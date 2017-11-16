@@ -389,45 +389,76 @@ public class GridMap : MonoBehaviour {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
             List<Landmark> landmarksInRegion = new List<Landmark>(currRegion.landmarks);
+            List<Region> alreadyConnectedRegions = new List<Region>();
+
             for (int j = 0; j < landmarksInRegion.Count; j++) {
                 Landmark currLandmark = landmarksInRegion[j];
-                if(currLandmark.connections.Count >= RoadManager.Instance.maxLandmarkConnections) {
-                    continue;
-                }
+                for (int k = 0; k < currLandmark.connections.Count; k++) {
+                    object connectedObj = currLandmark.connections[k];
+                    if (connectedObj is Region) {
+                        Region connectedRegion = (Region)connectedObj;
+                        if (connectedRegion.id != currRegion.id) {
+                            if (!alreadyConnectedRegions.Contains(connectedRegion)) {
+                                alreadyConnectedRegions.Add(connectedRegion);
 
-                List<Region> adjacentRegions = new List<Region>(currRegion.adjacentRegions);
-                List<HexTile> tilesToChooseFrom = new List<HexTile>(adjacentRegions.Where(x => x.connections.Count < RoadManager.Instance.maxConnections 
-                    && !x.connections.Contains(currLandmark.location)).Select(x => x.centerOfMass));
-
-                for (int k = 0; k < adjacentRegions.Count; k++) {
-                    tilesToChooseFrom.AddRange(adjacentRegions[k].landmarks.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections &&
-                        !x.connections.Contains(currLandmark.location)).Select(x => x.location));
-                }
-
-                //When connecting landmarks to nearby landmarks, exclude the other landmark on the same region if they are already connected
-                for (int k = 0; k < landmarksInRegion.Count; k++) {
-                    Landmark otherLandmark = landmarksInRegion[k];
-                    if(otherLandmark != currLandmark) {
-                        if(PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.USE_ROADS) == null) {
-                            //RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
-                            if (otherLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
-                                tilesToChooseFrom.Add(otherLandmark.location);
+                            }
+                        }
+                    } else if (connectedObj is HexTile) {
+                        HexTile connectedTile = (HexTile)connectedObj;
+                        if (connectedTile.region.id != currRegion.id) {
+                            if (!alreadyConnectedRegions.Contains(connectedTile.region)) {
+                                alreadyConnectedRegions.Add(connectedTile.region);
                             }
                         }
                     }
                 }
+            }
+
+            if(alreadyConnectedRegions.Count == currRegion.adjacentRegions.Count) {
+                continue;
+            }
+
+            for (int j = 0; j < landmarksInRegion.Count; j++) {
+                Landmark currLandmark = landmarksInRegion[j];
+                List<HexTile> otherLandmarksInRegion = new List<HexTile>(landmarksInRegion.Where(x => x != currLandmark).Select(x => x.location));
+                //When connecting landmarks to nearby landmarks, exclude the other landmark on the same region if they are already connected
+                //Check if currLandmark is already connected to other landmark in same region
+                bool isAlreadyConnectedToLandmarkInThisRegion = false;
+                for (int k = 0; k < otherLandmarksInRegion.Count; k++) {
+                    HexTile otherLandmarkLocation = otherLandmarksInRegion[k];
+                    if (PathGenerator.Instance.GetPath(currLandmark.location, otherLandmarkLocation, PATHFINDING_MODE.USE_ROADS) != null) {
+                        isAlreadyConnectedToLandmarkInThisRegion = true;
+                        break;
+                    }
+                }
+
+                List<HexTile> tilesToChooseFrom = null;
+                if (isAlreadyConnectedToLandmarkInThisRegion) {
+                    //connect to an adjacent region city/landmark instead
+                    List<Region> adjacentRegions = new List<Region>(currRegion.adjacentRegions);
+                    tilesToChooseFrom = new List<HexTile>(adjacentRegions.Where(x => !alreadyConnectedRegions.Contains(x) 
+                        && !x.connections.Contains(currLandmark.location)).Select(x => x.centerOfMass));
+                    for (int k = 0; k < adjacentRegions.Count; k++) {
+                        tilesToChooseFrom.AddRange(adjacentRegions[k].landmarks.Where(x => !x.connections.Contains(currLandmark.location)).Select(x => x.location));
+                    }
+                } else {
+                    tilesToChooseFrom = new List<HexTile>(landmarksInRegion.Where(x => x != currLandmark).Select(x => x.location));
+                }
 
                 tilesToChooseFrom = tilesToChooseFrom.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.transform.position)).ToList();
-                //if it can, it should connect to the nearest landmark or city within its region or adjacent region without intersecting a 
-                //major road and without creating a path in a third different region
                 for (int k = 0; k < tilesToChooseFrom.Count; k++) {
                     HexTile currTile = tilesToChooseFrom[k];
+                    if (alreadyConnectedRegions.Contains(currTile.region)) {
+                        continue;
+                    }
                     List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, currTile, PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION);
                     if(path != null) {
                         if (currTile.isHabitable) {
                             RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, currTile.region);
+                            alreadyConnectedRegions.Add(currTile.region);
                         } else if (currTile.hasLandmark) {
                             RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, currTile);
+                            alreadyConnectedRegions.Add(currTile.region);
                         }
                         RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
                         break;
