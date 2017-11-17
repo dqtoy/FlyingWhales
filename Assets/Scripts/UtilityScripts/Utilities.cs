@@ -1021,7 +1021,7 @@ public class Utilities : MonoBehaviour {
 			return true;
         case EVENT_TYPES.REQUEST_PEACE:
             return true;
-		case EVENT_TYPES.REINFORCEMENT:
+		case EVENT_TYPES.REINFORCE_CITY:
 			return true;
 		case EVENT_TYPES.RIOT_WEAPONS:
 			return true;
@@ -1287,7 +1287,7 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
-	public static bool AreTwoCitiesAdjacent(City sourceCity, City targetCity, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
+	public static bool AreTwoCitiesConnected(City sourceCity, City targetCity, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
 		List<HexTile> path = PathGenerator.Instance.GetPath (sourceCity.hexTile, targetCity.hexTile, pathFindingMode, kingdom);
 		if(path != null){
 			return true;

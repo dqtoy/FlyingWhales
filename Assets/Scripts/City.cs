@@ -756,9 +756,9 @@ public class City{
     }
 		
 	internal Citizen CreateNewAgent(ROLE role, HexTile targetLocation, HexTile sourceLocation = null){
-		if(role == ROLE.GENERAL){
-			return null;
-		}
+//		if(role == ROLE.GENERAL){
+//			return null;
+//		}
 		if(role == ROLE.REBEL){
 			GENDER gender = GENDER.MALE;
 			int randomGender = UnityEngine.Random.Range (0, 100);
@@ -875,11 +875,11 @@ public class City{
 		citizen.assignedRole.path = newPath;
 		citizen.assignedRole.daysBeforeMoving = newPath [0].movementDays;
 
-        General general = (General)citizen.assignedRole;
-        general.spawnRate = path.Sum (x => x.movementDays) + 2;
-		if(!isRebel){
-			general.damage = ((General)citizen.assignedRole).GetDamage();
-		}
+//        General general = (General)citizen.assignedRole;
+//        general.spawnRate = path.Sum (x => x.movementDays) + 2;
+//		if(!isRebel){
+//			general.damage = ((General)citizen.assignedRole).GetDamage();
+//		}
 		return citizen;
 	}
 	internal Citizen CreateGeneralForLair(List<HexTile> path, HexTile targetLocation){
@@ -897,8 +897,8 @@ public class City{
 		citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
 
 		General general = (General)citizen.assignedRole;
-		general.spawnRate = path.Sum (x => x.movementDays) + 2;
-		general.damage = ((General)citizen.assignedRole).GetDamage();
+//		general.spawnRate = path.Sum (x => x.movementDays) + 2;
+//		general.damage = ((General)citizen.assignedRole).GetDamage();
 		return citizen;
 	}
     internal void ChangeKingdom(Kingdom otherKingdom, List<Citizen> citizensToAdd) {
@@ -1223,6 +1223,19 @@ public class City{
 
 		baseAmount += (this.cityLevel / 2);
 		return baseAmount;
+	}
+
+	internal General RaiseSoldiers(int soldiers, HexTile targetLocation, bool isIdle){
+		City targetCity = targetLocation.city;
+		Citizen citizen = this.CreateNewAgent (ROLE.GENERAL, targetLocation);
+		if(citizen != null){
+			General general	= (General)citizen.assignedRole;
+			general.SetSoldiers (soldiers);
+			this.AdjustSoldiers (-soldiers);
+			general.isIdle = isIdle;
+			return general;
+		}
+		return null;
 	}
 	#endregion
 }

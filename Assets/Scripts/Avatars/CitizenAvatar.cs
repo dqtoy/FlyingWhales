@@ -26,7 +26,6 @@ public class CitizenAvatar : PooledObject {
 	internal List<HexTile> visibleTiles;
 	public SmoothMovement smoothMovement;
 
-
     #region getters/setters
     public bool hasArrived {
         get { return _hasArrived; }
@@ -40,10 +39,10 @@ public class CitizenAvatar : PooledObject {
 
     #region virtuals
     internal virtual void Init(Role citizenRole) {
+		this.citizenRole = citizenRole;
         this.citizenID = citizenRole.citizen.id;
         this.citizenName = citizenRole.citizen.name;
         this.roleType = citizenRole.ToString();
-        this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
 		this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
         this.smoothMovement.onMoveFinished += OnMoveFinished;
@@ -69,7 +68,9 @@ public class CitizenAvatar : PooledObject {
 	internal virtual void ReceivePath(List<HexTile> path){
 		if(path != null && path.Count > 0){
 			this.citizenRole.path = path;
-			StartMoving ();
+			if(!this.citizenRole.isIdle){
+				StartMoving ();
+			}
 		}else{
 			CancelEventInvolvedIn ();
 		}
@@ -90,16 +91,16 @@ public class CitizenAvatar : PooledObject {
         }
     }
 	internal virtual void NewMove() {
-//		if (this.citizenRole.targetLocation != null) {
-//			if (this.citizenRole.path != null) {
-//				if (this.citizenRole.path.Count > 0) {
-//					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
-//					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
-//				}else{
-//					CancelEventInvolvedIn ();
-//				}
-//			}
-//		}
+		if (this.citizenRole.targetLocation != null) {
+			if (this.citizenRole.path != null) {
+				if (this.citizenRole.path.Count > 0) {
+					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
+					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
+				}else{
+					CancelEventInvolvedIn ();
+				}
+			}
+		}
 	}
 
     internal virtual void OnMoveFinished() {

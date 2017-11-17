@@ -267,10 +267,10 @@ public class Region {
 		if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
 			this._occupant.kingdom.AdjustFoodCityCapacity (this._tileWithSpecialResource.cityCapacity);
 		}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
-			if(this._occupant.kingdom.race == RACE.HUMANS && (this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
-				this._occupant.kingdom.AdjustMaterialCityCapacity (this._tileWithSpecialResource.cityCapacity);
-			}else if(this._occupant.kingdom.race == RACE.ELVES && (this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
-				this._occupant.kingdom.AdjustMaterialCityCapacity (this._tileWithSpecialResource.cityCapacity);
+			if(this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
+				this._occupant.kingdom.AdjustMaterialCityCapacityForHumans (this._tileWithSpecialResource.cityCapacity);
+			}else if(this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY){
+				this._occupant.kingdom.AdjustMaterialCityCapacityForElves (this._tileWithSpecialResource.cityCapacity);
 			}
 		}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
 			this._occupant.kingdom.AdjustOreCityCapacity (this._tileWithSpecialResource.cityCapacity);
@@ -285,10 +285,10 @@ public class Region {
 		if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
 			previousOccupant.kingdom.AdjustFoodCityCapacity (-this._tileWithSpecialResource.cityCapacity);
 		}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
-			if(previousOccupant.kingdom.race == RACE.HUMANS && (this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
-				previousOccupant.kingdom.AdjustMaterialCityCapacity (-this._tileWithSpecialResource.cityCapacity);
-			}else if(previousOccupant.kingdom.race == RACE.ELVES && (this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
-				previousOccupant.kingdom.AdjustMaterialCityCapacity (-this._tileWithSpecialResource.cityCapacity);
+			if(this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
+				previousOccupant.kingdom.AdjustMaterialCityCapacityForHumans (-this._tileWithSpecialResource.cityCapacity);
+			}else if(this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY){
+				previousOccupant.kingdom.AdjustMaterialCityCapacityForElves (-this._tileWithSpecialResource.cityCapacity);
 			}
 		}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
 			previousOccupant.kingdom.AdjustOreCityCapacity (-this._tileWithSpecialResource.cityCapacity);

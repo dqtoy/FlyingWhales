@@ -98,7 +98,8 @@ public class Kingdom{
 
 	//Resources
 	private int _foodCityCapacity;
-	private int _materialCityCapacity;
+	private int _materialCityCapacityForHumans;
+	private int _materialCityCapacityForElves;
 	private int _oreCityCapacity;
 
     protected const int INCREASE_CITY_HP_CHANCE = 5;
@@ -367,8 +368,11 @@ public class Kingdom{
 	internal int foodCityCapacity {
 		get { return this._foodCityCapacity; }
 	}
-	internal int materialCityCapacity {
-		get { return this._materialCityCapacity; }
+	internal int materialCityCapacityForHumans {
+		get { return this._materialCityCapacityForHumans; }
+	}
+	internal int materialCityCapacityForElves {
+		get { return this._materialCityCapacityForElves; }
 	}
 	internal int oreCityCapacity {
 		get { return this._oreCityCapacity; }
@@ -3229,10 +3233,16 @@ public class Kingdom{
 			this._foodCityCapacity = 0;
 		}
 	}
-	internal void AdjustMaterialCityCapacity(int amount){
-		this._materialCityCapacity += amount;
-		if(this._materialCityCapacity < 0){
-			this._materialCityCapacity = 0;
+	internal void AdjustMaterialCityCapacityForHumans(int amount){
+		this._materialCityCapacityForHumans += amount;
+		if(this._materialCityCapacityForHumans < 0){
+			this._materialCityCapacityForHumans = 0;
+		}
+	}
+	internal void AdjustMaterialCityCapacityForElves(int amount){
+		this._materialCityCapacityForElves += amount;
+		if(this._materialCityCapacityForElves < 0){
+			this._materialCityCapacityForElves = 0;
 		}
 	}
 	internal void AdjustOreCityCapacity(int amount){

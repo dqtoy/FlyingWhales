@@ -47,6 +47,7 @@ public class Warfare {
 	}
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom, bool affectWarmonerValue = true){
+		GameManager.Instance.SetProgressionSpeed (PROGRESSION_SPEED.X1);
 		SetID();
 		this._name = RandomNameGenerator.Instance.GetWarfareName ();
 		this._isOver = false;
