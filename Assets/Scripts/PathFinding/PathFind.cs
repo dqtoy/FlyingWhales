@@ -54,7 +54,10 @@ namespace PathFind {
                             //path cannot pass through other regions
                             continue;
                         }
-                        if(n.isHabitable && n.id != start.id && n.id != destination.id) {
+                        if (n.MinorRoadTiles.Count > 0 && n.id != start.id && n.id != destination.id) {
+                            continue;
+                        }
+                        if (n.isHabitable && n.id != start.id && n.id != destination.id) {
                             continue;
                         }
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
@@ -176,6 +179,9 @@ namespace PathFind {
                     foreach (Node n in path.LastStep.LandmarkExternalConnectionTiles) {
                         if (n.region.id != region1.id && n.region.id != region2.id) {
                             //path cannot pass through other regions
+                            continue;
+                        }
+                        if(n.AllNeighbourRoadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR).Count() > 0 && n.id != start.id && n.id != destination.id) {
                             continue;
                         }
                         if (n.isHabitable && n.id != start.id && n.id != destination.id) {
