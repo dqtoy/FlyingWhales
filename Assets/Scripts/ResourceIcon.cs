@@ -34,6 +34,9 @@ public class ResourceIcon : MonoBehaviour {
     }
 
     public void OnMouseOver() {
+        if (UIManager.Instance.IsMouseOnUI()) {
+            return;
+        }
         isHovering = true;
 		UIManager.Instance.ShowSmallInfo("[b]" + resource.ToString() + ": " + hexTile.resourceCount.ToString() + "[/b]");
     }
