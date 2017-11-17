@@ -1604,7 +1604,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialCapacity + "(" + this.city.materialRequirement.ToString () + ")" +
 		"\n [b]Ore Count:[/b] " + this.city.oreCount.ToString () + "/" + this.city.oreCapacity + "(" + this.city.oreRequirement.ToString () + ")" +
 		"\n [b]Kingdom Food S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.foodCityCapacity +
-		"\n [b]Kingdom Material S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.materialCityCapacity +
+		"\n [b]Kingdom Material For Humans S/D:[/b] " + ((this.city.kingdom.race == RACE.HUMANS) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForHumans +
+		"\n [b]Kingdom Material For Elves S/D:[/b] " + ((this.city.kingdom.race == RACE.ELVES) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForElves +
 		"\n [b]Kingdom Ore S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.oreCityCapacity +
 		"\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +

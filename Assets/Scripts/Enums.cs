@@ -250,7 +250,8 @@ public enum EVENT_TYPES{
 	ALL,
 	ATTACK_CITY, // general
 	SABOTAGE, //envoy
-	REINFORCEMENT, //general
+	REINFORCE_CITY, //general
+	DEFEND_CITY, //general
 	SECESSION, //governor
 	RIOT_WEAPONS, //no agent
 	REBELLION, //general

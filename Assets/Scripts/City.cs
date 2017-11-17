@@ -207,6 +207,9 @@ public class City{
 	internal int soldiers{
 		get { return this._soldiers; }
 	}
+	internal int soldiersMax {
+		get { return Mathf.FloorToInt(this._population * this._kingdom.draftRate); }
+	}
 	private int[] soldiersCap{
 		get { return new int[]{ GetSoldiersCap (), this._oreCount, this._population }; }
 	}
@@ -767,9 +770,9 @@ public class City{
     }
 		
 	internal Citizen CreateNewAgent(ROLE role, HexTile targetLocation, HexTile sourceLocation = null){
-		if(role == ROLE.GENERAL){
-			return null;
-		}
+//		if(role == ROLE.GENERAL){
+//			return null;
+//		}
 		if(role == ROLE.REBEL){
 			GENDER gender = GENDER.MALE;
 			int randomGender = UnityEngine.Random.Range (0, 100);
@@ -886,11 +889,11 @@ public class City{
 		citizen.assignedRole.path = newPath;
 		citizen.assignedRole.daysBeforeMoving = newPath [0].movementDays;
 
-        General general = (General)citizen.assignedRole;
-        general.spawnRate = path.Sum (x => x.movementDays) + 2;
-		if(!isRebel){
-			general.damage = ((General)citizen.assignedRole).GetDamage();
-		}
+//        General general = (General)citizen.assignedRole;
+//        general.spawnRate = path.Sum (x => x.movementDays) + 2;
+//		if(!isRebel){
+//			general.damage = ((General)citizen.assignedRole).GetDamage();
+//		}
 		return citizen;
 	}
 	internal Citizen CreateGeneralForLair(List<HexTile> path, HexTile targetLocation){
@@ -908,8 +911,8 @@ public class City{
 		citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
 
 		General general = (General)citizen.assignedRole;
-		general.spawnRate = path.Sum (x => x.movementDays) + 2;
-		general.damage = ((General)citizen.assignedRole).GetDamage();
+//		general.spawnRate = path.Sum (x => x.movementDays) + 2;
+//		general.damage = ((General)citizen.assignedRole).GetDamage();
 		return citizen;
 	}
     internal void ChangeKingdom(Kingdom otherKingdom, List<Citizen> citizensToAdd) {
@@ -1132,11 +1135,7 @@ public class City{
 	#region Population
 	private void IncreasePopulationPerMonth(){
 		if(!this._isStarving){
-			int populationIncrease = this.populationGrowth;
-			AdjustPopulation (populationIncrease);
-		}else{
-			int populationDecrease = this._populationGrowth / 2;
-			AdjustPopulation (-populationDecrease);
+			AdjustPopulation (this.populationGrowth);
 		}
 	}
 	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
@@ -1170,14 +1169,19 @@ public class City{
 	#endregion
 
 	#region Soldiers
-	internal void AdjustSoldiers(int amount){
+	internal void AdjustSoldiers(int amount, bool isUpdateKingdomList = true){
 		int supposedSoldiers = this._soldiers + amount;
-		if (supposedSoldiers < 0){
-			this._kingdom.AdjustSoldiers (-this._soldiers);
+		int maxSoldiers = this.soldiersMax;
+		if(supposedSoldiers > maxSoldiers){
+			int addedSoldiers = maxSoldiers - this._soldiers;
+			this._soldiers += addedSoldiers;
+			this._kingdom.AdjustSoldiers (addedSoldiers, isUpdateKingdomList);
+		}else if (supposedSoldiers < 0){
+			this._kingdom.AdjustSoldiers (-this._soldiers, isUpdateKingdomList);
 			this._soldiers = 0;
 		}else{
 			this._soldiers += amount;
-			this._kingdom.AdjustSoldiers (amount);
+			this._kingdom.AdjustSoldiers (amount, isUpdateKingdomList);
 		}
 	}
 	internal void SetSoldiers(int amount) {
@@ -1229,6 +1233,19 @@ public class City{
 
 		baseAmount += (this.cityLevel / 2);
 		return baseAmount;
+	}
+
+	internal General RaiseSoldiers(int soldiers, HexTile targetLocation, bool isIdle){
+		City targetCity = targetLocation.city;
+		Citizen citizen = this.CreateNewAgent (ROLE.GENERAL, targetLocation);
+		if(citizen != null){
+			General general	= (General)citizen.assignedRole;
+			general.SetSoldiers (soldiers);
+			this.AdjustSoldiers (-soldiers);
+			general.isIdle = isIdle;
+			return general;
+		}
+		return null;
 	}
 	#endregion
 }

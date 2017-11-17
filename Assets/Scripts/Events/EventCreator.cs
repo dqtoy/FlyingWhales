@@ -88,7 +88,47 @@ public class EventCreator: MonoBehaviour {
         Regression regression = new Regression(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
         return regression;
     }
-
+	internal ReinforceCity CreateReinforceCityEvent(City sourceCity, City targetCity, int soldiers) {
+		Citizen citizen = sourceCity.CreateNewAgent (ROLE.GENERAL, targetCity.hexTile);
+		if(citizen != null){
+			General general	= (General)citizen.assignedRole;
+			sourceCity.AdjustSoldiers (-soldiers);
+			ReinforceCity reinforceCity = new ReinforceCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen);
+			general.Initialize (reinforceCity);
+			general.SetSoldiers (soldiers);
+			general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
+			return reinforceCity;
+		}
+		return null;
+	}
+	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity, Battle battle, int soldiers) {
+		Citizen citizen = sourceCity.CreateNewAgent (ROLE.GENERAL, targetCity.hexTile);
+		if(citizen != null){
+			General general	= (General)citizen.assignedRole;
+			general.isIdle = true;
+			sourceCity.AdjustSoldiers (-soldiers);
+			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen, battle, targetCity);
+			general.Initialize (attackCity);
+			general.SetSoldiers (soldiers);
+			general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS);
+			return attackCity;
+		}
+		return null;
+	}
+	internal DefendCity CreateDefendCityEvent(City sourceCity, City targetCity, Battle battle, int soldiers) {
+		Citizen citizen = sourceCity.CreateNewAgent (ROLE.GENERAL, targetCity.hexTile);
+		if(citizen != null){
+			General general	= (General)citizen.assignedRole;
+			general.isIdle = true;
+			sourceCity.AdjustSoldiers (-soldiers);
+			DefendCity defendCity = new DefendCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen, battle);
+			general.Initialize (defendCity);
+			general.SetSoldiers (soldiers);
+//			general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
+			return defendCity;
+		}
+		return null;
+	}
 	//internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){
 	//	if(sourceKingdom.isLockedDown){
 	//		return null;

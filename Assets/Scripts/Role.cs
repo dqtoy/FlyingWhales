@@ -21,6 +21,7 @@ public class Role {
 	public int damage;
 	public bool markAsDead;
 
+	internal bool isIdle;
 
     private GameEvent _gameEventInvolvedIn;
 
@@ -47,6 +48,7 @@ public class Role {
 		this.hasAttacked = false;
 		this.damage = 1;
 		this.markAsDead = false;
+		this.isIdle = false;
 	}
 	internal virtual void DestroyGO(){
         this.location.ExitCitizen(this.citizen);

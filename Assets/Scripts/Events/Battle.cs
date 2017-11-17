@@ -20,7 +20,10 @@ public class Battle {
 	private Kingdom defenderKingdom;
 	private GameDate _supposedAttackDate;
 
-    private List<string> _battleLogs; 
+    private List<string> _battleLogs;
+
+	internal AttackCity attackCityEvent;
+	internal DefendCity defendCityEvent;
 
 	public GameDate supposedAttackDate{
 		get{ return this._supposedAttackDate; }
@@ -85,6 +88,8 @@ public class Battle {
 			this.defenderKingdom = defenderKingdom;
 			this.attacker.ChangeAttackingState (true);
 			this.defender.ChangeDefendingState (true);
+			this.attackCityEvent = null;
+			this.defendCityEvent = null;
             AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " is now attacking(" + attacker.kingdom.name + ")");
             AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " is now defending(" + defender.kingdom.name + ")");
         }
@@ -92,14 +97,14 @@ public class Battle {
 	private void Step2(){
 		if (!this._warfare.isOver && !this._isOver) {
 			DeclareWar ();
-			Attack ();
+			AttackMobilization ();
 		}
 	}
-	private void Step3(){
-		if (!this._warfare.isOver && !this._isOver) {
-			Combat ();
-		}
-	}
+//	private void Step3(){
+//		if (!this._warfare.isOver && !this._isOver) {
+//			Combat ();
+//		}
+//	}
 
 	#region Step 2
 	private void DeclareWar(){
@@ -112,22 +117,103 @@ public class Battle {
 			this._warfare.ShowUINotification (newLog);
 		}
 	}
-	private void Attack(){
-		GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		gameDate.AddDays(UnityEngine.Random.Range(15, 31));
-		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => Step3());
+	private void AttackMobilization(){
+		Log offenseLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
+		offenseLog.AddToFillers(this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		offenseLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_1);
+		this._warfare.ShowUINotification(offenseLog, new HashSet<Kingdom> { attacker.kingdom });
 
-		this._supposedAttackDate.SetDate (gameDate);
+		this.attackCityEvent = EventCreator.Instance.CreateAttackCityEvent (this.attacker, this.defender, this, this.attacker.soldiers);
 
-        Log offenseLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
-        offenseLog.AddToFillers(this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        offenseLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_1);
-        this._warfare.ShowUINotification(offenseLog, new HashSet<Kingdom> { attacker.kingdom });
+		int totalSoldiers = 0;
+		int totalConnectedOwnedSoldiers = 0;
+		int baseSoldiers = this.attacker.soldiers;
+		int connectedOwnedCitiesSoldiers = 0;
+		int lessenSoldiers = 0;
+		List<City> ownedConnectedCities = new List<City> ();
+		for (int i = 0; i < this.attackerKingdom.cities.Count; i++) {
+			City city = this.attackerKingdom.cities [i];
+			if(city.id != this.attacker.id && city.soldiers > 0){
+				if(Utilities.AreTwoCitiesConnected(city, this.attacker, PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, this.attackerKingdom)){
+					ownedConnectedCities.Add (city);
+					connectedOwnedCitiesSoldiers += city.soldiers;
+					for (int j = 0; j < city.region.connections.Count; j++) {
+						if(city.region.connections[j] is Region){
+							Region connectedRegion = (Region)city.region.connections [j];
+							if(connectedRegion.occupant != null && connectedRegion.occupant.kingdom.id != city.kingdom.id){
+								KingdomRelationship kr = city.kingdom.GetRelationshipWithKingdom (connectedRegion.occupant.kingdom);
+								float threat = (float)kr.targetKingdomThreatLevel;
+								if(threat > 100f){
+									threat = 100f;
+								}
+								threat /= 100f;
+								lessenSoldiers += Mathf.RoundToInt(threat * connectedRegion.occupant.soldiers);
+							}
+						}
+					}
+				}
+			}
+		}
+			
+		if(ownedConnectedCities.Count > 0){
+			totalConnectedOwnedSoldiers = (connectedOwnedCitiesSoldiers - lessenSoldiers) / (this.attacker.kingdom.warfareInfo.Count + 1);
+			if(totalConnectedOwnedSoldiers < 0){
+				totalConnectedOwnedSoldiers = 0;
+			}
+			int distributableSoldiers = Mathf.RoundToInt(totalConnectedOwnedSoldiers / ownedConnectedCities.Count);
+			int excessSoldiers = 0;
+			for (int i = 0; i < ownedConnectedCities.Count; i++) {
+				City city = ownedConnectedCities [i];
+				if (city.id != this.attacker.id) {
+					int totalSoldiersCount = distributableSoldiers + excessSoldiers;
+					if(city.soldiers < totalSoldiersCount){
+						excessSoldiers += totalSoldiersCount - city.soldiers;
+						ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, city.soldiers);
+						if(reinforceCity != null){
+							this.attackCityEvent.AddReinforcements (reinforceCity);
+						}
+					}else{
+						excessSoldiers = 0;
+						ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, totalSoldiersCount);
+						if(reinforceCity != null){
+							this.attackCityEvent.AddReinforcements (reinforceCity);
+						}
+					}
+				}
+			}
+		}
+
+		if(this.attackCityEvent.reinforcements.Count <= 0){
+			this.attackCityEvent.Attack ();
+		}
+
 	}
+	internal void Attack(){
+		DefenseMobilization ();
+	}
+
+	private void DefenseMobilization(){
+		this.defendCityEvent = EventCreator.Instance.CreateDefendCityEvent (this.defender, this.attacker, this, this.defender.soldiers);
+
+		List<City> ownedConnectedCities = new List<City> ();
+		for (int i = 0; i < this.defender.region.connections.Count; i++) {
+			if (this.defender.region.connections [i] is Region) {
+				Region connectedRegion = (Region)this.defender.region.connections [i];
+				if(connectedRegion.occupant != null && connectedRegion.occupant.kingdom.id == this.defender.kingdom.id && connectedRegion.occupant.soldiers > 0){
+					int totalSoldiersCount = connectedRegion.occupant.soldiers / 2;
+					ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (connectedRegion.occupant, this.defender, totalSoldiersCount);
+					if(reinforceCity != null){
+						this.defendCityEvent.AddReinforcements (reinforceCity);
+					}
+				}
+			}
+		}
+	}
+
 	#endregion
 
 	#region Step 3
-	private void Combat(){
+	internal void Combat(){
 		if(!this.attacker.isDead && !this.defender.isDead){
 			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + this.attacker.name + " of " + this.attacker.kingdom.name + " AND " + this.defender.name + " of " + this.defender.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
 			this._warfare.AdjustWeariness (this.attacker.kingdom, 2);
@@ -135,8 +221,8 @@ public class Battle {
 			this._deadAttackerKingdom = null;
 			this._deadDefenderKingdom = null;
 
-			int attackerPower = this.attacker.kingdom.soldiersCount;
-			int defenderDefense = this.defender.kingdom.soldiersCount;
+			int attackerPower = this.attackCityEvent.general.soldiers;
+			int defenderDefense = this.defendCityEvent.general.soldiers;
 
             //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " has an attack power of " + attackerPower.ToString());
             //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " has defense of " + defenderDefense.ToString());
@@ -196,14 +282,15 @@ public class Battle {
 			int corpseCount = 0;
 
 			if(attackAfterDamage > 0){
-				this.attacker.kingdom.DamageSoldiers (defenseDamage);
+				this.attackCityEvent.general.AdjustSoldiers (-defenseDamage);
 				Debug.Log ("DAMAGE TO ATTACKER'S SOLDIERS: " + defenseDamage);
 				Debug.Log ("---------------------------");
 
 				AddBattleLog ((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.kingdom.name + " loses " + defenseDamage.ToString () + " soldiers " +
 					"(" + attacker.kingdom.soldiersCount.ToString () + ")");
 			}else{
-				this.attacker.kingdom.DamageSoldiers (attackerPower);
+				this.attackCityEvent.general.AdjustSoldiers (-attackerPower);
+				this.attackCityEvent.DoneEvent ();
 				Debug.Log ("DAMAGE TO ATTACKER'S SOLDIERS: " + attackerPower);
 				Debug.Log ("---------------------------");
 
@@ -213,8 +300,7 @@ public class Battle {
 
 
 			if (defenseAfterDamage > 0) {
-				this.defender.kingdom.DamageSoldiers (attackDamage);
-
+				this.defendCityEvent.general.AdjustSoldiers (-attackDamage);
 				Debug.Log ("DAMAGE TO DEFENDER'S SOLDIERS: " + attackDamage);
 				Debug.Log ("---------------------------");
 
@@ -222,8 +308,8 @@ public class Battle {
 					"(" + defender.kingdom.soldiersCount.ToString () + ")");
 
 			} else {
-				this.defender.kingdom.DamageSoldiers (defenderDefense);
-
+				this.defendCityEvent.general.AdjustSoldiers (-defenderDefense);
+				this.defendCityEvent.DoneEvent ();
 				Debug.Log ("DAMAGE TO DEFENDER'S SOLDIERS: " + defenderDefense);
 				Debug.Log ("---------------------------");
 
