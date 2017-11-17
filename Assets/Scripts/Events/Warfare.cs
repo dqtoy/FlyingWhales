@@ -243,8 +243,8 @@ public class Warfare {
 		City friendlyCity = null;
 		City enemyCity = GetEnemyCity (kingdom);
 		if(enemyCity != null){
-			for (int i = 0; i < enemyCity.region.adjacentRegions.Count; i++) {
-				City city = enemyCity.region.adjacentRegions [i].occupant;
+			for (int i = 0; i < enemyCity.region.connections.Count; i++) {
+				City city = ((Region)enemyCity.region.connections [i]).occupant;
 				if(city != null && city.kingdom.id == kingdom.id){
 					friendlyCity = city;
 					break;
@@ -265,26 +265,29 @@ public class Warfare {
 		WarfareInfo sourceKingdomInfo = sourceCity.kingdom.GetWarfareInfo (this._id);
 		List<City> enemyCities = new List<City> ();
 
-		for (int j = 0; j < sourceCity.region.adjacentRegions.Count; j++) {
-			City adjacentCity = sourceCity.region.adjacentRegions [j].occupant;
-			if(adjacentCity != null && adjacentCity.kingdom.id != sourceCity.kingdom.id){
-				KingdomRelationship kr = sourceCity.kingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
-				if(kr.battle == null){
-					if(kr.warfare != null){
-						if(kr.warfare.id == this._id){
-							enemyCities.Add (adjacentCity);
-						}
-					}else{
-						WarfareInfo targetKingdomInfo = adjacentCity.kingdom.GetWarfareInfo (this._id);
-						if(sourceKingdomInfo.warfare != null && targetKingdomInfo.warfare != null){
-							if(sourceKingdomInfo.side != targetKingdomInfo.side){
+		for (int j = 0; j < sourceCity.region.connections.Count; j++) {
+			if(sourceCity.region.connections [j] is Region){
+				City adjacentCity = ((Region)sourceCity.region.connections [j]).occupant;
+				if(adjacentCity != null && adjacentCity.kingdom.id != sourceCity.kingdom.id){
+					KingdomRelationship kr = sourceCity.kingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
+					if(kr.battle == null){
+						if(kr.warfare != null){
+							if(kr.warfare.id == this._id){
 								enemyCities.Add (adjacentCity);
 							}
-						}
+						}else{
+							WarfareInfo targetKingdomInfo = adjacentCity.kingdom.GetWarfareInfo (this._id);
+							if(sourceKingdomInfo.warfare != null && targetKingdomInfo.warfare != null){
+								if(sourceKingdomInfo.side != targetKingdomInfo.side){
+									enemyCities.Add (adjacentCity);
+								}
+							}
 
+						}
 					}
 				}
 			}
+
 		}
 		if (enemyCities.Count > 0) {
 			enemyCities = enemyCities.Distinct().ToList();
@@ -302,23 +305,25 @@ public class Warfare {
 		List<City> enemyCities = new List<City> ();
 
 		for (int i = 0; i < sourceKingdom.cities.Count; i++) {
-			for (int j = 0; j < sourceKingdom.cities[i].region.adjacentRegions.Count; j++) {
-				City adjacentCity = sourceKingdom.cities [i].region.adjacentRegions [j].occupant;
-				if(adjacentCity != null && adjacentCity.kingdom.id != sourceKingdom.id){
-					KingdomRelationship kr = sourceKingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
-					if(kr.battle == null){
-						if(kr.warfare != null){
-							if(kr.warfare.id == this._id){
-								enemyCities.Add (adjacentCity);
-							}
-						}else{
-							WarfareInfo targetKingdomInfo = adjacentCity.kingdom.GetWarfareInfo (this._id);
-							if(sourceKingdomInfo.warfare != null && targetKingdomInfo.warfare != null){
-								if(sourceKingdomInfo.side != targetKingdomInfo.side){
+			for (int j = 0; j < sourceKingdom.cities[i].region.connections.Count; j++) {
+				if (sourceKingdom.cities [i].region.connections [j] is Region) {
+					City adjacentCity = ((Region)sourceKingdom.cities [i].region.connections [j]).occupant;
+					if(adjacentCity != null && adjacentCity.kingdom.id != sourceKingdom.id){
+						KingdomRelationship kr = sourceKingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
+						if(kr.battle == null){
+							if(kr.warfare != null){
+								if(kr.warfare.id == this._id){
 									enemyCities.Add (adjacentCity);
 								}
-							}
+							}else{
+								WarfareInfo targetKingdomInfo = adjacentCity.kingdom.GetWarfareInfo (this._id);
+								if(sourceKingdomInfo.warfare != null && targetKingdomInfo.warfare != null){
+									if(sourceKingdomInfo.side != targetKingdomInfo.side){
+										enemyCities.Add (adjacentCity);
+									}
+								}
 
+							}
 						}
 					}
 				}

@@ -487,9 +487,11 @@ public class Battle {
 			if(attackRoll >= defenseRoll){
                 //Attacker Wins
                 AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + "(" + attacker.kingdom.name + ") wins the battle against " + defender.name + "(" + defender.kingdom.name + ")");
-                EndBattle(this.attacker, this.defender);
+				EndBattle(this.attacker, this.defender);
+				AttackerWins ();
 			}else{
                 //Defender Wins
+				DefenderWins();
 				this._warfare.AdjustWeariness (this.defender.kingdom, 1);
 
                 AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + "(" + defender.kingdom.name + ") wins the battle against " + attacker.name + "(" + attacker.kingdom.name + ")");
@@ -524,6 +526,14 @@ public class Battle {
 		}
 	}
 	#endregion
+	private void AttackerWins(){
+		this.defendCityEvent.ReturnRemainingSoldiers ();
+		this.attackCityEvent.DropSoldiersAndDisappear ();
+	}
+	private void DefenderWins(){
+		this.attackCityEvent.ReturnRemainingSoldiers ();
+		this.defendCityEvent.DropSoldiersAndDisappear ();
+	}
 	private void DeclarePeaceByDefender(){
 		Debug.Log (this.defender.kingdom + " is defender and has declared peace with " + this.attacker.kingdom);
 		this._isOver = true;

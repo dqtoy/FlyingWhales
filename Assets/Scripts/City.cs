@@ -588,7 +588,7 @@ public class City{
 			int foodCap = this.foodExcessCapacity;
 			if(this.foodCount > foodCap){
 				int excessFood = this.foodCount - foodCap;
-				if (excessFood >= this.foodExcessCapacity) {
+				if (excessFood >= foodCap) {
 					//Send caravan to other cities to give excess food
 					SendFoodToOtherCities (excessFood);
 				}
@@ -600,7 +600,7 @@ public class City{
 			int materialCap = this.materialExcessCapacity;
 			if (this.materialCount > materialCap) {
 				int excessMaterial = this.materialCount - materialCap;
-				if (excessMaterial >= this.materialExcessCapacity) {
+				if (excessMaterial >= materialCap) {
 					//Send caravan to other cities to give excess material
 					SendMaterialToOtherCities (excessMaterial);
 				}
@@ -612,7 +612,7 @@ public class City{
 			int oreCap = this.oreExcessCapacity;
 			if (this.oreCount > oreCap) {
 				int excessOre = this.oreCount - oreCap;
-				if(excessOre >= this.oreExcessCapacity){
+				if(excessOre >= oreCap){
 					//Send caravan to other cities to give excess ore
 					SendOreToOtherCities(excessOre);
 				}

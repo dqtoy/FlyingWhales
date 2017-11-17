@@ -5,9 +5,9 @@ using System.Linq;
 
 public class General : Role {
 	internal int soldiers;
-
+	internal bool isReturning;
     public General(Citizen citizen): base(citizen){
-		
+		this.isReturning = false;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){
