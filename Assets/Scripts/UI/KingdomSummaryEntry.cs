@@ -34,8 +34,10 @@ public class KingdomSummaryEntry : MonoBehaviour {
 //      armorLbl.text = kingdom.effectiveDefense.ToString();
 
 		EventDelegate.Set(emblemEventTrigger.onClick, delegate () { SwitchKingdom(kingdom); });
-//      EventDelegate.Set(weaponLblEventTrigger.onHoverOver, delegate () { OnHoverWeapons(); });
-//      EventDelegate.Set(weaponLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
+        EventDelegate.Set(emblemEventTrigger.onHoverOver, delegate () { UIManager.Instance.PreviewKingdomInfo(kingdom); });
+        EventDelegate.Set(emblemEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideKingdomInfoPreview();});
+        //      EventDelegate.Set(weaponLblEventTrigger.onHoverOver, delegate () { OnHoverWeapons(); });
+        //      EventDelegate.Set(weaponLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
     }
 
     private void OnHoverWeapons() {

@@ -388,6 +388,7 @@ public class GridMap : MonoBehaviour {
     public void GenerateLandmarkExternalConnections() {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
+            //Debug.Log("Creating External connection for region at " + currRegion.centerOfMass.name);
             List<Landmark> landmarksInRegion = new List<Landmark>(currRegion.landmarks);
             List<Region> alreadyConnectedRegions = new List<Region>();
 

@@ -27,6 +27,8 @@ public class KingdomEmblem : MonoBehaviour {
 
     private void Awake() {
         EventDelegate.Set(eventTrigger.onClick, OnEmblemClick);
+        EventDelegate.Set(eventTrigger.onHoverOver, OnEmblemHoverOver);
+        EventDelegate.Set(eventTrigger.onHoverOut, OnEmblemHoverOut);
     }
 
     internal void SetKingdom(Kingdom kingdom) {
@@ -56,4 +58,14 @@ public class KingdomEmblem : MonoBehaviour {
             onEmblemClicked(this);
         }
     }
+
+    private void OnEmblemHoverOver() {
+        UIManager.Instance.ShowSmallInfo(kingdom.name);
+    }
+
+    private void OnEmblemHoverOut() {
+        UIManager.Instance.HideSmallInfo();
+    }
+
+
 }

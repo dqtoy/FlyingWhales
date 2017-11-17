@@ -33,6 +33,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateNeighboursWithSameTag();
         if(!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
             Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+            Messenger.Cleanup();
             ReloadScene();
             return;
         }
@@ -41,6 +42,7 @@ public class MapGenerator : MonoBehaviour {
         if (!RoadManager.Instance.GenerateRegionRoads()) {
             //reset
             Debug.LogWarning("Road generation ran into a problem, reloading scene...");
+            Messenger.Cleanup();
             ReloadScene();
             return;
         }

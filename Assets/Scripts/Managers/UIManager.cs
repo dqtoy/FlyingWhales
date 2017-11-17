@@ -13,7 +13,9 @@ public class UIManager : MonoBehaviour {
 
     public UICamera uiCamera;
 
-	[Space(10)]
+    [SerializeField] UIMenu[] allMenus;
+
+    [Space(10)]
     [Header("Prefabs")]
     public GameObject characterPortraitPrefab;
 	public GameObject historyPortraitPrefab;
@@ -292,6 +294,10 @@ public class UIManager : MonoBehaviour {
     [Header("World History Menu")]
     [SerializeField] private WorldHistoryUI worldHistoryUI;
 
+    [Space(10)]
+    [Header("Kingdom Info Preview")]
+    [SerializeField] private GameObject kingdomInfoPreviewGO;
+    [SerializeField] private UILabel kingdomInfoPreviewLbl;
 
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -306,7 +312,8 @@ public class UIManager : MonoBehaviour {
     private Kingdom currentlyShowingKingdomCities;
 
     [Space(10)] //FOR TESTING
-	public GameObject goCreateEventUI;
+    [Header("For Testing")]
+    public GameObject goCreateEventUI;
 	public GameObject goRaid;
 	public GameObject goStateVisit;
 	public GameObject goMarriageInvitation;
@@ -382,8 +389,9 @@ public class UIManager : MonoBehaviour {
 	}
 
     internal void InitializeUI() {
-        //Messenger.Broadcast("InitializeUI");
-        worldHistoryUI.Initialize();
+        for (int i = 0; i < allMenus.Length; i++) {
+            allMenus[i].Initialize();
+        }
     }
 
     private void Update() {
@@ -550,7 +558,6 @@ public class UIManager : MonoBehaviour {
         //if(currentlyShowingKingdom != null) {
         //    currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
         //}
-
         currentlyShowingKingdom = kingdom;
 
         currentlyShowingKingdom.UpdateFogOfWarVisual();
@@ -609,6 +616,34 @@ public class UIManager : MonoBehaviour {
         if (this.notificationHistoryGO.activeSelf && this.logHistoryGO.activeSelf && this.isShowKingdomHistoryOnly) {
             ShowLogHistory();
         }
+    }
+    
+    internal void PreviewKingdomInfo(Kingdom kingdom) {
+        string text = "[b]" + kingdom.name + "[/b]\n";
+
+        text += "\n [b]Kingdom Food S/D:[/b] " + kingdom.cities.Count.ToString() + "/" + kingdom.foodCityCapacity +
+        "\n [b]Kingdom Material For Humans S/D:[/b] " + ((kingdom.race == RACE.HUMANS) ? kingdom.cities.Count.ToString() : "0") + "/" + kingdom.materialCityCapacityForHumans +
+        "\n [b]Kingdom Material For Elves S/D:[/b] " + ((kingdom.race == RACE.ELVES) ? kingdom.cities.Count.ToString() : "0") + "/" + kingdom.materialCityCapacityForElves +
+        "\n [b]Kingdom Ore S/D:[/b] " + kingdom.cities.Count.ToString() + "/" + kingdom.oreCityCapacity +
+        "\n [b]Kingdom Base Weapons:[/b] " + kingdom.baseWeapons.ToString() +
+        "\n [b]Weapons Over Production:[/b] " + kingdom.GetWeaponOverProductionPercentage().ToString() + "%" +
+        "\n [b]Kingdom Type:[/b] " + kingdom.kingdomType.ToString() +
+        "\n [b]Kingdom Size:[/b] " + kingdom.kingdomSize.ToString() +
+        "\n [b]Draft Rate: [/b]" + (kingdom.draftRate * 100f).ToString() + "%" +
+        "\n [b]Research Rate: [/b]" + (kingdom.researchRate * 100f).ToString() + "%" +
+        "\n [b]Production Rate: [/b]" + (kingdom.productionRate * 100f).ToString() + "%";
+        kingdomInfoPreviewLbl.text = text;
+
+        var v3 = Input.mousePosition;
+        v3.z = 10.0f;
+        v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+        v3.x -= 0.30f;
+        kingdomInfoPreviewGO.transform.position = v3;
+        kingdomInfoPreviewGO.SetActive(true);
+    }
+
+    internal void HideKingdomInfoPreview() {
+        kingdomInfoPreviewGO.SetActive(false);
     }
     private void UpdateKingdomInfo() {
         //currentlyShowingKingdom.UpdateFogOfWarVisual();
@@ -1337,6 +1372,13 @@ public class UIManager : MonoBehaviour {
         //} else {
         //    ShowLogHistory();
         //}
+    }
+    public void ToggleWarHistory() {
+        if (notificationHistoryGO.activeSelf) {
+            HideNotificationHistory();
+        } else {
+            ShowWarHistory();
+        }
     }
 	public void ShowLogHistory() {
         WorldHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<WorldHistoryItem>(notificationHistoryTable.gameObject);

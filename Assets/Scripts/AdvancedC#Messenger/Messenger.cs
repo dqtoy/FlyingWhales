@@ -19,12 +19,12 @@
  * Don't forget that the messages that should survive the cleanup, should be marked with Messenger.MarkAsPermanent(string)
  * 
  */
- 
+
 //#define LOG_ALL_MESSAGES
 //#define LOG_ADD_LISTENER
 //#define LOG_BROADCAST_MESSAGE
 #define REQUIRE_LISTENER
- 
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;

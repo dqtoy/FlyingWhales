@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class WorldHistoryUI : MonoBehaviour {
+public class WorldHistoryUI : UIMenu {
 
     [Header("Prefabs")]
     [SerializeField] private GameObject kingdomEmblemPrefab;
@@ -32,11 +32,7 @@ public class WorldHistoryUI : MonoBehaviour {
     //Selected Kingdoms
     [SerializeField] private List<Kingdom> selectedKingdoms;
 
-    //private void Awake() {
-    //    Messenger.AddListener("InitializeUI", Initialize);
-    //}
-
-    internal void Initialize() {
+    internal override void Initialize() {
         allKingdomsInMenu = new HashSet<Kingdom>();
         inactiveEmblems = new List<KingdomEmblem>();
         activeEmblems = new Dictionary<Kingdom, KingdomEmblem>();
@@ -262,6 +258,12 @@ public class WorldHistoryUI : MonoBehaviour {
         for (int i = 0; i < activeItems.Count; i++) {
             activeItems[i].SetBGColor(i);
         }
+    }
+    #endregion
+
+    #region War History
+    public void ToggleWarHistory() {
+        UIManager.Instance.ToggleWarHistory();
     }
     #endregion
 
