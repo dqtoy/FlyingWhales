@@ -24,7 +24,6 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        GridMap.Instance.GenerateOuterGrid();
         if (GameManager.Instance.enableGameAgents) {
             PathfindingManager.Instance.CreateGrid();
         }
@@ -37,6 +36,8 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
+        GridMap.Instance.GenerateOuterGrid();
+        GridMap.Instance.DivideOuterGridRegions();
         if (!RoadManager.Instance.GenerateRegionRoads()) {
             //reset
             Debug.LogWarning("Road generation ran into a problem, reloading scene...");
@@ -56,7 +57,7 @@ public class MapGenerator : MonoBehaviour {
         //GridMap.Instance.GenerateCityConnections ();
         //GridMap.Instance.GenerateExtraLandmarkConnections ();
         Biomes.Instance.GenerateTileBiomeDetails();
-        Biomes.Instance.GenerateTileDetails();
+        Biomes.Instance.GenerateTileEdges();
         //CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
         UIManager.Instance.InitializeUI();

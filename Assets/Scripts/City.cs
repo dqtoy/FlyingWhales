@@ -64,7 +64,7 @@ public class City{
 
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
-    [NonSerialized] internal List<HexTile> outerTiles;
+    [NonSerialized] internal List<HexTile> outerBorderTiles;
 //    [NonSerialized] internal Rebellions rebellion;
     [NonSerialized] internal Plague plague;
 
@@ -238,7 +238,7 @@ public class City{
 		this._isNoCityGrowth = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
-        this.outerTiles = new List<HexTile>();
+        this.outerBorderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
 		this.raidLoyaltyExpiration = 0;
 		this._foodCount = 0;
@@ -308,10 +308,12 @@ public class City{
     #region Border Tile Functions
     internal void PopulateBorderTiles() {
         borderTiles = new List<HexTile>(_region.tilesInRegion);
+        outerBorderTiles = new List<HexTile>(_region.outerGridTilesInRegion);
         for (int i = 0; i < borderTiles.Count; i++) {
             HexTile currTile = borderTiles[i];
             currTile.Borderize(this);
         }
+
     }
     internal void UnPopulateBorderTiles() {
         for (int i = 0; i < borderTiles.Count; i++) {
@@ -319,6 +321,7 @@ public class City{
             currTile.UnBorderize(this);
             currTile.SetMinimapTileColor(Color.black);
         }
+        outerBorderTiles.Clear();
     }
     #endregion
 
@@ -339,6 +342,13 @@ public class City{
             currentTile.kingdomColorSprite.gameObject.SetActive(true);
             currentTile.SetMinimapTileColor(this.kingdom.kingdomColor);
         }
+
+        for (int i = 0; i < this.outerBorderTiles.Count; i++) {
+            HexTile currentTile = this.outerBorderTiles[i];
+            currentTile.kingdomColorSprite.color = color;
+            currentTile.kingdomColorSprite.gameObject.SetActive(true);
+            currentTile.SetMinimapTileColor(this.kingdom.kingdomColor);
+        }
     }
     internal void UnHighlightAllOwnedTiles() {
         for (int i = 0; i < this.ownedTiles.Count; i++) {
@@ -347,6 +357,10 @@ public class City{
         }
         for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currentTile = this.borderTiles[i];
+            currentTile.kingdomColorSprite.gameObject.SetActive(false);
+        }
+        for (int i = 0; i < this.outerBorderTiles.Count; i++) {
+            HexTile currentTile = this.outerBorderTiles[i];
             currentTile.kingdomColorSprite.gameObject.SetActive(false);
         }
     }
@@ -660,7 +674,7 @@ public class City{
        
         this.ownedTiles.Clear();
 		this.borderTiles.Clear();
-        this.outerTiles.Clear();
+        this.outerBorderTiles.Clear();
 
 		this.isDead = true;
 		ChangeAttackingState (false);

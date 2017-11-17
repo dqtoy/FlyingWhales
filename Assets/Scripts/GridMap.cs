@@ -13,7 +13,7 @@ public class GridMap : MonoBehaviour {
     public float width;
 	public float height;
     [SerializeField] private Transform _borderParent;
-    [SerializeField] private int _borderThickness;
+    [SerializeField] internal int _borderThickness;
 
     public float xOffset;
     public float yOffset;
@@ -32,6 +32,7 @@ public class GridMap : MonoBehaviour {
 
     [Space(10)]
 	public List<GameObject> listHexes;
+    public List<HexTile> outerGridList;
     public List<HexTile> hexTiles;
     public List<Region> allRegions;
 	public HexTile[,] map;
@@ -92,13 +93,13 @@ public class GridMap : MonoBehaviour {
         float newX = xOffset * (newWidth / 2);
         float newY = yOffset * (newHeight / 2);
 
-        List<HexTile> outerGridList = new List<HexTile>();
+        outerGridList = new List<HexTile>();
         outerGrid = new HexTile[newWidth, newHeight];
 
         _borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {
-                if((x > _borderThickness && x < newWidth - _borderThickness) && (y > _borderThickness && y < newHeight - _borderThickness)) {
+                if((x >= _borderThickness && x < newWidth - _borderThickness) && (y >= _borderThickness && y < newHeight - _borderThickness)) {
                     continue;
                 }
                 float xPosition = x * xOffset;
@@ -122,8 +123,34 @@ public class GridMap : MonoBehaviour {
                 //int xToCopy = Mathf.Clamp(x, 0, (int)width - 1);
                 //int yToCopy = Mathf.Clamp(y, 0, (int)height - 1);
 
-                int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
-                int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
+                //int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
+                //int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
+                int xToCopy = x - _borderThickness;
+                int yToCopy = y - _borderThickness;
+                if(x < _borderThickness && y - _borderThickness >= 0 && y < height) { //if border thickness is 2 (0 and 1)
+                    //left border
+                    xToCopy = 0;
+                    yToCopy = y - _borderThickness;
+                } else if(x >= _borderThickness && x <= width && y < _borderThickness) {
+                    //bottom border
+                    xToCopy = x - _borderThickness;
+                    yToCopy = 0;
+                } else if(x > width && (y - _borderThickness >= 0 && y -_borderThickness <= height - 1)) {
+                    //right border
+                    xToCopy = (int)width - 1;
+                    yToCopy = y - _borderThickness;
+                } else if (x >= _borderThickness && x <= width && y - _borderThickness >= height) {
+                    //top border
+                    xToCopy = x - _borderThickness;
+                    yToCopy = (int)height - 1;
+                } else {
+                    //corners
+                    xToCopy = x;
+                    yToCopy = y;
+                    xToCopy = Mathf.Clamp(xToCopy, 0, (int)width - 1);
+                    yToCopy = Mathf.Clamp(yToCopy, 0, (int)height - 1);
+                }
+
                 HexTile hexToCopy = map[xToCopy, yToCopy];
 
                 hex.name = x + "," + y + "(Border) Copied from " + hexToCopy.name;
@@ -131,61 +158,55 @@ public class GridMap : MonoBehaviour {
                 currHex.SetElevation(hexToCopy.elevationType);
                 Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                 Biomes.Instance.AddBiomeDetailToTile(currHex);
-                //currHex.CopyEdgesFromOtherTile(hexToCopy);
+                hexToCopy.region.AddOuterGridTile(currHex);
 
                 currHex.DisableColliders();
-                currHex.HideFogOfWarObjects();
+                currHex.HideFogOfWarObjects();                
             }
         }
 
-        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid));
+        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+    }
 
+    internal void DivideOuterGridRegions() {
+        for (int i = 0; i < outerGridList.Count; i++) {
+            HexTile currTile = outerGridList[i];
+            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+                HexTile currNeighbour = currTile.AllNeighbours[j];
+                if (currNeighbour.region != currTile.region) {
+                    //Load Border For currTile
+                    HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour, true);
+                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                    currTile.region.AddRegionBorderLineSprite(border);
 
-        //List<HexTile> outerTiles = listHexes.Select(x => x.GetComponent<HexTile>()).ToList();
-        //outerTiles = outerTiles.Where(x => x.xCoordinate == 0 || x.xCoordinate == width - 1 || x.yCoordinate == 0 || x.yCoordinate == height - 1).ToList();
-        //for (int i = 0; i < outerTiles.Count; i++) {
-        //    HexTile currOuterTile = outerTiles[i];
+                    if (GridMap.Instance.hexTiles.Contains(currNeighbour)) {
+                        HEXTILE_DIRECTION neighbourBorderTileToActivate = HEXTILE_DIRECTION.NONE;
+                        if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_EAST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_EAST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_WEST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.EAST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.WEST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_EAST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_WEST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_WEST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_EAST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.WEST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.EAST;
+                        }
+                        border = currNeighbour.ActivateBorder(neighbourBorderTileToActivate);
+                        currNeighbour.region.AddRegionBorderLineSprite(border);
+                    }
 
-        //    for (int k = 0; k < _borderThickness; k++) {
-        //        int xCoordinateModifier = 1;
-        //        int yCoordinateModifier = 1;
-        //        float xPosition = currOuterTile.transform.localPosition.x;
-        //        float yPosition = currOuterTile.transform.localPosition.y;
-
-        //        if (currOuterTile.xCoordinate == 0) {
-        //            xCoordinateModifier = -1;
-        //            yCoordinateModifier = 0;
-        //        } else if (currOuterTile.yCoordinate == 0) {
-        //            xCoordinateModifier = 0;
-        //            yCoordinateModifier = -1;
-        //        } else if (currOuterTile.xCoordinate == width - 1) {
-        //            xCoordinateModifier = 1;
-        //            yCoordinateModifier = 0;
-        //        } else if (currOuterTile.yCoordinate == height - 1) {
-        //            xCoordinateModifier = 0;
-        //            yCoordinateModifier = 1;
-        //        }
-
-        //        if (k % 2 == 0 && yCoordinateModifier != 0) {
-        //            xPosition += xOffset / 2;
-        //        }
-
-        //        xPosition = xPosition + (((k + 1) * xOffset) * xCoordinateModifier);
-        //        yPosition = yPosition + (((k + 1) * yOffset) * yCoordinateModifier);
-
-        //        GameObject hex = GameObject.Instantiate(goHex) as GameObject;
-        //        HexTile currHex = hex.GetComponent<HexTile>();
-        //        hex.transform.parent = this.transform;
-        //        hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-        //        hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
-        //        hex.name = currOuterTile.name + " (Border)";
-        //        currHex.SetElevation(currOuterTile.elevationType);
-        //        Biomes.Instance.SetBiomeForTile(currOuterTile.biomeType, currHex);
-        //        Biomes.Instance.AddBiomeDetailToTile(currHex);
-        //        currHex.DisableColliders();
-        //        currHex.HideFogOfWarObjects();
-        //    }
-        //}
+                    //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
+                    //    //tile is part of left border
+                    //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+                    //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
+                    //    }
+                    //}
+                }
+            }
+        }
     }
 
 	internal GameObject GetHex(string hexName){
@@ -368,46 +389,76 @@ public class GridMap : MonoBehaviour {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
             List<Landmark> landmarksInRegion = new List<Landmark>(currRegion.landmarks);
+            List<Region> alreadyConnectedRegions = new List<Region>();
+
             for (int j = 0; j < landmarksInRegion.Count; j++) {
                 Landmark currLandmark = landmarksInRegion[j];
-                if(currLandmark.connections.Count >= RoadManager.Instance.maxLandmarkConnections) {
-                    continue;
-                }
+                for (int k = 0; k < currLandmark.connections.Count; k++) {
+                    object connectedObj = currLandmark.connections[k];
+                    if (connectedObj is Region) {
+                        Region connectedRegion = (Region)connectedObj;
+                        if (connectedRegion.id != currRegion.id) {
+                            if (!alreadyConnectedRegions.Contains(connectedRegion)) {
+                                alreadyConnectedRegions.Add(connectedRegion);
 
-                List<Region> adjacentRegions = new List<Region>(currRegion.adjacentRegions);
-                List<HexTile> tilesToChooseFrom = new List<HexTile>(adjacentRegions.Where(x => x.connections.Count < RoadManager.Instance.maxConnections 
-                    && !x.connections.Contains(currLandmark.location)).Select(x => x.centerOfMass));
-
-                for (int k = 0; k < adjacentRegions.Count; k++) {
-                    tilesToChooseFrom.AddRange(adjacentRegions[k].landmarks.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections &&
-                        !x.connections.Contains(currLandmark.location)).Select(x => x.location));
-                }
-
-                //When connecting landmarks to nearby landmarks, exclude the other landmark on the same region if they are already connected
-                for (int k = 0; k < landmarksInRegion.Count; k++) {
-                    Landmark otherLandmark = landmarksInRegion[k];
-                    if(otherLandmark != currLandmark) {
-                        if(PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.USE_ROADS) != null) {
-                            RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
-                        } else {
-                            if(otherLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
-                                tilesToChooseFrom.Add(otherLandmark.location);
+                            }
+                        }
+                    } else if (connectedObj is HexTile) {
+                        HexTile connectedTile = (HexTile)connectedObj;
+                        if (connectedTile.region.id != currRegion.id) {
+                            if (!alreadyConnectedRegions.Contains(connectedTile.region)) {
+                                alreadyConnectedRegions.Add(connectedTile.region);
                             }
                         }
                     }
                 }
+            }
+
+            if(alreadyConnectedRegions.Count == currRegion.adjacentRegions.Count) {
+                continue;
+            }
+
+            for (int j = 0; j < landmarksInRegion.Count; j++) {
+                Landmark currLandmark = landmarksInRegion[j];
+                List<HexTile> otherLandmarksInRegion = new List<HexTile>(landmarksInRegion.Where(x => x != currLandmark).Select(x => x.location));
+                //When connecting landmarks to nearby landmarks, exclude the other landmark on the same region if they are already connected
+                //Check if currLandmark is already connected to other landmark in same region
+                bool isAlreadyConnectedToLandmarkInThisRegion = false;
+                for (int k = 0; k < otherLandmarksInRegion.Count; k++) {
+                    HexTile otherLandmarkLocation = otherLandmarksInRegion[k];
+                    if (PathGenerator.Instance.GetPath(currLandmark.location, otherLandmarkLocation, PATHFINDING_MODE.USE_ROADS) != null) {
+                        isAlreadyConnectedToLandmarkInThisRegion = true;
+                        break;
+                    }
+                }
+
+                List<HexTile> tilesToChooseFrom = null;
+                if (isAlreadyConnectedToLandmarkInThisRegion) {
+                    //connect to an adjacent region city/landmark instead
+                    List<Region> adjacentRegions = new List<Region>(currRegion.adjacentRegions);
+                    tilesToChooseFrom = new List<HexTile>(adjacentRegions.Where(x => !alreadyConnectedRegions.Contains(x) 
+                        && !x.connections.Contains(currLandmark.location)).Select(x => x.centerOfMass));
+                    for (int k = 0; k < adjacentRegions.Count; k++) {
+                        tilesToChooseFrom.AddRange(adjacentRegions[k].landmarks.Where(x => !x.connections.Contains(currLandmark.location)).Select(x => x.location));
+                    }
+                } else {
+                    tilesToChooseFrom = new List<HexTile>(landmarksInRegion.Where(x => x != currLandmark).Select(x => x.location));
+                }
 
                 tilesToChooseFrom = tilesToChooseFrom.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.transform.position)).ToList();
-                //if it can, it should connect to the nearest landmark or city within its region or adjacent region without intersecting a 
-                //major road and without creating a path in a third different region
                 for (int k = 0; k < tilesToChooseFrom.Count; k++) {
                     HexTile currTile = tilesToChooseFrom[k];
+                    if (alreadyConnectedRegions.Contains(currTile.region)) {
+                        continue;
+                    }
                     List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, currTile, PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION);
                     if(path != null) {
                         if (currTile.isHabitable) {
                             RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, currTile.region);
+                            alreadyConnectedRegions.Add(currTile.region);
                         } else if (currTile.hasLandmark) {
                             RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, currTile);
+                            alreadyConnectedRegions.Add(currTile.region);
                         }
                         RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
                         break;

@@ -559,7 +559,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         gus.setTag = pathfindingTag;
         gus.Apply();
     }
-    public void FindNeighbours(HexTile[,] gameBoard) {
+    public void FindNeighbours(HexTile[,] gameBoard, bool isForOuterGrid = false) {
         _neighbourDirections = new Dictionary<HEXTILE_DIRECTION, HexTile>();
         var neighbours = new List<HexTile>();
 
@@ -578,6 +578,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 HexTile currNeighbour = gameBoard[neighbourCoordinateX, neighbourCoordinateY];
                 if(currNeighbour != null) {
                     neighbours.Add(currNeighbour);
+                } else {
+                    //This part is for outerGridTiles only!
+                    try {
+                        neighbourCoordinateX -= GridMap.Instance._borderThickness;
+                        neighbourCoordinateY -= GridMap.Instance._borderThickness;
+                        currNeighbour = GridMap.Instance.map[neighbourCoordinateX, neighbourCoordinateY];
+                        neighbours.Add(currNeighbour);
+                    } catch {
+                        //No Handling
+                    }
                 }
             }
 
@@ -586,19 +596,32 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         for (int i = 0; i < neighbours.Count; i++) {
             HexTile currNeighbour = neighbours[i];
-            _neighbourDirections.Add(GetNeighbourDirection(currNeighbour), currNeighbour);
+            try {
+                _neighbourDirections.Add(GetNeighbourDirection(currNeighbour, isForOuterGrid), currNeighbour);
+            } catch {
+                Debug.Log("LALALALALALALA");
+            }
+            
         }
 	}
-    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
+    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour, bool isForOuterGrid = false) {
         if (neighbour == null) {
             return HEXTILE_DIRECTION.NONE;
         }
         if (!AllNeighbours.Contains(neighbour)) {
             throw new System.Exception(neighbour.name + " is not a neighbour of " + this.name);
         }
-        Point difference = new Point((neighbour.xCoordinate - this.xCoordinate),
-                    (neighbour.yCoordinate - this.yCoordinate));
-        if (this.yCoordinate % 2 == 0) {
+        int thisXCoordinate = this.xCoordinate;
+        int thisYCoordinate = this.yCoordinate;
+        if (isForOuterGrid) {
+            if (!GridMap.Instance.outerGridList.Contains(neighbour)) {
+                thisXCoordinate -= GridMap.Instance._borderThickness;
+                thisYCoordinate -= GridMap.Instance._borderThickness;
+            }
+        }
+        Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
+                    (neighbour.yCoordinate - thisYCoordinate));
+        if (thisYCoordinate % 2 == 0) {
             if (difference.X == -1 && difference.Y == 1) {
                 //top left
                 return HEXTILE_DIRECTION.NORTH_WEST;
@@ -639,7 +662,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 return HEXTILE_DIRECTION.WEST;
             }
         }
-        return HEXTILE_DIRECTION.NORTH_WEST;
+        return HEXTILE_DIRECTION.NONE;
     }
     #endregion
 
@@ -752,95 +775,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
             centerPiece.SetActive(false);
         }
-    }
-    internal void CopyEdgesFromOtherTile(HexTile copyFrom) {
-        int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(copyFrom.biomeType);
-        List<HexTile> neighbours = new List<HexTile>(copyFrom.AllNeighbours);
-        if (copyFrom.elevationType == ELEVATION.WATER) {
-            neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
-        }
-        for (int i = 0; i < neighbours.Count; i++) {
-            HexTile currentNeighbour = neighbours[i];
-
-            int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
-
-            if (biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
-                int neighbourX = currentNeighbour.xCoordinate;
-                int neighbourY = currentNeighbour.yCoordinate;
-
-                Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
-                    (currentNeighbour.yCoordinate - this.yCoordinate));
-                if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) ||
-                    this.elevationType == ELEVATION.WATER) {
-                    GameObject gameObjectToEdit = null;
-                    Texture[] spriteMasksToChooseFrom = null;
-                    if (this.yCoordinate % 2 == 0) {
-                        if (difference.X == -1 && difference.Y == 1) {
-                            //top left
-                            gameObjectToEdit = this.topLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        } else if (difference.X == 0 && difference.Y == 1) {
-                            //top right
-                            gameObjectToEdit = this.topRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        } else if (difference.X == 1 && difference.Y == 0) {
-                            //right
-                            gameObjectToEdit = this.rightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        } else if (difference.X == 0 && difference.Y == -1) {
-                            //bottom right
-                            gameObjectToEdit = this.botRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        } else if (difference.X == -1 && difference.Y == -1) {
-                            //bottom left
-                            gameObjectToEdit = this.botLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        } else if (difference.X == -1 && difference.Y == 0) {
-                            //left
-                            gameObjectToEdit = this.leftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
-                        }
-                    } else {
-                        if (difference.X == 0 && difference.Y == 1) {
-                            //top left
-                            gameObjectToEdit = this.topLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        } else if (difference.X == 1 && difference.Y == 1) {
-                            //top right
-                            gameObjectToEdit = this.topRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        } else if (difference.X == 1 && difference.Y == 0) {
-                            //right
-                            gameObjectToEdit = this.rightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        } else if (difference.X == 1 && difference.Y == -1) {
-                            //bottom right
-                            gameObjectToEdit = this.botRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        } else if (difference.X == 0 && difference.Y == -1) {
-                            //bottom left
-                            gameObjectToEdit = this.botLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        } else if (difference.X == -1 && difference.Y == 0) {
-                            //left
-                            gameObjectToEdit = this.leftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
-                        }
-                    }
-                    if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
-                        SpriteRenderer sr = gameObjectToEdit.GetComponent<SpriteRenderer>();
-                        sr.sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
-                        sr.sortingOrder += biomeLayerOfNeighbour;
-                        gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
-                        gameObjectToEdit.SetActive(true);
-                    }
-
-                }
-            }
-
-
-        }
-
     }
     internal void LoadEdges() {
         int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
@@ -1576,6 +1510,28 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
     }
 
+    [ContextMenu("Load Border Lines")]
+    public void LoadBorderLinesForTesting() {
+        HexTile currTile = this;
+        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+            HexTile currNeighbour = currTile.AllNeighbours[j];
+            if (currNeighbour.region != currTile.region) {
+                //Load Border For currTile
+                Debug.Log(currNeighbour.name + " - " + currTile.GetNeighbourDirection(currNeighbour, true).ToString());
+                //HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour, true);
+                //SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                //currTile.region.AddRegionBorderLineSprite(border);
+
+                //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
+                //    //tile is part of left border
+                //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+                //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
+                //    }
+                //}
+            }
+        }
+    }
+
     private void ShowRegionInfo() {
         string text = string.Empty;
         text += "[b]Tile:[/b] " + this.name + "\n";
@@ -1670,24 +1626,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Production Rate: [/b]" + (this.city.kingdom.productionRate * 100f).ToString() + "%" +
         "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
 
-        //text += "[b]Adjacent Kingdoms: [/b]\n";
-        //if (this.city.kingdom.adjacentKingdoms.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-        //        text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+        text += "[b]Adjacent Kingdoms: [/b]\n";
+        if (this.city.kingdom.adjacentKingdoms.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+                text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
 
-        //text += "[b]Discovered Kingdoms: [/b]\n";
-        //if (this.city.kingdom.discoveredKingdoms.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
-        //        Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
-        //        text += currKingdom.name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+        text += "[b]Discovered Kingdoms: [/b]\n";
+        if (this.city.kingdom.discoveredKingdoms.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
+                Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
+                text += currKingdom.name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
 
         //text += "[b]Alliance Kingdoms: [/b]\n";
         //if(this.city.kingdom.alliancePool != null) {
