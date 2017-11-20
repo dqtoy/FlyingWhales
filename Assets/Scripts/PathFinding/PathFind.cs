@@ -129,7 +129,13 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						d = distance(path.LastStep, n);
+                        if (n.isHabitable && n.id != start.id && n.id != destination.id) {
+                            continue;
+                        }
+                        if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
+                            continue;
+                        }
+                        d = distance(path.LastStep, n);
 						newPath = path.AddStep(n, d);
 						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
 					}
@@ -204,7 +210,7 @@ namespace PathFind {
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION) {
-                    foreach (Node n in path.LastStep.LandmarkConnectionTiles) {
+                    foreach (Node n in path.LastStep.NoWaterTiles) {
                         //if (n.region.id != region1.id && n.region.id != region2.id) {
                         //    //path cannot pass through other regions
                         //    continue;

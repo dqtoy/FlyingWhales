@@ -478,6 +478,7 @@ public class GridMap : MonoBehaviour {
      * Add a third landmark to 20 regions in the world map. These would be the Unique Landmarks. 
      * These should have 2 roads connecting to other landmarks or minor roads only.
      * */
+     [ContextMenu("Generate Unique Landmarks")]
     public void GenerateUniqueLandmarks() {
         List<Region> allRegions = Utilities.Shuffle(this.allRegions);
         List<Landmark> allLandmarksInWorld = new List<Landmark>();
@@ -491,6 +492,10 @@ public class GridMap : MonoBehaviour {
             for (int j = 0; j < elligibleTilesInRegion.Count; j++) {
                 //Check if each elligible tile can have 2 roads
                 HexTile currElligibleTile = elligibleTilesInRegion[j];
+                if(currElligibleTile.GetTilesInRange(2).Where(x => x.hasLandmark).Count() > 0) {
+                    //Check if currElligibleTile has any landmark tiles within 2 tiles
+                    continue;
+                }
                 Dictionary<HexTile, List<HexTile>> roadsForElligibleTile = new Dictionary<HexTile, List<HexTile>>();
                 List<HexTile> possibleTilesToConnectTo = new List<HexTile>(allLandmarksInWorld.Select(x => x.location));
                 //possibleTilesToConnectTo.AddRange(minorRoadsInRegion);
@@ -498,25 +503,30 @@ public class GridMap : MonoBehaviour {
                 for (int k = 0; k < possibleTilesToConnectTo.Count; k++) {
                     HexTile otherHexTile = possibleTilesToConnectTo[k];
                     //check if currElligibleTile is already connected to otherHexTile via roads
-                    if (PathGenerator.Instance.GetPath(currElligibleTile, otherHexTile, PATHFINDING_MODE.USE_ROADS) == null) {
+                    List<HexTile> roadToOtherHexTile = PathGenerator.Instance.GetPath(currElligibleTile, otherHexTile, PATHFINDING_MODE.USE_ROADS);
+                    if (roadToOtherHexTile == null) {
                         //currElligibleTile and otherHexTile are not already connected
                         //check minor roads in region if there is a closer road tile that currElligibleTile can connect to to reach otherHexTile
                         HexTile nearestTile = otherHexTile;
-                        float nearestDistance = Vector2.Distance(currElligibleTile.transform.position, otherHexTile.transform.position);
-                        for (int l = 0; l < minorRoadsInRegion.Count; l++) {
-                            HexTile currRoadTile = minorRoadsInRegion[l];
-                            if(PathGenerator.Instance.GetPath(currElligibleTile, currRoadTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION) != null) {
-                                float distance = Vector2.Distance(currElligibleTile.transform.position, currRoadTile.transform.position);
-                                if(distance < nearestDistance) {
-                                    nearestDistance = distance;
-                                    nearestTile = currRoadTile;
+                        List<HexTile> pathToNearestHexTile = PathGenerator.Instance.GetPath(currElligibleTile, otherHexTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
+                        if(pathToNearestHexTile != null) {
+                            float nearestDistance = Vector2.Distance(currElligibleTile.transform.position, otherHexTile.transform.position);
+                            for (int l = 0; l < minorRoadsInRegion.Count; l++) {
+                                HexTile currRoadTile = minorRoadsInRegion[l];
+                                //Check if currRoadTile is connected to otherHexTile via roads
+                                if(PathGenerator.Instance.GetPath(currRoadTile, otherHexTile, PATHFINDING_MODE.USE_ROADS) != null) {
+                                    List<HexTile> pathToCurrRoadTile = PathGenerator.Instance.GetPath(currElligibleTile, currRoadTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
+                                    if (pathToCurrRoadTile != null && pathToCurrRoadTile.Count <= pathToNearestHexTile.Count) {
+                                        float distance = Vector2.Distance(currElligibleTile.transform.position, currRoadTile.transform.position);
+                                        if (distance <= nearestDistance) {
+                                            nearestDistance = distance;
+                                            pathToNearestHexTile = pathToCurrRoadTile;
+                                            nearestTile = currRoadTile;
+                                        }
+                                    }
                                 }
                             }
-                        }
-
-                        List<HexTile> pathToOtherHexTile = PathGenerator.Instance.GetPath(currElligibleTile, nearestTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
-                        if (pathToOtherHexTile != null) {
-                            roadsForElligibleTile.Add(otherHexTile, pathToOtherHexTile);
+                            roadsForElligibleTile.Add(otherHexTile, pathToNearestHexTile);
                             if (roadsForElligibleTile.Count == 2) {
                                 break;
                             }
