@@ -296,19 +296,19 @@ public class KingdomRelationship {
 
 
 		//Charisma Trait
-		if(this._targetKingdom.king.charisma == CHARISMA.CHARISMATIC){
+		if(this._targetKingdom.king.charisma == TRAIT.CHARISMATIC){
 			adjustment = 15;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += "+" + adjustment.ToString() + " Charmed.\n";
-		}else if(this._targetKingdom.king.charisma == CHARISMA.REPULSIVE){
+		}else if(this._targetKingdom.king.charisma == TRAIT.REPULSIVE){
 			adjustment = -15;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += adjustment.ToString() + " Repulsed.\n";
 		}
 
 		//Military Trait
-		if(this._sourceKingdom.king.military == MILITARY.PACIFIST){
-			if(this._targetKingdom.king.military != MILITARY.HOSTILE){
+		if(this._sourceKingdom.king.military == TRAIT.PACIFIST){
+			if(this._targetKingdom.king.military != TRAIT.HOSTILE){
 				adjustment = 30;
 				baseLoyalty += adjustment;
 				this._relationshipSummary += "+" + adjustment.ToString() + " Pacifist.\n";
@@ -317,40 +317,40 @@ public class KingdomRelationship {
 				baseLoyalty += adjustment;
 				this._relationshipSummary += adjustment.ToString() + " Disapproved Hostility.\n";
 			}
-		}else if(this._sourceKingdom.king.military == MILITARY.HOSTILE){
+		}else if(this._sourceKingdom.king.military == TRAIT.HOSTILE){
 			adjustment = -30;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += adjustment.ToString() + " Hostile.\n";
 		}
 
-		//Science Trait
-		if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.ERUDITE){
-			adjustment = 30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += "+" + adjustment.ToString() + " Both Erudite.\n";
-		}else if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.IGNORANT){
-			adjustment = -30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Dislikes Ignorant.\n";
-		}
+		////Science Trait
+		//if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.ERUDITE){
+		//	adjustment = 30;
+		//	baseLoyalty += adjustment;
+		//	this._relationshipSummary += "+" + adjustment.ToString() + " Both Erudite.\n";
+		//}else if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.IGNORANT){
+		//	adjustment = -30;
+		//	baseLoyalty += adjustment;
+		//	this._relationshipSummary += adjustment.ToString() + " Dislikes Ignorant.\n";
+		//}
 
 		//Intelligence Trait
-		if(this._sourceKingdom.king.intelligence == INTELLIGENCE.SMART && this._targetKingdom.king.intelligence == INTELLIGENCE.SMART){
+		if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.SMART){
 			adjustment = 30;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += "+" + adjustment.ToString() + " Both Smart.\n";
-		}else if(this._sourceKingdom.king.intelligence == INTELLIGENCE.SMART && this._targetKingdom.king.intelligence == INTELLIGENCE.DUMB){
+		}else if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.DUMB){
 			adjustment = -30;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += adjustment.ToString() + " Dislikes Dumb.\n";
 		}
 
 		//Efficieny Trait
-		if(this._sourceKingdom.king.efficiency == EFFICIENCY.EFFICIENT && this._targetKingdom.king.efficiency == EFFICIENCY.EFFICIENT){
+		if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.EFFICIENT){
 			adjustment = 30;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += "+" + adjustment.ToString() + " Both Efficient.\n";
-		}else if(this._sourceKingdom.king.efficiency == EFFICIENCY.EFFICIENT && this._targetKingdom.king.efficiency == EFFICIENCY.INEPT){
+		}else if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.INEFFICIENT){
 			adjustment = -30;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += adjustment.ToString() + " Dislikes Inept.\n";

@@ -835,31 +835,32 @@ public class UIManager : MonoBehaviour {
         //	}
         //}
 
-        List<object> traitsToShow = new List<object>();
-        if (currentlyShowingCitizen.charisma != CHARISMA.NEUTRAL) {
+        List<TRAIT> traitsToShow = new List<TRAIT>();
+        if (currentlyShowingCitizen.charisma != TRAIT.NONE) {
             traitsToShow.Add(currentlyShowingCitizen.charisma);
         }
-        if (currentlyShowingCitizen.intelligence != INTELLIGENCE.NEUTRAL) {
+        if (currentlyShowingCitizen.intelligence != TRAIT.NONE) {
             traitsToShow.Add(currentlyShowingCitizen.intelligence);
         }
-        if (currentlyShowingCitizen.efficiency != EFFICIENCY.NEUTRAL) {
+        if (currentlyShowingCitizen.efficiency != TRAIT.NONE) {
             traitsToShow.Add(currentlyShowingCitizen.efficiency);
         }
-        if (currentlyShowingCitizen.science != SCIENCE.NEUTRAL) {
-            traitsToShow.Add(currentlyShowingCitizen.science);
-        }
-        if (currentlyShowingCitizen.military != MILITARY.NEUTRAL) {
+        //if (currentlyShowingCitizen.science != SCIENCE.NEUTRAL) {
+        //    traitsToShow.Add(currentlyShowingCitizen.science);
+        //}
+        if (currentlyShowingCitizen.military != TRAIT.NONE) {
             traitsToShow.Add(currentlyShowingCitizen.military);
         }
-        if (currentlyShowingCitizen.loyalty != LOYALTY.NEUTRAL) {
-            traitsToShow.Add(currentlyShowingCitizen.loyalty);
-        }
+        //if (currentlyShowingCitizen.loyalty != LOYALTY.NEUTRAL) {
+        //    traitsToShow.Add(currentlyShowingCitizen.loyalty);
+        //}
 
+        traitsToShow.AddRange(currentlyShowingCitizen.otherTraits);
         //traits
         for (int i = 0; i < citizenTraitIcons.Length; i++) {
             TraitIcon currIcon = citizenTraitIcons[i];
-            object trait = traitsToShow.ElementAtOrDefault(i);
-            if (trait == null) {
+            TRAIT trait = traitsToShow.ElementAtOrDefault(i);
+            if (trait == TRAIT.NONE) {
                 currIcon.gameObject.SetActive(false);
             } else {
                 currIcon.SetTrait(trait);

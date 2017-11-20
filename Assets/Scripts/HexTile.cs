@@ -1600,6 +1600,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]Tile:[/b] " + this.name + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
+        "\n [b]King Character Type:[/b] " + this.city.kingdom.king.characterType.characterTypeName +
         "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
         for (int i = 0; i < this.region.connections.Count; i++) {
             object currConnection = this.region.connections[i];

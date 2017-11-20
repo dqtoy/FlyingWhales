@@ -1215,19 +1215,19 @@ public class City{
 	}
 	private int GetSoldiersCap(){
 		int baseAmount = 6;
-		if(this._kingdom.king.military == MILITARY.HOSTILE){
+		if(this._kingdom.king.military == TRAIT.HOSTILE){
 			baseAmount += 2;
-		}else if(this._kingdom.king.military == MILITARY.MILITANT){
+		}else if(this._kingdom.king.military == TRAIT.MILITANT){
 			baseAmount += 1;
-		}else if(this._kingdom.king.military == MILITARY.PACIFIST){
+		}else if(this._kingdom.king.military == TRAIT.PACIFIST){
 			baseAmount += -1;
 		}
 
-		if(this.governor.military == MILITARY.HOSTILE){
+		if(this.governor.military == TRAIT.HOSTILE){
 			baseAmount += 1;
-		}else if(this.governor.military == MILITARY.MILITANT){
+		}else if(this.governor.military == TRAIT.MILITANT){
 			baseAmount += 1;
-		}else if(this.governor.military == MILITARY.PACIFIST){
+		}else if(this.governor.military == TRAIT.PACIFIST){
 			baseAmount += -1;
 		}
 

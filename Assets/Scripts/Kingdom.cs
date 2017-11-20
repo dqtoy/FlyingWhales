@@ -2399,29 +2399,29 @@ public class Kingdom{
         _draftRateFromKing = 0f;
         _productionRateFromKing = 0f;
 
-        switch (king.science) {
-            case SCIENCE.ERUDITE:
-                _researchRateFromKing = 0.10f;
-                break;
-            case SCIENCE.ACADEMIC:
-                _researchRateFromKing = 0.05f;
-                break;
-            case SCIENCE.IGNORANT:
-                _researchRateFromKing = -0.05f;
-                break;
-            default:
-                break;
-        }
-        _productionRateFromKing -= _researchRateFromKing;
+        //switch (king.science) {
+        //    case SCIENCE.ERUDITE:
+        //        _researchRateFromKing = 0.10f;
+        //        break;
+        //    case SCIENCE.ACADEMIC:
+        //        _researchRateFromKing = 0.05f;
+        //        break;
+        //    case SCIENCE.IGNORANT:
+        //        _researchRateFromKing = -0.05f;
+        //        break;
+        //    default:
+        //        break;
+        //}
+        //_productionRateFromKing -= _researchRateFromKing;
 
         switch (king.military) {
-            case MILITARY.HOSTILE:
+            case TRAIT.HOSTILE:
                 _draftRateFromKing = 0.10f;
                 break;
-            case MILITARY.MILITANT:
+            case TRAIT.MILITANT:
                 _draftRateFromKing = 0.05f;
                 break;
-            case MILITARY.PACIFIST:
+            case TRAIT.PACIFIST:
                 _draftRateFromKing = -0.05f;
                 break;
             default:
@@ -3010,9 +3010,9 @@ public class Kingdom{
 		if(targetKingdom != null){
 			int triggerChance = UnityEngine.Random.Range (0, 100);
 			int triggerValue = 5;
-			if(this.king.loyalty == LOYALTY.SCHEMING){
-				triggerValue += 3;
-			}
+			//if(this.king.loyalty == LOYALTY.SCHEMING){
+			//	triggerValue += 3;
+			//}
 			if(triggerChance < triggerValue){
 				SUBTERFUGE_ACTIONS subterfuge = GetSubterfugeAction ();
 				CreateSubterfugeEvent (subterfuge, targetKingdom);
@@ -3023,9 +3023,9 @@ public class Kingdom{
 		int successChance = UnityEngine.Random.Range (0, 100);
 		int caughtChance = UnityEngine.Random.Range (0, 100);
 		int successValue = 60;
-		if(this.king.intelligence == INTELLIGENCE.SMART){
+		if(this.king.intelligence == TRAIT.SMART){
 			successValue += 15;
-		}else if(this.king.intelligence == INTELLIGENCE.DUMB){
+		}else if(this.king.intelligence == TRAIT.DUMB){
 			successValue -= 15;
 		}
 		if(successChance < successValue){
@@ -3036,9 +3036,9 @@ public class Kingdom{
 			//Fail
 			int criticalFailChance = UnityEngine.Random.Range (0, 100);
 			int criticalFailValue = 20;
-			if(this.king.efficiency == EFFICIENCY.INEPT){
+			if(this.king.efficiency == TRAIT.INEFFICIENT){
 				criticalFailValue += 5;
-			}else if(this.king.efficiency == EFFICIENCY.EFFICIENT){
+			}else if(this.king.efficiency == TRAIT.EFFICIENT){
 				criticalFailValue -= 5;
 			}
 			if(criticalFailChance < criticalFailValue){

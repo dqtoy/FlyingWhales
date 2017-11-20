@@ -3,12 +3,12 @@ using System.Collections;
 
 public class TraitIcon : MonoBehaviour {
 
-    private object trait;
+    private TRAIT trait;
 
     [SerializeField] private UI2DSprite innerSprite;
     private bool isHovering = false;
 
-    public void SetTrait(object trait) {
+    public void SetTrait(TRAIT trait) {
         this.trait = trait;
         innerSprite.color = Utilities.GetColorForTrait(trait);
     }

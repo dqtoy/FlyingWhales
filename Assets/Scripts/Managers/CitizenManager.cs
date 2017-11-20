@@ -7,6 +7,8 @@ public class CitizenManager : MonoBehaviour {
 
     public static CitizenManager Instance = null;
 
+    public List<CharacterType> characterTypes;
+
     private Dictionary<MONTH, Dictionary<int, HashSet<Citizen>>> citizenBirthdays;
     private Dictionary<int, HashSet<Citizen>> citizenAgeTable = new Dictionary<int, HashSet<Citizen>>() {
         {9, new HashSet<Citizen>()},
@@ -139,7 +141,6 @@ public class CitizenManager : MonoBehaviour {
             }
         }
     }
-
     private HashSet<Citizen> GetCitizensToDieToChooseFrom() {
         int[] elligibleKeys = elligibleCitizenAgeTable.Keys.ToArray();
         int totalChance = ageRangeDeathChances.Where(x => elligibleKeys.Contains(x.Key)).Sum(x => x.Value);
@@ -154,6 +155,12 @@ public class CitizenManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Character Types
+    internal CharacterType GetRandomCharacterType() {
+        return characterTypes[Random.Range(0, characterTypes.Count)];
     }
     #endregion
 
