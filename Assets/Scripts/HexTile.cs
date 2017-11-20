@@ -272,7 +272,34 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     #endregion
 
-	#region Resource
+    #region Landmarks
+    internal void CreateSummoningShrine() {
+        this.hasLandmark = true;
+        GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
+        shrineGO.transform.localPosition = Vector3.zero;
+        shrineGO.transform.localScale = Vector3.one;
+        _landmark = new ShrineLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
+    internal void CreateHabitat() {
+        this.hasLandmark = true;
+        GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
+        habitatGO.transform.localPosition = Vector3.zero;
+        habitatGO.transform.localScale = Vector3.one;
+        _landmark = new HabitatLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
+    internal void CreateUniqueLandmark() {
+        this.hasLandmark = true;
+        GameObject uniqueLandmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetUniqueLandmarkGO(), structureParentGO.transform) as GameObject;
+        uniqueLandmarkGO.transform.localPosition = Vector3.zero;
+        uniqueLandmarkGO.transform.localScale = Vector3.one;
+        _landmark = new UniqueLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
+    #endregion
+
+    #region Resource
     internal void AssignSpecialResource(RESOURCE resource) {
 		this.hasLandmark = true;
         specialResource = resource;
@@ -285,22 +312,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         _landmark = new ResourceLandmark(this);
         _region.AddLandmarkToRegion(_landmark);
     }
-	internal void CreateSummoningShrine(){
-		this.hasLandmark = true;
-		GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
-		shrineGO.transform.localPosition = Vector3.zero;
-		shrineGO.transform.localScale = Vector3.one;
-        _landmark = new ShrineLandmark(this);
-        _region.AddLandmarkToRegion(_landmark);
-    }
-	internal void CreateHabitat(){
-		this.hasLandmark = true;
-		GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
-		habitatGO.transform.localPosition = Vector3.zero;
-		habitatGO.transform.localScale = Vector3.one;
-        _landmark = new HabitatLandmark(this);
-        _region.AddLandmarkToRegion(_landmark);
-    }
+	
     internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;

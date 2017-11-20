@@ -31,8 +31,9 @@ public class CityGenerator : MonoBehaviour {
 	[SerializeField] private GameObject corpseMound;
 	[SerializeField] private GameObject summoningShrine;
 	[SerializeField] private GameObject habitat;
+    [SerializeField] private GameObject uniqueLandmark;
 
-	internal int[] cityMonthlyMaxGrowthMultiplier = new int[]{1,2,4,8,10,12,14,16,18,20,25};
+    internal int[] cityMonthlyMaxGrowthMultiplier = new int[]{1,2,4,8,10,12,14,16,18,20,25};
     //public GameObject[] genericStructures;
     //public GameObject[] cityStructures;
     //public GameObject[] mineStructures;
@@ -389,6 +390,9 @@ public class CityGenerator : MonoBehaviour {
 	public GameObject GetHabitatGO(){
 		return this.habitat;
 	}
+    public GameObject GetUniqueLandmarkGO() {
+        return this.uniqueLandmark;
+    }
 
     public List<HexTile> GetHabitableTilesForRace(RACE race, bool unoccupiedOnly = true) {
         List<HexTile> habitableTilesForRace = new List<HexTile>();

@@ -53,7 +53,7 @@ public class PathFindingThread {
 
 		if (path != null) {
 			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
-				|| _pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION || _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS) {
+				|| _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS) {
 
 				receivedPath = path.Reverse ().ToList ();
 			} else {
