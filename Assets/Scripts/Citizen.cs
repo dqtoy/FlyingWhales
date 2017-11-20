@@ -678,38 +678,17 @@ public class Citizen {
 
     #region Stability
     internal int GetStabilityContribution() {
-        if (role != ROLE.GOVERNOR && role != ROLE.KING) {
+        if (role != ROLE.KING) {
             return 0;
         } else {
-            if(role == ROLE.GOVERNOR) {
-                if(loyaltyToKing < 0) {
-                    return -2;
-                }
-            }
-
-            int baseValue = 3;
-            if (role == ROLE.GOVERNOR) {
-                baseValue = 1;
-            }
             switch (_efficiency) {
                 case TRAIT.EFFICIENT:
-                    if (role == ROLE.KING) {
-                        return baseValue + 2;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return baseValue + 1;
-                    }
-                    break;
-                case TRAIT.NONE:
-                    return baseValue;
+                    return 2;
                 case TRAIT.INEFFICIENT:
-                    if (role == ROLE.KING) {
-                        return baseValue - 2;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return baseValue - 1;
-                    }
-                    break;
+                    return 0;
+                default:
+                    return 1;
             }
-            return 0;
         }
     }
     #endregion

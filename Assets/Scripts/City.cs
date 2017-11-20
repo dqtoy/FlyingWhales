@@ -743,7 +743,9 @@ public class City{
                 otherKingdom.SetFogOfWarStateForRegion(newCity.region, FOG_OF_WAR_STATE.SEEN);
             }
         }
-        newCity.kingdom.AddStabilityDecreaseBecauseOfInvasion();
+        //When occupying an invaded city, Stability is reduced by 2.
+        newCity.kingdom.AdjustStability(-2);
+        //newCity.kingdom.AddStabilityDecreaseBecauseOfInvasion();
 
 
 		List<Citizen> remainingCitizens = this._kingdom.RemoveCityFromKingdom(this);
@@ -1001,33 +1003,33 @@ public class City{
         _armor = Mathf.Max(_armor, 0);
         KingdomManager.Instance.UpdateKingdomList();
     }
-	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
-		switch (this._region.specialResource){
-		case RESOURCE.CORN:
-			stabilityIncrease += 1;
-			break;
-		case RESOURCE.WHEAT:
-			stabilityIncrease += 2;
-			break;
-		case RESOURCE.RICE:
-			stabilityIncrease += 3;
-			break;
-		case RESOURCE.OAK:
-			armorIncrease += 5;
-			break;
-		case RESOURCE.EBONY:
-			armorIncrease += 10;
-			break;
-		case RESOURCE.GRANITE:
-			weaponsIncrease += 5;
-			break;
-		case RESOURCE.SLATE:
-			weaponsIncrease += 10;
-			break;
-		case RESOURCE.COBALT:
-			break;
-		}
-	}
+	//internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, int stabilityIncrease){
+	//	switch (this._region.specialResource){
+	//	case RESOURCE.CORN:
+	//		stabilityIncrease += 1;
+	//		break;
+	//	case RESOURCE.WHEAT:
+	//		stabilityIncrease += 2;
+	//		break;
+	//	case RESOURCE.RICE:
+	//		stabilityIncrease += 3;
+	//		break;
+	//	case RESOURCE.OAK:
+	//		armorIncrease += 5;
+	//		break;
+	//	case RESOURCE.EBONY:
+	//		armorIncrease += 10;
+	//		break;
+	//	case RESOURCE.GRANITE:
+	//		weaponsIncrease += 5;
+	//		break;
+	//	case RESOURCE.SLATE:
+	//		weaponsIncrease += 10;
+	//		break;
+	//	case RESOURCE.COBALT:
+	//		break;
+	//	}
+	//}
 	private void DailyGrowthResourceBenefits(){
 		switch (this._region.specialResource){
 		case RESOURCE.DEER:

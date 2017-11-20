@@ -2173,37 +2173,41 @@ public class Kingdom{
         if (this.isDead) {
             return;
         }
-        //When Stability reaches -100, there will either be a rebellion, a plague or rioting.
-        if (_stability <= -100) {
-            if (kingdomSize != KINGDOM_SIZE.SMALL) {
-                //Large or medium kingdom
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 15) {
-                    StartAutomaticRebellion();
-                } else if (chance >= 15 && chance < 35) {
-                    EventCreator.Instance.CreatePlagueEvent(this);
-                } else if (chance >= 35 && chance < 60) {
-                    EventCreator.Instance.CreateRiotEvent(this);
-                } else if (chance >= 60 && chance < 85) {
-                    EventCreator.Instance.CreateRiotSettlementEvent(this);
-                } else {
-                    EventCreator.Instance.CreateRegressionEvent(this);
-                }
-            } else {
-                //small kingdom
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) {
-                    EventCreator.Instance.CreatePlagueEvent(this);
-                } else if (chance >= 25 && chance < 55) {
-                    EventCreator.Instance.CreateRiotEvent(this);
-                } else if (chance >= 55 && chance < 85) {
-                    EventCreator.Instance.CreateRiotSettlementEvent(this);
-                } else {
-                    EventCreator.Instance.CreateRegressionEvent(this);
-                }
-            }
-
+        //A Rebellion will occur when Stability reaches -100. Stability will reset to 50. 
+        if (kingdomSize != KINGDOM_SIZE.SMALL) {
+            StartAutomaticRebellion();
         }
+
+        ////When Stability reaches -100, there will either be a rebellion, a plague or rioting.
+        //if (_stability <= -100) {
+        //    if (kingdomSize != KINGDOM_SIZE.SMALL) {
+        //        //Large or medium kingdom
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 15) {
+        //            StartAutomaticRebellion();
+        //        } else if (chance >= 15 && chance < 35) {
+        //            EventCreator.Instance.CreatePlagueEvent(this);
+        //        } else if (chance >= 35 && chance < 60) {
+        //            EventCreator.Instance.CreateRiotEvent(this);
+        //        } else if (chance >= 60 && chance < 85) {
+        //            EventCreator.Instance.CreateRiotSettlementEvent(this);
+        //        } else {
+        //            EventCreator.Instance.CreateRegressionEvent(this);
+        //        }
+        //    } else {
+        //        //small kingdom
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 25) {
+        //            EventCreator.Instance.CreatePlagueEvent(this);
+        //        } else if (chance >= 25 && chance < 55) {
+        //            EventCreator.Instance.CreateRiotEvent(this);
+        //        } else if (chance >= 55 && chance < 85) {
+        //            EventCreator.Instance.CreateRiotSettlementEvent(this);
+        //        } else {
+        //            EventCreator.Instance.CreateRegressionEvent(this);
+        //        }
+        //    }
+        //}
     }
     internal void ChangeStability(int newAmount) {
         this._stability = newAmount;
@@ -2213,24 +2217,24 @@ public class Kingdom{
     internal int GetMonthlyStabilityGain() {
         int totalStabilityIncrease = GetStabilityContributionFromCitizens();
         //totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
-        for (int i = 0; i < cities.Count; i++) {
-            City currCity = cities[i];
-            if (!currCity.isDead) {
-                int weaponsContribution = 0;
-                int armorContribution = 0;
-                currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
-            }
-        }
-        totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
+        //for (int i = 0; i < cities.Count; i++) {
+        //    City currCity = cities[i];
+        //    if (!currCity.isDead) {
+        //        int weaponsContribution = 0;
+        //        int armorContribution = 0;
+        //        currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
+        //    }
+        //}
+        //totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
         //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
         if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
-            totalStabilityIncrease -= 5;
+            totalStabilityIncrease -= 1;
         } else if (kingdomSize == KINGDOM_SIZE.LARGE) {
-            totalStabilityIncrease -= 10;
+            totalStabilityIncrease -= 2;
         }
 
-        return Mathf.Clamp(totalStabilityIncrease, -5, 5);
+        return totalStabilityIncrease;
     }
     internal void AddStabilityDecreaseBecauseOfInvasion() {
         _stabilityDecreaseFromInvasionCounter += 1;
@@ -2245,12 +2249,7 @@ public class Kingdom{
         _stabilityDecreaseFromInvasionCounter -= 1;
     }
     private int GetStabilityContributionFromCitizens() {
-        int stabilityContributionsFromCitizens = 0;
-        stabilityContributionsFromCitizens += king.GetStabilityContribution();
-        for (int i = 0; i < cities.Count; i++) {
-            stabilityContributionsFromCitizens += cities[i].governor.GetStabilityContribution();
-        }
-        return stabilityContributionsFromCitizens;
+        return king.GetStabilityContribution();
     }
     #endregion
 
@@ -2361,25 +2360,25 @@ public class Kingdom{
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead) {
-                int weaponsContribution = currCity.powerPoints;
-                int armorContribution = currCity.defensePoints;
+                //int weaponsContribution = currCity.powerPoints;
+                //int armorContribution = currCity.defensePoints;
                 int techContribution = currCity.techPoints;
-                currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
+                //currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, totalStabilityIncrease);
                 totalTechIncrease += techContribution;
             }
         }
 
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
-        totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
+        //totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
         //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
         if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
-            totalStabilityIncrease -= 5;
+            totalStabilityIncrease -= 1;
         } else if(kingdomSize == KINGDOM_SIZE.LARGE) {
-            totalStabilityIncrease -= 10;
+            totalStabilityIncrease -= 2;
         }
 
-        AdjustStability(Mathf.Clamp(totalStabilityIncrease, -5, 5));
+        AdjustStability(totalStabilityIncrease);
 
         //Tech Gains
         totalTechIncrease = ((2 * scientists * totalTechIncrease) / (scientists + totalTechIncrease));
@@ -2827,7 +2826,7 @@ public class Kingdom{
 			}
             this.alliancePool.RemoveKingdomInAlliance(this);
 			//When leaving an alliance, Stability is reduced by 15
-			this.AdjustStability(-15);
+			this.AdjustStability(-5);
 			if(!doNotShowLog){
 				Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
 				newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -3139,7 +3138,7 @@ public class Kingdom{
 		return weaponsToBeDestroyed;
 	}
 	private void InciteUnrestSubterfuge(){
-		this.AdjustStability (-5);
+		this.AdjustStability (-10);
 	}
 	private void FlatterSubterfuge(Kingdom targetKingdom, int modifier){
 		KingdomRelationship kr = targetKingdom.GetRelationshipWithKingdom (this);

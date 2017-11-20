@@ -24,7 +24,6 @@ public static class SeeksUndead {
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (allyKingdom);
 					if (kr.totalLike <= -100) {
 						kingdom.LeaveAlliance ();
-						kingdom.AdjustStability (-10);
 						Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name + " because total like is, " + kingdom.name +
 							" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
 						skipPhase4 = true;
@@ -104,7 +103,7 @@ public static class SeeksUndead {
 								} else {
 									//Don't join war, lose 10 Stability
 									Debug.Log(kingdom.name + " refused to join " + info.warfare.name + " and loses 10 Stability");
-									kingdom.AdjustStability (-10);
+									kingdom.AdjustStability (-2);
 									if (totalLikeToEnemies > 0) {
 										int leavingValue = totalLikeToEnemies * 2;
 										int chanceOfLeaving = UnityEngine.Random.Range (0, 100);
@@ -125,7 +124,6 @@ public static class SeeksUndead {
 											if (chanceOfLeaving < leavingValue) {
 												Debug.Log(kingdom.name + " betrayed his alliance by joining the other side");
 
-												kingdom.AdjustStability (-10);
 												AlliancePool allianceOfSourceKingdom = kingdom.alliancePool;
 												kingdom.LeaveAlliance ();
 												hasLeftAlliance = true;
