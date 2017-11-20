@@ -3103,7 +3103,7 @@ public class Kingdom{
 			targetKingdom.InciteUnrestSubterfuge ();
 			ShowSuccessSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
-			FlatterSubterfuge (targetKingdom, 25);
+			FlatterSubterfuge (targetKingdom, 50);
 			ShowSuccessSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE){
 			string plagueName = targetKingdom.SpreadPlague ();
