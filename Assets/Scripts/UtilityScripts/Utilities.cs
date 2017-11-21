@@ -670,67 +670,29 @@ public class Utilities : MonoBehaviour {
     public static Color darkRed = new Color(139f / 255f, 0f / 255f, 0f / 255f);
     public static Color lightRed = new Color(255f / 255f, 0f / 255f, 0f / 255f);
 
-    public static Color GetColorForTrait(object trait) {
-        if (trait is CHARISMA) {
-            switch ((CHARISMA)trait) {
-                case CHARISMA.CHARISMATIC:
-                    return darkGreen;
-                case CHARISMA.REPULSIVE:
-                    return darkRed;
-                default:
-                    return Color.white;
-            }
-        } else if (trait is INTELLIGENCE) {
-            switch ((INTELLIGENCE)trait) {
-                case INTELLIGENCE.SMART:
-                    return darkGreen;
-                case INTELLIGENCE.DUMB:
-                    return darkRed;
-                default:
-                    return Color.white;
-            }
-        } else if (trait is EFFICIENCY) {
-            switch ((EFFICIENCY)trait) {
-                case EFFICIENCY.EFFICIENT:
-                    return darkGreen;
-                case EFFICIENCY.INEPT:
-                    return darkRed;
-                default:
-                    return Color.white;
-            }
-        } else if (trait is SCIENCE) {
-            switch ((SCIENCE)trait) {
-                case SCIENCE.ERUDITE:
-                    return darkGreen;
-                case SCIENCE.ACADEMIC:
-                    return lightGreen;
-                case SCIENCE.IGNORANT:
-                    return darkRed;
-                default:
-                    return Color.white;
-            }
-        } else if (trait is MILITARY) {
-            switch ((MILITARY)trait) {
-                case MILITARY.HOSTILE:
-                    return darkRed;
-                case MILITARY.MILITANT:
-                    return lightRed;
-                case MILITARY.PACIFIST:
-                    return darkGreen;
-                default:
-                    return Color.white;
-            }
-        } else if (trait is LOYALTY) {
-            switch ((LOYALTY)trait) {
-                case LOYALTY.SCHEMING:
-                    return darkRed;
-                case LOYALTY.LOYAL:
-                    return darkGreen;
-                default:
-                    return Color.white;
-            }
+    public static Color GetColorForTrait(TRAIT trait) {
+        switch (trait) {
+            case TRAIT.CHARISMATIC:
+                return darkGreen;
+            case TRAIT.REPULSIVE:
+                return darkRed;
+            case TRAIT.SMART:
+                return darkGreen;
+            case TRAIT.DUMB:
+                return darkRed;
+            case TRAIT.EFFICIENT:
+                return darkGreen;
+            case TRAIT.INEFFICIENT:
+                return darkRed;
+            case TRAIT.HOSTILE:
+                return darkRed;
+            case TRAIT.MILITANT:
+                return lightRed;
+            case TRAIT.PACIFIST:
+                return darkGreen;
+            default:
+                return Color.white;
         }
-        return Color.black;
     }
 
 	public static string GetPronoun(string type, string caseIdentifier){

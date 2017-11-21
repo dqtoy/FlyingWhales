@@ -272,7 +272,34 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     #endregion
 
-	#region Resource
+    #region Landmarks
+    internal void CreateSummoningShrine() {
+        this.hasLandmark = true;
+        GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
+        shrineGO.transform.localPosition = Vector3.zero;
+        shrineGO.transform.localScale = Vector3.one;
+        _landmark = new ShrineLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
+    internal void CreateHabitat() {
+        this.hasLandmark = true;
+        GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
+        habitatGO.transform.localPosition = Vector3.zero;
+        habitatGO.transform.localScale = Vector3.one;
+        _landmark = new HabitatLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
+    internal void CreateUniqueLandmark() {
+        this.hasLandmark = true;
+        GameObject uniqueLandmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetUniqueLandmarkGO(), structureParentGO.transform) as GameObject;
+        uniqueLandmarkGO.transform.localPosition = Vector3.zero;
+        uniqueLandmarkGO.transform.localScale = Vector3.one;
+        _landmark = new UniqueLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
+    #endregion
+
+    #region Resource
     internal void AssignSpecialResource(RESOURCE resource) {
 		this.hasLandmark = true;
         specialResource = resource;
@@ -285,22 +312,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         _landmark = new ResourceLandmark(this);
         _region.AddLandmarkToRegion(_landmark);
     }
-	internal void CreateSummoningShrine(){
-		this.hasLandmark = true;
-		GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
-		shrineGO.transform.localPosition = Vector3.zero;
-		shrineGO.transform.localScale = Vector3.one;
-        _landmark = new ShrineLandmark(this);
-        _region.AddLandmarkToRegion(_landmark);
-    }
-	internal void CreateHabitat(){
-		this.hasLandmark = true;
-		GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
-		habitatGO.transform.localPosition = Vector3.zero;
-		habitatGO.transform.localScale = Vector3.one;
-        _landmark = new HabitatLandmark(this);
-        _region.AddLandmarkToRegion(_landmark);
-    }
+	
     internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
@@ -1588,6 +1600,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]Tile:[/b] " + this.name + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
+        "\n [b]King Character Type:[/b] " + this.city.kingdom.king.characterType.characterTypeName +
         "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
         for (int i = 0; i < this.region.connections.Count; i++) {
             object currConnection = this.region.connections[i];

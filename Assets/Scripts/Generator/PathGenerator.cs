@@ -191,7 +191,7 @@ public class PathGenerator : MonoBehaviour {
 
         if (path != null) {
 			if (pathfindingMode == PATHFINDING_MODE.COMBAT || pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION 
-                || pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION) {
+                || pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION || pathfindingMode == PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION) {
 				return path.Reverse().ToList();
 			} else {
 				List<HexTile> newPath = path.Reverse().ToList();

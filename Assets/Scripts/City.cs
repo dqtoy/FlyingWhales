@@ -249,7 +249,7 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		this._hp = this.maxHP;
-		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
+		this.populationIncreasePool = new int[]{ 30, 32, 34, 36, 38, 40 };
 		this._populationGrowth = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
 		this._cityBT = null;
         _activeGuards = new List<Guard>();
@@ -743,7 +743,9 @@ public class City{
                 otherKingdom.SetFogOfWarStateForRegion(newCity.region, FOG_OF_WAR_STATE.SEEN);
             }
         }
-        newCity.kingdom.AddStabilityDecreaseBecauseOfInvasion();
+        //When occupying an invaded city, Stability is reduced by 2.
+        newCity.kingdom.AdjustStability(-2);
+        //newCity.kingdom.AddStabilityDecreaseBecauseOfInvasion();
 
 
 		List<Citizen> remainingCitizens = this._kingdom.RemoveCityFromKingdom(this);
@@ -1001,33 +1003,33 @@ public class City{
         _armor = Mathf.Max(_armor, 0);
         KingdomManager.Instance.UpdateKingdomList();
     }
-	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
-		switch (this._region.specialResource){
-		case RESOURCE.CORN:
-			stabilityIncrease += 1;
-			break;
-		case RESOURCE.WHEAT:
-			stabilityIncrease += 2;
-			break;
-		case RESOURCE.RICE:
-			stabilityIncrease += 3;
-			break;
-		case RESOURCE.OAK:
-			armorIncrease += 5;
-			break;
-		case RESOURCE.EBONY:
-			armorIncrease += 10;
-			break;
-		case RESOURCE.GRANITE:
-			weaponsIncrease += 5;
-			break;
-		case RESOURCE.SLATE:
-			weaponsIncrease += 10;
-			break;
-		case RESOURCE.COBALT:
-			break;
-		}
-	}
+	//internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, int stabilityIncrease){
+	//	switch (this._region.specialResource){
+	//	case RESOURCE.CORN:
+	//		stabilityIncrease += 1;
+	//		break;
+	//	case RESOURCE.WHEAT:
+	//		stabilityIncrease += 2;
+	//		break;
+	//	case RESOURCE.RICE:
+	//		stabilityIncrease += 3;
+	//		break;
+	//	case RESOURCE.OAK:
+	//		armorIncrease += 5;
+	//		break;
+	//	case RESOURCE.EBONY:
+	//		armorIncrease += 10;
+	//		break;
+	//	case RESOURCE.GRANITE:
+	//		weaponsIncrease += 5;
+	//		break;
+	//	case RESOURCE.SLATE:
+	//		weaponsIncrease += 10;
+	//		break;
+	//	case RESOURCE.COBALT:
+	//		break;
+	//	}
+	//}
 	private void DailyGrowthResourceBenefits(){
 		switch (this._region.specialResource){
 		case RESOURCE.DEER:
@@ -1220,19 +1222,19 @@ public class City{
 	}
 	private int GetSoldiersCap(){
 		int baseAmount = 6;
-		if(this._kingdom.king.military == MILITARY.HOSTILE){
+		if(this._kingdom.king.military == TRAIT.HOSTILE){
 			baseAmount += 2;
-		}else if(this._kingdom.king.military == MILITARY.MILITANT){
+		}else if(this._kingdom.king.military == TRAIT.MILITANT){
 			baseAmount += 1;
-		}else if(this._kingdom.king.military == MILITARY.PACIFIST){
+		}else if(this._kingdom.king.military == TRAIT.PACIFIST){
 			baseAmount += -1;
 		}
 
-		if(this.governor.military == MILITARY.HOSTILE){
+		if(this.governor.military == TRAIT.HOSTILE){
 			baseAmount += 1;
-		}else if(this.governor.military == MILITARY.MILITANT){
+		}else if(this.governor.military == TRAIT.MILITANT){
 			baseAmount += 1;
-		}else if(this.governor.military == MILITARY.PACIFIST){
+		}else if(this.governor.military == TRAIT.PACIFIST){
 			baseAmount += -1;
 		}
 

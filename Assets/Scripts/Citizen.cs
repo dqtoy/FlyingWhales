@@ -36,12 +36,14 @@ public class Citizen {
     //private KINGDOM_TYPE _preferredKingdomType;
 
     //Traits
-    private CHARISMA _charisma;
-	private INTELLIGENCE _intelligence;
-    private EFFICIENCY _efficiency;
-	private SCIENCE _science;
-	private MILITARY _military;
-	private LOYALTY _loyalty;
+    private CharacterType _characterType;
+    private TRAIT _charisma;
+	private TRAIT _intelligence;
+    private TRAIT _efficiency;
+	//private SCIENCE _science;
+	private TRAIT _military;
+    private List<TRAIT> _otherTraits;
+	//private LOYALTY _loyalty;
     private PURPOSE _balanceType;
 	private WARMONGER _warmonger;
 
@@ -75,24 +77,30 @@ public class Citizen {
     public Citizen spouse {
         get { return this._spouse; }
     }
-    internal CHARISMA charisma {
+    internal CharacterType characterType {
+        get { return _characterType; }
+    }
+    internal TRAIT charisma {
         get { return this._charisma; }
     }
-    internal EFFICIENCY efficiency {
+    internal TRAIT efficiency {
         get { return this._efficiency; }
     }
-    internal INTELLIGENCE intelligence {
+    internal TRAIT intelligence {
 		get { return this._intelligence; }
     }
-	internal SCIENCE science {
-		get { return this._science; }
-	}
-	internal MILITARY military {
+	//internal SCIENCE science {
+	//	get { return this._science; }
+	//}
+	internal TRAIT military {
 		get { return this._military; }
 	}
-	internal LOYALTY loyalty {
-		get { return this._loyalty; }
-	}
+    //internal LOYALTY loyalty {
+    //	get { return this._loyalty; }
+    //}
+    internal List<TRAIT> otherTraits {
+        get { return _otherTraits; }
+    }
     internal PURPOSE balanceType {
         get { return this._balanceType; }
     }
@@ -151,10 +159,11 @@ public class Citizen {
 		this.history = new List<History>();
 		this.deathReason = DEATH_REASONS.NONE;
 		this.deathReasonText = string.Empty;
-		//this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
-  //      this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+        //this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+        //      this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 
-		GenerateTraits ();
+        //GenerateTraits ();
+        GenerateTraitsForCitizen();
 
         this._statusEffects = new Dictionary<STATUS_EFFECTS, StatusEffect>();
 
@@ -549,7 +558,6 @@ public class Citizen {
         //    UIManager.Instance.UpdateChooseCitizensMenuForIncurableDisease();
         //}
     }
-
     //internal void DeathHistory(DEATH_REASONS reason) {
     //    switch (reason) {
     //        case DEATH_REASONS.OLD_AGE:
@@ -617,94 +625,17 @@ public class Citizen {
     }
     #endregion
 
-    #region Character Value Functions
-    //internal void GenerateCharacterValues() {
-    //    this._dictCharacterValues.Clear();
-    //    this._dictCharacterValues = System.Enum.GetValues(typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE>().ToDictionary(x => x, x => UnityEngine.Random.Range(1, 101));
-    //    //        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(5).ToDictionary(x => x.Key, x => x.Value);
-    //    UpdateCharacterValues();
-    //    //		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
-    //    //		this._characterValues = new CharacterValue[character.Length];
-    //    //		for(int i = 0; i < this._characterValues.Length; i++){
-    //    //			this._characterValues [i].character = character [i];
-    //    //			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
-    //    //			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
-    //    //		}
-    //}
-    //internal void UpdateCharacterValues() {
-    //    for (int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++) {
-    //        this.UpdateSpecificCharacterValue(this.city.kingdom.kingdomTypeData.characterValues[i].character, this.city.kingdom.kingdomTypeData.characterValues[i].value);
-    //    }
-    //    this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
-    //}
-    //internal void ChangeCharacterValues(Dictionary<CHARACTER_VALUE, int> newCharacterValues) {
-    //    this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>(newCharacterValues);
-    //    this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
-    //}
-    //private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value) {
-    //    if (this._dictCharacterValues.ContainsKey(key)) {
-    //        this._dictCharacterValues[key] += value;
-    //        //			UpdateCharacterValueByKey(key, value);
-    //    }
-    //}
-    //private void UpdateCharacterValueByKey(CHARACTER_VALUE key, int value){
-    //	for(int i = 0; i < this._characterValues.Length; i++){
-    //		if(this._characterValues[i].character == key){
-    //			this._characterValues [i].value += value;
-    //			break;
-    //		}
-    //	}
-    //}
-    //internal int GetCharacterValueOfType(CHARACTER_VALUE characterValue) {
-    //    if (this._dictCharacterValues.ContainsKey(characterValue)) {
-    //        return this._dictCharacterValues[characterValue];
-    //    }
-    //    return 0;
-    //}
-    #endregion
-
-    #region Prestige
-    internal int GetPrestigeContribution() {
-        if(role != ROLE.GOVERNOR && role != ROLE.KING) {
-            return 0;
-        } else {
-			switch (this._charisma) {
-            case CHARISMA.CHARISMATIC:
-                if (role == ROLE.KING) {
-                    return 10;
-                } else if (role == ROLE.GOVERNOR) {
-                    return 2;
-                }
-                break;
-            case CHARISMA.NEUTRAL:
-                if (role == ROLE.KING) {
-                    return 7;
-                } else if (role == ROLE.GOVERNOR) {
-                    return 1;
-                }
-                break;
-            case CHARISMA.REPULSIVE:
-                if (role == ROLE.KING) {
-                    return 5;
-                }
-                break;
-            }
-            return 0;
-        }
-    }
-    #endregion
-
     #region Expansion
     internal int GetExpansionRateContribution() {
         if (role != ROLE.KING) {
             return 0;
         } else {
             switch (_efficiency) {
-                case EFFICIENCY.EFFICIENT:
+                case TRAIT.EFFICIENT:
                     return 1;
-                case EFFICIENCY.NEUTRAL:
+                case TRAIT.NONE:
                     return 0;
-                case EFFICIENCY.INEPT:
+                case TRAIT.INEFFICIENT:
                     return -1;
                 default:
                     return 0;
@@ -723,16 +654,16 @@ public class Citizen {
                 baseValue = 1;
             }
             switch (_intelligence) {
-                case INTELLIGENCE.SMART:
+                case TRAIT.SMART:
                     if (role == ROLE.KING) {
                         return baseValue + 2;
                     } else if (role == ROLE.GOVERNOR) {
                         return baseValue + 1;
                     }
                     break;
-                case INTELLIGENCE.NEUTRAL:
+                case TRAIT.NONE:
                     return baseValue;
-                case INTELLIGENCE.DUMB:
+                case TRAIT.DUMB:
                     if (role == ROLE.KING) {
                         return baseValue - 2;
                     } else if (role == ROLE.GOVERNOR) {
@@ -747,38 +678,17 @@ public class Citizen {
 
     #region Stability
     internal int GetStabilityContribution() {
-        if (role != ROLE.GOVERNOR && role != ROLE.KING) {
+        if (role != ROLE.KING) {
             return 0;
         } else {
-            if(role == ROLE.GOVERNOR) {
-                if(loyaltyToKing < 0) {
-                    return -2;
-                }
-            }
-
-            int baseValue = 3;
-            if (role == ROLE.GOVERNOR) {
-                baseValue = 1;
-            }
             switch (_efficiency) {
-                case EFFICIENCY.EFFICIENT:
-                    if (role == ROLE.KING) {
-                        return baseValue + 2;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return baseValue + 1;
-                    }
-                    break;
-                case EFFICIENCY.NEUTRAL:
-                    return baseValue;
-                case EFFICIENCY.INEPT:
-                    if (role == ROLE.KING) {
-                        return baseValue - 2;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return baseValue - 1;
-                    }
-                    break;
+                case TRAIT.EFFICIENT:
+                    return 2;
+                case TRAIT.INEFFICIENT:
+                    return 0;
+                default:
+                    return 1;
             }
-            return 0;
         }
     }
     #endregion
@@ -815,10 +725,10 @@ public class Citizen {
         //Charisma
         int charismaAdjustment = 0;
         string charismaSummary = string.Empty;
-        if(king.charisma == CHARISMA.REPULSIVE) {
+        if(king.charisma == TRAIT.REPULSIVE) {
             charismaAdjustment = -15;
             charismaSummary = charismaAdjustment.ToString() + "  Repulsed\n";
-        } else if (king.charisma == CHARISMA.CHARISMATIC) {
+        } else if (king.charisma == TRAIT.CHARISMATIC) {
             charismaAdjustment = 15;
             charismaSummary = charismaAdjustment.ToString() + "  Charmed\n";
         }
@@ -833,12 +743,12 @@ public class Citizen {
         //Military
         int militaryTraitAdjustment = 0;
         string militarySummary = string.Empty;
-        if(_military != MILITARY.NEUTRAL && king.military != MILITARY.NEUTRAL) {
+        if(_military != TRAIT.NONE && king.military != TRAIT.NONE) {
             if (_military == king.military) {
                 militaryTraitAdjustment = 15;
                 militarySummary = militaryTraitAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_military.ToString()) + "\n";
-            } else if((_military == MILITARY.HOSTILE && king.military == MILITARY.PACIFIST) ||
-                (_military == MILITARY.PACIFIST && king.military == MILITARY.HOSTILE)) {
+            } else if((_military == TRAIT.HOSTILE && king.military == TRAIT.PACIFIST) ||
+                (_military == TRAIT.PACIFIST && king.military == TRAIT.HOSTILE)) {
                 militaryTraitAdjustment = -15;
                 militarySummary = militaryTraitAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.military.ToString())+ "\n";
             }
@@ -851,34 +761,13 @@ public class Citizen {
             }
         }
 
-        //Science
-        int scienceTraitAdjustment = 0;
-        string scienceSummary = string.Empty;
-        if (_science != SCIENCE.NEUTRAL && king.science != SCIENCE.NEUTRAL) {
-            if (_science == king.science) {
-                scienceTraitAdjustment = 15;
-                scienceSummary = scienceTraitAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_science.ToString()) + "\n";
-            } else if ((_science == SCIENCE.ERUDITE && king.science == SCIENCE.IGNORANT) ||
-                (_science == SCIENCE.IGNORANT && king.science == SCIENCE.ERUDITE)) {
-                scienceTraitAdjustment = -15;
-                scienceSummary = scienceTraitAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.science.ToString()) + "\n";
-            }
-            if (scienceTraitAdjustment != 0) {
-                _loyaltyToKing += scienceTraitAdjustment;
-                if (scienceTraitAdjustment > 0) {
-                    _loyaltySummary += "+";
-                }
-                _loyaltySummary += scienceSummary;
-            }
-        }
-
         //Intelligence
         int intelligenceAdjustment = 0;
         string intelligenceSummary = string.Empty;
-        if(king.intelligence == INTELLIGENCE.SMART) {
+        if(king.intelligence == TRAIT.SMART) {
             intelligenceAdjustment = 15;
             intelligenceSummary = intelligenceAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(king._intelligence.ToString()) + " king\n";
-        } else if (king.intelligence == INTELLIGENCE.DUMB){
+        } else if (king.intelligence == TRAIT.DUMB){
             intelligenceAdjustment = -15;
             intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king._intelligence.ToString()) + " king\n";
         }
@@ -893,10 +782,10 @@ public class Citizen {
         //Efficiency
         int efficiencyAdjustment = 0;
         string efficiencySummary = string.Empty;
-        if(king.efficiency == EFFICIENCY.EFFICIENT) {
+        if(king.efficiency == TRAIT.EFFICIENT) {
             efficiencyAdjustment = 15;
             efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
-        } else if(king.efficiency == EFFICIENCY.INEPT){
+        } else if(king.efficiency == TRAIT.INEFFICIENT){
             efficiencyAdjustment = -15;
             efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
         }
@@ -906,18 +795,6 @@ public class Citizen {
                 _loyaltySummary += "+";
             }
             _loyaltySummary += efficiencySummary;
-        }
-
-        //Loyalty
-        int loyaltyAdjustment = 0;
-        if(_loyalty == LOYALTY.SCHEMING) {
-            loyaltyAdjustment = -30;
-            _loyaltyToKing += loyaltyAdjustment;
-            _loyaltySummary += loyaltyAdjustment.ToString() + "  Scheming\n";
-        } else if (_loyalty == LOYALTY.LOYAL) {
-            loyaltyAdjustment = 30;
-            _loyaltyToKing += loyaltyAdjustment;
-            _loyaltySummary += "+" + loyaltyAdjustment.ToString() + "  Loyal\n";
         }
 
         //Balance Type
@@ -1169,13 +1046,42 @@ public class Citizen {
     #endregion
 
     #region Character Traits
+    internal void GenerateTraitsForCitizen() {
+        CharacterType baseCharacter = CitizenManager.Instance.GetRandomCharacterType();
+        _otherTraits = new List<TRAIT>(baseCharacter.otherTraits);
+        _characterType = baseCharacter;
+        //Charisma
+        if(baseCharacter.charismaTrait == CHARISMA.NONE) {
+            _charisma = GenerateCharismaTrait();
+        } else {
+            _charisma = (TRAIT)baseCharacter.charismaTrait;
+        }
+        //Intelligence
+        if (baseCharacter.intelligenceTrait == INTELLIGENCE.NONE) {
+            _intelligence = GenerateIntelligenceTrait();
+        } else {
+            _intelligence = (TRAIT)baseCharacter.intelligenceTrait;
+        }
+        //Efficiency
+        if (baseCharacter.efficiencyTrait == EFFICIENCY.NONE) {
+            _efficiency = GenerateEfficiencyTrait();
+        } else {
+            _efficiency = (TRAIT)baseCharacter.efficiencyTrait;
+        }
+        //Military
+        if (baseCharacter.militaryTrait == MILITARY.NONE) {
+            _military = GenerateMilitaryTrait();
+        } else {
+            _military = (TRAIT)baseCharacter.militaryTrait;
+        }
+    }
     private void GenerateTraits() {
         this._charisma = GenerateCharismaTrait();
         this._efficiency = GenerateEfficiencyTrait();
         this._intelligence = GenerateIntelligenceTrait();
-        this._science = GenerateScienceTrait();
+        //this._science = GenerateScienceTrait();
         this._military = GenerateMilitaryTrait();
-        this._loyalty = GenerateLoyaltyTrait();
+        //this._loyalty = GenerateLoyaltyTrait();
 		this._balanceType = GetBalanceType();
 		this._warmonger = GenerateWarmonger ();
     }
@@ -1183,91 +1089,91 @@ public class Citizen {
 		this._charisma = GenerateNecromancerCharismaTrait();
 		this._efficiency = GenerateNecromancerEfficiencyTrait();
 		this._intelligence = GenerateNecromancerIntelligenceTrait();
-		this._science = GenerateNecromancerScienceTrait();
+		//this._science = GenerateNecromancerScienceTrait();
 		this._military = GenerateNecromancerMilitaryTrait();
-		this._loyalty = GenerateNecromancerLoyaltyTrait();
+		//this._loyalty = GenerateNecromancerLoyaltyTrait();
 		this._balanceType = GetBalanceType();
 		this._warmonger = GenerateNecromancerWarmonger ();
 	}
-    private CHARISMA GenerateCharismaTrait() {
+    private TRAIT GenerateCharismaTrait() {
         int chance = Random.Range(0, 100);
         if(chance < 20) {
-            return CHARISMA.CHARISMATIC;
+            return TRAIT.CHARISMATIC;
         }else if(chance >= 20 && chance < 40) {
-            return CHARISMA.REPULSIVE;
+            return TRAIT.REPULSIVE;
         } else {
-            return CHARISMA.NEUTRAL;
+            return TRAIT.NONE;
         }
     }
-    private INTELLIGENCE GenerateIntelligenceTrait() {
+    private TRAIT GenerateIntelligenceTrait() {
         int chance = Random.Range(0, 100);
         if (chance < 20) {
-            return INTELLIGENCE.SMART;
+            return TRAIT.SMART;
         } else if (chance >= 20 && chance < 40) {
-            return INTELLIGENCE.DUMB;
+            return TRAIT.DUMB;
         } else {
-            return INTELLIGENCE.NEUTRAL;
+            return TRAIT.NONE;
         }
     }
-    private EFFICIENCY GenerateEfficiencyTrait() {
+    private TRAIT GenerateEfficiencyTrait() {
         int chance = Random.Range(0, 100);
         if (chance < 20) {
-            return EFFICIENCY.EFFICIENT;
+            return TRAIT.EFFICIENT;
         } else if (chance >= 20 && chance < 40) {
-            return EFFICIENCY.INEPT;
+            return TRAIT.INEFFICIENT;
         } else {
-            return EFFICIENCY.NEUTRAL;
+            return TRAIT.NONE;
         }
     }
-    private SCIENCE GenerateScienceTrait() {
+    //private SCIENCE GenerateScienceTrait() {
+    //    int chance = Random.Range(0, 100);
+    //    if (chance < 10) {
+    //        return SCIENCE.ERUDITE;
+    //    } else if (chance >= 10 && chance < 25) {
+    //        return SCIENCE.ACADEMIC;
+    //    } else if (chance >= 25 && chance < 40) {
+    //        return SCIENCE.IGNORANT;
+    //    } else {
+    //        return SCIENCE.NEUTRAL;
+    //    }
+    //}
+    private TRAIT GenerateMilitaryTrait() {
         int chance = Random.Range(0, 100);
         if (chance < 10) {
-            return SCIENCE.ERUDITE;
+            return TRAIT.HOSTILE;
         } else if (chance >= 10 && chance < 25) {
-            return SCIENCE.ACADEMIC;
+            return TRAIT.MILITANT;
         } else if (chance >= 25 && chance < 40) {
-            return SCIENCE.IGNORANT;
+            return TRAIT.PACIFIST;
         } else {
-            return SCIENCE.NEUTRAL;
+            return TRAIT.NONE;
         }
     }
-    private MILITARY GenerateMilitaryTrait() {
-        int chance = Random.Range(0, 100);
-        if (chance < 10) {
-            return MILITARY.HOSTILE;
-        } else if (chance >= 10 && chance < 25) {
-            return MILITARY.MILITANT;
-        } else if (chance >= 25 && chance < 40) {
-            return MILITARY.PACIFIST;
-        } else {
-            return MILITARY.NEUTRAL;
-        }
-    }
-    private LOYALTY GenerateLoyaltyTrait() {
-        int chance = Random.Range(0, 100);
-        if (chance < 20) {
-            return LOYALTY.LOYAL;
-        } else if (chance >= 20 && chance < 50) {
-            return LOYALTY.SCHEMING;
-        } else {
-            return LOYALTY.NEUTRAL;
-        }
-    }
+    //private LOYALTY GenerateLoyaltyTrait() {
+    //    int chance = Random.Range(0, 100);
+    //    if (chance < 20) {
+    //        return LOYALTY.LOYAL;
+    //    } else if (chance >= 20 && chance < 50) {
+    //        return LOYALTY.SCHEMING;
+    //    } else {
+    //        return LOYALTY.NEUTRAL;
+    //    }
+    //}
 	private WARMONGER GenerateWarmonger(){
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(this._military == MILITARY.HOSTILE){
+		if((MILITARY)this._military == MILITARY.HOSTILE){
 			if(chance < 35){
 				return WARMONGER.VERY_HIGH;
 			}else{
 				return WARMONGER.HIGH;
 			}
-		}else if(this._military == MILITARY.PACIFIST){
+		}else if((MILITARY)this._military == MILITARY.PACIFIST){
 			if(chance < 35){
 				return WARMONGER.VERY_LOW;
 			}else{
 				return WARMONGER.LOW;
 			}
-		}else if(this._military == MILITARY.MILITANT){
+		}else if((MILITARY)this._military == MILITARY.MILITANT){
 			if(chance < 15){
 				return WARMONGER.VERY_HIGH;
 			}else if(chance >= 15 && chance < 50){
@@ -1289,54 +1195,42 @@ public class Citizen {
 			}
 		}
 	}
-
-	private CHARISMA GenerateNecromancerCharismaTrait() {
+	private TRAIT GenerateNecromancerCharismaTrait() {
 		int chance = Random.Range(0, 2);
 		if(chance == 0) {
-			return CHARISMA.REPULSIVE;
+			return TRAIT.REPULSIVE;
 		} else {
-			return CHARISMA.NEUTRAL;
+			return TRAIT.NONE;
 		}
 	}
-	private INTELLIGENCE GenerateNecromancerIntelligenceTrait() {
+	private TRAIT GenerateNecromancerIntelligenceTrait() {
 		int chance = Random.Range(0, 100);
 		if (chance < 20) {
-			return INTELLIGENCE.SMART;
+			return TRAIT.SMART;
 		} else if (chance >= 20 && chance < 40) {
-			return INTELLIGENCE.DUMB;
+			return TRAIT.DUMB;
 		} else {
-			return INTELLIGENCE.NEUTRAL;
+			return TRAIT.NONE;
 		}
 	}
-	private EFFICIENCY GenerateNecromancerEfficiencyTrait() {
+	private TRAIT GenerateNecromancerEfficiencyTrait() {
 		int chance = Random.Range(0, 100);
 		if (chance < 20) {
-			return EFFICIENCY.EFFICIENT;
+			return TRAIT.EFFICIENT;
 		} else if (chance >= 20 && chance < 40) {
-			return EFFICIENCY.INEPT;
+			return TRAIT.INEFFICIENT;
 		} else {
-			return EFFICIENCY.NEUTRAL;
+			return TRAIT.NONE;
 		}
 	}
-	private SCIENCE GenerateNecromancerScienceTrait() {
-		return SCIENCE.NEUTRAL;
-	}
-	private MILITARY GenerateNecromancerMilitaryTrait() {
+	private TRAIT GenerateNecromancerMilitaryTrait() {
 		int chance = Random.Range(0, 100);
 		if (chance < 40) {
-			return MILITARY.HOSTILE;
+			return TRAIT.HOSTILE;
 		} else if (chance >= 40 && chance < 70) {
-			return MILITARY.MILITANT;
+			return TRAIT.MILITANT;
 		} else {
-			return MILITARY.NEUTRAL;
-		}
-	}
-	private LOYALTY GenerateNecromancerLoyaltyTrait() {
-		int chance = Random.Range(0, 2);
-		if(chance == 0) {
-			return LOYALTY.SCHEMING;
-		} else {
-			return LOYALTY.NEUTRAL;
+			return TRAIT.NONE;
 		}
 	}
 	private WARMONGER GenerateNecromancerWarmonger(){
@@ -1371,7 +1265,7 @@ public class Citizen {
 	}
     #endregion
 
-	internal float GetWarmongerWarPercentage100(){
+    internal float GetWarmongerWarPercentage100(){
 		if(this._warmonger == WARMONGER.VERY_HIGH){
 			return 8f;
 		}else if(this._warmonger == WARMONGER.HIGH){

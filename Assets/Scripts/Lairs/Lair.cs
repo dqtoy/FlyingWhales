@@ -87,7 +87,7 @@ public class Lair {
 		City city = this.region.occupant;
 		Kingdom kingdom = this.region.occupant.kingdom;
 		int stabilityGain = 30;
-		kingdom.AdjustStability (stabilityGain);
+		//kingdom.AdjustStability (stabilityGain);
 
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerIntervention", "MonsterLair", "destroy");
 		newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);

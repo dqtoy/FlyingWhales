@@ -117,15 +117,15 @@ public class Crime : GameEvent {
     private void KingdomReaction() {
         PUNISHMENT kingdomPunishment = GetPunishment(kingdom);
         if (kingdomPunishment == this.kingPunishment) {
-            kingdom.AdjustStability(10);
+            //kingdom.AdjustStability(10);
         } else {
             if (this.kingPunishment == PUNISHMENT.NO) {
                 if (kingdomPunishment == PUNISHMENT.HARSH) {
-                    kingdom.AdjustStability(-10);
+                    //kingdom.AdjustStability(-10);
                 }
 			} else if (this.kingPunishment == PUNISHMENT.HARSH) {
                 if (kingdomPunishment == PUNISHMENT.NO) {
-                    kingdom.AdjustStability(-10);
+                    //kingdom.AdjustStability(-10);
                 }
             }
         }
