@@ -512,11 +512,11 @@ public class RoadManager : MonoBehaviour {
             _roadTiles.Add(tile);
         }
         if(tile.roadType == ROAD_TYPE.MAJOR) {
-            if (_majorRoadTiles.Contains(tile)) {
+            if (!_majorRoadTiles.Contains(tile)) {
                 _majorRoadTiles.Add(tile);
             }
         } else if (tile.roadType == ROAD_TYPE.MINOR) {
-            if (_minorRoadTiles.Contains(tile)) {
+            if (!_minorRoadTiles.Contains(tile)) {
                 _minorRoadTiles.Add(tile);
             }
         }

@@ -481,12 +481,16 @@ public class GridMap : MonoBehaviour {
      [ContextMenu("Generate Unique Landmarks")]
     public void GenerateUniqueLandmarks() {
         List<Region> allRegions = Utilities.Shuffle(this.allRegions);
-        List<Landmark> allLandmarksInWorld = new List<Landmark>();
-        allRegions.ForEach(x => allLandmarksInWorld.AddRange(x.landmarks));
+        //List<Landmark> allLandmarksInWorld = new List<Landmark>();
+        //allRegions.ForEach(x => allLandmarksInWorld.AddRange(x.landmarks));
+        List<HexTile> allMinorRoadsInWorld = new List<HexTile>(RoadManager.Instance.minorRoadTiles);
         int uniqueLandmarksCount = 0;
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
-            List<HexTile> minorRoadsInRegion = new List<HexTile>(currRegion.roadTilesInRegion.Where(x => x.roadType == ROAD_TYPE.MINOR));
+            List<Landmark> elligibleLandmarks = new List<Landmark>();
+            elligibleLandmarks.AddRange(currRegion.landmarks);
+            currRegion.adjacentRegions.ForEach(x => elligibleLandmarks.AddRange(x.landmarks));
+
             //Get tiles that is not habitable, is not a landmark and is not a road.
             List<HexTile> elligibleTilesInRegion = new List<HexTile>(currRegion.tilesInRegion.Where(x => !x.isHabitable && !x.hasLandmark && !x.isRoad));
             for (int j = 0; j < elligibleTilesInRegion.Count; j++) {
@@ -496,44 +500,37 @@ public class GridMap : MonoBehaviour {
                     //Check if currElligibleTile has any landmark tiles within 2 tiles
                     continue;
                 }
+                List<HexTile> possibleTilesToConnectTo = new List<HexTile>(elligibleLandmarks.Select(x => x.location));
+                possibleTilesToConnectTo = new List<HexTile>(possibleTilesToConnectTo.Where(x => PathGenerator.Instance.GetPath(currElligibleTile, x, PATHFINDING_MODE.USE_ROADS) == null 
+                    && PathGenerator.Instance.GetPath(currElligibleTile, x, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION) != null)
+                    .OrderBy(x => PathGenerator.Instance.GetPath(currElligibleTile, x, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION).Count));
+
+                if(possibleTilesToConnectTo.Count <= 1) {
+                    continue; //skip this tile
+                }
+
                 Dictionary<HexTile, List<HexTile>> roadsForElligibleTile = new Dictionary<HexTile, List<HexTile>>();
-                List<HexTile> possibleTilesToConnectTo = new List<HexTile>(allLandmarksInWorld.Select(x => x.location));
-                //possibleTilesToConnectTo.AddRange(minorRoadsInRegion);
-                possibleTilesToConnectTo = possibleTilesToConnectTo.OrderBy(x => Vector2.Distance(currElligibleTile.transform.position, x.transform.position)).ToList();
+                allMinorRoadsInWorld = allMinorRoadsInWorld.OrderBy(x => Vector2.Distance(currElligibleTile.transform.position, x.transform.position)).ToList();
+
                 for (int k = 0; k < possibleTilesToConnectTo.Count; k++) {
                     HexTile otherHexTile = possibleTilesToConnectTo[k];
-                    //check if currElligibleTile is already connected to otherHexTile via roads
-                    List<HexTile> roadToOtherHexTile = PathGenerator.Instance.GetPath(currElligibleTile, otherHexTile, PATHFINDING_MODE.USE_ROADS);
-                    if (roadToOtherHexTile == null) {
-                        //currElligibleTile and otherHexTile are not already connected
-                        //check minor roads in region if there is a closer road tile that currElligibleTile can connect to to reach otherHexTile
-                        HexTile nearestTile = otherHexTile;
-                        List<HexTile> pathToNearestHexTile = PathGenerator.Instance.GetPath(currElligibleTile, otherHexTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
-                        if(pathToNearestHexTile != null) {
-                            float nearestDistance = Vector2.Distance(currElligibleTile.transform.position, otherHexTile.transform.position);
-                            for (int l = 0; l < minorRoadsInRegion.Count; l++) {
-                                HexTile currRoadTile = minorRoadsInRegion[l];
-                                //Check if currRoadTile is connected to otherHexTile via roads
-                                if(PathGenerator.Instance.GetPath(currRoadTile, otherHexTile, PATHFINDING_MODE.USE_ROADS) != null) {
-                                    List<HexTile> pathToCurrRoadTile = PathGenerator.Instance.GetPath(currElligibleTile, currRoadTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
-                                    if (pathToCurrRoadTile != null && pathToCurrRoadTile.Count <= pathToNearestHexTile.Count) {
-                                        float distance = Vector2.Distance(currElligibleTile.transform.position, currRoadTile.transform.position);
-                                        if (distance <= nearestDistance) {
-                                            nearestDistance = distance;
-                                            pathToNearestHexTile = pathToCurrRoadTile;
-                                            nearestTile = currRoadTile;
-                                        }
-                                    }
-                                }
-                            }
-                            roadsForElligibleTile.Add(otherHexTile, pathToNearestHexTile);
-                            if (roadsForElligibleTile.Count == 2) {
+                    List<HexTile> pathToOtherHexTile = PathGenerator.Instance.GetPath(currElligibleTile, otherHexTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
+                    for (int l = 0; l < allMinorRoadsInWorld.Count; l++) {
+                        HexTile currRoadTile = allMinorRoadsInWorld[l];
+                        if(PathGenerator.Instance.GetPath(currRoadTile, otherHexTile, PATHFINDING_MODE.USE_ROADS) != null) {
+                            List<HexTile> pathToCurrRoadTile = PathGenerator.Instance.GetPath(currElligibleTile, currRoadTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
+                            if (pathToCurrRoadTile != null) {
+                                pathToOtherHexTile = pathToCurrRoadTile;
                                 break;
                             }
                         }
                     }
-                    
+                    roadsForElligibleTile.Add(otherHexTile, pathToOtherHexTile);
+                    if (roadsForElligibleTile.Count == 2) {
+                        break;
+                    }
                 }
+
                 if (roadsForElligibleTile.Count == 2) {
                     //currElligibleTile can have 2 roads
                     uniqueLandmarksCount++;
