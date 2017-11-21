@@ -122,7 +122,6 @@ public class CharacterPortrait : MonoBehaviour {
 			relationshipCircles[1].GetComponent<RelationshipItem>().SetRelationship(relationship2, true);
 
             kingdomThreatLvlLbl.text = "RS: " + relationship1._relativeStrength.ToString();
-            invasionValueLbl.text = "RW: " + relationship1._relativeWeakness.ToString();
         }
         
 	}

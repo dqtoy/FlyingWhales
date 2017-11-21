@@ -70,7 +70,7 @@ public class Warfare {
 		CreateNewBattle (firstKingdom, true);
 		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
 			KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
-			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.isAdjacent.ToString () + " and invasion value is " + kr.targetKingdomInvasionValue.ToString ());
+			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.isAdjacent.ToString () + " and threat is " + kr.targetKingdomThreatLevel.ToString ());
 		}
 		KingdomManager.Instance.AddWarfare (this);
 	}

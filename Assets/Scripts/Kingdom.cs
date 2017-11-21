@@ -2259,34 +2259,34 @@ public class Kingdom{
 		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
 			UIManager.Instance.militarizingGO.SetActive (state);
 		}
-        if (state) {
-            Kingdom kingdom2 = null;
-            float highestInvasionValue = -1;
-			bool isAtWar = false;
-            foreach (KingdomRelationship kr in relationships.Values) {
-                if (kr.isDiscovered) {
-                    if(kr.targetKingdomInvasionValue > highestInvasionValue) {
-                        kingdom2 = kr.targetKingdom;
-                        highestInvasionValue = kr.targetKingdomInvasionValue;
-                    }
-                }
-				if(kr.isAtWar && isAttacking){
-					isAtWar = true;
-					kingdom2 = kr.targetKingdom;
-					break;
-				}
-            }
-            if (kingdom2 != null) {
-				string militarizeFileName = "militarize";
-				if(isAttacking && isAtWar){
-					militarizeFileName = "militarize_attack";
-				}
-				Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", militarizeFileName);
-                militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-                militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-                UIManager.Instance.ShowNotification(militarizeLog, new HashSet<Kingdom>() { this }, false);
-            }
-        }
+//        if (state) {
+//            Kingdom kingdom2 = null;
+//            float highestInvasionValue = -1;
+//			bool isAtWar = false;
+//            foreach (KingdomRelationship kr in relationships.Values) {
+//                if (kr.isDiscovered) {
+//                    if(kr.targetKingdomInvasionValue > highestInvasionValue) {
+//                        kingdom2 = kr.targetKingdom;
+//                        highestInvasionValue = kr.targetKingdomInvasionValue;
+//                    }
+//                }
+//				if(kr.isAtWar && isAttacking){
+//					isAtWar = true;
+//					kingdom2 = kr.targetKingdom;
+//					break;
+//				}
+//            }
+//            if (kingdom2 != null) {
+//				string militarizeFileName = "militarize";
+//				if(isAttacking && isAtWar){
+//					militarizeFileName = "militarize_attack";
+//				}
+//				Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", militarizeFileName);
+//                militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+//                militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+//                UIManager.Instance.ShowNotification(militarizeLog, new HashSet<Kingdom>() { this }, false);
+//            }
+//        }
     }
 	internal void Fortify(bool state, bool isUnderAttack = false){
 		this._isFortifying = state;
@@ -2584,7 +2584,7 @@ public class Kingdom{
 		has100OrAboveThreat = false;
 		if(this.race == RACE.UNDEAD){
 			foreach (KingdomRelationship relationship in this.relationships.Values) {
-				relationship.UpdateThreatLevelAndInvasionValue ();
+				relationship.UpdateThreatLevel ();
 				relationship.UpdateLikeness ();
 			}
 		}else{
@@ -2594,14 +2594,14 @@ public class Kingdom{
 				this.highestRelativeStrengthAdjacentKingdom = null;
 				this.highestRelativeStrengthAdjacentKingdomValue = 0;
 				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					relationship.UpdateThreatLevelAndInvasionValue ();
+					relationship.UpdateThreatLevel ();
 				}
 				foreach (KingdomRelationship relationship in this.relationships.Values) {
 					relationship.UpdateLikeness ();
 				}
 			}else{
 				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					relationship.UpdateThreatLevelAndInvasionValue ();
+					relationship.UpdateThreatLevel ();
 					relationship.UpdateLikeness ();
 				}
 			}

@@ -224,7 +224,7 @@ public static class SeeksUndead {
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 						if(relationship.totalLike < 0 && relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar 
-							&& relationship.targetKingdomInvasionValue > 0){
+							&& relationship.targetKingdomThreatLevel < 0){
 							if(targetKingdom == null){
 								targetKingdom = relationship.targetKingdom;
 								leastLike = relationship.totalLike;

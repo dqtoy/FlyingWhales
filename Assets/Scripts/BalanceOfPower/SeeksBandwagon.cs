@@ -254,7 +254,7 @@ public static class SeeksBandwagon {
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 						if(relationship.isDiscovered && relationship.isAdjacent && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar){
-							if (relationship.totalLike <= -50 && relationship.targetKingdomInvasionValue > 0f && relationship.targetKingdom.warfareInfo.Count > 0) {
+							if (relationship.totalLike <= -50 && relationship.targetKingdomThreatLevel < 0 && relationship.targetKingdom.warfareInfo.Count > 0) {
 								if(targetKingdom == null || !isFirstPart){
 									targetKingdom = relationship.targetKingdom;
 									leastLike = relationship.totalLike;
@@ -267,7 +267,7 @@ public static class SeeksBandwagon {
 								isFirstPart = true;
 							}
 							if(!isFirstPart){
-								if(relationship._relativeWeakness >= 100 && relationship.totalLike < 0){
+								if(relationship.targetKingdomThreatLevel <= -100 && relationship.totalLike < 0){
 									if(targetKingdom == null){
 										targetKingdom = relationship.targetKingdom;
 										leastLike = relationship.totalLike;

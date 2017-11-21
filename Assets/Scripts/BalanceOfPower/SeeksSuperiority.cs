@@ -38,7 +38,7 @@ public static class SeeksSuperiority {
 			if (kingdom.alliancePool == null) {
 				if (kingdom.highestRelativeStrengthAdjacentKingdom != null) {
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
-					if (kr._relativeWeakness < 50) {
+					if (kr.targetKingdomThreatLevel > -50) {
 						Debug.Log (kingdom.name + " seeks alliance of conquest");
 						kingdom.SeekAllianceOfConquest ();
 					} else {
@@ -259,7 +259,7 @@ public static class SeeksSuperiority {
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 						if(relationship.totalLike < 0 && relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar){
-							if (relationship._relativeWeakness >= 100) {
+							if (relationship.targetKingdomThreatLevel <= -100) {
 								if(targetKingdom == null || !hasOver100InvasionValue){
 									targetKingdom = relationship.targetKingdom;
 									leastLike = relationship.totalLike;
@@ -272,7 +272,7 @@ public static class SeeksSuperiority {
 								hasOver100InvasionValue = true;
 							} 
 							if(!hasOver100InvasionValue){
-								if (relationship._relativeWeakness > 0 && relationship._relativeWeakness < 100) {
+								if (relationship.targetKingdomThreatLevel < 0 && relationship.targetKingdomThreatLevel > -100) {
 									if(targetKingdom == null){
 										targetKingdom = relationship.targetKingdom;
 										leastLike = relationship.totalLike;
@@ -308,8 +308,8 @@ public static class SeeksSuperiority {
 								int stabilityModifier = (int)((float)kingdom.stability / 10f);
 								int chance = UnityEngine.Random.Range (0, 100);
 								int value = (int)(kingdom.king.GetWarmongerWarPercentage50() * (float)stabilityModifier);
-								int threshold = 50;
-								int totalValue = ((int)kr.targetKingdomInvasionValue - threshold) * value;
+//								int threshold = 50;
+								int totalValue = value;
 								if(chance < totalValue){
 									//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
 									Debug.Log(kingdom.name + " decided to have war with " + targetKingdom.name);
