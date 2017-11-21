@@ -47,7 +47,6 @@ public class Warfare {
 	}
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom, bool affectWarmonerValue = true){
-		GameManager.Instance.SetProgressionSpeed (PROGRESSION_SPEED.X1);
 		SetID();
 		this._name = RandomNameGenerator.Instance.GetWarfareName ();
 		this._isOver = false;
@@ -132,6 +131,71 @@ public class Warfare {
 				}
 			}
 		}
+	}
+	internal void BattleEnds(General winnerGeneral, General loserGeneral, Battle battle){
+		RemoveBattle (battle);
+
+		City winnerCity = winnerGeneral.citizen.city;
+		City loserCity = loserGeneral.citizen.city;
+
+		Kingdom winnerKingdom = winnerCity.kingdom;
+		Kingdom loserKingdom = loserCity.kingdom;
+
+		winnerKingdom.ConquerCity(loserCity, this);
+		if(winnerGeneral.soldiers > 0){
+			loserCity.hexTile.city.AdjustSoldiers (winnerGeneral.soldiers, true, true);
+//			winnerGeneral.WillDropSoldiersAndDisappear ();
+			winnerGeneral.gameEventInvolvedIn.DoneEvent();
+		}
+
+		if(!winnerKingdom.isDead && !loserKingdom.isDead){
+			KingdomRelationship kr = winnerKingdom.GetRelationshipWithKingdom (loserKingdom);
+			kr.ChangeBattle (null);
+		}
+
+		if(!this._isOver){
+			if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom) && this._kingdomSideWeariness.ContainsKey(loserKingdom.id)){
+				Debug.Log ("LOSER: " + loserKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
+				PeaceDeclaration (loserKingdom);
+			}
+		}
+		if(!this._isOver && this._kingdomSideWeariness.ContainsKey(winnerKingdom.id)){
+			if(!winnerKingdom.isDead && !HasAdjacentEnemy(winnerKingdom)){
+				Debug.Log ("WINNER: " + winnerKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
+				PeaceDeclaration (winnerKingdom);
+				return;
+			}
+			if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
+				if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
+					AdjustWeariness (loserKingdom, 5);
+					Debug.Log (winnerKingdom.name + " won and will try to declare peace or create new battle");
+					float peaceMultiplier = PeaceMultiplier (winnerKingdom);
+					int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
+					int chance = UnityEngine.Random.Range (0, 100);
+					if(chance < value){
+						PeaceDeclaration (winnerKingdom);
+					}else{
+						Debug.Log (winnerKingdom.name + " won and did not declare peace and will create new battle");
+						CreateNewBattle (winnerKingdom);
+					}
+				}else{
+					if(battle.deadDefenderKingdom == null){
+						Debug.Log (loserKingdom.name + " lost and is dead " + winnerKingdom.name + " create new battle");
+					}else{
+						Debug.Log (loserKingdom.name + " lost and is dead or dead defender kingdom is " + battle.deadDefenderKingdom.name + ", " + winnerKingdom.name + " create new battle");
+					}
+					CreateNewBattle (winnerKingdom);
+				}
+			}else{
+				if(battle.deadAttackerKingdom == null){
+					Debug.Log (winnerKingdom.name + " won and is dead, will check this war");
+				}else{
+					Debug.Log (winnerKingdom.name + " won and is dead or dead attacker kingdom is " + battle.deadAttackerKingdom.name + ", will check this war");
+				}
+				CheckWarfare ();
+			}
+		}
+
 	}
 	internal void BattleEnds(City winnerCity, City loserCity, Battle battle){
 		//Conquer City if not null, if null means both dead
@@ -427,21 +491,6 @@ public class Warfare {
 				DeclarePeace (this._kingdomSideList[side] [i], kingdom);
 			}
 		}
-//		if(kingdomInfo.side == WAR_SIDE.A){
-//			for (int i = 0; i < this._sideB.Count; i++) {
-//				KingdomRelationship kr = this._sideB[i].GetRelationshipWithKingdom(kingdom);
-//				if(!kr.isAdjacent && kr.isAtWar && kr.warfare.id == this._id){
-//					DeclarePeace (this._sideB [i], kingdom);
-//				}
-//			}
-//		}else{
-//			for (int i = 0; i < this._sideA.Count; i++) {
-//				KingdomRelationship kr = this._sideA[i].GetRelationshipWithKingdom(kingdom);
-//				if(!kr.isAdjacent && kr.isAtWar && kr.warfare.id == this._id){
-//					DeclarePeace (this._sideA [i], kingdom);
-//				}
-//			}
-//		}
 	}
 	private bool CanUnjoinWar(WAR_SIDE side, Kingdom kingdom){
 		WAR_SIDE oppositeSide = WAR_SIDE.A;
@@ -454,21 +503,6 @@ public class Warfare {
 				return false;
 			}
 		}
-//		if(side == WAR_SIDE.A){
-//			for (int i = 0; i < this._sideB.Count; i++) {
-//				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._sideB[i]);
-//				if(kr.isAtWar && kr.warfare.id == this._id){
-//					return false;
-//				}
-//			}
-//		}else{
-//			for (int i = 0; i < this._sideA.Count; i++) {
-//				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._sideA[i]);
-//				if(kr.isAtWar && kr.warfare.id == this._id){
-//					return false;
-//				}
-//			}
-//		}
 		return true;
 	}
 	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
@@ -525,21 +559,6 @@ public class Warfare {
 				totalLike += kr.totalLike;
 			}
 		}
-//		if(side == WAR_SIDE.A){
-//			for (int i = 0; i < this._sideA.Count; i++) {
-//				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideA [i]);
-//				if(kr.totalLike >= 0){
-//					totalLike += kr.totalLike;
-//				}
-//			}
-//		}else if(side == WAR_SIDE.B){
-//			for (int i = 0; i < this._sideB.Count; i++) {
-//				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideB [i]);
-//				if(kr.totalLike >= 0){
-//					totalLike += kr.totalLike;
-//				}
-//			}
-//		}
 		return totalLike;
 	}
 	internal List<Kingdom> GetListFromSide(WAR_SIDE side){
@@ -557,23 +576,6 @@ public class Warfare {
 			}
 		}
 		return false;
-//		if(side == WAR_SIDE.A){
-//			for (int i = 0; i < this._sideB.Count; i++) {
-//				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideB [i]);
-//				if(kr.isAdjacent){
-//					return true;
-//				}
-//			}
-//			return false;
-//		}else{
-//			for (int i = 0; i < this._sideA.Count; i++) {
-//				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideA [i]);
-//				if(kr.isAdjacent){
-//					return true;
-//				}
-//			}
-//			return false;
-//		}
 	}
 	private void CantPairForcePeace(Kingdom kingdom){
 		if(this._kingdomSideWeariness.ContainsKey(kingdom.id)){
@@ -587,21 +589,6 @@ public class Warfare {
 				WarfareDone();
 				return;
 			}
-//			if (this._kingdomSideWeariness[kingdom.id].side == WAR_SIDE.A) {
-//				if (this._sideB.Count > 0) {
-//					PeaceDeclaration(kingdom);
-//				} else {
-//					WarfareDone();
-//					return;
-//				}
-//			} else {
-//				if (this._sideA.Count > 0) {
-//					PeaceDeclaration(kingdom);
-//				} else {
-//					WarfareDone();
-//					return;
-//				}
-//			}
 		}else{
 			CheckWarfare ();	
 		}

@@ -25,6 +25,7 @@ public class AttackCity : GameEvent {
 	internal void AddReinforcements(ReinforceCity reinforceCity){
 		this.reinforcements.Add (reinforceCity);
 		reinforceCity.attackCity = this;
+		reinforceCity.battle = this.battle;
 	}
 	internal void RemoveReinforcements(ReinforceCity reinforceCity){
 		this.reinforcements.Remove (reinforceCity);
@@ -50,12 +51,13 @@ public class AttackCity : GameEvent {
 					for (int i = 0; i < this.sourceCity.region.connections.Count; i++) {
 						if(this.sourceCity.region.connections[i] is Region){
 							City city = ((Region)this.sourceCity.region.connections [i]).occupant;
-							if(city != null && city.kingdom.id == this.sourceKingdom.id){
+							if(city != null && city.kingdom.id == this.sourceKingdom.id && Utilities.HasPath(this.general.location, city.hexTile, PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, this.sourceKingdom)){
 								ReturnSoldiers (city);
-								break;
+								return;
 							}
 						}
 					}
+					this.DoneEvent ();
 				}else{
 					this.DoneEvent ();
 				}
@@ -69,44 +71,39 @@ public class AttackCity : GameEvent {
 		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
 		this.general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 	}
-	internal void DropSoldiersAndDisappear(){
-		if(this.isActive){
-			if(this.general.location.city != null){
-				this.general.location.city.AdjustSoldiers (this.general.soldiers);
-				this.DoneEvent ();
-			}
-		}
-	}
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
-		if(citizen.id == this.general.citizen.id){
-			if(this.general.targetLocation.city == null || (this.general.targetLocation.city != null && this.general.targetLocation.city.id != this.general.targetCity.id)){
-				CancelEvent ();
-				return;
-			}
-			if(!this.general.isReturning){
-				if(!this.targetCity.isDead){
-					battle.Combat ();
-				}else{
-					CancelEvent ();
-				}	
-			}else{
-				if(!this.general.targetCity.isDead){
-					this.general.targetCity.AdjustSoldiers (this.general.soldiers);
-					this.DoneEvent ();
-				}else{
-					CancelEvent ();
-				}
-			}
-		}
+//		if(this.general.willDropSoldiersAndDisappear){
+//			this.general.DropSoldiersAndDisappear ();
+//		}
+//		if(citizen.id == this.general.citizen.id){
+//			if(this.general.targetLocation.city == null || (this.general.targetLocation.city != null && this.general.targetLocation.city.id != this.general.targetCity.id)){
+//				CancelEvent ();
+//				return;
+//			}
+
+//			if(!this.general.isReturning){
+//				if(!this.targetCity.isDead){
+//					battle.Combat ();
+//				}else{
+//					CancelEvent ();
+//				}	
+//			}else{
+//				if(!this.general.targetCity.isDead){
+//					this.general.targetCity.AdjustSoldiers (this.general.soldiers);
+//					this.DoneEvent ();
+//				}else{
+//					CancelEvent ();
+//				}
+//			}
+//		}
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();
-		this.general.DestroyGO();
+		this.general.citizen.Death(DEATH_REASONS.BATTLE);
 	}
 	internal override void CancelEvent (){
 		ReturnRemainingSoldiers ();
-		base.CancelEvent ();
 	}
 	#endregion
 }

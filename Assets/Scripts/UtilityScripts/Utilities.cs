@@ -1294,4 +1294,11 @@ public class Utilities : MonoBehaviour {
 		}
 		return false;
 	}
+	public static bool HasPath(HexTile startingLocation, HexTile targetLocation, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
+		List<HexTile> path = PathGenerator.Instance.GetPath (startingLocation, targetLocation, pathFindingMode, kingdom);
+		if(path != null){
+			return true;
+		}
+		return false;
+	}
 }

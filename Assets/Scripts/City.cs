@@ -1169,19 +1169,24 @@ public class City{
 	#endregion
 
 	#region Soldiers
-	internal void AdjustSoldiers(int amount, bool isUpdateKingdomList = true){
-		int supposedSoldiers = this._soldiers + amount;
-		int maxSoldiers = this.soldiersMax;
-		if(supposedSoldiers > maxSoldiers){
-			int addedSoldiers = maxSoldiers - this._soldiers;
-			this._soldiers += addedSoldiers;
-			this._kingdom.AdjustSoldiers (addedSoldiers, isUpdateKingdomList);
-		}else if (supposedSoldiers < 0){
-			this._kingdom.AdjustSoldiers (-this._soldiers, isUpdateKingdomList);
-			this._soldiers = 0;
-		}else{
+	internal void AdjustSoldiers(int amount, bool isUpdateKingdomList = true, bool isForced = false){
+		if(isForced){
 			this._soldiers += amount;
 			this._kingdom.AdjustSoldiers (amount, isUpdateKingdomList);
+		}else{
+			int supposedSoldiers = this._soldiers + amount;
+			int maxSoldiers = this.soldiersMax;
+			if(supposedSoldiers > maxSoldiers){
+				int addedSoldiers = maxSoldiers - this._soldiers;
+				this._soldiers += addedSoldiers;
+				this._kingdom.AdjustSoldiers (addedSoldiers, isUpdateKingdomList);
+			}else if (supposedSoldiers < 0){
+				this._kingdom.AdjustSoldiers (-this._soldiers, isUpdateKingdomList);
+				this._soldiers = 0;
+			}else{
+				this._soldiers += amount;
+				this._kingdom.AdjustSoldiers (amount, isUpdateKingdomList);
+			}
 		}
 	}
 	internal void SetSoldiers(int amount) {

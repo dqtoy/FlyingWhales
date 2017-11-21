@@ -313,7 +313,7 @@ public class CitizenAvatar : PooledObject {
     }
 
 	public void CancelEventInvolvedIn(){
-		this.citizenRole.DestroyGO();
+//		this.citizenRole.DestroyGO();
 		this.citizenRole.gameEventInvolvedIn.CancelEvent();
 	}
 
@@ -374,7 +374,8 @@ public class CitizenAvatar : PooledObject {
     //    UnHighlightPath();
     //}
 
-    private void OnTriggerEnter2D(Collider2D other) {
+	#region Collision
+    void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "Avatar") {
             if (this.gameObject != null && other.gameObject != null) {
 				Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
@@ -385,6 +386,7 @@ public class CitizenAvatar : PooledObject {
 						KingdomRelationship relationship = kingdomOfThis.GetRelationshipWithKingdom (kingdomOfOther);
 						if (relationship != null) {
 							if (relationship.isAtWar) {
+								CollisionManager.Instance.HasCollided (this.citizenRole, otherAgent.assignedRole);
 //								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
 							}
 						}
@@ -409,6 +411,8 @@ public class CitizenAvatar : PooledObject {
             }
         }
     }
+	#endregion
+
     #endregion
 
     public void SetAvatarState(bool state) {
@@ -422,5 +426,4 @@ public class CitizenAvatar : PooledObject {
             }
         }
     }
-
 }

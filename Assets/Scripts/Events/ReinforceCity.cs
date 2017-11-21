@@ -4,6 +4,7 @@ using System.Collections;
 public class ReinforceCity : GameEvent {
 	
 	internal General general;
+	internal Battle battle;
 	internal City sourceCity;
 	internal Kingdom sourceKingdom;
 
@@ -26,12 +27,13 @@ public class ReinforceCity : GameEvent {
 					for (int i = 0; i < this.sourceCity.region.connections.Count; i++) {
 						if(this.sourceCity.region.connections[i] is Region){
 							City city = ((Region)this.sourceCity.region.connections [i]).occupant;
-							if(city != null && city.kingdom.id == this.sourceKingdom.id){
+							if(city != null && city.kingdom.id == this.sourceKingdom.id && Utilities.HasPath(this.general.location, city.hexTile, PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, this.sourceKingdom)){
 								ReturnSoldiers (city);
-								break;
+								return;
 							}
 						}
 					}
+					this.DoneEvent ();
 				}else{
 					this.DoneEvent ();
 				}
@@ -52,21 +54,38 @@ public class ReinforceCity : GameEvent {
 				CancelEvent ();
 				return;
 			}
-			if(attackCity != null){
-				attackCity.TransferReinforcements (this);
-			}else if(defendCity != null){
-				defendCity.TransferReinforcements (this);
+			if(!this.general.isReturning){
+				if(attackCity != null){
+					if(attackCity.isActive){
+						attackCity.TransferReinforcements (this);
+					}else{
+						CancelEvent ();
+					}
+				}else if(defendCity != null){
+					if (defendCity.isActive) {
+						defendCity.TransferReinforcements (this);
+					}else{
+						CancelEvent ();
+					}
+				}
+			}else{
+				this.general.DropSoldiersAndDisappear ();
 			}
+
 		}
 		this.DoneEvent ();
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();
-		this.general.DestroyGO();
+		this.general.citizen.Death(DEATH_REASONS.BATTLE);
 	}
 	internal override void CancelEvent (){
+		if(attackCity != null){
+			attackCity.RemoveReinforcements (this);
+		}else if(defendCity != null){
+			defendCity.RemoveReinforcements (this);
+		}
 		ReturnRemainingSoldiers ();
-		base.CancelEvent ();
 	}
 	#endregion
 }
