@@ -2174,7 +2174,7 @@ public class Kingdom{
             return;
         }
         //A Rebellion will occur when Stability reaches -100. Stability will reset to 50. 
-        if (kingdomSize != KINGDOM_SIZE.SMALL) {
+        if (_stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
             StartAutomaticRebellion();
         }
 
