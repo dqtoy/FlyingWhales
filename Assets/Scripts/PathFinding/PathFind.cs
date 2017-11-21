@@ -187,7 +187,8 @@ namespace PathFind {
                             //path cannot pass through other regions
                             continue;
                         }
-                        if(n.AllNeighbourRoadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR).Count() > 0 && n.id != start.id && n.id != destination.id) {
+                        if(n.AllNeighbourRoadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR).Count() > 0 && n.id != start.id && n.id != destination.id 
+                            && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
                             continue;
                         }
                         if (n.isHabitable && n.id != start.id && n.id != destination.id) {

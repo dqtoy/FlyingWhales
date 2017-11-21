@@ -249,7 +249,7 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		this._hp = this.maxHP;
-		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
+		this.populationIncreasePool = new int[]{ 30, 32, 34, 36, 38, 40 };
 		this._populationGrowth = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
 		this._cityBT = null;
         _activeGuards = new List<Guard>();
