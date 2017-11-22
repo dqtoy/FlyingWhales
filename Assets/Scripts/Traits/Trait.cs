@@ -13,7 +13,7 @@ public class Trait{
     protected Citizen ownerOfTrait;
 
 
-    public Trait(Citizen ownerOfTrait) {
+    public void AssignCitizen(Citizen ownerOfTrait) {
         this.ownerOfTrait = ownerOfTrait;
     }
 

@@ -12,5 +12,8 @@ public class CitizenManagerEditor : Editor {
         if (GUILayout.Button("Apply Trait Weights")) {
             cm.ApplyTraitSetup();
         }
+        if (GUILayout.Button("Reset Trait Weights")) {
+            cm.ResetTraitSetup();
+        }
     }
 }

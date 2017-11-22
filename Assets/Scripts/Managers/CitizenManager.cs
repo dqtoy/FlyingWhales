@@ -169,19 +169,28 @@ public class CitizenManager : MonoBehaviour {
 
     #region Traits
     internal Trait CreateNewTraitForCitizen(TRAIT traitType, Citizen citizen) {
+        Trait createdTrait = null;
         switch (traitType) {
             case TRAIT.OPPORTUNIST:
-                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                createdTrait = JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                break; 
             case TRAIT.DECEITFUL:
-                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                createdTrait = JsonUtility.FromJson<Deceitful>(traitDictionary[traitType]);
+                break; 
             case TRAIT.IMPERIALIST:
-                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                createdTrait = JsonUtility.FromJson<Imperialist>(traitDictionary[traitType]);
+                break; 
             case TRAIT.HOSTILE:
-                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                createdTrait = JsonUtility.FromJson<Hostile>(traitDictionary[traitType]);
+                break;
             case TRAIT.PACIFIST:
-                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                createdTrait = JsonUtility.FromJson<Pacifist>(traitDictionary[traitType]); ;
+                break; 
         }
-        return null;
+        if(citizen != null && createdTrait != null) {
+            createdTrait.AssignCitizen(citizen);
+        }
+        return createdTrait;
     }
     internal Trait GetTrait(TRAIT trait) {
         for (int i = 0; i < traitSetup.Count; i++) {
@@ -196,6 +205,17 @@ public class CitizenManager : MonoBehaviour {
         for (int i = 0; i < traitSetup.Count; i++) {
             Trait currTrait = traitSetup[i];
             SaveTraitJson(currTrait.traitName, currTrait);
+        }
+    }
+    public void ResetTraitSetup() {
+        TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
+        for (int i = 0; i < allTraits.Length; i++) {
+            TRAIT currTrait = allTraits[i];
+            string jsonStringOfTrait = GetJsonStringOfTrait(currTrait);
+            if (!string.IsNullOrEmpty(jsonStringOfTrait)) {
+                Trait traitFromFile = JsonUtility.FromJson<Trait>(jsonStringOfTrait);
+                traitSetup.Add(traitFromFile);
+            }
         }
     }
     private void SaveTraitJson(string fileName, Trait traitSetup) {

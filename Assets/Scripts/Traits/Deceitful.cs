@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class Deceitful : Trait {
 
-    public Deceitful(Citizen ownerOfTrait) : base(ownerOfTrait) {}
-
     internal override Dictionary<Kingdom, int> GetWarOfConquestTargetWeights() {
         Dictionary<Kingdom, int> targetWeights = base.GetWarOfConquestTargetWeights();
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
