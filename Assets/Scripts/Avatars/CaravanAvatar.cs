@@ -2,31 +2,29 @@
 using System.Collections;
 
 public class CaravanAvatar : CitizenAvatar {
-	public SpriteRenderer sprtCaravan;
+//	public SpriteRenderer sprtCaravan;
 	public UI2DSprite sprtCaravanIcon;
-	public Sprite sprtFoodCaravan;
-	public Sprite sprtMaterialCaravan;
-	public Sprite sprtOreCaravan;
+//	public Sprite sprtFoodCaravan;
+//	public Sprite sprtMaterialCaravan;
+//	public Sprite sprtOreCaravan;
 	public Sprite sprtFoodCaravanIcon;
 	public Sprite sprtMaterialCaravanIcon;
 	public Sprite sprtOreCaravanIcon;
 
 	public UILabel amountLbl;
+	public GameObject amountPanelGO;
 
 	internal override void Init (Role citizenRole){
 		base.Init (citizenRole);
-		if(citizenRole.gameEventInvolvedIn is SendResource){
+		if (citizenRole.gameEventInvolvedIn is SendResource) {
 			SendResource sendResource = (SendResource)citizenRole.gameEventInvolvedIn;
-			if(sendResource.resourceType == RESOURCE_TYPE.FOOD){
-				sprtCaravan.sprite = sprtFoodCaravan;
+			if (sendResource.resourceType == RESOURCE_TYPE.FOOD) {
 				sprtCaravanIcon.sprite2D = sprtFoodCaravanIcon;
 				amountLbl.text = sendResource.foodAmount.ToString ();
-			}else if(sendResource.resourceType == RESOURCE_TYPE.MATERIAL){
-				sprtCaravan.sprite = sprtMaterialCaravan;
+			} else if (sendResource.resourceType == RESOURCE_TYPE.MATERIAL) {
 				sprtCaravanIcon.sprite2D = sprtMaterialCaravanIcon;
 				amountLbl.text = sendResource.materialAmount.ToString ();
-			}else if(sendResource.resourceType == RESOURCE_TYPE.ORE){
-				sprtCaravan.sprite = sprtOreCaravan;
+			} else if (sendResource.resourceType == RESOURCE_TYPE.ORE) {
 				sprtCaravanIcon.sprite2D = sprtOreCaravanIcon;
 				amountLbl.text = sendResource.oreAmount.ToString ();
 			}
@@ -59,5 +57,17 @@ public class CaravanAvatar : CitizenAvatar {
 				EndAttack ();
 			}
 		}
+	}
+	internal void ChangeResourceIcon(RESOURCE_TYPE resourceType){
+		if(resourceType == RESOURCE_TYPE.FOOD){
+			sprtCaravanIcon.sprite2D = sprtFoodCaravanIcon;
+		}else if(resourceType == RESOURCE_TYPE.MATERIAL){
+			sprtCaravanIcon.sprite2D = sprtMaterialCaravanIcon;
+		}else if(resourceType == RESOURCE_TYPE.ORE){
+			sprtCaravanIcon.sprite2D = sprtOreCaravanIcon;
+		}
+	}
+	internal void ChangeAmountText(int amount){
+		amountLbl.text = amount.ToString ();
 	}
 }

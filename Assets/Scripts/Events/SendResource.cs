@@ -36,39 +36,48 @@ public class SendResource : GameEvent {
 			CancelEvent ();
 			return;
 		}
-
-		if(foodAmount > 0){
+		this.DoneEvent ();
+		if (foodAmount > 0) {
+			citizen.assignedRole.targetCity.AdjustFoodCount (foodAmount);
 			citizen.assignedRole.targetCity.AdjustVirtualFoodCount (-foodAmount);
-			if(citizen.assignedRole.targetCity.foodCount >= citizen.assignedRole.targetCity.foodCapacity){
-				SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, citizen.assignedRole.location, citizen.assignedRole.location.city, this));
-			}else{
-				this.DoneEvent ();
-				citizen.assignedRole.targetCity.AdjustFoodCount (foodAmount);
-			}
-
 		}
 		if (materialAmount > 0) {
+			citizen.assignedRole.targetCity.AdjustMaterialCount (materialAmount);
 			citizen.assignedRole.targetCity.AdjustVirtualMaterialCount (-materialAmount);
-			if(citizen.assignedRole.targetCity.materialCount >= citizen.assignedRole.targetCity.materialCapacity){
-				SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, citizen.assignedRole.location, citizen.assignedRole.location.city, this));
-			}else{
-				this.DoneEvent ();
-				citizen.assignedRole.targetCity.AdjustMaterialCount (materialAmount);
-			}
-//			citizen.assignedRole.targetCity.AdjustMaterialCount (materialAmount);
-//			citizen.assignedRole.targetCity.AdjustVirtualMaterialCount (-materialAmount);
 		}
 		if (oreAmount > 0) {
+			citizen.assignedRole.targetCity.AdjustOreCount (oreAmount);
 			citizen.assignedRole.targetCity.AdjustVirtualOreCount (-oreAmount);
-			if(citizen.assignedRole.targetCity.oreCount >= citizen.assignedRole.targetCity.oreCapacity){
-				SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, citizen.assignedRole.location, citizen.assignedRole.location.city, this));
-			}else{
-				this.DoneEvent ();
-				citizen.assignedRole.targetCity.AdjustOreCount (oreAmount);
-			}
-//			citizen.assignedRole.targetCity.AdjustOreCount (oreAmount);
-//			citizen.assignedRole.targetCity.AdjustVirtualOreCount (-oreAmount);
 		}
+//		if(foodAmount > 0){
+//			citizen.assignedRole.targetCity.AdjustVirtualFoodCount (-foodAmount);
+//			if(citizen.assignedRole.targetCity.foodCount >= citizen.assignedRole.targetCity.foodCapacity){
+//				SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, citizen.assignedRole.location, citizen.assignedRole.location.city, this));
+//			}else{
+//				this.DoneEvent ();
+//				citizen.assignedRole.targetCity.AdjustFoodCount (foodAmount);
+//			}
+//
+//		}
+//		if (materialAmount > 0) {
+//			citizen.assignedRole.targetCity.AdjustVirtualMaterialCount (-materialAmount);
+//			if(citizen.assignedRole.targetCity.materialCount >= citizen.assignedRole.targetCity.materialCapacity){
+//				SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, citizen.assignedRole.location, citizen.assignedRole.location.city, this));
+//			}else{
+//				this.DoneEvent ();
+//				citizen.assignedRole.targetCity.AdjustMaterialCount (materialAmount);
+//			}
+//
+//		}
+//		if (oreAmount > 0) {
+//			citizen.assignedRole.targetCity.AdjustVirtualOreCount (-oreAmount);
+//			if(citizen.assignedRole.targetCity.oreCount >= citizen.assignedRole.targetCity.oreCapacity){
+//				SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, citizen.assignedRole.location, citizen.assignedRole.location.city, this));
+//			}else{
+//				this.DoneEvent ();
+//				citizen.assignedRole.targetCity.AdjustOreCount (oreAmount);
+//			}
+//		}
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();

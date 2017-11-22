@@ -157,6 +157,24 @@ namespace PathFind {
 						newPath = path.AddStep(n, d);
 						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
 					}
+				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE) {
+					if (kingdom == null) {
+						throw new Exception("Someone is trying to pathfind using USE_ROADS_TRADE, but hasn't specified a kingdom!");
+					}
+					foreach (Node n in path.LastStep.allNeighbourRoads) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+//						if (n.city != null && n.city.kingdom.id != kingdom.id) {
+//							KingdomRelationship kr = n.city.kingdom.GetRelationshipWithKingdom (kingdom);
+//							if (!kr.AreAllies ()) {
+//								continue;
+//							}
+//						}
+						d = distance(path.LastStep, n);
+						newPath = path.AddStep(n, d);
+						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+					}
 				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM) {
 					if (kingdom == null) {
 						throw new Exception("Someone is trying to pathfind using USE_ROADS_ONLY_KINGDOM, but hasn't specified a kingdom!");

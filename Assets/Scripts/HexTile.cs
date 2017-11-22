@@ -477,19 +477,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	private void CheckResourceCount(){
 		if(this.specialResourceType == RESOURCE_TYPE.FOOD){
-			if(this.resourceCount >= this.region.occupant.foodExcessCapacity){
+			if(this.resourceCount >= this.region.occupant.foodReserved){
 				//Create Caravan
 				EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}else if(this.specialResourceType == RESOURCE_TYPE.MATERIAL){
-			if(this.resourceCount >= this.region.occupant.materialExcessCapacity){
+			if(this.resourceCount >= this.region.occupant.materialReserved){
 				//Create Caravan
 				EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}else if(this.specialResourceType == RESOURCE_TYPE.ORE){
-			if(this.resourceCount >= this.region.occupant.oreExcessCapacity){
+			if(this.resourceCount >= this.region.occupant.oreReserved){
 				//Create Caravan
 				EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
