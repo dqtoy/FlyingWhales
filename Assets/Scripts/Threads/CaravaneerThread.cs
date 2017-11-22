@@ -29,11 +29,11 @@ public class CaravaneerThread {
 	public void ObtainCity(){
 		List<City> citiesToChooseFrom = new List<City> ();
 		if(neededResource == RESOURCE_TYPE.FOOD){
-			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.foodForTrade >= x.foodRequirement).ToList();
+			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.foodForTrade >= x.foodRequirement).ToList();
 		}else if(neededResource == RESOURCE_TYPE.MATERIAL){
-			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.materialForTrade >= x.materialRequirement).ToList();
+			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.materialForTrade >= x.materialRequirement).ToList();
 		}else if(neededResource == RESOURCE_TYPE.ORE){
-			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.oreForTrade >= x.oreRequirement).ToList();
+			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.oreForTrade >= x.oreRequirement).ToList();
 		}
 
 		City chosenCity = null;

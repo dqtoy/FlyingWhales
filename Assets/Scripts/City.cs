@@ -56,6 +56,8 @@ public class City{
 
 	internal Caravaneer caravaneer;
 
+	private List<City> _blacklist;
+
 	[Space(5)]
     [Header("Booleans")]
     //internal bool hasKing;
@@ -227,6 +229,10 @@ public class City{
 	private int[] soldiersCap{
 		get { return new int[]{ GetSoldiersCap (), this._oreCount, this._population }; }
 	}
+
+	internal List<City> blacklist {
+		get { return this._blacklist; }
+	}
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -269,6 +275,7 @@ public class City{
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
+		this._blacklist = new List<City> ();
 
 //		AdjustPopulation (50);
 
