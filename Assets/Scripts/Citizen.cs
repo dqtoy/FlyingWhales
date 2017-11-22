@@ -1075,7 +1075,8 @@ public class Citizen {
         } else {
             _military = (TRAIT)baseCharacter.militaryTrait;
         }
-
+        this._balanceType = GetBalanceType();
+        this._warmonger = GenerateWarmonger();
         //New traits
         allTraits = new List<Trait>();
         for (int i = 0; i < baseCharacter.allTraits.Count; i++) {
