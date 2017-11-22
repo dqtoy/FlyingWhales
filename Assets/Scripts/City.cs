@@ -301,7 +301,7 @@ public class City{
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
-
+		this.caravaneer = EventCreator.Instance.CreateCaravaneerEvent (this);
         Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         if (GameManager.Instance.enableGameAgents) {
             SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
