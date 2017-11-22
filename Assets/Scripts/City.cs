@@ -30,6 +30,9 @@ public class City{
 	private int _foodCount;
 	private int _materialCount;
 	private int _oreCount;
+	private int _reservedFoodCount;
+	private int _reservedMaterialCount;
+	private int _reservedOreCount;
 	private int _virtualFoodCount;
 	private int _virtualMaterialCount;
 	private int _virtualOreCount;
@@ -50,6 +53,8 @@ public class City{
 	private int _soldiers;
 
 	internal PandaBehaviour _cityBT;
+
+	internal Caravaneer caravaneer;
 
 	[Space(5)]
     [Header("Booleans")]
@@ -148,7 +153,13 @@ public class City{
         get { return _cityBounds; }
     }
 	internal int foodCount{
-		get { return this._foodCount; }
+		get { return this._foodCount + this._reservedFoodCount; }
+	}
+	internal int materialCount{
+		get { return this._materialCount + this._reservedMaterialCount; }
+	}
+	internal int oreCount{
+		get { return this._oreCount + this._reservedOreCount; }
 	}
 	internal int virtualFoodCount{
 		get { return this._foodCount + this._virtualFoodCount; }
@@ -159,12 +170,6 @@ public class City{
 	internal int virtualOreCount{
 		get { return this._oreCount + this._virtualOreCount; }
 	}
-	internal int materialCount{
-		get { return this._materialCount; }
-	}
-	internal int oreCount{
-		get { return this._oreCount; }
-	}
 	internal int foodRequirement{
 		get { return 80 + (20 * this.cityLevel); }
 	}
@@ -174,6 +179,36 @@ public class City{
 	internal int oreRequirement{
 		get { return 80 + (20 * this.cityLevel); }
 	}
+	internal int foodReserved{
+//		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
+		get { return 2 * this.foodRequirement; }
+	}
+	internal int materialReserved{
+//		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
+		get { return 2 * this.materialRequirement; }
+	}
+	internal int oreReserved{
+//		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+		get { return 2 * this.oreRequirement; }
+	}
+	internal int foodForTrade{
+		get { return this._foodCount - this.foodReserved; }
+	}
+	internal int materialForTrade{
+		get { return this._materialCount - this.materialReserved; }
+	}
+	internal int oreForTrade{
+		get { return this._oreCount - this.oreReserved; }
+	}
+	internal int foodCapacity{
+		get { return 12 * this.foodRequirement; }
+	}
+	internal int materialCapacity{
+		get { return 12 * this.materialRequirement; }
+	}
+	internal int oreCapacity{
+		get { return 12 * this.oreRequirement; }
+	}
 	internal int population {
 		get { return _population; }
 	}
@@ -182,27 +217,6 @@ public class City{
 	}
 	internal int populationCapacity {
 		get { return 500 + (100 * this.cityLevel); }
-	}
-	internal int foodExcessCapacity{
-//		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
-		get { return 2 * this.foodRequirement; }
-	}
-	internal int materialExcessCapacity{
-//		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
-		get { return 2 * this.materialRequirement; }
-	}
-	internal int oreExcessCapacity{
-//		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
-		get { return 2 * this.oreRequirement; }
-	}
-	internal int foodCapacity{
-		get { return 10 * this.foodRequirement; }
-	}
-	internal int materialCapacity{
-		get { return 10 * this.materialRequirement; }
-	}
-	internal int oreCapacity{
-		get { return 10 * this.oreRequirement; }
 	}
 	internal int soldiers{
 		get { return this._soldiers; }
@@ -276,10 +290,11 @@ public class City{
 	}
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
-		AdjustFoodCount(this.foodExcessCapacity);
+		AdjustFoodCount(this.foodReserved);
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
+
         Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         if (GameManager.Instance.enableGameAgents) {
             SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
@@ -492,9 +507,9 @@ public class City{
 	}
 	internal void AdjustFoodCount(int amount){
 		this._foodCount += amount;
-		this._foodCount = Mathf.Clamp (this._foodCount, 0, this.foodCapacity);
+		this._foodCount = Mathf.Clamp (this._foodCount, 0, (this.foodCapacity - this._reservedFoodCount));
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
-		CheckFoodSupply ();
+//		CheckFoodSupply ();
 	}
 	internal void AdjustVirtualFoodCount(int amount){
 		this._virtualFoodCount += amount;
@@ -506,11 +521,24 @@ public class City{
 		this._foodCount = amount;
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
+	internal int ReserveFood(){
+		int foodTrade = this.foodForTrade;
+		int foodTradeCap = 3 * this.foodRequirement;
+		int amount = 0;
+		if(foodTrade >= foodTradeCap){
+			amount = foodTradeCap;
+		}else{
+			amount = foodTrade;
+		}
+		this._reservedFoodCount += amount;
+		this.AdjustFoodCount (-amount);
+		return amount;
+	}
 	internal void AdjustMaterialCount(int amount){
 		this._materialCount += amount;
-		this._materialCount = Mathf.Clamp (this._materialCount, 0, this.materialCapacity);
+		this._materialCount = Mathf.Clamp (this._materialCount, 0, (this.materialCapacity - this._reservedMaterialCount));
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
-		CheckMaterialSupply ();
+//		CheckMaterialSupply ();
 	}
 	internal void AdjustVirtualMaterialCount(int amount){
 		this._virtualMaterialCount += amount;
@@ -522,11 +550,24 @@ public class City{
 		this._materialCount = amount;
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
+	internal int ReserveMaterial(){
+		int materialTrade = this.materialForTrade;
+		int materialTradeCap = 3 * this.materialRequirement;
+		int amount = 0;
+		if(materialTrade >= materialTradeCap){
+			amount = materialTradeCap;
+		}else{
+			amount = materialTrade;
+		}
+		this._reservedMaterialCount += amount;
+		this.AdjustMaterialCount (-amount);
+		return amount;
+	}
 	internal void AdjustOreCount(int amount){
 		this._oreCount += amount;
-		this._oreCount = Mathf.Clamp (this._oreCount, 0, this.oreCapacity);
+		this._oreCount = Mathf.Clamp (this._oreCount, 0, (this.oreCapacity - this._reservedOreCount));
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
-		CheckOreSupply ();
+//		CheckOreSupply ();
 	}
 	internal void AdjustVirtualOreCount(int amount){
 		this._virtualOreCount += amount;
@@ -537,6 +578,46 @@ public class City{
 	internal void SetOreCount(int amount){
 		this._oreCount = amount;
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
+	}
+	internal int ReserveOre(){
+		int oreTrade = this.oreForTrade;
+		int oreTradeCap = 3 * this.oreRequirement;
+		int amount = 0;
+		if(oreTrade >= oreTradeCap){
+			amount = oreTradeCap;
+		}else{
+			amount = oreTrade;
+		}
+		this._reservedOreCount += amount;
+		this.AdjustOreCount (-amount);
+		return amount;
+	}
+
+	internal void GiveResourceToCaravan(Caravaneer caravaneer, int amount){
+		int amountToTrade = amount;
+		if(caravaneer.neededResource == RESOURCE_TYPE.FOOD){
+			if (this._reservedFoodCount == 0) {
+				amountToTrade = 0;
+			}else if(this._reservedFoodCount < amountToTrade){
+				amountToTrade = this._reservedFoodCount;
+			}
+			this._reservedFoodCount -= amountToTrade;
+		}else if(caravaneer.neededResource == RESOURCE_TYPE.MATERIAL){
+			if (this._reservedMaterialCount == 0) {
+				amountToTrade = 0;
+			}else if(this._reservedMaterialCount < amountToTrade){
+				amountToTrade = this._reservedMaterialCount;
+			}
+			this._reservedMaterialCount -= amountToTrade;
+		}else if(caravaneer.neededResource == RESOURCE_TYPE.ORE){
+			if (this._reservedOreCount == 0) {
+				amountToTrade = 0;
+			}else if(this._reservedOreCount < amountToTrade){
+				amountToTrade = this._reservedOreCount;
+			}
+			this._reservedOreCount -= amountToTrade;
+		}
+		caravaneer.ReceiveResourceFromCity (amountToTrade);
 	}
 	private void ConsumeResources(){
 		ConsumeFood ();
@@ -585,7 +666,7 @@ public class City{
 	}
 	private void CheckFoodSupply(){
 		if(this._kingdom.cities.Count > 1){
-			int foodCap = this.foodExcessCapacity;
+			int foodCap = this.foodReserved;
 			if(this.foodCount > foodCap){
 				int excessFood = this.foodCount - foodCap;
 				if (excessFood >= foodCap) {
@@ -597,7 +678,7 @@ public class City{
 	}
 	private void CheckMaterialSupply(){
 		if (this._kingdom.cities.Count > 1) {
-			int materialCap = this.materialExcessCapacity;
+			int materialCap = this.materialReserved;
 			if (this.materialCount > materialCap) {
 				int excessMaterial = this.materialCount - materialCap;
 				if (excessMaterial >= materialCap) {
@@ -609,7 +690,7 @@ public class City{
 	}
 	private void CheckOreSupply(){
 		if (this._kingdom.cities.Count > 1) {
-			int oreCap = this.oreExcessCapacity;
+			int oreCap = this.oreReserved;
 			if (this.oreCount > oreCap) {
 				int excessOre = this.oreCount - oreCap;
 				if(excessOre >= oreCap){
@@ -648,6 +729,7 @@ public class City{
         RemoveListeners();
 		RemoveOneTimeResourceBenefits();
         KillActiveGuards();
+		this.caravaneer.DoneEvent ();
         /*
          * Remove irrelevant scripts on hextile
          * */
@@ -703,6 +785,8 @@ public class City{
 	internal void ConquerCity(Kingdom conqueror, Warfare warfare) {
         RemoveOneTimeResourceBenefits();
         KillActiveGuards();
+		this.caravaneer.DoneEvent ();
+
         //Combat invasion should reduce City level by half.
         int halfOfCityLevel = Mathf.FloorToInt(this.ownedTiles.Count / 2);
         for (int i = 0; i < halfOfCityLevel; i++) {

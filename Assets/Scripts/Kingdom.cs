@@ -1309,6 +1309,7 @@ public class Kingdom{
     internal City CreateNewCityOnTileForKingdom(HexTile tile, bool hasInitialPopulation = false) {
         City createdCity = CityGenerator.Instance.CreateNewCity(tile, this);
         this.AddCityToKingdom(createdCity);
+		createdCity.caravaneer = EventCreator.Instance.CreateCaravaneerEvent (createdCity);
 		if(hasInitialPopulation){
 			createdCity.AdjustPopulation (50);
 		}

@@ -170,7 +170,7 @@ public class PathGenerator : MonoBehaviour {
         bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
         bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
 
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM
+		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
 			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
 			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
 			startingTile.isRoad = true;
@@ -182,7 +182,7 @@ public class PathGenerator : MonoBehaviour {
 
 		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
 
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM
+		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
 			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
 			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
 			startingTile.isRoad = isStartingTileRoad;
@@ -191,7 +191,7 @@ public class PathGenerator : MonoBehaviour {
 
         if (path != null) {
 			if (pathfindingMode == PATHFINDING_MODE.COMBAT || pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION 
-                || pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION || pathfindingMode == PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION) {
+				|| pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION || pathfindingMode == PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE) {
 				return path.Reverse().ToList();
 			} else {
 				List<HexTile> newPath = path.Reverse().ToList();

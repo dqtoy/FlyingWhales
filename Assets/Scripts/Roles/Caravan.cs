@@ -2,14 +2,19 @@
 using System.Collections;
 
 public class Caravan : Role {
-
-	public Caravan(Citizen citizen): base(citizen){
 	
+	internal bool isActivated;
+	public Caravan(Citizen citizen): base(citizen){
 	}
 
 	internal override void Initialize(GameEvent gameEvent){
 		base.Initialize(gameEvent);
 		this.avatar.GetComponent<CaravanAvatar>().Init(this);
+	}
+
+	internal void CaravanActivation(bool state){
+		this.isActivated = state;
+		this.avatar.SetActive (state);
 	}
 
 //	internal override void CreateAvatarGO (){
