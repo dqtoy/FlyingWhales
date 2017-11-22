@@ -163,8 +163,8 @@ public class Citizen {
         //this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         //      this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 
-        GenerateTraits();
-        //GenerateTraitsForCitizen();
+        //GenerateTraits();
+        GenerateTraitsForCitizen();
 
         this._statusEffects = new Dictionary<STATUS_EFFECTS, StatusEffect>();
 
