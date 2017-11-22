@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+
 public class CitizenManager : MonoBehaviour {
 
     public static CitizenManager Instance = null;
 
     public List<CharacterType> characterTypes;
+    public List<Trait> traitSetup;
+    private Dictionary<TRAIT, string> traitDictionary;
 
     private Dictionary<MONTH, Dictionary<int, HashSet<Citizen>>> citizenBirthdays;
     private Dictionary<int, HashSet<Citizen>> citizenAgeTable = new Dictionary<int, HashSet<Citizen>>() {
@@ -161,6 +164,80 @@ public class CitizenManager : MonoBehaviour {
     #region Character Types
     internal CharacterType GetRandomCharacterType() {
         return characterTypes[Random.Range(0, characterTypes.Count)];
+    }
+    #endregion
+
+    #region Traits
+    internal Trait CreateNewTraitForCitizen(TRAIT traitType, Citizen citizen) {
+        switch (traitType) {
+            case TRAIT.OPPORTUNIST:
+                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+            case TRAIT.DECEITFUL:
+                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+            case TRAIT.IMPERIALIST:
+                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+            case TRAIT.HOSTILE:
+                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+            case TRAIT.PACIFIST:
+                return JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+        }
+        return null;
+    }
+    internal Trait GetTrait(TRAIT trait) {
+        for (int i = 0; i < traitSetup.Count; i++) {
+            Trait currTrait = traitSetup[i];
+            if (currTrait.trait == trait) {
+                return currTrait;
+            }
+        }
+        return null;
+    }
+    public void ApplyTraitSetup() {
+        for (int i = 0; i < traitSetup.Count; i++) {
+            Trait currTrait = traitSetup[i];
+            SaveTraitJson(currTrait.traitName, currTrait);
+        }
+    }
+    private void SaveTraitJson(string fileName, Trait traitSetup) {
+        string path = "Assets/Resources/Data/Traits/" + fileName + ".json";
+
+        string jsonString = JsonUtility.ToJson(traitSetup);
+
+        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
+        writer.WriteLine(jsonString);
+        writer.Close();
+
+        //Re-import the file to update the reference in the editor
+        UnityEditor.AssetDatabase.ImportAsset(path);
+        TextAsset asset = Resources.Load("Data/Traits/" + fileName + ".json") as TextAsset;
+
+        //Print the text from the file
+        Debug.Log(GetJsonStringOfTrait(traitSetup.trait));
+    }
+    private string GetJsonStringOfTrait(TRAIT trait) {
+        string path = "Assets/Resources/Data/Traits/" + Utilities.NormalizeString(trait.ToString()) + ".json";
+        string jsonString = string.Empty;
+        try {
+            //Read the text from directly from the test.txt file
+            System.IO.StreamReader reader = new System.IO.StreamReader(path);
+            jsonString = reader.ReadToEnd();
+            reader.Close();
+        } catch {
+            //Do nothing
+        }
+        
+        return jsonString;
+    }
+    internal void ConstructTraitDictionary() {
+        traitDictionary = new Dictionary<TRAIT, string>();
+        TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
+        for (int i = 0; i < allTraits.Length; i++) {
+            TRAIT currTrait = allTraits[i];
+            string jsonStringOfTrait = GetJsonStringOfTrait(currTrait);
+            if (!string.IsNullOrEmpty(jsonStringOfTrait)) {
+                traitDictionary.Add(currTrait, jsonStringOfTrait);
+            }
+        }
     }
     #endregion
 

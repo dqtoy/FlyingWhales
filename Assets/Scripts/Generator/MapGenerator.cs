@@ -19,6 +19,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
+        CitizenManager.Instance.ConstructTraitDictionary();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
         EquatorGenerator.Instance.GenerateEquator();

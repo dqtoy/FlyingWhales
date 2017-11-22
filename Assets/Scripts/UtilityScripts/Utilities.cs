@@ -1140,6 +1140,70 @@ public class Utilities : MonoBehaviour {
         return dict.Values.ToList();
     }
 
+    public static Dictionary<WEIGHTED_ACTION, int> MergeWeightedActionDictionaries(Dictionary<WEIGHTED_ACTION, int> dict1, Dictionary<WEIGHTED_ACTION, int> dict2) {
+        Dictionary<WEIGHTED_ACTION, int> mergedDict = new Dictionary<WEIGHTED_ACTION, int>();
+        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in dict1) {
+            WEIGHTED_ACTION currKey = kvp.Key;
+            int currValue = kvp.Value;
+            if (dict2.ContainsKey(currKey)) {
+                currValue += dict2[currKey];
+            }
+            mergedDict.Add(currKey, currValue);
+        }
+        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in dict2) {
+            WEIGHTED_ACTION currKey = kvp.Key;
+            int currValue = kvp.Value;
+            if (dict1.ContainsKey(currKey)) {
+                currValue += dict2[currKey];
+            }
+            if (!mergedDict.ContainsKey(currKey)) {
+                mergedDict.Add(currKey, currValue);
+            }
+            
+        }
+        return mergedDict;
+    }
+
+    public static Dictionary<Kingdom, int> MergeWeightedActionDictionaries(Dictionary<Kingdom, int> dict1, Dictionary<Kingdom, int> dict2) {
+        Dictionary<Kingdom, int> mergedDict = new Dictionary<Kingdom, int>();
+        foreach (KeyValuePair<Kingdom, int> kvp in dict1) {
+            Kingdom currKey = kvp.Key;
+            int currValue = kvp.Value;
+            if (dict2.ContainsKey(currKey)) {
+                currValue += dict2[currKey];
+            }
+            mergedDict.Add(currKey, currValue);
+        }
+        foreach (KeyValuePair<Kingdom, int> kvp in dict2) {
+            Kingdom currKey = kvp.Key;
+            int currValue = kvp.Value;
+            if (dict1.ContainsKey(currKey)) {
+                currValue += dict2[currKey];
+            }
+            if (!mergedDict.ContainsKey(currKey)) {
+                mergedDict.Add(currKey, currValue);
+            }
+
+        }
+        return mergedDict;
+    }
+
+    public static T PickRandomElementWithWeights<T>(Dictionary<T, int> weights) {
+        int totalOfAllWeights = weights.Sum(x => x.Value);
+        int chance = UnityEngine.Random.Range(0, totalOfAllWeights);
+        int upperBound = 0;
+        int lowerBound = 0;
+        foreach (KeyValuePair<T, int> kvp in weights) {
+            T currElementType = kvp.Key;
+            int weightOfCurrElement = kvp.Value;
+            upperBound += weightOfCurrElement;
+            if(chance >= lowerBound && chance < upperBound) {
+                return currElementType;
+            }
+            lowerBound = upperBound;
+        }
+        throw new Exception("Could not pick element in weights");
+    }
 
     /*
      * <summary>

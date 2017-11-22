@@ -957,4 +957,33 @@ public class KingdomRelationship {
 			}
 		}
 	}
+
+    internal List<Kingdom> GetAlliesTargetKingdomIsAtWarWith() {
+        List<Kingdom> alliesAtWarWith = new List<Kingdom>();
+        for (int i = 0; i < targetKingdom.warfareInfo.Values.Count; i++) {
+            WarfareInfo currWarfare = targetKingdom.warfareInfo.Values.ElementAt(i);
+            WAR_SIDE sideOfTargetKingdom = currWarfare.side;
+            WAR_SIDE opposingSide = WAR_SIDE.A;
+            if(sideOfTargetKingdom == WAR_SIDE.A) {
+                opposingSide = WAR_SIDE.B;
+            }
+            List<Kingdom> enemyKingdoms = currWarfare.warfare.GetListFromSide(opposingSide);
+            for (int j = 0; j < enemyKingdoms.Count; j++) {
+                Kingdom currEnemy = enemyKingdoms[j];
+                if (sourceKingdom.alliancePool.kingdomsInvolved.Contains(currEnemy)) {
+                    //targetKingdom is at war with sourceKingdom ally(currEnemy)
+                    if (!alliesAtWarWith.Contains(currEnemy)) {
+                        alliesAtWarWith.Add(currEnemy);
+                    }
+                }
+            }
+
+
+        }
+        return alliesAtWarWith;
+    }
+    internal float GetTheoreticalPowerAdvantageOverTarget() {
+        KingdomRelationship otherRelationship = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
+        return Mathf.Max(0, (otherRelationship._theoreticalPower / this._theoreticalPower) - 100f);
+    }
 }
