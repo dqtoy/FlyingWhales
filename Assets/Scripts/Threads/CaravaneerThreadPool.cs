@@ -17,13 +17,12 @@ public class CaravaneerThreadPool : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
+		functionsToBeRunInThread = new Queue<CaravaneerThread> ();
+		functionsToBeResolved = new Queue<CaravaneerThread> ();
 	}
 
 	void Start () {
 		this.isRunning = true;
-
-		functionsToBeRunInThread = new Queue<CaravaneerThread> ();
-		functionsToBeResolved = new Queue<CaravaneerThread> ();
 
 		newThread = new Thread( RunThread );
 		newThread.IsBackground = true;
