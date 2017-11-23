@@ -35,32 +35,13 @@ public class Trait{
         return totalWeights;
     }
 
-    //protected virtual int GetTotalWeightOfActionTowards(WEIGHTED_ACTION actionType, Kingdom targetKingdom) {
-    //    switch (actionType) {
-    //        case WEIGHTED_ACTION.DO_NOTHING:
-    //            break;
-    //        case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-    //            return GetWarOfConquestWeightTowards(targetKingdom);
-    //        case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
-    //            break;
-    //        case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-    //            break;
-    //        case WEIGHTED_ACTION.TRADE_DEAL:
-    //            break;
-    //        case WEIGHTED_ACTION.INCITE_UNREST:
-    //            break;
-    //        case WEIGHTED_ACTION.PIT_OTHER_KINGDOMS:
-    //            break;
-    //        case WEIGHTED_ACTION.FLATTER:
-    //            break;
-    //        case WEIGHTED_ACTION.SEND_AID:
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //    return 0;
-    //}
-
+    #region Weighted Actions
+    /*
+     * This will return a dictionary of
+     * kingdoms and their respective weights for WAR. The base class
+     * uses the logic for all traits, override this method for
+     * specific logic on other taits
+     * */
     internal virtual Dictionary<Kingdom, int> GetWarOfConquestTargetWeights() {
         Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
@@ -95,6 +76,11 @@ public class Trait{
         }
         return targetWeights;
     }
+    internal virtual Dictionary<Kingdom, Dictionary<Kingdom, int>> GetAllianceOfConquestTargetWeights() {
+        return null;
+    }
+    #endregion
+
 
     protected int GetBaseWeightOfAction(WEIGHTED_ACTION actionType) {
         int baseWeight = 0;
