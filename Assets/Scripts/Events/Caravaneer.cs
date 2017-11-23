@@ -48,7 +48,10 @@ public class Caravaneer : GameEvent {
 		}
 	}
 	internal override void DoneEvent(){
+		Debug.Log ("CARAVANEER EVENT DONE FOR " + this.sourceCity.name + " because: This event is active " + this.isActive.ToString() + ", the caravan is destroyed " + this.caravan.isDestroyed.ToString()
+			+ ", city is dead " + this.sourceCity.isDead.ToString());
 		base.DoneEvent();
+		this.sourceCity.caravaneer = null;
 		this.caravan.DestroyGO();
 	}
 	internal override void CancelEvent (){
@@ -58,9 +61,11 @@ public class Caravaneer : GameEvent {
 	#endregion
 
 	private void SearchForCityToObtainResource(){
-		if(this.isActive && this.caravan.avatar != null && !this.sourceCity.isDead){
+		if(this.isActive && !this.caravan.isDestroyed && !this.sourceCity.isDead){
 			this.neededResource = GetNeededResource ();
 			CaravaneerThreadPool.Instance.AddToThreadPool (new CaravaneerThread (this, this.neededResource));
+		}else{
+			this.DoneEvent();
 		}
 
 	}
