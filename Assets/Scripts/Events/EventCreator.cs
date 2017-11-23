@@ -131,14 +131,11 @@ public class EventCreator: MonoBehaviour {
 	}
 	internal Caravaneer CreateCaravaneerEvent(City sourceCity) {
 		Citizen citizen = sourceCity.CreateNewAgent (ROLE.CARAVAN, null);
-		if(citizen != null){
-			Caravan caravan = (Caravan)citizen.assignedRole;
-			Caravaneer caravaneer = new Caravaneer(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, citizen);
-			caravan.Initialize (caravaneer);
-			caravaneer.Initialize ();
-			return caravaneer;
-		}
-		return null;
+		Caravan caravan = (Caravan)citizen.assignedRole;
+		Caravaneer caravaneer = new Caravaneer(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, citizen);
+		caravan.Initialize (caravaneer);
+		caravaneer.Initialize ();
+		return caravaneer;
 	}
 	//internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){
 	//	if(sourceKingdom.isLockedDown){

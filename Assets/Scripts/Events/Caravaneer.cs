@@ -126,15 +126,17 @@ public class Caravaneer : GameEvent {
 	}
 
 	internal void ReceiveCityToObtainResource(City targetCity, List<HexTile> path){
-		if(targetCity == null){
-			DeactivateCaravan ();
-			RescheduleChecking ();
-		}else{
-			this.path = path;
-			this.targetCity = targetCity;
-			ReserveResource ();
-			ActivateCaravan ();
-			SendCaravan ();
+		if(this.isActive){
+			if(targetCity == null){
+				DeactivateCaravan ();
+				RescheduleChecking ();
+			}else{
+				this.path = path;
+				this.targetCity = targetCity;
+				ReserveResource ();
+				ActivateCaravan ();
+				SendCaravan ();
+			}
 		}
 	}
 	private void ReserveResource(){
