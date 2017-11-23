@@ -27,10 +27,19 @@ public class Trait{
         
         for (int i = 0; i < allWeightedActions.Length; i++) {
             WEIGHTED_ACTION currAction = allWeightedActions[i];
-            int totalWeightOfAction = Mathf.Max(0, GetBaseWeightOfAction(currAction)); //So that the returned number can never be negative
-            if(totalWeightOfAction > 0) {
-                totalWeights.Add(currAction, totalWeightOfAction);
+            bool shouldIncludeActionToWeights = true;
+            if (Utilities.weightedActionRequirements.ContainsKey(currAction)) {
+                if (Utilities.weightedActionRequirements[currAction].Contains(WEIGHTED_ACTION_REQS.NO_ALLIANCE) && ownerOfTrait.city.kingdom.alliancePool != null) {
+                    shouldIncludeActionToWeights = false;
+                }
             }
+            if (shouldIncludeActionToWeights) {
+                int totalWeightOfAction = Mathf.Max(0, GetBaseWeightOfAction(currAction)); //So that the returned number can never be negative
+                if (totalWeightOfAction > 0) {
+                    totalWeights.Add(currAction, totalWeightOfAction);
+                }
+            }
+            
         }
         return totalWeights;
     }

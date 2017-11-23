@@ -1322,9 +1322,6 @@ public class Citizen {
                 Kingdom target = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForWeightedAction(actionToPerform));
                 Debug.Log(role.ToString() + " " + this.name + " decides to " + actionToPerform + " on " + target.name);
             } else if((WEIGHTED_ACTION_TYPE)actionToPerform == WEIGHTED_ACTION_TYPE.INDIRECT) {
-                if(actionToPerform == WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST && this.city.kingdom.alliancePool != null) {
-                    return;
-                }
                 Kingdom[] targets = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForIndirectWeightedAction(actionToPerform));
             }
             
