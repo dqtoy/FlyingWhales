@@ -19,8 +19,10 @@ public class CollisionManager : MonoBehaviour {
 	}
 
 	private void GeneralToGeneral(General general1, General general2){
-		if(general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id){
-			Combat (general1, general2);
+		if(general1 != null && general2 != null){
+			if(general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id){
+				Combat (general1, general2);
+			}	
 		}
 	}
 

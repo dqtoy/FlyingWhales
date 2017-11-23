@@ -2127,8 +2127,8 @@ public class UIManager : MonoBehaviour {
 								allianceWarLbl.AddCity (warfare.battles[j].attackCity);
 								allianceWarLbl.AddCity (warfare.battles[j].defenderCity);
 
-								this.allianceSummaryLbl.text += "\n-- [url=" + warfare.battles[j].attackCity.id.ToString() + "_city" + "]" + warfare.battles[j].attackCity.name + "[/url] -> [url=" + warfare.battles[j].defenderCity.id.ToString() + "_city" + "]" + warfare.battles[j].defenderCity.name + "[/url] (" 
-									+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString() + ")";
+								this.allianceSummaryLbl.text += "\n-- [url=" + warfare.battles[j].attackCity.id.ToString() + "_city" + "]" + warfare.battles[j].attackCity.name + "[/url] -> [url=" + warfare.battles[j].defenderCity.id.ToString() + "_city" + "]" + warfare.battles[j].defenderCity.name + "[/url]";
+								//("+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString() + ")"
 							}
 						}
 					}

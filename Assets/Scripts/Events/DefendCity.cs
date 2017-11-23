@@ -33,22 +33,29 @@ public class DefendCity : GameEvent {
 	}
 	internal void ReturnRemainingSoldiers(){
 		if(this.isActive){
-			if(!this.sourceCity.isDead){
-				ReturnSoldiers (this.sourceCity);
-			}else{
-				if(!this.sourceKingdom.isDead){
-					for (int i = 0; i < this.sourceCity.region.connections.Count; i++) {
-						if(this.sourceCity.region.connections[i] is Region){
-							City city = ((Region)this.sourceCity.region.connections [i]).occupant;
-							if(city != null && city.kingdom.id == this.sourceKingdom.id && Utilities.HasPath(this.general.location, city.hexTile, PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, this.sourceKingdom)){
-								ReturnSoldiers (city);
-								return;
+			if (this.general.location.id == this.sourceCity.hexTile.id) {
+				if (!this.sourceCity.isDead) {
+					this.sourceCity.AdjustSoldiers (this.general.soldiers);
+				}
+				this.DoneEvent ();
+			} else {
+				if (!this.sourceCity.isDead) {
+					ReturnSoldiers (this.sourceCity);
+				} else {
+					if (!this.sourceKingdom.isDead) {
+						for (int i = 0; i < this.sourceCity.region.connections.Count; i++) {
+							if (this.sourceCity.region.connections [i] is Region) {
+								City city = ((Region)this.sourceCity.region.connections [i]).occupant;
+								if (city != null && city.kingdom.id == this.sourceKingdom.id && Utilities.HasPath (this.general.location, city.hexTile, PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, this.sourceKingdom)) {
+									ReturnSoldiers (city);
+									return;
+								}
 							}
 						}
+						this.DoneEvent ();
+					} else {
+						this.DoneEvent ();
 					}
-					this.DoneEvent ();
-				}else{
-					this.DoneEvent ();
 				}
 			}
 		}
@@ -99,6 +106,9 @@ public class DefendCity : GameEvent {
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();
+		if (!this.sourceCity.isDead) {
+			this.sourceCity.AdjustSoldiers (this.general.soldiers);
+		}
 		this.DoneEvent ();
 	}
 	#endregion

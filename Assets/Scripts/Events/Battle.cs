@@ -517,6 +517,13 @@ public class Battle {
 				this._kingdom1City.ChangeDefendingState (false);
 				this._kingdom2City.ChangeAttackingState (false);
 				this._kingdom2City.ChangeDefendingState (false);
+				if(this.attackCityEvent != null && this.attackCityEvent.isActive){
+					this.attackCityEvent.CancelEvent ();
+				}
+				if(this.defendCityEvent != null && this.defendCityEvent.isActive){
+					this.defendCityEvent.CancelEvent ();
+				}
+
 				if(!this._kingdom1.isDead && !this._kingdom2.isDead){
 					this._kr.ChangeBattle (null);
 				}
@@ -546,6 +553,12 @@ public class Battle {
 				this._kingdom1City.ChangeDefendingState (false);
 				this._kingdom2City.ChangeAttackingState (false);
 				this._kingdom2City.ChangeDefendingState (false);
+				if(this.attackCityEvent != null && this.attackCityEvent.isActive){
+					this.attackCityEvent.CancelEvent ();
+				}
+				if(this.defendCityEvent != null && this.defendCityEvent.isActive){
+					this.defendCityEvent.CancelEvent ();
+				}
 				if(!this._kingdom1.isDead && !this._kingdom2.isDead){
 					this._kr.ChangeBattle (null);
 				}
@@ -573,6 +586,12 @@ public class Battle {
 		this._kingdom1City.ChangeDefendingState (false);
 		this._kingdom2City.ChangeAttackingState (false);
 		this._kingdom2City.ChangeDefendingState (false);
+		if(this.attackCityEvent != null && this.attackCityEvent.isActive){
+			this.attackCityEvent.CancelEvent ();
+		}
+		if(this.defendCityEvent != null && this.defendCityEvent.isActive){
+			this.defendCityEvent.CancelEvent ();
+		}
 		if(!this._kingdom1.isDead && !this._kingdom2.isDead){
 			this._kr.ChangeBattle (null);
 		}
