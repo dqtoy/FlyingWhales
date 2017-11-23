@@ -153,7 +153,7 @@ public class Battle {
 		}
 			
 		if(ownedConnectedCities.Count > 0){
-			totalConnectedOwnedSoldiers = (connectedOwnedCitiesSoldiers - lessenSoldiers) / (this.attacker.kingdom.warfareInfo.Count + 1);
+			totalConnectedOwnedSoldiers = Mathf.RoundToInt((connectedOwnedCitiesSoldiers - lessenSoldiers) / (this.attacker.kingdom.warfareInfo.Count + 1));
 			if(totalConnectedOwnedSoldiers < 0){
 				totalConnectedOwnedSoldiers = 0;
 			}
@@ -165,15 +165,19 @@ public class Battle {
 					int totalSoldiersCount = distributableSoldiers + excessSoldiers;
 					if(city.soldiers < totalSoldiersCount){
 						excessSoldiers += totalSoldiersCount - city.soldiers;
-						ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, city.soldiers);
-						if(reinforceCity != null){
-							this.attackCityEvent.AddReinforcements (reinforceCity);
+						if(city.soldiers > 0){
+							ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, city.soldiers);
+							if(reinforceCity != null){
+								this.attackCityEvent.AddReinforcements (reinforceCity);
+							}
 						}
 					}else{
 						excessSoldiers = 0;
-						ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, totalSoldiersCount);
-						if(reinforceCity != null){
-							this.attackCityEvent.AddReinforcements (reinforceCity);
+						if(totalSoldiersCount > 0){
+							ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, totalSoldiersCount);
+							if(reinforceCity != null){
+								this.attackCityEvent.AddReinforcements (reinforceCity);
+							}
 						}
 					}
 				}
@@ -198,9 +202,11 @@ public class Battle {
 				Region connectedRegion = (Region)this.defender.region.connections [i];
 				if(connectedRegion.occupant != null && connectedRegion.occupant.kingdom.id == this.defender.kingdom.id && connectedRegion.occupant.soldiers > 0){
 					int totalSoldiersCount = connectedRegion.occupant.soldiers / 2;
-					ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (connectedRegion.occupant, this.defender, totalSoldiersCount);
-					if(reinforceCity != null){
-						this.defendCityEvent.AddReinforcements (reinforceCity);
+					if(totalSoldiersCount > 0){
+						ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (connectedRegion.occupant, this.defender, totalSoldiersCount);
+						if(reinforceCity != null){
+							this.defendCityEvent.AddReinforcements (reinforceCity);
+						}
 					}
 				}
 			}

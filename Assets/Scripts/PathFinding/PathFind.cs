@@ -148,7 +148,7 @@ namespace PathFind {
 							continue;
 						}
 						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
-							KingdomRelationship kr = n.city.kingdom.GetRelationshipWithKingdom (kingdom);
+							KingdomRelationship kr = n.region.occupant.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
 							}
@@ -166,7 +166,7 @@ namespace PathFind {
 							continue;
 						}
 						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
-							KingdomRelationship kr = n.city.kingdom.GetRelationshipWithKingdom (kingdom);
+							KingdomRelationship kr = n.region.occupant.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
 							}
