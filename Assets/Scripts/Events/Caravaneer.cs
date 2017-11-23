@@ -22,6 +22,13 @@ public class Caravaneer : GameEvent {
 		this.caravan = (Caravan)startedBy.assignedRole;
 		this.sourceCity = startedBy.city;
 		this.producedResource = this.sourceCity.region.tileWithSpecialResource.specialResourceType;
+		if(this.producedResource == RESOURCE_TYPE.MATERIAL){
+			if(this.sourceCity.kingdom.race != RACE.HUMANS && (this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
+				this.producedResource = RESOURCE_TYPE.NONE;
+			}else if(this.sourceCity.kingdom.race != RACE.ELVES && (this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
+				this.producedResource = RESOURCE_TYPE.NONE;
+			}
+		}
 		this.path = new List<HexTile> ();
 		this.isReturning = false;
 		this.resourceAmount = 0;
@@ -105,7 +112,7 @@ public class Caravaneer : GameEvent {
 					return RESOURCE_TYPE.ORE;
 				}
 			}
-		}else{
+		}else if(this.producedResource == RESOURCE_TYPE.ORE){
 			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement) {
 				return RESOURCE_TYPE.FOOD;
 			} else if (this.sourceCity.materialCount <= this.sourceCity.materialRequirement) {
@@ -115,6 +122,22 @@ public class Caravaneer : GameEvent {
 					return RESOURCE_TYPE.FOOD;
 				}else{
 					return RESOURCE_TYPE.MATERIAL;
+				}
+			}
+		}else{
+			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement) {
+				return RESOURCE_TYPE.FOOD;
+			} else if (this.sourceCity.materialCount <= this.sourceCity.materialRequirement) {
+				return RESOURCE_TYPE.MATERIAL;
+			} else if (this.sourceCity.oreCount <= this.sourceCity.oreRequirement) {
+				return RESOURCE_TYPE.ORE;
+			} else {
+				if(this.sourceCity.foodCount <= this.sourceCity.materialCount && this.sourceCity.foodCount <= this.sourceCity.oreCount){
+					return RESOURCE_TYPE.FOOD;
+				}else if(this.sourceCity.materialCount <= this.sourceCity.foodCount && this.sourceCity.materialCount <= this.sourceCity.oreCount){
+					return RESOURCE_TYPE.MATERIAL;
+				}else{
+					return RESOURCE_TYPE.ORE;
 				}
 			}
 		}
@@ -143,7 +166,11 @@ public class Caravaneer : GameEvent {
 		if (neededResource == RESOURCE_TYPE.FOOD) {
 			this.reserveAmount = this.targetCity.ReserveFood ();
 		}else if (neededResource == RESOURCE_TYPE.MATERIAL) {
-			this.reserveAmount = this.targetCity.ReserveMaterial ();
+			RESOURCE resource = RESOURCE.SLATE;
+			if(this.sourceCity.kingdom.race == RACE.ELVES){
+				resource = RESOURCE.OAK;
+			}
+			this.reserveAmount = this.targetCity.ReserveMaterial (resource);
 		}else if (neededResource == RESOURCE_TYPE.ORE) {
 			this.reserveAmount = this.targetCity.ReserveOre ();
 		}
@@ -185,7 +212,7 @@ public class Caravaneer : GameEvent {
 			if(neededResource == RESOURCE_TYPE.FOOD){
 				this.sourceCity.AdjustFoodCount (this.resourceAmount);
 			}else if(neededResource == RESOURCE_TYPE.MATERIAL){
-				this.sourceCity.AdjustMaterialCount (this.resourceAmount);
+				this.sourceCity.AdjustMaterialCount (this.resourceAmount, RESOURCE.NONE);
 			}else if(neededResource == RESOURCE_TYPE.ORE){
 				this.sourceCity.AdjustOreCount (this.resourceAmount);
 			}

@@ -37,6 +37,12 @@ public class City{
 	private int _virtualMaterialCount;
 	private int _virtualOreCount;
 
+	private int _materialCountForHumans;
+	private int _materialCountForElves;
+	private int _reservedMaterialCountForHumans;
+	private int _reservedMaterialCountForElves;
+
+
     //Balance of Power
     //private int _powerPoints;
     //private int _defensePoints;
@@ -160,6 +166,12 @@ public class City{
 	internal int materialCount{
 		get { return this._materialCount + this._reservedMaterialCount; }
 	}
+	internal int materialCountForHumans{
+		get { return this._materialCountForHumans + this._reservedMaterialCountForHumans; }
+	}
+	internal int materialCountForElves{
+		get { return this._materialCountForElves + this._reservedMaterialCountForElves; }
+	}
 	internal int oreCount{
 		get { return this._oreCount + this._reservedOreCount; }
 	}
@@ -197,7 +209,15 @@ public class City{
 		get { return this._foodCount - this.foodReserved; }
 	}
 	internal int materialForTrade{
-		get { return this._materialCount - this.materialReserved; }
+		get {
+			if(this._materialCountForHumans > 0){
+				return this._materialCountForHumans;
+			}else if(this._materialCountForElves > 0){
+				return this._materialCountForElves;
+			}else{
+				return this._materialCount - this.materialReserved; 
+			}
+		}
 	}
 	internal int oreForTrade{
 		get { return this._oreCount - this.oreReserved; }
@@ -516,7 +536,6 @@ public class City{
 		this._foodCount += amount;
 		this._foodCount = Mathf.Clamp (this._foodCount, 0, (this.foodCapacity - this._reservedFoodCount));
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
-//		CheckFoodSupply ();
 	}
 	internal void AdjustVirtualFoodCount(int amount){
 		this._virtualFoodCount += amount;
@@ -541,11 +560,49 @@ public class City{
 		this.AdjustFoodCount (-amount);
 		return amount;
 	}
-	internal void AdjustMaterialCount(int amount){
-		this._materialCount += amount;
-		this._materialCount = Mathf.Clamp (this._materialCount, 0, (this.materialCapacity - this._reservedMaterialCount));
-		this.hexTile.UpdateCityFoodMaterialOreUI ();
-//		CheckMaterialSupply ();
+	internal void AdjustMaterialCount(int amount, RESOURCE resource){
+		if(resource == RESOURCE.NONE){
+			this._materialCount += amount;
+			this._materialCount = Mathf.Clamp (this._materialCount, 0, (this.materialCapacity - this._reservedMaterialCount));
+			this.hexTile.UpdateCityFoodMaterialOreUI ();
+		}else{
+			if(this._kingdom.race == RACE.HUMANS){
+				if(resource == RESOURCE.SLATE || resource == RESOURCE.GRANITE){
+					this._materialCount += amount;
+					this._materialCount = Mathf.Clamp (this._materialCount, 0, (this.materialCapacity - this._reservedMaterialCount));
+					this.hexTile.UpdateCityFoodMaterialOreUI ();
+				}else{
+					this._materialCountForElves += amount;
+					this._materialCountForElves = Mathf.Clamp (this._materialCountForElves, 0, (this.materialCapacity - this._reservedMaterialCountForElves));
+
+				}
+			}else if(this._kingdom.race == RACE.ELVES){
+				if(resource == RESOURCE.OAK || resource == RESOURCE.EBONY){
+					this._materialCount += amount;
+					this._materialCount = Mathf.Clamp (this._materialCount, 0, (this.materialCapacity - this._reservedMaterialCount));
+					this.hexTile.UpdateCityFoodMaterialOreUI ();
+				}else{
+					this._materialCountForHumans += amount;
+					this._materialCountForHumans = Mathf.Clamp (this._materialCountForHumans, 0, (this.materialCapacity - this._reservedMaterialCountForHumans));
+
+				}
+			}
+		}
+	}
+	internal void AdjustReservedMaterialCount(int amount, RESOURCE resource){
+		if(this._kingdom.race == RACE.HUMANS){
+			if(resource == RESOURCE.SLATE || resource == RESOURCE.GRANITE){
+				this._reservedMaterialCount += amount;
+			}else{
+				this._reservedMaterialCountForElves += amount;
+			}
+		}else if(this._kingdom.race == RACE.ELVES){
+			if(resource == RESOURCE.OAK || resource == RESOURCE.EBONY){
+				this._reservedMaterialCount += amount;
+			}else{
+				this._reservedMaterialCountForHumans += amount;
+			}
+		}
 	}
 	internal void AdjustVirtualMaterialCount(int amount){
 		this._virtualMaterialCount += amount;
@@ -557,7 +614,7 @@ public class City{
 		this._materialCount = amount;
 		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
-	internal int ReserveMaterial(){
+	internal int ReserveMaterial(RESOURCE resource){
 		int materialTrade = this.materialForTrade;
 		int materialTradeCap = 3 * this.materialRequirement;
 		int amount = 0;
@@ -566,8 +623,8 @@ public class City{
 		}else{
 			amount = materialTrade;
 		}
-		this._reservedMaterialCount += amount;
-		this.AdjustMaterialCount (-amount);
+		this.AdjustReservedMaterialCount (amount, resource);
+		this.AdjustMaterialCount (-amount, resource);
 		return amount;
 	}
 	internal void AdjustOreCount(int amount){
@@ -610,12 +667,24 @@ public class City{
 			}
 			this._reservedFoodCount -= amountToTrade;
 		}else if(caravaneer.neededResource == RESOURCE_TYPE.MATERIAL){
-			if (this._reservedMaterialCount == 0) {
-				amountToTrade = 0;
-			}else if(this._reservedMaterialCount < amountToTrade){
-				amountToTrade = this._reservedMaterialCount;
+			if(this._reservedMaterialCountForHumans > 0){
+				if(this._reservedMaterialCountForHumans < amountToTrade){
+					amountToTrade = this._reservedMaterialCountForHumans;
+				}
+				this._reservedMaterialCountForHumans -= amount;
+			}else if(this._reservedMaterialCountForElves > 0){
+				if(this._reservedMaterialCountForElves < amountToTrade){
+					amountToTrade = this._reservedMaterialCountForElves;
+				}
+				this._reservedMaterialCountForElves -= amount;
+			}else{
+				if (this._reservedMaterialCount == 0) {
+					amountToTrade = 0;
+				}else if(this._reservedMaterialCount < amountToTrade){
+					amountToTrade = this._reservedMaterialCount;
+				}
+				this._reservedMaterialCount -= amountToTrade;
 			}
-			this._reservedMaterialCount -= amountToTrade;
 		}else if(caravaneer.neededResource == RESOURCE_TYPE.ORE){
 			if (this._reservedOreCount == 0) {
 				amountToTrade = 0;
@@ -645,10 +714,10 @@ public class City{
 	private void ConsumeMaterial(){
 		int materialToBeConsumed = this.materialRequirement;
 		if(this._materialCount >= materialToBeConsumed){
-			AdjustMaterialCount (-materialToBeConsumed);
+			AdjustMaterialCount (-materialToBeConsumed, RESOURCE.NONE);
 			this._isNoCityGrowth = false;
 		}else{
-			AdjustMaterialCount (-this._materialCount);
+			AdjustMaterialCount (-this._materialCount, RESOURCE.NONE);
 			//Suffer No City Growth
 			this._isNoCityGrowth = true;
 		}
@@ -671,62 +740,17 @@ public class City{
 			}
 		}
 	}
-	private void CheckFoodSupply(){
-		if(this._kingdom.cities.Count > 1){
-			int foodCap = this.foodReserved;
-			if(this.foodCount > foodCap){
-				int excessFood = this.foodCount - foodCap;
-				if (excessFood >= foodCap) {
-					//Send caravan to other cities to give excess food
-					SendFoodToOtherCities (excessFood);
-				}
-			}
-		}
-	}
-	private void CheckMaterialSupply(){
-		if (this._kingdom.cities.Count > 1) {
-			int materialCap = this.materialReserved;
-			if (this.materialCount > materialCap) {
-				int excessMaterial = this.materialCount - materialCap;
-				if (excessMaterial >= materialCap) {
-					//Send caravan to other cities to give excess material
-					SendMaterialToOtherCities (excessMaterial);
-				}
-			}
-		}
-	}
-	private void CheckOreSupply(){
-		if (this._kingdom.cities.Count > 1) {
-			int oreCap = this.oreReserved;
-			if (this.oreCount > oreCap) {
-				int excessOre = this.oreCount - oreCap;
-				if(excessOre >= oreCap){
-					//Send caravan to other cities to give excess ore
-					SendOreToOtherCities(excessOre);
-				}
-			}
-		}
-	}
-	private void SendFoodToOtherCities(int foodAmount){
-		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (foodAmount, 0, 0, RESOURCE_TYPE.FOOD, this.hexTile, this));
-	}
-	private void SendMaterialToOtherCities(int materialAmount){
-		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, this));
-	}
-	private void SendOreToOtherCities(int oreAmount){
-		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, this));
-	}
 	internal void ReceiveSendResourceThread(int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType, HexTile sourceHextile, HexTile targetHextile, City targetCity, List<HexTile> path){
 		if (targetHextile != null && targetHextile.city != null && targetCity != null && (path != null || path.Count > 0)) {
 			if(targetCity.id == targetHextile.city.id){
 				if (resourceType == RESOURCE_TYPE.FOOD) {
 					this.AdjustFoodCount (-foodAmount);
 				}else if (resourceType == RESOURCE_TYPE.MATERIAL) {
-					this.AdjustMaterialCount (-materialAmount);
+					this.AdjustMaterialCount (-materialAmount, RESOURCE.NONE);
 				}else if (resourceType == RESOURCE_TYPE.ORE) {
 					this.AdjustOreCount (-oreAmount);
 				}
-				EventCreator.Instance.CreateSendResourceEvent (foodAmount, materialAmount, oreAmount, resourceType, sourceHextile, targetHextile, this, path);
+//				EventCreator.Instance.CreateSendResourceEvent (foodAmount, materialAmount, oreAmount, resourceType, sourceHextile, targetHextile, this, path);
 			}
 		}
 	}

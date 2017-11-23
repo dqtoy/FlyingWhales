@@ -444,24 +444,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this.resourceCount += 42;
 			break;
 		case RESOURCE.SLATE:
-			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (25, 36);
-			}
+			this.resourceCount += UnityEngine.Random.Range (25, 36);
 			break;
 		case RESOURCE.GRANITE:
-			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (35, 46);
-			}
+			this.resourceCount += UnityEngine.Random.Range (35, 46);
 			break;
 		case RESOURCE.OAK:
-			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (25, 36);
-			}
+			this.resourceCount += UnityEngine.Random.Range (25, 36);
 			break;
 		case RESOURCE.EBONY:
-			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (35, 46);
-			}
+			this.resourceCount += UnityEngine.Random.Range (35, 46);
 			break;
 		case RESOURCE.COBALT:
 			this.resourceCount += UnityEngine.Random.Range (10, 21);
@@ -479,19 +471,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		if(this.specialResourceType == RESOURCE_TYPE.FOOD){
 			if(this.resourceCount >= this.region.occupant.foodReserved){
 				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
+				EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}else if(this.specialResourceType == RESOURCE_TYPE.MATERIAL){
 			if(this.resourceCount >= this.region.occupant.materialReserved){
 				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
+				EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}else if(this.specialResourceType == RESOURCE_TYPE.ORE){
 			if(this.resourceCount >= this.region.occupant.oreReserved){
 				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
+				EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}
@@ -1620,6 +1612,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
 		text += "\n [b]Food Count:[/b] " + this.city.foodCount.ToString () + "/" + this.city.foodCapacity + "(" + this.city.foodRequirement.ToString () + ")" +
 		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialCapacity + "(" + this.city.materialRequirement.ToString () + ")" +
+		"\n [b]Material Count For Humans:[/b] " + this.city.materialCountForHumans.ToString () + "/" + this.city.materialCapacity +
+		"\n [b]Material Count For Elves:[/b] " + this.city.materialCountForElves.ToString () + "/" + this.city.materialCapacity +
 		"\n [b]Ore Count:[/b] " + this.city.oreCount.ToString () + "/" + this.city.oreCapacity + "(" + this.city.oreRequirement.ToString () + ")" +
 		"\n [b]Kingdom Food S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.foodCityCapacity +
 		"\n [b]Kingdom Material For Humans S/D:[/b] " + ((this.city.kingdom.race == RACE.HUMANS) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForHumans +

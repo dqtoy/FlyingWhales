@@ -31,7 +31,11 @@ public class CaravaneerThread {
 		if(neededResource == RESOURCE_TYPE.FOOD){
 			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.foodForTrade >= x.foodRequirement).ToList();
 		}else if(neededResource == RESOURCE_TYPE.MATERIAL){
-			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.materialForTrade >= x.materialRequirement).ToList();
+			if(this.sourceKingdom.race == RACE.HUMANS){
+				citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || x.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE) && x.materialForTrade >= x.materialRequirement).ToList();
+			}else if(this.sourceKingdom.race == RACE.HUMANS){
+				citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || x.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY) && x.materialForTrade >= x.materialRequirement).ToList();
+			}
 		}else if(neededResource == RESOURCE_TYPE.ORE){
 			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.oreForTrade >= x.oreRequirement).ToList();
 		}

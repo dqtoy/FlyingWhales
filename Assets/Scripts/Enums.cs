@@ -121,6 +121,7 @@ public enum RESOURCE{
 	COBALT,
 }
 public enum RESOURCE_TYPE{
+	NONE,
 	FOOD,
 	MATERIAL,
 	ORE,
