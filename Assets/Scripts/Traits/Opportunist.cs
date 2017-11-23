@@ -38,4 +38,41 @@ public class Opportunist : Trait {
         }
         return targetWeights;
     }
+    internal override Dictionary<Kingdom, int> GetAllianceOfProtectionTargetWeights() {
+        Dictionary<Kingdom, int> targetWeights = base.GetAllianceOfProtectionTargetWeights();
+        if(targetWeights == null) {
+            return null;
+        }
+        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        //loop through known Kingdoms with the highest Relative Strength and only select one with positive Relative Strength and not at war with
+        for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
+            Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i];
+            KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+            KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+            if (!relWithOtherKingdom.isAtWar && relOfOtherWithSource._relativeStrength > 0) {
+                int weight = 0;
+                weight += 5 * relOfOtherWithSource._relativeStrength;//add 5 Weight for every positive Relative Strength point of the kingdom
+                //add 2 Weight for every positive Opinion it has towards me
+                //subtract 1 Weight for every negative Opinion it has towards me
+                if(relOfOtherWithSource.totalLike > 0) {
+                    weight += 2 * relOfOtherWithSource.totalLike;
+                } else if(relOfOtherWithSource.totalLike < 0) {
+                    weight += relOfOtherWithSource.totalLike;
+                }
+
+                //TODO: subtract 50 Weight if an Alliance or Trade Deal between the two has recently been rejected by the 
+                //target or if either side has recently broken an Alliance or Trade Deal
+                weight = Mathf.Max(0, weight); //minimum 0
+                if (targetWeights.ContainsKey(otherKingdom)) {
+                    int existingWeight = targetWeights[otherKingdom];
+                    weight += existingWeight;
+                    weight = Mathf.Max(0, weight); //minimum 0
+                    targetWeights[otherKingdom] = weight;
+                } else {
+                    targetWeights.Add(otherKingdom, weight);
+                }
+            }
+        }
+        return targetWeights;
+    }
 }
