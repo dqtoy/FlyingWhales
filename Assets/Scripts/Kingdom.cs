@@ -3250,5 +3250,20 @@ public class Kingdom{
 			this._oreCityCapacity = 0;
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Weighted Actions
+    internal bool IsThreatened() {
+        //if i am adjacent to someone whose threat is +20 or above and whose Opinion of me is negative
+        for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
+            Kingdom otherKingdom = sourceKingdom.adjacentKingdoms[i];
+            KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+            KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+            if (relWithOtherKingdom.targetKingdomThreatLevel > 20 && relOfOtherWithSource.totalLike < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Deceitful : Trait {
 
     internal override Dictionary<Kingdom, int> GetWarOfConquestTargetWeights() {
-        Dictionary<Kingdom, int> targetWeights = base.GetWarOfConquestTargetWeights();
+        Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.adjacentKingdoms[i];
@@ -38,11 +38,11 @@ public class Deceitful : Trait {
         return targetWeights;
     }
     internal override Dictionary<Kingdom, int> GetAllianceOfProtectionTargetWeights() {
-        Dictionary<Kingdom, int> targetWeights = base.GetAllianceOfProtectionTargetWeights();
-        if (targetWeights == null) {
+        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        if (!sourceKingdom.IsThreatened()) {
             return null;
         }
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
         //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
         for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i];

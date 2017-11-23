@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Imperialist : Trait {
 
     internal override Dictionary<Kingdom, int> GetWarOfConquestTargetWeights() {
-        Dictionary<Kingdom, int> targetWeights = base.GetWarOfConquestTargetWeights();
+        Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         //loop through non-ally adjacent kingdoms i am not at war with
         for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
