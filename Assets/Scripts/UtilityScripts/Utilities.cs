@@ -1154,7 +1154,7 @@ public class Utilities : MonoBehaviour {
             WEIGHTED_ACTION currKey = kvp.Key;
             int currValue = kvp.Value;
             if (dict1.ContainsKey(currKey)) {
-                currValue += dict2[currKey];
+                currValue += dict1[currKey];
             }
             if (!mergedDict.ContainsKey(currKey)) {
                 mergedDict.Add(currKey, currValue);
@@ -1164,26 +1164,49 @@ public class Utilities : MonoBehaviour {
         return mergedDict;
     }
 
-    public static Dictionary<Kingdom, int> MergeWeightedActionDictionaries(Dictionary<Kingdom, int> dict1, Dictionary<Kingdom, int> dict2) {
-        Dictionary<Kingdom, int> mergedDict = new Dictionary<Kingdom, int>();
-        foreach (KeyValuePair<Kingdom, int> kvp in dict1) {
-            Kingdom currKey = kvp.Key;
+    public static Dictionary<T, int> MergeWeightedActionDictionaries<T>(Dictionary<T, int> dict1, Dictionary<T, int> dict2) {
+        Dictionary<T, int> mergedDict = new Dictionary<T, int>();
+        foreach (KeyValuePair<T, int> kvp in dict1) {
+            T currKey = kvp.Key;
             int currValue = kvp.Value;
             if (dict2.ContainsKey(currKey)) {
                 currValue += dict2[currKey];
             }
             mergedDict.Add(currKey, currValue);
         }
-        foreach (KeyValuePair<Kingdom, int> kvp in dict2) {
-            Kingdom currKey = kvp.Key;
+        foreach (KeyValuePair<T, int> kvp in dict2) {
+            T currKey = kvp.Key;
             int currValue = kvp.Value;
             if (dict1.ContainsKey(currKey)) {
-                currValue += dict2[currKey];
+                currValue += dict1[currKey];
             }
             if (!mergedDict.ContainsKey(currKey)) {
                 mergedDict.Add(currKey, currValue);
             }
 
+        }
+        return mergedDict;
+    }
+
+    public static Dictionary<T, Dictionary<T, int>> MergeWeightedActionDictionaries<T>(Dictionary<T, Dictionary<T, int>> dict1, Dictionary<T, Dictionary<T, int>> dict2) {
+        Dictionary<T, Dictionary<T, int>> mergedDict = new Dictionary<T, Dictionary<T, int>>();
+        foreach (KeyValuePair<T, Dictionary<T, int>> kvp in dict1) {
+            T currKey = kvp.Key;
+            Dictionary<T, int> currValue = kvp.Value;
+            if (dict2.ContainsKey(currKey)) {
+                currValue = MergeWeightedActionDictionaries<T>(currValue, dict2[currKey]);
+            }
+            mergedDict.Add(currKey, currValue);
+        }
+        foreach (KeyValuePair<T, Dictionary<T, int>> kvp in dict2) {
+            T currKey = kvp.Key;
+            Dictionary<T, int> currValue = kvp.Value;
+            if (!mergedDict.ContainsKey(currKey)) {
+                if (dict1.ContainsKey(currKey)) {
+                    currValue = MergeWeightedActionDictionaries<T>(currValue, dict1[currKey]);
+                }
+                mergedDict.Add(currKey, currValue);
+            }
         }
         return mergedDict;
     }
@@ -1201,6 +1224,33 @@ public class Utilities : MonoBehaviour {
                 return currElementType;
             }
             lowerBound = upperBound;
+        }
+        throw new Exception("Could not pick element in weights");
+    }
+
+    /*
+     * This will return an array that has 2 elements 
+     * of the same type.
+     * */
+    public static T[] PickRandomElementWithWeights<T>(Dictionary<T, Dictionary<T,int>> weights) {
+        int totalOfAllWeights = 0;
+        foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
+            foreach (KeyValuePair<T, int> pair in kvp.Value) {
+                totalOfAllWeights += pair.Value;
+            }
+        }
+        int chance = UnityEngine.Random.Range(0, totalOfAllWeights);
+        int upperBound = 0;
+        int lowerBound = 0;
+        foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
+            T currElementType = kvp.Key;
+            foreach (KeyValuePair<T, int> pair in kvp.Value) {
+                T otherElement = pair.Key;
+                int weightOfOtherElement = pair.Value;
+                if (chance >= lowerBound && chance < upperBound) {
+                    return new T[] { currElementType, otherElement };
+                }
+            }
         }
         throw new Exception("Could not pick element in weights");
     }

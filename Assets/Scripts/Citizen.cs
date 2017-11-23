@@ -1318,10 +1318,38 @@ public class Citizen {
     internal void DoWeightedAction() {
         WEIGHTED_ACTION actionToPerform = DetermineWeightedActionToPerform();
         if(actionToPerform != WEIGHTED_ACTION.DO_NOTHING) {
-            Kingdom target = Utilities.PickRandomElementWithWeights<Kingdom>(GetKingdomWeightsForWeightedAction(actionToPerform));
-            Debug.Log(role.ToString() + " " + this.name + " decides to " + actionToPerform + " on " + target.name);
-        }
+            if((WEIGHTED_ACTION_TYPE)actionToPerform == WEIGHTED_ACTION_TYPE.DIRECT) {
+                Kingdom target = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForWeightedAction(actionToPerform));
+                Debug.Log(role.ToString() + " " + this.name + " decides to " + actionToPerform + " on " + target.name);
+            } else if((WEIGHTED_ACTION_TYPE)actionToPerform == WEIGHTED_ACTION_TYPE.INDIRECT) {
+                if(actionToPerform == WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST && this.city.kingdom.alliancePool != null) {
+                    return;
+                }
+                Kingdom[] targets = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForIndirectWeightedAction(actionToPerform));
+            }
+            
+        }   
         
+    }
+
+    private Dictionary<Kingdom, Dictionary<Kingdom, int>> GetKingdomWeightsForIndirectWeightedAction(WEIGHTED_ACTION actionType) {
+        Dictionary<Kingdom, Dictionary<Kingdom, int>> totalWeightedKingdoms = new Dictionary<Kingdom, Dictionary<Kingdom, int>>();
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
+            Dictionary<Kingdom, Dictionary<Kingdom, int>> weightsFromCurrTrait = null;
+            switch (actionType) {
+                case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
+                    weightsFromCurrTrait = currTrait.GetAllianceOfConquestTargetWeights();
+                    break;
+                default:
+                    break;
+            }
+            if(weightsFromCurrTrait != null) {
+                totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, weightsFromCurrTrait);
+            }
+            
+        }
+        return totalWeightedKingdoms;
     }
 
     private Dictionary<Kingdom, int> GetKingdomWeightsForWeightedAction(WEIGHTED_ACTION actionType) {
@@ -1332,20 +1360,6 @@ public class Citizen {
             switch (actionType) {
                 case WEIGHTED_ACTION.WAR_OF_CONQUEST:
                     weightsFromCurrTrait = currTrait.GetWarOfConquestTargetWeights();
-                    break;
-                case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
-                    break;
-                case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-                    break;
-                case WEIGHTED_ACTION.TRADE_DEAL:
-                    break;
-                case WEIGHTED_ACTION.INCITE_UNREST:
-                    break;
-                case WEIGHTED_ACTION.PIT_OTHER_KINGDOMS:
-                    break;
-                case WEIGHTED_ACTION.FLATTER:
-                    break;
-                case WEIGHTED_ACTION.SEND_AID:
                     break;
                 default:
                     break;
