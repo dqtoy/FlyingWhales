@@ -147,7 +147,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.city != null && n.city.kingdom.id != kingdom.id) {
+						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
 							KingdomRelationship kr = n.city.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
@@ -165,7 +165,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.city != null && n.city.kingdom.id != kingdom.id) {
+						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
 							KingdomRelationship kr = n.city.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
@@ -183,7 +183,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.city != null && n.city.kingdom.id != kingdom.id) {
+						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
 							continue;
 						}
 						d = distance(path.LastStep, n);
