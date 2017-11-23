@@ -27,10 +27,19 @@ public class Trait{
         
         for (int i = 0; i < allWeightedActions.Length; i++) {
             WEIGHTED_ACTION currAction = allWeightedActions[i];
-            int totalWeightOfAction = Mathf.Max(0, GetBaseWeightOfAction(currAction)); //So that the returned number can never be negative
-            if(totalWeightOfAction > 0) {
-                totalWeights.Add(currAction, totalWeightOfAction);
+            bool shouldIncludeActionToWeights = true;
+            if (Utilities.weightedActionRequirements.ContainsKey(currAction)) {
+                if (Utilities.weightedActionRequirements[currAction].Contains(WEIGHTED_ACTION_REQS.NO_ALLIANCE) && ownerOfTrait.city.kingdom.alliancePool != null) {
+                    shouldIncludeActionToWeights = false;
+                }
             }
+            if (shouldIncludeActionToWeights) {
+                int totalWeightOfAction = Mathf.Max(0, GetBaseWeightOfAction(currAction)); //So that the returned number can never be negative
+                if (totalWeightOfAction > 0) {
+                    totalWeights.Add(currAction, totalWeightOfAction);
+                }
+            }
+            
         }
         return totalWeights;
     }
@@ -77,6 +86,42 @@ public class Trait{
         return targetWeights;
     }
     internal virtual Dictionary<Kingdom, Dictionary<Kingdom, int>> GetAllianceOfConquestTargetWeights() {
+        return null;
+    }
+    internal virtual Dictionary<Kingdom, int> GetAllianceOfProtectionTargetWeights() {
+        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        bool isThreatened = false;
+        //if i am adjacent to someone whose threat is +20 or above and whose Opinion of me is negative
+        for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
+            Kingdom otherKingdom = sourceKingdom.adjacentKingdoms[i];
+            KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+            KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+            if (relWithOtherKingdom.targetKingdomThreatLevel > 20 && relOfOtherWithSource.totalLike < 0) {
+                isThreatened = true;
+                break;
+            }
+        }
+        
+        if (isThreatened) {
+            Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
+            //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
+            for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
+                Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i];
+                KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+                KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+                if(!relOfOtherWithSource.isAtWar && relOfOtherWithSource.totalLike > 0) {
+                    int weight = 0;
+                    weight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
+                    weight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
+                    //TODO: subtract 50 Weight if an Alliance or Trade Deal between the two has recently been 
+                    //rejected by the target or if either side has recently broken an Alliance or Trade Deal
+                    weight = Mathf.Max(0, weight); //minimum 0
+
+                    targetWeights.Add(otherKingdom, weight);
+                }
+            }
+            return targetWeights;
+        }
         return null;
     }
     #endregion

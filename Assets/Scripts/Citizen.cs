@@ -1318,16 +1318,14 @@ public class Citizen {
     internal void DoWeightedAction() {
         WEIGHTED_ACTION actionToPerform = DetermineWeightedActionToPerform();
         if(actionToPerform != WEIGHTED_ACTION.DO_NOTHING) {
-            if((WEIGHTED_ACTION_TYPE)actionToPerform == WEIGHTED_ACTION_TYPE.DIRECT) {
-                Kingdom target = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForWeightedAction(actionToPerform));
-                Debug.Log(role.ToString() + " " + this.name + " decides to " + actionToPerform + " on " + target.name);
-            } else if((WEIGHTED_ACTION_TYPE)actionToPerform == WEIGHTED_ACTION_TYPE.INDIRECT) {
-                if(actionToPerform == WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST && this.city.kingdom.alliancePool != null) {
-                    return;
+            if (Utilities.weightedActionTypes.ContainsKey(actionToPerform)) {
+                if (Utilities.weightedActionTypes[actionToPerform] == WEIGHTED_ACTION_TYPE.DIRECT) {
+                    Kingdom target = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForWeightedAction(actionToPerform));
+                    Debug.Log(role.ToString() + " " + this.name + " decides to " + actionToPerform + " on " + target.name);
+                } else if (Utilities.weightedActionTypes[actionToPerform] == WEIGHTED_ACTION_TYPE.INDIRECT) {
+                    Kingdom[] targets = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForIndirectWeightedAction(actionToPerform));
                 }
-                Kingdom[] targets = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForIndirectWeightedAction(actionToPerform));
             }
-            
         }   
         
     }
@@ -1360,6 +1358,9 @@ public class Citizen {
             switch (actionType) {
                 case WEIGHTED_ACTION.WAR_OF_CONQUEST:
                     weightsFromCurrTrait = currTrait.GetWarOfConquestTargetWeights();
+                    break;
+                case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
+                    weightsFromCurrTrait = currTrait.GetAllianceOfProtectionTargetWeights();
                     break;
                 default:
                     break;

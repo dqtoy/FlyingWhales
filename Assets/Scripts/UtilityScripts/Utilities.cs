@@ -485,77 +485,92 @@ public class Utilities : MonoBehaviour {
         {BIOMES.TUNDRA, new Color(106f/255f, 108f/255f, 59f/255f)},
         {BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
     };
-//	public static string StringReplacer(string text, LogFiller[] logFillers){
-//		List<int> specificWordIndexes = new List<int> ();
-//		string newText = text;
-//		bool hasPeriod = newText.EndsWith (".");
-//		if (!string.IsNullOrEmpty (newText)) {
-//			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
-//			for (int i = 0; i < words.Length; i++) {
-//				if (words [i].Contains ("(%")) {
-//					specificWordIndexes.Add (i);
-//				}else if(words [i].Contains ("(*")){
-//					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
-//					int index = 0;
-//					bool isIndex = int.TryParse (strIndex, out index);
-//					if(isIndex){
-//						words [i] = Utilities.PronounReplacer (words [i], logFillers [index].obj);
-//					}
-//				}
-//			}
-//			if(specificWordIndexes.Count == logFillers.Length){
-//				for (int i = 0; i < logFillers.Length; i++) {
-//					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], logFillers [i], i);
-//					if(!string.IsNullOrEmpty(replacedWord)){
-//						words [specificWordIndexes [i]] = replacedWord;
-//					}
-//				}
-//			}
-//			newText = string.Empty;
-//			for (int i = 0; i < words.Length; i++) {
-//				newText += words [i];
-//			}
-//			newText = newText.Trim (' ');
-//		}
-//
-//		return newText;
-//	}
-//	public static string LogReplacer(Log log){
-//		List<int> specificWordIndexes = new List<int> ();
-//		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
-//		bool hasPeriod = newText.EndsWith (".");
-//		if (!string.IsNullOrEmpty (newText)) {
-//			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
-//			for (int i = 0; i < words.Length; i++) {
-//				if (words [i].Contains ("(%")) {
-//					specificWordIndexes.Add (i);
-//				}else if(words [i].Contains ("(*")){
-//					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
-//					int index = 0;
-//					bool isIndex = int.TryParse (strIndex, out index);
-//					if(isIndex){
-//						words [i] = Utilities.PronounReplacer (words [i], log.fillers [index].obj);
-//					}
-//				}
-//			}
-//			if(specificWordIndexes.Count == log.fillers.Count){
-//				for (int i = 0; i < log.fillers.Count; i++) {
-//					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
-//					if(!string.IsNullOrEmpty(replacedWord)){
-//						words [specificWordIndexes [i]] = replacedWord;
-//					}
-//				}
-//			}
-//			newText = string.Empty;
-//			for (int i = 0; i < words.Length; i++) {
-//				newText += words [i];
-//			}
-//			newText = newText.Trim (' ');
-//		}
-//
-//		return newText;
-//	}
-	public static string LogReplacer(Log log){
+
+    public static Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>> weightedActionRequirements = new Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>() {
+        {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, new List<WEIGHTED_ACTION_REQS>(){
+            WEIGHTED_ACTION_REQS.NO_ALLIANCE
+        } },
+        {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, new List<WEIGHTED_ACTION_REQS>(){
+            WEIGHTED_ACTION_REQS.NO_ALLIANCE
+        } }
+    };
+
+    public static Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE> weightedActionTypes = new Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE>() {
+        {WEIGHTED_ACTION.WAR_OF_CONQUEST, WEIGHTED_ACTION_TYPE.DIRECT},
+        {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, WEIGHTED_ACTION_TYPE.INDIRECT},
+        {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, WEIGHTED_ACTION_TYPE.DIRECT}
+    };
+    //	public static string StringReplacer(string text, LogFiller[] logFillers){
+    //		List<int> specificWordIndexes = new List<int> ();
+    //		string newText = text;
+    //		bool hasPeriod = newText.EndsWith (".");
+    //		if (!string.IsNullOrEmpty (newText)) {
+    //			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
+    //			for (int i = 0; i < words.Length; i++) {
+    //				if (words [i].Contains ("(%")) {
+    //					specificWordIndexes.Add (i);
+    //				}else if(words [i].Contains ("(*")){
+    //					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
+    //					int index = 0;
+    //					bool isIndex = int.TryParse (strIndex, out index);
+    //					if(isIndex){
+    //						words [i] = Utilities.PronounReplacer (words [i], logFillers [index].obj);
+    //					}
+    //				}
+    //			}
+    //			if(specificWordIndexes.Count == logFillers.Length){
+    //				for (int i = 0; i < logFillers.Length; i++) {
+    //					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], logFillers [i], i);
+    //					if(!string.IsNullOrEmpty(replacedWord)){
+    //						words [specificWordIndexes [i]] = replacedWord;
+    //					}
+    //				}
+    //			}
+    //			newText = string.Empty;
+    //			for (int i = 0; i < words.Length; i++) {
+    //				newText += words [i];
+    //			}
+    //			newText = newText.Trim (' ');
+    //		}
+    //
+    //		return newText;
+    //	}
+    //	public static string LogReplacer(Log log){
+    //		List<int> specificWordIndexes = new List<int> ();
+    //		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
+    //		bool hasPeriod = newText.EndsWith (".");
+    //		if (!string.IsNullOrEmpty (newText)) {
+    //			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
+    //			for (int i = 0; i < words.Length; i++) {
+    //				if (words [i].Contains ("(%")) {
+    //					specificWordIndexes.Add (i);
+    //				}else if(words [i].Contains ("(*")){
+    //					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
+    //					int index = 0;
+    //					bool isIndex = int.TryParse (strIndex, out index);
+    //					if(isIndex){
+    //						words [i] = Utilities.PronounReplacer (words [i], log.fillers [index].obj);
+    //					}
+    //				}
+    //			}
+    //			if(specificWordIndexes.Count == log.fillers.Count){
+    //				for (int i = 0; i < log.fillers.Count; i++) {
+    //					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
+    //					if(!string.IsNullOrEmpty(replacedWord)){
+    //						words [specificWordIndexes [i]] = replacedWord;
+    //					}
+    //				}
+    //			}
+    //			newText = string.Empty;
+    //			for (int i = 0; i < words.Length; i++) {
+    //				newText += words [i];
+    //			}
+    //			newText = newText.Trim (' ');
+    //		}
+    //
+    //		return newText;
+    //	}
+    public static string LogReplacer(Log log){
 		if(log == null){
 			return string.Empty;
 		}
