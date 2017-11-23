@@ -52,32 +52,32 @@ public class CollisionManager : MonoBehaviour {
 				general2.isAttacking = true;
 			}
 
-			Debug.Log ("ATTACK POWER: " + general1Power);	
-			Debug.Log ("DEFEND POWER: " + general2Power);
+			Debug.Log ("GENERAL 1 POWER: " + general1Power);	
+			Debug.Log ("GENERAL 2 POWER: " + general2Power);
 			Debug.Log ("---------------------------");
 
 			int general1MaxRoll = (int)(Mathf.Sqrt ((2000f * (float)general1Power)) * (1f + (0.05f * (float)general1.citizen.city.cityLevel)));
 			int general2MaxRoll = (int)(Mathf.Sqrt ((2000f * (float)general2Power)) * (1f + (0.05f * (float)general2.citizen.city.cityLevel)));
 
-			Debug.Log ("ATTACK MAX ROLL: " + general1MaxRoll);	
-			Debug.Log ("DEFENSE MAX ROLL: " + general2MaxRoll);
+			Debug.Log ("GENERAL 1 MAX ROLL: " + general1MaxRoll);	
+			Debug.Log ("GENERAL 2 MAX ROLL: " + general2MaxRoll);
 			Debug.Log ("---------------------------");
 
 			int general1Roll = UnityEngine.Random.Range (0, general1MaxRoll);
 			int general2Roll = UnityEngine.Random.Range (0, general2MaxRoll);
 
-			Debug.Log ("ATTACK ROLL: " + general1Roll);	
-			Debug.Log ("DEFENSE ROLL: " + general2Roll);
+			Debug.Log ("GENERAL 1 ROLL: " + general1Roll);	
+			Debug.Log ("GENERAL 2 ROLL: " + general2Roll);
 			Debug.Log ("---------------------------");
 
 
 			if(general1Roll > general2Roll){
-				DamageComputation (general1, general2);
+				DamageComputation (general1, general1Roll, general2, general2Roll);
 				if(kr.battle != null){
 					kr.battle.BattleEnd (general1, general2);
 				}
 			}else if(general2Roll > general1Roll){
-				DamageComputation (general2, general1);
+				DamageComputation (general2, general2Roll, general1, general1Roll);
 				if(kr.battle != null){
 					kr.battle.BattleEnd (general2, general1);
 				}
@@ -89,17 +89,17 @@ public class CollisionManager : MonoBehaviour {
 					general2.gameEventInvolvedIn.DoneEvent ();
 				}else{
 					if(general1.isDefending){
-						DamageComputation (general1, general2);
+						DamageComputation (general1, general1Roll, general2, general2Roll);
 					}else if(general2.isDefending){
-						DamageComputation (general2, general1);
+						DamageComputation (general2, general2Roll, general1, general1Roll);
 					}
 				}
 			}
 		}
 	}
-	private void DamageComputation(General winnerGeneral, General loserGeneral){
-		float winnerPowerSquared = Mathf.Pow ((float)winnerGeneral.soldiers, 2f);
-		float loserPowerSquared = Mathf.Pow ((float)loserGeneral.soldiers, 2f);
+	private void DamageComputation(General winnerGeneral, int winnerGeneralRoll, General loserGeneral, int loserGeneralRoll){
+		float winnerPowerSquared = Mathf.Pow ((float)winnerGeneralRoll, 2f);
+		float loserPowerSquared = Mathf.Pow ((float)loserGeneralRoll, 2f);
 
 		float deathPercentage = (loserPowerSquared / winnerPowerSquared) * 100f;
 		Debug.Log ("DEATH PERCENTAGE: " + deathPercentage.ToString ());
