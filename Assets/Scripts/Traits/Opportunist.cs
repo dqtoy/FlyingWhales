@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Opportunist : Trait {
 
     internal override Dictionary<Kingdom, int> GetWarOfConquestTargetWeights() {
-        Dictionary<Kingdom, int> targetWeights = base.GetWarOfConquestTargetWeights();
+        Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.adjacentKingdoms[i];
@@ -39,11 +39,11 @@ public class Opportunist : Trait {
         return targetWeights;
     }
     internal override Dictionary<Kingdom, int> GetAllianceOfProtectionTargetWeights() {
-        Dictionary<Kingdom, int> targetWeights = base.GetAllianceOfProtectionTargetWeights();
-        if(targetWeights == null) {
+        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        if (!sourceKingdom.IsThreatened()) {
             return null;
         }
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
         //loop through known Kingdoms with the highest Relative Strength and only select one with positive Relative Strength and not at war with
         for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i];

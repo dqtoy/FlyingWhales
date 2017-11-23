@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Hostile : Trait {
 
     internal override Dictionary<Kingdom, int> GetWarOfConquestTargetWeights() {
-        Dictionary<Kingdom, int> targetWeights = base.GetWarOfConquestTargetWeights();
+        Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         //if i am not at war, loop through non-ally adjacent kingdoms i am not at war with
         int warCount = sourceKingdom.GetWarCount();
