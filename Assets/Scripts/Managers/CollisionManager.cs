@@ -92,8 +92,14 @@ public class CollisionManager : MonoBehaviour {
 				}else{
 					if(general1.isDefending){
 						DamageComputation (general1, general1Roll, general2, general2Roll);
+						if(kr.battle != null){
+							kr.battle.BattleEnd (general1, general2);
+						}
 					}else if(general2.isDefending){
 						DamageComputation (general2, general2Roll, general1, general1Roll);
+						if(kr.battle != null){
+							kr.battle.BattleEnd (general2, general1);
+						}
 					}
 				}
 			}

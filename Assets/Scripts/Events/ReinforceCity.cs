@@ -81,7 +81,7 @@ public class ReinforceCity : GameEvent {
 	}
 	internal override void CancelEvent (){
 		if(attackCity != null){
-			attackCity.RemoveReinforcements (this);
+			attackCity.RemoveReinforcements (this, true);
 		}else if(defendCity != null){
 			defendCity.RemoveReinforcements (this);
 		}

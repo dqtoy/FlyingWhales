@@ -9,6 +9,8 @@ public class CitizenAvatar : PooledObject {
     [SerializeField] private int citizenID;
     [SerializeField] private string citizenName;
     [SerializeField] private string roleType;
+	[SerializeField] public Collider2D colliderForInteraction;
+
     public Role citizenRole;
 //    public PandaBehaviour pandaBehaviour;
 //    public Animator animator;
@@ -174,6 +176,7 @@ public class CitizenAvatar : PooledObject {
     #region overrides
     public override void Reset() {
         base.Reset();
+		this.EnableCollider (false);
 //        UpdateFogOfWar(true);
         ResetValues();
 //        ResetBehaviourTree();
@@ -426,4 +429,10 @@ public class CitizenAvatar : PooledObject {
             }
         }
     }
+
+	internal void EnableCollider(bool state){
+		if(this.colliderForInteraction != null){
+			this.colliderForInteraction.enabled = state;
+		}
+	}
 }
