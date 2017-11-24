@@ -52,6 +52,16 @@ public class Trait{
                 return GetWarOfConquestWeightModification(targetKingdom);
             case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
                 return GetAllianceOfConquestWeightModification(targetKingdom);
+            case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
+                return GetAllianceOfProtectionWeightModification(targetKingdom);
+            case WEIGHTED_ACTION.TRADE_DEAL:
+                return GetTradeDealWeightModification(targetKingdom);
+            case WEIGHTED_ACTION.INCITE_UNREST:
+                return GetInciteUnrestWeightModification(targetKingdom);
+            case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
+                return GetInternationalIncidentWeightModification(targetKingdom);
+            case WEIGHTED_ACTION.FLATTER:
+                return GetFlatterWeightModification(targetKingdom);
             default:
                 return 0;
         }
@@ -66,8 +76,17 @@ public class Trait{
     internal virtual int GetAllianceOfProtectionWeightModification(Kingdom otherKingdom) {
         return 0;
     }
-    internal virtual Dictionary<Kingdom, int> GetTradeDealTargetWeights() {
-        return null;
+    internal virtual int GetTradeDealWeightModification(Kingdom otherKingdom) {
+        return 0;
+    }
+    internal virtual int GetInciteUnrestWeightModification(Kingdom otherKingdom) {
+        return 0;
+    }
+    internal virtual int GetInternationalIncidentWeightModification(Kingdom otherKingdom) {
+        return 0;
+    }
+    internal virtual int GetFlatterWeightModification(Kingdom otherKingdom) {
+        return 0;
     }
     #endregion
 

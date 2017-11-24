@@ -53,4 +53,15 @@ public class Opportunist : Trait {
         }
         return weight;
     }
+    internal override int GetFlatterWeightModification(Kingdom otherKingdom) {
+        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        int weight = 0;
+
+        KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+        KingdomRelationship relOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+        int difference = relOtherWithSource._relativeStrength - relWithOtherKingdom._relativeStrength;
+        //add or subtract 3 to Default Weight for each positive or negative point of Relative Strength the kingdom has over me
+        weight += 3 * difference;
+        return weight;
+    }
 }

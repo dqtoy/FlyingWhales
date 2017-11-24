@@ -3269,20 +3269,20 @@ public class Kingdom{
         Dictionary<Kingdom, int> kingdomWeights = new Dictionary<Kingdom, int>();
         for (int i = 0; i < discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = discoveredKingdoms[i];
-            int weightForOtherKingdom = GetDefaultWeightForAction(weightedAction);
+            int weightForOtherKingdom = GetDefaultWeightForAction(weightedAction, otherKingdom);
             //loop through all the traits of the current king
             for (int j = 0; j < king.allTraits.Count; j++) {
                 Trait currTrait = king.allTraits[j];
                 int modificationFromTrait = currTrait.GetWeightOfActionGivenTarget(weightedAction, otherKingdom, weightForOtherKingdom);
                 weightForOtherKingdom += modificationFromTrait;
             }
-            weightForOtherKingdom += GetActionModificationForAll(weightedAction, otherKingdom);
+            ApplyActionModificationForAll(weightedAction, otherKingdom, ref weightForOtherKingdom);
             kingdomWeights.Add(otherKingdom, weightForOtherKingdom);
         }
         return kingdomWeights;
     }
 
-    private int GetDefaultWeightForAction(WEIGHTED_ACTION weightedAction) {
+    private int GetDefaultWeightForAction(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom) {
         switch (weightedAction) {
             case WEIGHTED_ACTION.WAR_OF_CONQUEST:
                 return 0;
@@ -3291,31 +3291,85 @@ public class Kingdom{
             case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
                 return 0;
             case WEIGHTED_ACTION.TRADE_DEAL:
-                return 0;
+                return GetTradeDealDefaultWeight(targetKingdom);
             case WEIGHTED_ACTION.INCITE_UNREST:
-                return 0;
-            case WEIGHTED_ACTION.PIT_OTHER_KINGDOMS:
-                return 0;
+                return GetInciteUnrestDefaultWeight(targetKingdom);
+            case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
+                return GetInternationalIncidentDefaultWeight(targetKingdom);
             case WEIGHTED_ACTION.FLATTER:
-                return 0;
+                return GetFlatterDefaultWeight(targetKingdom);
             case WEIGHTED_ACTION.SEND_AID:
                 return 0;
             default:
                 return 0;
         }
     }
-    private int GetActionModificationForAll(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom) {
+    private void ApplyActionModificationForAll(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom, ref int defaultWeight) {
         switch (weightedAction) {
             case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                return GetAllModificationForWarOfConquest(targetKingdom);
+                GetAllModificationForWarOfConquest(targetKingdom, ref defaultWeight);
+                break;
             case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-                return GetAllModificationForAllianceOfProtection(targetKingdom);
-            default:
-                return 0;
+                GetAllModificationForAllianceOfProtection(targetKingdom, ref defaultWeight);
+                break;
+            case WEIGHTED_ACTION.TRADE_DEAL:
+                GetAllModificationForTradeDeal(targetKingdom, ref defaultWeight);
+                break;
         }
     }
-    private int GetAllModificationForWarOfConquest(Kingdom targetKingdom) {
-        int weightModification = 0;
+
+    private int GetTradeDealDefaultWeight(Kingdom targetKingdom) {
+        int defaultWeight = 0;
+        KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+        KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
+
+        if (relWithOtherKingdom.isAdjacent) {
+            defaultWeight = 40;
+            if (relWithOtherKingdom.totalLike > 0) {
+                defaultWeight += 2 * relWithOtherKingdom.totalLike;//add 2 to Default Weight per Positive Opinion I have towards target
+            } else if (relWithOtherKingdom.totalLike < 0) {
+                defaultWeight += 2 * relWithOtherKingdom.totalLike;//subtract 2 to Default Weight per Negative Opinion I have towards target
+            }
+
+            //add 1 to Default Weight per Positive Opinion target has towards me
+            //subtract 1 to Default Weight per Negative Opinion target has towards me
+            defaultWeight += relOfOtherWithSource.totalLike;
+            defaultWeight = Mathf.Max(0, defaultWeight); //minimum 0
+
+        }
+        return defaultWeight;
+    }
+    private int GetInciteUnrestDefaultWeight(Kingdom targetKingdom) {
+        int defaultWeight = 0;
+        KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+        KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
+
+        if (!relWithOtherKingdom.AreAllies()) {
+            defaultWeight = 40;
+            if (relWithOtherKingdom.totalLike < 0) {
+                defaultWeight += relWithOtherKingdom.totalLike;//subtract 2 to Default Weight per Negative Opinion I have towards target
+            }
+        }
+        return defaultWeight;
+    }
+    private int GetInternationalIncidentDefaultWeight(Kingdom targetKingdom) {
+        int defaultWeight = 0;
+        KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+        if(relWithOtherKingdom.totalLike < 0) {
+            defaultWeight += Mathf.Abs(5 * relWithOtherKingdom.totalLike);
+        }
+        return defaultWeight;
+    }
+    private int GetFlatterDefaultWeight(Kingdom targetKingdom) {
+        int defaultWeight = 40;
+        KingdomRelationship relOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
+        if (relOtherWithSource.totalLike < 0) {
+            defaultWeight += Mathf.Abs(relOtherWithSource.totalLike);
+        }
+        return defaultWeight;
+    }
+
+    private void GetAllModificationForWarOfConquest(Kingdom targetKingdom, ref int defaultWeight) {
         KingdomRelationship relWithTargetKingdom = this.GetRelationshipWithKingdom(targetKingdom);
         List<Kingdom> alliesAtWarWith = relWithTargetKingdom.GetAlliesTargetKingdomIsAtWarWith();
         //for each non-ally adjacent kingdoms that one of my allies declared war with recently
@@ -3325,39 +3379,39 @@ public class Kingdom{
             int otherKingdomPower = targetKingdom.GetRelationshipWithKingdom(sourceKingdom)._theoreticalPower;
             if (otherKingdomPower * 1.25f < sourceKingdomPower) {
                 //If his theoretical power is not higher than 25% over mine
-                weightModification = 20;
+                defaultWeight = 20;
                 for (int j = 0; j < alliesAtWarWith.Count; j++) {
                     Kingdom currAlly = alliesAtWarWith[j];
                     KingdomRelationship relationshipWithAlly = sourceKingdom.GetRelationshipWithKingdom(currAlly);
                     if (relationshipWithAlly.totalLike > 0) {
-                        weightModification += 2 * relationshipWithAlly.totalLike; //add 2 weight per positive opinion i have over my ally
+                        defaultWeight += 2 * relationshipWithAlly.totalLike; //add 2 weight per positive opinion i have over my ally
                     } else if (relationshipWithAlly.totalLike < 0) {
-                        weightModification += relationshipWithAlly.totalLike; //subtract 1 weight per negative opinion i have over my ally (totalLike is negative)
+                        defaultWeight += relationshipWithAlly.totalLike; //subtract 1 weight per negative opinion i have over my ally (totalLike is negative)
                     }
                 }
                 //add 1 weight per negative opinion i have over the target
                 //subtract 1 weight per positive opinion i have over the target
-                weightModification += (relWithTargetKingdom.totalLike * -1); //If totalLike is negative it becomes positive(+), otherwise it becomes negative(-)
-                weightModification = Mathf.Max(0, weightModification);
+                defaultWeight += (relWithTargetKingdom.totalLike * -1); //If totalLike is negative it becomes positive(+), otherwise it becomes negative(-)
+                defaultWeight = Mathf.Max(0, defaultWeight);
             }
         }
-        return weightModification;
     }
-    private int GetAllModificationForAllianceOfProtection(Kingdom targetKingdom) {
-        int weightModification = 0;
+    private void GetAllModificationForAllianceOfProtection(Kingdom targetKingdom, ref int defaultWeight) {
         if (this.IsThreatened()) {
             //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
             KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
             KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
             if (!relOfOtherWithSource.isAtWar && relOfOtherWithSource.totalLike > 0) {
-                weightModification += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
-                weightModification += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
+                defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
+                defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
                 //TODO: subtract 50 Weight if an Alliance or Trade Deal between the two has recently been 
                 //rejected by the target or if either side has recently broken an Alliance or Trade Deal
-                weightModification = Mathf.Max(0, weightModification); //minimum 0
+                defaultWeight = Mathf.Max(0, defaultWeight); //minimum 0
             }
         }
-        return weightModification;
+    }
+    private void GetAllModificationForTradeDeal(Kingdom targetKingdom, ref int defaultWeight) {
+        //TODO: add Default Weight for every point of Surplus they have on our Deficit Resources 
     }
     #endregion
 }
