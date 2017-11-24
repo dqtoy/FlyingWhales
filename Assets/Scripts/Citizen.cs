@@ -43,7 +43,7 @@ public class Citizen {
 	//private SCIENCE _science;
 	private TRAIT _military;
     private List<TRAIT> _otherTraits;
-    private List<Trait> allTraits;
+    private List<Trait> _allTraits;
 	//private LOYALTY _loyalty;
     private PURPOSE _balanceType;
 	private WARMONGER _warmonger;
@@ -125,6 +125,9 @@ public class Citizen {
     }
     internal bool isGovernor {
         get { return (role == ROLE.GOVERNOR && assignedRole is Governor); }
+    }
+    internal List<Trait> allTraits {
+        get { return _allTraits; }
     }
     #endregion
 
@@ -1078,12 +1081,12 @@ public class Citizen {
         this._balanceType = GetBalanceType();
         this._warmonger = GenerateWarmonger();
         //New traits
-        allTraits = new List<Trait>();
+        _allTraits = new List<Trait>();
         for (int i = 0; i < baseCharacter.allTraits.Count; i++) {
             TRAIT currTrait = baseCharacter.allTraits[i];
             Trait trait = CitizenManager.Instance.CreateNewTraitForCitizen(currTrait, this);
             if(trait != null) {
-                allTraits.Add(trait);
+                _allTraits.Add(trait);
             }
         }
     }
@@ -1305,86 +1308,86 @@ public class Citizen {
 	}
 
     #region Weighted Actions
-    internal WEIGHTED_ACTION DetermineWeightedActionToPerform() {
-        Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
-        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 500); //Add 500 Base Weight on Do Nothing Action
-        for (int i = 0; i < allTraits.Count; i++) {
-            Trait currTrait = allTraits[i];
-            Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
-            totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
-        }
-        return Utilities.PickRandomElementWithWeights<WEIGHTED_ACTION>(totalWeightedActions);
-    }
-    internal void DoWeightedAction() {
-        WEIGHTED_ACTION actionToPerform = DetermineWeightedActionToPerform();
-        if(actionToPerform != WEIGHTED_ACTION.DO_NOTHING) {
-            if (Utilities.weightedActionTypes.ContainsKey(actionToPerform)) {
-                if (Utilities.weightedActionTypes[actionToPerform] == WEIGHTED_ACTION_TYPE.DIRECT) {
-                    Kingdom target = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForDirectWeightedAction(actionToPerform));
-                    Debug.Log(role.ToString() + " " + this.name + " decides to " + actionToPerform + " on " + target.name);
-                } else if (Utilities.weightedActionTypes[actionToPerform] == WEIGHTED_ACTION_TYPE.INDIRECT) {
-                    Kingdom[] targets = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForIndirectWeightedAction(actionToPerform));
-                }
-            }
-        }   
+    //internal WEIGHTED_ACTION DetermineWeightedActionToPerform() {
+    //    Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
+    //    totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 500); //Add 500 Base Weight on Do Nothing Action
+    //    for (int i = 0; i < _allTraits.Count; i++) {
+    //        Trait currTrait = _allTraits[i];
+    //        Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
+    //        totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
+    //    }
+    //    return Utilities.PickRandomElementWithWeights<WEIGHTED_ACTION>(totalWeightedActions);
+    //}
+    //internal void DoWeightedAction() {
+    //    WEIGHTED_ACTION actionToPerform = DetermineWeightedActionToPerform();
+    //    if(actionToPerform != WEIGHTED_ACTION.DO_NOTHING) {
+    //        if (Utilities.weightedActionTypes.ContainsKey(actionToPerform)) {
+    //            if (Utilities.weightedActionTypes[actionToPerform] == WEIGHTED_ACTION_TYPE.DIRECT) {
+    //                Kingdom target = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForDirectWeightedAction(actionToPerform));
+    //                Debug.Log(role.ToString() + " " + this.name + " decides to " + actionToPerform + " on " + target.name);
+    //            } else if (Utilities.weightedActionTypes[actionToPerform] == WEIGHTED_ACTION_TYPE.INDIRECT) {
+    //                Kingdom[] targets = Utilities.PickRandomElementWithWeights(GetKingdomWeightsForIndirectWeightedAction(actionToPerform));
+    //            }
+    //        }
+    //    }   
         
-    }
+    //}
 
-    private Dictionary<Kingdom, Dictionary<Kingdom, int>> GetKingdomWeightsForIndirectWeightedAction(WEIGHTED_ACTION actionType) {
-        Dictionary<Kingdom, Dictionary<Kingdom, int>> totalWeightedKingdoms = new Dictionary<Kingdom, Dictionary<Kingdom, int>>();
-        for (int i = 0; i < allTraits.Count; i++) {
-            Trait currTrait = allTraits[i];
-            Dictionary<Kingdom, Dictionary<Kingdom, int>> weightsFromCurrTrait = null;
-            switch (actionType) {
-                case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
-                    weightsFromCurrTrait = currTrait.GetAllianceOfConquestTargetWeights();
-                    break;
-                default:
-                    break;
-            }
-            if(weightsFromCurrTrait != null) {
-                totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, weightsFromCurrTrait);
-            }
+    //private Dictionary<Kingdom, Dictionary<Kingdom, int>> GetKingdomWeightsForIndirectWeightedAction(WEIGHTED_ACTION actionType) {
+    //    Dictionary<Kingdom, Dictionary<Kingdom, int>> totalWeightedKingdoms = new Dictionary<Kingdom, Dictionary<Kingdom, int>>();
+    //    for (int i = 0; i < _allTraits.Count; i++) {
+    //        Trait currTrait = _allTraits[i];
+    //        Dictionary<Kingdom, Dictionary<Kingdom, int>> weightsFromCurrTrait = null;
+    //        switch (actionType) {
+    //            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
+    //                weightsFromCurrTrait = currTrait.GetAllianceOfConquestTargetWeights();
+    //                break;
+    //            default:
+    //                break;
+    //        }
+    //        if(weightsFromCurrTrait != null) {
+    //            totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, weightsFromCurrTrait);
+    //        }
             
-        }
-        Dictionary<Kingdom, Dictionary<Kingdom, int>> modifier = CitizenManager.Instance.GetIndirectWeightedActionModifier(actionType, this);
-        if(modifier != null) {
-            totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, modifier);
-        }
-        return totalWeightedKingdoms;
-    }
+    //    }
+    //    Dictionary<Kingdom, Dictionary<Kingdom, int>> modifier = CitizenManager.Instance.GetIndirectWeightedActionModifier(actionType, this);
+    //    if(modifier != null) {
+    //        totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, modifier);
+    //    }
+    //    return totalWeightedKingdoms;
+    //}
 
-    private Dictionary<Kingdom, int> GetKingdomWeightsForDirectWeightedAction(WEIGHTED_ACTION actionType) {
-        Dictionary<Kingdom, int> totalWeightedKingdoms = new Dictionary<Kingdom, int>();
-        for (int i = 0; i < allTraits.Count; i++) {
-            Trait currTrait = allTraits[i];
-            Dictionary<Kingdom, int> weightsFromCurrTrait = null;
-            switch (actionType) {
-                case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                    weightsFromCurrTrait = currTrait.GetWarOfConquestTargetWeights();
-                    break;
-                case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-                    weightsFromCurrTrait = currTrait.GetAllianceOfProtectionTargetWeights();
-                    break;
-                case WEIGHTED_ACTION.TRADE_DEAL:
-                    weightsFromCurrTrait = currTrait.GetTradeDealTargetWeights();
-                    break;
-                default:
-                    break;
-            }
-            if (weightsFromCurrTrait != null) {
-                totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, weightsFromCurrTrait);
-            }
-        }
-        if (Utilities.actionsWithDefaultWeights.Contains(actionType)) {
-            return CitizenManager.Instance.GetDirectWeightedActionModifier(actionType, this, totalWeightedKingdoms);
-        } else {
-            Dictionary<Kingdom, int> modifier = CitizenManager.Instance.GetDirectWeightedActionModifier(actionType, this);
-            if (modifier != null) {
-                totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, modifier);
-            }
-            return totalWeightedKingdoms;
-        }
-    }
+    //private Dictionary<Kingdom, int> GetKingdomWeightsForDirectWeightedAction(WEIGHTED_ACTION actionType) {
+    //    Dictionary<Kingdom, int> totalWeightedKingdoms = new Dictionary<Kingdom, int>();
+    //    for (int i = 0; i < _allTraits.Count; i++) {
+    //        Trait currTrait = _allTraits[i];
+    //        Dictionary<Kingdom, int> weightsFromCurrTrait = null;
+    //        switch (actionType) {
+    //            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+    //                weightsFromCurrTrait = currTrait.GetWarOfConquestTargetWeights();
+    //                break;
+    //            case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
+    //                weightsFromCurrTrait = currTrait.GetAllianceOfProtectionTargetWeights();
+    //                break;
+    //            case WEIGHTED_ACTION.TRADE_DEAL:
+    //                weightsFromCurrTrait = currTrait.GetTradeDealTargetWeights();
+    //                break;
+    //            default:
+    //                break;
+    //        }
+    //        if (weightsFromCurrTrait != null) {
+    //            totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, weightsFromCurrTrait);
+    //        }
+    //    }
+    //    if (Utilities.actionsWithDefaultWeights.Contains(actionType)) {
+    //        return CitizenManager.Instance.GetDirectWeightedActionModifier(actionType, this, totalWeightedKingdoms);
+    //    } else {
+    //        Dictionary<Kingdom, int> modifier = CitizenManager.Instance.GetDirectWeightedActionModifier(actionType, this);
+    //        if (modifier != null) {
+    //            totalWeightedKingdoms = Utilities.MergeWeightedActionDictionaries(totalWeightedKingdoms, modifier);
+    //        }
+    //        return totalWeightedKingdoms;
+    //    }
+    //}
     #endregion
 }

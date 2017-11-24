@@ -19,7 +19,8 @@ public class Trait{
 
     /*
      * This will return a Dictionary, containing the weights of each
-     * WEIGHTED_ACTION type.
+     * WEIGHTED_ACTION type. This is for determining what action the citizen
+     * should do.
      * */
     internal Dictionary<WEIGHTED_ACTION, int> GetTotalActionWeights() {
         WEIGHTED_ACTION[] allWeightedActions = Utilities.GetEnumValues<WEIGHTED_ACTION>();
@@ -45,20 +46,25 @@ public class Trait{
     }
 
     #region Weighted Actions
-    /*
-     * This will return a dictionary of
-     * kingdoms and their respective weights for WAR. The base class
-     * uses the logic for all traits, override this method for
-     * specific logic on other taits
-     * */
-    internal virtual Dictionary<Kingdom, int> GetWarOfConquestTargetWeights() {
-        return null;
+    internal int GetWeightOfActionGivenTarget(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom, int currentWeight) {
+        switch (weightedAction) {
+            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+                return GetWarOfConquestWeightModification(targetKingdom);
+            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
+                return GetAllianceOfConquestWeightModification(targetKingdom);
+            default:
+                return 0;
+        }
     }
-    internal virtual Dictionary<Kingdom, Dictionary<Kingdom, int>> GetAllianceOfConquestTargetWeights() {
-        return null;
+
+    internal virtual int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
+        return 0;
     }
-    internal virtual Dictionary<Kingdom, int> GetAllianceOfProtectionTargetWeights() {
-        return null;
+    internal virtual int GetAllianceOfConquestWeightModification(Kingdom otherKingdom) {
+        return 0;
+    }
+    internal virtual int GetAllianceOfProtectionWeightModification(Kingdom otherKingdom) {
+        return 0;
     }
     internal virtual Dictionary<Kingdom, int> GetTradeDealTargetWeights() {
         return null;
