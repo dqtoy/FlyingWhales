@@ -1536,10 +1536,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    //[ContextMenu("Make King Determine Weighted Action")]
-    //public void MakeKingDetermineWeightedAction() {
-    //    Debug.Log(this.city.kingdom.king.DetermineWeightedActionToPerform().ToString());
-    //}
+    [ContextMenu("Make King Determine Weighted Action")]
+    public void MakeKingDetermineWeightedAction() {
+        this.city.kingdom.PerformWeightedAction();
+    }
 
     private void ShowRegionInfo() {
         string text = string.Empty;

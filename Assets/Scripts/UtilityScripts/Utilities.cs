@@ -495,27 +495,27 @@ public class Utilities : MonoBehaviour {
         } }
     };
 
-    public static Dictionary<WEIGHTED_ACTION, List<TRAIT>> weightedActionValidTraits = new Dictionary<WEIGHTED_ACTION, List<TRAIT>>() {
-        {WEIGHTED_ACTION.WAR_OF_CONQUEST, new List<TRAIT>(){
-            TRAIT.OPPORTUNIST, TRAIT.DECEITFUL, TRAIT.IMPERIALIST, TRAIT.HOSTILE, TRAIT.PACIFIST
-        }},
-        {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, new List<TRAIT>(){
-            TRAIT.IMPERIALIST
-        }},
-        {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, new List<TRAIT>(){
-            TRAIT.OPPORTUNIST, TRAIT.DECEITFUL
-        }},
-    };
+    //public static Dictionary<WEIGHTED_ACTION, List<TRAIT>> weightedActionValidTraits = new Dictionary<WEIGHTED_ACTION, List<TRAIT>>() {
+    //    {WEIGHTED_ACTION.WAR_OF_CONQUEST, new List<TRAIT>(){
+    //        TRAIT.OPPORTUNIST, TRAIT.DECEITFUL, TRAIT.IMPERIALIST, TRAIT.HOSTILE, TRAIT.PACIFIST
+    //    }},
+    //    {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, new List<TRAIT>(){
+    //        TRAIT.IMPERIALIST
+    //    }},
+    //    {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, new List<TRAIT>(){
+    //        TRAIT.OPPORTUNIST, TRAIT.DECEITFUL
+    //    }},
+    //};
 
-    public static List<WEIGHTED_ACTION> actionsWithDefaultWeights = new List<WEIGHTED_ACTION>() {
-        WEIGHTED_ACTION.TRADE_DEAL
-    };
+    //public static List<WEIGHTED_ACTION> actionsWithDefaultWeights = new List<WEIGHTED_ACTION>() {
+    //    WEIGHTED_ACTION.TRADE_DEAL
+    //};
 
-    public static Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE> weightedActionTypes = new Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE>() {
-        {WEIGHTED_ACTION.WAR_OF_CONQUEST, WEIGHTED_ACTION_TYPE.DIRECT},
-        {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, WEIGHTED_ACTION_TYPE.INDIRECT},
-        {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, WEIGHTED_ACTION_TYPE.DIRECT}
-    };
+    //public static Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE> weightedActionTypes = new Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE>() {
+    //    {WEIGHTED_ACTION.WAR_OF_CONQUEST, WEIGHTED_ACTION_TYPE.DIRECT},
+    //    {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, WEIGHTED_ACTION_TYPE.INDIRECT},
+    //    {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, WEIGHTED_ACTION_TYPE.DIRECT}
+    //};
     //	public static string StringReplacer(string text, LogFiller[] logFillers){
     //		List<int> specificWordIndexes = new List<int> ();
     //		string newText = text;

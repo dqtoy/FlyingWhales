@@ -3253,6 +3253,20 @@ public class Kingdom{
     #endregion
 
     #region Weighted Actions
+    internal void PerformWeightedAction() {
+        WEIGHTED_ACTION actionToPerform = DetermineWeightedActionToPerform();
+        if (actionToPerform != WEIGHTED_ACTION.DO_NOTHING) {
+            Dictionary<Kingdom, int> targetKingdomWeights = GetKingdomWeightsForActionType(actionToPerform);
+            if(targetKingdomWeights.Sum(x => x.Value) > 0) {
+                Kingdom target = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
+                Debug.Log(this.name + " will perform " + actionToPerform.ToString() + " targeting " + target.name);
+            } else {
+                Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+            }
+        } else {
+            Debug.Log(this.name + " chose to do nothing.");
+        }
+    }
     internal bool IsThreatened() {
         //if i am adjacent to someone whose threat is +20 or above and whose Opinion of me is negative
         for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
@@ -3264,6 +3278,16 @@ public class Kingdom{
             }
         }
         return false;
+    }
+    internal WEIGHTED_ACTION DetermineWeightedActionToPerform() {
+        Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
+        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 10); //Add 500 Base Weight on Do Nothing Action
+        for (int i = 0; i < king.allTraits.Count; i++) {
+            Trait currTrait = king.allTraits[i];
+            Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
+            totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
+        }
+        return Utilities.PickRandomElementWithWeights(totalWeightedActions);
     }
     internal Dictionary<Kingdom, int> GetKingdomWeightsForActionType(WEIGHTED_ACTION weightedAction) {
         Dictionary<Kingdom, int> kingdomWeights = new Dictionary<Kingdom, int>();
