@@ -19,9 +19,9 @@ public class CaravaneerThread {
 	private Caravaneer caravaneer;
 	private RESOURCE_TYPE neededResource;
 
-	public CaravaneerThread(Caravaneer caravaneer, RESOURCE_TYPE neededResource){
+	public CaravaneerThread(Caravaneer caravaneer){
 		this.caravaneer = caravaneer;
-		this.neededResource = neededResource;
+		this.neededResource = caravaneer.neededResource;
 		this.sourceCity = caravaneer.sourceCity;
 		this.sourceKingdom = caravaneer.sourceCity.kingdom;
 	}
@@ -33,7 +33,7 @@ public class CaravaneerThread {
 		}else if(neededResource == RESOURCE_TYPE.MATERIAL){
 			if(this.sourceKingdom.race == RACE.HUMANS){
 				citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || x.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE) && x.materialForTrade >= x.materialRequirement).ToList();
-			}else if(this.sourceKingdom.race == RACE.HUMANS){
+			}else if(this.sourceKingdom.race == RACE.ELVES){
 				citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || x.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY) && x.materialForTrade >= x.materialRequirement).ToList();
 			}
 		}else if(neededResource == RESOURCE_TYPE.ORE){

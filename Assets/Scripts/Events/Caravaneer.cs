@@ -70,7 +70,7 @@ public class Caravaneer : GameEvent {
 	private void SearchForCityToObtainResource(){
 		if(this.isActive && !this.caravan.isDestroyed && !this.sourceCity.isDead){
 			this.neededResource = GetNeededResource ();
-			CaravaneerThreadPool.Instance.AddToThreadPool (new CaravaneerThread (this, this.neededResource));
+			CaravaneerThreadPool.Instance.AddToThreadPool (new CaravaneerThread (this));
 		}else{
 			this.DoneEvent();
 		}
