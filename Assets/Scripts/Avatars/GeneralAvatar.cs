@@ -39,8 +39,10 @@ public class GeneralAvatar : CitizenAvatar {
 		}
 	}
 	internal override void UpdateUI (){
-		if(this.txtDamage.gameObject != null){
-			this.txtDamage.text = ((General)this.citizenRole).soldiers.ToString ();
+		if(this.txtDamage != null){
+			if(this.txtDamage.gameObject != null){
+				this.txtDamage.text = ((General)this.citizenRole).soldiers.ToString ();
+			}
 		}
 	}
 
