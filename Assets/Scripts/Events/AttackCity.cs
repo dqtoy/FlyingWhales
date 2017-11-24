@@ -27,10 +27,12 @@ public class AttackCity : GameEvent {
 		reinforceCity.attackCity = this;
 		reinforceCity.battle = this.battle;
 	}
-	internal void RemoveReinforcements(ReinforceCity reinforceCity){
+	internal void RemoveReinforcements(ReinforceCity reinforceCity, bool skipAttack = false){
 		this.reinforcements.Remove (reinforceCity);
-		if(this.reinforcements.Count <= 0){
-			Attack ();
+		if(!skipAttack){
+			if(this.reinforcements.Count <= 0){
+				Attack ();
+			}
 		}
 	}
 	internal void TransferReinforcements(ReinforceCity reinforceCity){
@@ -39,7 +41,9 @@ public class AttackCity : GameEvent {
 	}
 	internal void Attack(){
 		this.general.isIdle = false;
-		this.general.avatar.GetComponent<GeneralAvatar> ().StartMoving ();
+		if(this.general.path != null && this.general.path.Count > 0){
+			this.general.avatar.GetComponent<GeneralAvatar> ().StartMoving ();
+		}
 		this.battle.Attack ();
 	}
 	internal void ReturnRemainingSoldiers (){
@@ -78,6 +82,13 @@ public class AttackCity : GameEvent {
 		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
 		this.general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 	}
+	private void CancelAllReinforcements(){
+		if(this.reinforcements.Count > 0){
+			for (int i = 0; i < this.reinforcements.Count; i++) {
+				this.reinforcements [i].CancelEvent ();
+			}
+		}
+	}
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
 //		if(this.general.willDropSoldiersAndDisappear){
@@ -111,6 +122,7 @@ public class AttackCity : GameEvent {
 	}
 	internal override void CancelEvent (){
 		ReturnRemainingSoldiers ();
+		CancelAllReinforcements ();
 	}
 	#endregion
 }

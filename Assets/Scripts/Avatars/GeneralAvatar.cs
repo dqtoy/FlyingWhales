@@ -12,6 +12,7 @@ public class GeneralAvatar : CitizenAvatar {
 	internal override void Init (Role citizenRole){
 		base.Init (citizenRole);
 		this.kingdomIndicator.color = this.citizenRole.citizen.city.kingdom.kingdomColor;
+		this.EnableCollider(true);
 	}
 	internal override void NewMove() {
 		if (this.citizenRole.targetLocation != null) {
@@ -38,8 +39,10 @@ public class GeneralAvatar : CitizenAvatar {
 		}
 	}
 	internal override void UpdateUI (){
-		if(this.txtDamage.gameObject != null){
-			this.txtDamage.text = ((General)this.citizenRole).soldiers.ToString ();
+		if(this.txtDamage != null){
+			if(this.txtDamage.gameObject != null){
+				this.txtDamage.text = ((General)this.citizenRole).soldiers.ToString ();
+			}
 		}
 	}
 

@@ -58,8 +58,11 @@ public class Caravaneer : GameEvent {
 		Debug.Log ("CARAVANEER EVENT DONE FOR " + this.sourceCity.name + " because: This event is active " + this.isActive.ToString() + ", the caravan is destroyed " + this.caravan.isDestroyed.ToString()
 			+ ", city is dead " + this.sourceCity.isDead.ToString());
 		base.DoneEvent();
-		this.sourceCity.caravaneer = null;
+		if(this.reserveAmount > 0){
+			ReturnReservedResource ();
+		}
 		this.caravan.DestroyGO();
+		this.sourceCity.caravaneer = null;
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();
@@ -174,6 +177,25 @@ public class Caravaneer : GameEvent {
 		}else if (neededResource == RESOURCE_TYPE.ORE) {
 			this.reserveAmount = this.targetCity.ReserveOre ();
 		}
+	}
+	private void ReturnReservedResource(){
+		if(this.reserveAmount > 0 && !this.targetCity.isDead){
+			if (neededResource == RESOURCE_TYPE.FOOD) {
+				this.targetCity.AdjustReserveFood (-this.reserveAmount);
+				this.targetCity.AdjustFoodCount (this.reserveAmount);
+			}else if (neededResource == RESOURCE_TYPE.MATERIAL) {
+				RESOURCE resource = RESOURCE.SLATE;
+				if(this.sourceCity.kingdom.race == RACE.ELVES){
+					resource = RESOURCE.OAK;
+				}
+				this.targetCity.AdjustReservedMaterialCount (-this.reserveAmount, resource);
+				this.targetCity.AdjustMaterialCount (this.reserveAmount, resource);
+			}else if (neededResource == RESOURCE_TYPE.ORE) {
+				this.targetCity.AdjustReserveOre (-this.reserveAmount);
+				this.targetCity.AdjustOreCount (this.reserveAmount);
+			}
+		}
+
 	}
 	private void SendCaravan(){
 		this.caravanAvatar.amountPanelGO.SetActive (false);

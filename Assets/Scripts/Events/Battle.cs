@@ -401,6 +401,12 @@ public class Battle {
 		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
 			this._kr.ChangeBattle(null);
 		}
+//		if(this.attackCityEvent != null && this.attackCityEvent.isActive){
+//			this.attackCityEvent.CancelEvent ();
+//		}
+//		if(this.defendCityEvent != null && this.defendCityEvent.isActive){
+//			this.defendCityEvent.CancelEvent ();
+//		}
 		this._warfare.RemoveBattle (this);
 		this._warfare.PeaceDeclaration (this.defender.kingdom);
 	}
@@ -448,7 +454,7 @@ public class Battle {
 	internal void BattleEnd(General winnerGeneral, General loserGeneral){
 		if(winnerGeneral.citizen.city.kingdom.id != loserGeneral.citizen.city.kingdom.id){
 			Debug.Log (winnerGeneral.citizen.city.kingdom.name + " wins against " + loserGeneral.citizen.city.kingdom.name + ", battle ends");
-			AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + winnerGeneral.citizen.name + " of " + winnerGeneral.citizen.city.name + "(" + winnerGeneral.citizen.city.kingdom.name + ") wins the battle against " + loserGeneral.citizen.city.name + " of " + loserGeneral.citizen.city.name + "(" + loserGeneral.citizen.city.kingdom.name + ")");
+			AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + winnerGeneral.citizen.name + " of " + winnerGeneral.citizen.city.name + "(" + winnerGeneral.citizen.city.kingdom.name + ") wins the battle against " + loserGeneral.citizen.name + " of " + loserGeneral.citizen.city.name + "(" + loserGeneral.citizen.city.kingdom.name + ")");
 
 			if(winnerGeneral.citizen.city.id == this.attacker.id && loserGeneral.citizen.city.id == this.defender.id){
 				this._isOver = true;
@@ -456,13 +462,13 @@ public class Battle {
 				Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
 				this._warfare.BattleEnds (winnerGeneral, loserGeneral, this);
 			}else if(winnerGeneral.citizen.city.id == this.defender.id && loserGeneral.citizen.city.id == this.attacker.id){
+				winnerGeneral.DropSoldiersAndDisappear ();
 				float peaceMultiplier = this._warfare.PeaceMultiplier (this.defender.kingdom);
 				int value = (int)((float)this._warfare.kingdomSideWeariness[this.defender.kingdom.id].weariness * peaceMultiplier);
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < value){
 					DeclarePeaceByDefender ();
 				}else{
-					winnerGeneral.DropSoldiersAndDisappear ();
 					ChangePositionAndGoToStep1();
 				}
 			}

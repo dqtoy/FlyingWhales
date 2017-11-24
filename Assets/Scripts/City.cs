@@ -316,7 +316,7 @@ public class City{
 		}
 	}
     internal void SetupInitialValues() {
-        hexTile.CheckLairsInRange();
+//        hexTile.CheckLairsInRange();
 		AdjustFoodCount(this.foodReserved);
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
@@ -556,9 +556,15 @@ public class City{
 		}else{
 			amount = foodTrade;
 		}
-		this._reservedFoodCount += amount;
+		this.AdjustReserveFood (amount);
 		this.AdjustFoodCount (-amount);
 		return amount;
+	}
+	internal void AdjustReserveFood(int amount){
+		this._reservedFoodCount += amount;
+		if(this._reservedFoodCount < 0){
+			this._reservedFoodCount = 0;
+		}
 	}
 	internal void AdjustMaterialCount(int amount, RESOURCE resource){
 		if(resource == RESOURCE.NONE){
@@ -652,9 +658,15 @@ public class City{
 		}else{
 			amount = oreTrade;
 		}
-		this._reservedOreCount += amount;
+		this.AdjustReserveOre (amount);
 		this.AdjustOreCount (-amount);
 		return amount;
+	}
+	internal void AdjustReserveOre(int amount){
+		this._reservedOreCount += amount;
+		if(this._reservedOreCount < 0){
+			this._reservedOreCount = 0;
+		}
 	}
 
 	internal void GiveResourceToCaravan(Caravaneer caravaneer, int amount){
@@ -760,7 +772,10 @@ public class City{
         RemoveListeners();
 		RemoveOneTimeResourceBenefits();
         KillActiveGuards();
-		this.caravaneer.DoneEvent ();
+
+		if (this.caravaneer != null) {
+			this.caravaneer.DoneEvent ();
+		}
         /*
          * Remove irrelevant scripts on hextile
          * */
@@ -816,7 +831,9 @@ public class City{
 	internal void ConquerCity(Kingdom conqueror, Warfare warfare) {
         RemoveOneTimeResourceBenefits();
         KillActiveGuards();
-		this.caravaneer.DoneEvent ();
+		if(this.caravaneer != null){
+			this.caravaneer.DoneEvent ();
+		}
 
         //Combat invasion should reduce City level by half.
         int halfOfCityLevel = Mathf.FloorToInt(this.ownedTiles.Count / 2);

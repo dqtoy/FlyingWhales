@@ -2366,19 +2366,32 @@ public class UIManager : MonoBehaviour {
 			this.forceWarGO.SetActive (false);
 		} else {
 			this.kingdomsForWar.Clear ();
-			if(this.currentlyShowingCitizen != null){
-				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.relationships.Count; i++){
-					if(!this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.isAtWar){
-						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.targetKingdom.name
-                            , this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.targetKingdom);
+			if(this.currentlyShowingKingdom != null){
+				foreach (KingdomRelationship kr in this.currentlyShowingKingdom.relationships.Values) {
+					if(!kr.isAtWar && kr.isAdjacent){
+						this.kingdomsForWar.AddItem (kr.targetKingdom.name, kr.targetKingdom);
 					}
 				}
+//				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.relationships.Count; i++){
+//					if(!this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.isAtWar){
+//						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.targetKingdom.name
+//                            , this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.targetKingdom);
+//					}
+//				}
 			}
 			this.forceWarGO.SetActive (true);
 		}
 	}
 	public void HideForceWar(){
 		this.forceWarGO.SetActive (false);
+	}
+	public void ForceWar(){
+		Kingdom targetKingdom = (Kingdom)this.kingdomsForWar.data;
+		if(targetKingdom != null && this.currentlyShowingKingdom != null){
+			Warfare warfare = new Warfare (this.currentlyShowingKingdom, targetKingdom);
+			this.currentlyShowingKingdom.checkedWarfareID.Add (warfare.id);
+			targetKingdom.checkedWarfareID.Add (warfare.id);
+		}
 	}
 	public void ToggleUnrest(){
 		if (this.unrestGO.activeSelf) {
