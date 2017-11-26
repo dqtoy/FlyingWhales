@@ -386,7 +386,7 @@ public static class SeeksBalance {
 	private static void Phase4(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool skipPhase4, bool hasAllianceInWar){
 		//Subterfuge
 		Debug.Log ("========== PHASE 4 ==========");
-		kingdom.Subterfuge ();
+		//kingdom.Subterfuge ();
 		Debug.Log("========== END SEEKS BALANCE " + kingdom.name + " ==========");
 
 	}
