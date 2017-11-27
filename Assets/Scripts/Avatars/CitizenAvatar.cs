@@ -388,7 +388,7 @@ public class CitizenAvatar : PooledObject {
 					if (kingdomOfThis.id != kingdomOfOther.id) {
 						KingdomRelationship relationship = kingdomOfThis.GetRelationshipWithKingdom (kingdomOfOther);
 						if (relationship != null) {
-							if (relationship.isAtWar) {
+							if (relationship.sharedRelationship.isAtWar) {
 								CollisionManager.Instance.HasCollided (this.citizenRole, otherAgent.assignedRole);
 //								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
 							}

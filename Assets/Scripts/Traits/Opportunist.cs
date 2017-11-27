@@ -9,7 +9,7 @@ public class Opportunist : Trait {
         KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
         int weight = 0;
         //loop through non-ally adjacent kingdoms i am not at war with
-        if (currRel.isAdjacent && !currRel.isAtWar && !currRel.AreAllies()) {
+		if (currRel.sharedRelationship.isAdjacent && !currRel.sharedRelationship.isAtWar && !currRel.AreAllies()) {
             if (otherKingdom.GetWarCount() > 0) {//if any of them is at war with another kingdom
                 //compare its theoretical power vs my theoretical power, if my theoretical power is higher
                 KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
@@ -35,7 +35,7 @@ public class Opportunist : Trait {
             //loop through known Kingdoms with the highest Relative Strength and only select one with positive Relative Strength and not at war with
             KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
             KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
-            if (!relWithOtherKingdom.isAtWar && relOfOtherWithSource._relativeStrength > 0) {
+			if (!relWithOtherKingdom.sharedRelationship.isAtWar && relOfOtherWithSource._relativeStrength > 0) {
                 weight = 0;
                 weight += 5 * relOfOtherWithSource._relativeStrength;//add 5 Weight for every positive Relative Strength point of the kingdom
                 //add 2 Weight for every positive Opinion it has towards me

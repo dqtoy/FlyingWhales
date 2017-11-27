@@ -70,7 +70,7 @@ public class Warfare {
 		CreateNewBattle (firstKingdom, true);
 		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
 			KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
-			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.isAdjacent.ToString () + " and threat is " + kr.targetKingdomThreatLevel.ToString ());
+			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.sharedRelationship.isAdjacent.ToString () + " and threat is " + kr.targetKingdomThreatLevel.ToString ());
 		}
 		KingdomManager.Instance.AddWarfare (this);
 	}
@@ -334,9 +334,9 @@ public class Warfare {
 				City adjacentCity = ((Region)sourceCity.region.connections [j]).occupant;
 				if(adjacentCity != null && adjacentCity.kingdom.id != sourceCity.kingdom.id){
 					KingdomRelationship kr = sourceCity.kingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
-					if(kr.battle == null){
-						if(kr.warfare != null){
-							if(kr.warfare.id == this._id){
+					if(kr.sharedRelationship.battle == null){
+						if(kr.sharedRelationship.warfare != null){
+							if(kr.sharedRelationship.warfare.id == this._id){
 								enemyCities.Add (adjacentCity);
 							}
 						}else{
@@ -374,9 +374,9 @@ public class Warfare {
 					City adjacentCity = ((Region)sourceKingdom.cities [i].region.connections [j]).occupant;
 					if(adjacentCity != null && adjacentCity.kingdom.id != sourceKingdom.id){
 						KingdomRelationship kr = sourceKingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
-						if(kr.battle == null){
-							if(kr.warfare != null){
-								if(kr.warfare.id == this._id){
+						if(kr.sharedRelationship.battle == null){
+							if(kr.sharedRelationship.warfare != null){
+								if(kr.sharedRelationship.warfare.id == this._id){
 									enemyCities.Add (adjacentCity);
 								}
 							}else{
@@ -468,7 +468,7 @@ public class Warfare {
 	}
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
-		if(kr.isAtWar){
+		if(kr.sharedRelationship.isAtWar){
 			kr.ChangeWarStatus (false, null);
 //			kr.ChangeBattle (null);
 			kr.ChangeRecentWar (true);
@@ -487,7 +487,7 @@ public class Warfare {
 		}
 		for (int i = 0; i < this._kingdomSideList[side].Count; i++) {
 			KingdomRelationship kr = this._kingdomSideList[side][i].GetRelationshipWithKingdom(kingdom);
-			if(!kr.isAdjacent && kr.isAtWar && kr.warfare.id == this._id){
+			if(!kr.sharedRelationship.isAdjacent && kr.sharedRelationship.isAtWar && kr.sharedRelationship.warfare.id == this._id){
 				DeclarePeace (this._kingdomSideList[side] [i], kingdom);
 			}
 		}
@@ -499,7 +499,7 @@ public class Warfare {
 		}
 		for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
 			KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
-			if(kr.isAtWar && kr.warfare.id == this._id){
+			if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.warfare.id == this._id){
 				return false;
 			}
 		}
@@ -516,12 +516,12 @@ public class Warfare {
 
 	private bool IsAdjacent(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom(kingdom2);
-		return kr.isAdjacent;
+		return kr.sharedRelationship.isAdjacent;
 	}
 
 	private void InstantDeclareWarIfNotAdjacent(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom(kingdom2);
-		if(!kr.isAtWar && !kr.isAdjacent){
+		if(!kr.sharedRelationship.isAtWar && !kr.sharedRelationship.isAdjacent){
 			kr.ChangeWarStatus(true, this);
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
 			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -571,7 +571,7 @@ public class Warfare {
 		}
 		for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
 			KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
-			if(kr.isAdjacent){
+			if(kr.sharedRelationship.isAdjacent){
 				return true;
 			}
 		}
@@ -635,7 +635,7 @@ public class Warfare {
 			}
 			for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
 				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
-				if(kr.isAdjacent && kr.warfare != null && kr.warfare.id == this._id){
+				if(kr.sharedRelationship.isAdjacent && kr.sharedRelationship.warfare != null && kr.sharedRelationship.warfare.id == this._id){
 					return true;
 				}
 			}
@@ -653,7 +653,7 @@ public class Warfare {
 			}
 			for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
 				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
-				if(kr.isAdjacent && kr.battle == null && kr.warfare != null && kr.warfare.id == this._id){
+				if(kr.sharedRelationship.isAdjacent && kr.sharedRelationship.battle == null && kr.sharedRelationship.warfare != null && kr.sharedRelationship.warfare.id == this._id){
 					return true;
 				}
 			}

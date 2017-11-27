@@ -9,7 +9,7 @@ public class Pacifist : Trait {
         int weight = 0;
         //loop through adjacent kingdoms i am not at war with:
         KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        if (currRel.isAdjacent && !currRel.isAtWar) {
+		if (currRel.sharedRelationship.isAdjacent && !currRel.sharedRelationship.isAtWar) {
             KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
             if (currRel._theoreticalPower > otherKingdomRelTowardsSource._theoreticalPower) {//compare its theoretical power vs my theoretical power
                 weight = -10; //subtract 10 base weight and 

@@ -61,7 +61,7 @@ public class Battle {
 		this._deadAttackerKingdom = null;
 		this._deadDefenderKingdom = null;
 		this._kr = this._kingdom1.GetRelationshipWithKingdom (this._kingdom2);
-		this._isKingdomsAtWar = this._kr.isAtWar;
+		this._isKingdomsAtWar = this._kr.sharedRelationship.isAtWar;
 		this._kr.ChangeBattle (this);
 		this._supposedAttackDate = new GameDate (1, 1, 1);
         this._battleLogs = new List<string>();
@@ -105,7 +105,7 @@ public class Battle {
 
 	#region Step 2
 	private void DeclareWar(){
-		if(!this._kr.isAtWar){
+		if(!this._kr.sharedRelationship.isAtWar){
 			this._isKingdomsAtWar = true;
 			this._kr.ChangeWarStatus(true, this._warfare);
 			Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
@@ -463,6 +463,7 @@ public class Battle {
 				this._warfare.BattleEnds (winnerGeneral, loserGeneral, this);
 			}else if(winnerGeneral.citizen.city.id == this.defender.id && loserGeneral.citizen.city.id == this.attacker.id){
 				winnerGeneral.DropSoldiersAndDisappear ();
+				loserGeneral.citizen.city.kingdom.AdjustStability(-5);
 				float peaceMultiplier = this._warfare.PeaceMultiplier (this.defender.kingdom);
 				int value = (int)((float)this._warfare.kingdomSideWeariness[this.defender.kingdom.id].weariness * peaceMultiplier);
 				int chance = UnityEngine.Random.Range (0, 100);

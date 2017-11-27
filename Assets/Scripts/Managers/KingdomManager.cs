@@ -29,6 +29,7 @@ public class KingdomManager : MonoBehaviour {
 
 	private List<AlliancePool> _alliances = new List<AlliancePool>();
 	private List<Warfare> _kingdomWars = new List<Warfare>();
+	private List<InternationalIncident> _internationalIncidents = new List<InternationalIncident>();
 
     private List<Warfare> _allWarsThatOccured = new List<Warfare>();
 
@@ -63,6 +64,9 @@ public class KingdomManager : MonoBehaviour {
 	}
 	public List<Warfare> kingdomWars {
 		get { return this._kingdomWars; }
+	}
+	public List<InternationalIncident> internationalIncidents {
+		get { return this._internationalIncidents; }
 	}
     public KINGDOMS_ORDERED_BY orderKingdomsBy {
         get { return _orderKingdomsBy; }
@@ -138,7 +142,7 @@ public class KingdomManager : MonoBehaviour {
         //}
 
         //Create Relationships first
-        newKingdom.CreateInitialRelationships();
+//        newKingdom.CreateInitialRelationships();
         if (broadcastCreation) {
             Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
         }
@@ -179,8 +183,8 @@ public class KingdomManager : MonoBehaviour {
 //		kingdom1Rel.SetWarStatus(false);
 //		kingdom2Rel.SetWarStatus(false);
 
-		kingdom1.AdjustExhaustionToAllRelationship (-15);
-		kingdom2.AdjustExhaustionToAllRelationship (-15);
+//		kingdom1.AdjustExhaustionToAllRelationship (-15);
+//		kingdom2.AdjustExhaustionToAllRelationship (-15);
 
 		//kingdom1.UpdateAllGovernorsLoyalty ();
 		//kingdom2.UpdateAllGovernorsLoyalty ();
@@ -421,12 +425,24 @@ public class KingdomManager : MonoBehaviour {
 	internal void RemoveAlliancePool(AlliancePool alliancePool){
 		this._alliances.Remove (alliancePool);
 	}
+	#endregion
+
+	#region Warfare
 	internal void AddWarfare(Warfare warfare){
 		this._kingdomWars.Add (warfare);
         this._allWarsThatOccured.Add(warfare);
     }
 	internal void RemoveWarfare(Warfare warfare){
 		this._kingdomWars.Remove (warfare);
+	}
+	#endregion
+
+	#region International Incidents
+	internal void AddInternationalIncidents(InternationalIncident internationalIncident){
+		this._internationalIncidents.Add (internationalIncident);
+	}
+	internal void RemoveInternationalIncidents(InternationalIncident internationalIncident){
+		this._internationalIncidents.Remove (internationalIncident);
 	}
 	#endregion
 

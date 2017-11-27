@@ -50,7 +50,7 @@ public static class SeeksSuperiority {
 
 				if (mustSeekAlliance) {
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if (relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 100f && !relationship.AreAllies ()) {
+						if (relationship.sharedRelationship.isDiscovered && relationship.targetKingdomThreatLevel >= 100f && !relationship.AreAllies ()) {
 							Debug.Log (kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat and a less than 75 invasion value");
 							kingdom.SeekAllianceOfProtection ();
 							if (kingdom.alliancePool != null) {
@@ -258,7 +258,7 @@ public static class SeeksSuperiority {
 					Kingdom targetKingdom = null;
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.totalLike < 0 && relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar){
+						if(relationship.totalLike < 0 && relationship.sharedRelationship.isAdjacent && relationship.sharedRelationship.isDiscovered && !relationship.AreAllies() && relationship.sharedRelationship.warfare == null && !relationship.sharedRelationship.isRecentWar){
 							if (relationship.targetKingdomThreatLevel <= -100) {
 								if(targetKingdom == null || !hasOver100InvasionValue){
 									targetKingdom = relationship.targetKingdom;

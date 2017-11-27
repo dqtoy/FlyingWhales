@@ -18,25 +18,9 @@ public class KingdomRelationship {
     public int forTestingLikeModifier;
     private string _relationshipSummary;
     private string _relationshipEventsSummary;
-    private bool _isInitial;
     private bool _isSharingBorder;
 
-    private bool _isAtWar;
-	private bool _isAdjacent;
-	private bool _isDiscovered;
-	private bool _isRecentWar;
-//	private bool _isPreparingForWar;
-
-    private KingdomWar _kingdomWarData;
-    private GameDate _requestPeaceCooldown;
-
-	private bool _isMilitaryAlliance;
-	private bool _isMutualDefenseTreaty;
-
 	private Dictionary<EVENT_TYPES, bool> _eventBuffs;
-
-	private GameDate _currentExpirationDefenseTreaty;
-	private GameDate _currentExpirationMilitaryAlliance;
 
 	//Kingdom Threat
 	private float _racePercentageModifier;
@@ -51,10 +35,7 @@ public class KingdomRelationship {
 	internal int _usedTargetEffectivePower;
 	internal int _usedTargetEffectiveDef;
 
-	internal bool cantAlly;
-
-	private Warfare _warfare;
-	private Battle _battle;
+	internal SharedKingdomRelationship sharedRelationship;
 
     #region getters/setters
     public Kingdom sourceKingdom {
@@ -81,33 +62,9 @@ public class KingdomRelationship {
     public int eventLikenessModifier {
         get { return _eventLikenessModifier; }
     }
-    public bool isAtWar {
-        get { return _isAtWar; }
-    }
-//	public bool isPreparingForWar {
-//		get { return this._isPreparingForWar; }
-//	}
-
     public bool isSharingBorder {
         get { return _isSharingBorder; }
     }
-    public KingdomWar kingdomWarData {
-        get { return _kingdomWarData; }
-    }
-
-    public GameDate requestPeaceCooldown {
-        get { return _requestPeaceCooldown; }
-    }
-
-    public bool isMilitaryAlliance {
-		get { return this._isMilitaryAlliance; }
-	}
-	public bool isMutualDefenseTreaty {
-		get { return this._isMutualDefenseTreaty; }
-	}
-	public bool isAdjacent {
-        get { return this._isAdjacent; }
-	}
 	public Dictionary<EVENT_TYPES, bool> eventBuffs {
 		get { return this._eventBuffs; }
 	}
@@ -115,18 +72,6 @@ public class KingdomRelationship {
 		get {
 			return Math.Min (this._targetKingdom.warmongerValue, this._relativeStrength);
 		}
-	}
-	public bool isDiscovered {
-		get { return this._isDiscovered; }
-	}
-	public Warfare warfare{
-		get { return this._warfare; }
-	}
-	public Battle battle{
-		get { return this._battle; }
-	}
-	public bool isRecentWar {
-		get { return this._isRecentWar; }
 	}
 //	public int targetKingdomThreat{
 //		get { return Math.Min (this._targetKingdom.warmongerValue, this._relativeStrength);}
@@ -155,29 +100,15 @@ public class KingdomRelationship {
         _eventLikenessModifier = 0;
         _relationshipSummary = string.Empty;
         _relationshipEventsSummary = string.Empty;
-        _isInitial = false;
-        _kingdomWarData = new KingdomWar(_targetKingdom);
-        _requestPeaceCooldown = new GameDate(0,0,0);
 		this._theoreticalPower = 0;
-//		this._theoreticalDefense = 0;
 		this._relativeStrength = 0;
-		this._isMilitaryAlliance = false;
-		this._isMutualDefenseTreaty = false;
-		this._isAdjacent = false;
-		this._isRecentWar = false;
-//		this._isPreparingForWar = false;
-		this._isAtWar = false;
-		this._currentExpirationDefenseTreaty = new GameDate (0, 0, 0);
-		this._currentExpirationMilitaryAlliance = new GameDate (0, 0, 0);
-		this._warfare = null;
-		this._battle = null;
+		this.sharedRelationship = null;
 
 		this._eventBuffs = new Dictionary<EVENT_TYPES, bool>(){
 			{EVENT_TYPES.TRIBUTE, false},
 			{EVENT_TYPES.INSTIGATION, false},
 		};
 
-		SetCantAlly (false);
 		SetRaceThreatModifier ();
         //UpdateLikeness(null);
     }
@@ -251,7 +182,7 @@ public class KingdomRelationship {
         }
 
         //Recent War
-		if (this._isRecentWar) {
+		if (this.sharedRelationship.isRecentWar) {
             adjustment = -30;
             baseLoyalty += adjustment;
             this._relationshipSummary += adjustment.ToString() + " Recent War.\n";
@@ -411,18 +342,6 @@ public class KingdomRelationship {
         this._like += adjustment;
         this._like = Mathf.Clamp(this._like, -100, 100);
         this.UpdateKingRelationshipStatus();
-
-//        if (!this._isInitial) {
-//            if (this.totalLike < 0) { //Relationship deteriorated
-////                _sourceKingdom.OnRelationshipDeteriorated(this, gameEventTrigger, isDiscovery, assassinationReasons);
-//                this.CheckForEmbargo(previousStatus, gameEventTrigger);
-//            } else { //Relationship improved
-//                _sourceKingdom.OnRelationshipImproved(this);
-//                this.CheckForDisembargo(previousStatus);
-//            }
-//        } else {
-//            this._isInitial = false;
-//        }
     }
 
     internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
@@ -526,10 +445,23 @@ public class KingdomRelationship {
 		}else if(identifier == RELATIONSHIP_MODIFIER.FLATTER){
 			dateTimeToUse.SetDate (dateTimeToUse.month, 1, dateTimeToUse.year);
 		}
-		if(isDecaying){
+		if (isDecaying) {
 			AddDecayingRelationshipModifier (modification, reason, identifier, dateTimeToUse);
+		} else {
+			if(!isExpiring){
+				AddNormalRelationshipModifier (modification, reason, identifier);
+			}
 		}
         UpdateKingRelationshipStatus();
+	}
+	private void AddNormalRelationshipModifier(int modification, string reason, RELATIONSHIP_MODIFIER identifier){
+		if(this._relationshipModifiers.ContainsKey(identifier)){
+			RelationshipModifier relationshipModifier = this._relationshipModifiers [identifier];
+			relationshipModifier.SetModifier (modification);
+		}else{
+			RelationshipModifier relationshipModifier = new RelationshipModifier (modification, reason, identifier);
+			this._relationshipModifiers.Add (identifier, relationshipModifier);
+		}
 	}
 	private void AddDecayingRelationshipModifier(int modification, string reason, RELATIONSHIP_MODIFIER identifier, GameDate currentDate){
 		RelationshipModifier relationshipModifier = null;
@@ -621,19 +553,28 @@ public class KingdomRelationship {
      * </summary>
      * */
 	private void DecayRelationshipModifier(RelationshipModifier relationshipModifier, int amount, DECAY_INTERVAL decayInterval, int interval){
-		relationshipModifier.AdjustModifier (amount);
-		if(relationshipModifier.modifier != 0){
-			GameDate decayDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-			if(decayInterval == DECAY_INTERVAL.DAILY){
-				decayDate.AddDays (interval);
-			}else if(decayInterval == DECAY_INTERVAL.MONTHLY){
-				decayDate.AddMonths (interval);
-			}else if(decayInterval == DECAY_INTERVAL.YEARLY){
-				decayDate.AddYears (interval);
+		if (this._relationshipModifiers.ContainsKey (relationshipModifier.identifier)) {
+			relationshipModifier.AdjustModifier (amount);
+			if (relationshipModifier.modifier != 0) {
+				GameDate decayDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+				if (decayInterval == DECAY_INTERVAL.DAILY) {
+					decayDate.AddDays (interval);
+				} else if (decayInterval == DECAY_INTERVAL.MONTHLY) {
+					decayDate.AddMonths (interval);
+				} else if (decayInterval == DECAY_INTERVAL.YEARLY) {
+					decayDate.AddYears (interval);
+				}
+				SchedulingManager.Instance.AddEntry (decayDate, () => DecayRelationshipModifier (relationshipModifier, amount, decayInterval, interval));
+			} else {
+				this._relationshipModifiers.Remove (relationshipModifier.identifier);
 			}
-			SchedulingManager.Instance.AddEntry (decayDate, () => DecayRelationshipModifier(relationshipModifier, amount, decayInterval, interval));
-		}else{
-			this._relationshipModifiers.Remove (relationshipModifier.identifier);
+		}
+		UpdateKingRelationshipStatus();
+	}
+	internal void RemoveRelationshipModifier(RELATIONSHIP_MODIFIER relationshipMod){
+		if(this._relationshipModifiers.ContainsKey(relationshipMod)){
+			this._relationshipModifiers.Remove (relationshipMod);
+			UpdateKingRelationshipStatus ();
 		}
 	}
     private void RemoveEventModifier(ExpirableModifier expMod) {
@@ -698,40 +639,6 @@ public class KingdomRelationship {
 	}
     #endregion
 
-    #region War Functions
-    /*
-     * <summary>
-     * Create an invasion plan against targetKingdom
-     * NOTE: sourceKingdom and targetKingdom must already have a war event between them for this to work
-     * </summary>
-     * */
-
-    internal void SetWarStatus(bool warStatus, Warfare warfare) {
-		if(this._isAtWar != warStatus){
-			this._isAtWar = warStatus;
-			SetWarfare(warfare);
-		}
-    }
-	internal void SetRecentWar(bool state) {
-		if(this._isRecentWar != state){
-			this._isRecentWar = state;
-		}
-	}
-	internal void SetDiscovery(bool state) {
-		if(this._isDiscovered != state){
-			this._isDiscovered = state;
-		}
-	}
-//	internal void SetPreparingWar(bool state) {
-//		this._isPreparingForWar = state;
-//	}
-    internal void AdjustExhaustion(int amount) {
-        if (_isAtWar) {
-            _kingdomWarData.AdjustExhaustion(amount);
-        }
-    }
-    #endregion
-
     #region Relationship History
     internal void AddRelationshipHistory(History relHistory) {
         _relationshipHistory.Add(relHistory);
@@ -739,46 +646,28 @@ public class KingdomRelationship {
     #endregion
 
 	internal void ChangeAdjacency(bool state){
-		AdjustAdjacency (state);
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.AdjustAdjacency (state);
-	}
-	private void AdjustAdjacency(bool state){
-		if(this._isAdjacent != state){
-			this._isAdjacent = state;
-//            UpdateTargetInvasionValue();
-//            UpdateTargetKingdomThreatLevel();
-            if (state){
-				this._sourceKingdom.AddAdjacentKingdom (this._targetKingdom);
-			}else{
-				this._sourceKingdom.RemoveAdjacentKingdom (this._targetKingdom);
-			}
+		this.sharedRelationship.SetAdjacency (state);
+		if (state){
+			this._sourceKingdom.AddAdjacentKingdom (this._targetKingdom);
+			this._targetKingdom.AddAdjacentKingdom (this._sourceKingdom);
+		}else{
+			this._sourceKingdom.RemoveAdjacentKingdom (this._targetKingdom);
+			this._targetKingdom.RemoveAdjacentKingdom (this._sourceKingdom);
 		}
 	}
 
 	internal void ChangeWarStatus(bool state, Warfare warfare){
-		SetWarStatus(state, warfare);
-//		if(state){
-//			this._sourceKingdom.AdjustWarmongerValue (50);
-//		}
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.SetWarStatus(state, warfare);
+		this.sharedRelationship.SetWarStatus (state, warfare);
 	}
 	internal void ChangeBattle(Battle battle){
-		SetBattle(battle);
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.SetBattle(battle);
+		this.sharedRelationship.SetBattle (battle);
 	}
 	internal void ChangeDiscovery(bool state){
-		SetDiscovery(state);
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.SetDiscovery(state);
+		this.sharedRelationship.SetDiscovery (state);
 	}
 	internal void ChangeRecentWar(bool state){
 		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
-			SetRecentWar (state);
-			KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-			kr.SetRecentWar(state);
+			this.sharedRelationship.SetRecentWar (state);
 		}
 	}
 
@@ -798,7 +687,7 @@ public class KingdomRelationship {
 		this._relativeStrength = Mathf.Clamp (this._relativeStrength, -100, 100);
 
 		float threat = this.targetKingdomThreatLevel;
-		if(this.isAdjacent){
+		if(this.sharedRelationship.isAdjacent){
 			if(threat >= 100){
 				this._sourceKingdom.has100OrAboveThreat = true;
 			}
@@ -840,7 +729,7 @@ public class KingdomRelationship {
 				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
-					if(relationship.totalLike >= 0 && relationshipToEnemy.isAdjacent && !relationshipToEnemy.isAtWar){
+					if(relationship.totalLike >= 0 && relationshipToEnemy.sharedRelationship.isAdjacent && !relationshipToEnemy.sharedRelationship.isAtWar){
 						posAlliancePower += (int)((float)kingdomInAlliance.soldiersCount * GetOpinionPercentage(relationship.totalLike));
 					}
 				}
@@ -855,7 +744,7 @@ public class KingdomRelationship {
 		int otherEnemiesPower = 0;
 		foreach (KingdomRelationship kr in this._sourceKingdom.relationships.Values) {
 			if(this._sourceKingdom.id != kr.targetKingdom.id && this._targetKingdom.id != kr.targetKingdom.id){
-				if(kr.isAtWar && kr.isAdjacent){
+				if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.isAdjacent){
 					otherEnemiesPower += kr.targetKingdom.soldiersCount;
 				}
 			}
@@ -882,13 +771,6 @@ public class KingdomRelationship {
 		}
 		return true;
 	}
-	internal void SetWarfare(Warfare warfare){
-		this._warfare = warfare;
-	}
-	internal void SetBattle(Battle battle){
-		this._battle = battle;
-	}
-
 	private int GetKingdomThreatOpinionChangeBasedOnTrait(TRAIT trait, out string summary){
 		//Kingdom Threat
 		summary = string.Empty;
@@ -941,15 +823,10 @@ public class KingdomRelationship {
 		}
 		return 0;
 	}
-	internal void SetCantAlly(bool state){
-		this.cantAlly = state;
-	}
+
 	internal void ChangeCantAlly(bool state){
 		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
-			SetCantAlly (state);
-			KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-			kr.SetCantAlly (state);
-
+			this.sharedRelationship.SetCantAlly (state);
 			if(state){
 				GameDate changeDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 				changeDate.AddYears (1);

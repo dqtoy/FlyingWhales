@@ -1039,7 +1039,7 @@ public class Citizen {
 		kr.AddRelationshipModifier (-100, "Rebellion", RELATIONSHIP_MODIFIER.REBELLION, true, false);
 		rk.AddRelationshipModifier (-100, "Rebellion", RELATIONSHIP_MODIFIER.REBELLION, true, false);
 
-        if (kr.isAdjacent) {
+		if (kr.sharedRelationship.isAdjacent) {
             Warfare warfare = new Warfare(newKingdom, sourceKingdom, false);
 			newKingdom.checkedWarfareID.Add (warfare.id);
 			sourceKingdom.checkedWarfareID.Add (warfare.id);

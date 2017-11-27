@@ -43,7 +43,7 @@ public static class SeeksBalance {
 			bool mustSeekAlliance = false;
 			//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
 			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-				if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f){
+				if(relationship.sharedRelationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f){
 					if (!relationship.AreAllies ()) {
 						mustSeekAlliance = true;
 						break;
@@ -293,7 +293,7 @@ public static class SeeksBalance {
 					Kingdom targetKingdom = null;
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar){
+						if(relationship.sharedRelationship.isAdjacent && relationship.sharedRelationship.isDiscovered && !relationship.AreAllies() && relationship.sharedRelationship.warfare == null && !relationship.sharedRelationship.isRecentWar){
 							if (relationship.totalLike <= -50) {
 								if(relationship.targetKingdomThreatLevel <= -25){
 									if(targetKingdom == null || !hasOver100InvasionValue){

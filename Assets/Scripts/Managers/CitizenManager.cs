@@ -288,7 +288,7 @@ public class CitizenManager : MonoBehaviour {
             KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
             List<Kingdom> alliesAtWarWith = currRel.GetAlliesTargetKingdomIsAtWarWith();
             //for each non-ally adjacent kingdoms that one of my allies declared war with recently
-            if (currRel.isAdjacent && !currRel.AreAllies() && alliesAtWarWith.Count > 0) {
+			if (currRel.sharedRelationship.isAdjacent && !currRel.AreAllies() && alliesAtWarWith.Count > 0) {
                 //compare its theoretical power vs my theoretical power
                 int sourceKingdomPower = currRel._theoreticalPower;
                 int otherKingdomPower = otherKingdom.GetRelationshipWithKingdom(sourceKingdom)._theoreticalPower;
@@ -323,7 +323,7 @@ public class CitizenManager : MonoBehaviour {
                 Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i];
                 KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
                 KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
-                if (!relOfOtherWithSource.isAtWar && relOfOtherWithSource.totalLike > 0) {
+				if (!relOfOtherWithSource.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
                     int weight = 0;
                     weight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
                     weight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it

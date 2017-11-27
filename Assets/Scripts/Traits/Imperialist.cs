@@ -9,7 +9,7 @@ public class Imperialist : Trait {
         KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
         int weight = 50;
         //loop through non-ally adjacent kingdoms i am not at war with
-        if (currRel.isAdjacent && !currRel.isAtWar && !currRel.AreAllies()) {
+		if (currRel.sharedRelationship.isAdjacent && !currRel.sharedRelationship.isAtWar && !currRel.AreAllies()) {
             KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
             //compare its theoretical power vs my theoretical power, if my theoretical power is higher
             if (currRel._theoreticalPower > otherKingdomRelTowardsSource._theoreticalPower) {

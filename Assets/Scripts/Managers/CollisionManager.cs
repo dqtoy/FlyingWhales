@@ -29,9 +29,9 @@ public class CollisionManager : MonoBehaviour {
 	#region Combat
 	private void Combat(General general1, General general2){
 		KingdomRelationship kr = general1.citizen.city.kingdom.GetRelationshipWithKingdom (general2.citizen.city.kingdom);
-		if(kr.isAtWar && kr.warfare != null){
+		if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.warfare != null){
 			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.city.name + " of " + general1.citizen.city.kingdom.name + " AND " + general2.citizen.city.name + " of " + general2.citizen.city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
-			kr.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
+			kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 
 			int general1Power = general1.soldiers;
 			int general2Power = general2.soldiers;
@@ -75,13 +75,13 @@ public class CollisionManager : MonoBehaviour {
 
 			if(general1Roll > general2Roll){
 				DamageComputation (general1, general1Roll, general2, general2Roll);
-				if(kr.battle != null){
-					kr.battle.BattleEnd (general1, general2);
+				if(kr.sharedRelationship.battle != null){
+					kr.sharedRelationship.battle.BattleEnd (general1, general2);
 				}
 			}else if(general2Roll > general1Roll){
 				DamageComputation (general2, general2Roll, general1, general1Roll);
-				if(kr.battle != null){
-					kr.battle.BattleEnd (general2, general1);
+				if(kr.sharedRelationship.battle != null){
+					kr.sharedRelationship.battle.BattleEnd (general2, general1);
 				}
 			}else{
 				if(!general1.isDefending && !general2.isDefending){
@@ -92,13 +92,13 @@ public class CollisionManager : MonoBehaviour {
 				}else{
 					if(general1.isDefending){
 						DamageComputation (general1, general1Roll, general2, general2Roll);
-						if(kr.battle != null){
-							kr.battle.BattleEnd (general1, general2);
+						if(kr.sharedRelationship.battle != null){
+							kr.sharedRelationship.battle.BattleEnd (general1, general2);
 						}
 					}else if(general2.isDefending){
 						DamageComputation (general2, general2Roll, general1, general1Roll);
-						if(kr.battle != null){
-							kr.battle.BattleEnd (general2, general1);
+						if(kr.sharedRelationship.battle != null){
+							kr.sharedRelationship.battle.BattleEnd (general2, general1);
 						}
 					}
 				}

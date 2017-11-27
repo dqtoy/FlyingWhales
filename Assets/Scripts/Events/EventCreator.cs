@@ -137,6 +137,10 @@ public class EventCreator: MonoBehaviour {
 		caravaneer.Initialize ();
 		return caravaneer;
 	}
+	internal InternationalIncident CreateInternationalIncidentEvent(Kingdom sourceKingdom, Kingdom targetKingdom, bool isSourceKingdomAggrieved, bool isTargetKingdomAggrieved) {
+		InternationalIncident internationalIncident = new InternationalIncident(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom, isSourceKingdomAggrieved, isTargetKingdomAggrieved);
+		return internationalIncident;
+	}
 	//internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){
 	//	if(sourceKingdom.isLockedDown){
 	//		return null;
