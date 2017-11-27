@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SharedKingdomRelationship {
 
@@ -10,6 +11,8 @@ public class SharedKingdomRelationship {
 
 	private Warfare _warfare;
 	private Battle _battle;
+
+	private List<InternationalIncident> _internationalIncidents;
 
 	internal bool cantAlly;
 	#region getters/setters
@@ -41,12 +44,16 @@ public class SharedKingdomRelationship {
 		this._isDiscovered = false;
 		this._warfare = null;
 		this._battle = null;
+		this._internationalIncidents = new List<InternationalIncident> ();
 	}
 
 	internal void SetWarStatus(bool warStatus, Warfare warfare) {
 		if(this._isAtWar != warStatus){
 			this._isAtWar = warStatus;
 			SetWarfare(warfare);
+			if(warStatus){
+				ResolveAllIntlIncidents ();
+			}
 		}
 	}
 	internal void SetRecentWar(bool state) {
@@ -72,5 +79,18 @@ public class SharedKingdomRelationship {
 	}
 	internal void SetBattle(Battle battle){
 		this._battle = battle;
+	}
+
+	internal void AddInternationalIncident(InternationalIncident intlIncident){
+		this._internationalIncidents.Add (intlIncident);
+	}
+	internal void RemoveInternationalIncident(InternationalIncident intlIncident){
+		this._internationalIncidents.Remove (intlIncident);
+	}
+
+	private void ResolveAllIntlIncidents(){
+		while(this._internationalIncidents.Count > 0) {
+			this._internationalIncidents [0].CancelEvent ();
+		}
 	}
 }

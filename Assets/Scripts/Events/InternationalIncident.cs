@@ -60,12 +60,14 @@ public class InternationalIncident : GameEvent {
 		this._sourceKingPreviousAction = INCIDENT_ACTIONS.NONE;
 		this._targetKingPreviousAction = INCIDENT_ACTIONS.NONE;
 		ScheduleReactionDate ();
+		this._krSourceToTarget.sharedRelationship.AddInternationalIncident (this);
 		KingdomManager.Instance.AddInternationalIncidents (this);
 	}
 	#region Overrides
 	internal override void DoneEvent(){
 		base.DoneEvent();
 		RemoveRelationshipModifications ();
+		this._krSourceToTarget.sharedRelationship.RemoveInternationalIncident (this);
 		KingdomManager.Instance.RemoveInternationalIncidents (this);
 	}
 	internal override void CancelEvent (){
@@ -248,11 +250,11 @@ public class InternationalIncident : GameEvent {
 		Warfare newWar = null;
 		if(this._krSourceToTarget.sharedRelationship.isAdjacent && this._krTargetToSource.sharedRelationship.isAdjacent){
 			if(chosenKingdom.id == this._sourceKingdom.id){
+				this.DoneEvent ();
 				newWar = new Warfare (this._sourceKingdom, this._targetKingdom);
-				this.DoneEvent ();
 			}else if(chosenKingdom.id == this._targetKingdom.id){
-				newWar = new Warfare (this._targetKingdom, this._sourceKingdom);
 				this.DoneEvent ();
+				newWar = new Warfare (this._targetKingdom, this._sourceKingdom);
 			}
 			if(newWar != null){
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "InternationalIncident", "war");
