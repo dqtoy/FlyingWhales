@@ -157,6 +157,8 @@ public class Kingdom{
 
 	private int _soldiers;
 
+	internal MilitaryManager militaryManager;
+
     #region getters/setters
     internal Sprite emblem {
         get { return _emblem; }
@@ -470,13 +472,15 @@ public class Kingdom{
 			this.SetTechProductionPercentage(1f);
 			this.UpdateTechCapacity ();
 			this.SetSecession (false);
-
 			// this.NewRandomCrimeDate (true);
 			// Determine what type of Kingdom this will be upon initialization.
 			this._kingdomTypeData = null;
 			SetKingdomType(StoryTellingManager.Instance.GetRandomKingdomTypeForKingdom());
 
 			this.basicResource = Utilities.GetBasicResourceForRace(race);
+
+			this.militaryManager = new MilitaryManager (this);
+
 
 			Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
             Messenger.AddListener("OnDayEnd", AttemptToExpand);
@@ -1400,6 +1404,7 @@ public class Kingdom{
         } else if (cities.Count >= KingdomManager.Instance.mediumToLargeReq) {
             _kingdomSize = KINGDOM_SIZE.LARGE;
         }
+		this.militaryManager.UpdateMaxGenerals ();
     }
     #endregion
 
