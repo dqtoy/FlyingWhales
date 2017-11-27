@@ -1050,6 +1050,15 @@ public class Citizen {
     #endregion
 
     #region Character Traits
+    internal bool HasTrait(TRAIT trait) {
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
+            if(currTrait.trait == trait) {
+                return true;
+            }
+        }
+        return false;
+    }
     internal void GenerateTraitsForCitizen() {
         CharacterType baseCharacter = CitizenManager.Instance.GetRandomCharacterType();
         _otherTraits = new List<TRAIT>(baseCharacter.otherTraits);

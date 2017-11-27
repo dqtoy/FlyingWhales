@@ -174,11 +174,13 @@ public class KingdomRelationship {
         //Kingdom Type
         if (_sourceKingdom.kingdomTypeData.dictRelationshipKingdomType.ContainsKey(_targetKingdom.kingdomType)) {
             adjustment = _sourceKingdom.kingdomTypeData.dictRelationshipKingdomType[_targetKingdom.kingdomType];
-            baseLoyalty += adjustment;
-            if (adjustment >= 0) {
-                this._relationshipSummary += "+";
+            if(adjustment != 0) {
+                baseLoyalty += adjustment;
+                if (adjustment > 0) {
+                    this._relationshipSummary += "+";
+                }
+                this._relationshipSummary += adjustment.ToString() + " Kingdom Type.\n";
             }
-            this._relationshipSummary += adjustment.ToString() + " Kingdom Type.\n";
         }
 
         //Recent War
@@ -215,70 +217,114 @@ public class KingdomRelationship {
 		}
 
 
-		//Charisma Trait
-		if(this._targetKingdom.king.charisma == TRAIT.CHARISMATIC){
-			adjustment = 15;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += "+" + adjustment.ToString() + " Charmed.\n";
-		}else if(this._targetKingdom.king.charisma == TRAIT.REPULSIVE){
-			adjustment = -15;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Repulsed.\n";
-		}
+        //Traits
+        if (this._sourceKingdom.king.HasTrait(TRAIT.HOSTILE)) {
+            if (this._targetKingdom.king.HasTrait(TRAIT.DIPLOMATIC)) {
+                adjustment = -20;
+                baseLoyalty += adjustment;
+                this._relationshipSummary += adjustment.ToString() + " Dislikes Diplomatic.\n";
+            }
+        }
 
-		//Military Trait
-		if(this._sourceKingdom.king.military == TRAIT.PACIFIST){
-			if(this._targetKingdom.king.military != TRAIT.HOSTILE){
-				adjustment = 30;
-				baseLoyalty += adjustment;
-				this._relationshipSummary += "+" + adjustment.ToString() + " Pacifist.\n";
-			}else{
-				adjustment = -30;
-				baseLoyalty += adjustment;
-				this._relationshipSummary += adjustment.ToString() + " Disapproved Hostility.\n";
-			}
-		}else if(this._sourceKingdom.king.military == TRAIT.HOSTILE){
-			adjustment = -30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Hostile.\n";
-		}
+        if (this._sourceKingdom.king.HasTrait(TRAIT.DIPLOMATIC)) {
+            if (this._targetKingdom.king.HasTrait(TRAIT.HOSTILE)) {
+                adjustment = -20;
+                baseLoyalty += adjustment;
+                this._relationshipSummary += adjustment.ToString() + " Dislikes Hostile.\n";
+            }
+        }
 
-		////Science Trait
-		//if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.ERUDITE){
-		//	adjustment = 30;
-		//	baseLoyalty += adjustment;
-		//	this._relationshipSummary += "+" + adjustment.ToString() + " Both Erudite.\n";
-		//}else if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.IGNORANT){
-		//	adjustment = -30;
-		//	baseLoyalty += adjustment;
-		//	this._relationshipSummary += adjustment.ToString() + " Dislikes Ignorant.\n";
-		//}
+        if (this._sourceKingdom.king.HasTrait(TRAIT.RUTHLESS)) {
+            if (this._targetKingdom.king.HasTrait(TRAIT.BENEVOLENT)) {
+                adjustment = -20;
+                baseLoyalty += adjustment;
+                this._relationshipSummary += adjustment.ToString() + " Dislikes Benevolent.\n";
+            }
+        }
 
-		//Intelligence Trait
-		if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.SMART){
-			adjustment = 30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += "+" + adjustment.ToString() + " Both Smart.\n";
-		}else if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.DUMB){
-			adjustment = -30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Dislikes Dumb.\n";
-		}
+        if (this._sourceKingdom.king.HasTrait(TRAIT.BENEVOLENT)) {
+            if (this._targetKingdom.king.HasTrait(TRAIT.RUTHLESS)) {
+                adjustment = -20;
+                baseLoyalty += adjustment;
+                this._relationshipSummary += adjustment.ToString() + " Dislikes Ruthless.\n";
+            }
+        }
 
-		//Efficieny Trait
-		if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.EFFICIENT){
-			adjustment = 30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += "+" + adjustment.ToString() + " Both Efficient.\n";
-		}else if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.INEFFICIENT){
-			adjustment = -30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Dislikes Inept.\n";
-		}
+        if (this._sourceKingdom.king.HasTrait(TRAIT.HONEST)) {
+            if (this._targetKingdom.king.HasTrait(TRAIT.DECEITFUL)) {
+                adjustment = -20;
+                baseLoyalty += adjustment;
+                this._relationshipSummary += adjustment.ToString() + " Dislikes Deceitful.\n";
+            }
+
+            if (this._targetKingdom.king.HasTrait(TRAIT.SCHEMING)) {
+                adjustment = -20;
+                baseLoyalty += adjustment;
+                this._relationshipSummary += adjustment.ToString() + " Dislikes Scheming.\n";
+            }
+        }
+
+        if (this._sourceKingdom.king.HasTrait(TRAIT.DEFENSIVE)) {
+            if (this._targetKingdom.king.HasTrait(TRAIT.IMPERIALIST)) {
+                adjustment = -20;
+                baseLoyalty += adjustment;
+                this._relationshipSummary += adjustment.ToString() + " Dislikes Imperialist.\n";
+            }
+        }
+
+        ////Charisma Trait
+        //if(this._targetKingdom.king.charisma == TRAIT.CHARISMATIC){
+        //	adjustment = 15;
+        //	baseLoyalty += adjustment;
+        //	this._relationshipSummary += "+" + adjustment.ToString() + " Charmed.\n";
+        //}else if(this._targetKingdom.king.charisma == TRAIT.REPULSIVE){
+        //	adjustment = -15;
+        //	baseLoyalty += adjustment;
+        //	this._relationshipSummary += adjustment.ToString() + " Repulsed.\n";
+        //}
+
+        ////Military Trait
+        //if(this._sourceKingdom.king.military == TRAIT.PACIFIST){
+        //	if(this._targetKingdom.king.military != TRAIT.HOSTILE){
+        //		adjustment = 30;
+        //		baseLoyalty += adjustment;
+        //		this._relationshipSummary += "+" + adjustment.ToString() + " Pacifist.\n";
+        //	}else{
+        //		adjustment = -30;
+        //		baseLoyalty += adjustment;
+        //		this._relationshipSummary += adjustment.ToString() + " Disapproved Hostility.\n";
+        //	}
+        //}else if(this._sourceKingdom.king.military == TRAIT.HOSTILE){
+        //	adjustment = -30;
+        //	baseLoyalty += adjustment;
+        //	this._relationshipSummary += adjustment.ToString() + " Hostile.\n";
+        //}
+
+        ////Intelligence Trait
+        //if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.SMART){
+        //	adjustment = 30;
+        //	baseLoyalty += adjustment;
+        //	this._relationshipSummary += "+" + adjustment.ToString() + " Both Smart.\n";
+        //}else if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.DUMB){
+        //	adjustment = -30;
+        //	baseLoyalty += adjustment;
+        //	this._relationshipSummary += adjustment.ToString() + " Dislikes Dumb.\n";
+        //}
+
+        ////Efficieny Trait
+        //if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.EFFICIENT){
+        //	adjustment = 30;
+        //	baseLoyalty += adjustment;
+        //	this._relationshipSummary += "+" + adjustment.ToString() + " Both Efficient.\n";
+        //}else if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.INEFFICIENT){
+        //	adjustment = -30;
+        //	baseLoyalty += adjustment;
+        //	this._relationshipSummary += adjustment.ToString() + " Dislikes Inept.\n";
+        //}
 
 
-		//Kingdom Threat
-		string summary = string.Empty;
+        //Kingdom Threat
+        string summary = string.Empty;
 		adjustment = GetKingdomThreatOpinionChangeBasedOnTrait (TRAIT.OPPORTUNIST, out summary);
 		if (adjustment != 0) {
 			baseLoyalty += adjustment;

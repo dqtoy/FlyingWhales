@@ -519,7 +519,7 @@ public class GridMap : MonoBehaviour {
                         HexTile currRoadTile = allMinorRoadsInWorld[l];
                         if(PathGenerator.Instance.GetPath(currRoadTile, otherHexTile, PATHFINDING_MODE.USE_ROADS) != null) {
                             List<HexTile> pathToCurrRoadTile = PathGenerator.Instance.GetPath(currElligibleTile, currRoadTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
-                            if (pathToCurrRoadTile != null) {
+                            if (pathToCurrRoadTile != null && pathToCurrRoadTile.Count < pathToOtherHexTile.Count) {
                                 pathToOtherHexTile = pathToCurrRoadTile;
                                 break;
                             }
