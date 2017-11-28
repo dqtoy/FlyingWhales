@@ -479,9 +479,6 @@ public class Kingdom{
 
 			this.basicResource = Utilities.GetBasicResourceForRace(race);
 
-			this.militaryManager = new MilitaryManager (this);
-
-
 			Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
             Messenger.AddListener("OnDayEnd", AttemptToExpand);
             Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
@@ -1404,7 +1401,9 @@ public class Kingdom{
         } else if (cities.Count >= KingdomManager.Instance.mediumToLargeReq) {
             _kingdomSize = KINGDOM_SIZE.LARGE;
         }
-		this.militaryManager.UpdateMaxGenerals ();
+		if (this.militaryManager != null) {
+			this.militaryManager.UpdateMaxGenerals ();
+		}
     }
     #endregion
 
