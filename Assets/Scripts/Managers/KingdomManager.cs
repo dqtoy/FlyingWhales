@@ -135,6 +135,7 @@ public class KingdomManager : MonoBehaviour {
                 currCity.hexTile.CreateCityNamePlate(currCity);
                 currCity.SetupInitialValues();
             }
+			newKingdom.militaryManager = new MilitaryManager (newKingdom);
         }
 
         //if(newKingdom.king == null) {
