@@ -28,7 +28,7 @@ public class KingdomRelationship {
 
 	internal int _theoreticalPower;
 //	internal int _theoreticalDefense;
-	internal int _relativeStrength;
+	private int _relativeStrength;
 
 	internal int _usedSourceEffectivePower;
 	internal int _usedSourceEffectiveDef;
@@ -72,6 +72,9 @@ public class KingdomRelationship {
 		get {
 			return Math.Min (this._targetKingdom.warmongerValue, this._relativeStrength);
 		}
+	}
+	public int relativeStrength{
+		get { return this._relativeStrength; }
 	}
 //	public int targetKingdomThreat{
 //		get { return Math.Min (this._targetKingdom.warmongerValue, this._relativeStrength);}

@@ -9,11 +9,15 @@ public class General : Role {
 	internal bool isAttacking;
 	internal bool isDefending;
 	internal bool willDropSoldiersAndDisappear;
+
+	internal GeneralTask generalTask;
+
     public General(Citizen citizen): base(citizen){
 		this.isReturning = false;
 		this.isAttacking = false;
 		this.isDefending = false;
 		this.willDropSoldiersAndDisappear = false;
+		this.generalTask = null;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){
@@ -54,5 +58,31 @@ public class General : Role {
 		}else{
 			this.gameEventInvolvedIn.DoneEvent ();
 		}
+	}
+
+	internal void AssignTask(GeneralTask generalTask){
+		this.generalTask = generalTask;
+
+	}
+	private void GetSoldiersFromCities(){
+		int neededSoldiers = NeededSoldiers ();
+		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
+			City city = this.citizen.city.kingdom.cities [i];
+			List<HexTile> path = PathGenerator.Instance.GetPath (city.hexTile, this.location, PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM, this.citizen.city.kingdom);
+			if(path != null){
+				
+			}
+		}
+	}
+	private void AskForSoldiers(int neededSoldiers){
+		
+	}
+	private int NeededSoldiers(){
+		if(this.generalTask.task == GENERAL_TASKS.ATTACK_CITY){
+			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.activeGenerals.Count / this.citizen.city.kingdom.warfareInfo.Count;
+		}else if(this.generalTask.task == GENERAL_TASKS.DEFEND_CITY){
+			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.activeGenerals.Count / this.citizen.city.kingdom.warfareInfo.Count;
+		}
+		return 0;
 	}
 }

@@ -698,3 +698,8 @@ public enum WEIGHTED_ACTION {
     FLATTER,
     SEND_AID
 }
+
+public enum GENERAL_TASKS{
+	ATTACK_CITY,
+	DEFEND_CITY,
+}

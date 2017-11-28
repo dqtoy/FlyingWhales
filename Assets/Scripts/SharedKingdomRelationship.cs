@@ -35,6 +35,9 @@ public class SharedKingdomRelationship {
 	public bool isRecentWar {
 		get { return this._isRecentWar; }
 	}
+	public List<InternationalIncident> internationalIncidents {
+		get { return this._internationalIncidents; }
+	}
 	#endregion
 
 	public SharedKingdomRelationship(){

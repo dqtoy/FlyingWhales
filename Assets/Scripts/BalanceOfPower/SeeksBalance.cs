@@ -310,7 +310,7 @@ public static class SeeksBalance {
 								if(!hasOver100InvasionValue){
 									if(relationship.targetKingdom.warmongerValue > 150 && relationship.targetKingdom.warfareInfo.Count > 0){
 										KingdomRelationship kr = relationship.targetKingdom.GetRelationshipWithKingdom(kingdom);
-										if(kr._relativeStrength <= 50){
+										if(kr.relativeStrength <= 50){
 											if(targetKingdom == null){
 												targetKingdom = relationship.targetKingdom;
 												leastLike = relationship.totalLike;

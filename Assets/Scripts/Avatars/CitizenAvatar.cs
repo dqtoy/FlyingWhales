@@ -386,11 +386,19 @@ public class CitizenAvatar : PooledObject {
 					Kingdom kingdomOfThis = this.citizenRole.citizen.city.kingdom;
 					Kingdom kingdomOfOther = otherAgent.city.kingdom;
 					if (kingdomOfThis.id != kingdomOfOther.id) {
-						KingdomRelationship relationship = kingdomOfThis.GetRelationshipWithKingdom (kingdomOfOther);
-						if (relationship != null) {
-							if (relationship.sharedRelationship.isAtWar) {
-								CollisionManager.Instance.HasCollided (this.citizenRole, otherAgent.assignedRole);
-//								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
+						if(!kingdomOfThis.isDead && !kingdomOfOther.isDead){
+							KingdomRelationship relationship = kingdomOfThis.GetRelationshipWithKingdom (kingdomOfOther);
+							if (relationship != null) {
+								if (relationship.sharedRelationship.isAtWar) {
+									CollisionManager.Instance.HasCollided (this.citizenRole, otherAgent.assignedRole);
+									//								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
+								}
+							}
+						}else{
+							if (kingdomOfThis.isDead) {
+								this.citizenRole.gameEventInvolvedIn.CancelEvent ();
+							} else if (kingdomOfOther.isDead) {
+								otherAgent.assignedRole.gameEventInvolvedIn.CancelEvent ();
 							}
 						}
 					}
