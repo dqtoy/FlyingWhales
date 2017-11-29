@@ -15,7 +15,7 @@ public class ReinforceCityTask : GeneralTask {
 			ReturnRemainingSoldiers ();
 		} else {
 			this.general.DropSoldiers ();
-			this.general.citizen.Death (DEATH_REASONS.BATTLE);
+			this.general.Death (DEATH_REASONS.BATTLE);
 		}
 	}
 	#endregion

@@ -20,4 +20,10 @@ public class AttackCityTask : GeneralTask {
 		this.moveDate.AddDays (this.daysBeforeMoving);
 		SchedulingManager.Instance.AddEntry (this.moveDate, () => ExecuteTask ());
 	}
+
+	#region Overrides
+	internal override void Arrived(){
+		this.general.GetTask ();
+	}
+	#endregion
 }

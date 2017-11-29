@@ -67,7 +67,7 @@ public class Warfare {
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
 //		InstantDeclareWarIfNotAdjacent (firstKingdom, secondKingdom);
-		CreateNewBattle (firstKingdom, true);
+//		CreateNewBattle (firstKingdom, true);
 		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
 			KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
 			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.sharedRelationship.isAdjacent.ToString () + " and threat is " + kr.targetKingdomThreatLevel.ToString ());
@@ -141,7 +141,7 @@ public class Warfare {
 		Kingdom winnerKingdom = winnerCity.kingdom;
 		Kingdom loserKingdom = loserCity.kingdom;
 
-		winnerKingdom.ConquerCity(loserCity, this);
+//		winnerKingdom.ConquerCity(loserCity, this);
 		if(winnerGeneral.soldiers > 0){
 			loserCity.hexTile.city.AdjustSoldiers (winnerGeneral.soldiers, true, true);
 //			winnerGeneral.WillDropSoldiersAndDisappear ();
@@ -205,7 +205,7 @@ public class Warfare {
 			Kingdom winnerKingdom = winnerCity.kingdom;
 			Kingdom loserKingdom = loserCity.kingdom;
 
-			winnerKingdom.ConquerCity(loserCity, this);
+//			winnerKingdom.ConquerCity(loserCity, this);
 
 			if(!winnerKingdom.isDead && !loserKingdom.isDead){
 				KingdomRelationship kr = winnerKingdom.GetRelationshipWithKingdom (loserKingdom);
@@ -447,6 +447,14 @@ public class Warfare {
 //			}
 
 			CheckWarfare ();
+		}
+	}
+	internal void AttemptToPeace(Kingdom winnerKingdom){
+		float peaceMultiplier = PeaceMultiplier (winnerKingdom);
+		int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < value){
+			PeaceDeclaration (winnerKingdom);
 		}
 	}
 	internal void PeaceDeclaration(Kingdom kingdom1){

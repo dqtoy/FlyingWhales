@@ -128,6 +128,9 @@ public class CitizenAvatar : PooledObject {
             }
         }
 
+		if(this.citizenRole is General){
+			HasEnteredHostileCity ((General)this.citizenRole);
+		}
 		HasArrivedAtTargetLocation ();
 		if(!this.hasArrived){
 			NewMove ();
@@ -194,6 +197,11 @@ public class CitizenAvatar : PooledObject {
     }
     #endregion
 
+	internal void HasEnteredHostileCity(General general){
+		if(this.citizenRole.location.city != null && this.citizenRole.location.city.kingdom.id != this.citizenRole.citizen.city.kingdom.id){
+			CollisionManager.Instance.Combat (general, this.citizenRole.location.city);
+		}
+	}
     private void ResetValues() {
         this.collidedWithHostile = false;
         this.otherGeneral = null;
