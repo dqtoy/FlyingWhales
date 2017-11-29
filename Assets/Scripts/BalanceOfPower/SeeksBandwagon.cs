@@ -39,7 +39,7 @@ public static class SeeksBandwagon {
 			bool mustSeekAlliance = false;
 			//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
 			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-				if (relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f) {
+				if (relationship.sharedRelationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f) {
 					if (!relationship.AreAllies ()) {
 						mustSeekAlliance = true;
 						break;
@@ -253,7 +253,7 @@ public static class SeeksBandwagon {
 					Kingdom targetKingdom = null;
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.isDiscovered && relationship.isAdjacent && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar){
+						if(relationship.sharedRelationship.isDiscovered && relationship.sharedRelationship.isAdjacent && !relationship.AreAllies() && relationship.sharedRelationship.warfare == null && !relationship.sharedRelationship.isRecentWar){
 							if (relationship.totalLike <= -50 && relationship.targetKingdomThreatLevel < 0 && relationship.targetKingdom.warfareInfo.Count > 0) {
 								if(targetKingdom == null || !isFirstPart){
 									targetKingdom = relationship.targetKingdom;

@@ -147,7 +147,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		if (relationship == null) {
 			return false;
 		}
-		return relationship.isAtWar;
+		return relationship.sharedRelationship.isAtWar;
 	}
 //	[Task]
 //	public void SetCompatibilityValue(){

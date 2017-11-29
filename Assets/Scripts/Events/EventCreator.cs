@@ -142,6 +142,11 @@ public class EventCreator: MonoBehaviour {
             offeringKingdom.king, offeringKingdom, offeredToKingdom, conquestTarget);
         return aoc;
     }
+    internal InternationalIncident CreateInternationalIncidentEvent(Kingdom sourceKingdom, Kingdom targetKingdom, bool isSourceKingdomAggrieved, bool isTargetKingdomAggrieved) {
+		InternationalIncident internationalIncident = new InternationalIncident(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom, isSourceKingdomAggrieved, isTargetKingdomAggrieved);
+		return internationalIncident;
+	}
+
     internal AllianceOfProtectionOffer CreateAllianceOfProtectionOfferEvent(Kingdom offeringKingdom, Kingdom offeredToKingdom) {
         AllianceOfProtectionOffer aop = new AllianceOfProtectionOffer(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
             offeringKingdom.king, offeringKingdom, offeredToKingdom);

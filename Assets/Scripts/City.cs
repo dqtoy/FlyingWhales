@@ -70,8 +70,8 @@ public class City{
 	internal bool isPaired;
 	internal bool isAttacking;
 	internal bool isDefending;
-	internal bool hasReinforced;
 	internal bool isDead;
+	internal bool hasAssignedDefendGeneral;
 	private bool _isStarving;
 	private bool _isNoCityGrowth;
 
@@ -273,7 +273,7 @@ public class City{
 		this.isPaired = false;
 		this.isAttacking = false;
 		this.isDefending = false;
-		this.hasReinforced = false;
+		this.hasAssignedDefendGeneral = false;
 		this._isStarving = false;
 		this._isNoCityGrowth = false;
 		this.isDead = false;
@@ -284,6 +284,7 @@ public class City{
 		this._foodCount = 0;
 		this._materialCount = 0;
 		this._oreCount = 0;
+
 
         this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -322,7 +323,6 @@ public class City{
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
 		this.caravaneer = EventCreator.Instance.CreateCaravaneerEvent (this);
-        Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         if (GameManager.Instance.enableGameAgents) {
             SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
         }
@@ -462,19 +462,7 @@ public class City{
         PurchaseTile(ctm.targetHexTileToPurchase);
         ctm.targetHexTileToPurchase = null;
     }
-
-	/*
-	 * Function that listens to onWeekEnd. Performed every tick.
-	 * */
-	protected void CityEverydayTurnActions(){
-		this.hasReinforced = false;
-	}
-	/*
-	 * Function that listens to onWeekEnd. Performed every tick.
-	 * */
-	protected void RebelFortEverydayTurnActions(){
-		this.hasReinforced = false;
-	}
+		
 	/*
 	 * Increase a city's HP every month.
 	 * */
@@ -899,7 +887,6 @@ public class City{
     }
 
     internal void RemoveListeners() {
-		Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
 		Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
     }
 		
@@ -1387,4 +1374,16 @@ public class City{
 		return null;
 	}
 	#endregion
+
+	internal bool IsBorder(){
+		for (int i = 0; i < this.region.connections.Count; i++) {
+			if(this.region.connections[i] is Region){
+				Region adjacentRegion = (Region)this.region.connections [i];
+				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

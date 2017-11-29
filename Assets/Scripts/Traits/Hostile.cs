@@ -11,7 +11,7 @@ public class Hostile : Trait {
         int warCount = sourceKingdom.GetWarCount();
         if(warCount <= 0) {
             KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-            if (currRel.isAdjacent && !currRel.isAtWar && !currRel.AreAllies()) {
+			if (currRel.sharedRelationship.isAdjacent && !currRel.sharedRelationship.isAtWar && !currRel.AreAllies()) {
                 KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
                 if (currRel._theoreticalPower > otherKingdomRelTowardsSource._theoreticalPower) {
                     //5 weight per 1% of my theoretical power over his

@@ -152,6 +152,8 @@ public class Kingdom{
 
 	private int _soldiers;
 
+	internal MilitaryManager militaryManager;
+
     #region getters/setters
     internal Sprite emblem {
         get { return _emblem; }
@@ -481,7 +483,6 @@ public class Kingdom{
 			this.SetTechProductionPercentage(1f);
 			this.UpdateTechCapacity ();
 			this.SetSecession (false);
-
 			// this.NewRandomCrimeDate (true);
 			// Determine what type of Kingdom this will be upon initialization.
 			this._kingdomTypeData = null;
@@ -890,7 +891,7 @@ public class Kingdom{
 //        }
 
 		foreach (KingdomRelationship rel in relationships.Values) {
-			if (rel.isAtWar) {
+			if (rel.sharedRelationship.isAtWar) {
 				rel.ChangeWarStatus (false, null);
 			}
 		}
@@ -940,9 +941,17 @@ public class Kingdom{
 
         //Debug.Log(this.name + " created new relationship with " + createdKingdom.name);
 
-        KingdomRelationship newRel = new KingdomRelationship(this, createdKingdom);
-        relationships.Add(createdKingdom, newRel);
-        newRel.UpdateLikeness();
+        KingdomRelationship newRel1 = new KingdomRelationship(this, createdKingdom);
+		relationships.Add(createdKingdom, newRel1);
+		KingdomRelationship newRel2 = new KingdomRelationship(createdKingdom, this);
+		createdKingdom.relationships.Add(this, newRel2);
+
+		SharedKingdomRelationship sharedRelationship = new SharedKingdomRelationship ();
+		newRel1.sharedRelationship = sharedRelationship;
+		newRel2.sharedRelationship = sharedRelationship;
+
+		newRel1.UpdateLikeness();
+		newRel2.UpdateLikeness();
     }
     /* 
      * <summary>
@@ -1408,6 +1417,9 @@ public class Kingdom{
         } else if (cities.Count >= KingdomManager.Instance.mediumToLargeReq) {
             _kingdomSize = KINGDOM_SIZE.LARGE;
         }
+		if (this.militaryManager != null) {
+			this.militaryManager.UpdateMaxGenerals ();
+		}
     }
     #endregion
 
@@ -1659,11 +1671,11 @@ public class Kingdom{
     #endregion
 
     #region War
-    internal void AdjustExhaustionToAllRelationship(int amount) {
-        for (int i = 0; i < relationships.Count; i++) {
-            relationships.ElementAt(i).Value.AdjustExhaustion(amount);
-        }
-    }
+//    internal void AdjustExhaustionToAllRelationship(int amount) {
+//        for (int i = 0; i < relationships.Count; i++) {
+//            relationships.ElementAt(i).Value.AdjustExhaustion(amount);
+//        }
+//    }
 	internal void ConquerCity(City city, Warfare warfare){
 		if (this.id != city.kingdom.id) {
 			city.ConquerCity(this, warfare);
@@ -1735,7 +1747,7 @@ public class Kingdom{
 //			}
 //		}
 		foreach (KingdomRelationship relationship in this.relationships.Values) {
-			if(relationship.isAtWar){
+			if(relationship.sharedRelationship.isAtWar){
 				total += 1;
 			}
 		}
@@ -1965,7 +1977,7 @@ public class Kingdom{
 			}
 		}else{
 			foreach (KingdomRelationship relationship in relationships.Values) {
-				if (relationship.isAtWar && exceptionKingdom.id != relationship.targetKingdom.id) {
+				if (relationship.sharedRelationship.isAtWar && exceptionKingdom.id != relationship.targetKingdom.id) {
 					return true;
 				}
 			}
@@ -2030,7 +2042,7 @@ public class Kingdom{
 	internal int GetNumberOfWars(){
 		int numOfWars = 0;
 		foreach (KingdomRelationship relationship in this.relationships.Values) {
-			if(relationship.isAtWar){
+			if(relationship.sharedRelationship.isAtWar){
 				numOfWars += 1;
 			}
 		}
@@ -2314,13 +2326,13 @@ public class Kingdom{
             float highestKingdomThreat = -1;
 			bool isAtWar = false;
             foreach (KingdomRelationship kr in relationships.Values) {
-                if (kr.isDiscovered) {
+				if (kr.sharedRelationship.isDiscovered) {
                     if (kr.targetKingdomThreatLevel > highestKingdomThreat) {
                         kingdom2 = kr.targetKingdom;
                         highestKingdomThreat = kr.targetKingdomThreatLevel;
                     }
                 }
-				if(kr.isAtWar && isUnderAttack){
+				if(kr.sharedRelationship.isAtWar && isUnderAttack){
 					isAtWar = true;
 					kingdom2 = kr.targetKingdom;
 					break;
@@ -2471,7 +2483,7 @@ public class Kingdom{
         for (int i = 0; i < kingdomsToCheck.Count; i++) {
             Kingdom otherKingdom = kingdomsToCheck[i];
             KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom, true);
-            if (kr != null && kr.isAdjacent) {
+			if (kr != null && kr.sharedRelationship.isAdjacent) {
                 bool isValid = false;
                 //Revalidate adjacency
                 for (int j = 0; j < cities.Count; j++) {
@@ -2631,10 +2643,10 @@ public class Kingdom{
 			Kingdom kingdomToAlly = null;
 			int likeTheMost = 0;
 			foreach (KingdomRelationship kr in this.relationships.Values) {
-				if (kr.isDiscovered && !kr.cantAlly && !kr.isAtWar) {
+				if (kr.sharedRelationship.isDiscovered && !kr.sharedRelationship.cantAlly && !kr.sharedRelationship.isAtWar) {
 					if (kr.targetKingdom.id != kingdomWithHighestThreat.id) {
 						KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
-						if (rk.isAdjacent) {
+						if (rk.sharedRelationship.isAdjacent) {
 							if (kr.targetKingdom.alliancePool != null) {
 								Debug.Log (name + " is looking to join the alliance of " + kr.targetKingdom.name);
 								bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance (this, kr.targetKingdom);
@@ -2688,7 +2700,7 @@ public class Kingdom{
 			Kingdom kingdomToAlly = null;
 			int likeTheMost = 0;
 			foreach (KingdomRelationship kr in this.relationships.Values) {			
-				if(kr.isDiscovered && !kr.cantAlly && !kr.isAtWar){
+				if(kr.sharedRelationship.isDiscovered && !kr.sharedRelationship.cantAlly && !kr.sharedRelationship.isAtWar){
 					if (kr.targetKingdom.alliancePool != null) {
 						Debug.Log (name + " is looking to join the alliance of " + kr.targetKingdom.name);
 						bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance (this, kr.targetKingdom);
@@ -2743,12 +2755,12 @@ public class Kingdom{
 		Kingdom kingdomToAlly = null;
 		int leastLikedToEnemy = 0;
 		foreach (KingdomRelationship krToAlly in this.relationships.Values) {
-			if (krToAlly.isDiscovered && !krToAlly.cantAlly && !krToAlly.isAtWar) {
+			if (krToAlly.sharedRelationship.isDiscovered && !krToAlly.sharedRelationship.cantAlly && !krToAlly.sharedRelationship.isAtWar) {
 				if (krToAlly.targetKingdom.id != this.highestRelativeStrengthAdjacentKingdom.id) {
 					KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (this);
 					KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (this.highestRelativeStrengthAdjacentKingdom);
-					if (krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent
-					  && krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings [0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly) {
+					if (krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.sharedRelationship.isAdjacent
+						&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings [0].id != krToAlly.targetKingdom.id && !krToAlly.sharedRelationship.cantAlly) {
 
 						if (krToAlly.targetKingdom.alliancePool != null) {
 							bool hasJoined = krToAlly.targetKingdom.alliancePool.AttemptToJoinAlliance (this, krToAlly.targetKingdom);
@@ -2986,7 +2998,7 @@ public class Kingdom{
 		Kingdom highestThreatKingdom = null;
 		foreach (KingdomRelationship kr in relationships.Values) {
 			float threat = kr.targetKingdomThreatLevel;
-			if(kr.isAdjacent && threat > 50f){
+			if(kr.sharedRelationship.isAdjacent && threat > 50f){
 				if(highestThreatKingdom == null){
 					highestThreatKingdom = kr.targetKingdom;
 					highestThreat = threat;
@@ -3004,7 +3016,7 @@ public class Kingdom{
 		int leastLike = 0;
 		Kingdom targetKingdom = null;
 		foreach (KingdomRelationship kr in relationships.Values) {
-			if(kr.isAdjacent && !kr.AreAllies() && kr.totalLike < 0){
+			if(kr.sharedRelationship.isAdjacent && !kr.AreAllies() && kr.totalLike < 0){
 				if(targetKingdom == null){
 					targetKingdom = kr.targetKingdom;
 					leastLike = kr.totalLike;
@@ -3148,8 +3160,8 @@ public class Kingdom{
 		ShowFailSubterfugeLog (subterfuge, targetKingdom);
 	}
 	private void CreateCaughtSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
-		string incidentName = RandomNameGenerator.Instance.GetInternationalIncidentName ();
-		ShowCaughtSubterfugeLog (subterfuge, targetKingdom, incidentName);
+		InternationalIncident intlIncident = EventCreator.Instance.CreateInternationalIncidentEvent (targetKingdom, this, true, false);
+//		ShowCaughtSubterfugeLog (subterfuge, targetKingdom, intlIncident.incidentName);
 	}
 	private int DestroyWeaponsSubterfuge(){
 		int weaponsToBeDestroyed = (int)((float)this._baseWeapons * 0.05f);
@@ -3473,7 +3485,7 @@ public class Kingdom{
         KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
         KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
 
-        if (relWithOtherKingdom.isAdjacent) {
+		if (relWithOtherKingdom.sharedRelationship.isAdjacent) {
             defaultWeight = 40;
             if (relWithOtherKingdom.totalLike > 0) {
                 defaultWeight += 2 * relWithOtherKingdom.totalLike;//add 2 to Default Weight per Positive Opinion I have towards target
@@ -3523,7 +3535,7 @@ public class Kingdom{
         KingdomRelationship relWithTargetKingdom = this.GetRelationshipWithKingdom(targetKingdom);
         List<Kingdom> alliesAtWarWith = relWithTargetKingdom.GetAlliesTargetKingdomIsAtWarWith();
         //for each non-ally adjacent kingdoms that one of my allies declared war with recently
-        if (relWithTargetKingdom.isAdjacent && !relWithTargetKingdom.AreAllies() && alliesAtWarWith.Count > 0) {
+		if (relWithTargetKingdom.sharedRelationship.isAdjacent && !relWithTargetKingdom.AreAllies() && alliesAtWarWith.Count > 0) {
             //compare its theoretical power vs my theoretical power
             int sourceKingdomPower = relWithTargetKingdom._theoreticalPower;
             int otherKingdomPower = targetKingdom.GetRelationshipWithKingdom(this)._theoreticalPower;
@@ -3551,7 +3563,7 @@ public class Kingdom{
             //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
             KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
             KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
-            if (!relOfOtherWithSource.isAtWar && relOfOtherWithSource.totalLike > 0) {
+			if (!relOfOtherWithSource.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
                 defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
                 defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
                 if (_recentlyRejectedOffers.ContainsKey(targetKingdom)) {

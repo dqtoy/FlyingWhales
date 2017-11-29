@@ -40,7 +40,7 @@ public class AlliancePool {
 		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
 			KingdomRelationship relationshipTo = kingdom.GetRelationshipWithKingdom (this._kingdomsInvolved [i]);
 			KingdomRelationship relationshipFrom = this._kingdomsInvolved [i].GetRelationshipWithKingdom (kingdom);
-			if(relationshipTo.totalLike <= 0 || relationshipFrom.totalLike <= 0 || relationshipTo.isAtWar || relationshipFrom.isAtWar){
+			if(relationshipTo.totalLike <= 0 || relationshipFrom.totalLike <= 0 || relationshipTo.sharedRelationship.isAtWar || relationshipFrom.sharedRelationship.isAtWar){
 				canBeAccepted = false;
 				break;
 			}
@@ -86,7 +86,7 @@ public class AlliancePool {
 		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
 			if(kingdom.id != this._kingdomsInvolved[i].id){
 				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._kingdomsInvolved [i]);
-				if(!kr.isDiscovered){
+				if(!kr.sharedRelationship.isDiscovered){
 					KingdomManager.Instance.DiscoverKingdom (kingdom, this._kingdomsInvolved [i]);
 				}
 			}
@@ -96,7 +96,7 @@ public class AlliancePool {
 		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
 			if(kingdom.id != this._kingdomsInvolved[i].id){
 				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._kingdomsInvolved [i]);
-				if(kr.isAdjacent){
+				if(kr.sharedRelationship.isAdjacent){
 					return true;
 				}
 			}

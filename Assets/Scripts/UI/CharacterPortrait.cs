@@ -121,7 +121,7 @@ public class CharacterPortrait : MonoBehaviour {
 			relationshipCircles[0].GetComponent<RelationshipItem>().SetRelationship(relationship1, true);
 			relationshipCircles[1].GetComponent<RelationshipItem>().SetRelationship(relationship2, true);
 
-            kingdomThreatLvlLbl.text = "RS: " + relationship1._relativeStrength.ToString();
+            kingdomThreatLvlLbl.text = "RS: " + relationship1.relativeStrength.ToString();
         }
         
 	}

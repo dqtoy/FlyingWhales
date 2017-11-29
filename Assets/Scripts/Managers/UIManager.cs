@@ -2133,6 +2133,21 @@ public class UIManager : MonoBehaviour {
 						}
 					}
 				}
+				for (int i = 0; i < KingdomManager.Instance.internationalIncidents.Count; i++) {
+					InternationalIncident internationalIncident = KingdomManager.Instance.internationalIncidents [i];
+					if (i != 0) {
+						this.allianceSummaryLbl.text += "\n";
+					}
+					this.allianceSummaryLbl.text += internationalIncident.incidentName;
+					this.allianceSummaryLbl.text += "\n-" + internationalIncident.sourceKingdom.name;
+					if(internationalIncident.isSourceKingdomAggrieved){
+						this.allianceSummaryLbl.text += " (Aggrieved)";
+					}
+					this.allianceSummaryLbl.text += "\n-" + internationalIncident.targetKingdom.name;
+					if(internationalIncident.isTargetKingdomAggrieved){
+						this.allianceSummaryLbl.text += " (Aggrieved)";
+					}
+				}
 			}
 
 		}
@@ -2368,7 +2383,7 @@ public class UIManager : MonoBehaviour {
 			this.kingdomsForWar.Clear ();
 			if(this.currentlyShowingKingdom != null){
 				foreach (KingdomRelationship kr in this.currentlyShowingKingdom.relationships.Values) {
-					if(!kr.isAtWar && kr.isAdjacent){
+					if(!kr.sharedRelationship.isAtWar && kr.sharedRelationship.isAdjacent){
 						this.kingdomsForWar.AddItem (kr.targetKingdom.name, kr.targetKingdom);
 					}
 				}

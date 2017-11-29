@@ -193,19 +193,19 @@ public class GameEvent {
 		Log newLog = new Log (month, day, year, category, file, key);
 		this.logs.Add (newLog);
 
-		if(this.goEventItem != null){
-			if(UIManager.Instance.currentlyShowingLogObject == null){
-				this.goEventItem.GetComponent<EventItem> ().ActivateNewLogIndicator ();
-			}else{
-				if(UIManager.Instance.currentlyShowingLogObject is GameEvent){
-					GameEvent gameEvent = (GameEvent)UIManager.Instance.currentlyShowingLogObject;
-					if(gameEvent.id != this.id){
-						this.goEventItem.GetComponent<EventItem> ().ActivateNewLogIndicator ();
-					}
-				}
-
-			}
-		}
+//		if(this.goEventItem != null){
+//			if(UIManager.Instance.currentlyShowingLogObject == null){
+//				this.goEventItem.GetComponent<EventItem> ().ActivateNewLogIndicator ();
+//			}else{
+//				if(UIManager.Instance.currentlyShowingLogObject is GameEvent){
+//					GameEvent gameEvent = (GameEvent)UIManager.Instance.currentlyShowingLogObject;
+//					if(gameEvent.id != this.id){
+//						this.goEventItem.GetComponent<EventItem> ().ActivateNewLogIndicator ();
+//					}
+//				}
+//
+//			}
+//		}
 		return newLog;
 	}
 
