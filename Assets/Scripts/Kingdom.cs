@@ -3329,10 +3329,10 @@ public class Kingdom{
     internal void PerformWeightedAction() {
         WEIGHTED_ACTION actionToPerform = GoalManager.Instance.DetermineWeightedActionToPerform(this);
         if (actionToPerform != WEIGHTED_ACTION.DO_NOTHING) {
-            if (Utilities.specialActionTypes.Contains(actionToPerform)) {
+            if (GoalManager.indirectActionTypes.Contains(actionToPerform)) {
                 //This action type requires a return of 2 kingdoms, a target and a cause of the action
-                Dictionary <Kingdom, Dictionary<Kingdom, int>> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForSpecialActionType(this, actionToPerform);
-                if(Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
+                Dictionary<Kingdom, Dictionary<Kingdom, int>> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForIndirectActionType(this, actionToPerform);
+                if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
                     Kingdom[] targets = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
                     if (targets.Length == 2) {
@@ -3345,6 +3345,40 @@ public class Kingdom{
                 } else {
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
                     Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                }
+            } else if (GoalManager.specialActionTypes.Contains(actionToPerform)) {
+                int weightToNotPerformAction = 0;
+                if (actionToPerform == WEIGHTED_ACTION.DECLARE_PEACE) {
+                    Dictionary<Warfare, int> warWeights = GoalManager.Instance.GetWeightsForSpecialActionType(this, GetAllActiveWars(), actionToPerform, ref weightToNotPerformAction);
+                    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                    if (Utilities.GetTotalOfWeights(warWeights) > 0) {
+                        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
+                        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
+                        actionWeights.Add(actionToPerform, warWeights.Sum(x => x.Value));
+                        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                        if (decision == actionToPerform) {
+                            //this kingdom has decided to perform the action
+                            Warfare target = Utilities.PickRandomElementWithWeights(warWeights);
+                            PerformAction(actionToPerform, target);
+                        }
+                    } else {
+                        Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                    }
+                } else if (actionToPerform == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
+                    List<AlliancePool> alliances = new List<AlliancePool>();
+                    alliances.Add(alliancePool);
+                    Dictionary<AlliancePool, int> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, alliances, actionToPerform, ref weightToNotPerformAction);
+                    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                    if (Utilities.GetTotalOfWeights(weights) > 0) {
+                        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
+                        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
+                        actionWeights.Add(actionToPerform, weights.Sum(x => x.Value));
+                        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                        if (decision == actionToPerform) {
+                            //this kingdom has decided to perform the action
+                            PerformAction(actionToPerform, null);
+                        }
+                    }
                 }
             } else {
                 Dictionary<Kingdom, int> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForActionType(this, actionToPerform);
@@ -3361,24 +3395,28 @@ public class Kingdom{
             Debug.Log(this.name + " chose to do nothing.");
         }
     }
-    private void PerformAction(WEIGHTED_ACTION weightedAction, Kingdom target, Kingdom cause = null) {
-        Debug.Log(this.name + " will perform " + weightedAction.ToString() + " targeting " + target.name);
+    private void PerformAction(WEIGHTED_ACTION weightedAction, object target, Kingdom cause = null) {
+        //Debug.Log(this.name + " will perform " + weightedAction.ToString() + " targeting " + target.name);
         if(weightedAction == WEIGHTED_ACTION.WAR_OF_CONQUEST) {
-            StartWarOfConquestTowards(target);
+            StartWarOfConquestTowards((Kingdom)target);
         } else if (weightedAction == WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION) {
-            OfferAllianceOfProtectionTo(target);
+            OfferAllianceOfProtectionTo((Kingdom)target);
         } else if (weightedAction == WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST) {
-            OfferAllianceOfConquestTo(target, cause);
+            OfferAllianceOfConquestTo((Kingdom)target, cause);
         } else if (weightedAction == WEIGHTED_ACTION.TRADE_DEAL) {
-            OfferTradeDealTo(target);
+            OfferTradeDealTo((Kingdom)target);
         } else if (weightedAction == WEIGHTED_ACTION.INCITE_UNREST) {
-            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.REDUCE_STABILITY, target);
+            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.REDUCE_STABILITY, (Kingdom)target);
         } else if (weightedAction == WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT) {
-            StartInternationalIncident(target);
+            StartInternationalIncident((Kingdom)target);
         } else if (weightedAction == WEIGHTED_ACTION.FLATTER) {
-            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, target);
+            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, (Kingdom)target);
         } else if (weightedAction == WEIGHTED_ACTION.SEND_AID) {
             //TODO: Add Send Aid Trigger
+        } else if (weightedAction == WEIGHTED_ACTION.DECLARE_PEACE) {
+            ((Warfare)target).PeaceDeclaration(this);
+        } else if (weightedAction == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
+            LeaveAlliance();
         }
     }
     internal bool IsThreatened() {
@@ -3633,6 +3671,16 @@ public class Kingdom{
     }
     private void RemoveRecentlyBrokenAllianceWith(Kingdom otherKingdom) {
         _recentlyBrokenAlliancesWith.Remove(otherKingdom);
+    }
+
+    internal List<Warfare> GetAllActiveWars() {
+        List<Warfare> activeWars = new List<Warfare>();
+        foreach (KingdomRelationship rel in relationships.Values) {
+            if (rel.sharedRelationship.isAtWar) {
+                activeWars.Add(rel.sharedRelationship.warfare);
+            }
+        }
+        return activeWars;
     }
     #endregion
 }

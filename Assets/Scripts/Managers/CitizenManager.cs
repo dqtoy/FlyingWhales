@@ -214,6 +214,7 @@ public class CitizenManager : MonoBehaviour {
         }
     }
     public void ResetTraitSetup() {
+        traitSetup.Clear();
         TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
         for (int i = 0; i < allTraits.Length; i++) {
             TRAIT currTrait = allTraits[i];

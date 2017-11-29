@@ -6,19 +6,70 @@ public class GoalManager : MonoBehaviour {
 
     public static GoalManager Instance = null;
 
+    [SerializeField] private List<WeightedActionRequirements> actionRequirements;
+
+    public Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>> weightedActionRequirements;
+
+    public static HashSet<WEIGHTED_ACTION> indirectActionTypes = new HashSet<WEIGHTED_ACTION>() {
+        WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST
+    };
+
+    public static HashSet<WEIGHTED_ACTION> specialActionTypes = new HashSet<WEIGHTED_ACTION>() {
+        WEIGHTED_ACTION.DECLARE_PEACE, WEIGHTED_ACTION.LEAVE_ALLIANCE
+    };
+
     private void Awake() {
         Instance = this;
+        ConstructActionRequirementsDictionary();
+    }
+
+    private void ConstructActionRequirementsDictionary() {
+        weightedActionRequirements = new Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>();
+        for (int i = 0; i < actionRequirements.Count; i++) {
+            WeightedActionRequirements currReq = actionRequirements[i];
+            weightedActionRequirements.Add(currReq.weightedAction, currReq.requirements);
+        }
     }
 
     internal WEIGHTED_ACTION DetermineWeightedActionToPerform(Kingdom sourceKingdom) {
         Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
-        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 50); //Add 500 Base Weight on Do Nothing Action
+        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 150); //Add 150 Base Weight on Do Nothing Action
+        if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.DECLARE_PEACE)) {
+            totalWeightedActions.Add(WEIGHTED_ACTION.DECLARE_PEACE, sourceKingdom.GetWarCount() * 5); //If at war, Add 5 weight to declare peace for each active war
+        }
+        if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_ALLIANCE)) {
+            totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_ALLIANCE, 5); //If at war and in an alliance, Add 5 weight to leave alliance
+        }
+        if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_TRADE_DEAL)) {
+            //If in a trade deal, add 5 weight to leave trade deal for each active trade deal
+            totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_ALLIANCE, 5 * sourceKingdom.kingdomsInTradeDealWith.Count); 
+        }
+
         for (int i = 0; i < sourceKingdom.king.allTraits.Count; i++) {
             Trait currTrait = sourceKingdom.king.allTraits[i];
             Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
             totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
         }
         return Utilities.PickRandomElementWithWeights(totalWeightedActions);
+    }
+
+    #region Weight Dictionaries
+    internal Dictionary<T, int> GetWeightsForSpecialActionType<T>(Kingdom source, List<T> choices, WEIGHTED_ACTION actionType, ref int weightToNotPerformAction) {
+        Dictionary<T, int> weights = new Dictionary<T, int>();
+        for (int i = 0; i < choices.Count; i++) {
+            T currChoice = choices[i];
+            int weightForCurrChoice = GetDefaultWeightForAction(actionType, source, currChoice);
+            //loop through all the traits of the current king
+            for (int j = 0; j < source.king.allTraits.Count; j++) {
+                Trait currTrait = source.king.allTraits[j];
+                int modificationFromTrait = currTrait.GetWeightOfActionGivenTarget(actionType, currChoice, weightForCurrChoice);
+                weightToNotPerformAction += currTrait.GetDontDoActionWeight(actionType, currChoice);
+                weightForCurrChoice += modificationFromTrait;
+            }
+            ApplySpecialActionModificationForAll(actionType, source, currChoice, ref weightForCurrChoice, ref weightToNotPerformAction);
+            weights.Add(currChoice, weightForCurrChoice);
+        }
+        return weights;
     }
 
     internal Dictionary<Kingdom, int> GetKingdomWeightsForActionType(Kingdom sourceKingdom, WEIGHTED_ACTION weightedAction) {
@@ -37,7 +88,7 @@ public class GoalManager : MonoBehaviour {
         }
         return kingdomWeights;
     }
-    internal Dictionary<Kingdom, Dictionary<Kingdom, int>> GetKingdomWeightsForSpecialActionType(Kingdom sourceKingdom, WEIGHTED_ACTION specialWeightedAction) {
+    internal Dictionary<Kingdom, Dictionary<Kingdom, int>> GetKingdomWeightsForIndirectActionType(Kingdom sourceKingdom, WEIGHTED_ACTION specialWeightedAction) {
         Dictionary<Kingdom, Dictionary<Kingdom, int>> kingdomWeights = new Dictionary<Kingdom, Dictionary<Kingdom, int>>();
         for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i]; //the cause of the action
@@ -60,7 +111,10 @@ public class GoalManager : MonoBehaviour {
         }
         return kingdomWeights;
     }
-    private int GetDefaultWeightForAction(WEIGHTED_ACTION weightedAction, Kingdom sourceKingdom, Kingdom targetKingdom) {
+    #endregion
+
+    #region Default Weights
+    private int GetDefaultWeightForAction(WEIGHTED_ACTION weightedAction, object source, object target) {
         switch (weightedAction) {
             case WEIGHTED_ACTION.WAR_OF_CONQUEST:
                 return 0;
@@ -69,34 +123,19 @@ public class GoalManager : MonoBehaviour {
             case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
                 return 0;
             case WEIGHTED_ACTION.TRADE_DEAL:
-                return GetTradeDealDefaultWeight(sourceKingdom, targetKingdom);
+                return GetTradeDealDefaultWeight((Kingdom)source, (Kingdom)target);
             case WEIGHTED_ACTION.INCITE_UNREST:
-                return GetInciteUnrestDefaultWeight(sourceKingdom, targetKingdom);
+                return GetInciteUnrestDefaultWeight((Kingdom)source, (Kingdom)target);
             case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
-                return GetInternationalIncidentDefaultWeight(sourceKingdom, targetKingdom);
+                return GetInternationalIncidentDefaultWeight((Kingdom)source, (Kingdom)target);
             case WEIGHTED_ACTION.FLATTER:
-                return GetFlatterDefaultWeight(sourceKingdom, targetKingdom);
+                return GetFlatterDefaultWeight((Kingdom)source, (Kingdom)target);
             case WEIGHTED_ACTION.SEND_AID:
                 return 0;
             default:
                 return 0;
         }
     }
-    private void ApplyActionModificationForAll(WEIGHTED_ACTION weightedAction, Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
-        switch (weightedAction) {
-            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                GetAllModificationForWarOfConquest(sourceKingdom, targetKingdom, ref defaultWeight);
-                break;
-            case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-                GetAllModificationForAllianceOfProtection(sourceKingdom, targetKingdom, ref defaultWeight);
-                break;
-            case WEIGHTED_ACTION.TRADE_DEAL:
-                GetAllModificationForTradeDeal(sourceKingdom, targetKingdom, ref defaultWeight);
-                break;
-        }
-    }
-
-    #region Default Weights
     private int GetTradeDealDefaultWeight(Kingdom sourceKingdom, Kingdom targetKingdom) {
         int defaultWeight = 0;
         KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
@@ -150,6 +189,19 @@ public class GoalManager : MonoBehaviour {
     #endregion
 
     #region All Modifications
+    private void ApplyActionModificationForAll(WEIGHTED_ACTION weightedAction, object source, object target, ref int defaultWeight) {
+        switch (weightedAction) {
+            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+                GetAllModificationForWarOfConquest((Kingdom)source, (Kingdom)target, ref defaultWeight);
+                break;
+            case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
+                GetAllModificationForAllianceOfProtection((Kingdom)source, (Kingdom)target, ref defaultWeight);
+                break;
+            case WEIGHTED_ACTION.TRADE_DEAL:
+                GetAllModificationForTradeDeal((Kingdom)source, (Kingdom)target, ref defaultWeight);
+                break;
+        }
+    }
     private void GetAllModificationForWarOfConquest(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
         KingdomRelationship relWithTargetKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
         List<Kingdom> alliesAtWarWith = relWithTargetKingdom.GetAlliesTargetKingdomIsAtWarWith();
@@ -207,5 +259,105 @@ public class GoalManager : MonoBehaviour {
             }
         }
     }
+    
+
+    private void ApplySpecialActionModificationForAll(WEIGHTED_ACTION weightedAction, object source, object target, ref int defaultWeight, ref int weightNotToDoAction) {
+        switch (weightedAction) {
+            case WEIGHTED_ACTION.DECLARE_PEACE:
+                GetAllModificationForDeclarePeace((Kingdom)source, (Warfare)target, ref defaultWeight, ref weightNotToDoAction);
+                break;
+            case WEIGHTED_ACTION.LEAVE_ALLIANCE:
+                GetAllModificationForLeaveAlliance((Kingdom)source, (AlliancePool)target, ref defaultWeight, ref weightNotToDoAction);
+                break;
+        }
+    }
+    private void GetAllModificationForDeclarePeace(Kingdom sourceKingdom, Warfare targetWar, ref int defaultWeight, ref int weightNotToDoAction) {
+        WAR_SIDE sourceSide = targetWar.GetSideOfKingdom(sourceKingdom);
+        WAR_SIDE otherSide = WAR_SIDE.A;
+        if(sourceSide == WAR_SIDE.A) {
+            otherSide = WAR_SIDE.B;
+        }
+        List<Kingdom> enemyKingdoms = targetWar.GetListFromSide(otherSide);
+        for (int i = 0; i < enemyKingdoms.Count; i++) {
+            Kingdom enemyKingdom = enemyKingdoms[i];
+            KingdomRelationship sourceRelWithEnemy = sourceKingdom.GetRelationshipWithKingdom(enemyKingdom);
+            KingdomRelationship enemyRelWithSource = enemyKingdom.GetRelationshipWithKingdom(sourceKingdom);
+            //add 2 to Weight to Declare Peace for every Relative Strength the enemy kingdoms have over me
+            if(enemyRelWithSource.relativeStrength > 0) {
+                defaultWeight += 2 * enemyRelWithSource.relativeStrength;
+            }
+            //add 2 to Weight to Don't Declare Peace for every Relative Strength I have over each enemy kingdom
+            if (sourceRelWithEnemy.relativeStrength > 0) {
+                weightNotToDoAction += 2 * sourceRelWithEnemy.relativeStrength;
+            }
+            //add 3 Weight to Declare Peace for each War Weariness I have
+            weightNotToDoAction += 3 * targetWar.kingdomSideWeariness[sourceKingdom.id].weariness;
+        }
+    }
+    private void GetAllModificationForLeaveAlliance(Kingdom sourceKingdom, AlliancePool alliance, ref int defaultWeight, ref int weightNotToDoAction) {
+        //loop through the other kingdoms within the alliance
+        for (int i = 0; i < alliance.kingdomsInvolved.Count; i++) {
+            Kingdom ally = alliance.kingdomsInvolved[i];
+            if (ally.id != sourceKingdom.id) {
+                KingdomRelationship relWithAlly = sourceKingdom.GetRelationshipWithKingdom(ally);
+                if(relWithAlly.targetKingdomThreatLevel > 0) {
+                    defaultWeight += relWithAlly.targetKingdomThreatLevel; //add 1 weight to leave alliance for every threat of ally kingdom
+                }
+                if (relWithAlly.totalLike < 0) {
+                    defaultWeight +=  Mathf.Abs(3 * relWithAlly.totalLike); //add 3 weight to leave alliance for every negative opinion I have towards the king
+                } else if (relWithAlly.totalLike > 0) {
+                    weightNotToDoAction += 2 * relWithAlly.totalLike; //add 2 weight to keep alliance for every positive opinion I have towards the king
+                }
+            }
+        }
+
+        for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
+            Kingdom otherKingdom = sourceKingdom.adjacentKingdoms[i];
+            if (!alliance.kingdomsInvolved.Contains(otherKingdom)) {
+                //loop through non-ally adjacent kingdoms
+                KingdomRelationship relWithOther = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+                if(relWithOther.targetKingdomThreatLevel > 0) {
+                    weightNotToDoAction += relWithOther.targetKingdomThreatLevel; //add 1 weight to keep alliance for every threat of the kingdom
+                }
+            }
+        }
+    }
     #endregion
+
+    #region Action Requirements
+    internal bool ActionMeetsRequirements(Kingdom sourceKingdom, WEIGHTED_ACTION actionType) {
+        if (weightedActionRequirements.ContainsKey(actionType)) {
+            List<WEIGHTED_ACTION_REQS> requirements = weightedActionRequirements[actionType];
+            for (int i = 0; i < requirements.Count; i++) {
+                WEIGHTED_ACTION_REQS currRequirement = requirements[i];
+                switch (currRequirement) {
+                    case WEIGHTED_ACTION_REQS.NO_ALLIANCE:
+                        if(sourceKingdom.alliancePool != null) {
+                            return false;
+                        }
+                        break;
+                    case WEIGHTED_ACTION_REQS.HAS_ALLIANCE:
+                        if (sourceKingdom.alliancePool == null) {
+                            return false;
+                        }
+                        break;
+                    case WEIGHTED_ACTION_REQS.HAS_WAR:
+                        if(sourceKingdom.GetWarCount() <= 0) {
+                            return false;
+                        }
+                        break;
+                    case WEIGHTED_ACTION_REQS.HAS_ACTIVE_TRADE_DEAL:
+                        if(sourceKingdom.kingdomsInTradeDealWith.Count <= 0) {
+                            return false;
+                        }
+                        break;
+                    default:
+                        return true;
+                }
+            }
+        }
+        return true;
+    }
+    #endregion
+
 }

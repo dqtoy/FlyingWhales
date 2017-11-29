@@ -660,4 +660,14 @@ public class Warfare {
 			return false;
 		}
 	}
+
+    internal WAR_SIDE GetSideOfKingdom(Kingdom kingdom) {
+        foreach (KeyValuePair<WAR_SIDE, List<Kingdom>> kvp in _kingdomSideList) {
+            WAR_SIDE currSide = kvp.Key;
+            if (kvp.Value.Contains(kingdom)) {
+                return currSide;
+            }
+        }
+        return WAR_SIDE.NONE;
+    }
 }

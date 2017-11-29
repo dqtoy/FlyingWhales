@@ -486,19 +486,6 @@ public class Utilities : MonoBehaviour {
         {BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
     };
 
-    public static Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>> weightedActionRequirements = new Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>() {
-        {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, new List<WEIGHTED_ACTION_REQS>(){
-            WEIGHTED_ACTION_REQS.NO_ALLIANCE
-        } },
-        {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, new List<WEIGHTED_ACTION_REQS>(){
-            WEIGHTED_ACTION_REQS.NO_ALLIANCE
-        } }
-    };
-
-    public static HashSet<WEIGHTED_ACTION> specialActionTypes = new HashSet<WEIGHTED_ACTION>() {
-        WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST
-    };
-
     //public static Dictionary<WEIGHTED_ACTION, List<TRAIT>> weightedActionValidTraits = new Dictionary<WEIGHTED_ACTION, List<TRAIT>>() {
     //    {WEIGHTED_ACTION.WAR_OF_CONQUEST, new List<TRAIT>(){
     //        TRAIT.OPPORTUNIST, TRAIT.DECEITFUL, TRAIT.IMPERIALIST, TRAIT.HOSTILE, TRAIT.PACIFIST

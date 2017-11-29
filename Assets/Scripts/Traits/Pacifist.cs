@@ -26,4 +26,31 @@ public class Pacifist : Trait {
         }
         return weight;
     }
+
+    #region Leave Alliance
+    internal override int GetLeaveAllianceWeightModification(AlliancePool alliance) {
+        //otherKingdom is Current Ally Member
+        int weight = 0;
+        for (int i = 0; i < alliance.kingdomsInvolved.Count; i++) {
+            Kingdom ally = alliance.kingdomsInvolved[i];
+            if(ally.id != ownerOfTrait.city.kingdom.id) {
+                weight += 20 * ally.GetWarCount(); //add 20 weight to leave alliance for every active war of active kingdoms in alliance
+            }
+        }
+        return weight;
+    }
+    internal override int GetKeepAllianceWeightModification(AlliancePool alliance) {
+        //add 50 weight of keep alliance if no other member is at war
+        for (int i = 0; i < alliance.kingdomsInvolved.Count; i++) {
+            Kingdom ally = alliance.kingdomsInvolved[i];
+            if (ally.id != ownerOfTrait.city.kingdom.id) {
+                if (ally.GetWarCount() > 0) {
+                    return 0;
+                }
+            }
+        }
+        return 50;
+    }
+    #endregion
+
 }
