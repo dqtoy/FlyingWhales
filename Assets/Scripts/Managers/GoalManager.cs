@@ -43,7 +43,7 @@ public class GoalManager : MonoBehaviour {
         }
         if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_TRADE_DEAL)) {
             //If in a trade deal, add 5 weight to leave trade deal for each active trade deal
-            totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_ALLIANCE, 5 * sourceKingdom.kingdomsInTradeDealWith.Count); 
+            totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_TRADE_DEAL, 5 * sourceKingdom.kingdomsInTradeDealWith.Count); 
         }
         for (int i = 0; i < sourceKingdom.king.allTraits.Count; i++) {
             Trait currTrait = sourceKingdom.king.allTraits[i];
