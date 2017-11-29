@@ -1386,4 +1386,42 @@ public class City{
 		}
 		return false;
 	}
+
+	internal void SendReinforcementsToGeneral(General general, int soldiersToBeGiven, List<HexTile> path){
+		AdjustSoldiers (-soldiersToBeGiven);
+		Citizen citizen = this.CreateNewAgent (ROLE.GENERAL, general.location);
+		if(citizen != null){
+			General reinforceGeneral = (General)citizen.assignedRole;
+			reinforceGeneral.Initialize (null);
+			reinforceGeneral.AssignTask (new ReinforceCityTask(GENERAL_TASKS.REINFORCE_CITY, reinforceGeneral, general.citizen.city, general));
+			reinforceGeneral.SetSoldiers (soldiers);
+			reinforceGeneral.path = path;
+			reinforceGeneral.avatar.GetComponent<GeneralAvatar> ().StartMoving();
+		}
+	}
+	internal int GetNumOfSoldiersCanBeGiven(){
+		float soldierPercentage = GetSoldierPercentageToGive ();
+		return (int)(this._soldiers * soldierPercentage);
+	}
+
+	private float GetSoldierPercentageToGive(){
+		for (int i = 0; i < this.region.connections.Count; i++) {
+			if(this.region.connections[i] is Region){
+				Region adjacentRegion = (Region)this.region.connections [i];
+				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id){
+					KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
+					if(kr.sharedRelationship.isAtWar){
+						return 0.25f;
+					}else{
+						if(!kr.AreAllies()){
+							return 0.5f;
+						}else{
+							return 0.75f;
+						}
+					}
+				}
+			}
+		}
+		return 1f;
+	}
 }

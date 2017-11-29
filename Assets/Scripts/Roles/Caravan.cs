@@ -5,6 +5,7 @@ public class Caravan : Role {
 	
 	internal bool isActivated;
 	public Caravan(Citizen citizen): base(citizen){
+		this.role = ROLE.CARAVAN;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){

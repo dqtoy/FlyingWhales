@@ -22,7 +22,13 @@ public class CollisionManager : MonoBehaviour {
 		if(general1 != null && general2 != null){
 			if(general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id){
 				Combat (general1, general2);
-			}	
+			}else{
+				if(general1.generalTask != null && general1.generalTask.task == GENERAL_TASKS.REINFORCE_CITY){
+					Reinforcement (general1, general2);
+				}else if(general2.generalTask != null && general2.generalTask.task == GENERAL_TASKS.REINFORCE_CITY){
+					Reinforcement (general2, general1);
+				}
+			}
 		}
 	}
 
@@ -129,6 +135,20 @@ public class CollisionManager : MonoBehaviour {
 		loserGeneral.gameEventInvolvedIn.DoneEvent ();
 		if(winnerGeneral.soldiers <= 0){
 			winnerGeneral.gameEventInvolvedIn.DoneEvent ();
+		}
+	}
+	#endregion
+
+	#region Reinforcement
+	private void Reinforcement(General reinforceGeneral, General general2){
+		if(general2.generalTask != null && (general2.generalTask.task == GENERAL_TASKS.ATTACK_CITY || general2.generalTask.task == GENERAL_TASKS.DEFEND_CITY)){
+			if(reinforceGeneral.generalTask is ReinforceCityTask){
+				ReinforceCityTask task = (ReinforceCityTask)reinforceGeneral.generalTask;
+				if(task.mainGeneral.citizen.id == general2.citizen.id){
+					general2.AdjustSoldiers (reinforceGeneral.soldiers);
+					reinforceGeneral.citizen.Death (DEATH_REASONS.ACCIDENT);
+				}
+			}
 		}
 	}
 	#endregion

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class GrandChancellor : Role {
 
     public GrandChancellor(Citizen citizen) : base(citizen) {
-
+		this.role = ROLE.GRAND_CHANCELLOR;
     }
 
     internal override void OnDeath() {

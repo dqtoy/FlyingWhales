@@ -7,7 +7,7 @@ using EZObjectPools;
 
 public class CitizenAvatar : PooledObject {
     [SerializeField] private int citizenID;
-    [SerializeField] private string citizenName;
+    [SerializeField] internal string citizenName;
     [SerializeField] private string roleType;
 	[SerializeField] public Collider2D colliderForInteraction;
 
@@ -106,6 +106,7 @@ public class CitizenAvatar : PooledObject {
 	}
 
     internal virtual void OnMoveFinished() {
+//		Debug.LogError (this.citizenRole.role.ToString() + " " + this.citizenName + " END DAY: " + GameManager.Instance.days);
 		if(this.citizenRole.path.Count > 0){
 			this.citizenRole.location = this.citizenRole.path[0];
 			this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
@@ -312,12 +313,18 @@ public class CitizenAvatar : PooledObject {
     public void EndAttack() {
 		HasAttacked();
 //      this.citizenRole.DestroyGO();
-        this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
+		if(this.citizenRole.gameEventInvolvedIn != null){
+			this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
+		}else{
+			this.citizenRole.ArrivedAtTargetLocation ();
+		}
     }
 
 	public void CancelEventInvolvedIn(){
 //		this.citizenRole.DestroyGO();
-		this.citizenRole.gameEventInvolvedIn.CancelEvent();
+		if(this.citizenRole.gameEventInvolvedIn != null){
+			this.citizenRole.gameEventInvolvedIn.CancelEvent();
+		}
 	}
 
     internal void HasAttacked() {
@@ -342,10 +349,10 @@ public class CitizenAvatar : PooledObject {
 
     #region Monobehaviour Functions
     private void OnMouseEnter() {
-        if (!UIManager.Instance.IsMouseOnUI()) {
-            UIManager.Instance.ShowSmallInfo(this.citizenRole.gameEventInvolvedIn.name);
-            this.HighlightPath();
-        }
+//        if (!UIManager.Instance.IsMouseOnUI()) {
+//            UIManager.Instance.ShowSmallInfo(this.citizenRole.gameEventInvolvedIn.name);
+//            this.HighlightPath();
+//        }
     }
 
     private void OnMouseExit() {
@@ -383,25 +390,12 @@ public class CitizenAvatar : PooledObject {
             if (this.gameObject != null && other.gameObject != null) {
 				Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
 				if (!otherAgent.isDead) {
-					Kingdom kingdomOfThis = this.citizenRole.citizen.city.kingdom;
-					Kingdom kingdomOfOther = otherAgent.city.kingdom;
-					if (kingdomOfThis.id != kingdomOfOther.id) {
-						if(!kingdomOfThis.isDead && !kingdomOfOther.isDead){
-							KingdomRelationship relationship = kingdomOfThis.GetRelationshipWithKingdom (kingdomOfOther);
-							if (relationship != null) {
-								if (relationship.sharedRelationship.isAtWar) {
-									CollisionManager.Instance.HasCollided (this.citizenRole, otherAgent.assignedRole);
-									//								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
-								}
-							}
-						}else{
-							if (kingdomOfThis.isDead) {
-								this.citizenRole.gameEventInvolvedIn.CancelEvent ();
-							} else if (kingdomOfOther.isDead) {
-								otherAgent.assignedRole.gameEventInvolvedIn.CancelEvent ();
-							}
-						}
-					}
+					CollisionManager.Instance.HasCollided (this.citizenRole, otherAgent.assignedRole);
+//					if (kingdomOfThis.isDead) {
+//						this.citizenRole.gameEventInvolvedIn.CancelEvent ();
+//					} else if (kingdomOfOther.isDead) {
+//						otherAgent.assignedRole.gameEventInvolvedIn.CancelEvent ();
+//					}
 				}
             }
         } else if (other.tag == "Trader") {

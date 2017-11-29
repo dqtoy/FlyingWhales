@@ -32,6 +32,7 @@ public class Governor : Role {
     #endregion
 
     public Governor(Citizen citizen): base(citizen){
+		this.role = ROLE.GOVERNOR;
 		this.citizen.city.governor = this.citizen;
         this._loyaltySummary = string.Empty;
         this._eventLoyaltyModifier = 0;

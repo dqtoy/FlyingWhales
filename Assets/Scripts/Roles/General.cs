@@ -13,6 +13,8 @@ public class General : Role {
 	internal GeneralTask generalTask;
 
     public General(Citizen citizen): base(citizen){
+		this.role = ROLE.GENERAL;
+		this.soldiers = 0;
 		this.isReturning = false;
 		this.isAttacking = false;
 		this.isDefending = false;
@@ -20,6 +22,7 @@ public class General : Role {
 		this.generalTask = null;
 	}
 
+	#region Override
 	internal override void Initialize(GameEvent gameEvent){
 		base.Initialize(gameEvent);
 		this.avatar.GetComponent<GeneralAvatar>().Init(this);
@@ -37,6 +40,13 @@ public class General : Role {
 		}
 		this.isDestroyed = true;
 	}
+	internal override void ArrivedAtTargetLocation (){
+		if(this.generalTask != null){
+			this.generalTask.Arrived ();
+		}
+	}
+	#endregion
+
 	internal void SetSoldiers(int amount){
 		this.soldiers = amount;
 		this.avatar.GetComponent<GeneralAvatar>().UpdateUI();
@@ -59,29 +69,59 @@ public class General : Role {
 			this.gameEventInvolvedIn.DoneEvent ();
 		}
 	}
+	internal void DropSoldiers(){
+		if(this.location.city != null && this.location.city.kingdom.id == this.citizen.city.kingdom.id){
+			this.location.city.AdjustSoldiers (this.soldiers);
+		}
+	}
 
+	internal void GetTask(){
+		if(this.generalTask != null){
+			this.generalTask.DoneTask();
+		}
+		this.citizen.city.kingdom.militaryManager.AssignTaskToGeneral (this);
+	}
 	internal void AssignTask(GeneralTask generalTask){
 		this.generalTask = generalTask;
-
+		if(this.generalTask.task != GENERAL_TASKS.REINFORCE_CITY){
+			this.targetCity = generalTask.targetCity;
+			this.targetLocation = generalTask.targetCity.hexTile;
+			this.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
+			this.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS_WITH_ALLIES);
+			GetSoldiersFromCities ();
+		}
 	}
 	private void GetSoldiersFromCities(){
 		int neededSoldiers = NeededSoldiers ();
 		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
-			City city = this.citizen.city.kingdom.cities [i];
-			List<HexTile> path = PathGenerator.Instance.GetPath (city.hexTile, this.location, PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM, this.citizen.city.kingdom);
-			if(path != null){
-				
+			if(neededSoldiers > 0){
+				City city = this.citizen.city.kingdom.cities [i];
+				List<HexTile> path = PathGenerator.Instance.GetPath (city.hexTile, this.location, PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM, this.citizen.city.kingdom);
+				if(path != null){
+					int soldiersGiven = AskForSoldiers (neededSoldiers, city, path);
+					neededSoldiers -= soldiersGiven;
+				}
+			}else{
+				break;
 			}
 		}
 	}
-	private void AskForSoldiers(int neededSoldiers){
-		
+	private int AskForSoldiers(int neededSoldiers, City city, List<HexTile> path){
+		int numOfSoldiersCanBeGiven = city.GetNumOfSoldiersCanBeGiven ();
+		if(numOfSoldiersCanBeGiven > neededSoldiers){
+			numOfSoldiersCanBeGiven = neededSoldiers;
+		}
+		if(numOfSoldiersCanBeGiven > 0){
+			city.SendReinforcementsToGeneral (this, numOfSoldiersCanBeGiven, path);
+		}
+		return numOfSoldiersCanBeGiven;
 	}
 	private int NeededSoldiers(){
 		if(this.generalTask.task == GENERAL_TASKS.ATTACK_CITY){
-			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.activeGenerals.Count / this.citizen.city.kingdom.warfareInfo.Count;
+			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.maxGenerals / this.citizen.city.kingdom.warfareInfo.Count;
 		}else if(this.generalTask.task == GENERAL_TASKS.DEFEND_CITY){
-			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.activeGenerals.Count / this.citizen.city.kingdom.warfareInfo.Count;
+			int numOfWars = (this.citizen.city.kingdom.warfareInfo.Count > 0) ? this.citizen.city.kingdom.warfareInfo.Count : 1;
+			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.maxGenerals / numOfWars;
 		}
 		return 0;
 	}

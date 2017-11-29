@@ -5,6 +5,7 @@ using System.Linq;
 
 public class Expander : Role {
 	public Expander(Citizen citizen): base(citizen){
+		this.role = ROLE.EXPANDER;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){

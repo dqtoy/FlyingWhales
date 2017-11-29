@@ -30,6 +30,7 @@ public class King : Role {
 		//}
 		//this.isRumoring = false;
 		//this.isHiddenHistoryBooking = false;
+		this.role = ROLE.KING;
 	}
 
 	internal override void OnDeath (){

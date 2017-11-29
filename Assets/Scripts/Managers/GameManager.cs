@@ -99,7 +99,6 @@ public class GameManager : MonoBehaviour {
         ////EventManager.Instance.onCityEverydayTurnActions.Invoke();
         ////EventManager.Instance.onWeekEnd.Invoke();
         ////Messenger.Broadcast("CitizenTurnActions");
-        Messenger.Broadcast("CityEverydayActions");
         Messenger.Broadcast("OnDayEnd");
         ////BehaviourTreeManager.Instance.Tick ();
         ////EventManager.Instance.onUpdateUI.Invoke();

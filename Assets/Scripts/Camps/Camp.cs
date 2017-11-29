@@ -14,7 +14,6 @@ public class Camp {
 		this.hp = 100;
 		this.maxHp = 500;
 		this.targetCity = null;
-		Messenger.AddListener("CityEverydayActions", CampEverydayActions);
 	}
 	internal virtual void CampEverydayActions(){
 		
