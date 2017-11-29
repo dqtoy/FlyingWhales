@@ -28,4 +28,40 @@ public class Hostile : Trait {
         }
         return weight;
     }
+
+    #region Leave Alliance
+    internal override int GetLeaveAllianceWeightModification(AlliancePool alliance) {
+        int weight = 0;
+        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        for (int i = 0; i < alliance.kingdomsInvolved.Count; i++) {
+            Kingdom ally = alliance.kingdomsInvolved[i];
+            if (ally.id != sourceKingdom.id) {
+                KingdomRelationship sourceRelWithAlly = sourceKingdom.GetRelationshipWithKingdom(ally);
+                if(sourceRelWithAlly.totalLike < 0) {
+                    weight += Mathf.Abs(2 * sourceRelWithAlly.totalLike); //add 2 weight to leave alliance for every negative opinion I have towards the king
+                }
+            }
+        }
+        return weight;
+    }
+    internal override int GetKeepAllianceWeightModification(AlliancePool alliance) {
+        int weight = 0;
+        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+        List<Warfare> activeWars = sourceKingdom.GetAllActiveWars();
+        for (int i = 0; i < alliance.kingdomsInvolved.Count; i++) {
+            Kingdom ally = alliance.kingdomsInvolved[i];
+            if (ally.id != sourceKingdom.id) {
+                List<Warfare> activeWarsOfAlly = ally.GetAllActiveWars();
+                for (int j = 0; j < activeWarsOfAlly.Count; j++) {
+                    Warfare currWar = activeWarsOfAlly[j];
+                    if (activeWars.Contains(currWar)) {
+                        weight += 20; //add 20 weight to keep alliance for every active war of other kingdoms withinin alliance
+                    }
+                }
+                
+            }
+        }
+        return weight;
+    }
+    #endregion
 }

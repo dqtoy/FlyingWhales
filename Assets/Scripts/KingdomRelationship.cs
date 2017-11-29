@@ -410,9 +410,9 @@ public class KingdomRelationship {
             this._like = -81;
         }
         UpdateKingRelationshipStatus();
-        if (this.relationshipStatus == RELATIONSHIP_STATUS.HATE || this.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
-            Embargo(gameEventTrigger);
-        }
+        //if (this.relationshipStatus == RELATIONSHIP_STATUS.HATE || this.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
+        //    Embargo(gameEventTrigger);
+        //}
     }
 
     /*
@@ -426,57 +426,57 @@ public class KingdomRelationship {
     }
 
     #region Trading
-    /*
-     * <summary>
-     * This function checks if the targetKingdom is to be embargoed,
-     * </summary>
-     * */
-    protected void CheckForEmbargo(RELATIONSHIP_STATUS previousRelationshipStatus, GameEvent gameEventTrigger) {
-        if (previousRelationshipStatus != _relationshipStatus) { // Check if the relationship between the 2 kings changed in status
-            //Check if the source kings relationship with king has changed to enemy or rival, if so, put king's kingdom in source king's embargo list
-            if (_relationshipStatus == RELATIONSHIP_STATUS.HATE || _relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
-                Embargo(gameEventTrigger);
-            }
-        }
-    }
+    ///*
+    // * <summary>
+    // * This function checks if the targetKingdom is to be embargoed,
+    // * </summary>
+    // * */
+    //protected void CheckForEmbargo(RELATIONSHIP_STATUS previousRelationshipStatus, GameEvent gameEventTrigger) {
+    //    if (previousRelationshipStatus != _relationshipStatus) { // Check if the relationship between the 2 kings changed in status
+    //        //Check if the source kings relationship with king has changed to enemy or rival, if so, put king's kingdom in source king's embargo list
+    //        if (_relationshipStatus == RELATIONSHIP_STATUS.HATE || _relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
+    //            Embargo(gameEventTrigger);
+    //        }
+    //    }
+    //}
 
-    /*
-     * <summary>
-     * Put targetKing's kingdom in sourceKing's kingdom embargo list.
-     * TODO: Add embargo reason from gameEventReasonForEmbargo when adding
-     * kingdom to embargo list.
-     * </summary>
-     * */
-    protected void Embargo(GameEvent gameEventReasonForEmbargo) {
-        _sourceKingdom.AddKingdomToEmbargoList(_targetKingdom);
-        //Debug.LogError(this.sourceKing.city.kingdom.name + " put " + this.king.city.kingdom.name + " in it's embargo list, beacuase of " + gameEventReasonForEmbargo.eventType.ToString());
-    }
+    ///*
+    // * <summary>
+    // * Put targetKing's kingdom in sourceKing's kingdom embargo list.
+    // * TODO: Add embargo reason from gameEventReasonForEmbargo when adding
+    // * kingdom to embargo list.
+    // * </summary>
+    // * */
+    //protected void Embargo(GameEvent gameEventReasonForEmbargo) {
+    //    _sourceKingdom.AddKingdomToEmbargoList(_targetKingdom);
+    //    //Debug.LogError(this.sourceKing.city.kingdom.name + " put " + this.king.city.kingdom.name + " in it's embargo list, beacuase of " + gameEventReasonForEmbargo.eventType.ToString());
+    //}
 
-    /*
-     * <summary>
-     * This function checks if the targetKingdom is to be disembargoed,
-     * requirement/s for disembargo:
-     * - Relationship should go from ENEMY to COLD.
-     * </summary>
-     * */
-    protected void CheckForDisembargo(RELATIONSHIP_STATUS previousRelationshipStatus) {
-        if (previousRelationshipStatus != _relationshipStatus) { // Check if the relationship between the 2 kings changed in status
-            //if the relationship changed from enemy to cold, disembargo the targetKing
-            if (previousRelationshipStatus == RELATIONSHIP_STATUS.HATE && _relationshipStatus == RELATIONSHIP_STATUS.DISLIKE) {
-                Disembargo();
-            }
-        }
-    }
+    ///*
+    // * <summary>
+    // * This function checks if the targetKingdom is to be disembargoed,
+    // * requirement/s for disembargo:
+    // * - Relationship should go from ENEMY to COLD.
+    // * </summary>
+    // * */
+    //protected void CheckForDisembargo(RELATIONSHIP_STATUS previousRelationshipStatus) {
+    //    if (previousRelationshipStatus != _relationshipStatus) { // Check if the relationship between the 2 kings changed in status
+    //        //if the relationship changed from enemy to cold, disembargo the targetKing
+    //        if (previousRelationshipStatus == RELATIONSHIP_STATUS.HATE && _relationshipStatus == RELATIONSHIP_STATUS.DISLIKE) {
+    //            Disembargo();
+    //        }
+    //    }
+    //}
 
-    /*
-     * <summary>
-     * Remove targetKingdom from sourceKingdom's embargo list
-     * </summary>
-     * */
-    protected void Disembargo() {
-        _sourceKingdom.RemoveKingdomFromEmbargoList(_targetKingdom);
-        //Debug.LogError(_sourceKingdom.name + " removed " + _targetKingdom.name + " from it's embargo list!");
-    }
+    ///*
+    // * <summary>
+    // * Remove targetKingdom from sourceKingdom's embargo list
+    // * </summary>
+    // * */
+    //protected void Disembargo() {
+    //    _sourceKingdom.RemoveKingdomFromEmbargoList(_targetKingdom);
+    //    //Debug.LogError(_sourceKingdom.name + " removed " + _targetKingdom.name + " from it's embargo list!");
+    //}
     #endregion
 
     #region Event Modifiers
@@ -587,11 +587,11 @@ public class KingdomRelationship {
         if (modification < 0) {
             //Deteriorate Relationship
             _sourceKingdom.OnRelationshipDeteriorated(this, gameEventTrigger, isDiscovery, assassinationReasons);
-            CheckForEmbargo(previousStatus, gameEventTrigger);
+            //CheckForEmbargo(previousStatus, gameEventTrigger);
         } else {
             //Improve Relationship
             _sourceKingdom.OnRelationshipImproved(this);
-            CheckForDisembargo(previousStatus);
+            //CheckForDisembargo(previousStatus);
         }
         UpdateKingRelationshipStatus();
     }
@@ -896,15 +896,15 @@ public class KingdomRelationship {
             List<Kingdom> enemyKingdoms = currWarfare.warfare.GetListFromSide(opposingSide);
             for (int j = 0; j < enemyKingdoms.Count; j++) {
                 Kingdom currEnemy = enemyKingdoms[j];
-                if (sourceKingdom.alliancePool.kingdomsInvolved.Contains(currEnemy)) {
-                    //targetKingdom is at war with sourceKingdom ally(currEnemy)
-                    if (!alliesAtWarWith.Contains(currEnemy)) {
-                        alliesAtWarWith.Add(currEnemy);
+                if(sourceKingdom.alliancePool != null) {
+                    if (sourceKingdom.alliancePool.kingdomsInvolved.Contains(currEnemy)) {
+                        //targetKingdom is at war with sourceKingdom ally(currEnemy)
+                        if (!alliesAtWarWith.Contains(currEnemy)) {
+                            alliesAtWarWith.Add(currEnemy);
+                        }
                     }
                 }
             }
-
-
         }
         return alliesAtWarWith;
     }

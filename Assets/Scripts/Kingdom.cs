@@ -29,13 +29,17 @@ public class Kingdom{
 	private int _evenActionDay;
 
     //Resources
-    private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
+    //private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
     internal BASE_RESOURCE_TYPE basicResource;
 
     //Trading
-    private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
+    private List<Kingdom> _kingdomsInTradeDealWith;
 
-//  private int _baseArmor;
+    //Weighted Actions
+    private Dictionary<Kingdom, List<WEIGHTED_ACTION>> _recentlyRejectedOffers;
+    private List<Kingdom> _recentlyBrokenAlliancesWith;
+
+    //  private int _baseArmor;
     private int _baseWeapons;
     private int _baseStability;
     private int _stability;
@@ -48,7 +52,6 @@ public class Kingdom{
 	internal List<Citizen> successionLine;
     private Dictionary<City, List<Citizen>> _citizens;
 
-
 	internal Dictionary<Kingdom, KingdomRelationship> relationships;
 
 	internal Color kingdomColor;
@@ -58,7 +61,6 @@ public class Kingdom{
 
 	//Plague
 	internal Plague plague;
-
 
 	//Daily Cumulative
 	private EventRate[] _dailyCumulativeEventRate;
@@ -101,13 +103,6 @@ public class Kingdom{
 	private int _materialCityCapacityForHumans;
 	private int _materialCityCapacityForElves;
 	private int _oreCityCapacity;
-
-    protected const int INCREASE_CITY_HP_CHANCE = 5;
-	protected const int INCREASE_CITY_HP_AMOUNT = 20;
-    protected const int GOLD_GAINED_FROM_TRADE = 10;
-    protected const int UNREST_DECREASE_PER_MONTH = -5;
-    protected const int STABILITY_DECREASE_CONQUER = -5;
-    protected const int STABILITY_DECREASE_EMBARGO = -5;
 
 	private bool _isDead;
 	private bool _hasBioWeapon;
@@ -193,12 +188,12 @@ public class Kingdom{
 //		get { return this._populationCapacity; }
 		get { return this.cities.Sum(x => x.populationCapacity); }
     }
-    internal Dictionary<RESOURCE, int> availableResources{
-		get{ return this._availableResources; }
-	}
-    internal Dictionary<Kingdom, EMBARGO_REASON> embargoList {
-        get { return this._embargoList;  }
-    }
+ //   internal Dictionary<RESOURCE, int> availableResources{
+	//	get{ return this._availableResources; }
+	//}
+    //internal Dictionary<Kingdom, EMBARGO_REASON> embargoList {
+    //    get { return this._embargoList;  }
+    //}
     internal bool isDead{
 		get{ return this._isDead; }
 	}
@@ -211,9 +206,9 @@ public class Kingdom{
     internal int stability {
         get { return this._stability; }
     }
-    internal int basicResourceCount {
-        get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
-    }
+    //internal int basicResourceCount {
+    //    get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
+    //}
     internal List<Kingdom> discoveredKingdoms {
         get { return this._discoveredKingdoms; }
     }
@@ -366,8 +361,11 @@ public class Kingdom{
 			}
 		}
 	}
+    internal List<Kingdom> kingdomsInTradeDealWith {
+        get { return _kingdomsInTradeDealWith; }
+    }
 
-	internal int foodCityCapacity {
+    internal int foodCityCapacity {
 		get { return this._foodCityCapacity; }
 	}
 	internal int materialCityCapacityForHumans {
@@ -379,13 +377,19 @@ public class Kingdom{
 	internal int oreCityCapacity {
 		get { return this._oreCityCapacity; }
 	}
+    internal Dictionary<Kingdom, List<WEIGHTED_ACTION>> recentlyRejectedOffers {
+        get { return _recentlyRejectedOffers; }
+    }
+    internal List<Kingdom> recentlyBrokenAlliancesWith {
+        get { return _recentlyBrokenAlliancesWith; }
+    }
     #endregion
 
     // Kingdom constructor paramters
     //	race - the race of this kingdom
     //	cities - the cities that this kingdom will initially own
     //	sourceKingdom (optional) - the kingdom from which this new kingdom came from
-	public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
+    public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
 		this.id = Utilities.SetID(this);
 		this.race = race;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
@@ -404,14 +408,14 @@ public class Kingdom{
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
-		this._availableResources = new Dictionary<RESOURCE, int> ();
+		//this._availableResources = new Dictionary<RESOURCE, int> ();
 		this.relationships = new Dictionary<Kingdom, KingdomRelationship>();
 		this._isDead = false;
 		this._isLockedDown = false;
 		this._isMilitarize = false;
 		this._isFortifying = false;
 		this._hasUpheldHiddenHistoryBook = false;
-        this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
+        //this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._stability = 0;
 		this._sourceKingdom = sourceKingdom;
 		this.borderConflictLoyaltyExpiration = 0;
@@ -424,6 +428,13 @@ public class Kingdom{
         this.foundationYear = GameManager.Instance.year;
         this.foundationDay = GameManager.Instance.days;
         this.foundationMonth = GameManager.Instance.month;
+
+        //Trading
+        this._kingdomsInTradeDealWith = new List<Kingdom>();
+
+        //Weighted Actions
+        this._recentlyRejectedOffers = new Dictionary<Kingdom, List<WEIGHTED_ACTION>>();
+        this._recentlyBrokenAlliancesWith = new List<Kingdom>();
 
         //Expansion
         this._kingdomExpansionRate = UnityEngine.Random.Range(1, 5);
@@ -894,6 +905,7 @@ public class Kingdom{
             RemoveRelationshipWithKingdom(kingdomThatDied);
             RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
             //RemoveKingdomFromEmbargoList(kingdomThatDied);
+            RemoveTradeDealWith(kingdomThatDied);
             RemoveAdjacentKingdom(kingdomThatDied);
             if (_mainThreat != null && _mainThreat == kingdomThatDied) {
                 _mainThreat = null;
@@ -1293,19 +1305,23 @@ public class Kingdom{
     #endregion
 
     #region Trading
-    internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
-        if (!this._embargoList.ContainsKey(kingdomToAdd)) {
-            this._embargoList.Add(kingdomToAdd, embargoReason);
-            //Remove all existing trade routes between kingdomToAdd and this Kingdom
-            //this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
-            //kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
-            //kingdomToAdd.AdjustStability(STABILITY_DECREASE_EMBARGO);
+    internal void AddTradeDealWith(Kingdom otherKingdom) {
+        if (!_kingdomsInTradeDealWith.Contains(otherKingdom)) {
+            _kingdomsInTradeDealWith.Add(otherKingdom);
         }
-        
     }
-    internal void RemoveKingdomFromEmbargoList(Kingdom kingdomToRemove) {
-        this._embargoList.Remove(kingdomToRemove);
+    internal void RemoveTradeDealWith(Kingdom otherKingdom) {
+         _kingdomsInTradeDealWith.Remove(otherKingdom);
     }
+    //internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
+    //    if (!this._embargoList.ContainsKey(kingdomToAdd)) {
+    //        this._embargoList.Add(kingdomToAdd, embargoReason);
+    //    }
+
+    //}
+    //internal void RemoveKingdomFromEmbargoList(Kingdom kingdomToRemove) {
+    //    this._embargoList.Remove(kingdomToRemove);
+    //}
     #endregion
 
     #region City Management
@@ -1758,28 +1774,28 @@ public class Kingdom{
 	}
 
 	#region Resource Management
-    /*
-     * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
-    * Will compare to this kingdoms available resources (excl. resources from trade)
-    * */
-    internal List<RESOURCE> GetResourcesOtherKingdomDoesNotHave(Kingdom otherKingdom) {
-        List<RESOURCE> resourcesOtherKingdomDoesNotHave = new List<RESOURCE>();
-//        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.ToList();
-		bool hasContainedResource = false;
-		foreach (RESOURCE currKey in this._availableResources.Keys) {
-			hasContainedResource = false;
-			foreach (RESOURCE otherCurrKey in otherKingdom.availableResources.Keys) {
-				if(otherCurrKey == currKey){
-					hasContainedResource = true;
-					break;
-				}
-			}
-			if(!hasContainedResource){
-				resourcesOtherKingdomDoesNotHave.Add(currKey);
-			}
-		}
-        return resourcesOtherKingdomDoesNotHave;
-    }
+//    /*
+//     * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
+//    * Will compare to this kingdoms available resources (excl. resources from trade)
+//    * */
+//    internal List<RESOURCE> GetResourcesOtherKingdomDoesNotHave(Kingdom otherKingdom) {
+//        List<RESOURCE> resourcesOtherKingdomDoesNotHave = new List<RESOURCE>();
+////        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.ToList();
+//		bool hasContainedResource = false;
+//		foreach (RESOURCE currKey in this._availableResources.Keys) {
+//			hasContainedResource = false;
+//			foreach (RESOURCE otherCurrKey in otherKingdom.availableResources.Keys) {
+//				if(otherCurrKey == currKey){
+//					hasContainedResource = true;
+//					break;
+//				}
+//			}
+//			if(!hasContainedResource){
+//				resourcesOtherKingdomDoesNotHave.Add(currKey);
+//			}
+//		}
+//        return resourcesOtherKingdomDoesNotHave;
+//    }
     /*
      * <summary>
      * Set growth state of kingdom, disabling growth will prevent expansion,
@@ -2343,17 +2359,18 @@ public class Kingdom{
 	private void ActionDay(){
 		if(!this.isDead){
 			UpdateThreatLevelsAndInvasionValues ();
-			if(this.race != RACE.UNDEAD){
-				if (this.king.balanceType == PURPOSE.BALANCE) {
-					SeeksBalance.Initialize(this);
-				}else if (this.king.balanceType == PURPOSE.SUPERIORITY) {
-					SeeksSuperiority.Initialize(this);
-				}else if (this.king.balanceType == PURPOSE.BANDWAGON) {
-					SeeksBandwagon.Initialize(this);
-				}
-			}else{
-				SeeksUndead.Initialize (this);
-			}
+            PerformWeightedAction();
+			//if(this.race != RACE.UNDEAD){
+			//	if (this.king.balanceType == PURPOSE.BALANCE) {
+			//		SeeksBalance.Initialize(this);
+			//	}else if (this.king.balanceType == PURPOSE.SUPERIORITY) {
+			//		SeeksSuperiority.Initialize(this);
+			//	}else if (this.king.balanceType == PURPOSE.BANDWAGON) {
+			//		SeeksBandwagon.Initialize(this);
+			//	}
+			//}else{
+			//	SeeksUndead.Initialize (this);
+			//}
 
 			CheckStability ();
 
@@ -2831,10 +2848,12 @@ public class Kingdom{
 			object[] objects = leftAlliance.kingdomsInvolved.ToArray ();
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
 				if(this.alliancePool.kingdomsInvolved[i].id != this.id){
-					KingdomRelationship kr = this.alliancePool.kingdomsInvolved [i].GetRelationshipWithKingdom (this);
+                    Kingdom otherKingdom = this.alliancePool.kingdomsInvolved[i];
+					KingdomRelationship kr = otherKingdom.GetRelationshipWithKingdom (this);
 					kr.AddRelationshipModifier (-50, "Broken Alliance", RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE, true, false);
 					kr.ChangeCantAlly (true);
-				}
+                    AddRecentlyBrokenAllianceWith(otherKingdom);
+                }
 			}
             this.alliancePool.RemoveKingdomInAlliance(this);
 			//When leaving an alliance, Stability is reduced by 15
@@ -3034,9 +3053,9 @@ public class Kingdom{
 		int successChance = UnityEngine.Random.Range (0, 100);
 		int caughtChance = UnityEngine.Random.Range (0, 100);
 		int successValue = 60;
-		if(this.king.intelligence == TRAIT.SMART){
+		if(this.king.HasTrait(TRAIT.SMART)){
 			successValue += 15;
-		}else if(this.king.intelligence == TRAIT.DUMB){
+		}else if(this.king.HasTrait(TRAIT.DUMB)){
 			successValue -= 15;
 		}
 		if(successChance < successValue){
@@ -3047,9 +3066,9 @@ public class Kingdom{
 			//Fail
 			int criticalFailChance = UnityEngine.Random.Range (0, 100);
 			int criticalFailValue = 20;
-			if(this.king.efficiency == TRAIT.INEFFICIENT){
+			if(this.king.HasTrait(TRAIT.INEFFICIENT)){
 				criticalFailValue += 5;
-			}else if(this.king.efficiency == TRAIT.EFFICIENT){
+			}else if(this.king.HasTrait(TRAIT.EFFICIENT)){
 				criticalFailValue -= 5;
 			}
 			if(criticalFailChance < criticalFailValue){
@@ -3130,7 +3149,7 @@ public class Kingdom{
 			InciteUnrestSubterfuge ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
-			FlatterSubterfuge (targetKingdom, -25);
+			FlatterSubterfuge (targetKingdom, -50);
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE){
 			string plagueName = SpreadPlague ();
@@ -3262,192 +3281,406 @@ public class Kingdom{
 			this._oreCityCapacity = 0;
 		}
 	}
+    internal Dictionary<RESOURCE_TYPE, int> GetSurplusResourcesFor(Kingdom otherKingdom) {
+        Dictionary<RESOURCE_TYPE, int> surplusResources = new Dictionary<RESOURCE_TYPE, int>();
+
+        if(this.cities.Count < this.foodCityCapacity) {
+            surplusResources.Add(RESOURCE_TYPE.FOOD, this.foodCityCapacity - this.cities.Count);
+        }
+
+        if (otherKingdom.race == RACE.HUMANS) {
+            if (this.cities.Count < this.materialCityCapacityForHumans) {
+                surplusResources.Add(RESOURCE_TYPE.MATERIAL, this.materialCityCapacityForHumans - this.cities.Count);
+            }
+        } else if (otherKingdom.race == RACE.ELVES) {
+            if (this.cities.Count < this._materialCityCapacityForElves) {
+                surplusResources.Add(RESOURCE_TYPE.MATERIAL, this.materialCityCapacityForElves - this.cities.Count);
+            }
+        }
+        if (this.cities.Count < this.oreCityCapacity) {
+            surplusResources.Add(RESOURCE_TYPE.ORE, this.oreCityCapacity - this.cities.Count);
+        }
+        return surplusResources; 
+    }
+    internal Dictionary<RESOURCE_TYPE, int> GetDeficitResourcesFor(Kingdom otherKingdom) {
+        Dictionary<RESOURCE_TYPE, int> deficitResources = new Dictionary<RESOURCE_TYPE, int>();
+
+        if (this.cities.Count > this.foodCityCapacity) {
+            deficitResources.Add(RESOURCE_TYPE.FOOD, this.cities.Count - this.foodCityCapacity);
+        }
+
+        if (otherKingdom.race == RACE.HUMANS) {
+            if (this.cities.Count > this.materialCityCapacityForHumans) {
+                deficitResources.Add(RESOURCE_TYPE.MATERIAL, this.cities.Count - this.materialCityCapacityForHumans);
+            }
+        } else if (otherKingdom.race == RACE.ELVES) {
+            if (this.cities.Count > this._materialCityCapacityForElves) {
+                deficitResources.Add(RESOURCE_TYPE.MATERIAL, this.cities.Count - this.materialCityCapacityForElves);
+            }
+        }
+        if (this.cities.Count > this.oreCityCapacity) {
+            deficitResources.Add(RESOURCE_TYPE.ORE, this.cities.Count - this.oreCityCapacity);
+        }
+        return deficitResources;
+    }
     #endregion
 
-    #region Weighted Actions
+    #region Goal Manager AI
     internal void PerformWeightedAction() {
-        WEIGHTED_ACTION actionToPerform = DetermineWeightedActionToPerform();
+        WEIGHTED_ACTION actionToPerform = GoalManager.Instance.DetermineWeightedActionToPerform(this);
         if (actionToPerform != WEIGHTED_ACTION.DO_NOTHING) {
-            Dictionary<Kingdom, int> targetKingdomWeights = GetKingdomWeightsForActionType(actionToPerform);
-            if(targetKingdomWeights.Sum(x => x.Value) > 0) {
-                Kingdom target = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
-                Debug.Log(this.name + " will perform " + actionToPerform.ToString() + " targeting " + target.name);
+            if (GoalManager.indirectActionTypes.Contains(actionToPerform)) {
+                //This action type requires a return of 2 kingdoms, a target and a cause of the action
+                Dictionary<Kingdom, Dictionary<Kingdom, int>> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForIndirectActionType(this, actionToPerform);
+                if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
+                    Kingdom[] targets = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
+                    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                    if (targets.Length == 2) {
+                        Kingdom cause = targets[0];
+                        Kingdom target = targets[1];
+                        PerformAction(actionToPerform, target, cause);
+                    } else {
+                        Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                    }
+                } else {
+                    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                    Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                }
+            } else if (GoalManager.specialActionTypes.Contains(actionToPerform)) {
+                int weightToNotPerformAction = 0;
+                if (actionToPerform == WEIGHTED_ACTION.DECLARE_PEACE) {
+                    Dictionary<Warfare, int> warWeights = GoalManager.Instance.GetWeightsForSpecialActionType(this, GetAllActiveWars(), actionToPerform, ref weightToNotPerformAction);
+                    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                    if (Utilities.GetTotalOfWeights(warWeights) > 0) {
+                        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
+                        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
+                        actionWeights.Add(actionToPerform, warWeights.Sum(x => x.Value));
+                        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                        if (decision == actionToPerform) {
+                            //this kingdom has decided to perform the action
+                            Warfare target = Utilities.PickRandomElementWithWeights(warWeights);
+                            PerformAction(actionToPerform, target);
+                        }
+                    } else {
+                        Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                    }
+                } else if (actionToPerform == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
+                    List<AlliancePool> alliances = new List<AlliancePool>();
+                    alliances.Add(alliancePool);
+                    Dictionary<AlliancePool, int> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, alliances, actionToPerform, ref weightToNotPerformAction);
+                    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                    if (Utilities.GetTotalOfWeights(weights) > 0) {
+                        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
+                        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
+                        actionWeights.Add(actionToPerform, weights.Sum(x => x.Value));
+                        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                        if (decision == actionToPerform) {
+                            //this kingdom has decided to perform the action
+                            PerformAction(actionToPerform, null);
+                        }
+                    }
+                }
             } else {
-                Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                Dictionary<Kingdom, int> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForActionType(this, actionToPerform);
+                ClearRejectedOffersList(); //Clear List Since weights are already computed
+                if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
+                    Kingdom target = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
+                    PerformAction(actionToPerform, target);
+                } else {
+                    Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                }
             }
         } else {
+            ClearRejectedOffersList(); //Clear List Since weights are already computed
             Debug.Log(this.name + " chose to do nothing.");
+        }
+    }
+    private void PerformAction(WEIGHTED_ACTION weightedAction, object target, Kingdom cause = null) {
+        //Debug.Log(this.name + " will perform " + weightedAction.ToString() + " targeting " + target.name);
+        if(weightedAction == WEIGHTED_ACTION.WAR_OF_CONQUEST) {
+            StartWarOfConquestTowards((Kingdom)target);
+        } else if (weightedAction == WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION) {
+            OfferAllianceOfProtectionTo((Kingdom)target);
+        } else if (weightedAction == WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST) {
+            OfferAllianceOfConquestTo((Kingdom)target, cause);
+        } else if (weightedAction == WEIGHTED_ACTION.TRADE_DEAL) {
+            OfferTradeDealTo((Kingdom)target);
+        } else if (weightedAction == WEIGHTED_ACTION.INCITE_UNREST) {
+            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.REDUCE_STABILITY, (Kingdom)target);
+        } else if (weightedAction == WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT) {
+            StartInternationalIncident((Kingdom)target);
+        } else if (weightedAction == WEIGHTED_ACTION.FLATTER) {
+            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, (Kingdom)target);
+        } else if (weightedAction == WEIGHTED_ACTION.SEND_AID) {
+            //TODO: Add Send Aid Trigger
+        } else if (weightedAction == WEIGHTED_ACTION.DECLARE_PEACE) {
+            ((Warfare)target).PeaceDeclaration(this);
+        } else if (weightedAction == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
+            LeaveAlliance();
         }
     }
     internal bool IsThreatened() {
         //if i am adjacent to someone whose threat is +20 or above and whose Opinion of me is negative
-        for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
-            Kingdom otherKingdom = sourceKingdom.adjacentKingdoms[i];
-            KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-            KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+        for (int i = 0; i < this.adjacentKingdoms.Count; i++) {
+            Kingdom otherKingdom = this.adjacentKingdoms[i];
+            KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(otherKingdom);
+            KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(this);
             if (relWithOtherKingdom.targetKingdomThreatLevel > 20 && relOfOtherWithSource.totalLike < 0) {
                 return true;
             }
         }
         return false;
     }
-    internal WEIGHTED_ACTION DetermineWeightedActionToPerform() {
-        Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
-        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 10); //Add 500 Base Weight on Do Nothing Action
-        for (int i = 0; i < king.allTraits.Count; i++) {
-            Trait currTrait = king.allTraits[i];
-            Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
-            totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
+    //internal WEIGHTED_ACTION DetermineWeightedActionToPerform() {
+    //    Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
+    //    totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 50); //Add 500 Base Weight on Do Nothing Action
+    //    for (int i = 0; i < king.allTraits.Count; i++) {
+    //        Trait currTrait = king.allTraits[i];
+    //        Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
+    //        totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
+    //    }
+    //    return Utilities.PickRandomElementWithWeights(totalWeightedActions);
+    //}
+    //internal Dictionary<Kingdom, int> GetKingdomWeightsForActionType(WEIGHTED_ACTION weightedAction) {
+    //    Dictionary<Kingdom, int> kingdomWeights = new Dictionary<Kingdom, int>();
+    //    for (int i = 0; i < discoveredKingdoms.Count; i++) {
+    //        Kingdom otherKingdom = discoveredKingdoms[i];
+    //        int weightForOtherKingdom = GetDefaultWeightForAction(weightedAction, otherKingdom);
+    //        //loop through all the traits of the current king
+    //        for (int j = 0; j < king.allTraits.Count; j++) {
+    //            Trait currTrait = king.allTraits[j];
+    //            int modificationFromTrait = currTrait.GetWeightOfActionGivenTarget(weightedAction, otherKingdom, weightForOtherKingdom);
+    //            weightForOtherKingdom += modificationFromTrait;
+    //        }
+    //        ApplyActionModificationForAll(weightedAction, otherKingdom, ref weightForOtherKingdom);
+    //        kingdomWeights.Add(otherKingdom, weightForOtherKingdom);
+    //    }
+    //    return kingdomWeights;
+    //}
+
+    //internal Dictionary<Kingdom, Dictionary<Kingdom, int>> GetKingdomWeightsForSpecialActionType(WEIGHTED_ACTION specialWeightedAction) {
+    //    Dictionary<Kingdom, Dictionary<Kingdom, int>> kingdomWeights = new Dictionary<Kingdom, Dictionary<Kingdom, int>>();
+    //    for (int i = 0; i < discoveredKingdoms.Count; i++) {
+    //        Kingdom otherKingdom = discoveredKingdoms[i]; //the cause of the action
+    //        Dictionary<Kingdom, int> possibleAllies = new Dictionary<Kingdom, int>();
+    //        for (int j = 0; j < otherKingdom.adjacentKingdoms.Count; j++) {
+    //            Kingdom adjKingdomOfOtherKingdom = otherKingdom.adjacentKingdoms[j]; //the target of the action
+    //            if(adjKingdomOfOtherKingdom.id != this.id) {
+    //                int weightForOtherKingdom = GetDefaultWeightForAction(specialWeightedAction, otherKingdom);
+    //                //loop through all the traits of the current king
+    //                for (int k = 0; k < king.allTraits.Count; k++) {
+    //                    Trait currTrait = king.allTraits[k];
+    //                    int modificationFromTrait = currTrait.GetWeightOfActionGivenTargetAndCause(specialWeightedAction, adjKingdomOfOtherKingdom, otherKingdom, weightForOtherKingdom);
+    //                    weightForOtherKingdom += modificationFromTrait;
+    //                }
+    //                ApplyActionModificationForAll(specialWeightedAction, otherKingdom, ref weightForOtherKingdom);
+    //                possibleAllies.Add(adjKingdomOfOtherKingdom, weightForOtherKingdom);
+    //            }
+    //        }            
+    //        kingdomWeights.Add(otherKingdom, possibleAllies);
+    //    }
+    //    return kingdomWeights;
+    //}
+
+    //private int GetDefaultWeightForAction(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom) {
+    //    switch (weightedAction) {
+    //        case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+    //            return 0;
+    //        case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
+    //            return 0;
+    //        case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
+    //            return 0;
+    //        case WEIGHTED_ACTION.TRADE_DEAL:
+    //            return GetTradeDealDefaultWeight(targetKingdom);
+    //        case WEIGHTED_ACTION.INCITE_UNREST:
+    //            return GetInciteUnrestDefaultWeight(targetKingdom);
+    //        case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
+    //            return GetInternationalIncidentDefaultWeight(targetKingdom);
+    //        case WEIGHTED_ACTION.FLATTER:
+    //            return GetFlatterDefaultWeight(targetKingdom);
+    //        case WEIGHTED_ACTION.SEND_AID:
+    //            return 0;
+    //        default:
+    //            return 0;
+    //    }
+    //}
+    //private void ApplyActionModificationForAll(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom, ref int defaultWeight) {
+    //    switch (weightedAction) {
+    //        case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+    //            GetAllModificationForWarOfConquest(targetKingdom, ref defaultWeight);
+    //            break;
+    //        case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
+    //            GetAllModificationForAllianceOfProtection(targetKingdom, ref defaultWeight);
+    //            break;
+    //        case WEIGHTED_ACTION.TRADE_DEAL:
+    //            GetAllModificationForTradeDeal(targetKingdom, ref defaultWeight);
+    //            break;
+    //    }
+    //}
+
+  //  private int GetTradeDealDefaultWeight(Kingdom targetKingdom) {
+  //      int defaultWeight = 0;
+  //      KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+  //      KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
+
+		//if (relWithOtherKingdom.sharedRelationship.isAdjacent) {
+  //          defaultWeight = 40;
+  //          if (relWithOtherKingdom.totalLike > 0) {
+  //              defaultWeight += 2 * relWithOtherKingdom.totalLike;//add 2 to Default Weight per Positive Opinion I have towards target
+  //          } else if (relWithOtherKingdom.totalLike < 0) {
+  //              defaultWeight += 2 * relWithOtherKingdom.totalLike;//subtract 2 to Default Weight per Negative Opinion I have towards target
+  //          }
+
+  //          //add 1 to Default Weight per Positive Opinion target has towards me
+  //          //subtract 1 to Default Weight per Negative Opinion target has towards me
+  //          defaultWeight += relOfOtherWithSource.totalLike;
+  //          defaultWeight = Mathf.Max(0, defaultWeight); //minimum 0
+
+  //      }
+  //      return defaultWeight;
+  //  }
+  //  private int GetInciteUnrestDefaultWeight(Kingdom targetKingdom) {
+  //      int defaultWeight = 0;
+  //      KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+  //      KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
+
+  //      if (!relWithOtherKingdom.AreAllies()) {
+  //          defaultWeight = 40;
+  //          if (relWithOtherKingdom.totalLike < 0) {
+  //              defaultWeight += relWithOtherKingdom.totalLike;//subtract 2 to Default Weight per Negative Opinion I have towards target
+  //          }
+  //      }
+  //      return defaultWeight;
+  //  }
+  //  private int GetInternationalIncidentDefaultWeight(Kingdom targetKingdom) {
+  //      int defaultWeight = 0;
+  //      KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+  //      if(relWithOtherKingdom.totalLike < 0) {
+  //          defaultWeight += Mathf.Abs(5 * relWithOtherKingdom.totalLike);
+  //      }
+  //      return defaultWeight;
+  //  }
+  //  private int GetFlatterDefaultWeight(Kingdom targetKingdom) {
+  //      int defaultWeight = 40;
+  //      KingdomRelationship relOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
+  //      if (relOtherWithSource.totalLike < 0) {
+  //          defaultWeight += Mathf.Abs(relOtherWithSource.totalLike);
+  //      }
+  //      return defaultWeight;
+  //  }
+
+  //  private void GetAllModificationForWarOfConquest(Kingdom targetKingdom, ref int defaultWeight) {
+  //      KingdomRelationship relWithTargetKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+  //      List<Kingdom> alliesAtWarWith = relWithTargetKingdom.GetAlliesTargetKingdomIsAtWarWith();
+  //      //for each non-ally adjacent kingdoms that one of my allies declared war with recently
+		//if (relWithTargetKingdom.sharedRelationship.isAdjacent && !relWithTargetKingdom.AreAllies() && alliesAtWarWith.Count > 0) {
+  //          //compare its theoretical power vs my theoretical power
+  //          int sourceKingdomPower = relWithTargetKingdom._theoreticalPower;
+  //          int otherKingdomPower = targetKingdom.GetRelationshipWithKingdom(this)._theoreticalPower;
+  //          if (otherKingdomPower * 1.25f < sourceKingdomPower) {
+  //              //If his theoretical power is not higher than 25% over mine
+  //              defaultWeight = 20;
+  //              for (int j = 0; j < alliesAtWarWith.Count; j++) {
+  //                  Kingdom currAlly = alliesAtWarWith[j];
+  //                  KingdomRelationship relationshipWithAlly = this.GetRelationshipWithKingdom(currAlly);
+  //                  if (relationshipWithAlly.totalLike > 0) {
+  //                      defaultWeight += 2 * relationshipWithAlly.totalLike; //add 2 weight per positive opinion i have over my ally
+  //                  } else if (relationshipWithAlly.totalLike < 0) {
+  //                      defaultWeight += relationshipWithAlly.totalLike; //subtract 1 weight per negative opinion i have over my ally (totalLike is negative)
+  //                  }
+  //              }
+  //              //add 1 weight per negative opinion i have over the target
+  //              //subtract 1 weight per positive opinion i have over the target
+  //              defaultWeight += (relWithTargetKingdom.totalLike * -1); //If totalLike is negative it becomes positive(+), otherwise it becomes negative(-)
+  //              defaultWeight = Mathf.Max(0, defaultWeight);
+  //          }
+  //      }
+  //  }
+  //  private void GetAllModificationForAllianceOfProtection(Kingdom targetKingdom, ref int defaultWeight) {
+  //      if (this.IsThreatened()) {
+  //          //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
+  //          KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
+  //          KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
+		//	if (!relOfOtherWithSource.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
+  //              defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
+  //              defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
+  //              if (_recentlyRejectedOffers.ContainsKey(targetKingdom)) {
+  //                  defaultWeight -= 50;
+  //              }else if (_recentlyBrokenAlliancesWith.Contains(targetKingdom)) {
+  //                  defaultWeight -= 50;
+  //              }
+  //              defaultWeight = Mathf.Max(0, defaultWeight); //minimum 0
+  //          }
+  //      }
+  //  }
+  //  private void GetAllModificationForTradeDeal(Kingdom targetKingdom, ref int defaultWeight) {
+  //      Dictionary<RESOURCE_TYPE, int> deficitOfTargetKingdom = targetKingdom.GetDeficitResourcesFor(this);
+  //      Dictionary<RESOURCE_TYPE, int> surplusOfThisKingdom = this.GetSurplusResourcesFor(targetKingdom);
+  //      foreach (KeyValuePair<RESOURCE_TYPE, int> kvp in surplusOfThisKingdom) {
+  //          RESOURCE_TYPE currSurplus = kvp.Key;
+  //          int surplusAmount = kvp.Value;
+  //          if (deficitOfTargetKingdom.ContainsKey(currSurplus)) {
+  //              //otherKingdom has a deficit for currSurplus
+  //              //add Default Weight for every point of Surplus they have on our Deficit Resources 
+  //              defaultWeight += surplusAmount;
+  //          }
+  //      }
+  //  }
+
+    private void StartWarOfConquestTowards(Kingdom targetKingdom) {
+        KingdomRelationship rel = this.GetRelationshipWithKingdom(targetKingdom);
+        if (rel.AreAllies()) {
+            this.LeaveAlliance();
         }
-        return Utilities.PickRandomElementWithWeights(totalWeightedActions);
+        Warfare warfare = new Warfare(this, targetKingdom, false);
+        this.checkedWarfareID.Add(warfare.id);
+        targetKingdom.checkedWarfareID.Add(warfare.id);
     }
-    internal Dictionary<Kingdom, int> GetKingdomWeightsForActionType(WEIGHTED_ACTION weightedAction) {
-        Dictionary<Kingdom, int> kingdomWeights = new Dictionary<Kingdom, int>();
-        for (int i = 0; i < discoveredKingdoms.Count; i++) {
-            Kingdom otherKingdom = discoveredKingdoms[i];
-            int weightForOtherKingdom = GetDefaultWeightForAction(weightedAction, otherKingdom);
-            //loop through all the traits of the current king
-            for (int j = 0; j < king.allTraits.Count; j++) {
-                Trait currTrait = king.allTraits[j];
-                int modificationFromTrait = currTrait.GetWeightOfActionGivenTarget(weightedAction, otherKingdom, weightForOtherKingdom);
-                weightForOtherKingdom += modificationFromTrait;
+    private void OfferAllianceOfProtectionTo(Kingdom targetKingdom) {
+        EventCreator.Instance.CreateAllianceOfProtectionOfferEvent(this, targetKingdom);
+    }
+    private void OfferAllianceOfConquestTo(Kingdom targetKingdom, Kingdom cause) {
+        EventCreator.Instance.CreateAllianceOfConquestOfferEvent(this, targetKingdom, cause);
+    }
+    private void OfferTradeDealTo(Kingdom targetKingdom) {
+        EventCreator.Instance.CreateTradeDealOfferEvent(this, targetKingdom);
+    }
+    private void StartInternationalIncident(Kingdom targetKingdom) {
+        EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, false, true);
+    }
+
+    internal void AddRejectedOffer(Kingdom rejectedBy, WEIGHTED_ACTION actionType) {
+        if (_recentlyRejectedOffers.ContainsKey(rejectedBy)) {
+            if (!_recentlyRejectedOffers[rejectedBy].Contains(actionType)) {
+                _recentlyRejectedOffers[rejectedBy].Add(actionType);
             }
-            ApplyActionModificationForAll(weightedAction, otherKingdom, ref weightForOtherKingdom);
-            kingdomWeights.Add(otherKingdom, weightForOtherKingdom);
-        }
-        return kingdomWeights;
-    }
-
-    private int GetDefaultWeightForAction(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom) {
-        switch (weightedAction) {
-            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                return 0;
-            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
-                return 0;
-            case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-                return 0;
-            case WEIGHTED_ACTION.TRADE_DEAL:
-                return GetTradeDealDefaultWeight(targetKingdom);
-            case WEIGHTED_ACTION.INCITE_UNREST:
-                return GetInciteUnrestDefaultWeight(targetKingdom);
-            case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
-                return GetInternationalIncidentDefaultWeight(targetKingdom);
-            case WEIGHTED_ACTION.FLATTER:
-                return GetFlatterDefaultWeight(targetKingdom);
-            case WEIGHTED_ACTION.SEND_AID:
-                return 0;
-            default:
-                return 0;
+        } else {
+            _recentlyRejectedOffers.Add(rejectedBy, new List<WEIGHTED_ACTION> { actionType });
         }
     }
-    private void ApplyActionModificationForAll(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom, ref int defaultWeight) {
-        switch (weightedAction) {
-            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                GetAllModificationForWarOfConquest(targetKingdom, ref defaultWeight);
-                break;
-            case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-                GetAllModificationForAllianceOfProtection(targetKingdom, ref defaultWeight);
-                break;
-            case WEIGHTED_ACTION.TRADE_DEAL:
-                GetAllModificationForTradeDeal(targetKingdom, ref defaultWeight);
-                break;
+    private void ClearRejectedOffersList() {
+        _recentlyRejectedOffers.Clear();
+    }
+    private void AddRecentlyBrokenAllianceWith(Kingdom otherKingdom) {
+        if (!_recentlyBrokenAlliancesWith.Contains(otherKingdom)) {
+            _recentlyBrokenAlliancesWith.Add(otherKingdom);
+            GameDate expiryDate = GameManager.Instance.Today();
+            expiryDate.AddMonths(1);
+            SchedulingManager.Instance.AddEntry(expiryDate, () => RemoveRecentlyBrokenAllianceWith(otherKingdom));
         }
     }
-
-    private int GetTradeDealDefaultWeight(Kingdom targetKingdom) {
-        int defaultWeight = 0;
-        KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
-        KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
-
-		if (relWithOtherKingdom.sharedRelationship.isAdjacent) {
-            defaultWeight = 40;
-            if (relWithOtherKingdom.totalLike > 0) {
-                defaultWeight += 2 * relWithOtherKingdom.totalLike;//add 2 to Default Weight per Positive Opinion I have towards target
-            } else if (relWithOtherKingdom.totalLike < 0) {
-                defaultWeight += 2 * relWithOtherKingdom.totalLike;//subtract 2 to Default Weight per Negative Opinion I have towards target
-            }
-
-            //add 1 to Default Weight per Positive Opinion target has towards me
-            //subtract 1 to Default Weight per Negative Opinion target has towards me
-            defaultWeight += relOfOtherWithSource.totalLike;
-            defaultWeight = Mathf.Max(0, defaultWeight); //minimum 0
-
-        }
-        return defaultWeight;
+    private void RemoveRecentlyBrokenAllianceWith(Kingdom otherKingdom) {
+        _recentlyBrokenAlliancesWith.Remove(otherKingdom);
     }
-    private int GetInciteUnrestDefaultWeight(Kingdom targetKingdom) {
-        int defaultWeight = 0;
-        KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
-        KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
 
-        if (!relWithOtherKingdom.AreAllies()) {
-            defaultWeight = 40;
-            if (relWithOtherKingdom.totalLike < 0) {
-                defaultWeight += relWithOtherKingdom.totalLike;//subtract 2 to Default Weight per Negative Opinion I have towards target
+    internal List<Warfare> GetAllActiveWars() {
+        List<Warfare> activeWars = new List<Warfare>();
+        foreach (KingdomRelationship rel in relationships.Values) {
+            if (rel.sharedRelationship.isAtWar) {
+                activeWars.Add(rel.sharedRelationship.warfare);
             }
         }
-        return defaultWeight;
-    }
-    private int GetInternationalIncidentDefaultWeight(Kingdom targetKingdom) {
-        int defaultWeight = 0;
-        KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
-        if(relWithOtherKingdom.totalLike < 0) {
-            defaultWeight += Mathf.Abs(5 * relWithOtherKingdom.totalLike);
-        }
-        return defaultWeight;
-    }
-    private int GetFlatterDefaultWeight(Kingdom targetKingdom) {
-        int defaultWeight = 40;
-        KingdomRelationship relOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
-        if (relOtherWithSource.totalLike < 0) {
-            defaultWeight += Mathf.Abs(relOtherWithSource.totalLike);
-        }
-        return defaultWeight;
-    }
-
-    private void GetAllModificationForWarOfConquest(Kingdom targetKingdom, ref int defaultWeight) {
-        KingdomRelationship relWithTargetKingdom = this.GetRelationshipWithKingdom(targetKingdom);
-        List<Kingdom> alliesAtWarWith = relWithTargetKingdom.GetAlliesTargetKingdomIsAtWarWith();
-        //for each non-ally adjacent kingdoms that one of my allies declared war with recently
-		if (relWithTargetKingdom.sharedRelationship.isAdjacent && !relWithTargetKingdom.AreAllies() && alliesAtWarWith.Count > 0) {
-            //compare its theoretical power vs my theoretical power
-            int sourceKingdomPower = relWithTargetKingdom._theoreticalPower;
-            int otherKingdomPower = targetKingdom.GetRelationshipWithKingdom(sourceKingdom)._theoreticalPower;
-            if (otherKingdomPower * 1.25f < sourceKingdomPower) {
-                //If his theoretical power is not higher than 25% over mine
-                defaultWeight = 20;
-                for (int j = 0; j < alliesAtWarWith.Count; j++) {
-                    Kingdom currAlly = alliesAtWarWith[j];
-                    KingdomRelationship relationshipWithAlly = sourceKingdom.GetRelationshipWithKingdom(currAlly);
-                    if (relationshipWithAlly.totalLike > 0) {
-                        defaultWeight += 2 * relationshipWithAlly.totalLike; //add 2 weight per positive opinion i have over my ally
-                    } else if (relationshipWithAlly.totalLike < 0) {
-                        defaultWeight += relationshipWithAlly.totalLike; //subtract 1 weight per negative opinion i have over my ally (totalLike is negative)
-                    }
-                }
-                //add 1 weight per negative opinion i have over the target
-                //subtract 1 weight per positive opinion i have over the target
-                defaultWeight += (relWithTargetKingdom.totalLike * -1); //If totalLike is negative it becomes positive(+), otherwise it becomes negative(-)
-                defaultWeight = Mathf.Max(0, defaultWeight);
-            }
-        }
-    }
-    private void GetAllModificationForAllianceOfProtection(Kingdom targetKingdom, ref int defaultWeight) {
-        if (this.IsThreatened()) {
-            //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
-            KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(targetKingdom);
-            KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(this);
-			if (!relOfOtherWithSource.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
-                defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
-                defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
-                //TODO: subtract 50 Weight if an Alliance or Trade Deal between the two has recently been 
-                //rejected by the target or if either side has recently broken an Alliance or Trade Deal
-                defaultWeight = Mathf.Max(0, defaultWeight); //minimum 0
-            }
-        }
-    }
-    private void GetAllModificationForTradeDeal(Kingdom targetKingdom, ref int defaultWeight) {
-        //TODO: add Default Weight for every point of Surplus they have on our Deficit Resources 
+        return activeWars;
     }
     #endregion
 }

@@ -28,13 +28,7 @@ public class Trait{
         
         for (int i = 0; i < allWeightedActions.Length; i++) {
             WEIGHTED_ACTION currAction = allWeightedActions[i];
-            bool shouldIncludeActionToWeights = true;
-            if (Utilities.weightedActionRequirements.ContainsKey(currAction)) {
-                if (Utilities.weightedActionRequirements[currAction].Contains(WEIGHTED_ACTION_REQS.NO_ALLIANCE) && ownerOfTrait.city.kingdom.alliancePool != null) {
-                    shouldIncludeActionToWeights = false;
-                }
-            }
-            if (shouldIncludeActionToWeights) {
+            if (GoalManager.Instance.ActionMeetsRequirements(ownerOfTrait.city.kingdom, currAction)) {
                 int totalWeightOfAction = Mathf.Max(0, GetBaseWeightOfAction(currAction)); //So that the returned number can never be negative
                 if (totalWeightOfAction > 0) {
                     totalWeights.Add(currAction, totalWeightOfAction);
@@ -46,22 +40,38 @@ public class Trait{
     }
 
     #region Weighted Actions
-    internal int GetWeightOfActionGivenTarget(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom, int currentWeight) {
+    internal int GetWeightOfActionGivenTarget(WEIGHTED_ACTION weightedAction, object target, int currentWeight) {
         switch (weightedAction) {
             case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                return GetWarOfConquestWeightModification(targetKingdom);
-            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
-                return GetAllianceOfConquestWeightModification(targetKingdom);
+                return GetWarOfConquestWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
-                return GetAllianceOfProtectionWeightModification(targetKingdom);
+                return GetAllianceOfProtectionWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.TRADE_DEAL:
-                return GetTradeDealWeightModification(targetKingdom);
+                return GetTradeDealWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.INCITE_UNREST:
-                return GetInciteUnrestWeightModification(targetKingdom);
+                return GetInciteUnrestWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
-                return GetInternationalIncidentWeightModification(targetKingdom);
+                return GetInternationalIncidentWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.FLATTER:
-                return GetFlatterWeightModification(targetKingdom);
+                return GetFlatterWeightModification((Kingdom)target);
+            case WEIGHTED_ACTION.LEAVE_ALLIANCE:
+                return GetLeaveAllianceWeightModification((AlliancePool)target);
+            default:
+                return 0;
+        }
+    }
+    internal int GetWeightOfActionGivenTargetAndCause(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom, Kingdom causingKindom, int currentWeight) {
+        switch (weightedAction) {
+            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
+                return GetAllianceOfConquestWeightModification(targetKingdom, causingKindom);
+            default:
+                return 0;
+        }
+    }
+    internal int GetDontDoActionWeight(WEIGHTED_ACTION weightedAction, object target) {
+        switch (weightedAction) {
+            case WEIGHTED_ACTION.LEAVE_ALLIANCE:
+                return GetKeepAllianceWeightModification((AlliancePool)target);
             default:
                 return 0;
         }
@@ -70,7 +80,7 @@ public class Trait{
     internal virtual int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
         return 0;
     }
-    internal virtual int GetAllianceOfConquestWeightModification(Kingdom otherKingdom) {
+    internal virtual int GetAllianceOfConquestWeightModification(Kingdom otherKingdom, Kingdom causingKindom) {
         return 0;
     }
     internal virtual int GetAllianceOfProtectionWeightModification(Kingdom otherKingdom) {
@@ -86,6 +96,12 @@ public class Trait{
         return 0;
     }
     internal virtual int GetFlatterWeightModification(Kingdom otherKingdom) {
+        return 0;
+    }
+    internal virtual int GetLeaveAllianceWeightModification(AlliancePool alliance) {
+        return 0;
+    }
+    internal virtual int GetKeepAllianceWeightModification(AlliancePool alliance) {
         return 0;
     }
     #endregion

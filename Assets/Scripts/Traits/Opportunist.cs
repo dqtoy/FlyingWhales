@@ -45,9 +45,11 @@ public class Opportunist : Trait {
                 } else if (relOfOtherWithSource.totalLike < 0) {
                     weight += relOfOtherWithSource.totalLike;
                 }
-
-                //TODO: subtract 50 Weight if an Alliance or Trade Deal between the two has recently been rejected by the 
-                //target or if either side has recently broken an Alliance or Trade Deal
+                if (sourceKingdom.recentlyRejectedOffers.ContainsKey(otherKingdom)) {
+                    weight -= 50;
+                } else if (sourceKingdom.recentlyBrokenAlliancesWith.Contains(otherKingdom)) {
+                    weight -= 50;
+                }
                 weight = Mathf.Max(0, weight); //minimum 0
             }
         }

@@ -30,79 +30,38 @@ public class Imperialist : Trait {
         }
         return weight;
     }
-    internal override int GetAllianceOfConquestWeightModification(Kingdom otherKingdom) {
+    internal override int GetAllianceOfConquestWeightModification(Kingdom otherKingdom, Kingdom causingKindom) {
         //otherKingdom is possible ally
         int weight = 0;
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
         KingdomRelationship relOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
-        for (int i = 0; i < otherKingdom.adjacentKingdoms.Count; i++) {
-            Kingdom adjKingdom = otherKingdom.adjacentKingdoms[i];
-            if (sourceKingdom.adjacentKingdoms.Contains(adjKingdom)) {
-                KingdomRelationship relSourceWithAdj = sourceKingdom.GetRelationshipWithKingdom(adjKingdom);
-                KingdomRelationship relOtherWithAdj = otherKingdom.GetRelationshipWithKingdom(adjKingdom);
-                //for each non-ally adjacent kingdom that have negative Relative Strength
+
+        KingdomRelationship relSourceWithAdj = sourceKingdom.GetRelationshipWithKingdom(causingKindom);
+        KingdomRelationship relOtherWithAdj = otherKingdom.GetRelationshipWithKingdom(causingKindom);
+        //for each non-ally adjacent kingdom that have negative Relative Strength
                 if (!relSourceWithAdj.AreAllies() && relSourceWithAdj.relativeStrength < 0) {
-                    if (relSourceWithOther.totalLike > 0) {
-                        weight += 3 * relSourceWithOther.totalLike; //add 3 Weight per positive opinion i have towards each alliance members
-                    } else if (relSourceWithOther.totalLike < 0) {
-                        weight += 2 * relSourceWithOther.totalLike; //subtract 2 Weight per negative opinion i have towards each alliance members
-                    }
-                    if (relOtherWithSource.totalLike > 0) {
-                        weight += 3 * relOtherWithSource.totalLike; //add 3 Weight per positive opinion each alliance member has towards me
-                    }
-                    if (relOtherWithAdj.totalLike > 0) {
-                        weight -= 2 * relOtherWithAdj.totalLike; //subtract 2 Weight per positive opinion each alliance member has towards Conquest Target
-                    } else if (relOtherWithAdj.totalLike < 0) {
-                        weight += Mathf.Abs(2 * relOtherWithAdj.totalLike); //add 2 Weight per negative opinion each alliance member has towards Conquest Target
-                    }
-                    //TODO: subtract 50 Weight if an Alliance or Trade Deal between the two has recently been rejected by the target or 
-                    //if either side has recently broken an Alliance or Trade Deal
-                    weight = Mathf.Max(0, weight); //minimum 0
-                }
+            if (relSourceWithOther.totalLike > 0) {
+                weight += 3 * relSourceWithOther.totalLike; //add 3 Weight per positive opinion i have towards each alliance members
+            } else if (relSourceWithOther.totalLike < 0) {
+                weight += 2 * relSourceWithOther.totalLike; //subtract 2 Weight per negative opinion i have towards each alliance members
             }
+            if (relOtherWithSource.totalLike > 0) {
+                weight += 3 * relOtherWithSource.totalLike; //add 3 Weight per positive opinion each alliance member has towards me
+            }
+            if (relOtherWithAdj.totalLike > 0) {
+                weight -= 2 * relOtherWithAdj.totalLike; //subtract 2 Weight per positive opinion each alliance member has towards Conquest Target
+            } else if (relOtherWithAdj.totalLike < 0) {
+                weight += Mathf.Abs(2 * relOtherWithAdj.totalLike); //add 2 Weight per negative opinion each alliance member has towards Conquest Target
+            }
+            if (sourceKingdom.recentlyRejectedOffers.ContainsKey(otherKingdom)) {
+                weight -= 50;
+            } else if (sourceKingdom.recentlyBrokenAlliancesWith.Contains(otherKingdom)) {
+                weight -= 50;
+            }
+            weight = Mathf.Max(0, weight); //minimum 0
         }
 
         return weight;
     }
-
-    //    for (int i = 0; i < sourceKingdom.adjacentKingdoms.Count; i++) {
-    //        Kingdom otherKingdom = sourceKingdom.adjacentKingdoms[i];
-    //        KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-    //        if (!relWithOtherKingdom.AreAllies() && relWithOtherKingdom._relativeStrength < 0) {
-    //            //loop through other kingdoms or alliances adjacent to it
-    //            Dictionary<Kingdom, int> offerAllianceTo = new Dictionary<Kingdom, int>();
-    //            for (int j = 0; j < otherKingdom.adjacentKingdoms.Count; j++) {
-    //                Kingdom adjacentKingdomOfOtherKingdom = otherKingdom.adjacentKingdoms[j];
-    //                KingdomRelationship relOfOtherKingdomWithAdj = otherKingdom.GetRelationshipWithKingdom(adjacentKingdomOfOtherKingdom);
-    //                if (!relOfOtherKingdomWithAdj.AreAllies()) {
-    //                    int weight = 0;
-    //                    KingdomRelationship relOfSourceKingdomWithAdj = sourceKingdom.GetRelationshipWithKingdom(adjacentKingdomOfOtherKingdom);
-    //                    if (relOfSourceKingdomWithAdj.totalLike > 0) {
-    //                        weight += 3 * relOfSourceKingdomWithAdj.totalLike; //add 3 Weight per positive opinion i have towards each alliance members
-    //                    } else if (relOfSourceKingdomWithAdj.totalLike < 0) {
-    //                        weight += 2 * relOfSourceKingdomWithAdj.totalLike; //subtract 2 Weight per negative opinion i have towards each alliance members
-    //                    }
-    //                    KingdomRelationship relOfAdjKingdomWithSource = adjacentKingdomOfOtherKingdom.GetRelationshipWithKingdom(sourceKingdom);
-    //                    if (relOfAdjKingdomWithSource.totalLike > 0) {
-    //                        weight += 3 * relOfAdjKingdomWithSource.totalLike; //add 3 Weight per positive opinion each alliance member has towards me
-    //                    }
-    //                    KingdomRelationship relOfAdjKingdomWithOther = adjacentKingdomOfOtherKingdom.GetRelationshipWithKingdom(otherKingdom);
-    //                    if (relOfAdjKingdomWithOther.totalLike > 0) {
-    //                        weight -= 2 * relOfAdjKingdomWithOther.totalLike; //subtract 2 Weight per positive opinion each alliance member has towards Conquest Target
-    //                    } else if (relOfAdjKingdomWithOther.totalLike < 0) {
-    //                        weight += Mathf.Abs(2 * relOfAdjKingdomWithOther.totalLike); //add 2 Weight per negative opinion each alliance member has towards Conquest Target
-    //                    }
-
-    //                    //TODO: subtract 50 Weight if an Alliance or Trade Deal between the two has recently been rejected by the target or 
-    //                    //if either side has recently broken an Alliance or Trade Deal
-    //                    weight = Mathf.Max(0, weight); //minimum 0
-    //                    offerAllianceTo.Add(adjacentKingdomOfOtherKingdom, weight);
-    //                }
-    //            }
-    //            kingdomWeights.Add(otherKingdom, offerAllianceTo);
-    //        }
-    //    }
-    //    return kingdomWeights;
-
 }
