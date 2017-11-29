@@ -1313,6 +1313,18 @@ public class Kingdom{
     internal void RemoveTradeDealWith(Kingdom otherKingdom) {
          _kingdomsInTradeDealWith.Remove(otherKingdom);
     }
+    internal bool IsTradeDealStillNeeded(Kingdom otherKingdom) {
+        Dictionary<RESOURCE_TYPE, int> deficitOfThisKingdom = this.GetDeficitResourcesFor(otherKingdom);
+        Dictionary<RESOURCE_TYPE, int> surplusOfOtherKingdom = otherKingdom.GetSurplusResourcesFor(this);
+        for (int i = 0; i < deficitOfThisKingdom.Keys.Count; i++) {
+            RESOURCE_TYPE deficitResource = deficitOfThisKingdom.Keys.ElementAt(i);
+            if (surplusOfOtherKingdom.ContainsKey(deficitResource)) {
+                //other kingdom still has a surplus of a resource that this kingdom has a deficit in
+                return true;
+            }
+        }
+        return false;
+    }
     //internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
     //    if (!this._embargoList.ContainsKey(kingdomToAdd)) {
     //        this._embargoList.Add(kingdomToAdd, embargoReason);
@@ -3333,18 +3345,28 @@ public class Kingdom{
                 //This action type requires a return of 2 kingdoms, a target and a cause of the action
                 Dictionary<Kingdom, Dictionary<Kingdom, int>> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForIndirectActionType(this, actionToPerform);
                 if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
+                    string actionWeightsSummary = "Kingdom Weights: ";
+                    foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in targetKingdomWeights) {
+                        actionWeightsSummary += "\n" + kvp.Key.name + " : ";
+                        foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
+                            actionWeightsSummary += "\n     " + kvp.Key.name + " - " + kvp.Value.ToString();
+                        }
+                    }
+                    Debug.Log(actionWeightsSummary);
+
                     Kingdom[] targets = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
                     if (targets.Length == 2) {
                         Kingdom cause = targets[0];
                         Kingdom target = targets[1];
+                        Debug.Log(this.name + " has targeted " + target.name + " because of " + cause.ToString());
                         PerformAction(actionToPerform, target, cause);
                     } else {
-                        Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                        Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
                     }
                 } else {
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
-                    Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                    Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
                 }
             } else if (GoalManager.specialActionTypes.Contains(actionToPerform)) {
                 int weightToNotPerformAction = 0;
@@ -3355,14 +3377,22 @@ public class Kingdom{
                         Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
                         actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
                         actionWeights.Add(actionToPerform, warWeights.Sum(x => x.Value));
+                        string actionWeightsSummary = "Action Weights: ";
+                        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in actionWeights) {
+                            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+                        }
+                        Debug.Log(actionWeightsSummary);
+
                         WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                        Debug.Log(this.name + " chose to " + decision.ToString());
                         if (decision == actionToPerform) {
                             //this kingdom has decided to perform the action
                             Warfare target = Utilities.PickRandomElementWithWeights(warWeights);
+                            Debug.Log(this.name + " targets " + target.name + " for " + actionToPerform.ToString());
                             PerformAction(actionToPerform, target);
                         }
                     } else {
-                        Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                        Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
                     }
                 } else if (actionToPerform == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
                     List<AlliancePool> alliances = new List<AlliancePool>();
@@ -3373,27 +3403,60 @@ public class Kingdom{
                         Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
                         actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
                         actionWeights.Add(actionToPerform, weights.Sum(x => x.Value));
+                        string actionWeightsSummary = "Action Weights: ";
+                        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in actionWeights) {
+                            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+                        }
+                        Debug.Log(actionWeightsSummary);
+
                         WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                        Debug.Log(this.name + " has chosen to " + decision.ToString());
                         if (decision == actionToPerform) {
                             //this kingdom has decided to perform the action
                             PerformAction(actionToPerform, null);
                         }
+                    } else {
+                        Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                    }
+                } else if (actionToPerform == WEIGHTED_ACTION.LEAVE_TRADE_DEAL) {
+                    Dictionary<Kingdom, int> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, kingdomsInTradeDealWith, actionToPerform, ref weightToNotPerformAction);
+                    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                    
+                    if (Utilities.GetTotalOfWeights(weights) > 0) {
+                        string actionWeightsSummary = "Kingdom Weights: ";
+                        foreach (KeyValuePair<Kingdom, int> kvp in weights) {
+                            actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
+                        }
+                        Debug.Log(actionWeightsSummary);
+                        Kingdom target = Utilities.PickRandomElementWithWeights(weights);
+
+                        Debug.Log(this.name + " chose to target " + target.name);
+                        PerformAction(actionToPerform, target);
+                    } else {
+                        Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
                     }
                 }
             } else {
                 Dictionary<Kingdom, int> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForActionType(this, actionToPerform);
                 ClearRejectedOffersList(); //Clear List Since weights are already computed
                 if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
+                    string actionWeightsSummary = "Kingdom Weights: ";
+                    foreach (KeyValuePair<Kingdom, int> kvp in targetKingdomWeights) {
+                        actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
+                    }
+                    Debug.Log(actionWeightsSummary);
                     Kingdom target = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
+                    Debug.Log(this.name + " chose to target " + target.name);
                     PerformAction(actionToPerform, target);
                 } else {
-                    Debug.LogWarning(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                    Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
                 }
             }
         } else {
             ClearRejectedOffersList(); //Clear List Since weights are already computed
             Debug.Log(this.name + " chose to do nothing.");
         }
+        Debug.Log("====================");
     }
     private void PerformAction(WEIGHTED_ACTION weightedAction, object target, Kingdom cause = null) {
         //Debug.Log(this.name + " will perform " + weightedAction.ToString() + " targeting " + target.name);
@@ -3417,6 +3480,8 @@ public class Kingdom{
             ((Warfare)target).PeaceDeclaration(this);
         } else if (weightedAction == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
             LeaveAlliance();
+        } else if(weightedAction == WEIGHTED_ACTION.LEAVE_TRADE_DEAL) {
+            RemoveTradeDealWith((Kingdom)target);
         }
     }
     internal bool IsThreatened() {

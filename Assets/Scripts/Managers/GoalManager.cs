@@ -15,7 +15,7 @@ public class GoalManager : MonoBehaviour {
     };
 
     public static HashSet<WEIGHTED_ACTION> specialActionTypes = new HashSet<WEIGHTED_ACTION>() {
-        WEIGHTED_ACTION.DECLARE_PEACE, WEIGHTED_ACTION.LEAVE_ALLIANCE
+        WEIGHTED_ACTION.DECLARE_PEACE, WEIGHTED_ACTION.LEAVE_ALLIANCE, WEIGHTED_ACTION.LEAVE_TRADE_DEAL
     };
 
     private void Awake() {
@@ -32,6 +32,7 @@ public class GoalManager : MonoBehaviour {
     }
 
     internal WEIGHTED_ACTION DetermineWeightedActionToPerform(Kingdom sourceKingdom) {
+        Debug.Log("========== " + sourceKingdom.name + " is trying to decide what to do... ==========");
         Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
         totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 150); //Add 150 Base Weight on Do Nothing Action
         if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.DECLARE_PEACE)) {
@@ -44,13 +45,21 @@ public class GoalManager : MonoBehaviour {
             //If in a trade deal, add 5 weight to leave trade deal for each active trade deal
             totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_ALLIANCE, 5 * sourceKingdom.kingdomsInTradeDealWith.Count); 
         }
-
         for (int i = 0; i < sourceKingdom.king.allTraits.Count; i++) {
             Trait currTrait = sourceKingdom.king.allTraits[i];
             Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
             totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
         }
-        return Utilities.PickRandomElementWithWeights(totalWeightedActions);
+
+        string actionWeightsSummary = "Action Weights of " + sourceKingdom.name;
+        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in totalWeightedActions) {
+            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+        }
+        Debug.Log(actionWeightsSummary);
+
+        WEIGHTED_ACTION chosenAction = Utilities.PickRandomElementWithWeights(totalWeightedActions);
+        Debug.Log("Chosen action of " + sourceKingdom.name + " is " + chosenAction.ToString());
+        return chosenAction;
     }
 
     #region Weight Dictionaries
@@ -58,7 +67,20 @@ public class GoalManager : MonoBehaviour {
         Dictionary<T, int> weights = new Dictionary<T, int>();
         for (int i = 0; i < choices.Count; i++) {
             T currChoice = choices[i];
-            int weightForCurrChoice = GetDefaultWeightForAction(actionType, source, currChoice);
+            int weightForCurrChoice = 0;
+            if (actionType == WEIGHTED_ACTION.TRADE_DEAL) {
+                //add Default Weight if Kingdom no longer benefits from any Surplus of the trade partner, otherwise, add its Default Weight to Not Leave Any Trade Deal
+                Kingdom otherKingdom = (Kingdom)((object)currChoice);
+                if (source.IsTradeDealStillNeeded(otherKingdom)) {
+                    weightForCurrChoice = 0;
+                    weightToNotPerformAction = GetDefaultWeightForAction(actionType, source, currChoice);
+                } else {
+                    weightForCurrChoice = GetDefaultWeightForAction(actionType, source, currChoice);
+                    weightToNotPerformAction = 0;
+                }
+            } else {
+                weightForCurrChoice = GetDefaultWeightForAction(actionType, source, currChoice);
+            }
             //loop through all the traits of the current king
             for (int j = 0; j < source.king.allTraits.Count; j++) {
                 Trait currTrait = source.king.allTraits[j];
@@ -132,6 +154,8 @@ public class GoalManager : MonoBehaviour {
                 return GetFlatterDefaultWeight((Kingdom)source, (Kingdom)target);
             case WEIGHTED_ACTION.SEND_AID:
                 return 0;
+            case WEIGHTED_ACTION.LEAVE_TRADE_DEAL:
+                return GetLeaveTradeDealDefaultWeight((Kingdom)source, (Kingdom)target);
             default:
                 return 0;
         }
@@ -183,6 +207,24 @@ public class GoalManager : MonoBehaviour {
         KingdomRelationship relOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
         if (relOtherWithSource.totalLike < 0) {
             defaultWeight += Mathf.Abs(relOtherWithSource.totalLike);
+        }
+        return defaultWeight;
+    }
+    private int GetLeaveTradeDealDefaultWeight(Kingdom sourceKingdom, Kingdom targetKingdom) {
+        int defaultWeight = 0;
+        if (sourceKingdom.kingdomsInTradeDealWith.Contains(targetKingdom)) {
+            defaultWeight = 100; //Default Weight to Leave Trade Deal is 100
+            KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+            if (relSourceWithOther.targetKingdomThreatLevel > 0) {
+                defaultWeight += relSourceWithOther.targetKingdomThreatLevel; //add 1 to Default Weight for every Threat of the kingdom
+            }
+            if (relSourceWithOther.totalLike < 0) {
+                defaultWeight += Mathf.Abs(2 * relSourceWithOther.totalLike); //add 2 to Default Weight for every negative Opinion I have towards the king
+            } else if (relSourceWithOther.totalLike > 0) {
+                defaultWeight -= 2 * relSourceWithOther.totalLike; //subtract 2 to Default Weight for every positive Opinion I have towards the king
+            }
+
+            //add Default Weight if Kingdom no longer benefits from any Surplus of the trade partner, otherwise, add its Default Weight to Not Leave Any Trade Deal
         }
         return defaultWeight;
     }

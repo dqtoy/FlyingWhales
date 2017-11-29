@@ -56,6 +56,8 @@ public class Trait{
                 return GetFlatterWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.LEAVE_ALLIANCE:
                 return GetLeaveAllianceWeightModification((AlliancePool)target);
+            case WEIGHTED_ACTION.LEAVE_TRADE_DEAL:
+                return GetLeaveTradeDealWeightModification((Kingdom)target);
             default:
                 return 0;
         }
@@ -102,6 +104,9 @@ public class Trait{
         return 0;
     }
     internal virtual int GetKeepAllianceWeightModification(AlliancePool alliance) {
+        return 0;
+    }
+    internal virtual int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
         return 0;
     }
     #endregion
