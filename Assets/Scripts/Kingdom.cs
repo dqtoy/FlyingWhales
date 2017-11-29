@@ -3374,7 +3374,7 @@ public class Kingdom{
         } else if (weightedAction == WEIGHTED_ACTION.INCITE_UNREST) {
             CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.REDUCE_STABILITY, target);
         } else if (weightedAction == WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT) {
-            //TODO: Add International Incident Trigger
+            StartInternationalIncident(target);
         } else if (weightedAction == WEIGHTED_ACTION.FLATTER) {
             CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, target);
         } else if (weightedAction == WEIGHTED_ACTION.SEND_AID) {
@@ -3395,7 +3395,7 @@ public class Kingdom{
     }
     internal WEIGHTED_ACTION DetermineWeightedActionToPerform() {
         Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
-        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 10); //Add 500 Base Weight on Do Nothing Action
+        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 50); //Add 500 Base Weight on Do Nothing Action
         for (int i = 0; i < king.allTraits.Count; i++) {
             Trait currTrait = king.allTraits[i];
             Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
@@ -3606,6 +3606,9 @@ public class Kingdom{
     }
     private void OfferTradeDealTo(Kingdom targetKingdom) {
         EventCreator.Instance.CreateTradeDealOfferEvent(this, targetKingdom);
+    }
+    private void StartInternationalIncident(Kingdom targetKingdom) {
+        EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, false, true);
     }
 
     internal void AddRejectedOffer(Kingdom rejectedBy, WEIGHTED_ACTION actionType) {
