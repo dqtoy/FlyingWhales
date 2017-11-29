@@ -192,6 +192,9 @@ public class CitizenManager : MonoBehaviour {
             case TRAIT.DIPLOMATIC:
                 createdTrait = JsonUtility.FromJson<Diplomatic>(traitDictionary[traitType]);
                 break;
+            case TRAIT.BENEVOLENT:
+                createdTrait = JsonUtility.FromJson<Benevolent>(traitDictionary[traitType]);
+                break;
         }
         if(citizen != null && createdTrait != null) {
             createdTrait.AssignCitizen(citizen);

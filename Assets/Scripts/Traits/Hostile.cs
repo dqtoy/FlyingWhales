@@ -64,4 +64,8 @@ public class Hostile : Trait {
         return weight;
     }
     #endregion
+
+    internal override int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
+        return -30; //add 30 to Default Weight
+    }
 }

@@ -15,4 +15,8 @@ public class Diplomatic : Trait {
         
         return weight;
     }
+
+    internal override int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
+        return -40; //subtract 40 from Default Weight
+    }
 }
