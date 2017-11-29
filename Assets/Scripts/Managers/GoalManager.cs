@@ -161,7 +161,11 @@ public class GoalManager : MonoBehaviour {
         }
     }
     private int GetTradeDealDefaultWeight(Kingdom sourceKingdom, Kingdom targetKingdom) {
+        if (sourceKingdom.kingdomsInTradeDealWith.Contains(targetKingdom)) {
+            return 0;
+        }
         int defaultWeight = 0;
+        
         KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
         KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
 
@@ -289,6 +293,9 @@ public class GoalManager : MonoBehaviour {
         }
     }
     private void GetAllModificationForTradeDeal(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
+        if (sourceKingdom.kingdomsInTradeDealWith.Contains(targetKingdom)) {
+            return;
+        }
         Dictionary<RESOURCE_TYPE, int> deficitOfTargetKingdom = targetKingdom.GetDeficitResourcesFor(sourceKingdom);
         Dictionary<RESOURCE_TYPE, int> surplusOfThisKingdom = sourceKingdom.GetSurplusResourcesFor(targetKingdom);
         foreach (KeyValuePair<RESOURCE_TYPE, int> kvp in surplusOfThisKingdom) {
