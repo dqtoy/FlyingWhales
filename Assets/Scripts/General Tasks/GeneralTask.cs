@@ -53,9 +53,9 @@ public class GeneralTask {
 						}
 					}
 				}
-				this.general.citizen.Death (DEATH_REASONS.BATTLE);
+				this.general.Death (DEATH_REASONS.BATTLE);
 			}else{
-				this.general.citizen.Death (DEATH_REASONS.BATTLE);
+				this.general.Death (DEATH_REASONS.BATTLE);
 			}
 		}
 	}

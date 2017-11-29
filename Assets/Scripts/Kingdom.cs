@@ -1688,9 +1688,9 @@ public class Kingdom{
 //            relationships.ElementAt(i).Value.AdjustExhaustion(amount);
 //        }
 //    }
-	internal void ConquerCity(City city, Warfare warfare){
+	internal void ConquerCity(City city){
 		if (this.id != city.kingdom.id) {
-			city.ConquerCity(this, warfare);
+			city.ConquerCity(this);
 		}
 	}
     #endregion

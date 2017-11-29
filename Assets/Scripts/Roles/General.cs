@@ -125,4 +125,9 @@ public class General : Role {
 		}
 		return 0;
 	}
+
+	internal void Death(DEATH_REASONS reason, bool isConquered = false){
+		this.citizen.city.kingdom.militaryManager.activeGenerals.Remove (this);
+		this.citizen.Death (reason, isConquered);
+	}
 }
