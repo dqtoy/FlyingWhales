@@ -6,11 +6,12 @@ public class MilitaryManager {
 
 	private Kingdom _kingdom;
 
-	internal int maxGeneral;
+	internal int maxGenerals;
 	internal List<General> activeGenerals;
 
 	public MilitaryManager(Kingdom kingdom){
 		this._kingdom = kingdom;
+		this.activeGenerals = new List<General> ();
 		UpdateMaxGenerals ();
 		ScheduleCreateGeneral ();
 	}
@@ -23,25 +24,31 @@ public class MilitaryManager {
 	}
 	private void CreateGeneral(){
 		if (!this._kingdom.isDead) {
-			if(this.activeGenerals.Count < maxGeneral){
+			if(this.activeGenerals.Count < maxGenerals){
 				//Create General
-
+				Citizen citizen = this._kingdom.capitalCity.CreateNewAgent(ROLE.GENERAL, this._kingdom.capitalCity.hexTile);
+				if(citizen != null){
+					General general = (General)citizen.assignedRole;
+					general.Initialize (null);
+					general.GetTask ();
+					activeGenerals.Add (general);
+				}
 			}
 			ScheduleCreateGeneral ();
 		}
 	}
 	internal void UpdateMaxGenerals(){
 		if(this._kingdom.kingdomSize == KINGDOM_SIZE.SMALL){
-			this.maxGeneral = 3;
+			this.maxGenerals = 3;
 		}else if(this._kingdom.kingdomSize == KINGDOM_SIZE.MEDIUM){
-			this.maxGeneral = 5;
+			this.maxGenerals = 5;
 		}else if(this._kingdom.kingdomSize == KINGDOM_SIZE.LARGE){
-			this.maxGeneral = 7;
+			this.maxGenerals = 7;
 		}
 		if(this._kingdom.king.otherTraits.Contains(TRAIT.MILITANT) || this._kingdom.king.otherTraits.Contains(TRAIT.HOSTILE)){
-			this.maxGeneral += 1;
+			this.maxGenerals += 1;
 		}else if(this._kingdom.king.otherTraits.Contains(TRAIT.PACIFIST)){
-			this.maxGeneral -= 1;
+			this.maxGenerals -= 1;
 		}
 	}
 
@@ -55,15 +62,19 @@ public class MilitaryManager {
 		if(this._kingdom.warfareInfo.Count > 0){
 			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
 			GetAttackCityAndWeight (ref attackCity, ref attackWeight);
-			tasksToChoose.Add (new GeneralTask(GENERAL_TASKS.ATTACK_CITY, attackCity), attackWeight);
-			tasksToChoose.Add (new GeneralTask(GENERAL_TASKS.DEFEND_CITY, defendCity), defendWeight);
+			tasksToChoose.Add (new AttackCityTask(GENERAL_TASKS.ATTACK_CITY, general, attackCity), attackWeight);
+			tasksToChoose.Add (new DefendCityTask(GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
 		}else{
 			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
-			tasksToChoose.Add (new GeneralTask(GENERAL_TASKS.DEFEND_CITY, defendCity), defendWeight);
+			tasksToChoose.Add (new DefendCityTask(GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
 		}
 
 		GeneralTask task = Utilities.PickRandomElementWithWeights<GeneralTask> (tasksToChoose);
 		general.AssignTask (task);
+	}
+
+	internal void AssignSpecificTaskToGeneral(General general, GENERAL_TASKS task){
+		
 	}
 
 	private void GetDefendCityAndWeight(ref City defendCity, ref int weight){

@@ -71,7 +71,6 @@ public class ReinforceCity : GameEvent {
 			}else{
 				this.general.DropSoldiersAndDisappear ();
 			}
-
 		}
 		this.DoneEvent ();
 	}

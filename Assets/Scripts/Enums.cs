@@ -705,6 +705,7 @@ public enum WEIGHTED_ACTION {
 public enum GENERAL_TASKS{
 	ATTACK_CITY,
 	DEFEND_CITY,
+	REINFORCE_CITY,
 }
 public enum RESPONSE {
     ACCEPT,

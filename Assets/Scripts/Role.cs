@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Role {
 	public Citizen citizen;
 
+	internal ROLE role;
     private int _hp;
     private int _maxHP;
 
@@ -117,6 +118,8 @@ public class Role {
 		}
 	}
 
+	internal virtual void ArrivedAtTargetLocation(){
+	}
 	#endregion
 
    /*
