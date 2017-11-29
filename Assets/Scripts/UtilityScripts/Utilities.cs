@@ -495,6 +495,10 @@ public class Utilities : MonoBehaviour {
         } }
     };
 
+    public static HashSet<WEIGHTED_ACTION> specialActionTypes = new HashSet<WEIGHTED_ACTION>() {
+        WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST
+    };
+
     //public static Dictionary<WEIGHTED_ACTION, List<TRAIT>> weightedActionValidTraits = new Dictionary<WEIGHTED_ACTION, List<TRAIT>>() {
     //    {WEIGHTED_ACTION.WAR_OF_CONQUEST, new List<TRAIT>(){
     //        TRAIT.OPPORTUNIST, TRAIT.DECEITFUL, TRAIT.IMPERIALIST, TRAIT.HOSTILE, TRAIT.PACIFIST
@@ -1243,13 +1247,16 @@ public class Utilities : MonoBehaviour {
     }
 
     public static T PickRandomElementWithWeights<T>(Dictionary<T, int> weights) {
-        int totalOfAllWeights = weights.Sum(x => x.Value);
+        int totalOfAllWeights = GetTotalOfWeights(weights);
         int chance = UnityEngine.Random.Range(0, totalOfAllWeights);
         int upperBound = 0;
         int lowerBound = 0;
         foreach (KeyValuePair<T, int> kvp in weights) {
             T currElementType = kvp.Key;
             int weightOfCurrElement = kvp.Value;
+            if(weightOfCurrElement <= 0) {
+                continue;
+            }
             upperBound += weightOfCurrElement;
             if(chance >= lowerBound && chance < upperBound) {
                 return currElementType;
@@ -1261,15 +1268,11 @@ public class Utilities : MonoBehaviour {
 
     /*
      * This will return an array that has 2 elements 
-     * of the same type.
+     * of the same type. The 1st element is the first key in the dictionary, and the
+     * 2nd element is the second key.
      * */
     public static T[] PickRandomElementWithWeights<T>(Dictionary<T, Dictionary<T,int>> weights) {
-        int totalOfAllWeights = 0;
-        foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
-            foreach (KeyValuePair<T, int> pair in kvp.Value) {
-                totalOfAllWeights += pair.Value;
-            }
-        }
+        int totalOfAllWeights = GetTotalOfWeights(weights);
         int chance = UnityEngine.Random.Range(0, totalOfAllWeights);
         int upperBound = 0;
         int lowerBound = 0;
@@ -1278,12 +1281,28 @@ public class Utilities : MonoBehaviour {
             foreach (KeyValuePair<T, int> pair in kvp.Value) {
                 T otherElement = pair.Key;
                 int weightOfOtherElement = pair.Value;
+                upperBound += weightOfOtherElement;
                 if (chance >= lowerBound && chance < upperBound) {
                     return new T[] { currElementType, otherElement };
                 }
+                lowerBound = upperBound;
             }
         }
         throw new Exception("Could not pick element in weights");
+    }
+
+    public static int GetTotalOfWeights<T>(Dictionary<T, Dictionary<T, int>> weights) {
+        int totalOfAllWeights = 0;
+        foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
+            foreach (KeyValuePair<T, int> pair in kvp.Value) {
+                totalOfAllWeights += pair.Value;
+            }
+        }
+        return totalOfAllWeights;
+    }
+
+    public static int GetTotalOfWeights<T>(Dictionary<T, int> weights) {
+        return weights.Sum(x => x.Value);
     }
 
     /*

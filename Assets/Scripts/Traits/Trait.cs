@@ -50,8 +50,6 @@ public class Trait{
         switch (weightedAction) {
             case WEIGHTED_ACTION.WAR_OF_CONQUEST:
                 return GetWarOfConquestWeightModification(targetKingdom);
-            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
-                return GetAllianceOfConquestWeightModification(targetKingdom);
             case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
                 return GetAllianceOfProtectionWeightModification(targetKingdom);
             case WEIGHTED_ACTION.TRADE_DEAL:
@@ -66,11 +64,19 @@ public class Trait{
                 return 0;
         }
     }
+    internal int GetWeightOfActionGivenTargetAndCause(WEIGHTED_ACTION weightedAction, Kingdom targetKingdom, Kingdom causingKindom, int currentWeight) {
+        switch (weightedAction) {
+            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
+                return GetAllianceOfConquestWeightModification(targetKingdom, causingKindom);
+            default:
+                return 0;
+        }
+    }
 
     internal virtual int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
         return 0;
     }
-    internal virtual int GetAllianceOfConquestWeightModification(Kingdom otherKingdom) {
+    internal virtual int GetAllianceOfConquestWeightModification(Kingdom otherKingdom, Kingdom causingKindom) {
         return 0;
     }
     internal virtual int GetAllianceOfProtectionWeightModification(Kingdom otherKingdom) {

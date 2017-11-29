@@ -28,16 +28,20 @@ public class CaravaneerThread {
 
 	public void ObtainCity(){
 		List<City> citiesToChooseFrom = new List<City> ();
-		if(neededResource == RESOURCE_TYPE.FOOD){
-			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.foodForTrade >= x.foodRequirement).ToList();
-		}else if(neededResource == RESOURCE_TYPE.MATERIAL){
+        List<City> citiesToCheck = new List<City>();
+        citiesToCheck.AddRange(this.sourceKingdom.cities);
+        this.sourceKingdom.kingdomsInTradeDealWith.ForEach(x => citiesToCheck.AddRange(x.cities));
+
+        if (neededResource == RESOURCE_TYPE.FOOD){
+			citiesToChooseFrom = citiesToCheck.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.foodForTrade >= x.foodRequirement).ToList();
+        } else if(neededResource == RESOURCE_TYPE.MATERIAL){
 			if(this.sourceKingdom.race == RACE.HUMANS){
-				citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || x.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE) && x.materialForTrade >= x.materialRequirement).ToList();
+				citiesToChooseFrom = citiesToCheck.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || x.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE) && x.materialForTrade >= x.materialRequirement).ToList();
 			}else if(this.sourceKingdom.race == RACE.ELVES){
-				citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || x.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY) && x.materialForTrade >= x.materialRequirement).ToList();
+				citiesToChooseFrom = citiesToCheck.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && (x.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || x.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY) && x.materialForTrade >= x.materialRequirement).ToList();
 			}
 		}else if(neededResource == RESOURCE_TYPE.ORE){
-			citiesToChooseFrom = this.sourceKingdom.cities.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.oreForTrade >= x.oreRequirement).ToList();
+			citiesToChooseFrom = citiesToCheck.Where (x => x.id != this.sourceCity.id && !this.sourceCity.blacklist.Contains(x) && x.region.tileWithSpecialResource.specialResourceType == neededResource && x.oreForTrade >= x.oreRequirement).ToList();
 		}
 
 		City chosenCity = null;

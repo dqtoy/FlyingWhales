@@ -686,28 +686,28 @@ public class UIManager : MonoBehaviour {
         } else if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
             kingdomBasicResourceSprite.sprite2D = lumberSprite;
         }
-        kingdomBasicResourceLbl.text = currentlyShowingKingdom.basicResourceCount.ToString();
+        //kingdomBasicResourceLbl.text = currentlyShowingKingdom.basicResourceCount.ToString();
 
         //Available Resources
         List<Transform> children = kingdomOtherResourcesGrid.GetChildList();
         List<RESOURCE> resourcesInGrid = children.Where(x => x.GetComponent<ResourceIcon>() != null).Select(x => x.GetComponent<ResourceIcon>().resource).ToList();
 
-        List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
-        if (resourcesInGrid.Except(allOtherResources).Any() || allOtherResources.Except(resourcesInGrid).Any()) {
-            for (int i = 0; i < children.Count; i++) {
-                kingdomOtherResourcesGrid.RemoveChild(children[i]);
-                ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
-            }
-            for (int i = 0; i < currentlyShowingKingdom.availableResources.Keys.Count; i++) {
-                RESOURCE currResource = currentlyShowingKingdom.availableResources.Keys.ElementAt(i);
-                GameObject resourceGO = InstantiateUIObject(resourceIconPrefab.name, this.transform);
-                resourceGO.GetComponent<ResourceIcon>().SetResource(currResource);
-                resourceGO.transform.localScale = Vector3.one;
-                kingdomOtherResourcesGrid.AddChild(resourceGO.transform);
-                kingdomOtherResourcesGrid.Reposition();
-            }
-            RepositionGridCallback(kingdomOtherResourcesGrid);
-        }
+        //List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
+        //if (resourcesInGrid.Except(allOtherResources).Any() || allOtherResources.Except(resourcesInGrid).Any()) {
+        //    for (int i = 0; i < children.Count; i++) {
+        //        kingdomOtherResourcesGrid.RemoveChild(children[i]);
+        //        ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
+        //    }
+        //    for (int i = 0; i < currentlyShowingKingdom.availableResources.Keys.Count; i++) {
+        //        RESOURCE currResource = currentlyShowingKingdom.availableResources.Keys.ElementAt(i);
+        //        GameObject resourceGO = InstantiateUIObject(resourceIconPrefab.name, this.transform);
+        //        resourceGO.GetComponent<ResourceIcon>().SetResource(currResource);
+        //        resourceGO.transform.localScale = Vector3.one;
+        //        kingdomOtherResourcesGrid.AddChild(resourceGO.transform);
+        //        kingdomOtherResourcesGrid.Reposition();
+        //    }
+        //    RepositionGridCallback(kingdomOtherResourcesGrid);
+        //}
 
         //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
     }

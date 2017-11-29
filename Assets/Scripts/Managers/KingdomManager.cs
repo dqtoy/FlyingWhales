@@ -400,7 +400,7 @@ public class KingdomManager : MonoBehaviour {
 	internal bool AttemptToCreateAllianceBetweenTwoKingdoms(Kingdom firstKingdom, Kingdom secondKingdom){
 		KingdomRelationship krFirst = firstKingdom.GetRelationshipWithKingdom(secondKingdom);
 		KingdomRelationship krSecond = secondKingdom.GetRelationshipWithKingdom(firstKingdom);
-		if(krFirst.totalLike >= 1 && krSecond.totalLike >= 1){
+		//if(krFirst.totalLike >= 1 && krSecond.totalLike >= 1){
 			AlliancePool newAlliance = new AlliancePool();
 			newAlliance.AddKingdomInAlliance(firstKingdom);
 			newAlliance.AddKingdomInAlliance(secondKingdom);
@@ -412,8 +412,8 @@ public class KingdomManager : MonoBehaviour {
 			newLog.AddAllInvolvedObjects (newAlliance.kingdomsInvolved.ToArray ());
 			UIManager.Instance.ShowNotification (newLog);
 			return true;
-		}
-		return false;
+		//}
+		//return false;
 	}
 	internal void AddAlliancePool(AlliancePool alliancePool){
 		this._alliances.Add (alliancePool);
@@ -504,6 +504,13 @@ public class KingdomManager : MonoBehaviour {
     }
     internal void RemoveEmblemAsUsed(Sprite emblem) {
         usedEmblems.Remove(emblem);
+    }
+    #endregion
+
+    #region Trading
+    internal void CreateTradeDeal(Kingdom kingdom1, Kingdom kingdom2) {
+        kingdom1.AddTradeDealWith(kingdom2);
+        kingdom2.AddTradeDealWith(kingdom1);
     }
     #endregion
 }

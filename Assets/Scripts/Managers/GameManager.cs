@@ -68,6 +68,10 @@ public class GameManager : MonoBehaviour {
         SetPausedState(false);
 	}
 
+    public GameDate Today() {
+        return new GameDate(this.month, this.days, this.year);
+    }
+
 	public void TogglePause(){
 		this.isPaused = !this.isPaused;
 	}
