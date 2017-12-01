@@ -39,33 +39,18 @@ public class CollisionManager : MonoBehaviour {
 			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.city.name + " of " + general1.citizen.city.kingdom.name + " AND " + general2.citizen.city.name + " of " + general2.citizen.city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
 			kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 
-			int general1Power = general1.soldiers * 3;
-			int general2Power = general2.soldiers * 3;
+			int general1Power = general1.GetPower();
+			int general2Power = general2.GetPower();
 
-			if(general1.location.city != null && general1.location.city.kingdom.id == general1.citizen.city.kingdom.id){
-				general1Power = (int)((general1.soldiers + general1.location.city.soldiers) * 4) + (int)(general1.location.city.population / 2);
-				general1.isDefending = true;
-				general1.isAttacking = false;
-			}else{
-				general1.isDefending = false;
-				general1.isAttacking = true;
-			}
-			if(general2.location.city != null && general2.location.city.kingdom.id == general2.citizen.city.kingdom.id){
-				general2Power = (int)((general2.soldiers + general2.location.city.soldiers) * 4) + (int)(general2.location.city.population / 2);
-				general2.isDefending = true;
-				general2.isAttacking = false;
-			}
-			else{
-				general2.isDefending = false;
-				general2.isAttacking = true;
-			}
+			general1.ChangeBattleState ();
+			general2.ChangeBattleState ();
 
 			Debug.Log ("GENERAL 1 POWER: " + general1Power);	
 			Debug.Log ("GENERAL 2 POWER: " + general2Power);
 			Debug.Log ("---------------------------");
 
-			int general1MaxRoll = (int)(Mathf.Sqrt ((2000f * (float)general1Power)) * (1f + (0.05f * (float)general1.citizen.city.cityLevel)));
-			int general2MaxRoll = (int)(Mathf.Sqrt ((2000f * (float)general2Power)) * (1f + (0.05f * (float)general2.citizen.city.cityLevel)));
+			int general1MaxRoll = (int)(Mathf.Sqrt ((2000f * (float)general1Power)));
+			int general2MaxRoll = (int)(Mathf.Sqrt ((2000f * (float)general2Power)));
 
 			Debug.Log ("GENERAL 1 MAX ROLL: " + general1MaxRoll);	
 			Debug.Log ("GENERAL 2 MAX ROLL: " + general2MaxRoll);
@@ -254,7 +239,7 @@ public class CollisionManager : MonoBehaviour {
 		Debug.Log ("DEATH COUNT: " + deathCount.ToString ());
 		city.AdjustSoldiers (-deathCount);
 		Debug.Log ("CURRENT WINNER SOLDIERS: " + city.soldiers.ToString ());
-		city.AdjustSoldiers (-city.soldiers);
+		general.AdjustSoldiers (-general.soldiers);
 		general.Death (DEATH_REASONS.BATTLE);
 	}
 	#endregion

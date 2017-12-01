@@ -5,7 +5,7 @@ public class DefendCityTask : GeneralTask {
 
 	public DefendCityTask(GENERAL_TASKS task, General general, City targetCity) : base (task, general, targetCity){
 		this.targetCity.hasAssignedDefendGeneral = true;
-		this.general.isIdle = true;
+//		this.general.isIdle = true;
 //		this.general.targetCity = targetCity;
 //		this.general.targetLocation = targetCity.hexTile;
 //		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
@@ -14,7 +14,7 @@ public class DefendCityTask : GeneralTask {
 	}
 
 	internal override void AssignMoveDate(){
-		this.daysBeforeMoving = UnityEngine.Random.Range (30, 46);
+		this.daysBeforeMoving = UnityEngine.Random.Range (20, 31);
 		this.moveDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		this.moveDate.AddDays (this.daysBeforeMoving);
 		SchedulingManager.Instance.AddEntry (this.moveDate, () => ExecuteTask ());

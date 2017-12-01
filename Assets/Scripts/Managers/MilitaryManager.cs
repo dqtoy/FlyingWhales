@@ -81,7 +81,7 @@ public class MilitaryManager {
 		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
 		for (int i = 0; i < this._kingdom.cities.Count; i++) {
 			City city = this._kingdom.cities [i];
-			if(!city.hasAssignedDefendGeneral){
+			if(!city.hasAssignedDefendGeneral && !cityWeights.ContainsKey(city)){
 				int cityTotalWeight = GetDefendCityWeight (city);
 				if(cityTotalWeight > 0){
 					cityWeights.Add (city, cityTotalWeight);
@@ -92,9 +92,11 @@ public class MilitaryManager {
 		if(cityWeights.Count <= 0){
 			for (int i = 0; i < this._kingdom.cities.Count; i++) {
 				City city = this._kingdom.cities [i];
-				int cityTotalWeight = GetDefendCityWeight (city);
-				if(cityTotalWeight > 0){
-					cityWeights.Add (city, cityTotalWeight);
+				if (!cityWeights.ContainsKey (city)) {
+					int cityTotalWeight = GetDefendCityWeight (city);
+					if (cityTotalWeight > 0) {
+						cityWeights.Add (city, cityTotalWeight);
+					}
 				}
 			}
 		}
@@ -111,12 +113,12 @@ public class MilitaryManager {
 			for (int j = 0; j < city.region.connections.Count; j++) {
 				if(city.region.connections[j] is Region){
 					Region adjacentRegion = (Region)city.region.connections [j];
-					if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && !HasGeneralTaskToAttackCity(adjacentRegion.occupant)){
+					if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && !HasGeneralTaskToAttackCity(adjacentRegion.occupant) && !cityWeights.ContainsKey(adjacentRegion.occupant)){
 						KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
 						if(kr.sharedRelationship.isAtWar){
 							int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
 							if(cityTotalWeight > 0){
-								cityWeights.Add (city, cityTotalWeight);
+								cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
 							}
 						}
 					}
@@ -130,12 +132,12 @@ public class MilitaryManager {
 				for (int j = 0; j < city.region.connections.Count; j++) {
 					if(city.region.connections[j] is Region){
 						Region adjacentRegion = (Region)city.region.connections [j];
-						if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id){
+						if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
 							KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
 							if(kr.sharedRelationship.isAtWar){
 								int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
 								if(cityTotalWeight > 0){
-									cityWeights.Add (city, cityTotalWeight);
+									cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
 								}
 							}
 						}

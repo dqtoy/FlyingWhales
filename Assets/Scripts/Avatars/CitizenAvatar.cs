@@ -58,7 +58,7 @@ public class CitizenAvatar : PooledObject {
         }
 
         ResetValues();
-//        AddBehaviourTree();
+//      AddBehaviourTree();
 		UpdateUI ();
 //		StartMoving ();
     }

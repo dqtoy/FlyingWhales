@@ -2,16 +2,22 @@
 using System.Collections;
 
 public class HoverPopulation : MonoBehaviour {
-//    void OnHover(bool isOver) {
-//        if (isOver) {
-//            if (UIManager.Instance.currentlyShowingKingdom != null) {
-//                Kingdom kingdom = UIManager.Instance.currentlyShowingKingdom;
-//                int monthlyPopulationGrowth = kingdom.GetPopulationGrowth();
-//                UIManager.Instance.ShowSmallInfo("[b]MONTHLY POPULATION: " + monthlyPopulationGrowth.ToString() + "[/b]");
-//            }
-//
-//        } else {
-//            UIManager.Instance.HideSmallInfo();
-//        }
-//    }
+	public GeneralAvatar generalAvatar;
+	string summary = string.Empty;
+
+    void OnMouseOver() {
+		if (generalAvatar.citizenRole is General) {
+			General general = (General)generalAvatar.citizenRole;
+			if(general.generalTask != null){
+				summary = "TASK: " + general.generalTask.task.ToString();
+				summary += "\nTARGET CITY: " + general.generalTask.targetCity.name.ToString();
+				summary += "\nMOVE DATE: " + ((MONTH)general.generalTask.moveDate.month).ToString () + " " + general.generalTask.moveDate.day.ToString() + ", " + GameManager.Instance.year.ToString ();
+				UIManager.Instance.ShowSmallInfo(summary);
+			}
+		}
+    }
+
+	void OnMouseExit(){
+		UIManager.Instance.HideSmallInfo();
+	}
 }

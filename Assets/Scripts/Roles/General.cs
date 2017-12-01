@@ -76,6 +76,9 @@ public class General : Role {
 	}
 
 	internal void GetTask(){
+		if(this.citizen.isDead){
+			return;
+		}
 		if(this.generalTask != null){
 			this.generalTask.DoneTask();
 		}
@@ -83,12 +86,22 @@ public class General : Role {
 	}
 	internal void AssignTask(GeneralTask generalTask){
 		this.generalTask = generalTask;
-		if(this.generalTask.task != GENERAL_TASKS.REINFORCE_CITY){
+		if (this.generalTask.task == GENERAL_TASKS.ATTACK_CITY) {
 			this.targetCity = generalTask.targetCity;
 			this.targetLocation = generalTask.targetCity.hexTile;
+			this.isIdle = true;
 			this.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
-			this.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS_WITH_ALLIES);
+			this.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS);
 			GetSoldiersFromCities ();
+		} else if (this.generalTask.task == GENERAL_TASKS.DEFEND_CITY) {
+			this.targetCity = generalTask.targetCity;
+			this.targetLocation = generalTask.targetCity.hexTile;
+			this.isIdle = true;
+			this.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
+			this.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM);
+			GetSoldiersFromCities ();
+		} else {
+			this.avatar.GetComponent<GeneralAvatar> ().ChangeAvatarImage (this.generalTask.task);
 		}
 	}
 	private void GetSoldiersFromCities(){
@@ -129,5 +142,23 @@ public class General : Role {
 	internal void Death(DEATH_REASONS reason, bool isConquered = false){
 		this.citizen.city.kingdom.militaryManager.activeGenerals.Remove (this);
 		this.citizen.Death (reason, isConquered);
+	}
+
+	internal int GetPower(){
+		if (this.location.city != null && this.location.city.kingdom.id == this.citizen.city.kingdom.id) {
+			return (int)((this.soldiers + this.location.city.soldiers) * 4) + (int)(this.location.city.population / 2);
+		}else{
+			return this.soldiers * 3;
+		}
+	}
+
+	internal void ChangeBattleState(){
+		if (this.location.city != null && this.location.city.kingdom.id == this.citizen.city.kingdom.id) {
+			this.isDefending = true;
+			this.isAttacking = false;
+		}else{
+			this.isDefending = false;
+			this.isAttacking = true;
+		}
 	}
 }

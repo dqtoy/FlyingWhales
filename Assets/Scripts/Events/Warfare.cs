@@ -66,12 +66,14 @@ public class Warfare {
 
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
+
+		DeclareWar (firstKingdom, secondKingdom);
 //		InstantDeclareWarIfNotAdjacent (firstKingdom, secondKingdom);
 //		CreateNewBattle (firstKingdom, true);
-		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
-			KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
-			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.sharedRelationship.isAdjacent.ToString () + " and threat is " + kr.targetKingdomThreatLevel.ToString ());
-		}
+//		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
+//			KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
+//			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.sharedRelationship.isAdjacent.ToString () + " and threat is " + kr.targetKingdomThreatLevel.ToString ());
+//		}
 		KingdomManager.Instance.AddWarfare (this);
 	}
 	private void SetID(){
@@ -678,4 +680,15 @@ public class Warfare {
         }
         return WAR_SIDE.NONE;
     }
+
+	private void DeclareWar(Kingdom firstKingdom, Kingdom secondKingdom){
+		KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
+		if(!kr.sharedRelationship.isAtWar){
+			kr.ChangeWarStatus(true, this);
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
+			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+			this.ShowUINotification (newLog);
+		}
+	}
 }
