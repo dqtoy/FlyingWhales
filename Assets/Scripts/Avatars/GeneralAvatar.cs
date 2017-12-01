@@ -7,6 +7,8 @@ using Panda;
 public class GeneralAvatar : CitizenAvatar {
 	public UILabel txtDamage;
 	public UI2DSprite kingdomIndicator;
+	public SpriteRenderer sprtAvatar;
+	public Sprite sprtReinforceAvatar;
 
 	#region Overrides
 	internal override void Init (Role citizenRole){
@@ -47,4 +49,10 @@ public class GeneralAvatar : CitizenAvatar {
 	}
 
 	#endregion
+
+	internal void ChangeAvatarImage(GENERAL_TASKS task){
+		if(task == GENERAL_TASKS.REINFORCE_CITY){
+			this.sprtAvatar.sprite = this.sprtReinforceAvatar;
+		}
+	}
 }

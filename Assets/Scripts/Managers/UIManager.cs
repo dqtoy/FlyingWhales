@@ -2135,7 +2135,10 @@ public class UIManager : MonoBehaviour {
 				}
 				for (int i = 0; i < KingdomManager.Instance.internationalIncidents.Count; i++) {
 					InternationalIncident internationalIncident = KingdomManager.Instance.internationalIncidents [i];
-					this.allianceSummaryLbl.text += "\n" + internationalIncident.incidentName;
+					if(this.allianceSummaryLbl.text != string.Empty){
+						this.allianceSummaryLbl.text += "\n";
+					}
+					this.allianceSummaryLbl.text += internationalIncident.incidentName;
 					this.allianceSummaryLbl.text += "\n-" + internationalIncident.sourceKingdom.name;
 					if(internationalIncident.isSourceKingdomAggrieved){
 						this.allianceSummaryLbl.text += " (Aggrieved)";

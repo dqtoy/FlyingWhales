@@ -449,7 +449,7 @@ public class Region {
         List<HexTile> elligibleRoadTiles = new List<HexTile>();
         for (int i = 0; i < minorRoads.Count; i++) {
             HexTile currRoadTile = minorRoads[i];
-            if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.USE_ROADS) != null) {
+            if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                 elligibleRoadTiles.Add(currRoadTile);
             }
         }
@@ -532,7 +532,7 @@ public class Region {
 		List<HexTile> elligibleRoadTiles = new List<HexTile>();
 		for (int i = 0; i < minorRoads.Count; i++) {
 			HexTile currRoadTile = minorRoads[i];
-			if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.USE_ROADS) != null) {
+			if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.POINT_TO_POINT) != null) {
 				elligibleRoadTiles.Add(currRoadTile);
 			}
 		}
@@ -631,7 +631,7 @@ public class Region {
         List<HexTile> elligibleRoadTiles = new List<HexTile>();
         for (int i = 0; i < minorRoads.Count; i++) {
             HexTile currRoadTile = minorRoads[i];
-            if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.USE_ROADS) != null) {
+            if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                 elligibleRoadTiles.Add(currRoadTile);
             }
         }
@@ -735,7 +735,7 @@ public class Region {
         List<HexTile> elligibleRoadTiles = new List<HexTile>();
         for (int i = 0; i < minorRoads.Count; i++) {
             HexTile currRoadTile = minorRoads[i];
-            if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.USE_ROADS) != null) {
+            if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                 elligibleRoadTiles.Add(currRoadTile);
             }
         }

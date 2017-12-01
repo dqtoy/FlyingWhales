@@ -102,7 +102,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if(n.id != start.id && n.city != null && n.city.kingdom.id != kingdom.id){
+						if(n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id){
 							continue;
 						}
 						d = distance(path.LastStep, n);
@@ -117,14 +117,14 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if(n.city != null && n.city.kingdom.id != kingdom.id){
+						if(n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id){
 							continue;
 						}
 						d = distance(path.LastStep, n);
 						newPath = path.AddStep(n, d);
 						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
 					}
-				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+				} else if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT) {
 					foreach (Node n in path.LastStep.allNeighbourRoads) {
 						if (n.tileTag != start.tileTag) {
 							continue;
@@ -139,7 +139,16 @@ namespace PathFind {
 						newPath = path.AddStep(n, d);
 						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
 					}
-				}  else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
+				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+					foreach (Node n in path.LastStep.allNeighbourRoads) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						d = distance(path.LastStep, n);
+						newPath = path.AddStep(n, d);
+						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+					}
+				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
 					if (kingdom == null) {
 						throw new Exception("Someone is trying to pathfind using USE_ROADS_WITH_ALLIES, but hasn't specified a kingdom!");
 					}
@@ -147,7 +156,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
+						if (n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
 							KingdomRelationship kr = n.region.occupant.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
@@ -165,7 +174,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
+						if (n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
 							KingdomRelationship kr = n.region.occupant.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
@@ -183,7 +192,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
+						if (n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
 							continue;
 						}
 						d = distance(path.LastStep, n);

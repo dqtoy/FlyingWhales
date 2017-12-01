@@ -141,7 +141,7 @@ public class PathGenerator : MonoBehaviour {
 	public void DeterminePath(HexTile start, HexTile destination){
 		List<HexTile> roadListByDistance = SortAllRoadsByDistance (start, destination); //Sort all road tiles in regards to how far they are from the start
 		for (int i = 0; i < roadListByDistance.Count; i++) {
-			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.USE_ROADS)) {
+			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.POINT_TO_POINT)) {
 //				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
 				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.ContainsKey(start)) {
 					return; //use the already created road between the 2 cities.
@@ -164,30 +164,30 @@ public class PathGenerator : MonoBehaviour {
             return null;
         }
 
-        bool isStartingTileRoad = startingTile.isRoad;
-        bool isDestinationTileRoad = destinationTile.isRoad;
+//        bool isStartingTileRoad = startingTile.isRoad;
+//        bool isDestinationTileRoad = destinationTile.isRoad;
 
         bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
         bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
 
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
-			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
-			startingTile.isRoad = true;
-			destinationTile.isRoad = true;
-		}
+//		if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
+//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
+//			startingTile.isRoad = true;
+//			destinationTile.isRoad = true;
+//		}
 
         Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
 
 		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
 
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
-			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
-			startingTile.isRoad = isStartingTileRoad;
-			destinationTile.isRoad = isDestinationTileRoad;
-		}
+//		if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
+//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
+//			startingTile.isRoad = isStartingTileRoad;
+//			destinationTile.isRoad = isDestinationTileRoad;
+//		}
 
         if (path != null) {
 			if (pathfindingMode == PATHFINDING_MODE.COMBAT || pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION 

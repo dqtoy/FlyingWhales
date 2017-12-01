@@ -1398,7 +1398,7 @@ public class City{
 			General reinforceGeneral = (General)citizen.assignedRole;
 			reinforceGeneral.Initialize (null);
 			reinforceGeneral.AssignTask (new ReinforceCityTask(GENERAL_TASKS.REINFORCE_CITY, reinforceGeneral, general.citizen.city, general));
-			reinforceGeneral.SetSoldiers (soldiers);
+			reinforceGeneral.SetSoldiers (soldiersToBeGiven);
 			reinforceGeneral.path = path;
 			reinforceGeneral.avatar.GetComponent<GeneralAvatar> ().StartMoving();
 		}
