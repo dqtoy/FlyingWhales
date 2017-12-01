@@ -3357,7 +3357,7 @@ public class Kingdom{
                     foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in targetKingdomWeights) {
                         actionWeightsSummary += "\n" + kvp.Key.name + " : ";
                         foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
-                            actionWeightsSummary += "\n     " + kvp.Key.name + " - " + kvp.Value.ToString();
+                            actionWeightsSummary += "\n     " + pair.Key.name + " - " + pair.Value.ToString();
                         }
                     }
                     Debug.Log(actionWeightsSummary);
