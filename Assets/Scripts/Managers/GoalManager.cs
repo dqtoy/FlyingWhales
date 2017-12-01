@@ -308,11 +308,10 @@ public class GoalManager : MonoBehaviour {
             //add 1 to Default Weight per Positive Opinion target has towards me
             //subtract 1 to Default Weight per Negative Opinion target has towards me
             weightAdjustment += relOfOtherWithSource.totalLike;
-            weightAdjustment = Mathf.Max(0, defaultWeight); //minimum 0
+            weightAdjustment = Mathf.Max(0, weightAdjustment); //minimum 0
 
         }
 
-        defaultWeight += weightAdjustment;
         Dictionary<RESOURCE_TYPE, int> deficitOfTargetKingdom = targetKingdom.GetDeficitResourcesFor(sourceKingdom);
         Dictionary<RESOURCE_TYPE, int> surplusOfThisKingdom = sourceKingdom.GetSurplusResourcesFor(targetKingdom);
         foreach (KeyValuePair<RESOURCE_TYPE, int> kvp in surplusOfThisKingdom) {
@@ -321,29 +320,33 @@ public class GoalManager : MonoBehaviour {
             if (deficitOfTargetKingdom.ContainsKey(currSurplus)) {
                 //otherKingdom has a deficit for currSurplus
                 //add Default Weight for every point of Surplus they have on our Deficit Resources 
-                defaultWeight += (defaultWeight * surplusAmount);
+                defaultWeight += (weightAdjustment * surplusAmount);
             }
         }
     }
     private void GetAllModificationForFlatter(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
-        defaultWeight += 40;//Default Weight is 40
+        int weightModification = defaultWeight + 40; //Default Weight is 40
+        defaultWeight = 0;
         KingdomRelationship relOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
         if (relOtherWithSource.totalLike < 0) {
             defaultWeight += Mathf.Abs(defaultWeight * relOtherWithSource.totalLike);
         }
     }
     private void GetAllModificationForInciteUnrest(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
-        defaultWeight += 40;
+        int weightModification = defaultWeight + 40;
+        defaultWeight = 0;
         KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
         KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
 
         if (!relWithOtherKingdom.AreAllies()) {
             if (relWithOtherKingdom.totalLike < 0) {
-                defaultWeight += Mathf.Abs(defaultWeight * relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
+                defaultWeight += Mathf.Abs(weightModification * relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
             }
         }
     }
     private void GetAllModificationForInternationalIncident(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
+        int weightModification = defaultWeight;
+        defaultWeight = 0;
         KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
         if (relWithOtherKingdom.totalLike < 0) {
             defaultWeight += Mathf.Abs(5 * relWithOtherKingdom.totalLike);
