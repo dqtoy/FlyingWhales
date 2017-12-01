@@ -248,7 +248,7 @@ public class InternationalIncident : GameEvent {
 
 	private void GoToWar(Kingdom chosenKingdom){
 		Warfare newWar = null;
-		if(this._krSourceToTarget.sharedRelationship.isAdjacent && this._krTargetToSource.sharedRelationship.isAdjacent){
+		if(this._krSourceToTarget.sharedRelationship.isAdjacent && this._krTargetToSource.sharedRelationship.isAdjacent && !this._krSourceToTarget.sharedRelationship.isAtWar){
 			if(chosenKingdom.id == this._sourceKingdom.id){
 				this.DoneEvent ();
 				newWar = new Warfare (this._sourceKingdom, this._targetKingdom);

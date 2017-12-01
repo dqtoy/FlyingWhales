@@ -199,6 +199,8 @@ public class Citizen {
             this.assignedRole = new GrandMarshal(this);
 		} else if (role == ROLE.CARAVAN) {
 			this.assignedRole = new Caravan(this);
+		} else if (role == ROLE.REFUGEE) {
+			this.assignedRole = new Refugee(this);
 		} else {
             this.assignedRole = null;
         }

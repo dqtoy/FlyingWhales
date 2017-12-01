@@ -297,4 +297,10 @@ public class MilitaryManager {
 		}
 		return false;
 	}
+
+	internal void DestroyAllGenerals(){
+		while(this.activeGenerals.Count > 0){
+			this.activeGenerals [0].Death (DEATH_REASONS.ACCIDENT);
+		}
+	}
 }

@@ -42,7 +42,7 @@ public class AttackCity : GameEvent {
 	internal void Attack(){
 		this.general.isIdle = false;
 		if(this.general.path != null && this.general.path.Count > 0){
-			this.general.avatar.GetComponent<GeneralAvatar> ().StartMoving ();
+			this.general.citizenAvatar.StartMoving ();
 		}
 		this.battle.Attack ();
 	}
@@ -79,8 +79,8 @@ public class AttackCity : GameEvent {
 		this.general.isReturning = true;
 		this.general.targetCity = targetCity;
 		this.general.targetLocation = targetCity.hexTile;
-		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
-		this.general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
+		this.general.citizenAvatar.SetHasArrivedState (false);
+		this.general.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 	}
 	private void CancelAllReinforcements(){
 		if(this.reinforcements.Count > 0){

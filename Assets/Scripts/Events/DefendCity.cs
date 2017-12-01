@@ -65,8 +65,8 @@ public class DefendCity : GameEvent {
 		this.general.isIdle = false;
 		this.general.targetCity = targetCity;
 		this.general.targetLocation = targetCity.hexTile;
-		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
-		this.general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
+		this.general.citizenAvatar.SetHasArrivedState (false);
+		this.general.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 	}
 	internal void DropSoldiersAndDisappear(){
 		if (this.isActive) {

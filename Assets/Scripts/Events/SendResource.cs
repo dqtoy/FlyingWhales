@@ -89,8 +89,8 @@ public class SendResource : GameEvent {
 				this.caravan.targetLocation = targetHextile;
 				this.caravan.targetCity = targetCity;
 				this.caravan.path = new List<HexTile> (path);
-				this.caravan.avatar.GetComponent<CaravanAvatar> ().StartMoving ();
-				this.caravan.avatar.GetComponent<CaravanAvatar> ().SetHasArrivedState (false);
+				this.caravan.citizenAvatar.StartMoving ();
+				this.caravan.citizenAvatar.SetHasArrivedState (false);
 				this.targetCity = targetCity;
 				this.targetCity.AdjustVirtualFoodCount (foodAmount);
 				this.targetCity.AdjustVirtualMaterialCount (materialAmount);

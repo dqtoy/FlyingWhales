@@ -11,7 +11,7 @@ public class HoverPopulation : MonoBehaviour {
 			if(general.generalTask != null){
 				summary = "TASK: " + general.generalTask.task.ToString();
 				summary += "\nTARGET CITY: " + general.generalTask.targetCity.name.ToString();
-				summary += "\nMOVE DATE: " + ((MONTH)general.generalTask.moveDate.month).ToString () + " " + general.generalTask.moveDate.day.ToString() + ", " + GameManager.Instance.year.ToString ();
+				summary += "\nMOVE DATE: " + ((MONTH)general.generalTask.moveDate.month).ToString () + " " + general.generalTask.moveDate.day.ToString() + ", " +  general.generalTask.moveDate.year.ToString ();
 				UIManager.Instance.ShowSmallInfo(summary);
 			}
 		}
