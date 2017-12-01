@@ -7,7 +7,7 @@ public class Imperialist : Trait {
     internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        int weight = 50;
+        int weight = 0;
         //loop through non-ally adjacent kingdoms i am not at war with
 		if (currRel.sharedRelationship.isAdjacent && !currRel.sharedRelationship.isAtWar && !currRel.AreAllies()) {
             KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
