@@ -3159,7 +3159,9 @@ public class Kingdom{
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE){
 			string plagueName = targetKingdom.SpreadPlague ();
 			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, 0, plagueName);
-		}
+        } else if(subterfuge == SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT) {
+            StartInternationalIncident(targetKingdom, "success");
+        }
 	}
 	private void CreateCriticalFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
 		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) {
@@ -3174,15 +3176,24 @@ public class Kingdom{
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE){
 			string plagueName = SpreadPlague ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, 0, plagueName);
-		}
-	}
+        } else if (subterfuge == SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT) {
+            StartInternationalIncident(targetKingdom, "critical_fail");
+        }
+    }
 	private void CreateFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
-		ShowFailSubterfugeLog (subterfuge, targetKingdom);
+        if (subterfuge == SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT) {
+            StartInternationalIncident(targetKingdom, "fail");
+        } else {
+            ShowFailSubterfugeLog(subterfuge, targetKingdom);
+        }
 	}
 	private void CreateCaughtSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
-		InternationalIncident intlIncident = EventCreator.Instance.CreateInternationalIncidentEvent (targetKingdom, this, true, false);
-//		ShowCaughtSubterfugeLog (subterfuge, targetKingdom, intlIncident.incidentName);
-	}
+        if (subterfuge == SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT) {
+            StartInternationalIncident(targetKingdom, "caught");
+        }
+        //InternationalIncident intlIncident = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, false);
+        //		ShowCaughtSubterfugeLog (subterfuge, targetKingdom, intlIncident.incidentName);
+    }
 	private int DestroyWeaponsSubterfuge(){
 		int weaponsToBeDestroyed = (int)((float)this._baseWeapons * 0.05f);
 		this.AdjustBaseWeapons (-weaponsToBeDestroyed);
@@ -3367,7 +3378,7 @@ public class Kingdom{
                     if (targets.Length == 2) {
                         Kingdom cause = targets[0];
                         Kingdom target = targets[1];
-                        Debug.Log(this.name + " has targeted " + target.name + " because of " + cause.ToString());
+                        Debug.Log(this.name + " has targeted " + target.name + " because of " + cause.name);
                         PerformAction(actionToPerform, target, cause);
                     } else {
                         Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
@@ -3484,7 +3495,7 @@ public class Kingdom{
                 CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.REDUCE_STABILITY, (Kingdom)target);
                 break;
             case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
-                StartInternationalIncident((Kingdom)target);
+                CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT, (Kingdom)target);
                 break;
             case WEIGHTED_ACTION.FLATTER:
                 CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, (Kingdom)target);
@@ -3731,10 +3742,72 @@ public class Kingdom{
     private void OfferTradeDealTo(Kingdom targetKingdom) {
         EventCreator.Instance.CreateTradeDealOfferEvent(this, targetKingdom);
     }
-    private void StartInternationalIncident(Kingdom targetKingdom) {
-        EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, false, true);
+    private void StartInternationalIncident(Kingdom targetKingdom, string status) {
+        Dictionary<Kingdom, int> targetWeights = GetInternationalIncidentKingdomWeights(targetKingdom);
+        if (Utilities.GetTotalOfWeights(targetWeights) > 0) {
+            Kingdom chosenKingdom = Utilities.PickRandomElementWithWeights(targetWeights);
+            if (status.Equals("success")) {
+                InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, chosenKingdom, false, true);
+                ii.ShowSuccessLog();
+            } else if (status.Equals("fail")) {
+                ShowInternationalIncidentFailLog(targetKingdom, chosenKingdom);
+            } else if (status.Equals("critical_fail")) {
+                InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, false);
+                ii.ShowCriticalFailLog(chosenKingdom);
+            } else if (status.Equals("caught")) {
+                InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, true);
+                ii.ShowCaughtLog();
+            }
+        } else {
+            Debug.Log(this.name + " tried to start an INTERNATIONAL_INCIDENT but, it could not find a target for " + targetKingdom.name);
+        }
     }
+    private Dictionary<Kingdom, int> GetInternationalIncidentKingdomWeights(Kingdom targetKingdom) {
+        //Loop through kingdoms adjacent to the target
+        Dictionary<Kingdom, int> targetWeights = new Dictionary<Kingdom, int>();
+        for (int i = 0; i < targetKingdom.adjacentKingdoms.Count; i++) {
+            Kingdom otherKingdom = targetKingdom.adjacentKingdoms[i];
+            if (otherKingdom.id != this.id) { //If Kingdom is the source, negate all Weight
+                int weightForKingdom = 0;
+                KingdomRelationship relOtherWithTarget = otherKingdom.GetRelationshipWithKingdom(targetKingdom);
+                KingdomRelationship relThisWithOther = this.GetRelationshipWithKingdom(otherKingdom);
 
+                //Add 1 Weight for every Positive Opinion they have towards target
+                if (relOtherWithTarget.totalLike > 0) {
+                    weightForKingdom += relOtherWithTarget.totalLike;
+                }
+
+                if (relThisWithOther.totalLike < 0) {
+                    //Add 2 Weight for every Negative Opinion I have towards it
+                    weightForKingdom += Mathf.Abs(2 * relThisWithOther.totalLike);
+                } else if (relThisWithOther.totalLike > 0) {
+                    //Subtract 2 Weight for every Positive Opinion I have towards it
+                    weightForKingdom -= 2 * relThisWithOther.totalLike;
+                }
+                //Add 5 Weight for every positive point of Relative Strength it has over target
+                if (relOtherWithTarget.relativeStrength > 0) {
+                    weightForKingdom += 5 * relOtherWithTarget.relativeStrength;
+                }
+
+                //If not Deceitful, subtract 100 Weight if ally
+                if (!this.king.HasTrait(TRAIT.DECEITFUL)) {
+                    if (relThisWithOther.AreAllies()) {
+                        weightForKingdom -= 100;
+                    }
+                }
+                targetWeights.Add(otherKingdom, weightForKingdom);
+            }
+        }
+        return targetWeights;
+    }
+    private void ShowInternationalIncidentFailLog(Kingdom targetKingdom, Kingdom otherKingdom) {
+        Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_fail");
+        newLog.AddToFillers(this.king, this.king.name, LOG_IDENTIFIER.KING_1);
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+        UIManager.Instance.ShowNotification(newLog);
+    }
     internal void AddRejectedOffer(Kingdom rejectedBy, WEIGHTED_ACTION actionType) {
         if (_recentlyRejectedOffers.ContainsKey(rejectedBy)) {
             if (!_recentlyRejectedOffers[rejectedBy].Contains(actionType)) {
