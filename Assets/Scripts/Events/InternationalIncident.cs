@@ -77,7 +77,7 @@ public class InternationalIncident : GameEvent {
 	#endregion
 
 	private void StartIncident(){
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "InternationalIncident", "start");
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start");
 		newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
@@ -103,7 +103,7 @@ public class InternationalIncident : GameEvent {
 	}
 
 	private void ReactionDay(){
-		if(!this._sourceKingdom.isDead || !this._targetKingdom.isDead){
+		if(this._sourceKingdom.isDead || this._targetKingdom.isDead){
 			CancelEvent ();
 			return;
 		}
@@ -214,7 +214,7 @@ public class InternationalIncident : GameEvent {
 			}else{
 				//Fail Resolve Peacefully
 				chosenKingdom.AdjustStability(-3);
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "InternationalIncident", "fail_resolve_peacefully");
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_resolve_peacefully");
 				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
 				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 				newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
@@ -228,7 +228,7 @@ public class InternationalIncident : GameEvent {
 			}else{
 				//Fail Increase Tension
 				chosenKingdom.AdjustStability(3);
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "InternationalIncident", "fail_war");
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_war");
 				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
 				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 				newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
@@ -238,7 +238,7 @@ public class InternationalIncident : GameEvent {
 	}
 
 	private void ResolvePeacefully(){
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "InternationalIncident", "resolve_peacefully");
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "resolve_peacefully");
 		newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
 		newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
@@ -257,7 +257,7 @@ public class InternationalIncident : GameEvent {
 				newWar = new Warfare (this._targetKingdom, this._sourceKingdom);
 			}
 			if(newWar != null){
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "InternationalIncident", "war");
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "war");
 				newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
 				newLog.AddToFillers (null, newWar.name, LOG_IDENTIFIER.WAR_NAME);
 				newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);

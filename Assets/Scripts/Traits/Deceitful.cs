@@ -9,7 +9,7 @@ public class Deceitful : Trait {
         KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
         int weight = 0;
         //loop through adjacent allies
-        if (currRel.AreAllies()) {
+        if (!currRel.sharedRelationship.isAtWar && currRel.AreAllies()) {
             if (otherKingdom.GetWarCount() > 0) {//if any of them is at war with another kingdom
                 //compare its theoretical power vs my theoretical power, if my theoretical power is higher
                 KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);

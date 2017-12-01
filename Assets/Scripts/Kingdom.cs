@@ -1325,6 +1325,14 @@ public class Kingdom{
         }
         return false;
     }
+    internal void LeaveTradeDealWith(Kingdom otherKingdom) {
+        Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TradeDeal", "trade_deal_leave");
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { this, otherKingdom });
+        RemoveTradeDealWith(otherKingdom);
+        otherKingdom.RemoveTradeDealWith(this);
+    }
     //internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
     //    if (!this._embargoList.ContainsKey(kingdomToAdd)) {
     //        this._embargoList.Add(kingdomToAdd, embargoReason);
@@ -3481,7 +3489,7 @@ public class Kingdom{
         } else if (weightedAction == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
             LeaveAlliance();
         } else if(weightedAction == WEIGHTED_ACTION.LEAVE_TRADE_DEAL) {
-            RemoveTradeDealWith((Kingdom)target);
+            LeaveTradeDealWith((Kingdom)target);
         }
     }
     internal bool IsThreatened() {
@@ -3740,10 +3748,8 @@ public class Kingdom{
 
     internal List<Warfare> GetAllActiveWars() {
         List<Warfare> activeWars = new List<Warfare>();
-        foreach (KingdomRelationship rel in relationships.Values) {
-            if (rel.sharedRelationship.isAtWar) {
-                activeWars.Add(rel.sharedRelationship.warfare);
-            }
+        foreach (WarfareInfo war in warfareInfo.Values) {
+            activeWars.Add(war.warfare);
         }
         return activeWars;
     }

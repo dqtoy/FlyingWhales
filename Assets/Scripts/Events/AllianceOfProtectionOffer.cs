@@ -12,6 +12,7 @@ public class AllianceOfProtectionOffer : GameEvent {
     public AllianceOfProtectionOffer(int startDay, int startMonth, int startYear, Citizen startedBy, Kingdom offeringKingdom, Kingdom offeredToKingdom) 
         : base(startDay, startMonth, startYear, startedBy) {
 
+        this.eventType = EVENT_TYPES.ALLIANCE_OF_CONQUEST_OFFER;
         this.offeredToKingdom = offeredToKingdom;
         this.offeringKingdom = offeringKingdom;
 

@@ -146,20 +146,20 @@ public class GameEvent {
 			this._eventKingdoms [i].RemoveActiveEvent (this);
 		}
 
-		if(!this.isOneTime){
-			if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null && this.logs.Count > 0) { //Kingdom Event
-				if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
-					if (!Utilities.eventsNotToShow.Contains(eventType)) {
-						if (UIManager.Instance.currentlyShowingLogObject != null) {
-							UIManager.Instance.eventLogsQueue.Add(this);
-						} else {
-							//					UIManager.Instance.Pause ();
-							UIManager.Instance.ShowEventLogs(this);
-						}
-					}
-				}
-			}
-		}
+		//if(!this.isOneTime){
+		//	if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null && this.logs.Count > 0) { //Kingdom Event
+		//		if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+		//			if (!Utilities.eventsNotToShow.Contains(eventType)) {
+		//				if (UIManager.Instance.currentlyShowingLogObject != null) {
+		//					UIManager.Instance.eventLogsQueue.Add(this);
+		//				} else {
+		//					//					UIManager.Instance.Pause ();
+		//					UIManager.Instance.ShowEventLogs(this);
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 
 //		if(this.goEventItem != null){
 //			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
@@ -225,16 +225,16 @@ public class GameEvent {
 			if(!this.isOneTime){
 				//UIManager.Instance.ShowEventsOfType (this, kingdom);
 			}else{
-				if (kingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
-					if (!Utilities.eventsNotToShow.Contains(eventType)) {
-						if (UIManager.Instance.currentlyShowingLogObject != null) {
-							UIManager.Instance.eventLogsQueue.Add(this);
-						} else {
-							//					UIManager.Instance.Pause ();
-							UIManager.Instance.ShowEventLogs(this);
-						}
-					}
-				}
+				//if (kingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+				//	if (!Utilities.eventsNotToShow.Contains(eventType)) {
+				//		if (UIManager.Instance.currentlyShowingLogObject != null) {
+				//			UIManager.Instance.eventLogsQueue.Add(this);
+				//		} else {
+				//			//					UIManager.Instance.Pause ();
+				//			UIManager.Instance.ShowEventLogs(this);
+				//		}
+				//	}
+				//}
 			}
 		}
 		if(kingdom != null){
