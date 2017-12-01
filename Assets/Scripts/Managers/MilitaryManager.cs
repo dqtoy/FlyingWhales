@@ -39,11 +39,11 @@ public class MilitaryManager {
 	}
 	internal void UpdateMaxGenerals(){
 		if(this._kingdom.kingdomSize == KINGDOM_SIZE.SMALL){
-			this.maxGenerals = 3;
+			this.maxGenerals = 2;
 		}else if(this._kingdom.kingdomSize == KINGDOM_SIZE.MEDIUM){
-			this.maxGenerals = 5;
+			this.maxGenerals = 4;
 		}else if(this._kingdom.kingdomSize == KINGDOM_SIZE.LARGE){
-			this.maxGenerals = 7;
+			this.maxGenerals = 6;
 		}
 		if(this._kingdom.king.otherTraits.Contains(TRAIT.MILITANT) || this._kingdom.king.otherTraits.Contains(TRAIT.HOSTILE)){
 			this.maxGenerals += 1;

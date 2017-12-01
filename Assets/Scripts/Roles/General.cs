@@ -146,7 +146,7 @@ public class General : Role {
 
 	internal int GetPower(){
 		if (this.location.city != null && this.location.city.kingdom.id == this.citizen.city.kingdom.id) {
-			return (int)((this.soldiers + this.location.city.soldiers) * 4) + (int)(this.location.city.population / 2);
+			return (int)((this.soldiers + this.location.city.soldiers) * 4) + (int)(Mathf.Sqrt((float)this.location.city.population));
 		}else{
 			return this.soldiers * 3;
 		}
