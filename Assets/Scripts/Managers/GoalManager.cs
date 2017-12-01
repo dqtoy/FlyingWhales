@@ -338,11 +338,20 @@ public class GoalManager : MonoBehaviour {
         KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
         KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
 
+        if (sourceKingdom.king.HasTrait(TRAIT.DECEITFUL)) {
+            if (relWithOtherKingdom.AreAllies()) {
+                if (relWithOtherKingdom.totalLike < 0) {
+                    defaultWeight += Mathf.Abs(weightModification * relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
+                }
+            }
+        }
+
         if (!relWithOtherKingdom.AreAllies()) {
             if (relWithOtherKingdom.totalLike < 0) {
                 defaultWeight += Mathf.Abs(weightModification * relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
             }
         }
+        
     }
     private void GetAllModificationForInternationalIncident(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
         int weightModification = defaultWeight;
