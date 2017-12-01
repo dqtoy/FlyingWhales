@@ -32,7 +32,7 @@ public class GoalManager : MonoBehaviour {
     }
 
     internal WEIGHTED_ACTION DetermineWeightedActionToPerform(Kingdom sourceKingdom) {
-        Debug.Log("========== " + sourceKingdom.name + " is trying to decide what to do... ==========");
+        Debug.Log("========== " + GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - " + sourceKingdom.name + " is trying to decide what to do... ==========");
         Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
         totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 150); //Add 150 Base Weight on Do Nothing Action
         if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.DECLARE_PEACE)) {

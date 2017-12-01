@@ -3467,29 +3467,42 @@ public class Kingdom{
         Debug.Log("====================");
     }
     private void PerformAction(WEIGHTED_ACTION weightedAction, object target, Kingdom cause = null) {
-        //Debug.Log(this.name + " will perform " + weightedAction.ToString() + " targeting " + target.name);
-        if(weightedAction == WEIGHTED_ACTION.WAR_OF_CONQUEST) {
-            StartWarOfConquestTowards((Kingdom)target);
-        } else if (weightedAction == WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION) {
-            OfferAllianceOfProtectionTo((Kingdom)target);
-        } else if (weightedAction == WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST) {
-            OfferAllianceOfConquestTo((Kingdom)target, cause);
-        } else if (weightedAction == WEIGHTED_ACTION.TRADE_DEAL) {
-            OfferTradeDealTo((Kingdom)target);
-        } else if (weightedAction == WEIGHTED_ACTION.INCITE_UNREST) {
-            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.REDUCE_STABILITY, (Kingdom)target);
-        } else if (weightedAction == WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT) {
-            StartInternationalIncident((Kingdom)target);
-        } else if (weightedAction == WEIGHTED_ACTION.FLATTER) {
-            CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, (Kingdom)target);
-        } else if (weightedAction == WEIGHTED_ACTION.SEND_AID) {
-            //TODO: Add Send Aid Trigger
-        } else if (weightedAction == WEIGHTED_ACTION.DECLARE_PEACE) {
-            ((Warfare)target).PeaceDeclaration(this);
-        } else if (weightedAction == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
-            LeaveAlliance();
-        } else if(weightedAction == WEIGHTED_ACTION.LEAVE_TRADE_DEAL) {
-            LeaveTradeDealWith((Kingdom)target);
+        switch (weightedAction) {
+            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+                StartWarOfConquestTowards((Kingdom)target);
+                break;
+            case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
+                OfferAllianceOfConquestTo((Kingdom)target, cause);
+                break;
+            case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
+                OfferAllianceOfProtectionTo((Kingdom)target);
+                break;
+            case WEIGHTED_ACTION.TRADE_DEAL:
+                OfferTradeDealTo((Kingdom)target);
+                break;
+            case WEIGHTED_ACTION.INCITE_UNREST:
+                CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.REDUCE_STABILITY, (Kingdom)target);
+                break;
+            case WEIGHTED_ACTION.START_INTERNATIONAL_INCIDENT:
+                StartInternationalIncident((Kingdom)target);
+                break;
+            case WEIGHTED_ACTION.FLATTER:
+                CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, (Kingdom)target);
+                break;
+            case WEIGHTED_ACTION.SEND_AID:
+                //TODO: Add Send Aid Trigger
+                break;
+            case WEIGHTED_ACTION.DECLARE_PEACE:
+                ((Warfare)target).PeaceDeclaration(this);
+                break;
+            case WEIGHTED_ACTION.LEAVE_ALLIANCE:
+                LeaveAlliance();
+                break;
+            case WEIGHTED_ACTION.LEAVE_TRADE_DEAL:
+                LeaveTradeDealWith((Kingdom)target);
+                break;
+            default:
+                break;
         }
     }
     internal bool IsThreatened() {
