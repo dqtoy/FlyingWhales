@@ -54,7 +54,7 @@ public class CitizenManager : MonoBehaviour {
         allCitizens = new HashSet<Citizen>();
         citizenBirthdays = new Dictionary<MONTH, Dictionary<int, HashSet<Citizen>>>();
         //Messenger.AddListener("OnDayEnd", AgeCitizens);
-        Messenger.AddListener("OnDayEnd", CheckForDeath);
+        //Messenger.AddListener("OnDayEnd", CheckForDeath);
     }
 
     internal void RegisterCitizen(Citizen citizen) {

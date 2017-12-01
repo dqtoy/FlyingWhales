@@ -9,7 +9,7 @@ public class TradeDealOffer : GameEvent {
 
     public TradeDealOffer(int startDay, int startMonth, int startYear, Citizen startedBy, Kingdom offeringKingdom, Kingdom offeredToKingdom) 
         : base(startDay, startMonth, startYear, startedBy) {
-
+        this.eventType = EVENT_TYPES.TRADE_DEAL_OFFER;
         this.offeredToKingdom = offeredToKingdom;
         this.offeringKingdom = offeringKingdom;
         CheckIfKingdomWillAcceptOffer(offeredToKingdom);
@@ -29,12 +29,22 @@ public class TradeDealOffer : GameEvent {
         Debug.Log(offeringKingdom.name + "'s trade deal offer was rejected by " + offeredToKingdom.name);
         offeringKingdom.AddRejectedOffer(offeredToKingdom, WEIGHTED_ACTION.TRADE_DEAL);
         offeredToKingdom.AddRejectedOffer(offeringKingdom, WEIGHTED_ACTION.TRADE_DEAL);
+
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TradeDeal", "trade_deal_reject");
+        newLog.AddToFillers(this.offeredToKingdom, this.offeredToKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(this.offeringKingdom, this.offeringKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { this.offeredToKingdom, this.offeringKingdom });
         DoneEvent();
     }
 
     private void OfferAccepted() {
         Debug.Log(offeringKingdom.name + "'s trade deal offer was accepted by " + offeredToKingdom.name);
         KingdomManager.Instance.CreateTradeDeal(offeringKingdom, offeredToKingdom);
+
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TradeDeal", "trade_deal_accept");
+        newLog.AddToFillers(this.offeredToKingdom, this.offeredToKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(this.offeringKingdom, this.offeringKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { this.offeredToKingdom, this.offeringKingdom });
         DoneEvent();
     }
 
