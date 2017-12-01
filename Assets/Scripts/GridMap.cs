@@ -424,7 +424,7 @@ public class GridMap : MonoBehaviour {
                 bool isAlreadyConnectedToLandmarkInThisRegion = false;
                 for (int k = 0; k < otherLandmarksInRegion.Count; k++) {
                     HexTile otherLandmarkLocation = otherLandmarksInRegion[k];
-                    if (PathGenerator.Instance.GetPath(currLandmark.location, otherLandmarkLocation, PATHFINDING_MODE.USE_ROADS) != null) {
+                    if (PathGenerator.Instance.GetPath(currLandmark.location, otherLandmarkLocation, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                         isAlreadyConnectedToLandmarkInThisRegion = true;
                         break;
                     }
@@ -501,7 +501,7 @@ public class GridMap : MonoBehaviour {
                     continue;
                 }
                 List<HexTile> possibleTilesToConnectTo = new List<HexTile>(elligibleLandmarks.Select(x => x.location));
-                possibleTilesToConnectTo = new List<HexTile>(possibleTilesToConnectTo.Where(x => PathGenerator.Instance.GetPath(currElligibleTile, x, PATHFINDING_MODE.USE_ROADS) == null 
+                possibleTilesToConnectTo = new List<HexTile>(possibleTilesToConnectTo.Where(x => PathGenerator.Instance.GetPath(currElligibleTile, x, PATHFINDING_MODE.POINT_TO_POINT) == null 
                     && PathGenerator.Instance.GetPath(currElligibleTile, x, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION) != null)
                     .OrderBy(x => PathGenerator.Instance.GetPath(currElligibleTile, x, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION).Count));
 
@@ -517,7 +517,7 @@ public class GridMap : MonoBehaviour {
                     List<HexTile> pathToOtherHexTile = PathGenerator.Instance.GetPath(currElligibleTile, otherHexTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
                     for (int l = 0; l < allMinorRoadsInWorld.Count; l++) {
                         HexTile currRoadTile = allMinorRoadsInWorld[l];
-                        if(PathGenerator.Instance.GetPath(currRoadTile, otherHexTile, PATHFINDING_MODE.USE_ROADS) != null) {
+                        if(PathGenerator.Instance.GetPath(currRoadTile, otherHexTile, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                             List<HexTile> pathToCurrRoadTile = PathGenerator.Instance.GetPath(currElligibleTile, currRoadTile, PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION);
                             if (pathToCurrRoadTile != null && pathToCurrRoadTile.Count < pathToOtherHexTile.Count) {
                                 pathToOtherHexTile = pathToCurrRoadTile;

@@ -28,15 +28,15 @@ public class PathFindingThread {
 	}
 
 	public void FindPath(){
-		bool isStartingTileRoad = _startingTile.isRoad;
-		bool isDestinationTileRoad = _destinationTile.isRoad;
+//		bool isStartingTileRoad = _startingTile.isRoad;
+//		bool isDestinationTileRoad = _destinationTile.isRoad;
 
-		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
-			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
-			_startingTile.isRoad = true;
-			_destinationTile.isRoad = true;
-		}
+//		if (_pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
+//			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+//			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
+//			_startingTile.isRoad = true;
+//			_destinationTile.isRoad = true;
+//		}
 
 
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
@@ -44,12 +44,12 @@ public class PathFindingThread {
 
 		var path = PathFind.PathFind.FindPath (_startingTile, _destinationTile, distance, estimate, _pathfindingMode, _kingdom);
 
-		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
-			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
-			_startingTile.isRoad = isStartingTileRoad;
-			_destinationTile.isRoad = isDestinationTileRoad;
-		}
+//		if (_pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
+//			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+//			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
+//			_startingTile.isRoad = isStartingTileRoad;
+//			_destinationTile.isRoad = isDestinationTileRoad;
+//		}
 
 		if (path != null) {
 			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 

@@ -466,7 +466,7 @@ public class RoadManager : MonoBehaviour {
         List<HexTile> tilesToCheck = _roadTiles.OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)).Take(50).ToList();
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
-            if(!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.USE_ROADS) != null) {
+            if(!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                 //There is a path from currTile to destination using roads
                 connectedRoadTiles.Add(currTile);
             }
@@ -481,7 +481,7 @@ public class RoadManager : MonoBehaviour {
 
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
-            if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.USE_ROADS) != null) {
+            if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                 //There is a path from currTile to destination using roads
                 connectedRoadTiles.Add(currTile);
             }
@@ -499,7 +499,7 @@ public class RoadManager : MonoBehaviour {
             .OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)).Take(50).ToList();
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
-            if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.USE_ROADS) != null) {
+            if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.POINT_TO_POINT) != null) {
                 //There is a path from currTile to destination using roads
                 connectedRoadTiles.Add(currTile);
             }

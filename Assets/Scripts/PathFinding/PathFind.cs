@@ -78,7 +78,7 @@ namespace PathFind {
                     }
 				} else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
 					foreach (Node n in path.LastStep.MajorRoadTiles) {
-						if (n.tileTag != start.tileTag && n.id != start.id && n.id != destination.id) {
+						if (n.tileTag != start.tileTag) {
 							continue;
 						}
 						d = distance(path.LastStep, n);
@@ -87,7 +87,7 @@ namespace PathFind {
 					}
 				}  else if (pathfindingMode == PATHFINDING_MODE.MINOR_ROADS) {
 					foreach (Node n in path.LastStep.MinorRoadTiles) {
-						if (n.tileTag != start.tileTag && n.id != start.id && n.id != destination.id) {
+						if (n.tileTag != start.tileTag) {
 							continue;
 						}
 						d = distance(path.LastStep, n);
@@ -124,7 +124,7 @@ namespace PathFind {
 						newPath = path.AddStep(n, d);
 						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
 					}
-				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+				} else if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT) {
 					foreach (Node n in path.LastStep.allNeighbourRoads) {
 						if (n.tileTag != start.tileTag) {
 							continue;
@@ -139,7 +139,16 @@ namespace PathFind {
 						newPath = path.AddStep(n, d);
 						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
 					}
-				}  else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
+				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+					foreach (Node n in path.LastStep.allNeighbourRoads) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						d = distance(path.LastStep, n);
+						newPath = path.AddStep(n, d);
+						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+					}
+				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
 					if (kingdom == null) {
 						throw new Exception("Someone is trying to pathfind using USE_ROADS_WITH_ALLIES, but hasn't specified a kingdom!");
 					}
