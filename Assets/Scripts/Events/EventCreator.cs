@@ -153,8 +153,8 @@ public class EventCreator: MonoBehaviour {
             offeringKingdom.king, offeringKingdom, offeredToKingdom, conquestTarget);
         return aoc;
     }
-    internal InternationalIncident CreateInternationalIncidentEvent(Kingdom sourceKingdom, Kingdom targetKingdom, bool isSourceKingdomAggrieved, bool isTargetKingdomAggrieved) {
-		InternationalIncident internationalIncident = new InternationalIncident(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom, isSourceKingdomAggrieved, isTargetKingdomAggrieved);
+    internal InternationalIncident CreateInternationalIncidentEvent(Kingdom startedByKingdom, Kingdom sourceKingdom, Kingdom targetKingdom, bool isSourceKingdomAggrieved, bool isTargetKingdomAggrieved) {
+		InternationalIncident internationalIncident = new InternationalIncident(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedByKingdom.king, sourceKingdom, targetKingdom, isSourceKingdomAggrieved, isTargetKingdomAggrieved);
 		return internationalIncident;
 	}
 

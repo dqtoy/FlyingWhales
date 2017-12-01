@@ -43,7 +43,7 @@ public class WorldHistoryUI : UIMenu {
         LoadInitialLogItems();
         SelectAll(true);
         Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateEmblemForKingdom);
-        Messenger.AddListener<Kingdom>("OnKingdomDied", RemoveEmblemOfKingdom);
+        //Messenger.AddListener<Kingdom>("OnKingdomDied", RemoveEmblemOfKingdom);
         Messenger.AddListener<Log>("AddLogToHistory", AddLogToWorldHistory);
     }
 
@@ -114,6 +114,7 @@ public class WorldHistoryUI : UIMenu {
         emblemOfKingdom.gameObject.SetActive(false);
         allKingdomsInMenu.Remove(kingdom);
         activeEmblems.Remove(kingdom);
+        selectedKingdoms.Remove(kingdom);
         inactiveEmblems.Add(emblemOfKingdom);
         kingdomEmblemsGrid.Reposition();
     }

@@ -43,20 +43,20 @@ public class Deceitful : Trait {
         }
         return weight;
     }
-    internal override int GetInciteUnrestWeightModification(Kingdom otherKingdom) {
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        int weight = 0;
+    //internal override int GetInciteUnrestWeightModification(Kingdom otherKingdom) {
+    //    Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+    //    int weight = 0;
 
-        KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        //if ally
-        if (relWithOtherKingdom.AreAllies()) {
-            //add Default Weight per Negative Opinion I have towards target
-            if(relWithOtherKingdom.totalLike < 0) {
-                weight += Mathf.Abs(relWithOtherKingdom.totalLike);
-            }
-        }
-        return weight;
-    }
+    //    KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+    //    //if ally
+    //    if (relWithOtherKingdom.AreAllies()) {
+    //        //add Default Weight per Negative Opinion I have towards target
+    //        if(relWithOtherKingdom.totalLike < 0) {
+    //            weight += Mathf.Abs(relWithOtherKingdom.totalLike);
+    //        }
+    //    }
+    //    return weight;
+    //}
     internal override int GetFlatterWeightModification(Kingdom otherKingdom) {
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         int weight = 0;
