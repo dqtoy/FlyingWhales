@@ -79,6 +79,7 @@ public class Kingdom{
 
     //FogOfWar
     private FOG_OF_WAR_STATE[,] _fogOfWar;
+    private Dictionary<HexTile, FOG_OF_WAR_STATE> _outerFogOfWar;
 	private Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> _fogOfWarDict;
     private Dictionary<Region, FOG_OF_WAR_STATE> _regionFogOfWarDict;
 
@@ -444,13 +445,18 @@ public class Kingdom{
 
         //Fog Of War
         this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
-		this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>>();
+        this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>>();
 		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new HashSet<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
 		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new HashSet<HexTile>());
 		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new HashSet<HexTile>());
         this._regionFogOfWarDict = new Dictionary<Region, FOG_OF_WAR_STATE>();
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             _regionFogOfWarDict.Add(GridMap.Instance.allRegions[i], FOG_OF_WAR_STATE.HIDDEN);
+        }
+        this._outerFogOfWar = new Dictionary<HexTile, FOG_OF_WAR_STATE>();
+        for (int i = 0; i < GridMap.Instance.outerGridList.Count; i++) {
+            _outerFogOfWar.Add(GridMap.Instance.outerGridList[i], FOG_OF_WAR_STATE.HIDDEN);
+            this._fogOfWarDict[FOG_OF_WAR_STATE.HIDDEN].Add(GridMap.Instance.outerGridList[i]);
         }
 
         this._activeEvents = new List<GameEvent> ();
@@ -2021,14 +2027,28 @@ public class Kingdom{
         for (int i = 0; i < region.tilesInRegion.Count; i++) {
             SetFogOfWarStateForTile(region.tilesInRegion[i], fowState);
         }
+        for (int i = 0; i < region.outerGridTilesInRegion.Count; i++) {
+            SetFogOfWarStateForTile(region.outerGridTilesInRegion[i], fowState, true);
+        }
     }
-    internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
-        FOG_OF_WAR_STATE previousStateOfTile = _fogOfWar[tile.xCoordinate, tile.yCoordinate];
+    internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState, bool isOuterGridTile = false) {
+        FOG_OF_WAR_STATE previousStateOfTile = FOG_OF_WAR_STATE.HIDDEN;
+        if (isOuterGridTile) {
+            previousStateOfTile = _outerFogOfWar[tile];
+        } else {
+            previousStateOfTile = _fogOfWar[tile.xCoordinate, tile.yCoordinate];
+        }
         //Remove tile from previous list that it belonged to
         _fogOfWarDict[previousStateOfTile].Remove(tile);
 
-        //Set new state of tile in fog of war dictionary
-        _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        if (isOuterGridTile) {
+            //Set new state of tile in outer grid dictionary
+            _outerFogOfWar[tile] = fowState;
+        } else {
+            //Set new state of tile in fog of war dictionary
+            _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        }
+        
         //Check if tile is already in the list
         if (!_fogOfWarDict[fowState].Contains(tile)) {
             //if not, add it to the new states list
@@ -2042,7 +2062,7 @@ public class Kingdom{
 
         //For checking if tile dictionary is accurate, remove this when checking is no longer necessary
         int sum = _fogOfWarDict.Sum(x => x.Value.Count);
-        if (sum != GridMap.Instance.listHexes.Count) {
+        if (sum != GridMap.Instance.listHexes.Count + GridMap.Instance.outerGridList.Count) {
             throw new Exception("Fog of war dictionary is no longer accurate!");
         }
     }
@@ -2054,13 +2074,16 @@ public class Kingdom{
                 UpdateFogOfWarVisualForTile(currHexTile, fowStateToUse);
             }
         }
+        foreach (KeyValuePair<HexTile, FOG_OF_WAR_STATE> kvp in _outerFogOfWar) {
+            UpdateFogOfWarVisualForTile(kvp.Key, kvp.Value);
+        }
     }
     private void UpdateFogOfWarVisualForTile(HexTile hexTile, FOG_OF_WAR_STATE fowState) {
         hexTile.SetFogOfWarState(fowState);
     }
-	internal FOG_OF_WAR_STATE GetFogOfWarStateOfTile(HexTile hexTile){
-		return this._fogOfWar [hexTile.xCoordinate, hexTile.yCoordinate];
-	}
+	//internal FOG_OF_WAR_STATE GetFogOfWarStateOfTile(HexTile hexTile){
+	//	return this._fogOfWar [hexTile.xCoordinate, hexTile.yCoordinate];
+	//}
     #endregion
 
 	internal int GetNumberOfWars(){

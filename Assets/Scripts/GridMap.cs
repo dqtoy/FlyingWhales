@@ -162,7 +162,7 @@ public class GridMap : MonoBehaviour {
                 hexToCopy.region.AddOuterGridTile(currHex);
 
                 currHex.DisableColliders();
-                currHex.HideFogOfWarObjects();
+                //currHex.HideFogOfWarObjects();
             }
         }
 
