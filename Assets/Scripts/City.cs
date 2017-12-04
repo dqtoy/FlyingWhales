@@ -817,6 +817,7 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
 	internal void ConquerCity(Kingdom conqueror) {
+		City previousCity = this;
 		KingdomRelationship kr = conqueror.GetRelationshipWithKingdom (this._kingdom);
 		if(kr.sharedRelationship.warfare != null){
 			Log newLog = kr.sharedRelationship.warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
@@ -854,6 +855,9 @@ public class City{
 		ChangeAttackingState (false);
 		ChangeDefendingState (false);
 
+		int civilianDeath = CivilianDeathsByConquered (conqueror);
+		AdjustPopulation (-civilianDeath);
+		int currentPopulation = this.population;
 
         City newCity = conqueror.CreateNewCityOnTileForKingdom(this.hexTile);
         newCity.name = this.name;
@@ -863,6 +867,8 @@ public class City{
         newCity.AddTilesToCity(structureTilesToTransfer);        
         newCity.hexTile.CreateCityNamePlate(newCity);
         newCity.SetupInitialValues();
+		newCity.AdjustPopulation (currentPopulation);
+		newCity.CreateRefugees (previousCity);
         newCity.HighlightAllOwnedTiles(69f / 255f);
 
         for (int i = 0; i < conqueror.discoveredKingdoms.Count; i++) {
@@ -889,6 +895,26 @@ public class City{
 		}
 
     }
+
+	private int CivilianDeathsByConquered(Kingdom conqueror){
+		int deathRange = UnityEngine.Random.Range (25, 51);
+		if(conqueror.king.otherTraits.Contains(TRAIT.RUTHLESS)){
+			deathRange += 25;
+		}
+		if(conqueror.king.otherTraits.Contains(TRAIT.BENEVOLENT)){
+			deathRange -= 25;
+		}
+		deathRange = Mathf.Clamp (deathRange, 0, 100);
+
+		float deathPercentage = (float)deathRange / 100f;
+
+		return (int)((float)this.population * deathPercentage);
+	}
+	internal void CreateRefugees(City previousCity){
+		int numOfRefugees = (int)((float)this._population * 0.75f);
+		AdjustPopulation (-numOfRefugees);
+		EventCreator.Instance.CreateRefugeEvent (previousCity, numOfRefugees);
+	}
 
     internal void RemoveListeners() {
 		Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
@@ -1400,7 +1426,7 @@ public class City{
 			reinforceGeneral.AssignTask (new ReinforceCityTask(GENERAL_TASKS.REINFORCE_CITY, reinforceGeneral, general.citizen.city, general));
 			reinforceGeneral.SetSoldiers (soldiersToBeGiven);
 			reinforceGeneral.path = path;
-			reinforceGeneral.avatar.GetComponent<GeneralAvatar> ().StartMoving();
+			reinforceGeneral.citizenAvatar.StartMoving();
 		}
 	}
 	internal int GetNumOfSoldiersCanBeGiven(){

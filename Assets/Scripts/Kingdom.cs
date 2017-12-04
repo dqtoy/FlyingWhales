@@ -840,6 +840,7 @@ public class Kingdom{
 		if(this.alliancePool != null){
 			LeaveAlliance (true);
 		}
+		this.militaryManager.DestroyAllGenerals ();
         //PathfindingManager.Instance.RemoveTag(kingdomTag);
         KingdomManager.Instance.UnregisterKingdomFromActionDays(this);
         KingdomManager.Instance.RemoveEmblemAsUsed(_emblem);

@@ -44,8 +44,8 @@ public class ReinforceCity : GameEvent {
 		this.general.isReturning = true;
 		this.general.targetCity = targetCity;
 		this.general.targetLocation = targetCity.hexTile;
-		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
-		this.general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
+		this.general.citizenAvatar.SetHasArrivedState (false);
+		this.general.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 	}
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){

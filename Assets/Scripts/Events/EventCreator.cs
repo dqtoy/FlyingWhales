@@ -58,13 +58,13 @@ public class EventCreator: MonoBehaviour {
 			SendResource sendResource = new SendResource (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, caravan, foodAmount, materialAmount, oreAmount, resourceType, resource);
 			caravan.assignedRole.Initialize (sendResource);
 			if (path == null) {
-				caravan.assignedRole.avatar.GetComponent<CaravanAvatar> ().CreatePath (PATHFINDING_MODE.POINT_TO_POINT);
+				caravan.assignedRole.citizenAvatar.CreatePath (PATHFINDING_MODE.POINT_TO_POINT);
 			} else {
 				if(path.Count > 0){
 					caravan.assignedRole.path = path;
-					caravan.assignedRole.avatar.GetComponent<CaravanAvatar> ().StartMoving ();
+					caravan.assignedRole.citizenAvatar.StartMoving ();
 				}else{
-					caravan.assignedRole.avatar.GetComponent<CaravanAvatar> ().CancelEventInvolvedIn ();
+					caravan.assignedRole.citizenAvatar.CancelEventInvolvedIn ();
 				}
 			}
 
@@ -96,7 +96,7 @@ public class EventCreator: MonoBehaviour {
 			ReinforceCity reinforceCity = new ReinforceCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen);
 			general.Initialize (reinforceCity);
 			general.SetSoldiers (soldiers);
-			general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
+			general.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 			return reinforceCity;
 		}
 		return null;
@@ -110,7 +110,7 @@ public class EventCreator: MonoBehaviour {
 			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen, battle, targetCity);
 			general.Initialize (attackCity);
 			general.SetSoldiers (soldiers);
-			general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.MAJOR_ROADS);
+			general.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS);
 			return attackCity;
 		}
 		return null;
@@ -136,6 +136,17 @@ public class EventCreator: MonoBehaviour {
 		caravan.Initialize (caravaneer);
 		caravaneer.Initialize ();
 		return caravaneer;
+	}
+	internal Refuge CreateRefugeEvent(City city, int population) {
+		Citizen citizen = city.CreateNewAgent (ROLE.REFUGEE, null);
+		if(citizen != null){
+			Refugee refugee	= (Refugee)citizen.assignedRole;
+			Refuge refuge = new Refuge(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, refugee.citizen);
+			refugee.Initialize (refuge);
+			refuge.Initialize ();
+			return refuge;
+		}
+		return null;
 	}
     internal AllianceOfConquestOffer CreateAllianceOfConquestOfferEvent(Kingdom offeringKingdom, Kingdom offeredToKingdom, Kingdom conquestTarget) {
         AllianceOfConquestOffer aoc = new AllianceOfConquestOffer(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 

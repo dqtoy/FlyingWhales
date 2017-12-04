@@ -15,6 +15,7 @@ public class Role {
 	public City targetCity;
 
 	public GameObject avatar;
+	public CitizenAvatar citizenAvatar;
 	public int daysBeforeMoving;
 	public bool isDestroyed;
 	public bool hasAttacked;
@@ -44,6 +45,7 @@ public class Role {
 		this.targetCity = null;
 		this.path = new List<HexTile> ();
 		this.avatar = null;
+		this.citizenAvatar = null;
 		this.daysBeforeMoving = 0;
 		this.isDestroyed = false;
 		this.hasAttacked = false;
@@ -100,8 +102,8 @@ public class Role {
     }
 
 	internal virtual void Attack(){
-		if (this.avatar != null) {
-			this.avatar.GetComponent<CitizenAvatar> ().EndAttack ();
+		if (this.citizenAvatar != null) {
+			this.citizenAvatar.EndAttack ();
 //			if(this.avatar.GetComponent<CitizenAvatar>().animator.gameObject.activeSelf){
 //				if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.LEFT) {
 //					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Left");
@@ -149,10 +151,8 @@ public class Role {
     }
     
     internal void UpdateUI(){
-		if(this.avatar != null){
-			if(this is General){
-				this.avatar.GetComponent<GeneralAvatar>().UpdateUI();
-			}
+		if(this.citizenAvatar != null){
+			this.citizenAvatar.UpdateUI();
 		}
 	}
 }

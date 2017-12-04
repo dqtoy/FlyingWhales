@@ -49,14 +49,14 @@ public class General : Role {
 
 	internal void SetSoldiers(int amount){
 		this.soldiers = amount;
-		this.avatar.GetComponent<GeneralAvatar>().UpdateUI();
+		this.citizenAvatar.UpdateUI();
 	}
 	internal void AdjustSoldiers(int amount){
 		this.soldiers += amount;
 		if(this.soldiers < 0){
 			this.soldiers = 0;
 		}
-		this.avatar.GetComponent<GeneralAvatar>().UpdateUI();
+		this.citizenAvatar.UpdateUI();
 	}
 	internal void WillDropSoldiersAndDisappear(){
 		this.willDropSoldiersAndDisappear = true;
@@ -90,15 +90,15 @@ public class General : Role {
 			this.targetCity = generalTask.targetCity;
 			this.targetLocation = generalTask.targetCity.hexTile;
 			this.isIdle = true;
-			this.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
-			this.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS);
+			this.citizenAvatar.SetHasArrivedState (false);
+			this.citizenAvatar.CreatePath (PATHFINDING_MODE.USE_ROADS);
 			GetSoldiersFromCities ();
 		} else if (this.generalTask.task == GENERAL_TASKS.DEFEND_CITY) {
 			this.targetCity = generalTask.targetCity;
 			this.targetLocation = generalTask.targetCity.hexTile;
 			this.isIdle = true;
-			this.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
-			this.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM);
+			this.citizenAvatar.SetHasArrivedState (false);
+			this.citizenAvatar.CreatePath (PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM);
 			GetSoldiersFromCities ();
 		} else {
 			this.avatar.GetComponent<GeneralAvatar> ().ChangeAvatarImage (this.generalTask.task);

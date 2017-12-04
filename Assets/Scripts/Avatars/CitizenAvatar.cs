@@ -42,6 +42,7 @@ public class CitizenAvatar : PooledObject {
     #region virtuals
     internal virtual void Init(Role citizenRole) {
 		this.citizenRole = citizenRole;
+		this.citizenRole.citizenAvatar = this;
         this.citizenID = citizenRole.citizen.id;
         this.citizenName = citizenRole.citizen.name;
         this.roleType = citizenRole.ToString();
