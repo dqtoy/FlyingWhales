@@ -105,7 +105,7 @@ public class KingdomManager : MonoBehaviour {
 			RESOURCE chosenResource = initialResources [UnityEngine.Random.Range (0, initialResources.Count)];
 			regionForKingdom.SetSpecialResource (chosenResource);
 			regionForKingdom.ComputeNaturalResourceLevel();
-			bool hasBeenRemoved = GridMap.Instance.ReduceResourceCount (chosenResource);
+			bool hasBeenRemoved = ResourcesManager.Instance.ReduceResourceCount (chosenResource);
 			if(hasBeenRemoved){
 				initialResources.Remove (chosenResource);
 			}

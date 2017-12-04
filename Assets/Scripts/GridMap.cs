@@ -335,8 +335,8 @@ public class GridMap : MonoBehaviour {
             if (currRegion.tileWithSpecialResource != null && currRegion.tileWithSpecialResource.specialResource != RESOURCE.NONE) {
                 continue;
             }
-            RESOURCE resourceForRegion = resources.Keys.ElementAt(Random.Range(0, resources.Count));
-            ReduceResourceCount(resourceForRegion);
+            RESOURCE resourceForRegion = ResourcesManager.Instance.resourceCapDict.Keys.ElementAt(Random.Range(0, resources.Count));
+			ResourcesManager.Instance.ReduceResourceCount(resourceForRegion);
             currRegion.SetSpecialResource(resourceForRegion);
             currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
         }

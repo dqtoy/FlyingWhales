@@ -14,7 +14,7 @@ public class ExpansionAvatar : CitizenAvatar {
 	internal override void NewMove (){
 		if (this.citizenRole.targetLocation != null) {
 			if(this.citizenRole.targetLocation.isOccupied){
-				HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom);
+				HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom, false);
 				if(hexTileToExpandTo != null){
 					this.citizenRole.targetLocation = hexTileToExpandTo;
 					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
@@ -37,7 +37,7 @@ public class ExpansionAvatar : CitizenAvatar {
 	internal override void HasArrivedAtTargetLocation (){
 		if (this.citizenRole.location == this.citizenRole.targetLocation) {
 			if(this.citizenRole.targetLocation.isOccupied){
-				HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom);
+				HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom, false);
 				if(hexTileToExpandTo != null){
 					this.citizenRole.targetLocation = hexTileToExpandTo;
 					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;

@@ -19,7 +19,7 @@ public class Expansion : GameEvent {
 		this.originCity = startedBy.city;
 		this.hexTileToExpandTo = targetHextile;
 		this.hexTileToExpandTo.isTargeted = true;
-		this.carriedPopulation = 50;
+		this.carriedPopulation = EventManager.Instance.expansionEventCarriedPopulation;
 		this.originCity.AdjustPopulation (-this.carriedPopulation);
 
 		EventManager.Instance.AddEventToDictionary(this);
