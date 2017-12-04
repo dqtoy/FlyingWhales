@@ -184,6 +184,9 @@ public class Kingdom{
     internal int population {
         get { return _population + _soldiers; }
     }
+	internal int civilians{
+		get { return _population; }
+	}
     internal int populationCapacity {
 //		get { return this._populationCapacity; }
 		get { return this.cities.Sum(x => x.populationCapacity); }

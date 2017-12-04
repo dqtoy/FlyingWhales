@@ -1041,13 +1041,11 @@ public class Citizen {
 		kr.AddRelationshipModifier (-100, "Rebellion", RELATIONSHIP_MODIFIER.REBELLION, true, false);
 		rk.AddRelationshipModifier (-100, "Rebellion", RELATIONSHIP_MODIFIER.REBELLION, true, false);
 
-		if (kr.sharedRelationship.isAdjacent) {
-            Warfare warfare = new Warfare(newKingdom, sourceKingdom, false);
-			newKingdom.checkedWarfareID.Add (warfare.id);
-			sourceKingdom.checkedWarfareID.Add (warfare.id);
-            Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
-            Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
-        }
+		Warfare warfare = new Warfare(newKingdom, sourceKingdom, false);
+		newKingdom.checkedWarfareID.Add (warfare.id);
+		sourceKingdom.checkedWarfareID.Add (warfare.id);
+		Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
+		Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
     }
     #endregion
 

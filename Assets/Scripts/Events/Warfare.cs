@@ -64,8 +64,8 @@ public class Warfare {
 			firstKingdom.AdjustWarmongerValue (75);
 		}
 
-		JoinWar(WAR_SIDE.A, firstKingdom, false);
-		JoinWar(WAR_SIDE.B, secondKingdom, false);
+		JoinWar(WAR_SIDE.A, firstKingdom, true);
+		JoinWar(WAR_SIDE.B, secondKingdom, true);
 
 		DeclareWar (firstKingdom, secondKingdom);
 //		InstantDeclareWarIfNotAdjacent (firstKingdom, secondKingdom);
@@ -81,7 +81,7 @@ public class Warfare {
 		Utilities.lastWarfareID = this._id;
 	}
 
-	internal void JoinWar(WAR_SIDE side, Kingdom kingdom, bool isCreateBattle = true){
+	internal void JoinWar(WAR_SIDE side, Kingdom kingdom, bool isFirst = false){
 		if (!this._kingdomSideWeariness.ContainsKey(kingdom.id)) {
 			WAR_SIDE oppositeSide = WAR_SIDE.A;
 			if(side == WAR_SIDE.A){
@@ -89,13 +89,14 @@ public class Warfare {
 			}
 			this._kingdomSideWeariness.Add(kingdom.id, new SideWeariness(side, 0));
 			this._kingdomSideList [side].Add (kingdom);
-			for (int i = 0; i < this._kingdomSideList [oppositeSide].Count; i++) {
-				InstantDeclareWarIfNotAdjacent (kingdom, this._kingdomSideList [oppositeSide] [i]);
+
+			if(!isFirst){
+				for (int i = 0; i < this._kingdomSideList [oppositeSide].Count; i++) {
+					DeclareWar (kingdom, this._kingdomSideList [oppositeSide] [i]);
+				}
 			}
+
 			kingdom.AddWarfareInfo(new WarfareInfo(side, this));
-			if(isCreateBattle){
-				CreateNewBattle (kingdom, true);
-			}
 		}
 	}
 	internal void UnjoinWar(Kingdom kingdom){
@@ -527,17 +528,6 @@ public class Warfare {
 	private bool IsAdjacent(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom(kingdom2);
 		return kr.sharedRelationship.isAdjacent;
-	}
-
-	private void InstantDeclareWarIfNotAdjacent(Kingdom kingdom1, Kingdom kingdom2){
-		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom(kingdom2);
-		if(!kr.sharedRelationship.isAtWar && !kr.sharedRelationship.isAdjacent){
-			kr.ChangeWarStatus(true, this);
-			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
-			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-			ShowUINotification (newLog);
-		}
 	}
 	internal void CheckWarfare(){
 		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
