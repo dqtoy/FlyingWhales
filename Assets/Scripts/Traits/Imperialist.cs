@@ -4,32 +4,32 @@ using System.Collections.Generic;
 
 public class Imperialist : Trait {
 
-    internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        int weight = 0;
-        //loop through non-ally adjacent kingdoms i am not at war with
-		if (currRel.sharedRelationship.isAdjacent && !currRel.sharedRelationship.isAtWar && !currRel.AreAllies()) {
-            KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
-            //compare its theoretical power vs my theoretical power, if my theoretical power is higher
-            if (currRel._theoreticalPower > otherKingdomRelTowardsSource._theoreticalPower) {
-                weight = 50; //add 50 base weight
-                //5 weight per 1% of my theoretical power over his
-                float theoreticalPowerPercent = currRel.GetTheoreticalPowerAdvantageOverTarget();
-                if (theoreticalPowerPercent > 0) {
-                    weight += 5 * (int)theoreticalPowerPercent;
-                }
-                weight -= 30 * sourceKingdom.GetWarCount(); //subtract 30 weight per active wars I have
+  //  internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
+  //      Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+  //      KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+  //      int weight = 0;
+  //      //loop through non-ally adjacent kingdoms i am not at war with
+		//if (currRel.sharedRelationship.isAdjacent && !currRel.sharedRelationship.isAtWar && !currRel.AreAllies()) {
+  //          KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+  //          //compare its theoretical power vs my theoretical power, if my theoretical power is higher
+  //          if (currRel._theoreticalPower > otherKingdomRelTowardsSource._theoreticalPower) {
+  //              weight = 50; //add 50 base weight
+  //              //5 weight per 1% of my theoretical power over his
+  //              float theoreticalPowerPercent = currRel.GetTheoreticalPowerAdvantageOverTarget();
+  //              if (theoreticalPowerPercent > 0) {
+  //                  weight += 5 * (int)theoreticalPowerPercent;
+  //              }
+  //              weight -= 30 * sourceKingdom.GetWarCount(); //subtract 30 weight per active wars I have
 
-                if (currRel.totalLike != 0) {
-                    //subtract 2 per 1 positive opinion
-                    //add 2 per 1 negative opinion
-                    weight += (currRel.totalLike * 2) * -1;
-                }
-            }
-        }
-        return weight;
-    }
+  //              if (currRel.totalLike != 0) {
+  //                  //subtract 2 per 1 positive opinion
+  //                  //add 2 per 1 negative opinion
+  //                  weight += (currRel.totalLike * 2) * -1;
+  //              }
+  //          }
+  //      }
+  //      return weight;
+  //  }
     internal override int GetAllianceOfConquestWeightModification(Kingdom otherKingdom, Kingdom causingKindom) {
         //otherKingdom is possible ally
         int weight = 0;

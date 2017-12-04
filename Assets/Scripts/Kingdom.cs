@@ -33,11 +33,11 @@ public class Kingdom{
     internal BASE_RESOURCE_TYPE basicResource;
 
     //Trading
-    private List<Kingdom> _kingdomsInTradeDealWith;
+    [NonSerialized] private List<Kingdom> _kingdomsInTradeDealWith;
 
     //Weighted Actions
     private Dictionary<Kingdom, List<WEIGHTED_ACTION>> _recentlyRejectedOffers;
-    private List<Kingdom> _recentlyBrokenAlliancesWith;
+    [NonSerialized] private List<Kingdom> _recentlyBrokenAlliancesWith;
 
     //  private int _baseArmor;
     private int _baseWeapons;
@@ -3390,31 +3390,32 @@ public class Kingdom{
                 }
             } else if (GoalManager.specialActionTypes.Contains(actionToPerform)) {
                 int weightToNotPerformAction = 0;
-                if (actionToPerform == WEIGHTED_ACTION.DECLARE_PEACE) {
-                    Dictionary<Warfare, int> warWeights = GoalManager.Instance.GetWeightsForSpecialActionType(this, GetAllActiveWars(), actionToPerform, ref weightToNotPerformAction);
-                    ClearRejectedOffersList(); //Clear List Since weights are already computed
-                    if (Utilities.GetTotalOfWeights(warWeights) > 0) {
-                        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
-                        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
-                        actionWeights.Add(actionToPerform, warWeights.Sum(x => x.Value));
-                        string actionWeightsSummary = "Action Weights: ";
-                        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in actionWeights) {
-                            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-                        }
-                        Debug.Log(actionWeightsSummary);
+                //if (actionToPerform == WEIGHTED_ACTION.DECLARE_PEACE) {
+                //    Dictionary<Warfare, int> warWeights = GoalManager.Instance.GetWeightsForSpecialActionType(this, GetAllActiveWars(), actionToPerform, ref weightToNotPerformAction);
+                //    ClearRejectedOffersList(); //Clear List Since weights are already computed
+                //    if (Utilities.GetTotalOfWeights(warWeights) > 0) {
+                //        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
+                //        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
+                //        actionWeights.Add(actionToPerform, warWeights.Sum(x => x.Value));
+                //        string actionWeightsSummary = "Action Weights: ";
+                //        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in actionWeights) {
+                //            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+                //        }
+                //        Debug.Log(actionWeightsSummary);
 
-                        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
-                        Debug.Log(this.name + " chose to " + decision.ToString());
-                        if (decision == actionToPerform) {
-                            //this kingdom has decided to perform the action
-                            Warfare target = Utilities.PickRandomElementWithWeights(warWeights);
-                            Debug.Log(this.name + " targets " + target.name + " for " + actionToPerform.ToString());
-                            PerformAction(actionToPerform, target);
-                        }
-                    } else {
-                        Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
-                    }
-                } else if (actionToPerform == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
+                //        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                //        Debug.Log(this.name + " chose to " + decision.ToString());
+                //        if (decision == actionToPerform) {
+                //            //this kingdom has decided to perform the action
+                //            Warfare target = Utilities.PickRandomElementWithWeights(warWeights);
+                //            Debug.Log(this.name + " targets " + target.name + " for " + actionToPerform.ToString());
+                //            PerformAction(actionToPerform, target);
+                //        }
+                //    } else {
+                //        Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
+                //    }
+                //} else 
+                if (actionToPerform == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
                     List<AlliancePool> alliances = new List<AlliancePool>();
                     alliances.Add(alliancePool);
                     Dictionary<AlliancePool, int> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, alliances, actionToPerform, ref weightToNotPerformAction);
@@ -3480,9 +3481,9 @@ public class Kingdom{
     }
     private void PerformAction(WEIGHTED_ACTION weightedAction, object target, Kingdom cause = null) {
         switch (weightedAction) {
-            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                StartWarOfConquestTowards((Kingdom)target);
-                break;
+            //case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+            //    StartWarOfConquestTowards((Kingdom)target);
+            //    break;
             case WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST:
                 OfferAllianceOfConquestTo((Kingdom)target, cause);
                 break;
@@ -3504,9 +3505,9 @@ public class Kingdom{
             case WEIGHTED_ACTION.SEND_AID:
                 //TODO: Add Send Aid Trigger
                 break;
-            case WEIGHTED_ACTION.DECLARE_PEACE:
-                ((Warfare)target).PeaceDeclaration(this);
-                break;
+            //case WEIGHTED_ACTION.DECLARE_PEACE:
+            //    ((Warfare)target).PeaceDeclaration(this);
+            //    break;
             case WEIGHTED_ACTION.LEAVE_ALLIANCE:
                 LeaveAlliance();
                 break;

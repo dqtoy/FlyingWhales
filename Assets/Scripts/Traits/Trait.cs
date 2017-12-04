@@ -42,8 +42,8 @@ public class Trait{
     #region Weighted Actions
     internal int GetWeightOfActionGivenTarget(WEIGHTED_ACTION weightedAction, object target, int currentWeight) {
         switch (weightedAction) {
-            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                return GetWarOfConquestWeightModification((Kingdom)target);
+            //case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+            //    return GetWarOfConquestWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
                 return GetAllianceOfProtectionWeightModification((Kingdom)target);
             case WEIGHTED_ACTION.TRADE_DEAL:
@@ -79,9 +79,9 @@ public class Trait{
         }
     }
 
-    internal virtual int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
-        return 0;
-    }
+    //internal virtual int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
+    //    return 0;
+    //}
     internal virtual int GetAllianceOfConquestWeightModification(Kingdom otherKingdom, Kingdom causingKindom) {
         return 0;
     }

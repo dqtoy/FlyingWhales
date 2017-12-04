@@ -4,29 +4,29 @@ using System.Collections.Generic;
 
 public class Deceitful : Trait {
 
-    internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        int weight = 0;
-        //loop through adjacent allies
-        if (!currRel.sharedRelationship.isAtWar && currRel.AreAllies()) {
-            if (otherKingdom.GetWarCount() > 0) {//if any of them is at war with another kingdom
-                //compare its theoretical power vs my theoretical power, if my theoretical power is higher
-                KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
-                if (currRel._theoreticalPower > otherKingdomRelTowardsSource._theoreticalPower) {
-                    weight = 50; //add 50 base weight
-                    //5 weight per 1% of my theoretical power over his
-                    float theoreticalPowerPercent = currRel.GetTheoreticalPowerAdvantageOverTarget();
-                    if (theoreticalPowerPercent > 0) {
-                        weight += 5 * (int)theoreticalPowerPercent;
-                    }
-                    weight -= 30 * sourceKingdom.GetWarCount();
-                    weight = Mathf.Max(0, weight);
-                }
-            }
-        }
-        return weight;
-    }
+    //internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
+    //    Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+    //    KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+    //    int weight = 0;
+    //    //loop through adjacent allies
+    //    if (!currRel.sharedRelationship.isAtWar && currRel.AreAllies()) {
+    //        if (otherKingdom.GetWarCount() > 0) {//if any of them is at war with another kingdom
+    //            //compare its theoretical power vs my theoretical power, if my theoretical power is higher
+    //            KingdomRelationship otherKingdomRelTowardsSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+    //            if (currRel._theoreticalPower > otherKingdomRelTowardsSource._theoreticalPower) {
+    //                weight = 50; //add 50 base weight
+    //                //5 weight per 1% of my theoretical power over his
+    //                float theoreticalPowerPercent = currRel.GetTheoreticalPowerAdvantageOverTarget();
+    //                if (theoreticalPowerPercent > 0) {
+    //                    weight += 5 * (int)theoreticalPowerPercent;
+    //                }
+    //                weight -= 30 * sourceKingdom.GetWarCount();
+    //                weight = Mathf.Max(0, weight);
+    //            }
+    //        }
+    //    }
+    //    return weight;
+    //}
     internal override int GetAllianceOfProtectionWeightModification(Kingdom otherKingdom) {
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
         int weight = 0;
