@@ -13,13 +13,15 @@ public class Refuge : GameEvent {
 	public Refugee refugee;
 	public Kingdom refugeeKingdom;
 	public HexTile previousLocation;
+	public City startingCity;
 
-	public Refuge(int startDay, int startMonth, int startYear, Citizen startedBy) : base (startDay, startMonth, startYear, startedBy){
+	public Refuge(int startDay, int startMonth, int startYear, Citizen startedBy, City startingCity) : base (startDay, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.REFUGE;
 		this.name = "Refuge";
 		this.refugee = (Refugee)startedBy.assignedRole;
 		this.refugeeKingdom = startedBy.city.kingdom;
-		this.previousLocation = null;
+		this.previousLocation = startedBy.assignedRole.location;
+		this.startingCity = startingCity;
 
 		GameDate newDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		newDate.AddDays (3);
@@ -32,7 +34,7 @@ public class Refuge : GameEvent {
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
 		if(this.refugee.citizen.id == citizen.id){
-			if(this.refugee.location.city == null){
+			if(this.refugee.location.city == null || (this.refugee.location.city != null && this.refugee.location.city.id == this.startingCity.id)){
 				FindNewPath ();
 			}else{
 				GovernorDecision ();

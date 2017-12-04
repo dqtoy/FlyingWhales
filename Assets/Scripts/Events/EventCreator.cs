@@ -141,8 +141,9 @@ public class EventCreator: MonoBehaviour {
 		Citizen citizen = city.CreateNewAgent (ROLE.REFUGEE, null);
 		if(citizen != null){
 			Refugee refugee	= (Refugee)citizen.assignedRole;
-			Refuge refuge = new Refuge(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, refugee.citizen);
+			Refuge refuge = new Refuge(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, refugee.citizen, city);
 			refugee.Initialize (refuge);
+			refugee.SetPopulation (population);
 			refuge.Initialize ();
 			return refuge;
 		}
