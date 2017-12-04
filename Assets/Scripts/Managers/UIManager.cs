@@ -346,7 +346,7 @@ public class UIManager : MonoBehaviour {
 
 	internal List<object> eventLogsQueue = new List<object> ();
 
-	private string warAllianceState = string.Empty;
+	internal string warAllianceState = string.Empty;
 
     private List<NotificationItem> notificationItemsThatCanBeReused;
     private List<Log> logHistory;
@@ -2090,6 +2090,15 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n- [url=" + kingdom.id.ToString() + "_kingdom" + "]" + kingdom.name + "[/url]";
 					}
 				}
+                if(KingdomManager.Instance.allTradeDeals.Count > 0) {
+                    this.allianceSummaryLbl.text += "\n Trade Deals: ";
+                    for (int i = 0; i < KingdomManager.Instance.allTradeDeals.Count; i++) {
+                        TradeDeal currDeal = KingdomManager.Instance.allTradeDeals[i];
+                        this.allianceSummaryLbl.text += "\n- [url=" + currDeal.kingdom1.id.ToString() + "_kingdom" + "]" + currDeal.kingdom1.name + "[/url]" +
+                            " -> " + "[url = " + currDeal.kingdom2.id.ToString() + "_kingdom" + "]" + currDeal.kingdom2.name + "[/ url]";
+                    }
+                }
+                
 			} else if (warAllianceState == "warfare") {
 				for (int i = 0; i < KingdomManager.Instance.kingdomWars.Count; i++) {
 					Warfare warfare = KingdomManager.Instance.kingdomWars [i];

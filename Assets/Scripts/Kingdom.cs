@@ -3512,7 +3512,7 @@ public class Kingdom{
                 LeaveAlliance();
                 break;
             case WEIGHTED_ACTION.LEAVE_TRADE_DEAL:
-                LeaveTradeDealWith((Kingdom)target);
+                KingdomManager.Instance.RemoveTradeDeal(this, (Kingdom)target);
                 break;
             default:
                 break;
