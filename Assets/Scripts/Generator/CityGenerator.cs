@@ -226,10 +226,25 @@ public class CityGenerator : MonoBehaviour {
 		return null;
 	}
 
-    public HexTile GetExpandableTileForKingdom(Kingdom kingdom) {
+	public HexTile GetExpandableTileForKingdom(Kingdom kingdom, bool isPopulationFactorApplies = true) {
         List<Region> unoccupiedAdjacentRegions = new List<Region>();
-        for (int i = 0; i < kingdom.cities.Count; i++) {
-			if(kingdom.cities[i].population	> 50){
+		if(isPopulationFactorApplies){
+			for (int i = 0; i < kingdom.cities.Count; i++) {
+				if(kingdom.cities[i].population	> EventManager.Instance.expansionEventCarriedPopulation){
+					Region currRegion = kingdom.cities[i].region;
+					for (int j = 0; j < currRegion.connections.Count; j++) {
+						if(currRegion.connections[j] is Region){
+							Region adjacentRegion = (Region)currRegion.connections[j];
+							if(adjacentRegion.occupant == null) {
+								unoccupiedAdjacentRegions.Add(adjacentRegion);
+							}
+						}
+
+					}
+				}
+			}
+		}else{
+			for (int i = 0; i < kingdom.cities.Count; i++) {
 				Region currRegion = kingdom.cities[i].region;
 				for (int j = 0; j < currRegion.connections.Count; j++) {
 					if(currRegion.connections[j] is Region){
@@ -241,7 +256,8 @@ public class CityGenerator : MonoBehaviour {
 
 				}
 			}
-        }
+		}
+
         if(unoccupiedAdjacentRegions.Count > 0) {
 			int highestResourceLevel = unoccupiedAdjacentRegions.Max(x => x.naturalResourceLevel[kingdom.race]);
 			Region chosenRegion = unoccupiedAdjacentRegions.FirstOrDefault(x => x.naturalResourceLevel[kingdom.race] == highestResourceLevel);

@@ -144,6 +144,7 @@ public class Refuge : GameEvent {
 	private void GovernorDecisionResult(GOVERNOR_DECISION decision, Citizen governor){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Refuge", decision.ToString().ToLower());
 		newLog.AddToFillers (governor, governor.name, LOG_IDENTIFIER.GOVERNOR_1);
+		newLog.AddToFillers (governor.city, governor.city.name, LOG_IDENTIFIER.CITY_1);
 		UIManager.Instance.ShowNotification (newLog);
 
 		if(decision == GOVERNOR_DECISION.ACCEPT){

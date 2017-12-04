@@ -29,10 +29,11 @@ public class ResourcesManager : MonoBehaviour {
 	/// return FALSE if resource count reached limit
 	/// </summary>
 	internal bool ReduceResourceCount(RESOURCE resource){
-		if(this.resourceCapDict[resource] > 0){
-			this.resourceCapDict [resource]--;
+		this.resourceCapDict[resource] -= 1;
+		if (this.resourceCapDict[resource] <= 0) {
+			this.resourceCapDict.Remove(resource);
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}

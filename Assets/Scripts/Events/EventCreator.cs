@@ -34,7 +34,7 @@ public class EventCreator: MonoBehaviour {
 			if(regionToExpandTo.connections[i] is Region){
 				Region currAdjacentRegion = (Region)regionToExpandTo.connections[i];
 				float distance = hexTileToExpandTo.GetDistanceTo(currAdjacentRegion.centerOfMass);
-				if(currAdjacentRegion.occupant != null && currAdjacentRegion.occupant.kingdom == kingdom && distance < nearestDistance && currAdjacentRegion.occupant.population > 50) {
+				if(currAdjacentRegion.occupant != null && currAdjacentRegion.occupant.kingdom == kingdom && distance < nearestDistance && currAdjacentRegion.occupant.population > EventManager.Instance.expansionEventCarriedPopulation) {
 					origin = currAdjacentRegion.occupant.hexTile;
 					nearestDistance = distance;
 				}

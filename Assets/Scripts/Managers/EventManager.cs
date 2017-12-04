@@ -106,6 +106,8 @@ public class EventManager : MonoBehaviour {
         {EVENT_TYPES.MILITARY_ALLIANCE_OFFER, -1},
     };
 
+	public int expansionEventCarriedPopulation;
+
 	void Awake(){
 		Instance = this;
 		this.Init();
