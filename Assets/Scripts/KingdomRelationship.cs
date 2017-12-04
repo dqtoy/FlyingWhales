@@ -821,6 +821,12 @@ public class KingdomRelationship {
 		}
 		return true;
 	}
+	internal bool AreTradePartners(){
+		if(this._sourceKingdom.kingdomsInTradeDealWith.Contains(this._targetKingdom) && this._targetKingdom.kingdomsInTradeDealWith.Contains(this._sourceKingdom)){
+			return true;
+		}
+		return false;
+	}
 	private int GetKingdomThreatOpinionChangeBasedOnTrait(TRAIT trait, out string summary){
 		//Kingdom Threat
 		summary = string.Empty;
@@ -913,4 +919,5 @@ public class KingdomRelationship {
         KingdomRelationship otherRelationship = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
         return Mathf.Max(0, (otherRelationship._theoreticalPower / this._theoreticalPower) - 100f);
     }
+
 }

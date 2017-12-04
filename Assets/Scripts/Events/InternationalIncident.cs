@@ -100,6 +100,13 @@ public class InternationalIncident : GameEvent {
         newLog.AddToFillers(null, this.incidentName, LOG_IDENTIFIER.OTHER);
         UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
     }
+	internal void ShowRandomLog() {
+		Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_random");
+		newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers(null, this.incidentName, LOG_IDENTIFIER.OTHER);
+		UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
+	}
 
     private void StartIncident(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start");
@@ -197,6 +204,27 @@ public class InternationalIncident : GameEvent {
 			if(kr.totalLike > 0){
 				totalWeight += kr.totalLike * 5;
 			}
+			if(kr.AreAllies()){
+				totalWeight += 50;
+				if (kingdom.king.otherTraits.Contains (TRAIT.DECEITFUL)) {
+					totalWeight -= 50;
+				}
+			}else{
+				KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+				if(kr._theoreticalPower < rk._theoreticalPower){
+					if(kingdom.king.otherTraits.Contains(TRAIT.OPPORTUNIST)){
+						totalWeight += (5 * kr.relativeStrength);
+					}
+					if(kingdom.king.otherTraits.Contains(TRAIT.IMPERIALIST)){
+						totalWeight += (10 * kr.relativeStrength);
+					}
+				}
+			}
+			if(kr.AreTradePartners()){
+				totalWeight += 25;
+			}
+			totalWeight += (30 * kingdom.warfareInfo.Count);
+
 		}else if(incidentAction == INCIDENT_ACTIONS.INCREASE_TENSION){
 			if(kingdom.king.otherTraits.Contains(TRAIT.HOSTILE)){
 				totalWeight += 20;
@@ -210,6 +238,24 @@ public class InternationalIncident : GameEvent {
 			if(kingdom.stability < -80){
 				int stabilityModifier = (kingdom.stability + 80) * -1;
 				totalWeight += stabilityModifier * 10;
+			}
+			if(kr.AreAllies()){
+				if (kingdom.king.otherTraits.Contains (TRAIT.DECEITFUL)) {
+					KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+					if(kr._theoreticalPower > rk._theoreticalPower && kr.targetKingdom.HasWar(kr.sourceKingdom)){
+						totalWeight += (20 * rk.relativeStrength);
+					}
+				}
+			}else{
+				KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+				if(kr._theoreticalPower > rk._theoreticalPower){
+					if(kingdom.king.otherTraits.Contains(TRAIT.OPPORTUNIST) && kr.targetKingdom.HasWar(kr.sourceKingdom)){
+						totalWeight += (20 * rk.relativeStrength);
+					}
+					if(kingdom.king.otherTraits.Contains(TRAIT.IMPERIALIST)){
+						totalWeight += (10 * rk.relativeStrength);
+					}
+				}
 			}
 		}
 
@@ -233,7 +279,7 @@ public class InternationalIncident : GameEvent {
 	private void DoPickedAction(INCIDENT_ACTIONS incidentAction, Kingdom chosenKingdom){
 		if(incidentAction == INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
 			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 20){
+			if(chance < 30){
 				//Success Resolve Peacefully
 				ResolvePeacefully();
 			}else{

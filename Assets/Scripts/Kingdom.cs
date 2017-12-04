@@ -956,7 +956,7 @@ public class Kingdom{
 		KingdomRelationship newRel2 = new KingdomRelationship(createdKingdom, this);
 		createdKingdom.relationships.Add(this, newRel2);
 
-		SharedKingdomRelationship sharedRelationship = new SharedKingdomRelationship ();
+		SharedKingdomRelationship sharedRelationship = new SharedKingdomRelationship (newRel1, newRel2);
 		newRel1.sharedRelationship = sharedRelationship;
 		newRel2.sharedRelationship = sharedRelationship;
 
@@ -1991,17 +1991,7 @@ public class Kingdom{
 
 
 	internal bool HasWar(Kingdom exceptionKingdom = null){
-//		for(int i = 0; i < relationships.Count; i++){
-//			if(relationships.ElementAt(i).Value.isAtWar){
-//				return true;
-//			}
-//		}
 		if(exceptionKingdom == null){
-//			foreach (KingdomRelationship relationship in relationships.Values) {
-//				if (relationship.isAtWar) {
-//					return true;
-//				}
-//			}
 			if(this._warfareInfo.Count > 0){
 				return true;
 			}
@@ -3204,7 +3194,7 @@ public class Kingdom{
 			string plagueName = SpreadPlague ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, 0, plagueName);
         } else if (subterfuge == SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT) {
-            StartInternationalIncident(targetKingdom, "critical_fail");
+            StartInternationalIncident(targetKingdom, "caught");
         }
     }
 	private void CreateFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
@@ -3770,25 +3760,43 @@ public class Kingdom{
     private void OfferTradeDealTo(Kingdom targetKingdom) {
         EventCreator.Instance.CreateTradeDealOfferEvent(this, targetKingdom);
     }
-    private void StartInternationalIncident(Kingdom targetKingdom, string status) {
-        Dictionary<Kingdom, int> targetWeights = GetInternationalIncidentKingdomWeights(targetKingdom);
-        if (Utilities.GetTotalOfWeights(targetWeights) > 0) {
-            Kingdom chosenKingdom = Utilities.PickRandomElementWithWeights(targetWeights);
-            if (status.Equals("success")) {
-                InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, chosenKingdom, false, true);
-                ii.ShowSuccessLog();
-            } else if (status.Equals("fail")) {
-                ShowInternationalIncidentFailLog(targetKingdom, chosenKingdom);
-            } else if (status.Equals("critical_fail")) {
-                InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, false);
-                ii.ShowCriticalFailLog(chosenKingdom);
-            } else if (status.Equals("caught")) {
-                InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, true);
-                ii.ShowCaughtLog();
-            }
-        } else {
-            Debug.Log(this.name + " tried to start an INTERNATIONAL_INCIDENT but, it could not find a target for " + targetKingdom.name);
-        }
+    internal void StartInternationalIncident(Kingdom targetKingdom, string status) {
+		if (status.Equals("caught")) {
+			InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, true);
+			ii.ShowCaughtLog();
+		} else if (status.Equals("random")) {
+			bool isSourceKingdomAggrieved = false;
+			bool isTargetKingdomAggrieved = false;
+			int chance = UnityEngine.Random.Range (0, 3);
+			if(chance == 0){
+				isSourceKingdomAggrieved = true;
+			}else if(chance == 1){
+				isTargetKingdomAggrieved = true;
+			}else{
+				isSourceKingdomAggrieved = true;
+				isTargetKingdomAggrieved = true;
+			}
+			InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, isSourceKingdomAggrieved, isTargetKingdomAggrieved);
+			ii.ShowRandomLog();
+		} else {
+			Dictionary<Kingdom, int> targetWeights = GetInternationalIncidentKingdomWeights(targetKingdom);
+			if (Utilities.GetTotalOfWeights(targetWeights) > 0) {
+				Kingdom chosenKingdom = Utilities.PickRandomElementWithWeights(targetWeights);
+				if (status.Equals("success")) {
+					InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, chosenKingdom, false, true);
+					ii.ShowSuccessLog();
+				} else if (status.Equals("fail")) {
+					ShowInternationalIncidentFailLog(targetKingdom, chosenKingdom);
+				}
+	//			else if (status.Equals("critical_fail")) {
+	//				InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, false);
+	//				ii.ShowCriticalFailLog(chosenKingdom);
+	//			}
+			} else {
+				Debug.Log(this.name + " tried to start an INTERNATIONAL_INCIDENT but, it could not find a target for " + targetKingdom.name);
+			}
+		}
+       
     }
     private Dictionary<Kingdom, int> GetInternationalIncidentKingdomWeights(Kingdom targetKingdom) {
         //Loop through kingdoms adjacent to the target
