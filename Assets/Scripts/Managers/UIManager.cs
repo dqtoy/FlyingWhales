@@ -632,6 +632,22 @@ public class UIManager : MonoBehaviour {
         "\n [b]Draft Rate: [/b]" + (kingdom.draftRate * 100f).ToString() + "%" +
         "\n [b]Research Rate: [/b]" + (kingdom.researchRate * 100f).ToString() + "%" +
         "\n [b]Production Rate: [/b]" + (kingdom.productionRate * 100f).ToString() + "%";
+		text += "\n[b]Trade Deals: [/b]\n";
+		if (kingdom.kingdomsInTradeDealWith.Count > 0) {
+			for (int i = 0; i < kingdom.kingdomsInTradeDealWith.Count; i++) {
+				text += kingdom.kingdomsInTradeDealWith[i].name + "\n";
+			}
+		} else {
+			text += "NONE\n";
+		}
+		text += "[b]Adjacent Kingdoms: [/b]\n";
+		if (kingdom.adjacentKingdoms.Count > 0) {
+			for (int i = 0; i < kingdom.adjacentKingdoms.Count; i++) {
+				text += kingdom.adjacentKingdoms[i].name + "\n";
+			}
+		} else {
+			text += "NONE\n";
+		}
         kingdomInfoPreviewLbl.text = text;
 
         var v3 = Input.mousePosition;
@@ -2148,7 +2164,7 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n";
 					}
 					this.allianceSummaryLbl.text += internationalIncident.incidentName;
-					this.allianceSummaryLbl.text += "\n-" + internationalIncident.sourceKingdom.name;
+					this.allianceSummaryLbl.text += "\n-" + "[url=" + internationalIncident.sourceKingdom.id.ToString() + "_kingdom" + "]" + internationalIncident.sourceKingdom.name + "[/url]";
 					if(internationalIncident.isSourceKingdomAggrieved){
 						this.allianceSummaryLbl.text += " (Aggrieved)";
 					}
