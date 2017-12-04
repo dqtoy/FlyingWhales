@@ -86,19 +86,20 @@ public class General : Role {
 	}
 	internal void AssignTask(GeneralTask generalTask){
 		this.generalTask = generalTask;
+		this.generalTask.AssignMoveDate ();
 		if (this.generalTask.task == GENERAL_TASKS.ATTACK_CITY) {
 			this.targetCity = generalTask.targetCity;
 			this.targetLocation = generalTask.targetCity.hexTile;
 			this.isIdle = true;
 			this.citizenAvatar.SetHasArrivedState (false);
-			this.citizenAvatar.CreatePath (PATHFINDING_MODE.USE_ROADS);
+			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS);
 			GetSoldiersFromCities ();
 		} else if (this.generalTask.task == GENERAL_TASKS.DEFEND_CITY) {
 			this.targetCity = generalTask.targetCity;
 			this.targetLocation = generalTask.targetCity.hexTile;
 			this.isIdle = true;
 			this.citizenAvatar.SetHasArrivedState (false);
-			this.citizenAvatar.CreatePath (PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM);
+			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 			GetSoldiersFromCities ();
 		} else {
 			this.avatar.GetComponent<GeneralAvatar> ().ChangeAvatarImage (this.generalTask.task);

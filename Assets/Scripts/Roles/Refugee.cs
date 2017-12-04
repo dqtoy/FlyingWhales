@@ -28,6 +28,10 @@ public class Refugee : Role {
 			DeathOfRefugees ();
 		}
 	}
+	internal void SetPopulation (int amount){
+		this._population = amount;
+		UpdateUI ();
+	}
 	internal void DeathOfRefugees(){
 		this._population = 0;
 		this.gameEventInvolvedIn.DoneEvent ();

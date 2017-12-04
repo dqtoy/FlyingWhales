@@ -11,7 +11,7 @@ public class AttackCityTask : GeneralTask {
 //		this.general.targetLocation = targetCity.hexTile;
 //		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
 //		this.general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS_WITH_ALLIES);
-		AssignMoveDate ();
+//		AssignMoveDate ();
 	}
 
 	internal override void AssignMoveDate(){
