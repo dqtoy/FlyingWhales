@@ -279,7 +279,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         shrineGO.transform.localPosition = Vector3.zero;
         shrineGO.transform.localScale = Vector3.one;
         _landmark = new ShrineLandmark(this);
+        _landmark.SetLandmarkObject(shrineGO);
         _region.AddLandmarkToRegion(_landmark);
+        HideLandmarkObject();
     }
     internal void CreateHabitat() {
         this.hasLandmark = true;
@@ -287,7 +289,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         habitatGO.transform.localPosition = Vector3.zero;
         habitatGO.transform.localScale = Vector3.one;
         _landmark = new HabitatLandmark(this);
+        _landmark.SetLandmarkObject(habitatGO);
         _region.AddLandmarkToRegion(_landmark);
+        HideLandmarkObject();
     }
     internal void CreateUniqueLandmark() {
         this.hasLandmark = true;
@@ -295,7 +299,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         uniqueLandmarkGO.transform.localPosition = Vector3.zero;
         uniqueLandmarkGO.transform.localScale = Vector3.one;
         _landmark = new UniqueLandmark(this);
+        _landmark.SetLandmarkObject(uniqueLandmarkGO);
         _region.AddLandmarkToRegion(_landmark);
+        HideLandmarkObject();
+    }
+    internal void HideLandmarkObject() {
+        if(_landmark != null && GameManager.Instance.hideLandmarks) {
+            _landmark.landmarkObject.SetActive(false);
+        }
+    }
+    internal void ShowLandmarkObject() {
+        if (_landmark != null && GameManager.Instance.hideLandmarks) {
+            _landmark.landmarkObject.SetActive(true);
+        }
     }
     #endregion
 

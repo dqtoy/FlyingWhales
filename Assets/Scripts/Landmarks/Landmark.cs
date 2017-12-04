@@ -6,6 +6,7 @@ public class Landmark {
     protected HexTile _location;
     protected LANDMARK_TYPE _landmarkType;
     protected List<object> _connections;
+    protected GameObject _landmarkObject;
 
     #region getters/setters
     internal HexTile location {
@@ -16,6 +17,9 @@ public class Landmark {
     }
     internal List<object> connections {
         get { return _connections; }
+    }
+    internal GameObject landmarkObject {
+        get { return _landmarkObject; }
     }
     #endregion
 
@@ -29,5 +33,9 @@ public class Landmark {
         if (!_connections.Contains(connection)) {
             _connections.Add(connection);
         }
+    }
+
+    internal void SetLandmarkObject(GameObject landmarkObject) {
+        _landmarkObject = landmarkObject;
     }
 }
