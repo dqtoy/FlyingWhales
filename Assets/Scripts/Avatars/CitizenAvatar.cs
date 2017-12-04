@@ -115,11 +115,11 @@ public class CitizenAvatar : PooledObject {
 			this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
 		}
 
-        //this.CheckForKingdomDiscovery();
-//        this.UpdateFogOfWar();
-//        this.transform.SetParent(this.citizenRole.location.transform);
-//        this.transform.localPosition = Vector3.zero;
-        if(this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+        this.CheckForKingdomDiscovery();
+        //        this.UpdateFogOfWar();
+        //        this.transform.SetParent(this.citizenRole.location.transform);
+        //        this.transform.localPosition = Vector3.zero;
+        if (this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
             if (!currAvatarState) {
                 SetAvatarState(true);
             }
@@ -225,7 +225,7 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
-            if (currTile.isOccupied && currTile.ownedByCity != null &&
+            if (currTile.ownedByCity != null &&
                 currTile.ownedByCity.kingdom.id != thisKingdom.id) {
                 City otherCity = currTile.ownedByCity;
                 if (!citiesSeen.Contains(otherCity)) {
@@ -235,40 +235,41 @@ public class CitizenAvatar : PooledObject {
                 if (otherKingdom.id != thisKingdom.id && !thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
                     KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
                 }
-            } else if (currTile.isBorder) {
-                for (int j = 0; j < currTile.isBorderOfCities.Count; j++) {
-                    City otherCity = currTile.isBorderOfCities[j];
-                    Kingdom otherKingdom = otherCity.kingdom;
-                    if (otherKingdom.id != thisKingdom.id) {
-                        if (!citiesSeen.Contains(otherCity)) {
-                            citiesSeen.Add(otherCity);
-                        }
-                        if (!thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
-                            KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
-                        }
-                    }
-                }
-            }
+            } 
+            //else if (currTile.isBorder) {
+            //    for (int j = 0; j < currTile.isBorderOfCities.Count; j++) {
+            //        City otherCity = currTile.isBorderOfCities[j];
+            //        Kingdom otherKingdom = otherCity.kingdom;
+            //        if (otherKingdom.id != thisKingdom.id) {
+            //            if (!citiesSeen.Contains(otherCity)) {
+            //                citiesSeen.Add(otherCity);
+            //            }
+            //            if (!thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
+            //                KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
+            //            }
+            //        }
+            //    }
+            //}
         }
 
-        for (int i = 0; i < citiesSeen.Count; i++) {
-            City currCity = citiesSeen[i];
-            //thisKingdom.DiscoverCity(currCity);
-            //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
-//            List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
-//            for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
-//                HexTile currTile = tilesToSetAsSeen[j];
-//                if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
-//                    thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-//                }
-//            }
-			foreach (var tileToSetAsSeen in currCity.ownedTiles.Union(currCity.borderTiles)) {
-				HexTile currTile = tileToSetAsSeen;
-				if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
-					thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-				}
-			}
-        }
+//        for (int i = 0; i < citiesSeen.Count; i++) {
+//            City currCity = citiesSeen[i];
+//            //thisKingdom.DiscoverCity(currCity);
+//            //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
+////            List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
+////            for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
+////                HexTile currTile = tilesToSetAsSeen[j];
+////                if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
+////                    thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+////                }
+////            }
+//			foreach (var tileToSetAsSeen in currCity.ownedTiles.Union(currCity.borderTiles)) {
+//				HexTile currTile = tileToSetAsSeen;
+//				if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
+//					thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+//				}
+//			}
+//        }
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {

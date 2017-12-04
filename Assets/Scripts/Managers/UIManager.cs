@@ -2095,7 +2095,7 @@ public class UIManager : MonoBehaviour {
                     for (int i = 0; i < KingdomManager.Instance.allTradeDeals.Count; i++) {
                         TradeDeal currDeal = KingdomManager.Instance.allTradeDeals[i];
                         this.allianceSummaryLbl.text += "\n- [url=" + currDeal.kingdom1.id.ToString() + "_kingdom" + "]" + currDeal.kingdom1.name + "[/url]" +
-                            " -> " + "[url = " + currDeal.kingdom2.id.ToString() + "_kingdom" + "]" + currDeal.kingdom2.name + "[/ url]";
+                            " -> " + "[url= " + currDeal.kingdom2.id.ToString() + "_kingdom" + "]" + currDeal.kingdom2.name + "[/ url]";
                     }
                 }
                 
