@@ -15,7 +15,8 @@ public class GoalManager : MonoBehaviour {
     };
 
     public static HashSet<WEIGHTED_ACTION> specialActionTypes = new HashSet<WEIGHTED_ACTION>() {
-        WEIGHTED_ACTION.DECLARE_PEACE, WEIGHTED_ACTION.LEAVE_ALLIANCE, WEIGHTED_ACTION.LEAVE_TRADE_DEAL
+        //WEIGHTED_ACTION.DECLARE_PEACE,
+        WEIGHTED_ACTION.LEAVE_ALLIANCE, WEIGHTED_ACTION.LEAVE_TRADE_DEAL
     };
 
     private void Awake() {
@@ -35,12 +36,12 @@ public class GoalManager : MonoBehaviour {
         Debug.Log("========== " + GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - " + sourceKingdom.name + " is trying to decide what to do... ==========");
         Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
         totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 150); //Add 150 Base Weight on Do Nothing Action
-        if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.DECLARE_PEACE)) {
-            totalWeightedActions.Add(WEIGHTED_ACTION.DECLARE_PEACE, sourceKingdom.GetWarCount() * 5); //If at war, Add 5 weight to declare peace for each active war
-        }
-        if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_ALLIANCE)) {
-            totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_ALLIANCE, 5); //If at war and in an alliance, Add 5 weight to leave alliance
-        }
+        //if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.DECLARE_PEACE)) {
+        //    totalWeightedActions.Add(WEIGHTED_ACTION.DECLARE_PEACE, sourceKingdom.GetWarCount() * 5); //If at war, Add 5 weight to declare peace for each active war
+        //}
+        //if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_ALLIANCE)) {
+        //    totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_ALLIANCE, 5); //If at war and in an alliance, Add 5 weight to leave alliance
+        //}
         if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_TRADE_DEAL)) {
             //If in a trade deal, add 5 weight to leave trade deal for each active trade deal
             totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_TRADE_DEAL, 5 * sourceKingdom.kingdomsInTradeDealWith.Count); 
@@ -224,9 +225,9 @@ public class GoalManager : MonoBehaviour {
     #region All Modifications
     private void ApplyActionModificationForAll(WEIGHTED_ACTION weightedAction, object source, object target, ref int defaultWeight) {
         switch (weightedAction) {
-            case WEIGHTED_ACTION.WAR_OF_CONQUEST:
-                GetAllModificationForWarOfConquest((Kingdom)source, (Kingdom)target, ref defaultWeight);
-                break;
+            //case WEIGHTED_ACTION.WAR_OF_CONQUEST:
+            //    GetAllModificationForWarOfConquest((Kingdom)source, (Kingdom)target, ref defaultWeight);
+            //    break;
             case WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION:
                 GetAllModificationForAllianceOfProtection((Kingdom)source, (Kingdom)target, ref defaultWeight);
                 break;
@@ -244,33 +245,33 @@ public class GoalManager : MonoBehaviour {
                 break;
         }
     }
-    private void GetAllModificationForWarOfConquest(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
-        KingdomRelationship relWithTargetKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
-        List<Kingdom> alliesAtWarWith = relWithTargetKingdom.GetAlliesTargetKingdomIsAtWarWith();
-        //for each non-ally adjacent kingdoms that one of my allies declared war with recently
-        if (relWithTargetKingdom.sharedRelationship.isAdjacent && !relWithTargetKingdom.AreAllies() && alliesAtWarWith.Count > 0) {
-            //compare its theoretical power vs my theoretical power
-            int sourceKingdomPower = relWithTargetKingdom._theoreticalPower;
-            int otherKingdomPower = targetKingdom.GetRelationshipWithKingdom(sourceKingdom)._theoreticalPower;
-            if (otherKingdomPower * 1.25f < sourceKingdomPower) {
-                //If his theoretical power is not higher than 25% over mine
-                defaultWeight = 20;
-                for (int j = 0; j < alliesAtWarWith.Count; j++) {
-                    Kingdom currAlly = alliesAtWarWith[j];
-                    KingdomRelationship relationshipWithAlly = sourceKingdom.GetRelationshipWithKingdom(currAlly);
-                    if (relationshipWithAlly.totalLike > 0) {
-                        defaultWeight += 2 * relationshipWithAlly.totalLike; //add 2 weight per positive opinion i have over my ally
-                    } else if (relationshipWithAlly.totalLike < 0) {
-                        defaultWeight += relationshipWithAlly.totalLike; //subtract 1 weight per negative opinion i have over my ally (totalLike is negative)
-                    }
-                }
-                //add 1 weight per negative opinion i have over the target
-                //subtract 1 weight per positive opinion i have over the target
-                defaultWeight += (relWithTargetKingdom.totalLike * -1); //If totalLike is negative it becomes positive(+), otherwise it becomes negative(-)
-                defaultWeight = Mathf.Max(0, defaultWeight);
-            }
-        }
-    }
+    //private void GetAllModificationForWarOfConquest(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
+    //    KingdomRelationship relWithTargetKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+    //    List<Kingdom> alliesAtWarWith = relWithTargetKingdom.GetAlliesTargetKingdomIsAtWarWith();
+    //    //for each non-ally adjacent kingdoms that one of my allies declared war with recently
+    //    if (relWithTargetKingdom.sharedRelationship.isAdjacent && !relWithTargetKingdom.AreAllies() && alliesAtWarWith.Count > 0) {
+    //        //compare its theoretical power vs my theoretical power
+    //        int sourceKingdomPower = relWithTargetKingdom._theoreticalPower;
+    //        int otherKingdomPower = targetKingdom.GetRelationshipWithKingdom(sourceKingdom)._theoreticalPower;
+    //        if (otherKingdomPower * 1.25f < sourceKingdomPower) {
+    //            //If his theoretical power is not higher than 25% over mine
+    //            defaultWeight = 20;
+    //            for (int j = 0; j < alliesAtWarWith.Count; j++) {
+    //                Kingdom currAlly = alliesAtWarWith[j];
+    //                KingdomRelationship relationshipWithAlly = sourceKingdom.GetRelationshipWithKingdom(currAlly);
+    //                if (relationshipWithAlly.totalLike > 0) {
+    //                    defaultWeight += 2 * relationshipWithAlly.totalLike; //add 2 weight per positive opinion i have over my ally
+    //                } else if (relationshipWithAlly.totalLike < 0) {
+    //                    defaultWeight += relationshipWithAlly.totalLike; //subtract 1 weight per negative opinion i have over my ally (totalLike is negative)
+    //                }
+    //            }
+    //            //add 1 weight per negative opinion i have over the target
+    //            //subtract 1 weight per positive opinion i have over the target
+    //            defaultWeight += (relWithTargetKingdom.totalLike * -1); //If totalLike is negative it becomes positive(+), otherwise it becomes negative(-)
+    //            defaultWeight = Mathf.Max(0, defaultWeight);
+    //        }
+    //    }
+    //}
     private void GetAllModificationForAllianceOfProtection(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
         if (sourceKingdom.IsThreatened()) {
             //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
@@ -364,9 +365,9 @@ public class GoalManager : MonoBehaviour {
 
     private void ApplySpecialActionModificationForAll(WEIGHTED_ACTION weightedAction, object source, object target, ref int defaultWeight, ref int weightNotToDoAction) {
         switch (weightedAction) {
-            case WEIGHTED_ACTION.DECLARE_PEACE:
-                GetAllModificationForDeclarePeace((Kingdom)source, (Warfare)target, ref defaultWeight, ref weightNotToDoAction);
-                break;
+            //case WEIGHTED_ACTION.DECLARE_PEACE:
+            //    GetAllModificationForDeclarePeace((Kingdom)source, (Warfare)target, ref defaultWeight, ref weightNotToDoAction);
+            //    break;
             case WEIGHTED_ACTION.LEAVE_ALLIANCE:
                 GetAllModificationForLeaveAlliance((Kingdom)source, (AlliancePool)target, ref defaultWeight, ref weightNotToDoAction);
                 break;
@@ -375,29 +376,29 @@ public class GoalManager : MonoBehaviour {
                 break;
         }
     }
-    private void GetAllModificationForDeclarePeace(Kingdom sourceKingdom, Warfare targetWar, ref int defaultWeight, ref int weightNotToDoAction) {
-        WAR_SIDE sourceSide = targetWar.GetSideOfKingdom(sourceKingdom);
-        WAR_SIDE otherSide = WAR_SIDE.A;
-        if(sourceSide == WAR_SIDE.A) {
-            otherSide = WAR_SIDE.B;
-        }
-        List<Kingdom> enemyKingdoms = targetWar.GetListFromSide(otherSide);
-        for (int i = 0; i < enemyKingdoms.Count; i++) {
-            Kingdom enemyKingdom = enemyKingdoms[i];
-            KingdomRelationship sourceRelWithEnemy = sourceKingdom.GetRelationshipWithKingdom(enemyKingdom);
-            KingdomRelationship enemyRelWithSource = enemyKingdom.GetRelationshipWithKingdom(sourceKingdom);
-            //add 2 to Weight to Declare Peace for every Relative Strength the enemy kingdoms have over me
-            if(enemyRelWithSource.relativeStrength > 0) {
-                defaultWeight += 2 * enemyRelWithSource.relativeStrength;
-            }
-            //add 2 to Weight to Don't Declare Peace for every Relative Strength I have over each enemy kingdom
-            if (sourceRelWithEnemy.relativeStrength > 0) {
-                weightNotToDoAction += 2 * sourceRelWithEnemy.relativeStrength;
-            }
-            //add 3 Weight to Declare Peace for each War Weariness I have
-            weightNotToDoAction += 3 * targetWar.kingdomSideWeariness[sourceKingdom.id].weariness;
-        }
-    }
+    //private void GetAllModificationForDeclarePeace(Kingdom sourceKingdom, Warfare targetWar, ref int defaultWeight, ref int weightNotToDoAction) {
+    //    WAR_SIDE sourceSide = targetWar.GetSideOfKingdom(sourceKingdom);
+    //    WAR_SIDE otherSide = WAR_SIDE.A;
+    //    if(sourceSide == WAR_SIDE.A) {
+    //        otherSide = WAR_SIDE.B;
+    //    }
+    //    List<Kingdom> enemyKingdoms = targetWar.GetListFromSide(otherSide);
+    //    for (int i = 0; i < enemyKingdoms.Count; i++) {
+    //        Kingdom enemyKingdom = enemyKingdoms[i];
+    //        KingdomRelationship sourceRelWithEnemy = sourceKingdom.GetRelationshipWithKingdom(enemyKingdom);
+    //        KingdomRelationship enemyRelWithSource = enemyKingdom.GetRelationshipWithKingdom(sourceKingdom);
+    //        //add 2 to Weight to Declare Peace for every Relative Strength the enemy kingdoms have over me
+    //        if(enemyRelWithSource.relativeStrength > 0) {
+    //            defaultWeight += 2 * enemyRelWithSource.relativeStrength;
+    //        }
+    //        //add 2 to Weight to Don't Declare Peace for every Relative Strength I have over each enemy kingdom
+    //        if (sourceRelWithEnemy.relativeStrength > 0) {
+    //            weightNotToDoAction += 2 * sourceRelWithEnemy.relativeStrength;
+    //        }
+    //        //add 3 Weight to Declare Peace for each War Weariness I have
+    //        weightNotToDoAction += 3 * targetWar.kingdomSideWeariness[sourceKingdom.id].weariness;
+    //    }
+    //}
     private void GetAllModificationForLeaveAlliance(Kingdom sourceKingdom, AlliancePool alliance, ref int defaultWeight, ref int weightNotToDoAction) {
         //loop through the other kingdoms within the alliance
         for (int i = 0; i < alliance.kingdomsInvolved.Count; i++) {
