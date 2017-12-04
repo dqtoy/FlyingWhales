@@ -21,6 +21,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastAlliancePoolID = 0;
 	public static int lastWarfareID = 0;
     public static int lastLogID = 0;
+	public static int lastSharedKingdomRelationshipID = 0;
     public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
@@ -71,7 +72,10 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Log) {
             lastLogID += 1;
             return lastLogID;
-        }
+		} else if (obj is SharedKingdomRelationship) {
+			lastSharedKingdomRelationshipID += 1;
+			return lastSharedKingdomRelationshipID;
+		}
         return 0;
 	}
 

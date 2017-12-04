@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class SharedKingdomRelationship {
 
+	private int _id;
 	private bool _isAtWar;
 	private bool _isAdjacent;
 	private bool _isDiscovered;
@@ -14,9 +15,15 @@ public class SharedKingdomRelationship {
 
 	private List<InternationalIncident> _internationalIncidents;
 
-	internal bool cantAlly;
-	#region getters/setters
+	private KingdomRelationship _kr1;
+	private KingdomRelationship _kr2;
 
+	internal bool cantAlly;
+
+	#region getters/setters
+	public int id {
+		get { return this._id; }
+	}
 	public bool isAtWar {
 		get { return _isAtWar; }
 	}
@@ -38,9 +45,18 @@ public class SharedKingdomRelationship {
 	public List<InternationalIncident> internationalIncidents {
 		get { return this._internationalIncidents; }
 	}
+	public KingdomRelationship kr1 {
+		get { return this._kr1; }
+	}
+	public KingdomRelationship kr2 {
+		get { return this._kr2; }
+	}
 	#endregion
 
-	public SharedKingdomRelationship(){
+	public SharedKingdomRelationship(KingdomRelationship kr1, KingdomRelationship kr2){
+		Utilities.SetID<SharedKingdomRelationship> (this);
+		this._kr1 = kr1;
+		this._kr2 = kr2;
 		this._isAdjacent = false;
 		this._isRecentWar = false;
 		this._isAtWar = false;
