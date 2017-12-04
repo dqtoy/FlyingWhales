@@ -174,17 +174,17 @@ public class KingdomRelationship {
         int adjustment = 0;
 
 
-        //Kingdom Type
-        if (_sourceKingdom.kingdomTypeData.dictRelationshipKingdomType.ContainsKey(_targetKingdom.kingdomType)) {
-            adjustment = _sourceKingdom.kingdomTypeData.dictRelationshipKingdomType[_targetKingdom.kingdomType];
-            if(adjustment != 0) {
-                baseLoyalty += adjustment;
-                if (adjustment > 0) {
-                    this._relationshipSummary += "+";
-                }
-                this._relationshipSummary += adjustment.ToString() + " Kingdom Type.\n";
-            }
-        }
+        ////Kingdom Type
+        //if (_sourceKingdom.kingdomTypeData.dictRelationshipKingdomType.ContainsKey(_targetKingdom.kingdomType)) {
+        //    adjustment = _sourceKingdom.kingdomTypeData.dictRelationshipKingdomType[_targetKingdom.kingdomType];
+        //    if(adjustment != 0) {
+        //        baseLoyalty += adjustment;
+        //        if (adjustment > 0) {
+        //            this._relationshipSummary += "+";
+        //        }
+        //        this._relationshipSummary += adjustment.ToString() + " Kingdom Type.\n";
+        //    }
+        //}
 
         //Recent War
 		if (this.sharedRelationship.isRecentWar) {
