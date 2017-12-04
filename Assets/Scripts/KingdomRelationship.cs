@@ -767,8 +767,9 @@ public class KingdomRelationship {
 	internal void UpdateTheoreticalPower(){
 		int posAllianceSoldiers = GetAdjacentPosAllianceSoldiers ();
 		int otherAdjacentEnemiesPower = GetOtherAdjacentEnemiesPower();
+		int kingdomCivilians = (int) (Mathf.Sqrt (this.sourceKingdom.civilians));
 
-		this._theoreticalPower = this._sourceKingdom.soldiersCount + posAllianceSoldiers - otherAdjacentEnemiesPower;
+		this._theoreticalPower = this._sourceKingdom.soldiersCount + posAllianceSoldiers + kingdomCivilians - otherAdjacentEnemiesPower;
 	}
 	private int GetAdjacentPosAllianceSoldiers(){
 		int posAlliancePower = 0;

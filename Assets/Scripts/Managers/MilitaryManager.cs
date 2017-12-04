@@ -62,15 +62,25 @@ public class MilitaryManager {
 		if(this._kingdom.warfareInfo.Count > 0){
 			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
 			GetAttackCityAndWeight (ref attackCity, ref attackWeight);
-			tasksToChoose.Add (new AttackCityTask(GENERAL_TASKS.ATTACK_CITY, general, attackCity), attackWeight);
-			tasksToChoose.Add (new DefendCityTask(GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
+			if(attackCity != null){
+				tasksToChoose.Add (new AttackCityTask(GENERAL_TASKS.ATTACK_CITY, general, attackCity), attackWeight);
+			}
+			if (defendCity != null) {
+				tasksToChoose.Add (new DefendCityTask (GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
+			}
 		}else{
 			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
-			tasksToChoose.Add (new DefendCityTask(GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
+			if (defendCity != null) {
+				tasksToChoose.Add (new DefendCityTask (GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
+			}
 		}
 
-		GeneralTask task = Utilities.PickRandomElementWithWeights<GeneralTask> (tasksToChoose);
-		general.AssignTask (task);
+		if(tasksToChoose.Count > 0){
+			GeneralTask task = Utilities.PickRandomElementWithWeights<GeneralTask> (tasksToChoose);
+			general.AssignTask (task);
+		}else{
+			general.generalTask = null;
+		}
 	}
 
 	internal void AssignSpecificTaskToGeneral(General general, GENERAL_TASKS task){

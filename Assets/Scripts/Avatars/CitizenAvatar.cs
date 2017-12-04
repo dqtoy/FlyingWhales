@@ -10,6 +10,7 @@ public class CitizenAvatar : PooledObject {
     [SerializeField] internal string citizenName;
     [SerializeField] private string roleType;
 	[SerializeField] public Collider2D colliderForInteraction;
+	public Emblem emblem;
 
     public Role citizenRole;
 //    public PandaBehaviour pandaBehaviour;
@@ -57,7 +58,7 @@ public class CitizenAvatar : PooledObject {
         } else {
             SetAvatarState(false);
         }
-
+		this.emblem.SetEmblem (this.citizenRole.citizen.city.kingdom);
         ResetValues();
 //      AddBehaviourTree();
 		UpdateUI ();
