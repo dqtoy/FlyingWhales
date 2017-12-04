@@ -62,7 +62,7 @@ public class City{
 
 	internal Caravaneer caravaneer;
 
-	private List<City> _blacklist;
+    [NonSerialized] private List<City> _blacklist;
 
 	[Space(5)]
     [Header("Booleans")]
@@ -86,7 +86,7 @@ public class City{
 
 	private int _bonusStability;
 
-    private List<Guard> _activeGuards;
+    [NonSerialized] private List<Guard> _activeGuards;
     private float _cityBounds;
 
 	private int[] populationIncreasePool;

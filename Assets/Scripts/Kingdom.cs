@@ -33,11 +33,11 @@ public class Kingdom{
     internal BASE_RESOURCE_TYPE basicResource;
 
     //Trading
-    private List<Kingdom> _kingdomsInTradeDealWith;
+    [NonSerialized] private List<Kingdom> _kingdomsInTradeDealWith;
 
     //Weighted Actions
     private Dictionary<Kingdom, List<WEIGHTED_ACTION>> _recentlyRejectedOffers;
-    private List<Kingdom> _recentlyBrokenAlliancesWith;
+    [NonSerialized] private List<Kingdom> _recentlyBrokenAlliancesWith;
 
     //  private int _baseArmor;
     private int _baseWeapons;
