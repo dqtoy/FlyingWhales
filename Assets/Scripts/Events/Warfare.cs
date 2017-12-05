@@ -65,7 +65,7 @@ public class Warfare {
 			firstKingdom.alliancePool.AlliesReactionToWar (firstKingdom, secondKingdom, this);
 		}
 		if(secondKingdom.alliancePool != null){
-			firstKingdom.alliancePool.AlliesReactionToWar (secondKingdom, firstKingdom, this);
+			secondKingdom.alliancePool.AlliesReactionToWar (secondKingdom, firstKingdom, this);
 		}
 		KingdomManager.Instance.AddWarfare (this);
 	}

@@ -6,6 +6,7 @@ public class DefendCityTask : GeneralTask {
 
 	public DefendCityTask(GENERAL_TASKS task, General general, HexTile targetHextile) : base (task, general, targetHextile){
 		this.targetCity = targetHextile.city;
+		Messenger.AddListener<City> ("CityHasDied", CityHasDied);
 	}
 
 	internal override void AssignMoveDate(){
@@ -22,6 +23,7 @@ public class DefendCityTask : GeneralTask {
 	internal override void DoneTask(){
 		base.DoneTask ();
 		this.targetCity.hasAssignedDefendGeneral = false;
+		Messenger.RemoveListener<City> ("CityHasDied", CityHasDied);
 	}
 	#endregion
 
@@ -36,6 +38,15 @@ public class DefendCityTask : GeneralTask {
 	}
 
 	private void GetNextTask(){
-		this.general.GetTask ();
+		if(!this.isDone){
+			this.general.GetTask ();
+		}
+	}
+
+	private void CityHasDied(City city){
+		if(city.id == this.targetCity.id){
+//			DoneTask ();
+			this.general.GetTask ();
+		}
 	}
 }

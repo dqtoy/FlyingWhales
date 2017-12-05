@@ -118,7 +118,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if(n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id){
+						if(n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id){
 							KingdomRelationship kr = n.region.occupant.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
@@ -175,7 +175,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
+						if (n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id) {
 							KingdomRelationship kr = n.region.occupant.kingdom.GetRelationshipWithKingdom (kingdom);
 							if (!kr.AreAllies ()) {
 								continue;
@@ -193,9 +193,9 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
-							KingdomRelationship kr = n.region.occupant.kingdom.GetRelationshipWithKingdom (kingdom);
-							if (!kr.AreAllies () &&	!kingdom.kingdomsInTradeDealWith.Contains(n.region.occupant.kingdom)) {
+						if (n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id) {
+							KingdomRelationship kr = n.city.kingdom.GetRelationshipWithKingdom (kingdom);
+							if (!kr.AreAllies () &&	!kingdom.kingdomsInTradeDealWith.Contains(n.city.kingdom)) {
 								continue;
 							}
 						}

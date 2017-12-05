@@ -810,12 +810,15 @@ public class City{
 		if(Messenger.eventTable.ContainsKey("CityDied")){
 			Messenger.Broadcast<City>("CityDied", this);
 		}
+		if(Messenger.eventTable.ContainsKey("CityHasDied")){
+			Messenger.Broadcast<City>("CityHasDied", this);
+		}
 
     }
 
-    /*
-     * Conquer this city and transfer ownership to the conqueror
-     * */
+    
+    //Conquer this city and transfer ownership to the conqueror
+    
 	internal void ConquerCity(Kingdom conqueror) {
 		City previousCity = this;
 		KingdomRelationship kr = conqueror.GetRelationshipWithKingdom (this._kingdom);
@@ -854,6 +857,10 @@ public class City{
         this.isDead = true;
 		ChangeAttackingState (false);
 		ChangeDefendingState (false);
+
+		if(Messenger.eventTable.ContainsKey("CityHasDied")){
+			Messenger.Broadcast<City>("CityHasDied", this);
+		}
 
 		int civilianDeath = CivilianDeathsByConquered (conqueror);
 		AdjustPopulation (-civilianDeath);
