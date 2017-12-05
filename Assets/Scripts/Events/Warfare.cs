@@ -567,11 +567,20 @@ public class Warfare {
 	internal void AdjustWeariness(Kingdom kingdom, int amount){
 		if(this._kingdomSideWeariness.ContainsKey(kingdom.id)){
 			SideWeariness sideWeariness = this._kingdomSideWeariness [kingdom.id];
-			sideWeariness.AdjustWeariness (amount);
+            if(kingdom.stability < 0) {
+                //Double the increase in War Weariness if Kingdom's stability is negative.
+                amount *= 2;
+            }
+            amount = Mathf.Clamp(amount, 0, 100);
+            
+            sideWeariness.AdjustWeariness (amount);
 			this._kingdomSideWeariness [kingdom.id] = sideWeariness;
 			Debug.Log (kingdom.name + " WEARINESS: " + this._kingdomSideWeariness [kingdom.id].weariness.ToString ());
-		}
-	}
+            if (amount > 0) {
+                CheckForPeace(kingdom); //Each time War Weariness changes, check if a Kingdom should ask for Peace.
+            }
+        }
+    }
 	internal int GetAllAttackDefenseFromSide(WAR_SIDE side){
 		int totalAttDef = 0;
 		for (int i = 0; i < this._kingdomSideList[side].Count; i++) {
@@ -652,4 +661,60 @@ public class Warfare {
 			this.ShowUINotification (newLog);
 		}
 	}
+
+    private void CheckForPeace(Kingdom sourceKingdom) {
+        Dictionary<ACTION_CHOICES, int> peaceWeights = GetPeaceDeclarationWeights(sourceKingdom);
+        Debug.Log(Utilities.GetWeightsSummary(peaceWeights, sourceKingdom.name + " Peace Declaration (" + this.name + ") weights: "));
+        ACTION_CHOICES choice = Utilities.PickRandomElementWithWeights(peaceWeights);
+        Debug.Log(sourceKingdom.name + " chose to " + choice.ToString());
+        if(choice == ACTION_CHOICES.DO_ACTION) {
+            PeaceDeclaration(sourceKingdom);
+        }
+    }
+    private Dictionary<ACTION_CHOICES, int> GetPeaceDeclarationWeights(Kingdom sourceKingdom) {
+        int doActionDefaultWeight = 50; //Default Weight to Declare Peace is 50
+        int dontDoActionDefaultWeight = 50; //Default Weight to Dont Declare Peace is 50
+
+        if(sourceKingdom.stability < 0) {
+            //Add 1 to Default Weight to Declare Peace for every point of negative stability I have
+            doActionDefaultWeight += Mathf.Abs(sourceKingdom.stability);
+        } else if(sourceKingdom.stability > 0) {
+            //Add 1 to Default Weight to Dont Declare Peace for every point of positive stability I have
+            dontDoActionDefaultWeight += sourceKingdom.stability;
+        }
+        
+        WAR_SIDE mySide = GetSideOfKingdom(sourceKingdom);
+        WAR_SIDE enemySide = WAR_SIDE.B;
+        if(mySide == WAR_SIDE.B) {
+            enemySide = WAR_SIDE.A;
+        }
+        //loop through kingdoms in the enemy side
+        List<Kingdom> enemyKingdoms = _kingdomSideList[enemySide];
+        for (int i = 0; i < enemyKingdoms.Count; i++) {
+            Kingdom enemyKingdom = enemyKingdoms[i];
+            //compare my Relative Strength vs his Relative Strength
+            KingdomRelationship relSourceWithEnemy = sourceKingdom.GetRelationshipWithKingdom(enemyKingdom);
+            KingdomRelationship relEnemyWithSource = enemyKingdom.GetRelationshipWithKingdom(sourceKingdom);
+
+            //add 2 to Default Weight to Declare Peace for every Relative Strength the enemy kingdoms have over me
+            doActionDefaultWeight += (2 * relSourceWithEnemy.relativeStrength);
+
+            //add 2 to Default Weight to Dont Declare Peace for every Relative Strength I have over each enemy kingdom
+            dontDoActionDefaultWeight += 2 * relEnemyWithSource.relativeStrength;
+        }
+        //Default Weights have a minimum value of 0
+        doActionDefaultWeight = Mathf.Max(0, doActionDefaultWeight);
+        dontDoActionDefaultWeight = Mathf.Max(0, dontDoActionDefaultWeight);
+
+        //Add Default Weight to Declare Peace for every War Weariness I have
+        int doAction = doActionDefaultWeight * _kingdomSideWeariness[sourceKingdom.id].weariness;
+
+        //Add Default Weight to Dont Declare Peace for (100 - War Weariness)
+        int dontDoAction = dontDoActionDefaultWeight * (100 - _kingdomSideWeariness[sourceKingdom.id].weariness);
+
+        return new Dictionary<ACTION_CHOICES, int>() {
+            { ACTION_CHOICES.DO_ACTION, doAction },
+            { ACTION_CHOICES.DONT_DO_ACTION, dontDoAction }
+        };
+    }
 }

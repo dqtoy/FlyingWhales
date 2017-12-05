@@ -3393,14 +3393,7 @@ public class Kingdom{
                 //This action type requires a return of 2 kingdoms, a target and a cause of the action
                 Dictionary<Kingdom, Dictionary<Kingdom, int>> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForIndirectActionType(this, actionToPerform);
                 if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
-                    string actionWeightsSummary = "Kingdom Weights: ";
-                    foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in targetKingdomWeights) {
-                        actionWeightsSummary += "\n" + kvp.Key.name + " : ";
-                        foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
-                            actionWeightsSummary += "\n     " + pair.Key.name + " - " + pair.Value.ToString();
-                        }
-                    }
-                    Debug.Log(actionWeightsSummary);
+                    Debug.Log(Utilities.GetWeightsSummary(targetKingdomWeights, actionToPerform.ToString() + " weights: "));
 
                     Kingdom[] targets = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
@@ -3452,11 +3445,7 @@ public class Kingdom{
                         Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
                         actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
                         actionWeights.Add(actionToPerform, weights.Sum(x => x.Value));
-                        string actionWeightsSummary = "Action Weights: ";
-                        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in actionWeights) {
-                            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-                        }
-                        Debug.Log(actionWeightsSummary);
+                        Debug.Log(Utilities.GetWeightsSummary(actionWeights, "Leave alliance weights: "));
 
                         WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
                         Debug.Log(this.name + " has chosen to " + decision.ToString());
@@ -3472,11 +3461,7 @@ public class Kingdom{
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
                     
                     if (Utilities.GetTotalOfWeights(weights) > 0) {
-                        string actionWeightsSummary = "Kingdom Weights: ";
-                        foreach (KeyValuePair<Kingdom, int> kvp in weights) {
-                            actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
-                        }
-                        Debug.Log(actionWeightsSummary);
+                        Debug.Log(Utilities.GetWeightsSummary(weights, "Leave trade deal weights"));
                         Kingdom target = Utilities.PickRandomElementWithWeights(weights);
 
                         Debug.Log(this.name + " chose to target " + target.name);
@@ -3489,11 +3474,7 @@ public class Kingdom{
                 Dictionary<Kingdom, int> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForActionType(this, actionToPerform);
                 ClearRejectedOffersList(); //Clear List Since weights are already computed
                 if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
-                    string actionWeightsSummary = "Kingdom Weights: ";
-                    foreach (KeyValuePair<Kingdom, int> kvp in targetKingdomWeights) {
-                        actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
-                    }
-                    Debug.Log(actionWeightsSummary);
+                    Debug.Log(Utilities.GetWeightsSummary(targetKingdomWeights, actionToPerform.ToString() + " weights: "));
                     Kingdom target = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
                     Debug.Log(this.name + " chose to target " + target.name);
                     PerformAction(actionToPerform, target);
@@ -3818,6 +3799,7 @@ public class Kingdom{
             if (otherKingdom.id != this.id) { //If Kingdom is the source, negate all Weight
                 int weightForKingdom = 0;
                 KingdomRelationship relOtherWithTarget = otherKingdom.GetRelationshipWithKingdom(targetKingdom);
+                KingdomRelationship relTargetWithOther = targetKingdom.GetRelationshipWithKingdom(otherKingdom);
                 KingdomRelationship relThisWithOther = this.GetRelationshipWithKingdom(otherKingdom);
 
                 //Add 1 Weight for every Positive Opinion they have towards target
@@ -3833,8 +3815,8 @@ public class Kingdom{
                     weightForKingdom -= 2 * relThisWithOther.totalLike;
                 }
                 //Add 5 Weight for every positive point of Relative Strength it has over target
-                if (relOtherWithTarget.relativeStrength > 0) {
-                    weightForKingdom += 5 * relOtherWithTarget.relativeStrength;
+                if (relTargetWithOther.relativeStrength > 0) {
+                    weightForKingdom += 5 * relTargetWithOther.relativeStrength;
                 }
 
                 //If not Deceitful, subtract 100 Weight if ally

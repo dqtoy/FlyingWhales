@@ -1296,6 +1296,44 @@ public class Utilities : MonoBehaviour {
         return weights.Sum(x => x.Value);
     }
 
+    public static string GetWeightsSummary<T>(Dictionary<T, int> weights, string title = "Weights Summary: ") {
+        string actionWeightsSummary = title;
+        foreach (KeyValuePair<T, int> kvp in weights) {
+            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+        }
+        return actionWeightsSummary;
+    }
+
+    public static string GetWeightsSummary<T>(Dictionary<T, Dictionary<T, int> >weights, string title = "Weights Summary: ") {
+        string actionWeightsSummary = title;
+        foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
+            actionWeightsSummary += "\n" + kvp.Key.ToString() + " : ";
+            foreach (KeyValuePair<T, int> pair in kvp.Value) {
+                actionWeightsSummary += "\n     " + pair.Key.ToString() + " - " + pair.Value.ToString();
+            }
+        }
+        return actionWeightsSummary;
+    }
+
+    public static string GetWeightsSummary(Dictionary<Kingdom, int> weights, string title = "Weights Summary: ") {
+        string actionWeightsSummary = title;
+        foreach (KeyValuePair<Kingdom, int> kvp in weights) {
+            actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
+        }
+        return actionWeightsSummary;
+    }
+
+    public static string GetWeightsSummary(Dictionary<Kingdom, Dictionary<Kingdom, int>> weights, string title = "Weights Summary: ") {
+        string actionWeightsSummary = title;
+        foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in weights) {
+            actionWeightsSummary += "\n" + kvp.Key.name + " : ";
+            foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
+                actionWeightsSummary += "\n     " + pair.Key.name + " - " + pair.Value.ToString();
+            }
+        }
+        return actionWeightsSummary;
+    }
+
     /*
      * <summary>
      * Get a random integer given a minimum and maximum range and a minimum and maximum 

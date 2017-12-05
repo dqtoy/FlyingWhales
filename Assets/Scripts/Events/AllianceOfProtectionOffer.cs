@@ -78,8 +78,8 @@ public class AllianceOfProtectionOffer : GameEvent {
 
         if (otherKingdom.king.HasTrait(TRAIT.BENEVOLENT)) {
             //+1 Weight on Accept for each negative point of Relative Strength of the Deal Source
-            if(offeringRelWithOfferedKingdom.relativeStrength < 0) {
-                acceptanceWeight += Mathf.Abs(offeringRelWithOfferedKingdom.relativeStrength);
+            if(relWithOfferingKingdom.relativeStrength < 0) {
+                acceptanceWeight += Mathf.Abs(relWithOfferingKingdom.relativeStrength);
             }
         }
         if (otherKingdom.king.HasTrait(TRAIT.DIPLOMATIC)) {

@@ -719,4 +719,8 @@ public enum RESPONSE {
     ACCEPT,
     REJECT
 }
+public enum ACTION_CHOICES {
+    DO_ACTION,
+    DONT_DO_ACTION
+}
 
