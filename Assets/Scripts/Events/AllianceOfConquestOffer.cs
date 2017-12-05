@@ -96,8 +96,8 @@ public class AllianceOfConquestOffer : GameEvent {
         }
         if (otherKingdom.king.HasTrait(TRAIT.OPPORTUNIST)) {
             //+2 Weight on Accept for each positive point of Relative Strength of the Deal Source
-            if(offeringRelWithOfferedKingdom.relativeStrength > 0) {
-                acceptanceWeight += 2 * offeringRelWithOfferedKingdom.relativeStrength;
+            if(relWithOfferingKingdom.relativeStrength > 0) {
+                acceptanceWeight += 2 * relWithOfferingKingdom.relativeStrength;
             }
         }
         return acceptanceWeight;
@@ -124,8 +124,8 @@ public class AllianceOfConquestOffer : GameEvent {
         }
         if (otherKingdom.king.HasTrait(TRAIT.OPPORTUNIST)) {
             //+2 Weight on Reject for each negative point of Relative Strength of the Deal Source
-            if (offeringRelWithOfferedKingdom.relativeStrength < 0) {
-                rejectionWeight += Mathf.Abs(2 * offeringRelWithOfferedKingdom.relativeStrength);
+            if (relWithOfferingKingdom.relativeStrength < 0) {
+                rejectionWeight += Mathf.Abs(2 * relWithOfferingKingdom.relativeStrength);
             }
         }
         return rejectionWeight;
