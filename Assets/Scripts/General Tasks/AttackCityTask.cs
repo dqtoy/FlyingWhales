@@ -30,7 +30,7 @@ public class AttackCityTask : GeneralTask {
 
 	private void CityHasDied(City city){
 		if(city.id == this.targetCity.id){
-			DoneTask ();
+//			DoneTask ();
 			this.general.GetTask ();
 		}
 	}
