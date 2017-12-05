@@ -23,8 +23,8 @@ public class InternationalIncidentManager : MonoBehaviour {
 		Debug.Log ("------------------------------------- RANDOM INTERNATIONAL INCIDENT " + GameManager.Instance.month.ToString () + "/" + GameManager.Instance.days.ToString () + "/" + GameManager.Instance.year.ToString () + " ----------------------------------");
 		Dictionary<Kingdom, int> kingdomWeightDict = new Dictionary<Kingdom, int> ();
 		Dictionary<SharedKingdomRelationship, int> incidentDict = new Dictionary<SharedKingdomRelationship, int> ();
-		incidentDict.Add (defaultSharedKR, 500);
-		Debug.Log ("NO INTERNATIONAL INCIDENTS: 500");
+		incidentDict.Add (defaultSharedKR, 5000);
+		Debug.Log ("NO INTERNATIONAL INCIDENTS: 5000");
 
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom kingdom = KingdomManager.Instance.allKingdoms [i];
