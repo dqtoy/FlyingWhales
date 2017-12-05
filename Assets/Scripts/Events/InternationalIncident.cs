@@ -272,7 +272,9 @@ public class InternationalIncident : GameEvent {
 				}
 			}
 		}
-
+		if(totalWeight < 0){
+			totalWeight = 0;
+		}
 		return totalWeight;
 	}
 

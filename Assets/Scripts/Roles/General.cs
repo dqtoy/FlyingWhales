@@ -92,7 +92,7 @@ public class General : Role {
 			this.targetLocation = generalTask.targetHextile;
 			this.isIdle = true;
 			this.citizenAvatar.SetHasArrivedState (false);
-			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS);
+			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_WITH_ALLIES);
 			GetSoldiersFromCities ();
 		} else if (this.generalTask.task == GENERAL_TASKS.DEFEND_CITY) {
 			this.targetCity = ((DefendCityTask)generalTask).targetCity;
