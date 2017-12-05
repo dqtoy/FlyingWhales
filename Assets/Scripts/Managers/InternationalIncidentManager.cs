@@ -23,8 +23,6 @@ public class InternationalIncidentManager : MonoBehaviour {
 		Debug.Log ("------------------------------------- RANDOM INTERNATIONAL INCIDENT " + GameManager.Instance.month.ToString () + "/" + GameManager.Instance.days.ToString () + "/" + GameManager.Instance.year.ToString () + " ----------------------------------");
 		Dictionary<Kingdom, int> kingdomWeightDict = new Dictionary<Kingdom, int> ();
 		Dictionary<SharedKingdomRelationship, int> incidentDict = new Dictionary<SharedKingdomRelationship, int> ();
-		incidentDict.Add (defaultSharedKR, 5000);
-		Debug.Log ("NO INTERNATIONAL INCIDENTS: 5000");
 
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom kingdom = KingdomManager.Instance.allKingdoms [i];
@@ -58,6 +56,8 @@ public class InternationalIncidentManager : MonoBehaviour {
 					totalWeight += kingdomWeightDict [kr.sourceKingdom];
 					totalWeight += kingdomWeightDict [kr.targetKingdom];
 
+					totalWeight -= (25 * kr.sharedRelationship.internationalIncidents.Count);
+
 					if(totalWeight < 0){
 						totalWeight = 0;
 					}
@@ -67,6 +67,10 @@ public class InternationalIncidentManager : MonoBehaviour {
 				}
 			}
 		}
+
+		int noIntlIncidentsWeight = incidentDict.Count * 2000;
+		incidentDict.Add (defaultSharedKR, noIntlIncidentsWeight);
+		Debug.Log ("NO INTERNATIONAL INCIDENTS: " + noIntlIncidentsWeight.ToString());
 
 		if(incidentDict.Count > 1){
 			SharedKingdomRelationship sharedKingdomRelationship = Utilities.PickRandomElementWithWeights<SharedKingdomRelationship> (incidentDict);
