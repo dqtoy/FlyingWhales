@@ -112,9 +112,11 @@ public class General : Role {
 			if(neededSoldiers > 0){
 				City city = this.citizen.city.kingdom.cities [i];
 				List<HexTile> path = PathGenerator.Instance.GetPath (city.hexTile, this.location, PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM, this.citizen.city.kingdom);
-				if(path != null){
-					int soldiersGiven = AskForSoldiers (neededSoldiers, city, path);
-					neededSoldiers -= soldiersGiven;
+				if(path != null && path.Count > 0){
+					if (path.Count + 2 <= this.generalTask.daysBeforeMoving){
+						int soldiersGiven = AskForSoldiers (neededSoldiers, city, path);
+						neededSoldiers -= soldiersGiven;
+					}
 				}
 			}else{
 				break;
