@@ -28,7 +28,6 @@ public class WorldHistoryUI : UIMenu {
     private Dictionary<Log, WorldHistoryItem> logHistory;
     private List<WorldHistoryItem> allLogItems;
     private const int LOG_HISTORY_LIMIT = 269;
-
     //Selected Kingdoms
     [SerializeField] private List<Kingdom> selectedKingdoms;
 
@@ -59,6 +58,7 @@ public class WorldHistoryUI : UIMenu {
         isShowing = true;
         tweenPos.PlayForward();
         StartCoroutine(RepositionScrollView(worldHistoryScrollView));
+        StartCoroutine(RepositionTable(worldHistoryTable));
     }
 
     public void HideWorldHistory() {
