@@ -70,7 +70,9 @@ public class CollisionManager : MonoBehaviour {
 					if(general1.isDefending){
 						kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 1);
 					}
-					kr.sharedRelationship.warfare.AdjustWeariness (general2.citizen.city.kingdom, 5);
+                    if(kr.sharedRelationship.warfare != null) {
+                        kr.sharedRelationship.warfare.AdjustWeariness(general2.citizen.city.kingdom, 5);
+                    }
 					//kr.sharedRelationship.warfare.AttemptToPeace (general1.citizen.city.kingdom);
 				}
 			}else if(general2Roll > general1Roll){
@@ -79,7 +81,9 @@ public class CollisionManager : MonoBehaviour {
 					if(general2.isDefending){
 						kr.sharedRelationship.warfare.AdjustWeariness (general2.citizen.city.kingdom, 1);
 					}
-					kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 5);
+                    if(kr.sharedRelationship.warfare != null) {
+                        kr.sharedRelationship.warfare.AdjustWeariness(general1.citizen.city.kingdom, 5);
+                    }
 					//kr.sharedRelationship.warfare.AttemptToPeace (general2.citizen.city.kingdom);
 				}
 			}else{
@@ -94,7 +98,9 @@ public class CollisionManager : MonoBehaviour {
 					}
 					if(!general1.citizen.city.kingdom.isDead && !general2.citizen.city.kingdom.isDead){
 						kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 5);
-						kr.sharedRelationship.warfare.AdjustWeariness (general2.citizen.city.kingdom, 5);
+                        if(kr.sharedRelationship.warfare != null) {
+                            kr.sharedRelationship.warfare.AdjustWeariness(general2.citizen.city.kingdom, 5);
+                        }
 					}
 				}else{
 					if(general1.isDefending){
