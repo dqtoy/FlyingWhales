@@ -162,9 +162,6 @@ public class InternationalIncident : GameEvent {
 		}
 
 		if(chosenKingdom != null && kr != null){
-			int resolvePeacefullyTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.RESOLVE_PEACEFULLY);
-			int increaseTensionTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.INCREASE_TENSION);
-
 			if(this._sourceKing.id != this._sourceKingdom.king.id){
 				this._sourceKingPreviousAction = INCIDENT_ACTIONS.NONE;
 				this._sourceKing = this._sourceKingdom.king;
@@ -174,12 +171,18 @@ public class InternationalIncident : GameEvent {
 				this._targetKing = this._targetKingdom.king;
 			}
 
-			Dictionary<INCIDENT_ACTIONS, int> actionWeightDict = new Dictionary<INCIDENT_ACTIONS, int> () {
-				{ INCIDENT_ACTIONS.RESOLVE_PEACEFULLY, resolvePeacefullyTotalWeight },
-				{ INCIDENT_ACTIONS.INCREASE_TENSION, increaseTensionTotalWeight },
-			};
-			INCIDENT_ACTIONS pickedAction = Utilities.PickRandomElementWithWeights<INCIDENT_ACTIONS> (actionWeightDict);
-			DoPickedAction (pickedAction, chosenKingdom);
+			int resolvePeacefullyTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.RESOLVE_PEACEFULLY);
+			int increaseTensionTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.INCREASE_TENSION);
+		
+			if(resolvePeacefullyTotalWeight > 0 && increaseTensionTotalWeight > 0){
+				Dictionary<INCIDENT_ACTIONS, int> actionWeightDict = new Dictionary<INCIDENT_ACTIONS, int> () {
+					{ INCIDENT_ACTIONS.RESOLVE_PEACEFULLY, resolvePeacefullyTotalWeight },
+					{ INCIDENT_ACTIONS.INCREASE_TENSION, increaseTensionTotalWeight },
+				};
+				INCIDENT_ACTIONS pickedAction = Utilities.PickRandomElementWithWeights<INCIDENT_ACTIONS> (actionWeightDict);
+				DoPickedAction (pickedAction, chosenKingdom);
+			}
+
 		}
 		if(this.isActive){
 			ScheduleReactionDate ();
@@ -260,23 +263,26 @@ public class InternationalIncident : GameEvent {
 		}
 
 		if(kingdom.id == this._sourceKingdom.id){
-			if(this._sourceKing.id == this._sourceKingdom.king.id){
-				if(this._sourceKingPreviousAction == incidentAction){
-					totalWeight += 50;
-				}
+			if(this._sourceKingPreviousAction == incidentAction){
+				totalWeight += 50;
 			}
 		}else if(kingdom.id == this._targetKingdom.id){
-			if(this._targetKing.id == this._targetKingdom.king.id){
-				if(this._targetKingPreviousAction == incidentAction){
-					totalWeight += 50;
-				}
+			if(this._targetKingPreviousAction == incidentAction){
+				totalWeight += 50;
 			}
 		}
-
+		if(totalWeight < 0){
+			totalWeight = 0;
+		}
 		return totalWeight;
 	}
 
 	private void DoPickedAction(INCIDENT_ACTIONS incidentAction, Kingdom chosenKingdom){
+		if(chosenKingdom.id == this._sourceKingdom.id){
+			this._sourceKingPreviousAction = incidentAction;
+		}else if(chosenKingdom.id == this._targetKingdom.id){
+			this._targetKingPreviousAction = incidentAction;
+		}
 		if(incidentAction == INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < 30){
