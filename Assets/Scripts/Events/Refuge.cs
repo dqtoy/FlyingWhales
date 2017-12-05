@@ -137,9 +137,11 @@ public class Refuge : GameEvent {
 				}
 			}
 		}else if(decision == GOVERNOR_DECISION.KILL){
-			KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
-			if(kr.sharedRelationship.isAtWar){
-				totalWeight += 200;
+			if(this.refugeeKingdom.id != governor.city.kingdom.id){
+				KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
+				if(kr.sharedRelationship.isAtWar){
+					totalWeight += 200;
+				}	
 			}
 		}
 		return totalWeight;

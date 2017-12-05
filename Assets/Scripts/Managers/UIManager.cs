@@ -2110,6 +2110,8 @@ public class UIManager : MonoBehaviour {
                     this.allianceSummaryLbl.text += "\n Trade Deals: ";
                     for (int i = 0; i < KingdomManager.Instance.allTradeDeals.Count; i++) {
                         TradeDeal currDeal = KingdomManager.Instance.allTradeDeals[i];
+						allianceWarLbl.AddKingdom (currDeal.kingdom1);
+						allianceWarLbl.AddKingdom (currDeal.kingdom2);
                         this.allianceSummaryLbl.text += "\n- [url=" + currDeal.kingdom1.id.ToString() + "_kingdom" + "]" + currDeal.kingdom1.name + "[/url]" +
                             " -> " + "[url= " + currDeal.kingdom2.id.ToString() + "_kingdom" + "]" + currDeal.kingdom2.name + "[/url]";
                     }
@@ -2160,6 +2162,9 @@ public class UIManager : MonoBehaviour {
 				}
 				for (int i = 0; i < KingdomManager.Instance.internationalIncidents.Count; i++) {
 					InternationalIncident internationalIncident = KingdomManager.Instance.internationalIncidents [i];
+					allianceWarLbl.AddKingdom (internationalIncident.sourceKingdom);
+					allianceWarLbl.AddKingdom (internationalIncident.targetKingdom);
+
 					if(this.allianceSummaryLbl.text != string.Empty){
 						this.allianceSummaryLbl.text += "\n";
 					}
