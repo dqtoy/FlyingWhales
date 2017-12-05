@@ -4,14 +4,14 @@ using System.Collections;
 public class GeneralTask {
 	public General general;
 	public GENERAL_TASKS task;
-	public City targetCity;
+	public HexTile targetHextile;
 	public int daysBeforeMoving;
 	public GameDate moveDate;
 	public bool isDone;
-	public GeneralTask(GENERAL_TASKS task, General general, City targetCity){
+	public GeneralTask(GENERAL_TASKS task, General general, HexTile targetHextile){
 		this.general = general;
 		this.task = task;
-		this.targetCity = targetCity;
+		this.targetHextile = targetHextile;
 		this.isDone = false;
 	}
 

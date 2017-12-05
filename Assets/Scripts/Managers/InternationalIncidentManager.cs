@@ -5,11 +5,14 @@ using System.Collections.Generic;
 public class InternationalIncidentManager : MonoBehaviour {
 	public static InternationalIncidentManager Instance;
 
+	private SharedKingdomRelationship defaultSharedKR;
+
 	void Awake(){
 		Instance = this;
 	}
 
 	void Start () {
+		defaultSharedKR = new SharedKingdomRelationship (null, null);
 		GameDate newDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		newDate.AddDays (7);
 		SchedulingManager.Instance.AddEntry (newDate, () => RandomInternationalIncident ());
@@ -17,9 +20,11 @@ public class InternationalIncidentManager : MonoBehaviour {
 	
 
 	private void RandomInternationalIncident(){
+		Debug.Log ("------------------------------------- RANDOM INTERNATIONAL INCIDENT " + GameManager.Instance.month.ToString () + "/" + GameManager.Instance.days.ToString () + "/" + GameManager.Instance.year.ToString () + " ----------------------------------");
 		Dictionary<Kingdom, int> kingdomWeightDict = new Dictionary<Kingdom, int> ();
 		Dictionary<SharedKingdomRelationship, int> incidentDict = new Dictionary<SharedKingdomRelationship, int> ();
-		incidentDict.Add (new SharedKingdomRelationship(null, null), 200);
+		incidentDict.Add (defaultSharedKR, 500);
+		Debug.Log ("NO INTERNATIONAL INCIDENTS: 500");
 
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom kingdom = KingdomManager.Instance.allKingdoms [i];
@@ -58,6 +63,7 @@ public class InternationalIncidentManager : MonoBehaviour {
 					}
 
 					incidentDict.Add (kr.sharedRelationship, totalWeight);
+					Debug.Log ("PAIR (" + kr.sourceKingdom.name + " and " + kr.targetKingdom.name + ") : " + totalWeight.ToString());
 				}
 			}
 		}
@@ -74,5 +80,6 @@ public class InternationalIncidentManager : MonoBehaviour {
 			newDate.AddDays (7);
 			SchedulingManager.Instance.AddEntry (newDate, () => RandomInternationalIncident ());
 		}
+		Debug.Log ("------------------------------------- END INTERNATIONAL INCIDENT ----------------------------------");
 	}
 }

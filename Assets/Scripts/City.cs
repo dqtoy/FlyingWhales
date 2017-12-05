@@ -1423,7 +1423,7 @@ public class City{
 		if(citizen != null){
 			General reinforceGeneral = (General)citizen.assignedRole;
 			reinforceGeneral.Initialize (null);
-			reinforceGeneral.AssignTask (new ReinforceCityTask(GENERAL_TASKS.REINFORCE_CITY, reinforceGeneral, general.citizen.city, general));
+			reinforceGeneral.AssignTask (new ReinforceCityTask(GENERAL_TASKS.REINFORCE_CITY, reinforceGeneral, general.citizen.city.hexTile, general));
 			reinforceGeneral.SetSoldiers (soldiersToBeGiven);
 			reinforceGeneral.path = path;
 			reinforceGeneral.citizenAvatar.StartMoving();

@@ -53,7 +53,18 @@ public class MilitaryManager {
 	}
 
 	internal void AssignTaskToGeneral(General general){
-		Dictionary<GeneralTask, int> tasksToChoose = new Dictionary<GeneralTask, int> ();
+		GeneralTask task = CreateTask (general);
+		if(task != null){
+			general.AssignTask (task);
+		}else{
+			general.generalTask = null;
+			GameDate checkDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+			checkDate.AddDays (5);
+			SchedulingManager.Instance.AddEntry (checkDate, () => general.GetTask ());
+		}
+	}
+	private GeneralTask CreateTask (General general){
+		Dictionary<GENERAL_TASKS, int> tasksToChoose = new Dictionary<GENERAL_TASKS, int> ();
 		City defendCity = null;
 		City attackCity = null;
 		int defendWeight = 0;
@@ -63,28 +74,27 @@ public class MilitaryManager {
 			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
 			GetAttackCityAndWeight (ref attackCity, ref attackWeight);
 			if(attackCity != null){
-				tasksToChoose.Add (new AttackCityTask(GENERAL_TASKS.ATTACK_CITY, general, attackCity), attackWeight);
+				tasksToChoose.Add (GENERAL_TASKS.ATTACK_CITY, attackWeight);
 			}
 			if (defendCity != null) {
-				tasksToChoose.Add (new DefendCityTask (GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
+				tasksToChoose.Add (GENERAL_TASKS.DEFEND_CITY, defendWeight);
 			}
 		}else{
 			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
 			if (defendCity != null) {
-				tasksToChoose.Add (new DefendCityTask (GENERAL_TASKS.DEFEND_CITY, general, defendCity), defendWeight);
+				tasksToChoose.Add (GENERAL_TASKS.DEFEND_CITY, defendWeight);
 			}
 		}
 
 		if(tasksToChoose.Count > 0){
-			GeneralTask task = Utilities.PickRandomElementWithWeights<GeneralTask> (tasksToChoose);
-			general.AssignTask (task);
-		}else{
-			general.generalTask = null;
+			GENERAL_TASKS task = Utilities.PickRandomElementWithWeights<GENERAL_TASKS> (tasksToChoose);
+			if(task == GENERAL_TASKS.ATTACK_CITY){
+				return new AttackCityTask (task, general, attackCity.hexTile);
+			}else if(task == GENERAL_TASKS.DEFEND_CITY){
+				return new DefendCityTask (task, general, defendCity.hexTile);
+			}
 		}
-	}
-
-	internal void AssignSpecificTaskToGeneral(General general, GENERAL_TASKS task){
-		
+		return null;
 	}
 
 	private void GetDefendCityAndWeight(ref City defendCity, ref int weight){
@@ -301,8 +311,10 @@ public class MilitaryManager {
 	internal bool HasGeneralTaskToAttackCity(City city){
 		for (int i = 0; i < this.activeGenerals.Count; i++) {
 			General general = this.activeGenerals [i];
-			if(general.generalTask != null && general.generalTask.task == GENERAL_TASKS.ATTACK_CITY && general.generalTask.targetCity.id == city.id){
-				return true;
+			if(general.generalTask != null && general.generalTask.task == GENERAL_TASKS.ATTACK_CITY){
+				if(((AttackCityTask)general.generalTask).targetCity.id == city.id){
+					return true;
+				}
 			}
 		}
 		return false;

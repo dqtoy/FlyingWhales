@@ -88,15 +88,16 @@ public class General : Role {
 		this.generalTask = generalTask;
 		this.generalTask.AssignMoveDate ();
 		if (this.generalTask.task == GENERAL_TASKS.ATTACK_CITY) {
-			this.targetCity = generalTask.targetCity;
-			this.targetLocation = generalTask.targetCity.hexTile;
+			this.targetCity = ((AttackCityTask)generalTask).targetCity;
+			this.targetLocation = generalTask.targetHextile;
 			this.isIdle = true;
 			this.citizenAvatar.SetHasArrivedState (false);
 			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS);
 			GetSoldiersFromCities ();
 		} else if (this.generalTask.task == GENERAL_TASKS.DEFEND_CITY) {
-			this.targetCity = generalTask.targetCity;
-			this.targetLocation = generalTask.targetCity.hexTile;
+			this.targetCity = ((DefendCityTask)generalTask).targetCity;
+			this.targetCity.hasAssignedDefendGeneral = true;
+			this.targetLocation = generalTask.targetHextile;
 			this.isIdle = true;
 			this.citizenAvatar.SetHasArrivedState (false);
 			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
