@@ -36,12 +36,6 @@ public class Warfare {
     public List<Battle> allBattles {
         get { return this._allBattles; }
     }
-//	public List<Kingdom> sideA{
-//		get { return this._sideA; }
-//	}
-//	public List<Kingdom> sideB{
-//		get { return this._sideB; }
-//	}
 	public bool isOver{
 		get { return this._isOver; }
 	}
@@ -50,8 +44,6 @@ public class Warfare {
 		SetID();
 		this._name = RandomNameGenerator.Instance.GetWarfareName ();
 		this._isOver = false;
-//		this._sideA = new List<Kingdom>();
-//		this._sideB = new List<Kingdom>();
 		this._battles = new List<Battle>();
         this._allBattles = new List<Battle>();
         this._logs = new List<Log> ();
@@ -68,12 +60,13 @@ public class Warfare {
 		JoinWar(WAR_SIDE.B, secondKingdom, true);
 
 		DeclareWar (firstKingdom, secondKingdom);
-//		InstantDeclareWarIfNotAdjacent (firstKingdom, secondKingdom);
-//		CreateNewBattle (firstKingdom, true);
-//		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
-//			KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
-//			Debug.LogError (firstKingdom.name + " can't pair with " + secondKingdom.name + " because their adjacency is " + kr.sharedRelationship.isAdjacent.ToString () + " and threat is " + kr.targetKingdomThreatLevel.ToString ());
-//		}
+
+		if(firstKingdom.alliancePool != null){
+			firstKingdom.alliancePool.AlliesReactionToWar (firstKingdom, secondKingdom, this);
+		}
+		if(secondKingdom.alliancePool != null){
+			firstKingdom.alliancePool.AlliesReactionToWar (secondKingdom, firstKingdom, this);
+		}
 		KingdomManager.Instance.AddWarfare (this);
 	}
 	private void SetID(){
@@ -427,28 +420,6 @@ public class Warfare {
 				WarfareDone ();
 				return;
 			}
-//			WAR_SIDE peaceDeclarerSide = this._kingdomSideWeariness [kingdom1.id].side;
-//			if(peaceDeclarerSide == WAR_SIDE.A){
-//				if(this._sideB.Count > 0){
-//					for (int i = 0; i < this._sideB.Count; i++) {
-//						DeclarePeace (kingdom1, this._sideB[i]);
-//					}
-//				}else{
-//					WarfareDone ();
-//					return;
-//				}
-//
-//			}else{
-//				if(this._sideA.Count > 0){
-//					for (int i = 0; i < this._sideA.Count; i++) {
-//						DeclarePeace (kingdom1, this._sideA[i]);
-//					}
-//				}else{
-//					WarfareDone ();
-//					return;
-//				}
-//			}
-
 			CheckWarfare ();
 		}
 	}

@@ -3,6 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class AlliancePool {
+	private enum REACTIONS{
+		JOIN_WAR,
+		REMAIN_NEUTRAL,
+		LEAVE_ALLIANCE,
+		BETRAY,
+	}
+
 	private int _id;
 	private string _name;
 	private bool _isDissolved;
@@ -102,5 +109,88 @@ public class AlliancePool {
 			}
 		}
 		return false;
+	}
+
+	internal void AlliesReactionToWar(Kingdom sourceKingdom, Kingdom enemyKingdom, Warfare warfare){
+		Dictionary<REACTIONS, int> reactionsWeight = new Dictionary<REACTIONS, int> ();
+		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
+			Kingdom allyKingdom = this._kingdomsInvolved [i];
+			if(sourceKingdom.id != allyKingdom.id){
+				reactionsWeight.Clear ();
+				reactionsWeight.Add (REACTIONS.JOIN_WAR, GetReactionWeight (REACTIONS.JOIN_WAR, sourceKingdom, allyKingdom, enemyKingdom));
+				reactionsWeight.Add (REACTIONS.REMAIN_NEUTRAL, GetReactionWeight (REACTIONS.REMAIN_NEUTRAL, sourceKingdom, allyKingdom, enemyKingdom));
+				reactionsWeight.Add (REACTIONS.LEAVE_ALLIANCE, GetReactionWeight (REACTIONS.LEAVE_ALLIANCE, sourceKingdom, allyKingdom, enemyKingdom));
+				reactionsWeight.Add (REACTIONS.BETRAY, GetReactionWeight (REACTIONS.BETRAY, sourceKingdom, allyKingdom, enemyKingdom));
+
+				REACTIONS pickedReaction = Utilities.PickRandomElementWithWeights<REACTIONS> (reactionsWeight);
+				AllyReact (pickedReaction, sourceKingdom, allyKingdom, warfare);
+				if(pickedReaction == REACTIONS.LEAVE_ALLIANCE || pickedReaction == REACTIONS.BETRAY){
+					i--;
+				}
+			}
+		}
+	}
+
+	private int GetReactionWeight(REACTIONS reaction, Kingdom sourceKingdom, Kingdom allyKingdom, Kingdom enemyKingdom){
+		int totalWeight = 0;
+		KingdomRelationship krAllyToSource = allyKingdom.GetRelationshipWithKingdom (sourceKingdom);
+		KingdomRelationship krAllyToEnemy = allyKingdom.GetRelationshipWithKingdom (enemyKingdom);
+		if(reaction == REACTIONS.JOIN_WAR){
+			if(krAllyToSource.totalLike > 0){
+				totalWeight += (5 * krAllyToSource.totalLike);
+			}
+			if(krAllyToEnemy.relativeStrength < 0){
+				totalWeight -= (2 * krAllyToEnemy.relativeStrength);
+			}
+			if (krAllyToEnemy.totalLike < 0) {
+				totalWeight -= (5 * krAllyToEnemy.totalLike);
+			}
+		}else if(reaction == REACTIONS.REMAIN_NEUTRAL){
+			if(krAllyToEnemy.relativeStrength > 0){
+				totalWeight += (2 * krAllyToEnemy.relativeStrength);
+			}
+			if(krAllyToSource.totalLike < 0){
+				totalWeight -= (2 * krAllyToSource.totalLike);
+			}
+			if(krAllyToEnemy.AreTradePartners()){
+				totalWeight += 30;
+			}
+			if (krAllyToEnemy.totalLike > 0) {
+				totalWeight += (2 * krAllyToEnemy.totalLike);
+			}
+		}else if(reaction == REACTIONS.LEAVE_ALLIANCE){
+			if(krAllyToSource.totalLike < 0){
+				totalWeight -= krAllyToSource.totalLike;
+			}
+		}else if(reaction == REACTIONS.BETRAY){
+			if(allyKingdom.king.otherTraits.Contains(TRAIT.DECEITFUL)){
+				if(krAllyToSource.relativeStrength < 0){
+					totalWeight -= (2 * krAllyToSource.relativeStrength);				
+				}
+				if(krAllyToSource.totalLike < 0){
+					totalWeight -= krAllyToSource.totalLike;
+				}
+			}
+		}
+		if(totalWeight < 0){
+			totalWeight = 0;
+		}
+		return totalWeight;
+	}
+
+	private void AllyReact(REACTIONS reaction, Kingdom sourceKingdom, Kingdom allyKingdom, Warfare warfare){
+		if(reaction == REACTIONS.JOIN_WAR){
+			warfare.JoinWar (warfare.GetSideOfKingdom (sourceKingdom), allyKingdom);
+			allyKingdom.ShowJoinWarLog (sourceKingdom, warfare);
+		}else if(reaction == REACTIONS.REMAIN_NEUTRAL){
+			allyKingdom.ShowDoNothingLog (warfare);
+		}else if(reaction == REACTIONS.LEAVE_ALLIANCE){
+			allyKingdom.ShowRefuseAndLeaveAllianceLog (this, warfare);
+			allyKingdom.LeaveAlliance (true);
+		}else if(reaction == REACTIONS.BETRAY){
+			allyKingdom.ShowBetrayalLog (this, sourceKingdom);
+			allyKingdom.LeaveAlliance (true);
+			Warfare betrayWar = new Warfare (allyKingdom, sourceKingdom);
+		}
 	}
 }
