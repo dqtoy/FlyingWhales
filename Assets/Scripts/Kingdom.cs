@@ -3006,6 +3006,18 @@ public class Kingdom{
 		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
+	internal void ShowBetrayalLog(AlliancePool alliance, Kingdom kingdom){
+		List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+		kingdomsToShowNotif.Add(kingdom);
+		kingdomsToShowNotif.AddRange(alliance.kingdomsInvolved);
+
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_war");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddAllInvolvedObjects (alliance.kingdomsInvolved.ToArray ());
+		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
+	}
 	internal void ShowBetrayalProvideLog(AlliancePool alliance, string logAmount, Kingdom kingdom){
         List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
         kingdomsToShowNotif.Add(this);

@@ -2,15 +2,10 @@
 using System.Collections;
 
 public class DefendCityTask : GeneralTask {
+	public City targetCity;
 
-	public DefendCityTask(GENERAL_TASKS task, General general, City targetCity) : base (task, general, targetCity){
-		this.targetCity.hasAssignedDefendGeneral = true;
-//		this.general.isIdle = true;
-//		this.general.targetCity = targetCity;
-//		this.general.targetLocation = targetCity.hexTile;
-//		this.general.avatar.GetComponent<GeneralAvatar> ().SetHasArrivedState (false);
-//		this.general.avatar.GetComponent<GeneralAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS_WITH_ALLIES);
-//		AssignMoveDate ();
+	public DefendCityTask(GENERAL_TASKS task, General general, HexTile targetHextile) : base (task, general, targetHextile){
+		this.targetCity = targetHextile.city;
 	}
 
 	internal override void AssignMoveDate(){

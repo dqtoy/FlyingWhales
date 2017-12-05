@@ -4,8 +4,10 @@ using System.Collections;
 public class ReinforceCityTask : GeneralTask {
 	
 	public General mainGeneral;
+	public City targetCity;
 
-	public ReinforceCityTask(GENERAL_TASKS task, General general, City targetCity, General mainGeneral) : base (task, general, targetCity){
+	public ReinforceCityTask(GENERAL_TASKS task, General general, HexTile targetHextile, General mainGeneral) : base (task, general, targetHextile){
+		this.targetCity = targetHextile.city;
 		this.mainGeneral = mainGeneral;
 	}
 
