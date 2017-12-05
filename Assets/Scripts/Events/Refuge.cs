@@ -64,7 +64,9 @@ public class Refuge : GameEvent {
 			newTargetLocation = this.refugee.location.allNeighbourRoads [UnityEngine.Random.Range (0, this.refugee.location.allNeighbourRoads.Count)];
 		}else{
 			List<HexTile> allNeighbors = new List<HexTile>(this.refugee.location.allNeighbourRoads);
-			allNeighbors.Remove (this.previousLocation);
+			if(allNeighbors.Count > 1){
+				allNeighbors.Remove (this.previousLocation);
+			}
 			newTargetLocation = allNeighbors [UnityEngine.Random.Range (0, allNeighbors.Count)];
 		}
 
