@@ -13,12 +13,14 @@ public class InternationalIncidentManager : MonoBehaviour {
 
 	void Start () {
 		defaultSharedKR = new SharedKingdomRelationship (null, null);
+		ScheduleIncident ();
+	}
+	
+	private void ScheduleIncident(){
 		GameDate newDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		newDate.AddDays (7);
 		SchedulingManager.Instance.AddEntry (newDate, () => RandomInternationalIncident ());
 	}
-	
-
 	private void RandomInternationalIncident(){
 		Debug.Log ("------------------------------------- RANDOM INTERNATIONAL INCIDENT " + GameManager.Instance.month.ToString () + "/" + GameManager.Instance.days.ToString () + "/" + GameManager.Instance.year.ToString () + " ----------------------------------");
 		Dictionary<Kingdom, int> kingdomWeightDict = new Dictionary<Kingdom, int> ();
@@ -80,9 +82,7 @@ public class InternationalIncidentManager : MonoBehaviour {
 		}
 
 		if(KingdomManager.Instance.allKingdoms.Count > 1){
-			GameDate newDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-			newDate.AddDays (7);
-			SchedulingManager.Instance.AddEntry (newDate, () => RandomInternationalIncident ());
+			ScheduleIncident ();
 		}
 		Debug.Log ("------------------------------------- END INTERNATIONAL INCIDENT ----------------------------------");
 	}
