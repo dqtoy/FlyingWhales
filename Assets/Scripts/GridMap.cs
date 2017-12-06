@@ -294,9 +294,11 @@ public class GridMap : MonoBehaviour {
             if (i != 0) {
                 allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
                 for (int j = 0; j < allRegions.Count; j++) {
-                    allRegions[j].ReComputeCenterOfMass();
-                    allRegions[j].ResetTilesInRegion();
-                    allHexTiles.Remove(allRegions[j].centerOfMass);
+                    Region currRegion = allRegions[j];
+                    currRegion.ReComputeCenterOfMass();
+                    currRegion.ResetTilesInRegion();
+                    currRegion.AddTile(currRegion.centerOfMass);
+                    allHexTiles.Remove(currRegion.centerOfMass);
                 }
             }
             for (int j = 0; j < allHexTiles.Count; j++) {

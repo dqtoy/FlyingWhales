@@ -208,7 +208,12 @@ public class Region {
                         _outerTiles.Add(currTile);
                     }
                     if (!_adjacentRegions.Contains(currNeighbour.region)) {
-                        _adjacentRegions.Add(currNeighbour.region);
+                        if(currNeighbour.region == null) {
+                            throw new System.Exception("REGION IS NULL!");
+                        } else {
+                            _adjacentRegions.Add(currNeighbour.region);
+                        }
+                        
                     }
                 }
             } 
