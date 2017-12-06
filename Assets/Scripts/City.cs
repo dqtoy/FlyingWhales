@@ -439,10 +439,6 @@ public class City{
         ////Set tile as visible for the kingdom that bought it
         //kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
 
-		if(Messenger.eventTable.ContainsKey("OnUpdatePath")){
-			Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
-		}
-
         //Update necessary data
         this.UpdateDailyProduction();
 

@@ -244,12 +244,6 @@ public enum MILITARY {
 }
 #endregion
 
-
-public enum CAMPAIGN{
-	NONE,
-	OFFENSE,
-	DEFENSE,
-}
 	
 public enum WAR_TYPE{
 	INTERNATIONAL,

@@ -39,7 +39,6 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Main UI Objects")]
     public GameObject smallInfoGO;
-	public GameObject campaignInfoGO;
 	public GameObject citizenInfoGO;
 	public GameObject cityInfoGO;
 	public GameObject kingdomInfoGO;
@@ -1099,30 +1098,6 @@ public class UIManager : MonoBehaviour {
     public void HideSmallInfo() {
         smallInfoGO.SetActive(false);
         smallInfoGO.transform.parent = this.transform;
-    }
-    #endregion
-
-    #region Campaign Info
-    public void ShowCampaignInfo(Campaign campaign, General general, Transform parent) {
-        //		smallInfoLbl.text = info;
-        this.campaignInfoGO.GetComponent<CampaignInfo>().SetCampaignInfo(campaign, general);
-        var v3 = Input.mousePosition;
-        v3.z = 10.0f;
-        v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-        v3.y -= 0.13f;
-        this.campaignInfoGO.transform.position = v3;
-        //		smallInfoGO.transform.parent = parent;
-        //		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
-        //		Vector3 newPos = smallInfoGO.transform.localPosition;
-
-        //		smallInfoGO.transform.localPosition = newPos;
-        //		smallInfoGO.transform.parent = this.transform;
-        //		smallInfoGO.transform.localScale = Vector3.one;
-        this.campaignInfoGO.SetActive(true);
-    }
-    public void HideCampaignInfo() {
-        this.campaignInfoGO.SetActive(false);
-        this.campaignInfoGO.transform.parent = this.transform;
     }
     #endregion
 

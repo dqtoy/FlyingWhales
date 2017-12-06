@@ -15,14 +15,12 @@ public class Utilities : MonoBehaviour {
 	public static int lastCitizenID = 0;
 	public static int lastCityID = 0;
     public static int lastRegionID = 0;
-	public static int lastCampaignID = 0;
 	public static int lastEventID = 0;
 	public static int lastKingdomColorIndex = 0;
 	public static int lastAlliancePoolID = 0;
 	public static int lastWarfareID = 0;
     public static int lastLogID = 0;
 	public static int lastSharedKingdomRelationshipID = 0;
-    public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
 
@@ -60,10 +58,7 @@ public class Utilities : MonoBehaviour {
 		} else if (obj is Citizen) {
 			lastCitizenID += 1;
 			return lastCitizenID;
-		} else if (obj is Campaign) {
-			lastCampaignID += 1;
-			return lastCampaignID;
-		} else if (obj is GameEvent) {
+		}else if (obj is GameEvent) {
 			lastEventID += 1;
 			return lastEventID;
 		}else if(obj is Region) {
@@ -309,127 +304,6 @@ public class Utilities : MonoBehaviour {
 		} 
 		return newList;
 	}
-	//public static bool AreTwoGeneralsFriendly(General general1, General general2){
-	//	if (general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id) {
-	//		if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-	//			return false;
-	//		}else{
-	//			return true;
-	//		}
-	//	}else{
-	//		return true;
-	//	}
-	//}
-	/*public static bool AreTwoGeneralsFriendly(General general1, General general2){
-		if(general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id){
-			if(general2.assignedCampaign != null){
-				if(general2.assignedCampaign.leader != null){
-					if(general1.citizen.city.kingdom.king.supportedCitizen != null){
-						if(general1.citizen.city.kingdom.king.supportedCitizen.id != general2.assignedCampaign.leader.id){
-							if(general2.citizen.city.governor.supportedCitizen != null){
-								if(general1.citizen.city.kingdom.king.supportedCitizen.id != general2.citizen.city.governor.supportedCitizen.id){
-									//CHECK VICE VERSA
-									if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-										return false;
-									}
-								}
-							}else{
-								if (general1.citizen.city.kingdom.king.supportedCitizen.city.kingdom.id != general2.citizen.city.kingdom.id) {
-									if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-										return false;
-									}
-								}else{
-									if(!general1.citizen.city.kingdom.king.supportedCitizen.isHeir){
-										if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-											return false;
-										}
-									}
-								}
-							}
-						}
-					}else{
-						//CHECK VICE VERSA
-						if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-							return false;
-						}
-					}
-
-				}else{
-					if (general1.citizen.city.kingdom.king.supportedCitizen != null) {
-						if(general2.citizen.city.governor.supportedCitizen != null){
-							if(general1.citizen.city.kingdom.king.supportedCitizen.id != general2.citizen.city.governor.supportedCitizen.id){
-								//CHECK VICE VERSA
-								if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-									return false;
-								}
-							}
-						}else{
-							if (general1.citizen.city.kingdom.king.supportedCitizen.city.kingdom.id != general2.citizen.city.kingdom.id) {
-								if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-									return false;
-								}
-							}else{
-								if(!general1.citizen.city.kingdom.king.supportedCitizen.isHeir){
-									if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-										return false;
-									}
-								}
-							}
-						}
-					}else{
-						if(general1.citizen.city.kingdom.CheckForSpecificWar(general2.citizen.city.kingdom)){
-							return false;
-						}
-					}
-
-				}
-			}else{
-				if (general1.citizen.city.kingdom.king.supportedCitizen != null) {
-					if(general2.citizen.city.governor.supportedCitizen != null){
-						if(general1.citizen.city.kingdom.king.supportedCitizen.id != general2.citizen.city.governor.supportedCitizen.id){
-							//CHECK VICE VERSA
-							if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-								return false;
-							}
-						}
-					}else{
-						if (general1.citizen.city.kingdom.king.supportedCitizen.city.kingdom.id != general2.citizen.city.kingdom.id) {
-							if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-								return false;
-							}
-						}else{
-							if(!general1.citizen.city.kingdom.king.supportedCitizen.isHeir){
-								if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
-									return false;
-								}
-							}
-						}
-					}
-				}else{
-					if(general1.citizen.city.kingdom.CheckForSpecificWar(general2.citizen.city.kingdom)){
-						return false;
-					}
-				}
-			}
-
-		}else{
-			if (general1.citizen.city.governor.id != general2.citizen.city.governor.id) {
-				if(general1.citizen.city.governor.supportedCitizen != null && general2.citizen.city.governor.supportedCitizen != null){
-					if(general1.citizen.city.governor.supportedCitizen.id != general2.citizen.city.governor.supportedCitizen.id){
-						return false;
-					}
-				}else{
-					if(general1.citizen.city.governor.supportedCitizen == null && general2.citizen.city.governor.supportedCitizen == null){
-						//BLANK ONLY
-					}else{
-						return false;
-					}
-				}
-			}
-		}
-
-		return true;
-	}*/
 
 	public static T[] GetComponentsInDirectChildren<T>(GameObject gameObject){
 		int indexer = 0;

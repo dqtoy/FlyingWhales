@@ -15,15 +15,6 @@ public class CitizenDiedEvent : UnityEvent{}
 public class CityEverydayTurnActions: UnityEvent{}
 public class CitizenMove: UnityEvent<bool>{}
 
-//Campaign
-public class RegisterOnCampaign: UnityEvent<Campaign>{}
-public class DeathArmy: UnityEvent{}
-public class UnsupportCitizen: UnityEvent<Citizen>{}
-public class RemoveSuccessionWarCity: UnityEvent<City>{}
-public class LookForLostArmies: UnityEvent<General>{}
-public class DeathToGhost: UnityEvent<City>{}
-public class CheckGeneralEligibility: UnityEvent<Citizen, HexTile>{}
-
 //Game Events
 public class GameEventAction: UnityEvent<GameEvent, int>{}
 public class GameEventEnded: UnityEvent<GameEvent>{}
