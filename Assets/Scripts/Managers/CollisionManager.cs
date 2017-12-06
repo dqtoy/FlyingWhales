@@ -36,7 +36,7 @@ public class CollisionManager : MonoBehaviour {
 	private void Combat(General general1, General general2){
 		KingdomRelationship kr = general1.citizen.city.kingdom.GetRelationshipWithKingdom (general2.citizen.city.kingdom);
 		if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.warfare != null){
-			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.city.name + " of " + general1.citizen.city.kingdom.name + " AND " + general2.citizen.city.name + " of " + general2.citizen.city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
+			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.name + " of " + general1.citizen.city.kingdom.name + " AND " + general2.citizen.name + " of " + general2.citizen.city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
 			kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 
 			int general1Power = general1.GetPower();
@@ -129,7 +129,7 @@ public class CollisionManager : MonoBehaviour {
 	internal void Combat(General general1, City city){
 		KingdomRelationship kr = general1.citizen.city.kingdom.GetRelationshipWithKingdom (city.kingdom);
 		if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.warfare != null){
-			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.city.name + " of " + general1.citizen.city.kingdom.name + " AND " + city.name + " of " + city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
+			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.name + " of " + general1.citizen.city.kingdom.name + " AND " + city.name + " of " + city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
 			kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 
 			int general1Power = general1.soldiers * 3;

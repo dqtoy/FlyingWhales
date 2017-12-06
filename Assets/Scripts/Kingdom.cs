@@ -1708,7 +1708,9 @@ public class Kingdom{
 //    }
 	internal void ConquerCity(City city){
 		if (this.id != city.kingdom.id) {
-			city.ConquerCity(this);
+			if(!city.kingdom.HasStillGeneralInLocation(city.hexTile)){
+				city.ConquerCity(this);
+			}
 		}
 	}
     #endregion
@@ -3870,4 +3872,13 @@ public class Kingdom{
         return activeWars;
     }
     #endregion
+
+	internal bool HasStillGeneralInLocation(HexTile hexTile){
+		for (int i = 0; i < this.militaryManager.activeGenerals.Count; i++) {
+			if(this.militaryManager.activeGenerals[i].location.id == hexTile.id){
+				return true;
+			}
+		}
+		return false;
+	}
 }

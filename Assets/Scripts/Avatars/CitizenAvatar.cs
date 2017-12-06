@@ -136,7 +136,9 @@ public class CitizenAvatar : PooledObject {
 		}
 		HasArrivedAtTargetLocation ();
 		if(!this.hasArrived){
-			NewMove ();
+			if (!this.citizenRole.isIdle) {
+				NewMove ();
+			}
 		}
 	}
 

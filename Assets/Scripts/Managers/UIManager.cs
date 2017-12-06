@@ -2173,7 +2173,7 @@ public class UIManager : MonoBehaviour {
 					if(internationalIncident.isSourceKingdomAggrieved){
 						this.allianceSummaryLbl.text += " (Aggrieved)";
 					}
-					this.allianceSummaryLbl.text += "\n-" + internationalIncident.targetKingdom.name;
+					this.allianceSummaryLbl.text += "\n-" + "[url=" + internationalIncident.targetKingdom.id.ToString() + "_kingdom" + "]" + internationalIncident.targetKingdom.name + "[/url]";
 					if(internationalIncident.isTargetKingdomAggrieved){
 						this.allianceSummaryLbl.text += " (Aggrieved)";
 					}
