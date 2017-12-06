@@ -588,7 +588,7 @@ public class GridMap : MonoBehaviour {
 
             for (int j = 0; j < elligibleTilesInRegion.Count; j++) {
                 HexTile currElligibleTile = elligibleTilesInRegion[j];
-                if (currElligibleTile.GetTilesInRange(2).Where(x => x.hasLandmark || x.isHabitable).Count() > 0) {
+                if (currElligibleTile.GetTilesInRange(2).Where(x => x.hasLandmark || x.isHabitable || x.isRoad).Count() > 0) {
                     //Check if currElligibleTile has any landmark tiles within 2 tiles
                     continue;
                 }
