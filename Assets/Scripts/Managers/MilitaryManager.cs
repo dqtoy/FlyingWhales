@@ -126,7 +126,6 @@ public class MilitaryManager {
 	}
 	private void GetAttackCityAndWeight(ref City attackCity, ref int weight){
 		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
-		List<City> enemyCities = new List<City> ();
 		for (int i = 0; i < this._kingdom.cities.Count; i++) {
 			City city = this._kingdom.cities [i];
 			for (int j = 0; j < city.region.connections.Count; j++) {
@@ -298,24 +297,16 @@ public class MilitaryManager {
 		if(this._kingdom.king.otherTraits.Contains(TRAIT.IMPERIALIST)){
 			cityTotalWeight += 50;
 		}
-		if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD) {
-			if (this._kingdom.cities.Count > this._kingdom.foodCityCapacity) {
-				cityTotalWeight += 100;
-			}
-		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL) {
+		if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.FOOD) < 0) {
+			cityTotalWeight += 100;
+		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.MATERIAL) < 0) {
 			if (this._kingdom.race == RACE.HUMANS && city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
-				if(this._kingdom.cities.Count > this._kingdom.materialCityCapacityForHumans){
-					cityTotalWeight += 100;
-				}
+				cityTotalWeight += 100;
 			}else if (this._kingdom.race == RACE.ELVES && city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY){
-				if(this._kingdom.cities.Count > this._kingdom.materialCityCapacityForElves){
-					cityTotalWeight += 100;
-				}
-			}
-		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE) {
-			if (this._kingdom.cities.Count > this._kingdom.oreCityCapacity) {
 				cityTotalWeight += 100;
 			}
+		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.ORE) < 0) {
+			cityTotalWeight += 100;
 		}
 
 		KingdomRelationship krSourceToTarget = this._kingdom.GetRelationshipWithKingdom (city.kingdom);

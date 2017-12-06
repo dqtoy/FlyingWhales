@@ -155,4 +155,8 @@ public class Role {
 			this.citizenAvatar.UpdateUI();
 		}
 	}
+
+	internal int GetTravelTimeInDays(){
+		return this.path.Count;
+	}
 }

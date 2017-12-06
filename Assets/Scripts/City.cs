@@ -1441,22 +1441,34 @@ public class City{
 	}
 
 	private float GetSoldierPercentageToGive(){
+		bool isAtWar = false;
+		bool isBorderingAllies = false;
+		bool isBorderingNonAllies = false;
 		for (int i = 0; i < this.region.connections.Count; i++) {
 			if(this.region.connections[i] is Region){
 				Region adjacentRegion = (Region)this.region.connections [i];
 				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id){
 					KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
 					if(kr.sharedRelationship.isAtWar){
-						return 0.25f;
+						isAtWar = true;
+						break;
 					}else{
 						if(!kr.AreAllies()){
-							return 0.5f;
+							isBorderingNonAllies = true;
 						}else{
-							return 0.75f;
+							isBorderingAllies = true;
 						}
 					}
 				}
 			}
+		}
+
+		if (isAtWar) {
+			return 0.25f;
+		} else if (isBorderingNonAllies) {
+			return 0.5f;
+		} else if (isBorderingAllies) {
+			return 0.75f;
 		}
 		return 1f;
 	}
