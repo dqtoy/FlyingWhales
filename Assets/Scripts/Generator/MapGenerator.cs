@@ -54,8 +54,9 @@ public class MapGenerator : MonoBehaviour {
         //		GridMap.Instance.GenerateResourceTiles();
         GridMap.Instance.GenerateOtherLandmarksPerRegion();
         GridMap.Instance.GenerateUniqueLandmarks();
-        GridMap.Instance.GenerateLandmarkExternalConnections();
-        GridMap.Instance.CheckLandmarkExternalConnections();
+        GridMap.Instance.GenerateLandmarkExtraConnections();
+        //GridMap.Instance.GenerateLandmarkExternalConnections();
+        //GridMap.Instance.CheckLandmarkExternalConnections();
         Biomes.Instance.GenerateElevationAfterRoads();
         //      GridMap.Instance.GenerateLandmarksPerRegion();
         //GridMap.Instance.GenerateRoadConnectionLandmarkToCity();

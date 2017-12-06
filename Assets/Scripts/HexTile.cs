@@ -155,7 +155,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 //    public List<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList();}}
 //    public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); }}
     public List<HexTile> RegionConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad).ToList(); } }
-    public List<HexTile> LandmarkConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad || (o.isRoad && o.roadType != ROAD_TYPE.MAJOR)).ToList(); }}
+    //public List<HexTile> LandmarkConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad || (o.isRoad && o.roadType != ROAD_TYPE.MAJOR)).ToList(); }}
+    public List<HexTile> LandmarkConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkExternalConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> CombatTiles { get { return NoWaterTiles; }}

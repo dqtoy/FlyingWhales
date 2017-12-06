@@ -30,6 +30,11 @@ public class PathGenerator : MonoBehaviour {
         }
     }
 
+    [ContextMenu("Get Distance")]
+    public void GetDistance() {
+        Debug.Log(Vector2.Distance(startTile.transform.position, targetTile.transform.position));
+    }
+
     [ContextMenu("Show all road tiles")]
     public void ShowAllRoadTiles() {
         foreach (HexTile h in roadTiles) {
