@@ -488,40 +488,52 @@ public class GridMap : MonoBehaviour {
         for (int i = 0; i < allLandmarks.Count; i++) {
             Landmark currLandmark = allLandmarks[i];
             if(currLandmark.connections.Count <= 1) {
-                List<Landmark> allOtherLandmarks = new List<Landmark>(allLandmarks);
-                allOtherLandmarks.Remove(currLandmark);
-                allOtherLandmarks = allOtherLandmarks.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.location.transform.position)).ToList();
-                for (int j = 0; j < allOtherLandmarks.Count; j++) {
-                    Landmark otherLandmark = allOtherLandmarks[j];
-                    if (otherLandmark.connections.Contains(currLandmark.location)) {
-                        continue;
+                List<HexTile> tilesToConnectTo = new List<HexTile>(allLandmarks.Select(x => x.location));
+                tilesToConnectTo.AddRange(allRegions.Select(x => x.centerOfMass));
+
+                tilesToConnectTo.Remove(currLandmark.location);
+                tilesToConnectTo = tilesToConnectTo.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.transform.position)).ToList();
+                for (int j = 0; j < tilesToConnectTo.Count; j++) {
+                    HexTile otherTile = tilesToConnectTo[j];
+                    if (otherTile.isHabitable) {
+                        if (otherTile.region.connections.Contains(currLandmark.location)) {
+                            continue;
+                        }
+                    } else {
+                        if (otherTile.landmark.connections.Contains(currLandmark.location)) {
+                            continue;
+                        }
                     }
-                    List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.LANDMARK_CONNECTION);
+                    List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherTile, PATHFINDING_MODE.LANDMARK_CONNECTION);
                     if(path != null) {
-                        RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
+                        if (otherTile.isHabitable) {
+                            RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherTile.region);
+                        } else {
+                            RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherTile);
+                        }
                         RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
                         break;
                     }
                 }
 
-                if(currLandmark.connections.Count <= 1) {
-                    //connect to nearest city instead
-                    List<Region> allOtherRegions = new List<Region>(allRegions);
-                    //allOtherRegions.Remove(currLandmark.location.region);
-                    allOtherRegions = allOtherRegions.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.centerOfMass.transform.position)).ToList();
-                    for (int j = 0; j < allOtherRegions.Count; j++) {
-                        Region otherRegion = allOtherRegions[j];
-                        if (otherRegion.connections.Contains(currLandmark.location)) {
-                            continue;
-                        }
-                        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION);
-                        if (path != null) {
-                            RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherRegion);
-                            RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-                            break;
-                        }
-                    }
-                }
+                //if(currLandmark.connections.Count <= 1) {
+                //    //connect to nearest city instead
+                //    List<Region> allOtherRegions = new List<Region>(allRegions);
+                //    //allOtherRegions.Remove(currLandmark.location.region);
+                //    allOtherRegions = allOtherRegions.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.centerOfMass.transform.position)).ToList();
+                //    for (int j = 0; j < allOtherRegions.Count; j++) {
+                //        Region otherRegion = allOtherRegions[j];
+                //        if (otherRegion.connections.Contains(currLandmark.location)) {
+                //            continue;
+                //        }
+                //        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.LANDMARK_CONNECTION);
+                //        if (path != null) {
+                //            RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherRegion);
+                //            RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
+                //            break;
+                //        }
+                //    }
+                //}
             }
         }
     }
@@ -576,7 +588,7 @@ public class GridMap : MonoBehaviour {
 
             for (int j = 0; j < elligibleTilesInRegion.Count; j++) {
                 HexTile currElligibleTile = elligibleTilesInRegion[j];
-                if (currElligibleTile.GetTilesInRange(2).Where(x => x.hasLandmark).Count() > 0) {
+                if (currElligibleTile.GetTilesInRange(2).Where(x => x.hasLandmark || x.isHabitable).Count() > 0) {
                     //Check if currElligibleTile has any landmark tiles within 2 tiles
                     continue;
                 }

@@ -50,10 +50,10 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION) {
                     foreach (Node n in path.LastStep.LandmarkConnectionTiles) {
-                        //if (n.region.id != region1.id && n.region.id != region2.id) {
-                        //    //path cannot pass through other regions
-                        //    continue;
-                        //}
+                        if (n.region.id != region1.id && n.region.id != region2.id) {
+                            //path cannot pass through other regions
+                            continue;
+                        }
                         if (n.AllNeighbourRoadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR).Count() > 0 && n.id != start.id && n.id != destination.id
                             && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
                             continue;
