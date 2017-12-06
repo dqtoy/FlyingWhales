@@ -24,6 +24,7 @@ public class King : Role {
 		base.OnDeath ();
         //Trigger Succession
         ownedKingdom.AssignNewKing();
+		ownedKingdom.militaryManager.UpdateMaxGenerals ();
 	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;

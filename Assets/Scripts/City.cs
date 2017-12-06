@@ -71,7 +71,6 @@ public class City{
 	internal bool isAttacking;
 	internal bool isDefending;
 	internal bool isDead;
-	internal bool hasAssignedDefendGeneral;
 	private bool _isStarving;
 	private bool _isNoCityGrowth;
 
@@ -90,6 +89,9 @@ public class City{
     private float _cityBounds;
 
 	private int[] populationIncreasePool;
+
+	internal int assignedDefendGeneralsCount;
+
 
     #region getters/setters
     internal Region region {
@@ -273,7 +275,7 @@ public class City{
 		this.isPaired = false;
 		this.isAttacking = false;
 		this.isDefending = false;
-		this.hasAssignedDefendGeneral = false;
+		this.assignedDefendGeneralsCount = 0;
 		this._isStarving = false;
 		this._isNoCityGrowth = false;
 		this.isDead = false;

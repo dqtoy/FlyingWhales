@@ -96,7 +96,7 @@ public class General : Role {
 			GetSoldiersFromCities ();
 		} else if (this.generalTask.task == GENERAL_TASKS.DEFEND_CITY) {
 			this.targetCity = ((DefendCityTask)generalTask).targetCity;
-			this.targetCity.hasAssignedDefendGeneral = true;
+			this.targetCity.assignedDefendGeneralsCount += 1;
 			this.targetLocation = generalTask.targetHextile;
 			this.isIdle = true;
 			this.citizenAvatar.SetHasArrivedState (false);

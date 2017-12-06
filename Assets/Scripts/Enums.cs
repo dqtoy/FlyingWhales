@@ -718,3 +718,13 @@ public enum ACTION_CHOICES {
     DONT_DO_ACTION
 }
 
+//---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
+public enum BODY_PART{
+	HEAD,
+	TORSO,
+	TAIL,
+	ARM,
+	HAND,
+	LEG,
+	FEET,
+}
