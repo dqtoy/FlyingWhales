@@ -45,7 +45,6 @@ public class Kingdom{
     private int _stability;
     private List<City> _cities;
     private List<Region> _regions;
-	private List<Camp> camps;
 	internal City capitalCity;
 	internal Citizen king;
     internal Citizen nextInLine;
@@ -71,7 +70,6 @@ public class Kingdom{
 	private int _techCounter;
 
 	//The First and The Keystone
-	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
     private bool _isGrowthEnabled;
 
 	//Serum of Alacrity
@@ -409,7 +407,6 @@ public class Kingdom{
 		this._cities = new List<City> ();
         this._regions = new List<Region>();
         this._citizens = new Dictionary<City, List<Citizen>>();
-		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
 		//this._availableResources = new Dictionary<RESOURCE, int> ();
@@ -1708,7 +1705,9 @@ public class Kingdom{
 //    }
 	internal void ConquerCity(City city){
 		if (this.id != city.kingdom.id) {
-			city.ConquerCity(this);
+			if(!city.kingdom.HasStillGeneralInLocation(city.hexTile)){
+				city.ConquerCity(this);
+			}
 		}
 	}
     #endregion
@@ -3870,4 +3869,13 @@ public class Kingdom{
         return activeWars;
     }
     #endregion
+
+	internal bool HasStillGeneralInLocation(HexTile hexTile){
+		for (int i = 0; i < this.militaryManager.activeGenerals.Count; i++) {
+			if(this.militaryManager.activeGenerals[i].location.id == hexTile.id){
+				return true;
+			}
+		}
+		return false;
+	}
 }

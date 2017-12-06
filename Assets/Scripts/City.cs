@@ -439,10 +439,6 @@ public class City{
         ////Set tile as visible for the kingdom that bought it
         //kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
 
-		if(Messenger.eventTable.ContainsKey("OnUpdatePath")){
-			Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
-		}
-
         //Update necessary data
         this.UpdateDailyProduction();
 
@@ -858,13 +854,9 @@ public class City{
 		ChangeAttackingState (false);
 		ChangeDefendingState (false);
 
-		if(Messenger.eventTable.ContainsKey("CityHasDied")){
-			Messenger.Broadcast<City>("CityHasDied", this);
-		}
-
 		int civilianDeath = CivilianDeathsByConquered (conqueror);
-		AdjustPopulation (-civilianDeath);
-		int currentPopulation = this.population;
+		AdjustPopulation (-civilianDeath, true, true);
+		int currentPopulation = this._population;
 
         City newCity = conqueror.CreateNewCityOnTileForKingdom(this.hexTile);
         newCity.name = this.name;
@@ -898,7 +890,10 @@ public class City{
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
         CameraMove.Instance.UpdateMinimapTexture();
 		if (Messenger.eventTable.ContainsKey ("CityDied")) {
-			Messenger.Broadcast<City> ("CityDied", this);
+			Messenger.Broadcast<City> ("CityDied", previousCity);
+		}
+		if(Messenger.eventTable.ContainsKey("CityHasDied")){
+			Messenger.Broadcast<City>("CityHasDied", previousCity);
 		}
 
     }
@@ -915,7 +910,7 @@ public class City{
 
 		float deathPercentage = (float)deathRange / 100f;
 
-		return (int)((float)this.population * deathPercentage);
+		return (int)((float)this._population * deathPercentage);
 	}
 	internal void CreateRefugees(City previousCity){
 		int numOfRefugees = (int)((float)this._population * 0.75f);
@@ -1296,7 +1291,7 @@ public class City{
 			AdjustPopulation (this.populationGrowth);
 		}
 	}
-	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
+	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true, bool isConquered = false) {
 		int supposedPopulation = this._population + adjustment;
 		int populationCap = this.populationCapacity;
 		if(supposedPopulation > populationCap){
@@ -1310,12 +1305,14 @@ public class City{
 			this._population += adjustment;
 			this._kingdom.AdjustPopulation (adjustment, isUpdateKingdomList);
 		}
-			
-		if(this._population == 0) {
-			if(supposedPopulation < 0){
-				AdjustSoldiers (supposedPopulation);
-				if(this._soldiers == 0){
-					KillCity ();
+
+		if(!isConquered){
+			if(this._population == 0) {
+				if(supposedPopulation < 0){
+					AdjustSoldiers (supposedPopulation);
+					if(this._soldiers == 0){
+						KillCity ();
+					}
 				}
 			}
 		}

@@ -174,9 +174,6 @@ public class Citizen {
         //this.city.citizens.Add (this);
     }
 
-	internal int GetCampaignLimit(){
-		return 2;
-	}
     internal void AssignRole(ROLE role) {
         if (this.role != ROLE.UNTRAINED && this.role != role) {
             if (this.assignedRole != null) {

@@ -40,18 +40,6 @@ public class EventManager : MonoBehaviour {
 	public CitizenMove onCitizenMove =  new CitizenMove();
 
 	/*
-	 * Campaign Events
-	 * */
-	public RegisterOnCampaign onRegisterOnCampaign = new RegisterOnCampaign();
-	public DeathArmy onDeathArmy = new DeathArmy();
-	public UnsupportCitizen onUnsupportCitizen = new UnsupportCitizen();
-	public RemoveSuccessionWarCity onRemoveSuccessionWarCity = new RemoveSuccessionWarCity();
-	public LookForLostArmies onLookForLostArmies = new LookForLostArmies ();
-	public DeathToGhost onDeathToGhost = new DeathToGhost();
-	public CheckGeneralEligibility onCheckGeneralEligibility = new CheckGeneralEligibility();
-	public UpdatePath onUpdatePath = new UpdatePath();
-
-	/*
 	 * Game Events
 	 * */
 	public GameEventAction onGameEventAction = new GameEventAction();

@@ -17,19 +17,6 @@ public class King : Role {
 	private int _triggerYearOfSerum;
 
 	public King(Citizen citizen): base(citizen){
-		//this.citizen.isKing = true;
-//		if(this.citizen.city.kingdom.king != null){
-//			this.citizen.CopyCampaignManager (this.citizen.city.kingdom.king.campaignManager);
-//		}
-		//this.citizen.city.kingdom.king = this.citizen;
-		//this.SetOwnedKingdom(this.citizen.city.kingdom);
-		//this.citizen.GenerateCharacterValues ();
-		//this.abductionCounter = 0;
-		//if(this.citizen.city.kingdom.plague != null){
-		//	this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
-		//}
-		//this.isRumoring = false;
-		//this.isHiddenHistoryBooking = false;
 		this.role = ROLE.KING;
 	}
 
