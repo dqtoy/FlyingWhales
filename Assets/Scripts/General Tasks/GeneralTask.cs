@@ -47,7 +47,7 @@ public class GeneralTask {
 				for (int i = 0; i < this.general.citizen.city.region.connections.Count; i++) {
 					if(this.general.citizen.city.region.connections[i] is Region){
 						City city = ((Region)this.general.citizen.city.region.connections [i]).occupant;
-						if(city != null && city.kingdom.id == this.general.citizen.city.kingdom.id && Utilities.HasPath(this.general.location, city.hexTile, PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM, this.general.citizen.city.kingdom)){
+						if(city != null && city.kingdom.id == this.general.citizen.city.kingdom.id && Utilities.HasPath(this.general.location, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.general.citizen.city.kingdom)){
 							ReturnSoldiers (city);
 							return;
 						}
@@ -64,6 +64,6 @@ public class GeneralTask {
 		this.general.targetCity = targetCity;
 		this.general.targetLocation = targetCity.hexTile;
 		this.general.citizenAvatar.SetHasArrivedState (false);
-		this.general.citizenAvatar.CreatePath (PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM);
+		this.general.citizenAvatar.CreatePath (PATHFINDING_MODE.USE_ROADS_WITH_ALLIES);
 	}
 }

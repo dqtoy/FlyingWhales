@@ -39,11 +39,12 @@ public class CollisionManager : MonoBehaviour {
 			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.name + " of " + general1.citizen.city.kingdom.name + " AND " + general2.citizen.name + " of " + general2.citizen.city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
 			kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 
+			general1.ChangeBattleState ();
+			general2.ChangeBattleState ();
+
 			int general1Power = general1.GetPower();
 			int general2Power = general2.GetPower();
 
-			general1.ChangeBattleState ();
-			general2.ChangeBattleState ();
 
 			Debug.Log ("GENERAL 1 POWER: " + general1Power);	
 			Debug.Log ("GENERAL 2 POWER: " + general2Power);
