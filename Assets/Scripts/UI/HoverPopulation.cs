@@ -10,12 +10,14 @@ public class HoverPopulation : MonoBehaviour {
 			General general = (General)generalAvatar.citizenRole;
 			if(general.generalTask != null){
 				summary = "NAME: " + general.citizen.name.ToString();
-				summary += "\nTASK: " + general.generalTask.task.ToString();
-				summary += "\nTARGET HEXTILE: " + general.generalTask.targetHextile.name.ToString();
-				if(general.generalTask.targetHextile.city != null){
-					summary += "\nTARGET CITY: " + general.generalTask.targetHextile.city.name.ToString();
+				if(general.generalTask != null){
+					summary += "\nTASK: " + general.generalTask.task.ToString();
+					summary += "\nTARGET HEXTILE: " + general.generalTask.targetHextile.name.ToString();
+					if(general.generalTask.targetHextile.city != null){
+						summary += "\nTARGET CITY: " + general.generalTask.targetHextile.city.name.ToString();
+					}
+					summary += "\nMOVE DATE: " + ((MONTH)general.generalTask.moveDate.month).ToString () + " " + general.generalTask.moveDate.day.ToString() + ", " +  general.generalTask.moveDate.year.ToString ();
 				}
-				summary += "\nMOVE DATE: " + ((MONTH)general.generalTask.moveDate.month).ToString () + " " + general.generalTask.moveDate.day.ToString() + ", " +  general.generalTask.moveDate.year.ToString ();
 				UIManager.Instance.ShowSmallInfo(summary);
 			}
 		}

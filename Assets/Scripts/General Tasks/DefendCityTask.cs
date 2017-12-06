@@ -22,7 +22,10 @@ public class DefendCityTask : GeneralTask {
 	}
 	internal override void DoneTask(){
 		base.DoneTask ();
-		this.targetCity.hasAssignedDefendGeneral = false;
+		this.targetCity.assignedDefendGeneralsCount -= 1;
+		if(this.targetCity.assignedDefendGeneralsCount < 0){
+			this.targetCity.assignedDefendGeneralsCount = 0;
+		}
 		Messenger.RemoveListener<City> ("CityHasDied", CityHasDied);
 	}
 	#endregion

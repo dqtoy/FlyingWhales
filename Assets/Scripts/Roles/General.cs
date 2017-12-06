@@ -96,11 +96,11 @@ public class General : Role {
 			GetSoldiersFromCities ();
 		} else if (this.generalTask.task == GENERAL_TASKS.DEFEND_CITY) {
 			this.targetCity = ((DefendCityTask)generalTask).targetCity;
-			this.targetCity.hasAssignedDefendGeneral = true;
+			this.targetCity.assignedDefendGeneralsCount += 1;
 			this.targetLocation = generalTask.targetHextile;
 			this.isIdle = true;
 			this.citizenAvatar.SetHasArrivedState (false);
-			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
+			this.citizenAvatar.CreatePath (PATHFINDING_MODE.MAJOR_ROADS_WITH_ALLIES);
 			GetSoldiersFromCities ();
 		} else {
 			this.avatar.GetComponent<GeneralAvatar> ().ChangeAvatarImage (this.generalTask.task);
@@ -111,7 +111,7 @@ public class General : Role {
 		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
 			if(neededSoldiers > 0){
 				City city = this.citizen.city.kingdom.cities [i];
-				List<HexTile> path = PathGenerator.Instance.GetPath (city.hexTile, this.location, PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM, this.citizen.city.kingdom);
+				List<HexTile> path = PathGenerator.Instance.GetPath (city.hexTile, this.location, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.citizen.city.kingdom);
 				if(path != null && path.Count > 0){
 					if (path.Count + 2 <= this.generalTask.daysBeforeMoving){
 						int soldiersGiven = AskForSoldiers (neededSoldiers, city, path);
