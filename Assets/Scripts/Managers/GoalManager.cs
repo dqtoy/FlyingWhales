@@ -290,8 +290,11 @@ public class GoalManager : MonoBehaviour {
             KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
             KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
             if (!relOfOtherWithSource.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
-                defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
-                defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
+                if (relOfOtherWithSource.totalLike > 0) {
+                    defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
+                }else if (relOfOtherWithSource.totalLike < 0) {
+                    defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
+                }
                 if (sourceKingdom.recentlyRejectedOffers.ContainsKey(targetKingdom)) {
                     defaultWeight -= 50;
                 } else if (sourceKingdom.recentlyBrokenAlliancesWith.Contains(targetKingdom)) {
@@ -333,7 +336,14 @@ public class GoalManager : MonoBehaviour {
             if (deficitOfTargetKingdom.ContainsKey(currSurplus)) {
                 //otherKingdom has a deficit for currSurplus
                 //add Default Weight for every point of Surplus they have on our Deficit Resources 
-                defaultWeight += (weightAdjustment * surplusAmount);
+                int deficitAmount = deficitOfTargetKingdom[currSurplus];
+                int modifier = 0;
+                if(surplusAmount >= deficitAmount) {
+                    modifier = deficitAmount;
+                } else {
+                    modifier = surplusAmount;
+                }
+                defaultWeight += (weightAdjustment * modifier);
             }
         }
     }
@@ -342,7 +352,7 @@ public class GoalManager : MonoBehaviour {
         defaultWeight = 0;
         KingdomRelationship relOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
         if (relOtherWithSource.totalLike < 0) {
-            defaultWeight += Mathf.Abs(defaultWeight * relOtherWithSource.totalLike);
+            defaultWeight += weightModification * Mathf.Abs(relOtherWithSource.totalLike);
         }
     }
     private void GetAllModificationForInciteUnrest(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
@@ -354,7 +364,7 @@ public class GoalManager : MonoBehaviour {
         if (sourceKingdom.king.HasTrait(TRAIT.DECEITFUL)) {
             if (relWithOtherKingdom.AreAllies()) {
                 if (relWithOtherKingdom.totalLike < 0) {
-                    defaultWeight += Mathf.Abs(weightModification * relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
+                    defaultWeight += weightModification * Mathf.Abs(relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
                 }
             }
         }
@@ -440,24 +450,22 @@ public class GoalManager : MonoBehaviour {
         }
     }
     private void GetAllModificationForLeaveTradeDeal(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight, ref int weightNotToDoAction) {
-        if (sourceKingdom.kingdomsInTradeDealWith.Contains(targetKingdom)) {
-            int weightAdjustment = 100;
-            KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
-            if (relSourceWithOther.targetKingdomThreatLevel > 0) {
-                weightAdjustment += relSourceWithOther.targetKingdomThreatLevel; //add 1 to Default Weight for every Threat of the kingdom
-            }
-            if (relSourceWithOther.totalLike < 0) {
-                weightAdjustment += Mathf.Abs(2 * relSourceWithOther.totalLike); //add 2 to Default Weight for every negative Opinion I have towards the king
-            } else if (relSourceWithOther.totalLike > 0) {
-                weightAdjustment -= 2 * relSourceWithOther.totalLike; //subtract 2 to Default Weight for every positive Opinion I have towards the king
-            }
+        int weightAdjustment = 100;
+        KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+        if (relSourceWithOther.targetKingdomThreatLevel > 0) {
+            weightAdjustment += relSourceWithOther.targetKingdomThreatLevel; //add 1 to Default Weight for every Threat of the kingdom
+        }
+        if (relSourceWithOther.totalLike < 0) {
+            weightAdjustment += Mathf.Abs(2 * relSourceWithOther.totalLike); //add 2 to Default Weight for every negative Opinion I have towards the king
+        } else if (relSourceWithOther.totalLike > 0) {
+            weightAdjustment -= 2 * relSourceWithOther.totalLike; //subtract 2 to Default Weight for every positive Opinion I have towards the king
+        }
 
-            //add Default Weight if Kingdom no longer benefits from any Surplus of the trade partner, otherwise, add its Default Weight to Not Leave Any Trade Deal
-            if (sourceKingdom.IsTradeDealStillNeeded(targetKingdom)) {
-                weightNotToDoAction += weightAdjustment;
-            } else {
-                defaultWeight += weightAdjustment;
-            }
+        //add Default Weight if Kingdom no longer benefits from any Surplus of the trade partner, otherwise, add its Default Weight to Not Leave Any Trade Deal
+        if (sourceKingdom.IsTradeDealStillNeeded(targetKingdom)) {
+            weightNotToDoAction += weightAdjustment;
+        } else {
+            defaultWeight += weightAdjustment;
         }
     }
     #endregion

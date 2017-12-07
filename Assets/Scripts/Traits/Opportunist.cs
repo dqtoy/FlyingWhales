@@ -32,11 +32,28 @@ public class Opportunist : Trait {
         int weight = 0;
         if (sourceKingdom.IsThreatened()) {
             //loop through known Kingdoms with the highest Relative Strength and only select one with positive Relative Strength and not at war with
+            Kingdom strongestKingdom = null;
+            int highestRelativeStrength = 0;
+            for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
+                Kingdom possibleStrongKingdom = sourceKingdom.discoveredKingdoms[i];
+                KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(possibleStrongKingdom);
+                if(currRel.relativeStrength > 0 && !currRel.sharedRelationship.isAtWar) {
+                    if (currRel.relativeStrength > highestRelativeStrength) {
+                        highestRelativeStrength = currRel.relativeStrength;
+                        strongestKingdom = possibleStrongKingdom;
+                    }
+                }
+            }
+            if(strongestKingdom == null || strongestKingdom.id != otherKingdom.id) {
+                //There is no strong kingdom or other kingdom is not the strongest kingdom
+                return 0;
+            }
             KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
             KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
 			if (!relWithOtherKingdom.sharedRelationship.isAtWar && relWithOtherKingdom.relativeStrength > 0) {
-                weight = 0;
-                weight += 5 * relWithOtherKingdom.relativeStrength;//add 5 Weight for every positive Relative Strength point of the kingdom
+                if (relWithOtherKingdom.relativeStrength > 0) {
+                    weight += 5 * relWithOtherKingdom.relativeStrength;//add 5 Weight for every positive Relative Strength point of the kingdom
+                }
                 //add 2 Weight for every positive Opinion it has towards me
                 //subtract 1 Weight for every negative Opinion it has towards me
                 if (relOfOtherWithSource.totalLike > 0) {

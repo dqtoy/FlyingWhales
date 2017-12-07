@@ -3532,7 +3532,7 @@ public class Kingdom{
             Kingdom otherKingdom = this.adjacentKingdoms[i];
             KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(otherKingdom);
             KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(this);
-            if (relWithOtherKingdom.targetKingdomThreatLevel > 20 && relOfOtherWithSource.totalLike < 0) {
+            if (relWithOtherKingdom.targetKingdomThreatLevel >= 20 && relOfOtherWithSource.totalLike < 0) {
                 return true;
             }
         }
