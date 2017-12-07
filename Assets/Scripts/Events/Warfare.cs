@@ -696,11 +696,15 @@ public class Warfare {
             KingdomRelationship relSourceWithEnemy = sourceKingdom.GetRelationshipWithKingdom(enemyKingdom);
             KingdomRelationship relEnemyWithSource = enemyKingdom.GetRelationshipWithKingdom(sourceKingdom);
 
-            //add 2 to Default Weight to Declare Peace for every Relative Strength the enemy kingdoms have over me
-            doActionDefaultWeight += (2 * relSourceWithEnemy.relativeStrength);
-
-            //add 2 to Default Weight to Dont Declare Peace for every Relative Strength I have over each enemy kingdom
-            dontDoActionDefaultWeight += 2 * relEnemyWithSource.relativeStrength;
+            if(relSourceWithEnemy.relativeStrength > 0) {
+                //add 2 to Default Weight to Declare Peace for every Relative Strength the enemy kingdoms have over me
+                doActionDefaultWeight += (2 * relSourceWithEnemy.relativeStrength);
+            }
+            
+            if(relEnemyWithSource.relativeStrength > 0) {
+                //add 2 to Default Weight to Dont Declare Peace for every Relative Strength I have over each enemy kingdom
+                dontDoActionDefaultWeight += 2 * relEnemyWithSource.relativeStrength;
+            }
         }
         //Default Weights have a minimum value of 0
         doActionDefaultWeight = Mathf.Max(0, doActionDefaultWeight);
