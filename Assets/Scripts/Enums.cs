@@ -728,3 +728,29 @@ public enum BODY_PART{
 	LEG,
 	FEET,
 }
+
+public enum CHARACTER_CLASS_TYPE {
+    GENERAL
+}
+
+public enum SKILL_TYPE {
+    ATTACK,
+    FLEE,
+    PICK_UP
+}
+public enum SKILL_REQUIREMENT_TYPE {
+    HAS,
+    DOES_NOT_HAVE
+}
+public enum SKILL_REQUIREMENT_ITEM {
+    HEAD,
+    TORSO,
+    TAIL,
+    ARM,
+    HAND,
+    LEG,
+    FEET,
+    WEAPON
+}
+
+
