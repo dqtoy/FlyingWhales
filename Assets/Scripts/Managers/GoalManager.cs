@@ -115,18 +115,18 @@ public class GoalManager : MonoBehaviour {
         for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i]; //the cause of the action
             Dictionary<Kingdom, int> possibleAllies = new Dictionary<Kingdom, int>();
-            for (int j = 0; j < otherKingdom.adjacentKingdoms.Count; j++) {
-                Kingdom adjKingdomOfOtherKingdom = otherKingdom.adjacentKingdoms[j]; //the target of the action
-                if (adjKingdomOfOtherKingdom.id != sourceKingdom.id) {
+            for (int j = 0; j < otherKingdom.discoveredKingdoms.Count; j++) {
+                Kingdom discoveredKingdomOfOtherKingdom = otherKingdom.discoveredKingdoms[j]; //the target of the action
+                if (discoveredKingdomOfOtherKingdom.id != sourceKingdom.id) {
                     int weightForOtherKingdom = 0;
                     //loop through all the traits of the current king
                     for (int k = 0; k < sourceKingdom.king.allTraits.Count; k++) {
                         Trait currTrait = sourceKingdom.king.allTraits[k];
-                        int modificationFromTrait = currTrait.GetWeightOfActionGivenTargetAndCause(specialWeightedAction, adjKingdomOfOtherKingdom, otherKingdom, weightForOtherKingdom);
+                        int modificationFromTrait = currTrait.GetWeightOfActionGivenTargetAndCause(specialWeightedAction, discoveredKingdomOfOtherKingdom, otherKingdom, weightForOtherKingdom);
                         weightForOtherKingdom += modificationFromTrait;
                     }
                     ApplyActionModificationForAll(specialWeightedAction, sourceKingdom, otherKingdom, ref weightForOtherKingdom);
-                    possibleAllies.Add(adjKingdomOfOtherKingdom, weightForOtherKingdom);
+                    possibleAllies.Add(discoveredKingdomOfOtherKingdom, weightForOtherKingdom);
                 }
             }
             kingdomWeights.Add(otherKingdom, possibleAllies);
