@@ -28,7 +28,7 @@ public class Trait{
         
         for (int i = 0; i < allWeightedActions.Length; i++) {
             WEIGHTED_ACTION currAction = allWeightedActions[i];
-            if (GoalManager.Instance.ActionMeetsRequirements(ownerOfTrait.city.kingdom, currAction)) {
+            if (GoalManager.Instance.ActionMeetsRequirementsForTrait(ownerOfTrait.city.kingdom, currAction, trait)) {
                 int totalWeightOfAction = Mathf.Max(0, GetBaseWeightOfAction(currAction)); //So that the returned number can never be negative
                 if (totalWeightOfAction > 0) {
                     totalWeights.Add(currAction, totalWeightOfAction);

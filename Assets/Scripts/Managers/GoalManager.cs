@@ -7,8 +7,10 @@ public class GoalManager : MonoBehaviour {
     public static GoalManager Instance = null;
 
     [SerializeField] private List<WeightedActionRequirements> actionRequirements;
+    [SerializeField] private List<TraitWeightedActionRequirements> traitActionRequirements;
 
     public Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>> weightedActionRequirements;
+    public Dictionary<TRAIT, Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>> weightedActionRequirementsForTraits;
 
     public static HashSet<WEIGHTED_ACTION> indirectActionTypes = new HashSet<WEIGHTED_ACTION>() {
         WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST
@@ -29,6 +31,16 @@ public class GoalManager : MonoBehaviour {
         for (int i = 0; i < actionRequirements.Count; i++) {
             WeightedActionRequirements currReq = actionRequirements[i];
             weightedActionRequirements.Add(currReq.weightedAction, currReq.requirements);
+        }
+        weightedActionRequirementsForTraits = new Dictionary<TRAIT, Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>>();
+        for (int i = 0; i < traitActionRequirements.Count; i++) {
+            TraitWeightedActionRequirements currTrait = traitActionRequirements[i];
+            Dictionary <WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>> reqs = new Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>();
+            for (int j = 0; j < currTrait.actionRequirements.Count; j++) {
+                WeightedActionRequirements currReq = currTrait.actionRequirements[j];
+                reqs.Add(currReq.weightedAction, currReq.requirements);
+            }
+            weightedActionRequirementsForTraits.Add(currTrait.trait, reqs);
         }
     }
 
@@ -479,6 +491,41 @@ public class GoalManager : MonoBehaviour {
                         break;
                     default:
                         return true;
+                }
+            }
+        }
+        return true;
+    }
+    internal bool ActionMeetsRequirementsForTrait(Kingdom sourceKingdom, WEIGHTED_ACTION actionType, TRAIT traitType) {
+        if (weightedActionRequirementsForTraits.ContainsKey(traitType)) {
+            if (weightedActionRequirementsForTraits[traitType].ContainsKey(actionType)) {
+                List<WEIGHTED_ACTION_REQS> requirements = weightedActionRequirementsForTraits[traitType][actionType];
+                for (int i = 0; i < requirements.Count; i++) {
+                    WEIGHTED_ACTION_REQS currRequirement = requirements[i];
+                    switch (currRequirement) {
+                        case WEIGHTED_ACTION_REQS.NO_ALLIANCE:
+                            if (sourceKingdom.alliancePool != null) {
+                                return false;
+                            }
+                            break;
+                        case WEIGHTED_ACTION_REQS.HAS_ALLIANCE:
+                            if (sourceKingdom.alliancePool == null) {
+                                return false;
+                            }
+                            break;
+                        case WEIGHTED_ACTION_REQS.HAS_WAR:
+                            if (sourceKingdom.GetWarCount() <= 0) {
+                                return false;
+                            }
+                            break;
+                        case WEIGHTED_ACTION_REQS.HAS_ACTIVE_TRADE_DEAL:
+                            if (sourceKingdom.kingdomsInTradeDealWith.Count <= 0) {
+                                return false;
+                            }
+                            break;
+                        default:
+                            return true;
+                    }
                 }
             }
         }
