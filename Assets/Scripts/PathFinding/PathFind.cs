@@ -35,13 +35,17 @@ namespace PathFind {
                             //path cannot pass through other regions
                             continue;
                         }
-                        if(n.allNeighbourRoads.Count > 0 && n.id != start.id && n.id != destination.id) {
+                        if(n.AllNeighbourRoadTiles.Count > 0 && n.id != start.id && n.id != destination.id) {
                             //current node has adjacent roads, check if it is a neighbour of start or destination
                             //if it is, allow the path
                             //else skip this node
-                            if(!start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
-                                continue;
-                            }
+                            continue;
+                            //if(!start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
+                            //    continue;
+                            //} else {
+                            //    //current node is a neighbour of start/destination
+
+                            //}
                         }
 
                         d = distance(path.LastStep, n);
