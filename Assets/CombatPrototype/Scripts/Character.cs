@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace ECS{
-	public class Character: MonoBehaviour {
-		[SerializeField] private int _maxHP;
-		public TextAsset characterClassJson;
-		public TextAsset bodyPartsJson;
+	[System.Serializable]
+	public class Character: EntityComponent {
+		[SerializeField] public int _maxHP;
+		[SerializeField] public TextAsset characterClassJson;
+		[SerializeField] public TextAsset bodyPartsJson;
 
 		private string _name;
 		private List<Trait>	_traits;
@@ -16,7 +17,8 @@ namespace ECS{
 		private CharacterClass _characterClass;
 
 
-		void Start(){
+		//Initializes Character Class
+		internal void Init(){
 			BodyPartsData bodyPartsData = JsonUtility.FromJson<BodyPartsData> (bodyPartsJson.text);
 			this._bodyParts = new List<BodyPart> (bodyPartsData.bodyParts);
 			this._characterClass = new CharacterClass ();

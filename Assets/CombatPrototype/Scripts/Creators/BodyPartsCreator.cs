@@ -33,6 +33,9 @@ namespace ECS {
 			if (GUILayout.Button("Load Body Parts")) {
 				LoadBodyParts();
 			}
+			if (GUILayout.Button("New Body Parts")) {
+				NewBodyParts();
+			}
         }
 
 		private void SaveBodyParts(){
@@ -67,6 +70,10 @@ namespace ECS {
 
 				bodyPartsData = JsonUtility.FromJson<BodyPartsData> (dataAsJson);
 			}
+		}
+
+		private void NewBodyParts(){
+			bodyPartsData = new BodyPartsData ();
 		}
     }
 }
