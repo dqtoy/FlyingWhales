@@ -47,17 +47,19 @@ public class Hostile : Trait {
     internal override int GetKeepAllianceWeightModification(AlliancePool alliance) {
         int weight = 0;
         Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        List<Warfare> activeWars = sourceKingdom.GetAllActiveWars();
+        //List<Warfare> activeWars = sourceKingdom.GetAllActiveWars();
         for (int i = 0; i < alliance.kingdomsInvolved.Count; i++) {
             Kingdom ally = alliance.kingdomsInvolved[i];
             if (ally.id != sourceKingdom.id) {
-                List<Warfare> activeWarsOfAlly = ally.GetAllActiveWars();
-                for (int j = 0; j < activeWarsOfAlly.Count; j++) {
-                    Warfare currWar = activeWarsOfAlly[j];
-                    if (activeWars.Contains(currWar)) {
-                        weight += 20; //add 20 weight to keep alliance for every active war of other kingdoms withinin alliance
-                    }
-                }
+                weight += 20 * ally.GetWarCount(); //add 20 weight to keep alliance for every active war of other kingdoms withinin alliance
+
+                //List<Warfare> activeWarsOfAlly = ally.GetAllActiveWars();
+                //for (int j = 0; j < activeWarsOfAlly.Count; j++) {
+                //    Warfare currWar = activeWarsOfAlly[j];
+                //    if (activeWars.Contains(currWar)) {
+                //        weight += 20; //add 20 weight to keep alliance for every active war of other kingdoms withinin alliance
+                //    }
+                //}
                 
             }
         }

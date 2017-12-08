@@ -68,7 +68,14 @@ public class TradeDealOffer : GameEvent {
             int surplusAmount = kvp.Value;
             if (deficitOfOtherKingdom.ContainsKey(currSurplus)) {
                 //otherKingdom has a deficit for currSurplus
-                acceptanceWeight += 10 * surplusAmount;
+                int deficitAmount = deficitOfOtherKingdom[currSurplus];
+                int modifier = 0;
+                if (surplusAmount >= deficitAmount) {
+                    modifier = deficitAmount;
+                } else {
+                    modifier = surplusAmount;
+                }
+                acceptanceWeight += 10 * modifier;
 
             }
         }

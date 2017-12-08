@@ -35,9 +35,7 @@ public class Deceitful : Trait {
             KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
             KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
 			if (!relWithOtherKingdom.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
-                if (relOfOtherWithSource.totalLike > 0) {
-                    weight += 2 * relOfOtherWithSource.totalLike; //add 2 Weight for every positive Opinion it has towards me
-                }
+                weight += 2 * relOfOtherWithSource.totalLike; //add 2 Weight for every positive Opinion it has towards me
                 weight = Mathf.Max(0, weight); //minimum 0
             }
         }

@@ -502,7 +502,8 @@ public class Kingdom{
 
             //SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
             SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
-			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseWarWearinessPerMonth());
+            SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
 			//ScheduleOddDayActions();
 			ScheduleActionDay();
 		}
@@ -3532,7 +3533,7 @@ public class Kingdom{
             Kingdom otherKingdom = this.adjacentKingdoms[i];
             KingdomRelationship relWithOtherKingdom = this.GetRelationshipWithKingdom(otherKingdom);
             KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(this);
-            if (relWithOtherKingdom.targetKingdomThreatLevel > 20 && relOfOtherWithSource.totalLike < 0) {
+            if (relWithOtherKingdom.targetKingdomThreatLevel >= 20 && relOfOtherWithSource.totalLike < 0) {
                 return true;
             }
         }
@@ -3893,4 +3894,21 @@ public class Kingdom{
 		}
 		return 0;
 	}
+
+    private void IncreaseWarWearinessPerMonth() {
+        if (this.isDead) {
+            return;
+        }
+
+        foreach (KingdomRelationship rel in relationships.Values) {
+            if(rel.sharedRelationship.warfare != null) {
+                rel.sharedRelationship.warfare.AdjustWeariness(this, 1); //At the start of each month, War Weariness increases by 1
+            }
+        }
+
+        //Reschedule event
+        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        dueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseBOPAttributesPerMonth());
+    }
 }

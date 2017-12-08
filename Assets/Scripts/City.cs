@@ -825,7 +825,8 @@ public class City{
 			newLog.AddToFillers (conqueror, conqueror.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
 			kr.sharedRelationship.warfare.ShowUINotification (newLog, new HashSet<Kingdom>() { conqueror, this.kingdom });
-		}
+            kr.sharedRelationship.warfare.AdjustWeariness(this._kingdom, 5);//Each time I lose a city, War Weariness increases by 5
+        }
 
         RemoveOneTimeResourceBenefits();
         KillActiveGuards();

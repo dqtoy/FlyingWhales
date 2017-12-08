@@ -7,8 +7,10 @@ public class GoalManager : MonoBehaviour {
     public static GoalManager Instance = null;
 
     [SerializeField] private List<WeightedActionRequirements> actionRequirements;
+    [SerializeField] private List<TraitWeightedActionRequirements> traitActionRequirements;
 
     public Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>> weightedActionRequirements;
+    public Dictionary<TRAIT, Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>> weightedActionRequirementsForTraits;
 
     public static HashSet<WEIGHTED_ACTION> indirectActionTypes = new HashSet<WEIGHTED_ACTION>() {
         WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST
@@ -29,6 +31,16 @@ public class GoalManager : MonoBehaviour {
         for (int i = 0; i < actionRequirements.Count; i++) {
             WeightedActionRequirements currReq = actionRequirements[i];
             weightedActionRequirements.Add(currReq.weightedAction, currReq.requirements);
+        }
+        weightedActionRequirementsForTraits = new Dictionary<TRAIT, Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>>();
+        for (int i = 0; i < traitActionRequirements.Count; i++) {
+            TraitWeightedActionRequirements currTrait = traitActionRequirements[i];
+            Dictionary <WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>> reqs = new Dictionary<WEIGHTED_ACTION, List<WEIGHTED_ACTION_REQS>>();
+            for (int j = 0; j < currTrait.actionRequirements.Count; j++) {
+                WeightedActionRequirements currReq = currTrait.actionRequirements[j];
+                reqs.Add(currReq.weightedAction, currReq.requirements);
+            }
+            weightedActionRequirementsForTraits.Add(currTrait.trait, reqs);
         }
     }
 
@@ -103,18 +115,18 @@ public class GoalManager : MonoBehaviour {
         for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i]; //the cause of the action
             Dictionary<Kingdom, int> possibleAllies = new Dictionary<Kingdom, int>();
-            for (int j = 0; j < otherKingdom.adjacentKingdoms.Count; j++) {
-                Kingdom adjKingdomOfOtherKingdom = otherKingdom.adjacentKingdoms[j]; //the target of the action
-                if (adjKingdomOfOtherKingdom.id != sourceKingdom.id) {
+            for (int j = 0; j < otherKingdom.discoveredKingdoms.Count; j++) {
+                Kingdom discoveredKingdomOfOtherKingdom = otherKingdom.discoveredKingdoms[j]; //the target of the action
+                if (discoveredKingdomOfOtherKingdom.id != sourceKingdom.id) {
                     int weightForOtherKingdom = 0;
                     //loop through all the traits of the current king
                     for (int k = 0; k < sourceKingdom.king.allTraits.Count; k++) {
                         Trait currTrait = sourceKingdom.king.allTraits[k];
-                        int modificationFromTrait = currTrait.GetWeightOfActionGivenTargetAndCause(specialWeightedAction, adjKingdomOfOtherKingdom, otherKingdom, weightForOtherKingdom);
+                        int modificationFromTrait = currTrait.GetWeightOfActionGivenTargetAndCause(specialWeightedAction, discoveredKingdomOfOtherKingdom, otherKingdom, weightForOtherKingdom);
                         weightForOtherKingdom += modificationFromTrait;
                     }
                     ApplyActionModificationForAll(specialWeightedAction, sourceKingdom, otherKingdom, ref weightForOtherKingdom);
-                    possibleAllies.Add(adjKingdomOfOtherKingdom, weightForOtherKingdom);
+                    possibleAllies.Add(discoveredKingdomOfOtherKingdom, weightForOtherKingdom);
                 }
             }
             kingdomWeights.Add(otherKingdom, possibleAllies);
@@ -278,8 +290,11 @@ public class GoalManager : MonoBehaviour {
             KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
             KingdomRelationship relOfOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
             if (!relOfOtherWithSource.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
-                defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
-                defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
+                if (relOfOtherWithSource.totalLike > 0) {
+                    defaultWeight += 3 * relOfOtherWithSource.totalLike;//add 3 Weight for every positive Opinion it has towards me
+                }else if (relOfOtherWithSource.totalLike < 0) {
+                    defaultWeight += relWithOtherKingdom.totalLike;//subtract 1 Weight for every negative Opinion I have towards it
+                }
                 if (sourceKingdom.recentlyRejectedOffers.ContainsKey(targetKingdom)) {
                     defaultWeight -= 50;
                 } else if (sourceKingdom.recentlyBrokenAlliancesWith.Contains(targetKingdom)) {
@@ -321,7 +336,14 @@ public class GoalManager : MonoBehaviour {
             if (deficitOfTargetKingdom.ContainsKey(currSurplus)) {
                 //otherKingdom has a deficit for currSurplus
                 //add Default Weight for every point of Surplus they have on our Deficit Resources 
-                defaultWeight += (weightAdjustment * surplusAmount);
+                int deficitAmount = deficitOfTargetKingdom[currSurplus];
+                int modifier = 0;
+                if(surplusAmount >= deficitAmount) {
+                    modifier = deficitAmount;
+                } else {
+                    modifier = surplusAmount;
+                }
+                defaultWeight += (weightAdjustment * modifier);
             }
         }
     }
@@ -330,7 +352,7 @@ public class GoalManager : MonoBehaviour {
         defaultWeight = 0;
         KingdomRelationship relOtherWithSource = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
         if (relOtherWithSource.totalLike < 0) {
-            defaultWeight += Mathf.Abs(defaultWeight * relOtherWithSource.totalLike);
+            defaultWeight += weightModification * Mathf.Abs(relOtherWithSource.totalLike);
         }
     }
     private void GetAllModificationForInciteUnrest(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight) {
@@ -342,7 +364,7 @@ public class GoalManager : MonoBehaviour {
         if (sourceKingdom.king.HasTrait(TRAIT.DECEITFUL)) {
             if (relWithOtherKingdom.AreAllies()) {
                 if (relWithOtherKingdom.totalLike < 0) {
-                    defaultWeight += Mathf.Abs(weightModification * relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
+                    defaultWeight += weightModification * Mathf.Abs(relWithOtherKingdom.totalLike);//add Default Weight per Negative Opinion I have towards target
                 }
             }
         }
@@ -428,24 +450,22 @@ public class GoalManager : MonoBehaviour {
         }
     }
     private void GetAllModificationForLeaveTradeDeal(Kingdom sourceKingdom, Kingdom targetKingdom, ref int defaultWeight, ref int weightNotToDoAction) {
-        if (sourceKingdom.kingdomsInTradeDealWith.Contains(targetKingdom)) {
-            int weightAdjustment = 100;
-            KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
-            if (relSourceWithOther.targetKingdomThreatLevel > 0) {
-                weightAdjustment += relSourceWithOther.targetKingdomThreatLevel; //add 1 to Default Weight for every Threat of the kingdom
-            }
-            if (relSourceWithOther.totalLike < 0) {
-                weightAdjustment += Mathf.Abs(2 * relSourceWithOther.totalLike); //add 2 to Default Weight for every negative Opinion I have towards the king
-            } else if (relSourceWithOther.totalLike > 0) {
-                weightAdjustment -= 2 * relSourceWithOther.totalLike; //subtract 2 to Default Weight for every positive Opinion I have towards the king
-            }
+        int weightAdjustment = 100;
+        KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+        if (relSourceWithOther.targetKingdomThreatLevel > 0) {
+            weightAdjustment += relSourceWithOther.targetKingdomThreatLevel; //add 1 to Default Weight for every Threat of the kingdom
+        }
+        if (relSourceWithOther.totalLike < 0) {
+            weightAdjustment += Mathf.Abs(2 * relSourceWithOther.totalLike); //add 2 to Default Weight for every negative Opinion I have towards the king
+        } else if (relSourceWithOther.totalLike > 0) {
+            weightAdjustment -= 2 * relSourceWithOther.totalLike; //subtract 2 to Default Weight for every positive Opinion I have towards the king
+        }
 
-            //add Default Weight if Kingdom no longer benefits from any Surplus of the trade partner, otherwise, add its Default Weight to Not Leave Any Trade Deal
-            if (sourceKingdom.IsTradeDealStillNeeded(targetKingdom)) {
-                weightNotToDoAction += weightAdjustment;
-            } else {
-                defaultWeight += weightAdjustment;
-            }
+        //add Default Weight if Kingdom no longer benefits from any Surplus of the trade partner, otherwise, add its Default Weight to Not Leave Any Trade Deal
+        if (sourceKingdom.IsTradeDealStillNeeded(targetKingdom)) {
+            weightNotToDoAction += weightAdjustment;
+        } else {
+            defaultWeight += weightAdjustment;
         }
     }
     #endregion
@@ -479,6 +499,41 @@ public class GoalManager : MonoBehaviour {
                         break;
                     default:
                         return true;
+                }
+            }
+        }
+        return true;
+    }
+    internal bool ActionMeetsRequirementsForTrait(Kingdom sourceKingdom, WEIGHTED_ACTION actionType, TRAIT traitType) {
+        if (weightedActionRequirementsForTraits.ContainsKey(traitType)) {
+            if (weightedActionRequirementsForTraits[traitType].ContainsKey(actionType)) {
+                List<WEIGHTED_ACTION_REQS> requirements = weightedActionRequirementsForTraits[traitType][actionType];
+                for (int i = 0; i < requirements.Count; i++) {
+                    WEIGHTED_ACTION_REQS currRequirement = requirements[i];
+                    switch (currRequirement) {
+                        case WEIGHTED_ACTION_REQS.NO_ALLIANCE:
+                            if (sourceKingdom.alliancePool != null) {
+                                return false;
+                            }
+                            break;
+                        case WEIGHTED_ACTION_REQS.HAS_ALLIANCE:
+                            if (sourceKingdom.alliancePool == null) {
+                                return false;
+                            }
+                            break;
+                        case WEIGHTED_ACTION_REQS.HAS_WAR:
+                            if (sourceKingdom.GetWarCount() <= 0) {
+                                return false;
+                            }
+                            break;
+                        case WEIGHTED_ACTION_REQS.HAS_ACTIVE_TRADE_DEAL:
+                            if (sourceKingdom.kingdomsInTradeDealWith.Count <= 0) {
+                                return false;
+                            }
+                            break;
+                        default:
+                            return true;
+                    }
                 }
             }
         }

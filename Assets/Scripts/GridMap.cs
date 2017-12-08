@@ -578,7 +578,7 @@ public class GridMap : MonoBehaviour {
         int uniqueLandmarksCount = 0;
         List<HexTile> allElligibleTilesToConnectTo = new List<HexTile>();
         allRegions.ForEach(x => allElligibleTilesToConnectTo.AddRange(x.landmarks.Select(y => y.location)));
-
+        allRegions.ForEach(x => allElligibleTilesToConnectTo.Add(x.centerOfMass));
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
             //List<Landmark> landmarksInRegion = currRegion.landmarks;

@@ -69,10 +69,10 @@ public class CollisionManager : MonoBehaviour {
 				DamageComputation (general1, general1Roll, general2, general2Roll);
 				if(!general1.citizen.city.kingdom.isDead && !general2.citizen.city.kingdom.isDead){
 					if(general1.isDefending){
-						kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 1);
+						kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, -2);
 					}
                     if(kr.sharedRelationship.warfare != null) {
-                        kr.sharedRelationship.warfare.AdjustWeariness(general2.citizen.city.kingdom, 5);
+                        kr.sharedRelationship.warfare.AdjustWeariness(general2.citizen.city.kingdom, 2);
                     }
 					//kr.sharedRelationship.warfare.AttemptToPeace (general1.citizen.city.kingdom);
 				}
@@ -80,10 +80,10 @@ public class CollisionManager : MonoBehaviour {
 				DamageComputation (general2, general2Roll, general1, general1Roll);
 				if(!general1.citizen.city.kingdom.isDead && !general2.citizen.city.kingdom.isDead){
 					if(general2.isDefending){
-						kr.sharedRelationship.warfare.AdjustWeariness (general2.citizen.city.kingdom, 1);
+						kr.sharedRelationship.warfare.AdjustWeariness (general2.citizen.city.kingdom, -2);
 					}
                     if(kr.sharedRelationship.warfare != null) {
-                        kr.sharedRelationship.warfare.AdjustWeariness(general1.citizen.city.kingdom, 5);
+                        kr.sharedRelationship.warfare.AdjustWeariness(general1.citizen.city.kingdom, 2);
                     }
 					//kr.sharedRelationship.warfare.AttemptToPeace (general2.citizen.city.kingdom);
 				}
@@ -98,16 +98,16 @@ public class CollisionManager : MonoBehaviour {
 						general2.gameEventInvolvedIn.DoneEvent ();
 					}
 					if(!general1.citizen.city.kingdom.isDead && !general2.citizen.city.kingdom.isDead){
-						kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 5);
+						kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
                         if(kr.sharedRelationship.warfare != null) {
-                            kr.sharedRelationship.warfare.AdjustWeariness(general2.citizen.city.kingdom, 5);
+                            kr.sharedRelationship.warfare.AdjustWeariness(general2.citizen.city.kingdom, 2);
                         }
 					}
 				}else{
 					if(general1.isDefending){
 						DamageComputation (general1, general1Roll, general2, general2Roll);
 						if(!general1.citizen.city.kingdom.isDead && !general2.citizen.city.kingdom.isDead){
-							kr.sharedRelationship.warfare.AdjustWeariness (general2.citizen.city.kingdom, 5);
+							kr.sharedRelationship.warfare.AdjustWeariness (general2.citizen.city.kingdom, 2);
 							//kr.sharedRelationship.warfare.AttemptToPeace (general1.citizen.city.kingdom);
 						}
 //						if(kr.sharedRelationship.battle != null){
@@ -116,7 +116,7 @@ public class CollisionManager : MonoBehaviour {
 					}else if(general2.isDefending){
 						DamageComputation (general2, general2Roll, general1, general1Roll);
 						if(!general1.citizen.city.kingdom.isDead && !general2.citizen.city.kingdom.isDead){
-							kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 5);
+							kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 							//kr.sharedRelationship.warfare.AttemptToPeace (general2.citizen.city.kingdom);
 						}
 //						if(kr.sharedRelationship.battle != null){
@@ -131,7 +131,7 @@ public class CollisionManager : MonoBehaviour {
 		KingdomRelationship kr = general1.citizen.city.kingdom.GetRelationshipWithKingdom (city.kingdom);
 		if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.warfare != null){
 			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.name + " of " + general1.citizen.city.kingdom.name + " AND " + city.name + " of " + city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
-			kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
+			//kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 
 			int general1Power = general1.soldiers * 3;
 			int cityPower = (int)((city.soldiers * 4) + (int)(city.population / 2));

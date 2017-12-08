@@ -40,7 +40,8 @@ public class Imperialist : Trait {
         KingdomRelationship relSourceWithAdj = sourceKingdom.GetRelationshipWithKingdom(causingKindom);
         KingdomRelationship relOtherWithAdj = otherKingdom.GetRelationshipWithKingdom(causingKindom);
         //for each non-ally adjacent kingdom that have negative Relative Strength
-        if (!relSourceWithAdj.AreAllies() && relSourceWithAdj.relativeStrength < 0) {
+        if (relSourceWithAdj.sharedRelationship.isAdjacent && relOtherWithAdj.sharedRelationship.isAdjacent && !relSourceWithAdj.AreAllies() 
+            && relSourceWithAdj.relativeStrength < 0) {
             if (relSourceWithOther.totalLike > 0) {
                 weight += 3 * relSourceWithOther.totalLike; //add 3 Weight per positive opinion i have towards each alliance members
             } else if (relSourceWithOther.totalLike < 0) {
