@@ -902,10 +902,10 @@ public class City{
 
 	private int CivilianDeathsByConquered(Kingdom conqueror){
 		int deathRange = UnityEngine.Random.Range (25, 51);
-		if(conqueror.king.otherTraits.Contains(TRAIT.RUTHLESS)){
+		if(conqueror.king.HasTrait(TRAIT.RUTHLESS)){
 			deathRange += 25;
 		}
-		if(conqueror.king.otherTraits.Contains(TRAIT.BENEVOLENT)){
+		if(conqueror.king.HasTrait(TRAIT.BENEVOLENT)){
 			deathRange -= 25;
 		}
 		deathRange = Mathf.Clamp (deathRange, 0, 100);

@@ -29,15 +29,10 @@ public class InternationalIncidentManager : MonoBehaviour {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom kingdom = KingdomManager.Instance.allKingdoms [i];
 			int weight = 0;
-			if(kingdom.king.otherTraits.Contains(TRAIT.PACIFIST)){
-				weight -= 20;
+			for (int j = 0; j < kingdom.king.allTraits.Count; j++) {
+				weight += kingdom.king.allTraits [j].GetRandomInternationalIncidentWeight ();
 			}
-			if(kingdom.king.otherTraits.Contains(TRAIT.DIPLOMATIC)){
-				weight -= 20;
-			}
-			if(kingdom.king.otherTraits.Contains(TRAIT.HOSTILE)){
-				weight += 20;
-			}
+
 			if(kingdom.stability < 0){
 				weight -= kingdom.stability;
 			}

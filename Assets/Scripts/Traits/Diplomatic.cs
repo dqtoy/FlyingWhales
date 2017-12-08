@@ -19,4 +19,14 @@ public class Diplomatic : Trait {
     internal override int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
         return -40; //subtract 40 from Default Weight
     }
+
+	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+		if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
+			return 100;
+		}
+		return 0;
+	}
+	internal override int GetRandomInternationalIncidentWeight(){
+		return -20;
+	}
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Refuge : GameEvent {
 
-	private enum GOVERNOR_DECISION{
+	public enum GOVERNOR_DECISION{
 		ACCEPT,
 		REJECT,
 		KILL,
@@ -97,10 +97,10 @@ public class Refuge : GameEvent {
 
 	private int GetDecisionWeight(GOVERNOR_DECISION decision, Citizen governor){
 		int totalWeight = 0;
+		for (int i = 0; i < governor.allTraits.Count; i++) {
+			totalWeight += governor.allTraits [i].GetRefugeeGovernorDecisionWeight (decision);
+		}
 		if(decision == GOVERNOR_DECISION.ACCEPT){
-			if(governor.otherTraits.Contains(TRAIT.BENEVOLENT)){
-				totalWeight += 200;
-			}
 			if(governor.city.kingdom.id == this.refugeeKingdom.id){
 				totalWeight += 300;
 			}else{
@@ -116,12 +116,6 @@ public class Refuge : GameEvent {
 				}
 			}
 		}else if(decision == GOVERNOR_DECISION.REJECT){
-			if(governor.otherTraits.Contains(TRAIT.RUTHLESS)){
-				totalWeight += 100;
-			}
-			if(governor.otherTraits.Contains(TRAIT.HOSTILE)){
-				totalWeight += 100;
-			}
 			if(governor.city.kingdom.id == this.refugeeKingdom.id){
 				totalWeight += 50;
 			}else{

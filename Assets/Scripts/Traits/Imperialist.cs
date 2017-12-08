@@ -64,4 +64,33 @@ public class Imperialist : Trait {
 
         return weight;
     }
+	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+		if(!kr.AreAllies()){
+			KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+			if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
+				if(kr._theoreticalPower < rk._theoreticalPower){
+					return 5 * kr.relativeStrength;
+				}
+			}else if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION){
+				if(kr._theoreticalPower > rk._theoreticalPower){
+					return 10 * rk.relativeStrength;
+				}
+			}
+		}
+		return 0;
+	}
+	internal override int GetKingdomThreatOpinionChange(int threat, out string summary){
+		summary = string.Empty;
+		if(threat >= -50 && threat < -25){
+			summary = "Preys on the Weak";
+			return -15;
+		}else if(threat > -100 && threat < -50){
+			summary = "Preys on the Weak";
+			return -30;
+		}else if(threat <= -100){
+			summary = "Preys on the Weak";
+			return -50;
+		}
+		return 0;
+	}
 }

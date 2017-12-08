@@ -63,4 +63,44 @@ public class Opportunist : Trait {
         weight += 3 * relWithOtherKingdom.relativeStrength;
         return weight;
     }
+	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+		if (!kr.AreAllies ()) {
+			KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+			if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY) {
+				if (kr._theoreticalPower < rk._theoreticalPower) {
+					return 5 * kr.relativeStrength;
+				}
+			}else if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION) {
+				if(kr._theoreticalPower > rk._theoreticalPower){
+					if(kr.targetKingdom.HasWar(kr.sourceKingdom)){
+						return 20 * rk.relativeStrength;
+					}
+				}
+			}
+		}
+		return 0;
+	}
+	internal override int GetKingdomThreatOpinionChange(int threat, out string summary){
+		summary = string.Empty;
+		if(threat >= 100){
+			summary = "Respects Power";
+			return 50;
+		}else if(threat > 50 && threat < 100){
+			summary = "Respects Power";
+			return 30;
+		}else if(threat > 25 && threat <= 50){
+			summary = "Respects Power";
+			return 15;
+		}else if(threat >= -50 && threat < -25){
+			summary = "Scorns Weakness";
+			return -15;
+		}else if(threat > -100 && threat < -50){
+			summary = "Scorns Weakness";
+			return -30;
+		}else if(threat <= -100){
+			summary = "Scorns Weakness";
+			return -50;
+		}
+		return 0;
+	}
 }

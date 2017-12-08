@@ -67,4 +67,17 @@ public class Deceitful : Trait {
         }
         return weight;
     }
+	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+		if (kr.AreAllies ()) {
+			if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY) {
+				return 50;
+			}else if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION) {
+				KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+				if(kr._theoreticalPower > rk._theoreticalPower && kr.targetKingdom.HasWar(kr.sourceKingdom)){
+					return (20 * rk.relativeStrength);
+				}
+			}
+		}
+		return 0;
+	}
 }

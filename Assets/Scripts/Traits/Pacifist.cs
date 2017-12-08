@@ -51,6 +51,20 @@ public class Pacifist : Trait {
         }
         return 50;
     }
+	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+		if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
+			return 50;
+		}
+		return 0;
+	}
+
+	internal override int GetRandomInternationalIncidentWeight(){
+		return -20;
+	}
+
+	internal override int GetMaxGeneralsModifier(){
+		return -1;
+	}
     #endregion
 
 }

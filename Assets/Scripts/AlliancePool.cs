@@ -163,7 +163,7 @@ public class AlliancePool {
 				totalWeight -= krAllyToSource.totalLike;
 			}
 		}else if(reaction == REACTIONS.BETRAY){
-			if(allyKingdom.king.otherTraits.Contains(TRAIT.DECEITFUL)){
+			if(allyKingdom.king.HasTrait(TRAIT.DECEITFUL)){
 				if(krAllyToSource.relativeStrength < 0){
 					totalWeight -= (2 * krAllyToSource.relativeStrength);				
 				}

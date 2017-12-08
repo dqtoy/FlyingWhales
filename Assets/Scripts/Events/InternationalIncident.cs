@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class InternationalIncident : GameEvent {
 
-	private enum INCIDENT_ACTIONS{
+	public enum INCIDENT_ACTIONS{
 		NONE,
 		RESOLVE_PEACEFULLY,
 		INCREASE_TENSION,
@@ -191,37 +191,15 @@ public class InternationalIncident : GameEvent {
 
 	private int GetTotalWeight(Kingdom kingdom, KingdomRelationship kr, INCIDENT_ACTIONS incidentAction){
 		int totalWeight = 0;
+		for (int i = 0; i < kingdom.king.allTraits.Count; i++) {
+			totalWeight += kingdom.king.allTraits [i].GetInternationalIncidentReactionWeight (incidentAction, kr);
+		}
 		if(incidentAction == INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
-			if(kingdom.king.otherTraits.Contains(TRAIT.PACIFIST)){
-				totalWeight += 50;
-			}
-			if(kingdom.king.otherTraits.Contains(TRAIT.DIPLOMATIC)){
-				totalWeight += 100;
-			}
-			if(kingdom.king.otherTraits.Contains(TRAIT.BENEVOLENT)){
-				totalWeight += 20;
-				if(kr.totalLike > 0){
-					totalWeight += kr.totalLike * 2;
-				}
-			}
 			if(kr.totalLike > 0){
 				totalWeight += kr.totalLike * 5;
 			}
 			if(kr.AreAllies()){
 				totalWeight += 50;
-				if (kingdom.king.otherTraits.Contains (TRAIT.DECEITFUL)) {
-					totalWeight -= 50;
-				}
-			}else{
-				KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
-				if(kr._theoreticalPower < rk._theoreticalPower){
-					if(kingdom.king.otherTraits.Contains(TRAIT.OPPORTUNIST)){
-						totalWeight += (5 * kr.relativeStrength);
-					}
-					if(kingdom.king.otherTraits.Contains(TRAIT.IMPERIALIST)){
-						totalWeight += (10 * kr.relativeStrength);
-					}
-				}
 			}
 			if(kr.AreTradePartners()){
 				totalWeight += 25;
@@ -229,36 +207,12 @@ public class InternationalIncident : GameEvent {
 			totalWeight += (30 * kingdom.warfareInfo.Count);
 
 		}else if(incidentAction == INCIDENT_ACTIONS.INCREASE_TENSION){
-			if(kingdom.king.otherTraits.Contains(TRAIT.HOSTILE)){
-				totalWeight += 20;
-				if(kr.totalLike < 0){
-					totalWeight += ((kr.totalLike * 2) * -1);
-				}
-			}
 			if(kr.totalLike < 0){
-				totalWeight += ((kr.totalLike * 5) * -1);
+				totalWeight -= (kr.totalLike * 5);
 			}
 			if(kingdom.stability < -80){
-				int stabilityModifier = (kingdom.stability + 80) * -1;
-				totalWeight += stabilityModifier * 10;
-			}
-			if(kr.AreAllies()){
-				if (kingdom.king.otherTraits.Contains (TRAIT.DECEITFUL)) {
-					KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
-					if(kr._theoreticalPower > rk._theoreticalPower && kr.targetKingdom.HasWar(kr.sourceKingdom)){
-						totalWeight += (20 * rk.relativeStrength);
-					}
-				}
-			}else{
-				KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
-				if(kr._theoreticalPower > rk._theoreticalPower){
-					if(kingdom.king.otherTraits.Contains(TRAIT.OPPORTUNIST) && kr.targetKingdom.HasWar(kr.sourceKingdom)){
-						totalWeight += (20 * rk.relativeStrength);
-					}
-					if(kingdom.king.otherTraits.Contains(TRAIT.IMPERIALIST)){
-						totalWeight += (10 * rk.relativeStrength);
-					}
-				}
+				int stabilityModifier = kingdom.stability + 80;
+				totalWeight -= stabilityModifier * 10;
 			}
 		}
 

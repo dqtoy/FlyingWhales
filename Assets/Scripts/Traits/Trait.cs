@@ -109,6 +109,22 @@ public class Trait{
     internal virtual int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
         return 0;
     }
+	internal virtual int GetInternationalIncidentReactionWeight(InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+		return 0;
+	}
+	internal virtual int GetRefugeeGovernorDecisionWeight(Refuge.GOVERNOR_DECISION decision){
+		return 0;
+	}
+	internal virtual int GetKingdomThreatOpinionChange(int threat, out string summary){
+		summary = string.Empty;
+		return 0;
+	}
+	internal virtual int GetRandomInternationalIncidentWeight(){
+		return 0;
+	}
+	internal virtual int GetMaxGeneralsModifier(){
+		return 0;
+	}
     #endregion
 
 

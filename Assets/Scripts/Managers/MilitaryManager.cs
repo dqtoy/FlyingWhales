@@ -45,9 +45,12 @@ public class MilitaryManager {
 		}else if(this._kingdom.kingdomSize == KINGDOM_SIZE.LARGE){
 			this.maxGenerals = 6;
 		}
-		if(this._kingdom.king.otherTraits.Contains(TRAIT.MILITANT) || this._kingdom.king.otherTraits.Contains(TRAIT.HOSTILE)){
+//		for (int i = 0; i < this._kingdom.king.allTraits.Count; i++) {
+//			this.maxGenerals += this._kingdom.king.allTraits [i].GetMaxGeneralsModifier ();
+//		}
+		if(this._kingdom.king.HasTrait(TRAIT.MILITANT) || this._kingdom.king.HasTrait(TRAIT.HOSTILE)){
 			this.maxGenerals += 1;
-		}else if(this._kingdom.king.otherTraits.Contains(TRAIT.PACIFIST)){
+		}else if(this._kingdom.king.HasTrait(TRAIT.PACIFIST)){
 			this.maxGenerals -= 1;
 		}
 	}
@@ -247,7 +250,7 @@ public class MilitaryManager {
 								hasGeneralOnTile = true;
 								cityTotalWeight += 100;
 							}
-							if (this._kingdom.king.otherTraits.Contains(TRAIT.SMART) && adjacentRegion.occupant.kingdom.militaryManager.HasGeneralTaskToAttackCity (city) && !hasGeneralAttackingCity) {
+							if (this._kingdom.king.HasTrait(TRAIT.SMART) && adjacentRegion.occupant.kingdom.militaryManager.HasGeneralTaskToAttackCity (city) && !hasGeneralAttackingCity) {
 								hasGeneralAttackingCity = true;
 								cityTotalWeight += 500;
 							}
@@ -277,7 +280,7 @@ public class MilitaryManager {
 				cityTotalWeight += 50;
 
 			}else{
-				if(this._kingdom.king.otherTraits.Contains(TRAIT.DEFENSIVE)){
+				if(this._kingdom.king.HasTrait(TRAIT.DEFENSIVE)){
 					cityTotalWeight += 50;
 				}
 				cityTotalWeight += 100 * city.cityLevel;
@@ -294,7 +297,7 @@ public class MilitaryManager {
 	private int GetAttackCityWeight(City city){
 		int cityTotalWeight = 0;
 		cityTotalWeight += 30 * city.cityLevel;
-		if(this._kingdom.king.otherTraits.Contains(TRAIT.IMPERIALIST)){
+		if(this._kingdom.king.HasTrait(TRAIT.IMPERIALIST)){
 			cityTotalWeight += 50;
 		}
 		if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.FOOD) < 0) {

@@ -68,4 +68,30 @@ public class Hostile : Trait {
     internal override int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
         return -30; //add 30 to Default Weight
     }
+
+	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+		int weight = 0;
+		if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION){
+			weight += 20;
+			if(kr.totalLike < 0){
+				weight -= (kr.totalLike * 2);
+			}
+		}
+		return weight;
+	}
+
+	internal override int GetRefugeeGovernorDecisionWeight(Refuge.GOVERNOR_DECISION decision){
+		if(decision == Refuge.GOVERNOR_DECISION.REJECT){
+			return 100;
+		}
+		return 0;
+	}
+
+	internal override int GetRandomInternationalIncidentWeight(){
+		return 20;
+	}
+
+	internal override int GetMaxGeneralsModifier(){
+		return 1;
+	}
 }

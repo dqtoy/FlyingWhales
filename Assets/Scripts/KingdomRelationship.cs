@@ -275,57 +275,6 @@ public class KingdomRelationship {
             }
         }
 
-        ////Charisma Trait
-        //if(this._targetKingdom.king.charisma == TRAIT.CHARISMATIC){
-        //	adjustment = 15;
-        //	baseLoyalty += adjustment;
-        //	this._relationshipSummary += "+" + adjustment.ToString() + " Charmed.\n";
-        //}else if(this._targetKingdom.king.charisma == TRAIT.REPULSIVE){
-        //	adjustment = -15;
-        //	baseLoyalty += adjustment;
-        //	this._relationshipSummary += adjustment.ToString() + " Repulsed.\n";
-        //}
-
-        ////Military Trait
-        //if(this._sourceKingdom.king.military == TRAIT.PACIFIST){
-        //	if(this._targetKingdom.king.military != TRAIT.HOSTILE){
-        //		adjustment = 30;
-        //		baseLoyalty += adjustment;
-        //		this._relationshipSummary += "+" + adjustment.ToString() + " Pacifist.\n";
-        //	}else{
-        //		adjustment = -30;
-        //		baseLoyalty += adjustment;
-        //		this._relationshipSummary += adjustment.ToString() + " Disapproved Hostility.\n";
-        //	}
-        //}else if(this._sourceKingdom.king.military == TRAIT.HOSTILE){
-        //	adjustment = -30;
-        //	baseLoyalty += adjustment;
-        //	this._relationshipSummary += adjustment.ToString() + " Hostile.\n";
-        //}
-
-        ////Intelligence Trait
-        //if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.SMART){
-        //	adjustment = 30;
-        //	baseLoyalty += adjustment;
-        //	this._relationshipSummary += "+" + adjustment.ToString() + " Both Smart.\n";
-        //}else if(this._sourceKingdom.king.intelligence == TRAIT.SMART && this._targetKingdom.king.intelligence == TRAIT.DUMB){
-        //	adjustment = -30;
-        //	baseLoyalty += adjustment;
-        //	this._relationshipSummary += adjustment.ToString() + " Dislikes Dumb.\n";
-        //}
-
-        ////Efficieny Trait
-        //if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.EFFICIENT){
-        //	adjustment = 30;
-        //	baseLoyalty += adjustment;
-        //	this._relationshipSummary += "+" + adjustment.ToString() + " Both Efficient.\n";
-        //}else if(this._sourceKingdom.king.efficiency == TRAIT.EFFICIENT && this._targetKingdom.king.efficiency == TRAIT.INEFFICIENT){
-        //	adjustment = -30;
-        //	baseLoyalty += adjustment;
-        //	this._relationshipSummary += adjustment.ToString() + " Dislikes Inept.\n";
-        //}
-
-
         //Kingdom Threat
         string summary = string.Empty;
 		adjustment = GetKingdomThreatOpinionChangeBasedOnTrait (TRAIT.OPPORTUNIST, out summary);
@@ -369,6 +318,39 @@ public class KingdomRelationship {
 			}
 			this._relationshipSummary += adjustment.ToString() + " " + summary + "\n";
 		}
+
+//		int threat = this.targetKingdomThreatLevel;
+//		bool hasOpportunistic = false; 
+//		for (int i = 0; i < this._sourceKingdom.king.allTraits.Count; i++) {
+//			summary = string.Empty;
+//			adjustment = this._sourceKingdom.king.allTraits [i].GetKingdomThreatOpinionChange (threat, out summary);
+//			if(adjustment != 0 && summary != string.Empty){
+//				baseLoyalty += adjustment;
+//				if (adjustment >= 0) {
+//					this._relationshipSummary += "+";
+//				}
+//				this._relationshipSummary += adjustment.ToString () + " " + summary + "\n";
+//			}
+//
+//			if(this._sourceKingdom.king.allTraits[i].trait == TRAIT.OPPORTUNIST){
+//				hasOpportunistic = true;
+//			}
+//		}
+//		if(!hasOpportunistic){
+//			if(threat >= 100){
+//				adjustment = -50;
+//				baseLoyalty += adjustment;
+//				this._relationshipSummary += adjustment.ToString () + " Fears Power\n";
+//			}else if(threat > 50 && threat < 100){
+//				adjustment = -30;
+//				baseLoyalty += adjustment;
+//				this._relationshipSummary += adjustment.ToString () + " Fears Power\n";
+//			}else if(threat > 25 && threat <= 50){
+//				adjustment = -15;
+//				baseLoyalty += adjustment;
+//				this._relationshipSummary += adjustment.ToString () + " Fears Power\n";
+//			}
+//		}
 
         this._like = 0;
         this.AdjustLikeness(baseLoyalty);
@@ -830,7 +812,7 @@ public class KingdomRelationship {
 	private int GetKingdomThreatOpinionChangeBasedOnTrait(TRAIT trait, out string summary){
 		//Kingdom Threat
 		summary = string.Empty;
-		if (!this._sourceKingdom.king.otherTraits.Contains (trait)) {
+		if (!this._sourceKingdom.king.HasTrait (trait)) {
 			return 0;
 		}
 		float threat = this.targetKingdomThreatLevel;
