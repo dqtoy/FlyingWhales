@@ -730,7 +730,8 @@ public enum BODY_PART{
 }
 
 public enum CHARACTER_CLASS_TYPE {
-    GENERAL
+    GENERAL,
+	NINJA
 }
 
 public enum SKILL_TYPE {
