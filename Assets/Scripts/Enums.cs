@@ -599,7 +599,7 @@ public enum WAR_SIDE{
 	B,
 }
 
-public enum STATUS_EFFECTS {
+public enum CITIZEN_STATUS_EFFECTS {
     INCURABLE_DISEASE
 }
 
@@ -736,8 +736,9 @@ public enum CHARACTER_CLASS_TYPE {
 
 public enum SKILL_TYPE {
     ATTACK,
+    HEAL,
+    OBTAIN_ITEM,
     FLEE,
-    PICK_UP
 }
 public enum SKILL_REQUIREMENT_TYPE {
     HAS,
@@ -752,6 +753,24 @@ public enum SKILL_REQUIREMENT_ITEM {
     LEG,
     FEET,
     WEAPON
+}
+public enum ATTACK_TYPE {
+    CRUSH,
+    PIERCE,
+    SLASH,
+    BURN
+}
+public enum DEFEND_TYPE {
+    DODGE,
+    PARRY,
+    BLOCK
+}
+public enum STATUS_EFFECT {
+    NONE,
+    POISONED,
+    STUNNED,
+    BLEEDING,
+    BURNING
 }
 
 

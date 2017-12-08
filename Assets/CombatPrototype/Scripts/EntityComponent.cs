@@ -3,5 +3,5 @@ using System.Collections;
 
 namespace ECS {
     [System.Serializable]
-    public class Component { }
+    public class EntityComponent { }
 }

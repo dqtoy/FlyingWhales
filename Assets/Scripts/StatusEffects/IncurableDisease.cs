@@ -18,7 +18,7 @@ public class IncurableDisease : StatusEffect {
 
     public IncurableDisease(Citizen owner) : base(owner) {
         this.name = GenerateDiseaseName();
-        this.statusEffectType = STATUS_EFFECTS.INCURABLE_DISEASE;
+        this.statusEffectType = CITIZEN_STATUS_EFFECTS.INCURABLE_DISEASE;
         ApplyEffects();
     }
     private string GenerateDiseaseName() {

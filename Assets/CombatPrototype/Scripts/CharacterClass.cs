@@ -3,9 +3,9 @@ using System.Collections;
 
 namespace ECS {
     [System.Serializable]
-    public class CharacterClass {
-        [SerializeField] protected CHARACTER_CLASS_TYPE classType;
-
+    public class CharacterClass : EntityComponent {
+        [SerializeField] protected string className;
+        [SerializeField] protected Skill[] skills;
     }
 }
 
