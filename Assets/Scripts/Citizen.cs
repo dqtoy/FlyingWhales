@@ -48,7 +48,7 @@ public class Citizen {
     private PURPOSE _balanceType;
 	private WARMONGER _warmonger;
 
-    private Dictionary<STATUS_EFFECTS, StatusEffect> _statusEffects;
+    private Dictionary<CITIZEN_STATUS_EFFECTS, StatusEffect> _statusEffects;
 
     //King Opinion
     //A citizen's Opinion towards his King is a value between -100 to 100 representing how loyal he is towards his King.
@@ -117,7 +117,7 @@ public class Citizen {
     internal string loyaltySummary {
         get { return _loyaltySummary; }
     }
-    internal Dictionary<STATUS_EFFECTS, StatusEffect> statusEffects {
+    internal Dictionary<CITIZEN_STATUS_EFFECTS, StatusEffect> statusEffects {
         get { return _statusEffects; }
     }
     internal bool isKing {
@@ -169,7 +169,7 @@ public class Citizen {
         //GenerateTraits();
         GenerateTraitsForCitizen();
 
-        this._statusEffects = new Dictionary<STATUS_EFFECTS, StatusEffect>();
+        this._statusEffects = new Dictionary<CITIZEN_STATUS_EFFECTS, StatusEffect>();
 
         //this.city.citizens.Add (this);
     }
@@ -820,19 +820,19 @@ public class Citizen {
     #endregion
 
     #region Status Effects
-    private StatusEffect CreateNewStatusEffectForCitizen(STATUS_EFFECTS statusEffectType) {
-        if(statusEffectType == STATUS_EFFECTS.INCURABLE_DISEASE) {
+    private StatusEffect CreateNewStatusEffectForCitizen(CITIZEN_STATUS_EFFECTS statusEffectType) {
+        if(statusEffectType == CITIZEN_STATUS_EFFECTS.INCURABLE_DISEASE) {
             return new IncurableDisease(this);
         }
         return null;
     }
-    internal void AddStatusEffect(STATUS_EFFECTS statusEffect) {
+    internal void AddStatusEffect(CITIZEN_STATUS_EFFECTS statusEffect) {
         if (!_statusEffects.ContainsKey(statusEffect)) {
             _statusEffects.Add(statusEffect, CreateNewStatusEffectForCitizen(statusEffect));
             Debug.Log(this.role.ToString() + " " + this.name + " is now afflicted with " + statusEffect.ToString());
         }
     }
-    internal void RemoveStatusEffect(STATUS_EFFECTS statusEffect) {
+    internal void RemoveStatusEffect(CITIZEN_STATUS_EFFECTS statusEffect) {
         _statusEffects.Remove(statusEffect);
     }
     #endregion

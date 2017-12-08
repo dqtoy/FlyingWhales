@@ -5,7 +5,7 @@ namespace ECS {
     [System.Serializable]
     public class Entity {
         protected int _id;
-        protected Component[] components;
+        protected EntityComponent[] components;
     }
 }
 
