@@ -727,6 +727,8 @@ public enum BODY_PART{
 	HAND,
 	LEG,
 	FEET,
+    HEART,
+    BRAIN,
 }
 
 public enum CHARACTER_CLASS_TYPE {

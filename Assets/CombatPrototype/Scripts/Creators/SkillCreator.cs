@@ -6,6 +6,8 @@ using System.IO;
 namespace ECS {
     public class SkillCreator : EditorWindow {
 
+        private Vector2 scrollPos = Vector2.zero;
+
         private SKILL_TYPE skillType;
         private string skillName;
         private int activationWeight;
@@ -33,6 +35,7 @@ namespace ECS {
         }
 
         private void OnGUI() {
+            this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos, GUILayout.Width(this.position.width), GUILayout.Height(this.position.height));
             GUILayout.Label("Skill Creator ", EditorStyles.boldLabel);
             skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillType);
             skillName = EditorGUILayout.TextField("Skill Name: ", skillName);
@@ -70,6 +73,8 @@ namespace ECS {
             if (GUILayout.Button("Load Skill")) {
                 LoadSkill();
             }
+
+            EditorGUILayout.EndScrollView();
         }
 
         private void ShowAttackSkillFields() {
