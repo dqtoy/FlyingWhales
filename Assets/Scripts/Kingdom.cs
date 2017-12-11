@@ -3411,31 +3411,6 @@ public class Kingdom{
                 }
             } else if (GoalManager.specialActionTypes.Contains(actionToPerform)) {
                 int weightToNotPerformAction = 0;
-                //if (actionToPerform == WEIGHTED_ACTION.DECLARE_PEACE) {
-                //    Dictionary<Warfare, int> warWeights = GoalManager.Instance.GetWeightsForSpecialActionType(this, GetAllActiveWars(), actionToPerform, ref weightToNotPerformAction);
-                //    ClearRejectedOffersList(); //Clear List Since weights are already computed
-                //    if (Utilities.GetTotalOfWeights(warWeights) > 0) {
-                //        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
-                //        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
-                //        actionWeights.Add(actionToPerform, warWeights.Sum(x => x.Value));
-                //        string actionWeightsSummary = "Action Weights: ";
-                //        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in actionWeights) {
-                //            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-                //        }
-                //        Debug.Log(actionWeightsSummary);
-
-                //        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
-                //        Debug.Log(this.name + " chose to " + decision.ToString());
-                //        if (decision == actionToPerform) {
-                //            //this kingdom has decided to perform the action
-                //            Warfare target = Utilities.PickRandomElementWithWeights(warWeights);
-                //            Debug.Log(this.name + " targets " + target.name + " for " + actionToPerform.ToString());
-                //            PerformAction(actionToPerform, target);
-                //        }
-                //    } else {
-                //        Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
-                //    }
-                //} else 
                 if (actionToPerform == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
                     List<AlliancePool> alliances = new List<AlliancePool>();
                     alliances.Add(alliancePool);

@@ -46,31 +46,22 @@ public class GoalManager : MonoBehaviour {
 
     internal WEIGHTED_ACTION DetermineWeightedActionToPerform(Kingdom sourceKingdom) {
         Debug.Log("========== " + GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - " + sourceKingdom.name + " is trying to decide what to do... ==========");
-        Dictionary<WEIGHTED_ACTION, int> totalWeightedActions = new Dictionary<WEIGHTED_ACTION, int>();
-        totalWeightedActions.Add(WEIGHTED_ACTION.DO_NOTHING, 150); //Add 150 Base Weight on Do Nothing Action
-        //if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.DECLARE_PEACE)) {
-        //    totalWeightedActions.Add(WEIGHTED_ACTION.DECLARE_PEACE, sourceKingdom.GetWarCount() * 5); //If at war, Add 5 weight to declare peace for each active war
-        //}
-        //if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_ALLIANCE)) {
-        //    totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_ALLIANCE, 5); //If at war and in an alliance, Add 5 weight to leave alliance
-        //}
+
+        WeightedDictionary<WEIGHTED_ACTION> weightedActions = new WeightedDictionary<WEIGHTED_ACTION>();
+        weightedActions.AddElement(WEIGHTED_ACTION.DO_NOTHING, 150); //Add 150 Base Weight on Do Nothing Action
+
         if (ActionMeetsRequirements(sourceKingdom, WEIGHTED_ACTION.LEAVE_TRADE_DEAL)) {
             //If in a trade deal, add 5 weight to leave trade deal for each active trade deal
-            totalWeightedActions.Add(WEIGHTED_ACTION.LEAVE_TRADE_DEAL, 5 * sourceKingdom.kingdomsInTradeDealWith.Count); 
+            weightedActions.AddElement(WEIGHTED_ACTION.LEAVE_TRADE_DEAL, 5 * sourceKingdom.kingdomsInTradeDealWith.Count);
         }
         for (int i = 0; i < sourceKingdom.king.allTraits.Count; i++) {
             Trait currTrait = sourceKingdom.king.allTraits[i];
             Dictionary<WEIGHTED_ACTION, int> weightsFromCurrTrait = currTrait.GetTotalActionWeights();
-            totalWeightedActions = Utilities.MergeWeightedActionDictionaries(totalWeightedActions, weightsFromCurrTrait);
+            weightedActions.AddElements(weightsFromCurrTrait);
         }
 
-        string actionWeightsSummary = "Action Weights of " + sourceKingdom.name;
-        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in totalWeightedActions) {
-            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-        }
-        Debug.Log(actionWeightsSummary);
-
-        WEIGHTED_ACTION chosenAction = Utilities.PickRandomElementWithWeights(totalWeightedActions);
+        weightedActions.LogDictionaryValues("Action Weights of " + sourceKingdom.name);
+        WEIGHTED_ACTION chosenAction = weightedActions.PickRandomElementGivenWeights();
         Debug.Log("Chosen action of " + sourceKingdom.name + " is " + chosenAction.ToString());
         return chosenAction;
     }
