@@ -3414,15 +3414,15 @@ public class Kingdom{
                 if (actionToPerform == WEIGHTED_ACTION.LEAVE_ALLIANCE) {
                     List<AlliancePool> alliances = new List<AlliancePool>();
                     alliances.Add(alliancePool);
-                    Dictionary<AlliancePool, int> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, alliances, actionToPerform, ref weightToNotPerformAction);
+                    WeightedDictionary<AlliancePool> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, alliances, actionToPerform, ref weightToNotPerformAction);
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
-                    if (Utilities.GetTotalOfWeights(weights) > 0) {
-                        Dictionary<WEIGHTED_ACTION, int> actionWeights = new Dictionary<WEIGHTED_ACTION, int>();
-                        actionWeights.Add(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
-                        actionWeights.Add(actionToPerform, weights.Sum(x => x.Value));
-                        Debug.Log(Utilities.GetWeightsSummary(actionWeights, "Leave alliance weights: "));
+                    if (weights.GetTotalOfWeights() > 0) {
+                        WeightedDictionary<WEIGHTED_ACTION> actionWeights = new WeightedDictionary<WEIGHTED_ACTION>();
+                        actionWeights.AddElement(WEIGHTED_ACTION.DO_NOTHING, weightToNotPerformAction);
+                        actionWeights.AddElement(actionToPerform, weights.GetTotalOfWeights());
+                        actionWeights.LogDictionaryValues("Leave alliance weights: ");
 
-                        WEIGHTED_ACTION decision = Utilities.PickRandomElementWithWeights(actionWeights);
+                        WEIGHTED_ACTION decision = actionWeights.PickRandomElementGivenWeights();
                         Debug.Log(this.name + " has chosen to " + decision.ToString());
                         if (decision == actionToPerform) {
                             //this kingdom has decided to perform the action
@@ -3432,12 +3432,12 @@ public class Kingdom{
                         Debug.Log(this.name + " tried to perform " + actionToPerform.ToString() + ", but it had no targets!", this.capitalCity.hexTile);
                     }
                 } else if (actionToPerform == WEIGHTED_ACTION.LEAVE_TRADE_DEAL) {
-                    Dictionary<Kingdom, int> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, kingdomsInTradeDealWith, actionToPerform, ref weightToNotPerformAction);
+                    WeightedDictionary<Kingdom> weights = GoalManager.Instance.GetWeightsForSpecialActionType(this, kingdomsInTradeDealWith, actionToPerform, ref weightToNotPerformAction);
                     ClearRejectedOffersList(); //Clear List Since weights are already computed
                     
-                    if (Utilities.GetTotalOfWeights(weights) > 0) {
-                        Debug.Log(Utilities.GetWeightsSummary(weights, "Leave trade deal weights"));
-                        Kingdom target = Utilities.PickRandomElementWithWeights(weights);
+                    if (weights.GetTotalOfWeights() > 0) {
+                        weights.LogDictionaryValues("Leave trade deal weights");
+                        Kingdom target = weights.PickRandomElementGivenWeights();
 
                         Debug.Log(this.name + " chose to target " + target.name);
                         PerformAction(actionToPerform, target);
@@ -3446,11 +3446,11 @@ public class Kingdom{
                     }
                 }
             } else {
-                Dictionary<Kingdom, int> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForActionType(this, actionToPerform);
+                WeightedDictionary<Kingdom> targetKingdomWeights = GoalManager.Instance.GetKingdomWeightsForActionType(this, actionToPerform);
                 ClearRejectedOffersList(); //Clear List Since weights are already computed
-                if (Utilities.GetTotalOfWeights(targetKingdomWeights) > 0) {
-                    Debug.Log(Utilities.GetWeightsSummary(targetKingdomWeights, actionToPerform.ToString() + " weights: "));
-                    Kingdom target = Utilities.PickRandomElementWithWeights(targetKingdomWeights);
+                if (targetKingdomWeights.GetTotalOfWeights() > 0) {
+                    targetKingdomWeights.LogDictionaryValues(actionToPerform.ToString() + " weights: ");
+                    Kingdom target = targetKingdomWeights.PickRandomElementGivenWeights();
                     Debug.Log(this.name + " chose to target " + target.name);
                     PerformAction(actionToPerform, target);
                 } else {

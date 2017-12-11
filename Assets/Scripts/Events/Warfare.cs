@@ -669,15 +669,15 @@ public class Warfare {
 	}
 
     private void CheckForPeace(Kingdom sourceKingdom) {
-        Dictionary<ACTION_CHOICES, int> peaceWeights = GetPeaceDeclarationWeights(sourceKingdom);
-        Debug.Log(Utilities.GetWeightsSummary(peaceWeights, sourceKingdom.name + " Peace Declaration (" + this.name + ") weights: "));
-        ACTION_CHOICES choice = Utilities.PickRandomElementWithWeights(peaceWeights);
+        WeightedDictionary<ACTION_CHOICES> peaceWeights = GetPeaceDeclarationWeights(sourceKingdom);
+        peaceWeights.LogDictionaryValues(sourceKingdom.name + " Peace Declaration (" + this.name + ") weights: ");
+        ACTION_CHOICES choice = peaceWeights.PickRandomElementGivenWeights();
         Debug.Log(sourceKingdom.name + " chose to " + choice.ToString());
         if(choice == ACTION_CHOICES.DO_ACTION) {
             PeaceDeclaration(sourceKingdom);
         }
     }
-    private Dictionary<ACTION_CHOICES, int> GetPeaceDeclarationWeights(Kingdom sourceKingdom) {
+    private WeightedDictionary<ACTION_CHOICES> GetPeaceDeclarationWeights(Kingdom sourceKingdom) {
         int doActionDefaultWeight = 50; //Default Weight to Declare Peace is 50
         int dontDoActionDefaultWeight = 50; //Default Weight to Dont Declare Peace is 50
 
@@ -722,9 +722,10 @@ public class Warfare {
         //Add Default Weight to Dont Declare Peace for (100 - War Weariness)
         int dontDoAction = dontDoActionDefaultWeight * (100 - _kingdomSideWeariness[sourceKingdom.id].weariness);
 
-        return new Dictionary<ACTION_CHOICES, int>() {
-            { ACTION_CHOICES.DO_ACTION, doAction },
-            { ACTION_CHOICES.DONT_DO_ACTION, dontDoAction }
-        };
+        WeightedDictionary<ACTION_CHOICES> weights = new WeightedDictionary<ACTION_CHOICES>();
+        weights.AddElement(ACTION_CHOICES.DO_ACTION, doAction);
+        weights.AddElement(ACTION_CHOICES.DONT_DO_ACTION, dontDoAction);
+
+        return weights;
     }
 }
