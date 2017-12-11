@@ -3754,6 +3754,11 @@ public class Kingdom{
         EventCreator.Instance.CreateTradeDealOfferEvent(this, targetKingdom);
     }
     internal void StartInternationalIncident(Kingdom targetKingdom, string status) {
+		KingdomRelationship kr = GetRelationshipWithKingdom (targetKingdom);
+		if(kr.sharedRelationship.isAtWar){
+			Debug.Log ("CAN'T HAVE INTERNATIONAL INCIDENT BECAUSE THEY ARE AT WAR!");
+			return;
+		}
 		if (status.Equals("caught")) {
 			InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, true);
 			ii.ShowCaughtLog();
@@ -3769,7 +3774,7 @@ public class Kingdom{
 				isSourceKingdomAggrieved = true;
 				isTargetKingdomAggrieved = true;
 			}
-			InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, isSourceKingdomAggrieved, isTargetKingdomAggrieved);
+			InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, this, targetKingdom, isSourceKingdomAggrieved, isTargetKingdomAggrieved);
 			ii.ShowRandomLog();
 		} else {
 			Dictionary<Kingdom, int> targetWeights = GetInternationalIncidentKingdomWeights(targetKingdom);

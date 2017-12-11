@@ -181,6 +181,8 @@ public class InternationalIncident : GameEvent {
 				};
 				INCIDENT_ACTIONS pickedAction = Utilities.PickRandomElementWithWeights<INCIDENT_ACTIONS> (actionWeightDict);
 				DoPickedAction (pickedAction, chosenKingdom);
+			}else{
+				DoPickedAction (INCIDENT_ACTIONS.INCREASE_TENSION, chosenKingdom);
 			}
 
 		}

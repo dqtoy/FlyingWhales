@@ -67,52 +67,55 @@ public class MilitaryManager {
 		}
 	}
 	private GeneralTask CreateTask (General general){
-		Dictionary<GENERAL_TASKS, int> tasksToChoose = new Dictionary<GENERAL_TASKS, int> ();
-		City defendCity = null;
-		City attackCity = null;
-		int defendWeight = 0;
-		int attackWeight = 0;
-
+		Dictionary<City, int> combinedCityWeights = new Dictionary<City, int> ();
 		if(this._kingdom.warfareInfo.Count > 0){
-			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
-			GetAttackCityAndWeight (ref attackCity, ref attackWeight);
-			if(attackCity != null){
-				tasksToChoose.Add (GENERAL_TASKS.ATTACK_CITY, attackWeight);
+			Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
+			combinedCityWeights = GetDefendCityAndWeight (true);
+			cityWeights = GetAttackCityAndWeight (true);
+			foreach (var item in cityWeights) {
+				combinedCityWeights.Add (item.Key, item.Value);
 			}
-			if (defendCity != null) {
-				tasksToChoose.Add (GENERAL_TASKS.DEFEND_CITY, defendWeight);
+
+			if(combinedCityWeights.Count <= 0){
+				combinedCityWeights = GetDefendCityAndWeight (false);
+				cityWeights = GetAttackCityAndWeight (false);
+				foreach (var item in cityWeights) {
+					combinedCityWeights.Add (item.Key, item.Value);
+				}
 			}
 		}else{
-			GetDefendCityAndWeight (ref defendCity, ref defendWeight);
-			if (defendCity != null) {
-				tasksToChoose.Add (GENERAL_TASKS.DEFEND_CITY, defendWeight);
+			combinedCityWeights = GetDefendCityAndWeight (true);
+			if(combinedCityWeights.Count <= 0){
+				combinedCityWeights = GetDefendCityAndWeight (false);
 			}
 		}
 
-		if(tasksToChoose.Count > 0){
-			GENERAL_TASKS task = Utilities.PickRandomElementWithWeights<GENERAL_TASKS> (tasksToChoose);
-			if(task == GENERAL_TASKS.ATTACK_CITY){
-				return new AttackCityTask (task, general, attackCity.hexTile);
-			}else if(task == GENERAL_TASKS.DEFEND_CITY){
-				return new DefendCityTask (task, general, defendCity.hexTile);
+		if(combinedCityWeights.Count > 0){
+			City targetCity = Utilities.PickRandomElementWithWeights<City> (combinedCityWeights);
+			if(targetCity.kingdom.id != this._kingdom.id){
+				return new AttackCityTask (GENERAL_TASKS.ATTACK_CITY, general, targetCity.hexTile);
+			}else{
+				return new DefendCityTask (GENERAL_TASKS.DEFEND_CITY, general, targetCity.hexTile);
 			}
 		}
 		return null;
 	}
 
-	private void GetDefendCityAndWeight(ref City defendCity, ref int weight){
+	//Get all kingdom cities to defend and their weights
+	//willFactorInAssignedDefendGenerals - controls if you want to get all cities with / without defending generals
+	private Dictionary<City, int> GetDefendCityAndWeight(bool willFactorInAssignedDefendGenerals){
 		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
-		for (int i = 0; i < this._kingdom.cities.Count; i++) {
-			City city = this._kingdom.cities [i];
-			if(city.assignedDefendGeneralsCount == 0){
-				int cityTotalWeight = GetDefendCityWeight (city);
-				if(cityTotalWeight > 0){
-					cityWeights.Add (city, cityTotalWeight);
+		if(willFactorInAssignedDefendGenerals){
+			for (int i = 0; i < this._kingdom.cities.Count; i++) {
+				City city = this._kingdom.cities [i];
+				if(city.assignedDefendGeneralsCount == 0){
+					int cityTotalWeight = GetDefendCityWeight (city);
+					if(cityTotalWeight > 0){
+						cityWeights.Add (city, cityTotalWeight);
+					}
 				}
 			}
-		}
-
-		if(cityWeights.Count <= 0){
+		}else{
 			for (int i = 0; i < this._kingdom.cities.Count; i++) {
 				City city = this._kingdom.cities [i];
 				int cityTotalWeight = GetDefendCityWeight (city);
@@ -121,48 +124,49 @@ public class MilitaryManager {
 				}
 			}
 		}
-
-		if (cityWeights.Count > 0) {
-			defendCity = Utilities.PickRandomElementWithWeights<City> (cityWeights);
-			weight = cityWeights [defendCity];
-		}
+		return cityWeights;
 	}
-	private void GetAttackCityAndWeight(ref City attackCity, ref int weight){
+
+	//Get all kingdom cities to attack and their weights
+	//willFactorInAssignedAttackingGenerals - controls if you want to get all cities to be attacked that has an attacking general assigned to it or not
+	private Dictionary<City, int> GetAttackCityAndWeight(bool willFactorInAssignedAttackingGenerals){
 		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
-		for (int i = 0; i < this._kingdom.cities.Count; i++) {
-			City city = this._kingdom.cities [i];
-			for (int j = 0; j < city.region.connections.Count; j++) {
-				if(city.region.connections[j] is Region){
-					Region adjacentRegion = (Region)city.region.connections [j];
-					if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
-						KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-						if(kr.sharedRelationship.isAtWar && !HasGeneralTaskToAttackCity(adjacentRegion.occupant)){
-							int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
-							if(cityTotalWeight > 0){
-								cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+		if(willFactorInAssignedAttackingGenerals){
+			for (int i = 0; i < this._kingdom.cities.Count; i++) {
+				City city = this._kingdom.cities [i];
+				for (int j = 0; j < city.region.connections.Count; j++) {
+					if(city.region.connections[j] is Region){
+						Region adjacentRegion = (Region)city.region.connections [j];
+						if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
+							KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
+							if(kr.sharedRelationship.isAtWar && !HasGeneralTaskToAttackCity(adjacentRegion.occupant)){
+								int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
+								if(cityTotalWeight > 0){
+									cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-		if(this._kingdom.alliancePool != null){
-			for (int i = 0; i < this._kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-				Kingdom allyKingdom = this._kingdom.alliancePool.kingdomsInvolved [i];
-				if(this._kingdom.id != allyKingdom.id){
-					KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (allyKingdom);
-					if(kr.sharedRelationship.isAdjacent){
-						for (int j = 0; j < allyKingdom.cities.Count; j++) {
-							City city = allyKingdom.cities [j];
-							for (int k = 0; k < city.region.connections.Count; k++) {
-								if(city.region.connections[k] is Region){
-									Region adjacentRegion = (Region)city.region.connections [k];
-									if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && adjacentRegion.occupant.kingdom.id != allyKingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
-										KingdomRelationship krToEnemy = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-										if(krToEnemy.sharedRelationship.isAtWar && !HasGeneralTaskToAttackCity(adjacentRegion.occupant)){
-											int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
-											if(cityTotalWeight > 0){
-												cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+			if(this._kingdom.alliancePool != null){
+				for (int i = 0; i < this._kingdom.alliancePool.kingdomsInvolved.Count; i++) {
+					Kingdom allyKingdom = this._kingdom.alliancePool.kingdomsInvolved [i];
+					if(this._kingdom.id != allyKingdom.id){
+						KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (allyKingdom);
+						if(kr.sharedRelationship.isAdjacent){
+							for (int j = 0; j < allyKingdom.cities.Count; j++) {
+								City city = allyKingdom.cities [j];
+								for (int k = 0; k < city.region.connections.Count; k++) {
+									if(city.region.connections[k] is Region){
+										Region adjacentRegion = (Region)city.region.connections [k];
+										if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && adjacentRegion.occupant.kingdom.id != allyKingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
+											KingdomRelationship krToEnemy = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
+											if(krToEnemy.sharedRelationship.isAtWar && !HasGeneralTaskToAttackCity(adjacentRegion.occupant)){
+												int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
+												if(cityTotalWeight > 0){
+													cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+												}
 											}
 										}
 									}
@@ -172,10 +176,7 @@ public class MilitaryManager {
 					}
 				}
 			}
-		}
-
-
-		if(cityWeights.Count <= 0){
+		}else{
 			for (int i = 0; i < this._kingdom.cities.Count; i++) {
 				City city = this._kingdom.cities [i];
 				for (int j = 0; j < city.region.connections.Count; j++) {
@@ -220,13 +221,8 @@ public class MilitaryManager {
 					}
 				}
 			}
-
 		}
-
-		if(cityWeights.Count > 0){
-			attackCity = Utilities.PickRandomElementWithWeights<City> (cityWeights);
-			weight = cityWeights [attackCity];
-		}
+		return cityWeights;
 	}
 	private int GetDefendCityWeight(City city){
 		int cityTotalWeight = 0;

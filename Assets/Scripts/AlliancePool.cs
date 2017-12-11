@@ -115,7 +115,7 @@ public class AlliancePool {
 		Dictionary<REACTIONS, int> reactionsWeight = new Dictionary<REACTIONS, int> ();
 		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
 			Kingdom allyKingdom = this._kingdomsInvolved [i];
-			if(sourceKingdom.id != allyKingdom.id){
+			if(sourceKingdom.id != allyKingdom.id && enemyKingdom.id != allyKingdom.id){
 				reactionsWeight.Clear ();
 				reactionsWeight.Add (REACTIONS.JOIN_WAR, GetReactionWeight (REACTIONS.JOIN_WAR, sourceKingdom, allyKingdom, enemyKingdom));
 				reactionsWeight.Add (REACTIONS.REMAIN_NEUTRAL, GetReactionWeight (REACTIONS.REMAIN_NEUTRAL, sourceKingdom, allyKingdom, enemyKingdom));
