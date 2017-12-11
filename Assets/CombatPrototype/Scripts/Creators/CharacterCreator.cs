@@ -15,7 +15,7 @@ namespace ECS {
 			EditorWindow.GetWindow(typeof(CharacterCreator));
         }
 
-        void OnGUI() {
+        private void OnGUI() {
             GUILayout.Label("Class Creator ", EditorStyles.boldLabel);
 			fileName = EditorGUILayout.TextField("File Name: ", fileName);
 

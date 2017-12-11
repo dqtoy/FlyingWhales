@@ -8,12 +8,12 @@ namespace ECS {
     public class BodyPartsCreator : EditorWindow {
 		public BodyPartsData bodyPartsData;
 
-        // Add menu item to the Window menu
-        [MenuItem("Window/Body Parts Creator")]
-        public static void ShowWindow() {
-            //Show existing window instance. If one doesn't exist, make one.
-			EditorWindow.GetWindow(typeof(BodyPartsCreator));
-        }
+   //     // Add menu item to the Window menu
+   //     [MenuItem("Window/Body Parts Creator")]
+   //     public static void ShowWindow() {
+   //         //Show existing window instance. If one doesn't exist, make one.
+			//EditorWindow.GetWindow(typeof(BodyPartsCreator));
+   //     }
 
         void OnGUI() {
             GUILayout.Label("Body Parts Creator ", EditorStyles.boldLabel);
