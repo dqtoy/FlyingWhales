@@ -135,6 +135,7 @@ public class InternationalIncident : GameEvent {
 	}
 
 	private void ReactionDay(){
+		Debug.Log ("------------------------------- REACTION DAY FOR " + this._incidentName + "--------------------------------------");
 		if(this._sourceKingdom.isDead || this._targetKingdom.isDead){
 			CancelEvent ();
 			return;
@@ -162,6 +163,7 @@ public class InternationalIncident : GameEvent {
 		}
 
 		if(chosenKingdom != null && kr != null){
+			Debug.Log ("REACTING KINGDOM: " + chosenKingdom.name);
 			if(this._sourceKing.id != this._sourceKingdom.king.id){
 				this._sourceKingPreviousAction = INCIDENT_ACTIONS.NONE;
 				this._sourceKing = this._sourceKingdom.king;
@@ -173,7 +175,10 @@ public class InternationalIncident : GameEvent {
 
 			int resolvePeacefullyTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.RESOLVE_PEACEFULLY);
 			int increaseTensionTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.INCREASE_TENSION);
-		
+
+			Debug.Log ("RESOLVE_PEACEFULLY: " + resolvePeacefullyTotalWeight.ToString());
+			Debug.Log ("INCREASE_TENSION: " + increaseTensionTotalWeight.ToString());
+
 			if(resolvePeacefullyTotalWeight > 0 && increaseTensionTotalWeight > 0){
 				Dictionary<INCIDENT_ACTIONS, int> actionWeightDict = new Dictionary<INCIDENT_ACTIONS, int> () {
 					{ INCIDENT_ACTIONS.RESOLVE_PEACEFULLY, resolvePeacefullyTotalWeight },
@@ -234,6 +239,7 @@ public class InternationalIncident : GameEvent {
 	}
 
 	private void DoPickedAction(INCIDENT_ACTIONS incidentAction, Kingdom chosenKingdom){
+		Debug.Log ("REACTION: " + incidentAction.ToString());
 		if(chosenKingdom.id == this._sourceKingdom.id){
 			this._sourceKingPreviousAction = incidentAction;
 		}else if(chosenKingdom.id == this._targetKingdom.id){
