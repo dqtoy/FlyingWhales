@@ -654,11 +654,17 @@ public class Warfare {
 	private void DeclareWar(Kingdom firstKingdom, Kingdom secondKingdom){
 		KingdomRelationship kr = firstKingdom.GetRelationshipWithKingdom (secondKingdom);
 		if(!kr.sharedRelationship.isAtWar){
+			if(kr.AreAllies()){
+				firstKingdom.LeaveAlliance ();
+			}
+
 			kr.ChangeWarStatus(true, this);
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
 			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 			this.ShowUINotification (newLog);
+
+
 		}
 	}
 

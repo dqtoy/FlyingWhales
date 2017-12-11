@@ -43,7 +43,7 @@ public class InternationalIncidentManager : MonoBehaviour {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom kingdom = KingdomManager.Instance.allKingdoms [i];
 			foreach (KingdomRelationship kr in kingdom.relationships.Values) {
-				if(kr.sharedRelationship.isAdjacent && !incidentDict.ContainsKey(kr.sharedRelationship)){
+				if(kr.sharedRelationship.isAdjacent && !kr.sharedRelationship.isAtWar && !incidentDict.ContainsKey(kr.sharedRelationship)){
 					totalWeight = 0;
 					totalWeight += 50;
 
