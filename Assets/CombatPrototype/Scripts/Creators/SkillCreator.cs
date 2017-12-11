@@ -10,7 +10,9 @@ namespace ECS {
         private string skillName;
         private int activationWeight;
         private float accuracy;
+        private int range;
         public SkillRequirement[] skillRequirements;
+        public CHARACTER_ATTRIBUTES attributeModifier;
 
         //Attack Skill Fields
         private int attackPower;
@@ -35,8 +37,9 @@ namespace ECS {
             skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillType);
             skillName = EditorGUILayout.TextField("Skill Name: ", skillName);
             activationWeight = EditorGUILayout.IntField("Activation Weight: ", activationWeight);
+            range = EditorGUILayout.IntField("Range: ", range);
             accuracy = EditorGUILayout.Slider("Accuracy: ", accuracy, 0f, 100f);
-
+            attributeModifier = (CHARACTER_ATTRIBUTES)EditorGUILayout.EnumPopup("Attribute Modifier: ", attributeModifier);
             switch (skillType) {
                 case SKILL_TYPE.ATTACK:
                     ShowAttackSkillFields();
@@ -49,6 +52,9 @@ namespace ECS {
                     break;
                 case SKILL_TYPE.FLEE:
                     ShowFleeItemFields();
+                    break;
+                case SKILL_TYPE.MOVE:
+                    ShowMoveItemFields();
                     break;
             }
 
@@ -87,6 +93,9 @@ namespace ECS {
         private void ShowFleeItemFields() {
             //Nothing yet
         }
+        private void ShowMoveItemFields() {
+            //Nothing yet
+        }
 
         #region Saving
         private void SaveSkill(string fileName) {
@@ -111,6 +120,8 @@ namespace ECS {
                 SaveHealSkill(path);
             } else if (skillType == SKILL_TYPE.OBTAIN_ITEM) {
                 SaveObtainSkill(path);
+            } else if (skillType == SKILL_TYPE.MOVE) {
+                SaveMoveSkill(path);
             } else {
                 SaveFleeSkill(path);
             }
@@ -119,13 +130,18 @@ namespace ECS {
             UnityEditor.AssetDatabase.ImportAsset(path);
             Debug.Log("Successfully saved skill at " + path);
         }
-        private void SaveAttackSkill(string path) {
-            AttackSkill newSkill = new AttackSkill();
-
+        private void SetCommonData(Skill newSkill) {
             newSkill.skillName = this.skillName;
             newSkill.activationWeight = this.activationWeight;
             newSkill.accuracy = this.accuracy;
+            newSkill.range = this.range;
             newSkill.skillRequirements = this.skillRequirements;
+            newSkill.attributeModifier = this.attributeModifier;
+        }
+        private void SaveAttackSkill(string path) {
+            AttackSkill newSkill = new AttackSkill();
+
+            SetCommonData(newSkill);
 
             newSkill.attackPower = attackPower;
             newSkill.attackType = attackType;
@@ -134,51 +150,31 @@ namespace ECS {
             newSkill.injuryRate = injuryRate;
             newSkill.decapitationRate = decapitationRate;
 
-            string jsonString = JsonUtility.ToJson(newSkill);
-
-            System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-            writer.WriteLine(jsonString);
-            writer.Close();
+            SaveJson(newSkill, path);
         }
         private void SaveHealSkill(string path) {
             HealSkill newSkill = new HealSkill();
-
-            newSkill.skillName = this.skillName;
-            newSkill.activationWeight = this.activationWeight;
-            newSkill.accuracy = this.accuracy;
-            newSkill.skillRequirements = this.skillRequirements;
-
+            SetCommonData(newSkill);
             newSkill.healPower = healPower;
-
-            string jsonString = JsonUtility.ToJson(newSkill);
-
-            System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-            writer.WriteLine(jsonString);
-            writer.Close();
+            SaveJson(newSkill, path);
         }
         private void SaveFleeSkill(string path) {
-            HealSkill newSkill = new HealSkill();
-
-            newSkill.skillName = this.skillName;
-            newSkill.activationWeight = this.activationWeight;
-            newSkill.accuracy = this.accuracy;
-            newSkill.skillRequirements = this.skillRequirements;
-
-            string jsonString = JsonUtility.ToJson(newSkill);
-
-            System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-            writer.WriteLine(jsonString);
-            writer.Close();
+            FleeSkill newSkill = new FleeSkill();
+            SetCommonData(newSkill);
+            SaveJson(newSkill, path);
         }
         private void SaveObtainSkill(string path) {
             ObtainSkill newSkill = new ObtainSkill();
-
-            newSkill.skillName = this.skillName;
-            newSkill.activationWeight = this.activationWeight;
-            newSkill.accuracy = this.accuracy;
-            newSkill.skillRequirements = this.skillRequirements;
-
-            string jsonString = JsonUtility.ToJson(newSkill);
+            SetCommonData(newSkill);
+            SaveJson(newSkill, path);
+        }
+        private void SaveMoveSkill(string path) {
+            MoveSkill newSkill = new MoveSkill();
+            SetCommonData(newSkill);
+            SaveJson(newSkill, path);
+        }
+        private void SaveJson(Skill skill, string path) {
+            string jsonString = JsonUtility.ToJson(skill);
 
             System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
             writer.WriteLine(jsonString);
@@ -203,6 +199,9 @@ namespace ECS {
                 } else if (filePath.Contains("FLEE")) {
                     FleeSkill currSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
                     LoadFleeSkill(currSkill);
+                } else if (filePath.Contains("MOVE")) {
+                    MoveSkill currSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+                    LoadMoveSkill(currSkill);
                 }
             }
         }
@@ -237,6 +236,10 @@ namespace ECS {
         }
         private void LoadFleeSkill(FleeSkill skill) {
             skillType = SKILL_TYPE.FLEE;
+            LoadCommonData(skill);
+        }
+        private void LoadMoveSkill(MoveSkill skill) {
+            skillType = SKILL_TYPE.MOVE;
             LoadCommonData(skill);
         }
         #endregion

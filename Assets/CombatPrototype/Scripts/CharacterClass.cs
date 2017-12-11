@@ -11,6 +11,9 @@ namespace ECS {
         public int intGain;
         public int agiGain;
         public int hpGain;
+        public int dodgeRate;
+        public int parryRate;
+        public int blockRate;
     }
 }
 

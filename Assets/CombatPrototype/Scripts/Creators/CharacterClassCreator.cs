@@ -10,6 +10,14 @@ namespace ECS {
         private Vector2 scrollPos = Vector2.zero;
 
         private string className;
+        private int actRate;
+        private int strGain;
+        private int intGain;
+        private int agiGain;
+        private int hpGain;
+        private int dodgeRate;
+        private int parryRate;
+        private int blockRate;
         public List<Skill> skills = new List<Skill>();
         private bool skillsFoldout;
 
@@ -27,6 +35,14 @@ namespace ECS {
             this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos, GUILayout.Width(this.position.width), GUILayout.Height(this.position.height));
             GUILayout.Label("Class Creator ", EditorStyles.boldLabel);
             className = EditorGUILayout.TextField("Class Name: ", className);
+            actRate = EditorGUILayout.IntField("Act Rate: ", actRate);
+            strGain = EditorGUILayout.IntField("Strength Gain: ", strGain);
+            intGain = EditorGUILayout.IntField("Intelligence Gain: ", intGain);
+            agiGain = EditorGUILayout.IntField("Agility Gain: ", agiGain);
+            hpGain = EditorGUILayout.IntField("HP Gain: ", hpGain);
+            dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", dodgeRate);
+            parryRate = EditorGUILayout.IntField("Parry Rate: ", parryRate);
+            blockRate = EditorGUILayout.IntField("Block Rate: ", blockRate);
 
             SerializedObject serializedObject = new SerializedObject(this);
             SerializedProperty skillProperty = serializedObject.FindProperty("skills");
@@ -48,9 +64,11 @@ namespace ECS {
             skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", skillTypeToAdd);
             List<string> choices = GetAllSkillsOfType(skillTypeToAdd);
             skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", skillToAddIndex, choices.ToArray());
+            GUI.enabled = choices.Count > 0;
             if (GUILayout.Button("Add Skill")) {
                 AddSkillToList(choices[skillToAddIndex]);
             }
+            GUI.enabled = true;
             GUILayout.EndHorizontal();
 
 
@@ -106,6 +124,13 @@ namespace ECS {
             string path = "Assets/CombatPrototype/Data/CharacterClasses/" + this.className + ".json";
             CharacterClass newClass = new CharacterClass();
             newClass.className = this.className;
+            newClass.strGain = this.strGain;
+            newClass.intGain = this.intGain;
+            newClass.agiGain = this.agiGain;
+            newClass.hpGain = this.hpGain;
+            newClass.dodgeRate = this.dodgeRate;
+            newClass.parryRate = this.parryRate;
+            newClass.blockRate = this.blockRate;
             newClass.skills = this.skills.ToArray();
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + this.className + " already exists. Replace with this class?", "Yes", "No")) {
@@ -136,6 +161,13 @@ namespace ECS {
         }
         private void LoadCharacter(CharacterClass character) {
             this.className = character.className;
+            this.strGain = character.strGain;
+            this.intGain = character.intGain;
+            this.agiGain = character.agiGain;
+            this.hpGain = character.hpGain;
+            this.dodgeRate = character.dodgeRate;
+            this.parryRate = character.parryRate;
+            this.blockRate = character.blockRate;
             this.skills = new List<Skill>(character.skills);
         }
         #endregion

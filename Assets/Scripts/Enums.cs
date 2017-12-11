@@ -739,6 +739,7 @@ public enum SKILL_TYPE {
     HEAL,
     OBTAIN_ITEM,
     FLEE,
+    MOVE
 }
 public enum SKILL_REQUIREMENT_TYPE {
     HAS,
@@ -771,6 +772,11 @@ public enum STATUS_EFFECT {
     STUNNED,
     BLEEDING,
     BURNING
+}
+public enum CHARACTER_ATTRIBUTES {
+    STRENGTH,
+    INTELLIGENCE,
+    AGILITY
 }
 
 
