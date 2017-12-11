@@ -102,8 +102,8 @@ public class InternationalIncident : GameEvent {
     }
 	internal void ShowRandomLog() {
 		Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_random");
-		newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		newLog.AddToFillers(null, this.incidentName, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
 	}
