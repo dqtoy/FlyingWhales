@@ -67,8 +67,8 @@ public class GoalManager : MonoBehaviour {
     }
 
     #region Weight Dictionaries
-    internal Dictionary<T, int> GetWeightsForSpecialActionType<T>(Kingdom source, List<T> choices, WEIGHTED_ACTION actionType, ref int weightToNotPerformAction) {
-        Dictionary<T, int> weights = new Dictionary<T, int>();
+    internal WeightedDictionary<T> GetWeightsForSpecialActionType<T>(Kingdom source, List<T> choices, WEIGHTED_ACTION actionType, ref int weightToNotPerformAction) {
+        WeightedDictionary<T> weights = new WeightedDictionary<T>();
         for (int i = 0; i < choices.Count; i++) {
             T currChoice = choices[i];
             int weightForCurrChoice = 0;
@@ -80,12 +80,12 @@ public class GoalManager : MonoBehaviour {
                 weightForCurrChoice += modificationFromTrait;
             }
             ApplySpecialActionModificationForAll(actionType, source, currChoice, ref weightForCurrChoice, ref weightToNotPerformAction);
-            weights.Add(currChoice, weightForCurrChoice);
+            weights.AddElement(currChoice, weightForCurrChoice);
         }
         return weights;
     }
-    internal Dictionary<Kingdom, int> GetKingdomWeightsForActionType(Kingdom sourceKingdom, WEIGHTED_ACTION weightedAction) {
-        Dictionary<Kingdom, int> kingdomWeights = new Dictionary<Kingdom, int>();
+    internal WeightedDictionary<Kingdom> GetKingdomWeightsForActionType(Kingdom sourceKingdom, WEIGHTED_ACTION weightedAction) {
+        WeightedDictionary<Kingdom> kingdomWeights = new WeightedDictionary<Kingdom>();
         for (int i = 0; i < sourceKingdom.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = sourceKingdom.discoveredKingdoms[i];
             //int weightForOtherKingdom = GetDefaultWeightForAction(weightedAction, sourceKingdom, otherKingdom);
@@ -97,7 +97,7 @@ public class GoalManager : MonoBehaviour {
                 weightForOtherKingdom += modificationFromTrait;
             }
             ApplyActionModificationForAll(weightedAction, sourceKingdom, otherKingdom, ref weightForOtherKingdom);
-            kingdomWeights.Add(otherKingdom, weightForOtherKingdom);
+            kingdomWeights.AddElement(otherKingdom, weightForOtherKingdom);
         }
         return kingdomWeights;
     }

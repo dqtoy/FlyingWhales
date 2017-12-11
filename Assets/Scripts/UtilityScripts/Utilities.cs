@@ -1173,7 +1173,16 @@ public class Utilities : MonoBehaviour {
     public static string GetWeightsSummary<T>(Dictionary<T, int> weights, string title = "Weights Summary: ") {
         string actionWeightsSummary = title;
         foreach (KeyValuePair<T, int> kvp in weights) {
-            actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            T key = kvp.Key;
+            int value = kvp.Value;
+            if(key is Kingdom) {
+                actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
+            } else if(key is AlliancePool) {
+                actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
+            } else {
+                actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            }
+            
         }
         return actionWeightsSummary;
     }
