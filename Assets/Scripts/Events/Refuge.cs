@@ -100,44 +100,53 @@ public class Refuge : GameEvent {
 		for (int i = 0; i < governor.allTraits.Count; i++) {
 			totalWeight += governor.allTraits [i].GetRefugeeGovernorDecisionWeight (decision);
 		}
-		if(decision == GOVERNOR_DECISION.ACCEPT){
-			if(governor.city.kingdom.id == this.refugeeKingdom.id){
-				totalWeight += 300;
-			}else{
-				KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
-				if(kr.AreAllies()){
+		if (this.refugeeKingdom.isDead) {
+			if (decision == GOVERNOR_DECISION.ACCEPT) {
+				totalWeight += 200;
+			} else if (decision == GOVERNOR_DECISION.REJECT) {
+				totalWeight += 200;
+			}
+		} else {
+			if(decision == GOVERNOR_DECISION.ACCEPT){
+				if(governor.city.kingdom.id == this.refugeeKingdom.id){
 					totalWeight += 300;
 				}else{
-					if(!kr.sharedRelationship.isAtWar){
-						totalWeight += 200;
-					}else{
-						totalWeight += 50;
-					}
-				}
-			}
-		}else if(decision == GOVERNOR_DECISION.REJECT){
-			if(governor.city.kingdom.id == this.refugeeKingdom.id){
-				totalWeight += 50;
-			}else{
-				KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
-				if(kr.AreAllies()){
-					totalWeight += 100;
-				}else{
-					if(!kr.sharedRelationship.isAtWar){
-						totalWeight += 200;
-					}else{
+					KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
+					if(kr.AreAllies()){
 						totalWeight += 300;
+					}else{
+						if(!kr.sharedRelationship.isAtWar){
+							totalWeight += 200;
+						}else{
+							totalWeight += 50;
+						}
 					}
 				}
-			}
-		}else if(decision == GOVERNOR_DECISION.KILL){
-			if(this.refugeeKingdom.id != governor.city.kingdom.id){
-				KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
-				if(kr.sharedRelationship.isAtWar){
-					totalWeight += 200;
-				}	
+			}else if(decision == GOVERNOR_DECISION.REJECT){
+				if(governor.city.kingdom.id == this.refugeeKingdom.id){
+					totalWeight += 50;
+				}else{
+					KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
+					if(kr.AreAllies()){
+						totalWeight += 100;
+					}else{
+						if(!kr.sharedRelationship.isAtWar){
+							totalWeight += 200;
+						}else{
+							totalWeight += 300;
+						}
+					}
+				}
+			}else if(decision == GOVERNOR_DECISION.KILL){
+				if(this.refugeeKingdom.id != governor.city.kingdom.id){
+					KingdomRelationship kr = this.refugeeKingdom.GetRelationshipWithKingdom (governor.city.kingdom);
+					if(kr.sharedRelationship.isAtWar){
+						totalWeight += 200;
+					}	
+				}
 			}
 		}
+
 		return totalWeight;
 	}
 

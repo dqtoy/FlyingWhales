@@ -9,6 +9,8 @@ public class AttackCityTask : GeneralTask {
 	public AttackCityTask(GENERAL_TASKS task, General general, HexTile targetHextile) : base (task, general, targetHextile){
 		this.targetCity = targetHextile.city;
 		Messenger.AddListener<City> ("CityHasDied", CityHasDied);
+		Messenger.AddListener<Kingdom, Kingdom> ("PeaceDeclared", PeaceDeclared);
+
 	}
 
 	internal override void AssignMoveDate(){
@@ -25,12 +27,19 @@ public class AttackCityTask : GeneralTask {
 	internal override void DoneTask (){
 		base.DoneTask ();
 		Messenger.RemoveListener<City> ("CityHasDied", CityHasDied);
+		Messenger.RemoveListener<Kingdom, Kingdom> ("PeaceDeclared", PeaceDeclared);
 	}
 	#endregion
 
 	private void CityHasDied(City city){
 		if(city.id == this.targetCity.id){
 //			DoneTask ();
+			this.general.GetTask ();
+		}
+	}
+
+	private void PeaceDeclared(Kingdom sourceKingdom, Kingdom targetKingdom){
+		if(this.general.citizen.city.kingdom.id == sourceKingdom.id && this.targetCity.kingdom.id == targetKingdom.id){
 			this.general.GetTask ();
 		}
 	}
