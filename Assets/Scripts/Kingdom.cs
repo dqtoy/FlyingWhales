@@ -3889,6 +3889,6 @@ public class Kingdom{
         //Reschedule event
         GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         dueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseBOPAttributesPerMonth());
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseWarWearinessPerMonth());
     }
 }
