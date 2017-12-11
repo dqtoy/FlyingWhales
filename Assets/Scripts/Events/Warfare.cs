@@ -98,16 +98,16 @@ public class Warfare {
 			this._kingdomSideList [this._kingdomSideWeariness[kingdom.id].side].Remove (kingdom);
 			kingdom.RemoveWarfareInfo(this);
 			this._kingdomSideWeariness.Remove(kingdom.id);
-			for (int i = 0; i < this._battles.Count; i++) {
-				if(this._battles[i].kingdom1.id == kingdom.id || this._battles[i].kingdom2.id == kingdom.id){
-					this._battles [i].ResolveBattle ();
-					i--;
-				}
-			}
+//			for (int i = 0; i < this._battles.Count; i++) {
+//				if(this._battles[i].kingdom1.id == kingdom.id || this._battles[i].kingdom2.id == kingdom.id){
+//					this._battles [i].ResolveBattle ();
+//					i--;
+//				}
+//			}
 			CheckWarfare ();
-			if(!this._isOver){
-				CheckSides ();
-			}
+//			if(!this._isOver){
+//				CheckSides ();
+//			}
 		}
 	}
 	private void CheckSides(){
@@ -409,20 +409,6 @@ public class Warfare {
 	internal void RemoveBattle(Battle battle){
 		this._battles.Remove (battle);
 	}
-	internal void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
-		if(!this._isOver){
-			DeclarePeace (kingdom1, kingdom2);
-			if(this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count > 0){
-				for (int i = 0; i < this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count; i++) {
-					DeclarePeace (kingdom1, this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side][i]);
-				}
-			}else{
-				WarfareDone ();
-				return;
-			}
-			CheckWarfare ();
-		}
-	}
 	internal void AttemptToPeace(Kingdom winnerKingdom){
 		float peaceMultiplier = PeaceMultiplier (winnerKingdom);
 		int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
@@ -459,6 +445,9 @@ public class Warfare {
 			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 			ShowUINotification (newLog);
+			if(Messenger.eventTable.ContainsKey("PeaceDeclared")){
+				Messenger.Broadcast<Kingdom, Kingdom> ("PeaceDeclared", kingdom1, kingdom2);
+			}
 		}
 	}
 	private void DeclarePeaceToUnadjacentKingdoms(Kingdom kingdom){

@@ -411,7 +411,7 @@ public class CitizenAvatar : PooledObject {
         if (other.tag == "Avatar") {
             if (this.gameObject != null && other.gameObject != null) {
 				Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
-				if (!otherAgent.isDead) {
+				if (!otherAgent.isDead && !this.citizenRole.citizen.isDead) {
 					CollisionManager.Instance.HasCollided (this.citizenRole, otherAgent.assignedRole);
 //					if (kingdomOfThis.isDead) {
 //						this.citizenRole.gameEventInvolvedIn.CancelEvent ();
