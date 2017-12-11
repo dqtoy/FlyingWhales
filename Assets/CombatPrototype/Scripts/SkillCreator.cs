@@ -90,9 +90,13 @@ namespace ECS {
 
         #region Saving
         private void SaveSkill(string fileName) {
+            if (string.IsNullOrEmpty(fileName)) {
+                EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
+                return;
+            }
             string path = "Assets/CombatPrototype/Data/Skills/" + skillType.ToString() + "/" + fileName + ".json";
-            if (DoesFileExist(path)) {
-                if (EditorUtility.DisplayDialog("Overwrite Skill", "A skil with name " + fileName + " already exists. Replace with this new skill?", "Yes", "No")) {
+            if (Utilities.DoesFileExist(path)) {
+                if (EditorUtility.DisplayDialog("Overwrite Skill", "A skill with name " + fileName + " already exists. Replace with this skill?", "Yes", "No")) {
                     File.Delete(path);
                     SaveSkillJson(path);
                 }
@@ -179,10 +183,6 @@ namespace ECS {
             System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
             writer.WriteLine(jsonString);
             writer.Close();
-        }
-
-        private bool DoesFileExist(string path) {
-            return File.Exists(path);
         }
         #endregion
 

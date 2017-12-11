@@ -1330,4 +1330,8 @@ public class Utilities : MonoBehaviour {
 		}
 		return false;
 	}
+
+    public static bool DoesFileExist(string path) {
+        return System.IO.File.Exists(path);
+    }
 }
