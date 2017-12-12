@@ -766,7 +766,8 @@ public enum ATTACK_TYPE {
 public enum DEFEND_TYPE {
     DODGE,
     PARRY,
-    BLOCK
+    BLOCK,
+	NONE,
 }
 public enum STATUS_EFFECT {
     NONE,

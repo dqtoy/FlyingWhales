@@ -18,6 +18,8 @@ namespace ECS{
 			NORMAL,
 			INJURED,
 			DECAPITATED,
+			BURNING,
+			BLEEDING,
 		}
 	}
 }
