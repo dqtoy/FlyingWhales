@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ECS{
 	public class IBodyPart: EntityComponent {
@@ -21,6 +22,12 @@ namespace ECS{
 			BURNING,
 			BLEEDING,
 		}
+
+		[SerializeField] internal BODY_PART bodyPart;
+		[SerializeField] internal IMPORTANCE importance;
+		[SerializeField] internal List<ATTRIBUTE> attributes;
+		internal List<STATUS> status = new List<STATUS>();
+		internal List<Item> itemsAttached = new List<Item>();
 	}
 }
 

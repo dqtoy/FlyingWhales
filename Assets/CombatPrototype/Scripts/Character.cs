@@ -154,6 +154,14 @@ namespace ECS{
 						break;
 					}
 				}
+
+				if(skill is MoveSkill){
+					if (this._currentRow == 1 && skill.skillName == "MoveLeft"){
+						skill.isEnabled = false;
+					} else if (this._currentRow == 5 && skill.skillName == "MoveRight"){
+						skill.isEnabled = false;
+					}
+				}
 			}
 		}
 
@@ -187,6 +195,22 @@ namespace ECS{
             bodyParts.Add(bodyPart);
         }
         #endregion
+
+		internal void CureStatusEffects(){
+			for (int i = 0; i < this._bodyParts.Count; i++) {
+				BodyPart bodyPart = this._bodyParts [i];
+				if(bodyPart.status.Count > 0){
+					for (int j = 0; j < bodyPart.status.Count; j++) {
+						int chance = UnityEngine.Random.Range (0, 100);
+						if(chance < 15){
+							bodyPart.RemoveStatusEffectOnSecondaryBodyParts (bodyPart.status [j]);
+							bodyPart.status.RemoveAt (j);
+							j--;
+						}
+					}
+				}
+			}
+		}
     }
 }
 

@@ -12,12 +12,22 @@ namespace ECS{
 
 	[System.Serializable]
 	public class BodyPart: IBodyPart {
-		[SerializeField] internal BODY_PART bodyPart;
-		[SerializeField] internal IMPORTANCE importance;
-		[SerializeField] internal List<ATTRIBUTE> attributes;
 		[SerializeField] internal List<SecondaryBodyPart> secondaryBodyParts;
-		internal List<STATUS> status;
 
+		//This applies status effect to all secondary body part of this main body part
+		//Whatever status effect added to the main body part will be added to secondary body part since they are linked
+		internal void ApplyStatusEffectOnSecondaryBodyParts(STATUS status){
+			for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
+				this.secondaryBodyParts [i].status.Add (status);
+			}
+		}
+
+		//This removes status effect to all secondary body part of this main body part
+		internal void RemoveStatusEffectOnSecondaryBodyParts(STATUS status){
+			for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
+				this.secondaryBodyParts [i].status.Remove (status);
+			}
+		}
 //		internal void SetData(BODY_PART bodyPart, IMPORTANCE importance, List<ATTRIBUTE> attributes, List<SecondaryBodyPart> secondaryBodyParts, STATUS status){
 //			this.bodyPart = bodyPart;
 //			this.importance = importance;
