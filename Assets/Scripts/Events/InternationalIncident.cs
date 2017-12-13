@@ -206,12 +206,12 @@ public class InternationalIncident : GameEvent {
 				totalWeight += (kr.totalLike * 2);
 			}
 			if(kr.AreAllies()){
-				totalWeight += 50;
+				totalWeight += 200;
 			}
 			if(kr.AreTradePartners()){
-				totalWeight += 25;
+				totalWeight += 100;
 			}
-			totalWeight += (30 * kingdom.warfareInfo.Count);
+			totalWeight += (300 * kingdom.warfareInfo.Count);
 
 		}else if(incidentAction == INCIDENT_ACTIONS.INCREASE_TENSION){
 			if(kr.totalLike < 0){
