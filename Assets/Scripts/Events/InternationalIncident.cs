@@ -203,7 +203,7 @@ public class InternationalIncident : GameEvent {
 		}
 		if(incidentAction == INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
 			if(kr.totalLike > 0){
-				totalWeight += kr.totalLike * 5;
+				totalWeight += kr.totalLike * 2;
 			}
 			if(kr.AreAllies()){
 				totalWeight += 50;
@@ -215,7 +215,7 @@ public class InternationalIncident : GameEvent {
 
 		}else if(incidentAction == INCIDENT_ACTIONS.INCREASE_TENSION){
 			if(kr.totalLike < 0){
-				totalWeight -= (kr.totalLike * 5);
+				totalWeight -= (kr.totalLike * 2);
 			}
 			if(kingdom.stability < -80){
 				int stabilityModifier = kingdom.stability + 80;
