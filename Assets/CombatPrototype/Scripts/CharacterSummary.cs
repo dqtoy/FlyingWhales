@@ -44,21 +44,32 @@ namespace ECS{
             classInfoLbl.text += "[b]Block Rate:[/b] " + character.characterClass.blockRate.ToString();
 
             bodyPartsInfoLbl.text = string.Empty;
-            bodyPartsInfoLbl.text += "[b]Body Parts:[/b]\n";
+            bodyPartsInfoLbl.text += "[b]Body Parts:[/b]";
             for (int i = 0; i < character.bodyParts.Count; i++) {
                 BodyPart currBodyPart = character.bodyParts[i];
+                bodyPartsInfoLbl.text += "\n";
                 for (int j = 0; j < currBodyPart.attributes.Count; j++) {
                     IBodyPart.ATTRIBUTE currAttribute = currBodyPart.attributes[j];
                     bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.ToString()) + " ";
                 }
-                bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.bodyPart.ToString()) + "[" + currBodyPart.status + "]";
+                bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
+                for (int j = 0; j < currBodyPart.status.Count; j++) {
+                    IBodyPart.STATUS currStatus = currBodyPart.status[j];
+                    bodyPartsInfoLbl.text += "[" + currStatus.ToString() + "]";
+                }
+
                 for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
                     SecondaryBodyPart otherBodyPart = currBodyPart.secondaryBodyParts[j];
+                    bodyPartsInfoLbl.text += "\n    -";
                     for (int k = 0; k < otherBodyPart.attributes.Count; k++) {
                         IBodyPart.ATTRIBUTE currAttribute = otherBodyPart.attributes[k];
                         bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.ToString()) + " ";
                     }
-                    bodyPartsInfoLbl.text += "\n    -" + Utilities.NormalizeString(otherBodyPart.bodyPart.ToString()) + "[" + otherBodyPart.status + "]";
+                    bodyPartsInfoLbl.text += Utilities.NormalizeString(otherBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
+                    for (int k = 0; k < otherBodyPart.status.Count; k++) {
+                        IBodyPart.STATUS currStatus = otherBodyPart.status[k];
+                        bodyPartsInfoLbl.text += "[" + currStatus.ToString() + "]";
+                    }
                 }
             }
         }
