@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ECS{
 	public enum SIDES{
@@ -12,8 +13,8 @@ namespace ECS{
 		public CombatPrototype Instance;
 
 //		public Dictionary<SIDES, List<Character>> allCharactersAndSides;
-		List<Character> charactersSideA;
-		List<Character> charactersSideB;
+		internal List<Character> charactersSideA;
+		internal List<Character> charactersSideB;
 
 		void Awake(){
 			Instance = this;
@@ -74,16 +75,13 @@ namespace ECS{
 				Character characterThatWillAct = GetCharacterThatWillAct (this.charactersSideA, this.charactersSideB, isInitial);
 				characterThatWillAct.EnableDisableSkills ();
 
-				//TODO: Which is first get target character or get skill to use, example confusion is Heal Skill
-				Character targetCharacter = GetTargetCharacter (characterThatWillAct);
-
-				Skill skillToUse = GetSkillToUse (characterThatWillAct, targetCharacter);
+				Skill skillToUse = GetSkillToUse (characterThatWillAct);
 				if(skillToUse != null){
+					characterThatWillAct.CureStatusEffects ();
+					Character targetCharacter = GetTargetCharacter (characterThatWillAct, skillToUse);
 					DoSkill (skillToUse, characterThatWillAct, targetCharacter);
 				}
 			}
-
-
 		}
 
 		//Set row number to a list of characters
@@ -119,25 +117,61 @@ namespace ECS{
 		}
 
 		//Get a random character from the opposite side to be the target
-		private Character GetTargetCharacter(Character sourceCharacter){
+		private Character GetTargetCharacter(Character sourceCharacter, Skill skill){
 //			if(this.allCharactersAndSides[SIDES.A].Contains(sourceCharacter)){
 //				return this.allCharactersAndSides [SIDES.B] [UnityEngine.Random.Range (0, this.allCharactersAndSides [SIDES.B].Count)];
 //			}
 //			return this.allCharactersAndSides [SIDES.A] [UnityEngine.Random.Range (0, this.allCharactersAndSides [SIDES.A].Count)];
-
-			if(this.charactersSideA.Contains(sourceCharacter)){
-				return this.charactersSideB [UnityEngine.Random.Range (0, this.charactersSideB.Count)];
+			List<Character> possibleTargets = new List<Character>();
+			if (skill is AttackSkill) {
+				if (this.charactersSideA.Contains (sourceCharacter)) {
+					for (int i = 0; i < this.charactersSideB.Count; i++) {
+						Character targetCharacter = this.charactersSideB [i];
+						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+						if (skill.range >= rowDistance) {
+							possibleTargets.Add (targetCharacter);
+						}
+					}
+				} else {
+					for (int i = 0; i < this.charactersSideA.Count; i++) {
+						Character targetCharacter = this.charactersSideA [i];
+						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+						if (skill.range >= rowDistance) {
+							possibleTargets.Add (targetCharacter);
+						}
+					}
+				}
+			} else if (skill is HealSkill) {
+				if (this.charactersSideA.Contains (sourceCharacter)) {
+					for (int i = 0; i < this.charactersSideA.Count; i++) {
+						Character targetCharacter = this.charactersSideA [i];
+						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+						if (skill.range >= rowDistance) {
+							possibleTargets.Add (targetCharacter);
+						}
+					}
+				} else {
+					for (int i = 0; i < this.charactersSideB.Count; i++) {
+						Character targetCharacter = this.charactersSideB [i];
+						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+						if (skill.range >= rowDistance) {
+							possibleTargets.Add (targetCharacter);
+						}
+					}
+				}
+			}else{
+				possibleTargets.Add (sourceCharacter);
 			}
-			return this.charactersSideA [UnityEngine.Random.Range (0, this.charactersSideA.Count)];
+
+			return possibleTargets [UnityEngine.Random.Range (0, possibleTargets.Count)];
 		}
 
 		//Get Skill that the character will use based on activation weights, target character must be within skill range
-		private Skill GetSkillToUse(Character sourceCharacter, Character targetCharacter){
+		private Skill GetSkillToUse(Character sourceCharacter){
 			Dictionary<Skill, int> skillActivationWeights = new Dictionary<Skill, int> ();
-			int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
 			for (int i = 0; i < sourceCharacter.characterClass.skills.Count; i++) {
 				Skill skill = sourceCharacter.characterClass.skills [i];
-				if(skill.isEnabled && skill.range >= rowDistance){
+				if(skill.isEnabled && HasTargetInRangeForSkill(skill, sourceCharacter)){
 					skillActivationWeights.Add (skill, skill.activationWeight);
 				}
 			}
@@ -149,6 +183,32 @@ namespace ECS{
 			return null;
 		}
 
+		//Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
+		private bool HasTargetInRangeForSkill(Skill skill, Character sourceCharacter){
+			if(skill is AttackSkill){
+				if(this.charactersSideA.Contains(sourceCharacter)){
+					for (int i = 0; i < this.charactersSideB.Count; i++) {
+						Character targetCharacter = this.charactersSideB [i];
+						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+						if(skill.range >= rowDistance){
+							return true;
+						}
+					}
+				}else{
+					for (int i = 0; i < this.charactersSideA.Count; i++) {
+						Character targetCharacter = this.charactersSideA [i];
+						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+						if(skill.range >= rowDistance){
+							return true;
+						}
+					}
+				}
+				return false;
+			}else{
+				return true;
+			}
+
+		}
 		//Returns the row distance/difference of two characters
 		private int GetRowDistanceBetweenTwoCharacters(Character sourceCharacter, Character targetCharacter){
 			int distance = targetCharacter.currentRow - sourceCharacter.currentRow;
@@ -174,13 +234,13 @@ namespace ECS{
 			if (skill is AttackSkill) {
 				AttackSkill (skill, sourceCharacter, targetCharacter);
 			} else if (skill is HealSkill) {
-				HealSkill (skill, sourceCharacter);
+				HealSkill (skill, sourceCharacter, targetCharacter);
 			} else if (skill is FleeSkill) {
-				FleeSkill (sourceCharacter);
+				FleeSkill (sourceCharacter, targetCharacter);
 			} else if (skill is ObtainSkill) {
-				ObtainItemSkill (sourceCharacter);
+				ObtainItemSkill (sourceCharacter, targetCharacter);
 			} else if (skill is MoveSkill) {
-				MoveSkill (sourceCharacter);
+				MoveSkill (skill, sourceCharacter, targetCharacter);
 			}
 		}
 
@@ -234,7 +294,7 @@ namespace ECS{
 			
 		//Hits the target with an attack skill
 		private void HitTargetCharacter(AttackSkill attackSkill, Character sourceCharacter, Character targetCharacter){
-			//TODO: damage computation must be power + attributeModifier * armor damage mitigation, add armor ddamage mitigation variable
+			//TODO: damage computation must be power + attributeModifier * armor damage mitigation, add armor damage mitigation variable
 			int damage = attackSkill.attackPower;
 
 			targetCharacter.AdjustHP (-damage);
@@ -249,17 +309,21 @@ namespace ECS{
 			if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
 				if(chance < 7){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.INJURED;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.INJURED);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.INJURED);
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 				if(chance < 10){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.BLEEDING;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.BLEEDING);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.BLEEDING);
+
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 				if(chance < 5){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.DECAPITATED;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.DECAPITATED);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.DECAPITATED);
 					//If body part is essential, instant death to the character
 					if(chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
 						CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
@@ -268,7 +332,8 @@ namespace ECS{
 			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
 				if(chance < 5){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.BURNING;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.BURNING);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.BURNING);
 				}
 			}
 		}
@@ -282,50 +347,59 @@ namespace ECS{
 //			}
 
 //			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
-
-			return character.bodyParts [UnityEngine.Random.Range (0, character.bodyParts.Count)];
+			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.status.Contains(IBodyPart.STATUS.DECAPITATED)).ToList();
+			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
 		}
 		#endregion
 
 		#region Heal Skill
-		private void HealSkill(Skill skill, Character sourceCharacter){
+		private void HealSkill(Skill skill, Character sourceCharacter, Character targetCharacter){
 			HealSkill healSkill = (HealSkill)skill;	
-			sourceCharacter.AdjustHP (healSkill.healPower);
+			targetCharacter.AdjustHP (healSkill.healPower);
 		}
 		#endregion
 
 		#region Flee Skill
-		private void FleeSkill(Character sourceCharacter){
+		private void FleeSkill(Character sourceCharacter, Character targetCharacter){
 			//TODO: Character flees
-			RemoveCharacter(sourceCharacter);
+			RemoveCharacter(targetCharacter);
 		}
 		#endregion
 
 		#region Obtain Item Skill
-		private void ObtainItemSkill(Character sourceCharacter){
+		private void ObtainItemSkill(Character sourceCharacter, Character targetCharacter){
 			//TODO: Character obtains an item
 		}
 		#endregion
 
 		#region Move Skill
-		private void MoveSkill(Character sourceCharacter){
-			if(sourceCharacter.currentRow == 1){
-				//Automatically moves to the right since 1 is the last row on the left
-				sourceCharacter.SetRowNumber (2);
-			}else if(sourceCharacter.currentRow == 5){
-				//Automatically moves to the left since 5 is the last row on the right
-				sourceCharacter.SetRowNumber (4);
-			}else{
-				//TODO: Is it totally random, or there will determining factors if movement is to the left or to the right
-				int chance = UnityEngine.Random.Range (0, 2);
-				if(chance == 0){
-					//Move left
-					sourceCharacter.SetRowNumber(sourceCharacter.currentRow - 1);
-				}else{
-					//Move right
-					sourceCharacter.SetRowNumber(sourceCharacter.currentRow + 1);
+		private void MoveSkill(Skill skill, Character sourceCharacter, Character targetCharacter){
+			if(skill.skillName == "MoveLeft"){
+				if (targetCharacter.currentRow != 1) {
+					targetCharacter.SetRowNumber(targetCharacter.currentRow - 1);
+				}
+			}else if(skill.skillName == "MoveRight"){
+				if (targetCharacter.currentRow != 5) {
+					targetCharacter.SetRowNumber(targetCharacter.currentRow + 1);
 				}
 			}
+//			if(sourceCharacter.currentRow == 1){
+//				//Automatically moves to the right since 1 is the last row on the left
+//				sourceCharacter.SetRowNumber (2);
+//			}else if(sourceCharacter.currentRow == 5){
+//				//Automatically moves to the left since 5 is the last row on the right
+//				sourceCharacter.SetRowNumber (4);
+//			}else{
+//				//TODO: Is it totally random, or there will determining factors if movement is to the left or to the right
+//				int chance = UnityEngine.Random.Range (0, 2);
+//				if(chance == 0){
+//					//Move left
+//					sourceCharacter.SetRowNumber(sourceCharacter.currentRow - 1);
+//				}else{
+//					//Move right
+//					sourceCharacter.SetRowNumber(sourceCharacter.currentRow + 1);
+//				}
+//			}
 		}
 		#endregion
 
@@ -338,13 +412,13 @@ namespace ECS{
 		private void CheckBodyPart(BODY_PART bodyPart, Character character){
 			for (int i = 0; i < character.bodyParts.Count; i++) {
 				BodyPart characterBodyPart = character.bodyParts [i];
-				if(characterBodyPart.bodyPart == bodyPart && characterBodyPart.status != IBodyPart.STATUS.DECAPITATED){
+				if(characterBodyPart.bodyPart == bodyPart && !characterBodyPart.status.Contains(IBodyPart.STATUS.DECAPITATED)){
 					return;
 				}
 
 				for (int j = 0; j < characterBodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = characterBodyPart.secondaryBodyParts [j];
-					if(secondaryBodyPart.bodyPart == bodyPart && secondaryBodyPart.status != IBodyPart.STATUS.DECAPITATED){
+					if(secondaryBodyPart.bodyPart == bodyPart && !secondaryBodyPart.status.Contains(IBodyPart.STATUS.DECAPITATED)){
 						return;
 					}
 				}
