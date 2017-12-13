@@ -311,7 +311,7 @@ public class Kingdom{
 		get { return Mathf.FloorToInt(population * draftRate); }
 	}
 	internal int soldiersCount {
-		get { return this._soldiers;}
+		get { return this._soldiers + this.militaryManager.activeGenerals.Sum(x => x.soldiers);}
 	}
     internal float draftRate {
         get {
