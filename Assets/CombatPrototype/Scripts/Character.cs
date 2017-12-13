@@ -21,11 +21,23 @@ namespace ECS{
 		private CharacterClass _characterClass;
 
 		#region getters / setters
+		internal string name{
+			get { return this._name; }
+		}
+		internal int level{
+			get { return this._level; }
+		}
+		internal int currentHP{
+			get { return this._currentHP; }
+		}
 		internal CharacterClass characterClass{
 			get { return this._characterClass; }
 		}
 		internal List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
+		}
+		internal List<Trait> traits{
+			get { return this._traits; }
 		}
 		internal int currentRow{
 			get { return this._currentRow; }
@@ -48,7 +60,7 @@ namespace ECS{
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
 
-				if(bodyPart.status == IBodyPart.STATUS.NORMAL){
+				if(bodyPart.status.Count <= 0){
 					if(bodyPart.attributes.Contains(attribute)){
 						count += 1;
 						if(count >= quantity){
@@ -59,7 +71,7 @@ namespace ECS{
 
 				for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
-					if (secondaryBodyPart.status == IBodyPart.STATUS.NORMAL) {
+					if (secondaryBodyPart.status.Count <= 0) {
 						if (secondaryBodyPart.attributes.Contains (attribute)) {
 							count += 1;
 							if (count >= quantity) {
