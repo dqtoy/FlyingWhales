@@ -15,7 +15,9 @@ namespace ECS{
 
         [SerializeField] private CharacterSummary characterSummary;
 
-		internal List<string> resultsLog;
+        [SerializeField] private UILabel combatSummaryLbl;
+
+        internal List<string> resultsLog;
 
         private void Awake() {
             Instance = this;
@@ -67,6 +69,11 @@ namespace ECS{
 
         public void UpdateCharacterSummary(Character character) {
             characterSummary.UpdateCharacterSummary(character);
+        }
+
+        public void AddCombatLog(string combatLog) {
+            resultsLog.Add(combatLog);
+            combatSummaryLbl.text += combatLog + "\n";
         }
     }
 }
