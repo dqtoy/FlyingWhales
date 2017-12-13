@@ -12,7 +12,6 @@ public class MilitaryManager {
 	public MilitaryManager(Kingdom kingdom){
 		this._kingdom = kingdom;
 		this.activeGenerals = new List<General> ();
-		UpdateMaxGenerals ();
 		ScheduleCreateGeneral ();
 	}
 
@@ -48,10 +47,12 @@ public class MilitaryManager {
 //		for (int i = 0; i < this._kingdom.king.allTraits.Count; i++) {
 //			this.maxGenerals += this._kingdom.king.allTraits [i].GetMaxGeneralsModifier ();
 //		}
-		if(this._kingdom.king.HasTrait(TRAIT.MILITANT) || this._kingdom.king.HasTrait(TRAIT.HOSTILE)){
-			this.maxGenerals += 1;
-		}else if(this._kingdom.king.HasTrait(TRAIT.PACIFIST)){
-			this.maxGenerals -= 1;
+		if(this._kingdom.king != null){
+			if(this._kingdom.king.HasTrait(TRAIT.MILITANT) || this._kingdom.king.HasTrait(TRAIT.HOSTILE)){
+				this.maxGenerals += 1;
+			}else if(this._kingdom.king.HasTrait(TRAIT.PACIFIST)){
+				this.maxGenerals -= 1;
+			}
 		}
 	}
 
