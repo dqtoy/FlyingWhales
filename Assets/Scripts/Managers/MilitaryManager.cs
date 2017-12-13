@@ -68,29 +68,32 @@ public class MilitaryManager {
 		}
 	}
 	private GeneralTask CreateTask (General general){
+		string weightLog = "--------------------- " + general.citizen.name + " task city weights -------------------------";
 		Dictionary<City, int> combinedCityWeights = new Dictionary<City, int> ();
 		if(this._kingdom.warfareInfo.Count > 0){
 			Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
-			combinedCityWeights = GetDefendCityAndWeight (true);
-			cityWeights = GetAttackCityAndWeight (true);
+			combinedCityWeights = GetDefendCityAndWeight (true, ref weightLog);
+			cityWeights = GetAttackCityAndWeight (true, ref weightLog);
 			foreach (var item in cityWeights) {
 				combinedCityWeights.Add (item.Key, item.Value);
+
 			}
 
 			if(combinedCityWeights.Count <= 0){
-				combinedCityWeights = GetDefendCityAndWeight (false);
-				cityWeights = GetAttackCityAndWeight (false);
+				combinedCityWeights = GetDefendCityAndWeight (false, ref weightLog);
+				cityWeights = GetAttackCityAndWeight (false, ref weightLog);
 				foreach (var item in cityWeights) {
 					combinedCityWeights.Add (item.Key, item.Value);
 				}
 			}
 		}else{
-			combinedCityWeights = GetDefendCityAndWeight (true);
+			combinedCityWeights = GetDefendCityAndWeight (true, ref weightLog);
 			if(combinedCityWeights.Count <= 0){
-				combinedCityWeights = GetDefendCityAndWeight (false);
+				combinedCityWeights = GetDefendCityAndWeight (false, ref weightLog);
 			}
 		}
 
+		Debug.Log (weightLog);
 		if(combinedCityWeights.Count > 0){
 			City targetCity = Utilities.PickRandomElementWithWeights<City> (combinedCityWeights);
 			if(targetCity.kingdom.id != this._kingdom.id){
@@ -104,7 +107,7 @@ public class MilitaryManager {
 
 	//Get all kingdom cities to defend and their weights
 	//willFactorInAssignedDefendGenerals - controls if you want to get all cities with / without defending generals
-	private Dictionary<City, int> GetDefendCityAndWeight(bool willFactorInAssignedDefendGenerals){
+	private Dictionary<City, int> GetDefendCityAndWeight(bool willFactorInAssignedDefendGenerals, ref string strWeights){
 		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
 		if(willFactorInAssignedDefendGenerals){
 			for (int i = 0; i < this._kingdom.cities.Count; i++) {
@@ -113,6 +116,7 @@ public class MilitaryManager {
 					int cityTotalWeight = GetDefendCityWeight (city);
 					if(cityTotalWeight > 0){
 						cityWeights.Add (city, cityTotalWeight);
+						strWeights += "\nDefend " + city.name + " - " + cityTotalWeight.ToString ();
 					}
 				}
 			}
@@ -122,6 +126,7 @@ public class MilitaryManager {
 				int cityTotalWeight = GetDefendCityWeight (city);
 				if (cityTotalWeight > 0) {
 					cityWeights.Add (city, cityTotalWeight);
+					strWeights += "\nDefend " + city.name + " - " + cityTotalWeight.ToString ();
 				}
 			}
 		}
@@ -130,7 +135,7 @@ public class MilitaryManager {
 
 	//Get all kingdom cities to attack and their weights
 	//willFactorInAssignedAttackingGenerals - controls if you want to get all cities to be attacked that has an attacking general assigned to it or not
-	private Dictionary<City, int> GetAttackCityAndWeight(bool willFactorInAssignedAttackingGenerals){
+	private Dictionary<City, int> GetAttackCityAndWeight(bool willFactorInAssignedAttackingGenerals, ref string strWeights){
 		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
 		if(willFactorInAssignedAttackingGenerals){
 			for (int i = 0; i < this._kingdom.cities.Count; i++) {
@@ -144,6 +149,7 @@ public class MilitaryManager {
 								int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
 								if(cityTotalWeight > 0){
 									cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+									strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
 								}
 							}
 						}
@@ -167,6 +173,7 @@ public class MilitaryManager {
 												int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
 												if(cityTotalWeight > 0){
 													cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+													strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
 												}
 											}
 										}
@@ -189,6 +196,7 @@ public class MilitaryManager {
 								int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
 								if(cityTotalWeight > 0){
 									cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+									strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
 								}
 							}
 						}
@@ -212,6 +220,7 @@ public class MilitaryManager {
 												int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
 												if(cityTotalWeight > 0){
 													cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
+													strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
 												}
 											}
 										}
