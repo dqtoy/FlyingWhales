@@ -203,7 +203,7 @@ public class InternationalIncident : GameEvent {
 		}
 		if(incidentAction == INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
 			if(kr.totalLike > 0){
-				totalWeight += kr.totalLike * 2;
+				totalWeight += (kr.totalLike * 2);
 			}
 			if(kr.AreAllies()){
 				totalWeight += 50;
