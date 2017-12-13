@@ -4,21 +4,30 @@ using System.Collections.Generic;
 
 namespace ECS{
 	[System.Serializable]
-	public class Character: EntityComponent {
-		[SerializeField] public int _maxHP;
-		[SerializeField] public TextAsset characterClassJson;
-		[SerializeField] public TextAsset bodyPartsJson;
+	public class Character {
+		[SerializeField] private string _name;
 
-		private string _name;
+        [SerializeField] private int _level;
+        [SerializeField] private int _maxHP;
+        [SerializeField] private int _currentHP;
+        [SerializeField] private int _currentRow;
 
-		private int	_level;
-		private int	_currentHP;
-		private int _currentRow;
+        [SerializeField] private int _strength;
+        [SerializeField] private int _intelligence;
+        [SerializeField] private int _agility;
 
-		private bool _isDead;
+        [SerializeField] private int _exp;
+
+        [SerializeField] private int _strGain;
+        [SerializeField] private int _intGain;
+        [SerializeField] private int _agiGain;
+        [SerializeField] private int _hpGain;
+
+        [SerializeField] private bool _isDead;
 		private List<Trait>	_traits;
-		private List<BodyPart> _bodyParts;
+        [SerializeField] private List<BodyPart> _bodyParts;
 		private CharacterClass _characterClass;
+        protected RaceSetting _raceSetting;
 
 		#region getters / setters
 		internal CharacterClass characterClass{
@@ -33,14 +42,57 @@ namespace ECS{
 		internal bool isDead{
 			get { return this._isDead; }
 		}
-		#endregion
-		//Initializes Character Class
-		internal void Init(){
-			BodyPartsData bodyPartsData = JsonUtility.FromJson<BodyPartsData> (bodyPartsJson.text);
-			this._bodyParts = new List<BodyPart> (bodyPartsData.bodyParts);
-			this._characterClass = new CharacterClass ();
-			this._characterClass = JsonUtility.FromJson<CharacterClass> (characterClassJson.text);
-		}
+        internal int strength {
+            get { return _strength; }
+        }
+        internal int intelligence {
+            get { return _intelligence; }
+        }
+        internal int agility {
+            get { return _agility; }
+        }
+        internal int exp {
+            get { return _exp; }
+        }
+        internal int strGain {
+            get { return _strGain; }
+        }
+        internal int intGain {
+            get { return _intGain; }
+        }
+        internal int agiGain {
+            get { return _agiGain; }
+        }
+        internal int hpGain {
+            get { return _hpGain; }
+        }
+        #endregion
+        public Character(CharacterSetup baseSetup) {
+            GENDER gender = GENDER.MALE;
+            if(Random.Range(0, 2) == 0) {
+                gender = GENDER.FEMALE;
+            }
+            if(baseSetup.raceSetting.race == RACE.HUMANS) {
+                _name = RandomNameGenerator.Instance.GenerateWholeHumanName(gender);
+            } else {
+                _name = RandomNameGenerator.Instance.GenerateElvenName(gender);
+            }
+            _level = 1;
+            _maxHP = baseSetup.raceSetting.baseHP;
+            _currentHP = _maxHP;
+            _strength = baseSetup.raceSetting.baseStr;
+            _intelligence = baseSetup.raceSetting.baseInt;
+            _agility = baseSetup.raceSetting.baseAgi;
+            _exp = 0;
+            _strGain = baseSetup.raceSetting.strGain + baseSetup.characterClass.strGain;
+            _intGain = baseSetup.raceSetting.intGain + baseSetup.characterClass.intGain;
+            _agiGain = baseSetup.raceSetting.agiGain + baseSetup.characterClass.agiGain;
+            _hpGain = baseSetup.raceSetting.hpGain + baseSetup.characterClass.hpGain;
+            _bodyParts = new List<BodyPart>(baseSetup.raceSetting.bodyParts);
+            _characterClass = baseSetup.characterClass;
+            _raceSetting = baseSetup.raceSetting;
+            //TODO: Generate Traits
+        }
 
 		//Check if the body parts of this character has the attribute necessary and quantity
 		internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
@@ -108,6 +160,15 @@ namespace ECS{
 				Messenger.Broadcast ("CharacterDeath", this);
 			}
 		}
-	}
+
+        #region Body Parts
+        /*
+         * Add new body parts here.
+         * */
+        internal void AddBodyPart(BodyPart bodyPart) {
+            bodyParts.Add(bodyPart);
+        }
+        #endregion
+    }
 }
 
