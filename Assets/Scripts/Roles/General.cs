@@ -76,7 +76,7 @@ public class General : Role {
 	}
 
 	internal void GetTask(){
-		if(this.citizen.isDead){
+		if(this.citizen.isDead || this.citizen.city.kingdom.isDead){
 			return;
 		}
 		if(this.generalTask != null){
