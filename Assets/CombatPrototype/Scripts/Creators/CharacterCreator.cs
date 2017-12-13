@@ -77,6 +77,7 @@ namespace ECS {
             CharacterSetup newCharacter = new CharacterSetup();
             string raceData = File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingFileName + ".json");
             string characterClassData = File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassFileName + ".json");
+            newCharacter.fileName = fileName;
             newCharacter.raceSetting = JsonUtility.FromJson<RaceSetting>(raceData);
             newCharacter.characterClass = JsonUtility.FromJson<CharacterClass>(characterClassData);
 
@@ -97,11 +98,11 @@ namespace ECS {
             string filePath = EditorUtility.OpenFilePanel("Select character data file", "Assets/CombatPrototype/Data/CharacterSetups/", "json");
 
             if (!string.IsNullOrEmpty(filePath)) {
-                this.fileName = Path.GetFileNameWithoutExtension(filePath);
                 string dataAsJson = File.ReadAllText(filePath);
 
                 CharacterSetup characterSetup = JsonUtility.FromJson<CharacterSetup>(dataAsJson);
 
+                this.fileName = characterSetup.fileName;
                 for (int i = 0; i < raceChoices.Count; i++) {
                     string currChoice = raceChoices[i];
                     if (currChoice.Equals(characterSetup.raceSetting.race.ToString())) {

@@ -10,11 +10,12 @@ namespace ECS{
 			if (!string.IsNullOrEmpty (url)) {
 				string id = url.Substring (0, url.IndexOf ('_'));
 				int idToUse = int.Parse (id);
+                Debug.Log("Clicked " + url);
 				if(url.Contains("_sideA")){
-//					CombatPrototype.Instance.charactersSideA [idToUse];
+                    CombatPrototypeUI.Instance.UpdateCharacterSummary(CombatPrototype.Instance.charactersSideA[idToUse]);
 				}else if(url.Contains("_sideB")){
-//					CombatPrototype.Instance.charactersSideB [idToUse];
-				}
+                    CombatPrototypeUI.Instance.UpdateCharacterSummary(CombatPrototype.Instance.charactersSideB[idToUse]);
+                }
 			}
 		}
 	}

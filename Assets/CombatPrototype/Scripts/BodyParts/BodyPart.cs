@@ -16,7 +16,7 @@ namespace ECS{
 		[SerializeField] internal IMPORTANCE importance;
 		[SerializeField] internal List<ATTRIBUTE> attributes;
 		[SerializeField] internal List<SecondaryBodyPart> secondaryBodyParts;
-		internal STATUS status;
+		internal List<STATUS> status;
 
 //		internal void SetData(BODY_PART bodyPart, IMPORTANCE importance, List<ATTRIBUTE> attributes, List<SecondaryBodyPart> secondaryBodyParts, STATUS status){
 //			this.bodyPart = bodyPart;

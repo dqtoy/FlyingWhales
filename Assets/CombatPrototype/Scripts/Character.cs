@@ -39,9 +39,15 @@ namespace ECS{
 		internal int currentHP{
 			get { return this._currentHP; }
 		}
-		internal CharacterClass characterClass{
+        internal int maxHP {
+            get { return this._maxHP; }
+        }
+        internal CharacterClass characterClass{
 			get { return this._characterClass; }
 		}
+        internal RaceSetting raceSetting {
+            get { return _raceSetting; }
+        }
 		internal List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
 		}

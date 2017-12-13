@@ -8,7 +8,7 @@ namespace ECS{
 		[SerializeField] internal BODY_PART bodyPart;
 		[SerializeField] internal IMPORTANCE importance;
 		[SerializeField] internal List<ATTRIBUTE> attributes;
-		internal STATUS status;
+		internal List<STATUS> status;
 	}
 }
 

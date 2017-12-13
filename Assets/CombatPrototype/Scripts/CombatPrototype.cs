@@ -9,11 +9,11 @@ namespace ECS{
 	}
 
 	public class CombatPrototype : MonoBehaviour {
-		public CombatPrototype Instance;
+		public static CombatPrototype Instance;
 
 //		public Dictionary<SIDES, List<Character>> allCharactersAndSides;
-		List<Character> charactersSideA;
-		List<Character> charactersSideB;
+		internal List<Character> charactersSideA;
+        internal List<Character> charactersSideB;
 
 		void Awake(){
 			Instance = this;
@@ -26,42 +26,50 @@ namespace ECS{
 			Messenger.AddListener<Character> ("CharacterDeath", CharacterDeath);
 		}
 
-		//Add a character to a side
-		internal void AddCharacter(SIDES side, Character character){
-//			if(this.allCharactersAndSides.ContainsKey(side)){
-//				this.allCharactersAndSides [side].Add (character);
-//			}else{
-//				this.allCharactersAndSides.Add (side, new List<Character>(){character});
-//			}
+        #region Character Management
+        //Add a character to a side
+        internal void AddCharacter(SIDES side, Character character) {
+            //			if(this.allCharactersAndSides.ContainsKey(side)){
+            //				this.allCharactersAndSides [side].Add (character);
+            //			}else{
+            //				this.allCharactersAndSides.Add (side, new List<Character>(){character});
+            //			}
 
-			if(side == SIDES.A){
-				this.charactersSideA.Add (character);
-			}else{
-				this.charactersSideB.Add (character);
-			}
-		}
+            if (side == SIDES.A) {
+                this.charactersSideA.Add(character);
+            } else {
+                this.charactersSideB.Add(character);
+            }
+            CombatPrototypeUI.Instance.UpdateCharactersList(side);
+        }
+        //Remove a character from a side
+        internal void RemoveCharacter(SIDES side, Character character) {
+            //			if(this.allCharactersAndSides.ContainsKey(side)){
+            //				this.allCharactersAndSides [side].Remove (character);
+            //			}
 
-		//Remove a character from a side
-		internal void RemoveCharacter(SIDES side, Character character){
-//			if(this.allCharactersAndSides.ContainsKey(side)){
-//				this.allCharactersAndSides [side].Remove (character);
-//			}
+            if (side == SIDES.A) {
+                this.charactersSideA.Remove(character);
+            } else {
+                this.charactersSideB.Remove(character);
+            }
+        }
+        //Remove character without specifying a side
+        internal void RemoveCharacter(Character character) {
+            this.charactersSideA.Remove(character);
+            this.charactersSideB.Remove(character);
+        }
+        internal List<Character> GetCharactersOnSide(SIDES side) {
+            if (side == SIDES.A) {
+                return charactersSideA;
+            } else {
+                return charactersSideB;
+            }
+        }
+        #endregion
 
-			if(side == SIDES.A){
-				this.charactersSideA.Remove (character);
-			}else{
-				this.charactersSideB.Remove (character);
-			}
-		}
-
-		//Remove character without specifying a side
-		internal void RemoveCharacter(Character character){
-			this.charactersSideA.Remove (character);
-			this.charactersSideB.Remove (character);
-		}
-
-		//This simulates the whole combat system
-		internal void CombatSimulation(){
+        //This simulates the whole combat system
+        internal void CombatSimulation(){
 //			List<Character> charactersSideA = this.allCharactersAndSides [SIDES.A];
 //			List<Character> charactersSideB = this.allCharactersAndSides [SIDES.B];
 
@@ -249,17 +257,17 @@ namespace ECS{
 			if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
 				if(chance < 7){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.INJURED;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.INJURED);
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 				if(chance < 10){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.BLEEDING;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.BLEEDING);
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 				if(chance < 5){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.DECAPITATED;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.DECAPITATED);
 					//If body part is essential, instant death to the character
 					if(chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
 						CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
@@ -268,7 +276,7 @@ namespace ECS{
 			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
 				if(chance < 5){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status = IBodyPart.STATUS.BURNING;
+					chosenBodyPart.status.Add(IBodyPart.STATUS.BURNING);
 				}
 			}
 		}
@@ -338,13 +346,13 @@ namespace ECS{
 		private void CheckBodyPart(BODY_PART bodyPart, Character character){
 			for (int i = 0; i < character.bodyParts.Count; i++) {
 				BodyPart characterBodyPart = character.bodyParts [i];
-				if(characterBodyPart.bodyPart == bodyPart && characterBodyPart.status != IBodyPart.STATUS.DECAPITATED){
+				if(characterBodyPart.bodyPart == bodyPart && characterBodyPart.status.Contains(IBodyPart.STATUS.DECAPITATED)){
 					return;
 				}
 
 				for (int j = 0; j < characterBodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = characterBodyPart.secondaryBodyParts [j];
-					if(secondaryBodyPart.bodyPart == bodyPart && secondaryBodyPart.status != IBodyPart.STATUS.DECAPITATED){
+					if(secondaryBodyPart.bodyPart == bodyPart && secondaryBodyPart.status.Contains(IBodyPart.STATUS.DECAPITATED)){
 						return;
 					}
 				}
