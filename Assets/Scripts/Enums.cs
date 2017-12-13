@@ -743,20 +743,6 @@ public enum SKILL_TYPE {
     FLEE,
     MOVE
 }
-public enum SKILL_REQUIREMENT_TYPE {
-    HAS,
-    DOES_NOT_HAVE
-}
-public enum SKILL_REQUIREMENT_ITEM {
-    HEAD,
-    TORSO,
-    TAIL,
-    ARM,
-    HAND,
-    LEG,
-    FEET,
-    WEAPON
-}
 public enum ATTACK_TYPE {
     CRUSH,
     PIERCE,
