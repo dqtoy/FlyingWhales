@@ -15,11 +15,14 @@ namespace ECS{
 
         [SerializeField] private CharacterSummary characterSummary;
 
+		internal List<string> resultsLog;
+
         private void Awake() {
             Instance = this;
         }
 
         private void Start() {
+			this.resultsLog = new List<string> ();
             LoadCharacterChoices();
         }
 
