@@ -252,7 +252,7 @@ public class InternationalIncident : GameEvent {
 				ResolvePeacefully();
 			}else{
 				//Fail Resolve Peacefully
-				chosenKingdom.AdjustStability(-3);
+				//chosenKingdom.AdjustStability(-3);
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_resolve_peacefully");
 				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
 				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -266,7 +266,7 @@ public class InternationalIncident : GameEvent {
 				GoToWar(chosenKingdom);
 			}else{
 				//Fail Increase Tension
-				chosenKingdom.AdjustStability(3);
+				//chosenKingdom.AdjustStability(3);
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_war");
 				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
 				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
