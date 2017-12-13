@@ -23,6 +23,7 @@ namespace ECS{
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<Character>> ();
 			this.charactersSideA = new List<Character> ();
 			this.charactersSideB = new List<Character> ();
+			Messenger.AddListener<Character> ("CharacterDeath", CharacterDeath);
 		}
 
 		//Add a character to a side
@@ -53,7 +54,7 @@ namespace ECS{
 			}
 		}
 
-		//Remove character without specifying sides
+		//Remove character without specifying a side
 		internal void RemoveCharacter(Character character){
 			this.charactersSideA.Remove (character);
 			this.charactersSideB.Remove (character);
@@ -216,7 +217,7 @@ namespace ECS{
 		}
 
 		private void InstantDeath(Character character){
-			//TODO: Instant death
+			character.Death();
 		}
 
 		#region Attack Skill
@@ -260,7 +261,9 @@ namespace ECS{
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
 					chosenBodyPart.status = IBodyPart.STATUS.DECAPITATED;
 					//If body part is essential, instant death to the character
-					//TODO: Checking of number of essential of the same type of body part before doing instant death
+					if(chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
+						CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
+					}
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
 				if(chance < 5){
@@ -325,6 +328,29 @@ namespace ECS{
 			}
 		}
 		#endregion
+
+		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
+		private void CharacterDeath(Character character){
+			RemoveCharacter (character);
+		}
+
+		//Check essential body part quantity, if all are decapitated, instant death
+		private void CheckBodyPart(BODY_PART bodyPart, Character character){
+			for (int i = 0; i < character.bodyParts.Count; i++) {
+				BodyPart characterBodyPart = character.bodyParts [i];
+				if(characterBodyPart.bodyPart == bodyPart && characterBodyPart.status != IBodyPart.STATUS.DECAPITATED){
+					return;
+				}
+
+				for (int j = 0; j < characterBodyPart.secondaryBodyParts.Count; j++) {
+					SecondaryBodyPart secondaryBodyPart = characterBodyPart.secondaryBodyParts [j];
+					if(secondaryBodyPart.bodyPart == bodyPart && secondaryBodyPart.status != IBodyPart.STATUS.DECAPITATED){
+						return;
+					}
+				}
+			}
+			InstantDeath (character);
+		}
 	}
 }
 

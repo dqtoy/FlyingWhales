@@ -10,12 +10,15 @@ namespace ECS{
 		[SerializeField] public TextAsset bodyPartsJson;
 
 		private string _name;
-		private List<Trait>	_traits;
+
 		private int	_level;
 		private int	_currentHP;
+		private int _currentRow;
+
+		private bool _isDead;
+		private List<Trait>	_traits;
 		private List<BodyPart> _bodyParts;
 		private CharacterClass _characterClass;
-		private int _currentRow;
 
 		#region getters / setters
 		internal CharacterClass characterClass{
@@ -26,6 +29,9 @@ namespace ECS{
 		}
 		internal int currentRow{
 			get { return this._currentRow; }
+		}
+		internal bool isDead{
+			get { return this._isDead; }
 		}
 		#endregion
 		//Initializes Character Class
@@ -91,6 +97,15 @@ namespace ECS{
 			this._currentHP += amount;
 			if(this._currentHP < 0){
 				this._currentHP = 0;
+				Death ();
+			}
+		}
+
+		//Character's death
+		internal void Death(){
+			this._isDead = true;
+			if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+				Messenger.Broadcast ("CharacterDeath", this);
 			}
 		}
 	}
