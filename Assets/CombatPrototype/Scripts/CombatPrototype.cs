@@ -256,7 +256,16 @@ namespace ECS{
 		private void FailedSkill(Skill skill, Character sourceCharacter, Character targetCharacter){
 			//TODO: What happens when a skill has failed?
 			if(skill is FleeSkill){
-				CounterAttack ();
+				CombatPrototypeUI.Instance.resultsLog.Add (sourceCharacter.name + " tried to flee but got tripped over and fell because of a used double condoms!");
+				CounterAttack (targetCharacter);
+			}else if(skill is AttackSkill){
+				CombatPrototypeUI.Instance.resultsLog.Add (sourceCharacter.name + " tried to " + skill.skillName + " " + targetCharacter.name + " but missed!");
+			}else if(skill is HealSkill){
+				if(sourceCharacter == targetCharacter){
+					CombatPrototypeUI.Instance.resultsLog.Add (sourceCharacter.name + " tried to use a bandage to heal himself/herself but it is already expired!");
+				}else{
+					CombatPrototypeUI.Instance.resultsLog.Add (sourceCharacter.name + " tried to use a bandage to heal " + targetCharacter.name + " but it is already expired!");
+				}
 			}
 		}
 
@@ -280,8 +289,9 @@ namespace ECS{
 			}
 		}
 
-		private void CounterAttack(){
+		private void CounterAttack(Character character){
 			//TODO: Counter attack
+			CombatPrototypeUI.Instance.resultsLog.Add (character.name + " counterattacked!");
 		}
 
 		private void InstantDeath(Character character){
@@ -291,12 +301,20 @@ namespace ECS{
 		#region Attack Skill
 		private void AttackSkill(Skill skill, Character sourceCharacter, Character targetCharacter){
 			AttackSkill attackSkill = (AttackSkill)skill;
-			if(CanTargetCharacterDefend(targetCharacter) == DEFEND_TYPE.NONE){
+			DEFEND_TYPE defendType = CanTargetCharacterDefend (targetCharacter);
+			if(defendType == DEFEND_TYPE.NONE){
 				//Successfully hits the target character
 				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter);
 			}else{
 				//Target character has defend successfully and will roll for counter attack
-				CounterAttack();
+				if(defendType == DEFEND_TYPE.DODGE){
+					CombatPrototypeUI.Instance.resultsLog.Add(targetCharacter.name + " dodged " + sourceCharacter.name + "'s " + attackSkill.skillName + ".");
+				} else if(defendType == DEFEND_TYPE.BLOCK){
+					CombatPrototypeUI.Instance.resultsLog.Add(targetCharacter.name + " blocked " + sourceCharacter.name + "'s " + attackSkill.skillName + ".");
+				} else if(defendType == DEFEND_TYPE.PARRY){
+					CombatPrototypeUI.Instance.resultsLog.Add(targetCharacter.name + " parried " + sourceCharacter.name + "'s " + attackSkill.skillName + ".");
+				}
+				CounterAttack(targetCharacter);
 			}
 		}
 			
@@ -307,11 +325,22 @@ namespace ECS{
 
 			targetCharacter.AdjustHP (-damage);
 
-			DealDamageToBodyPart (attackSkill, targetCharacter);
+			BodyPart damagedBodyPart =	DealDamageToBodyPart (attackSkill, targetCharacter);
+
+			if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
+				CombatPrototypeUI.Instance.resultsLog.Add(sourceCharacter.name + " crushes " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, injuring it.");
+			}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
+				CombatPrototypeUI.Instance.resultsLog.Add(sourceCharacter.name + " pierces " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, causing it to bleed.");
+			}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
+				CombatPrototypeUI.Instance.resultsLog.Add(sourceCharacter.name + " slashes " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, decapitating it.");
+			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
+				CombatPrototypeUI.Instance.resultsLog.Add(sourceCharacter.name + " burns " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage.");
+			}
+
 		}
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
-		private void DealDamageToBodyPart(AttackSkill attackSkill, Character targetCharacter){
+		private BodyPart DealDamageToBodyPart(AttackSkill attackSkill, Character targetCharacter){
 			int chance = UnityEngine.Random.Range (0, 100);
 
 			if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
@@ -319,13 +348,14 @@ namespace ECS{
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
 					chosenBodyPart.status.Add(IBodyPart.STATUS.INJURED);
 					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.INJURED);
+					return chosenBodyPart;
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 				if(chance < 10){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
 					chosenBodyPart.status.Add(IBodyPart.STATUS.BLEEDING);
 					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.BLEEDING);
-
+					return chosenBodyPart;
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 				if(chance < 5){
@@ -336,14 +366,17 @@ namespace ECS{
 					if(chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
 						CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
 					}
+					return chosenBodyPart;
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
 				if(chance < 5){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
 					chosenBodyPart.status.Add(IBodyPart.STATUS.BURNING);
 					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.BURNING);
+					return chosenBodyPart;
 				}
 			}
+			return null;
 		}
 
 
@@ -364,6 +397,12 @@ namespace ECS{
 		private void HealSkill(Skill skill, Character sourceCharacter, Character targetCharacter){
 			HealSkill healSkill = (HealSkill)skill;	
 			targetCharacter.AdjustHP (healSkill.healPower);
+			if(sourceCharacter == targetCharacter){
+				CombatPrototypeUI.Instance.resultsLog.Add (sourceCharacter.name + " used a medkit and healed himself/herself for " + healSkill.healPower.ToString() + ".");
+			}else if(sourceCharacter == targetCharacter){
+				CombatPrototypeUI.Instance.resultsLog.Add (sourceCharacter.name + " used a medkit and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".");
+			}
+
 		}
 		#endregion
 
@@ -371,12 +410,14 @@ namespace ECS{
 		private void FleeSkill(Character sourceCharacter, Character targetCharacter){
 			//TODO: Character flees
 			RemoveCharacter(targetCharacter);
+			CombatPrototypeUI.Instance.resultsLog.Add (targetCharacter.name + " chickened out and left his team!");
 		}
 		#endregion
 
 		#region Obtain Item Skill
 		private void ObtainItemSkill(Character sourceCharacter, Character targetCharacter){
 			//TODO: Character obtains an item
+			CombatPrototypeUI.Instance.resultsLog.Add (targetCharacter.name + " obtained an item.");
 		}
 		#endregion
 
@@ -386,11 +427,14 @@ namespace ECS{
 				if (targetCharacter.currentRow != 1) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow - 1);
 				}
+				CombatPrototypeUI.Instance.resultsLog.Add (targetCharacter.name + " moved to the left.");
 			}else if(skill.skillName == "MoveRight"){
 				if (targetCharacter.currentRow != 5) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow + 1);
 				}
+				CombatPrototypeUI.Instance.resultsLog.Add (targetCharacter.name + " moved to the right.");
 			}
+
 //			if(sourceCharacter.currentRow == 1){
 //				//Automatically moves to the right since 1 is the last row on the left
 //				sourceCharacter.SetRowNumber (2);
@@ -414,6 +458,7 @@ namespace ECS{
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
 		private void CharacterDeath(Character character){
 			RemoveCharacter (character);
+			CombatPrototypeUI.Instance.resultsLog.Add (character.name + " has died horribly!");
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death

@@ -201,11 +201,15 @@ namespace ECS{
 				BodyPart bodyPart = this._bodyParts [i];
 				if(bodyPart.status.Count > 0){
 					for (int j = 0; j < bodyPart.status.Count; j++) {
-						int chance = UnityEngine.Random.Range (0, 100);
-						if(chance < 15){
-							bodyPart.RemoveStatusEffectOnSecondaryBodyParts (bodyPart.status [j]);
-							bodyPart.status.RemoveAt (j);
-							j--;
+						IBodyPart.STATUS status = bodyPart.status [j];
+						if(status != IBodyPart.STATUS.DECAPITATED){
+							int chance = UnityEngine.Random.Range (0, 100);
+							if(chance < 15){
+								CombatPrototypeUI.Instance.resultsLog.Add(this._name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + status.ToString ().ToLower () + ".");
+								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (status);
+								bodyPart.status.RemoveAt (j);
+								j--;
+							}
 						}
 					}
 				}
