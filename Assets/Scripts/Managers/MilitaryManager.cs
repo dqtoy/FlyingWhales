@@ -283,7 +283,7 @@ public class MilitaryManager {
 				cityTotalWeight += 100 * city.cityLevel;
 			}
 		}else{
-			cityTotalWeight += 30;
+			cityTotalWeight += 10;
 		}
 		if(cityTotalWeight < 0){
 			cityTotalWeight = 0;
