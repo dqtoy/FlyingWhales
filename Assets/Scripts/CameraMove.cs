@@ -201,7 +201,11 @@ public class CameraMove : MonoBehaviour {
     }
 
 	public void CenterCameraOn(GameObject GO){
-		target = GO.transform;
+        if(GO == null) {
+            target = null;
+        } else {
+            target = GO.transform;
+        }
 	}
 
 	public void ToggleResourceIcons(){

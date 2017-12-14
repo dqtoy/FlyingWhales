@@ -42,6 +42,7 @@ public class Minimap : MonoBehaviour {
         RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, minimapCamera, out localPoint);
         //Debug.Log(localPoint);
         Vector3 targetPos = new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f);
+        CameraMove.Instance.CenterCameraOn(null);
         CameraMove.Instance.MoveMainCamera(targetPos);
     }
 
