@@ -34,6 +34,8 @@ public class Caravaneer : GameEvent {
 		this.resourceAmount = 0;
 		this.reserveAmount = 0;
 
+		EventIsCreated (this.sourceCity.kingdom, false);
+
 	}
 	internal void Initialize(){
 		this.caravanAvatar = startedBy.assignedRole.avatar.GetComponent<CaravanAvatar>();
@@ -91,12 +93,12 @@ public class Caravaneer : GameEvent {
 	}
 	private RESOURCE_TYPE GetNeededResource(){
 		if(this.producedResource == RESOURCE_TYPE.FOOD){
-			if(this.sourceCity.materialCount <= this.sourceCity.materialRequirement){
+			if(this.sourceCity.materialCount <= this.sourceCity.materialRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.MATERIAL)){
 				return RESOURCE_TYPE.MATERIAL;
-			}else if(this.sourceCity.oreCount <= this.sourceCity.oreRequirement){
+			}else if(this.sourceCity.oreCount <= this.sourceCity.oreRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.ORE)){
 				return RESOURCE_TYPE.ORE;
 			}else{
-				if(this.sourceCity.materialCount <= this.sourceCity.oreCount){
+				if(this.sourceCity.materialCount <= this.sourceCity.oreCount && HasCityToGetResourceFrom(RESOURCE_TYPE.MATERIAL)){
 					return RESOURCE_TYPE.MATERIAL;
 				}else{
 					return RESOURCE_TYPE.ORE;
@@ -104,40 +106,40 @@ public class Caravaneer : GameEvent {
 			}
 
 		}else if(this.producedResource == RESOURCE_TYPE.MATERIAL){
-			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement) {
+			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.FOOD)) {
 				return RESOURCE_TYPE.FOOD;
-			} else if (this.sourceCity.oreCount <= this.sourceCity.oreRequirement) {
+			} else if (this.sourceCity.oreCount <= this.sourceCity.oreRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.ORE)) {
 				return RESOURCE_TYPE.ORE;
 			} else {
-				if(this.sourceCity.foodCount <= this.sourceCity.oreCount){
+				if(this.sourceCity.foodCount <= this.sourceCity.oreCount && HasCityToGetResourceFrom(RESOURCE_TYPE.FOOD)){
 					return RESOURCE_TYPE.FOOD;
 				}else{
 					return RESOURCE_TYPE.ORE;
 				}
 			}
 		}else if(this.producedResource == RESOURCE_TYPE.ORE){
-			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement) {
+			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.FOOD)) {
 				return RESOURCE_TYPE.FOOD;
-			} else if (this.sourceCity.materialCount <= this.sourceCity.materialRequirement) {
+			} else if (this.sourceCity.materialCount <= this.sourceCity.materialRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.MATERIAL)) {
 				return RESOURCE_TYPE.MATERIAL;
 			} else {
-				if(this.sourceCity.foodCount <= this.sourceCity.materialCount){
+				if(this.sourceCity.foodCount <= this.sourceCity.materialCount && HasCityToGetResourceFrom(RESOURCE_TYPE.FOOD)){
 					return RESOURCE_TYPE.FOOD;
 				}else{
 					return RESOURCE_TYPE.MATERIAL;
 				}
 			}
 		}else{
-			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement) {
+			if (this.sourceCity.foodCount <= this.sourceCity.foodRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.FOOD)) {
 				return RESOURCE_TYPE.FOOD;
-			} else if (this.sourceCity.materialCount <= this.sourceCity.materialRequirement) {
+			} else if (this.sourceCity.materialCount <= this.sourceCity.materialRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.MATERIAL)) {
 				return RESOURCE_TYPE.MATERIAL;
-			} else if (this.sourceCity.oreCount <= this.sourceCity.oreRequirement) {
+			} else if (this.sourceCity.oreCount <= this.sourceCity.oreRequirement && HasCityToGetResourceFrom(RESOURCE_TYPE.ORE)) {
 				return RESOURCE_TYPE.ORE;
 			} else {
-				if(this.sourceCity.foodCount <= this.sourceCity.materialCount && this.sourceCity.foodCount <= this.sourceCity.oreCount){
+				if(this.sourceCity.foodCount <= this.sourceCity.materialCount && this.sourceCity.foodCount <= this.sourceCity.oreCount && HasCityToGetResourceFrom(RESOURCE_TYPE.FOOD)){
 					return RESOURCE_TYPE.FOOD;
-				}else if(this.sourceCity.materialCount <= this.sourceCity.foodCount && this.sourceCity.materialCount <= this.sourceCity.oreCount){
+				}else if(this.sourceCity.materialCount <= this.sourceCity.foodCount && this.sourceCity.materialCount <= this.sourceCity.oreCount && HasCityToGetResourceFrom(RESOURCE_TYPE.MATERIAL)){
 					return RESOURCE_TYPE.MATERIAL;
 				}else{
 					return RESOURCE_TYPE.ORE;
@@ -151,6 +153,48 @@ public class Caravaneer : GameEvent {
 		SchedulingManager.Instance.AddEntry (newSchedule, () => SearchForCityToObtainResource ());
 	}
 
+	//Check if there is at least 1 city that can trade a certain resource
+	private bool HasCityToGetResourceFrom(RESOURCE_TYPE resourceType){
+		for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
+			City city = this.sourceCity.kingdom.cities [i];
+			if(city.id != this.sourceCity.id){
+				if(city.region.tileWithSpecialResource.specialResourceType == resourceType){
+					if(resourceType == RESOURCE_TYPE.MATERIAL){
+						if(this.sourceCity.kingdom.race == RACE.HUMANS && (city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
+							return true;
+						}else if(this.sourceCity.kingdom.race == RACE.ELVES && (city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
+							return true;
+						}
+					}else{
+						return true;
+					}
+				}
+			}
+		}
+		if(this.sourceCity.kingdom.kingdomsInTradeDealWith.Count > 0){
+			for (int i = 0; i < this.sourceCity.kingdom.kingdomsInTradeDealWith.Count; i++) {
+				Kingdom tradeKingdoms = this.sourceCity.kingdom.kingdomsInTradeDealWith [i];
+				for (int j = 0; j < tradeKingdoms.cities.Count; j++) {
+					City city = tradeKingdoms.cities [j];
+					if(city.id != this.sourceCity.id){
+						if(city.region.tileWithSpecialResource.specialResourceType == resourceType){
+							if(resourceType == RESOURCE_TYPE.MATERIAL){
+								if(this.sourceCity.kingdom.race == RACE.HUMANS && (city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
+									return true;
+								}else if(this.sourceCity.kingdom.race == RACE.ELVES && (city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
+									return true;
+								}
+							}else{
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
 	internal void ReceiveCityToObtainResource(City targetCity, List<HexTile> path){
 		if(this.isActive){
 			if(targetCity == null){

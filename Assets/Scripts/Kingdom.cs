@@ -311,7 +311,7 @@ public class Kingdom{
 		get { return Mathf.FloorToInt(population * draftRate); }
 	}
 	internal int soldiersCount {
-		get { return this._soldiers;}
+		get { return this._soldiers + ((this.militaryManager.activeGenerals.Count > 0) ? this.militaryManager.activeGenerals.Sum(x => x.soldiers): 0);}
 	}
     internal float draftRate {
         get {
@@ -3099,6 +3099,7 @@ public class Kingdom{
 		}
 	}
 	internal void CreateSubterfugeEvent(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
+		bool noCaughtAction = false;
 		int successChance = UnityEngine.Random.Range (0, 100);
 		int caughtChance = UnityEngine.Random.Range (0, 100);
 		int successValue = 60;
@@ -3122,6 +3123,9 @@ public class Kingdom{
 			}
 			if(criticalFailChance < criticalFailValue){
 				//Critical Failure
+				if(subterfuge == SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT){
+					noCaughtAction = true;
+				}
 				CreateCriticalFailSubterfugeAction(subterfuge, targetKingdom);
 			}else{
 				//Failure
@@ -3129,8 +3133,10 @@ public class Kingdom{
 			}
 		}
 
-		if(caughtChance < 5){
-			CreateCaughtSubterfugeAction (subterfuge, targetKingdom);
+		if(!noCaughtAction){
+			if(caughtChance < 5){
+				CreateCaughtSubterfugeAction (subterfuge, targetKingdom);
+			}
 		}
 	}
 	private SUBTERFUGE_ACTIONS GetSubterfugeAction(){
@@ -3206,7 +3212,7 @@ public class Kingdom{
 			string plagueName = SpreadPlague ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, 0, plagueName);
         } else if (subterfuge == SUBTERFUGE_ACTIONS.INTERNATIONAL_INCIDENT) {
-            StartInternationalIncident(targetKingdom, "caught");
+			StartInternationalIncident(targetKingdom, "critical_fail");
         }
     }
 	private void CreateFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
@@ -3760,11 +3766,10 @@ public class Kingdom{
 					ii.ShowSuccessLog();
 				} else if (status.Equals("fail")) {
 					ShowInternationalIncidentFailLog(targetKingdom, chosenKingdom);
+				} else if (status.Equals("critical_fail")) {
+					InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, false);
+					ii.ShowCriticalFailLog(chosenKingdom);
 				}
-	//			else if (status.Equals("critical_fail")) {
-	//				InternationalIncident ii = EventCreator.Instance.CreateInternationalIncidentEvent(this, targetKingdom, this, true, false);
-	//				ii.ShowCriticalFailLog(chosenKingdom);
-	//			}
 			} else {
 				Debug.Log(this.name + " tried to start an INTERNATIONAL_INCIDENT but, it could not find a target for " + targetKingdom.name);
 			}

@@ -37,7 +37,6 @@ public class CollisionManager : MonoBehaviour {
 		KingdomRelationship kr = general1.citizen.city.kingdom.GetRelationshipWithKingdom (general2.citizen.city.kingdom);
 		if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.warfare != null){
 			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + general1.citizen.name + " of " + general1.citizen.city.kingdom.name + " AND " + general2.citizen.name + " of " + general2.citizen.city.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
-			kr.sharedRelationship.warfare.AdjustWeariness (general1.citizen.city.kingdom, 2);
 
 			general1.ChangeBattleState ();
 			general2.ChangeBattleState ();

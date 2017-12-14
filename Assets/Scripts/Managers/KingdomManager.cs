@@ -113,9 +113,9 @@ public class KingdomManager : MonoBehaviour {
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
             newKingdom.HighlightAllOwnedTilesInKingdom();
         }
-		GameDate nextUpdateDate = new GameDate (GameManager.Instance.month, 1, GameManager.Instance.year);
-		nextUpdateDate.AddMonths (1);
-		SchedulingManager.Instance.AddEntry (nextUpdateDate, () => MonthlyUpdateKingdomRankings ());
+//		GameDate nextUpdateDate = new GameDate (GameManager.Instance.month, 1, GameManager.Instance.year);
+//		nextUpdateDate.AddMonths (1);
+//		SchedulingManager.Instance.AddEntry (nextUpdateDate, () => MonthlyUpdateKingdomRankings ());
     }
 	private void RemoveAdjacentRegionsFrom(Region region, List<Region> allRegions){
 		for (int i = 0; i < region.adjacentRegions.Count; i++) {
@@ -126,6 +126,7 @@ public class KingdomManager : MonoBehaviour {
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom); //Create new kingdom
 		AddKingdom(newKingdom);
         Debug.Log("Created new kingdom: " + newKingdom.name);
+		newKingdom.militaryManager = new MilitaryManager (newKingdom);
         newKingdom.CreateInitialCities(cities); //Create initial cities
 
         if (createFamilies) { //create families?
@@ -134,8 +135,9 @@ public class KingdomManager : MonoBehaviour {
                 City currCity = newKingdom.cities[i];
                 currCity.hexTile.CreateCityNamePlate(currCity);
                 currCity.SetupInitialValues();
+				newKingdom.militaryManager.UpdateMaxGenerals ();
             }
-			newKingdom.militaryManager = new MilitaryManager (newKingdom);
+
         }
 
         //if(newKingdom.king == null) {
@@ -458,13 +460,13 @@ public class KingdomManager : MonoBehaviour {
 		this.allKingdoms.Add (kingdom);
 //		this.kingdomRankings.Add (kingdom.id, 0);
 		this.kingdomRankings.Add (kingdom);
-		UpdateKingdomRankings ();
+//		UpdateKingdomRankings ();
 	}
 	internal void RemoveKingdom(Kingdom kingdom){
 		this.allKingdoms.Remove (kingdom);
 //		this.kingdomRankings.Remove (kingdom.id);
 		this.kingdomRankings.Remove (kingdom);
-		UpdateKingdomRankings ();
+//		UpdateKingdomRankings ();
 	}
 	internal void UpdateKingdomRankings(){
 //		int highestEffectiveKingdom = 0;

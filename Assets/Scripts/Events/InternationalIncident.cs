@@ -90,8 +90,8 @@ public class InternationalIncident : GameEvent {
         newLog.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
         newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
         newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-        newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
-        UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
+		newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+		UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, otherKingdom });
     }
     internal void ShowCaughtLog() {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_caught");
@@ -102,8 +102,8 @@ public class InternationalIncident : GameEvent {
     }
 	internal void ShowRandomLog() {
 		Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_random");
-		newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		newLog.AddToFillers(null, this.incidentName, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
 	}
@@ -135,6 +135,7 @@ public class InternationalIncident : GameEvent {
 	}
 
 	private void ReactionDay(){
+		Debug.Log ("------------------------------- REACTION DAY FOR " + this._incidentName + "--------------------------------------");
 		if(this._sourceKingdom.isDead || this._targetKingdom.isDead){
 			CancelEvent ();
 			return;
@@ -162,6 +163,7 @@ public class InternationalIncident : GameEvent {
 		}
 
 		if(chosenKingdom != null && kr != null){
+			Debug.Log ("REACTING KINGDOM: " + chosenKingdom.name);
 			if(this._sourceKing.id != this._sourceKingdom.king.id){
 				this._sourceKingPreviousAction = INCIDENT_ACTIONS.NONE;
 				this._sourceKing = this._sourceKingdom.king;
@@ -173,7 +175,10 @@ public class InternationalIncident : GameEvent {
 
 			int resolvePeacefullyTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.RESOLVE_PEACEFULLY);
 			int increaseTensionTotalWeight = GetTotalWeight (chosenKingdom, kr, INCIDENT_ACTIONS.INCREASE_TENSION);
-		
+
+			Debug.Log ("RESOLVE_PEACEFULLY: " + resolvePeacefullyTotalWeight.ToString());
+			Debug.Log ("INCREASE_TENSION: " + increaseTensionTotalWeight.ToString());
+
 			if(resolvePeacefullyTotalWeight > 0 && increaseTensionTotalWeight > 0){
 				Dictionary<INCIDENT_ACTIONS, int> actionWeightDict = new Dictionary<INCIDENT_ACTIONS, int> () {
 					{ INCIDENT_ACTIONS.RESOLVE_PEACEFULLY, resolvePeacefullyTotalWeight },
@@ -198,19 +203,19 @@ public class InternationalIncident : GameEvent {
 		}
 		if(incidentAction == INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
 			if(kr.totalLike > 0){
-				totalWeight += kr.totalLike * 5;
+				totalWeight += (kr.totalLike * 2);
 			}
 			if(kr.AreAllies()){
-				totalWeight += 50;
+				totalWeight += 200;
 			}
 			if(kr.AreTradePartners()){
-				totalWeight += 25;
+				totalWeight += 100;
 			}
-			totalWeight += (30 * kingdom.warfareInfo.Count);
+			totalWeight += (300 * kingdom.warfareInfo.Count);
 
 		}else if(incidentAction == INCIDENT_ACTIONS.INCREASE_TENSION){
 			if(kr.totalLike < 0){
-				totalWeight -= (kr.totalLike * 5);
+				totalWeight -= (kr.totalLike * 2);
 			}
 			if(kingdom.stability < -80){
 				int stabilityModifier = kingdom.stability + 80;
@@ -234,6 +239,7 @@ public class InternationalIncident : GameEvent {
 	}
 
 	private void DoPickedAction(INCIDENT_ACTIONS incidentAction, Kingdom chosenKingdom){
+		Debug.Log ("REACTION: " + incidentAction.ToString());
 		if(chosenKingdom.id == this._sourceKingdom.id){
 			this._sourceKingPreviousAction = incidentAction;
 		}else if(chosenKingdom.id == this._targetKingdom.id){
@@ -246,7 +252,7 @@ public class InternationalIncident : GameEvent {
 				ResolvePeacefully();
 			}else{
 				//Fail Resolve Peacefully
-				chosenKingdom.AdjustStability(-3);
+				//chosenKingdom.AdjustStability(-3);
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_resolve_peacefully");
 				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
 				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -260,7 +266,7 @@ public class InternationalIncident : GameEvent {
 				GoToWar(chosenKingdom);
 			}else{
 				//Fail Increase Tension
-				chosenKingdom.AdjustStability(3);
+				//chosenKingdom.AdjustStability(3);
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_war");
 				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
 				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
