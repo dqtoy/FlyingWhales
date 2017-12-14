@@ -16,6 +16,7 @@ namespace ECS{
         [SerializeField] private CharacterSummary characterSummary;
 
         [SerializeField] private UILabel combatSummaryLbl;
+        [SerializeField] private UIScrollView combatSummaryScrollView;
 
         internal List<string> resultsLog;
 
@@ -73,12 +74,16 @@ namespace ECS{
 
         public void AddCombatLog(string combatLog) {
             resultsLog.Add(combatLog);
-            combatSummaryLbl.text += "--" + combatLog + "\n";
+            combatSummaryLbl.text += "--" + combatLog + "\n\n";
+            combatSummaryScrollView.ResetPosition();
+            combatSummaryScrollView.UpdateScrollbars();
         }
 
         public void ClearCombatLogs() {
             resultsLog.Clear();
             combatSummaryLbl.text = string.Empty;
+            combatSummaryScrollView.ResetPosition();
+            combatSummaryScrollView.UpdateScrollbars();
         }
 
         public void ResetSimulation() {
