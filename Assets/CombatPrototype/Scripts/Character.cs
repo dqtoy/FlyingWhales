@@ -7,6 +7,8 @@ namespace ECS{
 	public class Character {
 		[SerializeField] private string _name;
 
+        private int _actRate;
+
         [SerializeField] private int _level;
         [SerializeField] private int _maxHP;
         [SerializeField] private int _currentHP;
@@ -33,6 +35,10 @@ namespace ECS{
 		internal string name{
 			get { return this._name; }
 		}
+        internal int actRate {
+            get { return _actRate; }
+            set { _actRate = value; }
+        }
 		internal int level{
 			get { return this._level; }
 		}
@@ -107,6 +113,7 @@ namespace ECS{
             _agiGain = baseSetup.raceSetting.agiGain + baseSetup.characterClass.agiGain;
             _hpGain = baseSetup.raceSetting.hpGain + baseSetup.characterClass.hpGain;
             _bodyParts = new List<BodyPart>(baseSetup.raceSetting.bodyParts);
+            _actRate = baseSetup.characterClass.actRate;
             _characterClass = baseSetup.characterClass;
             _raceSetting = baseSetup.raceSetting;
             //TODO: Generate Traits
@@ -205,7 +212,7 @@ namespace ECS{
 						if(status != IBodyPart.STATUS.DECAPITATED){
 							int chance = UnityEngine.Random.Range (0, 100);
 							if(chance < 15){
-								CombatPrototypeUI.Instance.resultsLog.Add(this._name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + status.ToString ().ToLower () + ".");
+								CombatPrototypeUI.Instance.AddCombatLog(this._name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + status.ToString ().ToLower () + ".");
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (status);
 								bodyPart.status.RemoveAt (j);
 								j--;

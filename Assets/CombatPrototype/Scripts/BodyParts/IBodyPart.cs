@@ -13,6 +13,9 @@ namespace ECS{
 			CLAWED,
 			CAN_PUNCH,
 			CAN_GRIP,
+            TAIL,
+            CAN_KICK,
+            MAGICAL
 		}
 
 		public enum STATUS {

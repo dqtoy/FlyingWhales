@@ -74,7 +74,9 @@ namespace ECS {
             if (GUILayout.Button("Load Character Class")) {
                 LoadCharacterClass();
             }
-
+            if (GUILayout.Button("Reset Values")) {
+                ResetValues();
+            }
             EditorGUILayout.EndScrollView();
         }
 
@@ -106,6 +108,10 @@ namespace ECS {
                 case SKILL_TYPE.FLEE:
                     FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
                     currCharacterClass.skills.Add(fleeSkill);
+                    break;
+                case SKILL_TYPE.MOVE:
+                    MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+                    currCharacterClass.skills.Add(moveSkill);
                     break;
             }
         }
@@ -141,6 +147,7 @@ namespace ECS {
         private void LoadCharacterClass() {
             string filePath = EditorUtility.OpenFilePanel("Select Character Json", "Assets/CombatPrototype/Data/CharacterClasses/", "json");
             if (!string.IsNullOrEmpty(filePath)) {
+                ResetValues();
                 string dataAsJson = File.ReadAllText(filePath);
                 LoadCharacter(JsonUtility.FromJson<CharacterClass>(dataAsJson));
             }
@@ -149,6 +156,10 @@ namespace ECS {
             currCharacterClass = character;
         }
         #endregion
+
+        private void ResetValues() {
+            currCharacterClass = null;
+        }
     }
 }
 

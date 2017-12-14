@@ -1,0 +1,1 @@
+{"skillName":"Kick","activationWeight":45,"accuracy":90.0,"range":1,"isEnabled":false,"skillRequirements":[{"itemQuantity":1,"attributeRequired":4}],"attributeModifier":0,"attackPower":50,"attackType":0,"statusEffect":2,"statusEffectRate":5,"injuryRate":75,"decapitationRate":10}

@@ -90,7 +90,7 @@ namespace ECS {
             decapitationRate = EditorGUILayout.IntField("Decapitation Rate: ", decapitationRate);
         }
         private void ShowHealSkillFields() {
-            attackPower = EditorGUILayout.IntField("Heal Power: ", healPower);
+            healPower = EditorGUILayout.IntField("Heal Power: ", healPower);
         }
         private void ShowObtainItemFields() {
             //Nothing yet

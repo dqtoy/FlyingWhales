@@ -1,0 +1,1 @@
+{"skillName":"Pickup","activationWeight":20,"accuracy":95.0,"range":1,"isEnabled":false,"skillRequirements":[{"itemQuantity":1,"attributeRequired":2}],"attributeModifier":1}
