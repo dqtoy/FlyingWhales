@@ -6,11 +6,11 @@ namespace ECS {
     [System.Serializable]
     public class CharacterClass : EntityComponent {
         public string className;
-        public List<AttackSkill> attackSkills;
-        public List<HealSkill> healSkills;
-        public List<FleeSkill> fleeSkills;
-        public List<MoveSkill> moveSkills;
-        public List<ObtainSkill> obtainSkills;
+        public List<string> attackSkills;
+        public List<string> healSkills;
+        public List<string> fleeSkills;
+        public List<string> moveSkills;
+        public List<string> obtainSkills;
         public int actRate;
         public int strGain;
         public int intGain;
@@ -29,29 +29,29 @@ namespace ECS {
         #endregion
 
         public CharacterClass() {
-            attackSkills = new List<AttackSkill>();
-            healSkills = new List<HealSkill>();
-            fleeSkills = new List<FleeSkill>();
-            moveSkills = new List<MoveSkill>();
-            obtainSkills = new List<ObtainSkill>();
+            attackSkills = new List<string>();
+            healSkills = new List<string>();
+            fleeSkills = new List<string>();
+            moveSkills = new List<string>();
+            obtainSkills = new List<string>();
         }
 
         public void AddSkillOfType(SKILL_TYPE skillType, Skill skillToAdd) {
             switch (skillType) {
                 case SKILL_TYPE.ATTACK:
-                    attackSkills.Add((AttackSkill)skillToAdd);
+                    attackSkills.Add(skillToAdd.skillName);
                     break;
                 case SKILL_TYPE.HEAL:
-                    healSkills.Add((HealSkill)skillToAdd);
+                    healSkills.Add(skillToAdd.skillName);
                     break;
                 case SKILL_TYPE.OBTAIN_ITEM:
-                    obtainSkills.Add((ObtainSkill)skillToAdd);
+                    obtainSkills.Add(skillToAdd.skillName);
                     break;
                 case SKILL_TYPE.FLEE:
-                    fleeSkills.Add((FleeSkill)skillToAdd);
+                    fleeSkills.Add(skillToAdd.skillName);
                     break;
                 case SKILL_TYPE.MOVE:
-                    moveSkills.Add((MoveSkill)skillToAdd);
+                    moveSkills.Add(skillToAdd.skillName);
                     break;
             }
         }
@@ -59,19 +59,34 @@ namespace ECS {
         public void ConstructAllSkillsList() {
             _skills = new List<Skill>();
             for (int i = 0; i < attackSkills.Count; i++) {
-                _skills.Add(attackSkills[i]);
+                string skillName = attackSkills[i];
+                string path = "Assets/CombatPrototype/Data/Skills/ATTACK/" + skillName + ".json";
+                AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
+                _skills.Add(currSkill);
             }
             for (int i = 0; i < healSkills.Count; i++) {
-                _skills.Add(healSkills[i]);
+                string skillName = healSkills[i];
+                string path = "Assets/CombatPrototype/Data/Skills/HEAL/" + skillName + ".json";
+                HealSkill currSkill = JsonUtility.FromJson<HealSkill>(System.IO.File.ReadAllText(path));
+                _skills.Add(currSkill);
             }
             for (int i = 0; i < obtainSkills.Count; i++) {
-                _skills.Add(obtainSkills[i]);
+                string skillName = obtainSkills[i];
+                string path = "Assets/CombatPrototype/Data/Skills/OBTAIN_ITEM/" + skillName + ".json";
+                ObtainSkill currSkill = JsonUtility.FromJson<ObtainSkill>(System.IO.File.ReadAllText(path));
+                _skills.Add(currSkill);
             }
             for (int i = 0; i < fleeSkills.Count; i++) {
-                _skills.Add(fleeSkills[i]);
+                string skillName = fleeSkills[i];
+                string path = "Assets/CombatPrototype/Data/Skills/FLEE/" + skillName + ".json";
+                FleeSkill currSkill = JsonUtility.FromJson<FleeSkill>(System.IO.File.ReadAllText(path));
+                _skills.Add(currSkill);
             }
             for (int i = 0; i < moveSkills.Count; i++) {
-                _skills.Add(moveSkills[i]);
+                string skillName = moveSkills[i];
+                string path = "Assets/CombatPrototype/Data/Skills/MOVE/" + skillName + ".json";
+                MoveSkill currSkill = JsonUtility.FromJson<MoveSkill>(System.IO.File.ReadAllText(path));
+                _skills.Add(currSkill);
             }
         }
     }

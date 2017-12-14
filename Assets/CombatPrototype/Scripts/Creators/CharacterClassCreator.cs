@@ -156,6 +156,7 @@ namespace ECS {
         }
         private void LoadCharacter(CharacterClass character) {
             currCharacterClass = character;
+            currCharacterClass.ConstructAllSkillsList();
         }
         #endregion
 

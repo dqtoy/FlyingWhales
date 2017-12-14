@@ -13,12 +13,12 @@ namespace ECS{
 			CLAWED,
 			CAN_PUNCH,
 			CAN_GRIP,
-            TAIL,
             CAN_KICK,
             MAGICAL,
 			CAN_SLASH,
 			CAN_PIERCE,
 			CAN_SHOOT,
+            CAN_WHIP
 		}
 
 		[SerializeField] internal BODY_PART bodyPart;

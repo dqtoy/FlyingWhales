@@ -18,6 +18,9 @@ namespace ECS{
         [SerializeField] private UILabel combatSummaryLbl;
         [SerializeField] private UIScrollView combatSummaryScrollView;
 
+        [SerializeField] private UIPopupList itemTypePopupList;
+        [SerializeField] private UIPopupList equipmentPopupList;
+
         internal List<string> resultsLog;
 
         private void Awake() {
@@ -27,6 +30,7 @@ namespace ECS{
         private void Start() {
 			this.resultsLog = new List<string> ();
             LoadCharacterChoices();
+            LoadItemTypeChoices();
         }
 
         private void LoadCharacterChoices() {
@@ -41,6 +45,29 @@ namespace ECS{
                     sideBPopupList.value = currChoice.fileName;
                 }
             }
+        }
+        private void LoadItemTypeChoices() {
+            ITEM_TYPE[] itemTypes = Utilities.GetEnumValues<ITEM_TYPE>();
+            for (int i = 0; i < itemTypes.Length; i++) {
+                itemTypePopupList.AddItem(itemTypes[i].ToString(), itemTypes[i]);
+            }
+        }
+
+        public void LoadItemChoices() {
+            ITEM_TYPE currTypeChosen = (ITEM_TYPE)itemTypePopupList.data;
+            List<string> items = GetAllItemsOfType(currTypeChosen);
+            for (int i = 0; i < items.Count; i++) {
+                equipmentPopupList.AddItem(items[i]);
+            }
+        }
+
+        private List<string> GetAllItemsOfType(ITEM_TYPE itemType) {
+            List<string> allItemsOfType = new List<string>();
+            string path = "Assets/CombatPrototype/Data/Items/" + itemType.ToString() + "/";
+            foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+                allItemsOfType.Add(System.IO.Path.GetFileNameWithoutExtension(file));
+            }
+            return allItemsOfType;
         }
 
         public void AddCharacterToSideA() {

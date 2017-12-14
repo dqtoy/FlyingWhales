@@ -21,12 +21,15 @@ namespace ECS {
 
             // Calculate rects
             var requirementTypeRect = new Rect(position.x, position.y, 50, position.height);
-            var requirementAttributeRect = new Rect(position.x + 55, position.y, 150, position.height);
+            var requirementEquipmentRect = new Rect(position.x + 55, position.y, 150, position.height);
+            var requirementAttributeRect = new Rect(position.x + 205, position.y, 150, position.height);
             //var unitRect = new Rect(position.x + 35, position.y, 50, position.height);
             //var nameRect = new Rect(position.x + 90, position.y, position.width - 90, position.height);
 
+            
             // Draw fields - passs GUIContent.none to each so they are drawn without labels
             EditorGUI.PropertyField(requirementTypeRect, property.FindPropertyRelative("itemQuantity"), GUIContent.none);
+            EditorGUI.PropertyField(requirementEquipmentRect, property.FindPropertyRelative("equipmentType"), GUIContent.none);
             EditorGUI.PropertyField(requirementAttributeRect, property.FindPropertyRelative("attributeRequired"), GUIContent.none);
             //EditorGUI.PropertyField(unitRect, property.FindPropertyRelative("unit"), GUIContent.none);
             //EditorGUI.PropertyField(nameRect, property.FindPropertyRelative("name"), GUIContent.none);
