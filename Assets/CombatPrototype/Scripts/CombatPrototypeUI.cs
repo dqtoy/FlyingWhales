@@ -50,14 +50,22 @@ namespace ECS{
             ITEM_TYPE[] itemTypes = Utilities.GetEnumValues<ITEM_TYPE>();
             for (int i = 0; i < itemTypes.Length; i++) {
                 itemTypePopupList.AddItem(itemTypes[i].ToString(), itemTypes[i]);
+                if (i == 0) {
+                    itemTypePopupList.value = itemTypes[i].ToString();
+                }
             }
         }
 
         public void LoadItemChoices() {
+            equipmentPopupList.Clear();
+            equipmentPopupList.value = string.Empty;
             ITEM_TYPE currTypeChosen = (ITEM_TYPE)itemTypePopupList.data;
             List<string> items = GetAllItemsOfType(currTypeChosen);
             for (int i = 0; i < items.Count; i++) {
                 equipmentPopupList.AddItem(items[i]);
+                if (i == 0) {
+                    equipmentPopupList.value = items[i];
+                }
             }
         }
 

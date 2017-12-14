@@ -31,7 +31,12 @@ namespace ECS {
         [MenuItem("Window/Skill Creator")]
         public static void ShowWindow() {
             //Show existing window instance. If one doesn't exist, make one.
-            EditorWindow.GetWindow(typeof(SkillCreator));
+            //EditorWindow.CreateInstance("SkillCreator");
+            //EditorWindow.GetWindow(typeof(SkillCreator),);
+            SkillCreator window = CreateInstance<SkillCreator>();
+            window.title = "Skill Creator";
+            window.Show();
+            //EditorWindow.GetWindow(typeof(SkillCreator));
         }
 
         private void OnGUI() {
