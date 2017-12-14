@@ -189,7 +189,11 @@ namespace ECS{
 			for (int i = 0; i < sourceCharacter.characterClass.skills.Count; i++) {
 				Skill skill = sourceCharacter.characterClass.skills [i];
 				if(skill.isEnabled && HasTargetInRangeForSkill(skill, sourceCharacter)){
-					skillActivationWeights.Add (skill, skill.activationWeight);
+					int activationWeight = skill.activationWeight;
+					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
+						activationWeight /= 2;
+					}
+					skillActivationWeights.Add (skill, activationWeight);
 				}
 			}
 
@@ -201,7 +205,7 @@ namespace ECS{
 		}
 
 		//Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
-		private bool HasTargetInRangeForSkill(Skill skill, Character sourceCharacter){
+		internal bool HasTargetInRangeForSkill(Skill skill, Character sourceCharacter){
 			if(skill is AttackSkill){
 				if(this.charactersSideA.Contains(sourceCharacter)){
 					for (int i = 0; i < this.charactersSideB.Count; i++) {
@@ -225,6 +229,35 @@ namespace ECS{
 				return true;
 			}
 
+		}
+
+		internal bool HasTargetInRangeForSkill(SKILL_TYPE skillType, Character sourceCharacter){
+			if(skillType == SKILL_TYPE.ATTACK){
+				for (int i = 0; i < sourceCharacter.characterClass.skills.Count; i++) {
+					Skill skill = sourceCharacter.characterClass.skills [i];
+					if(skill is AttackSkill){
+						if(this.charactersSideA.Contains(sourceCharacter)){
+							for (int j = 0; j < this.charactersSideB.Count; j++) {
+								Character targetCharacter = this.charactersSideB [j];
+								int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+								if(skill.range >= rowDistance){
+									return true;
+								}
+							}
+						}else{
+							for (int j = 0; j < this.charactersSideA.Count; j++) {
+								Character targetCharacter = this.charactersSideA [j];
+								int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+								if(skill.range >= rowDistance){
+									return true;
+								}
+							}
+						}
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 		//Returns the row distance/difference of two characters
 		private int GetRowDistanceBetweenTwoCharacters(Character sourceCharacter, Character targetCharacter){
@@ -265,15 +298,15 @@ namespace ECS{
 		private void FailedSkill(Skill skill, Character sourceCharacter, Character targetCharacter){
 			//TODO: What happens when a skill has failed?
 			if(skill is FleeSkill){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell because of a used double condoms!");
+				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell down!");
 				CounterAttack (targetCharacter);
 			}else if(skill is AttackSkill){
 				CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to " + skill.skillName + " " + targetCharacter.name + " but missed!");
 			}else if(skill is HealSkill){
 				if(sourceCharacter == targetCharacter){
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use a bandage to heal himself/herself but it is already expired!");
+					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName + " to heal himself/herself but it is already expired!");
 				}else{
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use a bandage to heal " + targetCharacter.name + " but it is already expired!");
+					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName + " to heal " + targetCharacter.name + " but it is already expired!");
 				}
 			}
 		}
@@ -411,9 +444,9 @@ namespace ECS{
 			HealSkill healSkill = (HealSkill)skill;	
 			targetCharacter.AdjustHP (healSkill.healPower);
 			if(sourceCharacter == targetCharacter){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used a medkit and healed himself/herself for " + healSkill.healPower.ToString() + ".");
+				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".");
 			}else if(sourceCharacter == targetCharacter){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used a medkit and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".");
+				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".");
 			}
 
 		}

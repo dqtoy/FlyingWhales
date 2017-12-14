@@ -161,6 +161,7 @@ namespace ECS{
 
 		//Enables or Disables skills based on skill requirements
 		internal void EnableDisableSkills(){
+			bool isAllAttacksInRange = true;
 			for (int i = 0; i < this._characterClass.skills.Count; i++) {
 				Skill skill = this._characterClass.skills [i];
 				skill.isEnabled = true;
@@ -171,12 +172,76 @@ namespace ECS{
 						break;
 					}
 				}
-
+				if(skill is AttackSkill){
+					if(isAllAttacksInRange){
+						isAllAttacksInRange = CombatPrototype.Instance.HasTargetInRangeForSkill (skill, this);
+					}
+				}else if (skill is FleeSkill){
+					if(this.currentHP >= (this.maxHP / 2)){
+						skill.isEnabled = false;
+					}
+				}
+			}
+			for (int i = 0; i < this._characterClass.skills.Count; i++) {
+				Skill skill = this._characterClass.skills [i];
 				if(skill is MoveSkill){
-					if (this._currentRow == 1 && skill.skillName == "MoveLeft"){
+					skill.isEnabled = true;
+					if(isAllAttacksInRange){
 						skill.isEnabled = false;
-					} else if (this._currentRow == 5 && skill.skillName == "MoveRight"){
-						skill.isEnabled = false;
+						continue;
+					}
+					if(skill.skillName == "MoveLeft"){
+						if (this._currentRow == 1) {
+							skill.isEnabled = false;
+						} else {
+							bool hasEnemyOnLeft = false;
+							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
+								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
+									Character enemy = CombatPrototype.Instance.charactersSideB [j];
+									if(enemy.currentRow < this._currentRow){
+										hasEnemyOnLeft = true;
+										break;
+									}
+								}
+							}else{
+								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
+									Character enemy = CombatPrototype.Instance.charactersSideA [j];
+									if(enemy.currentRow < this._currentRow){
+										hasEnemyOnLeft = true;
+										break;
+									}
+								}
+							}
+							if(!hasEnemyOnLeft){
+								skill.isEnabled = false;
+							}
+						}
+					}else if(skill.skillName == "MoveRight"){
+						if (this._currentRow == 5) {
+							skill.isEnabled = false;
+						} else {
+							bool hasEnemyOnRight = false;
+							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
+								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
+									Character enemy = CombatPrototype.Instance.charactersSideB [j];
+									if(enemy.currentRow > this._currentRow){
+										hasEnemyOnRight = true;
+										break;
+									}
+								}
+							}else{
+								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
+									Character enemy = CombatPrototype.Instance.charactersSideA [j];
+									if(enemy.currentRow > this._currentRow){
+										hasEnemyOnRight = true;
+										break;
+									}
+								}
+							}
+							if(!hasEnemyOnRight){
+								skill.isEnabled = false;
+							}
+						}
 					}
 				}
 			}
