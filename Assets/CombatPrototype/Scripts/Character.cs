@@ -176,6 +176,10 @@ namespace ECS{
 					if(isAllAttacksInRange){
 						isAllAttacksInRange = CombatPrototype.Instance.HasTargetInRangeForSkill (skill, this);
 					}
+				}else if (skill is FleeSkill){
+					if(this.currentHP >= (this.maxHP / 2)){
+						skill.isEnabled = false;
+					}
 				}
 			}
 			for (int i = 0; i < this._characterClass.skills.Count; i++) {
