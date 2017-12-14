@@ -271,9 +271,10 @@ public class MilitaryManager {
 							}
 							if(krTargetToSource.totalLike < 0){
 								cityTotalWeight = (2 * krTargetToSource.totalLike);
-							}else{
-								cityTotalWeight -= krTargetToSource.totalLike;
 							}
+//							else{
+//								cityTotalWeight -= krTargetToSource.totalLike;
+//							}
 							int threat = krSourceToTarget.targetKingdomThreatLevel;
 							if(threat > 0){
 								cityTotalWeight += (4 * threat);
