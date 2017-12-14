@@ -25,6 +25,7 @@ public class SendResource : GameEvent {
 		this.resourceType = resourceType;
 		this.resource = resource;
 		this.targetCity = this.caravan.targetCity;
+		EventIsCreated (this.startedBy.city.kingdom, false);
 	}
 
 	#region Overrides

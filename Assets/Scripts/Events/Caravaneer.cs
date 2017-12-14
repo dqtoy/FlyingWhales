@@ -34,6 +34,8 @@ public class Caravaneer : GameEvent {
 		this.resourceAmount = 0;
 		this.reserveAmount = 0;
 
+		EventIsCreated (this.sourceCity.kingdom, false);
+
 	}
 	internal void Initialize(){
 		this.caravanAvatar = startedBy.assignedRole.avatar.GetComponent<CaravanAvatar>();
