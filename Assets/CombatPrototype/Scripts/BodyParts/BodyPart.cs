@@ -16,16 +16,16 @@ namespace ECS{
 
 		//This applies status effect to all secondary body part of this main body part
 		//Whatever status effect added to the main body part will be added to secondary body part since they are linked
-		internal void ApplyStatusEffectOnSecondaryBodyParts(STATUS status){
+		internal void ApplyStatusEffectOnSecondaryBodyParts(STATUS_EFFECT statusEffect){
 			for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
-				this.secondaryBodyParts [i].status.Add (status);
+				this.secondaryBodyParts [i].statusEffects.Add (statusEffect);
 			}
 		}
 
 		//This removes status effect to all secondary body part of this main body part
-		internal void RemoveStatusEffectOnSecondaryBodyParts(STATUS status){
+		internal void RemoveStatusEffectOnSecondaryBodyParts(STATUS_EFFECT statusEffect){
 			for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
-				this.secondaryBodyParts [i].status.Remove (status);
+				this.secondaryBodyParts [i].statusEffects.Remove (statusEffect);
 			}
 		}
 //		internal void SetData(BODY_PART bodyPart, IMPORTANCE importance, List<ATTRIBUTE> attributes, List<SecondaryBodyPart> secondaryBodyParts, STATUS status){

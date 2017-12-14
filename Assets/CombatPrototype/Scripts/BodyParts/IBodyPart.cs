@@ -15,21 +15,16 @@ namespace ECS{
 			CAN_GRIP,
             TAIL,
             CAN_KICK,
-            MAGICAL
-		}
-
-		public enum STATUS {
-			NORMAL,
-			INJURED,
-			DECAPITATED,
-			BURNING,
-			BLEEDING,
+            MAGICAL,
+			CAN_SLASH,
+			CAN_PIERCE,
+			CAN_SHOOT,
 		}
 
 		[SerializeField] internal BODY_PART bodyPart;
 		[SerializeField] internal IMPORTANCE importance;
 		[SerializeField] internal List<ATTRIBUTE> attributes;
-		internal List<STATUS> status = new List<STATUS>();
+		internal List<STATUS_EFFECT> statusEffects = new List<STATUS_EFFECT>();
 		internal List<Item> itemsAttached = new List<Item>();
 	}
 }

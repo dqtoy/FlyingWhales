@@ -53,8 +53,8 @@ namespace ECS{
                     bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.ToString()) + " ";
                 }
                 bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
-                for (int j = 0; j < currBodyPart.status.Count; j++) {
-                    IBodyPart.STATUS currStatus = currBodyPart.status[j];
+                for (int j = 0; j < currBodyPart.statusEffects.Count; j++) {
+					STATUS_EFFECT currStatus = currBodyPart.statusEffects[j];
                     bodyPartsInfoLbl.text += "[" + currStatus.ToString() + "]";
                 }
 
@@ -66,8 +66,8 @@ namespace ECS{
                         bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.ToString()) + " ";
                     }
                     bodyPartsInfoLbl.text += Utilities.NormalizeString(otherBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
-                    for (int k = 0; k < otherBodyPart.status.Count; k++) {
-                        IBodyPart.STATUS currStatus = otherBodyPart.status[k];
+                    for (int k = 0; k < otherBodyPart.statusEffects.Count; k++) {
+						STATUS_EFFECT currStatus = otherBodyPart.statusEffects[k];
                         bodyPartsInfoLbl.text += "[" + currStatus.ToString() + "]";
                     }
                 }

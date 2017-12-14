@@ -28,6 +28,8 @@ namespace ECS{
         [SerializeField] private bool _isDead;
 		private List<Trait>	_traits;
         [SerializeField] private List<BodyPart> _bodyParts;
+		[SerializeField] private List<Item> _items;
+
 		private CharacterClass _characterClass;
         protected RaceSetting _raceSetting;
 
@@ -56,6 +58,9 @@ namespace ECS{
         }
 		internal List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
+		}
+		internal List<Item> items{
+			get { return this._items; }
 		}
 		internal List<Trait> traits{
 			get { return this._traits; }
@@ -116,6 +121,7 @@ namespace ECS{
             _actRate = baseSetup.characterClass.actRate;
             _characterClass = baseSetup.characterClass;
             _raceSetting = baseSetup.raceSetting;
+			_items = new List<Item> ();
             //TODO: Generate Traits
         }
 
@@ -125,7 +131,7 @@ namespace ECS{
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
 
-				if(bodyPart.status.Count <= 0){
+				if(bodyPart.statusEffects.Count <= 0){
 					if(bodyPart.attributes.Contains(attribute)){
 						count += 1;
 						if(count >= quantity){
@@ -136,7 +142,7 @@ namespace ECS{
 
 				for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
-					if (secondaryBodyPart.status.Count <= 0) {
+					if (secondaryBodyPart.statusEffects.Count <= 0) {
 						if (secondaryBodyPart.attributes.Contains (attribute)) {
 							count += 1;
 							if (count >= quantity) {
@@ -203,18 +209,40 @@ namespace ECS{
         }
         #endregion
 
+		#region Items
+		//Equip a weapon to a body part of this character and add it to the list of items this character have
+		internal void EquipWeapon(Weapon weapon, IBodyPart bodyPart){
+			bodyPart.itemsAttached.Add (weapon);
+			weapon.bodyPartAttached = bodyPart;
+			AddItem (weapon);
+		}
+		//Equip an armor to a body part of this character and add it to the list of items this character have
+		internal void EquipArmor(Armor armor, IBodyPart bodyPart){
+			bodyPart.itemsAttached.Add (armor);
+			armor.bodyPartAttached = bodyPart;
+			AddItem (armor);
+		}
+
+		internal void AddItem(Item newItem){
+			this._items.Add (newItem);
+		}
+		internal void RemoveItem(Item newItem){
+			this._items.Remove (newItem);
+		}
+		#endregion
+
 		internal void CureStatusEffects(){
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
-				if(bodyPart.status.Count > 0){
-					for (int j = 0; j < bodyPart.status.Count; j++) {
-						IBodyPart.STATUS status = bodyPart.status [j];
-						if(status != IBodyPart.STATUS.DECAPITATED){
+				if(bodyPart.statusEffects.Count > 0){
+					for (int j = 0; j < bodyPart.statusEffects.Count; j++) {
+						STATUS_EFFECT statusEffect = bodyPart.statusEffects [j];
+						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = UnityEngine.Random.Range (0, 100);
 							if(chance < 15){
-								CombatPrototypeUI.Instance.AddCombatLog(this._name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + status.ToString ().ToLower () + ".");
-								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (status);
-								bodyPart.status.RemoveAt (j);
+								CombatPrototypeUI.Instance.AddCombatLog(this._name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".");
+								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
+								bodyPart.statusEffects.RemoveAt (j);
 								j--;
 							}
 						}

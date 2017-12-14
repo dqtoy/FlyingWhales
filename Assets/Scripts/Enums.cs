@@ -757,6 +757,8 @@ public enum DEFEND_TYPE {
 }
 public enum STATUS_EFFECT {
     NONE,
+	INJURED,
+	DECAPITATED,
     POISONED,
     STUNNED,
     BLEEDING,
@@ -766,6 +768,26 @@ public enum CHARACTER_ATTRIBUTES {
     STRENGTH,
     INTELLIGENCE,
     AGILITY
+}
+
+public enum ITEM_TYPE{
+	WEAPON,
+	ARMOR,
+}
+
+public enum WEAPON_TYPE{
+	NONE,
+	SWORD,
+	MACE,
+	GUN,
+	BOW,
+}
+
+public enum ARMOR_TYPE{
+	NONE,
+	SHIELD,
+	BRACER,
+	HELMET,
 }
 
 

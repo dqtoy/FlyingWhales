@@ -359,22 +359,22 @@ namespace ECS{
 			if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
 				if(chance < 7){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status.Add(IBodyPart.STATUS.INJURED);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.INJURED);
+					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.INJURED);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
 					return chosenBodyPart;
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 				if(chance < 10){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status.Add(IBodyPart.STATUS.BLEEDING);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.BLEEDING);
+					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BLEEDING);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
 					return chosenBodyPart;
 				}
 			}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 				if(chance < 5){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status.Add(IBodyPart.STATUS.DECAPITATED);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.DECAPITATED);
+					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.DECAPITATED);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
 					//If body part is essential, instant death to the character
 					if(chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
 						CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
@@ -384,8 +384,8 @@ namespace ECS{
 			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
 				if(chance < 5){
 					BodyPart chosenBodyPart = GetRandomBodyPart (targetCharacter);
-					chosenBodyPart.status.Add(IBodyPart.STATUS.BURNING);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (IBodyPart.STATUS.BURNING);
+					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BURNING);
+					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
 					return chosenBodyPart;
 				}
 			}
@@ -401,7 +401,7 @@ namespace ECS{
 //			}
 
 //			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
-			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.status.Contains(IBodyPart.STATUS.DECAPITATED)).ToList();
+			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();
 			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
 		}
 		#endregion
@@ -478,13 +478,13 @@ namespace ECS{
 		private void CheckBodyPart(BODY_PART bodyPart, Character character){
 			for (int i = 0; i < character.bodyParts.Count; i++) {
 				BodyPart characterBodyPart = character.bodyParts [i];
-				if(characterBodyPart.bodyPart == bodyPart && !characterBodyPart.status.Contains(IBodyPart.STATUS.DECAPITATED)){
+				if(characterBodyPart.bodyPart == bodyPart && !characterBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
 					return;
 				}
 
 				for (int j = 0; j < characterBodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = characterBodyPart.secondaryBodyParts [j];
-					if(secondaryBodyPart.bodyPart == bodyPart && !secondaryBodyPart.status.Contains(IBodyPart.STATUS.DECAPITATED)){
+					if(secondaryBodyPart.bodyPart == bodyPart && !secondaryBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
 						return;
 					}
 				}
