@@ -189,7 +189,11 @@ namespace ECS{
 			for (int i = 0; i < sourceCharacter.characterClass.skills.Count; i++) {
 				Skill skill = sourceCharacter.characterClass.skills [i];
 				if(skill.isEnabled && HasTargetInRangeForSkill(skill, sourceCharacter)){
-					skillActivationWeights.Add (skill, skill.activationWeight);
+					int activationWeight = skill.activationWeight;
+					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
+						activationWeight /= 2;
+					}
+					skillActivationWeights.Add (skill, activationWeight);
 				}
 			}
 
@@ -201,7 +205,7 @@ namespace ECS{
 		}
 
 		//Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
-		private bool HasTargetInRangeForSkill(Skill skill, Character sourceCharacter){
+		internal bool HasTargetInRangeForSkill(Skill skill, Character sourceCharacter){
 			if(skill is AttackSkill){
 				if(this.charactersSideA.Contains(sourceCharacter)){
 					for (int i = 0; i < this.charactersSideB.Count; i++) {
@@ -225,6 +229,35 @@ namespace ECS{
 				return true;
 			}
 
+		}
+
+		internal bool HasTargetInRangeForSkill(SKILL_TYPE skillType, Character sourceCharacter){
+			if(skillType == SKILL_TYPE.ATTACK){
+				for (int i = 0; i < sourceCharacter.characterClass.skills.Count; i++) {
+					Skill skill = sourceCharacter.characterClass.skills [i];
+					if(skill is AttackSkill){
+						if(this.charactersSideA.Contains(sourceCharacter)){
+							for (int j = 0; j < this.charactersSideB.Count; j++) {
+								Character targetCharacter = this.charactersSideB [j];
+								int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+								if(skill.range >= rowDistance){
+									return true;
+								}
+							}
+						}else{
+							for (int j = 0; j < this.charactersSideA.Count; j++) {
+								Character targetCharacter = this.charactersSideA [j];
+								int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+								if(skill.range >= rowDistance){
+									return true;
+								}
+							}
+						}
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 		//Returns the row distance/difference of two characters
 		private int GetRowDistanceBetweenTwoCharacters(Character sourceCharacter, Character targetCharacter){
