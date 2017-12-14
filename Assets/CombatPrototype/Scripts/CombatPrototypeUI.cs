@@ -73,12 +73,20 @@ namespace ECS{
 
         public void AddCombatLog(string combatLog) {
             resultsLog.Add(combatLog);
-            combatSummaryLbl.text += combatLog + "\n";
+            combatSummaryLbl.text += "--" + combatLog + "\n";
         }
 
         public void ClearCombatLogs() {
             resultsLog.Clear();
             combatSummaryLbl.text = string.Empty;
+        }
+
+        public void ResetSimulation() {
+            ClearCombatLogs();
+            CombatPrototype.Instance.charactersSideA.Clear();
+            CombatPrototype.Instance.charactersSideB.Clear();
+            UpdateCharactersList(SIDES.A);
+            UpdateCharactersList(SIDES.B);
         }
     }
 }

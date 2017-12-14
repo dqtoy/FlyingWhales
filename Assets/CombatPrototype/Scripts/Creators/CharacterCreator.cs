@@ -75,11 +75,11 @@ namespace ECS {
         }
         private CharacterSetup ConstructCharacterSetup(string raceSettingFileName, string characterClassFileName) {
             CharacterSetup newCharacter = new CharacterSetup();
-            string raceData = File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingFileName + ".json");
-            string characterClassData = File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassFileName + ".json");
+            //string raceData = File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingFileName + ".json");
+            //string characterClassData = File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassFileName + ".json");
             newCharacter.fileName = fileName;
-            newCharacter.raceSetting = JsonUtility.FromJson<RaceSetting>(raceData);
-            newCharacter.characterClass = JsonUtility.FromJson<CharacterClass>(characterClassData);
+            newCharacter.raceSettingName = raceSettingFileName;
+            newCharacter.characterClassName = characterClassFileName;
 
             return newCharacter;
         }
@@ -105,7 +105,7 @@ namespace ECS {
                 this.fileName = characterSetup.fileName;
                 for (int i = 0; i < raceChoices.Count; i++) {
                     string currChoice = raceChoices[i];
-                    if (currChoice.Equals(characterSetup.raceSetting.race.ToString())) {
+                    if (currChoice.Equals(characterSetup.raceSettingName)) {
                         raceSetupIndex = i;
                         break;
                     }
@@ -113,7 +113,7 @@ namespace ECS {
 
                 for (int i = 0; i < characterClassChoices.Count; i++) {
                     string currChoice = characterClassChoices[i];
-                    if (currChoice.Equals(characterSetup.characterClass.className.ToString())) {
+                    if (currChoice.Equals(characterSetup.characterClassName)) {
                         characterClassIndex = i;
                         break;
                     }

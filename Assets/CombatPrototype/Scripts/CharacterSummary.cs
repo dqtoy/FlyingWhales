@@ -29,7 +29,7 @@ namespace ECS{
             for (int i = 0; i < character.characterClass.skills.Count; i++) {
                 Skill currSkill = character.characterClass.skills[i];
                 classInfoLbl.text += currSkill.skillName.ToString();
-                if(i > 0) {
+                if(i + 1 < character.characterClass.skills.Count) {
                     classInfoLbl.text += ", ";
                 }
             }

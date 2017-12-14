@@ -54,11 +54,16 @@ namespace ECS{
             } else {
                 this.charactersSideB.Remove(character);
             }
+            CombatPrototypeUI.Instance.UpdateCharactersList(side);
         }
         //Remove character without specifying a side
         internal void RemoveCharacter(Character character) {
-            this.charactersSideA.Remove(character);
-            this.charactersSideB.Remove(character);
+            if (this.charactersSideA.Remove(character)) {
+                CombatPrototypeUI.Instance.UpdateCharactersList(SIDES.A);
+            } else {
+                this.charactersSideB.Remove(character);
+                CombatPrototypeUI.Instance.UpdateCharactersList(SIDES.B);
+            }
         }
         internal List<Character> GetCharactersOnSide(SIDES side) {
             if (side == SIDES.A) {
@@ -327,21 +332,25 @@ namespace ECS{
 			//TODO: damage computation must be power + attributeModifier * armor damage mitigation, add armor damage mitigation variable
 			int damage = attackSkill.attackPower;
 
-			targetCharacter.AdjustHP (-damage);
-
 			BodyPart damagedBodyPart =	DealDamageToBodyPart (attackSkill, targetCharacter);
 
-			if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " crushes " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, injuring it.");
-			}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " pierces " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, causing it to bleed.");
-			}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " slashes " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, decapitating it.");
-			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " burns " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage.");
-			}
+            if(damagedBodyPart != null) {
+                if (attackSkill.attackType == ATTACK_TYPE.CRUSH) {
+                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and crushes " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, injuring it.");
+                } else if (attackSkill.attackType == ATTACK_TYPE.PIERCE) {
+                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and pierces " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, causing it to bleed.");
+                } else if (attackSkill.attackType == ATTACK_TYPE.SLASH) {
+                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and slashes " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage, decapitating it.");
+                } else if (attackSkill.attackType == ATTACK_TYPE.BURN) {
+                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and burns " + targetCharacter.name + "'s " + damagedBodyPart.bodyPart.ToString().ToLower() + " for " + damage.ToString() + " damage.");
+                }
+            } else {
+                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name + " for " + damage.ToString());
+            }
 
-		}
+            targetCharacter.AdjustHP(-damage);
+
+        }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
 		private BodyPart DealDamageToBodyPart(AttackSkill attackSkill, Character targetCharacter){
@@ -414,7 +423,7 @@ namespace ECS{
 		private void FleeSkill(Character sourceCharacter, Character targetCharacter){
 			//TODO: Character flees
 			RemoveCharacter(targetCharacter);
-			CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " chickened out and left his team!");
+			CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " chickened out and ran away!");
 		}
 		#endregion
 
@@ -431,12 +440,12 @@ namespace ECS{
 				if (targetCharacter.currentRow != 1) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow - 1);
 				}
-				CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " moved to the left.");
+				CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " moved to the left. (" + targetCharacter.currentRow + ")");
 			}else if(skill.skillName == "MoveRight"){
 				if (targetCharacter.currentRow != 5) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow + 1);
 				}
-				CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " moved to the right.");
+				CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " moved to the right.(" + targetCharacter.currentRow + ")");
 			}
 
 //			if(sourceCharacter.currentRow == 1){

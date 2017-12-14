@@ -180,8 +180,8 @@ namespace ECS{
 		//Adjust current HP based on specified paramater, but HP must not go below 0
 		internal void AdjustHP(int amount){
 			this._currentHP += amount;
-			if(this._currentHP < 0){
-				this._currentHP = 0;
+            this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
+			if(this._currentHP == 0){
 				Death ();
 			}
 		}
