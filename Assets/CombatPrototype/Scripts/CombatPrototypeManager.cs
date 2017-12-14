@@ -21,6 +21,7 @@ namespace ECS {
                 string file = baseCharacterJsons[i];
                 string dataAsJson = System.IO.File.ReadAllText(file);
                 CharacterSetup charSetup = JsonUtility.FromJson<CharacterSetup>(dataAsJson);
+                charSetup.characterClass.ConstructAllSkillsList();
                 baseCharacters[i] = charSetup;
             }
         }

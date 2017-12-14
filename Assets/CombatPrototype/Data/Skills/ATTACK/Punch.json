@@ -1,1 +1,1 @@
-{"skillName":"Punch","activationWeight":50,"accuracy":100.0,"range":0,"isEnabled":false,"skillRequirements":[{"itemQuantity":1,"attributeRequired":1}],"attributeModifier":0,"attackPower":10,"attackType":0,"statusEffect":3,"statusEffectRate":10,"injuryRate":75,"decapitationRate":0}
+{"skillName":"Punch","activationWeight":50,"accuracy":100.0,"range":1,"isEnabled":false,"skillRequirements":[{"itemQuantity":1,"attributeRequired":1}],"attributeModifier":0,"attackPower":10,"attackType":0,"statusEffect":3,"statusEffectRate":10,"injuryRate":75,"decapitationRate":0}

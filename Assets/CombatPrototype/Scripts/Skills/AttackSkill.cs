@@ -2,6 +2,7 @@
 using System.Collections;
 
 namespace ECS {
+    [System.Serializable]
     public class AttackSkill : Skill {
         public int attackPower;
         public ATTACK_TYPE attackType;

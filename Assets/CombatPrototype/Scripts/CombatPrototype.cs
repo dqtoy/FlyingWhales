@@ -71,15 +71,16 @@ namespace ECS{
 
         //This simulates the whole combat system
         public void CombatSimulation(){
+            CombatPrototypeUI.Instance.ClearCombatLogs();
 //			List<Character> charactersSideA = this.allCharactersAndSides [SIDES.A];
 //			List<Character> charactersSideB = this.allCharactersAndSides [SIDES.B];
 
-			bool isInitial = true;
+            bool isInitial = true;
 			bool isOneSideDefeated = false;
 			SetRowNumber (this.charactersSideA, 1);
 			SetRowNumber (this.charactersSideB, 5);
 
-			while(this.charactersSideA.Count > 0 && this.charactersSideA.Count > 0){
+			while(this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0){
 				Character characterThatWillAct = GetCharacterThatWillAct (this.charactersSideA, this.charactersSideB, isInitial);
 				characterThatWillAct.EnableDisableSkills ();
 

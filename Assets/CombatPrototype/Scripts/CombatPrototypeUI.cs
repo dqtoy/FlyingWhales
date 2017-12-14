@@ -75,5 +75,10 @@ namespace ECS{
             resultsLog.Add(combatLog);
             combatSummaryLbl.text += combatLog + "\n";
         }
+
+        public void ClearCombatLogs() {
+            resultsLog.Clear();
+            combatSummaryLbl.text = string.Empty;
+        }
     }
 }

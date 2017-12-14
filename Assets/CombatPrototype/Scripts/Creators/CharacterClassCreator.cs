@@ -46,8 +46,9 @@ namespace ECS {
             if (skillsFoldout && currCharacterClass.skills != null) {
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < currCharacterClass.skills.Count; i++) {
-                    SerializedProperty currSkill = skillProperty.FindPropertyRelative("skills").GetArrayElementAtIndex(i);
-                    EditorGUILayout.PropertyField(currSkill, true);
+                    EditorGUILayout.LabelField(currCharacterClass.skills[i].skillName);
+                    //SerializedProperty currSkill = skillProperty.FindPropertyRelative("_skills").GetArrayElementAtIndex(i);
+                    //EditorGUILayout.PropertyField(currSkill, true);
                 }
                 serializedObject.ApplyModifiedProperties();
                 EditorGUI.indentLevel--;
@@ -95,25 +96,26 @@ namespace ECS {
             switch (skillTypeToAdd) {
                 case SKILL_TYPE.ATTACK:
                     AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-                    currCharacterClass.skills.Add(attackSkill);
+                    currCharacterClass.AddSkillOfType(skillTypeToAdd, attackSkill);
                     break;
                 case SKILL_TYPE.HEAL:
                     HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-                    currCharacterClass.skills.Add(healSkill);
+                    currCharacterClass.AddSkillOfType(skillTypeToAdd, healSkill);
                     break;
                 case SKILL_TYPE.OBTAIN_ITEM:
                     ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-                    currCharacterClass.skills.Add(obtainSkill);
+                    currCharacterClass.AddSkillOfType(skillTypeToAdd, obtainSkill);
                     break;
                 case SKILL_TYPE.FLEE:
                     FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
-                    currCharacterClass.skills.Add(fleeSkill);
+                    currCharacterClass.AddSkillOfType(skillTypeToAdd, fleeSkill);
                     break;
                 case SKILL_TYPE.MOVE:
                     MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-                    currCharacterClass.skills.Add(moveSkill);
+                    currCharacterClass.AddSkillOfType(skillTypeToAdd, moveSkill);
                     break;
             }
+            currCharacterClass.ConstructAllSkillsList();
         }
         #endregion
 
