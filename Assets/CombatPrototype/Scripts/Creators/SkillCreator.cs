@@ -214,6 +214,7 @@ namespace ECS {
             skillName = skill.skillName;
             activationWeight = skill.activationWeight;
             accuracy = skill.accuracy;
+            range = skill.range;
             skillRequirements = skill.skillRequirements;
         }
         private void LoadAttackSkill(AttackSkill skill) {
