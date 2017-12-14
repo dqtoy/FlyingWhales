@@ -194,11 +194,12 @@ namespace ECS{
 						if (this._currentRow == 1) {
 							skill.isEnabled = false;
 						} else {
+							bool hasEnemyOnLeft = false;
 							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
 									Character enemy = CombatPrototype.Instance.charactersSideB [j];
 									if(enemy.currentRow < this._currentRow){
-										skill.isEnabled = false;
+										hasEnemyOnLeft = true;
 										break;
 									}
 								}
@@ -206,21 +207,25 @@ namespace ECS{
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
 									Character enemy = CombatPrototype.Instance.charactersSideA [j];
 									if(enemy.currentRow < this._currentRow){
-										skill.isEnabled = false;
+										hasEnemyOnLeft = true;
 										break;
 									}
 								}
+							}
+							if(!hasEnemyOnLeft){
+								skill.isEnabled = false;
 							}
 						}
 					}else if(skill.skillName == "MoveRight"){
 						if (this._currentRow == 5) {
 							skill.isEnabled = false;
 						} else {
+							bool hasEnemyOnRight = false;
 							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
 									Character enemy = CombatPrototype.Instance.charactersSideB [j];
 									if(enemy.currentRow > this._currentRow){
-										skill.isEnabled = false;
+										hasEnemyOnRight = true;
 										break;
 									}
 								}
@@ -228,10 +233,13 @@ namespace ECS{
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
 									Character enemy = CombatPrototype.Instance.charactersSideA [j];
 									if(enemy.currentRow > this._currentRow){
-										skill.isEnabled = false;
+										hasEnemyOnRight = true;
 										break;
 									}
 								}
+							}
+							if(!hasEnemyOnRight){
+								skill.isEnabled = false;
 							}
 						}
 					}
