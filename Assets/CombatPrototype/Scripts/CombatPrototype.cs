@@ -265,15 +265,15 @@ namespace ECS{
 		private void FailedSkill(Skill skill, Character sourceCharacter, Character targetCharacter){
 			//TODO: What happens when a skill has failed?
 			if(skill is FleeSkill){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell because of a used double condoms!");
+				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell down!");
 				CounterAttack (targetCharacter);
 			}else if(skill is AttackSkill){
 				CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to " + skill.skillName + " " + targetCharacter.name + " but missed!");
 			}else if(skill is HealSkill){
 				if(sourceCharacter == targetCharacter){
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use a bandage to heal himself/herself but it is already expired!");
+					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName + " to heal himself/herself but it is already expired!");
 				}else{
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use a bandage to heal " + targetCharacter.name + " but it is already expired!");
+					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName + " to heal " + targetCharacter.name + " but it is already expired!");
 				}
 			}
 		}
@@ -411,9 +411,9 @@ namespace ECS{
 			HealSkill healSkill = (HealSkill)skill;	
 			targetCharacter.AdjustHP (healSkill.healPower);
 			if(sourceCharacter == targetCharacter){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used a medkit and healed himself/herself for " + healSkill.healPower.ToString() + ".");
+				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".");
 			}else if(sourceCharacter == targetCharacter){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used a medkit and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".");
+				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".");
 			}
 
 		}
