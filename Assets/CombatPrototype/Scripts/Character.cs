@@ -20,10 +20,10 @@ namespace ECS{
 
         [SerializeField] private int _exp;
 
-        [SerializeField] private int _strGain;
-        [SerializeField] private int _intGain;
-        [SerializeField] private int _agiGain;
-        [SerializeField] private int _hpGain;
+        //[SerializeField] private int _strGain;
+        //[SerializeField] private int _intGain;
+        //[SerializeField] private int _agiGain;
+        //[SerializeField] private int _hpGain;
 
         [SerializeField] private bool _isDead;
 		private List<Trait>	_traits;
@@ -79,19 +79,19 @@ namespace ECS{
             get { return _exp; }
         }
         internal int strGain {
-            get { return _strGain; }
+            get { return _characterClass.strGain + _raceSetting.strGain; }
         }
         internal int intGain {
-            get { return _intGain; }
+            get { return _characterClass.intGain + _raceSetting.intGain; }
         }
         internal int agiGain {
-            get { return _agiGain; }
+            get { return _characterClass.agiGain + _raceSetting.agiGain; }
         }
         internal int hpGain {
-            get { return _hpGain; }
+            get { return _characterClass.hpGain + _raceSetting.hpGain; }
         }
         #endregion
-        public Character(CharacterSetup baseSetup) {
+        public Character(CharacterSetup baseSetup, int level = 1) {
             GENDER gender = GENDER.MALE;
             if(Random.Range(0, 2) == 0) {
                 gender = GENDER.FEMALE;
@@ -108,14 +108,18 @@ namespace ECS{
             _intelligence = baseSetup.raceSetting.baseInt;
             _agility = baseSetup.raceSetting.baseAgi;
             _exp = 0;
-            _strGain = baseSetup.raceSetting.strGain + baseSetup.characterClass.strGain;
-            _intGain = baseSetup.raceSetting.intGain + baseSetup.characterClass.intGain;
-            _agiGain = baseSetup.raceSetting.agiGain + baseSetup.characterClass.agiGain;
-            _hpGain = baseSetup.raceSetting.hpGain + baseSetup.characterClass.hpGain;
+            //_strGain = baseSetup.raceSetting.strGain + baseSetup.characterClass.strGain;
+            //_intGain = baseSetup.raceSetting.intGain + baseSetup.characterClass.intGain;
+            //_agiGain = baseSetup.raceSetting.agiGain + baseSetup.characterClass.agiGain;
+            //_hpGain = baseSetup.raceSetting.hpGain + baseSetup.characterClass.hpGain;
             _bodyParts = new List<BodyPart>(baseSetup.raceSetting.bodyParts);
             _actRate = baseSetup.characterClass.actRate;
             _characterClass = baseSetup.characterClass;
             _raceSetting = baseSetup.raceSetting;
+
+            if (level > 1) {
+                LevelUp(level - 1);
+            }
             //TODO: Generate Traits
         }
 
@@ -222,6 +226,22 @@ namespace ECS{
 				}
 			}
 		}
+
+        #region Levels
+        public void LevelUp(int levels) {
+            for (int i = 0; i < levels; i++) {
+                IncreaseLevel();
+            }
+        }
+        private void IncreaseLevel() {
+            _level += 1;
+            _strength += strGain;
+            _intelligence += intGain;
+            _agility += agiGain;
+            _maxHP += hpGain;
+            _exp = 0;
+        }
+        #endregion
     }
 }
 
