@@ -90,8 +90,8 @@ public class InternationalIncident : GameEvent {
         newLog.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
         newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
         newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-        newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
-        UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
+		newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+		UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, otherKingdom });
     }
     internal void ShowCaughtLog() {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_caught");
