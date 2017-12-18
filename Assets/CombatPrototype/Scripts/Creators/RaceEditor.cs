@@ -10,7 +10,9 @@ namespace ECS {
 		RaceComponent raceComponent;
 
 		public override void OnInspectorGUI() {
-			raceComponent = (RaceComponent)target;
+			if(raceComponent == null){
+				raceComponent = (RaceComponent)target;
+			}
 
             GUILayout.Label("Race Editor ", EditorStyles.boldLabel);
 			raceComponent.race = (RACE)EditorGUILayout.EnumPopup("Race: ", raceComponent.race);
@@ -60,11 +62,11 @@ namespace ECS {
         #endregion
 
         #region Loading
-        private void LoadRaceSettings(RACE race) {
-            string path = "Assets/CombatPrototype/Data/RaceSettings/" + race.ToString() + ".json";
-            string dataAsJson = File.ReadAllText(path);
-			raceComponent = JsonUtility.FromJson<RaceComponent>(dataAsJson);
-        }
+//        private void LoadRaceSettings(RACE race) {
+//            string path = "Assets/CombatPrototype/Data/RaceSettings/" + race.ToString() + ".json";
+//            string dataAsJson = File.ReadAllText(path);
+//			raceComponent = JsonUtility.FromJson<RaceSetting>(dataAsJson);
+//        }
         #endregion
 
     }

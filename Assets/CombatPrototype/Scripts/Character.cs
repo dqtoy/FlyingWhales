@@ -31,7 +31,7 @@ namespace ECS{
 		[SerializeField] private List<Item> _items;
 
 		private CharacterClass _characterClass;
-		protected RaceComponent _raceSetting;
+		protected RaceSetting _raceSetting;
 
 		#region getters / setters
 		internal string name{
@@ -53,7 +53,7 @@ namespace ECS{
         internal CharacterClass characterClass{
 			get { return this._characterClass; }
 		}
-		internal RaceComponent raceSetting {
+		internal RaceSetting raceSetting {
             get { return _raceSetting; }
         }
 		internal List<BodyPart> bodyParts{

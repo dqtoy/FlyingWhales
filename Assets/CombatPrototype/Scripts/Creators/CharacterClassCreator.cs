@@ -5,29 +5,15 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace ECS {
-    public class CharacterClassCreator : EditorWindow {
+	[CustomEditor(typeof(ClassComponent))]
+    public class CharacterClassCreator : Editor {
 
-        private Vector2 scrollPos = Vector2.zero;
+		ClassComponent currCharacterClass;
 
-        [SerializeField] private CharacterClass currCharacterClass;
-
-        private bool skillsFoldout;
-
-        private SKILL_TYPE skillTypeToAdd;
-        private int skillToAddIndex;
-
-        // Add menu item to the Window menu
-        [MenuItem("Window/Character Class Creator")]
-        public static void ShowWindow() {
-            //Show existing window instance. If one doesn't exist, make one.
-            EditorWindow.GetWindow(typeof(CharacterClassCreator));
-        }
-
-        private void OnGUI() {
-            if(currCharacterClass == null) {
-                currCharacterClass = new CharacterClass();
-            }
-            this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos, GUILayout.Width(this.position.width), GUILayout.Height(this.position.height));
+        public override void OnInspectorGUI() {
+			if(currCharacterClass == null){
+				currCharacterClass = (ClassComponent)target;
+			}
             GUILayout.Label("Class Creator ", EditorStyles.boldLabel);
             currCharacterClass.className = EditorGUILayout.TextField("Class Name: ", currCharacterClass.className);
             currCharacterClass.actRate = EditorGUILayout.IntField("Act Rate: ", currCharacterClass.actRate);
@@ -39,11 +25,10 @@ namespace ECS {
             currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
             currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);
 
-            SerializedObject serializedObject = new SerializedObject(this);
             SerializedProperty skillProperty = serializedObject.FindProperty("currCharacterClass");
-            skillsFoldout = EditorGUILayout.Foldout(skillsFoldout, "Skills");
+			currCharacterClass.skillsFoldout = EditorGUILayout.Foldout(currCharacterClass.skillsFoldout, "Skills");
 
-            if (skillsFoldout && currCharacterClass.skills != null) {
+			if (currCharacterClass.skillsFoldout && currCharacterClass.skills != null) {
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < currCharacterClass.skills.Count; i++) {
                     EditorGUILayout.LabelField(currCharacterClass.skills[i].skillName);
@@ -58,12 +43,12 @@ namespace ECS {
             GUILayout.Space(10);
             GUILayout.BeginVertical(EditorStyles.helpBox);
             GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
-            skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", skillTypeToAdd);
-            List<string> choices = GetAllSkillsOfType(skillTypeToAdd);
-            skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", skillToAddIndex, choices.ToArray());
+			currCharacterClass.skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", currCharacterClass.skillTypeToAdd);
+			List<string> choices = GetAllSkillsOfType(currCharacterClass.skillTypeToAdd);
+			currCharacterClass.skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", currCharacterClass.skillToAddIndex, choices.ToArray());
             GUI.enabled = choices.Count > 0;
             if (GUILayout.Button("Add Skill")) {
-                AddSkillToList(choices[skillToAddIndex]);
+				AddSkillToList(choices[currCharacterClass.skillToAddIndex]);
             }
             GUI.enabled = true;
             GUILayout.EndHorizontal();
@@ -72,13 +57,6 @@ namespace ECS {
             if (GUILayout.Button("Create Character Class")) {
                 SaveCharacterClass();
             }
-            if (GUILayout.Button("Load Character Class")) {
-                LoadCharacterClass();
-            }
-            if (GUILayout.Button("Reset Values")) {
-                ResetValues();
-            }
-            EditorGUILayout.EndScrollView();
         }
 
         #region Skills
@@ -91,29 +69,29 @@ namespace ECS {
             return allSkillsOfType;
         }
         private void AddSkillToList(string skillName) {
-            string path = "Assets/CombatPrototype/Data/Skills/" + skillTypeToAdd.ToString() + "/" + skillName + ".json";
+			string path = "Assets/CombatPrototype/Data/Skills/" + currCharacterClass.skillTypeToAdd.ToString() + "/" + skillName + ".json";
             string dataAsJson = File.ReadAllText(path);
-            switch (skillTypeToAdd) {
-                case SKILL_TYPE.ATTACK:
-                    AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-                    currCharacterClass.AddSkillOfType(skillTypeToAdd, attackSkill);
-                    break;
-                case SKILL_TYPE.HEAL:
-                    HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-                    currCharacterClass.AddSkillOfType(skillTypeToAdd, healSkill);
-                    break;
-                case SKILL_TYPE.OBTAIN_ITEM:
-                    ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-                    currCharacterClass.AddSkillOfType(skillTypeToAdd, obtainSkill);
-                    break;
-                case SKILL_TYPE.FLEE:
-                    FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
-                    currCharacterClass.AddSkillOfType(skillTypeToAdd, fleeSkill);
-                    break;
-                case SKILL_TYPE.MOVE:
-                    MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-                    currCharacterClass.AddSkillOfType(skillTypeToAdd, moveSkill);
-                    break;
+			switch (currCharacterClass.skillTypeToAdd) {
+            case SKILL_TYPE.ATTACK:
+                AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
+				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, attackSkill);
+                break;
+            case SKILL_TYPE.HEAL:
+                HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
+				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, healSkill);
+                break;
+            case SKILL_TYPE.OBTAIN_ITEM:
+                ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
+				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, obtainSkill);
+                break;
+            case SKILL_TYPE.FLEE:
+                FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
+				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, fleeSkill);
+                break;
+            case SKILL_TYPE.MOVE:
+                MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, moveSkill);
+                break;
             }
             currCharacterClass.ConstructAllSkillsList();
         }
@@ -135,29 +113,29 @@ namespace ECS {
                 SaveCharacterClassJson(currCharacterClass, path);
             }
         }
-        private void SaveCharacterClassJson(CharacterClass characterClass, string path) {
+        private void SaveCharacterClassJson(ClassComponent characterClass, string path) {
             string jsonString = JsonUtility.ToJson(characterClass);
             System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
             writer.WriteLine(jsonString);
             writer.Close();
             UnityEditor.AssetDatabase.ImportAsset(path);
-            Debug.Log("Successfully saved class" + characterClass.className + " at " + path);
+            Debug.Log("Successfully saved class " + characterClass.className + " at " + path);
         }
         #endregion
 
         #region Loading
-        private void LoadCharacterClass() {
-            string filePath = EditorUtility.OpenFilePanel("Select Character Json", "Assets/CombatPrototype/Data/CharacterClasses/", "json");
-            if (!string.IsNullOrEmpty(filePath)) {
-                ResetValues();
-                string dataAsJson = File.ReadAllText(filePath);
-                LoadCharacter(JsonUtility.FromJson<CharacterClass>(dataAsJson));
-            }
-        }
-        private void LoadCharacter(CharacterClass character) {
-            currCharacterClass = character;
-            currCharacterClass.ConstructAllSkillsList();
-        }
+//        private void LoadCharacterClass() {
+//            string filePath = EditorUtility.OpenFilePanel("Select Character Json", "Assets/CombatPrototype/Data/CharacterClasses/", "json");
+//            if (!string.IsNullOrEmpty(filePath)) {
+//                ResetValues();
+//                string dataAsJson = File.ReadAllText(filePath);
+//                LoadCharacter(JsonUtility.FromJson<CharacterClass>(dataAsJson));
+//            }
+//        }
+//        private void LoadCharacter(CharacterClass character) {
+//            currCharacterClass = character;
+//            currCharacterClass.ConstructAllSkillsList();
+//        }
         #endregion
 
         private void ResetValues() {

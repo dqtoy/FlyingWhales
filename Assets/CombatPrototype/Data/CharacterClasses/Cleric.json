@@ -1,0 +1,1 @@
+{"className":"Cleric","attackSkills":["Fireball"],"healSkills":["Kiss","Rub"],"fleeSkills":["Run Away"],"moveSkills":["MoveLeft","MoveRight"],"obtainSkills":["Steal"],"actRate":1,"strGain":2,"intGain":3,"agiGain":4,"hpGain":5,"dodgeRate":6,"parryRate":7,"blockRate":8}

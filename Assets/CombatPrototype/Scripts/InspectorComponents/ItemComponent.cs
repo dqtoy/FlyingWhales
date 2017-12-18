@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace ECS{
-	public class Item : EntityComponent {
+	public class ItemComponent : MonoBehaviour {
+		public ITEM_TYPE itemType;
 		public string itemName;
 		public int bonusActRate;
 		public int bonusStrength;
@@ -14,6 +15,16 @@ namespace ECS{
 		public int bonusParryRate;
 		public int bonusBlockRate;
 		public List<StatusEffectResistance> statusEffectResistances = new List<StatusEffectResistance>();
-	}
-}
 
+		//Weapon Fields
+		public WEAPON_TYPE weaponType;
+		public float skillPowerModifier;
+		public List<IBodyPart.ATTRIBUTE> weaponAttributes = new List<IBodyPart.ATTRIBUTE>();
+
+		//Armor Fields
+		public ARMOR_TYPE armorType;
+		public float damageMitigation;
+		public List<IBodyPart.ATTRIBUTE> armorAttributes = new List<IBodyPart.ATTRIBUTE>();
+	}
+
+}

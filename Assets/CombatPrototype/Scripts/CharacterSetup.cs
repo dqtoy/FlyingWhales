@@ -5,25 +5,27 @@ namespace ECS {
     [System.Serializable]
     public class CharacterSetup {
         public string fileName;
-        public string characterClassName;
-        public string raceSettingName;
+
+		public TextAsset characterClassJson;
+		public TextAsset raceSetupJson;
 
         private CharacterClass _charClass;
-		private RaceComponent _raceSetting;
+		private RaceSetting _raceSetting;
+
 
         #region getters/setters
         public CharacterClass characterClass {
             get {
                 if (_charClass == null) {
-                    _charClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassName + ".json"));
+					_charClass = JsonUtility.FromJson<CharacterClass>(characterClassJson.text);
                 }
                 return _charClass;
             }
         }
-		public RaceComponent raceSetting {
+		public RaceSetting raceSetting {
             get {
                 if (_raceSetting == null) {
-					_raceSetting = JsonUtility.FromJson<RaceComponent>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingName + ".json"));
+					_raceSetting = JsonUtility.FromJson<RaceSetting>(raceSetupJson.text);
                 }
                 return _raceSetting;
             }

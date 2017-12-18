@@ -8,7 +8,9 @@ namespace ECS {
     public class SkillCreator : Editor {
 		SkillComponent skillComponent;
         public override void OnInspectorGUI() {
-			skillComponent = (SkillComponent)target;
+			if(skillComponent == null){
+				skillComponent = (SkillComponent)target;
+			}
 
             GUILayout.Label("Skill Creator ", EditorStyles.boldLabel);
 			skillComponent.skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillComponent.skillType);
