@@ -144,7 +144,6 @@ namespace ECS {
         #endregion
 
         #region Loading
-<<<<<<< HEAD
 //        private void LoadItem() {
 //            string filePath = EditorUtility.OpenFilePanel("Select Item Json", "Assets/CombatPrototype/Data/Items/", "json");
 //            if (!string.IsNullOrEmpty(filePath)) {
