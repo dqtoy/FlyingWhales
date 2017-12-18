@@ -5,67 +5,33 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace ECS {
-    public class RaceEditor : EditorWindow {
+	[CustomEditor(typeof(RaceSetting))]
+    public class RaceEditor : Editor {
+		RaceComponent raceComponent;
 
-        private Vector2 scrollPos = Vector2.zero;
-        [SerializeField] private RaceSetting currRaceSetting;
+		public override void OnInspectorGUI() {
+			raceComponent = (RaceComponent)target;
 
-        private int bodyPartToAddIndex;
-        // Add menu item to the Window menu
-        [MenuItem("Window/Race Editor")]
-        public static void ShowWindow() {
-            //Show existing window instance. If one doesn't exist, make one.
-            EditorWindow.GetWindow(typeof(RaceEditor));
-        }
-
-        private void OnGUI() {
-            if(currRaceSetting == null) {
-                currRaceSetting = new RaceSetting(RACE.NONE);
-            }
-            this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos, GUILayout.Width(this.position.width), GUILayout.Height(this.position.height));
             GUILayout.Label("Race Editor ", EditorStyles.boldLabel);
-            currRaceSetting.race = (RACE)EditorGUILayout.EnumPopup("Race: ", currRaceSetting.race);
-            string path = "Assets/CombatPrototype/Data/RaceSettings/" + currRaceSetting.race.ToString() + ".json";
-            if (GUI.changed) {
-                if (Utilities.DoesFileExist(path)) {
-                    //show settings of current race
-                    LoadRaceSettings(currRaceSetting.race);
-                } else {
-                    currRaceSetting = new RaceSetting(currRaceSetting.race);
-                }
-            }
-            currRaceSetting.baseStr = EditorGUILayout.IntField("Base Strength: ", currRaceSetting.baseStr);
-            currRaceSetting.baseInt = EditorGUILayout.IntField("Base Intelligence: ", currRaceSetting.baseInt);
-            currRaceSetting.baseAgi = EditorGUILayout.IntField("Base Agility: ", currRaceSetting.baseAgi);
-            currRaceSetting.baseHP = EditorGUILayout.IntField("Base HP: ", currRaceSetting.baseHP);
+			raceComponent.race = (RACE)EditorGUILayout.EnumPopup("Race: ", raceComponent.race);
 
-            currRaceSetting.strGain = EditorGUILayout.IntField("Strength Gain: ", currRaceSetting.strGain);
-            currRaceSetting.intGain = EditorGUILayout.IntField("Intelligence Gain: ", currRaceSetting.intGain);
-            currRaceSetting.agiGain = EditorGUILayout.IntField("Agility Gain: ", currRaceSetting.agiGain);
-            currRaceSetting.hpGain = EditorGUILayout.IntField("HP Gain: ", currRaceSetting.hpGain);
+			raceComponent.baseStr = EditorGUILayout.IntField("Base Strength: ", raceComponent.baseStr);
+			raceComponent.baseInt = EditorGUILayout.IntField("Base Intelligence: ", raceComponent.baseInt);
+			raceComponent.baseAgi = EditorGUILayout.IntField("Base Agility: ", raceComponent.baseAgi);
+			raceComponent.baseHP = EditorGUILayout.IntField("Base HP: ", raceComponent.baseHP);
 
-            SerializedObject serializedObject = new SerializedObject(this);
-            SerializedProperty bodyPartsProperty = serializedObject.FindProperty("currRaceSetting");
-            EditorGUILayout.PropertyField(bodyPartsProperty.FindPropertyRelative("bodyParts"), true);
-            serializedObject.ApplyModifiedProperties();
+			raceComponent.strGain = EditorGUILayout.IntField("Strength Gain: ", raceComponent.strGain);
+			raceComponent.intGain = EditorGUILayout.IntField("Intelligence Gain: ", raceComponent.intGain);
+			raceComponent.agiGain = EditorGUILayout.IntField("Agility Gain: ", raceComponent.agiGain);
+			raceComponent.hpGain = EditorGUILayout.IntField("HP Gain: ", raceComponent.hpGain);
 
-            //GUILayout.Space(10);
-            //GUILayout.BeginVertical(EditorStyles.helpBox);
-            //GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
-            //List<string> choices = GetAllSkillsOfType(skillTypeToAdd);
-            //bodyPartToAddIndex = EditorGUILayout.Popup("Body Part To Add: ", bodyPartToAddIndex, choices.ToArray());
-            //GUI.enabled = choices.Count > 0;
-            //if (GUILayout.Button("Add Skill")) {
-            //    AddSkillToList(choices[skillToAddIndex]);
-            //}
-            //GUI.enabled = true;
-            //GUILayout.EndHorizontal();
-
+			SerializedProperty serializedProperty = serializedObject.FindProperty("bodyParts");
+			EditorGUILayout.PropertyField(serializedProperty, true);
+			serializedObject.ApplyModifiedProperties();
 
             if (GUILayout.Button("Save Race Settings")) {
                 SaveRaceSettings();
             }
-            EditorGUILayout.EndScrollView();
         }
 
         #region Body Parts
@@ -74,9 +40,9 @@ namespace ECS {
 
         #region Saving
         private void SaveRaceSettings() {
-            string path = "Assets/CombatPrototype/Data/RaceSettings/" + currRaceSetting.race.ToString() + ".json";
+			string path = "Assets/CombatPrototype/Data/RaceSettings/" + raceComponent.race.ToString() + ".json";
             if (Utilities.DoesFileExist(path)) {
-                if (EditorUtility.DisplayDialog("Overwrite Race Setting", "A race setting with name " + currRaceSetting.race.ToString() + " already exists. Replace with these settings?", "Yes", "No")) {
+				if (EditorUtility.DisplayDialog("Overwrite Race Setting", "A race setting with name " + raceComponent.race.ToString() + " already exists. Replace with these settings?", "Yes", "No")) {
                     File.Delete(path);
                     SaveRaceJson(path);
                 }
@@ -85,7 +51,7 @@ namespace ECS {
             }
         }
         private void SaveRaceJson(string path) {
-            string jsonString = JsonUtility.ToJson(currRaceSetting);
+			string jsonString = JsonUtility.ToJson(raceComponent);
             System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
             writer.WriteLine(jsonString);
             writer.Close();
@@ -97,7 +63,7 @@ namespace ECS {
         private void LoadRaceSettings(RACE race) {
             string path = "Assets/CombatPrototype/Data/RaceSettings/" + race.ToString() + ".json";
             string dataAsJson = File.ReadAllText(path);
-            currRaceSetting = JsonUtility.FromJson<RaceSetting>(dataAsJson);
+			raceComponent = JsonUtility.FromJson<RaceComponent>(dataAsJson);
         }
         #endregion
 

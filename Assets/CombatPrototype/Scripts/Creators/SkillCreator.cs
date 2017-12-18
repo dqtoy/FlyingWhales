@@ -4,51 +4,20 @@ using UnityEditor;
 using System.IO;
 
 namespace ECS {
-    public class SkillCreator : EditorWindow {
+	[CustomEditor(typeof(SkillComponent))]
+    public class SkillCreator : Editor {
+		SkillComponent skillComponent;
+        public override void OnInspectorGUI() {
+			skillComponent = (SkillComponent)target;
 
-        private Vector2 scrollPos = Vector2.zero;
-
-        private SKILL_TYPE skillType;
-        private string skillName;
-        private int activationWeight;
-        private float accuracy;
-        private int range;
-        public SkillRequirement[] skillRequirements;
-        public CHARACTER_ATTRIBUTES attributeModifier;
-
-        //Attack Skill Fields
-        private int attackPower;
-        private ATTACK_TYPE attackType;
-        private STATUS_EFFECT statusEffect;
-        private int statusEffectRate;
-        private int injuryRate;
-        private int decapitationRate;
-
-        //Heal Skill Fields
-        private int healPower;
-
-        // Add menu item to the Window menu
-        [MenuItem("Window/Skill Creator")]
-        public static void ShowWindow() {
-            //Show existing window instance. If one doesn't exist, make one.
-            //EditorWindow.CreateInstance("SkillCreator");
-            //EditorWindow.GetWindow(typeof(SkillCreator),);
-            SkillCreator window = CreateInstance<SkillCreator>();
-            window.title = "Skill Creator";
-            window.Show();
-            //EditorWindow.GetWindow(typeof(SkillCreator));
-        }
-
-        private void OnGUI() {
-            this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos, GUILayout.Width(this.position.width), GUILayout.Height(this.position.height));
             GUILayout.Label("Skill Creator ", EditorStyles.boldLabel);
-            skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillType);
-            skillName = EditorGUILayout.TextField("Skill Name: ", skillName);
-            activationWeight = EditorGUILayout.IntField("Activation Weight: ", activationWeight);
-            range = EditorGUILayout.IntField("Range: ", range);
-            accuracy = EditorGUILayout.Slider("Accuracy: ", accuracy, 0f, 100f);
-            attributeModifier = (CHARACTER_ATTRIBUTES)EditorGUILayout.EnumPopup("Attribute Modifier: ", attributeModifier);
-            switch (skillType) {
+			skillComponent.skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillComponent.skillType);
+			skillComponent.skillName = EditorGUILayout.TextField("Skill Name: ", skillComponent.skillName);
+			skillComponent.activationWeight = EditorGUILayout.IntField("Activation Weight: ", skillComponent.activationWeight);
+			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
+			skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
+			skillComponent.attributeModifier = (CHARACTER_ATTRIBUTES)EditorGUILayout.EnumPopup("Attribute Modifier: ", skillComponent.attributeModifier);
+			switch (skillComponent.skillType) {
                 case SKILL_TYPE.ATTACK:
                     ShowAttackSkillFields();
                     break;
@@ -66,36 +35,29 @@ namespace ECS {
                     break;
             }
 
-            SerializedObject serializedObject = new SerializedObject(this);
             SerializedProperty serializedProperty = serializedObject.FindProperty("skillRequirements");
             EditorGUILayout.PropertyField(serializedProperty, true);
             serializedObject.ApplyModifiedProperties();
 
             if (GUILayout.Button("Save Skill")) {
-                SaveSkill(skillName);
+				SaveSkill(skillComponent.skillName);
             }
-
-            if (GUILayout.Button("Load Skill")) {
-                LoadSkill();
-            }
-
-            EditorGUILayout.EndScrollView();
         }
 
         private void ShowAttackSkillFields() {
-            attackPower = EditorGUILayout.IntField("Attack Power: ", attackPower);
-            attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", attackType);
-            statusEffect = (STATUS_EFFECT)EditorGUILayout.EnumPopup("Status Effect: ", statusEffect);
-            if(statusEffect != STATUS_EFFECT.NONE) {
+			skillComponent.attackPower = EditorGUILayout.IntField("Attack Power: ", skillComponent.attackPower);
+			skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
+			skillComponent.statusEffect = (STATUS_EFFECT)EditorGUILayout.EnumPopup("Status Effect: ", skillComponent.statusEffect);
+			if(skillComponent.statusEffect != STATUS_EFFECT.NONE) {
                 EditorGUI.indentLevel++;
-                statusEffectRate = EditorGUILayout.IntField("Status Effect Rate: ", statusEffectRate);
+				skillComponent.statusEffectRate = EditorGUILayout.IntField("Status Effect Rate: ", skillComponent.statusEffectRate);
                 EditorGUI.indentLevel--;
             }
-            injuryRate = EditorGUILayout.IntField("Injury Rate: ", injuryRate);
-            decapitationRate = EditorGUILayout.IntField("Decapitation Rate: ", decapitationRate);
+			skillComponent.injuryRate = EditorGUILayout.IntField("Injury Rate: ", skillComponent.injuryRate);
+			skillComponent.decapitationRate = EditorGUILayout.IntField("Decapitation Rate: ", skillComponent.decapitationRate);
         }
         private void ShowHealSkillFields() {
-            healPower = EditorGUILayout.IntField("Heal Power: ", healPower);
+			skillComponent.healPower = EditorGUILayout.IntField("Heal Power: ",skillComponent. healPower);
         }
         private void ShowObtainItemFields() {
             //Nothing yet
@@ -113,7 +75,7 @@ namespace ECS {
                 EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
                 return;
             }
-            string path = "Assets/CombatPrototype/Data/Skills/" + skillType.ToString() + "/" + fileName + ".json";
+			string path = "Assets/CombatPrototype/Data/Skills/" + skillComponent.skillType.ToString() + "/" + fileName + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Skill", "A skill with name " + fileName + " already exists. Replace with this skill?", "Yes", "No")) {
                     File.Delete(path);
@@ -124,13 +86,13 @@ namespace ECS {
             }
         }
         private void SaveSkillJson(string path) {
-            if(skillType == SKILL_TYPE.ATTACK) {
+			if(skillComponent.skillType == SKILL_TYPE.ATTACK) {
                 SaveAttackSkill(path);
-            } else if (skillType == SKILL_TYPE.HEAL) {
+			} else if (skillComponent.skillType == SKILL_TYPE.HEAL) {
                 SaveHealSkill(path);
-            } else if (skillType == SKILL_TYPE.OBTAIN_ITEM) {
+			} else if (skillComponent.skillType == SKILL_TYPE.OBTAIN_ITEM) {
                 SaveObtainSkill(path);
-            } else if (skillType == SKILL_TYPE.MOVE) {
+			} else if (skillComponent.skillType == SKILL_TYPE.MOVE) {
                 SaveMoveSkill(path);
             } else {
                 SaveFleeSkill(path);
@@ -141,31 +103,31 @@ namespace ECS {
             Debug.Log("Successfully saved skill at " + path);
         }
         private void SetCommonData(Skill newSkill) {
-            newSkill.skillName = this.skillName;
-            newSkill.activationWeight = this.activationWeight;
-            newSkill.accuracy = this.accuracy;
-            newSkill.range = this.range;
-            newSkill.skillRequirements = this.skillRequirements;
-            newSkill.attributeModifier = this.attributeModifier;
+			newSkill.skillName = skillComponent.skillName;
+			newSkill.activationWeight = skillComponent.activationWeight;
+			newSkill.accuracy = skillComponent.accuracy;
+			newSkill.range = skillComponent.range;
+			newSkill.skillRequirements = skillComponent.skillRequirements;
+			newSkill.attributeModifier = skillComponent.attributeModifier;
         }
         private void SaveAttackSkill(string path) {
             AttackSkill newSkill = new AttackSkill();
 
             SetCommonData(newSkill);
 
-            newSkill.attackPower = attackPower;
-            newSkill.attackType = attackType;
-            newSkill.statusEffect = statusEffect;
-            newSkill.statusEffectRate = statusEffectRate;
-            newSkill.injuryRate = injuryRate;
-            newSkill.decapitationRate = decapitationRate;
+			newSkill.attackPower = skillComponent.attackPower;
+			newSkill.attackType = skillComponent.attackType;
+			newSkill.statusEffect = skillComponent.statusEffect;
+			newSkill.statusEffectRate = skillComponent.statusEffectRate;
+			newSkill.injuryRate = skillComponent.injuryRate;
+			newSkill.decapitationRate = skillComponent.decapitationRate;
 
             SaveJson(newSkill, path);
         }
         private void SaveHealSkill(string path) {
             HealSkill newSkill = new HealSkill();
             SetCommonData(newSkill);
-            newSkill.healPower = healPower;
+			newSkill.healPower = skillComponent.healPower;
             SaveJson(newSkill, path);
         }
         private void SaveFleeSkill(string path) {
@@ -193,66 +155,66 @@ namespace ECS {
         #endregion
 
         #region Loading
-        private void LoadSkill() {
-            string filePath = EditorUtility.OpenFilePanel("Select Skill Json", "Assets/CombatPrototype/Data/Skills/", "json");
-            if (!string.IsNullOrEmpty(filePath)) {
-                string dataAsJson = File.ReadAllText(filePath);
-                if (filePath.Contains("ATTACK")) {
-                    AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-                    LoadAttackSkill(currSkill);
-                } else if (filePath.Contains("HEAL")) {
-                    HealSkill currSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-                    LoadHealSkill(currSkill);
-                } else if (filePath.Contains("OBTAIN")) {
-                    ObtainSkill currSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-                    LoadObtainSkill(currSkill);
-                } else if (filePath.Contains("FLEE")) {
-                    FleeSkill currSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
-                    LoadFleeSkill(currSkill);
-                } else if (filePath.Contains("MOVE")) {
-                    MoveSkill currSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-                    LoadMoveSkill(currSkill);
-                }
-            }
-        }
-        private void LoadCommonData(Skill skill) {
-            skillName = skill.skillName;
-            activationWeight = skill.activationWeight;
-            accuracy = skill.accuracy;
-            range = skill.range;
-            skillRequirements = skill.skillRequirements;
-        }
-        private void LoadAttackSkill(AttackSkill skill) {
-            skillType = SKILL_TYPE.ATTACK;
-            LoadCommonData(skill);
-
-            //Attack Skill Fields
-            attackPower = skill.attackPower;
-            attackType = skill.attackType;
-            statusEffect = skill.statusEffect;
-            statusEffectRate = skill.statusEffectRate;
-            injuryRate = skill.injuryRate;
-            decapitationRate = skill.decapitationRate;
-        }
-        private void LoadHealSkill(HealSkill skill) {
-            skillType = SKILL_TYPE.HEAL;
-            LoadCommonData(skill);
-
-            //Heal Skill Fields
-            healPower = skill.healPower;
-        }
-        private void LoadObtainSkill(ObtainSkill skill) {
-            skillType = SKILL_TYPE.OBTAIN_ITEM;
-            LoadCommonData(skill);
-        }
-        private void LoadFleeSkill(FleeSkill skill) {
-            skillType = SKILL_TYPE.FLEE;
-            LoadCommonData(skill);
-        }
-        private void LoadMoveSkill(MoveSkill skill) {
-            skillType = SKILL_TYPE.MOVE;
-            LoadCommonData(skill);
-        }
+//        private void LoadSkill() {
+//            string filePath = EditorUtility.OpenFilePanel("Select Skill Json", "Assets/CombatPrototype/Data/Skills/", "json");
+//            if (!string.IsNullOrEmpty(filePath)) {
+//                string dataAsJson = File.ReadAllText(filePath);
+//                if (filePath.Contains("ATTACK")) {
+//                    AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
+//                    LoadAttackSkill(currSkill);
+//                } else if (filePath.Contains("HEAL")) {
+//                    HealSkill currSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
+//                    LoadHealSkill(currSkill);
+//                } else if (filePath.Contains("OBTAIN")) {
+//                    ObtainSkill currSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
+//                    LoadObtainSkill(currSkill);
+//                } else if (filePath.Contains("FLEE")) {
+//                    FleeSkill currSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
+//                    LoadFleeSkill(currSkill);
+//                } else if (filePath.Contains("MOVE")) {
+//                    MoveSkill currSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+//                    LoadMoveSkill(currSkill);
+//                }
+//            }
+//        }
+//        private void LoadCommonData(Skill skill) {
+//            skillName = skill.skillName;
+//            activationWeight = skill.activationWeight;
+//            accuracy = skill.accuracy;
+//            range = skill.range;
+//            skillRequirements = skill.skillRequirements;
+//        }
+//        private void LoadAttackSkill(AttackSkill skill) {
+//            skillType = SKILL_TYPE.ATTACK;
+//            LoadCommonData(skill);
+//
+//            //Attack Skill Fields
+//            attackPower = skill.attackPower;
+//            attackType = skill.attackType;
+//            statusEffect = skill.statusEffect;
+//            statusEffectRate = skill.statusEffectRate;
+//            injuryRate = skill.injuryRate;
+//            decapitationRate = skill.decapitationRate;
+//        }
+//        private void LoadHealSkill(HealSkill skill) {
+//            skillType = SKILL_TYPE.HEAL;
+//            LoadCommonData(skill);
+//
+//            //Heal Skill Fields
+//            healPower = skill.healPower;
+//        }
+//        private void LoadObtainSkill(ObtainSkill skill) {
+//            skillType = SKILL_TYPE.OBTAIN_ITEM;
+//            LoadCommonData(skill);
+//        }
+//        private void LoadFleeSkill(FleeSkill skill) {
+//            skillType = SKILL_TYPE.FLEE;
+//            LoadCommonData(skill);
+//        }
+//        private void LoadMoveSkill(MoveSkill skill) {
+//            skillType = SKILL_TYPE.MOVE;
+//            LoadCommonData(skill);
+//        }
         #endregion
     }
 }
