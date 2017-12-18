@@ -19,16 +19,20 @@ namespace ECS {
 		private int bonusDodgeRate;
 		private int bonusParryRate;
 		private int bonusBlockRate;
-		private Dictionary<STATUS_EFFECT, int> statusEffectResistances = new Dictionary<STATUS_EFFECT, int>();
+        private int durability;
+        private Dictionary<STATUS_EFFECT, int> statusEffectResistances = new Dictionary<STATUS_EFFECT, int>();
 
         //Weapon Fields
         private WEAPON_TYPE weaponType;
-		private float skillPowerModifier;
-		public List<IBodyPart.ATTRIBUTE> weaponAttributes = new List<IBodyPart.ATTRIBUTE>();
+		private float weaponPower;
+        private int durabilityDamage;
+        public List<IBodyPart.ATTRIBUTE> equipRequirements;
+        public List<IBodyPart.ATTRIBUTE> weaponAttributes = new List<IBodyPart.ATTRIBUTE>();
 
 		//Armor Fields
 		private ARMOR_TYPE armorType;
-		private float damageMitigation;
+        private BODY_PART armorBodyType;
+		private int hitPoints;
 		public List<IBodyPart.ATTRIBUTE> armorAttributes = new List<IBodyPart.ATTRIBUTE>();
 
         // Add menu item to the Window menu
@@ -61,6 +65,7 @@ namespace ECS {
 			bonusDodgeRate = EditorGUILayout.IntField("Bonus Dodge Rate: ", bonusDodgeRate);
 			bonusParryRate = EditorGUILayout.IntField("Bonus Parry Rate: ", bonusParryRate);
 			bonusBlockRate = EditorGUILayout.IntField("Bonus Block Rate: ", bonusBlockRate);
+            durability = EditorGUILayout.IntField("Durability :", durability);
 
             if (GUILayout.Button("Save Item")) {
                 SaveItem(itemName);
@@ -75,16 +80,22 @@ namespace ECS {
 
         private void ShowWeaponFields() {
 			weaponType = (WEAPON_TYPE)EditorGUILayout.EnumPopup("Weapon Type: ", weaponType);
-			skillPowerModifier = EditorGUILayout.FloatField("Skill Power Modifier: ", skillPowerModifier);
+			weaponPower = EditorGUILayout.FloatField("Weapon Power: ", weaponPower);
+            durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", durabilityDamage);
 
-			SerializedObject serializedObject = new SerializedObject(this);
+            SerializedObject serializedObject = new SerializedObject(this);
 			SerializedProperty weaponAttribute = serializedObject.FindProperty("weaponAttributes");
 			EditorGUILayout.PropertyField(weaponAttribute, true);
 			serializedObject.ApplyModifiedProperties ();
+
+            SerializedProperty equipRequirements = serializedObject.FindProperty("equipRequirements");
+            EditorGUILayout.PropertyField(equipRequirements, true);
+            serializedObject.ApplyModifiedProperties();
         }
         private void ShowArmorFields() {
 			armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup("Armor Type: ", armorType);
-			damageMitigation = EditorGUILayout.FloatField("Damage Mitigation: ", damageMitigation);
+            armorBodyType = (BODY_PART)EditorGUILayout.EnumPopup("Body Armor Type: ", armorBodyType);
+            hitPoints = EditorGUILayout.IntField("Hitpoints: ", hitPoints);
 
 			SerializedObject serializedObject = new SerializedObject(this);
 			SerializedProperty armorAttribute = serializedObject.FindProperty("armorAttributes");
@@ -130,6 +141,7 @@ namespace ECS {
 			newItem.bonusDodgeRate = this.bonusDodgeRate;
 			newItem.bonusParryRate = this.bonusParryRate;
 			newItem.bonusBlockRate = this.bonusBlockRate;
+            newItem.durability = this.durability;
         }
         private void SaveWeapon(string path) {
 			Weapon weapon = new Weapon();
@@ -137,10 +149,12 @@ namespace ECS {
 			SetCommonData(weapon);
 
 			weapon.weaponType = this.weaponType;
-			weapon.skillPowerModifier = this.skillPowerModifier;
+			weapon.weaponPower = this.weaponPower;
+            weapon.durabilityDamage = this.durabilityDamage;
 			weapon.attributes = this.weaponAttributes;
+            weapon.equipRequirements = this.equipRequirements;
 
-			SaveJson(weapon, path);
+            SaveJson(weapon, path);
         }
 		private void SaveArmor(string path) {
 			Armor armor = new Armor();
@@ -148,7 +162,8 @@ namespace ECS {
 			SetCommonData(armor);
 
 			armor.armorType = this.armorType;
-			armor.damageMitigation = this.damageMitigation;
+            armor.armorBodyType = this.armorBodyType;
+			armor.hitPoints = this.hitPoints;
 			armor.attributes = this.armorAttributes;
 
 			SaveJson(armor, path);
@@ -186,6 +201,7 @@ namespace ECS {
 			this.bonusDodgeRate = newItem.bonusDodgeRate;
 			this.bonusParryRate = newItem.bonusParryRate;
 			this.bonusBlockRate = newItem.bonusBlockRate;
+            this.durability = newItem.durability;
         }
         private void LoadWeapon(Weapon weapon) {
             itemType = ITEM_TYPE.WEAPON;
@@ -193,8 +209,10 @@ namespace ECS {
 
             //Weapon Fields
 			this.weaponType = weapon.weaponType;
-			this.skillPowerModifier = weapon.skillPowerModifier;
+			this.weaponPower = weapon.weaponPower;
+            this.durabilityDamage = weapon.durabilityDamage;
 			this.weaponAttributes = weapon.attributes;
+            this.equipRequirements = weapon.equipRequirements;
         }
 		private void LoadArmor(Armor armor) {
             itemType = ITEM_TYPE.ARMOR;
@@ -202,7 +220,8 @@ namespace ECS {
 
             //Armor Fields
 			this.armorType = armor.armorType;
-			this.damageMitigation = armor.damageMitigation;
+            this.armorBodyType = armor.armorBodyType;
+			this.hitPoints = armor.hitPoints;
 			this.armorAttributes = armor.attributes;
 		}
         #endregion

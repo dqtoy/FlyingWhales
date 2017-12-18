@@ -21,6 +21,8 @@ namespace ECS{
         [SerializeField] private UIPopupList itemTypePopupList;
         [SerializeField] private UIPopupList equipmentPopupList;
 
+        private Character currSelectedCharacter;
+
         internal List<string> resultsLog;
 
         private void Awake() {
@@ -128,5 +130,36 @@ namespace ECS{
             UpdateCharactersList(SIDES.A);
             UpdateCharactersList(SIDES.B);
         }
+
+        public void SetCharacterAsSelected(Character character) {
+            currSelectedCharacter = character;
+            UpdateCharacterSummary(character);
+        }
+
+        #region Equpment
+        public void EquipItem() {
+            string itemType = itemTypePopupList.value;
+            string equipmentType = equipmentPopupList.value;
+            string path = "Assets/CombatPrototype/Data/Items/" + itemType + "/" + equipmentType + ".json";
+            string dataAsJson = System.IO.File.ReadAllText(path);
+            if (itemType.Contains("WEAPON")) {
+                Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
+                IBodyPart bodyPartToEquip = currSelectedCharacter.GetBodyPartForWeapon(weapon);
+                if(bodyPartToEquip != null) {
+                    currSelectedCharacter.EquipWeapon(weapon, bodyPartToEquip);
+                } else {
+                    Debug.Log(currSelectedCharacter.name + " cannot equip " + weapon.itemName);
+                }
+            } else if (itemType.Contains("ARMOR")) {
+                Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
+                IBodyPart bodyPartToEquip = currSelectedCharacter.GetBodyPartForArmor(armor);
+                if (bodyPartToEquip != null) {
+                    currSelectedCharacter.EquipArmor(armor, bodyPartToEquip);
+                } else {
+                    Debug.Log(currSelectedCharacter.name + " cannot equip " + armor.itemName);
+                }
+            }
+        }
+        #endregion
     }
 }

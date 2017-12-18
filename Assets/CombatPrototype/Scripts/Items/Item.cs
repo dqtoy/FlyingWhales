@@ -13,6 +13,7 @@ namespace ECS{
 		public int bonusDodgeRate;
 		public int bonusParryRate;
 		public int bonusBlockRate;
+        public int durability;
 		public Dictionary<STATUS_EFFECT, int> statusEffectResistances = new Dictionary<STATUS_EFFECT, int>();
 	}
 }
