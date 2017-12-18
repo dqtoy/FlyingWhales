@@ -10,5 +10,7 @@ namespace ECS {
         public int statusEffectRate;
         public int injuryRate;
         public int decapitationRate;
+        public int durabilityDamage;
+        public int durabilityCost;
     }
 }

@@ -8,7 +8,10 @@ namespace ECS{
 		public int activationWeight;
 		public float accuracy;
 		public int range;
-		public SkillRequirement[] skillRequirements;
+        public float strengthPower;
+        public float intellectPower;
+        public float agilityPower;
+        public SkillRequirement[] skillRequirements;
 		public CHARACTER_ATTRIBUTES attributeModifier;
 
 		//Attack Skill Fields
@@ -18,9 +21,13 @@ namespace ECS{
 		public int statusEffectRate;
 		public int injuryRate;
 		public int decapitationRate;
+        public int durabilityDamage;
 
 		//Heal Skill Fields
 		public int healPower;
-	}
+
+        //Shared Fields
+        public int durabilityCost;
+    }
 }
 
