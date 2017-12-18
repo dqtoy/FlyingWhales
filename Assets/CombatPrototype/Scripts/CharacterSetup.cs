@@ -9,7 +9,7 @@ namespace ECS {
         public string raceSettingName;
 
         private CharacterClass _charClass;
-        private RaceSetting _raceSetting;
+		private RaceComponent _raceSetting;
 
         #region getters/setters
         public CharacterClass characterClass {
@@ -20,10 +20,10 @@ namespace ECS {
                 return _charClass;
             }
         }
-        public RaceSetting raceSetting {
+		public RaceComponent raceSetting {
             get {
                 if (_raceSetting == null) {
-                    _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingName + ".json"));
+					_raceSetting = JsonUtility.FromJson<RaceComponent>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingName + ".json"));
                 }
                 return _raceSetting;
             }
