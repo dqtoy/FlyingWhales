@@ -69,10 +69,7 @@ namespace ECS {
 			EditorGUILayout.PropertyField(armorAttribute, true);
 			serializedObject.ApplyModifiedProperties ();
         }
-
-		private void ConstructItem(){
 			
-		}
         #region Saving
         private void SaveItem(string fileName) {
             if (string.IsNullOrEmpty(fileName)) {
