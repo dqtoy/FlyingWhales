@@ -7,7 +7,20 @@ namespace ECS{
 		public ARMOR_TYPE armorType;
         public BODY_PART armorBodyType;
 		public int hitPoints;
+        public int currHitPoints;
 		public List<IBodyPart.ATTRIBUTE> attributes;
 		internal IBodyPart bodyPartAttached;
+
+        public Armor() {
+            currHitPoints = hitPoints;
+        }
+
+        public void AdjustHitPoints(int adjustment) {
+            currHitPoints += adjustment;
+            currHitPoints = Mathf.Clamp(currHitPoints, 0, hitPoints);
+            if(currHitPoints == 0) {
+                //Armor Ineffective!
+            }
+        }
 	}
 }

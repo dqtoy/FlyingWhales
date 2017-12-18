@@ -98,6 +98,7 @@ namespace ECS {
             Debug.Log("Successfully saved item at " + path);
         }
 		private void SetCommonData(Item newItem) {
+			newItem.itemType = itemComponent.itemType;
 			newItem.itemName = itemComponent.itemName;
 			newItem.bonusActRate = itemComponent.bonusActRate;
 			newItem.bonusStrength = itemComponent.bonusStrength;
@@ -158,6 +159,7 @@ namespace ECS {
 //            }
 //        }
 //		private void LoadCommonData(Item newItem) {
+            //this.itemType = newItem.itemType;
 //			this.itemName = newItem.itemName;
 //			this.bonusActRate = newItem.bonusActRate;
 //			this.bonusStrength = newItem.bonusStrength;

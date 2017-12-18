@@ -87,6 +87,16 @@ namespace ECS{
                 currAttribute.SetAttributeAsUsed(false);
             }
         }
+        internal List<Item> GetAttachedItemsOfType(ITEM_TYPE itemType) {
+            List<Item> items = new List<Item>();
+            for (int i = 0; i < itemsAttached.Count; i++) {
+                Item currItem = itemsAttached[i];
+                if(currItem.itemType == itemType) {
+                    items.Add(currItem);
+                }
+            }
+            return items;
+        }
         #endregion
 
         #region Attributes
