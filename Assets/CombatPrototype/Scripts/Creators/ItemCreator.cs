@@ -13,7 +13,6 @@ namespace ECS {
 			if(itemComponent == null){
 				itemComponent = (ItemComponent)target;
 			}
-
             GUILayout.Label("Item Creator ", EditorStyles.boldLabel);
 			itemComponent.itemType = (ITEM_TYPE)EditorGUILayout.EnumPopup("Item Type: ", itemComponent.itemType);
 			itemComponent.itemName = EditorGUILayout.TextField("Item Name: ", itemComponent.itemName);
@@ -35,6 +34,8 @@ namespace ECS {
 			itemComponent.bonusDodgeRate = EditorGUILayout.IntField("Bonus Dodge Rate: ", itemComponent.bonusDodgeRate);
 			itemComponent.bonusParryRate = EditorGUILayout.IntField("Bonus Parry Rate: ", itemComponent.bonusParryRate);
 			itemComponent.bonusBlockRate = EditorGUILayout.IntField("Bonus Block Rate: ", itemComponent.bonusBlockRate);
+			itemComponent.durability = EditorGUILayout.IntField("Durability :", itemComponent.durability);
+
 
 			SerializedProperty statusEffectResistance = serializedObject.FindProperty("statusEffectResistances");
 			EditorGUILayout.PropertyField(statusEffectResistance, true);
@@ -47,15 +48,22 @@ namespace ECS {
 
         private void ShowWeaponFields() {
 			itemComponent.weaponType = (WEAPON_TYPE)EditorGUILayout.EnumPopup("Weapon Type: ", itemComponent.weaponType);
-			itemComponent.skillPowerModifier = EditorGUILayout.FloatField("Skill Power Modifier: ", itemComponent.skillPowerModifier);
+			itemComponent.weaponPower = EditorGUILayout.FloatField("Weapon Power: ", itemComponent.weaponPower);
+			itemComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", itemComponent.durabilityDamage);
 
 			SerializedProperty weaponAttribute = serializedObject.FindProperty("weaponAttributes");
 			EditorGUILayout.PropertyField(weaponAttribute, true);
 			serializedObject.ApplyModifiedProperties ();
+
+            SerializedProperty equipRequirements = serializedObject.FindProperty("equipRequirements");
+            EditorGUILayout.PropertyField(equipRequirements, true);
+            serializedObject.ApplyModifiedProperties();
         }
+
         private void ShowArmorFields() {
 			itemComponent.armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup("Armor Type: ", itemComponent.armorType);
-			itemComponent.damageMitigation = EditorGUILayout.FloatField("Damage Mitigation: ", itemComponent.damageMitigation);
+			itemComponent.armorBodyType = (BODY_PART)EditorGUILayout.EnumPopup("Body Armor Type: ", itemComponent.armorBodyType);
+			itemComponent.hitPoints = EditorGUILayout.IntField("Hitpoints: ", itemComponent.hitPoints);
 
 			SerializedProperty armorAttribute = serializedObject.FindProperty("armorAttributes");
 			EditorGUILayout.PropertyField(armorAttribute, true);
@@ -102,6 +110,7 @@ namespace ECS {
 			newItem.bonusDodgeRate = itemComponent.bonusDodgeRate;
 			newItem.bonusParryRate = itemComponent.bonusParryRate;
 			newItem.bonusBlockRate = itemComponent.bonusBlockRate;
+			newItem.durability = itemComponent.durability;
         }
         private void SaveWeapon(string path) {
 			Weapon weapon = new Weapon();
@@ -109,10 +118,12 @@ namespace ECS {
 			SetCommonData(weapon);
 
 			weapon.weaponType = itemComponent.weaponType;
-			weapon.skillPowerModifier = itemComponent.skillPowerModifier;
+			weapon.weaponPower = itemComponent.weaponPower;
+			weapon.durabilityDamage = itemComponent.durabilityDamage;
 			weapon.attributes = itemComponent.weaponAttributes;
+			weapon.equipRequirements = itemComponent.equipRequirements;
 
-			SaveJson(weapon, path);
+            SaveJson(weapon, path);
         }
 		private void SaveArmor(string path) {
 			Armor armor = new Armor();
@@ -120,7 +131,8 @@ namespace ECS {
 			SetCommonData(armor);
 
 			armor.armorType = itemComponent.armorType;
-			armor.damageMitigation = itemComponent.damageMitigation;
+			armor.armorBodyType = itemComponent.armorBodyType;
+			armor.hitPoints = itemComponent.hitPoints;
 			armor.attributes = itemComponent.armorAttributes;
 
 			SaveJson(armor, path);
@@ -135,6 +147,7 @@ namespace ECS {
         #endregion
 
         #region Loading
+<<<<<<< HEAD
 //        private void LoadItem() {
 //            string filePath = EditorUtility.OpenFilePanel("Select Item Json", "Assets/CombatPrototype/Data/Items/", "json");
 //            if (!string.IsNullOrEmpty(filePath)) {

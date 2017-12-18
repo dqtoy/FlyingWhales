@@ -14,16 +14,21 @@ namespace ECS{
 		public int bonusDodgeRate;
 		public int bonusParryRate;
 		public int bonusBlockRate;
+		public int durability;
 		public List<StatusEffectResistance> statusEffectResistances = new List<StatusEffectResistance>();
 
 		//Weapon Fields
 		public WEAPON_TYPE weaponType;
-		public float skillPowerModifier;
+		public float weaponPower;
+		public int durabilityDamage;
+		public List<IBodyPart.ATTRIBUTE> equipRequirements = new List<IBodyPart.ATTRIBUTE>();
 		public List<IBodyPart.ATTRIBUTE> weaponAttributes = new List<IBodyPart.ATTRIBUTE>();
+
 
 		//Armor Fields
 		public ARMOR_TYPE armorType;
-		public float damageMitigation;
+		public BODY_PART armorBodyType;
+		public int hitPoints;
 		public List<IBodyPart.ATTRIBUTE> armorAttributes = new List<IBodyPart.ATTRIBUTE>();
 	}
 

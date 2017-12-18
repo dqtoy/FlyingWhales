@@ -1334,4 +1334,27 @@ public class Utilities : MonoBehaviour {
     public static bool DoesFileExist(string path) {
         return System.IO.File.Exists(path);
     }
+
+    #region Combat Prototype
+    public static ECS.IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(ECS.Armor armor) {
+        switch (armor.armorBodyType) {
+            case BODY_PART.HEAD:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
+            case BODY_PART.TORSO:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+            case BODY_PART.TAIL:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
+            case BODY_PART.ARM:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
+            case BODY_PART.HAND:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
+            case BODY_PART.LEG:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
+            case BODY_PART.FEET:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
+            default:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+        }
+    }
+    #endregion
 }

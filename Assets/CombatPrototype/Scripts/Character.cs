@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ECS{
 	[System.Serializable]
@@ -136,7 +137,7 @@ namespace ECS{
 				BodyPart bodyPart = this._bodyParts [i];
 
 				if(bodyPart.statusEffects.Count <= 0){
-					if(bodyPart.attributes.Contains(attribute)){
+					if(bodyPart.HasAttribute(attribute)){
 						count += 1;
 						if(count >= quantity){
 							return true;
@@ -147,7 +148,7 @@ namespace ECS{
 				for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
 					if (secondaryBodyPart.statusEffects.Count <= 0) {
-						if (secondaryBodyPart.attributes.Contains (attribute)) {
+						if (secondaryBodyPart.HasAttribute(attribute)) {
 							count += 1;
 							if (count >= quantity) {
 								return true;
@@ -276,21 +277,71 @@ namespace ECS{
         internal void AddBodyPart(BodyPart bodyPart) {
             bodyParts.Add(bodyPart);
         }
+        internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
+            List<IBodyPart> allBodyParts = new List<IBodyPart>();
+            for (int i = 0; i < bodyParts.Count; i++) {
+                BodyPart currBodyPart = bodyParts[i];
+                allBodyParts.Add(currBodyPart);
+                for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+                    allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
+                }
+            }
+            for (int i = 0; i < allBodyParts.Count; i++) {
+                IBodyPart currBodyPart = allBodyParts[i];
+                bool meetsRequirements = true;
+                //check if currBodyPart meets the weapons requirements
+                for (int j = 0; j < weapon.equipRequirements.Count; j++) {
+                    IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
+                    if (!currBodyPart.HasUnusedAttribute(currReq)) {
+                        meetsRequirements = false;
+                        break;
+                    }
+                }
+                if (meetsRequirements) {
+                    return currBodyPart;
+                }
+            }
+            return null;
+        }
+        internal IBodyPart GetBodyPartForArmor(Armor armor) {
+            List<IBodyPart> allBodyParts = new List<IBodyPart>();
+            for (int i = 0; i < bodyParts.Count; i++) {
+                BodyPart currBodyPart = bodyParts[i];
+                allBodyParts.Add(currBodyPart);
+                for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+                    allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
+                }
+            }
+
+            IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
+            for (int i = 0; i < allBodyParts.Count; i++) {
+                IBodyPart currBodyPart = allBodyParts[i];
+                //check if currBodyPart can equip the armor
+                if (currBodyPart.HasUnusedAttribute(neededAttribute)) {
+                    return currBodyPart;
+                }
+            }
+            return null;
+        }
         #endregion
 
-		#region Items
-		//Equip a weapon to a body part of this character and add it to the list of items this character have
-		internal void EquipWeapon(Weapon weapon, IBodyPart bodyPart){
-			bodyPart.itemsAttached.Add (weapon);
+        #region Items
+        //Equip a weapon to a body part of this character and add it to the list of items this character have
+        internal void EquipWeapon(Weapon weapon, IBodyPart bodyPart){
+			bodyPart.AttachItem(weapon);
 			weapon.bodyPartAttached = bodyPart;
-			AddItem (weapon);
-		}
+			AddItem(weapon);
+            Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
+            CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+        }
 		//Equip an armor to a body part of this character and add it to the list of items this character have
 		internal void EquipArmor(Armor armor, IBodyPart bodyPart){
-			bodyPart.itemsAttached.Add (armor);
+			bodyPart.AttachItem(armor);
 			armor.bodyPartAttached = bodyPart;
-			AddItem (armor);
-		}
+			AddItem(armor);
+            Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPart.bodyPart.ToString());
+            CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+        }
 
 		internal void AddItem(Item newItem){
 			this._items.Add (newItem);

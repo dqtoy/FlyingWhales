@@ -19,7 +19,11 @@ namespace ECS {
 			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
 			skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
 			skillComponent.attributeModifier = (CHARACTER_ATTRIBUTES)EditorGUILayout.EnumPopup("Attribute Modifier: ", skillComponent.attributeModifier);
-			switch (skillComponent.skillType) {
+            skillComponent.strengthPower = EditorGUILayout.FloatField("Strength Power: ", skillComponent.strengthPower);
+            skillComponent.intellectPower = EditorGUILayout.FloatField("Intellect Power: ", skillComponent.intellectPower);
+            skillComponent.agilityPower = EditorGUILayout.FloatField("Agility Power: ", skillComponent.agilityPower);
+
+            switch (skillComponent.skillType) {
                 case SKILL_TYPE.ATTACK:
                     ShowAttackSkillFields();
                     break;
@@ -57,9 +61,12 @@ namespace ECS {
             }
 			skillComponent.injuryRate = EditorGUILayout.IntField("Injury Rate: ", skillComponent.injuryRate);
 			skillComponent.decapitationRate = EditorGUILayout.IntField("Decapitation Rate: ", skillComponent.decapitationRate);
+            skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
+            skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
         }
         private void ShowHealSkillFields() {
 			skillComponent.healPower = EditorGUILayout.IntField("Heal Power: ",skillComponent. healPower);
+            skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
         }
         private void ShowObtainItemFields() {
             //Nothing yet
@@ -111,6 +118,9 @@ namespace ECS {
 			newSkill.range = skillComponent.range;
 			newSkill.skillRequirements = skillComponent.skillRequirements;
 			newSkill.attributeModifier = skillComponent.attributeModifier;
+            newSkill.strengthPower = skillComponent.strengthPower;
+            newSkill.intellectPower = skillComponent.intellectPower;
+            newSkill.agilityPower = skillComponent.agilityPower;
         }
         private void SaveAttackSkill(string path) {
             AttackSkill newSkill = new AttackSkill();
@@ -123,6 +133,8 @@ namespace ECS {
 			newSkill.statusEffectRate = skillComponent.statusEffectRate;
 			newSkill.injuryRate = skillComponent.injuryRate;
 			newSkill.decapitationRate = skillComponent.decapitationRate;
+            newSkill.durabilityDamage = skillComponent.durabilityDamage;
+            newSkill.durabilityCost = skillComponent.durabilityCost;
 
             SaveJson(newSkill, path);
         }
@@ -130,6 +142,7 @@ namespace ECS {
             HealSkill newSkill = new HealSkill();
             SetCommonData(newSkill);
 			newSkill.healPower = skillComponent.healPower;
+            newSkill.durabilityCost = skillComponent.durabilityCost;
             SaveJson(newSkill, path);
         }
         private void SaveFleeSkill(string path) {

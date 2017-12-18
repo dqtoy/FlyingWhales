@@ -52,8 +52,8 @@ namespace ECS{
                 BodyPart currBodyPart = character.bodyParts[i];
                 bodyPartsInfoLbl.text += "\n";
                 for (int j = 0; j < currBodyPart.attributes.Count; j++) {
-                    IBodyPart.ATTRIBUTE currAttribute = currBodyPart.attributes[j];
-                    bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.ToString()) + " ";
+                    BodyAttribute currAttribute = currBodyPart.attributes[j];
+                    bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.attribute.ToString()) + " " + currAttribute.isUsed.ToString() + " ";
                 }
                 bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
                 for (int j = 0; j < currBodyPart.statusEffects.Count; j++) {
@@ -65,8 +65,8 @@ namespace ECS{
                     SecondaryBodyPart otherBodyPart = currBodyPart.secondaryBodyParts[j];
                     bodyPartsInfoLbl.text += "\n    -";
                     for (int k = 0; k < otherBodyPart.attributes.Count; k++) {
-                        IBodyPart.ATTRIBUTE currAttribute = otherBodyPart.attributes[k];
-                        bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.ToString()) + " ";
+                        BodyAttribute currAttribute = otherBodyPart.attributes[k];
+                        bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.attribute.ToString()) + " " + currAttribute.isUsed.ToString() + " ";
                     }
                     bodyPartsInfoLbl.text += Utilities.NormalizeString(otherBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
                     for (int k = 0; k < otherBodyPart.statusEffects.Count; k++) {

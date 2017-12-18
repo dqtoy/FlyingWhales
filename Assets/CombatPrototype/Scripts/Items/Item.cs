@@ -13,6 +13,7 @@ namespace ECS{
 		public int bonusDodgeRate;
 		public int bonusParryRate;
 		public int bonusBlockRate;
+		public int durability;
 		public List<StatusEffectResistance> statusEffectResistances = new List<StatusEffectResistance>();
 	}
 }
