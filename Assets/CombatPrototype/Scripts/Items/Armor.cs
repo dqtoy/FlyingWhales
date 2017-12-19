@@ -11,16 +11,16 @@ namespace ECS{
 		public List<IBodyPart.ATTRIBUTE> attributes;
 		internal IBodyPart bodyPartAttached;
 
-        public Armor() {
-            currHitPoints = hitPoints;
-        }
-
         public void AdjustHitPoints(int adjustment) {
             currHitPoints += adjustment;
             currHitPoints = Mathf.Clamp(currHitPoints, 0, hitPoints);
             if(currHitPoints == 0) {
                 //Armor Ineffective!
             }
+        }
+
+        public void ResetHitPoints() {
+            currHitPoints = hitPoints;
         }
 	}
 }

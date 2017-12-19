@@ -340,6 +340,7 @@ namespace ECS{
 			bodyPart.AttachItem(weapon);
 			weapon.bodyPartAttached = bodyPart;
 			AddItem(weapon);
+            weapon.ResetDurability();
             Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
         }
@@ -348,6 +349,8 @@ namespace ECS{
 			bodyPart.AttachItem(armor);
 			armor.bodyPartAttached = bodyPart;
 			AddItem(armor);
+            armor.ResetDurability();
+            armor.ResetHitPoints();
             Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
         }
