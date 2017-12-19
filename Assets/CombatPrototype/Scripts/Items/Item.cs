@@ -17,7 +17,7 @@ namespace ECS{
 		public int bonusBlockRate;
 		public int durability;
         public int currDurability;
-		public List<StatusEffectResistance> statusEffectResistances = new List<StatusEffectResistance>();
+		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;

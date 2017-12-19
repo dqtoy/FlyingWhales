@@ -1,1 +1,1 @@
-{"skillName":"Run Away","activationWeight":20,"accuracy":50.0,"range":1,"isEnabled":false,"skillRequirements":[],"attributeModifier":0}
+{"skillName":"Run away","description":"Cause I would run away eyayay!","activationWeight":10,"accuracy":20.0,"range":1,"isEnabled":false,"strengthPower":0.0,"intellectPower":0.0,"agilityPower":0.0,"skillRequirements":[],"attributeModifier":0,"levelRequirement":1}

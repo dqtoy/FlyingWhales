@@ -1,1 +1,1 @@
-{"skillName":"Slap","activationWeight":60,"accuracy":85.0,"range":1,"isEnabled":false,"skillRequirements":[],"attributeModifier":0,"attackPower":5,"attackType":0,"statusEffect":0,"statusEffectRate":0,"injuryRate":5,"decapitationRate":0}
+{"skillName":"Slap","description":"Gay move.","activationWeight":10,"accuracy":50.0,"range":1,"isEnabled":false,"strengthPower":0.0,"intellectPower":0.0,"agilityPower":30.0,"skillRequirements":[],"attributeModifier":2,"levelRequirement":1,"attackType":2,"durabilityDamage":1,"durabilityCost":1,"statusEffectRates":[]}

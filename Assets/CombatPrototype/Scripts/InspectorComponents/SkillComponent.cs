@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ECS{
 	public class SkillComponent : MonoBehaviour {
@@ -18,11 +19,8 @@ namespace ECS{
 
 		//Attack Skill Fields
 		public ATTACK_TYPE attackType;
-		public STATUS_EFFECT statusEffect;
-		public int statusEffectRate;
-		public int injuryRate;
-		public int decapitationRate;
         public int durabilityDamage;
+		public List<StatusEffectRate> statusEffectRates;
 
 		//Heal Skill Fields
 		public int healPower;
