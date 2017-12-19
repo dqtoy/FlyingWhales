@@ -19,16 +19,16 @@ namespace ECS{
         public int currDurability;
 		public List<StatusEffectResistance> statusEffectResistances = new List<StatusEffectResistance>();
 
-        public Item() {
-            currDurability = durability;
-        }
-
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;
             currDurability = Mathf.Clamp(currDurability, 0, durability);
             if (currDurability == 0) {
                 //Item Destroyed!
             }
+        }
+
+        public void ResetDurability() {
+            currDurability = durability;
         }
     }
 }
