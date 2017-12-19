@@ -19,7 +19,7 @@ namespace ECS{
 		public int parryRate;
 		public int blockRate;
 
-		private List<Skill> _skills;
+		[SerializeField] private List<Skill> _skills;
 
 		internal bool skillsFoldout;
 		internal SKILL_TYPE skillTypeToAdd;
