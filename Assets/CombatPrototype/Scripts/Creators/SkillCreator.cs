@@ -54,16 +54,12 @@ namespace ECS {
 
         private void ShowAttackSkillFields() {
 			skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
-			skillComponent.statusEffect = (STATUS_EFFECT)EditorGUILayout.EnumPopup("Status Effect: ", skillComponent.statusEffect);
-			if(skillComponent.statusEffect != STATUS_EFFECT.NONE) {
-                EditorGUI.indentLevel++;
-				skillComponent.statusEffectRate = EditorGUILayout.IntField("Status Effect Rate: ", skillComponent.statusEffectRate);
-                EditorGUI.indentLevel--;
-            }
-			skillComponent.injuryRate = EditorGUILayout.IntField("Injury Rate: ", skillComponent.injuryRate);
-			skillComponent.decapitationRate = EditorGUILayout.IntField("Decapitation Rate: ", skillComponent.decapitationRate);
             skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
             skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
+
+			SerializedProperty serializedProperty = serializedObject.FindProperty("statusEffectRates");
+			EditorGUILayout.PropertyField(serializedProperty, true);
+			serializedObject.ApplyModifiedProperties();
         }
         private void ShowHealSkillFields() {
 			skillComponent.healPower = EditorGUILayout.IntField("Heal Power: ",skillComponent. healPower);
@@ -131,12 +127,9 @@ namespace ECS {
             SetCommonData(newSkill);
 
 			newSkill.attackType = skillComponent.attackType;
-			newSkill.statusEffect = skillComponent.statusEffect;
-			newSkill.statusEffectRate = skillComponent.statusEffectRate;
-			newSkill.injuryRate = skillComponent.injuryRate;
-			newSkill.decapitationRate = skillComponent.decapitationRate;
             newSkill.durabilityDamage = skillComponent.durabilityDamage;
             newSkill.durabilityCost = skillComponent.durabilityCost;
+			newSkill.statusEffectRates = skillComponent.statusEffectRates;
 
             SaveJson(newSkill, path);
         }

@@ -31,9 +31,8 @@ namespace ECS {
 			if (currCharacterClass.skillsFoldout && currCharacterClass.skills != null) {
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < currCharacterClass.skills.Count; i++) {
-                    EditorGUILayout.LabelField(currCharacterClass.skills[i].skillName);
-                    //SerializedProperty currSkill = skillProperty.FindPropertyRelative("_skills").GetArrayElementAtIndex(i);
-                    //EditorGUILayout.PropertyField(currSkill, true);
+					SerializedProperty currSkill = serializedObject.FindProperty("_skills").GetArrayElementAtIndex(i);
+                    EditorGUILayout.PropertyField(currSkill, true);
                 }
                 serializedObject.ApplyModifiedProperties();
                 EditorGUI.indentLevel--;
@@ -93,7 +92,6 @@ namespace ECS {
 				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, moveSkill);
                 break;
             }
-            currCharacterClass.ConstructAllSkillsList();
         }
         #endregion
 

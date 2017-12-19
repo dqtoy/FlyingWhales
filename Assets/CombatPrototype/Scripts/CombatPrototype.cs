@@ -441,38 +441,86 @@ namespace ECS{
 		private BodyPart DealDamageToBodyPart(AttackSkill attackSkill, Character targetCharacter, Character sourceCharacter){
 			int chance = UnityEngine.Random.Range (0, 100);
             BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
-            if (attackSkill.attackType == ATTACK_TYPE.CRUSH){
-				if(chance < 7){
-					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.INJURED);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
-                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and crushes " + targetCharacter.name 
-                        + "'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", injuring it.");
-                }
-			}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
-				if(chance < 10){
-					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BLEEDING);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
-                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and pierces " + targetCharacter.name + 
-                        "'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.");
-                }
-			}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
-				if(chance < 5){
-					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.DECAPITATED);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
-                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and slashes " + targetCharacter.name + 
-                        "'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.");
-                    //If body part is essential, instant death to the character
-                    if (chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
-						CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
+
+			if(attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0){
+				for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
+					int value = attackSkill.statusEffectRates[i].ratePercentage;
+					string log = string.Empty;
+					if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.INJURED){
+						if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
+							value += 7;
+							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and crushes " + targetCharacter.name
+							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ", injuring it.";
+						}else{
+							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and injures " + targetCharacter.name
+							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
+						}
+					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BLEEDING){
+						if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
+							value += 10;
+							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and pierces " + targetCharacter.name + 
+								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.";
+						}else{
+							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and causes " + targetCharacter.name
+								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + " to bleed.";
+						}
+					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.DECAPITATED){
+						if(attackSkill.attackType == ATTACK_TYPE.SLASH){
+							value += 5;
+							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and slashes " + targetCharacter.name + 
+								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.";
+						}else{
+							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and decapitates " + targetCharacter.name
+								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
+						}
+					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BURNING){
+						if(attackSkill.attackType == ATTACK_TYPE.BURN){
+							value += 5;
+						}
+						log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and burns " + targetCharacter.name + 
+							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ".";
+					}
+
+					if(chance < value){
+						chosenBodyPart.statusEffects.Add(attackSkill.statusEffectRates[i].statusEffect);
+						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (attackSkill.statusEffectRates[i].statusEffect);
+						CombatPrototypeUI.Instance.AddCombatLog (log);
 					}
 				}
-			}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
-				if(chance < 5){
-					chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BURNING);
-					chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
-                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and burns " + targetCharacter.name + 
-                        "'s " + chosenBodyPart.bodyPart.ToString().ToLower());
-                }
+			}else{
+				if (attackSkill.attackType == ATTACK_TYPE.CRUSH){
+					if(chance < 7){
+						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.INJURED);
+						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and crushes " + targetCharacter.name 
+							+ "'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", injuring it.");
+					}
+				}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
+					if(chance < 10){
+						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BLEEDING);
+						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and pierces " + targetCharacter.name + 
+							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.");
+					}
+				}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
+					if(chance < 5){
+						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.DECAPITATED);
+						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and slashes " + targetCharacter.name + 
+							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.");
+						//If body part is essential, instant death to the character
+						if (chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
+							CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
+						}
+					}
+				}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
+					if(chance < 5){
+						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BURNING);
+						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and burns " + targetCharacter.name + 
+							"'s " + chosenBodyPart.bodyPart.ToString().ToLower());
+					}
+				}
 			}
             return chosenBodyPart;
         }

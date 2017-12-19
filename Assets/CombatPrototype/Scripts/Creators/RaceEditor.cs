@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace ECS {
-	[CustomEditor(typeof(RaceSetting))]
+	[CustomEditor(typeof(RaceComponent))]
     public class RaceEditor : Editor {
 		RaceComponent raceComponent;
 

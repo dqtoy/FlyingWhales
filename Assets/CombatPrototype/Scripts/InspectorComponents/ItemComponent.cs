@@ -16,7 +16,7 @@ namespace ECS{
 		public int bonusParryRate;
 		public int bonusBlockRate;
 		public int durability;
-		public List<StatusEffectResistance> statusEffectResistances = new List<StatusEffectResistance>();
+		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
 		//Weapon Fields
 		public WEAPON_TYPE weaponType;
