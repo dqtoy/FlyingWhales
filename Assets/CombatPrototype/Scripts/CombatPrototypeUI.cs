@@ -21,7 +21,7 @@ namespace ECS{
         [SerializeField] private UIPopupList itemTypePopupList;
         [SerializeField] private UIPopupList equipmentPopupList;
 
-        private Character currSelectedCharacter;
+        internal Character currSelectedCharacter;
 
         internal List<string> resultsLog;
 
