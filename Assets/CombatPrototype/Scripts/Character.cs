@@ -175,12 +175,19 @@ namespace ECS{
 			for (int i = 0; i < this._characterClass.skills.Count; i++) {
 				Skill skill = this._characterClass.skills [i];
 				skill.isEnabled = true;
+				if(this._level < skill.levelRequirement){
+					skill.isEnabled = false;
+					continue;
+				}
 				for (int j = 0; j < skill.skillRequirements.Length; j++) {
 					SkillRequirement skillRequirement = skill.skillRequirements [j];
 					if(!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)){
 						skill.isEnabled = false;
 						break;
 					}
+				}
+				if(!skill.isEnabled){
+					continue;
 				}
 				if(skill is AttackSkill){
 					if(isAllAttacksInRange){
@@ -189,9 +196,12 @@ namespace ECS{
 				}else if (skill is FleeSkill){
 					if(this.currentHP >= (this.maxHP / 2)){
 						skill.isEnabled = false;
+						continue;
 					}
 				}
 			}
+
+
 			for (int i = 0; i < this._characterClass.skills.Count; i++) {
 				Skill skill = this._characterClass.skills [i];
 				if(skill is MoveSkill){
@@ -203,6 +213,7 @@ namespace ECS{
 					if(skill.skillName == "MoveLeft"){
 						if (this._currentRow == 1) {
 							skill.isEnabled = false;
+							continue;
 						} else {
 							bool hasEnemyOnLeft = false;
 							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
@@ -224,6 +235,7 @@ namespace ECS{
 							}
 							if(!hasEnemyOnLeft){
 								skill.isEnabled = false;
+								continue;
 							}
 						}
 					}else if(skill.skillName == "MoveRight"){
@@ -250,6 +262,7 @@ namespace ECS{
 							}
 							if(!hasEnemyOnRight){
 								skill.isEnabled = false;
+								continue;
 							}
 						}
 					}

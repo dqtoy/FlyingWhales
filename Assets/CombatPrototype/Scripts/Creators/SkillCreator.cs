@@ -15,6 +15,7 @@ namespace ECS {
             GUILayout.Label("Skill Creator ", EditorStyles.boldLabel);
 			skillComponent.skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillComponent.skillType);
 			skillComponent.skillName = EditorGUILayout.TextField("Skill Name: ", skillComponent.skillName);
+			skillComponent.description = EditorGUILayout.TextField("Description: ", skillComponent.description);
 			skillComponent.activationWeight = EditorGUILayout.IntField("Activation Weight: ", skillComponent.activationWeight);
 			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
 			skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
@@ -22,6 +23,7 @@ namespace ECS {
             skillComponent.strengthPower = EditorGUILayout.FloatField("Strength Power: ", skillComponent.strengthPower);
             skillComponent.intellectPower = EditorGUILayout.FloatField("Intellect Power: ", skillComponent.intellectPower);
             skillComponent.agilityPower = EditorGUILayout.FloatField("Agility Power: ", skillComponent.agilityPower);
+			skillComponent.levelRequirement = EditorGUILayout.IntField("Level Requirement: ", skillComponent.levelRequirement);
 
             switch (skillComponent.skillType) {
                 case SKILL_TYPE.ATTACK:
@@ -51,7 +53,6 @@ namespace ECS {
         }
 
         private void ShowAttackSkillFields() {
-			skillComponent.attackPower = EditorGUILayout.IntField("Attack Power: ", skillComponent.attackPower);
 			skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
 			skillComponent.statusEffect = (STATUS_EFFECT)EditorGUILayout.EnumPopup("Status Effect: ", skillComponent.statusEffect);
 			if(skillComponent.statusEffect != STATUS_EFFECT.NONE) {
@@ -113,6 +114,7 @@ namespace ECS {
         }
         private void SetCommonData(Skill newSkill) {
 			newSkill.skillName = skillComponent.skillName;
+			newSkill.description = skillComponent.description;
 			newSkill.activationWeight = skillComponent.activationWeight;
 			newSkill.accuracy = skillComponent.accuracy;
 			newSkill.range = skillComponent.range;
@@ -121,13 +123,13 @@ namespace ECS {
             newSkill.strengthPower = skillComponent.strengthPower;
             newSkill.intellectPower = skillComponent.intellectPower;
             newSkill.agilityPower = skillComponent.agilityPower;
+			newSkill.levelRequirement = skillComponent.levelRequirement;
         }
         private void SaveAttackSkill(string path) {
             AttackSkill newSkill = new AttackSkill();
 
             SetCommonData(newSkill);
 
-			newSkill.attackPower = skillComponent.attackPower;
 			newSkill.attackType = skillComponent.attackType;
 			newSkill.statusEffect = skillComponent.statusEffect;
 			newSkill.statusEffectRate = skillComponent.statusEffectRate;

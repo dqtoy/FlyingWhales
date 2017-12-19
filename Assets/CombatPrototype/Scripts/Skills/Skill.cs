@@ -6,6 +6,7 @@ namespace ECS {
     [System.Serializable]
     public class Skill {
         public string skillName;
+		public string description;
         public int activationWeight;
         public float accuracy;
         public int range;
@@ -15,6 +16,7 @@ namespace ECS {
         public float agilityPower;
         public SkillRequirement[] skillRequirements;
         public CHARACTER_ATTRIBUTES attributeModifier;
+		public int levelRequirement;
 
         public bool RequiresItem() {
             for (int i = 0; i < skillRequirements.Length; i++) {
