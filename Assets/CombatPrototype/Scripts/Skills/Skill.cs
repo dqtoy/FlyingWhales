@@ -15,5 +15,15 @@ namespace ECS {
         public float agilityPower;
         public SkillRequirement[] skillRequirements;
         public CHARACTER_ATTRIBUTES attributeModifier;
+
+        public bool RequiresItem() {
+            for (int i = 0; i < skillRequirements.Length; i++) {
+                SkillRequirement skillReq = skillRequirements[i];
+                if(skillReq.equipmentType != EQUIPMENT_TYPE.NONE) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

@@ -484,6 +484,12 @@ namespace ECS{
 			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();
 			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
 		}
+        private Weapon GetWeaponForSkill(Skill skill) {
+            if (skill.RequiresItem()) {
+
+            }
+            return null;
+        }
 		#endregion
 
 		#region Heal Skill
