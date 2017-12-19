@@ -314,15 +314,15 @@ namespace ECS{
 		//Get DEFEND_TYPE for the attack skill, if DEFEND_TYPE is NONE, then target character has not defend successfully, therefore, the target character will be damaged
 		private DEFEND_TYPE CanTargetCharacterDefend(Character targetCharacter){
 			int dodgeChance = UnityEngine.Random.Range (0, 100);
-			if(dodgeChance < targetCharacter.characterClass.dodgeRate){
+			if(dodgeChance < targetCharacter.dodgeRate){
 				return DEFEND_TYPE.DODGE;
 			}else{
 				int parryChance = UnityEngine.Random.Range (0, 100);
-				if(parryChance < targetCharacter.characterClass.parryRate){
+				if(parryChance < targetCharacter.parryRate){
 					return DEFEND_TYPE.PARRY;
 				}else{
 					int blockChance = UnityEngine.Random.Range (0, 100);
-					if(blockChance < targetCharacter.characterClass.blockRate){
+					if(blockChance < targetCharacter.blockRate){
 						return DEFEND_TYPE.BLOCK;
 					}else{
 						return DEFEND_TYPE.NONE;
@@ -346,7 +346,7 @@ namespace ECS{
 			DEFEND_TYPE defendType = CanTargetCharacterDefend (targetCharacter);
 			if(defendType == DEFEND_TYPE.NONE){
 				//Successfully hits the target character
-				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter);
+				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter, GetWeaponForSkill(attackSkill, sourceCharacter));
 			}else{
 				//Target character has defend successfully and will roll for counter attack
 				if(defendType == DEFEND_TYPE.DODGE){
@@ -489,9 +489,31 @@ namespace ECS{
 			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();
 			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
 		}
-        private Weapon GetWeaponForSkill(Skill skill) {
+        /*
+         * Get Weapon that meets the requirements of a given skill,
+         * if the skill does not require a weapon, this will just return null.
+         * */
+        private Weapon GetWeaponForSkill(Skill skill, Character sourceCharacter) {
             if (skill.RequiresItem()) {
-
+                List<Weapon> weapons = sourceCharacter.GetAllAttachedWeapons();
+                for (int i = 0; i < weapons.Count; i++) {
+                    Weapon currWeapon = weapons[i];
+                    bool meetsRequirements = true;
+                    for (int j = 0; j < skill.skillRequirements.Length; j++) {
+                        SkillRequirement currRequirement = skill.skillRequirements[j];
+                        if(currRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
+                            //skip requirements that don't require an item
+                            continue;
+                        }
+                        if(currRequirement.equipmentType != (EQUIPMENT_TYPE)currWeapon.weaponType || !currWeapon.attributes.Contains(currRequirement.attributeRequired)) {
+                            meetsRequirements = false;
+                            break;
+                        }
+                    }
+                    if (meetsRequirements) {
+                        return currWeapon;
+                    }
+                }
             }
             return null;
         }

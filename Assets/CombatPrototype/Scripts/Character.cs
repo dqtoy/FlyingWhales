@@ -39,7 +39,7 @@ namespace ECS{
 			get { return this._name; }
 		}
         internal int actRate {
-            get { return _actRate; }
+            get { return _actRate + _items.Sum(x => x.bonusActRate); }
             set { _actRate = value; }
         }
 		internal int level{
@@ -49,7 +49,7 @@ namespace ECS{
 			get { return this._currentHP; }
 		}
         internal int maxHP {
-            get { return this._maxHP; }
+            get { return this._maxHP + _items.Sum(x => x.bonusMaxHP); }
         }
         internal CharacterClass characterClass{
 			get { return this._characterClass; }
@@ -73,13 +73,13 @@ namespace ECS{
 			get { return this._isDead; }
 		}
         internal int strength {
-            get { return _strength; }
+            get { return _strength +_items.Sum(x => x.bonusStrength); }
         }
         internal int intelligence {
-            get { return _intelligence; }
+            get { return _intelligence + _items.Sum(x => x.bonusIntelligence); }
         }
         internal int agility {
-            get { return _agility; }
+            get { return _agility + _items.Sum(x => x.bonusAgility); }
         }
         internal int exp {
             get { return _exp; }
@@ -95,6 +95,15 @@ namespace ECS{
         }
         internal int hpGain {
             get { return _characterClass.hpGain + _raceSetting.hpGain; }
+        }
+        internal int dodgeRate {
+            get { return characterClass.dodgeRate + _items.Sum(x => x.bonusDodgeRate); }
+        }
+        internal int parryRate {
+            get { return characterClass.parryRate + _items.Sum(x => x.bonusParryRate); }
+        }
+        internal int blockRate {
+            get { return characterClass.blockRate + _items.Sum(x => x.bonusBlockRate); }
         }
         #endregion
         public Character(CharacterSetup baseSetup, int level = 1) {
@@ -342,13 +351,22 @@ namespace ECS{
             Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
         }
-
-		internal void AddItem(Item newItem){
+        internal void AddItem(Item newItem){
 			this._items.Add (newItem);
 		}
 		internal void RemoveItem(Item newItem){
 			this._items.Remove (newItem);
 		}
+        internal List<Weapon> GetAllAttachedWeapons() {
+            List<Weapon> weapons = new List<Weapon>();
+            for (int i = 0; i < items.Count; i++) {
+                Item currItem = items[i];
+                if(currItem.itemType == ITEM_TYPE.WEAPON) {
+                    weapons.Add((Weapon)currItem);
+                }
+            }
+            return weapons;
+        }
 		#endregion
 
 		internal void CureStatusEffects(){
