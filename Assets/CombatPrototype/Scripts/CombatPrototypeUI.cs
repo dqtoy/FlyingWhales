@@ -112,7 +112,7 @@ namespace ECS{
         public void AddCombatLog(string combatLog) {
             resultsLog.Add(combatLog);
             combatSummaryLbl.text += "--" + combatLog + "\n\n";
-            combatSummaryScrollView.ResetPosition();
+            combatSummaryScrollView.UpdatePosition();
             combatSummaryScrollView.UpdateScrollbars();
         }
 
