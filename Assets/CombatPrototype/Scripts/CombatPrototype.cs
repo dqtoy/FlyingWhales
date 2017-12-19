@@ -12,6 +12,8 @@ namespace ECS{
 	public class CombatPrototype : MonoBehaviour {
 		public static CombatPrototype Instance;
 
+        public float updateIntervals = 0.5f;
+
 //		public Dictionary<SIDES, List<Character>> allCharactersAndSides;
 		internal List<Character> charactersSideA;
 		internal List<Character> charactersSideB;
@@ -74,8 +76,12 @@ namespace ECS{
         }
         #endregion
 
+        public void StartCombatSimulationCoroutine() {
+            StartCoroutine(CombatSimulation());
+        }
+
         //This simulates the whole combat system
-        public void CombatSimulation(){
+        public IEnumerator CombatSimulation(){
             CombatPrototypeUI.Instance.ClearCombatLogs();
 //			List<Character> charactersSideA = this.allCharactersAndSides [SIDES.A];
 //			List<Character> charactersSideB = this.allCharactersAndSides [SIDES.B];
@@ -85,19 +91,34 @@ namespace ECS{
 			SetRowNumber (this.charactersSideA, 1);
 			SetRowNumber (this.charactersSideB, 5);
 
+            int rounds = 1;
 			while(this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0){
+                Debug.Log("========== Round " + rounds.ToString() + " ==========");
 				Character characterThatWillAct = GetCharacterThatWillAct (this.charactersSideA, this.charactersSideB, isInitial);
 				characterThatWillAct.EnableDisableSkills ();
+                Debug.Log(characterThatWillAct.characterClass.className + " " + characterThatWillAct.name + " will act");
+                Debug.Log("Available Skills: ");
+                for (int i = 0; i < characterThatWillAct.characterClass.skills.Count; i++) {
+                    Skill currSkill = characterThatWillAct.characterClass.skills[i];
+                    if (currSkill.isEnabled) {
+                        Debug.Log(currSkill.skillName);
+                    }
+                }
 
-				Skill skillToUse = GetSkillToUse (characterThatWillAct);
+                Skill skillToUse = GetSkillToUse (characterThatWillAct);
 				if(skillToUse != null){
+                    Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
 					characterThatWillAct.CureStatusEffects ();
 					Character targetCharacter = GetTargetCharacter (characterThatWillAct, skillToUse);
-					DoSkill (skillToUse, characterThatWillAct, targetCharacter);
+                    Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
+                    DoSkill (skillToUse, characterThatWillAct, targetCharacter);
 				}
                 if (isInitial) {
                     isInitial = false;
                 }
+                Debug.Log("========== End Round " + rounds.ToString() + " ==========");
+                rounds++;
+                yield return new WaitForSeconds(updateIntervals);
             }
 		}
 

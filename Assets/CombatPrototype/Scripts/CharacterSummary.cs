@@ -3,17 +3,37 @@ using System.Collections;
 
 namespace ECS{
 	public class CharacterSummary : MonoBehaviour {
-		//public CharacterSummary Instance;
+        //public CharacterSummary Instance;
+
+        public GameObject basicSummaryGO;
+        public GameObject itemsSummaryGO;
 
 		public UILabel basicInfoLbl;
 		public UILabel classInfoLbl;
 		public UILabel bodyPartsInfoLbl;
 
+        public UILabel itemsInfoLbl;
+
 		//void Awake(){
 		//	Instance = this;
 		//}
 
-		public void UpdateCharacterSummary(Character character){
+        public void ShowBasicSummary() {
+            basicSummaryGO.SetActive(true);
+            itemsSummaryGO.SetActive(false);
+            UpdateCharacterSummary(CombatPrototypeUI.Instance.currSelectedCharacter);
+        }
+
+        public void ShowItemSummary() {
+            basicSummaryGO.SetActive(false);
+            itemsSummaryGO.SetActive(true);
+            UpdateItemSummary(CombatPrototypeUI.Instance.currSelectedCharacter);
+        }
+
+        public void UpdateCharacterSummary(Character character){
+            if (character == null) {
+                return;
+            }
             basicInfoLbl.text = string.Empty;
             basicInfoLbl.text += "[b]Name:[/b] " + character.name + "\n";
             basicInfoLbl.text += "[b]Class:[/b] " + character.characterClass.className + "\n";
@@ -74,6 +94,44 @@ namespace ECS{
                         bodyPartsInfoLbl.text += "[" + currStatus.ToString() + "]";
                     }
                 }
+            }
+            UpdateItemSummary(CombatPrototypeUI.Instance.currSelectedCharacter);
+        }
+
+        public void UpdateItemSummary(Character character) {
+            if(character == null) {
+                return;
+            }
+            itemsInfoLbl.text = "[b]ITEMS[/b]\n";
+            for (int i = 0; i < character.items.Count; i++) {
+                Item currItem = character.items[i];
+                itemsInfoLbl.text += "[b]" + currItem.itemName + "[/b] " +
+                    "\n     Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
+                if(currItem.itemType == ITEM_TYPE.ARMOR) {
+                    Armor armor = (Armor)currItem;
+                    itemsInfoLbl.text += "\n     Body part: " + armor.bodyPartAttached.bodyPart.ToString();
+                    itemsInfoLbl.text += "\n     Hitpoints: " + armor.currHitPoints.ToString() + "/" + armor.hitPoints.ToString();
+                    for (int j = 0; j < armor.attributes.Count; j++) {
+                        itemsInfoLbl.text += armor.attributes[j].ToString();
+                        if(j + 1 < armor.attributes.Count) {
+                            itemsInfoLbl.text += ", ";
+                        }
+                    }
+                } else if(currItem.itemType == ITEM_TYPE.WEAPON) {
+                    Weapon weapon = (Weapon)currItem;
+                    itemsInfoLbl.text += "\n     Body part: " + weapon.bodyPartAttached.bodyPart.ToString();
+                    itemsInfoLbl.text += "\n     Weapon Power: " + weapon.weaponPower.ToString();
+                    itemsInfoLbl.text += "\n     Durability Damage: " + weapon.durabilityDamage.ToString();
+                    for (int j = 0; j < weapon.attributes.Count; j++) {
+                        itemsInfoLbl.text += weapon.attributes[j].ToString();
+                        if (j + 1 < weapon.attributes.Count) {
+                            itemsInfoLbl.text += ", ";
+                        }
+                    }
+                } else {
+                    itemsInfoLbl.text += "\n";
+                }
+                    
             }
         }
 
