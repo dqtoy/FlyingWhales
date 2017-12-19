@@ -6,6 +6,7 @@ namespace ECS{
 	public class Item : EntityComponent {
         public ITEM_TYPE itemType;
 		public string itemName;
+		public string description;
 		public int bonusActRate;
 		public int bonusStrength;
 		public int bonusIntelligence;

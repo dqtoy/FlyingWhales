@@ -16,6 +16,7 @@ namespace ECS {
             GUILayout.Label("Item Creator ", EditorStyles.boldLabel);
 			itemComponent.itemType = (ITEM_TYPE)EditorGUILayout.EnumPopup("Item Type: ", itemComponent.itemType);
 			itemComponent.itemName = EditorGUILayout.TextField("Item Name: ", itemComponent.itemName);
+			itemComponent.description = EditorGUILayout.TextField("Description: ", itemComponent.description);
 
 			switch (itemComponent.itemType) {
 			case ITEM_TYPE.WEAPON:
@@ -100,6 +101,7 @@ namespace ECS {
 		private void SetCommonData(Item newItem) {
 			newItem.itemType = itemComponent.itemType;
 			newItem.itemName = itemComponent.itemName;
+			newItem.description = itemComponent.description;
 			newItem.bonusActRate = itemComponent.bonusActRate;
 			newItem.bonusStrength = itemComponent.bonusStrength;
 			newItem.bonusIntelligence = itemComponent.bonusIntelligence;
