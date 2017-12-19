@@ -181,10 +181,18 @@ namespace ECS{
 				}
 				for (int j = 0; j < skill.skillRequirements.Length; j++) {
 					SkillRequirement skillRequirement = skill.skillRequirements [j];
-					if(!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)){
-						skill.isEnabled = false;
-						break;
-					}
+                    if(skillRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
+                        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                            skill.isEnabled = false;
+                            break;
+                        }
+                    } else {
+                        //check if the character has the equipment needed to perform the skill
+                        if(!HasEquipmentOfType(skillRequirement.equipmentType, skillRequirement.attributeRequired)) {
+                            skill.isEnabled = false;
+                            break;
+                        }
+                    }
 				}
 				if(!skill.isEnabled){
 					continue;
@@ -382,6 +390,23 @@ namespace ECS{
                 }
             }
             return weapons;
+        }
+        internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
+            for (int i = 0; i < items.Count; i++) {
+                Item currItem = items[i];
+                if(currItem.itemType == ITEM_TYPE.ARMOR) {
+                    Armor armor = (Armor)currItem;
+                    if (armor.attributes.Contains(attribute)) {
+                        return true;
+                    }
+                } else if (currItem.itemType == ITEM_TYPE.WEAPON) {
+                    Weapon weapon = (Weapon)currItem;
+                    if (weapon.attributes.Contains(attribute)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 		#endregion
 
