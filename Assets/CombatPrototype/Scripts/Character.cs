@@ -128,6 +128,7 @@ namespace ECS{
             //_agiGain = baseSetup.raceSetting.agiGain + baseSetup.characterClass.agiGain;
             //_hpGain = baseSetup.raceSetting.hpGain + baseSetup.characterClass.hpGain;
             _bodyParts = new List<BodyPart>(baseSetup.raceSetting.bodyParts);
+
             _actRate = baseSetup.characterClass.actRate;
             _characterClass = baseSetup.characterClass;
             _raceSetting = baseSetup.raceSetting;
@@ -416,12 +417,12 @@ namespace ECS{
                 Item currItem = items[i];
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
-                    if (armor.attributes.Contains(attribute)) {
+                    if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
                         return true;
                     }
                 } else if (currItem.itemType == ITEM_TYPE.WEAPON) {
                     Weapon weapon = (Weapon)currItem;
-                    if (weapon.attributes.Contains(attribute)) {
+                    if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
                         return true;
                     }
                 }
