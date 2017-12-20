@@ -436,7 +436,7 @@ namespace ECS{
                 IncreaseLevel();
             }
         }
-        private void IncreaseLevel() {
+        internal void IncreaseLevel() {
             _level += 1;
             _strength += strGain;
             _intelligence += intGain;
@@ -444,6 +444,16 @@ namespace ECS{
             _maxHP += hpGain;
             _exp = 0;
         }
+		internal void DecreaseLevel() {
+			if(this._level > 1){
+				_level -= 1;
+				_strength -= strGain;
+				_intelligence -= intGain;
+				_agility -= agiGain;
+				_maxHP -= hpGain;
+				_exp = 0;
+			}
+		}
         #endregion
     }
 }

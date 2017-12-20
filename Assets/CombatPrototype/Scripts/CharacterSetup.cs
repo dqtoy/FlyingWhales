@@ -17,7 +17,7 @@ namespace ECS {
         public CharacterClass characterClass {
             get {
                 if (_charClass == null) {
-					_charClass = JsonUtility.FromJson<CharacterClass>(characterClassJson.text);
+					_charClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassJson.name + ".json"));
                 }
                 return _charClass;
             }
@@ -25,7 +25,7 @@ namespace ECS {
 		public RaceSetting raceSetting {
             get {
                 if (_raceSetting == null) {
-					_raceSetting = JsonUtility.FromJson<RaceSetting>(raceSetupJson.text);
+					_raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSetupJson.name + ".json"));
                 }
                 return _raceSetting;
             }
