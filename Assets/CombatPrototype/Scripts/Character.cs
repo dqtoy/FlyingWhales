@@ -362,8 +362,13 @@ namespace ECS{
 			weapon.bodyPartAttached = bodyPart;
 			AddItem(weapon);
             weapon.ResetDurability();
+            weapon.SetOwner(this);
             Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+        }
+        internal void UnequipWeapon(Weapon weapon) {
+            RemoveItem(weapon);
+            weapon.bodyPartAttached.DettachItem(weapon);
         }
 		//Equip an armor to a body part of this character and add it to the list of items this character have
 		internal void EquipArmor(Armor armor, IBodyPart bodyPart){
@@ -372,8 +377,13 @@ namespace ECS{
 			AddItem(armor);
             armor.ResetDurability();
             armor.ResetHitPoints();
+            armor.SetOwner(this);
             Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+        }
+        internal void UnequipArmor(Armor armor) {
+            RemoveItem(armor);
+            armor.bodyPartAttached.DettachItem(armor);
         }
         internal void AddItem(Item newItem){
 			this._items.Add (newItem);
@@ -387,6 +397,16 @@ namespace ECS{
                 Item currItem = items[i];
                 if(currItem.itemType == ITEM_TYPE.WEAPON) {
                     weapons.Add((Weapon)currItem);
+                }
+            }
+            return weapons;
+        }
+        internal List<Armor> GetAllAttachedArmor() {
+            List<Armor> weapons = new List<Armor>();
+            for (int i = 0; i < items.Count; i++) {
+                Item currItem = items[i];
+                if (currItem.itemType == ITEM_TYPE.ARMOR) {
+                    weapons.Add((Armor)currItem);
                 }
             }
             return weapons;

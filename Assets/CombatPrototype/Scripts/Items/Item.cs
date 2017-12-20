@@ -19,16 +19,29 @@ namespace ECS{
         public int currDurability;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
+        protected Character _owner;
+
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;
             currDurability = Mathf.Clamp(currDurability, 0, durability);
             if (currDurability == 0) {
-                //Item Destroyed!
+                //Item Destroyed! Unequip item if armor or weapon
+                if(this.itemType == ITEM_TYPE.WEAPON) {
+                    Weapon currWeapon = (Weapon)this;
+                    _owner.UnequipWeapon(currWeapon);
+                } else if(this.itemType == ITEM_TYPE.ARMOR) {
+                    Armor currArmor = (Armor)this;
+                    _owner.UnequipArmor(currArmor);
+                }
             }
         }
 
         public void ResetDurability() {
             currDurability = durability;
+        }
+
+        public void SetOwner(Character owner) {
+            _owner = owner;
         }
     }
 }
