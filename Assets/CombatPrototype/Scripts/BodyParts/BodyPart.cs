@@ -51,6 +51,11 @@ namespace ECS{
             }
             newBodyPart.statusEffects = new List<STATUS_EFFECT>(this.statusEffects);
             newBodyPart.itemsAttached = new List<Item>();
+            newBodyPart.secondaryBodyParts = new List<SecondaryBodyPart>();
+            for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
+                SecondaryBodyPart originalSecondary = this.secondaryBodyParts[i];
+                newBodyPart.secondaryBodyParts.Add(originalSecondary.CreateNewCopy());
+            }
             return newBodyPart;
         }
         #endregion
