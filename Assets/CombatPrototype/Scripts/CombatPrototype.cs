@@ -438,23 +438,23 @@ namespace ECS{
 					}
 
 					if(damage > 0){
-						//Deal damage to hp
-						targetCharacter.AdjustHP(-damage);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
-							+ " for " + damage.ToString());
+                        //Deal damage to hp
+                        CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
+                            + " for " + damage.ToString());
+                        targetCharacter.AdjustHP(-damage);
 					}
                     
                 } else {
                     //Deal damage to hp
-                    targetCharacter.AdjustHP(-damage);
                     CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
                     + " for " + damage.ToString());
+                    targetCharacter.AdjustHP(-damage);
                 }
             } else {
                 //Deal damage to hp
-                targetCharacter.AdjustHP(-damage);
-                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name 
+                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
                     + " for " + damage.ToString());
+                targetCharacter.AdjustHP(-damage);
             }
         }
 

@@ -21,11 +21,6 @@ namespace ECS{
 
         [SerializeField] private int _exp;
 
-        //[SerializeField] private int _strGain;
-        //[SerializeField] private int _intGain;
-        //[SerializeField] private int _agiGain;
-        //[SerializeField] private int _hpGain;
-
         [SerializeField] private bool _isDead;
 		private List<Trait>	_traits;
         [SerializeField] private List<BodyPart> _bodyParts;
@@ -116,21 +111,17 @@ namespace ECS{
             } else {
                 _name = RandomNameGenerator.Instance.GenerateElvenName(gender);
             }
+            _characterClass = baseSetup.characterClass.CreateNewCopy();
+            _raceSetting = baseSetup.raceSetting.CreateNewCopy();
             _level = 1;
-            _maxHP = baseSetup.raceSetting.baseHP;
+            _maxHP = _raceSetting.baseHP;
             _currentHP = _maxHP;
-            _strength = baseSetup.raceSetting.baseStr;
-            _intelligence = baseSetup.raceSetting.baseInt;
-            _agility = baseSetup.raceSetting.baseAgi;
+            _strength = _raceSetting.baseStr;
+            _intelligence = _raceSetting.baseInt;
+            _agility = _raceSetting.baseAgi;
             _exp = 0;
-            //_strGain = baseSetup.raceSetting.strGain + baseSetup.characterClass.strGain;
-            //_intGain = baseSetup.raceSetting.intGain + baseSetup.characterClass.intGain;
-            //_agiGain = baseSetup.raceSetting.agiGain + baseSetup.characterClass.agiGain;
-            //_hpGain = baseSetup.raceSetting.hpGain + baseSetup.characterClass.hpGain;
-            _bodyParts = new List<BodyPart>(baseSetup.raceSetting.bodyParts);
-            _actRate = baseSetup.characterClass.actRate;
-            _characterClass = baseSetup.characterClass;
-            _raceSetting = baseSetup.raceSetting;
+            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+            _actRate = _characterClass.actRate;
 			_items = new List<Item> ();
 
             if (level > 1) {

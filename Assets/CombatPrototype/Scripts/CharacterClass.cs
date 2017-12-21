@@ -28,12 +28,25 @@ namespace ECS {
         }
         #endregion
 
-        public CharacterClass() {
-            attackSkills = new List<string>();
-            healSkills = new List<string>();
-            fleeSkills = new List<string>();
-            moveSkills = new List<string>();
-            obtainSkills = new List<string>();
+        public CharacterClass CreateNewCopy() {
+            CharacterClass newClass = new CharacterClass();
+            newClass.className = this.className;
+            newClass.attackSkills = new List<string>(this.attackSkills);
+            newClass.healSkills = new List<string>(this.healSkills);
+            newClass.fleeSkills = new List<string>(this.fleeSkills);
+            newClass.moveSkills = new List<string>(this.moveSkills);
+            newClass.obtainSkills = new List<string>(this.obtainSkills);
+            newClass.actRate = this.actRate;
+            newClass.strGain = this.strGain;
+            newClass.intGain = this.intGain;
+            newClass.agiGain = this.agiGain;
+            newClass.hpGain = this.hpGain;
+            newClass.dodgeRate = this.dodgeRate;
+            newClass.parryRate = this.parryRate;
+            newClass.blockRate = this.blockRate;
+            newClass.ConstructAllSkillsList();
+
+            return newClass;
         }
 
         public void AddSkillOfType(SKILL_TYPE skillType, Skill skillToAdd) {
