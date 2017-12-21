@@ -16,6 +16,7 @@ namespace ECS {
 			skillComponent.skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillComponent.skillType);
 			skillComponent.skillName = EditorGUILayout.TextField("Skill Name: ", skillComponent.skillName);
 			skillComponent.description = EditorGUILayout.TextField("Description: ", skillComponent.description);
+			skillComponent.actWeightType = (ACTIVATION_WEIGHT_TYPE)EditorGUILayout.EnumPopup("Activation Weight Type: ", skillComponent.actWeightType);
 			skillComponent.activationWeight = EditorGUILayout.IntField("Activation Weight: ", skillComponent.activationWeight);
 			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
 			skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
@@ -111,6 +112,7 @@ namespace ECS {
         private void SetCommonData(Skill newSkill) {
 			newSkill.skillName = skillComponent.skillName;
 			newSkill.description = skillComponent.description;
+			newSkill.actWeightType = skillComponent.actWeightType;
 			newSkill.activationWeight = skillComponent.activationWeight;
 			newSkill.accuracy = skillComponent.accuracy;
 			newSkill.range = skillComponent.range;

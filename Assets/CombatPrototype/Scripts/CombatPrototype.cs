@@ -212,6 +212,47 @@ namespace ECS{
 				Skill skill = sourceCharacter.characterClass.skills [i];
 				if(skill.isEnabled && HasTargetInRangeForSkill(skill, sourceCharacter)){
 					int activationWeight = skill.activationWeight;
+					if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
+						activationWeight = (int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f);
+					}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.MISSING_HEALTH){
+						int missingHealth = sourceCharacter.maxHP - sourceCharacter.currentHP;
+						activationWeight = (int)(((float)missingHealth / (float)sourceCharacter.maxHP) * 100f);
+					}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
+						int highestMissingHealth = charactersSideA.Max(x => x.maxHP - x.currentHP);
+						Character chosenCharacter = null;
+						if(charactersSideA.Contains(sourceCharacter)){
+							for (int j = 0; j < charactersSideA.Count; j++) {
+								Character character = charactersSideA [j];
+								int missingHealth = character.maxHP - character.currentHP;
+								if(highestMissingHealth == -1){
+									highestMissingHealth = missingHealth;
+									chosenCharacter = character;
+								}else{
+									if(missingHealth > highestMissingHealth){
+										highestMissingHealth = missingHealth;
+										chosenCharacter = character;
+									}
+								}
+							}
+						}else{
+							for (int j = 0; j < charactersSideB.Count; j++) {
+								Character character = charactersSideB [j];
+								int missingHealth = character.maxHP - character.currentHP;
+								if(highestMissingHealth == -1){
+									highestMissingHealth = missingHealth;
+									chosenCharacter = character;
+								}else{
+									if(missingHealth > highestMissingHealth){
+										highestMissingHealth = missingHealth;
+										chosenCharacter = character;
+									}
+								}
+							}
+						}
+						if(chosenCharacter != null){
+							activationWeight = (int)((((float)highestMissingHealth / (float)chosenCharacter.maxHP) * 100f) * 2f);
+						}
+					}
 					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
 						activationWeight /= 2;
 					}
