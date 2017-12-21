@@ -113,7 +113,7 @@ namespace ECS{
             }
             _characterClass = baseSetup.characterClass.CreateNewCopy();
             _raceSetting = baseSetup.raceSetting.CreateNewCopy();
-            _level = 1;
+			_level = level;
             _maxHP = _raceSetting.baseHP;
             _currentHP = _maxHP;
             _strength = _raceSetting.baseStr;
@@ -123,10 +123,13 @@ namespace ECS{
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             _actRate = _characterClass.actRate;
 
+
 			_items = new List<Item> ();
 
-            if (level > 1) {
-                LevelUp(level - 1);
+			EquipPreEquippedItems (baseSetup);
+
+            if (baseSetup.initialLevel > 1) {
+				LevelUp(baseSetup.initialLevel - 1);
             }
             //TODO: Generate Traits
         }
@@ -348,6 +351,60 @@ namespace ECS{
         #endregion
 
         #region Items
+		//If character set up has pre equipped items, equip it here evey time a character is made
+		internal void EquipPreEquippedItems(CharacterSetup charSetup){
+			if(charSetup.preEquippedItems.Count > 0){
+				for (int i = 0; i < charSetup.preEquippedItems.Count; i++) {
+					EquipItem (charSetup.preEquippedItems [i].itemType, charSetup.preEquippedItems [i].itemName);
+				}
+			}
+
+		}
+		//Equip generic item, can be a weapon, armor, etc.
+		public void EquipItem(ITEM_TYPE itemType, string itemName) {
+			string strItemType = itemType.ToString();
+			string path = "Assets/CombatPrototype/Data/Items/" + strItemType + "/" + itemName + ".json";
+			string dataAsJson = System.IO.File.ReadAllText(path);
+			if (strItemType.Contains("WEAPON")) {
+				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
+				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
+				if(bodyPartToEquip != null) {
+					EquipWeapon(weapon, bodyPartToEquip);
+				} else {
+					Debug.Log(name + " cannot equip " + weapon.itemName);
+				}
+			} else if (strItemType.Contains("ARMOR")) {
+				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
+				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
+				if (bodyPartToEquip != null) {
+					EquipArmor(armor, bodyPartToEquip);
+				} else {
+					Debug.Log(name + " cannot equip " + armor.itemName);
+				}
+			}
+		}
+		public void EquipItem(string itemType, string itemName) {
+			string path = "Assets/CombatPrototype/Data/Items/" + itemType + "/" + itemName + ".json";
+			string dataAsJson = System.IO.File.ReadAllText(path);
+			if (itemType.Contains("WEAPON")) {
+				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
+				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
+				if(bodyPartToEquip != null) {
+					EquipWeapon(weapon, bodyPartToEquip);
+				} else {
+					Debug.Log(name + " cannot equip " + weapon.itemName);
+				}
+			} else if (itemType.Contains("ARMOR")) {
+				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
+				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
+				if (bodyPartToEquip != null) {
+					EquipArmor(armor, bodyPartToEquip);
+				} else {
+					Debug.Log(name + " cannot equip " + armor.itemName);
+				}
+			}
+		}
+
         //Equip a weapon to a body part of this character and add it to the list of items this character have
         internal void EquipWeapon(Weapon weapon, IBodyPart bodyPart){
 			bodyPart.AttachItem(weapon);

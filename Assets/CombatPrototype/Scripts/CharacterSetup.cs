@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ECS {
     [System.Serializable]
@@ -8,6 +9,9 @@ namespace ECS {
 
 		public string characterClassName;
 		public string raceSettingName;
+		public int initialLevel;
+		public List<ItemAndType> preEquippedItems;
+
 
         private CharacterClass _charClass;
 		private RaceSetting _raceSetting;

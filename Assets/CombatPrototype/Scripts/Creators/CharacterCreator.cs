@@ -33,17 +33,59 @@ namespace ECS {
 						}
 					}
 				}
+
+				if(characterComponent.initialLevel == 0){
+					characterComponent.initialLevel = 1;
+				}
 			}
             GUILayout.Label("Character Setup Creator ", EditorStyles.boldLabel);
 			characterComponent.fileName = EditorGUILayout.TextField("File Name: ", characterComponent.fileName);
             
 			characterComponent.currRaceSelectedIndex = EditorGUILayout.Popup("Race Setup: ", characterComponent.currRaceSelectedIndex, characterComponent.raceChoices.ToArray());
 			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
+			characterComponent.initialLevel = EditorGUILayout.IntField("Level: ", characterComponent.initialLevel);
+
+//			SerializedProperty serializedProperty = serializedObject.FindProperty("preEquippedItems");
+//			EditorGUILayout.PropertyField(serializedProperty, true);
+//			serializedObject.ApplyModifiedProperties();
+
+			characterComponent.itemFoldout = EditorGUILayout.Foldout(characterComponent.itemFoldout, "Pre-equipped Items");
+
+			if (characterComponent.itemFoldout && characterComponent.preEquippedItems != null) {
+				EditorGUI.indentLevel++;
+				for (int i = 0; i < characterComponent.preEquippedItems.Count; i++) {
+					SerializedProperty currItem = serializedObject.FindProperty("preEquippedItems").GetArrayElementAtIndex(i);
+					EditorGUILayout.PropertyField(currItem, true);
+//					EditorGUILayout.LabelField(characterComponent.preEquippedItems[i]);
+//					if (GUILayout.Button("Remove")) {
+//						characterComponent.RemoveItem(i);
+//					}
+				}
+				EditorGUI.indentLevel--;
+			}
+
+
+			//Add Item Area
+			GUILayout.Space(10);
+			GUILayout.BeginVertical(EditorStyles.helpBox);
+			GUILayout.Label("Add Items ", EditorStyles.boldLabel);
+			characterComponent.itemTypeToAdd = (ITEM_TYPE)EditorGUILayout.EnumPopup("Item Type To Add: ", characterComponent.itemTypeToAdd);
+			List<string> choices = GetAllItemsOfType(characterComponent.itemTypeToAdd);
+			characterComponent.currItemSelectedIndex = EditorGUILayout.Popup("Item To Add: ", characterComponent.currItemSelectedIndex, choices.ToArray());
+			GUI.enabled = choices.Count > 0;
+			if (GUILayout.Button("Add Item")) {
+				characterComponent.AddItem(choices[characterComponent.currItemSelectedIndex]);
+			}
+			GUI.enabled = true;
+			GUILayout.EndHorizontal();
+
+
+
 			characterComponent.raceSettingName = characterComponent.raceChoices[characterComponent.currRaceSelectedIndex];
 			characterComponent.characterClassName = characterComponent.characterClassChoices[characterComponent.currCharacterSelectedIndex];
 
 			if (GUILayout.Button("Save Character")) {
-				SaveCharacter(ConstructCharacterSetup(characterComponent.raceSettingName, characterComponent.characterClassName));
+				SaveCharacter(ConstructCharacterSetup());
 			}
         }
 
@@ -80,13 +122,15 @@ namespace ECS {
                 SaveCharacterJson(path, characterSetup);
             }
         }
-		private CharacterSetup ConstructCharacterSetup(string raceSettingName, string characterClassName) {
+		private CharacterSetup ConstructCharacterSetup() {
             CharacterSetup newCharacter = new CharacterSetup();
             //string raceData = File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingFileName + ".json");
             //string characterClassData = File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassFileName + ".json");
             newCharacter.fileName = characterComponent.fileName;
-			newCharacter.raceSettingName = raceSettingName;
-			newCharacter.characterClassName = characterClassName;
+			newCharacter.raceSettingName = characterComponent.raceSettingName;
+			newCharacter.characterClassName = characterComponent.characterClassName;
+			newCharacter.preEquippedItems = characterComponent.preEquippedItems;
+			newCharacter.initialLevel = characterComponent.initialLevel;
 
             return newCharacter;
         }
@@ -101,6 +145,28 @@ namespace ECS {
             UnityEditor.AssetDatabase.ImportAsset(path);
             Debug.Log("Successfully saved character data at " + path);
         }
+
+		private List<string> GetAllItems() {
+			string mainPath = "Assets/CombatPrototype/Data/Items/";
+			string[] folders = System.IO.Directory.GetDirectories (mainPath);
+			List<string> allItemsOfType = new List<string>();
+			for (int i = 0; i < folders.Length; i++) {
+				string path = folders[i] + "/";
+				foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+					allItemsOfType.Add(System.IO.Path.GetFileNameWithoutExtension(file));
+				}
+			} 
+
+			return allItemsOfType;
+		}
+		private List<string> GetAllItemsOfType(ITEM_TYPE itemType) {
+			List<string> allItemsOfType = new List<string>();
+			string path = "Assets/CombatPrototype/Data/Items/" + itemType.ToString() + "/";
+			foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+				allItemsOfType.Add(System.IO.Path.GetFileNameWithoutExtension(file));
+			}
+			return allItemsOfType;
+		}
 //        private void LoadCharacter() {
 //            string filePath = EditorUtility.OpenFilePanel("Select character data file", "Assets/CombatPrototype/Data/CharacterSetups/", "json");
 //
