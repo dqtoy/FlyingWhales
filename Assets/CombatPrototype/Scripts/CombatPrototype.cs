@@ -438,19 +438,18 @@ namespace ECS{
 				}
 
                 if (damage > 0) {
-                    //Deal damage to hp
-                    targetCharacter.AdjustHP(-damage);
-                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
-                        + " for " + damage.ToString());
+                        //Deal damage to hp
+                        CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
+                            + " for " + damage.ToString());
+                        targetCharacter.AdjustHP(-damage);
                 }
                     
             } else {
                 //Deal damage to hp
-                targetCharacter.AdjustHP(-damage);
                 CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
                 + " for " + damage.ToString());
+                    targetCharacter.AdjustHP(-damage);
             }
-            
         }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 

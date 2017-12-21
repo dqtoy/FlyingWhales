@@ -28,13 +28,37 @@ namespace ECS{
 				this.secondaryBodyParts [i].statusEffects.Remove (statusEffect);
 			}
 		}
-//		internal void SetData(BODY_PART bodyPart, IMPORTANCE importance, List<ATTRIBUTE> attributes, List<SecondaryBodyPart> secondaryBodyParts, STATUS status){
-//			this.bodyPart = bodyPart;
-//			this.importance = importance;
-//			this.attributes = new List<ATTRIBUTE> (attributes);
-//			this.secondaryBodyParts = new List<SecondaryBodyPart> (secondaryBodyParts);
-//			this.status = status;
-//		}
-	}
+        //		internal void SetData(BODY_PART bodyPart, IMPORTANCE importance, List<ATTRIBUTE> attributes, List<SecondaryBodyPart> secondaryBodyParts, STATUS status){
+        //			this.bodyPart = bodyPart;
+        //			this.importance = importance;
+        //			this.attributes = new List<ATTRIBUTE> (attributes);
+        //			this.secondaryBodyParts = new List<SecondaryBodyPart> (secondaryBodyParts);
+        //			this.status = status;
+        //		}
+
+        #region Utilities
+        internal BodyPart CreateNewCopy() {
+            BodyPart newBodyPart = new BodyPart();
+            newBodyPart.bodyPart = this.bodyPart;
+            newBodyPart.importance = this.importance;
+            newBodyPart.attributes = new List<BodyAttribute>();
+            for (int i = 0; i < this.attributes.Count; i++) {
+                BodyAttribute originalAttribute = this.attributes[i];
+                BodyAttribute newAttribute = new BodyAttribute();
+                newAttribute.attribute = originalAttribute.attribute;
+                newAttribute.SetAttributeAsUsed(originalAttribute.isUsed);
+                newBodyPart.attributes.Add(newAttribute);
+            }
+            newBodyPart.statusEffects = new List<STATUS_EFFECT>(this.statusEffects);
+            newBodyPart.itemsAttached = new List<Item>();
+            newBodyPart.secondaryBodyParts = new List<SecondaryBodyPart>();
+            for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
+                SecondaryBodyPart originalSecondary = this.secondaryBodyParts[i];
+                newBodyPart.secondaryBodyParts.Add(originalSecondary.CreateNewCopy());
+            }
+            return newBodyPart;
+        }
+        #endregion
+    }
 }
 
