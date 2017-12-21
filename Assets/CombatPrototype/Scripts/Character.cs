@@ -44,7 +44,7 @@ namespace ECS{
 			get { return this._currentHP; }
 		}
         internal int maxHP {
-            get { return this._maxHP + _items.Sum(x => x.bonusMaxHP); }
+            get { return this._maxHP; }
         }
         internal CharacterClass characterClass{
 			get { return this._characterClass; }
@@ -436,9 +436,11 @@ namespace ECS{
         }
         internal void AddItem(Item newItem){
 			this._items.Add (newItem);
+			AddItemBonuses (newItem);
 		}
 		internal void RemoveItem(Item newItem){
 			this._items.Remove (newItem);
+			RemoveItemBonuses (newItem);
 		}
         internal List<Weapon> GetAllAttachedWeapons() {
             List<Weapon> weapons = new List<Weapon>();
@@ -510,7 +512,7 @@ namespace ECS{
             _strength += strGain;
             _intelligence += intGain;
             _agility += agiGain;
-            _maxHP += hpGain;
+			AdjustMaxHP (hpGain);
             _exp = 0;
         }
 		internal void DecreaseLevel() {
@@ -519,11 +521,25 @@ namespace ECS{
 				_strength -= strGain;
 				_intelligence -= intGain;
 				_agility -= agiGain;
-				_maxHP -= hpGain;
+				AdjustMaxHP (-hpGain);
 				_exp = 0;
 			}
 		}
         #endregion
+		private void AddItemBonuses(Item item){
+			AdjustMaxHP (item.bonusMaxHP);
+		}
+		private void RemoveItemBonuses(Item item){
+			AdjustMaxHP (-item.bonusMaxHP);
+		}
+		internal void AdjustMaxHP(int amount){
+			if(this.currentHP == this.maxHP){
+				this._maxHP += amount;
+				this._currentHP = this._maxHP;
+			}else{
+				this._maxHP += amount;
+			}
+		}
     }
 }
 
