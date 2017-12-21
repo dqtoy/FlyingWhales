@@ -6,7 +6,13 @@ namespace ECS {
 	public class CharacterComponent : MonoBehaviour {
 		public string fileName;
 
-		public TextAsset characterClass;
-		public TextAsset raceSetup;
+		public string characterClassName;
+		public string raceSettingName;
+
+		public int currCharacterSelectedIndex;
+		public int currRaceSelectedIndex;
+
+		public List<string> raceChoices;
+		public List<string> characterClassChoices;
 	}
 }

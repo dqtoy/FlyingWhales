@@ -6,8 +6,8 @@ namespace ECS {
     public class CharacterSetup {
         public string fileName;
 
-		public TextAsset characterClassJson;
-		public TextAsset raceSetupJson;
+		public string characterClassName;
+		public string raceSettingName;
 
         private CharacterClass _charClass;
 		private RaceSetting _raceSetting;
@@ -17,7 +17,7 @@ namespace ECS {
         public CharacterClass characterClass {
             get {
                 if (_charClass == null) {
-					_charClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassJson.name + ".json"));
+					_charClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassName + ".json"));
                 }
                 return _charClass;
             }
@@ -25,7 +25,7 @@ namespace ECS {
 		public RaceSetting raceSetting {
             get {
                 if (_raceSetting == null) {
-					_raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSetupJson.name + ".json"));
+					_raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingName + ".json"));
                 }
                 return _raceSetting;
             }

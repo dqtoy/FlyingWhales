@@ -13,20 +13,37 @@ namespace ECS {
 		public override void OnInspectorGUI() {
 			if(characterComponent == null){
 				characterComponent = (CharacterComponent)target;
+				characterComponent.raceChoices = GetAllRaceSetups();
+				characterComponent.characterClassChoices = GetAllCharacterClasses();
+
+				if(characterComponent.raceSettingName != string.Empty){
+					for (int i = 0; i < characterComponent.raceChoices.Count; i++) {
+						if(characterComponent.raceSettingName == characterComponent.raceChoices[i]){
+							characterComponent.currRaceSelectedIndex = i;
+							break;
+						}
+					}
+				}
+
+				if(characterComponent.characterClassName != string.Empty){
+					for (int i = 0; i < characterComponent.characterClassChoices.Count; i++) {
+						if(characterComponent.characterClassName == characterComponent.characterClassChoices[i]){
+							characterComponent.currCharacterSelectedIndex = i;
+							break;
+						}
+					}
+				}
 			}
             GUILayout.Label("Character Setup Creator ", EditorStyles.boldLabel);
 			characterComponent.fileName = EditorGUILayout.TextField("File Name: ", characterComponent.fileName);
             
-//			characterComponent.raceChoices = GetAllRaceSetups();
-			characterComponent.raceSetup = (TextAsset)EditorGUILayout.ObjectField("Race Setup: ", characterComponent.raceSetup, typeof(TextAsset), false);
-//
-//			characterComponent.characterClassChoices = GetAllCharacterClasses();
-			characterComponent.characterClass = (TextAsset)EditorGUILayout.ObjectField("Character Class: ", characterComponent.characterClass, typeof(TextAsset), false);
+			characterComponent.currRaceSelectedIndex = EditorGUILayout.Popup("Race Setup: ", characterComponent.currRaceSelectedIndex, characterComponent.raceChoices.ToArray());
+			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
+			characterComponent.raceSettingName = characterComponent.raceChoices[characterComponent.currRaceSelectedIndex];
+			characterComponent.characterClassName = characterComponent.characterClassChoices[characterComponent.currCharacterSelectedIndex];
 
-			if(characterComponent.raceSetup != null && characterComponent.characterClass != null){
-				if (GUILayout.Button("Save Character")) {
-					SaveCharacter(ConstructCharacterSetup(characterComponent.raceSetup, characterComponent.characterClass));
-				}
+			if (GUILayout.Button("Save Character")) {
+				SaveCharacter(ConstructCharacterSetup(characterComponent.raceSettingName, characterComponent.characterClassName));
 			}
         }
 
@@ -63,13 +80,13 @@ namespace ECS {
                 SaveCharacterJson(path, characterSetup);
             }
         }
-        private CharacterSetup ConstructCharacterSetup(TextAsset raceSettingJson, TextAsset characterClassJson) {
+		private CharacterSetup ConstructCharacterSetup(string raceSettingName, string characterClassName) {
             CharacterSetup newCharacter = new CharacterSetup();
             //string raceData = File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingFileName + ".json");
             //string characterClassData = File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassFileName + ".json");
             newCharacter.fileName = characterComponent.fileName;
-			newCharacter.raceSetupJson = raceSettingJson;
-			newCharacter.characterClassJson = characterClassJson;
+			newCharacter.raceSettingName = raceSettingName;
+			newCharacter.characterClassName = characterClassName;
 
             return newCharacter;
         }
