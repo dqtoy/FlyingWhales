@@ -83,9 +83,9 @@ namespace ECS{
         //This simulates the whole combat system
         public IEnumerator CombatSimulation(){
             CombatPrototypeUI.Instance.ClearCombatLogs();
-//			List<Character> charactersSideA = this.allCharactersAndSides [SIDES.A];
-//			List<Character> charactersSideB = this.allCharactersAndSides [SIDES.B];
-
+            //			List<Character> charactersSideA = this.allCharactersAndSides [SIDES.A];
+            //			List<Character> charactersSideB = this.allCharactersAndSides [SIDES.B];
+            ResetAllArmorHitPoints(); //Reset all hitpoints of each characters armor
             bool isInitial = true;
 			bool isOneSideDefeated = false;
 			SetRowNumber (this.charactersSideA, 1);
@@ -116,6 +116,7 @@ namespace ECS{
                 if (isInitial) {
                     isInitial = false;
                 }
+                CombatPrototypeUI.Instance.UpdateCharacterSummary();
                 Debug.Log("========== End Round " + rounds.ToString() + " ==========");
                 rounds++;
                 yield return new WaitForSeconds(updateIntervals);
@@ -401,54 +402,55 @@ namespace ECS{
             
             BodyPart damagedBodyPart =	DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter);
 
-            if(damagedBodyPart != null) {
-                //Get all armor pieces on body part that still has hit points
-				List<Item> armorOnBodyPart = damagedBodyPart.GetAttachedItemsOfType(ITEM_TYPE.ARMOR).OrderByDescending(x => ((Armor)x).currHitPoints).ToList();
-                if (armorOnBodyPart.Count > 0) {
-					if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
-						for (int i = 0; i < armorOnBodyPart.Count; i++) {
-							Armor currArmor = (Armor)armorOnBodyPart[i];
-							if(currArmor.currHitPoints > 0) {
-								//Deal damage to armor
-								currArmor.AdjustHitPoints (-damage);
-								CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
-									+ "'s " + currArmor.itemName + " for " + damage.ToString());
-
-								damage -= currArmor.currHitPoints;
-								if(damage < 0 ){
-									damage = 0;
-								}
-							}
-						}
-					}
-
-					int damageToDurability = attackSkill.durabilityDamage; //[SkillDurabilityDamage  +  WeaponDurabilityDamage]
-					if (weapon != null) {
-						damageToDurability += weapon.durabilityDamage;
-					}
+            //Get all armor pieces on body part that still has hit points
+			List<Item> armorOnBodyPart = damagedBodyPart.GetAttachedItemsOfType(ITEM_TYPE.ARMOR).OrderByDescending(x => ((Armor)x).currHitPoints).ToList();
+            if (armorOnBodyPart.Count > 0) {
+				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
 					for (int i = 0; i < armorOnBodyPart.Count; i++) {
 						Armor currArmor = (Armor)armorOnBodyPart[i];
-						if(currArmor.durability > 0) {
-							//Reduce Armor Durability
-							currArmor.AdjustDurability(-damageToDurability);
-							if(currArmor.durability <= 0) {
-								CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " destroys " + targetCharacter.name + "'s " + currArmor.itemName);
+						if(currArmor.currHitPoints > 0) {
+							//Deal damage to armor
+							currArmor.AdjustHitPoints (-damage);
+							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
+								+ "'s " + currArmor.itemName + " for " + damage.ToString());
+
+							damage -= currArmor.currHitPoints;
+							if(damage < 0 ){
+								damage = 0;
 							}
 						}
 					}
+				}
 
-					if(damage > 0){
+				int damageToDurability = attackSkill.durabilityDamage; //[SkillDurabilityDamage  +  WeaponDurabilityDamage]
+				if (weapon != null) {
+					damageToDurability += weapon.durabilityDamage;
+				}
+				for (int i = 0; i < armorOnBodyPart.Count; i++) {
+					Armor currArmor = (Armor)armorOnBodyPart[i];
+					if(currArmor.durability > 0) {
+						//Reduce Armor Durability
+						currArmor.AdjustDurability(-damageToDurability);
+						if(currArmor.durability <= 0) {
+							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " destroys " + targetCharacter.name + "'s " + currArmor.itemName);
+						}
+					}
+				}
+
+                if (damage > 0) {
                         //Deal damage to hp
                         CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
                             + " for " + damage.ToString());
                         targetCharacter.AdjustHP(-damage);
-					}
+                }
                     
-                } else {
-                    //Deal damage to hp
-                    CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
-                    + " for " + damage.ToString());
+            } else {
+                //Deal damage to hp
+                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
+                + " for " + damage.ToString());
                     targetCharacter.AdjustHP(-damage);
+            }
+            
                 }
             } else {
                 //Deal damage to hp
@@ -673,6 +675,21 @@ namespace ECS{
 			}
 			InstantDeath (character);
 		}
-	}
+
+        #region Items
+        private void ResetAllArmorHitPoints() {
+            List<Character> allCharacters = new List<Character>(charactersSideA);
+            allCharacters.AddRange(charactersSideB);
+            for (int i = 0; i < allCharacters.Count; i++) {
+                Character currCharacter = allCharacters[i];
+                List<Armor> armorOfCharacter = currCharacter.GetAllAttachedArmor();
+                for (int j = 0; j < armorOfCharacter.Count; j++) {
+                    Armor currArmor = armorOfCharacter[j];
+                    currArmor.ResetHitPoints();
+                }
+            }
+        }
+        #endregion
+    }
 }
 

@@ -25,7 +25,8 @@ namespace ECS{
             CAN_EQUIP_ARM_ARMOR,
             CAN_EQUIP_HAND_ARMOR,
             CAN_EQUIP_HEAD_ARMOR,
-            CAN_EQUIP_TAIL_ARMOR
+            CAN_EQUIP_TAIL_ARMOR,
+            NONE
         }
 
 		[SerializeField] internal BODY_PART bodyPart;

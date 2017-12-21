@@ -122,6 +122,7 @@ namespace ECS{
             _exp = 0;
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             _actRate = _characterClass.actRate;
+
 			_items = new List<Item> ();
 
             if (level > 1) {
@@ -353,8 +354,13 @@ namespace ECS{
 			weapon.bodyPartAttached = bodyPart;
 			AddItem(weapon);
             weapon.ResetDurability();
+            weapon.SetOwner(this);
             Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+        }
+        internal void UnequipWeapon(Weapon weapon) {
+            RemoveItem(weapon);
+            weapon.bodyPartAttached.DettachItem(weapon);
         }
 		//Equip an armor to a body part of this character and add it to the list of items this character have
 		internal void EquipArmor(Armor armor, IBodyPart bodyPart){
@@ -363,8 +369,13 @@ namespace ECS{
 			AddItem(armor);
             armor.ResetDurability();
             armor.ResetHitPoints();
+            armor.SetOwner(this);
             Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+        }
+        internal void UnequipArmor(Armor armor) {
+            RemoveItem(armor);
+            armor.bodyPartAttached.DettachItem(armor);
         }
         internal void AddItem(Item newItem){
 			this._items.Add (newItem);
@@ -382,17 +393,27 @@ namespace ECS{
             }
             return weapons;
         }
+        internal List<Armor> GetAllAttachedArmor() {
+            List<Armor> weapons = new List<Armor>();
+            for (int i = 0; i < items.Count; i++) {
+                Item currItem = items[i];
+                if (currItem.itemType == ITEM_TYPE.ARMOR) {
+                    weapons.Add((Armor)currItem);
+                }
+            }
+            return weapons;
+        }
         internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
             for (int i = 0; i < items.Count; i++) {
                 Item currItem = items[i];
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
-                    if (armor.attributes.Contains(attribute)) {
+                    if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
                         return true;
                     }
                 } else if (currItem.itemType == ITEM_TYPE.WEAPON) {
                     Weapon weapon = (Weapon)currItem;
-                    if (weapon.attributes.Contains(attribute)) {
+                    if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
                         return true;
                     }
                 }
@@ -427,7 +448,7 @@ namespace ECS{
                 IncreaseLevel();
             }
         }
-        private void IncreaseLevel() {
+        internal void IncreaseLevel() {
             _level += 1;
             _strength += strGain;
             _intelligence += intGain;
@@ -435,6 +456,16 @@ namespace ECS{
             _maxHP += hpGain;
             _exp = 0;
         }
+		internal void DecreaseLevel() {
+			if(this._level > 1){
+				_level -= 1;
+				_strength -= strGain;
+				_intelligence -= intGain;
+				_agility -= agiGain;
+				_maxHP -= hpGain;
+				_exp = 0;
+			}
+		}
         #endregion
     }
 }

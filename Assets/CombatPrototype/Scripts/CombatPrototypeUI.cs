@@ -83,11 +83,13 @@ namespace ECS{
         public void AddCharacterToSideA() {
             Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
             CombatPrototype.Instance.AddCharacter(SIDES.A, newChar);
+            CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
         public void AddCharacterToSideB() {
             Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
             CombatPrototype.Instance.AddCharacter(SIDES.B, newChar);
+            CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
         public void UpdateCharactersList(SIDES side) {
@@ -108,6 +110,10 @@ namespace ECS{
         public void UpdateCharacterSummary(Character character) {
             characterSummary.UpdateCharacterSummary(character);
         }
+        public void UpdateCharacterSummary() {
+            characterSummary.UpdateCharacterSummary(currSelectedCharacter);
+        }
+
 
         public void AddCombatLog(string combatLog) {
             resultsLog.Add(combatLog);
@@ -161,5 +167,20 @@ namespace ECS{
             }
         }
         #endregion
+
+		#region Levels
+		public void LevelUp(){
+			if(currSelectedCharacter != null){
+				currSelectedCharacter.IncreaseLevel ();
+				UpdateCharacterSummary (currSelectedCharacter);
+			}
+		}
+		public void LevelDown(){
+			if(currSelectedCharacter != null){
+				currSelectedCharacter.DecreaseLevel ();
+				UpdateCharacterSummary (currSelectedCharacter);
+			}
+		}
+		#endregion
     }
 }
