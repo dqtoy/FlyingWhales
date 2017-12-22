@@ -95,16 +95,22 @@ public class Biomes : MonoBehaviour {
 			HexTile currentHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
             BIOMES biomeForTile = GetBiomeSimple(currentHexTileGO);
             SetBiomeForTile(biomeForTile, currentHexTile);
+            //SetElevationSpriteForTile(currentHexTile);
         }
 		//GenerateBareBiome();
-
 	}
+    internal void LoadElevationSprites() {
+        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+            HexTile currTile = GridMap.Instance.hexTiles[i];
+            SetElevationSpriteForTile(currTile);
+        }
+    }
     internal void SetBiomeForTile(BIOMES biomeForTile, HexTile currentHexTile) {
         currentHexTile.SetBiome(biomeForTile);
 
-        if (currentHexTile.elevationType == ELEVATION.WATER) {
-            return;
-        }
+        //if (currentHexTile.elevationType == ELEVATION.WATER) {
+        //    return;
+        //}
         int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
         switch (currentHexTile.biomeType) {
             case BIOMES.SNOW:
@@ -159,6 +165,9 @@ public class Biomes : MonoBehaviour {
     }
 
     internal void AddBiomeDetailToTile(HexTile tile) {
+        if(tile.elevationType != ELEVATION.PLAIN) {
+            return;
+        }
         GameObject biomeDetailToUse = null;
         Sprite centerSpriteToUse = null;
         switch (tile.biomeType) {
@@ -277,28 +286,148 @@ public class Biomes : MonoBehaviour {
 	internal void GenerateElevation(){
 		CalculateElevationAndMoisture();
 
-		for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
-			HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-			switch(currHexTile.elevationType){
-			case ELEVATION.MOUNTAIN:
-//				Sprite mountainSpriteToUse = mountainTiles [Random.Range (0, mountainTiles.Length)];
-//				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = new Color(165f/255f,42f/255f,42f/255f);
-//				GridMap.Instance.listHexes[i].GetComponent<HexTile>().centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
-//				GridMap.Instance.listHexes[i].GetComponent<HexTile>().GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
-				break;
-			case ELEVATION.PLAIN:
-//				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = Color.green;
-				break;
-			case ELEVATION.WATER:
-//				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = Color.blue;
-				Sprite waterSpriteToUse = waterTiles [Random.Range (0, waterTiles.Length)];
-				currHexTile.GetComponent<SpriteRenderer>().sortingLayerName = "Water";
-				currHexTile.GetComponent<SpriteRenderer>().sprite = waterSpriteToUse;
-//				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().sprite = waterSprite;
-				break;
-			}
-		}
+		//for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
+		//	HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+  //          SetElevationSpriteForTile(currHexTile);
+  //          //			switch(currHexTile.elevationType){
+  //          //			case ELEVATION.MOUNTAIN:
+  //          ////				Sprite mountainSpriteToUse = mountainTiles [Random.Range (0, mountainTiles.Length)];
+  //          ////				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = new Color(165f/255f,42f/255f,42f/255f);
+  //          ////				GridMap.Instance.listHexes[i].GetComponent<HexTile>().centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+  //          ////				GridMap.Instance.listHexes[i].GetComponent<HexTile>().GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+  //          //				break;
+  //          //			case ELEVATION.PLAIN:
+  //          ////				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = Color.green;
+  //          //				break;
+  //          //			case ELEVATION.WATER:
+  //          ////				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = Color.blue;
+  //          //				Sprite waterSpriteToUse = waterTiles [Random.Range (0, waterTiles.Length)];
+  //          //				currHexTile.GetComponent<SpriteRenderer>().sortingLayerName = "Water";
+  //          //				currHexTile.GetComponent<SpriteRenderer>().sprite = waterSpriteToUse;
+  //          ////				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().sprite = waterSprite;
+  //          //				break;
+  //          //			}
+  //      }
 	}
+    /*
+     * Generate elavation for each of
+     * the regions border tiles.
+     * */
+    internal void GenerateRegionBorderElevation() {
+        List<HexTile> checkedTiles = new List<HexTile>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+
+            for (int j = 0; j < currRegion.outerTiles.Count; j++) {
+                HexTile currBorderTile = currRegion.outerTiles[j];
+                if (currBorderTile.elevationType != ELEVATION.PLAIN || checkedTiles.Contains(currBorderTile)) {
+                    //The current border tile already has an elevation type
+                    //that is not plain, skip it.
+                    continue;
+                }
+                //Get Tiles in batch
+                List<HexTile> tilesInBatch = new List<HexTile>();
+                tilesInBatch.Add(currBorderTile);
+                for (int k = 0; k < tilesInBatch.Count; k++) {
+                    HexTile currTile = tilesInBatch[k];
+                    for (int l = 0; l < currTile.AllNeighbours.Count; l++) {
+                        HexTile currNeighbour = currTile.AllNeighbours[l];
+                        if(currRegion.outerTiles.Contains(currNeighbour) && currNeighbour.roadType != ROAD_TYPE.MAJOR) {
+                            if (!tilesInBatch.Contains(currNeighbour)) {
+                                tilesInBatch.Add(currNeighbour);
+                            }
+                        }
+                    }
+                }
+
+                ELEVATION elevationToUse = ELEVATION.PLAIN;
+
+
+                //Dictionary<ELEVATION, int> elevations = new Dictionary<ELEVATION, int>();
+                //List<HexTile> tilesToCheck = new List<HexTile>(tilesInBatch);
+                //tilesInBatch.ForEach(x => tilesToCheck.AddRange(x.AllNeighbours.Where(y => y.roadType != ROAD_TYPE.MAJOR && !tilesInBatch.Contains(y) && y.region.outerTiles.Contains(y))));
+                ////Check if the tiles in the batch have any elevation types
+                //for (int k = 0; k < tilesToCheck.Count; k++) {
+                //    HexTile tileToCheck = tilesToCheck[k];
+                //    if(tileToCheck.elevationType != ELEVATION.PLAIN) {
+                //        if (elevations.ContainsKey(tileToCheck.elevationType)) {
+                //            elevations[tileToCheck.elevationType]++;
+                //        } else {
+                //            elevations.Add(tileToCheck.elevationType, 1);
+                //        }
+                //    }
+                //}
+
+                //if(elevations.Count > 0) {
+                //    elevationToUse = elevations.Keys.First();
+                //    if (elevations.Count > 1) {
+                //        Debug.LogWarning("There is more than one elevation type in this batch!");
+                //    }
+                //}
+
+                //if (Random.Range(0, 2) == 0) {
+                    elevationToUse = ELEVATION.MOUNTAIN;
+                //} else {
+                //    elevationToUse = ELEVATION.WATER;
+                //}
+
+                for (int k = 0; k < tilesInBatch.Count; k++) {
+                    HexTile tile = tilesInBatch[k];
+                    checkedTiles.Add(tile);
+                    for (int l = 0; l < tile.AllNeighbours.Count; l++) {
+                        HexTile currNeighbour = tile.AllNeighbours[l];
+                        if(currNeighbour.roadType != ROAD_TYPE.MAJOR && currNeighbour.region.outerTiles.Contains(currNeighbour) && currNeighbour.region.id != tile.region.id) {
+                            //if(currNeighbour.AllNeighbours.Where(x => x.region.id != tile.region.id).Count() < 3) {
+                            currNeighbour.SetElevation(ELEVATION.PLAIN);
+                            if (!checkedTiles.Contains(currNeighbour)) {
+                                    checkedTiles.Add(currNeighbour);
+                            }
+                            //}
+                        }
+                    }
+                    tile.SetElevation(elevationToUse);
+                }
+                
+                //SetElevationSpriteForTile(currBorderTile);
+            }
+        }
+
+        //for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+        //    Region currRegion = GridMap.Instance.allRegions[i];
+
+        //    for (int j = 0; j < currRegion.outerTiles.Count; j++) {
+        //        HexTile currBorderTile = currRegion.outerTiles[j];
+        //        if (currBorderTile.elevationType != ELEVATION.PLAIN) {
+        //            //The current border tile already has an elevation type
+        //            //that is not plain, skip it.
+        //            continue;
+        //        }
+        //        ELEVATION elevationToUse = ELEVATION.PLAIN;
+
+        //        //Check the neighbours of the border tile. If there is a neighbour that has an elevation type that is not plain, use that elevation
+        //        for (int k = 0; k < currBorderTile.AllNeighbours.Count; k++) {
+        //            HexTile currNeighbour = currBorderTile.AllNeighbours[k];
+        //            if (currNeighbour.region.outerTiles.Contains(currNeighbour)) { //check if the current neighbour is an outer tile of its region
+        //                if (currNeighbour.elevationType != ELEVATION.PLAIN) {
+        //                    elevationToUse = currNeighbour.elevationType;
+        //                    break;
+        //                }
+        //            }
+
+        //        }
+        //        if (elevationToUse == ELEVATION.PLAIN) {
+        //            //This means that there were no neighbour tiles that have elevation other than plain. Randomize between water and mountain
+        //            if (Random.Range(0, 2) == 0) {
+        //                elevationToUse = ELEVATION.MOUNTAIN;
+        //            } else {
+        //                elevationToUse = ELEVATION.WATER;
+        //            }
+        //        }
+        //        currBorderTile.SetElevation(elevationToUse);
+        //        //SetElevationSpriteForTile(currBorderTile);
+        //    }
+        //}
+    }
     internal void GenerateElevationAfterRoads() {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
@@ -396,8 +525,8 @@ public class Biomes : MonoBehaviour {
     }
 
 	private void CalculateElevationAndMoisture(){
-		float elevationFrequency = 14.93f;//2.66f;
-		float moistureFrequency = 3.34f;//2.94f;
+        float elevationFrequency = 10f; //14.93f;//2.66f;
+        float moistureFrequency = 3.34f; //3.34f;//2.94f;
 		float tempFrequency = 2.64f;//2.4f;
 
 		float elevationRand = UnityEngine.Random.Range(500f,2000f);
@@ -431,15 +560,15 @@ public class Biomes : MonoBehaviour {
 	}
 
 	private ELEVATION GetElevationType(float elevationNoise){
-        return ELEVATION.PLAIN;
-		//if(elevationNoise <= 0.25f){
-		//	return ELEVATION.WATER;
-		//}else if(elevationNoise > 0.25f && elevationNoise <= 0.7f){
-		//	return ELEVATION.PLAIN;
-		//}else{
-		//	return ELEVATION.MOUNTAIN;
-		//}
-	}
+        //return ELEVATION.PLAIN;
+        if (elevationNoise <= 0.25f) {
+            return ELEVATION.WATER;
+        } else if (elevationNoise > 0.25f && elevationNoise <= 0.7f) {
+            return ELEVATION.PLAIN;
+        } else {
+            return ELEVATION.MOUNTAIN;
+        }
+    }
 
 	private BIOMES GetBiomeSimple(GameObject goHex){
 		float moistureNoise = goHex.GetComponent<HexTile>().moistureNoise;

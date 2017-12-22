@@ -398,11 +398,11 @@ public class RoadManager : MonoBehaviour {
 
             GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
             if(roadGO != null) {
-                roadGO.SetActive(true);
                 currTile.SetTileAsRoad(true, roadType);
                 if (currTile.roadType == ROAD_TYPE.MINOR) {
                     currTile.SetRoadColor(roadGO, Color.gray);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
+                    roadGO.SetActive(true);
                     currTile.SetRoadColor(roadGO, Color.white);
                 }
             }
@@ -525,5 +525,35 @@ public class RoadManager : MonoBehaviour {
         _roadTiles.Remove(tile);
         _majorRoadTiles.Remove(tile);
         _minorRoadTiles.Remove(tile);
+    }
+
+    internal void FlattenRoads() {
+        for (int i = 0; i < _majorRoadTiles.Count; i++) {
+            HexTile currRoadTile = _majorRoadTiles[i];
+            if (currRoadTile.elevationType != ELEVATION.PLAIN) {
+                currRoadTile.SetElevation(ELEVATION.PLAIN);
+            }
+        }
+
+        for (int i = 0; i < _minorRoadTiles.Count; i++) {
+            HexTile currRoadTile = _minorRoadTiles[i];
+            if (currRoadTile.elevationType == ELEVATION.WATER) {
+                currRoadTile.SetElevation(ELEVATION.PLAIN);
+            }
+        }
+
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if(currRegion.centerOfMass.elevationType != ELEVATION.PLAIN) {
+                currRegion.centerOfMass.SetElevation(ELEVATION.PLAIN);
+            }
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                Landmark currLandmark = currRegion.landmarks[j];
+                if (currLandmark.location.elevationType != ELEVATION.PLAIN) {
+                    currLandmark.location.SetElevation(ELEVATION.PLAIN);
+                }
+            }
+        }
+
     }
 }
