@@ -378,12 +378,13 @@ namespace ECS{
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (strItemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
-				if(bodyPartToEquip != null) {
-					EquipWeapon(weapon, bodyPartToEquip);
-				} else {
-					Debug.Log(name + " cannot equip " + weapon.itemName);
-				}
+				EquipWeapon(weapon);
+//				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
+//				if(bodyPartToEquip != null) {
+//					
+//				} else {
+//					Debug.Log(name + " cannot equip " + weapon.itemName);
+//				}
 			} else if (strItemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
 				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
@@ -399,12 +400,13 @@ namespace ECS{
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (itemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
-				if(bodyPartToEquip != null) {
-					EquipWeapon(weapon, bodyPartToEquip);
-				} else {
-					Debug.Log(name + " cannot equip " + weapon.itemName);
-				}
+				EquipWeapon(weapon);
+
+//				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
+//				if(bodyPartToEquip != null) {
+//				} else {
+//					Debug.Log(name + " cannot equip " + weapon.itemName);
+//				}
 			} else if (itemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
 				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
@@ -417,18 +419,55 @@ namespace ECS{
 		}
 
         //Equip a weapon to a body part of this character and add it to the list of items this character have
-        internal void EquipWeapon(Weapon weapon, IBodyPart bodyPart){
-			bodyPart.AttachItem(weapon);
-			weapon.bodyPartAttached = bodyPart;
+        internal void EquipWeapon(Weapon weapon){
+			for (int j = 0; j < weapon.equipRequirements.Count; j++) {
+				IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
+				if(!AttachWeaponToBodyPart(weapon, currReq)){
+					for (int i = 0; i < weapon.bodyPartsAttached.Count; i++) {
+						weapon.bodyPartsAttached[i].DettachItem(weapon);
+					}
+					weapon.bodyPartsAttached.Clear ();
+					return;
+				}
+			}
 			AddItem(weapon);
             weapon.ResetDurability();
             weapon.SetOwner(this);
-            Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
+//            Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
         }
+		private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req){
+			for (int i = 0; i < this._bodyParts.Count; i++) {
+				BodyPart currBodyPart = this._bodyParts[i];
+				if(currBodyPart.HasUnusedAttribute(req)){
+					currBodyPart.AttachItem (weapon);
+					BodyAttribute attribute = currBodyPart.GetAttribute(req);
+					if(attribute != null){
+						attribute.SetAttributeAsUsed(true);
+					}
+					weapon.bodyPartsAttached.Add(currBodyPart);
+					return true;
+				}
+				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+					if(currBodyPart.secondaryBodyParts[j].HasUnusedAttribute(req)){
+						currBodyPart.secondaryBodyParts[j].AttachItem (weapon);
+						BodyAttribute attribute = currBodyPart.secondaryBodyParts[j].GetAttribute(req);
+						if(attribute != null){
+							attribute.SetAttributeAsUsed(true);
+						}
+						weapon.bodyPartsAttached.Add(currBodyPart);
+						return true;
+					}
+				}
+			}
+			return false;
+		}
         internal void UnequipWeapon(Weapon weapon) {
             RemoveItem(weapon);
-            weapon.bodyPartAttached.DettachItem(weapon);
+			for (int i = 0; i < weapon.bodyPartsAttached.Count; i++) {
+				weapon.bodyPartsAttached[i].DettachItem(weapon);
+			}
+			weapon.bodyPartsAttached.Clear ();
         }
 		//Equip an armor to a body part of this character and add it to the list of items this character have
 		internal void EquipArmor(Armor armor, IBodyPart bodyPart){

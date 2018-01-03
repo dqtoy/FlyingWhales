@@ -120,7 +120,10 @@ namespace ECS{
                     }
                 } else if(currItem.itemType == ITEM_TYPE.WEAPON) {
                     Weapon weapon = (Weapon)currItem;
-                    itemsInfoLbl.text += ", Body part: " + weapon.bodyPartAttached.bodyPart.ToString();
+					itemsInfoLbl.text += ", Body part:";
+					for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
+						itemsInfoLbl.text += " " + weapon.bodyPartsAttached[j].bodyPart.ToString();
+					}
                     itemsInfoLbl.text += ", Weapon Power: " + weapon.weaponPower.ToString();
                     itemsInfoLbl.text += ", Durability Damage: " + weapon.durabilityDamage.ToString();
                     for (int j = 0; j < weapon.attributes.Count; j++) {

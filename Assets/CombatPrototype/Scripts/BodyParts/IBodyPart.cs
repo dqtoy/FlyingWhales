@@ -66,11 +66,11 @@ namespace ECS{
             itemsAttached.Add(item);
             if(item is Weapon) {
                 Weapon currItem = (Weapon)item;
-                for (int i = 0; i < currItem.equipRequirements.Count; i++) {
-                    ATTRIBUTE currAttribute = currItem.equipRequirements[i];
-                    BodyAttribute attribute = GetAttribute(currAttribute);
-                    attribute.SetAttributeAsUsed(true);
-                }
+//                for (int i = 0; i < currItem.equipRequirements.Count; i++) {
+//                    ATTRIBUTE currAttribute = currItem.equipRequirements[i];
+//                    BodyAttribute attribute = GetAttribute(currAttribute);
+//                    attribute.SetAttributeAsUsed(true);
+//                }
             } else if (item is Armor) {
                 Armor currItem = (Armor)item;
                 ATTRIBUTE attribute = Utilities.GetNeededAttributeForArmor(currItem);
@@ -127,7 +127,7 @@ namespace ECS{
         #endregion
 
         #region Attributes
-        private BodyAttribute GetAttribute(ATTRIBUTE attribute, bool isUsed = false) {
+        internal BodyAttribute GetAttribute(ATTRIBUTE attribute, bool isUsed = false) {
             for (int i = 0; i < attributes.Count; i++) {
                 BodyAttribute currAttribute = attributes[i];
                 if(currAttribute.attribute == attribute && currAttribute.isUsed == isUsed) {

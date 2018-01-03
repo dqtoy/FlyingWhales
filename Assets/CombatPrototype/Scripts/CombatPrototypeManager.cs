@@ -12,6 +12,7 @@ namespace ECS {
 		public Color[] characterColors;
 
 		private List<Color> unusedColors = new List<Color>();
+		private List<Color> usedColors = new List<Color>();
 
         private void Awake() {
             Instance = this;
@@ -48,6 +49,7 @@ namespace ECS {
 			if(unusedColors.Count > 0){
 				chosenColor = unusedColors [UnityEngine.Random.Range (0, unusedColors.Count)];
 				unusedColors.Remove (chosenColor);
+				usedColors.Add (chosenColor);
 			}else{
 				chosenColor = characterColors [UnityEngine.Random.Range (0, characterColors.Length)];
 			}
@@ -55,7 +57,9 @@ namespace ECS {
 		}
 
 		internal void ReturnCharacterColorToPool(Color color){
-			unusedColors.Add (color);
+			if(usedColors.Remove(color)){
+				unusedColors.Add (color);
+			}
 		}
     }
 }

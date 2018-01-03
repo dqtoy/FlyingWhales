@@ -9,6 +9,6 @@ namespace ECS{
         public int durabilityDamage;
 		public List<IBodyPart.ATTRIBUTE> attributes;
         public List<IBodyPart.ATTRIBUTE> equipRequirements;
-        internal IBodyPart bodyPartAttached;
+		internal List<IBodyPart> bodyPartsAttached = new List<IBodyPart>();
 	}
 }
