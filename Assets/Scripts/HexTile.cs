@@ -272,49 +272,90 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Landmarks
+    internal void CreateRandomLandmark() {
+        List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
+        GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.AddRange(x.landmarks.Select(y => y.location)));
+        GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.Add(x.centerOfMass));
+
+        //Connect to the nearest landmark
+        elligibleTilesToConnectTo = new List<HexTile>(elligibleTilesToConnectTo.OrderBy(x => Vector2.Distance(this.transform.position, x.transform.position)));
+        for (int j = 0; j < elligibleTilesToConnectTo.Count; j++) {
+            HexTile currTileToConnectTo = elligibleTilesToConnectTo[j];
+            List<HexTile> path = PathGenerator.Instance.GetPath(this, currTileToConnectTo, PATHFINDING_MODE.LANDMARK_CONNECTION);
+            if (path != null) {
+                //Create new random landmark given weights
+                LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
+                CreateLandmarkOfType(landmarkToCreate);
+                if (currTileToConnectTo.isHabitable) {
+                    RoadManager.Instance.ConnectLandmarkToRegion(this, currTileToConnectTo.region);
+                } else {
+                    RoadManager.Instance.ConnectLandmarkToLandmark(this, currTileToConnectTo);
+                }
+
+                RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
+                break;
+            }
+        }
+    }
+
+    private void CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        this.hasLandmark = true;
+        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        landmarkGO.transform.localPosition = Vector3.zero;
+        landmarkGO.transform.localScale = Vector3.one;
+        _landmark = new Landmark(this, landmarkType);
+        _landmark.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+        _region.AddLandmarkToRegion(_landmark);
+        HideLandmarkObject();
+    }
+
+    [System.Obsolete("Use CreateLandmarkOfType instead")]
     internal void CreateSummoningShrine() {
         this.hasLandmark = true;
         GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
         shrineGO.transform.localPosition = Vector3.zero;
         shrineGO.transform.localScale = Vector3.one;
-        _landmark = new ShrineLandmark(this);
-        _landmark.SetLandmarkObject(shrineGO);
+        _landmark = new Landmark(this, LANDMARK_TYPE.SUMMONING_SHRINE);
+        //_landmark.SetLandmarkObject(shrineGO);
         _region.AddLandmarkToRegion(_landmark);
         HideLandmarkObject();
     }
+    [System.Obsolete("Use CreateLandmarkOfType instead")]
     internal void CreateHabitat() {
         this.hasLandmark = true;
         GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
         habitatGO.transform.localPosition = Vector3.zero;
         habitatGO.transform.localScale = Vector3.one;
-        _landmark = new HabitatLandmark(this);
-        _landmark.SetLandmarkObject(habitatGO);
+        _landmark = new Landmark(this, LANDMARK_TYPE.ANCIENT_RUIN);
+        //_landmark.SetLandmarkObject(habitatGO);
         _region.AddLandmarkToRegion(_landmark);
         HideLandmarkObject();
     }
+    [System.Obsolete("Use CreateLandmarkOfType instead")]
     internal void CreateUniqueLandmark() {
         this.hasLandmark = true;
         GameObject uniqueLandmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetUniqueLandmarkGO(), structureParentGO.transform) as GameObject;
         uniqueLandmarkGO.transform.localPosition = Vector3.zero;
         uniqueLandmarkGO.transform.localScale = Vector3.one;
-        _landmark = new UniqueLandmark(this);
-        _landmark.SetLandmarkObject(uniqueLandmarkGO);
+        _landmark = new Landmark(this, LANDMARK_TYPE.ANCIENT_RUIN);
+        //_landmark.SetLandmarkObject(uniqueLandmarkGO);
         _region.AddLandmarkToRegion(_landmark);
         HideLandmarkObject();
     }
     internal void HideLandmarkObject() {
         if(_landmark != null && GameManager.Instance.hideLandmarks) {
-            _landmark.landmarkObject.SetActive(false);
+            _landmark.landmarkObject.gameObject.SetActive(false);
         }
     }
     internal void ShowLandmarkObject() {
         if (_landmark != null && GameManager.Instance.hideLandmarks) {
-            _landmark.landmarkObject.SetActive(true);
+            _landmark.landmarkObject.gameObject.SetActive(true);
         }
     }
     #endregion
 
     #region Resource
+    [System.Obsolete("Use CreateLandmarkOfType instead")]
     internal void AssignSpecialResource(RESOURCE resource) {
 		this.hasLandmark = true;
         specialResource = resource;
@@ -324,7 +365,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         GameObject resourceGO = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
         resourceGO.transform.localPosition = Vector3.zero;
         resourceGO.transform.localScale = Vector3.one;
-        _landmark = new ResourceLandmark(this);
+        _landmark = new Landmark(this, LANDMARK_TYPE.CORN);
         _region.AddLandmarkToRegion(_landmark);
     }
 	

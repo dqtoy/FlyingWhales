@@ -400,6 +400,7 @@ public class RoadManager : MonoBehaviour {
             if(roadGO != null) {
                 currTile.SetTileAsRoad(true, roadType);
                 if (currTile.roadType == ROAD_TYPE.MINOR) {
+                    roadGO.SetActive(true);
                     currTile.SetRoadColor(roadGO, Color.gray);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
                     roadGO.SetActive(true);

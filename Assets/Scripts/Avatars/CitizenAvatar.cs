@@ -310,7 +310,7 @@ public class CitizenAvatar : PooledObject {
 
     private void RevealLandmarks() {
         if (GameManager.Instance.hideLandmarks) {
-            if (this.citizenRole.location.hasLandmark && this.citizenRole.location.landmark.landmarkType != LANDMARK_TYPE.RESOURCE) {
+            if (this.citizenRole.location.hasLandmark) {
                 this.citizenRole.location.ShowLandmarkObject();
             }
         }

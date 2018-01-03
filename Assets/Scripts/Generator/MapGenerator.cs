@@ -47,16 +47,18 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
+        GridMap.Instance.GenerateLandmarks();
+
 		KingdomManager.Instance.GenerateInitialKingdoms();
 		GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
 
-        GridMap.Instance.GenerateResourcesPerRegion();
+        //GridMap.Instance.GenerateResourcesPerRegion();
         //		GridMap.Instance.GenerateResourceTiles();
-        GridMap.Instance.GenerateOtherLandmarksPerRegion();
-        GridMap.Instance.GenerateUniqueLandmarks();
+        //GridMap.Instance.GenerateOtherLandmarksPerRegion();
+        //GridMap.Instance.GenerateUniqueLandmarks();
         GridMap.Instance.GenerateLandmarkExtraConnections();
         //Biomes.Instance.GenerateElevationAfterRoads();
-        Biomes.Instance.GenerateRegionBorderElevation();
+        //Biomes.Instance.GenerateRegionBorderElevation();
         RoadManager.Instance.FlattenRoads();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();

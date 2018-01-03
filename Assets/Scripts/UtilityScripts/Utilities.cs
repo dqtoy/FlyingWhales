@@ -364,6 +364,28 @@ public class Utilities : MonoBehaviour {
         {BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
     };
 
+    public static WeightedDictionary<LANDMARK_TYPE> GetLandmarkWeights() {
+        WeightedDictionary<LANDMARK_TYPE> landmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
+        landmarkWeights.AddElement(LANDMARK_TYPE.CORN, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.PIG, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.OAK, 20);
+        landmarkWeights.AddElement(LANDMARK_TYPE.YEW, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.EBONY, 6);
+        landmarkWeights.AddElement(LANDMARK_TYPE.SILK, 20);
+        landmarkWeights.AddElement(LANDMARK_TYPE.COTTON, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.LEATHER, 6);
+        landmarkWeights.AddElement(LANDMARK_TYPE.IRON, 20);
+        landmarkWeights.AddElement(LANDMARK_TYPE.COBALT, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.MITHRIL, 6);
+        landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
+        landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
+        landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 25);
+        landmarkWeights.AddElement(LANDMARK_TYPE.ABANDONED_DUNGEON, 25);
+        landmarkWeights.AddElement(LANDMARK_TYPE.MYSTERIOUS_TOWER, 6);
+        landmarkWeights.AddElement(LANDMARK_TYPE.SUMMONING_SHRINE, 15);
+        return landmarkWeights;
+    }
+
     //public static Dictionary<WEIGHTED_ACTION, List<TRAIT>> weightedActionValidTraits = new Dictionary<WEIGHTED_ACTION, List<TRAIT>>() {
     //    {WEIGHTED_ACTION.WAR_OF_CONQUEST, new List<TRAIT>(){
     //        TRAIT.OPPORTUNIST, TRAIT.DECEITFUL, TRAIT.IMPERIALIST, TRAIT.HOSTILE, TRAIT.PACIFIST
@@ -1030,6 +1052,13 @@ public class Utilities : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    public static void ListRemoveRange<T>(List<T> sourceList, List<T> itemsToRemove) {
+        for (int i = 0; i < itemsToRemove.Count; i++) {
+            T currItem = itemsToRemove[i];
+            sourceList.Remove(currItem);
+        }
     }
 
     public static List<HexTile> MergeHexLists(List<HexTile> list1, List<HexTile> list2) {

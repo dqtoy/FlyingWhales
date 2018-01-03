@@ -677,10 +677,23 @@ public enum ROAD_TYPE{
 	ALL,
 }
 public enum LANDMARK_TYPE {
-    RESOURCE,
-    SHRINE,
-    HABITAT,
-    UNIQUE
+    CORN,
+    PIG,
+    OAK,
+    YEW,
+    EBONY,
+    SILK,
+    COTTON,
+    LEATHER,
+    IRON,
+    COBALT,
+    MITHRIL,
+    GOBLIN_CAMP,
+    DARK_CAVE,
+    ANCIENT_RUIN,
+    ABANDONED_DUNGEON,
+    MYSTERIOUS_TOWER,
+    SUMMONING_SHRINE
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,

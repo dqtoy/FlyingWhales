@@ -265,6 +265,11 @@ public class GridMap : MonoBehaviour {
             }
         }
     }
+    /*
+     * Divide the created grid into 
+     * regions. Refer to https://gamedev.stackexchange.com/questions/57213/generate-equal-regions-in-a-hex-map 
+     * for the logic used.
+     * */
     public bool GenerateRegions(int numOfRegions, int refinementLevel) {
         List<HexTile> allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
         List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles.Where(x => (x.xCoordinate > 1 && x.xCoordinate < width - 1) && (x.yCoordinate < height - 2 && x.yCoordinate > 2)));
@@ -327,44 +332,37 @@ public class GridMap : MonoBehaviour {
         }
 
         for (int i = 0; i < allRegions.Count; i++) {
-            allRegions[i].RevalidateCenterOfMass();
-            allRegions[i].CheckForAdjacency();
+            Region currRegion = allRegions[i];
+            currRegion.RevalidateCenterOfMass();
+            currRegion.CheckForAdjacency();
+            currRegion.ComputeNaturalResourceLevel();
         }
         return true;
     }
+    public void UpdateAllRegionsDiscoveredKingdoms() {
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            if (currRegion.occupant != null) {
+                currRegion.CheckForDiscoveredKingdoms();
+            }
+        }
+    }
+    #endregion
+
+    #region Landmark Generation
+    [System.Obsolete("This function should no longer be used because each region is not sure to have a resource")]
     public void GenerateResourcesPerRegion() {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
             if (currRegion.tileWithSpecialResource != null && currRegion.tileWithSpecialResource.specialResource != RESOURCE.NONE) {
                 continue;
             }
-			RESOURCE resourceForRegion = ResourcesManager.Instance.resourceCapDict.Keys.ElementAt(Random.Range(0, ResourcesManager.Instance.resourceCapDict.Count));
-			ResourcesManager.Instance.ReduceResourceCount(resourceForRegion);
+            RESOURCE resourceForRegion = ResourcesManager.Instance.resourceCapDict.Keys.ElementAt(Random.Range(0, ResourcesManager.Instance.resourceCapDict.Count));
+            ResourcesManager.Instance.ReduceResourceCount(resourceForRegion);
             currRegion.SetSpecialResource(resourceForRegion);
             currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
         }
     }
-    //public void GenerateResourceTiles() {
-    //    for (int i = 0; i < allRegions.Count; i++) {
-    //        Region currRegion = allRegions[i];
-    //        currRegion.AssignATileAsResourceTile();
-    //    }
-    //}
-//    private void ConvertInitialResourceSetupToDictionary() {
-//        for (int i = 0; i < resourceSetup.Count; i++) {
-//            InitialMapResource r = resourceSetup[i];
-//            resources.Add(r.resourceType, r.resourceAmount);
-//        }
-//    }
-//    internal bool ReduceResourceCount(RESOURCE resourceForRegion) {
-//        this.resources[resourceForRegion] -= 1;
-//        if (this.resources[resourceForRegion] <= 0) {
-//            this.resources.Remove(resourceForRegion);
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
     /*
      * <summary>
      * Generate landmarks for all regions
@@ -488,7 +486,7 @@ public class GridMap : MonoBehaviour {
         allRegions.ForEach(x => allLandmarks.AddRange(x.landmarks));
         for (int i = 0; i < allLandmarks.Count; i++) {
             Landmark currLandmark = allLandmarks[i];
-            if(currLandmark.connections.Count <= 1) {
+            if (currLandmark.connections.Count <= 1) {
                 List<HexTile> tilesToConnectTo = new List<HexTile>(allLandmarks.Select(x => x.location));
                 tilesToConnectTo.AddRange(allRegions.Select(x => x.centerOfMass));
 
@@ -506,7 +504,7 @@ public class GridMap : MonoBehaviour {
                         }
                     }
                     List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherTile, PATHFINDING_MODE.LANDMARK_CONNECTION);
-                    if(path != null) {
+                    if (path != null) {
                         if (otherTile.isHabitable) {
                             RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherTile.region);
                         } else {
@@ -544,13 +542,13 @@ public class GridMap : MonoBehaviour {
         List<HexTile> allMinorRoads = new List<HexTile>(RoadManager.Instance.minorRoadTiles);
         for (int i = 0; i < allLandmarks.Count; i++) {
             Landmark currLandmark = allLandmarks[i];
-            if(currLandmark.connections.Count < 2) {
+            if (currLandmark.connections.Count < 2) {
                 //Connect landmark to nearest minor road that it is not connected to
                 allMinorRoads.OrderBy(x => Vector2.Distance(x.transform.position, currLandmark.location.transform.position));
                 for (int j = 0; j < allMinorRoads.Count; j++) {
                     HexTile currRoadTile = allMinorRoads[j];
                     List<HexTile> pathToRoadTile = PathGenerator.Instance.GetPath(currLandmark.location, currRoadTile, PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION);
-                    if(pathToRoadTile != null && PathGenerator.Instance.GetPath(currLandmark.location, currRoadTile, PATHFINDING_MODE.POINT_TO_POINT) == null) {
+                    if (pathToRoadTile != null && PathGenerator.Instance.GetPath(currLandmark.location, currRoadTile, PATHFINDING_MODE.POINT_TO_POINT) == null) {
                         RoadManager.Instance.CreateRoad(pathToRoadTile, ROAD_TYPE.MINOR);
                         break;
                     }
@@ -558,19 +556,11 @@ public class GridMap : MonoBehaviour {
             }
         }
     }
-    public void UpdateAllRegionsDiscoveredKingdoms() {
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            if (currRegion.occupant != null) {
-                currRegion.CheckForDiscoveredKingdoms();
-            }
-        }
-    }
     /*
      * Add a third landmark to 20 regions in the world map. These would be the Unique Landmarks. 
      * These should have 2 roads connecting to other landmarks or minor roads only.
      * */
-     [ContextMenu("Generate Unique Landmarks")]
+    [ContextMenu("Generate Unique Landmarks")]
     public void GenerateUniqueLandmarks() {
         List<Region> allRegions = Utilities.Shuffle(this.allRegions);
         //List<Landmark> allLandmarksInWorld = new List<Landmark>();
@@ -608,7 +598,7 @@ public class GridMap : MonoBehaviour {
                         } else {
                             RoadManager.Instance.ConnectLandmarkToLandmark(currElligibleTile, currTileToConnectTo);
                         }
-                        
+
                         RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
                         break;
                     }
@@ -642,7 +632,7 @@ public class GridMap : MonoBehaviour {
                     break;
                 }
             }
-            if(uniqueLandmarksCount >= numOfUniqueLandmarks) {
+            if (uniqueLandmarksCount >= numOfUniqueLandmarks) {
                 break;
             }
         }
@@ -711,6 +701,45 @@ public class GridMap : MonoBehaviour {
         //    }
         //}
         Debug.Log("Created unique landmarks: " + uniqueLandmarksCount);
+    }
+
+    public void GenerateLandmarks() {
+        List<HexTile> elligibleTiles = new List<HexTile>(hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad)); //Get tiles that aren't water and are not habitable
+        //Tiles that are within 2 tiles of a habitable tile, cannot be landmarks
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            List<HexTile> tilesToRemove = currRegion.centerOfMass.GetTilesInRange(2);
+            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
+        }
+        Dictionary<LANDMARK_TYPE, int> createdLandmarksDict = new Dictionary<LANDMARK_TYPE, int>();
+        int numOfLandmarksToCreate = Mathf.FloorToInt(3f * (float)allRegions.Count); //there will be 2.5 times (rounded down) as many landmarks as there are number of cities
+        Debug.Log("Creating " + numOfLandmarksToCreate.ToString() + " landmarks..... ");
+        int createdLandmarks = 0;
+        for (int i = 0; i < numOfLandmarksToCreate; i++) {
+            if(elligibleTiles.Count <= 0) {
+                Debug.Log("Only created " + createdLandmarks.ToString() + " landmarks");
+                return;
+            }
+            HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
+            elligibleTiles.Remove(chosenTile);
+            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(2);
+            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
+            chosenTile.CreateRandomLandmark();
+            if(chosenTile.landmark != null) {
+                LANDMARK_TYPE createdLandmarkType = chosenTile.landmark.landmarkType;
+                if (createdLandmarksDict.ContainsKey(createdLandmarkType)) {
+                    createdLandmarksDict[createdLandmarkType]++;
+                } else {
+                    createdLandmarksDict.Add(createdLandmarkType, 1);
+                }
+            }
+            createdLandmarks++;
+        }
+        Debug.Log("Created " + createdLandmarks.ToString() + " landmarks");
+
+        foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in createdLandmarksDict) {
+            Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
+        }
     }
     #endregion
 }

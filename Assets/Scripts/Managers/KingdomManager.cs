@@ -93,7 +93,7 @@ public class KingdomManager : MonoBehaviour {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
-		List<RESOURCE> initialResources = new List<RESOURCE>(){ RESOURCE.DEER, RESOURCE.PIG, RESOURCE.WHEAT, RESOURCE.RICE };
+		//List<RESOURCE> initialResources = new List<RESOURCE>(){ RESOURCE.DEER, RESOURCE.PIG, RESOURCE.WHEAT, RESOURCE.RICE };
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
             RACE initialKingdomRace = initialKingdom.race;
@@ -102,13 +102,13 @@ public class KingdomManager : MonoBehaviour {
             allRegions.Remove(regionForKingdom);
 			RemoveAdjacentRegionsFrom (regionForKingdom, allRegions);
 
-			RESOURCE chosenResource = initialResources [UnityEngine.Random.Range (0, initialResources.Count)];
-			regionForKingdom.SetSpecialResource (chosenResource);
-			regionForKingdom.ComputeNaturalResourceLevel();
-			bool hasBeenRemoved = ResourcesManager.Instance.ReduceResourceCount (chosenResource);
-			if(hasBeenRemoved){
-				initialResources.Remove (chosenResource);
-			}
+			//RESOURCE chosenResource = initialResources [UnityEngine.Random.Range (0, initialResources.Count)];
+			//regionForKingdom.SetSpecialResource (chosenResource);
+			//regionForKingdom.ComputeNaturalResourceLevel();
+			//bool hasBeenRemoved = ResourcesManager.Instance.ReduceResourceCount (chosenResource);
+			//if(hasBeenRemoved){
+			//	initialResources.Remove (chosenResource);
+			//}
 
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
             newKingdom.HighlightAllOwnedTilesInKingdom();

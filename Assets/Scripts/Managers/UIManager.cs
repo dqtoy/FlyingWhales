@@ -738,10 +738,10 @@ public class UIManager : MonoBehaviour {
 
     #region Minimap
     internal void UpdateMinimapInfo() {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            currRegion.ShowNaturalResourceLevelForRace(currentlyShowingKingdom.race);
-        }
+        //for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+        //    Region currRegion = GridMap.Instance.allRegions[i];
+        //    currRegion.ShowNaturalResourceLevelForRace(currentlyShowingKingdom.race);
+        //}
         CameraMove.Instance.UpdateMinimapTexture();
     }
     #endregion
