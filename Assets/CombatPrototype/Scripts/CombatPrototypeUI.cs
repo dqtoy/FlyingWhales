@@ -103,7 +103,7 @@ namespace ECS{
             labelToUpdate.text = string.Empty;
             for (int i = 0; i < charactersFromSide.Count; i++) {
                 Character currCharacter = charactersFromSide[i];
-                labelToUpdate.text += "[url=" + i.ToString() + sideText + "]" + currCharacter.name + "[/url]\n";
+				labelToUpdate.text += "[url=" + i.ToString() + sideText + "]" + currCharacter.name + "[/url]\n";
             }
         }
 

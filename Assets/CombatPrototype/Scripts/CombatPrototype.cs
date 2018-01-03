@@ -452,8 +452,8 @@ namespace ECS{
 						if(currArmor.currHitPoints > 0) {
 							//Deal damage to armor
 							currArmor.AdjustHitPoints (-damage);
-							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
-								+ "'s " + currArmor.itemName + " for " + damage.ToString());
+							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+								+ "'s " + currArmor.itemName + " for " + damage.ToString() + ".");
 
 							damage -= currArmor.currHitPoints;
 							if(damage < 0 ){
@@ -480,15 +480,15 @@ namespace ECS{
 
                 if (damage > 0) {
                         //Deal damage to hp
-                        CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
-                            + " for " + damage.ToString());
+                        CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+                            + " for " + damage.ToString() + ".");
                         targetCharacter.AdjustHP(-damage);
                 }
                     
             } else {
                 //Deal damage to hp
-                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and damages " + targetCharacter.name
-                + " for " + damage.ToString());
+                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+					+ " for " + damage.ToString() + ".");
                     targetCharacter.AdjustHP(-damage);
             }
         }
@@ -514,7 +514,7 @@ namespace ECS{
 					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BLEEDING){
 						if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 							value += 10;
-							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and pierces " + targetCharacter.name + 
+							log = sourceCharacter.name + " used " + attackSkill.skillName + " and pierces " + targetCharacter.name + 
 								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.";
 						}else{
 							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and causes " + targetCharacter.name
@@ -523,7 +523,7 @@ namespace ECS{
 					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.DECAPITATED){
 						if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 							value += 5;
-							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and slashes " + targetCharacter.name + 
+							log = sourceCharacter.name + " used " + attackSkill.skillName + " and slashes " + targetCharacter.name + 
 								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.";
 						}else{
 							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and decapitates " + targetCharacter.name
@@ -533,7 +533,7 @@ namespace ECS{
 						if(attackSkill.attackType == ATTACK_TYPE.BURN){
 							value += 5;
 						}
-						log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and burns " + targetCharacter.name + 
+						log = sourceCharacter.name + " used " + attackSkill.skillName + " and burns " + targetCharacter.name + 
 							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ".";
 					}
 
@@ -548,21 +548,21 @@ namespace ECS{
 					if(chance < 7){
 						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.INJURED);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and crushes " + targetCharacter.name 
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and crushes " + targetCharacter.name 
 							+ "'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", injuring it.");
 					}
 				}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 					if(chance < 10){
 						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BLEEDING);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and pierces " + targetCharacter.name + 
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and pierces " + targetCharacter.name + 
 							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.");
 					}
 				}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 					if(chance < 5){
 						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.DECAPITATED);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and slashes " + targetCharacter.name + 
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and slashes " + targetCharacter.name + 
 							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.");
 						//If body part is essential, instant death to the character
 						if (chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
@@ -573,7 +573,7 @@ namespace ECS{
 					if(chance < 5){
 						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BURNING);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName.ToLower() + " and burns " + targetCharacter.name + 
+						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and burns " + targetCharacter.name + 
 							"'s " + chosenBodyPart.bodyPart.ToString().ToLower());
 					}
 				}

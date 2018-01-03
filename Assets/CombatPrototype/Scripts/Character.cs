@@ -29,9 +29,12 @@ namespace ECS{
 		private CharacterClass _characterClass;
 		protected RaceSetting _raceSetting;
 
+		private Color _characterColor;
+		private string _characterColorCode;
+
 		#region getters / setters
 		internal string name{
-			get { return this._name; }
+			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
 		}
         internal int actRate {
             get { return _actRate + _items.Sum(x => x.bonusActRate); }
@@ -100,7 +103,14 @@ namespace ECS{
         internal int blockRate {
             get { return characterClass.blockRate + _items.Sum(x => x.bonusBlockRate); }
         }
+		internal Color characterColor {
+			get { return _characterColor; }
+		}
+		internal string characterColorCode {
+			get { return _characterColorCode; }
+		}
         #endregion
+
         public Character(CharacterSetup baseSetup, int level = 1) {
             GENDER gender = GENDER.MALE;
             if(Random.Range(0, 2) == 0) {
@@ -123,10 +133,10 @@ namespace ECS{
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             _actRate = _characterClass.actRate;
 
-
 			_items = new List<Item> ();
 
 			EquipPreEquippedItems (baseSetup);
+			GetRandomCharacterColor ();
 
             if (baseSetup.initialLevel > 1) {
 				LevelUp(baseSetup.initialLevel - 1);
@@ -290,6 +300,7 @@ namespace ECS{
 		//Character's death
 		internal void Death(){
 			this._isDead = true;
+			CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 			if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 				Messenger.Broadcast ("CharacterDeath", this);
 			}
@@ -539,6 +550,11 @@ namespace ECS{
 			}else{
 				this._maxHP += amount;
 			}
+		}
+
+		private void GetRandomCharacterColor(){
+			_characterColor = CombatPrototypeManager.Instance.UseRandomCharacterColor ();
+			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
 		}
     }
 }
