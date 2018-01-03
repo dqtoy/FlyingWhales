@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour {
 	public bool isPaused = true;
     public bool enableGameAgents = true;
     public bool hideLandmarks = true;
+    public bool initiallyHideRoads = false;
 
     private const float X1_SPEED = 2f;
     private const float X2_SPEED = 1f;

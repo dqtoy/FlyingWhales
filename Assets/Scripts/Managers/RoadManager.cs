@@ -399,11 +399,12 @@ public class RoadManager : MonoBehaviour {
             GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
             if(roadGO != null) {
                 currTile.SetTileAsRoad(true, roadType);
-                if (currTile.roadType == ROAD_TYPE.MINOR) {
+                if (!GameManager.Instance.initiallyHideRoads) {
                     roadGO.SetActive(true);
+                }
+                if (currTile.roadType == ROAD_TYPE.MINOR) {
                     currTile.SetRoadColor(roadGO, Color.gray);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
-                    roadGO.SetActive(true);
                     currTile.SetRoadColor(roadGO, Color.white);
                 }
             }
