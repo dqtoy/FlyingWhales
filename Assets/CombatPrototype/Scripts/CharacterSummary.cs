@@ -102,15 +102,16 @@ namespace ECS{
             if(character == null) {
                 return;
             }
-            itemsInfoLbl.text = "[b]ITEMS[/b]\n";
+            itemsInfoLbl.text = "[b]ITEMS[/b]";
             for (int i = 0; i < character.items.Count; i++) {
                 Item currItem = character.items[i];
-                itemsInfoLbl.text += "[b]" + currItem.itemName + "[/b] " +
-                    "\n     Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
+				itemsInfoLbl.text += "\n[b]" + currItem.itemName + "[/b] ";
+				itemsInfoLbl.text += " (";
+				itemsInfoLbl.text += "Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
-                    itemsInfoLbl.text += "\n     Body part: " + armor.bodyPartAttached.bodyPart.ToString();
-                    itemsInfoLbl.text += "\n     Hitpoints: " + armor.currHitPoints.ToString() + "/" + armor.hitPoints.ToString();
+                    itemsInfoLbl.text += ", Body part: " + armor.bodyPartAttached.bodyPart.ToString();
+                    itemsInfoLbl.text += ", Hitpoints: " + armor.currHitPoints.ToString() + "/" + armor.hitPoints.ToString();
                     for (int j = 0; j < armor.attributes.Count; j++) {
                         itemsInfoLbl.text += armor.attributes[j].ToString();
                         if(j + 1 < armor.attributes.Count) {
@@ -119,17 +120,15 @@ namespace ECS{
                     }
                 } else if(currItem.itemType == ITEM_TYPE.WEAPON) {
                     Weapon weapon = (Weapon)currItem;
-                    itemsInfoLbl.text += "\n     Body part: " + weapon.bodyPartAttached.bodyPart.ToString();
-                    itemsInfoLbl.text += "\n     Weapon Power: " + weapon.weaponPower.ToString();
-                    itemsInfoLbl.text += "\n     Durability Damage: " + weapon.durabilityDamage.ToString();
+                    itemsInfoLbl.text += ", Body part: " + weapon.bodyPartAttached.bodyPart.ToString();
+                    itemsInfoLbl.text += ", Weapon Power: " + weapon.weaponPower.ToString();
+                    itemsInfoLbl.text += ", Durability Damage: " + weapon.durabilityDamage.ToString();
                     for (int j = 0; j < weapon.attributes.Count; j++) {
                         itemsInfoLbl.text += weapon.attributes[j].ToString();
                         if (j + 1 < weapon.attributes.Count) {
                             itemsInfoLbl.text += ", ";
                         }
                     }
-                } else {
-                    itemsInfoLbl.text += "\n";
                 }
                     
             }

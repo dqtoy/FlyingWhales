@@ -26,6 +26,9 @@ namespace ECS{
             CAN_EQUIP_HAND_ARMOR,
             CAN_EQUIP_HEAD_ARMOR,
             CAN_EQUIP_TAIL_ARMOR,
+			NO_WEAPON,
+			CAN_PUNCH_NO_WEAPON,
+			CAN_KICK_NO_WEAPON,
             NONE
         }
 
@@ -39,7 +42,10 @@ namespace ECS{
             for (int i = 0; i < attributes.Count; i++) {
                 BodyAttribute currAttribute = attributes[i];
                 if (currAttribute.attribute == attribute) {
-                    return true;
+					if(currAttribute.attribute.ToString().Contains("NO_WEAPON") && HasWeapon()){
+						return false;
+					}
+					return true;
                 }
             }
             return false;
@@ -98,6 +104,26 @@ namespace ECS{
             }
             return items;
         }
+
+		internal bool HasWeapon(){
+			for (int i = 0; i < itemsAttached.Count; i++) {
+				Item currItem = itemsAttached[i];
+				if(currItem.itemType == ITEM_TYPE.WEAPON) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		internal bool HasArmor(){
+			for (int i = 0; i < itemsAttached.Count; i++) {
+				Item currItem = itemsAttached[i];
+				if(currItem.itemType == ITEM_TYPE.ARMOR) {
+					return true;
+				}
+			}
+			return false;
+		}
         #endregion
 
         #region Attributes
