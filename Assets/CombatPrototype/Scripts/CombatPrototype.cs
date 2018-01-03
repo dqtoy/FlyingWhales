@@ -218,13 +218,13 @@ namespace ECS{
 						int missingHealth = sourceCharacter.maxHP - sourceCharacter.currentHP;
 						activationWeight = (int)(((float)missingHealth / (float)sourceCharacter.maxHP) * 100f);
 					}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
-						int highestMissingHealth = charactersSideA.Max(x => x.maxHP - x.currentHP);
+						int highestMissingHealth = 0;
 						Character chosenCharacter = null;
 						if(charactersSideA.Contains(sourceCharacter)){
 							for (int j = 0; j < charactersSideA.Count; j++) {
 								Character character = charactersSideA [j];
 								int missingHealth = character.maxHP - character.currentHP;
-								if(highestMissingHealth == -1){
+								if(chosenCharacter == null){
 									highestMissingHealth = missingHealth;
 									chosenCharacter = character;
 								}else{
@@ -238,7 +238,7 @@ namespace ECS{
 							for (int j = 0; j < charactersSideB.Count; j++) {
 								Character character = charactersSideB [j];
 								int missingHealth = character.maxHP - character.currentHP;
-								if(highestMissingHealth == -1){
+								if(chosenCharacter == null){
 									highestMissingHealth = missingHealth;
 									chosenCharacter = character;
 								}else{
