@@ -518,7 +518,7 @@ namespace ECS{
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = UnityEngine.Random.Range (0, 100);
 							if(chance < 15){
-								CombatPrototypeUI.Instance.AddCombatLog(this._name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".");
+								CombatPrototypeUI.Instance.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".");
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
