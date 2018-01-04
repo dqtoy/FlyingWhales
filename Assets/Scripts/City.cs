@@ -6,7 +6,7 @@ using System;
 using Panda;
 
 [System.Serializable]
-public class City{
+public class City : Settlement{
     [Header("City Info")]
 	public int id;
 	public string name;
