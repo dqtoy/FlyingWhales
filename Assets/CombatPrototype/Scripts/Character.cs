@@ -340,23 +340,20 @@ namespace ECS{
             return null;
         }
         internal IBodyPart GetBodyPartForArmor(Armor armor) {
-            List<IBodyPart> allBodyParts = new List<IBodyPart>();
-            for (int i = 0; i < bodyParts.Count; i++) {
-                BodyPart currBodyPart = bodyParts[i];
-                allBodyParts.Add(currBodyPart);
-                for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-                    allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
-                }
-            }
-
             IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
-            for (int i = 0; i < allBodyParts.Count; i++) {
-                IBodyPart currBodyPart = allBodyParts[i];
-                //check if currBodyPart can equip the armor
-                if (currBodyPart.HasUnusedAttribute(neededAttribute)) {
-                    return currBodyPart;
-                }
-            }
+			for (int i = 0; i < bodyParts.Count; i++) {
+				BodyPart currBodyPart = bodyParts[i];
+				//check if currBodyPart can equip the armor
+				if (currBodyPart.HasUnusedAttribute(neededAttribute)) {
+					return currBodyPart;
+				}
+				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+					//check if currBodyPart can equip the armor
+					if (currBodyPart.secondaryBodyParts[j].HasUnusedAttribute(neededAttribute)) {
+						return currBodyPart.secondaryBodyParts[j];
+					}
+				}
+			}
             return null;
         }
         #endregion
@@ -378,13 +375,7 @@ namespace ECS{
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (strItemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-				EquipWeapon(weapon);
-//				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
-//				if(bodyPartToEquip != null) {
-//					
-//				} else {
-//					Debug.Log(name + " cannot equip " + weapon.itemName);
-//				}
+				TryEquipWeapon(weapon);
 			} else if (strItemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
 				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
@@ -400,13 +391,7 @@ namespace ECS{
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (itemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-				EquipWeapon(weapon);
-
-//				IBodyPart bodyPartToEquip = GetBodyPartForWeapon(weapon);
-//				if(bodyPartToEquip != null) {
-//				} else {
-//					Debug.Log(name + " cannot equip " + weapon.itemName);
-//				}
+				TryEquipWeapon(weapon);
 			} else if (itemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
 				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
@@ -418,61 +403,54 @@ namespace ECS{
 			}
 		}
 
-        //Equip a weapon to a body part of this character and add it to the list of items this character have
-        internal void EquipWeapon(Weapon weapon){
+        //Try to equip a weapon to a body part of this character and add it to the list of items this character have
+		internal bool TryEquipWeapon(Weapon weapon){
 			for (int j = 0; j < weapon.equipRequirements.Count; j++) {
 				IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
 				if(!AttachWeaponToBodyPart(weapon, currReq)){
-					for (int i = 0; i < weapon.bodyPartsAttached.Count; i++) {
-						weapon.bodyPartsAttached[i].DettachItem(weapon);
-					}
-					weapon.bodyPartsAttached.Clear ();
-					return;
+					DetachWeaponFromBodyParts (weapon);
+					return false;
 				}
 			}
 			AddItem(weapon);
             weapon.ResetDurability();
             weapon.SetOwner(this);
-//            Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
+//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+			return true;
         }
 		private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req){
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart currBodyPart = this._bodyParts[i];
-				if(currBodyPart.HasUnusedAttribute(req)){
-					currBodyPart.AttachItem (weapon);
-					BodyAttribute attribute = currBodyPart.GetAttribute(req);
-					if(attribute != null){
-						attribute.SetAttributeAsUsed(true);
-					}
-					weapon.bodyPartsAttached.Add(currBodyPart);
+				if(currBodyPart.AttachItem(weapon, req)){
 					return true;
 				}
 				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-					if(currBodyPart.secondaryBodyParts[j].HasUnusedAttribute(req)){
-						currBodyPart.secondaryBodyParts[j].AttachItem (weapon);
-						BodyAttribute attribute = currBodyPart.secondaryBodyParts[j].GetAttribute(req);
-						if(attribute != null){
-							attribute.SetAttributeAsUsed(true);
-						}
-						weapon.bodyPartsAttached.Add(currBodyPart);
+					if(currBodyPart.secondaryBodyParts[j].AttachItem(weapon, req)){
 						return true;
 					}
 				}
 			}
 			return false;
 		}
+		private void DetachWeaponFromBodyParts(Weapon weapon){
+			for (int i = 0; i < weapon.equipRequirements.Count; i++) {
+				IBodyPart.ATTRIBUTE req = weapon.equipRequirements [i];
+				for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
+					if(weapon.bodyPartsAttached[j].DettachItem(weapon, req)){
+						break;
+					}
+				}
+			}
+		}
         internal void UnequipWeapon(Weapon weapon) {
             RemoveItem(weapon);
-			for (int i = 0; i < weapon.bodyPartsAttached.Count; i++) {
-				weapon.bodyPartsAttached[i].DettachItem(weapon);
-			}
-			weapon.bodyPartsAttached.Clear ();
+			DetachWeaponFromBodyParts (weapon);
         }
 		//Equip an armor to a body part of this character and add it to the list of items this character have
 		internal void EquipArmor(Armor armor, IBodyPart bodyPart){
-			bodyPart.AttachItem(armor);
-			armor.bodyPartAttached = bodyPart;
+			bodyPart.AttachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
+//			armor.bodyPartAttached = bodyPart;
 			AddItem(armor);
             armor.ResetDurability();
             armor.ResetHitPoints();
@@ -482,7 +460,7 @@ namespace ECS{
         }
         internal void UnequipArmor(Armor armor) {
             RemoveItem(armor);
-            armor.bodyPartAttached.DettachItem(armor);
+			armor.bodyPartAttached.DettachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
         }
         internal void AddItem(Item newItem){
 			this._items.Add (newItem);

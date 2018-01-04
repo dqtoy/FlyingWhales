@@ -130,9 +130,15 @@ namespace ECS{
         }
 
         public void ResetSimulation() {
-            ClearCombatLogs();
-            CombatPrototype.Instance.charactersSideA.Clear();
-            CombatPrototype.Instance.charactersSideB.Clear();
+			while (CombatPrototype.Instance.charactersSideA.Count > 0) {
+				CombatPrototype.Instance.charactersSideA [0].Death ();
+			}
+			while (CombatPrototype.Instance.charactersSideB.Count > 0) {
+				CombatPrototype.Instance.charactersSideB [0].Death ();
+			}
+			ClearCombatLogs();
+//            CombatPrototype.Instance.charactersSideA.Clear();
+//            CombatPrototype.Instance.charactersSideB.Clear();
             UpdateCharactersList(SIDES.A);
             UpdateCharactersList(SIDES.B);
         }

@@ -62,37 +62,49 @@ namespace ECS{
         }
 
         #region Items
-        internal void AttachItem(Item item) {
-            itemsAttached.Add(item);
+        internal bool AttachItem(Item item, IBodyPart.ATTRIBUTE req) {
             if(item is Weapon) {
                 Weapon currItem = (Weapon)item;
-//                for (int i = 0; i < currItem.equipRequirements.Count; i++) {
-//                    ATTRIBUTE currAttribute = currItem.equipRequirements[i];
-//                    BodyAttribute attribute = GetAttribute(currAttribute);
-//                    attribute.SetAttributeAsUsed(true);
-//                }
+				BodyAttribute attribute = GetAttribute(req);
+				if(attribute != null){
+					attribute.SetAttributeAsUsed(true);
+					currItem.bodyPartsAttached.Add(this);
+					itemsAttached.Add (item);
+					return true;
+				}
             } else if (item is Armor) {
                 Armor currItem = (Armor)item;
-                ATTRIBUTE attribute = Utilities.GetNeededAttributeForArmor(currItem);
-                BodyAttribute currAttribute = GetAttribute(attribute);
-                currAttribute.SetAttributeAsUsed(true);
+				BodyAttribute currAttribute = GetAttribute(req);
+				if(currAttribute != null){
+					currAttribute.SetAttributeAsUsed(true);
+					currItem.bodyPartAttached = this;
+					itemsAttached.Add (item);
+					return true;
+				}
             }
+			return false;
         }
-        internal void DettachItem(Item item) {
-            itemsAttached.Remove(item);
+		internal bool DettachItem(Item item, IBodyPart.ATTRIBUTE req) {
             if (item is Weapon) {
                 Weapon currItem = (Weapon)item;
-                for (int i = 0; i < currItem.equipRequirements.Count; i++) {
-                    ATTRIBUTE currAttribute = currItem.equipRequirements[i];
-                    BodyAttribute attribute = GetAttribute(currAttribute);
-                    attribute.SetAttributeAsUsed(false);
-                }
+				BodyAttribute attribute = GetAttribute(req, true);
+				if(attribute != null){
+					attribute.SetAttributeAsUsed(false);
+					currItem.bodyPartsAttached.Remove(this);
+					itemsAttached.Remove(item);
+					return true;
+				}
             } else if (item is Armor) {
                 Armor currItem = (Armor)item;
-                ATTRIBUTE attribute = Utilities.GetNeededAttributeForArmor(currItem);
-                BodyAttribute currAttribute = GetAttribute(attribute);
-                currAttribute.SetAttributeAsUsed(false);
+				BodyAttribute attribute = GetAttribute(req, true);
+				if(attribute != null){
+					attribute.SetAttributeAsUsed(false);
+					currItem.bodyPartAttached = null;
+					itemsAttached.Remove(item);
+					return true;
+				}
             }
+			return false;
         }
         internal List<Item> GetAttachedItemsOfType(ITEM_TYPE itemType) {
             List<Item> items = new List<Item>();
