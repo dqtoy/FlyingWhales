@@ -444,6 +444,7 @@ namespace ECS{
             }
             
             BodyPart damagedBodyPart =	DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter);
+			bool hasDamagedArmor = false;
 
             //Get all armor pieces on body part that still has hit points
 			List<Item> armorOnBodyPart = damagedBodyPart.GetAttachedItemsOfType(ITEM_TYPE.ARMOR).OrderByDescending(x => ((Armor)x).currHitPoints).ToList();
@@ -453,16 +454,31 @@ namespace ECS{
 						Armor currArmor = (Armor)armorOnBodyPart[i];
 						if(currArmor.currHitPoints > 0) {
 							//Deal damage to armor
-							currArmor.AdjustHitPoints (-damage);
-							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-								+ "'s " + currArmor.itemName + " for " + damage.ToString() + ".");
+							hasDamagedArmor = true;
+							int damageToArmor = 0;
+							if(damage > currArmor.currHitPoints){
+								damageToArmor = currArmor.currHitPoints;
+							}else{
+								damageToArmor = damage;
+							}
+							damage -= damageToArmor;
 
-							damage -= currArmor.currHitPoints;
+							currArmor.AdjustHitPoints (-damageToArmor);
+							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+								+ "'s " + currArmor.itemName + " for " + damageToArmor.ToString() + " and damages " + targetCharacter.name + " for " + damage.ToString() + ".");
+
+							targetCharacter.AdjustHP(-damage);
+
 							if(damage < 0 ){
 								damage = 0;
 							}
 						}
 					}
+				}
+				if (damage > 0 && !hasDamagedArmor) {
+					//Deal damage to hp
+					CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+						+ " for " + damage.ToString() + ".");
 				}
 
 				int damageToDurability = attackSkill.durabilityDamage; //[SkillDurabilityDamage  +  WeaponDurabilityDamage]
@@ -480,12 +496,7 @@ namespace ECS{
 					}
 				}
 
-                if (damage > 0) {
-                        //Deal damage to hp
-                        CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-                            + " for " + damage.ToString() + ".");
-                        targetCharacter.AdjustHP(-damage);
-                }
+                
                     
             } else {
                 //Deal damage to hp
