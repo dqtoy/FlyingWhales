@@ -12,7 +12,7 @@ public class MilitaryManager {
 	public MilitaryManager(Kingdom kingdom){
 		this._kingdom = kingdom;
 		this.activeGenerals = new List<General> ();
-		ScheduleCreateGeneral ();
+		//ScheduleCreateGeneral ();
 	}
 
 	private void ScheduleCreateGeneral(){

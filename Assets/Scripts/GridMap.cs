@@ -724,7 +724,7 @@ public class GridMap : MonoBehaviour {
             elligibleTiles.Remove(chosenTile);
             List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(2);
             Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-            chosenTile.CreateRandomLandmark();
+            List<HexTile> createdRoad = chosenTile.CreateRandomLandmark();
             if(chosenTile.landmark != null) {
                 LANDMARK_TYPE createdLandmarkType = chosenTile.landmark.landmarkType;
                 if (createdLandmarksDict.ContainsKey(createdLandmarkType)) {
@@ -732,6 +732,9 @@ public class GridMap : MonoBehaviour {
                 } else {
                     createdLandmarksDict.Add(createdLandmarkType, 1);
                 }
+            }
+            if(createdRoad != null) {
+                Utilities.ListRemoveRange(elligibleTiles, createdRoad);
             }
             createdLandmarks++;
         }

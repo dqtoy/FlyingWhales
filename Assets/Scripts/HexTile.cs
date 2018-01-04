@@ -272,10 +272,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Landmarks
-    internal void CreateRandomLandmark() {
+    //This will return the created road
+    internal List<HexTile> CreateRandomLandmark() {
         List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
-        GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.AddRange(x.landmarks.Select(y => y.location)));
-        GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.Add(x.centerOfMass));
+        elligibleTilesToConnectTo.AddRange(this.region.landmarks.Select(x => x.location));
+        elligibleTilesToConnectTo.Add(this.region.centerOfMass);
+        //GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.AddRange(x.landmarks.Select(y => y.location)));
+        //GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.Add(x.centerOfMass));
 
         //Connect to the nearest landmark
         elligibleTilesToConnectTo = new List<HexTile>(elligibleTilesToConnectTo.OrderBy(x => Vector2.Distance(this.transform.position, x.transform.position)));
@@ -293,9 +296,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 }
 
                 RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-                break;
+                return path;
             }
         }
+        return null;
     }
 
     private void CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
