@@ -139,7 +139,7 @@ public class Warfare {
 
 //		winnerKingdom.ConquerCity(loserCity, this);
 		if(winnerGeneral.soldiers > 0){
-			loserCity.hexTile.city.AdjustSoldiers (winnerGeneral.soldiers, true, true);
+//			loserCity.hexTile.city.AdjustSoldiers (winnerGeneral.soldiers, true, true);
 //			winnerGeneral.WillDropSoldiersAndDisappear ();
 			winnerGeneral.gameEventInvolvedIn.DoneEvent();
 		}

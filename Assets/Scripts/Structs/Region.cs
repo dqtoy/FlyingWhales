@@ -48,6 +48,8 @@ public class Region {
 
 	private bool isOtherDay;
 
+	private float _populationGrowth;
+
     #region getters/sertters
 	internal int id {
 		get { return this._id; }
@@ -88,9 +90,9 @@ public class Region {
     internal int cityLevelCap {
         get { return _cityLevelCap; }
     }
-//    internal int populationGrowth {
-//        get { return _populationGrowth; }
-//    }
+    internal float populationGrowth {
+        get { return _populationGrowth; }
+    }
 	internal List<HexTile> corpseMoundTiles {
 		get { return this._corpseMoundTiles; }
 	}
@@ -131,7 +133,7 @@ public class Region {
 
         //Generate population growth
 //        int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
-//        _populationGrowth = possiblePopulationGrowths[Random.Range(0, possiblePopulationGrowths.Length)];
+		_populationGrowth = UnityEngine.Random.Range(0.1f, 0.5f) / 100f;
     }
 
     #region Center Of Mass Functions

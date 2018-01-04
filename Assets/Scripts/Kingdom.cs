@@ -16,7 +16,7 @@ public class Kingdom{
     private Sprite _emblemBG;
     public RACE race;
     public int age;
-    private int _population;
+	private float _population;
     private int _populationCapacity;
     private int foundationYear;
     private int foundationMonth;
@@ -149,8 +149,6 @@ public class Kingdom{
 
 	internal HashSet<int> checkedWarfareID;
 
-	private int _soldiers;
-
 	internal MilitaryManager militaryManager;
 
     #region getters/setters
@@ -181,11 +179,8 @@ public class Kingdom{
 		get { return this._mainThreat; }
 	}
     internal int population {
-        get { return _population + _soldiers; }
+		get { return this.cities.Sum(x => x.population); }
     }
-	internal int civilians{
-		get { return _population; }
-	}
     internal int populationCapacity {
 //		get { return this._populationCapacity; }
 		get { return this.cities.Sum(x => x.populationCapacity); }
@@ -309,9 +304,6 @@ public class Kingdom{
     }
 	internal int soldiersCap {
 		get { return Mathf.FloorToInt(population * draftRate); }
-	}
-	internal int soldiersCount {
-		get { return this._soldiers + ((this.militaryManager.activeGenerals.Count > 0) ? this.militaryManager.activeGenerals.Sum(x => x.soldiers): 0);}
 	}
     internal float draftRate {
         get {
@@ -1363,7 +1355,7 @@ public class Kingdom{
         City createdCity = CityGenerator.Instance.CreateNewCity(tile, this);
         this.AddCityToKingdom(createdCity);
 		if(hasInitialPopulation){
-			createdCity.AdjustPopulation (50);
+			createdCity.AdjustPopulation (100f);
 		}
         return createdCity;
     }
@@ -2550,26 +2542,26 @@ public class Kingdom{
     #endregion
 
     #region Population
-	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
-        _population += adjustment;
-        if(_population < 0) {
-			_population = 0;
-        }
-		if(isUpdateKingdomList){
-			KingdomManager.Instance.UpdateKingdomList();
-		}
-    }
-    internal void SetPopulation(int newPopulation) {
-        _population = newPopulation;
-        KingdomManager.Instance.UpdateKingdomList();
-    }
-	internal void UpdatePopulation(){
-		this._population = 0;
-		for (int i = 0; i < this.cities.Count; i++) {
-			this._population += this.cities [i].population;
-		}
-		KingdomManager.Instance.UpdateKingdomList ();
-	}
+//	internal void AdjustPopulation(float adjustment, bool isUpdateKingdomList = true) {
+//        _population += adjustment;
+//        if(_population < 0f) {
+//			_population = 0f;
+//        }
+//		if(isUpdateKingdomList){
+//			KingdomManager.Instance.UpdateKingdomList();
+//		}
+//    }
+//	internal void SetPopulation(float newPopulation) {
+//        _population = newPopulation;
+//        KingdomManager.Instance.UpdateKingdomList();
+//    }
+//	internal void UpdatePopulation(){
+//		this._population = 0f;
+//		for (int i = 0; i < this.cities.Count; i++) {
+//			this._population += this.cities [i]._population;
+//		}
+//		KingdomManager.Instance.UpdateKingdomList ();
+//	}
 	internal void DamagePopulation(int damage){
 		int distributableDamage = damage / this.cities.Count;
 		int remainder = damage % this.cities.Count;
@@ -2580,32 +2572,14 @@ public class Kingdom{
 			int totalDamage = distributableDamage + excessDamage;
 			if(city.population < totalDamage){
 				excessDamage += totalDamage - city.population;
-				city.AdjustPopulation (-city.population);
+				city.AdjustPopulation ((float)-city.population);
 				i--;
 			}else{
 				excessDamage = 0;
-				city.AdjustPopulation (-totalDamage);
+				city.AdjustPopulation ((float)-totalDamage);
 				if(city.isDead){
 					i--;
 				}
-			}
-		}
-	}
-	internal void DamageSoldiers(int damage){
-		int distributableDamage = damage / this.cities.Count;
-		int remainder = damage % this.cities.Count;
-		distributableDamage += remainder;
-		Debug.Log (this.name + " DISTRIBUTABLE DAMAGE: " + distributableDamage.ToString() + ", REMAINDER: " + remainder.ToString ());
-		int excessDamage = 0;
-		for (int i = 0; i < this.cities.Count; i++) {
-			City city = this.cities [i];
-			int totalDamage = distributableDamage + excessDamage;
-			if(city.soldiers < totalDamage){
-				excessDamage += totalDamage - city.soldiers;
-				city.AdjustSoldiers (-city.soldiers);
-			}else{
-				excessDamage = 0;
-				city.AdjustSoldiers (-totalDamage);
 			}
 		}
 	}
@@ -3298,27 +3272,6 @@ public class Kingdom{
 	#region Undead
 	internal void InitializeUndeadKingdom(int undeadCount){
 //		this.AdjustPopulation (undeadCount);
-	}
-	#endregion
-
-	#region Soldiers
-	internal void AdjustSoldiers(int amount, bool isUpdateKingdomList = true){
-		this._soldiers += amount;
-		if(this._soldiers < 0) {
-			this._soldiers = 0;
-		}
-		if(isUpdateKingdomList){
-			KingdomManager.Instance.UpdateKingdomList ();
-		}
-	}
-	internal void UpdateSoldiers(bool isUpdateKingdomList = true){
-		this._soldiers = 0;
-		for (int i = 0; i < this.cities.Count; i++) {
-			this._soldiers += this.cities [i].soldiers;
-		}
-		if (isUpdateKingdomList) {
-			KingdomManager.Instance.UpdateKingdomList ();
-		}
 	}
 	#endregion
 

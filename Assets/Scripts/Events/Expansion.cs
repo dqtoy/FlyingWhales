@@ -20,7 +20,7 @@ public class Expansion : GameEvent {
 		this.hexTileToExpandTo = targetHextile;
 		this.hexTileToExpandTo.isTargeted = true;
 		this.carriedPopulation = EventManager.Instance.expansionEventCarriedPopulation;
-		this.originCity.AdjustPopulation (-this.carriedPopulation);
+		this.originCity.AdjustPopulation ((float)-this.carriedPopulation);
 
 		EventManager.Instance.AddEventToDictionary(this);
 
@@ -45,7 +45,7 @@ public class Expansion : GameEvent {
 		//CheckIfCitizenIsCarryingPlague(citizen);
 		if (this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0) {
 			City newCity = this.startedByKingdom.CreateNewCityOnTileForKingdom (this.hexTileToExpandTo);
-			newCity.AdjustPopulation (this.carriedPopulation);
+			newCity.AdjustPopulation ((float)this.carriedPopulation);
             newCity.SetupInitialValues();
             newCity.region.SetOccupant(newCity);
             newCity.ExpandToThisCity (this.startedBy);

@@ -92,7 +92,7 @@ public class EventCreator: MonoBehaviour {
 		Citizen citizen = sourceCity.CreateNewAgent (ROLE.GENERAL, targetCity.hexTile);
 		if(citizen != null){
 			General general	= (General)citizen.assignedRole;
-			sourceCity.AdjustSoldiers (-soldiers);
+//			sourceCity.AdjustSoldiers (-soldiers);
 			ReinforceCity reinforceCity = new ReinforceCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen);
 			general.Initialize (reinforceCity);
 			general.SetSoldiers (soldiers);
@@ -106,7 +106,7 @@ public class EventCreator: MonoBehaviour {
 		if(citizen != null){
 			General general	= (General)citizen.assignedRole;
 			general.isIdle = true;
-			sourceCity.AdjustSoldiers (-soldiers);
+//			sourceCity.AdjustSoldiers (-soldiers);
 			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen, battle, targetCity);
 			general.Initialize (attackCity);
 			general.SetSoldiers (soldiers);
@@ -120,7 +120,7 @@ public class EventCreator: MonoBehaviour {
 		if(citizen != null){
 			General general	= (General)citizen.assignedRole;
 			general.isIdle = true;
-			sourceCity.AdjustSoldiers (-soldiers);
+//			sourceCity.AdjustSoldiers (-soldiers);
 			DefendCity defendCity = new DefendCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, general.citizen, battle);
 			general.Initialize (defendCity);
 			general.SetSoldiers (soldiers);

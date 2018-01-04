@@ -49,9 +49,9 @@ public class AttackCity : GameEvent {
 	internal void ReturnRemainingSoldiers (){
 		if(this.isActive){
 			if(this.general.location.id == this.sourceCity.hexTile.id){
-				if(!this.sourceCity.isDead){
-					this.sourceCity.AdjustSoldiers (this.general.soldiers);
-				}
+//				if(!this.sourceCity.isDead){
+//					this.sourceCity.AdjustSoldiers (this.general.soldiers);
+//				}
 				this.DoneEvent ();
 			}else{
 				if(!this.sourceCity.isDead){
