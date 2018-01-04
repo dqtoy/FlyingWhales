@@ -86,7 +86,6 @@ public class KingdomManager : MonoBehaviour {
         for (int i = 1; i < 27; i += 2) {
             oddActionDays.Add(i, new List<Kingdom>());
         }
-
     }
 
     public void GenerateInitialKingdoms() {

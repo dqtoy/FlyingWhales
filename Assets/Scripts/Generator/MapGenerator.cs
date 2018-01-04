@@ -49,7 +49,8 @@ public class MapGenerator : MonoBehaviour {
         }
         GridMap.Instance.GenerateLandmarks();
 
-		KingdomManager.Instance.GenerateInitialKingdoms();
+        FactionManager.Instance.GenerateInititalFactions();
+        KingdomManager.Instance.GenerateInitialKingdoms();
 		GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
 
         //GridMap.Instance.GenerateResourcesPerRegion();
