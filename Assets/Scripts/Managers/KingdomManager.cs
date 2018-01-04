@@ -327,7 +327,7 @@ public class KingdomManager : MonoBehaviour {
         } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.currentExpansionRate).ToList();
         } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.WEAPONS) {
-            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.soldiersCount).ToList();
+//            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.soldiersCount).ToList();
         } 
 //		else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.ARMOR) {
 //            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveDefense).ToList();

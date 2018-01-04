@@ -749,9 +749,9 @@ public class KingdomRelationship {
 	internal void UpdateTheoreticalPower(){
 		int posAllianceSoldiers = GetAdjacentPosAllianceSoldiers ();
 		int otherAdjacentEnemiesPower = GetOtherAdjacentEnemiesPower();
-		int kingdomCivilians = (int) (Mathf.Sqrt (this.sourceKingdom.civilians));
+		int kingdomCivilians = (int) (Mathf.Sqrt (this.sourceKingdom.population));
 
-		this._theoreticalPower = this._sourceKingdom.soldiersCount + posAllianceSoldiers + kingdomCivilians - otherAdjacentEnemiesPower;
+//		this._theoreticalPower = this._sourceKingdom.soldiersCount + posAllianceSoldiers + kingdomCivilians - otherAdjacentEnemiesPower;
 	}
 	private int GetAdjacentPosAllianceSoldiers(){
 		int posAlliancePower = 0;
@@ -762,7 +762,7 @@ public class KingdomRelationship {
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
 					if(relationship.totalLike >= 0 && relationshipToEnemy.sharedRelationship.isAdjacent && !relationshipToEnemy.sharedRelationship.isAtWar){
-						posAlliancePower += (int)((float)kingdomInAlliance.soldiersCount * GetOpinionPercentage(relationship.totalLike));
+//						posAlliancePower += (int)((float)kingdomInAlliance.soldiersCount * GetOpinionPercentage(relationship.totalLike));
 					}
 				}
 			}
@@ -777,7 +777,7 @@ public class KingdomRelationship {
 		foreach (KingdomRelationship kr in this._sourceKingdom.relationships.Values) {
 			if(this._sourceKingdom.id != kr.targetKingdom.id && this._targetKingdom.id != kr.targetKingdom.id){
 				if(kr.sharedRelationship.isAtWar && kr.sharedRelationship.isAdjacent){
-					otherEnemiesPower += kr.targetKingdom.soldiersCount;
+//					otherEnemiesPower += kr.targetKingdom.soldiersCount;
 				}
 			}
 		}

@@ -30,7 +30,7 @@ public class KingdomSummaryEntry : MonoBehaviour {
         populationLbl.text = kingdom.population.ToString();
         citiesLbl.text = kingdom.cities.Count.ToString();
         expansionRateLbl.text = kingdom.currentExpansionRate.ToString();
-		weaponsLbl.text = kingdom.soldiersCount.ToString();
+//		weaponsLbl.text = kingdom.soldiersCount.ToString();
 //      armorLbl.text = kingdom.effectiveDefense.ToString();
 
 		EventDelegate.Set(emblemEventTrigger.onClick, delegate () { SwitchKingdom(kingdom); });

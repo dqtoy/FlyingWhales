@@ -115,78 +115,78 @@ public class Battle {
 		}
 	}
 	private void AttackMobilization(){
-		Log offenseLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
-		offenseLog.AddToFillers(this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		offenseLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_1);
-		this._warfare.ShowUINotification(offenseLog, new HashSet<Kingdom> { attacker.kingdom });
-
-		this.attackCityEvent = EventCreator.Instance.CreateAttackCityEvent (this.attacker, this.defender, this, this.attacker.soldiers);
-
-		int totalSoldiers = 0;
-		int totalConnectedOwnedSoldiers = 0;
-		int baseSoldiers = this.attacker.soldiers;
-		int connectedOwnedCitiesSoldiers = 0;
-		int lessenSoldiers = 0;
-		List<City> ownedConnectedCities = new List<City> ();
-		for (int i = 0; i < this.attackerKingdom.cities.Count; i++) {
-			City city = this.attackerKingdom.cities [i];
-			if(city.id != this.attacker.id && city.soldiers > 0){
-				if(Utilities.AreTwoCitiesConnected(city, this.attacker, PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, this.attackerKingdom)){
-					ownedConnectedCities.Add (city);
-					connectedOwnedCitiesSoldiers += city.soldiers;
-					for (int j = 0; j < city.region.connections.Count; j++) {
-						if(city.region.connections[j] is Region){
-							Region connectedRegion = (Region)city.region.connections [j];
-							if(connectedRegion.occupant != null && connectedRegion.occupant.kingdom.id != city.kingdom.id){
-								KingdomRelationship kr = city.kingdom.GetRelationshipWithKingdom (connectedRegion.occupant.kingdom);
-								float threat = (float)kr.targetKingdomThreatLevel;
-								if(threat > 100f){
-									threat = 100f;
-								}
-								threat /= 100f;
-								lessenSoldiers += Mathf.RoundToInt(threat * connectedRegion.occupant.soldiers);
-							}
-						}
-					}
-				}
-			}
-		}
-			
-		if(ownedConnectedCities.Count > 0){
-			totalConnectedOwnedSoldiers = Mathf.RoundToInt((connectedOwnedCitiesSoldiers - lessenSoldiers) / (this.attacker.kingdom.warfareInfo.Count + 1));
-			if(totalConnectedOwnedSoldiers < 0){
-				totalConnectedOwnedSoldiers = 0;
-			}
-			int distributableSoldiers = Mathf.RoundToInt(totalConnectedOwnedSoldiers / ownedConnectedCities.Count);
-			int excessSoldiers = 0;
-			for (int i = 0; i < ownedConnectedCities.Count; i++) {
-				City city = ownedConnectedCities [i];
-				if (city.id != this.attacker.id) {
-					int totalSoldiersCount = distributableSoldiers + excessSoldiers;
-					if(city.soldiers < totalSoldiersCount){
-						excessSoldiers += totalSoldiersCount - city.soldiers;
-						if(city.soldiers > 0){
-							ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, city.soldiers);
-							if(reinforceCity != null){
-								this.attackCityEvent.AddReinforcements (reinforceCity);
-							}
-						}
-					}else{
-						excessSoldiers = 0;
-						if(totalSoldiersCount > 0){
-							ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, totalSoldiersCount);
-							if(reinforceCity != null){
-								this.attackCityEvent.AddReinforcements (reinforceCity);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if(this.attackCityEvent.reinforcements.Count <= 0){
-			this.attackCityEvent.Attack ();
-		}
+//		Log offenseLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
+//		offenseLog.AddToFillers(this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+//		offenseLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_1);
+//		this._warfare.ShowUINotification(offenseLog, new HashSet<Kingdom> { attacker.kingdom });
+//
+//		this.attackCityEvent = EventCreator.Instance.CreateAttackCityEvent (this.attacker, this.defender, this, this.attacker.soldiers);
+//
+//		int totalSoldiers = 0;
+//		int totalConnectedOwnedSoldiers = 0;
+//		int baseSoldiers = this.attacker.soldiers;
+//		int connectedOwnedCitiesSoldiers = 0;
+//		int lessenSoldiers = 0;
+//		List<City> ownedConnectedCities = new List<City> ();
+//		for (int i = 0; i < this.attackerKingdom.cities.Count; i++) {
+//			City city = this.attackerKingdom.cities [i];
+//			if(city.id != this.attacker.id && city.soldiers > 0){
+//				if(Utilities.AreTwoCitiesConnected(city, this.attacker, PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, this.attackerKingdom)){
+//					ownedConnectedCities.Add (city);
+//					connectedOwnedCitiesSoldiers += city.soldiers;
+//					for (int j = 0; j < city.region.connections.Count; j++) {
+//						if(city.region.connections[j] is Region){
+//							Region connectedRegion = (Region)city.region.connections [j];
+//							if(connectedRegion.occupant != null && connectedRegion.occupant.kingdom.id != city.kingdom.id){
+//								KingdomRelationship kr = city.kingdom.GetRelationshipWithKingdom (connectedRegion.occupant.kingdom);
+//								float threat = (float)kr.targetKingdomThreatLevel;
+//								if(threat > 100f){
+//									threat = 100f;
+//								}
+//								threat /= 100f;
+//								lessenSoldiers += Mathf.RoundToInt(threat * connectedRegion.occupant.soldiers);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//			
+//		if(ownedConnectedCities.Count > 0){
+//			totalConnectedOwnedSoldiers = Mathf.RoundToInt((connectedOwnedCitiesSoldiers - lessenSoldiers) / (this.attacker.kingdom.warfareInfo.Count + 1));
+//			if(totalConnectedOwnedSoldiers < 0){
+//				totalConnectedOwnedSoldiers = 0;
+//			}
+//			int distributableSoldiers = Mathf.RoundToInt(totalConnectedOwnedSoldiers / ownedConnectedCities.Count);
+//			int excessSoldiers = 0;
+//			for (int i = 0; i < ownedConnectedCities.Count; i++) {
+//				City city = ownedConnectedCities [i];
+//				if (city.id != this.attacker.id) {
+//					int totalSoldiersCount = distributableSoldiers + excessSoldiers;
+//					if(city.soldiers < totalSoldiersCount){
+//						excessSoldiers += totalSoldiersCount - city.soldiers;
+//						if(city.soldiers > 0){
+//							ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, city.soldiers);
+//							if(reinforceCity != null){
+//								this.attackCityEvent.AddReinforcements (reinforceCity);
+//							}
+//						}
+//					}else{
+//						excessSoldiers = 0;
+//						if(totalSoldiersCount > 0){
+//							ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (city, this.attacker, totalSoldiersCount);
+//							if(reinforceCity != null){
+//								this.attackCityEvent.AddReinforcements (reinforceCity);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//		if(this.attackCityEvent.reinforcements.Count <= 0){
+//			this.attackCityEvent.Attack ();
+//		}
 
 	}
 	internal void Attack(){
@@ -194,23 +194,23 @@ public class Battle {
 	}
 
 	private void DefenseMobilization(){
-		this.defendCityEvent = EventCreator.Instance.CreateDefendCityEvent (this.defender, this.attacker, this, this.defender.soldiers);
-
-		List<City> ownedConnectedCities = new List<City> ();
-		for (int i = 0; i < this.defender.region.connections.Count; i++) {
-			if (this.defender.region.connections [i] is Region) {
-				Region connectedRegion = (Region)this.defender.region.connections [i];
-				if(connectedRegion.occupant != null && connectedRegion.occupant.kingdom.id == this.defender.kingdom.id && connectedRegion.occupant.soldiers > 0){
-					int totalSoldiersCount = connectedRegion.occupant.soldiers / 2;
-					if(totalSoldiersCount > 0){
-						ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (connectedRegion.occupant, this.defender, totalSoldiersCount);
-						if(reinforceCity != null){
-							this.defendCityEvent.AddReinforcements (reinforceCity);
-						}
-					}
-				}
-			}
-		}
+//		this.defendCityEvent = EventCreator.Instance.CreateDefendCityEvent (this.defender, this.attacker, this, this.defender.soldiers);
+//
+//		List<City> ownedConnectedCities = new List<City> ();
+//		for (int i = 0; i < this.defender.region.connections.Count; i++) {
+//			if (this.defender.region.connections [i] is Region) {
+//				Region connectedRegion = (Region)this.defender.region.connections [i];
+//				if(connectedRegion.occupant != null && connectedRegion.occupant.kingdom.id == this.defender.kingdom.id && connectedRegion.occupant.soldiers > 0){
+//					int totalSoldiersCount = connectedRegion.occupant.soldiers / 2;
+//					if(totalSoldiersCount > 0){
+//						ReinforceCity reinforceCity = EventCreator.Instance.CreateReinforceCityEvent (connectedRegion.occupant, this.defender, totalSoldiersCount);
+//						if(reinforceCity != null){
+//							this.defendCityEvent.AddReinforcements (reinforceCity);
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 
 	#endregion

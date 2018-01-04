@@ -63,7 +63,7 @@ public class General : Role {
 	}
 	internal void DropSoldiersAndDisappear(){
 		if(this.location.city != null && this.location.city.kingdom.id == this.citizen.city.kingdom.id){
-			this.location.city.AdjustSoldiers (this.soldiers);
+//			this.location.city.AdjustSoldiers (this.soldiers);
 			this.gameEventInvolvedIn.DoneEvent ();
 		}else{
 			this.gameEventInvolvedIn.DoneEvent ();
@@ -71,7 +71,7 @@ public class General : Role {
 	}
 	internal void DropSoldiers(){
 		if(this.location.city != null && this.location.city.kingdom.id == this.citizen.city.kingdom.id){
-			this.location.city.AdjustSoldiers (this.soldiers);
+//			this.location.city.AdjustSoldiers (this.soldiers);
 		}
 	}
 
@@ -134,12 +134,12 @@ public class General : Role {
 		return numOfSoldiersCanBeGiven;
 	}
 	private int NeededSoldiers(){
-		if(this.generalTask.task == GENERAL_TASKS.ATTACK_CITY){
-			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.maxGenerals / this.citizen.city.kingdom.warfareInfo.Count;
-		}else if(this.generalTask.task == GENERAL_TASKS.DEFEND_CITY){
-			int numOfWars = (this.citizen.city.kingdom.warfareInfo.Count > 0) ? this.citizen.city.kingdom.warfareInfo.Count : 1;
-			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.maxGenerals / numOfWars;
-		}
+//		if(this.generalTask.task == GENERAL_TASKS.ATTACK_CITY){
+//			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.maxGenerals / this.citizen.city.kingdom.warfareInfo.Count;
+//		}else if(this.generalTask.task == GENERAL_TASKS.DEFEND_CITY){
+//			int numOfWars = (this.citizen.city.kingdom.warfareInfo.Count > 0) ? this.citizen.city.kingdom.warfareInfo.Count : 1;
+//			return this.citizen.city.kingdom.soldiersCount / this.citizen.city.kingdom.militaryManager.maxGenerals / numOfWars;
+//		}
 		return 0;
 	}
 
@@ -155,10 +155,11 @@ public class General : Role {
 
 	internal int GetPower(){
 		if (this.isDefending) {
-			return (int)((this.soldiers + this.location.city.soldiers) * 4) + (int)(Mathf.Sqrt((float)this.location.city.population));
+//			return (int)((this.soldiers + this.location.city.soldiers) * 4) + (int)(Mathf.Sqrt((float)this.location.city.population));
 		}else{
 			return this.soldiers * 3;
 		}
+		return 0;
 	}
 
 	internal void ChangeBattleState(){
