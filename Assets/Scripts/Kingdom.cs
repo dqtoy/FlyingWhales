@@ -2418,16 +2418,10 @@ public class Kingdom{
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead) {
-                //int weaponsContribution = currCity.powerPoints;
-                //int armorContribution = currCity.defensePoints;
                 int techContribution = currCity.techPoints;
-                //currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, totalStabilityIncrease);
                 totalTechIncrease += techContribution;
             }
         }
-
-        //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
-        //totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
         //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
         if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
