@@ -85,12 +85,10 @@ public class Role {
         //}
 
         //this.location.ExitCitizen(this.citizen);
-        this.DisinfectPlague();
 		this.DestroyGO ();
 	}
 	internal virtual void Initialize(GameEvent gameEvent){
         SetGameEventInvolvedIn(gameEvent);
-        CheckForPlagueInfection();
         //if (ObjectPoolManager.Instance.HasPool(citizen.role.ToString())){
             CreateAvatarGO();
         //}
@@ -123,29 +121,7 @@ public class Role {
 	internal virtual void ArrivedAtTargetLocation(){
 	}
 	#endregion
-
-   /*
-    * Whenever an agent comes out of a plagued city, 
-    * there is a 5% chance for every plagued settlement that he carries the plague
-    * */
-    protected void CheckForPlagueInfection() {
-        if (this.citizen.city.plague != null) {
-            int numOfInfectedSettlements = this.citizen.city.plaguedSettlements.Count;
-            int chanceToPlague = 10 * numOfInfectedSettlements;
-            if (Random.Range(0, 100) < chanceToPlague) {
-                this.InfectWithPlague(this.citizen.city.plague);
-            }
-        }
-    }
-
-    protected void InfectWithPlague(Plague plague) {
-        this._plague = plague;
-    }
-
-    internal void DisinfectPlague() {
-        this._plague = null;
-    }
-
+   
     internal void SetGameEventInvolvedIn(GameEvent _gameEventInvolvedIn) {
         this._gameEventInvolvedIn = _gameEventInvolvedIn;
     }

@@ -117,9 +117,6 @@ public class City : Settlement{
 	public List<HexTile> structures{
 		get{ return this._ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();} //Contains all structures, except capital city
 	}
-	public List<HexTile> plaguedSettlements{
-		get{ return this.structures.Where (x => x.isPlagued).ToList();} //Get plagued settlements
-	}
     public int powerPoints {
         get { return kingdom.kingdomTypeData.productionPointsSpend.power + cityLevel + kingdom.techLevel; }
     }
@@ -257,6 +254,45 @@ public class City : Settlement{
 	}
     #endregion
 
+    public City(HexTile hexTile) {
+        this.id = Utilities.SetID(this);
+        this.hexTile = hexTile;
+        this._region = hexTile.region;
+        this.name = RandomNameGenerator.Instance.GenerateCityName(this._kingdom.race);
+        this.governor = null;
+        this._weapons = 0;
+        this._armor = 0;
+        this._bonusStability = 0;
+        this._ownedTiles = new List<HexTile>();
+        this.incomingGenerals = new List<General>();
+        this.cityHistory = new List<History>();
+        this.isPaired = false;
+        this.isAttacking = false;
+        this.isDefending = false;
+        this.assignedDefendGeneralsCount = 0;
+        this._isStarving = false;
+        this._isNoCityGrowth = false;
+        this.isDead = false;
+        this.borderTiles = new List<HexTile>();
+        this.outerBorderTiles = new List<HexTile>();
+        this.habitableTileDistance = new List<HabitableTileDistance>();
+        this.raidLoyaltyExpiration = 0;
+        this._foodCount = 0;
+        this._materialCount = 0;
+        this._oreCount = 0;
+
+        this.hexTile.Occupy(this);
+        this.ownedTiles.Add(this.hexTile);
+        this.plague = null;
+        this._hp = this.maxHP;
+        this.populationIncreasePool = new int[] { 30, 32, 34, 36, 38, 40 };
+        this._populationGrowth = populationIncreasePool[UnityEngine.Random.Range(0, populationIncreasePool.Length)];
+        this._cityBT = null;
+        _activeGuards = new List<Guard>();
+        _cityBounds = 50f;
+        this._blacklist = new List<City>();
+    }
+
     public City(HexTile hexTile, Kingdom kingdom){
 		this.id = Utilities.SetID(this);
 		this.hexTile = hexTile;
@@ -268,10 +304,8 @@ public class City : Settlement{
         this._armor = 0;
 		this._bonusStability = 0;
 		this._ownedTiles = new List<HexTile>();
-		this.incomingGenerals = new List<General> ();
-		//this.citizens = new List<Citizen>();
+		this.incomingGenerals = new List<General>();
 		this.cityHistory = new List<History>();
-		//this.hasKing = false;
 		this.isPaired = false;
 		this.isAttacking = false;
 		this.isDefending = false;
@@ -287,7 +321,6 @@ public class City : Settlement{
 		this._materialCount = 0;
 		this._oreCount = 0;
 
-
         this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
@@ -299,8 +332,6 @@ public class City : Settlement{
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 		this._blacklist = new List<City> ();
-
-//		AdjustPopulation (50);
 
 		GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 		increaseDueDate.AddMonths(1);

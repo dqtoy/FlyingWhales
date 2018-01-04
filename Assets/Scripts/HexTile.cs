@@ -51,10 +51,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isRoad = false;
 	public bool isOccupied = false;
 	public bool isBorder = false;
-	public bool isPlagued = false;
 	public bool isTargeted = false;
-	public bool hasKeystone = false;
-	public bool hasFirst = false;
 	public bool isLair = false;
 	public bool hasLandmark = false;
 
@@ -109,13 +106,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [Space(10)]
     [Header("Fog Of War Objects")]
-    
     [SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
-
-    [Space(10)]
-    [Header("Game Event Objects")]
-    [SerializeField] private GameObject plagueIconGO;
-    [SerializeField] private GameObject gameEventObjectsParentGO;
 
     [Space(10)]
     [Header("Road Objects")]
@@ -125,11 +116,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     //Landmark
     private Landmark _landmark = null;
 
-    private GameEvent _gameEventInTile;
+    //Settlement
+    private Settlement _settlement = null; //Use settlement instead of city or landmark to unify the 2 variables
+
     private Transform _namePlateParent;
     private CityItem _cityInfo;
 	private LairItem _lairItem;
-	private HextileEventItem _hextileEventItem;
 	private GameObject plagueIcon;
 	private GameObject _corpseMoundGO = null;
 	private CorpseMound _corpseMound = null;
@@ -139,20 +131,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
 	[System.NonSerialized] public Dictionary<HexTile, RoadConnection> connectedTiles = new Dictionary<HexTile, RoadConnection>();
-    //	[System.NonSerialized] public List<GameObject> connectionsGO = new List<GameObject>();
 
     public List<HexTile> allNeighbourRoads = new List<HexTile>();
 
 	public List<HexTile> AllNeighbours { get; set; }
 	public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList();}}
     public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
-    //public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && !o.hasLandmark).ToList(); } }
     public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
-    //public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && !o.hasLandmark).ToList(); } }
     public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
     public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
 	public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
-
     public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkExternalConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
@@ -161,8 +149,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public List<HexTile> AvatarTiles { get { return NoWaterTiles; }}
 
     public List<HexTile> sameTagNeighbours;
-
-	//private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
 	#region getters/setters
     public Region region {
@@ -182,12 +168,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	public LairItem lairItem{
 		get { return this._lairItem; }
-	}
-	public HextileEventItem hextileEventItem{
-		get { return this._hextileEventItem; }
-	}
-	public GameEvent gameEventInTile{
-		get { return this._gameEventInTile; }
 	}
     public FOG_OF_WAR_STATE currFogOfWarState {
         get { return _currFogOfWarState; }
@@ -288,6 +268,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             if (path != null) {
                 //Create new random landmark given weights
                 LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
+                //SettlementManager.Instance.CreateNewSettlementOnTile(this, typeof(Landmark), landmarkToCreate);
                 CreateLandmarkOfType(landmarkToCreate);
                 if (currTileToConnectTo.isHabitable) {
                     RoadManager.Instance.ConnectLandmarkToRegion(this, currTileToConnectTo.region);
@@ -302,7 +283,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         return null;
     }
 
-    private void CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
+    public Landmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         this.hasLandmark = true;
         GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
         landmarkGO.transform.localPosition = Vector3.zero;
@@ -311,6 +292,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         _landmark.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
         _region.AddLandmarkToRegion(_landmark);
         HideLandmarkObject();
+        return _landmark;
     }
 
     [System.Obsolete("Use CreateLandmarkOfType instead")]
@@ -372,7 +354,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         _landmark = new Landmark(this, LANDMARK_TYPE.CORN);
         _region.AddLandmarkToRegion(_landmark);
     }
-	
     internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
@@ -787,7 +768,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
         UpdateSortingOrder();
     }
-
     internal void UpdateSortingOrder() {
         int sortingOrder = GetComponent<SpriteRenderer>().sortingOrder;
         if (elevationType == ELEVATION.MOUNTAIN) {
@@ -1044,32 +1024,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
     #endregion
 
-    #region Events Functions
-    internal void CreateEventNamePlate() {
-        //Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
-
-        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("EventNamePlatePanel", UIParent);
-        namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
-        _namePlateParent = namePlateGO.transform;
-        _hextileEventItem = namePlateGO.GetComponentInChildren<HextileEventItem>();
-        namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
-        Messenger.AddListener("UpdateUI", UpdateHextileEventNamePlate);
-
-        UpdateHextileEventNamePlate();
-    }
-    internal void UpdateHextileEventNamePlate() {
-        _hextileEventItem.SetHextileEvent(_gameEventInTile);
-    }
-    internal void RemoveHextileEventNamePlate() {
-        if (_namePlateParent != null) {
-            ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
-            _namePlateParent = null;
-            _hextileEventItem = null;
-            Messenger.RemoveListener("UpdateUI", UpdateHextileEventNamePlate);
-        }
-    }
-    #endregion
-
     #region Structures Functions
     internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
@@ -1164,13 +1118,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 //} else {
                 //    minimapColor = biomeColor;
                 //}
-                if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
+                if ((isHabitable && isOccupied) || isLair) {
                     ShowNamePlate();
                 }
                 if (isOccupied) {
                     ShowStructures();
                 }
-                gameEventObjectsParentGO.SetActive(true);
                 UIParent.gameObject.SetActive(true);
                 ShowAllCitizensOnTile();
                 break;
@@ -1181,26 +1134,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 //} else {
                 //    minimapColor = biomeColor;
                 //}
-                if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
+                if ((isHabitable && isOccupied) || isLair) {
                     ShowNamePlate();
                 }
                 if (isOccupied) {
                     ShowStructures();
                 }
-                gameEventObjectsParentGO.SetActive(false);
                 UIParent.gameObject.SetActive(true);
                 HideAllCitizensOnTile();
                 break;
             case FOG_OF_WAR_STATE.HIDDEN:
                 newColor.a = 255f / 255f;
                 //minimapColor = Color.black;
-                if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
+                if ((isHabitable && isOccupied) || isLair) {
                     HideNamePlate();
                 }
                 if (isOccupied) {
                     HideStructures();
                 }
-                gameEventObjectsParentGO.SetActive(false);
                 UIParent.gameObject.SetActive(false);
                 HideAllCitizensOnTile();
                 break;
@@ -1238,13 +1189,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.city = null;
         this.isOccupied = false;
         this.isBorder = false;
-        this.isPlagued = false;
         this.ownedByCity = null;
         //SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
         this.kingdomColorSprite.gameObject.SetActive(false);
         this._lairItem = null;
-        this._hextileEventItem = null;
         Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
 
         RuinStructureOnTile(false);
@@ -1778,76 +1727,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal float GetDistanceTo(HexTile targetHextile){
 		return Vector3.Distance (this.transform.position, targetHextile.transform.position);
 	}
-
-	internal void SetPlague(bool state){
-		this.isPlagued = state;
-		this.SetActivePlagueIcon(state);
-        this.ownedByCity.UpdateDailyProduction();
-	}
-
-	private void SetActivePlagueIcon(bool state){
-		if(state){
-			if(this.plagueIcon == null){
-				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO.name, this.UIParent);
-				this.plagueIcon.transform.localPosition = Vector3.zero;
-			}
-		}else{
-			if(this.plagueIcon != null){
-				ObjectPoolManager.Instance.DestroyObject(this.plagueIcon);
-			}
-		}
-	}
-		
-	internal void RemoveEventOnTile(){
-		this._gameEventInTile = null;
-        RemoveHextileEventNamePlate();
-        //      Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
-        //for (int i = 0; i < children.Length; i++) {
-        //	if(children[i].gameObject.tag == "EventTileNameplate"){
-        //Destroy(children[i].gameObject);
-        //	}
-        //}
-    }
-	internal GameEvent GetEventFromTile(){
-		return this._gameEventInTile;
-	}
-	internal void SetKeystone(bool state){
-		this.hasKeystone = state;
-		this.SetActiveKeystoneIcon(state);
-        this.RemoveEventOnTile();
-    }
-
-	private void SetActiveKeystoneIcon(bool state){
-		if(state){
-			if(this.plagueIcon == null){
-				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO.name, this.UIParent);
-				this.plagueIcon.transform.localPosition = Vector3.zero;
-			}
-		}else{
-			if(this.plagueIcon != null){
-				ObjectPoolManager.Instance.DestroyObject(this.plagueIcon);
-			}
-		}
-	}
-
-	internal void SetFirst(bool state){
-		this.hasFirst = state;
-		this.SetActiveFirstIcon(state);
-	}
-
-	private void SetActiveFirstIcon(bool state){
-		if(state){
-			if(this.plagueIcon == null){
-				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO.name, this.UIParent);
-				this.plagueIcon.transform.localPosition = Vector3.zero;
-			}
-		}else{
-			if(this.plagueIcon != null){
-				ObjectPoolManager.Instance.DestroyObject(this.plagueIcon);
-			}
-		}
-	}
-
+	
     public void SetTag(int tag) {
         this.tileTag = tag;
         //tileTextMesh.text = xCoordinate.ToString() + "," + yCoordinate.ToString();

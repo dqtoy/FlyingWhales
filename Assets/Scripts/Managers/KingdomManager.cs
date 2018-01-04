@@ -139,10 +139,6 @@ public class KingdomManager : MonoBehaviour {
 
         }
 
-        //if(newKingdom.king == null) {
-        //    throw new System.Exception("New kingdom " + newKingdom.name + " has no king created on generation!\n" + System.Environment.StackTrace);
-        //}
-
         //Create Relationships first
 //        newKingdom.CreateInitialRelationships();
         if (broadcastCreation) {
@@ -220,12 +216,6 @@ public class KingdomManager : MonoBehaviour {
 
 		return count;
 	}
-		
-    private void UpdateDiscoveredKingdomsForAll() {
-        for (int i = 0; i < this.allKingdoms.Count; i++) {
-            this.allKingdoms[i].CheckForDiscoveredKingdoms();
-        }
-    }
 
     public List<Kingdom> GetAllKingdomsByRace(RACE race) {
         List<Kingdom> kingdomsOfRace = new List<Kingdom>();

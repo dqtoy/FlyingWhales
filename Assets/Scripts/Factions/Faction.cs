@@ -18,4 +18,15 @@ public class Faction {
     public void SetRace(RACE race) {
         _race = race;
     }
+
+    #region Settlements
+    public void AddSettlement(Settlement settlement) {
+        if (_settlements.Contains(settlement)) {
+            _settlements.Add(settlement);
+        }
+    }
+    public void RemoveSettlement(Settlement settlement) {
+        _settlements.Remove(settlement);
+    }
+    #endregion
 }
