@@ -18,17 +18,7 @@ public class SettlementManager : MonoBehaviour {
      otherwise this will just return a null value
      */
     public Settlement CreateNewSettlementOnTile(HexTile location, System.Type settlementType) {
-        if(settlementType != typeof(Settlement)) {
-            return null;
-        }
-
         if(settlementType == typeof(City)) {
-            City newCity = new City(location);
-            location.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
-            location.city.PopulateBorderTiles();
-            location.emptyCityGO.SetActive(false);
-            return newCity;
-        } else if (settlementType == typeof(Landmark)) {
             City newCity = new City(location);
             location.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
             location.city.PopulateBorderTiles();
@@ -39,9 +29,6 @@ public class SettlementManager : MonoBehaviour {
     }
 
     public Settlement CreateNewSettlementOnTile(HexTile location, System.Type settlementType, LANDMARK_TYPE landmarkType) {
-        if (settlementType != typeof(Settlement)) {
-            return null;
-        }
         if (settlementType == typeof(Landmark)) {
             Landmark newLandmark = location.CreateLandmarkOfType(landmarkType);
             return newLandmark;

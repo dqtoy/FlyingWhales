@@ -268,8 +268,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             if (path != null) {
                 //Create new random landmark given weights
                 LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
-                //SettlementManager.Instance.CreateNewSettlementOnTile(this, typeof(Landmark), landmarkToCreate);
-                CreateLandmarkOfType(landmarkToCreate);
+                SettlementManager.Instance.CreateNewSettlementOnTile(this, typeof(Landmark), landmarkToCreate);
+                //CreateLandmarkOfType(landmarkToCreate);
                 if (currTileToConnectTo.isHabitable) {
                     RoadManager.Instance.ConnectLandmarkToRegion(this, currTileToConnectTo.region);
                 } else {
