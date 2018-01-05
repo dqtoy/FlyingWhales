@@ -7,37 +7,38 @@ namespace ECS{
 	[System.Serializable]
 	public class Character {
 		[SerializeField] private string _name;
+		private GENDER _gender;
+		private List<Trait>	_traits;
 
-        private int _actRate;
-
+		//Stats
+		[SerializeField] private int _currentHP;
+		[SerializeField] private int _maxHP;
+		[SerializeField] private int _exp;
         [SerializeField] private int _level;
-        [SerializeField] private int _maxHP;
-        [SerializeField] private int _currentHP;
-        [SerializeField] private int _currentRow;
-
         [SerializeField] private int _strength;
         [SerializeField] private int _intelligence;
         [SerializeField] private int _agility;
-
-        [SerializeField] private int _exp;
-
-        [SerializeField] private bool _isDead;
-		private List<Trait>	_traits;
-        [SerializeField] private List<BodyPart> _bodyParts;
-		[SerializeField] private List<Item> _items;
+		[SerializeField] private int _currentRow;
+		private int _actRate;
 
 		private CharacterClass _characterClass;
-		protected RaceSetting _raceSetting;
+		private RaceSetting _raceSetting;
+		//TODO: Add role and faction
 
+        [SerializeField] private List<BodyPart> _bodyParts;
+		[SerializeField] private List<Item> _equippedItems;
+		[SerializeField] private List<Item> _inventory;
+			
 		private Color _characterColor;
 		private string _characterColorCode;
+		private bool _isDead;
 
 		#region getters / setters
 		internal string name{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
 		}
         internal int actRate {
-            get { return _actRate + _items.Sum(x => x.bonusActRate); }
+			get { return _actRate + _equippedItems.Sum(x => x.bonusActRate); }
             set { _actRate = value; }
         }
 		internal int level{
@@ -59,7 +60,10 @@ namespace ECS{
 			get { return this._bodyParts; }
 		}
 		internal List<Item> items{
-			get { return this._items; }
+			get { return this._equippedItems; }
+		}
+		internal List<Item> inventory{
+			get { return this._inventory; }
 		}
 		internal List<Trait> traits{
 			get { return this._traits; }
@@ -71,13 +75,13 @@ namespace ECS{
 			get { return this._isDead; }
 		}
         internal int strength {
-            get { return _strength + _items.Sum(x => x.bonusStrength); }
+			get { return _strength + _equippedItems.Sum(x => x.bonusStrength); }
         }
         internal int intelligence {
-            get { return _intelligence + _items.Sum(x => x.bonusIntelligence); }
+			get { return _intelligence + _equippedItems.Sum(x => x.bonusIntelligence); }
         }
         internal int agility {
-            get { return _agility + _items.Sum(x => x.bonusAgility); }
+			get { return _agility + _equippedItems.Sum(x => x.bonusAgility); }
         }
         internal int exp {
             get { return _exp; }
@@ -95,13 +99,13 @@ namespace ECS{
             get { return _characterClass.hpGain + _raceSetting.hpGain; }
         }
         internal int dodgeRate {
-            get { return characterClass.dodgeRate + _items.Sum(x => x.bonusDodgeRate); }
+			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
         }
         internal int parryRate {
-            get { return characterClass.parryRate + _items.Sum(x => x.bonusParryRate); }
+			get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
         }
         internal int blockRate {
-            get { return characterClass.blockRate + _items.Sum(x => x.bonusBlockRate); }
+			get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
         }
 		internal Color characterColor {
 			get { return _characterColor; }
@@ -133,7 +137,8 @@ namespace ECS{
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             _actRate = _characterClass.actRate;
 
-			_items = new List<Item> ();
+			_equippedItems = new List<Item> ();
+			_inventory = new List<Item> ();
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
@@ -359,6 +364,19 @@ namespace ECS{
         #endregion
 
         #region Items
+		//If a character picks up an item, it is automatically added to his/her inventory
+		internal void PickupItem(Item item){
+			this._inventory.Add (item);
+		}
+
+		internal void ThrowItem(Item item){
+			if(item.isEquipped){
+				this._equippedItems.Remove (item);
+			}else{
+				this._inventory.Remove (item);
+			}
+		}
+
 		//If character set up has pre equipped items, equip it here evey time a character is made
 		internal void EquipPreEquippedItems(CharacterSetup charSetup){
 			if(charSetup.preEquippedItems.Count > 0){
@@ -366,8 +384,9 @@ namespace ECS{
 					EquipItem (charSetup.preEquippedItems [i].itemType, charSetup.preEquippedItems [i].itemName);
 				}
 			}
-
 		}
+
+		//For prototype only, in reality, an instance of an Item must be passed as parameter
 		//Equip generic item, can be a weapon, armor, etc.
 		public void EquipItem(ITEM_TYPE itemType, string itemName) {
 			string strItemType = itemType.ToString();
@@ -378,12 +397,7 @@ namespace ECS{
 				TryEquipWeapon(weapon);
 			} else if (strItemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
-				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
-				if (bodyPartToEquip != null) {
-					EquipArmor(armor, bodyPartToEquip);
-				} else {
-					Debug.Log(name + " cannot equip " + armor.itemName);
-				}
+				TryEquipArmor(armor);
 			}
 		}
 		public void EquipItem(string itemType, string itemName) {
@@ -394,13 +408,29 @@ namespace ECS{
 				TryEquipWeapon(weapon);
 			} else if (itemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
-				IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
-				if (bodyPartToEquip != null) {
-					EquipArmor(armor, bodyPartToEquip);
-				} else {
-					Debug.Log(name + " cannot equip " + armor.itemName);
-				}
+				TryEquipArmor(armor);
 			}
+		}
+
+		//TODO: For merge, this is the real way to equip an item
+		internal void EquipItem(Item item){
+			if (item is Weapon) {
+				Weapon weapon = (Weapon)item;
+				TryEquipWeapon(weapon);
+			} else if (item is Armor) {
+				Armor armor = (Armor)item;
+				TryEquipArmor(armor);
+			}
+		}
+
+		//Unequips an item of a character, whether it's a weapon, armor, etc.
+		internal void UnequipItem(Item item){
+			if(item is Weapon){
+				UnequipWeapon ((Weapon)item);
+			}else if(item is Armor){
+				UnequipArmor ((Armor)item);
+			}
+			RemoveEquippedItem(item);
 		}
 
         //Try to equip a weapon to a body part of this character and add it to the list of items this character have
@@ -412,7 +442,7 @@ namespace ECS{
 					return false;
 				}
 			}
-			AddItem(weapon);
+			AddEquippedItem(weapon);
             weapon.ResetDurability();
             weapon.SetOwner(this);
 //          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
@@ -443,42 +473,41 @@ namespace ECS{
 				}
 			}
 		}
-
-		//Unequips an item of a character, whether it's a weapon, armor, etc.
-		internal void UnequipItem(Item item){
-			if(item is Weapon){
-				UnequipWeapon ((Weapon)item);
-			}else if(item is Armor){
-				UnequipArmor ((Armor)item);
-			}
-			RemoveItem(item);
-		}
 		//Unequips weapon of a character
 		private void UnequipWeapon(Weapon weapon) {
-            RemoveItem(weapon);
 			DetachWeaponFromBodyParts (weapon);
         }
-		//Equip an armor to a body part of this character and add it to the list of items this character have
-		internal void EquipArmor(Armor armor, IBodyPart bodyPart){
-			bodyPart.AttachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
+
+		//Try to equip an armor to a body part of this character and add it to the list of items this character have
+		internal bool TryEquipArmor(Armor armor){
+			IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
+			if(bodyPartToEquip == null){
+				return false;
+			}
+			bodyPartToEquip.AttachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
 //			armor.bodyPartAttached = bodyPart;
-			AddItem(armor);
+			AddEquippedItem(armor);
             armor.ResetDurability();
             armor.ResetHitPoints();
             armor.SetOwner(this);
-            Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPart.bodyPart.ToString());
+			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+			return true;
         }
 		//Unequips armor of a character
 		private void UnequipArmor(Armor armor) {
 			armor.bodyPartAttached.DettachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
         }
-        internal void AddItem(Item newItem){
-			this._items.Add (newItem);
+        internal void AddEquippedItem(Item newItem){
+			this._inventory.Remove (newItem);
+			this._equippedItems.Add (newItem);
+			newItem.SetEquipped (true);
 			AddItemBonuses (newItem);
 		}
-		internal void RemoveItem(Item newItem){
-			this._items.Remove (newItem);
+		internal void RemoveEquippedItem(Item newItem){
+			this._inventory.Add (newItem);
+			this._equippedItems.Remove (newItem);
+			newItem.SetEquipped (false);
 			RemoveItemBonuses (newItem);
 		}
         internal List<Weapon> GetAllAttachedWeapons() {

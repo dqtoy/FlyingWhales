@@ -21,6 +21,12 @@ namespace ECS{
 
         protected Character _owner;
 
+		private bool _isEquipped;
+
+		public bool isEquipped{
+			get { return _isEquipped; }
+		}
+
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;
             currDurability = Mathf.Clamp(currDurability, 0, durability);
@@ -37,6 +43,10 @@ namespace ECS{
         public void SetOwner(Character owner) {
             _owner = owner;
         }
+
+		public void SetEquipped(bool state){
+			this._isEquipped = state;
+		}
     }
 }
 
