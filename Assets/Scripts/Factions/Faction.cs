@@ -8,11 +8,23 @@ using System.Collections.Generic;
 public class Faction {
 
     protected RACE _race;
-    protected List<Settlement> _settlements;//List of settlements (cities/landmarks) owned by this faction
+    protected List<BaseLandmark> _ownedLandmarks;//List of settlements (cities/landmarks) owned by this faction
+    internal Color factionColor;
     //TODO: Add list for characters that are part of the faction
+
+    #region getters/setters
+    public RACE race {
+        get { return _race; }
+    }
+    public List<BaseLandmark> ownedLandmarks {
+        get { return _ownedLandmarks; }
+    }
+    #endregion
 
     public Faction(RACE race) {
         SetRace(race);
+        _ownedLandmarks = new List<BaseLandmark>();
+        factionColor = Utilities.GetColorForFaction();
     }
 
     public void SetRace(RACE race) {
@@ -20,13 +32,13 @@ public class Faction {
     }
 
     #region Settlements
-    public void AddSettlement(Settlement settlement) {
-        if (_settlements.Contains(settlement)) {
-            _settlements.Add(settlement);
+    public void AddLandmarkAsOwned(BaseLandmark landmark) {
+        if (_ownedLandmarks.Contains(landmark)) {
+            _ownedLandmarks.Add(landmark);
         }
     }
-    public void RemoveSettlement(Settlement settlement) {
-        _settlements.Remove(settlement);
+    public void RemoveLandmarkAsOwned(BaseLandmark landmark) {
+        _ownedLandmarks.Remove(landmark);
     }
     #endregion
 }

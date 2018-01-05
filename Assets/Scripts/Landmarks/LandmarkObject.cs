@@ -3,12 +3,12 @@ using System.Collections;
 
 public class LandmarkObject : MonoBehaviour {
 
-    private Landmark _landmark;
+    //private BaseLandmark _landmark;
 
     [SerializeField] private UILabel landmarkLbl;
 
-    public void SetLandmark(Landmark landmark) {
-        _landmark = landmark;
-        landmarkLbl.text = Utilities.NormalizeString(landmark.landmarkType.ToString());
+    public void SetLandmark(BaseLandmark landmark) {
+        //_landmark = landmark;
+        landmarkLbl.text = Utilities.NormalizeString(landmark.specificLandmarkType.ToString());
     }
 }

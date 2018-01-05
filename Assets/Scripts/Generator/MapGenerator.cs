@@ -47,11 +47,11 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
-        GridMap.Instance.GenerateLandmarks();
+        GridMap.Instance.GenerateOtherLandmarks();
 
-        //FactionManager.Instance.GenerateInititalFactions();
-        KingdomManager.Instance.GenerateInitialKingdoms();
-		GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
+        FactionManager.Instance.GenerateInititalFactions();
+        //KingdomManager.Instance.GenerateInitialKingdoms();
+        //GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
 
         //GridMap.Instance.GenerateResourcesPerRegion();
         //		GridMap.Instance.GenerateResourceTiles();
@@ -65,13 +65,13 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateTileBiomeDetails();
         Biomes.Instance.GenerateTileEdges();
 
-        UIManager.Instance.InitializeUI();
-		UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
+        //UIManager.Instance.InitializeUI();
+        //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
-        GameManager.Instance.StartProgression();
-        CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
+        //GameManager.Instance.StartProgression();
+        //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
-        
+
     }
 
     internal void ReloadScene() {

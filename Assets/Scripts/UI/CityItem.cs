@@ -56,77 +56,60 @@ public class CityItem : MonoBehaviour {
 		_structuresLbl.text = city.ownedTiles.Count.ToString();
 		_cityLbl.text = city.name;
 
-        if (forNamePlate) {
-            _emblemGO.SetActive(true);
-            Color emblemBGColor = _city.kingdom.kingdomColor;
-            emblemBGColor.a = 255f / 255f;
-            _emblemBG.sprite2D = _city.kingdom.emblemBG;
-            _emblemBG.color = emblemBGColor;
-            _emblemBG.MakePixelPerfect();
-            _emblemBG.width += Mathf.FloorToInt(_emblemBG.width * 0.25f);
+        //if (forNamePlate) {
+        //    _emblemGO.SetActive(true);
+        //    Color emblemBGColor = _city.kingdom.kingdomColor;
+        //    emblemBGColor.a = 255f / 255f;
+        //    _emblemBG.sprite2D = _city.kingdom.emblemBG;
+        //    _emblemBG.color = emblemBGColor;
+        //    _emblemBG.MakePixelPerfect();
+        //    _emblemBG.width += Mathf.FloorToInt(_emblemBG.width * 0.25f);
 
-            _emblemOutline.sprite2D = _city.kingdom.emblemBG;
-            _emblemOutline.MakePixelPerfect();
-            _emblemOutline.width = (_emblemBG.width + 8);
-            Color outlineColor;
-            ColorUtility.TryParseHtmlString("#2d2e2e", out outlineColor);
-            _emblemOutline.color = outlineColor;
+        //    _emblemOutline.sprite2D = _city.kingdom.emblemBG;
+        //    _emblemOutline.MakePixelPerfect();
+        //    _emblemOutline.width = (_emblemBG.width + 8);
+        //    Color outlineColor;
+        //    ColorUtility.TryParseHtmlString("#2d2e2e", out outlineColor);
+        //    _emblemOutline.color = outlineColor;
 
-            _emblemSprite.sprite2D = _city.kingdom.emblem;
-            _emblemSprite.MakePixelPerfect();
-            _emblemSprite.width += Mathf.FloorToInt(_emblemSprite.width * 0.25f);
-        } else {
-            _emblemGO.SetActive(false);
-            _governor.SetCitizen(city.governor);
-            //this._powerLbl.text = city.weapons.ToString();
-            //this._defenseLbl.text = city.armor.ToString();
+        //    _emblemSprite.sprite2D = _city.kingdom.emblem;
+        //    _emblemSprite.MakePixelPerfect();
+        //    _emblemSprite.width += Mathf.FloorToInt(_emblemSprite.width * 0.25f);
+        //} else {
+        //    _emblemGO.SetActive(false);
+        //    _governor.SetCitizen(city.governor);
+        //    _structuresLbl.text = city.ownedTiles.Count.ToString();
+        //    _cityLbl.text = city.name;
+        //    _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
 
-            //        _hpLbl.text = city.hp.ToString();
-            _structuresLbl.text = city.ownedTiles.Count.ToString();
-            _cityLbl.text = city.name;
-            //		float hpValue = (float)city.hp / (float)city.maxHP;
-            //		if(hpValue > 1f){
-            //			hpValue = 1f;
-            //		}
-            //        _hpProgBar.value = hpValue;
-            _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
+        //    if (showLoyalty) {
+        //        _loyaltyGO.SetActive(true);
+        //        _loyaltyLbl.text = _governor.citizen.loyaltyToKing.ToString();
+        //        EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
+        //            ShowLoyaltySummary();
+        //        });
+        //        EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
+        //    }
 
-            if (showLoyalty) {
-                _loyaltyGO.SetActive(true);
-                _loyaltyLbl.text = _governor.citizen.loyaltyToKing.ToString();
-                EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
-                    ShowLoyaltySummary();
-                });
-                EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
-            }
+        //    if (showNameOnly) {
+        //        governorParentGO.SetActive(false);
+        //        cityNameParentGO.SetActive(true);
+        //        structuresParentGO.SetActive(false);
+        //        growthMeterParentGO.SetActive(false);
+        //    } else {
+        //        governorParentGO.SetActive(true);
+        //        cityNameParentGO.SetActive(true);
+        //        structuresParentGO.SetActive(true);
+        //        growthMeterParentGO.SetActive(true);
+        //    }
 
-            if (showNameOnly) {
-                governorParentGO.SetActive(false);
-                //            hpParentGO.SetActive(false);
-                //powerGO.SetActive(false);
-                //defenseGO.SetActive(false);
-                cityNameParentGO.SetActive(true);
-                structuresParentGO.SetActive(false);
-                growthMeterParentGO.SetActive(false);
-            } else {
-                governorParentGO.SetActive(true);
-                //            hpParentGO.SetActive(true);
-                //powerGO.SetActive(true);
-                //defenseGO.SetActive(true);
-                cityNameParentGO.SetActive(true);
-                structuresParentGO.SetActive(true);
-                growthMeterParentGO.SetActive(true);
-            }
-
-            if (showForTesting) {
-                forTestingGO.SetActive(true);
-                //newPowerLbl.text = _city.weapons.ToString();
-                //newDefLabel.text = _city.armor.ToString();
-                loyaltyAdjustmentLbl.text = ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier.ToString();
-            } else {
-                forTestingGO.SetActive(false);
-            }
-        }
+        //    if (showForTesting) {
+        //        forTestingGO.SetActive(true);
+        //        loyaltyAdjustmentLbl.text = ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier.ToString();
+        //    } else {
+        //        forTestingGO.SetActive(false);
+        //    }
+        //}
 
         
 

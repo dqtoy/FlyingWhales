@@ -114,7 +114,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
 
     //Landmark
-    private Landmark _landmark = null;
+    private BaseLandmark _landmarkOnTile = null;
 
     //Settlement
     private Settlement _settlement = null; //Use settlement instead of city or landmark to unify the 2 variables
@@ -170,7 +170,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		get { return this._lairItem; }
 	}
     public FOG_OF_WAR_STATE currFogOfWarState {
-        get { return _currFogOfWarState; }
+        //get { return _currFogOfWarState; }
+        get { return FOG_OF_WAR_STATE.VISIBLE; }
     }
     public List<Citizen> citizensOnTile {
         get { return this._citizensOnTile; }
@@ -199,8 +200,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal ROAD_TYPE roadType {
         get { return _roadType; }
     }
-    internal Landmark landmark {
-        get { return _landmark; }
+    public BaseLandmark landmarkOnTile {
+        get { return _landmarkOnTile; }
     }
     #endregion
 
@@ -257,8 +258,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
         elligibleTilesToConnectTo.AddRange(this.region.landmarks.Select(x => x.location));
         elligibleTilesToConnectTo.Add(this.region.centerOfMass);
-        //GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.AddRange(x.landmarks.Select(y => y.location)));
-        //GridMap.Instance.allRegions.ForEach(x => elligibleTilesToConnectTo.Add(x.centerOfMass));
 
         //Connect to the nearest landmark
         elligibleTilesToConnectTo = new List<HexTile>(elligibleTilesToConnectTo.OrderBy(x => Vector2.Distance(this.transform.position, x.transform.position)));
@@ -268,8 +267,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             if (path != null) {
                 //Create new random landmark given weights
                 LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
-                SettlementManager.Instance.CreateNewSettlementOnTile(this, typeof(Landmark), landmarkToCreate);
-                //CreateLandmarkOfType(landmarkToCreate);
+                LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkToCreate);
                 if (currTileToConnectTo.isHabitable) {
                     RoadManager.Instance.ConnectLandmarkToRegion(this, currTileToConnectTo.region);
                 } else {
@@ -283,77 +281,56 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         return null;
     }
 
-    public Landmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
         this.hasLandmark = true;
-        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-        landmarkGO.transform.localPosition = Vector3.zero;
-        landmarkGO.transform.localScale = Vector3.one;
-        _landmark = new Landmark(this, landmarkType);
-        _landmark.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
-        _region.AddLandmarkToRegion(_landmark);
-        HideLandmarkObject();
-        return _landmark;
+        GameObject landmarkGO = null;
+        //Create Landmark Game Object on tile
+        if (baseLandmarkType != BASE_LANDMARK_TYPE.SETTLEMENT) {
+            //NOTE: Only create landmark object if landmark type is not a settlement!
+            landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+            landmarkGO.transform.localPosition = Vector3.zero;
+            landmarkGO.transform.localScale = Vector3.one;
+        }
+        
+        switch (baseLandmarkType) {
+            case BASE_LANDMARK_TYPE.SETTLEMENT:
+                _landmarkOnTile = new Settlement(this, landmarkType);
+                break;
+            case BASE_LANDMARK_TYPE.RESOURCE:
+                _landmarkOnTile = new ResourceLandmark(this, landmarkType);
+                break;
+            case BASE_LANDMARK_TYPE.DUNGEON:
+                _landmarkOnTile = new DungeonLandmark(this, landmarkType);
+                break;
+            case BASE_LANDMARK_TYPE.LAIR:
+                _landmarkOnTile = new LairLandmark(this, landmarkType);
+                break;
+            default:
+                break;
+        }
+        if(_landmarkOnTile != null && landmarkGO != null) {
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+            _region.AddLandmarkToRegion(_landmarkOnTile);
+        }
+        return _landmarkOnTile;
+    }
+    public void RemoveLandmarkOnTile() {
+        _landmarkOnTile = null;
     }
 
-    [System.Obsolete("Use CreateLandmarkOfType instead")]
-    internal void CreateSummoningShrine() {
-        this.hasLandmark = true;
-        GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
-        shrineGO.transform.localPosition = Vector3.zero;
-        shrineGO.transform.localScale = Vector3.one;
-        _landmark = new Landmark(this, LANDMARK_TYPE.SUMMONING_SHRINE);
-        //_landmark.SetLandmarkObject(shrineGO);
-        _region.AddLandmarkToRegion(_landmark);
-        HideLandmarkObject();
-    }
-    [System.Obsolete("Use CreateLandmarkOfType instead")]
-    internal void CreateHabitat() {
-        this.hasLandmark = true;
-        GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
-        habitatGO.transform.localPosition = Vector3.zero;
-        habitatGO.transform.localScale = Vector3.one;
-        _landmark = new Landmark(this, LANDMARK_TYPE.ANCIENT_RUIN);
-        //_landmark.SetLandmarkObject(habitatGO);
-        _region.AddLandmarkToRegion(_landmark);
-        HideLandmarkObject();
-    }
-    [System.Obsolete("Use CreateLandmarkOfType instead")]
-    internal void CreateUniqueLandmark() {
-        this.hasLandmark = true;
-        GameObject uniqueLandmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetUniqueLandmarkGO(), structureParentGO.transform) as GameObject;
-        uniqueLandmarkGO.transform.localPosition = Vector3.zero;
-        uniqueLandmarkGO.transform.localScale = Vector3.one;
-        _landmark = new Landmark(this, LANDMARK_TYPE.ANCIENT_RUIN);
-        //_landmark.SetLandmarkObject(uniqueLandmarkGO);
-        _region.AddLandmarkToRegion(_landmark);
-        HideLandmarkObject();
-    }
     internal void HideLandmarkObject() {
-        if(_landmark != null && GameManager.Instance.hideLandmarks) {
-            _landmark.landmarkObject.gameObject.SetActive(false);
+        if(_landmarkOnTile != null && GameManager.Instance.hideLandmarks) {
+            _landmarkOnTile.landmarkObject.gameObject.SetActive(false);
         }
     }
     internal void ShowLandmarkObject() {
-        if (_landmark != null && GameManager.Instance.hideLandmarks) {
-            _landmark.landmarkObject.gameObject.SetActive(true);
+        if (_landmarkOnTile != null && GameManager.Instance.hideLandmarks) {
+            _landmarkOnTile.landmarkObject.gameObject.SetActive(true);
         }
     }
     #endregion
 
     #region Resource
-    [System.Obsolete("Use CreateLandmarkOfType instead")]
-    internal void AssignSpecialResource(RESOURCE resource) {
-		this.hasLandmark = true;
-        specialResource = resource;
-		SetSpecialResourceType ();
-		SetCityCapacity();
-        resourceIcon.SetResource(specialResource);
-        GameObject resourceGO = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
-        resourceGO.transform.localPosition = Vector3.zero;
-        resourceGO.transform.localScale = Vector3.one;
-        _landmark = new Landmark(this, LANDMARK_TYPE.CORN);
-        _region.AddLandmarkToRegion(_landmark);
-    }
     internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
@@ -1027,13 +1004,41 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #region Structures Functions
     internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
-        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
+        GameObject[] gameObjectsToChooseFrom = null;
+        if (this.ownedByCity.kingdom != null) {
+            //TODO: Remove this when code has fully transitioned to factions instead of kingdoms
+            gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
+        } else {
+            gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
+        }
+         
         string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
 		GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
 		structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
-        structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState, this);
+        if (this.ownedByCity.kingdom != null) {
+            //TODO: Remove this when code has fully transitioned to factions instead of kingdoms
+            structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState, this);
+        } else {
+            structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
+        }
 
+        this._centerPiece.SetActive(false);
+
+        //Color color = this.ownedByCity.kingdom.kingdomColor;
+        //SetMinimapTileColor(color);
+        //SetTileHighlightColor(color);
+    }
+    internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
+        //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
+        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
+
+        string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
+        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
+        AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
+        structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
+
+        structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
         this._centerPiece.SetActive(false);
 
         //Color color = this.ownedByCity.kingdom.kingdomColor;
@@ -1208,13 +1213,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //if (!isVisibleByCities.Contains(city)) {
         //    this.isVisibleByCities.Add(city);
         //}
-        //this.isOccupiedByCityID = city.id;		
+        //this.isOccupiedByCityID = city.id;
+        this.city = city;
         this.ownedByCity = city;
         if (!_visibleByKingdoms.Contains(city.kingdom)) {
             _visibleByKingdoms.Add(city.kingdom);
         }
         //this.isBorder = false;
         //this.isBorderOfCityID = 0;
+    }
+    public void Occupy() {
+        this.isOccupied = true;
     }
     public void Unoccupy(bool immediatelyDestroyStructures = false) {
         //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)
@@ -1328,50 +1337,62 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-        if (this.isOccupied) {
-			if(!this.isHabitable){
-				if(this.city == null){
-					return;
-				}
-			}
-            //this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-            this.ShowKingdomInfo();
-            this.city.HighlightAllOwnedTiles(127f / 255f);
-        } else {
-            if (this.isHabitable) {
-                if (this.city == null) {
-                    ShowRegionInfo();
-                    return;
-                }
-            } else if (this.hasLandmark) {
-                ShowLandmarkInfo();
+        if(_landmarkOnTile != null && isHabitable) {
+            if(_landmarkOnTile.owner != null) {
+                this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
             }
         }
+
+   //     if (this.isOccupied) {
+			//if(!this.isHabitable){
+			//	if(this.city == null){
+			//		return;
+			//	}
+			//}
+   //         //this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+   //         //this.ShowKingdomInfo();
+            
+   //     } else {
+   //         if (this.isHabitable) {
+   //             ShowRegionInfo();
+   //         } else {
+   //             if(landmarkOnTile != null) {
+   //                 ShowLandmarkInfo();
+   //             }
+   //         }
+   //     }
     }
     private void OnMouseExit() {
-        if (this.isOccupied) {
-			if(!this.isHabitable){
-				if(this.city == null){
-					return;
-				}
-			}
-            this.HideSmallInfoWindow();
-            this.city.HighlightAllOwnedTiles(69f / 255f);
-            //if(this.ownedByCity != null) {
-            //    this.ownedByCity.kingdom.UnHighlightAllOwnedTilesInKingdom();
-            //}
-            //if (UIManager.Instance.currentlyShowingKingdom != null) {
-            //    UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
-            //}
-        } else {
-            if (this.isHabitable) {
-                if (this.city == null) {
-                    HideRegionInfo();
-                }
-            } else if (this.hasLandmark) {
-                HideLandmarkInfo();
+        if (_landmarkOnTile != null && isHabitable) {
+            if (_landmarkOnTile.owner != null) {
+                this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
             }
         }
+        //     if (this.isOccupied) {
+        //if(!this.isHabitable){
+        //	if(this.city == null){
+        //		return;
+        //	}
+        //}
+        //         this.HideSmallInfoWindow();
+        //         this.city.HighlightAllOwnedTiles(69f / 255f);
+        //         //if(this.ownedByCity != null) {
+        //         //    this.ownedByCity.kingdom.UnHighlightAllOwnedTilesInKingdom();
+        //         //}
+        //         //if (UIManager.Instance.currentlyShowingKingdom != null) {
+        //         //    UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+        //         //}
+        //     } else {
+        //         if (this.isHabitable) {
+        //             if (this.city == null) {
+        //                 HideRegionInfo();
+        //             }
+        //         } else {
+        //             if (landmarkOnTile != null) {
+        //                 HideSmallInfoWindow();
+        //             }
+        //         }
+        //     }
     }
     #endregion
 
@@ -1556,9 +1577,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         text += "[b]Connections:[/b] " + this.region.connections.Count.ToString();
         for (int i = 0; i < this.region.connections.Count; i++) {
             object currConnection = this.region.connections[i];
-            text += "\n " + currConnection.ToString();
             if (currConnection is Region) {
-                text += " - " + ((Region)currConnection).centerOfMass.name;
+                text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
+            } else {
+                text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
             }
         }
         UIManager.Instance.ShowSmallInfo(text);
@@ -1579,28 +1601,30 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private void ShowLandmarkInfo() {
         string text = string.Empty;
         text += "[b]Tile:[/b] " + this.name + "\n";
-        text += "[b]Connections:[/b] " + this.landmark.connections.Count.ToString();
-        for (int i = 0; i < this.landmark.connections.Count; i++) {
-            object currConnection = this.landmark.connections[i];
-            text += "\n " + currConnection.ToString();
-            if (currConnection is Region) {
-                text += " - " + ((Region)currConnection).centerOfMass.name;
+        text += "[b]Connections:[/b] " + this.landmarkOnTile.connections.Count.ToString();
+        for (int i = 0; i < this.landmarkOnTile.connections.Count; i++) {
+            object currConnection = this.landmarkOnTile.connections[i];
+            if(currConnection is Region) {
+                text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
+            } else {
+                text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
             }
+            
         }
         UIManager.Instance.ShowSmallInfo(text);
     }
 
-    private void HideLandmarkInfo() {
-        HideSmallInfoWindow();
-        //for (int i = 0; i < this.landmark.connections.Count; i++) {
-        //    object currConnection = this.landmark.connections[i];
-        //    if (currConnection is Region) {
-        //        ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
-        //    } else if (currConnection is HexTile) {
-        //        ((HexTile)currConnection).HideTileHighlight();
-        //    }
-        //}
-    }
+    //private void HideLandmarkInfo() {
+    //    HideSmallInfoWindow();
+    //    //for (int i = 0; i < this.landmark.connections.Count; i++) {
+    //    //    object currConnection = this.landmark.connections[i];
+    //    //    if (currConnection is Region) {
+    //    //        ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
+    //    //    } else if (currConnection is HexTile) {
+    //    //        ((HexTile)currConnection).HideTileHighlight();
+    //    //    }
+    //    //}
+    //}
 
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";

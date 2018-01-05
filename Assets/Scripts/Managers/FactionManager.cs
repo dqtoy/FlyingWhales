@@ -19,9 +19,15 @@ public class FactionManager : MonoBehaviour {
      races are specified in the inspector (inititalRaces)
      */
     public void GenerateInititalFactions() {
+        allFactions = new List<Faction>();
+        List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
         for (int i = 0; i < inititalRaces.Length; i++) {
             RACE inititalRace = inititalRaces[i];
-            CreateNewFaction(typeof(Tribe), inititalRace);
+            Faction newFaction = CreateNewFaction(typeof(Tribe), inititalRace);
+            Region regionForFaction = allRegions[Random.Range(0, allRegions.Count)];
+            allRegions.Remove(regionForFaction);
+            Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
+            LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
         }
     }
 
