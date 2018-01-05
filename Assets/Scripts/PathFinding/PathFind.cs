@@ -107,7 +107,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if(n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id){
+						if(n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id){
 							continue;
 						}
 						d = distance(path.LastStep, n);
@@ -140,7 +140,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if(n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id){
+						if(n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id){
 							continue;
 						}
 						d = distance(path.LastStep, n);
@@ -215,7 +215,7 @@ namespace PathFind {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
-						if (n.id != start.id && n.id != destination.id && n.region.occupant != null && n.region.occupant.kingdom.id != kingdom.id) {
+						if (n.id != start.id && n.id != destination.id && n.city != null && n.city.kingdom.id != kingdom.id) {
 							continue;
 						}
 						d = distance(path.LastStep, n);
