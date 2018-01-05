@@ -144,6 +144,7 @@ namespace ECS{
 //            CombatPrototype.Instance.charactersSideB.Clear();
             UpdateCharactersList(SIDES.A);
             UpdateCharactersList(SIDES.B);
+			ResetCurrentSelectedItem ();
         }
 
         public void SetCharacterAsSelected(Character character) {
