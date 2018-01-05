@@ -105,7 +105,7 @@ namespace ECS{
             itemsInfoLbl.text = "[b]ITEMS[/b]";
             for (int i = 0; i < character.items.Count; i++) {
                 Item currItem = character.items[i];
-				itemsInfoLbl.text += "\n[b]" + currItem.itemName + "[/b] ";
+				itemsInfoLbl.text += "\n[b]" + "[url= " + i.ToString() + "]" + currItem.itemName + "[/url]" + "[/b] ";
 				itemsInfoLbl.text += " (";
 				itemsInfoLbl.text += "Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {

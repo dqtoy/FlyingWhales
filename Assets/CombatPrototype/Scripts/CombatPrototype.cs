@@ -213,11 +213,11 @@ namespace ECS{
 				if(skill.isEnabled && HasTargetInRangeForSkill(skill, sourceCharacter)){
 					int activationWeight = skill.activationWeight;
 					if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
-						activationWeight = (int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f);
+						activationWeight *= ((int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f));
 					}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.MISSING_HEALTH){
 						int missingHealth = sourceCharacter.maxHP - sourceCharacter.currentHP;
 						int weight = (int)(((float)missingHealth / (float)sourceCharacter.maxHP) * 100f);
-						activationWeight =  weight > 0f ? weight : 1;
+						activationWeight *=  (weight > 0f ? weight : 1);
 					}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
 						int highestMissingHealth = 0;
 						Character chosenCharacter = null;
@@ -252,7 +252,7 @@ namespace ECS{
 						}
 						if(chosenCharacter != null){
 							int weight = (int)((((float)highestMissingHealth / (float)chosenCharacter.maxHP) * 100f) * 2f);
-							activationWeight = weight > 0f ? weight : 1;
+							activationWeight *= (weight > 0f ? weight : 1);
 						}
 					}
 					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){

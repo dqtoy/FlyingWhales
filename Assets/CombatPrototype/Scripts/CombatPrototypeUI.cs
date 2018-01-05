@@ -21,7 +21,10 @@ namespace ECS{
         [SerializeField] private UIPopupList itemTypePopupList;
         [SerializeField] private UIPopupList equipmentPopupList;
 
+		[SerializeField] private GameObject goRemoveItem;
+
         internal Character currSelectedCharacter;
+		internal Item currSelectedItem;
 
         internal List<string> resultsLog;
 
@@ -144,9 +147,16 @@ namespace ECS{
         }
 
         public void SetCharacterAsSelected(Character character) {
+			if(currSelectedCharacter != null && currSelectedCharacter != character){
+				ResetCurrentSelectedItem ();
+			}
             currSelectedCharacter = character;
             UpdateCharacterSummary(character);
         }
+		public void SetItemAsSelected(Item item) {
+			currSelectedItem = item;
+			goRemoveItem.SetActive (true);
+		}
 
         #region Equpment
         public void EquipItem() {
@@ -170,5 +180,19 @@ namespace ECS{
 			}
 		}
 		#endregion
+
+		public void OnClickRemoveItem(){
+			if(currSelectedItem != null){
+				currSelectedCharacter.UnequipItem (currSelectedItem);
+				characterSummary.UpdateItemSummary (currSelectedCharacter);
+				ResetCurrentSelectedItem ();
+			}
+		}
+
+		public void ResetCurrentSelectedItem(){
+			currSelectedItem = null;
+			goRemoveItem.SetActive (false);
+		}
+
     }
 }

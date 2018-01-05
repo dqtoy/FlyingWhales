@@ -71,7 +71,7 @@ namespace ECS{
 			get { return this._isDead; }
 		}
         internal int strength {
-            get { return _strength +_items.Sum(x => x.bonusStrength); }
+            get { return _strength + _items.Sum(x => x.bonusStrength); }
         }
         internal int intelligence {
             get { return _intelligence + _items.Sum(x => x.bonusIntelligence); }
@@ -443,7 +443,18 @@ namespace ECS{
 				}
 			}
 		}
-        internal void UnequipWeapon(Weapon weapon) {
+
+		//Unequips an item of a character, whether it's a weapon, armor, etc.
+		internal void UnequipItem(Item item){
+			if(item is Weapon){
+				UnequipWeapon ((Weapon)item);
+			}else if(item is Armor){
+				UnequipArmor ((Armor)item);
+			}
+			RemoveItem(item);
+		}
+		//Unequips weapon of a character
+		private void UnequipWeapon(Weapon weapon) {
             RemoveItem(weapon);
 			DetachWeaponFromBodyParts (weapon);
         }
@@ -458,8 +469,8 @@ namespace ECS{
             Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
         }
-        internal void UnequipArmor(Armor armor) {
-            RemoveItem(armor);
+		//Unequips armor of a character
+		private void UnequipArmor(Armor armor) {
 			armor.bodyPartAttached.DettachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
         }
         internal void AddItem(Item newItem){
