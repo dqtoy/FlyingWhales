@@ -285,8 +285,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.hasLandmark = true;
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-        if (baseLandmarkType != BASE_LANDMARK_TYPE.SETTLEMENT) {
-            //NOTE: Only create landmark object if landmark type is not a settlement!
+        if (landmarkType != LANDMARK_TYPE.CITY) {
+            //NOTE: Only create landmark object if landmark type is not a city!
             landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;

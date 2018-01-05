@@ -32,6 +32,7 @@ public enum RACE{
 	MINGONS,
 	CROMADS,
 	UNDEAD,
+    GOBLIN
 }
 
 public enum PATH_DIRECTION{
@@ -737,6 +738,11 @@ public enum RESPONSE {
 public enum ACTION_CHOICES {
     DO_ACTION,
     DONT_DO_ACTION
+}
+
+public enum FACTION_TYPE {
+    MAJOR,
+    MINOR
 }
 
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//

@@ -10,9 +10,12 @@ public class Settlement : BaseLandmark {
     #region Ownership
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
-        location.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
-        location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
-        location.emptyCityGO.SetActive(false);
+        if (location.isHabitable) {
+            //Create structures on location
+            location.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
+            location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
+            location.emptyCityGO.SetActive(false);
+        }
     }
     #endregion
 }

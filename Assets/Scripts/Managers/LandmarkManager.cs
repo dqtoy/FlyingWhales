@@ -6,8 +6,6 @@ public class LandmarkManager : MonoBehaviour {
 
     public static LandmarkManager Instance = null;
 
-    public List<Settlement> allSettlements;
-
     private void Awake() {
         Instance = this;
     }
@@ -18,6 +16,13 @@ public class LandmarkManager : MonoBehaviour {
     public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
         BASE_LANDMARK_TYPE baseLandmarkType = Utilities.GetBaseLandmarkType(landmarkType);
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
+        if(baseLandmarkType == BASE_LANDMARK_TYPE.SETTLEMENT && landmarkType != LANDMARK_TYPE.CITY) {
+            if(landmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+                //Create a new faction to occupy the new settlement
+                Faction newFaction = FactionManager.Instance.CreateNewFaction(typeof(Camp), RACE.GOBLIN);
+                newLandmark.OccupyLandmark(newFaction);
+            }
+        }
         return newLandmark;
     }
     /*

@@ -1394,8 +1394,7 @@ public class Utilities : MonoBehaviour {
             case LANDMARK_TYPE.COBALT:
             case LANDMARK_TYPE.MITHRIL:
                 return BASE_LANDMARK_TYPE.RESOURCE;
-            case LANDMARK_TYPE.GOBLIN_CAMP://lair/settlement?
-            case LANDMARK_TYPE.DARK_CAVE://lair
+            case LANDMARK_TYPE.DARK_CAVE:
                 return BASE_LANDMARK_TYPE.LAIR;
             case LANDMARK_TYPE.ANCIENT_RUIN:
             case LANDMARK_TYPE.ABANDONED_DUNGEON:
