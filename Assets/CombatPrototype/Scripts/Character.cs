@@ -26,7 +26,8 @@ namespace ECS{
 
 		private CharacterClass _characterClass;
 		private RaceSetting _raceSetting;
-		//TODO: Add role and faction
+		private Role _role;
+		//TODO: faction
 
         [SerializeField] private List<BodyPart> _bodyParts;
 		[SerializeField] private List<Item> _equippedItems;
@@ -59,6 +60,9 @@ namespace ECS{
 		internal RaceSetting raceSetting {
             get { return _raceSetting; }
         }
+		internal Role role {
+			get { return _role; }
+		}
 		internal List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
 		}
