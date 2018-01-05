@@ -30,7 +30,7 @@ public class MapGenerator : MonoBehaviour {
         }
         
         //Biomes.Instance.GenerateSpecialResources ();
-        Biomes.Instance.GenerateTileTags();
+        //Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();
         if(!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
             Debug.LogWarning("Region generation ran into a problem, reloading scene...");
@@ -61,6 +61,7 @@ public class MapGenerator : MonoBehaviour {
         //Biomes.Instance.GenerateElevationAfterRoads();
         //Biomes.Instance.GenerateRegionBorderElevation();
         RoadManager.Instance.FlattenRoads();
+        Biomes.Instance.GenerateTileTags();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();
         Biomes.Instance.GenerateTileEdges();
