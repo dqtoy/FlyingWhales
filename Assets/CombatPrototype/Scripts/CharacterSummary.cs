@@ -49,10 +49,10 @@ namespace ECS{
             classInfoLbl.text = string.Empty;
             classInfoLbl.text += "[b]Class:[/b] " + character.characterClass.className + "\n";
             classInfoLbl.text += "[b]Skills:[/b] ";
-            for (int i = 0; i < character.characterClass.skills.Count; i++) {
-                Skill currSkill = character.characterClass.skills[i];
+            for (int i = 0; i < character.skills.Count; i++) {
+                Skill currSkill = character.skills[i];
                 classInfoLbl.text += currSkill.skillName.ToString();
-                if(i + 1 < character.characterClass.skills.Count) {
+                if(i + 1 < character.skills.Count) {
                     classInfoLbl.text += ", ";
                 }
             }

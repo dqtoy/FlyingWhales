@@ -21,6 +21,9 @@ namespace ECS{
 		[SerializeField] private int _currentRow;
 		private int _actRate;
 
+		//Skills
+		private List<Skill> _skills;
+
 		private CharacterClass _characterClass;
 		private RaceSetting _raceSetting;
 		//TODO: Add role and faction
@@ -67,6 +70,9 @@ namespace ECS{
 		}
 		internal List<Trait> traits{
 			get { return this._traits; }
+		}
+		internal List<Skill> skills{
+			get { return this._skills; }
 		}
 		internal int currentRow{
 			get { return this._currentRow; }
@@ -139,6 +145,7 @@ namespace ECS{
 
 			_equippedItems = new List<Item> ();
 			_inventory = new List<Item> ();
+			_skills = new List<Skill> (_characterClass.skills);
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
@@ -182,8 +189,8 @@ namespace ECS{
 		//Enables or Disables skills based on skill requirements
 		internal void EnableDisableSkills(){
 			bool isAllAttacksInRange = true;
-			for (int i = 0; i < this._characterClass.skills.Count; i++) {
-				Skill skill = this._characterClass.skills [i];
+			for (int i = 0; i < this._skills.Count; i++) {
+				Skill skill = this._skills [i];
 				skill.isEnabled = true;
 				if(this._level < skill.levelRequirement){
 					skill.isEnabled = false;
@@ -220,8 +227,8 @@ namespace ECS{
 			}
 
 
-			for (int i = 0; i < this._characterClass.skills.Count; i++) {
-				Skill skill = this._characterClass.skills [i];
+			for (int i = 0; i < this._skills.Count; i++) {
+				Skill skill = this._skills [i];
 				if(skill is MoveSkill){
 					skill.isEnabled = true;
 					if(isAllAttacksInRange){

@@ -98,8 +98,8 @@ namespace ECS{
 				characterThatWillAct.EnableDisableSkills ();
                 Debug.Log(characterThatWillAct.characterClass.className + " " + characterThatWillAct.name + " will act");
                 Debug.Log("Available Skills: ");
-                for (int i = 0; i < characterThatWillAct.characterClass.skills.Count; i++) {
-                    Skill currSkill = characterThatWillAct.characterClass.skills[i];
+                for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
+                    Skill currSkill = characterThatWillAct.skills[i];
                     if (currSkill.isEnabled) {
                         Debug.Log(currSkill.skillName);
                     }
@@ -208,8 +208,8 @@ namespace ECS{
 		//Get Skill that the character will use based on activation weights, target character must be within skill range
 		private Skill GetSkillToUse(Character sourceCharacter){
 			Dictionary<Skill, int> skillActivationWeights = new Dictionary<Skill, int> ();
-			for (int i = 0; i < sourceCharacter.characterClass.skills.Count; i++) {
-				Skill skill = sourceCharacter.characterClass.skills [i];
+			for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+				Skill skill = sourceCharacter.skills [i];
 				if(skill.isEnabled && HasTargetInRangeForSkill(skill, sourceCharacter)){
 					int activationWeight = skill.activationWeight;
 					if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
@@ -298,8 +298,8 @@ namespace ECS{
 
 		internal bool HasTargetInRangeForSkill(SKILL_TYPE skillType, Character sourceCharacter){
 			if(skillType == SKILL_TYPE.ATTACK){
-				for (int i = 0; i < sourceCharacter.characterClass.skills.Count; i++) {
-					Skill skill = sourceCharacter.characterClass.skills [i];
+				for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+					Skill skill = sourceCharacter.skills [i];
 					if(skill is AttackSkill){
 						if(this.charactersSideA.Contains(sourceCharacter)){
 							for (int j = 0; j < this.charactersSideB.Count; j++) {
