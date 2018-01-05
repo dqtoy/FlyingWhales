@@ -676,6 +676,13 @@ public enum ROAD_TYPE{
 	MINOR,
 	ALL,
 }
+public enum BASE_LANDMARK_TYPE {
+    SETTLEMENT,
+    RESOURCE,
+    DUNGEON,
+    LAIR
+}
+
 public enum LANDMARK_TYPE {
     CORN,
     PIG,
@@ -693,7 +700,8 @@ public enum LANDMARK_TYPE {
     ANCIENT_RUIN,
     ABANDONED_DUNGEON,
     MYSTERIOUS_TOWER,
-    SUMMONING_SHRINE
+    SUMMONING_SHRINE,
+    CITY
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,

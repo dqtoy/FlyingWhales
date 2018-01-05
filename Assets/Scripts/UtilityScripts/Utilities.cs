@@ -17,6 +17,7 @@ public class Utilities : MonoBehaviour {
     public static int lastRegionID = 0;
 	public static int lastEventID = 0;
 	public static int lastKingdomColorIndex = 0;
+    public static int lastFactionColorIndex = 0;
 	public static int lastAlliancePoolID = 0;
 	public static int lastWarfareID = 0;
     public static int lastLogID = 0;
@@ -82,6 +83,15 @@ public class Utilities : MonoBehaviour {
 		}
 		return chosenColor;
 	}
+
+    public static Color GetColorForFaction() {
+        Color chosenColor = kingdomColorCycle[lastFactionColorIndex];
+        lastFactionColorIndex += 1;
+        if (lastFactionColorIndex >= kingdomColorCycle.Length) {
+            lastFactionColorIndex = 0;
+        }
+        return chosenColor;
+    }
 
 	public static T[] GetEnumValues<T>() where T : struct {
 		if (!typeof(T).IsEnum) {
@@ -1368,4 +1378,33 @@ public class Utilities : MonoBehaviour {
 		}
 		return false;
 	}
+
+    #region Landmarks
+    public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
+        switch (landmarkType) {
+            case LANDMARK_TYPE.CORN:
+            case LANDMARK_TYPE.PIG:
+            case LANDMARK_TYPE.OAK:
+            case LANDMARK_TYPE.YEW:
+            case LANDMARK_TYPE.EBONY:
+            case LANDMARK_TYPE.SILK:
+            case LANDMARK_TYPE.COTTON:
+            case LANDMARK_TYPE.LEATHER:
+            case LANDMARK_TYPE.IRON:
+            case LANDMARK_TYPE.COBALT:
+            case LANDMARK_TYPE.MITHRIL:
+                return BASE_LANDMARK_TYPE.RESOURCE;
+            case LANDMARK_TYPE.GOBLIN_CAMP://lair/settlement?
+            case LANDMARK_TYPE.DARK_CAVE://lair
+                return BASE_LANDMARK_TYPE.LAIR;
+            case LANDMARK_TYPE.ANCIENT_RUIN:
+            case LANDMARK_TYPE.ABANDONED_DUNGEON:
+            case LANDMARK_TYPE.MYSTERIOUS_TOWER:
+            case LANDMARK_TYPE.SUMMONING_SHRINE:
+                return BASE_LANDMARK_TYPE.DUNGEON;
+            default:
+                return BASE_LANDMARK_TYPE.SETTLEMENT;
+        }
+    }
+    #endregion
 }

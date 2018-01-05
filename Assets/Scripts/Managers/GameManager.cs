@@ -100,17 +100,13 @@ public class GameManager : MonoBehaviour {
      * Function that triggers daily actions
      * */
 	public void DayEnded(){
-        ////		TriggerRequestPeace();
-        ////EventManager.Instance.onCitizenTurnActions.Invoke();
-        ////EventManager.Instance.onCityEverydayTurnActions.Invoke();
-        ////EventManager.Instance.onWeekEnd.Invoke();
         ////Messenger.Broadcast("CitizenTurnActions");
         //Messenger.Broadcast("CityEverydayActions");
 
-        Messenger.Broadcast("OnDayEnd");
+        //Messenger.Broadcast("OnDayEnd");
         ////BehaviourTreeManager.Instance.Tick ();
         ////EventManager.Instance.onUpdateUI.Invoke();
-        Messenger.Broadcast("UpdateUI");
+        //Messenger.Broadcast("UpdateUI");
 
         this.days += 1;
 		if (days > daysInMonth[this.month]) {

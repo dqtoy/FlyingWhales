@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Landmark : Settlement {
+public class Landmark {
     protected HexTile _location;
     protected LANDMARK_TYPE _landmarkType;
     protected List<object> _connections;
@@ -35,8 +35,8 @@ public class Landmark : Settlement {
         }
     }
 
-    internal void SetLandmarkObject(LandmarkObject landmarkObject) {
-        _landmarkObject = landmarkObject;
-        _landmarkObject.SetLandmark(this);
-    }
+    //internal void SetLandmarkObject(LandmarkObject landmarkObject) {
+    //    _landmarkObject = landmarkObject;
+    //    _landmarkObject.SetLandmark(this);
+    //}
 }

@@ -6,7 +6,7 @@ using System;
 using Panda;
 
 [System.Serializable]
-public class City : Settlement{
+public class City {
     [Header("City Info")]
 	public int id;
 	public string name;
@@ -90,6 +90,8 @@ public class City : Settlement{
 
 	internal int assignedDefendGeneralsCount;
 
+    //Faction
+    private Faction _faction;
 
     #region getters/setters
     internal Region region {
@@ -240,13 +242,17 @@ public class City : Settlement{
 	internal List<City> blacklist {
 		get { return this._blacklist; }
 	}
+    internal Faction faction {
+        get { return _faction; }
+    }
     #endregion
 
-    public City(HexTile hexTile) {
+    public City(HexTile hexTile, Faction faction) {
         this.id = Utilities.SetID(this);
         this.hexTile = hexTile;
         this._region = hexTile.region;
-        this.name = RandomNameGenerator.Instance.GenerateCityName(this._kingdom.race);
+        this._faction = faction;
+        this.name = RandomNameGenerator.Instance.GenerateCityName(this._faction.race);
         this.governor = null;
         this._weapons = 0;
         this._armor = 0;
@@ -271,8 +277,6 @@ public class City : Settlement{
 
         this.hexTile.Occupy(this);
         this.ownedTiles.Add(this.hexTile);
-        this.plague = null;
-        this._hp = this.maxHP;
         this.populationIncreasePool = new int[] { 30, 32, 34, 36, 38, 40 };
         this._populationGrowth = populationIncreasePool[UnityEngine.Random.Range(0, populationIncreasePool.Length)];
         this._cityBT = null;
@@ -389,27 +393,35 @@ public class City : Settlement{
 
     #region Tile Highlight
     internal void HighlightAllOwnedTiles(float alpha) {
-        Color color = this.kingdom.kingdomColor;
+        Color color = Color.clear;
+        Color originalColor = Color.clear;
+        if(this.kingdom != null) {
+            //TODO: Remove this when code has fully transitioned to factions instead of kingdoms
+            color = this.kingdom.kingdomColor;
+        } else {
+            color = this.faction.factionColor;
+        }
+        originalColor = color;
         color.a = alpha;
         for (int i = 0; i < this.ownedTiles.Count; i++) {
             HexTile currentTile = this.ownedTiles[i];
             currentTile.kingdomColorSprite.color = color;
             currentTile.kingdomColorSprite.gameObject.SetActive(true);
-            currentTile.SetMinimapTileColor(this.kingdom.kingdomColor);
+            currentTile.SetMinimapTileColor(originalColor);
         }
 
         for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currentTile = this.borderTiles[i];
             currentTile.kingdomColorSprite.color = color;
             currentTile.kingdomColorSprite.gameObject.SetActive(true);
-            currentTile.SetMinimapTileColor(this.kingdom.kingdomColor);
+            currentTile.SetMinimapTileColor(originalColor);
         }
 
         for (int i = 0; i < this.outerBorderTiles.Count; i++) {
             HexTile currentTile = this.outerBorderTiles[i];
             currentTile.kingdomColorSprite.color = color;
             currentTile.kingdomColorSprite.gameObject.SetActive(true);
-            currentTile.SetMinimapTileColor(this.kingdom.kingdomColor);
+            currentTile.SetMinimapTileColor(originalColor);
         }
     }
     internal void UnHighlightAllOwnedTiles() {

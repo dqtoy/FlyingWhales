@@ -451,12 +451,12 @@ public class RoadManager : MonoBehaviour {
     }
 
     public void ConnectLandmarkToRegion(HexTile landmarkLocation, Region region) {
-        region.AddConnection(landmarkLocation);
-        landmarkLocation.landmark.AddConnection(region);
+        region.AddConnection(landmarkLocation.landmarkOnTile);
+        landmarkLocation.landmarkOnTile.AddConnection(region);
     }
     public void ConnectLandmarkToLandmark(HexTile landmarkLocation1, HexTile landmarkLocation2) {
-        landmarkLocation1.landmark.AddConnection(landmarkLocation2);
-        landmarkLocation2.landmark.AddConnection(landmarkLocation1);
+        landmarkLocation1.landmarkOnTile.AddConnection(landmarkLocation2.landmarkOnTile);
+        landmarkLocation2.landmarkOnTile.AddConnection(landmarkLocation1.landmarkOnTile);
     }
 
     /*
@@ -550,7 +550,7 @@ public class RoadManager : MonoBehaviour {
                 currRegion.centerOfMass.SetElevation(ELEVATION.PLAIN);
             }
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                Landmark currLandmark = currRegion.landmarks[j];
+                BaseLandmark currLandmark = currRegion.landmarks[j];
                 if (currLandmark.location.elevationType != ELEVATION.PLAIN) {
                     currLandmark.location.SetElevation(ELEVATION.PLAIN);
                 }
