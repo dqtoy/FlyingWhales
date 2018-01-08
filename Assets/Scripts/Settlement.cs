@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿/*
+ This will replace the city script.
+ */
+using UnityEngine;
 using System.Collections;
 
 public class Settlement : BaseLandmark {

@@ -13,6 +13,7 @@ public class Faction {
     private Sprite _emblemBG;
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
     protected List<BaseLandmark> _ownedLandmarks;//List of settlements (cities/landmarks) owned by this faction
+    protected List<TECHNOLOGY> _inititalTechnologies;
     internal Color factionColor;
     //TODO: Add list for characters that are part of the faction
 
@@ -26,6 +27,9 @@ public class Faction {
     public List<BaseLandmark> ownedLandmarks {
         get { return _ownedLandmarks; }
     }
+    public List<TECHNOLOGY> inititalTechnologies {
+        get { return _inititalTechnologies; }
+    }
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -36,6 +40,7 @@ public class Faction {
         _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
         _ownedLandmarks = new List<BaseLandmark>();
         factionColor = Utilities.GetColorForFaction();
+        ConstructInititalTechnologies();
     }
 
     public void SetRace(RACE race) {
@@ -50,6 +55,15 @@ public class Faction {
     }
     public void RemoveLandmarkAsOwned(BaseLandmark landmark) {
         _ownedLandmarks.Remove(landmark);
+    }
+    #endregion
+
+    #region Technologies
+    protected void ConstructInititalTechnologies() {
+        _inititalTechnologies = new List<TECHNOLOGY>();
+        if (FactionManager.Instance.inititalRaceTechnologies.ContainsKey(this.race)) {
+            _inititalTechnologies.AddRange(FactionManager.Instance.inititalRaceTechnologies[this.race]);
+        }
     }
     #endregion
 }

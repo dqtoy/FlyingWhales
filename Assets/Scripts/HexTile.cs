@@ -1337,10 +1337,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-        if(_landmarkOnTile != null && isHabitable) {
-            if(_landmarkOnTile.owner != null) {
-                this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+        if(_landmarkOnTile != null) {
+            if(_landmarkOnTile.owner != null) { //landmark is occupied
+                if (isHabitable) {
+                    this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+                }
             }
+            ShowLandmarkInfo();
         }
 
    //     if (this.isOccupied) {
@@ -1363,11 +1366,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
    //     }
     }
     private void OnMouseExit() {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+            return;
+        }
         if (_landmarkOnTile != null && isHabitable) {
             if (_landmarkOnTile.owner != null) {
                 this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
             }
         }
+        HideSmallInfoWindow();
         //     if (this.isOccupied) {
         //if(!this.isHabitable){
         //	if(this.city == null){
@@ -1609,7 +1616,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             } else {
                 text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
             }
-            
+        }
+        if (this.landmarkOnTile.owner != null) {
+            text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
+        }
+        text += "\n[b]Technologies: [/b] ";
+        List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
+        if (availableTech.Count > 0) {
+            for (int i = 0; i < availableTech.Count; i++) {
+                TECHNOLOGY currTech = availableTech[i];
+                text += currTech.ToString();
+                if(i + 1 != availableTech.Count) {
+                    text += ", ";
+                }
+            }
+        } else {
+            text += "NONE";
         }
         UIManager.Instance.ShowSmallInfo(text);
     }

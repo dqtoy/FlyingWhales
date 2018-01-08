@@ -9,6 +9,30 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] private RACE[] inititalRaces;
 
     public List<Faction> allFactions = new List<Faction>();
+    public Dictionary<RACE, List<TECHNOLOGY>> inititalRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
+        { RACE.HUMANS, new List<TECHNOLOGY>(){
+            TECHNOLOGY.BASIC_FARMING,
+            TECHNOLOGY.BASIC_MINING,
+            TECHNOLOGY.SWORDSMAN_CLASS,
+            TECHNOLOGY.SPEARMAN_CLASS,
+            TECHNOLOGY.WILDLING_CLASS,
+            TECHNOLOGY.SWORD_MAKING,
+            TECHNOLOGY.SPEAR_MAKING,
+            TECHNOLOGY.AXE_MAKING,
+            TECHNOLOGY.BASIC_SMITHING
+        }},
+        { RACE.ELVES, new List<TECHNOLOGY>(){
+            TECHNOLOGY.BASIC_HUNTING,
+            TECHNOLOGY.BASIC_WOODCUTTING,
+            TECHNOLOGY.ARCHER_CLASS,
+            TECHNOLOGY.ROGUE_CLASS,
+            TECHNOLOGY.MAGE_CLASS,
+            TECHNOLOGY.BOW_MAKING,
+            TECHNOLOGY.DAGGER_MAKING,
+            TECHNOLOGY.STAFF_MAKING,
+            TECHNOLOGY.BASIC_WOODCRAFTING
+        }}
+    };
 
     [Space(10)]
     [Header("Visuals")]
