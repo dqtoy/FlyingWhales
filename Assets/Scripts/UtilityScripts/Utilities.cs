@@ -1437,9 +1437,9 @@ public class Utilities : MonoBehaviour {
             case CHARACTER_CLASS.BATTLEMAGE:
                 return TECHNOLOGY.BATTLEMAGE_CLASS;
             case CHARACTER_CLASS.SENTRY:
-                return TECHNOLOGY.SENTRY_CLASS;
-            case CHARACTER_CLASS.NIGHTBLADE:
-                return TECHNOLOGY.NIGHTBLADE_CLASS;
+                return TECHNOLOGY.ARCANIST_CLASS;
+            case CHARACTER_CLASS.SAVAGE:
+                return TECHNOLOGY.SAVAGE_CLASS;
             case CHARACTER_CLASS.SCOUT:
                 return TECHNOLOGY.SCOUT_CLASS;
         }

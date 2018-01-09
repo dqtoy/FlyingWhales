@@ -1621,6 +1621,30 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
             text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
             text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civilians.ToString();
+            text += "\n[b]Population Growth: [/b] " + (this.landmarkOnTile.totalPopulation * this.landmarkOnTile.location.region.populationGrowth).ToString();
+            text += "\n[b]Characters: [/b] ";
+            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
+                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
+                    Character currChar = landmarkOnTile.charactersOnLandmark[i];
+                    text += "\n" + currChar._name + " - " + currChar._characterClass.ToString() + "/" + currChar._role.roleType.ToString();
+                }
+            } else {
+                text += "NONE";
+            }
+
+            text += "\n[b]Character Caps: [/b] ";
+            for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
+                CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
+                bool isCapReached = false;
+                for (int j = 0; j < currWweight.productionCaps.Count; j++) {
+                    CharacterProductionCap cap = currWweight.productionCaps[j];
+                    if(cap.IsCapReached(currWweight.role, this.landmarkOnTile.owner)) {
+                        isCapReached = true;
+                        break;
+                    }
+                }
+                text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
+            }
         }
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
@@ -1631,15 +1655,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 if(i + 1 != availableTech.Count) {
                     text += ", ";
                 }
-            }
-        } else {
-            text += "NONE";
-        }
-        text += "\n[b]Characters: [/b] ";
-        if (landmarkOnTile.charactersOnLandmark.Count > 0) {
-            for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
-                Character currChar = landmarkOnTile.charactersOnLandmark[i];
-                text += "\n" + currChar._name + " - " + currChar._characterClass.ToString() + "/" + currChar._role.roleType.ToString();
             }
         } else {
             text += "NONE";

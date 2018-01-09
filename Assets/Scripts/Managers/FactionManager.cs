@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class FactionManager : MonoBehaviour {
 
@@ -9,6 +10,10 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] private RACE[] inititalRaces;
 
     public List<Faction> allFactions = new List<Faction>();
+
+    public List<Tribe> allTribes {
+        get { return allFactions.Where(x => x is Tribe).Select(x => (Tribe)x).ToList(); }
+    }
     public Dictionary<RACE, List<TECHNOLOGY>> inititalRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
         { RACE.HUMANS, new List<TECHNOLOGY>(){
             TECHNOLOGY.BASIC_FARMING,

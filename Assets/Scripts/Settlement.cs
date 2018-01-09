@@ -10,7 +10,7 @@ public class Settlement : BaseLandmark {
     private CHARACTER_ROLE roleToCreate;
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
-
+        _canBeOccupied = true;
     }
 
     #region Ownership
@@ -55,7 +55,6 @@ public class Settlement : BaseLandmark {
                 CreateNewCharacter(roleToCreate, classToCreate);
             }
         }
-
         GameDate decideCharacterDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         decideCharacterDate.AddDays(1);
         SchedulingManager.Instance.AddEntry(decideCharacterDate.month, decideCharacterDate.day, decideCharacterDate.year, () => DecideCharacterToCreate());
