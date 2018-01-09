@@ -1310,28 +1310,28 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             }
         }
 
-        if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
-            if(UIManager.Instance.spawnType == AGENT_TYPE.NECROMANCER) {
-                //Spawn New Necromancer
-                Necromancer newNecromancer = new Necromancer();
-                AIBehaviour attackBehaviour = new AttackHostiles(newNecromancer);
-                AIBehaviour fleeBehaviour = new RunAwayFromHostile(newNecromancer);
-                AIBehaviour randomBehaviour = new SearchForCorpseMound(newNecromancer);
-                newNecromancer.SetAttackBehaviour(attackBehaviour);
-                newNecromancer.SetFleeBehaviour(fleeBehaviour);
-                newNecromancer.SetRandomBehaviour(randomBehaviour);
+        //if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
+        //    if(UIManager.Instance.spawnType == AGENT_TYPE.NECROMANCER) {
+        //        //Spawn New Necromancer
+        //        Necromancer newNecromancer = new Necromancer();
+        //        AIBehaviour attackBehaviour = new AttackHostiles(newNecromancer);
+        //        AIBehaviour fleeBehaviour = new RunAwayFromHostile(newNecromancer);
+        //        AIBehaviour randomBehaviour = new SearchForCorpseMound(newNecromancer);
+        //        newNecromancer.SetAttackBehaviour(attackBehaviour);
+        //        newNecromancer.SetFleeBehaviour(fleeBehaviour);
+        //        newNecromancer.SetRandomBehaviour(randomBehaviour);
                 
-                GameObject necromancerObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", Vector3.zero, Quaternion.identity, this.transform);
-                AgentObject agentObj = necromancerObj.GetComponent<AgentObject>();
-                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                pos.z = 0f;
-                agentObj.aiPath.transform.position = pos;
-                newNecromancer.SetAgentObj(agentObj);
-                agentObj.Initialize(newNecromancer, new int[] {-1});
-                UIManager.Instance.spawnType = AGENT_TYPE.NONE;
-                UIManager.Instance._spawnNecromancerBtn.SetAsUnClicked();
-            }
-        }
+        //        GameObject necromancerObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", Vector3.zero, Quaternion.identity, this.transform);
+        //        AgentObject agentObj = necromancerObj.GetComponent<AgentObject>();
+        //        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //        pos.z = 0f;
+        //        agentObj.aiPath.transform.position = pos;
+        //        newNecromancer.SetAgentObj(agentObj);
+        //        agentObj.Initialize(newNecromancer, new int[] {-1});
+        //        UIManager.Instance.spawnType = AGENT_TYPE.NONE;
+        //        UIManager.Instance._spawnNecromancerBtn.SetAsUnClicked();
+        //    }
+        //}
     }
     private void OnMouseOver() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
@@ -1619,6 +1619,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         if (this.landmarkOnTile.owner != null) {
             text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
+            text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
+            text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civilians.ToString();
         }
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
@@ -1629,6 +1631,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 if(i + 1 != availableTech.Count) {
                     text += ", ";
                 }
+            }
+        } else {
+            text += "NONE";
+        }
+        text += "\n[b]Characters: [/b] ";
+        if (landmarkOnTile.charactersOnLandmark.Count > 0) {
+            for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
+                Character currChar = landmarkOnTile.charactersOnLandmark[i];
+                text += "\n" + currChar._name + " - " + currChar._characterClass.ToString() + "/" + currChar._role.roleType.ToString();
             }
         } else {
             text += "NONE";

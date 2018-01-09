@@ -797,7 +797,50 @@ public enum TECHNOLOGY {
     HUMAN_LANGUAGE,
     TROLL_LANGUAGE
 }
-
+public enum CHARACTER_ROLE {
+    NONE,
+    CHIEFTAIN,
+    WARLORD,
+    HERO,
+    TRADER,
+    ADVENTURER,
+    COLONIST,
+    SPY,
+    MEDIATOR,
+    NECROMANCER,
+    DRAGON_TAMER,
+    VILLAGE_HEAD
+}
+public enum CHARACTER_CLASS {
+    NONE,
+    ARCHER,
+    SPEARMAN,
+    SWORDSMAN,
+    ROGUE,
+    WILDLING,
+    MAGE,
+    BARBARIAN,
+    RANGER,
+    KNIGHT,
+    BATTLEMAGE,
+    SENTRY,
+    NIGHTBLADE,
+    SCOUT
+}
+public enum CHARACTER_PRODUCTION_CAP {
+    CITY_COUNT,
+    MINOR_FACTION,
+    SMALL_TRIBE,
+    MEDIUM_TRIBE,
+    LARGE_TRIBE,
+    ENTIRE_WORLD,
+    PER_TRIBE
+}
+public enum FACTION_SIZE {
+    SMALL,
+    MEDIUM,
+    LARGE,
+}
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
 	HEAD,

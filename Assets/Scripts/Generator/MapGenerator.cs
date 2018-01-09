@@ -69,7 +69,7 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.InitializeUI();
         //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
-        //GameManager.Instance.StartProgression();
+        GameManager.Instance.StartProgression();
         //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
         CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allFactions.FirstOrDefault().ownedLandmarks.FirstOrDefault().location.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();

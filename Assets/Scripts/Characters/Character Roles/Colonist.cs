@@ -9,6 +9,7 @@ using System.Collections.Generic;
 public class Colonist : CharacterRole {
 
     public Colonist() {
+        _roleType = CHARACTER_ROLE.COLONIST;
         this.allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR
         };

@@ -66,12 +66,15 @@ public class GameManager : MonoBehaviour {
 	public void StartProgression(){
 		UIManager.Instance.SetProgressionSpeed1X();
 		UIManager.Instance.x1Btn.SetAsClicked();
-        Messenger.Broadcast("UpdateUI");
+        //Messenger.Broadcast("UpdateUI");
         SetPausedState(false);
 	}
 
     public GameDate Today() {
         return new GameDate(this.month, this.days, this.year);
+    }
+    public GameDate EndOfTheMonth() {
+        return new GameDate(this.month, daysInMonth[this.month], this.year);
     }
 
 	public void TogglePause(){
@@ -103,10 +106,10 @@ public class GameManager : MonoBehaviour {
         ////Messenger.Broadcast("CitizenTurnActions");
         //Messenger.Broadcast("CityEverydayActions");
 
-        //Messenger.Broadcast("OnDayEnd");
+        Messenger.Broadcast("OnDayEnd");
         ////BehaviourTreeManager.Instance.Tick ();
         ////EventManager.Instance.onUpdateUI.Invoke();
-        //Messenger.Broadcast("UpdateUI");
+        Messenger.Broadcast("UpdateUI");
 
         this.days += 1;
 		if (days > daysInMonth[this.month]) {

@@ -40,6 +40,13 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] private List<Sprite> _emblems;
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
+    [Space(10)]
+    [Header("Kingdom Size Modifiers")]
+    [SerializeField] internal float smallToMediumReqPercentage;
+    [SerializeField] internal float mediumToLargeReqPercentage;
+    [SerializeField] internal int smallToMediumReq;
+    [SerializeField] internal int mediumToLargeReq;
+
     private void Awake() {
         Instance = this;
     }
@@ -50,6 +57,8 @@ public class FactionManager : MonoBehaviour {
      races are specified in the inspector (inititalRaces)
      */
     public void GenerateInititalFactions() {
+        smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
+        mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
         for (int i = 0; i < inititalRaces.Length; i++) {
             RACE inititalRace = inititalRaces[i];
@@ -58,7 +67,17 @@ public class FactionManager : MonoBehaviour {
             allRegions.Remove(regionForFaction);
             Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
             LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
+            regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
+            CreateInititalFactionCharacters(newFaction);
         }
+    }
+    /*
+     Initital tribes should have a chieftain and a village head.
+         */
+    private void CreateInititalFactionCharacters(Faction faction) {
+        Settlement baseSettlement = faction.settlements[0];
+        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, CHARACTER_CLASS.SWORDSMAN);
+        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, CHARACTER_CLASS.SWORDSMAN);
     }
     public Faction CreateNewFaction(System.Type factionType, RACE race) {
         if (factionType == typeof(Tribe)) {
@@ -103,6 +122,17 @@ public class FactionManager : MonoBehaviour {
     }
     internal void RemoveEmblemAsUsed(Sprite emblem) {
         usedEmblems.Remove(emblem);
+    }
+    #endregion
+
+    #region Characters
+    public List<Character> GetAllCharactersOfType(CHARACTER_ROLE role) {
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction currFaction = allFactions[i];
+            characters.AddRange(currFaction.GetCharactersOfType(role));
+        }
+        return characters;
     }
     #endregion
 }
