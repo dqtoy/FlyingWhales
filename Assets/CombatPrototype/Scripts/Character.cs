@@ -44,6 +44,9 @@ namespace ECS{
 		internal string name{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
 		}
+		internal GENDER gender{
+			get { return _gender; }
+		}
 		internal int currentHP{
 			get { return this._currentHP; }
 		}
@@ -133,10 +136,10 @@ namespace ECS{
             }
             _characterClass = baseSetup.characterClass.CreateNewCopy();
             _raceSetting = baseSetup.raceSetting.CreateNewCopy();
-			_baseMaxHP = _raceSetting.baseHP + (_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
-			_baseStrength = _raceSetting.baseStr + (_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
-			_baseAgility = _raceSetting.baseAgi + (_raceSetting.baseAgi * (_characterClass.agiPercentage / 100f));
-			_baseIntelligence = _raceSetting.baseInt + (_raceSetting.baseInt * (_characterClass.intPercentage / 100f));
+			_baseMaxHP = _raceSetting.baseHP + (int)((float)_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
+			_baseStrength = _raceSetting.baseStr + (int)((float)_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
+			_baseAgility = _raceSetting.baseAgi + (int)((float)_raceSetting.baseAgi * (_characterClass.agiPercentage / 100f));
+			_baseIntelligence = _raceSetting.baseInt + (int)((float)_raceSetting.baseInt * (_characterClass.intPercentage / 100f));
 
 			_maxHP = _baseMaxHP;
             _currentHP = _maxHP;
@@ -148,7 +151,8 @@ namespace ECS{
 
 			_equippedItems = new List<Item> ();
 			_inventory = new List<Item> ();
-			_skills = GetBodyPartAttackSkills();
+			_skills = GetGeneralSkills();
+			_skills.AddRange (GetBodyPartSkills ());
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
@@ -375,10 +379,9 @@ namespace ECS{
 
 		internal void ThrowItem(Item item){
 			if(item.isEquipped){
-				this._equippedItems.Remove (item);
-			}else{
-				this._inventory.Remove (item);
+				UnequipItem (item);
 			}
+			this._inventory.Remove (item);
 		}
 
 		//If character set up has pre equipped items, equip it here evey time a character is made
@@ -521,6 +524,24 @@ namespace ECS{
 			newItem.SetEquipped (false);
 			RemoveItemBonuses (newItem);
 		}
+		internal bool HasWeaponEquipped(){
+			for (int i = 0; i < equippedItems.Count; i++) {
+				Item currItem = equippedItems[i];
+				if(currItem.itemType == ITEM_TYPE.WEAPON) {
+					return true;
+				}
+			}
+			return false;
+		}
+		internal bool HasArmorEquipped(){
+			for (int i = 0; i < equippedItems.Count; i++) {
+				Item currItem = equippedItems[i];
+				if(currItem.itemType == ITEM_TYPE.ARMOR) {
+					return true;
+				}
+			}
+			return false;
+		}
         internal List<Weapon> GetAllAttachedWeapons() {
             List<Weapon> weapons = new List<Weapon>();
             for (int i = 0; i < equippedItems.Count; i++) {
@@ -581,30 +602,70 @@ namespace ECS{
 		}
 
 		#region Skills
-		private List<AttackSkill> GetBodyPartAttackSkills(){
-			List<AttackSkill> allBodyPartSkills = new List<AttackSkill>();
-			string path = "Assets/CombatPrototype/Data/Skills/ATTACK/";
-			foreach (string file in Directory.GetFiles(path, "*.json")) {
-				AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
-				if(attackSkill.skillCategory == SKILL_CATEGORY.BODY_PART){
-					string fileName = Path.GetFileNameWithoutExtension (file);
-					if(fileName == "Punch" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON, 1)){
-						allBodyPartSkills.Add (attackSkill);
-					}else if(fileName == "Kick" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_KICK_NO_WEAPON, 1)){
-						allBodyPartSkills.Add (attackSkill);
-					}else if(fileName == "Bite" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_BITE_NO_WEAPON, 1)){
-						allBodyPartSkills.Add (attackSkill);
-					}else if(fileName == "Tail Whip" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_WHIP_NO_WEAPON, 1)){
-						allBodyPartSkills.Add (attackSkill);
-					}else if(fileName == "Scratch" && HasAttribute(IBodyPart.ATTRIBUTE.CLAWED_NO_WEAPON, 1)){
-						allBodyPartSkills.Add (attackSkill);
-					}else if(fileName == "Squeeze" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_GRIP_NO_WEAPON, 2)){
-						allBodyPartSkills.Add (attackSkill);
-					}else if(fileName == "Flame Breath" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_FLAME_BREATH_NO_WEAPON, 1)){
-						allBodyPartSkills.Add (attackSkill);
+		private List<Skill> GetGeneralSkills(){
+			List<Skill> generalSkills = new List<Skill> ();
+			string mainPath = "Assets/CombatPrototype/Data/Skills/GENERAL/";
+			string[] folders = System.IO.Directory.GetDirectories (mainPath);
+			for (int i = 0; i < folders.Length; i++) {
+				string path = folders[i] + "/";
+				DirectoryInfo di = new DirectoryInfo (path);
+				if (di.Name == "ATTACK") {
+					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+						AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
+						generalSkills.Add (attackSkill);
+					}
+				}else if (di.Name == "HEAL") {
+					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+						HealSkill healSkill = JsonUtility.FromJson<HealSkill> (System.IO.File.ReadAllText (file));
+						generalSkills.Add (healSkill);
+					}
+				}else if (di.Name == "FLEE") {
+					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+						FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill> (System.IO.File.ReadAllText (file));
+						generalSkills.Add (fleeSkill);
+					}
+				}else if (di.Name == "MOVE") {
+					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+						MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill> (System.IO.File.ReadAllText (file));
+						generalSkills.Add (moveSkill);
+					}
+				}else if (di.Name == "OBTAIN_ITEM") {
+					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+						ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill> (System.IO.File.ReadAllText (file));
+						generalSkills.Add (obtainSkill);
 					}
 				}
-
+			}
+			return generalSkills;
+		}
+		private List<Skill> GetBodyPartSkills(){
+			List<Skill> allBodyPartSkills = new List<Skill>();
+			string mainPath = "Assets/CombatPrototype/Data/Skills/BODY_PART/";
+			string[] folders = System.IO.Directory.GetDirectories (mainPath);
+			for (int i = 0; i < folders.Length; i++) {
+				string path = folders[i] + "/";
+				DirectoryInfo di = new DirectoryInfo (path);
+				if (di.Name == "ATTACK") {
+					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+						AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
+						string fileName = Path.GetFileNameWithoutExtension (file);
+						if(fileName == "Punch" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON, 1)){
+							allBodyPartSkills.Add (attackSkill);
+						}else if(fileName == "Kick" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_KICK_NO_WEAPON, 1)){
+							allBodyPartSkills.Add (attackSkill);
+						}else if(fileName == "Bite" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_BITE_NO_WEAPON, 1)){
+							allBodyPartSkills.Add (attackSkill);
+						}else if(fileName == "Tail Whip" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_WHIP_NO_WEAPON, 1)){
+							allBodyPartSkills.Add (attackSkill);
+						}else if(fileName == "Scratch" && HasAttribute(IBodyPart.ATTRIBUTE.CLAWED_NO_WEAPON, 1)){
+							allBodyPartSkills.Add (attackSkill);
+						}else if(fileName == "Squeeze" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_GRIP_NO_WEAPON, 2)){
+							allBodyPartSkills.Add (attackSkill);
+						}else if(fileName == "Flame Breath" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_FLAME_BREATH_NO_WEAPON, 1)){
+							allBodyPartSkills.Add (attackSkill);
+						}
+					}
+				}
 			}
 			return allBodyPartSkills;
 		}

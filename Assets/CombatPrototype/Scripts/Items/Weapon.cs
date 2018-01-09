@@ -14,6 +14,7 @@ namespace ECS{
 		internal List<IBodyPart> bodyPartsAttached = new List<IBodyPart>();
 
 		public List<string> attackSkills = new List<string>();
+		public List<string> healSkills = new List<string>();
 
 		private List<Skill> _skills;
 
@@ -30,6 +31,8 @@ namespace ECS{
 		public void AddSkill(Skill skillToAdd) {
 			if(skillToAdd is AttackSkill){
 				attackSkills.Add(skillToAdd.skillName);
+			}else if(skillToAdd is HealSkill){
+				healSkills.Add(skillToAdd.skillName);
 			}
 //			switch (skillToAdd) {
 //			case SKILL_TYPE.ATTACK:
@@ -42,8 +45,16 @@ namespace ECS{
 			_skills = new List<Skill>();
 			for (int i = 0; i < attackSkills.Count; i++) {
 				string skillName = attackSkills[i];
-				string path = "Assets/CombatPrototype/Data/Skills/ATTACK/" + skillName + ".json";
+				string path = "Assets/CombatPrototype/Data/Skills/WEAPON/ATTACK/" + skillName + ".json";
 				AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
+				currSkill.weapon = this;
+				_skills.Add(currSkill);
+			}
+			for (int i = 0; i < healSkills.Count; i++) {
+				string skillName = healSkills[i];
+				string path = "Assets/CombatPrototype/Data/Skills/WEAPON/HEAL/" + skillName + ".json";
+				HealSkill currSkill = JsonUtility.FromJson<HealSkill>(System.IO.File.ReadAllText(path));
+				currSkill.weapon = this;
 				_skills.Add(currSkill);
 			}
 		}

@@ -1357,4 +1357,13 @@ public class Utilities : MonoBehaviour {
         }
     }
     #endregion
+
+	public static MATERIAL_CATEGORY GetMaterialCategory(MATERIAL material){
+		if(material == MATERIAL.IRON || material == MATERIAL.COBALT || material == MATERIAL.MITHRIL){
+			return MATERIAL_CATEGORY.METAL;
+		}else if(material == MATERIAL.OAK || material == MATERIAL.YEW || material == MATERIAL.EBONY){
+			return MATERIAL_CATEGORY.WOOD;
+		}
+		return MATERIAL_CATEGORY.NONE;
+	}
 }

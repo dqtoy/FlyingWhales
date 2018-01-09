@@ -80,7 +80,7 @@ namespace ECS {
 			GUILayout.BeginVertical(EditorStyles.helpBox);
 			GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
 			itemComponent.skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", itemComponent.skillTypeToAdd);
-			List<string> choices = GetAllSkillsOfType(itemComponent.skillTypeToAdd);
+			List<string> choices = GetAllSkillsOfType(SKILL_CATEGORY.WEAPON, itemComponent.skillTypeToAdd);
 			itemComponent.skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", itemComponent.skillToAddIndex, choices.ToArray());
 			GUI.enabled = choices.Count > 0;
 			if (GUILayout.Button("Add Skill")) {
@@ -164,7 +164,7 @@ namespace ECS {
 			weapon.durabilityDamage = itemComponent.durabilityDamage;
 			weapon.attributes = itemComponent.weaponAttributes;
 			weapon.equipRequirements = itemComponent.equipRequirements;
-			for (int i = 0; i < itemComponent.skills; i++) {
+			for (int i = 0; i < itemComponent.skills.Count; i++) {
 				weapon.AddSkill (itemComponent.skills [i]);
 			}
 
@@ -197,16 +197,16 @@ namespace ECS {
         #endregion
 
 		#region Skills
-		private List<string> GetAllSkillsOfType(SKILL_TYPE skillType) {
+		private List<string> GetAllSkillsOfType(SKILL_CATEGORY category, SKILL_TYPE skillType) {
 			List<string> allSkillsOfType = new List<string>();
-			string path = "Assets/CombatPrototype/Data/Skills/" + skillType.ToString() + "/";
+			string path = "Assets/CombatPrototype/Data/Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
 			foreach (string file in Directory.GetFiles(path, "*.json")) {
 				allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
 			}
 			return allSkillsOfType;
 		}
 		private void AddSkillToList(string skillName) {
-			string path = "Assets/CombatPrototype/Data/Skills/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
+			string path = "Assets/CombatPrototype/Data/Skills/" + itemComponent.itemType.ToString() + "/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
 			string dataAsJson = File.ReadAllText(path);
 			switch (itemComponent.skillTypeToAdd) {
 			case SKILL_TYPE.ATTACK:

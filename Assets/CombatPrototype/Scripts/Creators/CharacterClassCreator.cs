@@ -16,10 +16,10 @@ namespace ECS {
 			}
             GUILayout.Label("Class Creator ", EditorStyles.boldLabel);
             currCharacterClass.className = EditorGUILayout.TextField("Class Name: ", currCharacterClass.className);
-			currCharacterClass.strPercentage = EditorGUILayout.IntField("Strength Percentage: ", currCharacterClass.strPercentage);
-			currCharacterClass.intPercentage = EditorGUILayout.IntField("Intelligence Percentage: ", currCharacterClass.intPercentage);
-			currCharacterClass.agiPercentage = EditorGUILayout.IntField("Agility Percentage: ", currCharacterClass.agiPercentage);
-			currCharacterClass.hpPercentage = EditorGUILayout.IntField("HP Percentage: ", currCharacterClass.hpPercentage);
+			currCharacterClass.strPercentage = EditorGUILayout.FloatField("Strength Percentage: ", currCharacterClass.strPercentage);
+			currCharacterClass.intPercentage = EditorGUILayout.FloatField("Intelligence Percentage: ", currCharacterClass.intPercentage);
+			currCharacterClass.agiPercentage = EditorGUILayout.FloatField("Agility Percentage: ", currCharacterClass.agiPercentage);
+			currCharacterClass.hpPercentage = EditorGUILayout.FloatField("HP Percentage: ", currCharacterClass.hpPercentage);
             currCharacterClass.dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", currCharacterClass.dodgeRate);
             currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
             currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);

@@ -208,67 +208,103 @@ namespace ECS{
 		//Get Skill that the character will use based on activation weights, target character must be within skill range
 		private Skill GetSkillToUse(Character sourceCharacter){
 			Dictionary<Skill, int> skillActivationWeights = new Dictionary<Skill, int> ();
+			Dictionary<object, int> categoryActivationWeights = new Dictionary<object, int> ();
+
+			//First step: pick from general skills or body part skill or weapon skill
+			categoryActivationWeights.Add("bodypart", 10);
+			if(sourceCharacter.HasWeaponEquipped()){
+				categoryActivationWeights.Add("weapon", 100);
+			}
 			for (int i = 0; i < sourceCharacter.skills.Count; i++) {
 				Skill skill = sourceCharacter.skills [i];
-				if(skill.isEnabled && HasTargetInRangeForSkill(skill, sourceCharacter)){
-					int activationWeight = skill.activationWeight;
-					if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
-						activationWeight *= ((int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f));
-					}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.MISSING_HEALTH){
-						int missingHealth = sourceCharacter.maxHP - sourceCharacter.currentHP;
-						int weight = (int)(((float)missingHealth / (float)sourceCharacter.maxHP) * 100f);
-						activationWeight *=  (weight > 0f ? weight : 1);
-					}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
-						int highestMissingHealth = 0;
-						Character chosenCharacter = null;
-						if(charactersSideA.Contains(sourceCharacter)){
-							for (int j = 0; j < charactersSideA.Count; j++) {
-								Character character = charactersSideA [j];
-								int missingHealth = character.maxHP - character.currentHP;
-								if(chosenCharacter == null){
-									highestMissingHealth = missingHealth;
-									chosenCharacter = character;
-								}else{
-									if(missingHealth > highestMissingHealth){
-										highestMissingHealth = missingHealth;
-										chosenCharacter = character;
-									}
-								}
-							}
-						}else{
-							for (int j = 0; j < charactersSideB.Count; j++) {
-								Character character = charactersSideB [j];
-								int missingHealth = character.maxHP - character.currentHP;
-								if(chosenCharacter == null){
-									highestMissingHealth = missingHealth;
-									chosenCharacter = character;
-								}else{
-									if(missingHealth > highestMissingHealth){
-										highestMissingHealth = missingHealth;
-										chosenCharacter = character;
-									}
-								}
-							}
-						}
-						if(chosenCharacter != null){
-							int weight = (int)((((float)highestMissingHealth / (float)chosenCharacter.maxHP) * 100f) * 2f);
-							activationWeight *= (weight > 0f ? weight : 1);
-						}
-					}
+				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.GENERAL){
+					int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
 					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
 						activationWeight /= 2;
 					}
-					skillActivationWeights.Add (skill, activationWeight);
+					categoryActivationWeights.Add (skill, activationWeight);
 				}
 			}
-
-			if(skillActivationWeights.Count > 0){
-				Skill chosenSkill = Utilities.PickRandomElementWithWeights<Skill> (skillActivationWeights);
-				return chosenSkill;
+			if(categoryActivationWeights.Count > 0){
+				object chosenObject = Utilities.PickRandomElementWithWeights<object> (categoryActivationWeights);
+				if(chosenObject is string){
+					string chosenCategory = chosenObject.ToString ();
+					if(chosenCategory == "bodypart"){
+						for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+							Skill skill = sourceCharacter.skills [i];
+							if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART && HasTargetInRangeForSkill(skill, sourceCharacter)){
+								int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
+								skillActivationWeights.Add (skill, activationWeight);
+							}
+						}
+					}else if(chosenCategory == "weapon"){
+						for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+							Skill skill = sourceCharacter.skills [i];
+							if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON && HasTargetInRangeForSkill(skill, sourceCharacter)){
+								int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
+								skillActivationWeights.Add (skill, activationWeight);
+							}
+						}
+					}
+					if(skillActivationWeights.Count > 0){
+						Skill chosenSkill = Utilities.PickRandomElementWithWeights<Skill> (skillActivationWeights);
+						return chosenSkill;
+					}
+				}else{
+					return (Skill)chosenObject;
+				}
 			}
 			return null;
 		}
 
+		//Returns activation weight of a certain skill that is already modified
+		private int GetActivationWeightOfSkill(Character sourceCharacter, Skill skill){
+			int activationWeight = skill.activationWeight;
+			if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
+				activationWeight *= ((int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f));
+			}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.MISSING_HEALTH){
+				int missingHealth = sourceCharacter.maxHP - sourceCharacter.currentHP;
+				int weight = (int)(((float)missingHealth / (float)sourceCharacter.maxHP) * 100f);
+				activationWeight *=  (weight > 0f ? weight : 1);
+			}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
+				int highestMissingHealth = 0;
+				Character chosenCharacter = null;
+				if(charactersSideA.Contains(sourceCharacter)){
+					for (int j = 0; j < charactersSideA.Count; j++) {
+						Character character = charactersSideA [j];
+						int missingHealth = character.maxHP - character.currentHP;
+						if(chosenCharacter == null){
+							highestMissingHealth = missingHealth;
+							chosenCharacter = character;
+						}else{
+							if(missingHealth > highestMissingHealth){
+								highestMissingHealth = missingHealth;
+								chosenCharacter = character;
+							}
+						}
+					}
+				}else{
+					for (int j = 0; j < charactersSideB.Count; j++) {
+						Character character = charactersSideB [j];
+						int missingHealth = character.maxHP - character.currentHP;
+						if(chosenCharacter == null){
+							highestMissingHealth = missingHealth;
+							chosenCharacter = character;
+						}else{
+							if(missingHealth > highestMissingHealth){
+								highestMissingHealth = missingHealth;
+								chosenCharacter = character;
+							}
+						}
+					}
+				}
+				if(chosenCharacter != null){
+					int weight = (int)((((float)highestMissingHealth / (float)chosenCharacter.maxHP) * 100f) * 2f);
+					activationWeight *= (weight > 0f ? weight : 1);
+				}
+			}
+			return activationWeight;
+		}
 		//Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
 		internal bool HasTargetInRangeForSkill(Skill skill, Character sourceCharacter){
 			if(skill is AttackSkill){
@@ -366,12 +402,12 @@ namespace ECS{
 				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell down!");
 				CounterAttack (targetCharacter);
 			}else if(skill is AttackSkill){
-				CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to " + skill.skillName + " " + targetCharacter.name + " but missed!");
+				CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to " + skill.skillName.ToLower() + " " + targetCharacter.name + " but missed!");
 			}else if(skill is HealSkill){
 				if(sourceCharacter == targetCharacter){
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName + " to heal himself/herself but it is already expired!");
+					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal himself/herself but it is already expired!");
 				}else{
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName + " to heal " + targetCharacter.name + " but it is already expired!");
+					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal " + targetCharacter.name + " but it is already expired!");
 				}
 			}
 		}
@@ -411,15 +447,15 @@ namespace ECS{
 			DEFEND_TYPE defendType = CanTargetCharacterDefend (targetCharacter);
 			if(defendType == DEFEND_TYPE.NONE){
 				//Successfully hits the target character
-				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter, GetWeaponForSkill(attackSkill, sourceCharacter));
+				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter, attackSkill.weapon);
 			}else{
 				//Target character has defend successfully and will roll for counter attack
 				if(defendType == DEFEND_TYPE.DODGE){
-					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " dodged " + sourceCharacter.name + "'s " + attackSkill.skillName + ".");
+					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " dodged " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".");
 				} else if(defendType == DEFEND_TYPE.BLOCK){
-					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " blocked " + sourceCharacter.name + "'s " + attackSkill.skillName + ".");
+					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " blocked " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".");
 				} else if(defendType == DEFEND_TYPE.PARRY){
-					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " parried " + sourceCharacter.name + "'s " + attackSkill.skillName + ".");
+					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " parried " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".");
 				}
 				CounterAttack(targetCharacter);
 			}
@@ -429,17 +465,27 @@ namespace ECS{
 		private void HitTargetCharacter(AttackSkill attackSkill, Character sourceCharacter, Character targetCharacter, Weapon weapon = null){
 			//Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
 			string log = string.Empty;
-			int weaponPower = 0;
+			float weaponPower = 0f;
+			BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
+			if (chosenBodyPart == null) {
+				Debug.LogError ("NO MORE BODY PARTS!");
+				return;
+			}
+			Armor armor = chosenBodyPart.GetArmor ();
+			log += sourceCharacter.name + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.name + " in the " + chosenBodyPart.name.ToLower();
+
             if(weapon != null) {
 				weaponPower = weapon.weaponPower;
+				if(Utilities.GetMaterialCategory(weapon.material) == MATERIAL_CATEGORY.WOOD && (weapon.weaponType == WEAPON_TYPE.BOW || weapon.weaponType == WEAPON_TYPE.STAFF)){
+					weaponPower *= 2f;
+				}
 				//reduce weapon durability by durability cost of skill
 				weapon.AdjustDurability(-attackSkill.durabilityCost);
-            }
-			BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
-			Armor armor = chosenBodyPart.GetArmor ();
-			int damage = (weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
-
-			log += sourceCharacter.name + " " + attackSkill.skillName + "ed " + targetCharacter.name + " in the " + chosenBodyPart.name + ".";
+				log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
+			}else{
+				log += ".";
+			}
+			int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
 
 			if(armor != null){
 				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
@@ -460,8 +506,10 @@ namespace ECS{
 				}
 			}
 
+			DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
 
-            BodyPart damagedBodyPart =	DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter);
+			CombatPrototypeUI.Instance.AddCombatLog (log);
+
 			targetCharacter.AdjustHP (-damage);
 
             //Get all armor pieces on body part that still has hit points
@@ -582,11 +630,11 @@ namespace ECS{
 						int logChance = UnityEngine.Random.Range (0, 2);
 						if(logChance == 0){
 							string[] predicate = new string[]{ "battered", "crippled", "mangled", "brokened" };
-							log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate + "!";
+							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate[UnityEngine.Random.Range(0, predicate.Length)] + "!";
 						}else{
 							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
 							if(secondaryBodPart != null){
-								log += targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + " makes a crunching noise!";
+								log += " " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + " makes a crunching noise!";
 							}
 						}
 
@@ -603,12 +651,12 @@ namespace ECS{
 								string[] adjective = new string[]{ "deep", "light", "painful", "fresh", "deadly" };
 								string[] noun = new string[]{ "gash", "wound", "lesion", "tear" };
 
-								log += "A " + adjective + " " + noun + " forms near " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + ".";
+								log += " A " + adjective[UnityEngine.Random.Range(0, adjective.Length)] + " " + noun[UnityEngine.Random.Range(0, noun.Length)] + " forms near " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + ".";
 							}
 						}else{
 							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
 							if(secondaryBodPart != null){
-								log += "Blood erupts from " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + "!";
+								log += " Blood erupts from " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + "!";
 							}
 						}
 					}
@@ -618,28 +666,34 @@ namespace ECS{
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
 
 						string[] verb = new string[]{ "severed", "decapitated", "sliced off", "lopped off" };
-						log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb + " by the attack!";
+						log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb[UnityEngine.Random.Range(0, verb.Length)] + " by the attack!";
 
 						int logChance = UnityEngine.Random.Range (0, 2);
 						if(logChance == 0){
-							log += "It drops to the floor lifelessly.";
+							log += " It drops to the floor lifelessly.";
 						}else{
-							log += "It flew away!";
+							log += " It flew away!";
 						}
 
-
+						string allWeaponDropped = string.Empty;
 						for (int i = 0; i < targetCharacter.equippedItems.Count; i++) {
 							Item item = targetCharacter.equippedItems [i];
 							if(item is Weapon){
 								Weapon weapon = (Weapon)item;
 								for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
 									if(weapon.bodyPartsAttached[j].statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
-										targetCharacter.UnequipItem (item);
+										if(allWeaponDropped != string.Empty){
+											allWeaponDropped += ", ";
+										}
+										allWeaponDropped += item.itemName;
 										targetCharacter.ThrowItem (item);
 										break;
 									}
 								}
 							}
+						}
+						if(allWeaponDropped != string.Empty){
+							log += " " + targetCharacter.name + " drops " + allWeaponDropped + ".";
 						}
 
 						//If body part is essential, instant death to the character
@@ -651,12 +705,16 @@ namespace ECS{
 					if(chance < 5){
 						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BURNING);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and burns " + targetCharacter.name + 
-							"'s " + chosenBodyPart.bodyPart.ToString().ToLower());
+						int logChance = UnityEngine.Random.Range (0, 2);
+						if(logChance == 0){
+							log += " A burnt smell emanates from " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + "!";
+						}else{
+							string[] verb = new string[]{ "charred", "burning", "roasting" };
+							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + verb[UnityEngine.Random.Range(0, verb.Length)] + "!";
+						}
 					}
 				}
 			}
-            return chosenBodyPart;
         }
 
 
@@ -669,36 +727,40 @@ namespace ECS{
 
 //			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
 			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();
-			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
+			if(allBodyParts.Count > 0){
+				return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
+			}else{
+				return null;
+			}
 		}
         /*
          * Get Weapon that meets the requirements of a given skill,
          * if the skill does not require a weapon, this will just return null.
          * */
-        private Weapon GetWeaponForSkill(Skill skill, Character sourceCharacter) {
-            if (skill.RequiresItem()) {
-                List<Weapon> weapons = sourceCharacter.GetAllAttachedWeapons();
-                for (int i = 0; i < weapons.Count; i++) {
-                    Weapon currWeapon = weapons[i];
-                    bool meetsRequirements = true;
-                    for (int j = 0; j < skill.skillRequirements.Length; j++) {
-                        SkillRequirement currRequirement = skill.skillRequirements[j];
-                        if(currRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
-                            //skip requirements that don't require an item
-                            continue;
-                        }
-                        if(currRequirement.equipmentType != (EQUIPMENT_TYPE)currWeapon.weaponType || !currWeapon.attributes.Contains(currRequirement.attributeRequired)) {
-                            meetsRequirements = false;
-                            break;
-                        }
-                    }
-                    if (meetsRequirements) {
-                        return currWeapon;
-                    }
-                }
-            }
-            return null;
-        }
+//        private Weapon GetWeaponForSkill(Skill skill, Character sourceCharacter) {
+//            if (skill.RequiresItem()) {
+//                List<Weapon> weapons = sourceCharacter.GetAllAttachedWeapons();
+//                for (int i = 0; i < weapons.Count; i++) {
+//                    Weapon currWeapon = weapons[i];
+//                    bool meetsRequirements = true;
+//                    for (int j = 0; j < skill.skillRequirements.Length; j++) {
+//                        SkillRequirement currRequirement = skill.skillRequirements[j];
+//                        if(currRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
+//                            //skip requirements that don't require an item
+//                            continue;
+//                        }
+//                        if(currRequirement.equipmentType != (EQUIPMENT_TYPE)currWeapon.weaponType || !currWeapon.attributes.Contains(currRequirement.attributeRequired)) {
+//                            meetsRequirements = false;
+//                            break;
+//                        }
+//                    }
+//                    if (meetsRequirements) {
+//                        return currWeapon;
+//                    }
+//                }
+//            }
+//            return null;
+//        }
 		#endregion
 
 		#region Heal Skill
@@ -766,7 +828,7 @@ namespace ECS{
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
 		private void CharacterDeath(Character character){
 			RemoveCharacter (character);
-			CombatPrototypeUI.Instance.AddCombatLog(character.name + " has died horribly!");
+			CombatPrototypeUI.Instance.AddCombatLog(character.name + " died horribly!");
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death

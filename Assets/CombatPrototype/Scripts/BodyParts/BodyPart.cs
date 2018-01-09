@@ -40,6 +40,7 @@ namespace ECS{
         internal BodyPart CreateNewCopy() {
             BodyPart newBodyPart = new BodyPart();
             newBodyPart.bodyPart = this.bodyPart;
+			newBodyPart.name = this.name;
             newBodyPart.importance = this.importance;
             newBodyPart.attributes = new List<BodyAttribute>();
             for (int i = 0; i < this.attributes.Count; i++) {

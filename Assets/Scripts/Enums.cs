@@ -140,6 +140,11 @@ public enum MATERIAL{
 	SILK,
 	LEATHER,
 }
+public enum MATERIAL_CATEGORY{
+	NONE,
+	METAL,
+	WOOD,
+}
 public enum ROLE{
 	UNTRAINED,
 	FOODIE, //Farming or Hunting
@@ -741,6 +746,18 @@ public enum BODY_PART{
 	FEET,
     HEART,
     BRAIN,
+	EYE,
+	NOSE,
+	EAR,
+	ELBOW,
+	WRIST,
+	FINGER,
+	THIGH,
+	KNEE,
+	SHIN,
+	BREAST,
+	ABS,
+	RIB,
 }
 
 public enum CHARACTER_CLASS_TYPE {
@@ -756,6 +773,7 @@ public enum SKILL_TYPE {
     MOVE
 }
 public enum SKILL_CATEGORY {
+	GENERAL,
 	BODY_PART,
 	WEAPON,
 }

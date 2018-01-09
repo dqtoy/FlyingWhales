@@ -11,7 +11,7 @@ namespace ECS{
 				int idToUse = int.Parse (url);
                 //Debug.Log("Clicked " + url);
 				if(CombatPrototypeUI.Instance.currSelectedCharacter != null){
-					CombatPrototypeUI.Instance.SetItemAsSelected(CombatPrototypeUI.Instance.currSelectedCharacter.items[idToUse]);
+					CombatPrototypeUI.Instance.SetItemAsSelected(CombatPrototypeUI.Instance.currSelectedCharacter.equippedItems[idToUse]);
 				}
 			}
 		}

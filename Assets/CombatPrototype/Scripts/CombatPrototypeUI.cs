@@ -168,18 +168,18 @@ namespace ECS{
         #endregion
 
 		#region Levels
-		public void LevelUp(){
-			if(currSelectedCharacter != null){
-				currSelectedCharacter.IncreaseLevel ();
-				UpdateCharacterSummary (currSelectedCharacter);
-			}
-		}
-		public void LevelDown(){
-			if(currSelectedCharacter != null){
-				currSelectedCharacter.DecreaseLevel ();
-				UpdateCharacterSummary (currSelectedCharacter);
-			}
-		}
+//		public void LevelUp(){
+//			if(currSelectedCharacter != null){
+//				currSelectedCharacter.IncreaseLevel ();
+//				UpdateCharacterSummary (currSelectedCharacter);
+//			}
+//		}
+//		public void LevelDown(){
+//			if(currSelectedCharacter != null){
+//				currSelectedCharacter.DecreaseLevel ();
+//				UpdateCharacterSummary (currSelectedCharacter);
+//			}
+//		}
 		#endregion
 
 		public void OnClickRemoveItem(){

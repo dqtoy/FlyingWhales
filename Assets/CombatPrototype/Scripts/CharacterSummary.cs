@@ -39,7 +39,6 @@ namespace ECS{
             basicInfoLbl.text += "[b]Class:[/b] " + character.characterClass.className + "\n";
             basicInfoLbl.text += "[b]Race:[/b] " + character.raceSetting.race.ToString() + "\n";
             basicInfoLbl.text += "[b]HP:[/b] " + character.currentHP.ToString() + "/" + character.maxHP.ToString() + "\n";
-            basicInfoLbl.text += "[b]Level:[/b] " + character.level.ToString() + "\n";
             basicInfoLbl.text += "[b]Strength:[/b] " + character.strength.ToString() + "\n";
             basicInfoLbl.text += "[b]Intelligence:[/b] " + character.intelligence.ToString() + "\n";
             basicInfoLbl.text += "[b]Agility:[/b] " + character.agility.ToString() + "\n";
@@ -57,11 +56,10 @@ namespace ECS{
                 }
             }
             classInfoLbl.text += "\n";
-            classInfoLbl.text += "[b]Act Rate:[/b] " + character.characterClass.actRate.ToString() + "\n";
-            classInfoLbl.text += "[b]Strength Gain:[/b] " + character.characterClass.strGain.ToString() + "\n";
-            classInfoLbl.text += "[b]Intelligence Gain:[/b] " + character.characterClass.intGain.ToString() + "\n";
-            classInfoLbl.text += "[b]Agility Gain:[/b] " + character.characterClass.agiGain.ToString() + "\n";
-            classInfoLbl.text += "[b]HP Gain:[/b] " + character.characterClass.hpGain.ToString() + "\n";
+            classInfoLbl.text += "[b]Strength %:[/b] " + character.characterClass.strPercentage.ToString() + "\n";
+			classInfoLbl.text += "[b]Intelligence %:[/b] " + character.characterClass.intPercentage.ToString() + "\n";
+			classInfoLbl.text += "[b]Agility %:[/b] " + character.characterClass.agiPercentage.ToString() + "\n";
+			classInfoLbl.text += "[b]HP %:[/b] " + character.characterClass.hpPercentage.ToString() + "\n";
             classInfoLbl.text += "[b]Dodge Rate:[/b] " + character.characterClass.dodgeRate.ToString() + "\n";
             classInfoLbl.text += "[b]Parry Rate:[/b] " + character.characterClass.parryRate.ToString() + "\n";
             classInfoLbl.text += "[b]Block Rate:[/b] " + character.characterClass.blockRate.ToString();
@@ -71,29 +69,36 @@ namespace ECS{
             for (int i = 0; i < character.bodyParts.Count; i++) {
                 BodyPart currBodyPart = character.bodyParts[i];
                 bodyPartsInfoLbl.text += "\n";
-                for (int j = 0; j < currBodyPart.attributes.Count; j++) {
-                    BodyAttribute currAttribute = currBodyPart.attributes[j];
-                    bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.attribute.ToString()) + " " + currAttribute.isUsed.ToString() + " ";
-                }
-                bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
-                for (int j = 0; j < currBodyPart.statusEffects.Count; j++) {
-					STATUS_EFFECT currStatus = currBodyPart.statusEffects[j];
-                    bodyPartsInfoLbl.text += "[" + currStatus.ToString() + "]";
-                }
+				bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.bodyPart.ToString());
+				if (currBodyPart.attributes.Count > 0) {
+					bodyPartsInfoLbl.text += "[";
+					for (int j = 0; j < currBodyPart.attributes.Count; j++) {
+						BodyAttribute currAttribute = currBodyPart.attributes [j];
+						bodyPartsInfoLbl.text += Utilities.NormalizeString (currAttribute.attribute.ToString ()) + "(" + currAttribute.isUsed.ToString () + ")";
+					}
+					bodyPartsInfoLbl.text += "]";
+				}
 
-                for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-                    SecondaryBodyPart otherBodyPart = currBodyPart.secondaryBodyParts[j];
-                    bodyPartsInfoLbl.text += "\n    -";
-                    for (int k = 0; k < otherBodyPart.attributes.Count; k++) {
-                        BodyAttribute currAttribute = otherBodyPart.attributes[k];
-                        bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.attribute.ToString()) + " " + currAttribute.isUsed.ToString() + " ";
-                    }
-                    bodyPartsInfoLbl.text += Utilities.NormalizeString(otherBodyPart.bodyPart.ToString()) + "(" + currBodyPart.importance.ToString() + ")";
-                    for (int k = 0; k < otherBodyPart.statusEffects.Count; k++) {
-						STATUS_EFFECT currStatus = otherBodyPart.statusEffects[k];
-                        bodyPartsInfoLbl.text += "[" + currStatus.ToString() + "]";
-                    }
-                }
+				if(currBodyPart.secondaryBodyParts.Count > 0){
+					bodyPartsInfoLbl.text += "\n    -";
+					for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+						SecondaryBodyPart otherBodyPart = currBodyPart.secondaryBodyParts[j];
+						if(j != 0){
+							bodyPartsInfoLbl.text += ", ";
+						}
+						bodyPartsInfoLbl.text += "{";
+						bodyPartsInfoLbl.text += Utilities.NormalizeString(otherBodyPart.bodyPart.ToString());
+						if( otherBodyPart.attributes.Count > 0){
+							bodyPartsInfoLbl.text += "[";
+							for (int k = 0; k < otherBodyPart.attributes.Count; k++) {
+								BodyAttribute currAttribute = otherBodyPart.attributes[k];
+								bodyPartsInfoLbl.text += Utilities.NormalizeString(currAttribute.attribute.ToString()) + "(" + currAttribute.isUsed.ToString() + ")";
+							}
+							bodyPartsInfoLbl.text += "]";
+						}
+						bodyPartsInfoLbl.text += "}";
+					}
+				}
             }
             UpdateItemSummary(CombatPrototypeUI.Instance.currSelectedCharacter);
         }
@@ -103,15 +108,14 @@ namespace ECS{
                 return;
             }
             itemsInfoLbl.text = "[b]ITEMS[/b]";
-            for (int i = 0; i < character.items.Count; i++) {
-                Item currItem = character.items[i];
+            for (int i = 0; i < character.equippedItems.Count; i++) {
+				Item currItem = character.equippedItems[i];
 				itemsInfoLbl.text += "\n[b]" + "[url= " + i.ToString() + "]" + currItem.itemName + "[/url]" + "[/b] ";
 				itemsInfoLbl.text += " (";
 				itemsInfoLbl.text += "Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
                     itemsInfoLbl.text += ", Body part: " + armor.bodyPartAttached.bodyPart.ToString();
-                    itemsInfoLbl.text += ", Hitpoints: " + armor.currHitPoints.ToString() + "/" + armor.hitPoints.ToString();
                     for (int j = 0; j < armor.attributes.Count; j++) {
                         itemsInfoLbl.text += armor.attributes[j].ToString();
                         if(j + 1 < armor.attributes.Count) {

@@ -14,6 +14,7 @@ namespace ECS {
 
             GUILayout.Label("Skill Creator ", EditorStyles.boldLabel);
 			skillComponent.skillType = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type: ", skillComponent.skillType);
+			skillComponent.skillCategory = (SKILL_CATEGORY)EditorGUILayout.EnumPopup("Skill Category: ", skillComponent.skillCategory);
 			skillComponent.skillName = EditorGUILayout.TextField("Skill Name: ", skillComponent.skillName);
 			skillComponent.description = EditorGUILayout.TextField("Description: ", skillComponent.description);
 			skillComponent.actWeightType = (ACTIVATION_WEIGHT_TYPE)EditorGUILayout.EnumPopup("Activation Weight Type: ", skillComponent.actWeightType);
@@ -50,7 +51,6 @@ namespace ECS {
 
         private void ShowAttackSkillFields() {
 			skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
-			skillComponent.skillCategory = (SKILL_CATEGORY)EditorGUILayout.EnumPopup("Skill Category: ", skillComponent.skillCategory);
             skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
             skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
 
@@ -78,7 +78,7 @@ namespace ECS {
                 EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
                 return;
             }
-			string path = "Assets/CombatPrototype/Data/Skills/" + skillComponent.skillType.ToString() + "/" + fileName + ".json";
+			string path = "Assets/CombatPrototype/Data/Skills/" + skillComponent.skillCategory.ToString() + "/"+ skillComponent.skillType.ToString() + "/" + fileName + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Skill", "A skill with name " + fileName + " already exists. Replace with this skill?", "Yes", "No")) {
                     File.Delete(path);
@@ -107,6 +107,7 @@ namespace ECS {
         }
         private void SetCommonData(Skill newSkill) {
 			newSkill.skillName = skillComponent.skillName;
+			newSkill.skillCategory = skillComponent.skillCategory;
 			newSkill.description = skillComponent.description;
 			newSkill.actWeightType = skillComponent.actWeightType;
 			newSkill.activationWeight = skillComponent.activationWeight;

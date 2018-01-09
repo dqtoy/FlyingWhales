@@ -16,6 +16,7 @@ namespace ECS {
 		public bool isEnabled;
         public SkillRequirement[] skillRequirements;
 
+		internal Weapon weapon;
 //        public bool RequiresItem() {
 //            for (int i = 0; i < skillRequirements.Length; i++) {
 //                SkillRequirement skillReq = skillRequirements[i];
