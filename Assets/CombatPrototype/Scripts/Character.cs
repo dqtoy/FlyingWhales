@@ -398,14 +398,16 @@ namespace ECS{
 		public void EquipItem(ITEM_TYPE itemType, string itemName) {
 			string strItemType = itemType.ToString();
 			string path = "Assets/CombatPrototype/Data/Items/" + strItemType + "/" + itemName + ".json";
-			string dataAsJson = System.IO.File.ReadAllText(path);
-			if (strItemType.Contains("WEAPON")) {
-				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-				weapon.ConstructAllSkillsList ();
-				TryEquipWeapon(weapon);
-			} else if (strItemType.Contains("ARMOR")) {
-				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
-				TryEquipArmor(armor);
+			if(System.IO.File.Exists(path)){
+				string dataAsJson = System.IO.File.ReadAllText(path);
+				if (strItemType.Contains("WEAPON")) {
+					Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
+					weapon.ConstructAllSkillsList ();
+					TryEquipWeapon(weapon);
+				} else if (strItemType.Contains("ARMOR")) {
+					Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
+					TryEquipArmor(armor);
+				}
 			}
 		}
 		public void EquipItem(string itemType, string itemName) {
