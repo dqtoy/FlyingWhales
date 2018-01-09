@@ -63,4 +63,15 @@ public class Character {
         _characterClass = charClass;
     }
     #endregion
+
+    #region Traits
+    public bool HasTrait(TRAIT trait) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if(_traits[i].trait == trait) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 }
