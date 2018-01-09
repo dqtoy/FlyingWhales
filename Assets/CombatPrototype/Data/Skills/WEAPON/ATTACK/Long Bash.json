@@ -1,1 +1,1 @@
-{"skillName":"Long Bash","description":"Long hulk smash","skillCategory":2,"actWeightType":0,"activationWeight":10,"accuracy":90.0,"range":3,"isEnabled":false,"skillRequirements":[],"attackType":0,"durabilityDamage":1,"durabilityCost":1,"statusEffectRates":[]}
+{"skillName":"Long Bash","description":"Long Bash","skillCategory":2,"actWeightType":0,"activationWeight":10,"accuracy":90.0,"range":3,"isEnabled":false,"skillRequirements":[],"attackType":0,"durabilityDamage":1,"durabilityCost":1,"statusEffectRates":[]}
