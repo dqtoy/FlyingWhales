@@ -6,21 +6,13 @@ namespace ECS{
 	public class Armor : Item {
 		public ARMOR_TYPE armorType;
         public BODY_PART armorBodyType;
-		public int hitPoints;
-        public int currHitPoints;
+		public MATERIAL material;
+		public QUALITY quality;
+		public float baseDamageMitigation;
+		public float damageNullificationChance;
+		public List<ATTACK_TYPE> ineffectiveAttackTypes;
+		public List<ATTACK_TYPE> effectiveAttackTypes;
 		public List<IBodyPart.ATTRIBUTE> attributes;
 		internal IBodyPart bodyPartAttached;
-
-        public void AdjustHitPoints(int adjustment) {
-            currHitPoints += adjustment;
-            currHitPoints = Mathf.Clamp(currHitPoints, 0, hitPoints);
-            if(currHitPoints == 0) {
-                //Armor Ineffective!
-            }
-        }
-
-        public void ResetHitPoints() {
-            currHitPoints = hitPoints;
-        }
 	}
 }

@@ -85,7 +85,7 @@ namespace ECS{
             CombatPrototypeUI.Instance.ClearCombatLogs();
             //			List<Character> charactersSideA = this.allCharactersAndSides [SIDES.A];
             //			List<Character> charactersSideB = this.allCharactersAndSides [SIDES.B];
-            ResetAllArmorHitPoints(); //Reset all hitpoints of each characters armor
+//            ResetAllArmorHitPoints(); //Reset all hitpoints of each characters armor
             bool isInitial = true;
 			bool isOneSideDefeated = false;
 			SetRowNumber (this.charactersSideA, 1);
@@ -139,19 +139,19 @@ namespace ECS{
 			}
 
 			for (int i = 0; i < charactersSideA.Count; i++) {
-				int actRate = charactersSideA [i].actRate * modifier;
+				int actRate = charactersSideA [i].agility * modifier;
 				characterActivationWeights.Add (charactersSideA [i], actRate);
 			}
 			for (int i = 0; i < charactersSideB.Count; i++) {
-				int actRate = charactersSideB [i].actRate * modifier;
+				int actRate = charactersSideB [i].agility * modifier;
 				characterActivationWeights.Add (charactersSideB [i], actRate);
 			}
 
 			Character chosenCharacter = Utilities.PickRandomElementWithWeights<Character>(characterActivationWeights);
 			foreach (Character character in characterActivationWeights.Keys) {
-				character.actRate += character.characterClass.actRate;
+				character.AdjustAgility(character.baseAgility);
 			}
-			chosenCharacter.actRate = 0;
+			chosenCharacter.SetAgility(0);
 			return chosenCharacter;
 		}
 
@@ -427,164 +427,229 @@ namespace ECS{
 			
 		//Hits the target with an attack skill
 		private void HitTargetCharacter(AttackSkill attackSkill, Character sourceCharacter, Character targetCharacter, Weapon weapon = null){
-            int damage = 0;
-            if(weapon == null) {
-                //Total Damage = [Spower * str] + [Ipower * int] + [Apower * agi]
-                damage = (int)((attackSkill.strengthPower * (float)sourceCharacter.strength)
-                    + (attackSkill.intellectPower * (float)sourceCharacter.intelligence)
-                    + (attackSkill.agilityPower * (float)sourceCharacter.agility));
-            } else {
-                //Total Damage = [Spower * (str + Watk)] + [Ipower * (int + Watk)] + [Apower * (agi + Watk)]
-                damage = (int)((attackSkill.strengthPower * (float)(sourceCharacter.strength + weapon.weaponPower))
-                    + (attackSkill.intellectPower * (float)(sourceCharacter.intelligence + weapon.weaponPower))
-                    + (attackSkill.agilityPower * (float)(sourceCharacter.agility + weapon.weaponPower)));
-
-                //reduce weapon durability by 1
-                weapon.AdjustDurability(-1);
+			//Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
+			string log = string.Empty;
+			int weaponPower = 0;
+            if(weapon != null) {
+				weaponPower = weapon.weaponPower;
+				//reduce weapon durability by durability cost of skill
+				weapon.AdjustDurability(-attackSkill.durabilityCost);
             }
-            
+			BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
+			Armor armor = chosenBodyPart.GetArmor ();
+			int damage = (weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
+
+			log += sourceCharacter.name + " " + attackSkill.skillName + "ed " + targetCharacter.name + " in the " + chosenBodyPart.name + ".";
+
+			if(armor != null){
+				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
+					int damageNullChance = UnityEngine.Random.Range (0, 100);
+					if(damageNullChance < armor.damageNullificationChance){
+						log += " The attack was fully absorbed by the " + armor.itemName + ".";
+						return;
+					}
+					damage -= (int)((float)damage * (armor.baseDamageMitigation / 100f));
+				}else{
+					damage -= (int)((float)damage * ((armor.baseDamageMitigation / 2f) / 100f));
+				}
+				if(armor.ineffectiveAttackTypes.Contains(attackSkill.attackType)){
+					damage -= (int)((float)damage * 0.2f);
+				}
+				if(armor.effectiveAttackTypes.Contains(attackSkill.attackType)){
+					damage += (int)((float)damage * 0.2f);
+				}
+			}
+
+
             BodyPart damagedBodyPart =	DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter);
-			bool hasDamagedArmor = false;
+			targetCharacter.AdjustHP (-damage);
 
             //Get all armor pieces on body part that still has hit points
-			List<Item> armorOnBodyPart = damagedBodyPart.GetAttachedItemsOfType(ITEM_TYPE.ARMOR).OrderByDescending(x => ((Armor)x).currHitPoints).ToList();
-            if (armorOnBodyPart.Count > 0) {
-				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
-					for (int i = 0; i < armorOnBodyPart.Count; i++) {
-						Armor currArmor = (Armor)armorOnBodyPart[i];
-						if(currArmor.currHitPoints > 0) {
-							//Deal damage to armor
-							hasDamagedArmor = true;
-							int damageToArmor = 0;
-							if(damage > currArmor.currHitPoints){
-								damageToArmor = currArmor.currHitPoints;
-							}else{
-								damageToArmor = damage;
-							}
-							damage -= damageToArmor;
-
-							currArmor.AdjustHitPoints (-damageToArmor);
-							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-								+ "'s " + currArmor.itemName + " for " + damageToArmor.ToString() + " and damages " + targetCharacter.name + " for " + damage.ToString() + ".");
-
-							targetCharacter.AdjustHP(-damage);
-
-							if(damage < 0 ){
-								damage = 0;
-							}
-						}
-					}
-				}
-				if (damage > 0 && !hasDamagedArmor) {
-					//Deal damage to hp
-					CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-						+ " for " + damage.ToString() + ".");
-				}
-
-				int damageToDurability = attackSkill.durabilityDamage; //[SkillDurabilityDamage  +  WeaponDurabilityDamage]
-				if (weapon != null) {
-					damageToDurability += weapon.durabilityDamage;
-				}
-				for (int i = 0; i < armorOnBodyPart.Count; i++) {
-					Armor currArmor = (Armor)armorOnBodyPart[i];
-					if(currArmor.durability > 0) {
-						//Reduce Armor Durability
-						currArmor.AdjustDurability(-damageToDurability);
-						if(currArmor.durability <= 0) {
-							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " destroys " + targetCharacter.name + "'s " + currArmor.itemName);
-						}
-					}
-				}
-
-                
-                    
-            } else {
-                //Deal damage to hp
-                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-					+ " for " + damage.ToString() + ".");
-                    targetCharacter.AdjustHP(-damage);
-            }
+//			List<Item> armorOnBodyPart = damagedBodyPart.GetAttachedItemsOfType(ITEM_TYPE.ARMOR).OrderByDescending(x => ((Armor)x).currHitPoints).ToList();
+//            if (armorOnBodyPart.Count > 0) {
+//				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
+//					for (int i = 0; i < armorOnBodyPart.Count; i++) {
+//						Armor currArmor = (Armor)armorOnBodyPart[i];
+//						if(currArmor.currHitPoints > 0) {
+//							//Deal damage to armor
+//							hasDamagedArmor = true;
+//							int damageToArmor = 0;
+//							if(damage > currArmor.currHitPoints){
+//								damageToArmor = currArmor.currHitPoints;
+//							}else{
+//								damageToArmor = damage;
+//							}
+//							damage -= damageToArmor;
+//
+//							currArmor.AdjustHitPoints (-damageToArmor);
+//							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+//								+ "'s " + currArmor.itemName + " for " + damageToArmor.ToString() + " and damages " + targetCharacter.name + " for " + damage.ToString() + ".");
+//
+//							targetCharacter.AdjustHP(-damage);
+//
+//							if(damage < 0 ){
+//								damage = 0;
+//							}
+//						}
+//					}
+//				}
+//				if (damage > 0 && !hasDamagedArmor) {
+//					//Deal damage to hp
+//					CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+//						+ " for " + damage.ToString() + ".");
+//				}
+//
+//				int damageToDurability = attackSkill.durabilityDamage; //[SkillDurabilityDamage  +  WeaponDurabilityDamage]
+//				if (weapon != null) {
+//					damageToDurability += weapon.durabilityDamage;
+//				}
+//				for (int i = 0; i < armorOnBodyPart.Count; i++) {
+//					Armor currArmor = (Armor)armorOnBodyPart[i];
+//					if(currArmor.durability > 0) {
+//						//Reduce Armor Durability
+//						currArmor.AdjustDurability(-damageToDurability);
+//						if(currArmor.durability <= 0) {
+//							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " destroys " + targetCharacter.name + "'s " + currArmor.itemName);
+//						}
+//					}
+//				}
+//
+//                
+//                    
+//            } else {
+//                //Deal damage to hp
+//                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
+//					+ " for " + damage.ToString() + ".");
+//                    targetCharacter.AdjustHP(-damage);
+//            }
         }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
-		private BodyPart DealDamageToBodyPart(AttackSkill attackSkill, Character targetCharacter, Character sourceCharacter){
+		private void DealDamageToBodyPart(AttackSkill attackSkill, Character targetCharacter, Character sourceCharacter, BodyPart chosenBodyPart, ref string log){
 			int chance = UnityEngine.Random.Range (0, 100);
-            BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
 
 			if(attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0){
 				for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
 					int value = attackSkill.statusEffectRates[i].ratePercentage;
-					string log = string.Empty;
 					if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.INJURED){
 						if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
 							value += 7;
-							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and crushes " + targetCharacter.name
-							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ", injuring it.";
+//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and crushes " + targetCharacter.name
+//							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ", injuring it.";
 						}else{
-							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and injures " + targetCharacter.name
-							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
+//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and injures " + targetCharacter.name
+//							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
 						}
+
 					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BLEEDING){
 						if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 							value += 10;
-							log = sourceCharacter.name + " used " + attackSkill.skillName + " and pierces " + targetCharacter.name + 
-								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.";
+//							log = sourceCharacter.name + " used " + attackSkill.skillName + " and pierces " + targetCharacter.name + 
+//								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.";
 						}else{
-							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and causes " + targetCharacter.name
-								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + " to bleed.";
+//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and causes " + targetCharacter.name
+//								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + " to bleed.";
 						}
 					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.DECAPITATED){
 						if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 							value += 5;
-							log = sourceCharacter.name + " used " + attackSkill.skillName + " and slashes " + targetCharacter.name + 
-								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.";
+//							log = sourceCharacter.name + " used " + attackSkill.skillName + " and slashes " + targetCharacter.name + 
+//								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.";
 						}else{
-							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and decapitates " + targetCharacter.name
-								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
+//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and decapitates " + targetCharacter.name
+//								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
 						}
 					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BURNING){
-						if(attackSkill.attackType == ATTACK_TYPE.BURN){
+						if(attackSkill.attackType == ATTACK_TYPE.MAGIC){
 							value += 5;
 						}
-						log = sourceCharacter.name + " used " + attackSkill.skillName + " and burns " + targetCharacter.name + 
-							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ".";
+//						log = sourceCharacter.name + " used " + attackSkill.skillName + " and burns " + targetCharacter.name + 
+//							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ".";
 					}
 
 					if(chance < value){
-						chosenBodyPart.statusEffects.Add(attackSkill.statusEffectRates[i].statusEffect);
+						chosenBodyPart.AddStatusEffect(attackSkill.statusEffectRates[i].statusEffect);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (attackSkill.statusEffectRates[i].statusEffect);
-						CombatPrototypeUI.Instance.AddCombatLog (log);
+//						CombatPrototypeUI.Instance.AddCombatLog (log);
 					}
 				}
 			}else{
 				if (attackSkill.attackType == ATTACK_TYPE.CRUSH){
 					if(chance < 7){
-						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.INJURED);
+						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.INJURED);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and crushes " + targetCharacter.name 
-							+ "'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", injuring it.");
+
+						int logChance = UnityEngine.Random.Range (0, 2);
+						if(logChance == 0){
+							string[] predicate = new string[]{ "battered", "crippled", "mangled", "brokened" };
+							log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate + "!";
+						}else{
+							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
+							if(secondaryBodPart != null){
+								log += targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + " makes a crunching noise!";
+							}
+						}
+
 					}
 				}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
 					if(chance < 10){
-						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BLEEDING);
+						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BLEEDING);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and pierces " + targetCharacter.name + 
-							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.");
+
+						int logChance = UnityEngine.Random.Range (0, 2);
+						if(logChance == 0){
+							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
+							if(secondaryBodPart != null){
+								string[] adjective = new string[]{ "deep", "light", "painful", "fresh", "deadly" };
+								string[] noun = new string[]{ "gash", "wound", "lesion", "tear" };
+
+								log += "A " + adjective + " " + noun + " forms near " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + ".";
+							}
+						}else{
+							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
+							if(secondaryBodPart != null){
+								log += "Blood erupts from " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + "!";
+							}
+						}
 					}
 				}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
 					if(chance < 5){
-						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.DECAPITATED);
+						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.DECAPITATED);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
-						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and slashes " + targetCharacter.name + 
-							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.");
+
+						string[] verb = new string[]{ "severed", "decapitated", "sliced off", "lopped off" };
+						log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb + " by the attack!";
+
+						int logChance = UnityEngine.Random.Range (0, 2);
+						if(logChance == 0){
+							log += "It drops to the floor lifelessly.";
+						}else{
+							log += "It flew away!";
+						}
+
+
+						for (int i = 0; i < targetCharacter.equippedItems.Count; i++) {
+							Item item = targetCharacter.equippedItems [i];
+							if(item is Weapon){
+								Weapon weapon = (Weapon)item;
+								for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
+									if(weapon.bodyPartsAttached[j].statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
+										targetCharacter.UnequipItem (item);
+										targetCharacter.ThrowItem (item);
+										break;
+									}
+								}
+							}
+						}
+
 						//If body part is essential, instant death to the character
 						if (chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
 							CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
 						}
 					}
-				}else if(attackSkill.attackType == ATTACK_TYPE.BURN){
+				}else if(attackSkill.attackType == ATTACK_TYPE.MAGIC){
 					if(chance < 5){
-						chosenBodyPart.statusEffects.Add(STATUS_EFFECT.BURNING);
+						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BURNING);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
 						CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and burns " + targetCharacter.name + 
 							"'s " + chosenBodyPart.bodyPart.ToString().ToLower());
@@ -723,18 +788,18 @@ namespace ECS{
 		}
 
         #region Items
-        private void ResetAllArmorHitPoints() {
-            List<Character> allCharacters = new List<Character>(charactersSideA);
-            allCharacters.AddRange(charactersSideB);
-            for (int i = 0; i < allCharacters.Count; i++) {
-                Character currCharacter = allCharacters[i];
-                List<Armor> armorOfCharacter = currCharacter.GetAllAttachedArmor();
-                for (int j = 0; j < armorOfCharacter.Count; j++) {
-                    Armor currArmor = armorOfCharacter[j];
-                    currArmor.ResetHitPoints();
-                }
-            }
-        }
+//        private void ResetAllArmorHitPoints() {
+//            List<Character> allCharacters = new List<Character>(charactersSideA);
+//            allCharacters.AddRange(charactersSideB);
+//            for (int i = 0; i < allCharacters.Count; i++) {
+//                Character currCharacter = allCharacters[i];
+//                List<Armor> armorOfCharacter = currCharacter.GetAllAttachedArmor();
+//                for (int j = 0; j < armorOfCharacter.Count; j++) {
+//                    Armor currArmor = armorOfCharacter[j];
+//                    currArmor.ResetHitPoints();
+//                }
+//            }
+//        }
         #endregion
     }
 }

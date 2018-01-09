@@ -128,6 +128,18 @@ public enum RESOURCE_TYPE{
 	MATERIAL,
 	ORE,
 }
+public enum MATERIAL{
+	NONE,
+	IRON,
+	OAK,
+	COBALT,
+	YEW,
+	MITHRIL,
+	EBONY,
+	COTTON,
+	SILK,
+	LEATHER,
+}
 public enum ROLE{
 	UNTRAINED,
 	FOODIE, //Farming or Hunting
@@ -743,11 +755,16 @@ public enum SKILL_TYPE {
     FLEE,
     MOVE
 }
+public enum SKILL_CATEGORY {
+	BODY_PART,
+	WEAPON,
+}
+
 public enum ATTACK_TYPE {
     CRUSH,
     PIERCE,
     SLASH,
-    BURN
+    MAGIC
 }
 public enum DEFEND_TYPE {
     DODGE,
@@ -808,6 +825,12 @@ public enum ACTIVATION_WEIGHT_TYPE{
 	CURRENT_HEALTH,
 	MISSING_HEALTH,
 	ALLY_MISSING_HEALTH,
+}
+
+public enum QUALITY{
+	NORMAL,
+	CRUDE,
+	EXCEPTIONAL,
 }
 
 

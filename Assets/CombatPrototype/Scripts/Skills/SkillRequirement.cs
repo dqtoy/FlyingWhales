@@ -9,7 +9,7 @@ namespace ECS {
         //public ITEM_TYPE itemType;
         //public WEAPON_TYPE weaponType;
         //public ARMOR_TYPE armorType;
-        public EQUIPMENT_TYPE equipmentType;
+//        public EQUIPMENT_TYPE equipmentType;
 		public IBodyPart.ATTRIBUTE attributeRequired;
     }
 }

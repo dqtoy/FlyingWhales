@@ -8,7 +8,6 @@ namespace ECS {
 
 		public string characterClassName;
 		public string raceSettingName;
-		public int initialLevel;
 
 		[SerializeField] internal List<ItemAndType> preEquippedItems;
 

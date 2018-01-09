@@ -18,14 +18,14 @@ namespace ECS{
 		//Whatever status effect added to the main body part will be added to secondary body part since they are linked
 		internal void ApplyStatusEffectOnSecondaryBodyParts(STATUS_EFFECT statusEffect){
 			for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
-				this.secondaryBodyParts [i].statusEffects.Add (statusEffect);
+				this.secondaryBodyParts [i].AddStatusEffect(statusEffect);
 			}
 		}
 
 		//This removes status effect to all secondary body part of this main body part
 		internal void RemoveStatusEffectOnSecondaryBodyParts(STATUS_EFFECT statusEffect){
 			for (int i = 0; i < this.secondaryBodyParts.Count; i++) {
-				this.secondaryBodyParts [i].statusEffects.Remove (statusEffect);
+				this.secondaryBodyParts [i].RemoveStatusEffect (statusEffect);
 			}
 		}
         //		internal void SetData(BODY_PART bodyPart, IMPORTANCE importance, List<ATTRIBUTE> attributes, List<SecondaryBodyPart> secondaryBodyParts, STATUS status){
@@ -59,6 +59,15 @@ namespace ECS{
             return newBodyPart;
         }
         #endregion
+
+		internal SecondaryBodyPart GetRandomSecondaryBodyPart(){
+			if(this.secondaryBodyParts.Count > 0){
+				return this.secondaryBodyParts [UnityEngine.Random.Range (0, this.secondaryBodyParts.Count)];
+			}else{
+				Debug.LogError (this.name + " has no secondary parts!");
+				return null;
+			}
+		}
     }
 }
 

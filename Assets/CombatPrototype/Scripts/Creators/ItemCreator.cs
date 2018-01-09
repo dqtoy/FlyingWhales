@@ -49,6 +49,8 @@ namespace ECS {
 
         private void ShowWeaponFields() {
 			itemComponent.weaponType = (WEAPON_TYPE)EditorGUILayout.EnumPopup("Weapon Type: ", itemComponent.weaponType);
+			itemComponent.weaponMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.weaponMaterial);
+			itemComponent.weaponQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.weaponQuality);
 			itemComponent.weaponPower = EditorGUILayout.FloatField("Weapon Power: ", itemComponent.weaponPower);
 			itemComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", itemComponent.durabilityDamage);
 
@@ -59,12 +61,50 @@ namespace ECS {
             SerializedProperty equipRequirements = serializedObject.FindProperty("equipRequirements");
             EditorGUILayout.PropertyField(equipRequirements, true);
             serializedObject.ApplyModifiedProperties();
+
+			SerializedProperty skillProperty = serializedObject.FindProperty("itemComponent");
+			itemComponent.skillsFoldout = EditorGUILayout.Foldout(itemComponent.skillsFoldout, "Skills");
+
+			if (itemComponent.skillsFoldout && itemComponent.skills != null) {
+				EditorGUI.indentLevel++;
+				for (int i = 0; i < itemComponent.skills.Count; i++) {
+					SerializedProperty currSkill = serializedObject.FindProperty("_skills").GetArrayElementAtIndex(i);
+					EditorGUILayout.PropertyField(currSkill, true);
+				}
+				serializedObject.ApplyModifiedProperties();
+				EditorGUI.indentLevel--;
+			}
+
+			//Add Skill Area
+			GUILayout.Space(10);
+			GUILayout.BeginVertical(EditorStyles.helpBox);
+			GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
+			itemComponent.skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", itemComponent.skillTypeToAdd);
+			List<string> choices = GetAllSkillsOfType(itemComponent.skillTypeToAdd);
+			itemComponent.skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", itemComponent.skillToAddIndex, choices.ToArray());
+			GUI.enabled = choices.Count > 0;
+			if (GUILayout.Button("Add Skill")) {
+				AddSkillToList(choices[itemComponent.skillToAddIndex]);
+			}
+			GUI.enabled = true;
+			GUILayout.EndHorizontal();
         }
 
         private void ShowArmorFields() {
 			itemComponent.armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup("Armor Type: ", itemComponent.armorType);
 			itemComponent.armorBodyType = (BODY_PART)EditorGUILayout.EnumPopup("Body Armor Type: ", itemComponent.armorBodyType);
-			itemComponent.hitPoints = EditorGUILayout.IntField("Hitpoints: ", itemComponent.hitPoints);
+			itemComponent.armorMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.armorMaterial);
+			itemComponent.armorQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.armorQuality);
+			itemComponent.baseDamageMitigation = EditorGUILayout.FloatField("Base Damage Mitigation: ", itemComponent.baseDamageMitigation);
+			itemComponent.damageNullificationChance = EditorGUILayout.FloatField("Damage Nullification: ", itemComponent.damageNullificationChance);
+
+			SerializedProperty ineffectiveAttackType = serializedObject.FindProperty("ineffectiveAttackTypes");
+			EditorGUILayout.PropertyField(ineffectiveAttackType, true);
+			serializedObject.ApplyModifiedProperties ();
+
+			SerializedProperty effectiveAttackType = serializedObject.FindProperty("effectiveAttackTypes");
+			EditorGUILayout.PropertyField(effectiveAttackType, true);
+			serializedObject.ApplyModifiedProperties ();
 
 			SerializedProperty armorAttribute = serializedObject.FindProperty("armorAttributes");
 			EditorGUILayout.PropertyField(armorAttribute, true);
@@ -118,10 +158,15 @@ namespace ECS {
 			SetCommonData(weapon);
 
 			weapon.weaponType = itemComponent.weaponType;
+			weapon.material = itemComponent.weaponMaterial;
+			weapon.quality = itemComponent.weaponQuality;
 			weapon.weaponPower = itemComponent.weaponPower;
 			weapon.durabilityDamage = itemComponent.durabilityDamage;
 			weapon.attributes = itemComponent.weaponAttributes;
 			weapon.equipRequirements = itemComponent.equipRequirements;
+			for (int i = 0; i < itemComponent.skills; i++) {
+				weapon.AddSkill (itemComponent.skills [i]);
+			}
 
             SaveJson(weapon, path);
         }
@@ -132,7 +177,12 @@ namespace ECS {
 
 			armor.armorType = itemComponent.armorType;
 			armor.armorBodyType = itemComponent.armorBodyType;
-			armor.hitPoints = itemComponent.hitPoints;
+			armor.material = itemComponent.armorMaterial;
+			armor.quality = itemComponent.armorQuality;
+			armor.baseDamageMitigation = itemComponent.baseDamageMitigation;
+			armor.damageNullificationChance = itemComponent.damageNullificationChance;
+			armor.ineffectiveAttackTypes = itemComponent.ineffectiveAttackTypes;
+			armor.effectiveAttackTypes = itemComponent.effectiveAttackTypes;
 			armor.attributes = itemComponent.armorAttributes;
 
 			SaveJson(armor, path);
@@ -145,6 +195,43 @@ namespace ECS {
             writer.Close();
         }
         #endregion
+
+		#region Skills
+		private List<string> GetAllSkillsOfType(SKILL_TYPE skillType) {
+			List<string> allSkillsOfType = new List<string>();
+			string path = "Assets/CombatPrototype/Data/Skills/" + skillType.ToString() + "/";
+			foreach (string file in Directory.GetFiles(path, "*.json")) {
+				allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
+			}
+			return allSkillsOfType;
+		}
+		private void AddSkillToList(string skillName) {
+			string path = "Assets/CombatPrototype/Data/Skills/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
+			string dataAsJson = File.ReadAllText(path);
+			switch (itemComponent.skillTypeToAdd) {
+			case SKILL_TYPE.ATTACK:
+				AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
+				itemComponent.AddSkill(attackSkill);
+				break;
+			case SKILL_TYPE.HEAL:
+				HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
+				itemComponent.AddSkill(healSkill);
+				break;
+			case SKILL_TYPE.OBTAIN_ITEM:
+				ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
+				itemComponent.AddSkill(obtainSkill);
+				break;
+			case SKILL_TYPE.FLEE:
+				FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
+				itemComponent.AddSkill(fleeSkill);
+				break;
+			case SKILL_TYPE.MOVE:
+				MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+				itemComponent.AddSkill(moveSkill);
+				break;
+			}
+		}
+		#endregion
 
         #region Loading
 //        private void LoadItem() {

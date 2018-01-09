@@ -33,17 +33,12 @@ namespace ECS {
 						}
 					}
 				}
-
-				if(characterComponent.initialLevel == 0){
-					characterComponent.initialLevel = 1;
-				}
 			}
             GUILayout.Label("Character Setup Creator ", EditorStyles.boldLabel);
 			characterComponent.fileName = EditorGUILayout.TextField("File Name: ", characterComponent.fileName);
             
 			characterComponent.currRaceSelectedIndex = EditorGUILayout.Popup("Race Setup: ", characterComponent.currRaceSelectedIndex, characterComponent.raceChoices.ToArray());
 			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
-			characterComponent.initialLevel = EditorGUILayout.IntField("Level: ", characterComponent.initialLevel);
 
 //			SerializedProperty serializedProperty = serializedObject.FindProperty("preEquippedItems");
 //			EditorGUILayout.PropertyField(serializedProperty, true);
@@ -130,7 +125,6 @@ namespace ECS {
 			newCharacter.raceSettingName = characterComponent.raceSettingName;
 			newCharacter.characterClassName = characterComponent.characterClassName;
 			newCharacter.preEquippedItems = characterComponent.preEquippedItems;
-			newCharacter.initialLevel = characterComponent.initialLevel;
 
             return newCharacter;
         }

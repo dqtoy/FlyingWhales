@@ -20,16 +20,46 @@ namespace ECS{
 
 		//Weapon Fields
 		public WEAPON_TYPE weaponType;
+		public MATERIAL weaponMaterial;
+		public QUALITY weaponQuality;
 		public float weaponPower;
 		public int durabilityDamage;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements = new List<IBodyPart.ATTRIBUTE>();
 		public List<IBodyPart.ATTRIBUTE> weaponAttributes = new List<IBodyPart.ATTRIBUTE>();
+		public List<Skill> _skills = new List<Skill> ();
+
+		internal bool skillsFoldout;
+		internal SKILL_TYPE skillTypeToAdd;
+		internal int skillToAddIndex;
+
+		#region getters/setters
+		public List<Skill> skills {
+			get { return _skills; }
+		}
+		#endregion
+
+		public void AddSkill(Skill skillToAdd) {
+//			switch (skillType) {
+//			case SKILL_TYPE.ATTACK:
+//				attackSkills.Add (skillToAdd.skillName);
+//				break;
+//			}
+//			if(this._skills == null){
+//				this._skills = new List<Skill> ();
+//			}
+			this._skills.Add (skillToAdd);
+		}
 
 
 		//Armor Fields
 		public ARMOR_TYPE armorType;
 		public BODY_PART armorBodyType;
-		public int hitPoints;
+		public MATERIAL armorMaterial;
+		public QUALITY armorQuality;
+		public float baseDamageMitigation;
+		public float damageNullificationChance;
+		public List<ATTACK_TYPE> ineffectiveAttackTypes;
+		public List<ATTACK_TYPE> effectiveAttackTypes;
 		public List<IBodyPart.ATTRIBUTE> armorAttributes = new List<IBodyPart.ATTRIBUTE>();
 	}
 

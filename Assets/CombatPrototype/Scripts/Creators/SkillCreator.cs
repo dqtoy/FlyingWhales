@@ -20,11 +20,6 @@ namespace ECS {
 			skillComponent.activationWeight = EditorGUILayout.IntField("Activation Weight: ", skillComponent.activationWeight);
 			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
 			skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
-			skillComponent.attributeModifier = (CHARACTER_ATTRIBUTES)EditorGUILayout.EnumPopup("Attribute Modifier: ", skillComponent.attributeModifier);
-            skillComponent.strengthPower = EditorGUILayout.FloatField("Strength Power: ", skillComponent.strengthPower);
-            skillComponent.intellectPower = EditorGUILayout.FloatField("Intellect Power: ", skillComponent.intellectPower);
-            skillComponent.agilityPower = EditorGUILayout.FloatField("Agility Power: ", skillComponent.agilityPower);
-			skillComponent.levelRequirement = EditorGUILayout.IntField("Level Requirement: ", skillComponent.levelRequirement);
 
             switch (skillComponent.skillType) {
                 case SKILL_TYPE.ATTACK:
@@ -44,9 +39,9 @@ namespace ECS {
                     break;
             }
 
-            SerializedProperty serializedProperty = serializedObject.FindProperty("skillRequirements");
-            EditorGUILayout.PropertyField(serializedProperty, true);
-            serializedObject.ApplyModifiedProperties();
+			SerializedProperty skillRequirement = serializedObject.FindProperty("skillRequirements");
+			EditorGUILayout.PropertyField(skillRequirement, true);
+			serializedObject.ApplyModifiedProperties();
 
             if (GUILayout.Button("Save Skill")) {
 				SaveSkill(skillComponent.skillName);
@@ -55,6 +50,7 @@ namespace ECS {
 
         private void ShowAttackSkillFields() {
 			skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
+			skillComponent.skillCategory = (SKILL_CATEGORY)EditorGUILayout.EnumPopup("Skill Category: ", skillComponent.skillCategory);
             skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
             skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
 
@@ -117,11 +113,6 @@ namespace ECS {
 			newSkill.accuracy = skillComponent.accuracy;
 			newSkill.range = skillComponent.range;
 			newSkill.skillRequirements = skillComponent.skillRequirements;
-			newSkill.attributeModifier = skillComponent.attributeModifier;
-            newSkill.strengthPower = skillComponent.strengthPower;
-            newSkill.intellectPower = skillComponent.intellectPower;
-            newSkill.agilityPower = skillComponent.agilityPower;
-			newSkill.levelRequirement = skillComponent.levelRequirement;
         }
         private void SaveAttackSkill(string path) {
             AttackSkill newSkill = new AttackSkill();

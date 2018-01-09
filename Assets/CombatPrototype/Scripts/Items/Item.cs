@@ -26,6 +26,9 @@ namespace ECS{
 		public bool isEquipped{
 			get { return _isEquipped; }
 		}
+		public Character owner{
+			get { return _owner; }
+		}
 
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;

@@ -29,9 +29,15 @@ namespace ECS{
 			NO_WEAPON,
 			CAN_PUNCH_NO_WEAPON,
 			CAN_KICK_NO_WEAPON,
+			CAN_BITE_NO_WEAPON,
+			CAN_WHIP_NO_WEAPON,
+			CLAWED_NO_WEAPON,
+			CAN_GRIP_NO_WEAPON,
+			CAN_FLAME_BREATH_NO_WEAPON,
             NONE
         }
 
+		[SerializeField] internal string name;
 		[SerializeField] internal BODY_PART bodyPart;
 		[SerializeField] internal IMPORTANCE importance;
 		[SerializeField] internal List<BodyAttribute> attributes;
@@ -136,6 +142,16 @@ namespace ECS{
 			}
 			return false;
 		}
+
+		internal Armor GetArmor(){
+			for (int i = 0; i < itemsAttached.Count; i++) {
+				Item currItem = itemsAttached[i];
+				if(currItem.itemType == ITEM_TYPE.ARMOR) {
+					return (Armor)currItem;
+				}
+			}
+			return null;
+		}
         #endregion
 
         #region Attributes
@@ -150,6 +166,26 @@ namespace ECS{
         }
         #endregion
 
+		internal void AddStatusEffect(STATUS_EFFECT statusEffect){
+			this.statusEffects.Add (statusEffect);
+//			if(statusEffect == STATUS_EFFECT.DECAPITATED){
+//				DropWeapons ();	
+//			}
+		}
+
+		internal void RemoveStatusEffect(STATUS_EFFECT statusEffect){
+			this.statusEffects.Remove (statusEffect);
+		}
+
+		internal void DropWeapons(){
+			for (int i = 0; i < this.itemsAttached.Count; i++) {
+				Item item = this.itemsAttached [i];
+				if(item is Weapon){
+					item.owner.UnequipItem (item);
+					i--;
+				}
+			}
+		}
     }
 }
 

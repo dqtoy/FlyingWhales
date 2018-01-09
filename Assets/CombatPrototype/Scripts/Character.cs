@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace ECS{
 	[System.Serializable]
@@ -14,12 +15,14 @@ namespace ECS{
 		[SerializeField] private int _currentHP;
 		[SerializeField] private int _maxHP;
 		[SerializeField] private int _exp;
-        [SerializeField] private int _level;
         [SerializeField] private int _strength;
         [SerializeField] private int _intelligence;
         [SerializeField] private int _agility;
 		[SerializeField] private int _currentRow;
-		private int _actRate;
+		private int _baseMaxHP;
+		private int _baseStrength;
+		private int _baseIntelligence;
+		private int _baseAgility;
 
 		//Skills
 		private List<Skill> _skills;
@@ -41,19 +44,15 @@ namespace ECS{
 		internal string name{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
 		}
-        internal int actRate {
-			get { return _actRate + _equippedItems.Sum(x => x.bonusActRate); }
-            set { _actRate = value; }
-        }
-		internal int level{
-			get { return this._level; }
-		}
 		internal int currentHP{
 			get { return this._currentHP; }
 		}
         internal int maxHP {
             get { return this._maxHP; }
         }
+		internal int baseMaxHP {
+			get { return _baseMaxHP; }
+		}
         internal CharacterClass characterClass{
 			get { return this._characterClass; }
 		}
@@ -66,7 +65,7 @@ namespace ECS{
 		internal List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
 		}
-		internal List<Item> items{
+		internal List<Item> equippedItems{
 			get { return this._equippedItems; }
 		}
 		internal List<Item> inventory{
@@ -87,26 +86,23 @@ namespace ECS{
         internal int strength {
 			get { return _strength + _equippedItems.Sum(x => x.bonusStrength); }
         }
+		internal int baseStrength {
+			get { return _baseStrength; }
+		}
         internal int intelligence {
 			get { return _intelligence + _equippedItems.Sum(x => x.bonusIntelligence); }
         }
+		internal int baseIntelligence {
+			get { return _baseIntelligence; }
+		}
         internal int agility {
 			get { return _agility + _equippedItems.Sum(x => x.bonusAgility); }
         }
+		internal int baseAgility {
+			get { return _baseAgility; }
+		}
         internal int exp {
             get { return _exp; }
-        }
-        internal int strGain {
-            get { return _characterClass.strGain + _raceSetting.strGain; }
-        }
-        internal int intGain {
-            get { return _characterClass.intGain + _raceSetting.intGain; }
-        }
-        internal int agiGain {
-            get { return _characterClass.agiGain + _raceSetting.agiGain; }
-        }
-        internal int hpGain {
-            get { return _characterClass.hpGain + _raceSetting.hpGain; }
         }
         internal int dodgeRate {
 			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
@@ -137,26 +133,25 @@ namespace ECS{
             }
             _characterClass = baseSetup.characterClass.CreateNewCopy();
             _raceSetting = baseSetup.raceSetting.CreateNewCopy();
-			_level = level;
-            _maxHP = _raceSetting.baseHP;
+			_baseMaxHP = _raceSetting.baseHP + (_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
+			_baseStrength = _raceSetting.baseStr + (_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
+			_baseAgility = _raceSetting.baseAgi + (_raceSetting.baseAgi * (_characterClass.agiPercentage / 100f));
+			_baseIntelligence = _raceSetting.baseInt + (_raceSetting.baseInt * (_characterClass.intPercentage / 100f));
+
+			_maxHP = _baseMaxHP;
             _currentHP = _maxHP;
-            _strength = _raceSetting.baseStr;
-            _intelligence = _raceSetting.baseInt;
-            _agility = _raceSetting.baseAgi;
+			_strength = _baseStrength;
+			_agility = _baseAgility;
+			_intelligence = _baseIntelligence;
             _exp = 0;
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-            _actRate = _characterClass.actRate;
 
 			_equippedItems = new List<Item> ();
 			_inventory = new List<Item> ();
-			_skills = new List<Skill> (_characterClass.skills);
+			_skills = GetBodyPartAttackSkills();
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
-
-            if (baseSetup.initialLevel > 1) {
-				LevelUp(baseSetup.initialLevel - 1);
-            }
             //TODO: Generate Traits
         }
 
@@ -196,24 +191,22 @@ namespace ECS{
 			for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
-				if(this._level < skill.levelRequirement){
-					skill.isEnabled = false;
-					continue;
-				}
+
 				for (int j = 0; j < skill.skillRequirements.Length; j++) {
 					SkillRequirement skillRequirement = skill.skillRequirements [j];
-                    if(skillRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
-                        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                            skill.isEnabled = false;
-                            break;
-                        }
-                    } else {
-                        //check if the character has the equipment needed to perform the skill
-                        if(!HasEquipmentOfType(skillRequirement.equipmentType, skillRequirement.attributeRequired)) {
-                            skill.isEnabled = false;
-                            break;
-                        }
-                    }
+					if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+						skill.isEnabled = false;
+						break;
+					}
+//                    if(skillRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
+//                        
+//                    } else {
+//                        //check if the character has the equipment needed to perform the skill
+//                        if(!HasEquipmentOfType(skillRequirement.equipmentType, skillRequirement.attributeRequired)) {
+//                            skill.isEnabled = false;
+//                            break;
+//                        }
+//                    }
 				}
 				if(!skill.isEnabled){
 					continue;
@@ -405,6 +398,7 @@ namespace ECS{
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (strItemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
+				weapon.ConstructAllSkillsList ();
 				TryEquipWeapon(weapon);
 			} else if (strItemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
@@ -416,6 +410,7 @@ namespace ECS{
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (itemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
+				weapon.ConstructAllSkillsList ();
 				TryEquipWeapon(weapon);
 			} else if (itemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
@@ -456,6 +451,9 @@ namespace ECS{
 			AddEquippedItem(weapon);
             weapon.ResetDurability();
             weapon.SetOwner(this);
+			for (int i = 0; i < weapon.skills.Count; i++) {
+				this._skills.Add (weapon.skills [i]);
+			}
 //          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
 			return true;
@@ -487,6 +485,9 @@ namespace ECS{
 		//Unequips weapon of a character
 		private void UnequipWeapon(Weapon weapon) {
 			DetachWeaponFromBodyParts (weapon);
+			for (int i = 0; i < weapon.skills.Count; i++) {
+				this._skills.Remove (weapon.skills [i]);
+			}
         }
 
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
@@ -499,7 +500,6 @@ namespace ECS{
 //			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(armor);
             armor.ResetDurability();
-            armor.ResetHitPoints();
             armor.SetOwner(this);
 			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.bodyPart.ToString());
             CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
@@ -523,8 +523,8 @@ namespace ECS{
 		}
         internal List<Weapon> GetAllAttachedWeapons() {
             List<Weapon> weapons = new List<Weapon>();
-            for (int i = 0; i < items.Count; i++) {
-                Item currItem = items[i];
+            for (int i = 0; i < equippedItems.Count; i++) {
+				Item currItem = equippedItems[i];
                 if(currItem.itemType == ITEM_TYPE.WEAPON) {
                     weapons.Add((Weapon)currItem);
                 }
@@ -533,8 +533,8 @@ namespace ECS{
         }
         internal List<Armor> GetAllAttachedArmor() {
             List<Armor> weapons = new List<Armor>();
-            for (int i = 0; i < items.Count; i++) {
-                Item currItem = items[i];
+			for (int i = 0; i < equippedItems.Count; i++) {
+				Item currItem = equippedItems[i];
                 if (currItem.itemType == ITEM_TYPE.ARMOR) {
                     weapons.Add((Armor)currItem);
                 }
@@ -542,8 +542,8 @@ namespace ECS{
             return weapons;
         }
         internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
-            for (int i = 0; i < items.Count; i++) {
-                Item currItem = items[i];
+			for (int i = 0; i < equippedItems.Count; i++) {
+				Item currItem = equippedItems[i];
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
                     if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
@@ -580,31 +580,71 @@ namespace ECS{
 			}
 		}
 
-        #region Levels
-        public void LevelUp(int levels) {
-            for (int i = 0; i < levels; i++) {
-                IncreaseLevel();
-            }
-        }
-        internal void IncreaseLevel() {
-            _level += 1;
-            _strength += strGain;
-            _intelligence += intGain;
-            _agility += agiGain;
-			AdjustMaxHP (hpGain);
-            _exp = 0;
-        }
-		internal void DecreaseLevel() {
-			if(this._level > 1){
-				_level -= 1;
-				_strength -= strGain;
-				_intelligence -= intGain;
-				_agility -= agiGain;
-				AdjustMaxHP (-hpGain);
-				_exp = 0;
+		#region Skills
+		private List<AttackSkill> GetBodyPartAttackSkills(){
+			List<AttackSkill> allBodyPartSkills = new List<AttackSkill>();
+			string path = "Assets/CombatPrototype/Data/Skills/ATTACK/";
+			foreach (string file in Directory.GetFiles(path, "*.json")) {
+				AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
+				if(attackSkill.skillCategory == SKILL_CATEGORY.BODY_PART){
+					string fileName = Path.GetFileNameWithoutExtension (file);
+					if(fileName == "Punch" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON, 1)){
+						allBodyPartSkills.Add (attackSkill);
+					}else if(fileName == "Kick" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_KICK_NO_WEAPON, 1)){
+						allBodyPartSkills.Add (attackSkill);
+					}else if(fileName == "Bite" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_BITE_NO_WEAPON, 1)){
+						allBodyPartSkills.Add (attackSkill);
+					}else if(fileName == "Tail Whip" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_WHIP_NO_WEAPON, 1)){
+						allBodyPartSkills.Add (attackSkill);
+					}else if(fileName == "Scratch" && HasAttribute(IBodyPart.ATTRIBUTE.CLAWED_NO_WEAPON, 1)){
+						allBodyPartSkills.Add (attackSkill);
+					}else if(fileName == "Squeeze" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_GRIP_NO_WEAPON, 2)){
+						allBodyPartSkills.Add (attackSkill);
+					}else if(fileName == "Flame Breath" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_FLAME_BREATH_NO_WEAPON, 1)){
+						allBodyPartSkills.Add (attackSkill);
+					}
+				}
+
 			}
+			return allBodyPartSkills;
 		}
+		#endregion
+
+        #region Levels
+//        public void LevelUp(int levels) {
+//            for (int i = 0; i < levels; i++) {
+//                IncreaseLevel();
+//            }
+//        }
+//        internal void IncreaseLevel() {
+//            _level += 1;
+//            _strength += strGain;
+//            _intelligence += intGain;
+//            _agility += agiGain;
+//			AdjustMaxHP (hpGain);
+//            _exp = 0;
+//        }
+//		internal void DecreaseLevel() {
+//			if(this._level > 1){
+//				_level -= 1;
+//				_strength -= strGain;
+//				_intelligence -= intGain;
+//				_agility -= agiGain;
+//				AdjustMaxHP (-hpGain);
+//				_exp = 0;
+//			}
+//		}
         #endregion
+
+		#region Stats
+		internal void SetAgility (int amount){
+			this._agility = amount;
+		}
+		internal void AdjustAgility (int amount){
+			this._agility += amount;
+		}
+		#endregion
+
 		private void AddItemBonuses(Item item){
 			AdjustMaxHP (item.bonusMaxHP);
 		}

@@ -10,10 +10,6 @@ namespace ECS{
 		public int baseInt;
 		public int baseAgi;
 		public int baseHP;
-		public int strGain;
-		public int intGain;
-		public int agiGain;
-		public int hpGain;
 	}
 }
 
