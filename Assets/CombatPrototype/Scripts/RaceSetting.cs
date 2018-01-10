@@ -8,6 +8,7 @@ namespace ECS {
     public class RaceSetting {
         public RACE race;
         public List<BodyPart> bodyParts;
+
         public int baseStr;
         public int baseInt;
         public int baseAgi;

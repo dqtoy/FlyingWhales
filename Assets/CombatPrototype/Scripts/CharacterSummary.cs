@@ -129,7 +129,6 @@ namespace ECS{
 						itemsInfoLbl.text += " " + weapon.bodyPartsAttached[j].bodyPart.ToString();
 					}
                     itemsInfoLbl.text += ", Weapon Power: " + weapon.weaponPower.ToString();
-                    itemsInfoLbl.text += ", Durability Damage: " + weapon.durabilityDamage.ToString();
                     for (int j = 0; j < weapon.attributes.Count; j++) {
                         itemsInfoLbl.text += weapon.attributes[j].ToString();
                         if (j + 1 < weapon.attributes.Count) {

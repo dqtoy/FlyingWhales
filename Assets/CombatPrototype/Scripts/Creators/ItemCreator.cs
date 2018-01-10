@@ -37,7 +37,6 @@ namespace ECS {
 			itemComponent.bonusBlockRate = EditorGUILayout.IntField("Bonus Block Rate: ", itemComponent.bonusBlockRate);
 			itemComponent.durability = EditorGUILayout.IntField("Durability :", itemComponent.durability);
 
-
 			SerializedProperty statusEffectResistance = serializedObject.FindProperty("statusEffectResistances");
 			EditorGUILayout.PropertyField(statusEffectResistance, true);
 			serializedObject.ApplyModifiedProperties ();
@@ -52,7 +51,6 @@ namespace ECS {
 			itemComponent.weaponMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.weaponMaterial);
 			itemComponent.weaponQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.weaponQuality);
 			itemComponent.weaponPower = EditorGUILayout.FloatField("Weapon Power: ", itemComponent.weaponPower);
-			itemComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", itemComponent.durabilityDamage);
 
 			SerializedProperty weaponAttribute = serializedObject.FindProperty("weaponAttributes");
 			EditorGUILayout.PropertyField(weaponAttribute, true);
@@ -161,7 +159,6 @@ namespace ECS {
 			weapon.material = itemComponent.weaponMaterial;
 			weapon.quality = itemComponent.weaponQuality;
 			weapon.weaponPower = itemComponent.weaponPower;
-			weapon.durabilityDamage = itemComponent.durabilityDamage;
 			weapon.attributes = itemComponent.weaponAttributes;
 			weapon.equipRequirements = itemComponent.equipRequirements;
 			for (int i = 0; i < itemComponent.skills.Count; i++) {

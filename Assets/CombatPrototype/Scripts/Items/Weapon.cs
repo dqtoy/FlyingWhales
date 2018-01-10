@@ -8,7 +8,6 @@ namespace ECS{
 		public MATERIAL material;
 		public QUALITY quality;
 		public float weaponPower;
-        public int durabilityDamage;
 		public List<IBodyPart.ATTRIBUTE> attributes;
         public List<IBodyPart.ATTRIBUTE> equipRequirements;
 		internal List<IBodyPart> bodyPartsAttached = new List<IBodyPart>();
@@ -43,6 +42,13 @@ namespace ECS{
 
 		public void ConstructAllSkillsList() {
 			_skills = new List<Skill>();
+			if(CombatPrototypeManager.Instance.weaponTypeSkills.ContainsKey(this.weaponType)){
+				List<Skill> weaponTypeSkills = CombatPrototypeManager.Instance.weaponTypeSkills [weaponType];
+				for (int i = 0; i < weaponTypeSkills.Count; i++) {
+					_skills.Add (weaponTypeSkills [i].CreateNewCopy ());
+				}
+			}
+
 			for (int i = 0; i < attackSkills.Count; i++) {
 				string skillName = attackSkills[i];
 				string path = "Assets/CombatPrototype/Data/Skills/WEAPON/ATTACK/" + skillName + ".json";
@@ -57,6 +63,8 @@ namespace ECS{
 				currSkill.weapon = this;
 				_skills.Add(currSkill);
 			}
+
+
 		}
 	}
 }

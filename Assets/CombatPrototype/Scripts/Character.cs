@@ -642,35 +642,53 @@ namespace ECS{
 		}
 		private List<Skill> GetBodyPartSkills(){
 			List<Skill> allBodyPartSkills = new List<Skill>();
-			string mainPath = "Assets/CombatPrototype/Data/Skills/BODY_PART/";
-			string[] folders = System.IO.Directory.GetDirectories (mainPath);
-			for (int i = 0; i < folders.Length; i++) {
-				string path = folders[i] + "/";
-				DirectoryInfo di = new DirectoryInfo (path);
-				if (di.Name == "ATTACK") {
-					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-						AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
-						string fileName = Path.GetFileNameWithoutExtension (file);
-						if(fileName == "Punch" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON, 1)){
-							allBodyPartSkills.Add (attackSkill);
-						}else if(fileName == "Kick" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_KICK_NO_WEAPON, 1)){
-							allBodyPartSkills.Add (attackSkill);
-						}else if(fileName == "Bite" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_BITE_NO_WEAPON, 1)){
-							allBodyPartSkills.Add (attackSkill);
-						}else if(fileName == "Tail Whip" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_WHIP_NO_WEAPON, 1)){
-							allBodyPartSkills.Add (attackSkill);
-						}else if(fileName == "Scratch" && HasAttribute(IBodyPart.ATTRIBUTE.CLAWED_NO_WEAPON, 1)){
-							allBodyPartSkills.Add (attackSkill);
-						}else if(fileName == "Squeeze" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_GRIP_NO_WEAPON, 2)){
-							allBodyPartSkills.Add (attackSkill);
-						}else if(fileName == "Flame Breath" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_FLAME_BREATH_NO_WEAPON, 1)){
-							allBodyPartSkills.Add (attackSkill);
-						}
+			for (int i = 0; i < CombatPrototypeManager.Instance.attributeSkills.Length; i++) {
+				bool requirementsPassed = true;
+				for (int j = 0; j < CombatPrototypeManager.Instance.attributeSkills[i].requirements.Length; j++) {
+					if(!HasAttribute(CombatPrototypeManager.Instance.attributeSkills[i].requirements[j].attributeRequired, CombatPrototypeManager.Instance.attributeSkills[i].requirements[j].itemQuantity)){
+						requirementsPassed = false;
+						break;
+					}
+				}
+				if(requirementsPassed){
+					for (int j = 0; j < CombatPrototypeManager.Instance.attributeSkills[i].skills.Count; j++) {
+						allBodyPartSkills.Add (CombatPrototypeManager.Instance.attributeSkills [i].skills [j].CreateNewCopy());
 					}
 				}
 			}
 			return allBodyPartSkills;
 		}
+//		private List<Skill> GetBodyPartSkills(){
+//			List<Skill> allBodyPartSkills = new List<Skill>();
+//			string mainPath = "Assets/CombatPrototype/Data/Skills/BODY_PART/";
+//			string[] folders = System.IO.Directory.GetDirectories (mainPath);
+//			for (int i = 0; i < folders.Length; i++) {
+//				string path = folders[i] + "/";
+//				DirectoryInfo di = new DirectoryInfo (path);
+//				if (di.Name == "ATTACK") {
+//					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
+//						AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
+//						string fileName = Path.GetFileNameWithoutExtension (file);
+//						if(fileName == "Punch" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON, 1)){
+//							allBodyPartSkills.Add (attackSkill);
+//						}else if(fileName == "Kick" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_KICK_NO_WEAPON, 1)){
+//							allBodyPartSkills.Add (attackSkill);
+//						}else if(fileName == "Bite" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_BITE_NO_WEAPON, 1)){
+//							allBodyPartSkills.Add (attackSkill);
+//						}else if(fileName == "Tail Whip" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_WHIP_NO_WEAPON, 1)){
+//							allBodyPartSkills.Add (attackSkill);
+//						}else if(fileName == "Scratch" && HasAttribute(IBodyPart.ATTRIBUTE.CLAWED_NO_WEAPON, 1)){
+//							allBodyPartSkills.Add (attackSkill);
+//						}else if(fileName == "Squeeze" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_GRIP_NO_WEAPON, 2)){
+//							allBodyPartSkills.Add (attackSkill);
+//						}else if(fileName == "Flame Breath" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_FLAME_BREATH_NO_WEAPON, 1)){
+//							allBodyPartSkills.Add (attackSkill);
+//						}
+//					}
+//				}
+//			}
+//			return allBodyPartSkills;
+//		}
 		#endregion
 
         #region Levels

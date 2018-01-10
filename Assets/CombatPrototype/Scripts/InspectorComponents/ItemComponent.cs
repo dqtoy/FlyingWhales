@@ -23,7 +23,6 @@ namespace ECS{
 		public MATERIAL weaponMaterial;
 		public QUALITY weaponQuality;
 		public float weaponPower;
-		public int durabilityDamage;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements = new List<IBodyPart.ATTRIBUTE>();
 		public List<IBodyPart.ATTRIBUTE> weaponAttributes = new List<IBodyPart.ATTRIBUTE>();
 		public List<Skill> _skills = new List<Skill> ();
@@ -47,6 +46,9 @@ namespace ECS{
 //			if(this._skills == null){
 //				this._skills = new List<Skill> ();
 //			}
+			if(this._skills == null){
+				this._skills = new List<Skill> ();	
+			}
 			this._skills.Add (skillToAdd);
 		}
 

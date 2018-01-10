@@ -10,6 +10,8 @@ namespace ECS {
 
         public CharacterSetup[] baseCharacters;
 		public Color[] characterColors;
+		public AttributeSkill[] attributeSkills;
+		public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>> ();
 
 		private List<Color> unusedColors = new List<Color>();
 		private List<Color> usedColors = new List<Color>();
@@ -18,6 +20,8 @@ namespace ECS {
             Instance = this;
             ConstructBaseCharacters();
 			ConstructCharacterColors ();
+			ConstructAttributeSkills ();
+			ConstructWeaponTypeSkills ();
         }
 
         private void ConstructBaseCharacters() {
@@ -58,6 +62,31 @@ namespace ECS {
 		internal void ReturnCharacterColorToPool(Color color){
 			if(usedColors.Remove(color)){
 				unusedColors.Add (color);
+			}
+		}
+
+		private void ConstructAttributeSkills(){
+			string path = "Assets/CombatPrototype/Data/AttributeSkills/";
+			string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
+			attributeSkills = new AttributeSkill[attributeSkillsJson.Length];
+			for (int i = 0; i < attributeSkillsJson.Length; i++) {
+				string file = attributeSkillsJson[i];
+				string dataAsJson = System.IO.File.ReadAllText(file);
+				AttributeSkill attSkill = JsonUtility.FromJson<AttributeSkill>(dataAsJson);
+				attSkill.ConstructAttributeSkillsList ();
+				attributeSkills[i] = attSkill;
+			}
+		}
+
+		private void ConstructWeaponTypeSkills(){
+			string path = "Assets/CombatPrototype/Data/WeaponTypeSkills/";
+			string[] weaponSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
+			for (int i = 0; i < weaponSkillsJson.Length; i++) {
+				string file = weaponSkillsJson[i];
+				string dataAsJson = System.IO.File.ReadAllText(file);
+				WeaponSkill weapSkill = JsonUtility.FromJson<WeaponSkill>(dataAsJson);
+				weapSkill.ConstructWeaponSkillsList ();
+				weaponTypeSkills.Add (weapSkill.weaponType, new List<Skill> (weapSkill.skills));
 			}
 		}
     }
