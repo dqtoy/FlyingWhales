@@ -846,6 +846,13 @@ public enum QUEST_RESULT {
     FAIL,
     CANCEL
 }
+public enum QUEST_TYPE {
+    EXPLORE_REGION,
+    OCCUPY_LANDMARK,
+    INVESTIGATE_LANDMARK,
+    OBTAIN_RESOURCE,
+    EXPAND
+}
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
 	HEAD,

@@ -18,6 +18,7 @@ public class Faction : QuestCreator {
     protected List<TECHNOLOGY> _inititalTechnologies;
     internal Color factionColor;
     protected List<Character> _characters;
+    protected InternalQuestManager _internalQuestManager;
     //TODO: Add list for characters that are part of the faction
 
     #region getters/setters
@@ -45,6 +46,9 @@ public class Faction : QuestCreator {
     public List<Character> characters {
         get { return _characters; }
     }
+    public InternalQuestManager internalQuestManager {
+        get { return _internalQuestManager; }
+    }
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -58,6 +62,7 @@ public class Faction : QuestCreator {
         factionColor = Utilities.GetColorForFaction();
         _characters = new List<Character>();
         ConstructInititalTechnologies();
+        _internalQuestManager = new InternalQuestManager(this);
     }
 
     public void SetRace(RACE race) {

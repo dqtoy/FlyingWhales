@@ -1645,6 +1645,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 }
                 text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
             }
+
+            text += "\n[b]Active Quests: [/b] ";
+            if (landmarkOnTile.owner.internalQuestManager.activeQuests.Count > 0) {
+                for (int i = 0; i < landmarkOnTile.owner.internalQuestManager.activeQuests.Count; i++) {
+                    Quest currQuest = landmarkOnTile.owner.internalQuestManager.activeQuests[i];
+                    text += "\n" + currQuest.GetType().ToString();
+                }
+            } else {
+                text += "NONE";
+            }
         }
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();

@@ -14,6 +14,7 @@ public class BaseLandmark {
     protected bool _isOccupied;
     protected bool _isHidden; //is landmark hidden or not?
     protected bool _isExplored; //has landmark been explored?
+    protected bool _isDiscovered; //has landmark been discovered?
     protected string _landmarkName;
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
@@ -46,6 +47,9 @@ public class BaseLandmark {
     }
     public bool isExplored {
         get { return _isExplored; }
+    }
+    public bool isDiscovered {
+        get { return _isDiscovered; }
     }
     public string landmarkName {
         get { return _landmarkName; }
