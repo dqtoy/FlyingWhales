@@ -6,8 +6,8 @@ namespace ECS {
     [System.Serializable]
     public class AttackSkill : Skill {
         public ATTACK_TYPE attackType;
-        public int durabilityDamage = 1;
-        public int durabilityCost = 1;
+        public int durabilityDamage;
+        public int durabilityCost;
 		public List<StatusEffectRate> statusEffectRates;
     }
 }

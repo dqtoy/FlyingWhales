@@ -504,7 +504,9 @@ namespace ECS{
 				if(armor.effectiveAttackTypes.Contains(attackSkill.attackType)){
 					damage += (int)((float)damage * 0.2f);
 				}
+				armor.AdjustDurability (-attackSkill.durabilityDamage);
 			}
+			log += "(" + damage.ToString () + ")";
 
 			DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
 
