@@ -83,3 +83,47 @@ public class MustBeClass : QuestFilter {
     }
     #endregion
 }
+
+public class MustHaveSkills : QuestFilter {
+    //TODO: Create MustHaveSkill Quest Filter on Merge of Combat Prototype 
+}
+
+public class MustBeFaction : QuestFilter {
+
+    private List<Faction> _allowedFactions;
+
+    public MustBeFaction(List<Faction> allowedFactions) {
+        _allowedFactions = allowedFactions;
+    }
+
+    #region overrides
+    public override bool MeetsRequirements(Character character) {
+        if(character._faction != null) {
+            if (_allowedFactions.Contains(character._faction)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
+}
+
+public class MustNotBeFaction : QuestFilter {
+
+    private List<Faction> _bannedFactions;
+
+    public MustNotBeFaction(List<Faction> bannedFactions) {
+        _bannedFactions = bannedFactions;
+    }
+
+    #region overrides
+    public override bool MeetsRequirements(Character character) {
+        if (character._faction != null) {
+            if (_bannedFactions.Contains(character._faction)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    #endregion
+}

@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Character {
+public class Character : QuestCreator {
     public string _name;
     public GENDER _gender;
     public List<Trait> _traits;
     public RACE _race;
     public CharacterRole _role;
     public CHARACTER_CLASS _characterClass;
+    public Faction _faction;
 
     public Character(RACE race) {
         _gender = Utilities.GetRandomGender();
@@ -72,6 +73,12 @@ public class Character {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Faction
+    public void SetFaction(Faction faction) {
+        _faction = faction;
     }
     #endregion
 }

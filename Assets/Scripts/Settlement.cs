@@ -4,7 +4,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Settlement : BaseLandmark {
+public class Settlement : BaseLandmark, QuestCreator {
 
     private CHARACTER_CLASS classToCreate;
     private CHARACTER_ROLE roleToCreate;
@@ -78,6 +78,7 @@ public class Settlement : BaseLandmark {
         Character newCharacter = new Character(this._owner.race);
         newCharacter.AssignClass(charClass);
         newCharacter.AssignRole(charRole);
+        newCharacter.SetFaction(this._owner);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterOnLandmark(newCharacter);

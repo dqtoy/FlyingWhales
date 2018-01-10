@@ -841,6 +841,11 @@ public enum FACTION_SIZE {
     MEDIUM,
     LARGE,
 }
+public enum QUEST_RESULT {
+    SUCCESS,
+    FAIL,
+    CANCEL
+}
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
 	HEAD,

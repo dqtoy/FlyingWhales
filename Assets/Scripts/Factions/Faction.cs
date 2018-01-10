@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Faction {
+public class Faction : QuestCreator {
     protected string _name;
     protected RACE _race;
     protected FACTION_TYPE _factionType;
