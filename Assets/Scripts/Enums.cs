@@ -851,7 +851,10 @@ public enum QUEST_TYPE {
     OCCUPY_LANDMARK,
     INVESTIGATE_LANDMARK,
     OBTAIN_RESOURCE,
-    EXPAND
+    EXPAND,
+    REST,
+    GO_HOME,
+    DO_NOTHING
 }
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{

@@ -109,7 +109,8 @@ public class BaseLandmark {
     public virtual void OccupyLandmark(Faction faction) {
         _owner = faction;
         _isOccupied = true;
-        _isHidden = false;
+        SetHiddenState(false);
+        SetExploredState(true);
         faction.AddLandmarkAsOwned(this);
         _location.Occupy();
         EnableInitialTechnologies(faction);

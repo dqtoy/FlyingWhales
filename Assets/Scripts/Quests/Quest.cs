@@ -11,6 +11,7 @@ using System;
 
 public class Quest {
     protected QuestCreator _createdBy;
+    protected QUEST_TYPE _questType;
     protected int _daysBeforeDeadline;
     protected bool _isExpired;
     protected bool _isAccepted;
@@ -19,14 +20,27 @@ public class Quest {
     protected int _maxPartyMembers;
     protected List<QuestFilter> _questFilters;
     protected QuestAction _currentAction;
+    protected QUEST_RESULT _questResult;
 
     protected Queue<QuestAction> _questLine;
 
-    public Quest(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers) {
+    #region getters/setters
+    public QUEST_TYPE questType {
+        get { return _questType; }
+    }
+    #endregion
+    /*
+     Create a new quest object.
+     NOTE: Set daysBeforeDeadline to -1 if quest cannot expire.
+         */
+    public Quest(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers, QUEST_TYPE questType) {
         _createdBy = createdBy;
+        _questType = questType;
         _daysBeforeDeadline = daysBeforeDeadline;
         _maxPartyMembers = maxPartyMembers;
-        ScheduleDeadline();
+        if(daysBeforeDeadline != -1) {
+            ScheduleDeadline();
+        }
     }
 
     #region virtuals
@@ -70,14 +84,24 @@ public class Quest {
             }
         }
     }
-    protected virtual void QuestSuccess() { }
-    protected virtual void QuestFail() { }
-    protected virtual void QuestCancel() { }
+    protected virtual void QuestSuccess() { _questResult = QUEST_RESULT.SUCCESS; }
+    protected virtual void QuestFail() { _questResult = QUEST_RESULT.FAIL; }
+    protected virtual void QuestCancel() { _questResult = QUEST_RESULT.CANCEL; }
     /*
      Construct the list of quest actions that the party will perform.
          */
     protected virtual void ConstructQuestLine() { _questLine = new Queue<QuestAction>(); }
     #endregion
+
+    public bool CanAcceptQuest(Character character) {
+        for (int i = 0; i < _questFilters.Count; i++) {
+            QuestFilter currFilter = _questFilters[i];
+            if (!currFilter.MeetsRequirements(character)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     #region Deadline
     private void ScheduleDeadline() {
@@ -102,13 +126,13 @@ public class Quest {
     #endregion
 
     #region Quest Line
-    private void StartQuestLine() {
+    public void StartQuestLine() {
         ConstructQuestLine();
         PerformNextQuestAction();
     }
     internal void PerformNextQuestAction() {
         _currentAction = _questLine.Dequeue();
-        _currentAction.DoAction();
+        _currentAction.DoAction(_assignedParty.partyLeader);
     }
     #endregion
 }

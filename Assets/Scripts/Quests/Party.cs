@@ -4,13 +4,22 @@ using System.Collections.Generic;
 
 public class Party {
 
+    public delegate void OnPartyFull(Party party);
+    public OnPartyFull onPartyFull;
+
     protected int _maxPartyMembers;
 
     protected Character _partyLeader;
     protected List<Character> _partyMembers; //Contains all party members including the party leader
 
-    public delegate void OnPartyFull(Party party);
-    public OnPartyFull onPartyFull;
+    #region getters/setters
+    public Character partyLeader {
+        get { return _partyLeader; }
+    }
+    public List<Character> partyMembers {
+        get { return _partyMembers; }
+    }
+    #endregion
 
     public Party(Character partyLeader, int maxPartyMembers) {
         _maxPartyMembers = maxPartyMembers;

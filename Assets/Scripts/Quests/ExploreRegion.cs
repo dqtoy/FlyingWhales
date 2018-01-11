@@ -7,8 +7,10 @@ public class ExploreRegion : Quest {
     private Region _regionToExplore;
 
     public ExploreRegion(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers) 
-        : base(createdBy, daysBeforeDeadline, maxPartyMembers) {
-        
+        : base(createdBy, daysBeforeDeadline, maxPartyMembers, QUEST_TYPE.EXPLORE_REGION) {
+        _questFilters = new List<QuestFilter>() {
+            new MustBeRole(CHARACTER_ROLE.CHIEFTAIN)
+        };
     }
 
     private void PickRegionToExplore() {
