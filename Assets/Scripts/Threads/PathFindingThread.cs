@@ -17,6 +17,7 @@ public class PathFindingThread {
 	private PATHFINDING_MODE _pathfindingMode;
 	private Kingdom _kingdom;
 	private CitizenAvatar _citizenAvatar;
+    private CharacterAvatar _characterAvatar;
 
 	public PathFindingThread(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null){
 		receivedPath = new List<HexTile> ();
@@ -27,7 +28,16 @@ public class PathFindingThread {
 		this._citizenAvatar = citizenAvatar;
 	}
 
-	public void FindPath(){
+    public PathFindingThread(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null) {
+        receivedPath = new List<HexTile>();
+        this._startingTile = startingTile;
+        this._destinationTile = destinationTile;
+        this._pathfindingMode = pathfindingMode;
+        this._kingdom = kingdom;
+        this._characterAvatar = characterAvatar;
+    }
+
+    public void FindPath(){
 //		bool isStartingTileRoad = _startingTile.isRoad;
 //		bool isDestinationTileRoad = _destinationTile.isRoad;
 

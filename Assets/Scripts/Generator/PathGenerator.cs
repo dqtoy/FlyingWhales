@@ -218,20 +218,22 @@ public class PathGenerator : MonoBehaviour {
 		if(startingTile.tileTag != destinationTile.tileTag) {
 			return;
 		}
-//		List<HexTile> habitableTiles;
-//		if (resourceType == BASE_RESOURCE_TYPE.STONE) {
-//			habitableTiles = CityGenerator.Instance.stoneHabitableTiles;
-//		} else {
-//			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
-//		}
-
 		PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, kingdom));
 	}
+    public void CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, Kingdom kingdom = null) {
+        if (startingTile == null || destinationTile == null) {
+            return;
+        }
+        if (startingTile.tileTag != destinationTile.tileTag) {
+            return;
+        }
+        PathfindingThreadPool.Instance.AddToThreadPool(new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, kingdom));
+    }
 
-	/*
+    /*
 	 * Counts the number of hex tiles between two input tiles
 	 * */
-	public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
+    public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
 		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL, null);

@@ -25,6 +25,7 @@ public class Party {
     public void AddPartyMember(Character member) {
         if (!_partyMembers.Contains(member)) {
             _partyMembers.Add(member);
+            member.SetParty(this);
         }
         if(_partyMembers.Count >= _maxPartyMembers) {
             //Party is now full

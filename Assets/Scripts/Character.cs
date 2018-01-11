@@ -10,6 +10,7 @@ public class Character : QuestCreator {
     public CharacterRole _role;
     public CHARACTER_CLASS _characterClass;
     public Faction _faction;
+    public Party _party;
 
     public Character(RACE race) {
         _gender = Utilities.GetRandomGender();
@@ -79,6 +80,12 @@ public class Character : QuestCreator {
     #region Faction
     public void SetFaction(Faction faction) {
         _faction = faction;
+    }
+    #endregion
+
+    #region Party
+    public void SetParty(Party party) {
+        _party = party;
     }
     #endregion
 }
