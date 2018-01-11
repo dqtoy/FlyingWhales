@@ -57,8 +57,10 @@ public class InternalQuestManager : QuestCreator {
     private void GenerateMonthlyQuests() {
         if(_activeQuests.Count < GetMaxActiveQuests()) {
             WeightedDictionary<QUEST_TYPE> questDictionary = GetQuestWeightedDictionary();
-            QUEST_TYPE chosenQuestType = questDictionary.PickRandomElementGivenWeights();
-            CreateNewQuest(chosenQuestType);
+            if(questDictionary.GetTotalOfWeights() > 0) {
+                QUEST_TYPE chosenQuestType = questDictionary.PickRandomElementGivenWeights();
+                CreateNewQuest(chosenQuestType);
+            }
         }
 
         GameDate dueDate = GameManager.Instance.Today();
@@ -79,7 +81,7 @@ public class InternalQuestManager : QuestCreator {
             Region regionOfSettlement = _owner.settlements[i].location.region;
             for (int j = 0; j < regionOfSettlement.landmarks.Count; j++) {
                 BaseLandmark landmark = regionOfSettlement.landmarks[j];
-                if (!landmark.isDiscovered) {
+                if (landmark.isHidden) {
                     weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
                 }
             }

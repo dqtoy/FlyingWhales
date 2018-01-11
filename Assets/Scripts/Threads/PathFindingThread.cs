@@ -78,6 +78,9 @@ public class PathFindingThread {
 	}
 
 	public void ReturnPath(){
-		this._citizenAvatar.ReceivePath (receivedPath);
+        if(_citizenAvatar != null) {
+            this._citizenAvatar.ReceivePath(receivedPath);
+        }
+		
 	}
 }

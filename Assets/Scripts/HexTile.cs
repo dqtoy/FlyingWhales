@@ -49,6 +49,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Header("Booleans")]
     public bool isHabitable = false;
 	public bool isRoad = false;
+    public bool isRoadHidden = true;
 	public bool isOccupied = false;
 	public bool isBorder = false;
 	public bool isTargeted = false;
@@ -308,9 +309,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             default:
                 break;
         }
-        if(_landmarkOnTile != null && landmarkGO != null) {
-            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
-            _region.AddLandmarkToRegion(_landmarkOnTile);
+        if(_landmarkOnTile != null) {
+            if(landmarkGO != null) {
+                _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+                _region.AddLandmarkToRegion(_landmarkOnTile);
+            } else {
+                //Created landmark was a city
+                _landmarkOnTile.SetLandmarkObject(_emptyCityGO.GetComponent<LandmarkObject>());
+            }
+            
         }
         return _landmarkOnTile;
     }

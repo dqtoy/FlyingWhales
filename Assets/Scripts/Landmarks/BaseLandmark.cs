@@ -12,9 +12,8 @@ public class BaseLandmark {
     protected List<object> _connections;
     protected bool _canBeOccupied; //can the landmark be occupied?
     protected bool _isOccupied;
-    protected bool _isHidden; //is landmark hidden or not?
+    protected bool _isHidden; //is landmark hidden or discovered?
     protected bool _isExplored; //has landmark been explored?
-    protected bool _isDiscovered; //has landmark been discovered?
     protected string _landmarkName;
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
@@ -48,9 +47,6 @@ public class BaseLandmark {
     public bool isExplored {
         get { return _isExplored; }
     }
-    public bool isDiscovered {
-        get { return _isDiscovered; }
-    }
     public string landmarkName {
         get { return _landmarkName; }
     }
@@ -83,7 +79,6 @@ public class BaseLandmark {
         _connections = new List<object>();
         _isHidden = true;
         _isExplored = false;
-        _isDiscovered = false;
         _landmarkName = string.Empty; //TODO: Add name generation
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
@@ -217,5 +212,15 @@ public class BaseLandmark {
         _charactersOnLandmark.Remove(character);
     }
     #endregion
+
+    public void SetHiddenState(bool isHidden) {
+        _isHidden = isHidden;
+        landmarkObject.UpdateLandmarkVisual();
+    }
+
+    public void SetExploredState(bool isExplored) {
+        _isExplored = isExplored;
+        landmarkObject.UpdateLandmarkVisual();
+    }
 
 }
