@@ -83,6 +83,7 @@ public class BaseLandmark {
         _connections = new List<object>();
         _isHidden = true;
         _isExplored = false;
+        _isDiscovered = false;
         _landmarkName = string.Empty; //TODO: Add name generation
         _owner = null; //landmark has no owner yet
         _civilians = 0f;

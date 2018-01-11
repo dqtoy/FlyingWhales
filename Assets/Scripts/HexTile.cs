@@ -1300,14 +1300,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-        if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
+        //    if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
+        //        CameraMove.Instance.CenterCameraOn(this.gameObject);
+        //        if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
+        //            UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
+        //if(UIManager.Instance.notificationCityHistoryGO.activeSelf){
+        //	UIManager.Instance.ShowCityHistory (this.city);
+        //}
+        //        }
+        //    }
+
+        if (this.isHabitable && this.isOccupied) {
             CameraMove.Instance.CenterCameraOn(this.gameObject);
-            if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
-                UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
-				if(UIManager.Instance.notificationCityHistoryGO.activeSelf){
-					UIManager.Instance.ShowCityHistory (this.city);
-				}
-            }
+            UIManager.Instance.ShowSettlementInfo((Settlement)this.landmarkOnTile);
         }
 
         //if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
@@ -1320,7 +1325,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //        newNecromancer.SetAttackBehaviour(attackBehaviour);
         //        newNecromancer.SetFleeBehaviour(fleeBehaviour);
         //        newNecromancer.SetRandomBehaviour(randomBehaviour);
-                
+
         //        GameObject necromancerObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", Vector3.zero, Quaternion.identity, this.transform);
         //        AgentObject agentObj = necromancerObj.GetComponent<AgentObject>();
         //        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

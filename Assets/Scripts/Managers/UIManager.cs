@@ -3044,4 +3044,12 @@ public class UIManager : MonoBehaviour {
         worldInfoSelectedGO.transform.localPosition = Vector3.zero;
     }
     #endregion
+
+    #region Settlement Info
+    [SerializeField] private SettlementInfoUI settlementInfoUI;
+    public void ShowSettlementInfo(Settlement settlement) {
+        settlementInfoUI.SetSettlementAsActive(settlement);
+        settlementInfoUI.ShowSettlementInfo();
+    }
+    #endregion
 }
