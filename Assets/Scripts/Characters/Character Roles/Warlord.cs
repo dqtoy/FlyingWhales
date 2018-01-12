@@ -10,6 +10,7 @@ using System.Collections.Generic;
 public class Warlord : CharacterRole {
 
     public Warlord() {
+        _roleType = CHARACTER_ROLE.WARLORD;
         this.allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR
         };

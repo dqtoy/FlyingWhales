@@ -49,6 +49,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Header("Booleans")]
     public bool isHabitable = false;
 	public bool isRoad = false;
+    public bool isRoadHidden = true;
 	public bool isOccupied = false;
 	public bool isBorder = false;
 	public bool isTargeted = false;
@@ -285,8 +286,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.hasLandmark = true;
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-        if (baseLandmarkType != BASE_LANDMARK_TYPE.SETTLEMENT) {
-            //NOTE: Only create landmark object if landmark type is not a settlement!
+        if (landmarkType != LANDMARK_TYPE.CITY) {
+            //NOTE: Only create landmark object if landmark type is not a city!
             landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
@@ -308,9 +309,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             default:
                 break;
         }
-        if(_landmarkOnTile != null && landmarkGO != null) {
-            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
-            _region.AddLandmarkToRegion(_landmarkOnTile);
+        if(_landmarkOnTile != null) {
+            if(landmarkGO != null) {
+                _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+                _region.AddLandmarkToRegion(_landmarkOnTile);
+            } else {
+                //Created landmark was a city
+                _landmarkOnTile.SetLandmarkObject(_emptyCityGO.GetComponent<LandmarkObject>());
+            }
+            
         }
         return _landmarkOnTile;
     }
@@ -1300,47 +1307,55 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-        if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
+        //    if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
+        //        CameraMove.Instance.CenterCameraOn(this.gameObject);
+        //        if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
+        //            UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
+        //if(UIManager.Instance.notificationCityHistoryGO.activeSelf){
+        //	UIManager.Instance.ShowCityHistory (this.city);
+        //}
+        //        }
+        //    }
+
+        if (this.isHabitable && this.isOccupied) {
             CameraMove.Instance.CenterCameraOn(this.gameObject);
-            if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
-                UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
-				if(UIManager.Instance.notificationCityHistoryGO.activeSelf){
-					UIManager.Instance.ShowCityHistory (this.city);
-				}
-            }
+            UIManager.Instance.ShowSettlementInfo((Settlement)this.landmarkOnTile);
         }
 
-        if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
-            if(UIManager.Instance.spawnType == AGENT_TYPE.NECROMANCER) {
-                //Spawn New Necromancer
-                Necromancer newNecromancer = new Necromancer();
-                AIBehaviour attackBehaviour = new AttackHostiles(newNecromancer);
-                AIBehaviour fleeBehaviour = new RunAwayFromHostile(newNecromancer);
-                AIBehaviour randomBehaviour = new SearchForCorpseMound(newNecromancer);
-                newNecromancer.SetAttackBehaviour(attackBehaviour);
-                newNecromancer.SetFleeBehaviour(fleeBehaviour);
-                newNecromancer.SetRandomBehaviour(randomBehaviour);
-                
-                GameObject necromancerObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", Vector3.zero, Quaternion.identity, this.transform);
-                AgentObject agentObj = necromancerObj.GetComponent<AgentObject>();
-                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                pos.z = 0f;
-                agentObj.aiPath.transform.position = pos;
-                newNecromancer.SetAgentObj(agentObj);
-                agentObj.Initialize(newNecromancer, new int[] {-1});
-                UIManager.Instance.spawnType = AGENT_TYPE.NONE;
-                UIManager.Instance._spawnNecromancerBtn.SetAsUnClicked();
-            }
-        }
+        //if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
+        //    if(UIManager.Instance.spawnType == AGENT_TYPE.NECROMANCER) {
+        //        //Spawn New Necromancer
+        //        Necromancer newNecromancer = new Necromancer();
+        //        AIBehaviour attackBehaviour = new AttackHostiles(newNecromancer);
+        //        AIBehaviour fleeBehaviour = new RunAwayFromHostile(newNecromancer);
+        //        AIBehaviour randomBehaviour = new SearchForCorpseMound(newNecromancer);
+        //        newNecromancer.SetAttackBehaviour(attackBehaviour);
+        //        newNecromancer.SetFleeBehaviour(fleeBehaviour);
+        //        newNecromancer.SetRandomBehaviour(randomBehaviour);
+
+        //        GameObject necromancerObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", Vector3.zero, Quaternion.identity, this.transform);
+        //        AgentObject agentObj = necromancerObj.GetComponent<AgentObject>();
+        //        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //        pos.z = 0f;
+        //        agentObj.aiPath.transform.position = pos;
+        //        newNecromancer.SetAgentObj(agentObj);
+        //        agentObj.Initialize(newNecromancer, new int[] {-1});
+        //        UIManager.Instance.spawnType = AGENT_TYPE.NONE;
+        //        UIManager.Instance._spawnNecromancerBtn.SetAsUnClicked();
+        //    }
+        //}
     }
     private void OnMouseOver() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-        if(_landmarkOnTile != null && isHabitable) {
-            if(_landmarkOnTile.owner != null) {
-                this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+        if(_landmarkOnTile != null) {
+            if(_landmarkOnTile.owner != null) { //landmark is occupied
+                if (isHabitable) {
+                    this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+                }
             }
+            ShowLandmarkInfo();
         }
 
    //     if (this.isOccupied) {
@@ -1363,11 +1378,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
    //     }
     }
     private void OnMouseExit() {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+            return;
+        }
         if (_landmarkOnTile != null && isHabitable) {
             if (_landmarkOnTile.owner != null) {
                 this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
             }
         }
+        HideSmallInfoWindow();
         //     if (this.isOccupied) {
         //if(!this.isHabitable){
         //	if(this.city == null){
@@ -1609,7 +1628,58 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             } else {
                 text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
             }
-            
+        }
+        if (this.landmarkOnTile.owner != null) {
+            text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
+            text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
+            text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civilians.ToString();
+            text += "\n[b]Population Growth: [/b] " + (this.landmarkOnTile.totalPopulation * this.landmarkOnTile.location.region.populationGrowth).ToString();
+            text += "\n[b]Characters: [/b] ";
+            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
+                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
+                    Character currChar = landmarkOnTile.charactersOnLandmark[i];
+                    text += "\n" + currChar._name + " - " + currChar._characterClass.ToString() + "/" + currChar._role.roleType.ToString();
+                }
+            } else {
+                text += "NONE";
+            }
+
+            text += "\n[b]Character Caps: [/b] ";
+            for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
+                CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
+                bool isCapReached = false;
+                for (int j = 0; j < currWweight.productionCaps.Count; j++) {
+                    CharacterProductionCap cap = currWweight.productionCaps[j];
+                    if(cap.IsCapReached(currWweight.role, this.landmarkOnTile.owner)) {
+                        isCapReached = true;
+                        break;
+                    }
+                }
+                text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
+            }
+
+            text += "\n[b]Active Quests: [/b] ";
+            if (landmarkOnTile.owner.internalQuestManager.activeQuests.Count > 0) {
+                for (int i = 0; i < landmarkOnTile.owner.internalQuestManager.activeQuests.Count; i++) {
+                    Quest currQuest = landmarkOnTile.owner.internalQuestManager.activeQuests[i];
+                    text += "\n" + currQuest.GetType().ToString();
+                }
+            } else {
+                text += "NONE";
+            }
+        }
+        text += "\n[b]Technologies: [/b] ";
+        List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
+        if (availableTech.Count > 0) {
+            for (int i = 0; i < availableTech.Count; i++) {
+                TECHNOLOGY currTech = availableTech[i];
+                text += currTech.ToString();
+                if(i + 1 != availableTech.Count) {
+                    text += ", ";
+                }
+            }
+        } else {
+            text += "NONE";
         }
         UIManager.Instance.ShowSmallInfo(text);
     }

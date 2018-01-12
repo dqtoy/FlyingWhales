@@ -13,7 +13,7 @@ public class InternationalIncidentManager : MonoBehaviour {
 
 	void Start () {
 		defaultSharedKR = new SharedKingdomRelationship (null, null);
-		ScheduleIncident ();
+		//ScheduleIncident ();
 	}
 	
 	private void ScheduleIncident(){

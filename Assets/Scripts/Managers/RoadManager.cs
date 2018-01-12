@@ -351,6 +351,8 @@ public class RoadManager : MonoBehaviour {
     private void ConnectRegions(Region region1, Region region2) {
         region1.AddConnection(region2);
         region2.AddConnection(region1);
+        region1.centerOfMass.landmarkOnTile.AddConnection(region2.centerOfMass.landmarkOnTile);
+        region2.centerOfMass.landmarkOnTile.AddConnection(region1.centerOfMass.landmarkOnTile);
         if (region1.connections.Count > RoadManager.Instance.maxCityConnections) {
             throw new System.Exception("Exceeded maximum connections!");
         }
@@ -452,6 +454,7 @@ public class RoadManager : MonoBehaviour {
 
     public void ConnectLandmarkToRegion(HexTile landmarkLocation, Region region) {
         region.AddConnection(landmarkLocation.landmarkOnTile);
+        region.centerOfMass.landmarkOnTile.AddConnection(landmarkLocation.landmarkOnTile);
         landmarkLocation.landmarkOnTile.AddConnection(region);
     }
     public void ConnectLandmarkToLandmark(HexTile landmarkLocation1, HexTile landmarkLocation2) {

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 public class Trader : CharacterRole {
 
     public Trader() {
+        _roleType = CHARACTER_ROLE.TRADER;
         this.allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
         };

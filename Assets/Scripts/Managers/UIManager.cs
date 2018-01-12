@@ -465,60 +465,42 @@ public class UIManager : MonoBehaviour {
 
     private void UpdateUI(){
         dateLbl.text = GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString ();
-        KingdomManager.Instance.UpdateKingdomList();
-		UpdateAllianceSummary ();
-        if (currentlyShowingKingdom != null) {
-            UpdateKingdomInfo();
-        }
+  //      KingdomManager.Instance.UpdateKingdomList();
+		//UpdateAllianceSummary ();
+  //      if (currentlyShowingKingdom != null) {
+  //          UpdateKingdomInfo();
+  //      }
 
-		//if (cityInfoGO.activeSelf) {
-		//	if (currentlyShowingCity != null) {
-		//		ShowCityInfo (currentlyShowingCity);
+		//if (eventLogsGO.activeSelf) {
+		//	if (currentlyShowingLogObject != null) {
+		//		ShowEventLogs (currentlyShowingLogObject);
 		//	}
 		//}
 
-		if (eventLogsGO.activeSelf) {
-			if (currentlyShowingLogObject != null) {
-				ShowEventLogs (currentlyShowingLogObject);
-			}
-		}
-
-        if (allKingdomEventsGO.activeSelf) {
-            if (currentlyShowingKingdom != null) {
-                //ShowKingdomEvents();
-                if (kingdomCurrentEventsGO.activeSelf) {
-                    ShowKingdomCurrentEvents();
-                } else if (kingdomHistoryGO.activeSelf) {
-                    ShowKingdomPastEvents();
-                }
-            }
-        }
-
-        //if (kingdomHistoryGO.activeSelf) {
-        //	if (currentlyShowingKingdom != null) {
-        //		ShowKingdomHistory ();
-        //	}
-        //}
-        if (relationshipsGO.activeSelf) {
-            if (currentlyShowingKingdom != null) {
-                ShowKingRelationships();
-            }
-        }
+  //      if (allKingdomEventsGO.activeSelf) {
+  //          if (currentlyShowingKingdom != null) {
+  //              if (kingdomCurrentEventsGO.activeSelf) {
+  //                  ShowKingdomCurrentEvents();
+  //              } else if (kingdomHistoryGO.activeSelf) {
+  //                  ShowKingdomPastEvents();
+  //              }
+  //          }
+  //      }
+  //      if (relationshipsGO.activeSelf) {
+  //          if (currentlyShowingKingdom != null) {
+  //              ShowKingRelationships();
+  //          }
+  //      }
         
-        if (kingdomCitiesGO.activeSelf) {
-            if (currentlyShowingKingdom != null) {
-                ShowKingdomCities();
-            }
-        }
+  //      if (kingdomCitiesGO.activeSelf) {
+  //          if (currentlyShowingKingdom != null) {
+  //              ShowKingdomCities();
+  //          }
+  //      }
 
-        if (createKingdomGO.activeSelf) {
-            UpdateCreateKingdomErrorMessage();
-        }
-        //if (citizenInfoGO.activeSelf) {
-        //    if (currentlyShowingCitizen != null) {
-        //        ShowCitizenInfo(currentlyShowingCitizen);
-        //    }
-        //}
+  //      if (createKingdomGO.activeSelf) {
+  //          UpdateCreateKingdomErrorMessage();
+  //      }
 	}
 
     #region World Controls
@@ -3060,6 +3042,14 @@ public class UIManager : MonoBehaviour {
     private void SetWorldInfoMenuItemAsSelected(Transform worldInfoMenuItem) {
         worldInfoSelectedGO.transform.parent = worldInfoMenuItem;
         worldInfoSelectedGO.transform.localPosition = Vector3.zero;
+    }
+    #endregion
+
+    #region Settlement Info
+    [SerializeField] private SettlementInfoUI settlementInfoUI;
+    public void ShowSettlementInfo(Settlement settlement) {
+        settlementInfoUI.SetSettlementAsActive(settlement);
+        settlementInfoUI.ShowSettlementInfo();
     }
     #endregion
 }

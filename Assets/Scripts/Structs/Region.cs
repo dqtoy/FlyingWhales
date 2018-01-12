@@ -391,6 +391,12 @@ public class Region {
             currentTile.kingdomColorSprite.gameObject.SetActive(true);
             currentTile.SetMinimapTileColor(fullColor);
         }
+        for (int i = 0; i < this.outerGridTilesInRegion.Count; i++) {
+            HexTile currentTile = this.outerGridTilesInRegion[i];
+            currentTile.kingdomColorSprite.color = color;
+            currentTile.kingdomColorSprite.gameObject.SetActive(true);
+            currentTile.SetMinimapTileColor(fullColor);
+        }
     }
     private void ReColorBorderTiles(Color color) {
         for (int i = 0; i < regionBorderLines.Count; i++) {

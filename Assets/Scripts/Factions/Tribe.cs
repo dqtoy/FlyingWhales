@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Tribe : Faction {
 
-    public Tribe(RACE race) : base(race) {
+    public Tribe(RACE race) : base(race, FACTION_TYPE.MAJOR) {
 
     }
 }

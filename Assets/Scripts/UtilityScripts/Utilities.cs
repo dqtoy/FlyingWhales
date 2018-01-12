@@ -1378,6 +1378,12 @@ public class Utilities : MonoBehaviour {
 		}
 		return false;
 	}
+    public static GENDER GetRandomGender() {
+        if(UnityEngine.Random.Range(0, 2) == 0) {
+            return GENDER.MALE;
+        }
+        return GENDER.FEMALE;
+    }
 
     #region Landmarks
     public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
@@ -1394,8 +1400,7 @@ public class Utilities : MonoBehaviour {
             case LANDMARK_TYPE.COBALT:
             case LANDMARK_TYPE.MITHRIL:
                 return BASE_LANDMARK_TYPE.RESOURCE;
-            case LANDMARK_TYPE.GOBLIN_CAMP://lair/settlement?
-            case LANDMARK_TYPE.DARK_CAVE://lair
+            case LANDMARK_TYPE.DARK_CAVE:
                 return BASE_LANDMARK_TYPE.LAIR;
             case LANDMARK_TYPE.ANCIENT_RUIN:
             case LANDMARK_TYPE.ABANDONED_DUNGEON:
@@ -1443,4 +1448,37 @@ public class Utilities : MonoBehaviour {
 		}
 		return MATERIAL_CATEGORY.NONE;
 	}
+    #region Characters
+    public static TECHNOLOGY GetTechnologyForCharacterClass(CHARACTER_CLASS charClass) {
+        switch (charClass) {
+            case CHARACTER_CLASS.ARCHER:
+                return TECHNOLOGY.ARCHER_CLASS;
+            case CHARACTER_CLASS.SPEARMAN:
+                return TECHNOLOGY.SPEARMAN_CLASS;
+            case CHARACTER_CLASS.SWORDSMAN:
+                return TECHNOLOGY.SWORDSMAN_CLASS;
+            case CHARACTER_CLASS.ROGUE:
+                return TECHNOLOGY.ROGUE_CLASS;
+            case CHARACTER_CLASS.WILDLING:
+                return TECHNOLOGY.WILDLING_CLASS;
+            case CHARACTER_CLASS.MAGE:
+                return TECHNOLOGY.MAGE_CLASS;
+            case CHARACTER_CLASS.BARBARIAN:
+                return TECHNOLOGY.BARBARIAN_CLASS;
+            case CHARACTER_CLASS.RANGER:
+                return TECHNOLOGY.RANGER_CLASS;
+            case CHARACTER_CLASS.KNIGHT:
+                return TECHNOLOGY.KNIGHT_CLASS;
+            case CHARACTER_CLASS.BATTLEMAGE:
+                return TECHNOLOGY.BATTLEMAGE_CLASS;
+            case CHARACTER_CLASS.SENTRY:
+                return TECHNOLOGY.ARCANIST_CLASS;
+            case CHARACTER_CLASS.SAVAGE:
+                return TECHNOLOGY.SAVAGE_CLASS;
+            case CHARACTER_CLASS.SCOUT:
+                return TECHNOLOGY.SCOUT_CLASS;
+        }
+        return TECHNOLOGY.BASIC_FARMING;
+    }
+    #endregion
 }

@@ -31,7 +31,6 @@ public class MapGenerator : MonoBehaviour {
         
         //Biomes.Instance.GenerateSpecialResources ();
         //Biomes.Instance.GenerateTileTags();
-        GridMap.Instance.GenerateNeighboursWithSameTag();
         if(!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
             Debug.LogWarning("Region generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
@@ -62,15 +61,17 @@ public class MapGenerator : MonoBehaviour {
         //Biomes.Instance.GenerateRegionBorderElevation();
         RoadManager.Instance.FlattenRoads();
         Biomes.Instance.GenerateTileTags();
+        GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();
         Biomes.Instance.GenerateTileEdges();
 
-        //UIManager.Instance.InitializeUI();
+        UIManager.Instance.InitializeUI();
         //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
-        //GameManager.Instance.StartProgression();
+        GameManager.Instance.StartProgression();
         //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
+        CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().ownedLandmarks.FirstOrDefault().location.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
 
     }

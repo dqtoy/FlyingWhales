@@ -6,7 +6,6 @@ public class SmoothMovement : MonoBehaviour {
     public delegate void OnMoveFinished();
     public OnMoveFinished onMoveFinished;
 
-	//public float speed;
 	internal bool isMoving = false;
 	Vector3 targetPosition = Vector3.zero;
 	internal DIRECTION direction;
@@ -16,31 +15,12 @@ public class SmoothMovement : MonoBehaviour {
     [SerializeField] private float timeStarted = 0f;
     [SerializeField] private float timeSinceStarted = 0f;
 
-//	private Animator animator;
 	internal GameObject avatarGO;
 
-	void Awake(){
-//		this.animator = this.GetComponent<Animator> ();
-	}
-
-//	void FixedUpdate(){
-//		if(this.isMoving){
-//			if(this.targetPosition != Vector3.zero){
-////				this.timeSinceStarted = Time.time - this.timeStarted;
-//				this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
-//				this.timeSinceStarted += this.step;
-//				this.avatarGO.transform.position = Vector3.Lerp (this.avatarGO.transform.position, this.targetPosition, this.step);
-//				if(this.timeSinceStarted >= 1.0f){
-//					StopMoving ();
-//                }
-//			}
-//		}
-//	}
 
 	void Update(){
 		if(this.isMoving && !GameManager.Instance.isPaused){
 			this.step = Time.deltaTime / GameManager.Instance.progressionSpeed;
-//			this.timeSinceStarted += this.step;
 			this.avatarGO.transform.position = Vector3.MoveTowards (this.avatarGO.transform.position, this.targetPosition, this.step * 2f);
 			if(this.avatarGO.transform.position == this.targetPosition){
 				StopMoving ();
@@ -57,28 +37,15 @@ public class SmoothMovement : MonoBehaviour {
         direction = DIRECTION.LEFT;
         hasAttacked = false;
 		onMoveFinished = null;
-//        animator.Rebind();
     }
 
     private void StopMoving(){
-//		if (!this.hasAttacked) {
-//			string idleToPlay = GetIdleDirection();
-//			this.animator.Play(idleToPlay);
-
-//			if(this.GetComponent<Animator> () != null){
-//			}else{
-//				if (this.GetComponentInChildren<Animator> () != null) {
-//					this.GetComponentInChildren<Animator>().Play(idleToPlay);
-//				}
-//			}
-//		}
 		this.isMoving = false;
 		this.targetPosition = Vector3.zero;
 		if(onMoveFinished != null) {
 			onMoveFinished();
         }
     }
-
 	internal void Move(Vector3 endPos, DIRECTION direction){
 		this.direction = direction;
 		this.targetPosition = endPos;
