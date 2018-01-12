@@ -399,7 +399,7 @@ namespace ECS {
 		internal bool HasActivatableWeaponSkill(){
 			for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
-				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART){
+				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON){
 					return true;
 				}
 			}
