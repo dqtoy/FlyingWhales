@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
-namespace ECS{
+namespace ECS {
 	[System.Serializable]
-	public class Character {
+	public class Character : QuestCreator {
 		[SerializeField] private string _name;
 		private GENDER _gender;
 		private List<Trait>	_traits;
@@ -14,10 +14,9 @@ namespace ECS{
 		//Stats
 		[SerializeField] private int _currentHP;
 		[SerializeField] private int _maxHP;
-		[SerializeField] private int _exp;
-        [SerializeField] private int _strength;
-        [SerializeField] private int _intelligence;
-        [SerializeField] private int _agility;
+		[SerializeField] private int _strength;
+		[SerializeField] private int _intelligence;
+		[SerializeField] private int _agility;
 		[SerializeField] private int _currentRow;
 		private int _baseMaxHP;
 		private int _baseStrength;
@@ -29,16 +28,22 @@ namespace ECS{
 
 		private CharacterClass _characterClass;
 		private RaceSetting _raceSetting;
-		private Role _role;
-		//TODO: faction
+		private CharacterRole _role;
+		private Faction _faction;
+		private Party _party;
+		private Quest _currentQuest;
+		private HexTile _currLocation;
+		private CharacterAvatar _avatar;
 
-        [SerializeField] private List<BodyPart> _bodyParts;
+		[SerializeField] private List<BodyPart> _bodyParts;
 		[SerializeField] private List<Item> _equippedItems;
 		[SerializeField] private List<Item> _inventory;
-			
+
 		private Color _characterColor;
 		private string _characterColorCode;
 		private bool _isDead;
+
+		internal int actRate;
 
 		#region getters / setters
 		internal string name{
@@ -50,20 +55,35 @@ namespace ECS{
 		internal int currentHP{
 			get { return this._currentHP; }
 		}
-        internal int maxHP {
-            get { return this._maxHP; }
-        }
+		internal int maxHP {
+			get { return this._maxHP; }
+		}
 		internal int baseMaxHP {
 			get { return _baseMaxHP; }
 		}
-        internal CharacterClass characterClass{
+		internal CharacterClass characterClass{
 			get { return this._characterClass; }
 		}
 		internal RaceSetting raceSetting {
-            get { return _raceSetting; }
-        }
-		internal Role role {
+			get { return _raceSetting; }
+		}
+		internal CharacterRole role {
 			get { return _role; }
+		}
+		internal Faction faction {
+			get { return _faction; }
+		}
+		internal Party party {
+			get { return _party; }
+		}
+		internal Quest currentQuest {
+			get { return _currentQuest; }
+		}
+		internal HexTile currLocation{
+			get { return _currLocation; }
+		}
+		internal CharacterAvatar avatar{
+			get { return _avatar; }
 		}
 		internal List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
@@ -86,68 +106,58 @@ namespace ECS{
 		internal bool isDead{
 			get { return this._isDead; }
 		}
-        internal int strength {
+		internal int strength {
 			get { return _strength + _equippedItems.Sum(x => x.bonusStrength); }
-        }
+		}
 		internal int baseStrength {
 			get { return _baseStrength; }
 		}
-        internal int intelligence {
+		internal int intelligence {
 			get { return _intelligence + _equippedItems.Sum(x => x.bonusIntelligence); }
-        }
+		}
 		internal int baseIntelligence {
 			get { return _baseIntelligence; }
 		}
-        internal int agility {
+		internal int agility {
 			get { return _agility + _equippedItems.Sum(x => x.bonusAgility); }
-        }
+		}
 		internal int baseAgility {
 			get { return _baseAgility; }
 		}
-        internal int exp {
-            get { return _exp; }
-        }
-        internal int dodgeRate {
+		internal int dodgeRate {
 			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
-        }
-        internal int parryRate {
+		}
+		internal int parryRate {
 			get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
-        }
-        internal int blockRate {
+		}
+		internal int blockRate {
 			get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
-        }
+		}
 		internal Color characterColor {
 			get { return _characterColor; }
 		}
 		internal string characterColorCode {
 			get { return _characterColorCode; }
 		}
-        #endregion
+		#endregion
 
-        public Character(CharacterSetup baseSetup, int level = 1) {
-            GENDER gender = GENDER.MALE;
-            if(Random.Range(0, 2) == 0) {
-                gender = GENDER.FEMALE;
-            }
-            if(baseSetup.raceSetting.race == RACE.HUMANS) {
-                _name = RandomNameGenerator.Instance.GenerateWholeHumanName(gender);
-            } else {
-                _name = RandomNameGenerator.Instance.GenerateElvenName(gender);
-            }
-            _characterClass = baseSetup.characterClass.CreateNewCopy();
-            _raceSetting = baseSetup.raceSetting.CreateNewCopy();
+		public Character(CharacterSetup baseSetup) {
+			_characterClass = baseSetup.characterClass.CreateNewCopy();
+			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
+			_name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
+			_gender = Utilities.GetRandomGender();
+
 			_baseMaxHP = _raceSetting.baseHP + (int)((float)_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
 			_baseStrength = _raceSetting.baseStr + (int)((float)_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
 			_baseAgility = _raceSetting.baseAgi + (int)((float)_raceSetting.baseAgi * (_characterClass.agiPercentage / 100f));
 			_baseIntelligence = _raceSetting.baseInt + (int)((float)_raceSetting.baseInt * (_characterClass.intPercentage / 100f));
 
 			_maxHP = _baseMaxHP;
-            _currentHP = _maxHP;
+			_currentHP = _maxHP;
 			_strength = _baseStrength;
 			_agility = _baseAgility;
 			_intelligence = _baseIntelligence;
-            _exp = 0;
-            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+			_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
 
 			_equippedItems = new List<Item> ();
 			_inventory = new List<Item> ();
@@ -156,8 +166,8 @@ namespace ECS{
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
-            //TODO: Generate Traits
-        }
+			//TODO: Generate Traits
+		}
 
 		//Check if the body parts of this character has the attribute necessary and quantity
 		internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
@@ -202,15 +212,6 @@ namespace ECS{
 						skill.isEnabled = false;
 						break;
 					}
-//                    if(skillRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
-//                        
-//                    } else {
-//                        //check if the character has the equipment needed to perform the skill
-//                        if(!HasEquipmentOfType(skillRequirement.equipmentType, skillRequirement.attributeRequired)) {
-//                            skill.isEnabled = false;
-//                            break;
-//                        }
-//                    }
 				}
 				if(!skill.isEnabled){
 					continue;
@@ -304,7 +305,7 @@ namespace ECS{
 		//Adjust current HP based on specified paramater, but HP must not go below 0
 		internal void AdjustHP(int amount){
 			this._currentHP += amount;
-            this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
+			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
 			if(this._currentHP == 0){
 				Death ();
 			}
@@ -319,41 +320,41 @@ namespace ECS{
 			}
 		}
 
-        #region Body Parts
-        /*
-         * Add new body parts here.
-         * */
-        internal void AddBodyPart(BodyPart bodyPart) {
-            bodyParts.Add(bodyPart);
-        }
-        internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
-            List<IBodyPart> allBodyParts = new List<IBodyPart>();
-            for (int i = 0; i < bodyParts.Count; i++) {
-                BodyPart currBodyPart = bodyParts[i];
-                allBodyParts.Add(currBodyPart);
-                for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-                    allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
-                }
-            }
-            for (int i = 0; i < allBodyParts.Count; i++) {
-                IBodyPart currBodyPart = allBodyParts[i];
-                bool meetsRequirements = true;
-                //check if currBodyPart meets the weapons requirements
-                for (int j = 0; j < weapon.equipRequirements.Count; j++) {
-                    IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
-                    if (!currBodyPart.HasUnusedAttribute(currReq)) {
-                        meetsRequirements = false;
-                        break;
-                    }
-                }
-                if (meetsRequirements) {
-                    return currBodyPart;
-                }
-            }
-            return null;
-        }
-        internal IBodyPart GetBodyPartForArmor(Armor armor) {
-            IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
+		#region Body Parts
+		/*
+     * Add new body parts here.
+     * */
+		internal void AddBodyPart(BodyPart bodyPart) {
+			bodyParts.Add(bodyPart);
+		}
+		internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
+			List<IBodyPart> allBodyParts = new List<IBodyPart>();
+			for (int i = 0; i < bodyParts.Count; i++) {
+				BodyPart currBodyPart = bodyParts[i];
+				allBodyParts.Add(currBodyPart);
+				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+					allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
+				}
+			}
+			for (int i = 0; i < allBodyParts.Count; i++) {
+				IBodyPart currBodyPart = allBodyParts[i];
+				bool meetsRequirements = true;
+				//check if currBodyPart meets the weapons requirements
+				for (int j = 0; j < weapon.equipRequirements.Count; j++) {
+					IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
+					if (!currBodyPart.HasUnusedAttribute(currReq)) {
+						meetsRequirements = false;
+						break;
+					}
+				}
+				if (meetsRequirements) {
+					return currBodyPart;
+				}
+			}
+			return null;
+		}
+		internal IBodyPart GetBodyPartForArmor(Armor armor) {
+			IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
 			for (int i = 0; i < bodyParts.Count; i++) {
 				BodyPart currBodyPart = bodyParts[i];
 				//check if currBodyPart can equip the armor
@@ -367,11 +368,11 @@ namespace ECS{
 					}
 				}
 			}
-            return null;
-        }
-        #endregion
+			return null;
+		}
+		#endregion
 
-        #region Items
+		#region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
 			this._inventory.Add (item);
@@ -444,7 +445,7 @@ namespace ECS{
 			RemoveEquippedItem(item);
 		}
 
-        //Try to equip a weapon to a body part of this character and add it to the list of items this character have
+		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipWeapon(Weapon weapon){
 			for (int j = 0; j < weapon.equipRequirements.Count; j++) {
 				IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
@@ -454,15 +455,15 @@ namespace ECS{
 				}
 			}
 			AddEquippedItem(weapon);
-            weapon.ResetDurability();
-            weapon.SetOwner(this);
+			weapon.ResetDurability();
+			weapon.SetOwner(this);
 			for (int i = 0; i < weapon.skills.Count; i++) {
 				this._skills.Add (weapon.skills [i]);
 			}
-//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
-            CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
+			CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
 			return true;
-        }
+		}
 		private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req){
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart currBodyPart = this._bodyParts[i];
@@ -493,7 +494,7 @@ namespace ECS{
 			for (int i = 0; i < weapon.skills.Count; i++) {
 				this._skills.Remove (weapon.skills [i]);
 			}
-        }
+		}
 
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipArmor(Armor armor){
@@ -502,19 +503,19 @@ namespace ECS{
 				return false;
 			}
 			bodyPartToEquip.AttachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
-//			armor.bodyPartAttached = bodyPart;
+			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(armor);
-            armor.ResetDurability();
-            armor.SetOwner(this);
+			armor.ResetDurability();
+			armor.SetOwner(this);
 			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.bodyPart.ToString());
-            CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+			CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
 			return true;
-        }
+		}
 		//Unequips armor of a character
 		private void UnequipArmor(Armor armor) {
 			armor.bodyPartAttached.DettachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
-        }
-        internal void AddEquippedItem(Item newItem){
+		}
+		internal void AddEquippedItem(Item newItem){
 			this._inventory.Remove (newItem);
 			this._equippedItems.Add (newItem);
 			newItem.SetEquipped (true);
@@ -544,43 +545,43 @@ namespace ECS{
 			}
 			return false;
 		}
-        internal List<Weapon> GetAllAttachedWeapons() {
-            List<Weapon> weapons = new List<Weapon>();
-            for (int i = 0; i < equippedItems.Count; i++) {
-				Item currItem = equippedItems[i];
-                if(currItem.itemType == ITEM_TYPE.WEAPON) {
-                    weapons.Add((Weapon)currItem);
-                }
-            }
-            return weapons;
-        }
-        internal List<Armor> GetAllAttachedArmor() {
-            List<Armor> weapons = new List<Armor>();
+		internal List<Weapon> GetAllAttachedWeapons() {
+			List<Weapon> weapons = new List<Weapon>();
 			for (int i = 0; i < equippedItems.Count; i++) {
 				Item currItem = equippedItems[i];
-                if (currItem.itemType == ITEM_TYPE.ARMOR) {
-                    weapons.Add((Armor)currItem);
-                }
-            }
-            return weapons;
-        }
-        internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
+				if(currItem.itemType == ITEM_TYPE.WEAPON) {
+					weapons.Add((Weapon)currItem);
+				}
+			}
+			return weapons;
+		}
+		internal List<Armor> GetAllAttachedArmor() {
+			List<Armor> weapons = new List<Armor>();
 			for (int i = 0; i < equippedItems.Count; i++) {
 				Item currItem = equippedItems[i];
-                if(currItem.itemType == ITEM_TYPE.ARMOR) {
-                    Armor armor = (Armor)currItem;
-                    if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-                        return true;
-                    }
-                } else if (currItem.itemType == ITEM_TYPE.WEAPON) {
-                    Weapon weapon = (Weapon)currItem;
-                    if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+				if (currItem.itemType == ITEM_TYPE.ARMOR) {
+					weapons.Add((Armor)currItem);
+				}
+			}
+			return weapons;
+		}
+		internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
+			for (int i = 0; i < equippedItems.Count; i++) {
+				Item currItem = equippedItems[i];
+				if(currItem.itemType == ITEM_TYPE.ARMOR) {
+					Armor armor = (Armor)currItem;
+					if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
+						return true;
+					}
+				} else if (currItem.itemType == ITEM_TYPE.WEAPON) {
+					Weapon weapon = (Weapon)currItem;
+					if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 		#endregion
 
 		internal void CureStatusEffects(){
@@ -658,64 +659,7 @@ namespace ECS{
 			}
 			return allBodyPartSkills;
 		}
-//		private List<Skill> GetBodyPartSkills(){
-//			List<Skill> allBodyPartSkills = new List<Skill>();
-//			string mainPath = "Assets/CombatPrototype/Data/Skills/BODY_PART/";
-//			string[] folders = System.IO.Directory.GetDirectories (mainPath);
-//			for (int i = 0; i < folders.Length; i++) {
-//				string path = folders[i] + "/";
-//				DirectoryInfo di = new DirectoryInfo (path);
-//				if (di.Name == "ATTACK") {
-//					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-//						AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
-//						string fileName = Path.GetFileNameWithoutExtension (file);
-//						if(fileName == "Punch" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON, 1)){
-//							allBodyPartSkills.Add (attackSkill);
-//						}else if(fileName == "Kick" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_KICK_NO_WEAPON, 1)){
-//							allBodyPartSkills.Add (attackSkill);
-//						}else if(fileName == "Bite" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_BITE_NO_WEAPON, 1)){
-//							allBodyPartSkills.Add (attackSkill);
-//						}else if(fileName == "Tail Whip" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_WHIP_NO_WEAPON, 1)){
-//							allBodyPartSkills.Add (attackSkill);
-//						}else if(fileName == "Scratch" && HasAttribute(IBodyPart.ATTRIBUTE.CLAWED_NO_WEAPON, 1)){
-//							allBodyPartSkills.Add (attackSkill);
-//						}else if(fileName == "Squeeze" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_GRIP_NO_WEAPON, 2)){
-//							allBodyPartSkills.Add (attackSkill);
-//						}else if(fileName == "Flame Breath" && HasAttribute(IBodyPart.ATTRIBUTE.CAN_FLAME_BREATH_NO_WEAPON, 1)){
-//							allBodyPartSkills.Add (attackSkill);
-//						}
-//					}
-//				}
-//			}
-//			return allBodyPartSkills;
-//		}
 		#endregion
-
-        #region Levels
-//        public void LevelUp(int levels) {
-//            for (int i = 0; i < levels; i++) {
-//                IncreaseLevel();
-//            }
-//        }
-//        internal void IncreaseLevel() {
-//            _level += 1;
-//            _strength += strGain;
-//            _intelligence += intGain;
-//            _agility += agiGain;
-//			AdjustMaxHP (hpGain);
-//            _exp = 0;
-//        }
-//		internal void DecreaseLevel() {
-//			if(this._level > 1){
-//				_level -= 1;
-//				_strength -= strGain;
-//				_intelligence -= intGain;
-//				_agility -= agiGain;
-//				AdjustMaxHP (-hpGain);
-//				_exp = 0;
-//			}
-//		}
-        #endregion
 
 		#region Stats
 		internal void SetAgility (int amount){
@@ -745,6 +689,173 @@ namespace ECS{
 			_characterColor = CombatPrototypeManager.Instance.UseRandomCharacterColor ();
 			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
 		}
-    }
-}
 
+		#region Character Class
+		public void AssignClass(CharacterClass charClass) {
+			_characterClass = charClass;
+		}
+		#endregion
+
+		#region Traits
+		public bool HasTrait(TRAIT trait) {
+			for (int i = 0; i < _traits.Count; i++) {
+				if(_traits[i].trait == trait) {
+					return true;
+				}
+			}
+			return false;
+		}
+		#endregion
+
+		#region Faction
+		public void SetFaction(Faction faction) {
+			_faction = faction;
+		}
+		#endregion
+
+		#region Party
+		public void SetParty(Party party) {
+			_party = party;
+		}
+		#endregion
+
+		#region Location
+		public void SetLocation(HexTile location) {
+			_currLocation = location;
+		}
+		#endregion
+
+		#region Quests
+		private void DetermineAction() {
+			WeightedDictionary<QUEST_TYPE> actionWeights = GetActionWeights();
+			if (actionWeights.GetTotalOfWeights() > 0) {
+				QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
+				switch (chosenAction) {
+				case QUEST_TYPE.EXPLORE_REGION:
+					break;
+				case QUEST_TYPE.OCCUPY_LANDMARK:
+					break;
+				case QUEST_TYPE.INVESTIGATE_LANDMARK:
+					break;
+				case QUEST_TYPE.OBTAIN_RESOURCE:
+					break;
+				case QUEST_TYPE.EXPAND:
+					break;
+				case QUEST_TYPE.REST:
+					StartRestQuest();
+					break;
+				case QUEST_TYPE.GO_HOME:
+					break;
+				case QUEST_TYPE.DO_NOTHING:
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		private WeightedDictionary<QUEST_TYPE> GetActionWeights() {
+			WeightedDictionary<QUEST_TYPE> actionWeights = new WeightedDictionary<QUEST_TYPE>();
+			for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
+				Quest currQuest = _faction.internalQuestManager.activeQuests[i];
+//				if (currQuest.CanAcceptQuest(this)) {
+//					actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
+//				}
+			}
+			actionWeights.AddElement(QUEST_TYPE.REST, GetWeightForQuestType(QUEST_TYPE.REST));
+			actionWeights.AddElement(QUEST_TYPE.GO_HOME, GetWeightForQuestType(QUEST_TYPE.GO_HOME));
+			actionWeights.AddElement(QUEST_TYPE.DO_NOTHING, GetWeightForQuestType(QUEST_TYPE.DO_NOTHING));
+			return actionWeights;
+		}
+		private int GetWeightForQuestType(QUEST_TYPE questType) {
+			int weight = 0;
+			switch (questType) {
+			case QUEST_TYPE.EXPLORE_REGION:
+				weight += GetExploreRegionWeight();
+				break;
+			case QUEST_TYPE.OCCUPY_LANDMARK:
+				break;
+			case QUEST_TYPE.INVESTIGATE_LANDMARK:
+				break;
+			case QUEST_TYPE.OBTAIN_RESOURCE:
+				break;
+			case QUEST_TYPE.EXPAND:
+				break;
+			case QUEST_TYPE.REST:
+				weight += GetRestWeight();
+				break;
+			case QUEST_TYPE.GO_HOME:
+				weight += GetGoHomeWeight();
+				break;
+			case QUEST_TYPE.DO_NOTHING:
+				weight += GetDoNothingWeight();
+				break;
+			default:
+				break;
+			}
+			return weight;
+		}
+		private int GetExploreRegionWeight() {
+			int weight = 0;
+			switch (_role.roleType) {
+			case CHARACTER_ROLE.CHIEFTAIN:
+				weight += 100;
+				break;
+			default:
+				break;
+			}
+			return weight;
+		}
+		private int GetRestWeight() {
+			if(_currentHP < maxHP) {
+				int percentMissing = _currentHP / maxHP;
+				return 5 * percentMissing;
+			}
+			return 0;
+		}
+		private int GetGoHomeWeight() {
+			//0 if already at Home Settlement or no path to it
+			if (currLocation.isHabitable && currLocation.isOccupied && currLocation.landmarkOnTile.owner == this._faction) {
+				return 0;
+			}
+			if(PathGenerator.Instance.GetPath(currLocation, _faction.settlements[0].location, PATHFINDING_MODE.USE_ROADS) == null) {
+				return 0;
+			}
+			return 5; //5 if not
+		}
+		private int GetDoNothingWeight() {
+			return 10;
+		}
+		private void StartRestQuest() {
+			Rest restQuest = new Rest(this, 0, 1);
+			restQuest.StartQuestLine();
+		}
+		#endregion
+
+		#region HP
+		int regenAmount;
+		public void StartRegeneration(int amount) {
+			regenAmount = amount;
+			Messenger.AddListener("OnDayEnd", RegenerateHealth);
+		}
+		public void StopRegeneration() {
+			regenAmount = 0;
+			Messenger.RemoveListener("OnDayEnd", RegenerateHealth);
+		}
+		public void RegenerateHealth() {
+			AdjustHP(regenAmount);
+		}
+		#endregion
+
+		#region Avatar
+		public void SetAvatar(CharacterAvatar avatar) {
+			_avatar = avatar;
+		}
+		public void DestroyAvatar() {
+			if(_avatar != null) {
+				_avatar.DestroyObject();
+			}
+		}
+		#endregion
+	}
+}

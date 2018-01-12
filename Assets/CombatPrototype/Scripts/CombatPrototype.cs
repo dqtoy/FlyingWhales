@@ -32,12 +32,6 @@ namespace ECS{
         #region Character Management
         //Add a character to a side
         internal void AddCharacter(SIDES side, Character character) {
-            //			if(this.allCharactersAndSides.ContainsKey(side)){
-            //				this.allCharactersAndSides [side].Add (character);
-            //			}else{
-            //				this.allCharactersAndSides.Add (side, new List<Character>(){character});
-            //			}
-
             if (side == SIDES.A) {
                 this.charactersSideA.Add(character);
             } else {
@@ -47,10 +41,6 @@ namespace ECS{
         }
         //Remove a character from a side
         internal void RemoveCharacter(SIDES side, Character character) {
-            //			if(this.allCharactersAndSides.ContainsKey(side)){
-            //				this.allCharactersAndSides [side].Remove (character);
-            //			}
-
             if (side == SIDES.A) {
                 this.charactersSideA.Remove(character);
             } else {
@@ -83,9 +73,7 @@ namespace ECS{
         //This simulates the whole combat system
         public IEnumerator CombatSimulation(){
             CombatPrototypeUI.Instance.ClearCombatLogs();
-            //			List<Character> charactersSideA = this.allCharactersAndSides [SIDES.A];
-            //			List<Character> charactersSideB = this.allCharactersAndSides [SIDES.B];
-//            ResetAllArmorHitPoints(); //Reset all hitpoints of each characters armor
+			Dictionary<Character, int> characterActivationWeights = new Dictionary<Character, int> ();
             bool isInitial = true;
 			bool isOneSideDefeated = false;
 			SetRowNumber (this.charactersSideA, 1);
@@ -94,7 +82,7 @@ namespace ECS{
             int rounds = 1;
 			while(this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0){
                 Debug.Log("========== Round " + rounds.ToString() + " ==========");
-				Character characterThatWillAct = GetCharacterThatWillAct (this.charactersSideA, this.charactersSideB, isInitial);
+				Character characterThatWillAct = GetCharacterThatWillAct (characterActivationWeights, this.charactersSideA, this.charactersSideB, isInitial);
 				characterThatWillAct.EnableDisableSkills ();
                 Debug.Log(characterThatWillAct.characterClass.className + " " + characterThatWillAct.name + " will act");
                 Debug.Log("Available Skills: ");
@@ -131,36 +119,36 @@ namespace ECS{
 		}
 
 		//Return a character that will act from a pool of characters based on their act rate
-		private Character GetCharacterThatWillAct(List<Character> charactersSideA, List<Character> charactersSideB, bool isInitial){
-			Dictionary<Character, int> characterActivationWeights = new Dictionary<Character, int> ();
-			int modifier = 1;
+		private Character GetCharacterThatWillAct(Dictionary<Character, int> characterActivationWeights, List<Character> charactersSideA, List<Character> charactersSideB, bool isInitial){
+			characterActivationWeights.Clear();
 			if(isInitial){
-				modifier = 10;
-			}
-
-			for (int i = 0; i < charactersSideA.Count; i++) {
-				int actRate = charactersSideA [i].agility * modifier;
-				characterActivationWeights.Add (charactersSideA [i], actRate);
-			}
-			for (int i = 0; i < charactersSideB.Count; i++) {
-				int actRate = charactersSideB [i].agility * modifier;
-				characterActivationWeights.Add (charactersSideB [i], actRate);
+				for (int i = 0; i < charactersSideA.Count; i++) {
+					charactersSideA[i].actRate = charactersSideA [i].agility * 10;
+					characterActivationWeights.Add (charactersSideA [i], charactersSideA[i].actRate);
+				}
+				for (int i = 0; i < charactersSideB.Count; i++) {
+					charactersSideB[i].actRate = charactersSideB [i].agility * 10;
+					characterActivationWeights.Add (charactersSideB [i], charactersSideB[i].actRate);
+				}
+			}else{
+				for (int i = 0; i < charactersSideA.Count; i++) {
+					characterActivationWeights.Add (charactersSideA [i], charactersSideA[i].actRate);
+				}
+				for (int i = 0; i < charactersSideB.Count; i++) {
+					characterActivationWeights.Add (charactersSideB [i], charactersSideB[i].actRate);
+				}
 			}
 
 			Character chosenCharacter = Utilities.PickRandomElementWithWeights<Character>(characterActivationWeights);
 			foreach (Character character in characterActivationWeights.Keys) {
-				character.AdjustAgility(character.baseAgility);
+				character.actRate += character.baseAgility;
 			}
-			chosenCharacter.SetAgility(0);
+			chosenCharacter.actRate = 0;
 			return chosenCharacter;
 		}
 
 		//Get a random character from the opposite side to be the target
 		private Character GetTargetCharacter(Character sourceCharacter, Skill skill){
-//			if(this.allCharactersAndSides[SIDES.A].Contains(sourceCharacter)){
-//				return this.allCharactersAndSides [SIDES.B] [UnityEngine.Random.Range (0, this.allCharactersAndSides [SIDES.B].Count)];
-//			}
-//			return this.allCharactersAndSides [SIDES.A] [UnityEngine.Random.Range (0, this.allCharactersAndSides [SIDES.A].Count)];
 			List<Character> possibleTargets = new List<Character>();
 			if (skill is AttackSkill) {
 				if (this.charactersSideA.Contains (sourceCharacter)) {
