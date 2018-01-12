@@ -10,8 +10,8 @@ public class Rest : Quest {
     }
 
     private Settlement GetTargetSettlement() {
-        Character character = (Character)_createdBy;
-        List<Settlement> factionSettlements = character._faction.settlements.OrderBy(x => Vector2.Distance(character.currLocation.transform.position, x.location.transform.position)).ToList();
+        ECS.Character character = (ECS.Character)_createdBy;
+        List<Settlement> factionSettlements = character.faction.settlements.OrderBy(x => Vector2.Distance(character.currLocation.transform.position, x.location.transform.position)).ToList();
         for (int i = 0; i < factionSettlements.Count; i++) {
             Settlement currSettlement = factionSettlements[i];
             if(PathGenerator.Instance.GetPath(character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {

@@ -23,7 +23,7 @@ namespace ECS{
 
 		[SerializeField] private GameObject goRemoveItem;
 
-        internal Character currSelectedCharacter;
+        internal ECS.Character currSelectedCharacter;
 		internal Item currSelectedItem;
 
         internal List<string> resultsLog;
@@ -84,13 +84,13 @@ namespace ECS{
         }
 
         public void AddCharacterToSideA() {
-            Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
+            ECS.Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
             CombatPrototype.Instance.AddCharacter(SIDES.A, newChar);
             CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
         public void AddCharacterToSideB() {
-            Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
+            ECS.Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
             CombatPrototype.Instance.AddCharacter(SIDES.B, newChar);
             CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
@@ -102,15 +102,15 @@ namespace ECS{
                 labelToUpdate = sideBCharactersLbl;
                 sideText = "_sideB";
             }
-            List<Character> charactersFromSide = CombatPrototype.Instance.GetCharactersOnSide(side);
+            List<ECS.Character> charactersFromSide = CombatPrototype.Instance.GetCharactersOnSide(side);
             labelToUpdate.text = string.Empty;
             for (int i = 0; i < charactersFromSide.Count; i++) {
-                Character currCharacter = charactersFromSide[i];
+                ECS.Character currCharacter = charactersFromSide[i];
 				labelToUpdate.text += "[url=" + i.ToString() + sideText + "]" + currCharacter.name + "[/url]\n";
             }
         }
 
-        public void UpdateCharacterSummary(Character character) {
+        public void UpdateCharacterSummary(ECS.Character character) {
             characterSummary.UpdateCharacterSummary(character);
         }
         public void UpdateCharacterSummary() {
@@ -150,7 +150,7 @@ namespace ECS{
 			ResetCurrentSelectedItem ();
         }
 
-        public void SetCharacterAsSelected(Character character) {
+        public void SetCharacterAsSelected(ECS.Character character) {
 			if(currSelectedCharacter != null && currSelectedCharacter != character){
 				ResetCurrentSelectedItem ();
 			}

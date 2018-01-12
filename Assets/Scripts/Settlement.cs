@@ -53,7 +53,7 @@ public class Settlement : BaseLandmark {
     protected void CreateScheduledCharacter() {
         if(roleToCreate != CHARACTER_ROLE.NONE && classToCreate != CHARACTER_CLASS.NONE) {
             if (civilians >= 1f) { //Check first if the settlement has enough civilians to create a new character
-                CreateNewCharacter(roleToCreate, classToCreate);
+				CreateNewCharacter(roleToCreate, Utilities.NormalizeString(classToCreate.ToString()));
             }
         }
         GameDate decideCharacterDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -75,9 +75,13 @@ public class Settlement : BaseLandmark {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public void CreateNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass) {
-        Character newCharacter = new Character(this._owner.race);
-        newCharacter.AssignClass(charClass);
+	public void CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
+		ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetupBasedOnClass (className);
+		if(setup == null){
+			Debug.LogError ("THERE IS NO CLASS WITH THE NAME: " + className + "!");
+			return;
+		}
+		ECS.Character newCharacter = new ECS.Character(setup);
         newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(this._owner);
         newCharacter.SetLocation(this.location);

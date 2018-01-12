@@ -10,7 +10,7 @@ public class RestForDays : QuestAction {
         base.InititalizeAction(days);
         restDays = days;
     }
-    public override void DoAction(Character actionDoer) {
+    public override void DoAction(ECS.Character actionDoer) {
         base.DoAction(actionDoer);
         actionDoer.StartRegeneration(2);
 

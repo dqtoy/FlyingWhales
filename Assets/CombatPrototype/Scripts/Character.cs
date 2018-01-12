@@ -43,6 +43,7 @@ namespace ECS {
 		private Color _characterColor;
 		private string _characterColorCode;
 		private bool _isDead;
+		private List<Quest> _activeQuests; //TODO: Move this to quest creator interface
 
 		internal int actRate;
 
@@ -109,6 +110,9 @@ namespace ECS {
 		}
 		internal bool isDead{
 			get { return this._isDead; }
+		}
+		public List<Quest> activeQuests {
+			get { return _activeQuests; }
 		}
 		internal int strength {
 			get { return _strength + _equippedItems.Sum(x => x.bonusStrength); }
@@ -206,6 +210,7 @@ namespace ECS {
 		//Enables or Disables skills based on skill requirements
 		internal void EnableDisableSkills(){
 			bool isAllAttacksInRange = true;
+			bool isAttackInRange = false;
 			for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
@@ -221,8 +226,11 @@ namespace ECS {
 					continue;
 				}
 				if(skill is AttackSkill){
-					if(isAllAttacksInRange){
-						isAllAttacksInRange = CombatPrototype.Instance.HasTargetInRangeForSkill (skill, this);
+					isAttackInRange = CombatPrototype.Instance.HasTargetInRangeForSkill (skill, this);
+					if(!isAttackInRange){
+						isAllAttacksInRange = false;
+						skill.isEnabled = false;
+						continue;
 					}
 				}else if (skill is FleeSkill){
 					if(this.currentHP >= (this.maxHP / 2)){
@@ -249,7 +257,7 @@ namespace ECS {
 							bool hasEnemyOnLeft = false;
 							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
-									Character enemy = CombatPrototype.Instance.charactersSideB [j];
+									ECS.Character enemy = CombatPrototype.Instance.charactersSideB [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -257,7 +265,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
-									Character enemy = CombatPrototype.Instance.charactersSideA [j];
+									ECS.Character enemy = CombatPrototype.Instance.charactersSideA [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -276,7 +284,7 @@ namespace ECS {
 							bool hasEnemyOnRight = false;
 							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
-									Character enemy = CombatPrototype.Instance.charactersSideB [j];
+									ECS.Character enemy = CombatPrototype.Instance.charactersSideB [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -284,7 +292,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
-									Character enemy = CombatPrototype.Instance.charactersSideA [j];
+									ECS.Character enemy = CombatPrototype.Instance.charactersSideA [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -320,7 +328,7 @@ namespace ECS {
 			}
 		}
 
-		//Character's death
+		//ECS.Character's death
 		internal void Death(){
 			this._isDead = true;
 			CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
@@ -383,9 +391,16 @@ namespace ECS {
 			for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
 				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART){
-					if(CombatPrototype.Instance.HasTargetInRangeForSkill(skill, this)){
-						return true;
-					}
+					return true;
+				}
+			}
+			return false;
+		}
+		internal bool HasActivatableWeaponSkill(){
+			for (int i = 0; i < this._skills.Count; i++) {
+				Skill skill = this._skills [i];
+				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON){
+					return true;
 				}
 			}
 			return false;
@@ -709,8 +724,48 @@ namespace ECS {
 			_characterColor = CombatPrototypeManager.Instance.UseRandomCharacterColor ();
 			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
 		}
-
-		#region Character Class
+		#region Roles
+		public void AssignRole(CHARACTER_ROLE role) {
+			switch (role) {
+			case CHARACTER_ROLE.CHIEFTAIN:
+				_role = new Chieftain();
+				break;
+			case CHARACTER_ROLE.VILLAGE_HEAD:
+				_role = new VillageHead();
+				break;
+			case CHARACTER_ROLE.WARLORD:
+				_role = new Warlord();
+				break;
+			case CHARACTER_ROLE.HERO:
+				_role = new Hero();
+				break;
+			case CHARACTER_ROLE.TRADER:
+				_role = new Trader();
+				break;
+			case CHARACTER_ROLE.ADVENTURER:
+				_role = new Adventurer();
+				break;
+			case CHARACTER_ROLE.COLONIST:
+				_role = new Colonist();
+				break;
+			case CHARACTER_ROLE.SPY:
+				_role = new Spy();
+				break;
+			case CHARACTER_ROLE.MEDIATOR:
+				_role = new Mediator();
+				break;
+			case CHARACTER_ROLE.NECROMANCER:
+				_role = new Necromancer();
+				break;
+			case CHARACTER_ROLE.DRAGON_TAMER:
+				_role = new DragonTamer();
+				break;
+			default:
+				break;
+			}
+		}
+		#endregion
+		#region ECS.Character Class
 		public void AssignClass(CharacterClass charClass) {
 			_characterClass = charClass;
 		}
@@ -746,7 +801,7 @@ namespace ECS {
 		#endregion
 
 		#region Quests
-		private void DetermineAction() {
+		internal void DetermineAction() {
 			WeightedDictionary<QUEST_TYPE> actionWeights = GetActionWeights();
 			if (actionWeights.GetTotalOfWeights() > 0) {
 				QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
@@ -868,6 +923,12 @@ namespace ECS {
 		#endregion
 
 		#region Avatar
+		public void CreateNewAvatar() {
+			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
+			GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
+			CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
+			//        avatar.Init(this);
+		}
 		public void SetAvatar(CharacterAvatar avatar) {
 			_avatar = avatar;
 		}
@@ -875,6 +936,30 @@ namespace ECS {
 			if(_avatar != null) {
 				_avatar.DestroyObject();
 			}
+		}
+		#endregion
+
+		#region Quest Management
+		public void AddNewQuest(Quest quest) {
+			if (!_activeQuests.Contains(quest)) {
+				_activeQuests.Add(quest);
+			}
+		}
+		public void RemoveQuest(Quest quest) {
+			_activeQuests.Remove(quest);
+		}
+		public void SetCurrentQuest(Quest currentQuest) {
+			this._currentQuest = currentQuest;
+		}
+		public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
+			List<Quest> quests = new List<Quest>();
+			for (int i = 0; i < _activeQuests.Count; i++) {
+				Quest currQuest = _activeQuests[i];
+				if(currQuest.questType == questType) {
+					quests.Add(currQuest);
+				}
+			}
+			return quests;
 		}
 		#endregion
 	}

@@ -1046,7 +1046,7 @@ public class Citizen {
     }
     #endregion
 
-    #region Character Traits
+    #region ECS.Character Traits
     internal bool HasTrait(TRAIT trait) {
         for (int i = 0; i < allTraits.Count; i++) {
             Trait currTrait = allTraits[i];

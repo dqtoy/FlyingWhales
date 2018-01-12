@@ -13,9 +13,9 @@ public class RoamRegion : QuestAction {
         base.InititalizeAction(target);
         _regionToRoam = target;
     }
-    public override void DoAction(Character actionDoer) {
+    public override void DoAction(ECS.Character actionDoer) {
         base.DoAction(actionDoer);
-        if(actionDoer._avatar == null) {
+        if(actionDoer.avatar == null) {
             actionDoer.CreateNewAvatar();
         }
         HexTile chosenTile = GetNextHexTile();

@@ -34,11 +34,11 @@ namespace ECS {
 					}
 				}
 			}
-            GUILayout.Label("Character Setup Creator ", EditorStyles.boldLabel);
+            GUILayout.Label("ECS.Character Setup Creator ", EditorStyles.boldLabel);
 			characterComponent.fileName = EditorGUILayout.TextField("File Name: ", characterComponent.fileName);
             
 			characterComponent.currRaceSelectedIndex = EditorGUILayout.Popup("Race Setup: ", characterComponent.currRaceSelectedIndex, characterComponent.raceChoices.ToArray());
-			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
+			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("ECS.Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
 
 //			SerializedProperty serializedProperty = serializedObject.FindProperty("preEquippedItems");
 //			EditorGUILayout.PropertyField(serializedProperty, true);
@@ -79,12 +79,12 @@ namespace ECS {
 			characterComponent.raceSettingName = characterComponent.raceChoices[characterComponent.currRaceSelectedIndex];
 			characterComponent.characterClassName = characterComponent.characterClassChoices[characterComponent.currCharacterSelectedIndex];
 
-			if (GUILayout.Button("Save Character")) {
+			if (GUILayout.Button("Save ECS.Character")) {
 				SaveCharacter(ConstructCharacterSetup());
 			}
         }
 
-        #region Character Classes
+        #region ECS.Character Classes
         private List<string> GetAllCharacterClasses() {
             List<string> allCharacterClasses = new List<string>();
             string path = "Assets/CombatPrototype/Data/CharacterClasses/";
@@ -109,7 +109,7 @@ namespace ECS {
         private void SaveCharacter(CharacterSetup characterSetup) {
 			string path = "Assets/CombatPrototype/Data/CharacterSetups/" + characterComponent.fileName + ".json";
             if (File.Exists(path)) {
-				if (EditorUtility.DisplayDialog("Overwrite Character", characterComponent.fileName + " already exists. Replace with this character?", "Yes", "No")) {
+				if (EditorUtility.DisplayDialog("Overwrite ECS.Character", characterComponent.fileName + " already exists. Replace with this character?", "Yes", "No")) {
                     File.Delete(path);
                     SaveCharacterJson(path, characterSetup);
                 }

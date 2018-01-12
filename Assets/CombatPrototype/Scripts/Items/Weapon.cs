@@ -45,7 +45,9 @@ namespace ECS{
 			if(CombatPrototypeManager.Instance.weaponTypeSkills.ContainsKey(this.weaponType)){
 				List<Skill> weaponTypeSkills = CombatPrototypeManager.Instance.weaponTypeSkills [weaponType];
 				for (int i = 0; i < weaponTypeSkills.Count; i++) {
-					_skills.Add (weaponTypeSkills [i].CreateNewCopy ());
+					Skill newSkill = weaponTypeSkills [i].CreateNewCopy ();
+					newSkill.weapon = this;
+					_skills.Add (newSkill);
 				}
 			}
 

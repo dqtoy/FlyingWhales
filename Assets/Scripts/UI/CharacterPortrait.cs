@@ -30,7 +30,7 @@ public class CharacterPortrait : MonoBehaviour {
     [SerializeField] private UILabel invasionValueLbl;
 
     [Space(10)]
-    [Header("Deatiled Character Info")]
+    [Header("Detailed ECS.Character Info")]
     [SerializeField] private GameObject detailedCharacterInfoGO;
     [SerializeField] private UILabel detailedCharacterInfoNameLbl;
     [SerializeField] private UILabel detailedCharacterInfoOtherLbl;
