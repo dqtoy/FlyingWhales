@@ -118,8 +118,11 @@ namespace ECS{
         }
 
 
-        public void AddCombatLog(string combatLog) {
+        public void AddCombatLog(string combatLog, SIDES side) {
             resultsLog.Add(combatLog);
+			if(side == SIDES.B){
+				combatSummaryLbl.text += "--------------";
+			}
             combatSummaryLbl.text += "--" + combatLog + "\n\n";
             combatSummaryScrollView.UpdatePosition();
             combatSummaryScrollView.UpdateScrollbars();

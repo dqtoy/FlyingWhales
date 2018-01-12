@@ -18,6 +18,7 @@ namespace ECS {
 		[SerializeField] private int _intelligence;
 		[SerializeField] private int _agility;
 		[SerializeField] private int _currentRow;
+		private SIDES _currentSide;
 		private int _baseMaxHP;
 		private int _baseStrength;
 		private int _baseIntelligence;
@@ -102,6 +103,9 @@ namespace ECS {
 		}
 		internal int currentRow{
 			get { return this._currentRow; }
+		}
+		internal SIDES currentSide{
+			get { return this._currentSide; }
 		}
 		internal bool isDead{
 			get { return this._isDead; }
@@ -302,6 +306,11 @@ namespace ECS {
 			this._currentRow = rowNumber;
 		}
 
+		//Changes character's side
+		internal void SetSide(SIDES side){
+			this._currentSide = side;
+		}
+
 		//Adjust current HP based on specified paramater, but HP must not go below 0
 		internal void AdjustHP(int amount){
 			this._currentHP += amount;
@@ -369,6 +378,17 @@ namespace ECS {
 				}
 			}
 			return null;
+		}
+		internal bool HasActivatableBodyPartSkill(){
+			for (int i = 0; i < this._skills.Count; i++) {
+				Skill skill = this._skills [i];
+				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART){
+					if(CombatPrototype.Instance.HasTargetInRangeForSkill(skill, this)){
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		#endregion
 
@@ -593,7 +613,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = UnityEngine.Random.Range (0, 100);
 							if(chance < 15){
-								CombatPrototypeUI.Instance.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".");
+								CombatPrototypeUI.Instance.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
