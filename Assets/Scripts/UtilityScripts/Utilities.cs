@@ -1407,4 +1407,40 @@ public class Utilities : MonoBehaviour {
         }
     }
     #endregion
+
+    public static bool DoesFileExist(string path) {
+        return System.IO.File.Exists(path);
+    }
+
+    #region Combat Prototype
+    public static ECS.IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(ECS.Armor armor) {
+        switch (armor.armorBodyType) {
+            case BODY_PART.HEAD:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
+            case BODY_PART.TORSO:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+            case BODY_PART.TAIL:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
+            case BODY_PART.ARM:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
+            case BODY_PART.HAND:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
+            case BODY_PART.LEG:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
+            case BODY_PART.FEET:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
+            default:
+                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+        }
+    }
+    #endregion
+
+	public static MATERIAL_CATEGORY GetMaterialCategory(MATERIAL material){
+		if(material == MATERIAL.IRON || material == MATERIAL.COBALT || material == MATERIAL.MITHRIL){
+			return MATERIAL_CATEGORY.METAL;
+		}else if(material == MATERIAL.OAK || material == MATERIAL.YEW || material == MATERIAL.EBONY){
+			return MATERIAL_CATEGORY.WOOD;
+		}
+		return MATERIAL_CATEGORY.NONE;
+	}
 }

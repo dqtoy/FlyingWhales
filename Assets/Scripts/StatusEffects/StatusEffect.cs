@@ -5,7 +5,7 @@ public class StatusEffect {
 
     public Citizen owner;
     public string name;
-    public STATUS_EFFECTS statusEffectType;
+    public CITIZEN_STATUS_EFFECTS statusEffectType;
     public GameDate contractionDate;
 
     public StatusEffect(Citizen owner) {
