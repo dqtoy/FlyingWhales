@@ -12,7 +12,7 @@ public class CharacterAvatar : PooledObject{
     [SerializeField] private SmoothMovement smoothMovement;
     [SerializeField] private DIRECTION direction;
 
-    private List<Character> _characters;
+    private List<ECS.Character> _characters;
 
     private HexTile currLocation;
     private HexTile targetLocation;
@@ -21,19 +21,19 @@ public class CharacterAvatar : PooledObject{
 
     private bool _hasArrived = false;
 
-    internal virtual void Init(Character character) {
-        _characters = new List<Character>();
+    internal virtual void Init(ECS.Character character) {
+        _characters = new List<ECS.Character>();
         AddNewCharacter(character);
     }
     internal virtual void Init(Party party) {
-        _characters = new List<Character>();
+        _characters = new List<ECS.Character>();
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
     }
 
-    #region Character Management
-    public void AddNewCharacter(Character character) {
+    #region ECS.Character Management
+    public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {
             _characters.Add(character);
             character.SetAvatar(this);
@@ -79,7 +79,7 @@ public class CharacterAvatar : PooledObject{
         if (this.path.Count > 0) {
             this.currLocation = this.path[0];
             for (int i = 0; i < _characters.Count; i++) {
-                Character currCharacter = _characters[i];
+                ECS.Character currCharacter = _characters[i];
                 currCharacter.SetLocation(this.currLocation);
             }
             this.path.RemoveAt(0);
@@ -113,7 +113,7 @@ public class CharacterAvatar : PooledObject{
          */
     public void DestroyObject() {
         for (int i = 0; i < _characters.Count; i++) {
-            Character currCharacter = _characters[i];
+            ECS.Character currCharacter = _characters[i];
             currCharacter.SetAvatar(null);
         }
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);

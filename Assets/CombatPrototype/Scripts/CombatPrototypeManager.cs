@@ -39,8 +39,8 @@ namespace ECS {
         /*
          * Create a new character given a base character setup.
          * */
-        internal Character CreateNewCharacter(CharacterSetup baseCharacter) {
-            return new Character(baseCharacter);
+        internal ECS.Character CreateNewCharacter(CharacterSetup baseCharacter) {
+            return new ECS.Character(baseCharacter);
         }
 
 		private void ConstructCharacterColors(){
@@ -88,6 +88,15 @@ namespace ECS {
 				weapSkill.ConstructWeaponSkillsList ();
 				weaponTypeSkills.Add (weapSkill.weaponType, new List<Skill> (weapSkill.skills));
 			}
+		}
+
+		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
+			for (int i = 0; i < this.baseCharacters.Length; i++) {
+				if(this.baseCharacters[i].characterClassName.ToLower() == className.ToLower()){
+					return this.baseCharacters [i];
+				}
+			}
+			return null;
 		}
     }
 }

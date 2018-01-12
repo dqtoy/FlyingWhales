@@ -14,16 +14,16 @@ public class RoamRegion : QuestAction {
         base.InititalizeAction(target);
         _regionToRoam = target;
     }
-    public override void DoAction(Character actionDoer) {
+    public override void DoAction(ECS.Character actionDoer) {
         base.DoAction(actionDoer);
-        if(actionDoer._avatar == null) {
+        if(actionDoer.avatar == null) {
             actionDoer.CreateNewAvatar();
         }
 
         //actionDoer._avatar.SetTarget()
         //actionDoer._avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
 
-        if (actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer._faction) {
+        if (actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer.faction) {
             //action doer is already at a home settlement
             ActionDone();
         } else {
@@ -33,7 +33,7 @@ public class RoamRegion : QuestAction {
 
     }
     public override void ActionDone() {
-        //Destroy Character Avatar
+        //Destroy ECS.Character Avatar
         actionDoer.DestroyAvatar();
         base.ActionDone();
     }

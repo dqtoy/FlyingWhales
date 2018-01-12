@@ -25,7 +25,7 @@ namespace ECS {
             currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);
 
 
-            if (GUILayout.Button("Create Character Class")) {
+            if (GUILayout.Button("Create ECS.Character Class")) {
                 SaveCharacterClass();
             }
         }
@@ -95,7 +95,7 @@ namespace ECS {
 
         #region Loading
 //        private void LoadCharacterClass() {
-//            string filePath = EditorUtility.OpenFilePanel("Select Character Json", "Assets/CombatPrototype/Data/CharacterClasses/", "json");
+//            string filePath = EditorUtility.OpenFilePanel("Select ECS.Character Json", "Assets/CombatPrototype/Data/CharacterClasses/", "json");
 //            if (!string.IsNullOrEmpty(filePath)) {
 //                ResetValues();
 //                string dataAsJson = File.ReadAllText(filePath);

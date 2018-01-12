@@ -81,8 +81,8 @@ public class FactionManager : MonoBehaviour {
          */
     private void CreateInititalFactionCharacters(Faction faction) {
         Settlement baseSettlement = faction.settlements[0];
-        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, CHARACTER_CLASS.SWORDSMAN);
-        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, CHARACTER_CLASS.SWORDSMAN);
+		baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
+		baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
     }
     public Faction CreateNewFaction(System.Type factionType, RACE race) {
         if (factionType == typeof(Tribe)) {
@@ -131,8 +131,8 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Characters
-    public List<Character> GetAllCharactersOfType(CHARACTER_ROLE role) {
-        List<Character> characters = new List<Character>();
+    public List<ECS.Character> GetAllCharactersOfType(CHARACTER_ROLE role) {
+        List<ECS.Character> characters = new List<ECS.Character>();
         for (int i = 0; i < allFactions.Count; i++) {
             Faction currFaction = allFactions[i];
             characters.AddRange(currFaction.GetCharactersOfType(role));

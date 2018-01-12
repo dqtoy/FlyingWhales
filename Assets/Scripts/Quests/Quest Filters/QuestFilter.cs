@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class QuestFilter {
 
     #region virtuals
-    public virtual bool MeetsRequirements(Character character) {
+    public virtual bool MeetsRequirements(ECS.Character character) {
         return true;
     }
     #endregion
@@ -20,7 +20,7 @@ public class MustNotHaveTraits : QuestFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(Character character) {
+    public override bool MeetsRequirements(ECS.Character character) {
         for (int i = 0; i < _traits.Count; i++) {
             if (character.HasTrait(_traits[i])) {
                 return false;
@@ -40,7 +40,7 @@ public class MustHaveTraits : QuestFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(Character character) {
+    public override bool MeetsRequirements(ECS.Character character) {
         for (int i = 0; i < _requiredTraits.Count; i++) {
             if (!character.HasTrait(_requiredTraits[i])) {
                 return false;
@@ -60,9 +60,9 @@ public class MustBeRole : QuestFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(Character character) {
-        if(character._role != null) {
-            return character._role.roleType == _requiredRole;
+    public override bool MeetsRequirements(ECS.Character character) {
+        if(character.role != null) {
+			return character.role.roleType == _requiredRole;
         }
         return false;
     }
@@ -71,15 +71,15 @@ public class MustBeRole : QuestFilter {
 
 public class MustBeClass : QuestFilter {
 
-    private CHARACTER_CLASS _requiredClass;
+	private string _requiredClass;
 
-    public MustBeClass(CHARACTER_CLASS requiredClass) {
+	public MustBeClass(string requiredClass) {
         _requiredClass = requiredClass;
     }
 
     #region overrides
-    public override bool MeetsRequirements(Character character) {
-         return character._characterClass == _requiredClass;
+    public override bool MeetsRequirements(ECS.Character character) {
+         return character.characterClass.className == _requiredClass;
     }
     #endregion
 }
@@ -97,9 +97,9 @@ public class MustBeFaction : QuestFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(Character character) {
-        if(character._faction != null) {
-            if (_allowedFactions.Contains(character._faction)) {
+    public override bool MeetsRequirements(ECS.Character character) {
+        if(character.faction != null) {
+            if (_allowedFactions.Contains(character.faction)) {
                 return true;
             }
         }
@@ -117,9 +117,9 @@ public class MustNotBeFaction : QuestFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(Character character) {
-        if (character._faction != null) {
-            if (_bannedFactions.Contains(character._faction)) {
+    public override bool MeetsRequirements(ECS.Character character) {
+        if (character.faction != null) {
+            if (_bannedFactions.Contains(character.faction)) {
                 return false;
             }
         }

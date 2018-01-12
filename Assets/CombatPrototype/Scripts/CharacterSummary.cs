@@ -30,7 +30,7 @@ namespace ECS{
             UpdateItemSummary(CombatPrototypeUI.Instance.currSelectedCharacter);
         }
 
-        public void UpdateCharacterSummary(Character character){
+        public void UpdateCharacterSummary(ECS.Character character){
             if (character == null) {
                 return;
             }
@@ -103,7 +103,7 @@ namespace ECS{
             UpdateItemSummary(CombatPrototypeUI.Instance.currSelectedCharacter);
         }
 
-        public void UpdateItemSummary(Character character) {
+        public void UpdateItemSummary(ECS.Character character) {
             if(character == null) {
                 return;
             }
@@ -140,7 +140,7 @@ namespace ECS{
             }
         }
 
-//		private void BasicInfo(Character character){
+//		private void BasicInfo(ECS.Character character){
 //			summaryLbl 
 //		}
 

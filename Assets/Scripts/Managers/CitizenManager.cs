@@ -161,7 +161,7 @@ public class CitizenManager : MonoBehaviour {
     }
     #endregion
 
-    #region Character Types
+    #region ECS.Character Types
     internal CharacterType GetRandomCharacterType() {
         return characterTypes[Random.Range(0, characterTypes.Count)];
     }

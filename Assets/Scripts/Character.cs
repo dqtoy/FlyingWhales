@@ -77,7 +77,7 @@ public class Character : QuestCreator {
     }
     #endregion
 
-    #region Character Class
+    #region ECS.Character Class
     public void AssignClass(CHARACTER_CLASS charClass) {
         _characterClass = charClass;
     }
@@ -135,7 +135,7 @@ public class Character : QuestCreator {
                         throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
                     }
                     Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
-                    exploreQuest.AcceptQuest(this);
+//                    exploreQuest.AcceptQuest(this);
                     break;
                 case QUEST_TYPE.OCCUPY_LANDMARK:
                     break;
@@ -163,9 +163,9 @@ public class Character : QuestCreator {
         WeightedDictionary<QUEST_TYPE> actionWeights = new WeightedDictionary<QUEST_TYPE>();
         for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
             Quest currQuest = _faction.internalQuestManager.activeQuests[i];
-            if (currQuest.CanAcceptQuest(this)) {
-                actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
-            }
+//            if (currQuest.CanAcceptQuest(this)) {
+//                actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
+//            }
         }
         actionWeights.AddElement(QUEST_TYPE.REST, GetWeightForQuestType(QUEST_TYPE.REST));
         actionWeights.AddElement(QUEST_TYPE.GO_HOME, GetWeightForQuestType(QUEST_TYPE.GO_HOME));
@@ -234,13 +234,13 @@ public class Character : QuestCreator {
     private void StartResting() {
         Rest restQuest = new Rest(this, 0, 1);
         AddNewQuest(restQuest);
-        restQuest.AcceptQuest(this);
+//        restQuest.AcceptQuest(this);
         //restQuest.StartQuestLine();
     }
     private void StartDoNothing() {
         DoNothing doNothing = new DoNothing(this, -1, 1);
         AddNewQuest(doNothing);
-        doNothing.AcceptQuest(this);
+//        doNothing.AcceptQuest(this);
     }
     #endregion
 
@@ -268,7 +268,7 @@ public class Character : QuestCreator {
         //TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
         GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
         CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-        avatar.Init(this);
+//        avatar.Init(this);
     }
     public void SetAvatar(CharacterAvatar avatar) {
         _avatar = avatar;

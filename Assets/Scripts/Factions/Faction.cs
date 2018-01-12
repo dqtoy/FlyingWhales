@@ -17,7 +17,7 @@ public class Faction {
     protected List<BaseLandmark> _ownedLandmarks;//List of settlements (cities/landmarks) owned by this faction
     protected List<TECHNOLOGY> _inititalTechnologies;
     internal Color factionColor;
-    protected List<Character> _characters;
+    protected List<ECS.Character> _characters;
     protected InternalQuestManager _internalQuestManager;
     //TODO: Add list for characters that are part of the faction
 
@@ -43,7 +43,7 @@ public class Faction {
     public List<TECHNOLOGY> inititalTechnologies {
         get { return _inititalTechnologies; }
     }
-    public List<Character> characters {
+    public List<ECS.Character> characters {
         get { return _characters; }
     }
     public InternalQuestManager internalQuestManager {
@@ -60,7 +60,7 @@ public class Faction {
         _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
         _ownedLandmarks = new List<BaseLandmark>();
         factionColor = Utilities.GetColorForFaction();
-        _characters = new List<Character>();
+        _characters = new List<ECS.Character>();
         ConstructInititalTechnologies();
         _internalQuestManager = new InternalQuestManager(this);
     }
@@ -106,17 +106,17 @@ public class Faction {
     #endregion
 
     #region Characters
-    public void AddNewCharacter(Character character) {
+    public void AddNewCharacter(ECS.Character character) {
         _characters.Add(character);
     }
-    public void RemoveCharacter(Character character) {
+    public void RemoveCharacter(ECS.Character character) {
         _characters.Remove(character);
     }
-    public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
-        List<Character> chars = new List<Character>();
+    public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
+        List<ECS.Character> chars = new List<ECS.Character>();
         for (int i = 0; i < _characters.Count; i++) {
-            Character currCharacter = _characters[i];
-            if(currCharacter._role.roleType == role) {
+            ECS.Character currCharacter = _characters[i];
+            if(currCharacter.role.roleType == role) {
                 chars.Add(currCharacter);
             }
         }

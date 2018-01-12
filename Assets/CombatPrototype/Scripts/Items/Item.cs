@@ -19,14 +19,14 @@ namespace ECS{
         public int currDurability;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
-        protected Character _owner;
+        protected ECS.Character _owner;
 
 		private bool _isEquipped;
 
 		public bool isEquipped{
 			get { return _isEquipped; }
 		}
-		public Character owner{
+		public ECS.Character owner{
 			get { return _owner; }
 		}
 
@@ -43,7 +43,7 @@ namespace ECS{
             currDurability = durability;
         }
 
-        public void SetOwner(Character owner) {
+        public void SetOwner(ECS.Character owner) {
             _owner = owner;
         }
 

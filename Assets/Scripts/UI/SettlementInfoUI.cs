@@ -50,8 +50,8 @@ public class SettlementInfoUI : UIMenu {
             text += "\n[b]Characters: [/b] ";
             if (currentlyShowingSettlement.charactersOnLandmark.Count > 0) {
                 for (int i = 0; i < currentlyShowingSettlement.charactersOnLandmark.Count; i++) {
-                    Character currChar = currentlyShowingSettlement.charactersOnLandmark[i];
-                    text += "\n" + currChar._name + " - " + currChar._characterClass.ToString() + "/" + currChar._role.roleType.ToString();
+                    ECS.Character currChar = currentlyShowingSettlement.charactersOnLandmark[i];
+                    text += "\n" + currChar.faction + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
                     if (currChar.currentQuest != null) {
                         text += " (" + currChar.currentQuest.questType.ToString() + ")";
                     }
@@ -60,7 +60,7 @@ public class SettlementInfoUI : UIMenu {
                 text += "NONE";
             }
 
-            //text += "\n[b]Character Caps: [/b] ";
+            //text += "\n[b]ECS.Character Caps: [/b] ";
             //for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
             //    CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
             //    bool isCapReached = false;

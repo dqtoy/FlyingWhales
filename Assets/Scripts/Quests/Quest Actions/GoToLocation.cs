@@ -10,9 +10,9 @@ public class GoToLocation : QuestAction {
         base.InititalizeAction(target);
         targetLocation = target;
     }
-    public override void DoAction(Character actionDoer) {
+    public override void DoAction(ECS.Character actionDoer) {
         base.DoAction(actionDoer);
-        if(actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer._faction) {
+        if(actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer.faction) {
             //action doer is already at a home settlement
             ActionDone();
         } else {
@@ -25,7 +25,7 @@ public class GoToLocation : QuestAction {
         
     }
     public override void ActionDone() {
-        //Destroy Character Avatar
+        //Destroy ECS.Character Avatar
         actionDoer.DestroyAvatar();
         base.ActionDone();
     }

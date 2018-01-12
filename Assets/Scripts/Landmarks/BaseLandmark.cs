@@ -17,7 +17,7 @@ public class BaseLandmark {
     protected string _landmarkName;
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
-    protected List<Character> _charactersOnLandmark; //List of characters on landmark
+    protected List<ECS.Character> _charactersOnLandmark; //List of characters on landmark
     //TODO: Add list of prisoners on landmark
     protected Dictionary<RESOURCE, int> _resourceInventory; //list of resources available on landmark
     //TODO: Add list of items on landmark
@@ -59,7 +59,7 @@ public class BaseLandmark {
     public float civilians {
         get { return _civilians; }
     }
-    public List<Character> charactersOnLandmark {
+    public List<ECS.Character> charactersOnLandmark {
         get { return _charactersOnLandmark; }
     }
     public Dictionary<RESOURCE, int> resourceInventory {
@@ -82,7 +82,7 @@ public class BaseLandmark {
         _landmarkName = string.Empty; //TODO: Add name generation
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
-        _charactersOnLandmark = new List<Character>();
+        _charactersOnLandmark = new List<ECS.Character>();
         _resourceInventory = new Dictionary<RESOURCE, int>();
         ConstructTechnologiesDictionary();
     }
@@ -204,12 +204,12 @@ public class BaseLandmark {
     #endregion
 
     #region Characters
-    public void AddCharacterOnLandmark(Character character) {
+    public void AddCharacterOnLandmark(ECS.Character character) {
         if (!_charactersOnLandmark.Contains(character)) {
             _charactersOnLandmark.Add(character);
         }
     }
-    public void RemoveCharacterOnLandmark(Character character) {
+    public void RemoveCharacterOnLandmark(ECS.Character character) {
         _charactersOnLandmark.Remove(character);
     }
     #endregion

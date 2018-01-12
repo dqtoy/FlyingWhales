@@ -9,29 +9,29 @@ public class Party {
 
     protected int _maxPartyMembers;
 
-    protected Character _partyLeader;
-    protected List<Character> _partyMembers; //Contains all party members including the party leader
+    protected ECS.Character _partyLeader;
+    protected List<ECS.Character> _partyMembers; //Contains all party members including the party leader
 
     #region getters/setters
-    public Character partyLeader {
+    public ECS.Character partyLeader {
         get { return _partyLeader; }
     }
-    public List<Character> partyMembers {
+    public List<ECS.Character> partyMembers {
         get { return _partyMembers; }
     }
     #endregion
 
-    public Party(Character partyLeader, int maxPartyMembers) {
+    public Party(ECS.Character partyLeader, int maxPartyMembers) {
         _maxPartyMembers = maxPartyMembers;
         _partyLeader = partyLeader;
-        _partyMembers = new List<Character>();
+        _partyMembers = new List<ECS.Character>();
         AddPartyMember(_partyLeader);
     }
 
     /*
      Add a new party member.
          */
-    public void AddPartyMember(Character member) {
+    public void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
             _partyMembers.Add(member);
             member.SetParty(this);
@@ -46,7 +46,7 @@ public class Party {
     /*
      Remove a character from this party.
          */
-    public void RemovePartyMember(Character member) {
+    public void RemovePartyMember(ECS.Character member) {
         _partyMembers.Remove(member);
     }
 }

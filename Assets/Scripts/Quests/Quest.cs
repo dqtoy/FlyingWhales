@@ -56,9 +56,9 @@ public class Quest {
      Accept this quest.
      Quests can only be accepted by characters that can be party leaders.
          */
-    public virtual void AcceptQuest(Character partyLeader) {
+    public virtual void AcceptQuest(ECS.Character partyLeader) {
         _isAccepted = true;
-        //Character that accepts this quest must now create a party
+        //ECS.Character that accepts this quest must now create a party
         Party newParty = new Party(partyLeader, _maxPartyMembers);
         newParty.onPartyFull += OnPartyFull;
         _assignedParty = newParty;
@@ -72,7 +72,7 @@ public class Quest {
     /*
      Add a new character as a party member of this quest.
          */
-    public virtual void JoinQuest(Character member) {
+    public virtual void JoinQuest(ECS.Character member) {
         _assignedParty.AddPartyMember(member);
         member.SetCurrentQuest(this);
     }
@@ -119,7 +119,7 @@ public class Quest {
     protected virtual void ConstructQuestLine() { _questLine = new Queue<QuestAction>(); }
     #endregion
 
-    public bool CanAcceptQuest(Character character) {
+    public bool CanAcceptQuest(ECS.Character character) {
         for (int i = 0; i < _questFilters.Count; i++) {
             QuestFilter currFilter = _questFilters[i];
             if (!currFilter.MeetsRequirements(character)) {
@@ -165,7 +165,7 @@ public class Quest {
 
     private void RetaskParty() {
         for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
-            Character currMember = _assignedParty.partyMembers[i];
+            ECS.Character currMember = _assignedParty.partyMembers[i];
             currMember.SetCurrentQuest(null);
             currMember.DetermineAction(); //Retask all party members
         }

@@ -40,7 +40,7 @@ public class LandmarkManager : MonoBehaviour {
         region.centerOfMass.landmarkOnTile.OccupyLandmark(occupant);
     }
 
-    #region Character Production
+    #region ECS.Character Production
     /*
      Get the character role weights for a faction.
      This will not include roles that the faction has already reached the cap of.
