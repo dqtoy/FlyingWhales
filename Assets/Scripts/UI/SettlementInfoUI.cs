@@ -16,6 +16,7 @@ public class SettlementInfoUI : UIMenu {
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateSettlementInfo);
+        tweenPos.AddOnFinished(() => UpdateSettlementInfo());
     }
 
     public void ShowSettlementInfo() {
@@ -29,7 +30,9 @@ public class SettlementInfoUI : UIMenu {
 
     public void SetSettlementAsActive(Settlement settlement) {
         currentlyShowingSettlement = settlement;
-        UpdateSettlementInfo();
+        if (isShowing) {
+            UpdateSettlementInfo();
+        }
     }
 
     public void UpdateSettlementInfo() {
@@ -49,30 +52,42 @@ public class SettlementInfoUI : UIMenu {
                 for (int i = 0; i < currentlyShowingSettlement.charactersOnLandmark.Count; i++) {
                     Character currChar = currentlyShowingSettlement.charactersOnLandmark[i];
                     text += "\n" + currChar._name + " - " + currChar._characterClass.ToString() + "/" + currChar._role.roleType.ToString();
+                    if (currChar.currentQuest != null) {
+                        text += " (" + currChar.currentQuest.questType.ToString() + ")";
+                    }
                 }
             } else {
                 text += "NONE";
             }
 
-            text += "\n[b]Character Caps: [/b] ";
-            for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
-                CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
-                bool isCapReached = false;
-                for (int j = 0; j < currWweight.productionCaps.Count; j++) {
-                    CharacterProductionCap cap = currWweight.productionCaps[j];
-                    if (cap.IsCapReached(currWweight.role, currentlyShowingSettlement.owner)) {
-                        isCapReached = true;
-                        break;
-                    }
-                }
-                text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
-            }
+            //text += "\n[b]Character Caps: [/b] ";
+            //for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
+            //    CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
+            //    bool isCapReached = false;
+            //    for (int j = 0; j < currWweight.productionCaps.Count; j++) {
+            //        CharacterProductionCap cap = currWweight.productionCaps[j];
+            //        if (cap.IsCapReached(currWweight.role, currentlyShowingSettlement.owner)) {
+            //            isCapReached = true;
+            //            break;
+            //        }
+            //    }
+            //    text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
+            //}
 
             text += "\n[b]Active Quests: [/b] ";
             if (currentlyShowingSettlement.owner.internalQuestManager.activeQuests.Count > 0) {
                 for (int i = 0; i < currentlyShowingSettlement.owner.internalQuestManager.activeQuests.Count; i++) {
                     Quest currQuest = currentlyShowingSettlement.owner.internalQuestManager.activeQuests[i];
-                    text += "\n" + currQuest.GetType().ToString();
+                    text += "\n" + currQuest.questType.ToString();
+                    if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
+                        text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name;
+                    }
+                    if (currQuest.isAccepted) {
+                        text += " - A";
+                    } else {
+                        text += " - N";
+                    }
+                    
                 }
             } else {
                 text += "NONE";

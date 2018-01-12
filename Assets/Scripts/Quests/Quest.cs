@@ -10,6 +10,10 @@ using System.Collections.Generic;
 using System;
 
 public class Quest {
+
+    protected delegate void OnQuestAccepted();
+    protected OnQuestAccepted onQuestAccepted;
+
     protected QuestCreator _createdBy;
     protected QUEST_TYPE _questType;
     protected int _daysBeforeDeadline;
@@ -28,6 +32,9 @@ public class Quest {
     public QUEST_TYPE questType {
         get { return _questType; }
     }
+    public bool isAccepted {
+        get { return _isAccepted; }
+    }
     #endregion
     /*
      Create a new quest object.
@@ -41,6 +48,7 @@ public class Quest {
         if(daysBeforeDeadline != -1) {
             ScheduleDeadline();
         }
+        _createdBy.AddNewQuest(this);
     }
 
     #region virtuals
@@ -50,17 +58,23 @@ public class Quest {
          */
     public virtual void AcceptQuest(Character partyLeader) {
         _isAccepted = true;
-        _isExpired = false;
         //Character that accepts this quest must now create a party
         Party newParty = new Party(partyLeader, _maxPartyMembers);
         newParty.onPartyFull += OnPartyFull;
         _assignedParty = newParty;
+
+        partyLeader.SetCurrentQuest(this);
+
+        if(onQuestAccepted != null) {
+            onQuestAccepted();
+        }
     }
     /*
      Add a new character as a party member of this quest.
          */
     public virtual void JoinQuest(Character member) {
         _assignedParty.AddPartyMember(member);
+        member.SetCurrentQuest(this);
     }
     protected virtual void OnPartyFull(Party party) {
         //When the party is full, proceed with the next step
@@ -84,9 +98,21 @@ public class Quest {
             }
         }
     }
-    protected virtual void QuestSuccess() { _questResult = QUEST_RESULT.SUCCESS; }
-    protected virtual void QuestFail() { _questResult = QUEST_RESULT.FAIL; }
-    protected virtual void QuestCancel() { _questResult = QUEST_RESULT.CANCEL; }
+    protected virtual void QuestSuccess() {
+        _questResult = QUEST_RESULT.SUCCESS;
+        _createdBy.RemoveQuest(this);
+        RetaskParty();
+    }
+    protected virtual void QuestFail() {
+        _questResult = QUEST_RESULT.FAIL;
+        _createdBy.RemoveQuest(this);
+        RetaskParty();
+    }
+    protected virtual void QuestCancel() {
+        _questResult = QUEST_RESULT.CANCEL;
+        _createdBy.RemoveQuest(this);
+        RetaskParty();
+    }
     /*
      Construct the list of quest actions that the party will perform.
          */
@@ -116,6 +142,7 @@ public class Quest {
             StartQuestLine();
         } else {
             //Quest has not been accepted, remove quest from quest log
+            _createdBy.RemoveQuest(this);
         }
     }
     protected void ScheduleQuestEnd(int days, QUEST_RESULT result) {
@@ -135,4 +162,12 @@ public class Quest {
         _currentAction.DoAction(_assignedParty.partyLeader);
     }
     #endregion
+
+    private void RetaskParty() {
+        for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
+            Character currMember = _assignedParty.partyMembers[i];
+            currMember.SetCurrentQuest(null);
+            currMember.DetermineAction(); //Retask all party members
+        }
+    }
 }

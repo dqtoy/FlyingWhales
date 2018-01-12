@@ -18,12 +18,21 @@ public class Character : QuestCreator {
     public int hp;
     public int maxHP;
 
+    private List<Quest> _activeQuests; //This contains a list of the active quests created by the character
+
+    #region getters/setters
+    public List<Quest> activeQuests {
+        get { return _activeQuests; }
+    }
+    #endregion
+
     public Character(RACE race) {
         _gender = Utilities.GetRandomGender();
         _race = race;
         _name = RandomNameGenerator.Instance.GenerateRandomName(_race, _gender);
         maxHP = 100;
         hp = 100;
+        _activeQuests = new List<Quest>();
     }
 
     #region Roles
@@ -104,12 +113,29 @@ public class Character : QuestCreator {
     #endregion
 
     #region Quests
-    private void DetermineAction() {
+    public void AddNewQuest(Quest newQuest) {
+        if (!_activeQuests.Contains(newQuest)) {
+            _activeQuests.Add(newQuest);
+        }
+    }
+    public void RemoveQuest(Quest quest) {
+        _activeQuests.Remove(quest);
+    }
+    public void SetCurrentQuest(Quest currentQuest) {
+        this.currentQuest = currentQuest;
+    }
+    public void DetermineAction() {
         WeightedDictionary<QUEST_TYPE> actionWeights = GetActionWeights();
         if (actionWeights.GetTotalOfWeights() > 0) {
             QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
             switch (chosenAction) {
                 case QUEST_TYPE.EXPLORE_REGION:
+                    List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
+                    if(exploreQuests.Count < 0) {
+                        throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
+                    }
+                    Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
+                    exploreQuest.AcceptQuest(this);
                     break;
                 case QUEST_TYPE.OCCUPY_LANDMARK:
                     break;
@@ -120,11 +146,12 @@ public class Character : QuestCreator {
                 case QUEST_TYPE.EXPAND:
                     break;
                 case QUEST_TYPE.REST:
-                    StartRestQuest();
+                    StartResting();
                     break;
                 case QUEST_TYPE.GO_HOME:
                     break;
                 case QUEST_TYPE.DO_NOTHING:
+                    StartDoNothing();
                     break;
                 default:
                     break;
@@ -204,9 +231,16 @@ public class Character : QuestCreator {
     private int GetDoNothingWeight() {
         return 10;
     }
-    private void StartRestQuest() {
+    private void StartResting() {
         Rest restQuest = new Rest(this, 0, 1);
-        restQuest.StartQuestLine();
+        AddNewQuest(restQuest);
+        restQuest.AcceptQuest(this);
+        //restQuest.StartQuestLine();
+    }
+    private void StartDoNothing() {
+        DoNothing doNothing = new DoNothing(this, -1, 1);
+        AddNewQuest(doNothing);
+        doNothing.AcceptQuest(this);
     }
     #endregion
 
@@ -230,6 +264,12 @@ public class Character : QuestCreator {
     #endregion
 
     #region Avatar
+    public void CreateNewAvatar() {
+        //TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
+        GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
+        CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
+        avatar.Init(this);
+    }
     public void SetAvatar(CharacterAvatar avatar) {
         _avatar = avatar;
     }

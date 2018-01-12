@@ -7,6 +7,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class InternalQuestManager : QuestCreator {
 
@@ -15,6 +16,9 @@ public class InternalQuestManager : QuestCreator {
     private List<Quest> _activeQuests; //TODO: Move this to quest creator interface
 
     #region getters/setters
+    public Faction owner {
+        get { return _owner; }
+    }
     public List<Quest> activeQuests {
         get { return _activeQuests; }
     }
@@ -23,9 +27,10 @@ public class InternalQuestManager : QuestCreator {
     public InternalQuestManager(Faction owner) {
         _owner = owner;
         _activeQuests = new List<Quest>();
-
-        GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-        SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+        if(owner is Tribe) {
+            GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+        }
     }
 
     /*
@@ -56,10 +61,10 @@ public class InternalQuestManager : QuestCreator {
          */
     private void GenerateMonthlyQuests() {
         if(_activeQuests.Count < GetMaxActiveQuests()) {
-            WeightedDictionary<QUEST_TYPE> questDictionary = GetQuestWeightedDictionary();
+            WeightedDictionary<Quest> questDictionary = GetQuestWeightedDictionary();
             if(questDictionary.GetTotalOfWeights() > 0) {
-                QUEST_TYPE chosenQuestType = questDictionary.PickRandomElementGivenWeights();
-                CreateNewQuest(chosenQuestType);
+                Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
+                AddNewQuest(chosenQuestToCreate);
             }
         }
 
@@ -68,54 +73,69 @@ public class InternalQuestManager : QuestCreator {
         SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
     }
 
-    private WeightedDictionary<QUEST_TYPE> GetQuestWeightedDictionary() {
-        WeightedDictionary<QUEST_TYPE> questDict = new WeightedDictionary<QUEST_TYPE>();
-        questDict.AddElement(QUEST_TYPE.EXPLORE_REGION, GetExploreRegionWeight());
-        return questDict;
-    }
-
-    private int GetExploreRegionWeight() {
-        int weight = 0;
+    private WeightedDictionary<Quest> GetQuestWeightedDictionary() {
+        WeightedDictionary<Quest> questDict = new WeightedDictionary<Quest>();
+        //Explore region weights
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
             Region regionOfSettlement = _owner.settlements[i].location.region;
-            for (int j = 0; j < regionOfSettlement.landmarks.Count; j++) {
-                BaseLandmark landmark = regionOfSettlement.landmarks[j];
-                if (landmark.isHidden) {
-                    weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
-                }
+            //check if the current region already has an active quest to explore it
+            List<Quest> exploreRegionQuests = GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
+            if(!exploreRegionQuests.Where(x => ((ExploreRegion)x).regionToExplore.id == regionOfSettlement.id).Any()) {
+                questDict.AddElement(new ExploreRegion(this, 90, 3, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
+            }
+        }
+        
+        return questDict;
+    }
+
+    private int GetExploreRegionWeight(Region region) {
+        int weight = 0;
+        for (int i = 0; i < region.landmarks.Count; i++) {
+            BaseLandmark landmark = region.landmarks[i];
+            if (landmark.isHidden) {
+                weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
             }
         }
         return weight;
     }
-    private void CreateNewQuest(QUEST_TYPE questType) {
-        switch (questType) {
-            case QUEST_TYPE.EXPLORE_REGION:
-                ExploreRegion newExploreRegionQuest = new ExploreRegion(this, 90, 3);
-                AddNewQuest(newExploreRegionQuest);
-                break;
-            case QUEST_TYPE.OCCUPY_LANDMARK:
-                break;
-            case QUEST_TYPE.INVESTIGATE_LANDMARK:
-                break;
-            case QUEST_TYPE.OBTAIN_RESOURCE:
-                break;
-            case QUEST_TYPE.EXPAND:
-                break;
-            default:
-                break;
-        }
-    }
+    //private void CreateNewQuest(QUEST_TYPE questType) {
+    //    switch (questType) {
+    //        case QUEST_TYPE.EXPLORE_REGION:
+    //            ExploreRegion newExploreRegionQuest = new ExploreRegion(this, 90, 3);
+    //            break;
+    //        case QUEST_TYPE.OCCUPY_LANDMARK:
+    //            break;
+    //        case QUEST_TYPE.INVESTIGATE_LANDMARK:
+    //            break;
+    //        case QUEST_TYPE.OBTAIN_RESOURCE:
+    //            break;
+    //        case QUEST_TYPE.EXPAND:
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
     #endregion
 
     #region Quest Management
-    private void AddNewQuest(Quest quest) {
+    public void AddNewQuest(Quest quest) {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
         }
     }
-    private void RemoveQuest(Quest quest) {
+    public void RemoveQuest(Quest quest) {
         _activeQuests.Remove(quest);
+    }
+    public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
+        List<Quest> quests = new List<Quest>();
+        for (int i = 0; i < _activeQuests.Count; i++) {
+            Quest currQuest = _activeQuests[i];
+            if(currQuest.questType == questType) {
+                quests.Add(currQuest);
+            }
+        }
+        return quests;
     }
     #endregion
 }

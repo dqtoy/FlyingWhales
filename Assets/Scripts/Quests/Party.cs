@@ -37,8 +37,10 @@ public class Party {
             member.SetParty(this);
         }
         if(_partyMembers.Count >= _maxPartyMembers) {
-            //Party is now full
-            onPartyFull(this);
+            if(onPartyFull != null) {
+                //Party is now full
+                onPartyFull(this);
+            }
         }
     }
     /*

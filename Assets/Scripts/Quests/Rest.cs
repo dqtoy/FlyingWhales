@@ -6,7 +6,7 @@ using System.Linq;
 public class Rest : Quest {
     public Rest(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers) 
         : base(createdBy, daysBeforeDeadline, maxPartyMembers, QUEST_TYPE.REST) {
-
+        onQuestAccepted += StartQuestLine;
     }
 
     private Settlement GetTargetSettlement() {

@@ -71,6 +71,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private GameObject biomeDetailParentGO;
     [SerializeField] private TextMesh tileTextMesh;
 	[SerializeField] private GameObject _emptyCityGO;
+    [SerializeField] private GameObject _hoverHighlightGO;
 
     [Space(10)]
     [Header("Tile Edges")]
@@ -1346,16 +1347,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //}
     }
     private void OnMouseOver() {
+        _hoverHighlightGO.SetActive(true);
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-        if(_landmarkOnTile != null) {
+        if (_landmarkOnTile != null) {
             if(_landmarkOnTile.owner != null) { //landmark is occupied
                 if (isHabitable) {
                     this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
                 }
             }
-            ShowLandmarkInfo();
+            //ShowLandmarkInfo();
         }
 
    //     if (this.isOccupied) {
@@ -1378,6 +1380,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
    //     }
     }
     private void OnMouseExit() {
+        _hoverHighlightGO.SetActive(false);
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
@@ -1639,6 +1642,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
                     Character currChar = landmarkOnTile.charactersOnLandmark[i];
                     text += "\n" + currChar._name + " - " + currChar._characterClass.ToString() + "/" + currChar._role.roleType.ToString();
+                    if (currChar.currentQuest != null) {
+                        text += " " + currChar.currentQuest.questType.ToString();
+                    }
                 }
             } else {
                 text += "NONE";

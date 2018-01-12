@@ -4,13 +4,14 @@
 using UnityEngine;
 using System.Collections;
 
-public class Settlement : BaseLandmark, QuestCreator {
+public class Settlement : BaseLandmark {
 
     private CHARACTER_CLASS classToCreate;
     private CHARACTER_ROLE roleToCreate;
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
+        _isHidden = false;
     }
 
     #region Ownership
@@ -22,7 +23,7 @@ public class Settlement : BaseLandmark, QuestCreator {
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
         }
-        DecideCharacterToCreate(); //Start Character Creation Process
+        //DecideCharacterToCreate(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
     #endregion
@@ -79,9 +80,11 @@ public class Settlement : BaseLandmark, QuestCreator {
         newCharacter.AssignClass(charClass);
         newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(this._owner);
+        newCharacter.SetLocation(this.location);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterOnLandmark(newCharacter);
+        newCharacter.DetermineAction();
     }
     #endregion
 
