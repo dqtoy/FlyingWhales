@@ -18,16 +18,19 @@ public class RoamRegion : QuestAction {
         if(actionDoer.avatar == null) {
             actionDoer.CreateNewAvatar();
         }
+        if(previousHexTile == null) {
+            previousHexTile = actionDoer.currLocation;
+        }
         HexTile chosenTile = GetNextHexTile();
         previousHexTile = chosenTile;
-        actionDoer._avatar.SetTarget(chosenTile);
-        actionDoer._avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
+        actionDoer.avatar.SetTarget(chosenTile);
+        actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
     }
     #endregion
 
     private HexTile GetNextHexTile() {
-        List<HexTile> possibleTiles = _actionDoer.currLocation.allNeighbourRoads.Where(x => x.region.id == _regionToRoam.id).ToList();
-        if(previousHexTile != null) {
+        List<HexTile> possibleTiles = new List<HexTile>(_actionDoer.currLocation.allNeighbourRoads.Where(x => x.region.id == _regionToRoam.id));
+        if (previousHexTile != null) {
             possibleTiles.Remove(previousHexTile);
         }
         if(possibleTiles.Count > 0) {

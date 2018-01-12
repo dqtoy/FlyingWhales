@@ -6,10 +6,10 @@ public class QuestAction {
     public delegate void OnQuestActionDone();
     public OnQuestActionDone onQuestActionDone;
 
-    protected ECS.Character actionDoer;
+    protected ECS.Character _actionDoer;
 
     #region getters/setters
-    public Character actionDoer {
+    public ECS.Character actionDoer {
         get { return _actionDoer; }
     }
     #endregion
@@ -21,7 +21,7 @@ public class QuestAction {
     public virtual void InititalizeAction(Settlement target) { }
     public virtual void InititalizeAction(int days) { }
 
-    public virtual void DoAction(ECS.Character partyLeader) { actionDoer = partyLeader; }
+    public virtual void DoAction(ECS.Character partyLeader) { _actionDoer = partyLeader; }
     public virtual void CancelAction() { }
     public virtual void ActionDone() {
         if(onQuestActionDone != null) {

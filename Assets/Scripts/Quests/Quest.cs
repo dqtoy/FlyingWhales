@@ -101,18 +101,21 @@ public class Quest {
         _isDone = true;
         _questResult = QUEST_RESULT.SUCCESS;
         _createdBy.RemoveQuest(this);
+        CheckIfDestroyAvatar();
         RetaskParty();
     }
     protected virtual void QuestFail() {
         _isDone = true;
         _questResult = QUEST_RESULT.FAIL;
         _createdBy.RemoveQuest(this);
+        CheckIfDestroyAvatar();
         RetaskParty();
     }
     protected virtual void QuestCancel() {
         _isDone = true;
         _questResult = QUEST_RESULT.CANCEL;
         _createdBy.RemoveQuest(this);
+        CheckIfDestroyAvatar();
         RetaskParty();
     }
     /*
@@ -175,6 +178,13 @@ public class Quest {
             ECS.Character currMember = _assignedParty.partyMembers[i];
             currMember.SetCurrentQuest(null);
             currMember.DetermineAction(); //Retask all party members
+        }
+    }
+
+    private void CheckIfDestroyAvatar() {
+        if (_assignedParty.partyLeader.currLocation.isOccupied) {
+            //Destroy Avatar
+            _assignedParty.partyLeader.DestroyAvatar();
         }
     }
 }

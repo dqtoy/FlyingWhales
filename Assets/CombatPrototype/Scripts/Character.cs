@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ECS {
 	[System.Serializable]
-	public class Character {
+	public class Character : QuestCreator {
 		[SerializeField] private string _name;
 		private GENDER _gender;
 		private List<Trait>	_traits;
@@ -147,9 +147,12 @@ namespace ECS {
 		internal string characterColorCode {
 			get { return _characterColorCode; }
 		}
-		#endregion
+        public Settlement home {
+            get { return _faction.settlements[0]; }
+        }
+        #endregion
 
-		public Character(CharacterSetup baseSetup) {
+        public Character(CharacterSetup baseSetup) {
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
 			_name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
@@ -174,6 +177,8 @@ namespace ECS {
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
+
+            _activeQuests = new List<Quest>();
 			//TODO: Generate Traits
 		}
 
@@ -496,7 +501,7 @@ namespace ECS {
 				this._skills.Add (weapon.skills [i]);
 			}
 			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
-			CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+			//CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
 			return true;
 		}
 		private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req){
@@ -807,7 +812,13 @@ namespace ECS {
 				QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
 				switch (chosenAction) {
 				case QUEST_TYPE.EXPLORE_REGION:
-					break;
+                    List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
+                    if (exploreQuests.Count < 0) {
+                        throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
+                    }
+                    Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
+                    exploreQuest.AcceptQuest(this);
+                    break;
 				case QUEST_TYPE.OCCUPY_LANDMARK:
 					break;
 				case QUEST_TYPE.INVESTIGATE_LANDMARK:
@@ -820,8 +831,10 @@ namespace ECS {
 					StartRestQuest();
 					break;
 				case QUEST_TYPE.GO_HOME:
+                    StartGoHome();
 					break;
 				case QUEST_TYPE.DO_NOTHING:
+                    StartDoNothing();
 					break;
 				default:
 					break;
@@ -833,10 +846,10 @@ namespace ECS {
 			WeightedDictionary<QUEST_TYPE> actionWeights = new WeightedDictionary<QUEST_TYPE>();
 			for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
 				Quest currQuest = _faction.internalQuestManager.activeQuests[i];
-//				if (currQuest.CanAcceptQuest(this)) {
-//					actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
-//				}
-			}
+                if (currQuest.CanAcceptQuest(this)) {
+                    actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
+                }
+            }
 			actionWeights.AddElement(QUEST_TYPE.REST, GetWeightForQuestType(QUEST_TYPE.REST));
 			actionWeights.AddElement(QUEST_TYPE.GO_HOME, GetWeightForQuestType(QUEST_TYPE.GO_HOME));
 			actionWeights.AddElement(QUEST_TYPE.DO_NOTHING, GetWeightForQuestType(QUEST_TYPE.DO_NOTHING));
@@ -905,10 +918,20 @@ namespace ECS {
 			//Rest restQuest = new Rest(this, 0, 1);
 			//restQuest.StartQuestLine();
 		}
-		#endregion
+        private void StartDoNothing() {
+            DoNothing doNothing = new DoNothing(this, -1, 1);
+            AddNewQuest(doNothing);
+            doNothing.AcceptQuest(this);
+        }
+        private void StartGoHome() {
+            GoHome goHome = new GoHome(this, -1, 1);
+            AddNewQuest(goHome);
+            goHome.AcceptQuest(this);
+        }
+        #endregion
 
-		#region HP
-		int regenAmount;
+        #region HP
+        int regenAmount;
 		public void StartRegeneration(int amount) {
 			regenAmount = amount;
 			Messenger.AddListener("OnDayEnd", RegenerateHealth);
@@ -927,8 +950,8 @@ namespace ECS {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
 			GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
 			CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-			//        avatar.Init(this);
-		}
+            avatar.Init(this);
+        }
 		public void SetAvatar(CharacterAvatar avatar) {
 			_avatar = avatar;
 		}

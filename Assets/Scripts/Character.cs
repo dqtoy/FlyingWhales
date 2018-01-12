@@ -168,9 +168,9 @@ public class Character : QuestCreator {
         for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
             Quest currQuest = _faction.internalQuestManager.activeQuests[i];
             if (!currQuest.isAccepted) { //if the quest has already been accepted, do not add weight
-                if (currQuest.CanAcceptQuest(this)) {
-                    actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
-                }
+                //if (currQuest.CanAcceptQuest(this)) {
+                //    actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
+                //}
             }
         }
         actionWeights.AddElement(QUEST_TYPE.REST, GetWeightForQuestType(QUEST_TYPE.REST));
@@ -243,14 +243,14 @@ public class Character : QuestCreator {
 //        restQuest.AcceptQuest(this);
     }
     private void StartDoNothing() {
-        DoNothing doNothing = new DoNothing(this, -1, 1);
-        AddNewQuest(doNothing);
-//        doNothing.AcceptQuest(this);
+//        DoNothing doNothing = new DoNothing(this, -1, 1);
+//        AddNewQuest(doNothing);
+////        doNothing.AcceptQuest(this);
     }
     private void StartGoHome() {
-        GoHome goHome = new GoHome(this, -1, 1);
-        AddNewQuest(goHome);
-        goHome.AcceptQuest(this);
+        //GoHome goHome = new GoHome(this, -1, 1);
+        //AddNewQuest(goHome);
+        //goHome.AcceptQuest(this);
     }
     #endregion
 

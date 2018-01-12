@@ -12,15 +12,15 @@ public class GoToLocation : QuestAction {
     }
     public override void DoAction(ECS.Character actionDoer) {
         base.DoAction(actionDoer);
-        if(actionDoer.currLocation.isHabitable && actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer._faction) {
+        if(actionDoer.currLocation.isHabitable && actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer.faction) {
             //action doer is already at a home settlement
             ActionDone();
         } else {
-            if(actionDoer._avatar == null) {
+            if(actionDoer.avatar == null) {
                 //Instantiate a new character avatar
                 actionDoer.CreateNewAvatar();
             }
-            actionDoer._avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
+            actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
         }
         
     }

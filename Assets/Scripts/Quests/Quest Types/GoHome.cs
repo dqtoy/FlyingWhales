@@ -12,7 +12,7 @@ public class GoHome : Quest {
         base.ConstructQuestLine();
 
         GoToLocation goToLocation = new GoToLocation(); //Make character go to chosen settlement
-        goToLocation.InititalizeAction(((Character)_createdBy).home);
+        goToLocation.InititalizeAction(((ECS.Character)_createdBy).home);
         goToLocation.onQuestActionDone += QuestSuccess;
 
         _questLine.Enqueue(goToLocation);
