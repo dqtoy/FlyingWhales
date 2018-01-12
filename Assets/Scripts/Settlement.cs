@@ -23,7 +23,7 @@ public class Settlement : BaseLandmark {
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
         }
-        //DecideCharacterToCreate(); //Start Character Creation Process
+        DecideCharacterToCreate(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
     #endregion

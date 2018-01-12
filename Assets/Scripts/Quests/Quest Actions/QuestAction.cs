@@ -6,7 +6,13 @@ public class QuestAction {
     public delegate void OnQuestActionDone();
     public OnQuestActionDone onQuestActionDone;
 
-    protected Character actionDoer;
+    protected Character _actionDoer;
+
+    #region getters/setters
+    public Character actionDoer {
+        get { return _actionDoer; }
+    }
+    #endregion
 
     #region virtuals
     public virtual void InititalizeAction(HexTile target) { }
@@ -15,7 +21,7 @@ public class QuestAction {
     public virtual void InititalizeAction(Settlement target) { }
     public virtual void InititalizeAction(int days) { }
 
-    public virtual void DoAction(Character partyLeader) { actionDoer = partyLeader; }
+    public virtual void DoAction(Character partyLeader) { _actionDoer = partyLeader; }
     public virtual void CancelAction() { }
     public virtual void ActionDone() {
         if(onQuestActionDone != null) {

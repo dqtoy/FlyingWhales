@@ -82,7 +82,6 @@ public class Quest {
     }
     protected virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
-            _isDone = true;
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
                     QuestSuccess();
@@ -99,16 +98,19 @@ public class Quest {
         }
     }
     protected virtual void QuestSuccess() {
+        _isDone = true;
         _questResult = QUEST_RESULT.SUCCESS;
         _createdBy.RemoveQuest(this);
         RetaskParty();
     }
     protected virtual void QuestFail() {
+        _isDone = true;
         _questResult = QUEST_RESULT.FAIL;
         _createdBy.RemoveQuest(this);
         RetaskParty();
     }
     protected virtual void QuestCancel() {
+        _isDone = true;
         _questResult = QUEST_RESULT.CANCEL;
         _createdBy.RemoveQuest(this);
         RetaskParty();
@@ -160,6 +162,11 @@ public class Quest {
     internal void PerformNextQuestAction() {
         _currentAction = _questLine.Dequeue();
         _currentAction.DoAction(_assignedParty.partyLeader);
+    }
+    internal void RepeatCurrentAction() {
+        if(_currentAction != null) {
+            _currentAction.DoAction(_assignedParty.partyLeader);
+        }
     }
     #endregion
 

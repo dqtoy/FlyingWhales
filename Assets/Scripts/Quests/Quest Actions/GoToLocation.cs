@@ -12,21 +12,21 @@ public class GoToLocation : QuestAction {
     }
     public override void DoAction(Character actionDoer) {
         base.DoAction(actionDoer);
-        if(actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer._faction) {
+        if(actionDoer.currLocation.isHabitable && actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer._faction) {
             //action doer is already at a home settlement
             ActionDone();
         } else {
-            //Instantiate a new character avatar
-            GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", actionDoer.currLocation.transform.position, Quaternion.identity);
-            CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-            avatar.Init(actionDoer);
-            avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
+            if(actionDoer._avatar == null) {
+                //Instantiate a new character avatar
+                actionDoer.CreateNewAvatar();
+            }
+            actionDoer._avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
         }
         
     }
     public override void ActionDone() {
         //Destroy Character Avatar
-        actionDoer.DestroyAvatar();
+        //_actionDoer.DestroyAvatar();
         base.ActionDone();
     }
     #endregion

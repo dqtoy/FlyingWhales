@@ -22,14 +22,20 @@ public class CharacterAvatar : PooledObject{
     private bool _hasArrived = false;
 
     internal virtual void Init(Character character) {
+        this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<Character>();
         AddNewCharacter(character);
+        this.currLocation = character.currLocation;
+        this.smoothMovement.onMoveFinished += OnMoveFinished;
     }
     internal virtual void Init(Party party) {
+        this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<Character>();
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
+        this.currLocation = party.partyLeader.currLocation;
+        this.smoothMovement.onMoveFinished += OnMoveFinished;
     }
 
     #region Character Management
@@ -45,11 +51,13 @@ public class CharacterAvatar : PooledObject{
     internal void SetTarget(HexTile target) {
         targetLocation = target;
     }
-    internal void StartPath(PATHFINDING_MODE pathFindingMode, OnPathFinished actionOnPathFinished) {
+    internal void StartPath(PATHFINDING_MODE pathFindingMode, OnPathFinished actionOnPathFinished = null) {
         if (this.targetLocation != null) {
             SetHasArrivedState(false);
             onPathFinished = null;
-            onPathFinished += actionOnPathFinished;
+            if(actionOnPathFinished != null) {
+                onPathFinished += actionOnPathFinished;
+            }
             PathGenerator.Instance.CreatePath(this, this.currLocation, this.targetLocation, pathFindingMode, BASE_RESOURCE_TYPE.STONE, null);
         }
     }
@@ -84,8 +92,9 @@ public class CharacterAvatar : PooledObject{
             }
             this.path.RemoveAt(0);
         }
+        RevealRoads();
+        RevealLandmarks();
 
-       
         HasArrivedAtTargetLocation();
         if (!this._hasArrived) {
             NewMove();
@@ -118,11 +127,20 @@ public class CharacterAvatar : PooledObject{
         }
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
+    private void RevealRoads() {
+        this.currLocation.SetRoadState(true);
+    }
+    private void RevealLandmarks() {
+        if(this.currLocation.landmarkOnTile != null) {
+            this.currLocation.landmarkOnTile.SetHiddenState(false);
+        }
+    }
     #endregion
 
     #region overrides
     public override void Reset() {
         base.Reset();
+        smoothMovement.Reset();
         onPathFinished = null;
         direction = DIRECTION.LEFT;
         currLocation = null;

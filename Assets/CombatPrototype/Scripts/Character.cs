@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ECS {
 	[System.Serializable]
-	public class Character : QuestCreator {
+	public class Character {
 		[SerializeField] private string _name;
 		private GENDER _gender;
 		private List<Trait>	_traits;
@@ -847,8 +847,8 @@ namespace ECS {
 			return 10;
 		}
 		private void StartRestQuest() {
-			Rest restQuest = new Rest(this, 0, 1);
-			restQuest.StartQuestLine();
+			//Rest restQuest = new Rest(this, 0, 1);
+			//restQuest.StartQuestLine();
 		}
 		#endregion
 

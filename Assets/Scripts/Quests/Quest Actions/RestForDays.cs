@@ -20,7 +20,7 @@ public class RestForDays : QuestAction {
         
     }
     public override void ActionDone() {
-        actionDoer.StopRegeneration();
+        _actionDoer.StopRegeneration();
         base.ActionDone();
     }
     #endregion

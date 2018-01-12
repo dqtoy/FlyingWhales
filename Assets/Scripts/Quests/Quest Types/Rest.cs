@@ -34,6 +34,9 @@ public class Rest : Quest {
         restForDays.InititalizeAction(30); //set character to rest for x days
         restForDays.onQuestActionDone += QuestSuccess;
 
+        _questLine.Enqueue(goToLocation);
+        _questLine.Enqueue(restForDays);
+
     }
     #endregion
 }

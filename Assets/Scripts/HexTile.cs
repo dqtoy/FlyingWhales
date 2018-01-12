@@ -60,6 +60,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private List<City> _isOuterTileOfCities = new List<City>();
     [SerializeField] private List<Kingdom> _visibleByKingdoms = new List<Kingdom>(); //This is only occupied when a tile becomes occupies, becaoms a border or becomes an outer tile of a city!
 
+    private List<GameObject> roadGOs = new List<GameObject>();
+
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
@@ -722,7 +724,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         
     }
-    public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType) {
+    public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType, GameObject roadGO) {
+        roadGOs.Add(roadGO);
         if(this.isHabitable || this.hasLandmark) {
             if (isRoad) {
                 if (_roadType == ROAD_TYPE.NONE) {
@@ -744,6 +747,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 region.RemoveTileAsRoad(this);
                 RoadManager.Instance.RemoveTileAsRoadTile(this);
             }
+        }
+    }
+    public void SetRoadState(bool state) {
+        isRoadHidden = !state;
+        for (int i = 0; i < roadGOs.Count; i++) {
+            GameObject road = roadGOs[i];
+            road.SetActive(state);
+            
         }
     }
     #endregion

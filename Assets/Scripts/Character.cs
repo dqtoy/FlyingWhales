@@ -24,6 +24,9 @@ public class Character : QuestCreator {
     public List<Quest> activeQuests {
         get { return _activeQuests; }
     }
+    public Settlement home {
+        get { return _faction.settlements[0]; }
+    }
     #endregion
 
     public Character(RACE race) {
@@ -149,6 +152,7 @@ public class Character : QuestCreator {
                     StartResting();
                     break;
                 case QUEST_TYPE.GO_HOME:
+                    StartGoHome();
                     break;
                 case QUEST_TYPE.DO_NOTHING:
                     StartDoNothing();
@@ -163,8 +167,10 @@ public class Character : QuestCreator {
         WeightedDictionary<QUEST_TYPE> actionWeights = new WeightedDictionary<QUEST_TYPE>();
         for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
             Quest currQuest = _faction.internalQuestManager.activeQuests[i];
-            if (currQuest.CanAcceptQuest(this)) {
-                actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
+            if (!currQuest.isAccepted) { //if the quest has already been accepted, do not add weight
+                if (currQuest.CanAcceptQuest(this)) {
+                    actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
+                }
             }
         }
         actionWeights.AddElement(QUEST_TYPE.REST, GetWeightForQuestType(QUEST_TYPE.REST));
@@ -235,12 +241,16 @@ public class Character : QuestCreator {
         Rest restQuest = new Rest(this, 0, 1);
         AddNewQuest(restQuest);
         restQuest.AcceptQuest(this);
-        //restQuest.StartQuestLine();
     }
     private void StartDoNothing() {
         DoNothing doNothing = new DoNothing(this, -1, 1);
         AddNewQuest(doNothing);
         doNothing.AcceptQuest(this);
+    }
+    private void StartGoHome() {
+        GoHome goHome = new GoHome(this, -1, 1);
+        AddNewQuest(goHome);
+        goHome.AcceptQuest(this);
     }
     #endregion
 

@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class RoamRegion : QuestAction {
 
     private Region _regionToRoam;
-
     private HexTile previousHexTile;
-    private HexTile nextTile;
 
     #region overrides
     public override void InititalizeAction(Region target) {
@@ -19,28 +18,15 @@ public class RoamRegion : QuestAction {
         if(actionDoer._avatar == null) {
             actionDoer.CreateNewAvatar();
         }
-
-        //actionDoer._avatar.SetTarget()
-        //actionDoer._avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
-
-        if (actionDoer.currLocation.isOccupied && actionDoer.currLocation.landmarkOnTile.owner == actionDoer._faction) {
-            //action doer is already at a home settlement
-            ActionDone();
-        } else {
-            //Instantiate a new character avatar
-            
-        }
-
-    }
-    public override void ActionDone() {
-        //Destroy Character Avatar
-        actionDoer.DestroyAvatar();
-        base.ActionDone();
+        HexTile chosenTile = GetNextHexTile();
+        previousHexTile = chosenTile;
+        actionDoer._avatar.SetTarget(chosenTile);
+        actionDoer._avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
     }
     #endregion
 
     private HexTile GetNextHexTile() {
-        List<HexTile> possibleTiles = actionDoer.currLocation.allNeighbourRoads;
+        List<HexTile> possibleTiles = _actionDoer.currLocation.allNeighbourRoads.Where(x => x.region.id == _regionToRoam.id).ToList();
         if(previousHexTile != null) {
             possibleTiles.Remove(previousHexTile);
         }
