@@ -75,6 +75,7 @@ public class InternalQuestManager : QuestCreator {
 
     private WeightedDictionary<Quest> GetQuestWeightedDictionary() {
         WeightedDictionary<Quest> questDict = new WeightedDictionary<Quest>();
+        
         //Explore region weights
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
@@ -82,9 +83,10 @@ public class InternalQuestManager : QuestCreator {
             //check if the current region already has an active quest to explore it
             List<Quest> exploreRegionQuests = GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
             if(!exploreRegionQuests.Where(x => ((ExploreRegion)x).regionToExplore.id == regionOfSettlement.id).Any()) {
-                questDict.AddElement(new ExploreRegion(this, 90, 3, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
+                questDict.AddElement(new ExploreRegion(this, 30, 3, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
             }
         }
+        //End Explore Region Weights
         
         return questDict;
     }

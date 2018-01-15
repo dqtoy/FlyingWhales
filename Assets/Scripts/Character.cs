@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Obsolete("Use ECS.Character instead of this!")]
 public class Character : QuestCreator {
     public string _name;
     public GENDER _gender;

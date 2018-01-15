@@ -754,7 +754,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         for (int i = 0; i < roadGOs.Count; i++) {
             GameObject road = roadGOs[i];
             road.SetActive(state);
-            
         }
     }
     #endregion
