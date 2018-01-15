@@ -9,17 +9,17 @@ public class CharacterAvatar : PooledObject{
     public delegate void OnPathFinished();
     public OnPathFinished onPathFinished;
 
-    [SerializeField] private SmoothMovement smoothMovement;
-    [SerializeField] private DIRECTION direction;
+	[SerializeField] protected SmoothMovement smoothMovement;
+	[SerializeField] protected DIRECTION direction;
 
-    private List<ECS.Character> _characters;
+	protected List<ECS.Character> _characters;
 
-    private HexTile currLocation;
-    private HexTile targetLocation;
+	protected HexTile currLocation;
+    protected HexTile targetLocation;
 
-    private List<HexTile> path;
+	protected List<HexTile> path;
 
-    private bool _hasArrived = false;
+	protected bool _hasArrived = false;
 
     internal virtual void Init(ECS.Character character) {
         this.smoothMovement.avatarGO = this.gameObject;

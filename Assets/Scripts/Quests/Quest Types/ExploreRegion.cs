@@ -43,7 +43,7 @@ public class ExploreRegion : Quest {
         _questLine.Enqueue(goToRegionAction); 
         _questLine.Enqueue(roamRegionAction);
     }
-    protected override void EndQuest(QUEST_RESULT result) {
+	internal override void EndQuest(QUEST_RESULT result) {
         _currentAction.onQuestActionDone = null;
         //_currentAction.actionDoer.DestroyAvatar();
         base.EndQuest(result);

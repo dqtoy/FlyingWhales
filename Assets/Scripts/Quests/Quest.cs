@@ -35,6 +35,9 @@ public class Quest {
     public bool isAccepted {
         get { return _isAccepted; }
     }
+	public bool isDone {
+		get { return _isDone; }
+	}
     public Party assignedParty {
         get { return _assignedParty; }
     }
@@ -94,7 +97,7 @@ public class Quest {
         //if not wait for them to arrive before starting the quest.
         CheckPartyMembers();
     }
-    protected virtual void EndQuest(QUEST_RESULT result) {
+    internal virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
@@ -130,19 +133,25 @@ public class Quest {
     protected virtual void QuestCancel() {
         _isDone = true;
         _questResult = QUEST_RESULT.CANCEL;
+		_isAccepted = false;
         _createdBy.RemoveQuest(this);
         _currentAction.onQuestActionDone = null;
         _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
         CheckIfDestroyAvatar();
         RetaskParty();
+		ResetQuestValues ();
     }
+
+	//Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
+	protected virtual void ResetQuestValues(){}
+
     /*
      Construct the list of quest actions that the party will perform.
          */
     protected virtual void ConstructQuestLine() { _questLine = new Queue<QuestAction>(); }
     #endregion
 
-    public bool CanAcceptQuest(ECS.Character character) {
+    public virtual bool CanAcceptQuest(ECS.Character character) {
         for (int i = 0; i < _questFilters.Count; i++) {
             QuestFilter currFilter = _questFilters[i];
             if (!currFilter.MeetsRequirements(character)) {

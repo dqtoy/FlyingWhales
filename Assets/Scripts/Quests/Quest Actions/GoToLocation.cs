@@ -37,4 +37,17 @@ public class GoToLocation : QuestAction {
             actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
         }
     }
+
+	internal void Expand() {
+		if (actionDoer.currLocation.id == targetLocation.id) {
+			//action doer is already at the target location
+			ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+		} else {
+			if (actionDoer.avatar == null) {
+				//Instantiate a new character avatar
+				actionDoer.CreateNewAvatar();
+			}
+			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+		}
+	}
 }

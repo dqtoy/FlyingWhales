@@ -39,6 +39,9 @@ public class LandmarkManager : MonoBehaviour {
     public void OccupyLandmark(Region region, Faction occupant) {
         region.centerOfMass.landmarkOnTile.OccupyLandmark(occupant);
     }
+	public void OccupyLandmark(HexTile hexTile, Faction occupant) {
+		hexTile.landmarkOnTile.OccupyLandmark(occupant);
+	}
 
     #region ECS.Character Production
     /*
