@@ -20,7 +20,7 @@ public class DoNothing : Quest {
             onQuestAccepted();
         }
     }
-    protected override void EndQuest(QUEST_RESULT result) {
+    internal override void EndQuest(QUEST_RESULT result) {
         _isDone = true;
         _createdBy.RemoveQuest(this);
         ((ECS.Character)_createdBy).DetermineAction();

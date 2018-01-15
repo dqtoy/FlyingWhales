@@ -89,7 +89,7 @@ public class InternalQuestManager : QuestCreator {
 					Region region = (Region)regionOfSettlement.connections [j];
 					if(!region.centerOfMass.isOccupied && !checkedExpandRegions.Contains(region)){
 						if (!AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, region.centerOfMass)) {
-							questDict.AddElement(new Expand(this, 60, 5, region.centerOfMass), GetExpandWeight(region));
+							questDict.AddElement(new Expand(this, 60, region.centerOfMass), GetExpandWeight(region));
 						}
 					}
 				}

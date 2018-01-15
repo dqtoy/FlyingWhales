@@ -29,19 +29,19 @@ public class Expand : Quest {
 	public override void AcceptQuest(ECS.Character partyLeader) {
 		_isAccepted = true;
 		//ECS.Character that accepts this quest must now create a party
-		Party newParty = new Party(partyLeader, _maxPartyMembers);
+		Party newParty = new Party(partyLeader);
 		newParty.onPartyFull += OnPartyFull;
 		_assignedParty = newParty;
 
 		partyLeader.SetCurrentQuest(this);
 
-		Collect collect = new Collect (this);
-		collect.InititalizeAction (20);
-		collect.onQuestDoAction += collect.Expand;
-		collect.DoAction (partyLeader);
-		collect.ActionDone (QUEST_ACTION_RESULT.SUCCESS);
+        Collect collect = new Collect(this);
+        collect.InititalizeAction(20);
+        collect.onQuestDoAction += collect.Expand;
+        collect.DoAction(partyLeader);
+        collect.ActionDone(QUEST_ACTION_RESULT.SUCCESS);
 
-		if(onQuestAccepted != null) {
+        if (onQuestAccepted != null) {
 			onQuestAccepted();
 		}
 	}
@@ -97,7 +97,7 @@ public class Expand : Quest {
 
 		for (int i = 0; i < this._assignedParty.partyMembers.Count; i++) {
 			ECS.Character character = this._assignedParty.partyMembers [i];
-			GoHome goHome = new GoHome (character, -1, 1);
+			GoHome goHome = new GoHome (character, -1);
 			goHome.AcceptQuest (character);
 		}
 		this._assignedParty.DisbandParty ();
