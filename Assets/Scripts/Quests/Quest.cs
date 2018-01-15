@@ -110,9 +110,15 @@ public class Quest {
     }
     protected virtual void QuestCancel() {
         _questResult = QUEST_RESULT.CANCEL;
+		_isAccepted = false;
         _createdBy.RemoveQuest(this);
         RetaskParty();
+		ResetQuestValues ();
     }
+
+	//Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
+	protected virtual void ResetQuestValues(){}
+
     /*
      Construct the list of quest actions that the party will perform.
          */

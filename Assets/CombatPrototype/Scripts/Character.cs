@@ -807,6 +807,12 @@ namespace ECS {
 				QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
 				switch (chosenAction) {
 				case QUEST_TYPE.EXPLORE_REGION:
+					List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
+					if(exploreQuests.Count < 0) {
+						throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
+					}
+					Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
+					exploreQuest.AcceptQuest(this);
 					break;
 				case QUEST_TYPE.OCCUPY_LANDMARK:
 					break;
@@ -815,6 +821,40 @@ namespace ECS {
 				case QUEST_TYPE.OBTAIN_RESOURCE:
 					break;
 				case QUEST_TYPE.EXPAND:
+					List<Quest> expandQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPAND);
+					if(expandQuests.Count < 0) {
+						throw new System.Exception("No expand region quests available! Expand region quest type should not have weight!");
+					}
+					if(this._currLocation.landmarkOnTile != null && this._currLocation.landmarkOnTile.owner.id == this._faction.id && this._currLocation.landmarkOnTile.civilians > 20){
+						bool isAdjacentToTribe = false;
+						for (int i = 0; i < expandQuests.Count; i++) {
+							Expand expand = (Expand)expandQuests [i];
+							for (int j = 0; j < expand.targetUnoccupiedTile.region.connections.Count; j++) {
+								if(expand.targetUnoccupiedTile.region.connections[j] is Region){
+									Region region = (Region)expand.targetUnoccupiedTile.region.connections [j];
+									if(region.centerOfMass.landmarkOnTile != null && region.centerOfMass.landmarkOnTile.owner.id == this._faction.id){
+										isAdjacentToTribe = true;
+										break;
+									}
+								}
+							}
+							if(!isAdjacentToTribe){
+								expandQuests.RemoveAt (i);
+								i--;
+							}else{
+								List<HexTile> path = PathGenerator.Instance.GetPath (this._currLocation, expand.targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
+								if(path == null){
+									expandQuests.RemoveAt (i);
+									i--;
+								}
+							}
+						}
+						if(expandQuests.Count > 0){
+							Quest expandQuest = expandQuests[Random.Range(0, expandQuests.Count)];
+							expandQuest.AcceptQuest(this);	
+						}
+					}
+
 					break;
 				case QUEST_TYPE.REST:
 					StartRestQuest();
