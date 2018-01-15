@@ -19,7 +19,7 @@ public class Expand : Quest {
 	public Expand(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers, HexTile targetUnoccupiedTile) 
 		: base(createdBy, daysBeforeDeadline, maxPartyMembers, QUEST_TYPE.EXPAND) {
 		_questFilters = new List<QuestFilter>() {
-			new MustBeFaction(new List<Faction>(){((ECS.Character)createdBy).faction}),
+			new MustBeFaction(new List<Faction>(){((InternalQuestManager)createdBy).owner}),
 			new MustBeRole(CHARACTER_ROLE.COLONIST),
 		};
 		_targetUnoccupiedTile = targetUnoccupiedTile;
@@ -67,12 +67,12 @@ public class Expand : Quest {
 		if(!canAccept){
 			return false;
 		}
-		if(character.currLocation.landmarkOnTile != null && character.currLocation.landmarkOnTile.owner.id == character.faction.id && character.currLocation.landmarkOnTile.civilians > 20){
+		if(character.currLocation.landmarkOnTile != null && character.currLocation.landmarkOnTile.owner != null && character.currLocation.landmarkOnTile.owner.id == character.faction.id && character.currLocation.landmarkOnTile.civilians > 20){
 			bool isAdjacentToTribe = false;
 			for (int j = 0; j < this._targetUnoccupiedTile.region.connections.Count; j++) {
 				if(this._targetUnoccupiedTile.region.connections[j] is Region){
 					Region region = (Region)this._targetUnoccupiedTile.region.connections [j];
-					if(region.centerOfMass.landmarkOnTile != null && region.centerOfMass.landmarkOnTile.owner.id == character.faction.id){
+					if(region.centerOfMass.landmarkOnTile.owner != null && region.centerOfMass.landmarkOnTile.owner.id == character.faction.id){
 						isAdjacentToTribe = true;
 						break;
 					}

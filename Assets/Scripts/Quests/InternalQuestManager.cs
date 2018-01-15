@@ -115,7 +115,7 @@ public class InternalQuestManager : QuestCreator {
 		for (int i = 0; i < region.connections.Count; i++) {
 			if(region.connections[i] is Region){
 				Region adjacentRegion = (Region)region.connections[i];
-				if (adjacentRegion.centerOfMass.landmarkOnTile != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id == this._owner.id) {
+				if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id == this._owner.id) {
 					int regionWeight = (int)(adjacentRegion.centerOfMass.landmarkOnTile.civilians - 40f);
 					if(regionWeight > 0){
 						weight += regionWeight;
