@@ -75,16 +75,25 @@ public class InternalQuestManager : QuestCreator {
 
     private WeightedDictionary<Quest> GetQuestWeightedDictionary() {
         WeightedDictionary<Quest> questDict = new WeightedDictionary<Quest>();
-        
+		List<Region> checkedExpandRegions = new List<Region> ();
         //Explore region weights
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
             Region regionOfSettlement = _owner.settlements[i].location.region;
             //check if the current region already has an active quest to explore it
-            List<Quest> exploreRegionQuests = GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
-            if(!exploreRegionQuests.Where(x => ((ExploreRegion)x).regionToExplore.id == regionOfSettlement.id).Any()) {
+            if(!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_REGION, regionOfSettlement)) {
                 questDict.AddElement(new ExploreRegion(this, 30, 3, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
             }
+			for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
+				if(regionOfSettlement.connections[j] is Region){
+					Region region = (Region)regionOfSettlement.connections [j];
+					if(!region.centerOfMass.isOccupied && !checkedExpandRegions.Contains(region)){
+						if (!AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, region.centerOfMass)) {
+							questDict.AddElement(new Expand(this, 60, 5, region.centerOfMass), GetExpandWeight(region));
+						}
+					}
+				}
+			}
         }
         //End Explore Region Weights
         
@@ -101,6 +110,21 @@ public class InternalQuestManager : QuestCreator {
         }
         return weight;
     }
+	private int GetExpandWeight(Region region) {
+		int weight = 0;
+		for (int i = 0; i < region.connections.Count; i++) {
+			if(region.connections[i] is Region){
+				Region adjacentRegion = (Region)region.connections[i];
+				if (adjacentRegion.centerOfMass.landmarkOnTile != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id == this._owner.id) {
+					int regionWeight = (int)(adjacentRegion.centerOfMass.landmarkOnTile.civilians - 40f);
+					if(regionWeight > 0){
+						weight += regionWeight;
+					}
+				}
+			}
+		}
+		return weight;
+	}
     //private void CreateNewQuest(QUEST_TYPE questType) {
     //    switch (questType) {
     //        case QUEST_TYPE.EXPLORE_REGION:
@@ -139,5 +163,24 @@ public class InternalQuestManager : QuestCreator {
         }
         return quests;
     }
+	public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
+		for (int i = 0; i < _activeQuests.Count; i++) {
+			Quest currQuest = _activeQuests[i];
+			if(currQuest.questType == questType) {
+				if(questType == QUEST_TYPE.EXPLORE_REGION){
+					Region region = (Region)identifier;
+					if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
+						return true;
+					}
+				}else if(questType == QUEST_TYPE.EXPAND){
+					HexTile hexTile = (HexTile)identifier;
+					if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
     #endregion
 }

@@ -22,6 +22,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastWarfareID = 0;
     public static int lastLogID = 0;
 	public static int lastSharedKingdomRelationshipID = 0;
+	public static int lastFactionID = 0;
 	public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
 
@@ -71,7 +72,10 @@ public class Utilities : MonoBehaviour {
 		} else if (obj is SharedKingdomRelationship) {
 			lastSharedKingdomRelationshipID += 1;
 			return lastSharedKingdomRelationshipID;
-		}
+		} else if (obj is Faction) {
+			lastFactionID += 1;
+			return lastFactionID;
+		} 
         return 0;
 	}
 

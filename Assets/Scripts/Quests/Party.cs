@@ -63,6 +63,9 @@ public class Party {
             //TODO: Cancel Quest if party is currently on a quest?
         }
         PartyManager.Instance.RemoveParty(this);
+		if(!_currentQuest.isDone){
+			_currentQuest.EndQuest (QUEST_RESULT.CANCEL);
+		}
     }
     #endregion
 

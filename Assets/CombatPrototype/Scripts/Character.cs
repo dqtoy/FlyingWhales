@@ -811,11 +811,9 @@ namespace ECS {
              */
 		internal void DetermineAction() {
 			WeightedDictionary<Quest> actionWeights = GetActionWeights();
-
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
 				chosenAction.AcceptQuest(this);
-
 			}
 		}
         /*
@@ -1026,9 +1024,15 @@ namespace ECS {
 		#region Avatar
 		public void CreateNewAvatar() {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
-			GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
-			CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-            avatar.Init(this);
+			if(this._role.roleType == CHARACTER_ROLE.COLONIST){
+				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
+				ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
+				avatar.Init(this);
+			}else{
+				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
+				CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
+				avatar.Init(this);
+			}
         }
 		public void SetAvatar(CharacterAvatar avatar) {
 			_avatar = avatar;

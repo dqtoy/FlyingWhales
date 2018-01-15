@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Faction {
+	protected int _id;
     protected string _name;
     protected RACE _race;
     protected FACTION_TYPE _factionType;
@@ -22,6 +23,9 @@ public class Faction {
     //TODO: Add list for characters that are part of the faction
 
     #region getters/setters
+	public int id {
+		get { return _id; }
+	}
     public string name {
         get { return _name; }
     }
@@ -52,6 +56,7 @@ public class Faction {
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
+		this._id = Utilities.SetID<Faction> (this);
         SetRace(race);
         _name = RandomNameGenerator.Instance.GenerateKingdomName(race);
         _factionType = factionType;

@@ -35,6 +35,9 @@ public class Quest {
     public bool isAccepted {
         get { return _isAccepted; }
     }
+	public bool isDone {
+		get { return _isDone; }
+	}
     public Party assignedParty {
         get { return _assignedParty; }
     }
@@ -87,7 +90,7 @@ public class Quest {
         //if not wait for them to arrive before starting the quest.
         StartQuestLine();
     }
-    protected virtual void EndQuest(QUEST_RESULT result) {
+    internal virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
@@ -141,7 +144,7 @@ public class Quest {
     protected virtual void ConstructQuestLine() { _questLine = new Queue<QuestAction>(); }
     #endregion
 
-    public bool CanAcceptQuest(ECS.Character character) {
+    public virtual bool CanAcceptQuest(ECS.Character character) {
         for (int i = 0; i < _questFilters.Count; i++) {
             QuestFilter currFilter = _questFilters[i];
             if (!currFilter.MeetsRequirements(character)) {
