@@ -5,6 +5,7 @@ public class LandmarkObject : MonoBehaviour {
 
     private BaseLandmark _landmark;
 
+    [SerializeField] private GameObject nameplateGO;
     [SerializeField] private UILabel landmarkLbl;
     [SerializeField] private SpriteRenderer topSprite;
     [SerializeField] private SpriteRenderer botSprite;
@@ -28,6 +29,9 @@ public class LandmarkObject : MonoBehaviour {
         } else {
             topSprite.color = Color.white;
             botSprite.color = Color.white;
+        }
+        if(nameplateGO != null) {
+            nameplateGO.SetActive(!_landmark.isHidden);
         }
 
         exploredGO.SetActive(_landmark.isExplored); //Activate explored GO based on isExplored boolean

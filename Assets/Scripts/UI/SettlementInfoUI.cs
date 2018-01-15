@@ -51,7 +51,7 @@ public class SettlementInfoUI : UIMenu {
             if (currentlyShowingSettlement.charactersOnLandmark.Count > 0) {
                 for (int i = 0; i < currentlyShowingSettlement.charactersOnLandmark.Count; i++) {
                     ECS.Character currChar = currentlyShowingSettlement.charactersOnLandmark[i];
-                    text += "\n" + currChar.faction + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
                     if (currChar.currentQuest != null) {
                         text += " (" + currChar.currentQuest.questType.ToString() + ")";
                     }

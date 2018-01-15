@@ -19,26 +19,6 @@ public class ExploreRegion : Quest {
         _regionToExplore = regionToExplore;
     }
 
-    private void PickRegionToExplore() {
-        List<Region> elligibleRegions = new List<Region>();
-        Faction source = ((InternalQuestManager)_createdBy).owner;
-        for (int i = 0; i < source.settlements.Count; i++) {
-            Region currRegion = source.settlements[i].location.region;
-            for (int j = 0; j < currRegion.adjacentRegionsViaMajorRoad.Count; j++) {
-                Region adjacentRegion = currRegion.adjacentRegionsViaMajorRoad[j];
-                if (adjacentRegion.occupant == null) {
-                    if (!elligibleRegions.Contains(currRegion)) {
-                        elligibleRegions.Add(currRegion);
-                    }
-                }
-            }
-        }
-        if (elligibleRegions.Count <= 0) {
-            throw new System.Exception("Could not find elligible region to explore!");
-        }
-        _regionToExplore = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
-    }
-
     private void EndQuestAfterDays() {
         ScheduleQuestEnd(30, QUEST_RESULT.SUCCESS);
     }
@@ -48,19 +28,24 @@ public class ExploreRegion : Quest {
         base.ConstructQuestLine();
         //PickRegionToExplore(); //pick a region to explore
 
-        GoToLocation goToRegionAction = new GoToLocation(); //Go to the picked region
+        GoToLocation goToRegionAction = new GoToLocation(this); //Go to the picked region
         goToRegionAction.InititalizeAction(_regionToExplore.centerOfMass);
         goToRegionAction.onQuestActionDone += this.PerformNextQuestAction;
         goToRegionAction.onQuestActionDone += EndQuestAfterDays; //After 30 days of exploring, the Quest ends in SUCCESS.
+        goToRegionAction.onQuestDoAction += goToRegionAction.Generic;
 
-        RoamRegion roamRegionAction = new RoamRegion();
+        RoamRegion roamRegionAction = new RoamRegion(this);
         roamRegionAction.InititalizeAction(_regionToExplore);
+        roamRegionAction.onQuestActionDone += RepeatCurrentAction;
+        roamRegionAction.onQuestDoAction += roamRegionAction.ExploreRegion;
 
         //Enqueue all actions
         _questLine.Enqueue(goToRegionAction); 
         _questLine.Enqueue(roamRegionAction);
     }
     protected override void EndQuest(QUEST_RESULT result) {
+        _currentAction.onQuestActionDone = null;
+        //_currentAction.actionDoer.DestroyAvatar();
         base.EndQuest(result);
     }
     #endregion

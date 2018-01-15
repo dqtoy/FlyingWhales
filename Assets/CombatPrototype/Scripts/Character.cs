@@ -147,9 +147,12 @@ namespace ECS {
 		internal string characterColorCode {
 			get { return _characterColorCode; }
 		}
-		#endregion
+        public Settlement home {
+            get { return _faction.settlements[0]; }
+        }
+        #endregion
 
-		public Character(CharacterSetup baseSetup) {
+        public Character(CharacterSetup baseSetup) {
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
 			_name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
@@ -174,6 +177,8 @@ namespace ECS {
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
+
+            _activeQuests = new List<Quest>();
 			//TODO: Generate Traits
 		}
 
@@ -496,7 +501,7 @@ namespace ECS {
 				this._skills.Add (weapon.skills [i]);
 			}
 			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
-			CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+			//CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
 			return true;
 		}
 		private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req){
@@ -765,7 +770,7 @@ namespace ECS {
 			}
 		}
 		#endregion
-		#region ECS.Character Class
+		#region Character Class
 		public void AssignClass(CharacterClass charClass) {
 			_characterClass = charClass;
 		}
@@ -801,154 +806,210 @@ namespace ECS {
 		#endregion
 
 		#region Quests
+        /*
+         Determine what action the character will do, and execute that action.
+             */
 		internal void DetermineAction() {
-			WeightedDictionary<QUEST_TYPE> actionWeights = GetActionWeights();
-			if (actionWeights.GetTotalOfWeights() > 0) {
-				QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
-				switch (chosenAction) {
-				case QUEST_TYPE.EXPLORE_REGION:
-					List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
-					if(exploreQuests.Count < 0) {
-						throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
-					}
-					Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
-					exploreQuest.AcceptQuest(this);
-					break;
-				case QUEST_TYPE.OCCUPY_LANDMARK:
-					break;
-				case QUEST_TYPE.INVESTIGATE_LANDMARK:
-					break;
-				case QUEST_TYPE.OBTAIN_RESOURCE:
-					break;
-				case QUEST_TYPE.EXPAND:
-					List<Quest> expandQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPAND);
-					if(expandQuests.Count < 0) {
-						throw new System.Exception("No expand region quests available! Expand region quest type should not have weight!");
-					}
-					if(this._currLocation.landmarkOnTile != null && this._currLocation.landmarkOnTile.owner.id == this._faction.id && this._currLocation.landmarkOnTile.civilians > 20){
-						bool isAdjacentToTribe = false;
-						for (int i = 0; i < expandQuests.Count; i++) {
-							Expand expand = (Expand)expandQuests [i];
-							for (int j = 0; j < expand.targetUnoccupiedTile.region.connections.Count; j++) {
-								if(expand.targetUnoccupiedTile.region.connections[j] is Region){
-									Region region = (Region)expand.targetUnoccupiedTile.region.connections [j];
-									if(region.centerOfMass.landmarkOnTile != null && region.centerOfMass.landmarkOnTile.owner.id == this._faction.id){
-										isAdjacentToTribe = true;
-										break;
-									}
-								}
-							}
-							if(!isAdjacentToTribe){
-								expandQuests.RemoveAt (i);
-								i--;
-							}else{
-								List<HexTile> path = PathGenerator.Instance.GetPath (this._currLocation, expand.targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
-								if(path == null){
-									expandQuests.RemoveAt (i);
-									i--;
-								}
-							}
-						}
-						if(expandQuests.Count > 0){
-							Quest expandQuest = expandQuests[Random.Range(0, expandQuests.Count)];
-							expandQuest.AcceptQuest(this);	
-						}
-					}
+			WeightedDictionary<Quest> actionWeights = GetActionWeights();
 
-					break;
-				case QUEST_TYPE.REST:
-					StartRestQuest();
-					break;
-				case QUEST_TYPE.GO_HOME:
-					break;
-				case QUEST_TYPE.DO_NOTHING:
-					break;
-				default:
-					break;
-				}
+			if (actionWeights.GetTotalOfWeights () > 0) {
+				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
+				chosenAction.AcceptQuest(this);
+
 			}
 		}
-
-		private WeightedDictionary<QUEST_TYPE> GetActionWeights() {
-			WeightedDictionary<QUEST_TYPE> actionWeights = new WeightedDictionary<QUEST_TYPE>();
+        /*
+         Get the weighted dictionary for what action the character will do next.
+             */
+		private WeightedDictionary<Quest> GetActionWeights() {
+			WeightedDictionary<Quest> actionWeights = new WeightedDictionary<Quest>();
 			for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
 				Quest currQuest = _faction.internalQuestManager.activeQuests[i];
-//				if (currQuest.CanAcceptQuest(this)) {
-//					actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));
-//				}
-			}
-			actionWeights.AddElement(QUEST_TYPE.REST, GetWeightForQuestType(QUEST_TYPE.REST));
-			actionWeights.AddElement(QUEST_TYPE.GO_HOME, GetWeightForQuestType(QUEST_TYPE.GO_HOME));
-			actionWeights.AddElement(QUEST_TYPE.DO_NOTHING, GetWeightForQuestType(QUEST_TYPE.DO_NOTHING));
+                if (currQuest.CanAcceptQuest(this)) {
+                    actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+                }
+            }
+
+            if(this._party == null) {
+                for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
+                    Party currParty = PartyManager.Instance.allParties[i];
+                    if (!currParty.isFull) {
+                        JoinParty joinPartyTask = new JoinParty(this, -1, 1, currParty);
+                        actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+                    }
+                }
+            }
+            
+            Rest restTask = new Rest(this, -1, 1);
+			actionWeights.AddElement(restTask, GetWeightForQuest(restTask));
+
+            GoHome goHomeTask = new GoHome(this, -1, 1);
+			actionWeights.AddElement(goHomeTask, GetWeightForQuest(goHomeTask));
+
+            DoNothing doNothingTask = new DoNothing(this, -1, 1);
+			actionWeights.AddElement(doNothingTask, GetWeightForQuest(doNothingTask));
 			return actionWeights;
 		}
-		private int GetWeightForQuestType(QUEST_TYPE questType) {
-			int weight = 0;
-			switch (questType) {
-			case QUEST_TYPE.EXPLORE_REGION:
-				weight += GetExploreRegionWeight();
-				break;
-			case QUEST_TYPE.OCCUPY_LANDMARK:
-				break;
-			case QUEST_TYPE.INVESTIGATE_LANDMARK:
-				break;
-			case QUEST_TYPE.OBTAIN_RESOURCE:
-				break;
-			case QUEST_TYPE.EXPAND:
-				break;
-			case QUEST_TYPE.REST:
-				weight += GetRestWeight();
-				break;
-			case QUEST_TYPE.GO_HOME:
-				weight += GetGoHomeWeight();
-				break;
-			case QUEST_TYPE.DO_NOTHING:
-				weight += GetDoNothingWeight();
-				break;
-			default:
-				break;
-			}
-			return weight;
-		}
-		private int GetExploreRegionWeight() {
-			int weight = 0;
-			switch (_role.roleType) {
-			case CHARACTER_ROLE.CHIEFTAIN:
-				weight += 100;
-				break;
-			default:
-				break;
-			}
-			return weight;
-		}
-		private int GetRestWeight() {
-			if(_currentHP < maxHP) {
-				int percentMissing = _currentHP / maxHP;
-				return 5 * percentMissing;
-			}
-			return 0;
-		}
-		private int GetGoHomeWeight() {
-			//0 if already at Home Settlement or no path to it
-			if (currLocation.isHabitable && currLocation.isOccupied && currLocation.landmarkOnTile.owner == this._faction) {
-				return 0;
-			}
-			if(PathGenerator.Instance.GetPath(currLocation, _faction.settlements[0].location, PATHFINDING_MODE.USE_ROADS) == null) {
-				return 0;
-			}
-			return 5; //5 if not
-		}
-		private int GetDoNothingWeight() {
-			return 10;
-		}
-		private void StartRestQuest() {
-			Rest restQuest = new Rest(this, 0, 1);
-			restQuest.StartQuestLine();
-		}
-		#endregion
 
-		#region HP
-		int regenAmount;
+  //      private void StartExploreRegion() {
+  //          List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
+  //          if (exploreQuests.Count < 0) {
+  //              throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
+  //          }
+  //          Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
+  //          exploreQuest.AcceptQuest(this);
+  //      }
+		//private void StartRestQuest() {
+		//	//Rest restQuest = new Rest(this, 0, 1);
+		//	//restQuest.StartQuestLine();
+		//}
+  //      private void StartDoNothing() {
+  //          DoNothing doNothing = new DoNothing(this, -1, 1);
+  //          AddNewQuest(doNothing);
+  //          doNothing.AcceptQuest(this);
+  //      }
+  //      private void StartGoHome() {
+        //    GoHome goHome = new GoHome(this, -1, 1);
+        //    AddNewQuest(goHome);
+        //    goHome.AcceptQuest(this);
+        //}
+        #endregion
+
+        #region Quest Weights
+        private int GetWeightForQuest(Quest quest) {
+            int weight = 0;
+            switch (quest.questType) {
+                case QUEST_TYPE.EXPLORE_REGION:
+                    weight += GetExploreRegionWeight((ExploreRegion)quest);
+                    break;
+                case QUEST_TYPE.OCCUPY_LANDMARK:
+                    break;
+                case QUEST_TYPE.INVESTIGATE_LANDMARK:
+                    break;
+                case QUEST_TYPE.OBTAIN_RESOURCE:
+                    break;
+                case QUEST_TYPE.EXPAND:
+                    break;
+                case QUEST_TYPE.REST:
+                    weight += GetRestWeight();
+                    break;
+                case QUEST_TYPE.GO_HOME:
+                    weight += GetGoHomeWeight();
+                    break;
+                case QUEST_TYPE.DO_NOTHING:
+                    weight += GetDoNothingWeight();
+                    break;
+                case QUEST_TYPE.JOIN_PARTY:
+                    weight += GetJoinPartyWeight((JoinParty)quest);
+                    break;
+                default:
+                    break;
+            }
+            return weight;
+        }
+
+        private int GetExploreRegionWeight(ExploreRegion exploreRegionQuest) {
+            int weight = 0;
+            weight += 100; //Change algo if needed
+            return weight;
+        }
+        private int GetJoinPartyWeight(JoinParty joinParty) {
+            if(_party != null) {
+                return 0; //if already in a party
+            }
+            int weight = 0;
+            if(joinParty.partyToJoin.partyLeader.currLocation.id == this.currLocation.id) {
+                //party leader and this character are at the same tile
+                return 200;
+            } else {
+                List<HexTile> pathToParty = PathGenerator.Instance.GetPath(this.currLocation, joinParty.partyToJoin.partyLeader.currLocation, PATHFINDING_MODE.USE_ROADS);
+                if(pathToParty != null) {
+                    weight += 200 - (15 * pathToParty.Count); //200 - (15 per tile distance) if not in a party
+                }
+            }
+            return weight;
+        }
+        private int GetRestWeight() {
+            if (_currentHP < maxHP) {
+                int percentMissing = _currentHP / maxHP;
+                return 5 * percentMissing; //5 Weight per % of HP below max HP
+            }
+            return 0;
+        }
+        private int GetGoHomeWeight() {
+            //0 if already at Home Settlement or no path to it
+            if (currLocation.isHabitable && currLocation.isOccupied && currLocation.landmarkOnTile.owner == this._faction) {
+                return 0;
+            }
+            if (PathGenerator.Instance.GetPath(currLocation, _faction.settlements[0].location, PATHFINDING_MODE.USE_ROADS) == null) {
+                return 0;
+            }
+            return 5; //5 if not
+        }
+        private int GetDoNothingWeight() {
+            return 10;
+        }
+
+        //private int GetWeightForQuestType(QUEST_TYPE questType) {
+        //    int weight = 0;
+        //    switch (questType) {
+        //        case QUEST_TYPE.EXPLORE_REGION:
+        //            weight += GetExploreRegionWeight();
+        //            break;
+        //        case QUEST_TYPE.OCCUPY_LANDMARK:
+        //            break;
+        //        case QUEST_TYPE.INVESTIGATE_LANDMARK:
+        //            break;
+        //        case QUEST_TYPE.OBTAIN_RESOURCE:
+        //            break;
+        //        case QUEST_TYPE.EXPAND:
+        //            break;
+        //        case QUEST_TYPE.REST:
+        //            weight += GetRestWeight();
+        //            break;
+        //        case QUEST_TYPE.GO_HOME:
+        //            weight += GetGoHomeWeight();
+        //            break;
+        //        case QUEST_TYPE.DO_NOTHING:
+        //            weight += GetDoNothingWeight();
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //    return weight;
+        //}
+        //private int GetExploreRegionWeight() {
+        //    int weight = 0;
+        //    switch (_role.roleType) {
+        //        case CHARACTER_ROLE.CHIEFTAIN:
+        //            weight += 100;
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //    return weight;
+        //}
+        //private int GetRestWeight() {
+        //    if (_currentHP < maxHP) {
+        //        int percentMissing = _currentHP / maxHP;
+        //        return 5 * percentMissing;
+        //    }
+        //    return 0;
+        //}
+        //private int GetGoHomeWeight() {
+        //    //0 if already at Home Settlement or no path to it
+        //    if (currLocation.isHabitable && currLocation.isOccupied && currLocation.landmarkOnTile.owner == this._faction) {
+        //        return 0;
+        //    }
+        //    if (PathGenerator.Instance.GetPath(currLocation, _faction.settlements[0].location, PATHFINDING_MODE.USE_ROADS) == null) {
+        //        return 0;
+        //    }
+        //    return 5; //5 if not
+        //}
+        #endregion
+
+        #region HP
+        int regenAmount;
 		public void StartRegeneration(int amount) {
 			regenAmount = amount;
 			Messenger.AddListener("OnDayEnd", RegenerateHealth);
@@ -967,8 +1028,8 @@ namespace ECS {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
 			GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
 			CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-			//        avatar.Init(this);
-		}
+            avatar.Init(this);
+        }
 		public void SetAvatar(CharacterAvatar avatar) {
 			_avatar = avatar;
 		}

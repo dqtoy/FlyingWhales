@@ -26,13 +26,18 @@ public class Rest : Quest {
         base.ConstructQuestLine();
         Settlement targetSettlement = GetTargetSettlement();
 
-        GoToLocation goToLocation = new GoToLocation(); //Make character go to chosen settlement
+        GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
         goToLocation.InititalizeAction(targetSettlement.location);
         goToLocation.onQuestActionDone += this.PerformNextQuestAction;
+        goToLocation.onQuestDoAction += goToLocation.Generic;
 
-        RestForDays restForDays = new RestForDays();
+        RestForDays restForDays = new RestForDays(this);
         restForDays.InititalizeAction(30); //set character to rest for x days
         restForDays.onQuestActionDone += QuestSuccess;
+        restForDays.onQuestDoAction += restForDays.Rest;
+
+        _questLine.Enqueue(goToLocation);
+        _questLine.Enqueue(restForDays);
 
     }
     #endregion

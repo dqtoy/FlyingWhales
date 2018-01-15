@@ -400,14 +400,13 @@ public class RoadManager : MonoBehaviour {
 
             GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
             if(roadGO != null) {
-                currTile.SetTileAsRoad(true, roadType);
-                if (!GameManager.Instance.initiallyHideRoads) {
-                    roadGO.SetActive(true);
-                }
+                currTile.SetTileAsRoad(true, roadType, roadGO);
                 if (currTile.roadType == ROAD_TYPE.MINOR) {
                     currTile.SetRoadColor(roadGO, Color.gray);
+                    currTile.SetRoadState(!GameManager.Instance.initiallyHideRoads);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
                     currTile.SetRoadColor(roadGO, Color.white);
+                    currTile.SetRoadState(true); //Major Roads should already be visible
                 }
             }
         }

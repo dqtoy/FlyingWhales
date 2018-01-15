@@ -80,6 +80,8 @@ public class PathFindingThread {
 	public void ReturnPath(){
         if(_citizenAvatar != null) {
             this._citizenAvatar.ReceivePath(receivedPath);
+        } else {
+            this._characterAvatar.ReceivePath(receivedPath);
         }
 		
 	}

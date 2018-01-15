@@ -8,6 +8,6 @@ public class DoNothing : Quest {
     }
 
     private void EndQuestAfterDays() {
-        ScheduleQuestEnd(30, QUEST_RESULT.SUCCESS);
+        ScheduleQuestEnd(10, QUEST_RESULT.SUCCESS);
     }
 }
