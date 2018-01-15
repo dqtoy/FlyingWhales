@@ -85,6 +85,14 @@ public class CharacterAvatar : PooledObject{
          */
     internal virtual void OnMoveFinished() {
         if (this.path.Count > 0) {
+            if(this.currLocation.landmarkOnTile != null) {
+                //Remove characters from previous landmark
+                RemoveCharactersFromLandmark(this.currLocation.landmarkOnTile);
+            }
+            if (this.path[0].landmarkOnTile != null) {
+                //Add characters to the landmark they are on
+                AddCharactersToLandmark(this.path[0].landmarkOnTile);
+            }
             this.currLocation = this.path[0];
             for (int i = 0; i < _characters.Count; i++) {
                 ECS.Character currCharacter = _characters[i];
@@ -133,6 +141,18 @@ public class CharacterAvatar : PooledObject{
     private void RevealLandmarks() {
         if(this.currLocation.landmarkOnTile != null) {
             this.currLocation.landmarkOnTile.SetHiddenState(false);
+        }
+    }
+    private void RemoveCharactersFromLandmark(BaseLandmark landmark) {
+        for (int i = 0; i < _characters.Count; i++) {
+            ECS.Character currCharacter = _characters[i];
+            landmark.RemoveCharacterOnLandmark(currCharacter);
+        }
+    }
+    private void AddCharactersToLandmark(BaseLandmark landmark) {
+        for (int i = 0; i < _characters.Count; i++) {
+            ECS.Character currCharacter = _characters[i];
+            landmark.AddCharacterOnLandmark(currCharacter);
         }
     }
     #endregion

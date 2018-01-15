@@ -13,7 +13,7 @@ public class InternalQuestManager : QuestCreator {
 
     private Faction _owner;
 
-    private List<Quest> _activeQuests; //TODO: Move this to quest creator interface
+    private List<Quest> _activeQuests;
 
     #region getters/setters
     public Faction owner {
@@ -83,7 +83,7 @@ public class InternalQuestManager : QuestCreator {
             //check if the current region already has an active quest to explore it
             List<Quest> exploreRegionQuests = GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
             if(!exploreRegionQuests.Where(x => ((ExploreRegion)x).regionToExplore.id == regionOfSettlement.id).Any()) {
-                questDict.AddElement(new ExploreRegion(this, 30, 3, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
+                questDict.AddElement(new ExploreRegion(this, 30, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
             }
         }
         //End Explore Region Weights

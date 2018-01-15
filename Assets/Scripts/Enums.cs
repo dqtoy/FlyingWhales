@@ -879,6 +879,10 @@ public enum QUEST_ACTION_RESULT {
     FAIL,
     CANCEL
 }
+public enum PARTY_ACTION {
+    STAY,
+    LEAVE
+}
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
 	HEAD,

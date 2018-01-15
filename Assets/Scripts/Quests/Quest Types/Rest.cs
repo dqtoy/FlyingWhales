@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Rest : Quest {
-    public Rest(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers) 
-        : base(createdBy, daysBeforeDeadline, maxPartyMembers, QUEST_TYPE.REST) {
+    public Rest(QuestCreator createdBy, int daysBeforeDeadline) 
+        : base(createdBy, daysBeforeDeadline, QUEST_TYPE.REST) {
         onQuestAccepted += StartQuestLine;
     }
 
@@ -39,6 +39,18 @@ public class Rest : Quest {
         _questLine.Enqueue(goToLocation);
         _questLine.Enqueue(restForDays);
 
+    }
+    public override void AcceptQuest(ECS.Character partyLeader) {
+        _isAccepted = true;
+        partyLeader.SetCurrentQuest(this);
+        if (onQuestAccepted != null) {
+            onQuestAccepted();
+        }
+    }
+    protected override void QuestSuccess() {
+        _isDone = true;
+        _createdBy.RemoveQuest(this);
+        ((ECS.Character)_createdBy).DetermineAction();
     }
     #endregion
 }

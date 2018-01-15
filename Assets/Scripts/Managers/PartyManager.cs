@@ -17,7 +17,6 @@ public class PartyManager : MonoBehaviour {
             allParties.Add(newParty);
         }
     }
-
     public void RemoveParty(Party party) {
         allParties.Remove(party);
     }

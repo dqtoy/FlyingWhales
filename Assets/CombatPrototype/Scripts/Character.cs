@@ -150,6 +150,9 @@ namespace ECS {
         public Settlement home {
             get { return _faction.settlements[0]; }
         }
+        public float missingHP {
+            get { return (float)currentHP / (float)maxHP; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -644,6 +647,15 @@ namespace ECS {
 			}
 		}
 
+        internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
+            for (int i = 0; i < this._bodyParts.Count; i++) {
+                BodyPart bodyPart = this._bodyParts[i];
+                if (bodyPart.statusEffects.Contains(statusEffect)) {
+                    return true;
+                }
+            }
+            return false;
+        }
 		#region Skills
 		private List<Skill> GetGeneralSkills(){
 			List<Skill> generalSkills = new List<Skill> ();
@@ -831,20 +843,22 @@ namespace ECS {
             if(this._party == null) {
                 for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
                     Party currParty = PartyManager.Instance.allParties[i];
-                    if (!currParty.isFull) {
-                        JoinParty joinPartyTask = new JoinParty(this, -1, 1, currParty);
-                        actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+                    if (!currParty.isFull && currParty.isOpen) {
+                        JoinParty joinPartyTask = new JoinParty(this, -1, currParty);
+                        if (joinPartyTask.CanAcceptQuest(this)) {
+                            actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+                        }
                     }
                 }
             }
             
-            Rest restTask = new Rest(this, -1, 1);
+            Rest restTask = new Rest(this, -1);
 			actionWeights.AddElement(restTask, GetWeightForQuest(restTask));
 
-            GoHome goHomeTask = new GoHome(this, -1, 1);
+            GoHome goHomeTask = new GoHome(this, -1);
 			actionWeights.AddElement(goHomeTask, GetWeightForQuest(goHomeTask));
 
-            DoNothing doNothingTask = new DoNothing(this, -1, 1);
+            DoNothing doNothingTask = new DoNothing(this, -1);
 			actionWeights.AddElement(doNothingTask, GetWeightForQuest(doNothingTask));
 			return actionWeights;
 		}

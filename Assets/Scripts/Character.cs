@@ -239,9 +239,9 @@ public class Character : QuestCreator {
         return 10;
     }
     private void StartResting() {
-        Rest restQuest = new Rest(this, 0, 1);
-        AddNewQuest(restQuest);
-//        restQuest.AcceptQuest(this);
+//        Rest restQuest = new Rest(this, 0, 1);
+//        AddNewQuest(restQuest);
+////        restQuest.AcceptQuest(this);
     }
     private void StartDoNothing() {
 //        DoNothing doNothing = new DoNothing(this, -1, 1);

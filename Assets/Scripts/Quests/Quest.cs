@@ -20,8 +20,8 @@ public class Quest {
     protected bool _isExpired;
     protected bool _isAccepted;
     protected bool _isDone;
+    protected bool _isWaiting;
     protected Party _assignedParty;
-    protected int _maxPartyMembers;
     protected List<QuestFilter> _questFilters;
     protected QuestAction _currentAction;
     protected QUEST_RESULT _questResult;
@@ -38,16 +38,18 @@ public class Quest {
     public Party assignedParty {
         get { return _assignedParty; }
     }
+    public QUEST_RESULT questResult {
+        get { return _questResult; }
+    }
     #endregion
     /*
      Create a new quest object.
      NOTE: Set daysBeforeDeadline to -1 if quest cannot expire.
          */
-    public Quest(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers, QUEST_TYPE questType) {
+    public Quest(QuestCreator createdBy, int daysBeforeDeadline, QUEST_TYPE questType) {
         _createdBy = createdBy;
         _questType = questType;
         _daysBeforeDeadline = daysBeforeDeadline;
-        _maxPartyMembers = maxPartyMembers;
         if(daysBeforeDeadline != -1) {
             ScheduleDeadline();
         }
@@ -62,8 +64,13 @@ public class Quest {
     public virtual void AcceptQuest(ECS.Character partyLeader) {
         _isAccepted = true;
 
-        //Character that accepts this quest must now create a party
-        CreateNewPartyForQuest(partyLeader);
+        if (partyLeader.party != null) {
+            //if character already has a party, assign that party to this quest
+            AssignPartyToQuest(partyLeader.party);
+        } else {
+            //Character that accepts this quest must now create a party
+            CreateNewPartyForQuest(partyLeader);
+        }
 
         if(onQuestAccepted != null) {
             onQuestAccepted();
@@ -85,7 +92,7 @@ public class Quest {
     protected virtual void OnPartyFull(Party party) {
         //When the party is full, check if all the characters have arrived at the party leaders location
         //if not wait for them to arrive before starting the quest.
-        StartQuestLine();
+        CheckPartyMembers();
     }
     protected virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
@@ -154,8 +161,10 @@ public class Quest {
     private void QuestExpired() {
         //Quest has reached the expiry date
         if (_isAccepted) {
-            //Quest has already been accepted, procceed with the next step regardless of party members
-            StartQuestLine();
+            if (!_isWaiting) {//Check first if all the party members have arrived
+                //Quest has already been accepted, procceed with the next step regardless of party members
+                StartQuestLine();
+            }
         } else {
             //Quest has not been accepted, remove quest from quest log
             _createdBy.RemoveQuest(this);
@@ -170,6 +179,9 @@ public class Quest {
 
     #region Quest Line
     public void StartQuestLine() {
+        if(_assignedParty != null) {
+            _assignedParty.SetOpenStatus(false); //set party to not accept party members
+        }
         ConstructQuestLine();
         PerformNextQuestAction();
     }
@@ -190,8 +202,8 @@ public class Quest {
      The created party will automatically be assigned to this quest.
          */
     private Party CreateNewPartyForQuest(ECS.Character partyLeader) {
-        Party newParty = new Party(partyLeader, _maxPartyMembers);
-        newParty.onPartyFull += OnPartyFull;
+        Party newParty = new Party(partyLeader);
+        newParty.onPartyFull = OnPartyFull;
         AssignPartyToQuest(newParty);
         return newParty;
     }
@@ -201,16 +213,46 @@ public class Quest {
     internal void AssignPartyToQuest(Party party) {
         _assignedParty = party;
         party.SetCurrentQuest(this);
+        if (_assignedParty.isFull) {
+            //Party is already full, check party members
+            CheckPartyMembers();
+        } else {
+            _assignedParty.SetOpenStatus(true); //Set party as open to members
+            _assignedParty.onPartyFull = OnPartyFull;
+        }
     }
     private void RetaskParty() {
+        //Check which party members will leave
+        List<ECS.Character> charactersToLeave = new List<ECS.Character>();
         for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
             ECS.Character currMember = _assignedParty.partyMembers[i];
-            currMember.SetCurrentQuest(null);
-            currMember.DetermineAction(); //Retask all party members
+            if (currMember != _assignedParty.partyLeader) {
+                WeightedDictionary<PARTY_ACTION> partyActionWeights = _assignedParty.GetPartyActionWeightsForCharacter(currMember);
+                if(partyActionWeights.PickRandomElementGivenWeights() == PARTY_ACTION.LEAVE) {
+                    charactersToLeave.Add(currMember);
+                }
+            }
+        }
+
+        for (int i = 0; i < charactersToLeave.Count; i++) {
+            ECS.Character characterToLeave = charactersToLeave[i];
+            _assignedParty.RemovePartyMember(characterToLeave);
+            characterToLeave.DetermineAction(); //Make the character that left the party determine a next action
+        }
+
+        _assignedParty.SetCurrentQuest(null);
+        _assignedParty.onPartyFull = null;
+        _assignedParty.DetermineNextAction();
+    }
+    internal void CheckPartyMembers() {
+        if (_assignedParty.AreAllPartyMembersPresent()) {
+            _isWaiting = false;
+            StartQuestLine();
+        } else {
+            _isWaiting = true;
         }
     }
     #endregion
-
 
     private void CheckIfDestroyAvatar() {
         if (_assignedParty.partyLeader.currLocation.isOccupied) {

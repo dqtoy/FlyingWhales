@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class GoHome : Quest {
-    public GoHome(QuestCreator createdBy, int daysBeforeDeadline, int maxPartyMembers) 
-        : base(createdBy, daysBeforeDeadline, maxPartyMembers, QUEST_TYPE.GO_HOME) {
+    public GoHome(QuestCreator createdBy, int daysBeforeDeadline) 
+        : base(createdBy, daysBeforeDeadline, QUEST_TYPE.GO_HOME) {
         onQuestAccepted += StartQuestLine;
     }
 

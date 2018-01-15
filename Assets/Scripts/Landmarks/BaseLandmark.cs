@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BaseLandmark {
+    protected int _id;
     protected HexTile _location;
     protected LANDMARK_TYPE _specificLandmarkType;
     protected List<object> _connections;
@@ -18,6 +19,7 @@ public class BaseLandmark {
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
     protected List<ECS.Character> _charactersOnLandmark; //List of characters on landmark
+    protected List<ECS.Character> _charactersWithHomeOnLandmark;
     //TODO: Add list of prisoners on landmark
     protected Dictionary<RESOURCE, int> _resourceInventory; //list of resources available on landmark
     //TODO: Add list of items on landmark
@@ -26,6 +28,9 @@ public class BaseLandmark {
     protected LandmarkObject _landmarkObject;
 
     #region getters/setters
+    public int id {
+        get { return _id; }
+    }
     public HexTile location {
         get { return _location; }
     }
@@ -74,6 +79,7 @@ public class BaseLandmark {
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
+        _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
         _connections = new List<object>();
@@ -83,6 +89,7 @@ public class BaseLandmark {
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
         _charactersOnLandmark = new List<ECS.Character>();
+        _charactersWithHomeOnLandmark = new List<ECS.Character>();
         _resourceInventory = new Dictionary<RESOURCE, int>();
         ConstructTechnologiesDictionary();
     }
@@ -211,6 +218,14 @@ public class BaseLandmark {
     }
     public void RemoveCharacterOnLandmark(ECS.Character character) {
         _charactersOnLandmark.Remove(character);
+    }
+    public void AddCharacterHomeOnLandmark(ECS.Character character) {
+        if (!_charactersWithHomeOnLandmark.Contains(character)) {
+            _charactersWithHomeOnLandmark.Add(character);
+        }
+    }
+    public void RemoveCharacterHomeOnLandmark(ECS.Character character) {
+        _charactersWithHomeOnLandmark.Remove(character);
     }
     #endregion
 
