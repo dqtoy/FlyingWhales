@@ -35,6 +35,9 @@ public class Quest {
     public bool isAccepted {
         get { return _isAccepted; }
     }
+    public Party assignedParty {
+        get { return _assignedParty; }
+    }
     #endregion
     /*
      Create a new quest object.
@@ -58,12 +61,9 @@ public class Quest {
          */
     public virtual void AcceptQuest(ECS.Character partyLeader) {
         _isAccepted = true;
-        //ECS.Character that accepts this quest must now create a party
-        Party newParty = new Party(partyLeader, _maxPartyMembers);
-        newParty.onPartyFull += OnPartyFull;
-        _assignedParty = newParty;
 
-        partyLeader.SetCurrentQuest(this);
+        //Character that accepts this quest must now create a party
+        CreateNewPartyForQuest(partyLeader);
 
         if(onQuestAccepted != null) {
             onQuestAccepted();
@@ -76,8 +76,15 @@ public class Quest {
         _assignedParty.AddPartyMember(member);
         member.SetCurrentQuest(this);
     }
+    /*
+     This is the action done, when the party assigned to this quest is full.
+     Full meaning a number of characters have registered to join this quest,
+     but they might not be with the party leader yet, if they are not, wait for them to arrive,
+     otherwise, start the quest immediately.
+         */
     protected virtual void OnPartyFull(Party party) {
-        //When the party is full, proceed with the next step
+        //When the party is full, check if all the characters have arrived at the party leaders location
+        //if not wait for them to arrive before starting the quest.
         StartQuestLine();
     }
     protected virtual void EndQuest(QUEST_RESULT result) {
@@ -108,6 +115,8 @@ public class Quest {
         _isDone = true;
         _questResult = QUEST_RESULT.FAIL;
         _createdBy.RemoveQuest(this);
+        _currentAction.onQuestActionDone = null;
+        _currentAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
         CheckIfDestroyAvatar();
         RetaskParty();
     }
@@ -115,6 +124,8 @@ public class Quest {
         _isDone = true;
         _questResult = QUEST_RESULT.CANCEL;
         _createdBy.RemoveQuest(this);
+        _currentAction.onQuestActionDone = null;
+        _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
         CheckIfDestroyAvatar();
         RetaskParty();
     }
@@ -173,6 +184,24 @@ public class Quest {
     }
     #endregion
 
+    #region Party
+    /*
+     Create a new party for this quest.
+     The created party will automatically be assigned to this quest.
+         */
+    private Party CreateNewPartyForQuest(ECS.Character partyLeader) {
+        Party newParty = new Party(partyLeader, _maxPartyMembers);
+        newParty.onPartyFull += OnPartyFull;
+        AssignPartyToQuest(newParty);
+        return newParty;
+    }
+    /*
+     Assign a party to this quest.
+         */
+    internal void AssignPartyToQuest(Party party) {
+        _assignedParty = party;
+        party.SetCurrentQuest(this);
+    }
     private void RetaskParty() {
         for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
             ECS.Character currMember = _assignedParty.partyMembers[i];
@@ -180,6 +209,8 @@ public class Quest {
             currMember.DetermineAction(); //Retask all party members
         }
     }
+    #endregion
+
 
     private void CheckIfDestroyAvatar() {
         if (_assignedParty.partyLeader.currLocation.isOccupied) {

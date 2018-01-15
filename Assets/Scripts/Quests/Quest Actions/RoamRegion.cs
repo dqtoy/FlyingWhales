@@ -8,23 +8,13 @@ public class RoamRegion : QuestAction {
     private Region _regionToRoam;
     private HexTile previousHexTile;
 
+    public RoamRegion(Quest quest) : base(quest) {
+    }
+
     #region overrides
     public override void InititalizeAction(Region target) {
         base.InititalizeAction(target);
         _regionToRoam = target;
-    }
-    public override void DoAction(ECS.Character actionDoer) {
-        base.DoAction(actionDoer);
-        if(actionDoer.avatar == null) {
-            actionDoer.CreateNewAvatar();
-        }
-        if (previousHexTile == null) {
-            previousHexTile = actionDoer.currLocation; //Expect this to be the settlement on the region
-        }
-        HexTile chosenTile = GetNextHexTile();
-        //previousHexTile = chosenTile;
-        actionDoer.avatar.SetTarget(chosenTile);
-        actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone());
     }
     #endregion
 
@@ -52,5 +42,18 @@ public class RoamRegion : QuestAction {
             previousHexTile = actionDoer.currLocation;
             return chosenTile;
         }
+    }
+
+    internal void ExploreRegion() {
+        if (actionDoer.avatar == null) {
+            actionDoer.CreateNewAvatar();
+        }
+        if (previousHexTile == null) {
+            previousHexTile = actionDoer.currLocation; //Expect this to be the settlement on the region
+        }
+        HexTile chosenTile = GetNextHexTile();
+        //previousHexTile = chosenTile;
+        actionDoer.avatar.SetTarget(chosenTile);
+        actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
     }
 }

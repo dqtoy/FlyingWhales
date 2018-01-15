@@ -871,7 +871,13 @@ public enum QUEST_TYPE {
     EXPAND,
     REST,
     GO_HOME,
-    DO_NOTHING
+    DO_NOTHING,
+    JOIN_PARTY
+}
+public enum QUEST_ACTION_RESULT {
+    SUCCESS,
+    FAIL,
+    CANCEL
 }
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
