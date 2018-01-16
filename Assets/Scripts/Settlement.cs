@@ -99,6 +99,7 @@ public class Settlement : BaseLandmark {
         newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(this._owner);
         newCharacter.SetLocation(this.location);
+		newCharacter.SetHome (this);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterOnLandmark(newCharacter);

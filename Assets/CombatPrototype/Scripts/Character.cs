@@ -46,6 +46,7 @@ namespace ECS {
 		private string _characterColorCode;
 		private bool _isDead;
 		private List<Quest> _activeQuests; //TODO: Move this to quest creator interface
+		private Settlement _home;
 
 		internal int actRate;
 
@@ -153,7 +154,7 @@ namespace ECS {
 			get { return _characterColorCode; }
 		}
         public Settlement home {
-            get { return _faction.settlements[0]; }
+            get { return _home; }
         }
         public float missingHP {
             get { return (float)currentHP / (float)maxHP; }
@@ -166,6 +167,7 @@ namespace ECS {
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
 			_name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
 			_gender = Utilities.GetRandomGender();
+			_traits = new List<Trait> ();
 
 			_baseMaxHP = _raceSetting.baseHP + (int)((float)_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
 			_baseStrength = _raceSetting.baseStr + (int)((float)_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
@@ -787,6 +789,11 @@ namespace ECS {
 				break;
 			}
 		}
+
+		public void ChangeRole(CHARACTER_ROLE role){
+			//TODO: Things to do when a character changes role
+			AssignRole(role);
+		}
 		#endregion
 		#region Character Class
 		public void AssignClass(CharacterClass charClass) {
@@ -979,7 +986,7 @@ namespace ECS {
             if (currLocation.isHabitable && currLocation.isOccupied && currLocation.landmarkOnTile.owner == this._faction) {
                 return 0;
             }
-            if (PathGenerator.Instance.GetPath(currLocation, _faction.settlements[0].location, PATHFINDING_MODE.USE_ROADS) == null) {
+            if (PathGenerator.Instance.GetPath(currLocation, _home.location, PATHFINDING_MODE.USE_ROADS) == null) {
                 return 0;
             }
             return 5; //5 if not
@@ -1143,5 +1150,9 @@ namespace ECS {
 			return quests;
 		}
 		#endregion
+
+		public void SetHome(Settlement newHome){
+			this._home = newHome;
+		}
 	}
 }
