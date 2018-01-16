@@ -8,10 +8,12 @@ public class Party {
     public OnPartyFull onPartyFull;
 
     protected bool _isOpen; //is this party open to new members?
+    protected bool _isDisbanded;
 
     protected ECS.Character _partyLeader;
     protected List<ECS.Character> _partyMembers; //Contains all party members including the party leader
     protected Quest _currentQuest;
+    protected CharacterAvatar _avatar;
 
     private const int MAX_PARTY_MEMBERS = 5;
 
@@ -21,6 +23,9 @@ public class Party {
     }
     public bool isOpen {
         get { return _isOpen; }
+    }
+    public bool isDisbanded {
+        get { return _isDisbanded; }
     }
     public ECS.Character partyLeader {
         get { return _partyLeader; }
@@ -49,6 +54,10 @@ public class Party {
             _partyMembers.Add(member);
             member.SetParty(this);
             member.SetCurrentQuest(_currentQuest);
+            if(_avatar != null) {
+                member.DestroyAvatar();
+                _avatar.AddNewCharacter(member);
+            }
             Debug.Log(member.name + " has joined the party of " + partyLeader.name);
         }
         if (_partyMembers.Count >= MAX_PARTY_MEMBERS) {
@@ -64,20 +73,28 @@ public class Party {
          */
     public void RemovePartyMember(ECS.Character member) {
         _partyMembers.Remove(member);
-        if(_partyMembers.Count < 2) {
+        if(_avatar != null) {
+            _avatar.RemoveCharacter(member);
+        }
+        Debug.Log(member.name + " has left the party of " + partyLeader.name);
+        member.SetParty(null);
+        if (_partyMembers.Count < 2) {
             DisbandParty();
         }
     }
     public void DisbandParty() {
+        _isDisbanded = true;
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
-            //TODO: Cancel Quest if party is currently on a quest?
+            if (_avatar != null && currMember != partyLeader) {
+                _avatar.RemoveCharacter(currMember);
+            }
         }
         PartyManager.Instance.RemoveParty(this);
 		if(!_currentQuest.isDone){
-			_currentQuest.EndQuest (QUEST_RESULT.CANCEL);
-		}
+			_currentQuest.EndQuest (QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+        }
     }
     public bool AreAllPartyMembersPresent() {
         bool isPartyComplete = true;
@@ -110,6 +127,8 @@ public class Party {
             //If character HP is less than 50%, add 50 to Leave
             leaveWeight += 50;
         }
+        partyActionWeights.AddElement(PARTY_ACTION.STAY, stayWeight);
+        partyActionWeights.AddElement(PARTY_ACTION.LEAVE, leaveWeight);
         return partyActionWeights;
     }
     #endregion
@@ -132,6 +151,19 @@ public class Party {
          */
     public void DetermineNextAction() {
         _partyLeader.DetermineAction();
+    }
+    #endregion
+
+    #region Character Avatar
+    public void SetAvatar(CharacterAvatar avatar) {
+        _avatar = avatar;
+        for (int i = 0; i < _partyMembers.Count; i++) {
+            ECS.Character currCharacter = _partyMembers[i];
+            if(currCharacter.avatar != avatar) {
+                currCharacter.DestroyAvatar();
+            }
+            avatar.AddNewCharacter(currCharacter);
+        }
     }
     #endregion
 }

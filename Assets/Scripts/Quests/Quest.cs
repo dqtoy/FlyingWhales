@@ -118,7 +118,6 @@ public class Quest {
         _isDone = true;
         _questResult = QUEST_RESULT.SUCCESS;
         _createdBy.RemoveQuest(this);
-        CheckIfDestroyAvatar();
         RetaskParty();
     }
     protected virtual void QuestFail() {
@@ -127,7 +126,6 @@ public class Quest {
         _createdBy.RemoveQuest(this);
         _currentAction.onQuestActionDone = null;
         _currentAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
-        CheckIfDestroyAvatar();
         RetaskParty();
     }
     protected virtual void QuestCancel() {
@@ -137,14 +135,11 @@ public class Quest {
         _createdBy.RemoveQuest(this);
         _currentAction.onQuestActionDone = null;
         _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
-        CheckIfDestroyAvatar();
         RetaskParty();
 		ResetQuestValues ();
     }
-
 	//Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
 	protected virtual void ResetQuestValues(){}
-
     /*
      Construct the list of quest actions that the party will perform.
          */
@@ -196,7 +191,14 @@ public class Quest {
     }
     internal void PerformNextQuestAction() {
         _currentAction = _questLine.Dequeue();
-        _currentAction.DoAction(_assignedParty.partyLeader);
+        if(_assignedParty == null) {
+            if(_createdBy is ECS.Character) {
+                _currentAction.DoAction((ECS.Character)_createdBy);
+            }
+        } else {
+            _currentAction.DoAction(_assignedParty.partyLeader);
+        }
+        
     }
     internal void RepeatCurrentAction() {
         if(_currentAction != null) {
@@ -214,6 +216,10 @@ public class Quest {
         Party newParty = new Party(partyLeader);
         newParty.onPartyFull = OnPartyFull;
         AssignPartyToQuest(newParty);
+        if(partyLeader.avatar == null) {
+            partyLeader.CreateNewAvatar();//Characters that have accepted a Quest should have icon already even if they are still forming party in the city
+        }
+        newParty.SetAvatar(partyLeader.avatar);
         return newParty;
     }
     /*
@@ -230,6 +236,10 @@ public class Quest {
             _assignedParty.onPartyFull = OnPartyFull;
         }
     }
+    /*
+     This will check which characters will choose to leave
+     the party. 
+         */
     private void RetaskParty() {
         //Check which party members will leave
         List<ECS.Character> charactersToLeave = new List<ECS.Character>();
@@ -246,12 +256,14 @@ public class Quest {
         for (int i = 0; i < charactersToLeave.Count; i++) {
             ECS.Character characterToLeave = charactersToLeave[i];
             _assignedParty.RemovePartyMember(characterToLeave);
-            characterToLeave.DetermineAction(); //Make the character that left the party determine a next action
+            characterToLeave.GoToNearestNonHostileSettlement(() => _assignedParty.partyLeader.OnReachNonHostileSettlement()); //Make the character that left, go home then decide a new action
         }
 
+        //Make the rest of the party go home then determine the next action
+        //if the party has been disbanded, only the party leader will remain.
         _assignedParty.SetCurrentQuest(null);
         _assignedParty.onPartyFull = null;
-        _assignedParty.DetermineNextAction();
+        _assignedParty.partyLeader.GoToNearestNonHostileSettlement(() => _assignedParty.partyLeader.OnReachNonHostileSettlement());
     }
     internal void CheckPartyMembers() {
         if (_assignedParty.AreAllPartyMembersPresent()) {
@@ -262,11 +274,4 @@ public class Quest {
         }
     }
     #endregion
-
-    private void CheckIfDestroyAvatar() {
-        if (_assignedParty.partyLeader.currLocation.isOccupied) {
-            //Destroy Avatar
-            _assignedParty.partyLeader.DestroyAvatar();
-        }
-    }
 }

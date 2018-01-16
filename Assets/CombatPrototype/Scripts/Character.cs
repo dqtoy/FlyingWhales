@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System;
 
 namespace ECS {
 	[System.Serializable]
 	public class Character : QuestCreator {
 		[SerializeField] private string _name;
+        private int _id;
 		private GENDER _gender;
 		private List<Trait>	_traits;
 
@@ -51,6 +53,9 @@ namespace ECS {
 		internal string name{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
 		}
+        internal int id {
+            get { return _id; }
+        }
 		internal GENDER gender{
 			get { return _gender; }
 		}
@@ -156,6 +161,7 @@ namespace ECS {
         #endregion
 
         public Character(CharacterSetup baseSetup) {
+            _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
 			_name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
@@ -826,7 +832,9 @@ namespace ECS {
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
 				chosenAction.AcceptQuest(this);
-			}
+            } else {
+                throw new Exception(this.name + " could not decide action because weights are zero!");
+            }
 		}
         /*
          Get the weighted dictionary for what action the character will do next.
@@ -1056,6 +1064,39 @@ namespace ECS {
 				_avatar.DestroyObject();
 			}
 		}
+        public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
+            //check first if the character is already at a non hostile settlement
+            if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY) {
+                //TODO: Add Check for hostility
+                onReachSettlement();
+            } else {
+                //character is not on a non hostile settlement
+                List<Settlement> allSettlements = new List<Settlement>();
+                for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
+                                                                                    //TODO: Add checking for hostility
+                    Tribe currTribe = FactionManager.Instance.allTribes[i];
+                    allSettlements.AddRange(currTribe.settlements);
+                }
+                allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.location.transform.position)).ToList();
+                if(_avatar == null) {
+                    CreateNewAvatar();
+                }
+                _avatar.SetTarget(allSettlements[0].location);
+                _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
+            }
+        }
+        /*
+         This is the default action to be done when a 
+         character returns to a non hostile settlement after a quest.
+             */
+        internal void OnReachNonHostileSettlement() {
+            if (_party.partyMembers.Count < 2) {
+                //only the leader is left
+                SetParty(null);
+            }
+            DestroyAvatar();
+            DetermineAction();
+        }
 		#endregion
 
 		#region Quest Management
