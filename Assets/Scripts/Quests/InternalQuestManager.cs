@@ -62,6 +62,7 @@ public class InternalQuestManager : QuestCreator {
     private void GenerateMonthlyQuests() {
         if(_activeQuests.Count < GetMaxActiveQuests()) {
             WeightedDictionary<Quest> questDictionary = GetQuestWeightedDictionary();
+            questDictionary.LogDictionaryValues("Quest Creation Weights: ");
             if(questDictionary.GetTotalOfWeights() > 0) {
                 Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
                 AddNewQuest(chosenQuestToCreate);

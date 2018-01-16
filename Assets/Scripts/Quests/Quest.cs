@@ -62,7 +62,7 @@ public class Quest {
         if(daysBeforeDeadline != -1) {
             ScheduleDeadline();
         }
-        _createdBy.AddNewQuest(this);
+        //_createdBy.AddNewQuest(this);
     }
 
     #region virtuals
