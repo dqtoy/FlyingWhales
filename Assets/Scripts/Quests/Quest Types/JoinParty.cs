@@ -23,6 +23,13 @@ public class JoinParty : Quest {
     }
 
     #region overrides
+    public override void AcceptQuest(ECS.Character partyLeader) {
+        _isAccepted = true;
+        partyLeader.SetCurrentQuest(this);
+        if (onQuestAccepted != null) {
+            onQuestAccepted();
+        }
+    }
     protected override void ConstructQuestLine() {
         base.ConstructQuestLine();
 
@@ -34,13 +41,6 @@ public class JoinParty : Quest {
         goToLocation.onQuestDoAction += goToLocation.Generic;
 
         _questLine.Enqueue(goToLocation);
-    }
-    public override void AcceptQuest(ECS.Character partyLeader) {
-        _isAccepted = true;
-        partyLeader.SetCurrentQuest(this);
-        if (onQuestAccepted != null) {
-            onQuestAccepted();
-        }
     }
     protected override void QuestSuccess() {
         _isDone = true;

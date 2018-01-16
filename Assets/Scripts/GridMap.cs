@@ -360,7 +360,8 @@ public class GridMap : MonoBehaviour {
             Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
         }
         Dictionary<LANDMARK_TYPE, int> createdLandmarksDict = new Dictionary<LANDMARK_TYPE, int>();
-        int numOfLandmarksToCreate = Mathf.FloorToInt(3f * (float)allRegions.Count); //there will be 2.5 times (rounded down) as many landmarks as there are number of cities
+        //int numOfLandmarksToCreate = Mathf.FloorToInt(3f * (float)allRegions.Count); //there will be 2.5 times (rounded down) as many landmarks as there are number of cities
+        int numOfLandmarksToCreate = 40; //Increase Landmarks to 40
         Debug.Log("Creating " + numOfLandmarksToCreate.ToString() + " landmarks..... ");
         int createdLandmarks = 0;
 

@@ -45,6 +45,10 @@ public class CharacterAvatar : PooledObject{
             character.SetAvatar(this);
         }
     }
+    public void RemoveCharacter(ECS.Character character) {
+        _characters.Remove(character);
+        character.SetAvatar(null);
+    }
     #endregion
 
     #region Pathfinding
@@ -148,12 +152,14 @@ public class CharacterAvatar : PooledObject{
             ECS.Character currCharacter = _characters[i];
             landmark.RemoveCharacterOnLandmark(currCharacter);
         }
+        UIManager.Instance.UpdateSettlementInfo();
     }
     private void AddCharactersToLandmark(BaseLandmark landmark) {
         for (int i = 0; i < _characters.Count; i++) {
             ECS.Character currCharacter = _characters[i];
             landmark.AddCharacterOnLandmark(currCharacter);
         }
+        UIManager.Instance.UpdateSettlementInfo();
     }
     #endregion
 

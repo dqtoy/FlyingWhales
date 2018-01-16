@@ -9,7 +9,7 @@ public class DoNothing : Quest {
     }
 
     private void EndQuestAfterDays() {
-        ScheduleQuestEnd(10, QUEST_RESULT.SUCCESS);
+        ScheduleQuestEnd(Random.Range(4, 9), QUEST_RESULT.SUCCESS); //Do Nothing should only last for a random number of days between 4 days to 8 days
     }
 
     #region overrides

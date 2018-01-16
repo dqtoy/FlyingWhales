@@ -3051,5 +3051,8 @@ public class UIManager : MonoBehaviour {
         settlementInfoUI.SetSettlementAsActive(settlement);
         settlementInfoUI.ShowSettlementInfo();
     }
+    public void UpdateSettlementInfo() {
+        settlementInfoUI.UpdateSettlementInfo();
+    }
     #endregion
 }
