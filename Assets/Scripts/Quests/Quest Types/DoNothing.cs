@@ -16,14 +16,24 @@ public class DoNothing : Quest {
     public override void AcceptQuest(ECS.Character partyLeader) {
         _isAccepted = true;
         partyLeader.SetCurrentQuest(this);
+        if(partyLeader.party != null) {
+            partyLeader.party.SetCurrentQuest(this);
+        }
+        this.SetWaitingStatus(false);
         if (onQuestAccepted != null) {
             onQuestAccepted();
         }
     }
     internal override void EndQuest(QUEST_RESULT result) {
+        _questResult = result;
         _isDone = true;
         _createdBy.RemoveQuest(this);
         ((ECS.Character)_createdBy).DetermineAction();
+    }
+    internal override void QuestCancel() {
+        _isDone = true;
+        _createdBy.RemoveQuest(this);
+        _questResult = QUEST_RESULT.SUCCESS;
     }
     #endregion
 }

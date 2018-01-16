@@ -82,18 +82,18 @@ public class InternalQuestManager : QuestCreator {
             Region regionOfSettlement = _owner.settlements[i].location.region;
             //check if the current region already has an active quest to explore it
             if(!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_REGION, regionOfSettlement)) {
-                questDict.AddElement(new ExploreRegion(this, 30, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
+                questDict.AddElement(new ExploreRegion(this, 20, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
             }
-			for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
-				if(regionOfSettlement.connections[j] is Region){
-					Region region = (Region)regionOfSettlement.connections [j];
-					if(!region.centerOfMass.isOccupied && !checkedExpandRegions.Contains(region)){
-						if (!AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, region.centerOfMass)) {
-							questDict.AddElement(new Expand(this, 60, region.centerOfMass), GetExpandWeight(region));
-						}
-					}
-				}
-			}
+            for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
+                if (regionOfSettlement.connections[j] is Region) {
+                    Region region = (Region)regionOfSettlement.connections[j];
+                    if (!region.centerOfMass.isOccupied && !checkedExpandRegions.Contains(region)) {
+                        if (!AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, region.centerOfMass)) {
+                            questDict.AddElement(new Expand(this, 60, region.centerOfMass), GetExpandWeight(region));
+                        }
+                    }
+                }
+            }
         }
         //End Explore Region Weights
         

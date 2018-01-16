@@ -43,11 +43,15 @@ public class Rest : Quest {
     public override void AcceptQuest(ECS.Character partyLeader) {
         _isAccepted = true;
         partyLeader.SetCurrentQuest(this);
+        if (partyLeader.party != null) {
+            partyLeader.party.SetCurrentQuest(this);
+        }
+        this.SetWaitingStatus(false);
         if (onQuestAccepted != null) {
             onQuestAccepted();
         }
     }
-    protected override void QuestSuccess() {
+    internal override void QuestSuccess() {
         _isDone = true;
         _createdBy.RemoveQuest(this);
         ((ECS.Character)_createdBy).DetermineAction();

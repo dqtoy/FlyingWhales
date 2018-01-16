@@ -4,6 +4,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 
 public class Settlement : BaseLandmark {
 
@@ -104,6 +105,18 @@ public class Settlement : BaseLandmark {
         this.AddCharacterOnLandmark(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.DetermineAction();
+    }
+    public List<Party> GetPartiesInSettlement() {
+        List<Party> parties = new List<Party>();
+        for (int i = 0; i < charactersOnLandmark.Count; i++) {
+            ECS.Character currCharacter = charactersOnLandmark[i];
+            if(currCharacter.party != null) {
+                if (!parties.Contains(currCharacter.party)) {
+                    parties.Add(currCharacter.party);
+                }
+            }
+        }
+        return parties;
     }
     #endregion
 

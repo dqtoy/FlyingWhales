@@ -26,6 +26,7 @@ public class JoinParty : Quest {
     public override void AcceptQuest(ECS.Character partyLeader) {
         _isAccepted = true;
         partyLeader.SetCurrentQuest(this);
+        _partyToJoin.currentQuest.SetWaitingStatus(true); //wait for the character that will join the party
         if (onQuestAccepted != null) {
             onQuestAccepted();
         }
@@ -42,7 +43,7 @@ public class JoinParty : Quest {
 
         _questLine.Enqueue(goToLocation);
     }
-    protected override void QuestSuccess() {
+    internal override void QuestSuccess() {
         _isDone = true;
         _questResult = QUEST_RESULT.SUCCESS;
         _createdBy.RemoveQuest(this);

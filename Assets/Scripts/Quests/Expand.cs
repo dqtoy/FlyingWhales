@@ -88,7 +88,7 @@ public class Expand : Quest {
 		}
 		return false;
 	}
-	protected override void QuestSuccess() {
+	internal override void QuestSuccess() {
 		_isDone = true;
 		_questResult = QUEST_RESULT.SUCCESS;
 		_createdBy.RemoveQuest(this);
@@ -98,7 +98,8 @@ public class Expand : Quest {
 		this._assignedParty.DisbandParty ();
 		this._assignedParty.partyLeader.DestroyAvatar ();
 	}
-	protected override void QuestFail() {
+
+	internal override void QuestFail() {
 		_isDone = true;
 		_questResult = QUEST_RESULT.FAIL;
 		_createdBy.RemoveQuest(this);
