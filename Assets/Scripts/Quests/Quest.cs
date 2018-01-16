@@ -59,10 +59,10 @@ public class Quest {
         _createdBy = createdBy;
         _questType = questType;
         _daysBeforeDeadline = daysBeforeDeadline;
-        if(daysBeforeDeadline != -1) {
-            ScheduleDeadline();
-        }
-        _createdBy.AddNewQuest(this);
+        //if(daysBeforeDeadline != -1) {
+        //    ScheduleDeadline();
+        //}
+        //_createdBy.AddNewQuest(this);
     }
 
     #region virtuals
@@ -163,10 +163,12 @@ public class Quest {
     }
 
     #region Deadline
-    private void ScheduleDeadline() {
-        GameDate deadline = GameManager.Instance.Today();
-        deadline.AddDays(_daysBeforeDeadline);
-        SchedulingManager.Instance.AddEntry(deadline, () => QuestExpired());
+    public void ScheduleDeadline() {
+        if (_daysBeforeDeadline != -1) {
+            GameDate deadline = GameManager.Instance.Today();
+            deadline.AddDays(_daysBeforeDeadline);
+            SchedulingManager.Instance.AddEntry(deadline, () => QuestExpired());
+        }
     }
     private void QuestExpired() {
         Debug.Log(this.questType.ToString() + " has expired!");

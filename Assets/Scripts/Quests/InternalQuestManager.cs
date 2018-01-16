@@ -62,6 +62,7 @@ public class InternalQuestManager : QuestCreator {
     private void GenerateMonthlyQuests() {
         if(_activeQuests.Count < GetMaxActiveQuests()) {
             WeightedDictionary<Quest> questDictionary = GetQuestWeightedDictionary();
+            questDictionary.LogDictionaryValues("Quest Creation Weights: ");
             if(questDictionary.GetTotalOfWeights() > 0) {
                 Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
                 AddNewQuest(chosenQuestToCreate);
@@ -148,6 +149,7 @@ public class InternalQuestManager : QuestCreator {
     public void AddNewQuest(Quest quest) {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
+            quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }
     public void RemoveQuest(Quest quest) {

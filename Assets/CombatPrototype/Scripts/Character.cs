@@ -891,7 +891,6 @@ namespace ECS {
 			actionWeights.AddElement(doNothingTask, GetWeightForQuest(doNothingTask));
 			return actionWeights;
 		}
-
   //      private void StartExploreRegion() {
   //          List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
   //          if (exploreQuests.Count < 0) {
@@ -995,7 +994,6 @@ namespace ECS {
         private int GetDoNothingWeight() {
             return 10;
         }
-
         //private int GetWeightForQuestType(QUEST_TYPE questType) {
         //    int weight = 0;
         //    switch (questType) {
