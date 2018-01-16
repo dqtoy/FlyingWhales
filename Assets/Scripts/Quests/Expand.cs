@@ -88,7 +88,7 @@ public class Expand : Quest {
 		return false;
 	}
 
-	protected override void QuestFail() {
+	internal override void QuestFail() {
 		_isDone = true;
 		_questResult = QUEST_RESULT.FAIL;
 		_createdBy.RemoveQuest(this);

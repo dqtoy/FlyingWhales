@@ -60,20 +60,6 @@ public class SettlementInfoUI : UIMenu {
                 text += "NONE";
             }
 
-            //text += "\n[b]ECS.Character Caps: [/b] ";
-            //for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
-            //    CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
-            //    bool isCapReached = false;
-            //    for (int j = 0; j < currWweight.productionCaps.Count; j++) {
-            //        CharacterProductionCap cap = currWweight.productionCaps[j];
-            //        if (cap.IsCapReached(currWweight.role, currentlyShowingSettlement.owner)) {
-            //            isCapReached = true;
-            //            break;
-            //        }
-            //    }
-            //    text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
-            //}
-
             text += "\n[b]Active Quests: [/b] ";
             if (currentlyShowingSettlement.owner.internalQuestManager.activeQuests.Count > 0) {
                 for (int i = 0; i < currentlyShowingSettlement.owner.internalQuestManager.activeQuests.Count; i++) {
@@ -107,7 +93,35 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-
+        text += "\n[b]Parties: [/b] ";
+        List<Party> partiesInSettlement = currentlyShowingSettlement.GetPartiesInSettlement();
+        if (PartyManager.Instance.allParties.Count > 0) {
+            for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
+                Party currParty = PartyManager.Instance.allParties[i];
+                text += "\n" + currParty.name + " O: " + currParty.isOpen + " F: " + currParty.isFull;
+                if(currParty.currentQuest != null) {
+                    text += "\n" + Utilities.NormalizeString(currParty.currentQuest.questType.ToString());
+                    if (currParty.currentQuest.isDone) {
+                        text += "(Done)";
+                    } else {
+                        if (currParty.isOpen || currParty.currentQuest.isWaiting) {
+                            text += "(Forming Party)";
+                        } else {
+                            text += "(In Progress)";
+                        }
+                    }
+                }
+                text += "\n     " + currParty.partyLeader.name;
+                for (int j = 0; j < currParty.partyMembers.Count; j++) {
+                    ECS.Character currMember = currParty.partyMembers[j];
+                    if(currMember.id != currParty.partyLeader.id) {
+                        text += "\n          " + currMember.name;
+                    }
+                }
+            }
+        } else {
+            text += "NONE";
+        }
         settlementInfoLbl.text = text;
     }
 }

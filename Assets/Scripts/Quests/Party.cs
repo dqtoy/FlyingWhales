@@ -7,6 +7,8 @@ public class Party {
     public delegate void OnPartyFull(Party party);
     public OnPartyFull onPartyFull;
 
+    protected string _name;
+
     protected bool _isOpen; //is this party open to new members?
     protected bool _isDisbanded;
 
@@ -18,6 +20,9 @@ public class Party {
     private const int MAX_PARTY_MEMBERS = 5;
 
     #region getters/setters
+    public string name {
+        get { return _name; }
+    }
     public bool isFull {
         get { return partyMembers.Count >= MAX_PARTY_MEMBERS; }
     }
@@ -39,6 +44,7 @@ public class Party {
     #endregion
 
     public Party(ECS.Character partyLeader) {
+        _name = RandomNameGenerator.Instance.GetAllianceName();
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
         AddPartyMember(_partyLeader);
@@ -109,7 +115,28 @@ public class Party {
     }
     public void SetOpenStatus(bool isOpen) {
         _isOpen = isOpen;
+        //Do Nothing adventurers within the same city will be informed whenever a new character is registering for a Party. They will have first choice to join the party.
+
     }
+    public void InviteCharactersOnTile(CHARACTER_ROLE role, HexTile tile) {
+        if(tile.landmarkOnTile != null) {
+            if(tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY) {
+                Settlement settlement = (Settlement)tile.landmarkOnTile;
+                for (int i = 0; i < settlement.charactersOnLandmark.Count; i++) {
+                    if(this.isOpen && !this.isFull) {
+                        ECS.Character currCharacter = settlement.charactersOnLandmark[i];
+                        if (currCharacter.role.roleType == role) {
+                            if (currCharacter.currentQuest is DoNothing && currCharacter.party == null) {
+                                currCharacter.currentQuest.QuestCancel();
+                                currCharacter.JoinParty(this);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public WeightedDictionary<PARTY_ACTION> GetPartyActionWeightsForCharacter(ECS.Character member) {
         WeightedDictionary<PARTY_ACTION> partyActionWeights = new WeightedDictionary<PARTY_ACTION>();
         int stayWeight = 50; //Default value for Stay is 50
@@ -145,6 +172,12 @@ public class Party {
             ECS.Character currMember = _partyMembers[i];
             currMember.SetCurrentQuest(quest);
         }
+        if(quest == null) {
+            Debug.Log("Set current quest of " + name + " to nothing");
+        } else {
+            Debug.Log("Set current quest of " + name + " to " + quest.questType.ToString());
+        }
+        
     }
     /*
      Make the party leader decide the next action for the party.
@@ -164,6 +197,12 @@ public class Party {
             }
             avatar.AddNewCharacter(currCharacter);
         }
+    }
+    #endregion
+
+    #region Utilities
+    internal bool IsCharacterLeaderOfParty(ECS.Character character) {
+        return character.id == _partyLeader.id;
     }
     #endregion
 }

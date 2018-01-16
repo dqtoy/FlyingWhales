@@ -836,6 +836,12 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
+            if(_party != null) {
+                //if the character is in a party, and is not the leader, do not decide any action
+                if (!_party.IsCharacterLeaderOfParty(this)) {
+                    return;
+                }
+            }
 			WeightedDictionary<Quest> actionWeights = GetActionWeights();
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
@@ -1098,10 +1104,14 @@ namespace ECS {
          character returns to a non hostile settlement after a quest.
              */
         internal void OnReachNonHostileSettlement() {
-            if (_party.partyMembers.Count < 2) {
-                //only the leader is left
-                SetParty(null);
-            }
+            //if(_party != null) {
+            //    if (_party.partyMembers.Count < 2) {
+            //        //only the leader is left
+            //        _party.DisbandParty();
+            //        //SetParty(null);
+            //    }
+            //}
+            _currLocation.landmarkOnTile.AddCharacterOnLandmark(this);
             DestroyAvatar();
             DetermineAction();
         }
