@@ -3048,6 +3048,12 @@ public class UIManager : MonoBehaviour {
     #region Settlement Info
     [SerializeField] internal SettlementInfoUI settlementInfoUI;
     public void ShowSettlementInfo(Settlement settlement) {
+		if(factionInfoUI.isShowing){
+			factionInfoUI.HideFactionInfo ();
+		}
+		if(characterInfoUI.isShowing){
+			characterInfoUI.HideCharacterInfo ();
+		}
         settlementInfoUI.SetSettlementAsActive(settlement);
         settlementInfoUI.ShowSettlementInfo();
     }
@@ -3056,14 +3062,37 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-	#region Settlement Info
+	#region Faction Info
 	[SerializeField] internal FactionInfoUI factionInfoUI;
 	public void ShowFactionInfo(Faction faction) {
+		if(settlementInfoUI.isShowing){
+			settlementInfoUI.HideSettlementInfo ();
+		}
+		if(characterInfoUI.isShowing){
+			characterInfoUI.HideCharacterInfo ();
+		}
 		factionInfoUI.SetFactionAsActive(faction);
 		factionInfoUI.ShowFactionInfo();
 	}
 	public void UpdateFactionInfo() {
 		factionInfoUI.UpdateFactionInfo();
+	}
+	#endregion
+
+	#region Character Info
+	[SerializeField] internal CharacterInfoUI characterInfoUI;
+	public void ShowCharacterInfo(ECS.Character character) {
+		if(settlementInfoUI.isShowing){
+			settlementInfoUI.HideSettlementInfo ();
+		}
+		if(factionInfoUI.isShowing){
+			factionInfoUI.HideFactionInfo ();
+		}
+		characterInfoUI.SetCharacterAsActive(character);
+		characterInfoUI.ShowCharacterInfo();
+	}
+	public void UpdateCharacterInfo() {
+		characterInfoUI.UpdateCharacterInfo();
 	}
 	#endregion
 }

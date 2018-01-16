@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SettlementInfoClick : MonoBehaviour {
+public class CharacterInfoClick : MonoBehaviour {
 	void OnClick(){
 		UILabel lbl = GetComponent<UILabel> ();
 		string url = lbl.GetUrlAtPosition (UICamera.lastWorldPosition);
@@ -13,11 +13,6 @@ public class SettlementInfoClick : MonoBehaviour {
 				Faction faction = FactionManager.Instance.GetFactionBasedOnID (idToUse);
 				if(faction != null){
 					UIManager.Instance.ShowFactionInfo (faction);
-				}
-			}else if(url.Contains("_character")){
-				ECS.Character character = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.GetCharacterByID(idToUse);
-				if(character != null){
-					UIManager.Instance.ShowCharacterInfo (character);
 				}
 			}
 		}

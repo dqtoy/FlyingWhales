@@ -5,14 +5,14 @@ using System.Linq;
 
 public class SettlementInfoUI : UIMenu {
 
-    private bool isShowing;
+    internal bool isShowing;
 
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel settlementInfoLbl;
 
-    private Settlement currentlyShowingSettlement;
+    internal Settlement currentlyShowingSettlement;
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateSettlementInfo);
@@ -51,7 +51,7 @@ public class SettlementInfoUI : UIMenu {
             if (currentlyShowingSettlement.charactersOnLandmark.Count > 0) {
                 for (int i = 0; i < currentlyShowingSettlement.charactersOnLandmark.Count; i++) {
                     ECS.Character currChar = currentlyShowingSettlement.charactersOnLandmark[i];
-                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+					text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
                     if (currChar.currentQuest != null) {
                         text += " (" + currChar.currentQuest.questType.ToString() + ")";
                     }

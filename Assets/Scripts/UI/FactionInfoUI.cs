@@ -5,14 +5,14 @@ using System.Linq;
 
 public class FactionInfoUI : UIMenu {
 
-    private bool isShowing;
+    internal bool isShowing;
 
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel factionInfoLbl;
 
-    private Faction currentlyShowingFaction;
+    internal Faction currentlyShowingFaction;
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateFactionInfo);
@@ -44,7 +44,7 @@ public class FactionInfoUI : UIMenu {
 		text += "\n[b]Race:[/b] " + currentlyShowingFaction.race.ToString();
 		text += "\n[b]Faction Type:[/b] " + currentlyShowingFaction.factionType.ToString();
 		text += "\n[b]Faction Size:[/b] " + currentlyShowingFaction.factionSize.ToString();
-		text += "\n[b]Owned Landmarks: [/b] " + currentlyShowingFaction.factionSize.ToString();
+		text += "\n[b]Owned Landmarks: [/b] ";
 		if(currentlyShowingFaction.ownedLandmarks.Count > 0){
 			for (int i = 0; i < currentlyShowingFaction.ownedLandmarks.Count; i++) {
 				BaseLandmark landmark = currentlyShowingFaction.ownedLandmarks [i];
@@ -72,7 +72,7 @@ public class FactionInfoUI : UIMenu {
 		if (currentlyShowingFaction.characters.Count > 0) {
 			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
 				ECS.Character currChar = currentlyShowingFaction.characters[i];
-				text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
 				if (currChar.currentQuest != null) {
 					text += " (" + currChar.currentQuest.questType.ToString() + ")";
 				}

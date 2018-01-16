@@ -128,4 +128,13 @@ public class Faction {
         return chars;
     }
     #endregion
+
+	public ECS.Character GetCharacterByID(int id){
+		for (int i = 0; i < _characters.Count; i++) {
+			if(_characters[i].id == id){
+				return _characters [i];
+			}
+		}
+		return null;
+	}
 }
