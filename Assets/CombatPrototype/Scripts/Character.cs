@@ -815,6 +815,14 @@ namespace ECS {
 		public void SetParty(Party party) {
 			_party = party;
 		}
+        /*
+         This will force the character to start a join party quest for the
+         given party.
+             */
+        public void JoinParty(Party party) {
+            JoinParty joinParty = new JoinParty(this, -1, party);
+            joinParty.AcceptQuest(this);
+        }
 		#endregion
 
 		#region Location
@@ -952,7 +960,7 @@ namespace ECS {
                     weight += 200 - (15 * pathToParty.Count); //200 - (15 per tile distance) if not in a party
                 }
             }
-            return weight;
+            return Mathf.Max(0, weight);
         }
         private int GetRestWeight() {
             if (_currentHP < maxHP) {
