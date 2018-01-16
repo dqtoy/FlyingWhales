@@ -50,10 +50,11 @@ public class Expand : Quest {
 
 		GoToLocation goToExpandLocationAction = new GoToLocation(this); //Go to the picked region
 		goToExpandLocationAction.InititalizeAction(_targetUnoccupiedTile);
+		goToExpandLocationAction.onQuestDoAction += goToExpandLocationAction.Expand;
 		goToExpandLocationAction.onQuestActionDone += SuccessExpansion;
 
 //		//Enqueue all actions
-//		_questLine.Enqueue(goToRegionAction); 
+		_questLine.Enqueue(goToExpandLocationAction);
 //		_questLine.Enqueue(roamRegionAction);
 	}
 	internal override void EndQuest(QUEST_RESULT result) {
@@ -87,7 +88,16 @@ public class Expand : Quest {
 		}
 		return false;
 	}
-
+	protected override void QuestSuccess() {
+		_isDone = true;
+		_questResult = QUEST_RESULT.SUCCESS;
+		_createdBy.RemoveQuest(this);
+		ECS.Character partyLeader = this._assignedParty.partyLeader;
+		partyLeader.ChangeRole (CHARACTER_ROLE.VILLAGE_HEAD);
+		partyLeader.SetHome ((Settlement)this._targetUnoccupiedTile.landmarkOnTile);
+		this._assignedParty.DisbandParty ();
+		this._assignedParty.partyLeader.DestroyAvatar ();
+	}
 	protected override void QuestFail() {
 		_isDone = true;
 		_questResult = QUEST_RESULT.FAIL;
