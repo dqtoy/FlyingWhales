@@ -3046,7 +3046,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Settlement Info
-    [SerializeField] private SettlementInfoUI settlementInfoUI;
+    [SerializeField] internal SettlementInfoUI settlementInfoUI;
     public void ShowSettlementInfo(Settlement settlement) {
         settlementInfoUI.SetSettlementAsActive(settlement);
         settlementInfoUI.ShowSettlementInfo();
@@ -3055,4 +3055,15 @@ public class UIManager : MonoBehaviour {
         settlementInfoUI.UpdateSettlementInfo();
     }
     #endregion
+
+	#region Settlement Info
+	[SerializeField] internal FactionInfoUI factionInfoUI;
+	public void ShowFactionInfo(Faction faction) {
+		factionInfoUI.SetFactionAsActive(faction);
+		factionInfoUI.ShowFactionInfo();
+	}
+	public void UpdateFactionInfo() {
+		factionInfoUI.UpdateFactionInfo();
+	}
+	#endregion
 }

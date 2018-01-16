@@ -43,7 +43,7 @@ public class SettlementInfoUI : UIMenu {
         text += "[b]Location:[/b] " + currentlyShowingSettlement.location.name;
 
         if (currentlyShowingSettlement.owner != null) {
-            text += "\n[b]Owner:[/b] " + currentlyShowingSettlement.owner.name + "/" + currentlyShowingSettlement.owner.race.ToString();
+			text += "\n[b]Owner:[/b] " + "[url=" + currentlyShowingSettlement.owner.id + "_faction]" + currentlyShowingSettlement.owner.name + "[/url]" + "/" + currentlyShowingSettlement.owner.race.ToString();
             text += "\n[b]Total Population: [/b] " + currentlyShowingSettlement.totalPopulation.ToString();
             text += "\n[b]Civilian Population: [/b] " + currentlyShowingSettlement.civilians.ToString();
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingSettlement.totalPopulation * currentlyShowingSettlement.location.region.populationGrowth).ToString();
