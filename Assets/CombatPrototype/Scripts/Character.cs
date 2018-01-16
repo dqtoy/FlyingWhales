@@ -908,7 +908,8 @@ namespace ECS {
                     break;
                 case QUEST_TYPE.OBTAIN_RESOURCE:
                     break;
-                case QUEST_TYPE.EXPAND:
+				case QUEST_TYPE.EXPAND:
+					weight += GetExpandWeight ();
                     break;
                 case QUEST_TYPE.REST:
                     weight += GetRestWeight();
@@ -927,7 +928,11 @@ namespace ECS {
             }
             return weight;
         }
-
+		private int GetExpandWeight() {
+			int weight = 0;
+			weight += 100; //Change algo if needed
+			return weight;
+		}
         private int GetExploreRegionWeight(ExploreRegion exploreRegionQuest) {
             int weight = 0;
             weight += 100; //Change algo if needed
