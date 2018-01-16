@@ -458,7 +458,7 @@ public class Biomes : MonoBehaviour {
 	private ELEVATION GetElevationType(float elevationNoise){
         //return ELEVATION.PLAIN;
         if (elevationNoise <= 0.25f) {
-            return ELEVATION.WATER;
+			return ELEVATION.PLAIN;
         } else if (elevationNoise > 0.25f && elevationNoise <= 0.7f) {
             return ELEVATION.PLAIN;
         } else {

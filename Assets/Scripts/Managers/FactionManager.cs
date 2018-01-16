@@ -140,4 +140,13 @@ public class FactionManager : MonoBehaviour {
         return characters;
     }
     #endregion
+
+	public Faction GetFactionBasedOnID(int id){
+		for (int i = 0; i < allFactions.Count; i++) {
+			if(allFactions[i].id == id){
+				return allFactions [i];
+			}
+		}
+		return null;
+	}
 }
