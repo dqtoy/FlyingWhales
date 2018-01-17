@@ -74,6 +74,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private TextMesh tileTextMesh;
 	[SerializeField] private GameObject _emptyCityGO;
     [SerializeField] private GameObject _hoverHighlightGO;
+	[SerializeField] private GameObject _clickHighlightGO;
 
     [Space(10)]
     [Header("Tile Edges")]
@@ -207,6 +208,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public BaseLandmark landmarkOnTile {
         get { return _landmarkOnTile; }
     }
+	public GameObject clickHighlightGO {
+		get { return _clickHighlightGO; }
+	}
     #endregion
 
     #region Region Functions
@@ -1318,6 +1322,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
+		UIManager.Instance.ShowHexTileInfo (this);
         //    if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
         //        CameraMove.Instance.CenterCameraOn(this.gameObject);
         //        if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
@@ -1328,10 +1333,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //        }
         //    }
 
-        if (this.isHabitable && this.isOccupied) {
-            CameraMove.Instance.CenterCameraOn(this.gameObject);
-            UIManager.Instance.ShowSettlementInfo((Settlement)this.landmarkOnTile);
-        }
+//        if (this.isHabitable && this.isOccupied) {
+//            CameraMove.Instance.CenterCameraOn(this.gameObject);
+//            UIManager.Instance.ShowSettlementInfo((Settlement)this.landmarkOnTile);
+//        }
+
 
         //if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
         //    if(UIManager.Instance.spawnType == AGENT_TYPE.NECROMANCER) {

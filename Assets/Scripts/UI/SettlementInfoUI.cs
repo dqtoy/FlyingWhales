@@ -12,7 +12,7 @@ public class SettlementInfoUI : UIMenu {
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel settlementInfoLbl;
 
-    internal Settlement currentlyShowingSettlement;
+    internal BaseLandmark currentlyShowingSettlement;
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateSettlementInfo);
@@ -21,14 +21,16 @@ public class SettlementInfoUI : UIMenu {
 
     public void ShowSettlementInfo() {
         isShowing = true;
-        tweenPos.PlayForward();
+		this.gameObject.SetActive (true);
+//      tweenPos.PlayForward();
     }
     public void HideSettlementInfo() {
         isShowing = false;
-        tweenPos.PlayReverse();
+		this.gameObject.SetActive (false);
+//      tweenPos.PlayReverse();
     }
 
-    public void SetSettlementAsActive(Settlement settlement) {
+    public void SetSettlementAsActive(BaseLandmark settlement) {
         currentlyShowingSettlement = settlement;
         if (isShowing) {
             UpdateSettlementInfo();
@@ -40,7 +42,7 @@ public class SettlementInfoUI : UIMenu {
             return;
         }
         string text = string.Empty;
-        text += "[b]Location:[/b] " + currentlyShowingSettlement.location.name;
+		text += "[b]Location:[/b] " + "[url=" + currentlyShowingSettlement.location.id + "_hextile]" + currentlyShowingSettlement.location.tileName + "[/url]";
 
         if (currentlyShowingSettlement.owner != null) {
 			text += "\n[b]Owner:[/b] " + "[url=" + currentlyShowingSettlement.owner.id + "_faction]" + currentlyShowingSettlement.owner.name + "[/url]" + "/" + currentlyShowingSettlement.owner.race.ToString();
@@ -93,35 +95,38 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-        text += "\n[b]Parties: [/b] ";
-        List<Party> partiesInSettlement = currentlyShowingSettlement.GetPartiesInSettlement();
-        if (PartyManager.Instance.allParties.Count > 0) {
-            for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
-                Party currParty = PartyManager.Instance.allParties[i];
-                text += "\n" + currParty.name + " O: " + currParty.isOpen + " F: " + currParty.isFull;
-                if(currParty.currentQuest != null) {
-                    text += "\n" + Utilities.NormalizeString(currParty.currentQuest.questType.ToString());
-                    if (currParty.currentQuest.isDone) {
-                        text += "(Done)";
-                    } else {
-                        if (currParty.isOpen || currParty.currentQuest.isWaiting) {
-                            text += "(Forming Party)";
-                        } else {
-                            text += "(In Progress)";
-                        }
-                    }
-                }
-                text += "\n     " + currParty.partyLeader.name;
-                for (int j = 0; j < currParty.partyMembers.Count; j++) {
-                    ECS.Character currMember = currParty.partyMembers[j];
-                    if(currMember.id != currParty.partyLeader.id) {
-                        text += "\n          " + currMember.name;
-                    }
-                }
-            }
-        } else {
-            text += "NONE";
-        }
+		if(currentlyShowingSettlement is Settlement){
+			text += "\n[b]Parties: [/b] ";
+			List<Party> partiesInSettlement = ((Settlement)currentlyShowingSettlement).GetPartiesInSettlement();
+			if (PartyManager.Instance.allParties.Count > 0) {
+				for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
+					Party currParty = PartyManager.Instance.allParties[i];
+					text += "\n" + currParty.name + " O: " + currParty.isOpen + " F: " + currParty.isFull;
+					if(currParty.currentQuest != null) {
+						text += "\n" + Utilities.NormalizeString(currParty.currentQuest.questType.ToString());
+						if (currParty.currentQuest.isDone) {
+							text += "(Done)";
+						} else {
+							if (currParty.isOpen || currParty.currentQuest.isWaiting) {
+								text += "(Forming Party)";
+							} else {
+								text += "(In Progress)";
+							}
+						}
+					}
+					text += "\n     " + currParty.partyLeader.name;
+					for (int j = 0; j < currParty.partyMembers.Count; j++) {
+						ECS.Character currMember = currParty.partyMembers[j];
+						if(currMember.id != currParty.partyLeader.id) {
+							text += "\n          " + currMember.name;
+						}
+					}
+				}
+			} else {
+				text += "NONE";
+			}
+		}
+       
         settlementInfoLbl.text = text;
     }
 }

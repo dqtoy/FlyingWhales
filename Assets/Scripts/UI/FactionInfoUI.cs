@@ -21,11 +21,13 @@ public class FactionInfoUI : UIMenu {
 
     public void ShowFactionInfo() {
         isShowing = true;
-        tweenPos.PlayForward();
+//        tweenPos.PlayForward();
+		this.gameObject.SetActive (true);
     }
     public void HideFactionInfo() {
         isShowing = false;
-        tweenPos.PlayReverse();
+//        tweenPos.PlayReverse();
+		this.gameObject.SetActive (false);
     }
 
     public void SetFactionAsActive(Faction faction) {
@@ -48,7 +50,7 @@ public class FactionInfoUI : UIMenu {
 		if(currentlyShowingFaction.ownedLandmarks.Count > 0){
 			for (int i = 0; i < currentlyShowingFaction.ownedLandmarks.Count; i++) {
 				BaseLandmark landmark = currentlyShowingFaction.ownedLandmarks [i];
-				text += "\n  - " + landmark.location.tileName + " (" + landmark.specificLandmarkType.ToString() + ")";
+				text += "[url=" + landmark.id + "_landmark]" + "\n  - " + landmark.location.tileName + " (" + landmark.specificLandmarkType.ToString() + ")" + "[/url]";
 			}
 		}else{
 			text += "NONE";

@@ -3047,15 +3047,18 @@ public class UIManager : MonoBehaviour {
 
     #region Settlement Info
     [SerializeField] internal SettlementInfoUI settlementInfoUI;
-    public void ShowSettlementInfo(Settlement settlement) {
+    public void ShowSettlementInfo(BaseLandmark landmark) {
 		if(factionInfoUI.isShowing){
 			factionInfoUI.HideFactionInfo ();
 		}
 		if(characterInfoUI.isShowing){
 			characterInfoUI.HideCharacterInfo ();
 		}
-        settlementInfoUI.SetSettlementAsActive(settlement);
-        settlementInfoUI.ShowSettlementInfo();
+		if(hexTileInfoUI.isShowing){
+			hexTileInfoUI.HideHexTileInfo ();
+		}
+		settlementInfoUI.ShowSettlementInfo();
+		settlementInfoUI.SetSettlementAsActive(landmark);
     }
     public void UpdateSettlementInfo() {
         settlementInfoUI.UpdateSettlementInfo();
@@ -3071,8 +3074,11 @@ public class UIManager : MonoBehaviour {
 		if(characterInfoUI.isShowing){
 			characterInfoUI.HideCharacterInfo ();
 		}
-		factionInfoUI.SetFactionAsActive(faction);
+		if(hexTileInfoUI.isShowing){
+			hexTileInfoUI.HideHexTileInfo ();
+		}
 		factionInfoUI.ShowFactionInfo();
+		factionInfoUI.SetFactionAsActive(faction);
 	}
 	public void UpdateFactionInfo() {
 		factionInfoUI.UpdateFactionInfo();
@@ -3088,11 +3094,34 @@ public class UIManager : MonoBehaviour {
 		if(factionInfoUI.isShowing){
 			factionInfoUI.HideFactionInfo ();
 		}
-		characterInfoUI.SetCharacterAsActive(character);
+		if(hexTileInfoUI.isShowing){
+			hexTileInfoUI.HideHexTileInfo ();
+		}
 		characterInfoUI.ShowCharacterInfo();
+		characterInfoUI.SetCharacterAsActive(character);
 	}
 	public void UpdateCharacterInfo() {
 		characterInfoUI.UpdateCharacterInfo();
+	}
+	#endregion
+
+	#region Character Info
+	[SerializeField] internal HextileInfoUI hexTileInfoUI;
+	public void ShowHexTileInfo(HexTile hexTile) {
+		if(settlementInfoUI.isShowing){
+			settlementInfoUI.HideSettlementInfo ();
+		}
+		if(factionInfoUI.isShowing){
+			factionInfoUI.HideFactionInfo ();
+		}
+		if(characterInfoUI.isShowing){
+			characterInfoUI.HideCharacterInfo ();
+		}
+		hexTileInfoUI.ShowHexTileInfo();
+		hexTileInfoUI.SetHexTileAsActive(hexTile);
+	}
+	public void UpdateHexTileInfo() {
+		hexTileInfoUI.UpdateHexTileInfo();
 	}
 	#endregion
 }

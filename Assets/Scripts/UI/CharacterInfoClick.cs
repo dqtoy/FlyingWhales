@@ -14,6 +14,10 @@ public class CharacterInfoClick : MonoBehaviour {
 				if(faction != null){
 					UIManager.Instance.ShowFactionInfo (faction);
 				}
+			}if(url.Contains("_landmark")){
+				if(UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home.id == idToUse){
+					UIManager.Instance.ShowSettlementInfo (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
+				}
 			}
 		}
 	}
