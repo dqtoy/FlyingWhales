@@ -16,7 +16,7 @@ public class CharacterInfoUI : UIMenu {
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
-        tweenPos.AddOnFinished(() => UpdateCharacterInfo());
+        //tweenPos.AddOnFinished(() => UpdateCharacterInfo());
     }
 
     public void ShowCharacterInfo() {
@@ -28,6 +28,7 @@ public class CharacterInfoUI : UIMenu {
         isShowing = false;
 //        tweenPos.PlayReverse();
 		this.gameObject.SetActive (false);
+//        UpdateCharacterInfo();
     }
 
 	public void SetCharacterAsActive(ECS.Character character) {
@@ -104,5 +105,9 @@ public class CharacterInfoUI : UIMenu {
 			text += "NONE";
 		}
         characterInfoLbl.text = text;
+    }
+
+    public void CenterCameraOnCharacter() {
+        CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);
     }
 }

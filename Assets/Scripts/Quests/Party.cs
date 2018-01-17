@@ -47,6 +47,8 @@ public class Party {
         _name = RandomNameGenerator.Instance.GetAllianceName();
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
+        Debug.Log(partyLeader.name + " has created " + _name);
+
         AddPartyMember(_partyLeader);
         PartyManager.Instance.AddParty(this);
     }
@@ -64,11 +66,13 @@ public class Party {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
-            Debug.Log(member.name + " has joined the party of " + partyLeader.name);
+            if (!IsCharacterLeaderOfParty(member)) {
+                Debug.Log(member.name + " has joined the party of " + partyLeader.name);
+            }
         }
         if (_partyMembers.Count >= MAX_PARTY_MEMBERS) {
             if (onPartyFull != null) {
-                Debug.Log("The party of " + partyLeader.name + "is full!");
+                Debug.Log("Party " + _name + " is full!");
                 //Party is now full
                 onPartyFull(this);
             }
@@ -87,6 +91,25 @@ public class Party {
         //if (_partyMembers.Count < 2) {
         //    DisbandParty();
         //}
+    }
+    public void CheckLeavePartyAfterQuest() {
+        //Check which party members will leave
+        List<ECS.Character> charactersToLeave = new List<ECS.Character>();
+        for (int i = 0; i < _partyMembers.Count; i++) {
+            ECS.Character currMember = _partyMembers[i];
+            if (!IsCharacterLeaderOfParty(currMember)) {
+                WeightedDictionary<PARTY_ACTION> partyActionWeights = GetPartyActionWeightsForCharacter(currMember);
+                if (partyActionWeights.PickRandomElementGivenWeights() == PARTY_ACTION.LEAVE) {
+                    charactersToLeave.Add(currMember);
+                }
+            }
+        }
+
+        for (int i = 0; i < charactersToLeave.Count; i++) {
+            ECS.Character characterToLeave = charactersToLeave[i];
+            RemovePartyMember(characterToLeave);
+            characterToLeave.GoToNearestNonHostileSettlement(() => characterToLeave.OnReachNonHostileSettlementAfterQuest()); //Make the character that left, go home then decide a new action
+        }
     }
     /*
      This will disband this party.
@@ -107,7 +130,7 @@ public class Party {
             if (_avatar != null && currMember != partyLeader) {
                 _avatar.RemoveCharacter(currMember);
             }
-            currMember.GoToNearestNonHostileSettlement(() => currMember.OnReachNonHostileSettlement());
+            currMember.GoToNearestNonHostileSettlement(() => currMember.OnReachNonHostileSettlementAfterQuest());
         }
         
     }

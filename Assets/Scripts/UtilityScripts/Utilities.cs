@@ -1268,6 +1268,10 @@ public class Utilities : MonoBehaviour {
         return actionWeightsSummary;
     }
 
+    public static string GetDateString(GameDate date) {
+        return NormalizeString(((MONTH)date.month).ToString()) + " " + date.day.ToString() + ", " + date.year.ToString();
+    }
+
     /*
      * <summary>
      * Get a random integer given a minimum and maximum range and a minimum and maximum 

@@ -92,11 +92,22 @@ namespace ECS {
 
 		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
 			for (int i = 0; i < this.baseCharacters.Length; i++) {
-				if(this.baseCharacters[i].characterClassName.ToLower() == className.ToLower()){
-					return this.baseCharacters [i];
+                CharacterSetup currBase = this.baseCharacters[i];
+                if (currBase.characterClassName.ToLower() == className.ToLower()){
+					return currBase;
 				}
 			}
 			return null;
 		}
+
+        internal CharacterSetup GetBaseCharacterSetup(string className, RACE race) {
+            for (int i = 0; i < this.baseCharacters.Length; i++) {
+                CharacterSetup currBase = this.baseCharacters[i];
+                if (currBase.characterClassName.ToLower() == className.ToLower() && currBase.raceSetting.race == race) {
+                    return currBase;
+                }
+            }
+            return null;
+        }
     }
 }
