@@ -24,7 +24,7 @@ public class FactionSummaryEntry : MonoBehaviour {
 
         villagesLbl.text = faction.settlements.Count.ToString();
         populationLbl.text = faction.totalPopulation.ToString();
-        charactersLbl.text = faction.totalCharacters.ToString();
+        charactersLbl.text = faction.characters.Count.ToString();
     }
 
     private void ConstructEmblem() {
