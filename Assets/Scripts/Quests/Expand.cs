@@ -109,8 +109,15 @@ public class Expand : Quest {
 		_isDone = true;
 		_questResult = QUEST_RESULT.FAIL;
 		_createdBy.RemoveQuest(this);
-		_currentAction.onQuestActionDone = null;
-		_currentAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
+//		if(_currentAction != null){
+//			_currentAction.onQuestActionDone = null;
+//			_currentAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
+//		}
+		while(_questLine.Count > 0){
+			QuestAction questAction = _questLine.Dequeue ();
+			questAction.onQuestActionDone = null;
+			questAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
+		}
 
 		for (int i = 0; i < this._assignedParty.partyMembers.Count; i++) {
 			ECS.Character character = this._assignedParty.partyMembers [i];
@@ -128,6 +135,7 @@ public class Expand : Quest {
 	private void SuccessExpansion(){
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
 		this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_civilians);
+		CameraMove.Instance.UpdateMinimapTexture ();
 		EndQuest (QUEST_RESULT.SUCCESS);
 	}
 }
