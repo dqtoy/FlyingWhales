@@ -155,4 +155,12 @@ public class Faction {
 		}
 		return null;
 	}
+	public BaseLandmark GetLandmarkByID(int id){
+		for (int i = 0; i < _ownedLandmarks.Count; i++) {
+			if(_ownedLandmarks[i].id == id){
+				return _ownedLandmarks [i];
+			}
+		}
+		return null;
+	}
 }

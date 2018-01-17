@@ -753,37 +753,37 @@ namespace ECS {
 		public void AssignRole(CHARACTER_ROLE role) {
 			switch (role) {
 			case CHARACTER_ROLE.CHIEFTAIN:
-				_role = new Chieftain();
+				_role = new Chieftain(this);
 				break;
 			case CHARACTER_ROLE.VILLAGE_HEAD:
-				_role = new VillageHead();
+				_role = new VillageHead(this);
 				break;
 			case CHARACTER_ROLE.WARLORD:
-				_role = new Warlord();
+				_role = new Warlord(this);
 				break;
 			case CHARACTER_ROLE.HERO:
-				_role = new Hero();
+				_role = new Hero(this);
 				break;
 			case CHARACTER_ROLE.TRADER:
-				_role = new Trader();
+				_role = new Trader(this);
 				break;
 			case CHARACTER_ROLE.ADVENTURER:
-				_role = new Adventurer();
+				_role = new Adventurer(this);
 				break;
 			case CHARACTER_ROLE.COLONIST:
-				_role = new Colonist();
+				_role = new Colonist(this);
 				break;
 			case CHARACTER_ROLE.SPY:
-				_role = new Spy();
+				_role = new Spy(this);
 				break;
 			case CHARACTER_ROLE.MEDIATOR:
-				_role = new Mediator();
+				_role = new Mediator(this);
 				break;
 			case CHARACTER_ROLE.NECROMANCER:
-				_role = new Necromancer();
+				_role = new Necromancer(this);
 				break;
 			case CHARACTER_ROLE.DRAGON_TAMER:
-				_role = new DragonTamer();
+				_role = new DragonTamer(this);
 				break;
 			default:
 				break;
@@ -849,7 +849,7 @@ namespace ECS {
                     return;
                 }
             }
-			WeightedDictionary<Quest> actionWeights = GetActionWeights();
+			WeightedDictionary<Quest> actionWeights = _role.GetActionWeights();
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
 				chosenAction.AcceptQuest(this);
@@ -857,121 +857,7 @@ namespace ECS {
                 throw new Exception(this.name + " could not decide action because weights are zero!");
             }
 		}
-        /*
-         Get the weighted dictionary for what action the character will do next.
-             */
-		private WeightedDictionary<Quest> GetActionWeights() {
-			WeightedDictionary<Quest> actionWeights = new WeightedDictionary<Quest>();
-			for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
-				Quest currQuest = _faction.internalQuestManager.activeQuests[i];
-                if (currQuest.CanAcceptQuest(this)) {
-                    actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
-                }
-            }
-
-            if(this._party == null) {
-                for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
-                    Party currParty = PartyManager.Instance.allParties[i];
-                    if (!currParty.isFull && currParty.isOpen) {
-                        JoinParty joinPartyTask = new JoinParty(this, -1, currParty);
-                        if (joinPartyTask.CanAcceptQuest(this)) {
-                            actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
-                        }
-                    }
-                }
-            }
-            
-            Rest restTask = new Rest(this, -1);
-			actionWeights.AddElement(restTask, GetWeightForQuest(restTask));
-
-            GoHome goHomeTask = new GoHome(this, -1);
-			actionWeights.AddElement(goHomeTask, GetWeightForQuest(goHomeTask));
-
-            DoNothing doNothingTask = new DoNothing(this, -1);
-			actionWeights.AddElement(doNothingTask, GetWeightForQuest(doNothingTask));
-			return actionWeights;
-		}
-        #endregion
-
-        #region Quest Weights
-        private int GetWeightForQuest(Quest quest) {
-            int weight = 0;
-            switch (quest.questType) {
-                case QUEST_TYPE.EXPLORE_REGION:
-                    weight += GetExploreRegionWeight((ExploreRegion)quest);
-                    break;
-                case QUEST_TYPE.OCCUPY_LANDMARK:
-                    break;
-                case QUEST_TYPE.INVESTIGATE_LANDMARK:
-                    break;
-                case QUEST_TYPE.OBTAIN_RESOURCE:
-                    break;
-				case QUEST_TYPE.EXPAND:
-					weight += GetExpandWeight ();
-                    break;
-                case QUEST_TYPE.REST:
-                    weight += GetRestWeight();
-                    break;
-                case QUEST_TYPE.GO_HOME:
-                    weight += GetGoHomeWeight();
-                    break;
-                case QUEST_TYPE.DO_NOTHING:
-                    weight += GetDoNothingWeight();
-                    break;
-                case QUEST_TYPE.JOIN_PARTY:
-                    weight += GetJoinPartyWeight((JoinParty)quest);
-                    break;
-                default:
-                    break;
-            }
-            return weight;
-        }
-		private int GetExpandWeight() {
-			int weight = 0;
-			weight += 100; //Change algo if needed
-			return weight;
-		}
-        private int GetExploreRegionWeight(ExploreRegion exploreRegionQuest) {
-            int weight = 0;
-            weight += 100; //Change algo if needed
-            return weight;
-        }
-        private int GetJoinPartyWeight(JoinParty joinParty) {
-            if(_party != null) {
-                return 0; //if already in a party
-            }
-            int weight = 0;
-            if(joinParty.partyToJoin.partyLeader.currLocation.id == this.currLocation.id) {
-                //party leader and this character are at the same tile
-                return 200;
-            } else {
-                List<HexTile> pathToParty = PathGenerator.Instance.GetPath(this.currLocation, joinParty.partyToJoin.partyLeader.currLocation, PATHFINDING_MODE.USE_ROADS);
-                if(pathToParty != null) {
-                    weight += 200 - (15 * pathToParty.Count); //200 - (15 per tile distance) if not in a party
-                }
-            }
-            return Mathf.Max(0, weight);
-        }
-        private int GetRestWeight() {
-            if (_currentHP < maxHP) {
-                int percentMissing = _currentHP / maxHP;
-                return 5 * percentMissing; //5 Weight per % of HP below max HP
-            }
-            return 0;
-        }
-        private int GetGoHomeWeight() {
-            //0 if already at Home Settlement or no path to it
-            if (currLocation.isHabitable && currLocation.isOccupied && currLocation.landmarkOnTile.owner == this._faction) {
-                return 0;
-            }
-            if (PathGenerator.Instance.GetPath(currLocation, _home.location, PATHFINDING_MODE.USE_ROADS) == null) {
-                return 0;
-            }
-            return 5; //5 if not
-        }
-        private int GetDoNothingWeight() {
-            return 10;
-        }
+      
         //private int GetWeightForQuestType(QUEST_TYPE questType) {
         //    int weight = 0;
         //    switch (questType) {

@@ -3,6 +3,6 @@ using System.Collections;
 
 public class RebelLeader : CharacterRole {
 
-    public RebelLeader() {
+	public RebelLeader(ECS.Character character): base (character) {
     }
 }

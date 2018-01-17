@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 public class VillageHead : CharacterRole {
 
-    public VillageHead() {
+	public VillageHead(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.VILLAGE_HEAD;
         this.allowedRoadTypes = new List<ROAD_TYPE>();
         this.canPassHiddenRoads = false;

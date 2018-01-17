@@ -12,7 +12,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel characterInfoLbl;
 
-    private ECS.Character currentlyShowingCharacter;
+    internal ECS.Character currentlyShowingCharacter;
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
@@ -21,14 +21,14 @@ public class CharacterInfoUI : UIMenu {
 
     public void ShowCharacterInfo() {
         isShowing = true;
-        //tweenPos.PlayForward();
-        gameObject.SetActive(true);
-        UpdateCharacterInfo();
+		this.gameObject.SetActive (true);
+//        tweenPos.PlayForward();
     }
     public void HideCharacterInfo() {
         isShowing = false;
-        //tweenPos.PlayReverse();
-        gameObject.SetActive(false);
+//        tweenPos.PlayReverse();
+		this.gameObject.SetActive (false);
+//        UpdateCharacterInfo();
     }
 
 	public void SetCharacterAsActive(ECS.Character character) {
@@ -57,7 +57,7 @@ public class CharacterInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n[b]Home:[/b] " + currentlyShowingCharacter.home.location.tileName;
+		text += "\n[b]Home:[/b] " + "[url=" + currentlyShowingCharacter.home.id + "_landmark]" + currentlyShowingCharacter.home.location.tileName + "[/url]";
 
 		//Stats
 		text += "\n[b]HP:[/b] " + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString() + " (" + currentlyShowingCharacter.baseMaxHP.ToString() + ")";

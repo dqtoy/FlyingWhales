@@ -16,19 +16,18 @@ public class FactionInfoUI : UIMenu {
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateFactionInfo);
-        //tweenPos.AddOnFinished(() => UpdateFactionInfo());
+        tweenPos.AddOnFinished(() => UpdateFactionInfo());
     }
 
     public void ShowFactionInfo() {
         isShowing = true;
-        //tweenPos.PlayForward();
-        gameObject.SetActive(true);
-        UpdateFactionInfo();
+//        tweenPos.PlayForward();
+		this.gameObject.SetActive (true);
     }
     public void HideFactionInfo() {
         isShowing = false;
-        //tweenPos.PlayReverse();
-        gameObject.SetActive(false);
+//        tweenPos.PlayReverse();
+		this.gameObject.SetActive (false);
     }
 
     public void SetFactionAsActive(Faction faction) {
@@ -51,7 +50,7 @@ public class FactionInfoUI : UIMenu {
 		if(currentlyShowingFaction.ownedLandmarks.Count > 0){
 			for (int i = 0; i < currentlyShowingFaction.ownedLandmarks.Count; i++) {
 				BaseLandmark landmark = currentlyShowingFaction.ownedLandmarks [i];
-				text += "\n  - " + landmark.location.tileName + " (" + landmark.specificLandmarkType.ToString() + ")";
+				text += "[url=" + landmark.id + "_landmark]" + "\n  - " + landmark.location.tileName + " (" + landmark.specificLandmarkType.ToString() + ")" + "[/url]";
 			}
 		}else{
 			text += "NONE";
