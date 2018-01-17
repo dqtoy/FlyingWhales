@@ -43,10 +43,10 @@ public class SettlementInfoUI : UIMenu {
         }
         string text = string.Empty;
 		text += "[b]Location:[/b] " + "[url=" + currentlyShowingSettlement.location.id + "_hextile]" + currentlyShowingSettlement.location.tileName + "[/url]";
-		text += "[b]Can Be Occupied:[/b] " + currentlyShowingSettlement.canBeOccupied.ToString();
-		text += "[b]Is Occupied:[/b] " + currentlyShowingSettlement.isOccupied.ToString();
-		text += "[b]Is Hidden:[/b] " + currentlyShowingSettlement.isHidden.ToString();
-		text += "[b]Is Explored:[/b] " + currentlyShowingSettlement.isExplored.ToString();
+		text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingSettlement.canBeOccupied.ToString();
+		text += "\n[b]Is Occupied:[/b] " + currentlyShowingSettlement.isOccupied.ToString();
+		text += "\n[b]Is Hidden:[/b] " + currentlyShowingSettlement.isHidden.ToString();
+		text += "\n[b]Is Explored:[/b] " + currentlyShowingSettlement.isExplored.ToString();
 
         if (currentlyShowingSettlement.owner != null) {
 			text += "\n[b]Owner:[/b] " + "[url=" + currentlyShowingSettlement.owner.id + "_faction]" + currentlyShowingSettlement.owner.name + "[/url]" + "/" + currentlyShowingSettlement.owner.race.ToString();
