@@ -1075,7 +1075,7 @@ namespace ECS {
                 //character is not on a non hostile settlement
                 List<Settlement> allSettlements = new List<Settlement>();
                 for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
-                                                                                    //TODO: Add checking for hostility
+                    //TODO: Add checking for hostility
                     Tribe currTribe = FactionManager.Instance.allTribes[i];
                     allSettlements.AddRange(currTribe.settlements);
                 }

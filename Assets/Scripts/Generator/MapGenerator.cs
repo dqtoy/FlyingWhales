@@ -46,8 +46,11 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
+        UIManager.Instance.InitializeUI();
+
         GridMap.Instance.GenerateOtherLandmarks();
 
+  
         FactionManager.Instance.GenerateInititalFactions();
         //KingdomManager.Instance.GenerateInitialKingdoms();
         //GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
@@ -66,7 +69,6 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateTileBiomeDetails();
         Biomes.Instance.GenerateTileEdges();
 
-        UIManager.Instance.InitializeUI();
         //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
         GameManager.Instance.StartProgression();

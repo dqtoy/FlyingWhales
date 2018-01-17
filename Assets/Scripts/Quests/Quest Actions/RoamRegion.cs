@@ -19,13 +19,24 @@ public class RoamRegion : QuestAction {
     #endregion
 
     private HexTile GetNextHexTile() {
-        //Check all the neighbouring roads of the characters current location, exclude roads that are not part of the region to explore
-        List<HexTile> neighbouringRoads = new List<HexTile>(actionDoer.currLocation.allNeighbourRoads.Where(x => x.region.id == _regionToRoam.id));
-        //exclude the previous tile from the neighbouring roads
-        if(previousHexTile != null) {
-            neighbouringRoads.Remove(previousHexTile);
+        //Check all the neighbouring roads of the characters current location
+        List<HexTile> neighbouringRoads = new List<HexTile>();
+        for (int i = 0; i < actionDoer.currLocation.allNeighbourRoads.Count; i++) {
+            HexTile currRoadTile = actionDoer.currLocation.allNeighbourRoads[i];
+            if (currRoadTile.region.id != _regionToRoam.id) {
+                continue; //exclude roads that are not part of the region to explore
+            }
+            if(currRoadTile.roadType == ROAD_TYPE.MAJOR) {
+                if(currRoadTile.landmarkOnTile == null) {
+                    continue;
+                }
+            }
+            if(previousHexTile != null && currRoadTile.id == previousHexTile.id) {
+                continue; //exclude the previous tile from the neighbouring roads
+            }
+            neighbouringRoads.Add(currRoadTile);
         }
-
+        
         if(neighbouringRoads.Count > 1) { 
             //if there is more than 1 neighbour road, this means that the character is at a crossroads, choose a random road
             HexTile chosenTile = neighbouringRoads[Random.Range(0, neighbouringRoads.Count)];

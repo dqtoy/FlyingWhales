@@ -9,11 +9,12 @@ public class FactionManager : MonoBehaviour {
 
     [SerializeField] private RACE[] inititalRaces;
 
+    private ORDER_BY orderBy = ORDER_BY.CITIES;
+
     public List<Faction> allFactions = new List<Faction>();
 	public List<Tribe> allTribes = new List<Tribe>();
-//    public List<Tribe> allTribes {
-//        get { return allFactions.Where(x => x is Tribe).Select(x => (Tribe)x).ToList(); }
-//    }
+    public List<Faction> orderedFactions = new List<Faction>();
+
     public Dictionary<RACE, List<TECHNOLOGY>> inititalRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
         { RACE.HUMANS, new List<TECHNOLOGY>(){
             TECHNOLOGY.BASIC_FARMING,
@@ -52,6 +53,15 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] internal int smallToMediumReq;
     [SerializeField] internal int mediumToLargeReq;
 
+    #region getters
+    public List<Faction> majorFactions {
+        get { return allFactions.Where(x => x.factionType == FACTION_TYPE.MAJOR).ToList(); }
+    }
+    public List<Faction> minorFactions {
+        get { return allFactions.Where(x => x.factionType == FACTION_TYPE.MINOR).ToList(); }
+    }
+    #endregion
+
     private void Awake() {
         Instance = this;
     }
@@ -89,10 +99,12 @@ public class FactionManager : MonoBehaviour {
             Tribe newTribe = new Tribe(race);
             allFactions.Add(newTribe);
 			allTribes.Add (newTribe);
+            UIManager.Instance.UpdateFactionSummary();
             return newTribe;
         } else if(factionType == typeof(Camp)) {
             Camp newCamp = new Camp(race);
             allFactions.Add(newCamp);
+            UIManager.Instance.UpdateFactionSummary();
             return newCamp;
         }
         return null;
@@ -141,6 +153,24 @@ public class FactionManager : MonoBehaviour {
         return characters;
     }
     #endregion
+
+    public void SetOrderBy(ORDER_BY orderBy) {
+        this.orderBy = orderBy;
+        UpdateFactionOrderBy();
+    }
+    public void UpdateFactionOrderBy() {
+        if (orderBy == ORDER_BY.CITIES) {
+            orderedFactions = majorFactions.OrderBy(x => x.settlements.Count).ToList();
+            orderedFactions.AddRange(minorFactions.OrderBy(x => x.settlements.Count));
+        } else if (orderBy == ORDER_BY.POPULATION) {
+            orderedFactions = majorFactions.OrderBy(x => x.totalPopulation).ToList();
+            orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalPopulation));
+        } else if (orderBy == ORDER_BY.CHARACTERS) {
+            orderedFactions = majorFactions.OrderBy(x => x.totalCharacters).ToList();
+            orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalCharacters));
+        }
+        UIManager.Instance.UpdateFactionSummary();
+    }
 
 	public Faction GetFactionBasedOnID(int id){
 		for (int i = 0; i < allFactions.Count; i++) {
