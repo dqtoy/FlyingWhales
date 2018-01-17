@@ -105,6 +105,7 @@ public class Settlement : BaseLandmark {
         this.AddCharacterOnLandmark(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.DetermineAction();
+        UIManager.Instance.UpdateFactionSummary();
     }
     public List<Party> GetPartiesInSettlement() {
         List<Party> parties = new List<Party>();
@@ -136,6 +137,7 @@ public class Settlement : BaseLandmark {
     private void IncreasePopulationPerMonth() {
         float populationGrowth = this.totalPopulation * this.location.region.populationGrowth;
         AdjustPopulation(populationGrowth);
+        UIManager.Instance.UpdateFactionSummary();
         ScheduleMonthlyPopulationIncrease();
     }
     #endregion

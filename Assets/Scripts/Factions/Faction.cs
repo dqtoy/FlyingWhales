@@ -38,8 +38,20 @@ public class Faction {
     public FACTION_SIZE factionSize {
         get { return _factionSize; }
     }
+    public Sprite emblem {
+        get { return _emblem; }
+    }
+    public Sprite emblemBG {
+        get { return _emblemBG; }
+    }
     public List<BaseLandmark> ownedLandmarks {
         get { return _ownedLandmarks; }
+    }
+    public int totalPopulation {
+        get { return settlements.Sum(x => x.totalPopulation); }
+    }
+    public int totalCharacters {
+        get { return settlements.Sum(x => x.charactersOnLandmark.Count); }
     }
     public List<Settlement> settlements {
         get { return _ownedLandmarks.Where(x => x is Settlement).Select(x => (Settlement)x).ToList(); }
@@ -79,11 +91,13 @@ public class Faction {
         if (!_ownedLandmarks.Contains(landmark)) {
             _ownedLandmarks.Add(landmark);
             RecalculateFactionSize();
+            FactionManager.Instance.UpdateFactionOrderBy();
         }
     }
     public void RemoveLandmarkAsOwned(BaseLandmark landmark) {
         _ownedLandmarks.Remove(landmark);
         RecalculateFactionSize();
+        FactionManager.Instance.UpdateFactionOrderBy();
     }
     /*
      Recalculate the size of this faction given the 
@@ -112,10 +126,14 @@ public class Faction {
 
     #region Characters
     public void AddNewCharacter(ECS.Character character) {
-        _characters.Add(character);
+        if (!_characters.Contains(character)) {
+            _characters.Add(character);
+            FactionManager.Instance.UpdateFactionOrderBy();
+        }
     }
     public void RemoveCharacter(ECS.Character character) {
         _characters.Remove(character);
+        FactionManager.Instance.UpdateFactionOrderBy();
     }
     public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
         List<ECS.Character> chars = new List<ECS.Character>();

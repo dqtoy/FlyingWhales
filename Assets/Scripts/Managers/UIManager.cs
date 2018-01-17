@@ -255,17 +255,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIScrollView notificationScrollView;
 
     [Space(10)]
-    [Header("Prestige List")]
-    [SerializeField] private UIEventTrigger orderKingdomsByNameBtn;
-    [SerializeField] private UIEventTrigger orderKingdomsByPopulationBtn;
-    [SerializeField] private UIEventTrigger orderKingdomsByCitiesBtn;
-    [SerializeField] private UIEventTrigger orderKingdomsByExpansionRateBtn;
-    [SerializeField] private UIEventTrigger orderKingdomsByWeaponsBtn;
-    [SerializeField] private UIEventTrigger orderKingdomsByArmorBtn;
-    [SerializeField] private UIGrid kingdomSummaryGrid;
-    private KingdomSummaryEntry[] kingdomSummaryEntries;
-
-    [Space(10)]
 	[Header("Alliance List")]
 	[SerializeField] private UILabel allianceSummaryLbl;
 
@@ -285,13 +274,17 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("World Info Menu")]
     [SerializeField] private GameObject worldInfoSelectedGO;
-    [SerializeField] private GameObject worldInfoKingdomBtn;
+    [SerializeField] private GameObject worldInfoFactionBtn;
     [SerializeField] private GameObject worldInfoAllianceBtn;
     [SerializeField] private GameObject worldInfoWarsBtn;
     
     [Space(10)]
     [Header("World History Menu")]
     [SerializeField] private WorldHistoryUI worldHistoryUI;
+
+    [Space(10)]
+    [Header("Faction Summary Menu")]
+    [SerializeField] private FactionSummaryUI factionSummaryUI;
 
     [Space(10)]
     [Header("Kingdom Info Preview")]
@@ -361,7 +354,7 @@ public class UIManager : MonoBehaviour {
 		Instance = this;
         logHistory = new List<Log>();
         notificationItemsThatCanBeReused = new List<NotificationItem>();
-        kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
+        //kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
         onAddNewBattleLog += UpdateBattleLogs;
     }
 
@@ -375,15 +368,8 @@ public class UIManager : MonoBehaviour {
         ToggleBorders();
         toggleBordersBtn.SetClickState(true);
 		isShowKingdomHistoryOnly = false;
-        //EventDelegate.Add(orderKingdomsByNameBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.NAME); });
-        EventDelegate.Add(orderKingdomsByPopulationBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.POPULATION); });
-        EventDelegate.Add(orderKingdomsByCitiesBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.CITIES); });
-        EventDelegate.Add(orderKingdomsByExpansionRateBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.EXPANSION_RATE); });
-        EventDelegate.Add(orderKingdomsByWeaponsBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.WEAPONS); });
-        //EventDelegate.Add(orderKingdomsByArmorBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.ARMOR); });
-        PopulateHistoryTable();
-		PopulateCityHistoryTable ();
-        //LoadKingdomList();
+  //      PopulateHistoryTable();
+		//PopulateCityHistoryTable ();
         UpdateUI();
 	}
 
@@ -2025,22 +2011,22 @@ public class UIManager : MonoBehaviour {
 
 
     #region Kingdoms Summary
-    public void UpdateKingdomSummary() {
-        List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedBy);
-        kingdomsToShow.Reverse();
+    //public void UpdateKingdomSummary() {
+    //    List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedBy);
+    //    kingdomsToShow.Reverse();
 
-        for (int i = 0; i < kingdomSummaryEntries.Length; i++) {
-            KingdomSummaryEntry kse = kingdomSummaryEntries[i];
-            Kingdom currKingdom = kingdomsToShow.ElementAtOrDefault(i);
-            if (currKingdom == null) {
-                kse.gameObject.SetActive(false);
-            } else {
-                kse.SetKingdom(currKingdom);
-                kse.gameObject.SetActive(true);
-            }
-            kingdomSummaryGrid.Reposition();
-        }
-    }
+    //    for (int i = 0; i < kingdomSummaryEntries.Length; i++) {
+    //        KingdomSummaryEntry kse = kingdomSummaryEntries[i];
+    //        Kingdom currKingdom = kingdomsToShow.ElementAtOrDefault(i);
+    //        if (currKingdom == null) {
+    //            kse.gameObject.SetActive(false);
+    //        } else {
+    //            kse.SetKingdom(currKingdom);
+    //            kse.gameObject.SetActive(true);
+    //        }
+    //        kingdomSummaryGrid.Reposition();
+    //    }
+    //}
     #endregion
 
     public void UpdateAllianceSummary() {
@@ -3005,19 +2991,20 @@ public class UIManager : MonoBehaviour {
 	}
 
     #region World Info Menu
-    public void ShowKingdomsSummary() {
-        HideAllianceSummary();
-        HideWarSummary();
-        UpdateKingdomSummary();
-        kingdomSummaryGO.SetActive(true);
-        SetWorldInfoMenuItemAsSelected(worldInfoKingdomBtn.transform);
-    }
-    public void HideKingdomSummary() {
-        kingdomSummaryGO.SetActive(false);
-    }
+    //public void ShowKingdomsSummary() {
+    //    HideAllianceSummary();
+    //    HideWarSummary();
+    //    //UpdateKingdomSummary();
+    //    kingdomSummaryGO.SetActive(true);
+    //    //SetWorldInfoMenuItemAsSelected(worldInfoKingdomBtn.transform);
+    //}
+    //public void HideKingdomSummary() {
+    //    kingdomSummaryGO.SetActive(false);
+    //}
 
     public void ShowAllianceSummary() {
-        HideKingdomSummary();
+        //HideKingdomSummary();
+        HideFactionsSummary();
         HideWarSummary();
         warAllianceState = "alliance";
         goAlliance.SetActive(true);
@@ -3029,7 +3016,8 @@ public class UIManager : MonoBehaviour {
     }
 
     public void ShowWarSummary() {
-        HideKingdomSummary();
+        //HideKingdomSummary();
+        HideFactionsSummary();
         HideAllianceSummary();
         warAllianceState = "warfare";
         goAlliance.SetActive(true);
@@ -3123,5 +3111,20 @@ public class UIManager : MonoBehaviour {
 	public void UpdateHexTileInfo() {
 		hexTileInfoUI.UpdateHexTileInfo();
 	}
-	#endregion
+    #endregion
+
+    #region Faction Summary
+    public void ShowFactionsSummary() {
+        factionSummaryUI.ShowFactionSummary();
+        HideAllianceSummary();
+        HideWarSummary();
+        SetWorldInfoMenuItemAsSelected(worldInfoFactionBtn.transform);
+    }
+    public void HideFactionsSummary() {
+        factionSummaryUI.HideFactionSummary();
+    }
+    public void UpdateFactionSummary() {
+        factionSummaryUI.UpdateFactionsSummary();
+    }
+    #endregion
 }

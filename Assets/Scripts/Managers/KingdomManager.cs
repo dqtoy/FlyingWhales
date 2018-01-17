@@ -14,7 +14,7 @@ public class KingdomManager : MonoBehaviour {
 //	public Dictionary<int, int> kingdomRankings = new Dictionary<int, int>();
 
     public List<Kingdom> allKingdomsOrderedBy;
-    [SerializeField] private KINGDOMS_ORDERED_BY _orderKingdomsBy;
+    [SerializeField] private ORDER_BY _orderKingdomsBy;
 
 	public KingdomTypeData kingdomTypeNoble;
 	public KingdomTypeData kingdomTypeEvil;
@@ -68,7 +68,7 @@ public class KingdomManager : MonoBehaviour {
 	public List<InternationalIncident> internationalIncidents {
 		get { return this._internationalIncidents; }
 	}
-    public KINGDOMS_ORDERED_BY orderKingdomsBy {
+    public ORDER_BY orderKingdomsBy {
         get { return _orderKingdomsBy; }
     }
     public List<Warfare> allWarsThatOccured {
@@ -318,25 +318,25 @@ public class KingdomManager : MonoBehaviour {
 	}
 
     internal void UpdateKingdomList() {
-        if(_orderKingdomsBy == KINGDOMS_ORDERED_BY.NAME) {
+        if(_orderKingdomsBy == ORDER_BY.NAME) {
             allKingdomsOrderedBy = allKingdoms.OrderByDescending(x => x.name).ToList();
-        } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.POPULATION) {
+        } else if (_orderKingdomsBy == ORDER_BY.POPULATION) {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.population).ToList();
-        } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.CITIES) {
+        } else if (_orderKingdomsBy == ORDER_BY.CITIES) {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.cities.Count).ToList();
-        } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
+        } else if (_orderKingdomsBy == ORDER_BY.EXPANSION_RATE) {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.currentExpansionRate).ToList();
-        } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.WEAPONS) {
+        } else if (_orderKingdomsBy == ORDER_BY.WEAPONS) {
 //            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.soldiersCount).ToList();
         } 
 //		else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.ARMOR) {
 //            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveDefense).ToList();
 //        }
         //allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.cities.Count).ToList();
-        UIManager.Instance.UpdateKingdomSummary();
+        //UIManager.Instance.UpdateKingdomSummary();
     }
 
-    internal void SetOrderKingdomsBy(KINGDOMS_ORDERED_BY orderedBy) {
+    internal void SetOrderKingdomsBy(ORDER_BY orderedBy) {
         _orderKingdomsBy = orderedBy;
         UpdateKingdomList();
     }

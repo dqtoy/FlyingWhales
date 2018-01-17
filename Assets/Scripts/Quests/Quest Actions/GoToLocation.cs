@@ -34,6 +34,7 @@ public class GoToLocation : QuestAction {
                 //Instantiate a new character avatar
                 actionDoer.CreateNewAvatar();
             }
+            actionDoer.avatar.SetTarget(targetLocation);
             actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
         }
     }
