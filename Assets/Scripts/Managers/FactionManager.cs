@@ -152,6 +152,16 @@ public class FactionManager : MonoBehaviour {
         }
         return characters;
     }
+    public ECS.Character GetCharacterByID(int id) {
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction currFaction = allFactions[i];
+            ECS.Character charInFaction = currFaction.GetCharacterByID(id);
+            if(charInFaction != null) {
+                return charInFaction;
+            }
+        }
+        return null;
+    }
     #endregion
 
     public void SetOrderBy(ORDER_BY orderBy) {

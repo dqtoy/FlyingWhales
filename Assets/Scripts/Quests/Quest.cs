@@ -50,6 +50,9 @@ public class Quest {
     public Party assignedParty {
         get { return _assignedParty; }
     }
+    public QuestAction currentAction {
+        get { return _currentAction; }
+    }
     public QUEST_RESULT questResult {
         get { return _questResult; }
     }

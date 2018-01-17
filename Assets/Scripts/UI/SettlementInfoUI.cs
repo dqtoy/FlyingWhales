@@ -72,6 +72,7 @@ public class SettlementInfoUI : UIMenu {
                     }
                     if (currQuest.isAccepted) {
                         text += " - A";
+                        text += " (" + currQuest.assignedParty.name + ")";
                     } else {
                         text += " - N";
                     }
@@ -110,17 +111,21 @@ public class SettlementInfoUI : UIMenu {
 							if (currParty.isOpen || currParty.currentQuest.isWaiting) {
 								text += "(Forming Party)";
 							} else {
-								text += "(In Progress)";
+								text += "(In Progress)(" + currParty.currentQuest.currentAction.GetType().ToString() + ")";
 							}
 						}
 					}
-					text += "\n     " + currParty.partyLeader.name;
+					text += "\n     Leader: [url=" + currParty.partyLeader.id + "_character]" + currParty.partyLeader.name + "[/url]";
+                    if(currParty.partyMembers.Count > 2) {
+                        text += "\n          Members:";
+                    }
 					for (int j = 0; j < currParty.partyMembers.Count; j++) {
 						ECS.Character currMember = currParty.partyMembers[j];
 						if(currMember.id != currParty.partyLeader.id) {
-							text += "\n          " + currMember.name;
+							text += "\n          [url=" + currMember.id + "_character]" + currMember.name + "[/url]";
 						}
 					}
+                    text += "\n";
 				}
 			} else {
 				text += "NONE";
