@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 public class Warlord : CharacterRole {
 
-    public Warlord() {
+	public Warlord(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.WARLORD;
         this.allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR

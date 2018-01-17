@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 public class Chieftain : CharacterRole {
 
-    public Chieftain() {
+	public Chieftain(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.CHIEFTAIN;
         this.allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
