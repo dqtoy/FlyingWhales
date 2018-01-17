@@ -64,6 +64,9 @@ public class HextileInfoUI : UIMenu {
 		}else{
 			text += "NONE";
 		}
+
+		text += "\n[b]Road Type:[/b] " + currentlyShowingHexTile.roadType.ToString ();;
+
         hexTileInfoLbl.text = text;
     }
 }
