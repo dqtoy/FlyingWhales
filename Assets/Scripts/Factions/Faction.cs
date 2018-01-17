@@ -163,4 +163,20 @@ public class Faction {
 		}
 		return null;
 	}
+	public Settlement GetSettlementWithHighestPopulation(){
+		Settlement highestPopulationSettlement = null;
+		for (int i = 0; i < _ownedLandmarks.Count; i++) {
+			if(_ownedLandmarks[i] is Settlement){
+				Settlement settlement = (Settlement)_ownedLandmarks [i];
+				if(highestPopulationSettlement == null){
+					highestPopulationSettlement = settlement;
+				}else{
+					if((int)settlement.civilians > (int)highestPopulationSettlement.civilians){
+						highestPopulationSettlement = settlement;
+					}
+				}
+			}
+		}
+		return highestPopulationSettlement;
+	}
 }

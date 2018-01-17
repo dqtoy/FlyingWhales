@@ -5,11 +5,15 @@ using System.Collections.Generic;
 public class Expand : Quest {
 
 	private HexTile _targetUnoccupiedTile;
+	private HexTile _targetFactionSettlementTile;
 	private int _civilians;
 
 	#region getters/setters
 	public HexTile targetUnoccupiedTile {
 		get { return _targetUnoccupiedTile; }
+	}
+	public HexTile targetFactionSettlementTile {
+		get { return _targetFactionSettlementTile; }
 	}
 	public int civilians{
 		get { return _civilians; }
@@ -28,23 +32,31 @@ public class Expand : Quest {
 	#region overrides
 	public override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
-		Collect collect = new Collect(this);
-		collect.InititalizeAction(20);
-		collect.onQuestDoAction += collect.Expand;
-		collect.DoAction(partyLeader);
-		collect.ActionDone(QUEST_ACTION_RESULT.SUCCESS);
 	}
 	protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
+		if (_assignedParty.partyLeader.currLocation.id != this._targetFactionSettlementTile.id) {
+			GoToLocation goToSettlementLocationAction = new GoToLocation(this); //Go to the picked region
+			goToSettlementLocationAction.InititalizeAction(this._targetFactionSettlementTile);
+			goToSettlementLocationAction.onQuestDoAction += goToSettlementLocationAction.Expand;
+			goToSettlementLocationAction.onQuestActionDone += this.PerformNextQuestAction;
+			_questLine.Enqueue(goToSettlementLocationAction);
+		}
+		Collect collect = new Collect(this);
+		collect.InititalizeAction(20);
+		collect.onQuestActionDone += this.PerformNextQuestAction;
+		collect.onQuestDoAction += collect.Expand;
 
 		GoToLocation goToExpandLocationAction = new GoToLocation(this); //Go to the picked region
 		goToExpandLocationAction.InititalizeAction(_targetUnoccupiedTile);
 		goToExpandLocationAction.onQuestDoAction += goToExpandLocationAction.Expand;
 		goToExpandLocationAction.onQuestActionDone += SuccessExpansion;
 
+
+
 //		//Enqueue all actions
+		_questLine.Enqueue(collect);
 		_questLine.Enqueue(goToExpandLocationAction);
-//		_questLine.Enqueue(roamRegionAction);
 	}
 	internal override void EndQuest(QUEST_RESULT result) {
 		base.EndQuest(result);
@@ -57,22 +69,27 @@ public class Expand : Quest {
 		if(!canAccept){
 			return false;
 		}
-		if(character.currLocation.landmarkOnTile != null && character.currLocation.landmarkOnTile.owner != null && character.currLocation.landmarkOnTile.owner.id == character.faction.id && character.currLocation.landmarkOnTile.civilians > 20){
-			bool isAdjacentToTribe = false;
-			for (int j = 0; j < this._targetUnoccupiedTile.region.connections.Count; j++) {
-				if(this._targetUnoccupiedTile.region.connections[j] is Region){
-					Region region = (Region)this._targetUnoccupiedTile.region.connections [j];
-					if(region.centerOfMass.landmarkOnTile.owner != null && region.centerOfMass.landmarkOnTile.owner.id == character.faction.id){
-						isAdjacentToTribe = true;
-						break;
-					}
+		this._targetFactionSettlementTile = character.faction.GetSettlementWithHighestPopulation ().location;
+		if(character.currLocation.id != this._targetFactionSettlementTile.id){
+			List<HexTile> path = PathGenerator.Instance.GetPath (character.currLocation, this._targetFactionSettlementTile, PATHFINDING_MODE.MAJOR_ROADS);
+			if(path == null){
+				return false;
+			}
+		}
+		bool isAdjacentToTribe = false;
+		for (int j = 0; j < this._targetUnoccupiedTile.region.connections.Count; j++) {
+			if(this._targetUnoccupiedTile.region.connections[j] is Region){
+				Region region = (Region)this._targetUnoccupiedTile.region.connections [j];
+				if(region.centerOfMass.landmarkOnTile.owner != null && region.centerOfMass.landmarkOnTile.owner.id == character.faction.id){
+					isAdjacentToTribe = true;
+					break;
 				}
 			}
-			if(isAdjacentToTribe){
-				List<HexTile> path = PathGenerator.Instance.GetPath (character.currLocation, this._targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
-				if(path != null){
-					return true;
-				}
+		}
+		if(isAdjacentToTribe){
+			List<HexTile> path = PathGenerator.Instance.GetPath (this._targetFactionSettlementTile, this._targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
+			if(path != null){
+				return true;
 			}
 		}
 		return false;
