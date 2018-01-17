@@ -108,9 +108,6 @@ public class CharacterAvatar : PooledObject{
         RevealLandmarks();
 
         HasArrivedAtTargetLocation();
-        if (!this._hasArrived) {
-            NewMove();
-        }
     }
     internal virtual void HasArrivedAtTargetLocation() {
         if (this.currLocation == this.targetLocation) {
@@ -120,7 +117,9 @@ public class CharacterAvatar : PooledObject{
                     onPathFinished();
                 }
             }
-        }
+		}else{
+			NewMove();
+		}
     }
     internal void SetHasArrivedState(bool state) {
         _hasArrived = state;

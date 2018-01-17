@@ -239,7 +239,7 @@ public class Quest {
      Create a new party for this quest.
      The created party will automatically be assigned to this quest.
          */
-    private Party CreateNewPartyForQuest(ECS.Character partyLeader) {
+    internal Party CreateNewPartyForQuest(ECS.Character partyLeader) {
         Party newParty = new Party(partyLeader);
         newParty.onPartyFull = OnPartyFull;
         AssignPartyToQuest(newParty);

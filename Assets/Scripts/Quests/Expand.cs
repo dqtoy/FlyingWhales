@@ -27,23 +27,12 @@ public class Expand : Quest {
 
 	#region overrides
 	public override void AcceptQuest(ECS.Character partyLeader) {
-		_isAccepted = true;
-		//ECS.Character that accepts this quest must now create a party
-		Party newParty = new Party(partyLeader);
-		newParty.onPartyFull += OnPartyFull;
-		_assignedParty = newParty;
-
-		partyLeader.SetCurrentQuest(this);
-
-        Collect collect = new Collect(this);
-        collect.InititalizeAction(20);
-        collect.onQuestDoAction += collect.Expand;
-        collect.DoAction(partyLeader);
-        collect.ActionDone(QUEST_ACTION_RESULT.SUCCESS);
-
-        if (onQuestAccepted != null) {
-			onQuestAccepted();
-		}
+		base.AcceptQuest (partyLeader);
+		Collect collect = new Collect(this);
+		collect.InititalizeAction(20);
+		collect.onQuestDoAction += collect.Expand;
+		collect.DoAction(partyLeader);
+		collect.ActionDone(QUEST_ACTION_RESULT.SUCCESS);
 	}
 	protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
