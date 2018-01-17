@@ -33,7 +33,7 @@ public class CharacterRole {
 		WeightedDictionary<Quest> actionWeights = new WeightedDictionary<Quest>();
 		for (int i = 0; i < _character.faction.internalQuestManager.activeQuests.Count; i++) {
 			Quest currQuest = _character.faction.internalQuestManager.activeQuests[i];
-			if (currQuest.CanAcceptQuest(this)) {
+			if (currQuest.CanAcceptQuest(_character)) {
 				actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
 			}
 		}
@@ -42,21 +42,21 @@ public class CharacterRole {
 			for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
 				Party currParty = PartyManager.Instance.allParties[i];
 				if (!currParty.isFull && currParty.isOpen) {
-					JoinParty joinPartyTask = new JoinParty(this, -1, currParty);
-					if (joinPartyTask.CanAcceptQuest(this)) {
+					JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
+					if (joinPartyTask.CanAcceptQuest(_character)) {
 						actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
 					}
 				}
 			}
 		}
 
-		Rest restTask = new Rest(this, -1);
+		Rest restTask = new Rest(_character, -1);
 		actionWeights.AddElement(restTask, GetWeightForQuest(restTask));
 
-		GoHome goHomeTask = new GoHome(this, -1);
+		GoHome goHomeTask = new GoHome(_character, -1);
 		actionWeights.AddElement(goHomeTask, GetWeightForQuest(goHomeTask));
 
-		DoNothing doNothingTask = new DoNothing(this, -1);
+		DoNothing doNothingTask = new DoNothing(_character, -1);
 		actionWeights.AddElement(doNothingTask, GetWeightForQuest(doNothingTask));
 		return actionWeights;
 	}
