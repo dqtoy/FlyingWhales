@@ -28,6 +28,9 @@ public class Quest {
 
     protected Queue<QuestAction> _questLine;
 
+    private GameDate _deadline;
+    private Action _deadlineAction;
+
     #region getters/setters
     public QUEST_TYPE questType {
         get { return _questType; }
@@ -80,7 +83,8 @@ public class Quest {
             //Character that accepts this quest must now create a party
             CreateNewPartyForQuest(partyLeader);
         }
-
+        UnScheduleDeadline();
+        SchedulePartyExpiration();
         if(onQuestAccepted != null) {
             onQuestAccepted();
         }
@@ -167,8 +171,20 @@ public class Quest {
         if (_daysBeforeDeadline != -1) {
             GameDate deadline = GameManager.Instance.Today();
             deadline.AddDays(_daysBeforeDeadline);
-            SchedulingManager.Instance.AddEntry(deadline, () => QuestExpired());
+            _deadline = deadline;
+            _deadlineAction = QuestExpired;
+            SchedulingManager.Instance.AddEntry(deadline, () => _deadlineAction());
         }
+    }
+    public void UnScheduleDeadline() {
+        if(_deadlineAction != null) {
+            SchedulingManager.Instance.RemoveSpecificEntry(_deadline.month, _deadline.day, _deadline.year, _deadlineAction);
+        }
+    }
+    public void SchedulePartyExpiration() {
+        GameDate deadline = GameManager.Instance.Today();
+        deadline.AddDays(3);
+        SchedulingManager.Instance.AddEntry(deadline, () => QuestExpired());
     }
     private void QuestExpired() {
         Debug.Log(this.questType.ToString() + " has expired!");

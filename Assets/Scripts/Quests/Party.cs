@@ -84,23 +84,32 @@ public class Party {
         }
         Debug.Log(member.name + " has left the party of " + partyLeader.name);
         member.SetParty(null);
-        if (_partyMembers.Count < 2) {
-            DisbandParty();
-        }
+        //if (_partyMembers.Count < 2) {
+        //    DisbandParty();
+        //}
     }
+    /*
+     This will disband this party.
+     All party members will set their party to null and this party
+     will be removed from the Party Manager. Each member will now return to
+     non hostile settlements and determine their action there.
+         */
     public void DisbandParty() {
         _isDisbanded = true;
+        PartyManager.Instance.RemoveParty(this);
+        if (_currentQuest != null && !_currentQuest.isDone) {
+            _currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+        }
+
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
             if (_avatar != null && currMember != partyLeader) {
                 _avatar.RemoveCharacter(currMember);
             }
+            currMember.GoToNearestNonHostileSettlement(() => currMember.OnReachNonHostileSettlement());
         }
-        PartyManager.Instance.RemoveParty(this);
-		if(!_currentQuest.isDone){
-			_currentQuest.EndQuest (QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
-        }
+        
     }
     public bool AreAllPartyMembersPresent() {
         bool isPartyComplete = true;
