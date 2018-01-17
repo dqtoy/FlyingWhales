@@ -165,9 +165,9 @@ namespace ECS {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
-			_name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
 			_gender = Utilities.GetRandomGender();
-			_traits = new List<Trait> ();
+            _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
+            _traits = new List<Trait> ();
 
 			_baseMaxHP = _raceSetting.baseHP + (int)((float)_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
 			_baseStrength = _raceSetting.baseStr + (int)((float)_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
@@ -891,28 +891,6 @@ namespace ECS {
 			actionWeights.AddElement(doNothingTask, GetWeightForQuest(doNothingTask));
 			return actionWeights;
 		}
-  //      private void StartExploreRegion() {
-  //          List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
-  //          if (exploreQuests.Count < 0) {
-  //              throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
-  //          }
-  //          Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
-  //          exploreQuest.AcceptQuest(this);
-  //      }
-		//private void StartRestQuest() {
-		//	//Rest restQuest = new Rest(this, 0, 1);
-		//	//restQuest.StartQuestLine();
-		//}
-  //      private void StartDoNothing() {
-  //          DoNothing doNothing = new DoNothing(this, -1, 1);
-  //          AddNewQuest(doNothing);
-  //          doNothing.AcceptQuest(this);
-  //      }
-  //      private void StartGoHome() {
-        //    GoHome goHome = new GoHome(this, -1, 1);
-        //    AddNewQuest(goHome);
-        //    goHome.AcceptQuest(this);
-        //}
         #endregion
 
         #region Quest Weights
@@ -1113,14 +1091,10 @@ namespace ECS {
          This is the default action to be done when a 
          character returns to a non hostile settlement after a quest.
              */
-        internal void OnReachNonHostileSettlement() {
-            //if(_party != null) {
-            //    if (_party.partyMembers.Count < 2) {
-            //        //only the leader is left
-            //        _party.DisbandParty();
-            //        //SetParty(null);
-            //    }
-            //}
+        internal void OnReachNonHostileSettlementAfterQuest() {
+            if (_party != null) {
+                _party.CheckLeavePartyAfterQuest();
+            }
             _currLocation.landmarkOnTile.AddCharacterOnLandmark(this);
             DestroyAvatar();
             DetermineAction();

@@ -90,7 +90,7 @@ public class Settlement : BaseLandmark {
      This will also subtract from the civilian population.
          */
 	public void CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-		ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetupBasedOnClass (className);
+		ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(className, _owner.race);
 		if(setup == null){
 			Debug.LogError ("THERE IS NO CLASS WITH THE NAME: " + className + "!");
 			return;

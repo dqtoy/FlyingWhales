@@ -16,16 +16,19 @@ public class CharacterInfoUI : UIMenu {
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
-        tweenPos.AddOnFinished(() => UpdateCharacterInfo());
+        //tweenPos.AddOnFinished(() => UpdateCharacterInfo());
     }
 
     public void ShowCharacterInfo() {
         isShowing = true;
-        tweenPos.PlayForward();
+        //tweenPos.PlayForward();
+        gameObject.SetActive(true);
+        UpdateCharacterInfo();
     }
     public void HideCharacterInfo() {
         isShowing = false;
-        tweenPos.PlayReverse();
+        //tweenPos.PlayReverse();
+        gameObject.SetActive(false);
     }
 
 	public void SetCharacterAsActive(ECS.Character character) {
@@ -102,5 +105,9 @@ public class CharacterInfoUI : UIMenu {
 			text += "NONE";
 		}
         characterInfoLbl.text = text;
+    }
+
+    public void CenterCameraOnCharacter() {
+        CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);
     }
 }

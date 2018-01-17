@@ -16,16 +16,19 @@ public class SettlementInfoUI : UIMenu {
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateSettlementInfo);
-        tweenPos.AddOnFinished(() => UpdateSettlementInfo());
+        //tweenPos.AddOnFinished(() => UpdateSettlementInfo());
     }
 
     public void ShowSettlementInfo() {
         isShowing = true;
-        tweenPos.PlayForward();
+        //tweenPos.PlayForward();
+        gameObject.SetActive(true);
+        UpdateSettlementInfo();
     }
     public void HideSettlementInfo() {
         isShowing = false;
-        tweenPos.PlayReverse();
+        //tweenPos.PlayReverse();
+        gameObject.SetActive(false);
     }
 
     public void SetSettlementAsActive(Settlement settlement) {
@@ -111,11 +114,11 @@ public class SettlementInfoUI : UIMenu {
                         }
                     }
                 }
-                text += "\n     " + currParty.partyLeader.name;
+                text += "\n      [url=" + currParty.partyLeader.id + "_character]" + currParty.partyLeader.name + "[/url]";
                 for (int j = 0; j < currParty.partyMembers.Count; j++) {
                     ECS.Character currMember = currParty.partyMembers[j];
-                    if(currMember.id != currParty.partyLeader.id) {
-                        text += "\n          " + currMember.name;
+                    if(!currParty.IsCharacterLeaderOfParty(currMember)) {
+                        text += "\n         [url=" + currMember.id + "_character]" + currMember.name + "[/url]";
                     }
                 }
             }

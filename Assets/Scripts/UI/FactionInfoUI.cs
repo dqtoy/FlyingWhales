@@ -16,16 +16,19 @@ public class FactionInfoUI : UIMenu {
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateFactionInfo);
-        tweenPos.AddOnFinished(() => UpdateFactionInfo());
+        //tweenPos.AddOnFinished(() => UpdateFactionInfo());
     }
 
     public void ShowFactionInfo() {
         isShowing = true;
-        tweenPos.PlayForward();
+        //tweenPos.PlayForward();
+        gameObject.SetActive(true);
+        UpdateFactionInfo();
     }
     public void HideFactionInfo() {
         isShowing = false;
-        tweenPos.PlayReverse();
+        //tweenPos.PlayReverse();
+        gameObject.SetActive(false);
     }
 
     public void SetFactionAsActive(Faction faction) {

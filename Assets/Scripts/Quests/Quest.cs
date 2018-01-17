@@ -74,6 +74,7 @@ public class Quest {
      Quests can only be accepted by characters that can be party leaders.
          */
     public virtual void AcceptQuest(ECS.Character partyLeader) {
+        Debug.Log(partyLeader.name + " accepts quest " + questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
         _isAccepted = true;
 
         if (partyLeader.party != null) {
@@ -187,7 +188,7 @@ public class Quest {
         SchedulingManager.Instance.AddEntry(deadline, () => QuestExpired());
     }
     private void QuestExpired() {
-        Debug.Log(this.questType.ToString() + " has expired!");
+        Debug.Log(this.questType.ToString() + " has expired on " + Utilities.GetDateString(GameManager.Instance.Today()));
         _isExpired = true;
         //Quest has reached the expiry date
         if (_isAccepted) {
@@ -269,29 +270,10 @@ public class Quest {
      the party. 
          */
     private void RetaskParty() {
-        //Check which party members will leave
-        List<ECS.Character> charactersToLeave = new List<ECS.Character>();
-        for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
-            ECS.Character currMember = _assignedParty.partyMembers[i];
-            if (currMember != _assignedParty.partyLeader) {
-                WeightedDictionary<PARTY_ACTION> partyActionWeights = _assignedParty.GetPartyActionWeightsForCharacter(currMember);
-                if (partyActionWeights.PickRandomElementGivenWeights() == PARTY_ACTION.LEAVE) {
-                    charactersToLeave.Add(currMember);
-                }
-            }
-        }
-
-        for (int i = 0; i < charactersToLeave.Count; i++) {
-            ECS.Character characterToLeave = charactersToLeave[i];
-            _assignedParty.RemovePartyMember(characterToLeave);
-            characterToLeave.GoToNearestNonHostileSettlement(() => characterToLeave.OnReachNonHostileSettlement()); //Make the character that left, go home then decide a new action
-        }
-
-        //Make the rest of the party go home then determine the next action
-        //if the party has been disbanded, only the party leader will remain.
+        //Make party go to nearest non hostile settlement after a quest
         //_assignedParty.SetCurrentQuest(null);
         _assignedParty.onPartyFull = null;
-        _assignedParty.partyLeader.GoToNearestNonHostileSettlement(() => _assignedParty.partyLeader.OnReachNonHostileSettlement());
+        _assignedParty.partyLeader.GoToNearestNonHostileSettlement(() => _assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest());
     }
     internal void CheckPartyMembers() {
         if (_assignedParty.isFull) { //if the assigned party is full
