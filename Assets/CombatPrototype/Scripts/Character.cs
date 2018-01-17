@@ -11,6 +11,7 @@ namespace ECS {
 		[SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
+        private CharacterType _characterType; //Base Character Type(For Traits)
 		private List<Trait>	_traits;
 
 		//Stats
@@ -45,7 +46,7 @@ namespace ECS {
 		private Color _characterColor;
 		private string _characterColorCode;
 		private bool _isDead;
-		private List<Quest> _activeQuests; //TODO: Move this to quest creator interface
+		private List<Quest> _activeQuests;
 		private Settlement _home;
 
 		internal int actRate;
@@ -60,6 +61,9 @@ namespace ECS {
 		internal GENDER gender{
 			get { return _gender; }
 		}
+        internal List<Trait> traits {
+            get { return _traits; }
+        }
 		internal int currentHP{
 			get { return this._currentHP; }
 		}
@@ -101,9 +105,6 @@ namespace ECS {
 		}
 		internal List<Item> inventory{
 			get { return this._inventory; }
-		}
-		internal List<Trait> traits{
-			get { return this._traits; }
 		}
 		internal List<Skill> skills{
 			get { return this._skills; }
@@ -190,7 +191,7 @@ namespace ECS {
 			GetRandomCharacterColor ();
 
             _activeQuests = new List<Quest>();
-			//TODO: Generate Traits
+            GenerateTraits();
 		}
 
 		//Check if the body parts of this character has the attribute necessary and quantity
@@ -802,7 +803,86 @@ namespace ECS {
 		#endregion
 
 		#region Traits
-		public bool HasTrait(TRAIT trait) {
+        private void GenerateTraits() {
+            CharacterType baseCharacterType = CitizenManager.Instance.GetRandomCharacterType();
+            _characterType = baseCharacterType;
+            List<TRAIT> allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
+            //Charisma
+            if (baseCharacterType.charismaTrait == CHARISMA.NONE) {
+                allTraits.Add(GenerateCharismaTrait());
+            } else {
+                allTraits.Add((TRAIT)baseCharacterType.charismaTrait);
+            }
+            //Intelligence
+            if (baseCharacterType.intelligenceTrait == INTELLIGENCE.NONE) {
+                allTraits.Add(GenerateIntelligenceTrait());
+            } else {
+                allTraits.Add((TRAIT)baseCharacterType.intelligenceTrait);
+            }
+            //Efficiency
+            if (baseCharacterType.efficiencyTrait == EFFICIENCY.NONE) {
+                allTraits.Add(GenerateEfficiencyTrait());
+            } else {
+                allTraits.Add((TRAIT)baseCharacterType.efficiencyTrait);
+            }
+            //Military
+            if (baseCharacterType.militaryTrait == MILITARY.NONE) {
+                allTraits.Add(GenerateMilitaryTrait());
+            } else {
+                allTraits.Add((TRAIT)baseCharacterType.militaryTrait);
+            }
+            _traits = new List<Trait>();
+            for (int i = 0; i < baseCharacterType.allTraits.Count; i++) {
+                TRAIT currTrait = baseCharacterType.allTraits[i];
+                Trait trait = CitizenManager.Instance.CreateNewTraitForCharacter(currTrait, this);
+                if (trait != null) {
+                    _traits.Add(trait);
+                }
+            }
+        }
+        private TRAIT GenerateCharismaTrait() {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 20) {
+                return TRAIT.CHARISMATIC;
+            } else if (chance >= 20 && chance < 40) {
+                return TRAIT.REPULSIVE;
+            } else {
+                return TRAIT.NONE;
+            }
+        }
+        private TRAIT GenerateIntelligenceTrait() {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 20) {
+                return TRAIT.SMART;
+            } else if (chance >= 20 && chance < 40) {
+                return TRAIT.DUMB;
+            } else {
+                return TRAIT.NONE;
+            }
+        }
+        private TRAIT GenerateEfficiencyTrait() {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 20) {
+                return TRAIT.EFFICIENT;
+            } else if (chance >= 20 && chance < 40) {
+                return TRAIT.INEFFICIENT;
+            } else {
+                return TRAIT.NONE;
+            }
+        }
+        private TRAIT GenerateMilitaryTrait() {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 10) {
+                return TRAIT.HOSTILE;
+            } else if (chance >= 10 && chance < 25) {
+                return TRAIT.MILITANT;
+            } else if (chance >= 25 && chance < 40) {
+                return TRAIT.PACIFIST;
+            } else {
+                return TRAIT.NONE;
+            }
+        }
+        public bool HasTrait(TRAIT trait) {
 			for (int i = 0; i < _traits.Count; i++) {
 				if(_traits[i].trait == trait) {
 					return true;
