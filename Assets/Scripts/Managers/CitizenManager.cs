@@ -204,6 +204,42 @@ public class CitizenManager : MonoBehaviour {
         }
         return createdTrait;
     }
+    internal Trait CreateNewTraitForCharacter(TRAIT traitType, ECS.Character character) {
+        Trait createdTrait = null;
+        switch (traitType) {
+            case TRAIT.OPPORTUNIST:
+                createdTrait = JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                break;
+            case TRAIT.DECEITFUL:
+                createdTrait = JsonUtility.FromJson<Deceitful>(traitDictionary[traitType]);
+                break;
+            case TRAIT.IMPERIALIST:
+                createdTrait = JsonUtility.FromJson<Imperialist>(traitDictionary[traitType]);
+                break;
+            case TRAIT.HOSTILE:
+                createdTrait = JsonUtility.FromJson<Hostile>(traitDictionary[traitType]);
+                break;
+            case TRAIT.PACIFIST:
+                createdTrait = JsonUtility.FromJson<Pacifist>(traitDictionary[traitType]);
+                break;
+            case TRAIT.SCHEMING:
+                createdTrait = JsonUtility.FromJson<Scheming>(traitDictionary[traitType]);
+                break;
+            case TRAIT.DIPLOMATIC:
+                createdTrait = JsonUtility.FromJson<Diplomatic>(traitDictionary[traitType]);
+                break;
+            case TRAIT.BENEVOLENT:
+                createdTrait = JsonUtility.FromJson<Benevolent>(traitDictionary[traitType]);
+                break;
+            case TRAIT.RUTHLESS:
+                createdTrait = JsonUtility.FromJson<Ruthless>(traitDictionary[traitType]);
+                break;
+        }
+        //if (character != null && createdTrait != null) {
+        //    createdTrait.AssignCitizen(citizen);
+        //}
+        return createdTrait;
+    }
     internal Trait GetTrait(TRAIT trait) {
         for (int i = 0; i < traitSetup.Count; i++) {
             Trait currTrait = traitSetup[i];
