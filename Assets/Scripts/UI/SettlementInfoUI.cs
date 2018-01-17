@@ -32,6 +32,7 @@ public class SettlementInfoUI : UIMenu {
 
     public void SetSettlementAsActive(BaseLandmark settlement) {
         currentlyShowingSettlement = settlement;
+		UIManager.Instance.hexTileInfoUI.SetHexTileAsActive (settlement.location);
         if (isShowing) {
             UpdateSettlementInfo();
         }

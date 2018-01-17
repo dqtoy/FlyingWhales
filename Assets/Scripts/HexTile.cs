@@ -1322,7 +1322,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-		UIManager.Instance.ShowHexTileInfo (this);
+		if(this.landmarkOnTile != null){
+			UIManager.Instance.ShowSettlementInfo (this.landmarkOnTile);
+		}else{
+			UIManager.Instance.ShowHexTileInfo (this);
+		}
         //    if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
         //        CameraMove.Instance.CenterCameraOn(this.gameObject);
         //        if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
