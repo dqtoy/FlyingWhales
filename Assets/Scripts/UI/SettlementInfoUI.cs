@@ -114,8 +114,12 @@ public class SettlementInfoUI : UIMenu {
 							if (currParty.isOpen || currParty.currentQuest.isWaiting) {
 								text += "(Forming Party)";
 							} else {
-								text += "(In Progress)(" + currParty.currentQuest.currentAction.GetType().ToString() + ")";
-							}
+								text += "(In Progress)";
+                                if(currParty.currentQuest.currentAction != null) {
+                                    text += "(" + currParty.currentQuest.currentAction.GetType().ToString() + ")";
+                                }
+
+                            }
 						}
 					}
 					text += "\n     Leader: [url=" + currParty.partyLeader.id + "_character]" + currParty.partyLeader.name + "[/url]";
