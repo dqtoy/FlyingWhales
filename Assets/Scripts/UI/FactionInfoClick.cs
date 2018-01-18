@@ -19,7 +19,12 @@ public class FactionInfoClick : MonoBehaviour {
 				if(landmark != null){
 					UIManager.Instance.ShowSettlementInfo(landmark);
 				}
-			}
-		}
+			} else if (url.Contains("_faction")) {
+                Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
+                if (faction != null) {
+                    UIManager.Instance.ShowFactionInfo(faction);
+                }
+            }
+        }
 	}
 }

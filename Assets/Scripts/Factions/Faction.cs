@@ -81,7 +81,7 @@ public class Faction {
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
-		this._id = Utilities.SetID<Faction> (this);
+		this._id = Utilities.SetID<Faction>(this);
         SetRace(race);
         _name = RandomNameGenerator.Instance.GenerateKingdomName(race);
         _factionType = factionType;
@@ -277,6 +277,12 @@ public class Faction {
     }
     public void RemoveQuest(Quest quest) {
         _activeQuests.Remove(quest);
+    }
+    #endregion
+
+    #region Death
+    public void Death() {
+        FactionManager.Instance.RemoveRelationshipsWith(this);
     }
     #endregion
 }
