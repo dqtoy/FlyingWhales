@@ -8,6 +8,17 @@ public class GoHome : Quest {
     }
 
     #region overrides
+	public override void AcceptQuest(ECS.Character partyLeader) {
+		_isAccepted = true;
+		partyLeader.SetCurrentQuest(this);
+		if (partyLeader.party != null) {
+			partyLeader.party.SetCurrentQuest(this);
+		}
+		this.SetWaitingStatus(false);
+		if (onQuestAccepted != null) {
+			onQuestAccepted();
+		}
+	}
     protected override void ConstructQuestLine() {
         base.ConstructQuestLine();
 

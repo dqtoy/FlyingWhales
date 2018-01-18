@@ -109,18 +109,8 @@ public class Expand : Quest {
 		_isDone = true;
 		_questResult = QUEST_RESULT.FAIL;
 		_createdBy.RemoveQuest(this);
-		while(_questLine.Count > 0){
-			QuestAction questAction = _questLine.Dequeue ();
-			questAction.onQuestActionDone = null;
-			questAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
-		}
-
-		for (int i = 0; i < this._assignedParty.partyMembers.Count; i++) {
-			ECS.Character character = this._assignedParty.partyMembers [i];
-			GoHome goHome = new GoHome (character, -1);
-			goHome.AcceptQuest (character);
-		}
-		this._assignedParty.DisbandParty ();
+		RetaskParty (_assignedParty.DisbandParty);
+//		this._assignedParty.DisbandParty ();
 	}
 	#endregion
 

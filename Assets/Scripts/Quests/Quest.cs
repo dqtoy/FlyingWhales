@@ -120,8 +120,11 @@ public class Quest {
         if (!_isDone) {
 			_isDone = true;
 			_questResult = result;
-			_currentAction.onQuestActionDone = null;
+			if(_currentAction != null){
+				_currentAction.onQuestActionDone = null;
+			}
 			_createdBy.RemoveQuest(this);
+
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
                     QuestSuccess();
@@ -138,18 +141,24 @@ public class Quest {
         }
     }
     internal virtual void QuestSuccess() {
-		_currentAction.ActionDone(QUEST_ACTION_RESULT.SUCCESS);
-        RetaskParty();
+		if (_currentAction != null) {
+			_currentAction.ActionDone (QUEST_ACTION_RESULT.SUCCESS);
+		}
+		RetaskParty (_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
     }
     internal virtual void QuestFail() {
-        _currentAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
-        RetaskParty();
+		if (_currentAction != null) {
+			_currentAction.ActionDone (QUEST_ACTION_RESULT.FAIL);
+		}
+		RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
     }
     internal virtual void QuestCancel() {
         _questResult = QUEST_RESULT.CANCEL;
 		_isAccepted = false;
-        _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
-        RetaskParty();
+		if (_currentAction != null) {
+			_currentAction.ActionDone (QUEST_ACTION_RESULT.CANCEL);
+		}
+		RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
 		ResetQuestValues ();
     }
 	//Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
@@ -272,11 +281,11 @@ public class Quest {
      This will check which characters will choose to leave
      the party. 
          */
-    private void RetaskParty() {
+	protected void RetaskParty(Action action) {
         //Make party go to nearest non hostile settlement after a quest
         //_assignedParty.SetCurrentQuest(null);
         _assignedParty.onPartyFull = null;
-        _assignedParty.partyLeader.GoToNearestNonHostileSettlement(() => _assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest());
+		_assignedParty.partyLeader.GoToNearestNonHostileSettlement(() => action());
     }
     internal void CheckPartyMembers() {
         if (_assignedParty.isFull) { //if the assigned party is full
