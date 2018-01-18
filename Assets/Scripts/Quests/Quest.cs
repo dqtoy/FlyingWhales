@@ -14,6 +14,9 @@ public class Quest {
     protected delegate void OnQuestAccepted();
     protected OnQuestAccepted onQuestAccepted;
 
+    protected delegate void OnQuestEnd(QUEST_RESULT result);
+    protected OnQuestEnd onQuestEnd;
+
     protected QuestCreator _createdBy;
     protected QUEST_TYPE _questType;
     protected int _daysBeforeDeadline;
@@ -118,6 +121,9 @@ public class Quest {
     }
     internal virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
+            if(onQuestEnd != null) {
+                onQuestEnd(result);
+            }
 			_isDone = true;
 			_questResult = result;
 			if(_currentAction != null){
@@ -263,11 +269,12 @@ public class Quest {
          */
     internal void AssignPartyToQuest(Party party) {
         _assignedParty = party;
-        party.SetCurrentQuest(this);
-        if (party.partyLeader.avatar == null) {
-            party.partyLeader.CreateNewAvatar();//Characters that have accepted a Quest should have icon already even if they are still forming party in the city
-            party.SetAvatar(party.partyLeader.avatar);
+        _assignedParty.SetCurrentQuest(this);
+        if (_assignedParty.partyLeader.avatar == null) {
+            _assignedParty.partyLeader.CreateNewAvatar();//Characters that have accepted a Quest should have icon already even if they are still forming party in the city
+            _assignedParty.SetAvatar(_assignedParty.partyLeader.avatar);
         }
+        onQuestEnd += _assignedParty.OnQuestEnd;
         if (_assignedParty.isFull) {
             //Party is already full, check party members
             CheckPartyMembers();

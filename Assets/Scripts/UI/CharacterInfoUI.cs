@@ -11,6 +11,7 @@ public class CharacterInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel characterInfoLbl;
+    [SerializeField] private UILabel relationshipsLbl;
 
     internal ECS.Character currentlyShowingCharacter;
 
@@ -104,7 +105,22 @@ public class CharacterInfoUI : UIMenu {
 		}else{
 			text += "NONE";
 		}
+
         characterInfoLbl.text = text;
+
+        //Relationships
+        string relationshipText = string.Empty;
+        relationshipText += "\n[b]Relationships:[/b] ";
+        if (currentlyShowingCharacter.relationships.Count > 0) {
+            foreach (KeyValuePair<ECS.Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
+                relationshipText += "\n " + kvp.Key.role.roleType.ToString() + " [url=" + kvp.Key.id + "_character]" + kvp.Key.name + "[/url]: " + kvp.Value.totalValue.ToString();
+            }
+        } else {
+            relationshipText += "NONE";
+        }
+
+        relationshipsLbl.text = relationshipText;
+
     }
 
     public void CenterCameraOnCharacter() {

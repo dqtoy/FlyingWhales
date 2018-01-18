@@ -59,6 +59,7 @@ public class Party {
          */
     public void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
+            CreateRelationshipsForNewMember(member);
             _partyMembers.Add(member);
             member.SetParty(this);
             member.SetCurrentQuest(_currentQuest);
@@ -217,6 +218,12 @@ public class Party {
     public void DetermineNextAction() {
         _partyLeader.DetermineAction();
     }
+    /*
+     This is called when the quest assigned to this party ends.
+         */
+    public void OnQuestEnd(QUEST_RESULT result) {
+        AdjustRelationshipBasedOnQuestResult(result);
+    }
     #endregion
 
     #region Character Avatar
@@ -235,6 +242,43 @@ public class Party {
     #region Utilities
     internal bool IsCharacterLeaderOfParty(ECS.Character character) {
         return character.id == _partyLeader.id;
+    }
+    #endregion
+
+    #region Relationships
+    public void CreateRelationshipsForNewMember(ECS.Character newMember) {
+        for (int i = 0; i < _partyMembers.Count; i++) {
+            ECS.Character currPartyMember = _partyMembers[i];
+            if(newMember.GetRelationshipWith(currPartyMember) == null) {
+                CharacterManager.Instance.CreateNewRelationshipBetween(currPartyMember, newMember);
+            }
+        }
+    }
+    /*
+     Adjust the relationship of each party member with each other by an amount
+         */
+    public void AdjustPartyRelationships(int adjustment) {
+        for (int i = 0; i < _partyMembers.Count; i++) {
+            ECS.Character currPartyMember = _partyMembers[i];
+            for (int j = 0; j < _partyMembers.Count; j++) {
+                ECS.Character otherPartyMember = _partyMembers[j];
+                if (currPartyMember.id != otherPartyMember.id) {
+                    currPartyMember.GetRelationshipWith(otherPartyMember).AdjustValue(adjustment);
+                }
+            }
+        }
+    }
+    private void AdjustRelationshipBasedOnQuestResult(QUEST_RESULT result) {
+        switch (result) {
+            case QUEST_RESULT.SUCCESS:
+                AdjustPartyRelationships(5); //Succeeded in a Quest Together: +5 (cumulative)
+                break;
+            case QUEST_RESULT.FAIL:
+                AdjustPartyRelationships(-5); //Failed in a Quest Together: -5 (cumulative)
+                break;
+            default:
+                break;
+        }
     }
     #endregion
 }

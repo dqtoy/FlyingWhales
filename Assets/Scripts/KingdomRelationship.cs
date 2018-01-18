@@ -8,7 +8,7 @@ public class KingdomRelationship {
 
     private Kingdom _sourceKingdom;
     private Kingdom _targetKingdom;
-    private RELATIONSHIP_STATUS _relationshipStatus;
+    private KINGDOM_RELATIONSHIP_STATUS _relationshipStatus;
     private List<History> _relationshipHistory;
     private List<ExpirableModifier> _eventModifiers;
 	private Dictionary<RELATIONSHIP_MODIFIER, RelationshipModifier> _relationshipModifiers;
@@ -44,7 +44,7 @@ public class KingdomRelationship {
     public Kingdom targetKingdom {
         get { return _targetKingdom; }
     }
-    public RELATIONSHIP_STATUS relationshipStatus {
+    public KINGDOM_RELATIONSHIP_STATUS relationshipStatus {
         get { return _relationshipStatus; }
     }
     public List<ExpirableModifier> eventModifiers {
@@ -133,21 +133,21 @@ public class KingdomRelationship {
      * </summary>
      * */
     internal void UpdateKingRelationshipStatus() {
-        RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
+        KINGDOM_RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
         if (totalLike <= -81) {
-            _relationshipStatus = RELATIONSHIP_STATUS.SPITE;
+            _relationshipStatus = KINGDOM_RELATIONSHIP_STATUS.SPITE;
         } else if (totalLike >= -80 && totalLike <= -41) {
-            _relationshipStatus = RELATIONSHIP_STATUS.HATE;
+            _relationshipStatus = KINGDOM_RELATIONSHIP_STATUS.HATE;
         } else if (totalLike >= -40 && totalLike <= -21) {
-            _relationshipStatus = RELATIONSHIP_STATUS.DISLIKE;
+            _relationshipStatus = KINGDOM_RELATIONSHIP_STATUS.DISLIKE;
         } else if (totalLike >= -20 && totalLike <= 20) {
-            _relationshipStatus = RELATIONSHIP_STATUS.NEUTRAL;
+            _relationshipStatus = KINGDOM_RELATIONSHIP_STATUS.NEUTRAL;
         } else if (totalLike >= 21 && totalLike <= 40) {
-            _relationshipStatus = RELATIONSHIP_STATUS.LIKE;
+            _relationshipStatus = KINGDOM_RELATIONSHIP_STATUS.LIKE;
         } else if (totalLike >= 41 && totalLike <= 80) {
-            _relationshipStatus = RELATIONSHIP_STATUS.AFFECTIONATE;
+            _relationshipStatus = KINGDOM_RELATIONSHIP_STATUS.AFFECTIONATE;
         } else {
-            _relationshipStatus = RELATIONSHIP_STATUS.LOVE;
+            _relationshipStatus = KINGDOM_RELATIONSHIP_STATUS.LOVE;
         }
         //if (previousStatus != _relationshipStatus) {
         //    //relationship status changed
@@ -369,26 +369,26 @@ public class KingdomRelationship {
      * <param name="isDiscovery"> Is from discovery? (Default is false) </param>
      * */
     internal void AdjustLikeness(int adjustment) {
-        RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
+        KINGDOM_RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
         this._like += adjustment;
         this._like = Mathf.Clamp(this._like, -100, 100);
         this.UpdateKingRelationshipStatus();
     }
 
-    internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
-        if (newStatus == RELATIONSHIP_STATUS.LOVE) {
+    internal void ChangeRelationshipStatus(KINGDOM_RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
+        if (newStatus == KINGDOM_RELATIONSHIP_STATUS.LOVE) {
             this._like = 81;
-        } else if (newStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
+        } else if (newStatus == KINGDOM_RELATIONSHIP_STATUS.AFFECTIONATE) {
             this._like = 41;
-        } else if (newStatus == RELATIONSHIP_STATUS.LIKE) {
+        } else if (newStatus == KINGDOM_RELATIONSHIP_STATUS.LIKE) {
             this._like = 21;
-        } else if (newStatus == RELATIONSHIP_STATUS.NEUTRAL) {
+        } else if (newStatus == KINGDOM_RELATIONSHIP_STATUS.NEUTRAL) {
             this._like = 0;
-        } else if (newStatus == RELATIONSHIP_STATUS.DISLIKE) {
+        } else if (newStatus == KINGDOM_RELATIONSHIP_STATUS.DISLIKE) {
             this._like = -21;
-        } else if (newStatus == RELATIONSHIP_STATUS.HATE) {
+        } else if (newStatus == KINGDOM_RELATIONSHIP_STATUS.HATE) {
             this._like = -41;
-        } else if (newStatus == RELATIONSHIP_STATUS.SPITE) {
+        } else if (newStatus == KINGDOM_RELATIONSHIP_STATUS.SPITE) {
             this._like = -81;
         }
         UpdateKingRelationshipStatus();
@@ -520,7 +520,7 @@ public class KingdomRelationship {
 		}
 	}
 	internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger = null, bool hasExpiration = true, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
-        RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
+        KINGDOM_RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
 		bool hasAddedModifier = false;
 		GameDate dateTimeToUse = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		if(gameEventTrigger != null){

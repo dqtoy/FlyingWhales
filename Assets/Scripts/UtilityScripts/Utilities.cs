@@ -254,20 +254,20 @@ public class Utilities : MonoBehaviour {
         return STRUCTURE_TYPE.GENERIC;
     }
             
-	public static Color GetColorForRelationship(RELATIONSHIP_STATUS status){
-		if (status == RELATIONSHIP_STATUS.LOVE) {
+	public static Color GetColorForRelationship(KINGDOM_RELATIONSHIP_STATUS status){
+		if (status == KINGDOM_RELATIONSHIP_STATUS.LOVE) {
 			return new Color (0f, (139f/255f), (69f/255f), 1f);
-		} else if (status == RELATIONSHIP_STATUS.AFFECTIONATE) {
+		} else if (status == KINGDOM_RELATIONSHIP_STATUS.AFFECTIONATE) {
 			return new Color (0f, 1f, (127f/255f), 1f);
-		} else if (status == RELATIONSHIP_STATUS.LIKE) {
+		} else if (status == KINGDOM_RELATIONSHIP_STATUS.LIKE) {
 			return new Color ((118f/255f), (238f/255f), (198f/255f), 1f);
-		} else if (status == RELATIONSHIP_STATUS.NEUTRAL) {
+		} else if (status == KINGDOM_RELATIONSHIP_STATUS.NEUTRAL) {
 			return Color.white;
-		} else if (status == RELATIONSHIP_STATUS.DISLIKE) {
+		} else if (status == KINGDOM_RELATIONSHIP_STATUS.DISLIKE) {
 			return new Color ((240f/255f), (128f/255f), (128f/255f), 1f);
-		} else if (status == RELATIONSHIP_STATUS.HATE) {
+		} else if (status == KINGDOM_RELATIONSHIP_STATUS.HATE) {
 			return new Color (1f, (64f/255f), (64f/255f), 1f);
-		} else if (status == RELATIONSHIP_STATUS.SPITE) {
+		} else if (status == KINGDOM_RELATIONSHIP_STATUS.SPITE) {
 			return new Color (1f, 0f, 0f, 1f);
 		}
 		return Color.white;

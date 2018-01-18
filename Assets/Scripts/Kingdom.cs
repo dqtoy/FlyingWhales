@@ -1012,7 +1012,7 @@ public class Kingdom{
      * <param name="relationshipStatuses">Relationship Statuses to be checked</param>
      * <param name="discoveredOnly">Should only return discovered kingdoms?</param>
      * */
-	internal List<Kingdom> GetKingdomsByRelationship(RELATIONSHIP_STATUS[] relationshipStatuses, Kingdom exception = null, bool discoveredOnly = true) {
+	internal List<Kingdom> GetKingdomsByRelationship(KINGDOM_RELATIONSHIP_STATUS[] relationshipStatuses, Kingdom exception = null, bool discoveredOnly = true) {
         List<Kingdom> kingdomsWithRelationshipStatus = new List<Kingdom>();
 		if(discoveredOnly){
 			foreach (Kingdom currKingdom in relationships.Keys) {
@@ -1025,7 +1025,7 @@ public class Kingdom{
 					continue;
 				}
 
-				RELATIONSHIP_STATUS currStatus = relationships[currKingdom].relationshipStatus;
+				KINGDOM_RELATIONSHIP_STATUS currStatus = relationships[currKingdom].relationshipStatus;
 				if (relationshipStatuses.Contains(currStatus)) {
 					kingdomsWithRelationshipStatus.Add(currKingdom);
 				}
@@ -1037,7 +1037,7 @@ public class Kingdom{
 				if(exception != null && exception.id == currKingdom.id){
 					continue;
 				}
-				RELATIONSHIP_STATUS currStatus = relationships[currKingdom].relationshipStatus;
+				KINGDOM_RELATIONSHIP_STATUS currStatus = relationships[currKingdom].relationshipStatus;
 				if (relationshipStatuses.Contains(currStatus)) {
 					kingdomsWithRelationshipStatus.Add(currKingdom);
 				}

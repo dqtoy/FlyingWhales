@@ -149,11 +149,13 @@ public class InternalQuestManager : QuestCreator {
     public void AddNewQuest(Quest quest) {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
+            _owner.AddNewQuest(quest);
             quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }
     public void RemoveQuest(Quest quest) {
         _activeQuests.Remove(quest);
+        _owner.RemoveQuest(quest);
     }
     public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
         List<Quest> quests = new List<Quest>();

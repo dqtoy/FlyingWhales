@@ -68,9 +68,9 @@ public class SettlementInfoUI : UIMenu {
             }
 
             text += "\n[b]Active Quests: [/b] ";
-            if (currentlyShowingSettlement.owner.internalQuestManager.activeQuests.Count > 0) {
-                for (int i = 0; i < currentlyShowingSettlement.owner.internalQuestManager.activeQuests.Count; i++) {
-                    Quest currQuest = currentlyShowingSettlement.owner.internalQuestManager.activeQuests[i];
+            if (currentlyShowingSettlement.owner.activeQuests.Count > 0) {
+                for (int i = 0; i < currentlyShowingSettlement.owner.activeQuests.Count; i++) {
+                    Quest currQuest = currentlyShowingSettlement.owner.activeQuests[i];
                     text += "\n" + currQuest.questType.ToString();
                     if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
                         text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name;

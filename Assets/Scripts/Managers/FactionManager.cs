@@ -91,8 +91,10 @@ public class FactionManager : MonoBehaviour {
          */
     private void CreateInititalFactionCharacters(Faction faction) {
         Settlement baseSettlement = faction.settlements[0];
-		baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
-		baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
+		ECS.Character chieftain = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
+        ECS.Character villageHead = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
+        faction.SetLeader(chieftain);
+        baseSettlement.SetHead(villageHead);
     }
     public Faction CreateNewFaction(System.Type factionType, RACE race) {
         if (factionType == typeof(Tribe)) {
@@ -164,6 +166,7 @@ public class FactionManager : MonoBehaviour {
     }
     #endregion
 
+    #region Utilities
     public void SetOrderBy(ORDER_BY orderBy) {
         this.orderBy = orderBy;
         UpdateFactionOrderBy();
@@ -181,13 +184,41 @@ public class FactionManager : MonoBehaviour {
         }
         UIManager.Instance.UpdateFactionSummary();
     }
+    public Faction GetFactionBasedOnID(int id) {
+        for (int i = 0; i < allFactions.Count; i++) {
+            if (allFactions[i].id == id) {
+                return allFactions[i];
+            }
+        }
+        return null;
+    }
+    #endregion
 
-	public Faction GetFactionBasedOnID(int id){
-		for (int i = 0; i < allFactions.Count; i++) {
-			if(allFactions[i].id == id){
-				return allFactions [i];
-			}
-		}
-		return null;
-	}
+    #region Relationships
+    /*
+     Create a new relationship between 2 factions,
+     then add add a reference to that relationship, to both of the factions.
+         */
+    public void CreateNewRelationshipBetween(Faction faction1, Faction faction2) {
+        FactionRelationship newRel = new FactionRelationship(faction1, faction2);
+        faction1.AddNewRelationship(faction2, newRel);
+        faction2.AddNewRelationship(faction1, newRel);
+    }
+    /*
+     Utility Function for getting the relationship between 2 factions,
+     this just adds a checking for data consistency if, the 2 factions have the
+     same reference to their relationship.
+     NOTE: This is probably more performance intensive because of the additional checking.
+     User can opt to use each factions GetRelationshipWith() instead.
+         */
+    public FactionRelationship GetRelationshipBetween(Faction faction1, Faction faction2) {
+        FactionRelationship faction1Rel = faction1.GetRelationshipWith(faction2);
+        FactionRelationship faction2Rel = faction2.GetRelationshipWith(faction1);
+        if (faction1Rel == faction2Rel) {
+            return faction1Rel;
+        }
+        throw new System.Exception(faction1.name + " does not have the same relationship object as " + faction2.name + "!");
+    }
+    #endregion
+
 }

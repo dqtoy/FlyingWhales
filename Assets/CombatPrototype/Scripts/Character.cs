@@ -13,6 +13,7 @@ namespace ECS {
 		private GENDER _gender;
         private CharacterType _characterType; //Base Character Type(For Traits)
 		private List<Trait>	_traits;
+        private Dictionary<Character, Relationship> _relationships;
 
 		//Stats
 		[SerializeField] private int _currentHP;
@@ -63,6 +64,9 @@ namespace ECS {
 		}
         internal List<Trait> traits {
             get { return _traits; }
+        }
+        internal Dictionary<Character, Relationship> relationships {
+            get { return _relationships; }
         }
 		internal int currentHP{
 			get { return this._currentHP; }
@@ -169,6 +173,7 @@ namespace ECS {
 			_gender = Utilities.GetRandomGender();
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _traits = new List<Trait> ();
+            _relationships = new Dictionary<Character, Relationship>();
 
 			_baseMaxHP = _raceSetting.baseHP + (int)((float)_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
 			_baseStrength = _raceSetting.baseStr + (int)((float)_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
@@ -804,7 +809,7 @@ namespace ECS {
 
 		#region Traits
         private void GenerateTraits() {
-            CharacterType baseCharacterType = CitizenManager.Instance.GetRandomCharacterType();
+            CharacterType baseCharacterType = CharacterManager.Instance.GetRandomCharacterType();
             _characterType = baseCharacterType;
             List<TRAIT> allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
             //Charisma
@@ -834,7 +839,7 @@ namespace ECS {
             _traits = new List<Trait>();
             for (int i = 0; i < baseCharacterType.allTraits.Count; i++) {
                 TRAIT currTrait = baseCharacterType.allTraits[i];
-                Trait trait = CitizenManager.Instance.CreateNewTraitForCharacter(currTrait, this);
+                Trait trait = CharacterManager.Instance.CreateNewTraitForCharacter(currTrait, this);
                 if (trait != null) {
                     _traits.Add(trait);
                 }
@@ -1093,10 +1098,33 @@ namespace ECS {
 			}
 			return quests;
 		}
-		#endregion
+        #endregion
 
-		public void SetHome(Settlement newHome){
-			this._home = newHome;
-		}
-	}
+        #region Utilities
+        public void SetHome(Settlement newHome) {
+            this._home = newHome;
+        }
+        #endregion
+
+        #region Relationships
+        public void AddNewRelationship(Character relWith, Relationship relationship) {
+            if (!_relationships.ContainsKey(relWith)) {
+                _relationships.Add(relWith, relationship);
+            } else {
+                throw new Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
+            }
+        }
+        public void RemoveRelationshipWith(Character relWith) {
+            if (_relationships.ContainsKey(relWith)) {
+                _relationships.Remove(relWith);
+            }
+        }
+        public Relationship GetRelationshipWith(ECS.Character character) {
+            if (_relationships.ContainsKey(character)) {
+                return _relationships[character];
+            }
+            return null;
+        }
+        #endregion
+    }
 }

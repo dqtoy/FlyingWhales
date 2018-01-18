@@ -53,7 +53,7 @@ public enum HEXTILE_DIRECTION {
     WEST,
     NONE
 }
-public enum RELATIONSHIP_STATUS{
+public enum KINGDOM_RELATIONSHIP_STATUS{
 	SPITE,
 	HATE,
 	DISLIKE,
@@ -237,7 +237,8 @@ public enum TRAIT {
     BENEVOLENT,
     DIPLOMATIC,
     DEFENSIVE,
-    HONEST
+    HONEST,
+    RACIST
 }
 public enum CHARISMA {
     CHARISMATIC = TRAIT.CHARISMATIC,
@@ -885,6 +886,11 @@ public enum QUEST_ACTION_RESULT {
 public enum PARTY_ACTION {
     STAY,
     LEAVE
+}
+public enum RELATIONSHIP_STATUS {
+    FRIENDLY,
+    NEUTRAL,
+    HOSTILE
 }
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
