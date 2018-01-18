@@ -219,7 +219,10 @@ public class BaseLandmark {
     public void RemoveCharacterOnLandmark(ECS.Character character) {
         _charactersOnLandmark.Remove(character);
     }
-    public void AddCharacterHomeOnLandmark(ECS.Character character) {
+    /*
+     Make a character consider this landmark as it's home.
+         */
+    public virtual void AddCharacterHomeOnLandmark(ECS.Character character) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
         }

@@ -14,12 +14,12 @@ public class SettlementInfoClick : MonoBehaviour {
 				if(faction != null){
 					UIManager.Instance.ShowFactionInfo (faction);
 				}
-			}else if(url.Contains("_character")){
-				ECS.Character character = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.GetCharacterByID(idToUse);
+			} else if(url.Contains("_character")){
+				ECS.Character character = FactionManager.Instance.GetCharacterByID(idToUse);
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo (character);
 				}
-			}else if(url.Contains("_hextile")){
+			} else if(url.Contains("_hextile")){
 				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.id == idToUse){
 					UIManager.Instance.ShowHexTileInfo (UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location);
 				}

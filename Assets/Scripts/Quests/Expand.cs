@@ -100,8 +100,11 @@ public class Expand : Quest {
 		_createdBy.RemoveQuest(this);
 		ECS.Character partyLeader = this._assignedParty.partyLeader;
 		partyLeader.ChangeRole (CHARACTER_ROLE.VILLAGE_HEAD);
-		partyLeader.SetHome ((Settlement)this._targetUnoccupiedTile.landmarkOnTile);
-		this._assignedParty.DisbandParty ();
+        Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
+        partyLeader.SetHome (expandedTo);
+        expandedTo.SetHead(partyLeader);
+
+        this._assignedParty.DisbandParty ();
 		this._assignedParty.partyLeader.DestroyAvatar ();
 	}
 

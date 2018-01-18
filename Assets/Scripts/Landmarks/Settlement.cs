@@ -11,6 +11,8 @@ public class Settlement : BaseLandmark {
     private CHARACTER_CLASS classToCreate;
     private CHARACTER_ROLE roleToCreate;
 
+    private ECS.Character _headOfSettlement;
+
     private const int CHARACTER_LIMIT = 10;
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
@@ -89,16 +91,11 @@ public class Settlement : BaseLandmark {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-	public void CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-		ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(className, _owner.race);
-		if(setup == null){
-			Debug.LogError ("THERE IS NO CLASS WITH THE NAME: " + className + "!");
-			return;
-		}
-		ECS.Character newCharacter = new ECS.Character(setup);
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, _owner.race);
         newCharacter.AssignRole(charRole);
-        newCharacter.SetFaction(this._owner);
-        newCharacter.SetLocation(this.location);
+        newCharacter.SetFaction(_owner);
+        newCharacter.SetLocation(location);
 		newCharacter.SetHome (this);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
@@ -106,6 +103,7 @@ public class Settlement : BaseLandmark {
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.DetermineAction();
         UIManager.Instance.UpdateFactionSummary();
+        return newCharacter;
     }
     public List<Party> GetPartiesInSettlement() {
         List<Party> parties = new List<Party>();
@@ -118,6 +116,41 @@ public class Settlement : BaseLandmark {
             }
         }
         return parties;
+    }
+    public void SetHead(ECS.Character head) {
+        _headOfSettlement = head;
+        if(_owner.leader != null) {
+            if(_headOfSettlement.GetRelationshipWith(_owner.leader) == null) {
+                //Create Relationship between the head of the settlement and the leader of the faction that owns the settlement
+                CharacterManager.Instance.CreateNewRelationshipBetween(_owner.leader, _headOfSettlement);
+            }
+        }
+
+        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
+            ECS.Character otherCharacter = _charactersWithHomeOnLandmark[i];
+            if(_headOfSettlement.id != otherCharacter.id) {
+                if(_headOfSettlement.GetRelationshipWith(otherCharacter) == null) {
+                    //Village Elders will have relationship with the characters within their village.
+                    CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, otherCharacter);
+                }
+            }
+        }
+    }
+    /*
+     Make a character consider this landmark as it's home.
+         */
+    public override void AddCharacterHomeOnLandmark(ECS.Character character) {
+        if (!_charactersWithHomeOnLandmark.Contains(character)) {
+            _charactersWithHomeOnLandmark.Add(character);
+            //Add new relationship with head of the settlement
+            if(_headOfSettlement != null) {
+                if (character.GetRelationshipWith(_headOfSettlement) == null) {
+                    //Village Elders will have relationship with the characters within their village.
+                    CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, character);
+                }
+            }
+            
+        }
     }
     #endregion
 

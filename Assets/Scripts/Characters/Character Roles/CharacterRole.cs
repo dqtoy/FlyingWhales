@@ -31,8 +31,8 @@ public class CharacterRole {
              */
 	internal WeightedDictionary<Quest> GetActionWeights() {
 		WeightedDictionary<Quest> actionWeights = new WeightedDictionary<Quest>();
-		for (int i = 0; i < _character.faction.internalQuestManager.activeQuests.Count; i++) {
-			Quest currQuest = _character.faction.internalQuestManager.activeQuests[i];
+		for (int i = 0; i < _character.faction.activeQuests.Count; i++) {
+			Quest currQuest = _character.faction.activeQuests[i];
 			if (currQuest.CanAcceptQuest(_character)) {
 				actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
 			}

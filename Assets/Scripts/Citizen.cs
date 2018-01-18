@@ -392,7 +392,7 @@ public class Citizen {
         this.birthDay = days;
         this.birthYear = year;
         if (registerCitizen) {
-            CitizenManager.Instance.RegisterCitizen(this);
+            //CharacterManager.Instance.RegisterCitizen(this);
             SchedulingManager.Instance.AddEntry((int)birthMonth, birthDay, GameManager.Instance.year, () => IncreaseAgeEveryYear());
         }
         this.history.Add(new History((int)month, days, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
@@ -400,8 +400,8 @@ public class Citizen {
     internal void IncreaseAgeEveryYear() {
         if (!isDead) {
             AdjustAge(1);
-            CitizenManager.Instance.RemoveCitizenFromAgeTable(this);
-            CitizenManager.Instance.AddCitizenToAgeTable(this);
+            //CharacterManager.Instance.RemoveCitizenFromAgeTable(this);
+            //CharacterManager.Instance.AddCitizenToAgeTable(this);
             //reschedule bday
             SchedulingManager.Instance.AddEntry((int)birthMonth, birthDay, GameManager.Instance.year + 1, () => IncreaseAgeEveryYear());
         }
@@ -474,7 +474,7 @@ public class Citizen {
 
 
         //Unregister citizen from the manager (The manager handles random deaths)
-        CitizenManager.Instance.UnregisterCitizen(this);
+        //CharacterManager.Instance.UnregisterCitizen(this);
 
         Messenger.Broadcast("UpdateUI");
         //DeathHistory(reason);
@@ -1057,7 +1057,7 @@ public class Citizen {
         return false;
     }
     internal void GenerateTraitsForCitizen() {
-        CharacterType baseCharacter = CitizenManager.Instance.GetRandomCharacterType();
+        CharacterType baseCharacter = CharacterManager.Instance.GetRandomCharacterType();
         _otherTraits = new List<TRAIT>(baseCharacter.otherTraits);
         _characterType = baseCharacter;
         //Charisma
@@ -1090,10 +1090,10 @@ public class Citizen {
         _allTraits = new List<Trait>();
         for (int i = 0; i < baseCharacter.allTraits.Count; i++) {
             TRAIT currTrait = baseCharacter.allTraits[i];
-            Trait trait = CitizenManager.Instance.CreateNewTraitForCitizen(currTrait, this);
-            if(trait != null) {
-                _allTraits.Add(trait);
-            }
+            //Trait trait = CharacterManager.Instance.CreateNewTraitForCitizen(currTrait, this);
+            //if(trait != null) {
+            //    _allTraits.Add(trait);
+            //}
         }
     }
     private void GenerateTraits() {

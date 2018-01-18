@@ -2,13 +2,13 @@
 using System.Collections;
 using UnityEditor;
 
-[CustomEditor(typeof(CitizenManager))]
+[CustomEditor(typeof(CharacterManager))]
 public class CitizenManagerEditor : Editor {
 
     public override void OnInspectorGUI() {
         DrawDefaultInspector();
 
-        CitizenManager cm = (CitizenManager)target;
+        CharacterManager cm = (CharacterManager)target;
         if (GUILayout.Button("Apply Trait Weights")) {
             cm.ApplyTraitSetup();
         }

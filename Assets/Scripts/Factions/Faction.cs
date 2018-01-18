@@ -9,6 +9,7 @@ using System.Linq;
 public class Faction {
 	protected int _id;
     protected string _name;
+    protected ECS.Character _leader;
     protected RACE _race;
     protected FACTION_TYPE _factionType;
     protected FACTION_SIZE _factionSize;
@@ -18,9 +19,10 @@ public class Faction {
     protected List<BaseLandmark> _ownedLandmarks;//List of settlements (cities/landmarks) owned by this faction
     protected List<TECHNOLOGY> _inititalTechnologies;
     internal Color factionColor;
-    protected List<ECS.Character> _characters;
+    protected List<ECS.Character> _characters; //List of characters that are part of the faction
+    protected List<Quest> _activeQuests;
     protected InternalQuestManager _internalQuestManager;
-    //TODO: Add list for characters that are part of the faction
+    protected Dictionary<Faction, FactionRelationship> _relationships;
 
     #region getters/setters
 	public int id {
@@ -28,6 +30,9 @@ public class Faction {
 	}
     public string name {
         get { return _name; }
+    }
+    public ECS.Character leader {
+        get { return _leader; }
     }
     public RACE race {
         get { return _race; }
@@ -59,8 +64,14 @@ public class Faction {
     public List<ECS.Character> characters {
         get { return _characters; }
     }
+    public List<Quest> activeQuests {
+        get { return _activeQuests; }
+    }
     public InternalQuestManager internalQuestManager {
         get { return _internalQuestManager; }
+    }
+    public Dictionary<Faction, FactionRelationship> relationships {
+        get { return _relationships; }
     }
     #endregion
 
@@ -76,12 +87,31 @@ public class Faction {
         factionColor = Utilities.GetColorForFaction();
         _characters = new List<ECS.Character>();
         ConstructInititalTechnologies();
+        _activeQuests = new List<Quest>();
         _internalQuestManager = new InternalQuestManager(this);
+        _relationships = new Dictionary<Faction, FactionRelationship>();
     }
 
     public void SetRace(RACE race) {
         _race = race;
     }
+
+    #region virtuals
+    /*
+     Set the leader of this faction, change this per faction type if needed.
+     This creates relationships between the leader and it's village heads by default.
+         */
+    public virtual void SetLeader(ECS.Character leader) {
+        _leader = leader;
+        List<ECS.Character> villageHeads = GetCharactersOfType(CHARACTER_ROLE.VILLAGE_HEAD);
+        for (int i = 0; i < villageHeads.Count; i++) {
+            ECS.Character currHead = villageHeads[i];
+            //leaders have relationships with their Village heads and vise versa.
+            CharacterManager.Instance.CreateNewRelationshipBetween(leader, currHead);
+        }
+
+    }
+    #endregion
 
     #region Settlements
     public void AddLandmarkAsOwned(BaseLandmark landmark) {
@@ -144,36 +174,70 @@ public class Faction {
     }
     #endregion
 
-	public ECS.Character GetCharacterByID(int id){
-		for (int i = 0; i < _characters.Count; i++) {
-			if(_characters[i].id == id){
-				return _characters [i];
-			}
-		}
-		return null;
-	}
-	public BaseLandmark GetLandmarkByID(int id){
-		for (int i = 0; i < _ownedLandmarks.Count; i++) {
-			if(_ownedLandmarks[i].id == id){
-				return _ownedLandmarks [i];
-			}
-		}
-		return null;
-	}
-	public Settlement GetSettlementWithHighestPopulation(){
-		Settlement highestPopulationSettlement = null;
-		for (int i = 0; i < _ownedLandmarks.Count; i++) {
-			if(_ownedLandmarks[i] is Settlement){
-				Settlement settlement = (Settlement)_ownedLandmarks [i];
-				if(highestPopulationSettlement == null){
-					highestPopulationSettlement = settlement;
-				}else{
-					if((int)settlement.civilians > (int)highestPopulationSettlement.civilians){
-						highestPopulationSettlement = settlement;
-					}
-				}
-			}
-		}
-		return highestPopulationSettlement;
-	}
+    #region Utilities
+    public ECS.Character GetCharacterByID(int id) {
+        for (int i = 0; i < _characters.Count; i++) {
+            if (_characters[i].id == id) {
+                return _characters[i];
+            }
+        }
+        return null;
+    }
+    public BaseLandmark GetLandmarkByID(int id) {
+        for (int i = 0; i < _ownedLandmarks.Count; i++) {
+            if (_ownedLandmarks[i].id == id) {
+                return _ownedLandmarks[i];
+            }
+        }
+        return null;
+    }
+    public Settlement GetSettlementWithHighestPopulation() {
+        Settlement highestPopulationSettlement = null;
+        for (int i = 0; i < _ownedLandmarks.Count; i++) {
+            if (_ownedLandmarks[i] is Settlement) {
+                Settlement settlement = (Settlement)_ownedLandmarks[i];
+                if (highestPopulationSettlement == null) {
+                    highestPopulationSettlement = settlement;
+                } else {
+                    if ((int)settlement.civilians > (int)highestPopulationSettlement.civilians) {
+                        highestPopulationSettlement = settlement;
+                    }
+                }
+            }
+        }
+        return highestPopulationSettlement;
+    }
+    #endregion
+
+    #region Relationships
+    public void AddNewRelationship(Faction relWith, FactionRelationship relationship) {
+        if (!_relationships.ContainsKey(relWith)) {
+            _relationships.Add(relWith, relationship);
+        } else {
+            throw new System.Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
+        }
+    }
+    public void RemoveRelationshipWith(Faction relWith) {
+        if (_relationships.ContainsKey(relWith)) {
+            _relationships.Remove(relWith);
+        }
+    }
+    public FactionRelationship GetRelationshipWith(Faction faction) {
+        if (_relationships.ContainsKey(faction)) {
+            return _relationships[faction];
+        }
+        return null;
+    }
+    #endregion
+
+    #region Quests
+    public void AddNewQuest(Quest quest) {
+        if (!_activeQuests.Contains(quest)) {
+            _activeQuests.Add(quest);
+        }
+    }
+    public void RemoveQuest(Quest quest) {
+        _activeQuests.Remove(quest);
+    }
+    #endregion
 }
