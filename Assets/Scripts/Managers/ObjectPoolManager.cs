@@ -15,7 +15,7 @@ public class ObjectPoolManager : MonoBehaviour {
     [SerializeField] internal GameObject[] citizenAvatarPrefabs;
     [SerializeField] private GameObject[] monsterAvatarPrefabs;
     [SerializeField] private GameObject[] agentPrefabs;
-    [SerializeField] private GameObject[] otherPrefabs;
+    [SerializeField] internal GameObject[] otherPrefabs;
 
     private void Awake() {
         Instance = this;

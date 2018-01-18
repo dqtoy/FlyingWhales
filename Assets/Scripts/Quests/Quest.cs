@@ -121,11 +121,11 @@ public class Quest {
     }
     internal virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
+			_isDone = true;
+			_questResult = result;
             if(onQuestEnd != null) {
                 onQuestEnd(result);
             }
-			_isDone = true;
-			_questResult = result;
 			if(_currentAction != null){
 				_currentAction.onQuestActionDone = null;
 			}

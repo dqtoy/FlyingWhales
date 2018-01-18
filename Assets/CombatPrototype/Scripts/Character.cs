@@ -1020,6 +1020,7 @@ namespace ECS {
 		public void CreateNewAvatar() {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
 			if(this._role.roleType == CHARACTER_ROLE.COLONIST){
+//				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
 				ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
 				avatar.Init(this);

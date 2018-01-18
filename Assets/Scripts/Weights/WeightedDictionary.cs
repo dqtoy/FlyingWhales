@@ -11,6 +11,12 @@ public class WeightedDictionary<T> {
 
     private Dictionary<T, int> _dictionary;
 
+	#region getters/setters
+	public int Count{
+		get { return _dictionary.Count; }
+	}
+	#endregion
+
     public WeightedDictionary() {
         _dictionary = new Dictionary<T, int>();
     }

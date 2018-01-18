@@ -29,7 +29,7 @@ public class MilitaryManager : QuestCreator {
         _activeQuests = new List<Quest>();
         if(owner is Tribe) {
             GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+//            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
         }
     }
 
@@ -63,8 +63,10 @@ public class MilitaryManager : QuestCreator {
         if(_activeQuests.Count < GetMaxActiveQuests()) {
             WeightedDictionary<Quest> questDictionary = GetQuestWeightedDictionary();
             questDictionary.LogDictionaryValues("Quest Creation Weights: ");
-			Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
-			AddNewQuest(chosenQuestToCreate);
+			if(questDictionary.Count > 0){
+				Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
+				AddNewQuest(chosenQuestToCreate);
+			}
         }
 
         GameDate dueDate = GameManager.Instance.Today();
@@ -203,11 +205,13 @@ public class MilitaryManager : QuestCreator {
     public void AddNewQuest(Quest quest) {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
+			_owner.AddNewQuest(quest);
             quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }
     public void RemoveQuest(Quest quest) {
         _activeQuests.Remove(quest);
+		_owner.RemoveQuest(quest);
     }
     public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
         List<Quest> quests = new List<Quest>();
@@ -242,7 +246,7 @@ public class MilitaryManager : QuestCreator {
 
 	private bool IsAlreadyBeingDefended(BaseLandmark landmark){
 		for (int i = 0; i < _activeQuests.Count; i++) {
-			if(_activeQuests[i].questType == QUEST_TYPE.DEFEND && _activeQuests[i].isAccepted){
+			if(_activeQuests[i].questType == QUEST_TYPE.DEFEND){
 				Defend defend = (Defend)_activeQuests [i];
 				if(defend.landmarkToDefend.id == landmark.id){
 					return true;
@@ -253,7 +257,7 @@ public class MilitaryManager : QuestCreator {
 	}
 	internal bool IsAlreadyBeingAttacked(BaseLandmark landmark){
 		for (int i = 0; i < _activeQuests.Count; i++) {
-			if(_activeQuests[i].questType == QUEST_TYPE.ATTACK && _activeQuests[i].isAccepted){
+			if(_activeQuests[i].questType == QUEST_TYPE.ATTACK){
 				Attack attack = (Attack)_activeQuests [i];
 				if(attack.landmarkToAttack.id == landmark.id){
 					return true;

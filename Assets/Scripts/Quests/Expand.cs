@@ -104,7 +104,7 @@ public class Expand : Quest {
         partyLeader.SetHome (expandedTo);
         expandedTo.SetHead(partyLeader);
 
-        this._assignedParty.DisbandParty ();
+//        this._assignedParty.DisbandParty ();
 		this._assignedParty.partyLeader.DestroyAvatar ();
 	}
 
