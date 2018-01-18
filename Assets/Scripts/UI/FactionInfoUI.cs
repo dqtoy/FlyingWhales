@@ -11,6 +11,7 @@ public class FactionInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel factionInfoLbl;
+    [SerializeField] private UILabel relationshipsLbl;
 
     internal Faction currentlyShowingFaction;
 
@@ -84,5 +85,18 @@ public class FactionInfoUI : UIMenu {
 		}
 			
         factionInfoLbl.text = text;
+
+        //Relationships
+        string relationshipText = string.Empty;
+        relationshipText += "\n[b]Relationships:[/b] ";
+        if (currentlyShowingFaction.relationships.Count > 0) {
+            foreach (KeyValuePair<Faction, FactionRelationship> kvp in currentlyShowingFaction.relationships) {
+                relationshipText += "\n "  + kvp.Key.factionType.ToString() + "[-] [url=" + kvp.Key.id + "_faction]" + kvp.Key.name + "[/url]: " + kvp.Value.relationshipStatus.ToString();
+            }
+        } else {
+            relationshipText += "NONE";
+        }
+
+        relationshipsLbl.text = relationshipText;
     }
 }

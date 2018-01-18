@@ -84,7 +84,19 @@ public class Relationship {
             _character2.HasTrait(TRAIT.PACIFIST)) {
             _baseValue += 10; //Both Pacifist: +10
         } else {
-            //if(_character1.HasTrait())
+            if (_character1.HasTrait(TRAIT.PACIFIST) || 
+                _character2.HasTrait(TRAIT.PACIFIST)) {
+                _baseValue += 10;//Pacifist (this character): +10
+            }
+            if (_character1.HasTrait(TRAIT.HOSTILE) ||
+                _character2.HasTrait(TRAIT.HOSTILE)) {
+                _baseValue -= 10;//Hostile (this character): -10
+            }
+        }
+
+        if (_character1.HasTrait(TRAIT.DIPLOMATIC) ||
+                _character2.HasTrait(TRAIT.DIPLOMATIC)) {
+            _baseValue += 10;//Diplomatic (this character): +10
         }
 
         if (_character1.HasTrait(TRAIT.HONEST)) {

@@ -97,19 +97,17 @@ public class FactionManager : MonoBehaviour {
         baseSettlement.SetHead(villageHead);
     }
     public Faction CreateNewFaction(System.Type factionType, RACE race) {
+        Faction newFaction = null;
         if (factionType == typeof(Tribe)) {
-            Tribe newTribe = new Tribe(race);
-            allFactions.Add(newTribe);
-			allTribes.Add (newTribe);
-            UIManager.Instance.UpdateFactionSummary();
-            return newTribe;
+            newFaction = new Tribe(race);
+			allTribes.Add ((Tribe)newFaction);
         } else if(factionType == typeof(Camp)) {
-            Camp newCamp = new Camp(race);
-            allFactions.Add(newCamp);
-            UIManager.Instance.UpdateFactionSummary();
-            return newCamp;
+            newFaction = new Camp(race);
         }
-        return null;
+        allFactions.Add(newFaction);
+        CreateRelationshipsForNewFaction(newFaction);
+        UIManager.Instance.UpdateFactionSummary();
+        return newFaction;
     }
     #endregion
 
@@ -195,6 +193,22 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Relationships
+    public void CreateRelationshipsForNewFaction(Faction faction) {
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction otherFaction = allFactions[i];
+            if(otherFaction.id != faction.id) {
+                CreateNewRelationshipBetween(otherFaction, faction);
+            }
+        }
+    }
+    public void RemoveRelationshipsWith(Faction faction) {
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction otherFaction = allFactions[i];
+            if (otherFaction.id != faction.id) {
+                otherFaction.RemoveRelationshipWith(faction);
+            }
+        }
+    }
     /*
      Create a new relationship between 2 factions,
      then add add a reference to that relationship, to both of the factions.
