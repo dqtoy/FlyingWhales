@@ -50,9 +50,6 @@ public class Faction {
     public int totalPopulation {
         get { return settlements.Sum(x => x.totalPopulation); }
     }
-    public int totalCharacters {
-        get { return settlements.Sum(x => x.charactersOnLandmark.Count); }
-    }
     public List<Settlement> settlements {
         get { return _ownedLandmarks.Where(x => x is Settlement).Select(x => (Settlement)x).ToList(); }
     }

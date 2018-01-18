@@ -49,7 +49,6 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.InitializeUI();
 
         GridMap.Instance.GenerateOtherLandmarks();
-
   
         FactionManager.Instance.GenerateInititalFactions();
         //KingdomManager.Instance.GenerateInitialKingdoms();

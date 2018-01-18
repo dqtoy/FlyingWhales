@@ -176,8 +176,8 @@ public class FactionManager : MonoBehaviour {
             orderedFactions = majorFactions.OrderBy(x => x.totalPopulation).ToList();
             orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalPopulation));
         } else if (orderBy == ORDER_BY.CHARACTERS) {
-            orderedFactions = majorFactions.OrderBy(x => x.totalCharacters).ToList();
-            orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalCharacters));
+            orderedFactions = majorFactions.OrderBy(x => x.characters.Count).ToList();
+            orderedFactions.AddRange(minorFactions.OrderBy(x => x.characters.Count));
         }
         UIManager.Instance.UpdateFactionSummary();
     }

@@ -28,7 +28,7 @@ public class InternalQuestManager : QuestCreator {
         _owner = owner;
         _activeQuests = new List<Quest>();
         if(owner is Tribe) {
-            GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+            GameDate dueDate = new GameDate(GameManager.Instance.month, 15, GameManager.Instance.year);
             SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
         }
     }
@@ -70,7 +70,7 @@ public class InternalQuestManager : QuestCreator {
         }
 
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddMonths(1);
+        dueDate.AddDays(15);
         SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
     }
 
