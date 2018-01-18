@@ -88,6 +88,12 @@ public class CharacterRole {
 		case QUEST_TYPE.JOIN_PARTY:
 			weight += GetJoinPartyWeight((JoinParty)quest);
 			break;
+		case QUEST_TYPE.ATTACK:
+			weight += GetAttackWeight((Attack)quest);
+			break;
+		case QUEST_TYPE.DEFEND:
+			weight += GetDefendWeight((Defend)quest);
+			break;
 		default:
 			break;
 		}
@@ -97,7 +103,7 @@ public class CharacterRole {
 		int weight = 0;
 		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, expandQuest.targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
 		if(pathToTarget != null) {
-			weight += 200 - (15 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
+			weight += 200 - (5 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
 		}
 		if(weight < 0){
 			weight = 0;
@@ -144,5 +150,27 @@ public class CharacterRole {
 	}
 	internal virtual int GetDoNothingWeight() {
 		return 10;
+	}
+	internal virtual int GetDefendWeight(Defend defendQuest) {
+		int weight = 0;
+		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, defendQuest.landmarkToDefend.location, PATHFINDING_MODE.MAJOR_ROADS);
+		if(pathToTarget != null) {
+			weight += 200 - (15 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
+		}
+		if(weight < 0){
+			weight = 0;
+		}
+		return weight;
+	}
+	internal virtual int GetAttackWeight(Attack attackQuest) {
+		int weight = 0;
+		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, attackQuest.landmarkToAttack.location, PATHFINDING_MODE.MAJOR_ROADS);
+		if(pathToTarget != null) {
+			weight += 200 - (15 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
+		}
+		if(weight < 0){
+			weight = 0;
+		}
+		return weight;
 	}
 }

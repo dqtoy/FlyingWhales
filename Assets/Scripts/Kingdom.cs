@@ -149,7 +149,7 @@ public class Kingdom{
 
 	internal HashSet<int> checkedWarfareID;
 
-	internal MilitaryManager militaryManager;
+	internal MilitaryManager2 militaryManager;
 
     #region getters/setters
     internal Sprite emblem {

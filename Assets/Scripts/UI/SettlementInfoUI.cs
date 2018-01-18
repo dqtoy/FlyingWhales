@@ -101,7 +101,7 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-		if(currentlyShowingSettlement is Settlement && currentlyShowingSettlement.owner != null){
+		if(currentlyShowingSettlement is Settlement && currentlyShowingSettlement.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingSettlement.owner != null){
 			text += "\n[b]Parties: [/b] ";
 			if (PartyManager.Instance.allParties.Count > 0) {
 				for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {

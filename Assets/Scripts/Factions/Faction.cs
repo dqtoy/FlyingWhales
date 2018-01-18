@@ -23,6 +23,8 @@ public class Faction {
     protected List<Quest> _activeQuests;
     protected InternalQuestManager _internalQuestManager;
     protected Dictionary<Faction, FactionRelationship> _relationships;
+	protected MilitaryManager _militaryManager;
+
 
     #region getters/setters
 	public int id {
@@ -73,6 +75,9 @@ public class Faction {
     public Dictionary<Faction, FactionRelationship> relationships {
         get { return _relationships; }
     }
+	public MilitaryManager militaryManager {
+		get { return _militaryManager; }
+	}
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -90,6 +95,7 @@ public class Faction {
         _activeQuests = new List<Quest>();
         _internalQuestManager = new InternalQuestManager(this);
         _relationships = new Dictionary<Faction, FactionRelationship>();
+		_militaryManager = new MilitaryManager (this);
     }
 
     public void SetRace(RACE race) {
@@ -194,7 +200,7 @@ public class Faction {
     public Settlement GetSettlementWithHighestPopulation() {
         Settlement highestPopulationSettlement = null;
         for (int i = 0; i < _ownedLandmarks.Count; i++) {
-            if (_ownedLandmarks[i] is Settlement) {
+			if(_ownedLandmarks[i] is Settlement && _ownedLandmarks[i].specificLandmarkType == LANDMARK_TYPE.CITY){
                 Settlement settlement = (Settlement)_ownedLandmarks[i];
                 if (highestPopulationSettlement == null) {
                     highestPopulationSettlement = settlement;
@@ -206,6 +212,39 @@ public class Faction {
             }
         }
         return highestPopulationSettlement;
+	}
+	public bool IsAtWar(){
+		//TODO: check if this faction is hostile to other factions, or in short, if this faction is at war
+		return false;
+	}
+	public List<BaseLandmark> GetAllPossibleLandmarksToAttack(){
+		List<BaseLandmark> allPossibleLandmarksToAttack = new List<BaseLandmark> ();
+		for (int i = 0; i < _ownedLandmarks.Count; i++) {
+			BaseLandmark ownedLandmark = _ownedLandmarks [i];
+			for (int j = 0; j < ownedLandmark.location.region.landmarks.Count; j++) {
+				BaseLandmark regionLandmark = ownedLandmark.location.region.landmarks [j];
+				if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
+					//TODO: check if minor faction is hostile
+					if(!_militaryManager.IsAlreadyBeingAttacked(regionLandmark)){
+						allPossibleLandmarksToAttack.Add(regionLandmark);
+					}
+				}
+			}
+			for (int j = 0; j < ownedLandmark.location.region.connections.Count; j++) {
+				if(ownedLandmark.location.region.connections[j] is Region){
+					Region adjacentRegion = (Region)ownedLandmark.location.region.connections [j];
+					if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
+						//TODO: check if adjacentregion owner is at war with this faction
+						if (!_militaryManager.IsAlreadyBeingAttacked (adjacentRegion.centerOfMass.landmarkOnTile)) {
+							if(!allPossibleLandmarksToAttack.Contains(adjacentRegion.centerOfMass.landmarkOnTile)){
+								allPossibleLandmarksToAttack.Add (adjacentRegion.centerOfMass.landmarkOnTile);
+							}
+						}
+					}
+				}
+			}
+		}
+		return allPossibleLandmarksToAttack;
     }
     #endregion
 
