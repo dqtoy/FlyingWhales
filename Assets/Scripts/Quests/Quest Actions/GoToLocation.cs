@@ -16,6 +16,7 @@ public class GoToLocation : QuestAction {
     public override void ActionDone(QUEST_ACTION_RESULT result) {
         //Destroy ECS.Character Avatar
         //_actionDoer.DestroyAvatar();
+
         base.ActionDone(result);
     }
     #endregion
@@ -40,6 +41,32 @@ public class GoToLocation : QuestAction {
     }
 
 	internal void Expand() {
+		if (actionDoer.currLocation.id == targetLocation.id) {
+			//action doer is already at the target location
+			ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+		} else {
+			if (actionDoer.avatar == null) {
+				//Instantiate a new character avatar
+				actionDoer.CreateNewAvatar();
+			}
+			actionDoer.avatar.SetTarget (targetLocation);
+			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+		}
+	}
+	internal void Defend() {
+		if (actionDoer.currLocation.id == targetLocation.id) {
+			//action doer is already at the target location
+			ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+		} else {
+			if (actionDoer.avatar == null) {
+				//Instantiate a new character avatar
+				actionDoer.CreateNewAvatar();
+			}
+			actionDoer.avatar.SetTarget (targetLocation);
+			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+		}
+	}
+	internal void Attack() {
 		if (actionDoer.currLocation.id == targetLocation.id) {
 			//action doer is already at the target location
 			ActionDone(QUEST_ACTION_RESULT.SUCCESS);

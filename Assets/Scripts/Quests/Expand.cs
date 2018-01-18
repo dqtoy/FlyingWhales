@@ -109,10 +109,6 @@ public class Expand : Quest {
 		_isDone = true;
 		_questResult = QUEST_RESULT.FAIL;
 		_createdBy.RemoveQuest(this);
-//		if(_currentAction != null){
-//			_currentAction.onQuestActionDone = null;
-//			_currentAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
-//		}
 		while(_questLine.Count > 0){
 			QuestAction questAction = _questLine.Dequeue ();
 			questAction.onQuestActionDone = null;

@@ -25,6 +25,7 @@ public class Quest {
     protected List<QuestFilter> _questFilters;
     protected QuestAction _currentAction;
     protected QUEST_RESULT _questResult;
+	protected int _activeDuration;
 
     protected Queue<QuestAction> _questLine;
 
@@ -56,6 +57,9 @@ public class Quest {
     public QUEST_RESULT questResult {
         get { return _questResult; }
     }
+	public int activeDuration {
+		get { return _activeDuration; }
+	}
     #endregion
     /*
      Create a new quest object.
@@ -65,6 +69,7 @@ public class Quest {
         _createdBy = createdBy;
         _questType = questType;
         _daysBeforeDeadline = daysBeforeDeadline;
+		_activeDuration = 0;
         //if(daysBeforeDeadline != -1) {
         //    ScheduleDeadline();
         //}
@@ -113,6 +118,10 @@ public class Quest {
     }
     internal virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
+			_isDone = true;
+			_questResult = result;
+			_currentAction.onQuestActionDone = null;
+			_createdBy.RemoveQuest(this);
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
                     QuestSuccess();
@@ -129,25 +138,16 @@ public class Quest {
         }
     }
     internal virtual void QuestSuccess() {
-        _isDone = true;
-        _questResult = QUEST_RESULT.SUCCESS;
-        _createdBy.RemoveQuest(this);
+		_currentAction.ActionDone(QUEST_ACTION_RESULT.SUCCESS);
         RetaskParty();
     }
     internal virtual void QuestFail() {
-        _isDone = true;
-        _questResult = QUEST_RESULT.FAIL;
-        _createdBy.RemoveQuest(this);
-        _currentAction.onQuestActionDone = null;
         _currentAction.ActionDone(QUEST_ACTION_RESULT.FAIL);
         RetaskParty();
     }
     internal virtual void QuestCancel() {
-        _isDone = true;
         _questResult = QUEST_RESULT.CANCEL;
 		_isAccepted = false;
-        _createdBy.RemoveQuest(this);
-        _currentAction.onQuestActionDone = null;
         _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
         RetaskParty();
 		ResetQuestValues ();

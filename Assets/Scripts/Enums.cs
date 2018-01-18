@@ -873,7 +873,9 @@ public enum QUEST_TYPE {
     REST,
     GO_HOME,
     DO_NOTHING,
-    JOIN_PARTY
+    JOIN_PARTY,
+	ATTACK,
+	DEFEND,
 }
 public enum QUEST_ACTION_RESULT {
     SUCCESS,

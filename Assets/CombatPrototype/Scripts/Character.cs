@@ -1018,6 +1018,10 @@ namespace ECS {
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
 				ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
 				avatar.Init(this);
+			}else if(this._role.roleType == CHARACTER_ROLE.WARLORD){
+				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("WarlordAvatar", this.currLocation.transform.position, Quaternion.identity);
+				WarlordAvatar avatar = avatarGO.GetComponent<WarlordAvatar>();
+				avatar.Init(this);
 			}else{
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
 				CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();

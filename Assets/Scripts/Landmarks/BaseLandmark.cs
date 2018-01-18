@@ -238,5 +238,67 @@ public class BaseLandmark {
         _isExplored = isExplored;
         landmarkObject.UpdateLandmarkVisual();
     }
-
+	internal bool IsBorder(){
+		if(this.owner == null){
+			return false;
+		}
+		for (int i = 0; i < this.location.region.connections.Count; i++) {
+			if(this.location.region.connections[i] is Region){
+				Region adjacentRegion = (Region)this.location.region.connections [i];
+				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	internal bool IsAdjacentToEnemyTribe(){
+		if(this.owner == null || (this.owner != null && !(this.owner is Tribe))){
+			return false;
+		}
+		for (int i = 0; i < this.location.region.connections.Count; i++) {
+			if(this.location.region.connections[i] is Region){
+				Region adjacentRegion = (Region)this.location.region.connections [i];
+				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && this.owner is Tribe && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
+					//TODO: check if adjacent to an enemy faction, if yes return true
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	internal bool HasWarlordOnAdjacentVillage(){
+		if(this.owner == null){
+			return false;
+		}
+		for (int i = 0; i < this.location.region.connections.Count; i++) {
+			if(this.location.region.connections[i] is Region){
+				Region adjacentRegion = (Region)this.location.region.connections [i];
+				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
+					//TODO: check if adjacent to an enemy faction, if yes return true
+					if(adjacentRegion.centerOfMass.landmarkOnTile.HasWarlord()){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	internal bool HasWarlord(){
+		for (int i = 0; i < this.charactersOnLandmark.Count; i++) {
+			if(this.charactersOnLandmark[i].role.roleType == CHARACTER_ROLE.WARLORD){
+				return true;
+			}
+		}
+		return false;
+	}
+	internal int GetTechnologyCount(){
+		int count = 0;
+		foreach (bool isTrue in _technologies.Values) {
+			if(isTrue){
+				count += 1;
+			}
+		}
+		return count;
+	}
 }

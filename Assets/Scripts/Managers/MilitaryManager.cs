@@ -1,365 +1,265 @@
-﻿using UnityEngine;
+﻿/*
+ This is the Internal Quest Manager. Each Faction has one,
+ it is responsible for generating new quests for each faction.
+ Reference: https://trello.com/c/Wf38ZqLM/737-internal-manager-ai
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
-public class MilitaryManager {
+public class MilitaryManager : QuestCreator {
 
-	private Kingdom _kingdom;
+    private Faction _owner;
 
-	internal int maxGenerals;
-	internal List<General> activeGenerals;
+    private List<Quest> _activeQuests;
 
-	public MilitaryManager(Kingdom kingdom){
-		this._kingdom = kingdom;
-		this.activeGenerals = new List<General> ();
-		//ScheduleCreateGeneral ();
-	}
+    #region getters/setters
+    public Faction owner {
+        get { return _owner; }
+    }
+    public List<Quest> activeQuests {
+        get { return _activeQuests; }
+    }
+    #endregion
 
-	private void ScheduleCreateGeneral(){
-		GameDate newDate = new GameDate (GameManager.Instance.month, 1, GameManager.Instance.year);
-		newDate.AddMonths (1);
+	public MilitaryManager(Faction owner) {
+        _owner = owner;
+        _activeQuests = new List<Quest>();
+        if(owner is Tribe) {
+            GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+        }
+    }
 
-		SchedulingManager.Instance.AddEntry (newDate, () => CreateGeneral ());
-	}
-	private void CreateGeneral(){
-		if (!this._kingdom.isDead) {
-			if(this.activeGenerals.Count < maxGenerals){
-				//Create General
-				Citizen citizen = this._kingdom.capitalCity.CreateNewAgent(ROLE.GENERAL, this._kingdom.capitalCity.hexTile);
-				if(citizen != null){
-					General general = (General)citizen.assignedRole;
-					general.Initialize (null);
-					general.GetTask ();
-					activeGenerals.Add (general);
+    /*
+     Get the maximum number of active quests a faction
+     can have.
+         */
+    private int GetMaxActiveQuests() {
+        if(_owner.factionType == FACTION_TYPE.MINOR) {
+            return 2;
+        } else {
+            switch (_owner.factionSize) {
+                case FACTION_SIZE.SMALL:
+                    return 3;
+                case FACTION_SIZE.MEDIUM:
+                    return 5;
+                case FACTION_SIZE.LARGE:
+                    return 7;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    #region Quest Generation
+    /*
+     At the start of each month, if the Faction has not yet reached the cap of active Internal Quests, 
+     it will attempt to create a new one.
+         */
+    private void GenerateMonthlyQuests() {
+        if(_activeQuests.Count < GetMaxActiveQuests()) {
+            WeightedDictionary<Quest> questDictionary = GetQuestWeightedDictionary();
+            questDictionary.LogDictionaryValues("Quest Creation Weights: ");
+			Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
+			AddNewQuest(chosenQuestToCreate);
+        }
+
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+    }
+
+    private WeightedDictionary<Quest> GetQuestWeightedDictionary() {
+        WeightedDictionary<Quest> questDict = new WeightedDictionary<Quest>();
+
+        //Loop through each owned landmarks without active defend quest.
+		//Defend weights
+        for (int i = 0; i < _owner.ownedLandmarks.Count; i++) {
+			BaseLandmark landmark = _owner.ownedLandmarks [i];
+			if(!IsAlreadyBeingDefended(landmark)){
+				int defendWeight = GetDefendWeight (landmark);
+				if(defendWeight > 0){
+					questDict.AddElement(new Defend(this, 90, landmark), defendWeight);
 				}
 			}
-			ScheduleCreateGeneral ();
-		}
-	}
-	internal void UpdateMaxGenerals(){
-		if(this._kingdom.kingdomSize == KINGDOM_SIZE.SMALL){
-			this.maxGenerals = 2;
-		}else if(this._kingdom.kingdomSize == KINGDOM_SIZE.MEDIUM){
-			this.maxGenerals = 4;
-		}else if(this._kingdom.kingdomSize == KINGDOM_SIZE.LARGE){
-			this.maxGenerals = 6;
-		}
-//		for (int i = 0; i < this._kingdom.king.allTraits.Count; i++) {
-//			this.maxGenerals += this._kingdom.king.allTraits [i].GetMaxGeneralsModifier ();
-//		}
-		if(this._kingdom.king != null){
-			if(this._kingdom.king.HasTrait(TRAIT.MILITANT) || this._kingdom.king.HasTrait(TRAIT.HOSTILE)){
-				this.maxGenerals += 1;
-			}else if(this._kingdom.king.HasTrait(TRAIT.PACIFIST)){
-				this.maxGenerals -= 1;
-			}
-		}
-	}
-
-	internal void AssignTaskToGeneral(General general){
-		GeneralTask task = CreateTask (general);
-		if(task != null){
-			general.AssignTask (task);
-		}else{
-			general.generalTask = null;
-			GameDate checkDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-			checkDate.AddDays (5);
-			SchedulingManager.Instance.AddEntry (checkDate, () => general.GetTask ());
-		}
-	}
-	private GeneralTask CreateTask (General general){
-		string weightLog = "--------------------- " + general.citizen.name + " task city weights -------------------------";
-		Dictionary<City, int> combinedCityWeights = new Dictionary<City, int> ();
-		if(this._kingdom.warfareInfo.Count > 0){
-			Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
-			combinedCityWeights = GetDefendCityAndWeight (true, ref weightLog);
-			cityWeights = GetAttackCityAndWeight (true, ref weightLog);
-			foreach (var item in cityWeights) {
-				combinedCityWeights.Add (item.Key, item.Value);
-
-			}
-
-			if(combinedCityWeights.Count <= 0){
-				combinedCityWeights = GetDefendCityAndWeight (false, ref weightLog);
-				cityWeights = GetAttackCityAndWeight (false, ref weightLog);
-				foreach (var item in cityWeights) {
-					combinedCityWeights.Add (item.Key, item.Value);
+        }
+        
+        //Attack weights
+		if(_owner.IsAtWar()){
+			List<BaseLandmark> landmarksToBeAttacked = _owner.GetAllPossibleLandmarksToAttack ();
+			for (int i = 0; i < landmarksToBeAttacked.Count; i++) {
+				int attackWeight = GetAttackWeight (landmarksToBeAttacked[i]);
+				if(attackWeight > 0){
+					questDict.AddElement(new Attack(this, 90, landmarksToBeAttacked[i]), attackWeight);
 				}
 			}
-		}else{
-			combinedCityWeights = GetDefendCityAndWeight (true, ref weightLog);
-			if(combinedCityWeights.Count <= 0){
-				combinedCityWeights = GetDefendCityAndWeight (false, ref weightLog);
-			}
 		}
+        return questDict;
+    }
 
-		Debug.Log (weightLog);
-		if(combinedCityWeights.Count > 0){
-			City targetCity = Utilities.PickRandomElementWithWeights<City> (combinedCityWeights);
-			if(targetCity.kingdom.id != this._kingdom.id){
-				return new AttackCityTask (GENERAL_TASKS.ATTACK_CITY, general, targetCity.hexTile);
+    private int GetDefendWeight(BaseLandmark landmark) {
+        int weight = 0;
+		if(landmark is Settlement){
+			if(landmark.specificLandmarkType == LANDMARK_TYPE.CITY){
+				if(landmark.IsBorder()){
+					//TODO: go to IsAdjacentToEnemy
+					if(landmark.IsAdjacentToEnemyTribe()){
+						Settlement village = (Settlement)landmark;
+						weight += (4 * (int)village.civilians);
+						weight += village.resourceInventory.Sum (x => x.Value);
+						weight += (15 * village.GetTechnologyCount());
+						if(landmark.HasWarlordOnAdjacentVillage()){
+							weight += 150;
+						}
+
+						//TODO: if Chieftain is Smart, add 500 to Weight to Defend City if there is an active Attack Quest targeting the village
+//						if(IsLandmarkTargeted(landmark)){
+//	
+//						}
+
+						//TODO: add 50 to Weight to Defend if the King is Defensive
+					}else{
+						weight += 50;
+					}
+
+					/*TODO: add 50 to Weight to Defend if it is adjacent to a Kingdom that we have an active International Incident with
+						- add 2 to Weight to Defend for each point of Negative Opinion each adjacent Tribe leader has towards us
+						- subtract 1 to Weight to Defend for each point of Positive Opinion each adjacent Tribe leader has towards us
+						- add 4 to Weight to Defend for each point of Threat of each adjacent Tribe
+					*/
+
+				}else{
+					weight += 20;
+					//TODO: go to HasDiscoveredMinorFaction
+					if(HasDiscoveredMinorFaction(landmark.location.region)){
+						weight += 30;
+					}
+					//TODO: if Chieftain is Smart, add 300 to Weight to Defend City if there is an active Attack Quest targeting the village
+//					if(IsLandmarkTargeted(landmark)){
+//
+//					}
+				}
 			}else{
-				return new DefendCityTask (GENERAL_TASKS.DEFEND_CITY, general, targetCity.hexTile);
-			}
-		}
-		return null;
-	}
-
-	//Get all kingdom cities to defend and their weights
-	//willFactorInAssignedDefendGenerals - controls if you want to get all cities with / without defending generals
-	private Dictionary<City, int> GetDefendCityAndWeight(bool willFactorInAssignedDefendGenerals, ref string strWeights){
-		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
-		if(willFactorInAssignedDefendGenerals){
-			for (int i = 0; i < this._kingdom.cities.Count; i++) {
-				City city = this._kingdom.cities [i];
-				if(city.assignedDefendGeneralsCount == 0){
-					int cityTotalWeight = GetDefendCityWeight (city);
-					if(cityTotalWeight > 0){
-						cityWeights.Add (city, cityTotalWeight);
-						strWeights += "\nDefend " + city.name + " - " + cityTotalWeight.ToString ();
-					}
+				weight += 10;
+				//TODO: go to HasDiscoveredMinorFaction
+				if(HasDiscoveredMinorFaction(landmark.location.region)){
+					weight += 20;
 				}
+				//TODO: if Chieftain is Smart, add 300 to Weight to Defend City if there is an active Attack Quest targeting the village
+//				if(IsLandmarkTargeted(landmark)){
+//
+//				}
 			}
 		}else{
-			for (int i = 0; i < this._kingdom.cities.Count; i++) {
-				City city = this._kingdom.cities [i];
-				int cityTotalWeight = GetDefendCityWeight (city);
-				if (cityTotalWeight > 0) {
-					cityWeights.Add (city, cityTotalWeight);
-					strWeights += "\nDefend " + city.name + " - " + cityTotalWeight.ToString ();
-				}
+			weight += 5;
+			//TODO: go to HasDiscoveredMinorFaction
+			if(HasDiscoveredMinorFaction(landmark.location.region)){
+				weight += 10;
 			}
+			//TODO: if Chieftain is Smart, add 300 to Weight to Defend City if there is an active Attack Quest targeting the village
+//			if(IsLandmarkTargeted(landmark)){
+//				
+//			}
 		}
-		return cityWeights;
+        return weight;
+    }
+	private int GetAttackWeight(BaseLandmark landmark) {
+		int weight = 0;
+		weight += (15 * landmark.GetTechnologyCount ());
+		weight += (4 * (int)((Settlement)landmark).civilians);
+
+		/*TODO: - add 50 to Weight to Attack if the Chieftain is Imperialist
+				- add 100 to Weight to Attack if the city produces a Deficit resource
+				- add 5 to Weight to Attack for each point of Negative Opinion I have towards its Leader
+				- subtract 3 to Weight to Attack for each point of Positive Opinion I have towards its Leader
+				- add 4 to Weight to Attack for each point of Relative Strength I have over the Faction
+				- subtract 4 to Weight to Attack for each point of Relative Strength they have over my Faction
+		*/
+		return weight;
 	}
-
-	//Get all kingdom cities to attack and their weights
-	//willFactorInAssignedAttackingGenerals - controls if you want to get all cities to be attacked that has an attacking general assigned to it or not
-	private Dictionary<City, int> GetAttackCityAndWeight(bool willFactorInAssignedAttackingGenerals, ref string strWeights){
-		Dictionary<City, int> cityWeights = new Dictionary<City, int> ();
-		if(willFactorInAssignedAttackingGenerals){
-			for (int i = 0; i < this._kingdom.cities.Count; i++) {
-				City city = this._kingdom.cities [i];
-				for (int j = 0; j < city.region.connections.Count; j++) {
-					if(city.region.connections[j] is Region){
-						Region adjacentRegion = (Region)city.region.connections [j];
-						if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
-							KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-							if(kr.sharedRelationship.isAtWar && !HasGeneralTaskToAttackCity(adjacentRegion.occupant)){
-								int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
-								if(cityTotalWeight > 0){
-									cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
-									strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
-								}
-							}
-						}
-					}
-				}
-			}
-			if(this._kingdom.alliancePool != null){
-				for (int i = 0; i < this._kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-					Kingdom allyKingdom = this._kingdom.alliancePool.kingdomsInvolved [i];
-					if(this._kingdom.id != allyKingdom.id){
-						KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (allyKingdom);
-						if(kr.sharedRelationship.isAdjacent){
-							for (int j = 0; j < allyKingdom.cities.Count; j++) {
-								City city = allyKingdom.cities [j];
-								for (int k = 0; k < city.region.connections.Count; k++) {
-									if(city.region.connections[k] is Region){
-										Region adjacentRegion = (Region)city.region.connections [k];
-										if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && adjacentRegion.occupant.kingdom.id != allyKingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
-											KingdomRelationship krToEnemy = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-											if(krToEnemy.sharedRelationship.isAtWar && !HasGeneralTaskToAttackCity(adjacentRegion.occupant)){
-												int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
-												if(cityTotalWeight > 0){
-													cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
-													strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}else{
-			for (int i = 0; i < this._kingdom.cities.Count; i++) {
-				City city = this._kingdom.cities [i];
-				for (int j = 0; j < city.region.connections.Count; j++) {
-					if(city.region.connections[j] is Region){
-						Region adjacentRegion = (Region)city.region.connections [j];
-						if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
-							KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-							if(kr.sharedRelationship.isAtWar){
-								int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
-								if(cityTotalWeight > 0){
-									cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
-									strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
-								}
-							}
-						}
-					}
-				}
-			}
-			if(this._kingdom.alliancePool != null){
-				for (int i = 0; i < this._kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-					Kingdom allyKingdom = this._kingdom.alliancePool.kingdomsInvolved [i];
-					if(this._kingdom.id != allyKingdom.id){
-						KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (allyKingdom);
-						if(kr.sharedRelationship.isAdjacent){
-							for (int j = 0; j < allyKingdom.cities.Count; j++) {
-								City city = allyKingdom.cities [j];
-								for (int k = 0; k < city.region.connections.Count; k++) {
-									if(city.region.connections[k] is Region){
-										Region adjacentRegion = (Region)city.region.connections [k];
-										if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id && adjacentRegion.occupant.kingdom.id != allyKingdom.id && !cityWeights.ContainsKey(adjacentRegion.occupant)){
-											KingdomRelationship krToEnemy = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-											if(krToEnemy.sharedRelationship.isAtWar){
-												int cityTotalWeight = GetAttackCityWeight (adjacentRegion.occupant);
-												if(cityTotalWeight > 0){
-													cityWeights.Add (adjacentRegion.occupant, cityTotalWeight);
-													strWeights += "\nAttack " + adjacentRegion.occupant.name + " - " + cityTotalWeight.ToString ();
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return cityWeights;
-	}
-	private int GetDefendCityWeight(City city){
-		int cityTotalWeight = 0;
-		if(city.IsBorder()){
-			bool isAdjacentToKingdomAtWar = false;
-			bool hasGeneralAttackingCity = false;
-			bool hasGeneralOnTile = false;
-			bool hasIntlIncident = false;
-
-			List<Kingdom> checkedKingdoms = new List<Kingdom> ();
-
-			for (int j = 0; j < city.region.connections.Count; j++) {
-				if(city.region.connections[j] is Region){
-					Region adjacentRegion = (Region)city.region.connections [j];
-					if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id != this._kingdom.id){
-						KingdomRelationship kr = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-						if(kr.sharedRelationship.isAtWar){
-							isAdjacentToKingdomAtWar = true;
-//							if(adjacentRegion.occupant.kingdom.militaryManager.activeGenerals.Count > 0){
-							if(adjacentRegion.occupant.kingdom.militaryManager.HasGeneralOnTile(adjacentRegion.occupant.hexTile) && !hasGeneralOnTile){
-								hasGeneralOnTile = true;
-								cityTotalWeight += 100;
-							}
-							if (this._kingdom.king.HasTrait(TRAIT.SMART) && adjacentRegion.occupant.kingdom.militaryManager.HasGeneralTaskToAttackCity (city) && !hasGeneralAttackingCity) {
-								hasGeneralAttackingCity = true;
-								cityTotalWeight += 500;
-							}
-						}
-						if(!checkedKingdoms.Contains(adjacentRegion.occupant.kingdom)){
-							checkedKingdoms.Add (adjacentRegion.occupant.kingdom);
-							KingdomRelationship krSourceToTarget = this._kingdom.GetRelationshipWithKingdom (adjacentRegion.occupant.kingdom);
-							KingdomRelationship krTargetToSource = adjacentRegion.occupant.kingdom.GetRelationshipWithKingdom (this._kingdom);
-							if(!hasIntlIncident && krTargetToSource.sharedRelationship.internationalIncidents.Count > 0){
-								hasIntlIncident = true;
-								cityTotalWeight += 50;
-							}
-							if(krTargetToSource.totalLike < 0){
-								cityTotalWeight = (2 * krTargetToSource.totalLike);
-							}
-//							else{
-//								cityTotalWeight -= krTargetToSource.totalLike;
-//							}
-							int threat = krSourceToTarget.targetKingdomThreatLevel;
-							if(threat > 0){
-								cityTotalWeight += (4 * threat);
-							}
-						}
-					}
-				}
-			}
-			if(!isAdjacentToKingdomAtWar){
-				cityTotalWeight += 50;
-
-			}else{
-				if(this._kingdom.king.HasTrait(TRAIT.DEFENSIVE)){
-					cityTotalWeight += 50;
-				}
-				cityTotalWeight += 100 * city.cityLevel;
-			}
-		}else{
-			cityTotalWeight += 10;
-		}
-		if(cityTotalWeight < 0){
-			cityTotalWeight = 0;
-		}
-		return cityTotalWeight;
-	}
-
-	private int GetAttackCityWeight(City city){
-		int cityTotalWeight = 0;
-		cityTotalWeight += 30 * city.cityLevel;
-		if(this._kingdom.king.HasTrait(TRAIT.IMPERIALIST)){
-			cityTotalWeight += 50;
-		}
-		if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.FOOD) < 0) {
-			cityTotalWeight += 100;
-		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.MATERIAL) < 0) {
-			if (this._kingdom.race == RACE.HUMANS && city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
-				cityTotalWeight += 100;
-			}else if (this._kingdom.race == RACE.ELVES && city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY){
-				cityTotalWeight += 100;
-			}
-		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.ORE) < 0) {
-			cityTotalWeight += 100;
-		}
-
-		KingdomRelationship krSourceToTarget = this._kingdom.GetRelationshipWithKingdom (city.kingdom);
-		KingdomRelationship krTargetToSource = city.kingdom.GetRelationshipWithKingdom (this._kingdom);
-
-		if(krSourceToTarget.totalLike < 0){
-			cityTotalWeight += ((2 * krSourceToTarget.totalLike) * -1);
-		}else{
-			cityTotalWeight -= krSourceToTarget.totalLike;
-		}
-		cityTotalWeight += (krTargetToSource.relativeStrength * 4);
-		cityTotalWeight -= (krSourceToTarget.relativeStrength * 4);
-		if(cityTotalWeight < 0){
-			cityTotalWeight = 0;
-		}
-		return cityTotalWeight;
-	}
-
-	internal bool HasGeneralOnTile(HexTile hexTile){
-		for (int i = 0; i < this.activeGenerals.Count; i++) {
-			General general = this.activeGenerals [i];
-			if(general.location.id == hexTile.id){
+	private bool HasDiscoveredMinorFaction(Region region){
+		for (int i = 0; i < region.landmarks.Count; i++) {
+			if(region.landmarks[i].owner != null && region.landmarks[i].owner.factionType == FACTION_TYPE.MINOR && region.landmarks[i].isExplored){
+				//TODO: check if minor faction is hostile
 				return true;
 			}
 		}
 		return false;
 	}
+	private bool IsLandmarkTargeted(BaseLandmark landmark){
+		for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+			if(FactionManager.Instance.allFactions[i].militaryManager.IsAlreadyBeingAttacked(landmark)){
+				return true;
+			}
+		}
+		return false;
+	}
+    #endregion
 
-	internal bool HasGeneralTaskToAttackCity(City city){
-		for (int i = 0; i < this.activeGenerals.Count; i++) {
-			General general = this.activeGenerals [i];
-			if(general.generalTask != null && general.generalTask.task == GENERAL_TASKS.ATTACK_CITY){
-				if(((AttackCityTask)general.generalTask).targetCity.id == city.id){
+    #region Quest Management
+    public void AddNewQuest(Quest quest) {
+        if (!_activeQuests.Contains(quest)) {
+            _activeQuests.Add(quest);
+            quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
+        }
+    }
+    public void RemoveQuest(Quest quest) {
+        _activeQuests.Remove(quest);
+    }
+    public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
+        List<Quest> quests = new List<Quest>();
+        for (int i = 0; i < _activeQuests.Count; i++) {
+            Quest currQuest = _activeQuests[i];
+            if(currQuest.questType == questType) {
+                quests.Add(currQuest);
+            }
+        }
+        return quests;
+    }
+	public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
+		for (int i = 0; i < _activeQuests.Count; i++) {
+			Quest currQuest = _activeQuests[i];
+			if(currQuest.questType == questType) {
+				if(questType == QUEST_TYPE.EXPLORE_REGION){
+					Region region = (Region)identifier;
+					if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
+						return true;
+					}
+				}else if(questType == QUEST_TYPE.EXPAND){
+					HexTile hexTile = (HexTile)identifier;
+					if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+    #endregion
+
+	private bool IsAlreadyBeingDefended(BaseLandmark landmark){
+		for (int i = 0; i < _activeQuests.Count; i++) {
+			if(_activeQuests[i].questType == QUEST_TYPE.DEFEND && _activeQuests[i].isAccepted){
+				Defend defend = (Defend)_activeQuests [i];
+				if(defend.landmarkToDefend.id == landmark.id){
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-
-	internal void DestroyAllGenerals(){
-		while(this.activeGenerals.Count > 0){
-			this.activeGenerals [0].Death (DEATH_REASONS.ACCIDENT);
+	internal bool IsAlreadyBeingAttacked(BaseLandmark landmark){
+		for (int i = 0; i < _activeQuests.Count; i++) {
+			if(_activeQuests[i].questType == QUEST_TYPE.ATTACK && _activeQuests[i].isAccepted){
+				Attack attack = (Attack)_activeQuests [i];
+				if(attack.landmarkToAttack.id == landmark.id){
+					return true;
+				}
+			}
 		}
+		return false;
 	}
 }

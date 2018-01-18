@@ -125,7 +125,7 @@ public class KingdomManager : MonoBehaviour {
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom); //Create new kingdom
 		AddKingdom(newKingdom);
         Debug.Log("Created new kingdom: " + newKingdom.name);
-		newKingdom.militaryManager = new MilitaryManager (newKingdom);
+		newKingdom.militaryManager = new MilitaryManager2 (newKingdom);
         newKingdom.CreateInitialCities(cities); //Create initial cities
 
         if (createFamilies) { //create families?
