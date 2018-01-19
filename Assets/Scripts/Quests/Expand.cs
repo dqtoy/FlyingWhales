@@ -69,7 +69,11 @@ public class Expand : Quest {
 		if(!canAccept){
 			return false;
 		}
-		this._targetFactionSettlementTile = character.faction.GetSettlementWithHighestPopulation ().location;
+		Settlement settlement = character.faction.GetSettlementWithHighestPopulation ();
+		if((int)settlement.civilians <= 20){
+			return false;
+		}
+		this._targetFactionSettlementTile = settlement.location;
 		if(character.currLocation.id != this._targetFactionSettlementTile.id){
 			List<HexTile> path = PathGenerator.Instance.GetPath (character.currLocation, this._targetFactionSettlementTile, PATHFINDING_MODE.MAJOR_ROADS);
 			if(path == null){
@@ -95,17 +99,14 @@ public class Expand : Quest {
 		return false;
 	}
 	internal override void QuestSuccess() {
-		_isDone = true;
-		_questResult = QUEST_RESULT.SUCCESS;
-		_createdBy.RemoveQuest(this);
 		ECS.Character partyLeader = this._assignedParty.partyLeader;
 		partyLeader.ChangeRole (CHARACTER_ROLE.VILLAGE_HEAD);
         Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
         partyLeader.SetHome (expandedTo);
         expandedTo.SetHead(partyLeader);
 
-//        this._assignedParty.DisbandParty ();
-		this._assignedParty.partyLeader.DestroyAvatar ();
+        this._assignedParty.JustDisbandParty ();
+//		partyLeader.DestroyAvatar ();
 	}
 
 	internal override void QuestFail() {

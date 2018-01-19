@@ -48,6 +48,9 @@ public class CharacterAvatar : PooledObject{
     public void RemoveCharacter(ECS.Character character) {
         _characters.Remove(character);
         character.SetAvatar(null);
+		if(_characters.Count <= 0){
+			DestroyObject ();
+		}
     }
     #endregion
 
