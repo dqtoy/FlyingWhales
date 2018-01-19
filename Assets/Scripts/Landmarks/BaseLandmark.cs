@@ -263,8 +263,10 @@ public class BaseLandmark {
 			if(this.location.region.connections[i] is Region){
 				Region adjacentRegion = (Region)this.location.region.connections [i];
 				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && this.owner is Tribe && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
-					//TODO: check if adjacent to an enemy faction, if yes return true
-					return true;
+					FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
+					if(factionRel != null && factionRel.isAtWar){
+						return true;
+					}
 				}
 			}
 		}
@@ -278,9 +280,11 @@ public class BaseLandmark {
 			if(this.location.region.connections[i] is Region){
 				Region adjacentRegion = (Region)this.location.region.connections [i];
 				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
-					//TODO: check if adjacent to an enemy faction, if yes return true
-					if(adjacentRegion.centerOfMass.landmarkOnTile.HasWarlord()){
-						return true;
+					FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
+					if (factionRel != null && factionRel.isAtWar) {
+						if (adjacentRegion.centerOfMass.landmarkOnTile.HasWarlord ()) {
+							return true;
+						}
 					}
 				}
 			}

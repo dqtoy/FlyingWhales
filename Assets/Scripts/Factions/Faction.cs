@@ -24,6 +24,7 @@ public class Faction {
     protected InternalQuestManager _internalQuestManager;
     protected Dictionary<Faction, FactionRelationship> _relationships;
 	protected MilitaryManager _militaryManager;
+	protected int _threat;
 
 
     #region getters/setters
@@ -78,6 +79,9 @@ public class Faction {
 	public MilitaryManager militaryManager {
 		get { return _militaryManager; }
 	}
+	public int threatValue {
+		get { return _threat; }
+	}
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -96,6 +100,7 @@ public class Faction {
         _internalQuestManager = new InternalQuestManager(this);
         _relationships = new Dictionary<Faction, FactionRelationship>();
 		_militaryManager = new MilitaryManager (this);
+		_threat = 0; //TODO: Threat computation
     }
 
     public void SetRace(RACE race) {
@@ -214,7 +219,21 @@ public class Faction {
         return highestPopulationSettlement;
 	}
 	public bool IsAtWar(){
-		//TODO: check if this faction is hostile to other factions, or in short, if this faction is at war
+		foreach (FactionRelationship factionRel in _relationships.Values) {
+			if(factionRel.faction1.id == this._id){
+				if(factionRel.faction2.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
+					return true;
+				}else if(factionRel.faction2.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+					return true;
+				}
+			}else{
+				if(factionRel.faction1.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
+					return true;
+				}else if(factionRel.faction1.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	public List<BaseLandmark> GetAllPossibleLandmarksToAttack(){
@@ -224,9 +243,11 @@ public class Faction {
 			for (int j = 0; j < ownedLandmark.location.region.landmarks.Count; j++) {
 				BaseLandmark regionLandmark = ownedLandmark.location.region.landmarks [j];
 				if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
-					//TODO: check if minor faction is hostile
-					if(!_militaryManager.IsAlreadyBeingAttacked(regionLandmark)){
-						allPossibleLandmarksToAttack.Add(regionLandmark);
+					FactionRelationship factionRel = GetRelationshipWith(regionLandmark.owner);
+					if (factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+						if (!_militaryManager.IsAlreadyBeingAttacked (regionLandmark)) {
+							allPossibleLandmarksToAttack.Add (regionLandmark);
+						}
 					}
 				}
 			}
@@ -234,10 +255,12 @@ public class Faction {
 				if(ownedLandmark.location.region.connections[j] is Region){
 					Region adjacentRegion = (Region)ownedLandmark.location.region.connections [j];
 					if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
-						//TODO: check if adjacentregion owner is at war with this faction
-						if (!_militaryManager.IsAlreadyBeingAttacked (adjacentRegion.centerOfMass.landmarkOnTile)) {
-							if(!allPossibleLandmarksToAttack.Contains(adjacentRegion.centerOfMass.landmarkOnTile)){
-								allPossibleLandmarksToAttack.Add (adjacentRegion.centerOfMass.landmarkOnTile);
+						FactionRelationship factionRel = GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
+						if (factionRel != null && factionRel.isAtWar) {
+							if (!_militaryManager.IsAlreadyBeingAttacked (adjacentRegion.centerOfMass.landmarkOnTile)) {
+								if (!allPossibleLandmarksToAttack.Contains (adjacentRegion.centerOfMass.landmarkOnTile)) {
+									allPossibleLandmarksToAttack.Add (adjacentRegion.centerOfMass.landmarkOnTile);
+								}
 							}
 						}
 					}

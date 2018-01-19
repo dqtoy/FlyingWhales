@@ -107,7 +107,6 @@ public class MilitaryManager : QuestCreator {
 		if(landmark is Settlement){
 			if(landmark.specificLandmarkType == LANDMARK_TYPE.CITY){
 				if(landmark.IsBorder()){
-					//TODO: go to IsAdjacentToEnemy
 					if(landmark.IsAdjacentToEnemyTribe()){
 						Settlement village = (Settlement)landmark;
 						weight += (4 * (int)village.civilians);
@@ -116,55 +115,62 @@ public class MilitaryManager : QuestCreator {
 						if(landmark.HasWarlordOnAdjacentVillage()){
 							weight += 150;
 						}
-
-						//TODO: if Chieftain is Smart, add 500 to Weight to Defend City if there is an active Attack Quest targeting the village
-//						if(IsLandmarkTargeted(landmark)){
-//	
-//						}
-
-						//TODO: add 50 to Weight to Defend if the King is Defensive
+						if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+							weight += 500;
+						}
+						if(_owner.leader.HasTrait(TRAIT.DEFENSIVE)){
+							weight += 50;
+						}
 					}else{
 						weight += 50;
 					}
 
-					/*TODO: add 50 to Weight to Defend if it is adjacent to a Kingdom that we have an active International Incident with
-						- add 2 to Weight to Defend for each point of Negative Opinion each adjacent Tribe leader has towards us
-						- subtract 1 to Weight to Defend for each point of Positive Opinion each adjacent Tribe leader has towards us
-						- add 4 to Weight to Defend for each point of Threat of each adjacent Tribe
-					*/
 
+					//TODO: add 50 to Weight to Defend if it is adjacent to a Kingdom that we have an active International Incident with
+
+					foreach (FactionRelationship factionRel in _owner.relationships.Values) {
+						if(factionRel.isAdjacent){
+							Relationship rel = factionRel.faction1.leader.GetRelationshipWith (factionRel.faction2.leader);
+							if(rel != null){
+								int relModifier = 1;
+								if(rel.totalValue < 0){
+									relModifier = 2;
+								}
+								weight -= (relModifier * rel.totalValue);
+							}
+							if(factionRel.faction1.id == this._owner.id){
+								weight += (4 * factionRel.faction2.threatValue);
+							}else{
+								weight += (4 * factionRel.faction1.threatValue);
+							}
+						}
+					}
 				}else{
 					weight += 20;
-					//TODO: go to HasDiscoveredMinorFaction
 					if(HasDiscoveredMinorFaction(landmark.location.region)){
 						weight += 30;
 					}
-					//TODO: if Chieftain is Smart, add 300 to Weight to Defend City if there is an active Attack Quest targeting the village
-//					if(IsLandmarkTargeted(landmark)){
-//
-//					}
+					if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+						weight += 300;
+					}
 				}
 			}else{
 				weight += 10;
-				//TODO: go to HasDiscoveredMinorFaction
 				if(HasDiscoveredMinorFaction(landmark.location.region)){
 					weight += 20;
 				}
-				//TODO: if Chieftain is Smart, add 300 to Weight to Defend City if there is an active Attack Quest targeting the village
-//				if(IsLandmarkTargeted(landmark)){
-//
-//				}
+				if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+					weight += 300;
+				}
 			}
 		}else{
 			weight += 5;
-			//TODO: go to HasDiscoveredMinorFaction
 			if(HasDiscoveredMinorFaction(landmark.location.region)){
 				weight += 10;
 			}
-			//TODO: if Chieftain is Smart, add 300 to Weight to Defend City if there is an active Attack Quest targeting the village
-//			if(IsLandmarkTargeted(landmark)){
-//				
-//			}
+			if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+				weight += 300;
+			}
 		}
         return weight;
     }
@@ -173,27 +179,39 @@ public class MilitaryManager : QuestCreator {
 		weight += (15 * landmark.GetTechnologyCount ());
 		weight += (4 * (int)((Settlement)landmark).civilians);
 
-		/*TODO: - add 50 to Weight to Attack if the Chieftain is Imperialist
-				- add 100 to Weight to Attack if the city produces a Deficit resource
-				- add 5 to Weight to Attack for each point of Negative Opinion I have towards its Leader
-				- subtract 3 to Weight to Attack for each point of Positive Opinion I have towards its Leader
+		/*TODO:	- add 100 to Weight to Attack if the city produces a Deficit resource
 				- add 4 to Weight to Attack for each point of Relative Strength I have over the Faction
 				- subtract 4 to Weight to Attack for each point of Relative Strength they have over my Faction
 		*/
+		if(_owner.leader.HasTrait(TRAIT.IMPERIALIST)){
+			weight += 50;
+		}
+
+
+		Relationship rel = this._owner.leader.GetRelationshipWith (landmark.owner.leader);
+		if(rel != null){
+			int relModifier = 3;
+			if(rel.totalValue < 0){
+				relModifier = 5;
+			}
+			weight -= (relModifier * rel.totalValue);
+		}
 		return weight;
 	}
 	private bool HasDiscoveredMinorFaction(Region region){
 		for (int i = 0; i < region.landmarks.Count; i++) {
 			if(region.landmarks[i].owner != null && region.landmarks[i].owner.factionType == FACTION_TYPE.MINOR && region.landmarks[i].isExplored){
-				//TODO: check if minor faction is hostile
-				return true;
+				FactionRelationship factionRel = this._owner.GetRelationshipWith(region.landmarks[i].owner);
+				if(factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 	private bool IsLandmarkTargeted(BaseLandmark landmark){
 		for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-			if(FactionManager.Instance.allFactions[i].militaryManager.IsAlreadyBeingAttacked(landmark)){
+			if(FactionManager.Instance.allFactions[i].id != this._owner.id && FactionManager.Instance.allFactions[i].militaryManager.IsAlreadyBeingAttacked(landmark)){
 				return true;
 			}
 		}
