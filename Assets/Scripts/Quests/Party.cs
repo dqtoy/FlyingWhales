@@ -89,6 +89,7 @@ public class Party {
         }
         Debug.Log(member.name + " has left the party of " + partyLeader.name);
         member.SetParty(null);
+		member.SetCurrentQuest (null);
         //if (_partyMembers.Count < 2) {
         //    DisbandParty();
         //}
@@ -124,7 +125,7 @@ public class Party {
         if (_currentQuest != null && !_currentQuest.isDone) {
             _currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
         }
-
+		SetCurrentQuest (null);
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
@@ -133,8 +134,24 @@ public class Party {
             }
             currMember.GoToNearestNonHostileSettlement(() => currMember.OnReachNonHostileSettlementAfterQuest());
         }
-        
     }
+	public void JustDisbandParty() {
+		_isDisbanded = true;
+		PartyManager.Instance.RemoveParty(this);
+		if (_currentQuest != null && !_currentQuest.isDone) {
+			_currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+		}
+		SetCurrentQuest (null);
+
+		while(_partyMembers.Count > 0) {
+			ECS.Character currMember = _partyMembers[0];
+			currMember.SetParty(null);
+			RemovePartyMember(currMember);
+
+			currMember.currLocation.landmarkOnTile.AddCharacterOnLandmark(currMember);
+			currMember.DetermineAction();
+		}
+	}
     public bool AreAllPartyMembersPresent() {
         bool isPartyComplete = true;
         for (int i = 0; i < _partyMembers.Count; i++) {

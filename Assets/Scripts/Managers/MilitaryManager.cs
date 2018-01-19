@@ -29,7 +29,7 @@ public class MilitaryManager : QuestCreator {
         _activeQuests = new List<Quest>();
         if(owner is Tribe) {
             GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-//            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
         }
     }
 

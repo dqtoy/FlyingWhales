@@ -130,6 +130,11 @@ public class Quest {
 				_currentAction.onQuestActionDone = null;
 			}
 			_createdBy.RemoveQuest(this);
+//			if(_assignedParty != null){
+//				for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
+//					_assignedParty.partyMembers [i].SetCurrentQuest (null);
+//				}
+//			}
 
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
@@ -176,6 +181,9 @@ public class Quest {
     #endregion
 
     public virtual bool CanAcceptQuest(ECS.Character character) {
+		if(_isAccepted){
+			return false;
+		}
         for (int i = 0; i < _questFilters.Count; i++) {
             QuestFilter currFilter = _questFilters[i];
             if (!currFilter.MeetsRequirements(character)) {
