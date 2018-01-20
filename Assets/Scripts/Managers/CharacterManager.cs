@@ -221,6 +221,9 @@ public class CharacterManager : MonoBehaviour {
     //     return createdTrait;
     // }
     internal Trait CreateNewTraitForCharacter(TRAIT traitType, ECS.Character character) {
+        if(traitDictionary == null) {
+            ConstructTraitDictionary();
+        }
         Trait createdTrait = null;
         switch (traitType) {
             case TRAIT.OPPORTUNIST:
