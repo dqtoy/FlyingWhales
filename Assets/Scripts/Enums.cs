@@ -867,9 +867,6 @@ public enum QUEST_RESULT {
 }
 public enum QUEST_TYPE {
     EXPLORE_REGION,
-    OCCUPY_LANDMARK,
-    INVESTIGATE_LANDMARK,
-    OBTAIN_RESOURCE,
     EXPAND,
     REST,
     GO_HOME,
@@ -877,6 +874,7 @@ public enum QUEST_TYPE {
     JOIN_PARTY,
 	ATTACK,
 	DEFEND,
+    EXPLORE_TILE
 }
 public enum QUEST_ACTION_RESULT {
     SUCCESS,

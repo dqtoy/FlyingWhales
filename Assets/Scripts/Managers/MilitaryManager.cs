@@ -224,7 +224,7 @@ public class MilitaryManager : QuestCreator {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
 			_owner.AddNewQuest(quest);
-            quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
+            //quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }
     public void RemoveQuest(Quest quest) {

@@ -132,35 +132,35 @@ public class Character : QuestCreator {
         WeightedDictionary<QUEST_TYPE> actionWeights = GetActionWeights();
         if (actionWeights.GetTotalOfWeights() > 0) {
             QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
-            switch (chosenAction) {
-                case QUEST_TYPE.EXPLORE_REGION:
-                    List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
-                    if(exploreQuests.Count < 0) {
-                        throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
-                    }
-                    Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
-//                    exploreQuest.AcceptQuest(this);
-                    break;
-                case QUEST_TYPE.OCCUPY_LANDMARK:
-                    break;
-                case QUEST_TYPE.INVESTIGATE_LANDMARK:
-                    break;
-                case QUEST_TYPE.OBTAIN_RESOURCE:
-                    break;
-                case QUEST_TYPE.EXPAND:
-                    break;
-                case QUEST_TYPE.REST:
-                    StartResting();
-                    break;
-                case QUEST_TYPE.GO_HOME:
-                    StartGoHome();
-                    break;
-                case QUEST_TYPE.DO_NOTHING:
-                    StartDoNothing();
-                    break;
-                default:
-                    break;
-            }
+//            switch (chosenAction) {
+//                case QUEST_TYPE.EXPLORE_REGION:
+//                    List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
+//                    if(exploreQuests.Count < 0) {
+//                        throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
+//                    }
+//                    Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
+////                    exploreQuest.AcceptQuest(this);
+//                    break;
+//                case QUEST_TYPE.OCCUPY_LANDMARK:
+//                    break;
+//                case QUEST_TYPE.INVESTIGATE_LANDMARK:
+//                    break;
+//                case QUEST_TYPE.OBTAIN_RESOURCE:
+//                    break;
+//                case QUEST_TYPE.EXPAND:
+//                    break;
+//                case QUEST_TYPE.REST:
+//                    StartResting();
+//                    break;
+//                case QUEST_TYPE.GO_HOME:
+//                    StartGoHome();
+//                    break;
+//                case QUEST_TYPE.DO_NOTHING:
+//                    StartDoNothing();
+//                    break;
+//                default:
+//                    break;
+//            }
         }
     }
 
@@ -181,30 +181,30 @@ public class Character : QuestCreator {
     }
     private int GetWeightForQuestType(QUEST_TYPE questType) {
         int weight = 0;
-        switch (questType) {
-            case QUEST_TYPE.EXPLORE_REGION:
-                weight += GetExploreRegionWeight();
-                break;
-            case QUEST_TYPE.OCCUPY_LANDMARK:
-                break;
-            case QUEST_TYPE.INVESTIGATE_LANDMARK:
-                break;
-            case QUEST_TYPE.OBTAIN_RESOURCE:
-                break;
-            case QUEST_TYPE.EXPAND:
-                break;
-            case QUEST_TYPE.REST:
-                weight += GetRestWeight();
-                break;
-            case QUEST_TYPE.GO_HOME:
-                weight += GetGoHomeWeight();
-                break;
-            case QUEST_TYPE.DO_NOTHING:
-                weight += GetDoNothingWeight();
-                break;
-            default:
-                break;
-        }
+        //switch (questType) {
+        //    case QUEST_TYPE.EXPLORE_REGION:
+        //        weight += GetExploreRegionWeight();
+        //        break;
+        //    case QUEST_TYPE.OCCUPY_LANDMARK:
+        //        break;
+        //    case QUEST_TYPE.INVESTIGATE_LANDMARK:
+        //        break;
+        //    case QUEST_TYPE.OBTAIN_RESOURCE:
+        //        break;
+        //    case QUEST_TYPE.EXPAND:
+        //        break;
+        //    case QUEST_TYPE.REST:
+        //        weight += GetRestWeight();
+        //        break;
+        //    case QUEST_TYPE.GO_HOME:
+        //        weight += GetGoHomeWeight();
+        //        break;
+        //    case QUEST_TYPE.DO_NOTHING:
+        //        weight += GetDoNothingWeight();
+        //        break;
+        //    default:
+        //        break;
+        //}
         return weight;
     }
     private int GetExploreRegionWeight() {

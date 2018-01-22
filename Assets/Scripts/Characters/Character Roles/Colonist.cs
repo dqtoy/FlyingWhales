@@ -10,9 +10,9 @@ public class Colonist : CharacterRole {
 
 	public Colonist(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.COLONIST;
-        this.allowedRoadTypes = new List<ROAD_TYPE>() {
+        this._allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR
         };
-        this.canPassHiddenRoads = true;
+        this._canPassHiddenRoads = true;
     }
 }

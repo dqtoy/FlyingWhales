@@ -27,8 +27,18 @@ public class Log {
 		this.key = key;
 		this.fillers = new List<LogFiller>();
 	}
+    public Log(GameDate date, string category, string file, string key) {
+        this.id = Utilities.SetID<Log>(this);
+        this.month = (MONTH)date.month;
+        this.day = date.day;
+        this.year = date.year;
+        this.category = category;
+        this.file = file;
+        this.key = key;
+        this.fillers = new List<LogFiller>();
+    }
 
-	internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier){
+    internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier){
 		this.fillers.Add (new LogFiller (obj, value, identifier));
 	}
 

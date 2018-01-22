@@ -1044,24 +1044,33 @@ namespace ECS {
 		}
         public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
             //check first if the character is already at a non hostile settlement
-            if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY) {
-                //TODO: Add Check for hostility
-                onReachSettlement();
-            } else {
-                //character is not on a non hostile settlement
-                List<Settlement> allSettlements = new List<Settlement>();
-                for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
-                    //TODO: Add checking for hostility
-                    Tribe currTribe = FactionManager.Instance.allTribes[i];
+            if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
+                && this.currLocation.landmarkOnTile.owner != null) {
+                if(this.faction.id != this.currLocation.landmarkOnTile.owner.id) {
+                    if(FactionManager.Instance.GetRelationshipBetween(this.faction, this.currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                        onReachSettlement();
+                        return;
+                    }
+                } else {
+                    onReachSettlement();
+                    return;
+                }
+            }
+            //character is not on a non hostile settlement
+            List<Settlement> allSettlements = new List<Settlement>();
+            for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
+                Tribe currTribe = FactionManager.Instance.allTribes[i];
+                if(this.faction.id == currTribe.id ||
+                    FactionManager.Instance.GetRelationshipBetween(this.faction, currTribe).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
                     allSettlements.AddRange(currTribe.settlements);
                 }
-                allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.location.transform.position)).ToList();
-                if(_avatar == null) {
-                    CreateNewAvatar();
-                }
-                _avatar.SetTarget(allSettlements[0].location);
-                _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
             }
+            allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.location.transform.position)).ToList();
+            if(_avatar == null) {
+                CreateNewAvatar();
+            }
+            _avatar.SetTarget(allSettlements[0].location);
+            _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
         }
         /*
          This is the default action to be done when a 

@@ -73,6 +73,7 @@ public class Quest {
         _questType = questType;
         _daysBeforeDeadline = daysBeforeDeadline;
 		_activeDuration = 0;
+        _questFilters = new List<QuestFilter>();
         //if(daysBeforeDeadline != -1) {
         //    ScheduleDeadline();
         //}
@@ -95,7 +96,7 @@ public class Quest {
             //Character that accepts this quest must now create a party
             CreateNewPartyForQuest(partyLeader);
         }
-        UnScheduleDeadline();
+        //UnScheduleDeadline();
         SchedulePartyExpiration();
         if(onQuestAccepted != null) {
             onQuestAccepted();
@@ -231,6 +232,11 @@ public class Quest {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(days);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndQuest(result));
+    }
+    protected void ScheduleQuestAction(int days, Action action) {
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddDays(days);
+        SchedulingManager.Instance.AddEntry(dueDate, () => action());
     }
     #endregion
 

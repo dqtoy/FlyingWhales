@@ -74,6 +74,8 @@ public class SettlementInfoUI : UIMenu {
                     text += "\n" + currQuest.questType.ToString();
                     if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
                         text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name;
+                    } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
+                        text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name;
                     }
                     if (currQuest.isAccepted) {
                         text += " - A";

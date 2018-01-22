@@ -81,16 +81,24 @@ public class InternalQuestManager : QuestCreator {
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
             Region regionOfSettlement = _owner.settlements[i].location.region;
-            //check if the current region already has an active quest to explore it
-            if(!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_REGION, regionOfSettlement)) {
-                questDict.AddElement(new ExploreRegion(this, 20, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
-            }
+            ////check if the current region already has an active quest to explore it
+            //if(!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_REGION, regionOfSettlement)) {
+            //    questDict.AddElement(new ExploreRegion(this, 20, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
+            //}
             for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
-                if (regionOfSettlement.connections[j] is Region) {
-                    Region region = (Region)regionOfSettlement.connections[j];
+                object currConnection = regionOfSettlement.connections[j];
+                if (currConnection is Region) {
+                    Region region = (Region)currConnection;
                     if (!region.centerOfMass.isOccupied && !checkedExpandRegions.Contains(region)) {
                         if (!AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, region.centerOfMass)) {
                             questDict.AddElement(new Expand(this, 60, region.centerOfMass), GetExpandWeight(region));
+                        }
+                    }
+                } else if (currConnection is BaseLandmark) {
+                    BaseLandmark currLandmark = (BaseLandmark)currConnection;
+                    if(currLandmark.isHidden && !currLandmark.isExplored) {
+                        if (!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
+                            questDict.AddElement(new ExploreTile(this, 60, currLandmark), GetExploreLandmarkWeight(currLandmark));
                         }
                     }
                 }
@@ -101,13 +109,20 @@ public class InternalQuestManager : QuestCreator {
         return questDict;
     }
 
-    private int GetExploreRegionWeight(Region region) {
+    //private int GetExploreRegionWeight(Region region) {
+    //    int weight = 0;
+    //    for (int i = 0; i < region.landmarks.Count; i++) {
+    //        BaseLandmark landmark = region.landmarks[i];
+    //        if (landmark.isHidden) {
+    //            weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
+    //        }
+    //    }
+    //    return weight;
+    //}
+    private int GetExploreLandmarkWeight(BaseLandmark landmark) {
         int weight = 0;
-        for (int i = 0; i < region.landmarks.Count; i++) {
-            BaseLandmark landmark = region.landmarks[i];
-            if (landmark.isHidden) {
-                weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
-            }
+        if (landmark.isHidden) {
+            weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
         }
         return weight;
     }
@@ -150,7 +165,7 @@ public class InternalQuestManager : QuestCreator {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
             _owner.AddNewQuest(quest);
-            quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
+            //quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }
     public void RemoveQuest(Quest quest) {
@@ -176,13 +191,18 @@ public class InternalQuestManager : QuestCreator {
 					if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
 						return true;
 					}
-				}else if(questType == QUEST_TYPE.EXPAND){
+				} else if(questType == QUEST_TYPE.EXPAND){
 					HexTile hexTile = (HexTile)identifier;
 					if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
 						return true;
 					}
-				}
-			}
+				} else if (questType == QUEST_TYPE.EXPLORE_TILE) {
+                    BaseLandmark landmark = (BaseLandmark)identifier;
+                    if (((ExploreTile)currQuest).landmarkToExplore.id == landmark.id) {
+                        return true;
+                    }
+                }
+            }
 		}
 		return false;
 	}
