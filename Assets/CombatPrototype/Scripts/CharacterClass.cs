@@ -13,6 +13,7 @@ namespace ECS {
         public int dodgeRate;
         public int parryRate;
         public int blockRate;
+		public List<WEAPON_TYPE> allowedWeaponTypes;
 
         public CharacterClass CreateNewCopy() {
             CharacterClass newClass = new CharacterClass();
@@ -24,6 +25,7 @@ namespace ECS {
             newClass.dodgeRate = this.dodgeRate;
             newClass.parryRate = this.parryRate;
             newClass.blockRate = this.blockRate;
+			newClass.allowedWeaponTypes = this.allowedWeaponTypes;
             return newClass;
         }
 

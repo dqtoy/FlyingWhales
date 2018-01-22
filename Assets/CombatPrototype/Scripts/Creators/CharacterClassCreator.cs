@@ -24,6 +24,9 @@ namespace ECS {
             currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
             currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);
 
+			SerializedProperty allowedWeaponType = serializedObject.FindProperty("allowedWeaponTypes");
+			EditorGUILayout.PropertyField(allowedWeaponType, true);
+			serializedObject.ApplyModifiedProperties ();
 
             if (GUILayout.Button("Create ECS.Character Class")) {
                 SaveCharacterClass();

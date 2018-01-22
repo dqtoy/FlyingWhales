@@ -13,6 +13,7 @@ namespace ECS{
 		public int parryRate;
 		public int blockRate;
 
+		public List<WEAPON_TYPE> allowedWeaponTypes;
 //		public void AddSkillOfType(SKILL_TYPE skillType, Skill skillToAdd) {
 //			switch (skillType) {
 //			case SKILL_TYPE.ATTACK:
