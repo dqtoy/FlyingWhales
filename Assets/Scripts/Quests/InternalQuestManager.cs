@@ -73,7 +73,6 @@ public class InternalQuestManager : QuestCreator {
         dueDate.AddDays(15);
         SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
     }
-
     private WeightedDictionary<Quest> GetQuestWeightedDictionary() {
         WeightedDictionary<Quest> questDict = new WeightedDictionary<Quest>();
 		List<Region> checkedExpandRegions = new List<Region> ();
@@ -141,23 +140,15 @@ public class InternalQuestManager : QuestCreator {
 //		}
 		return 1 + (5 * region.landmarks.Count);
 	}
-    //private void CreateNewQuest(QUEST_TYPE questType) {
-    //    switch (questType) {
-    //        case QUEST_TYPE.EXPLORE_REGION:
-    //            ExploreRegion newExploreRegionQuest = new ExploreRegion(this, 90, 3);
-    //            break;
-    //        case QUEST_TYPE.OCCUPY_LANDMARK:
-    //            break;
-    //        case QUEST_TYPE.INVESTIGATE_LANDMARK:
-    //            break;
-    //        case QUEST_TYPE.OBTAIN_RESOURCE:
-    //            break;
-    //        case QUEST_TYPE.EXPAND:
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
+	internal void CreateExpandQuest(BaseLandmark originLandmark){
+		HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
+		if(unoccupiedTile != null){
+			Expand expand = new Expand(this, 60, unoccupiedTile);
+			AddNewQuest(expand);
+		}
+	}
+	internal void CreateExploreRegionQuest(){
+	}
     #endregion
 
     #region Quest Management

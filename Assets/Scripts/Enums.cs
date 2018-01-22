@@ -32,7 +32,9 @@ public enum RACE{
 	MINGONS,
 	CROMADS,
 	UNDEAD,
-    GOBLIN
+    GOBLIN,
+	TROLL,
+	DRAGON,
 }
 
 public enum PATH_DIRECTION{
@@ -913,6 +915,9 @@ public enum BODY_PART{
 	BREAST,
 	ABS,
 	RIB,
+	MOUTH,
+	WING,
+	HORN,
 }
 
 public enum CHARACTER_CLASS_TYPE {

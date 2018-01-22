@@ -99,4 +99,8 @@ public class FactionInfoUI : UIMenu {
 
         relationshipsLbl.text = relationshipText;
     }
+	public void OnClickCloseBtn(){
+//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+		HideFactionInfo ();
+	}
 }

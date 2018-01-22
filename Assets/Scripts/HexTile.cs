@@ -132,7 +132,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private CorpseMound _corpseMound = null;
 	private GameDate _corpseMoundDestroyDate;
 
-    private List<Citizen> _citizensOnTile = new List<Citizen>();
+	protected List<ECS.Character> _charactersOnTile = new List<ECS.Character>(); //List of characters on landmark
+
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
 	[System.NonSerialized] public Dictionary<HexTile, RoadConnection> connectedTiles = new Dictionary<HexTile, RoadConnection>();
@@ -178,9 +179,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //get { return _currFogOfWarState; }
         get { return FOG_OF_WAR_STATE.VISIBLE; }
     }
-    public List<Citizen> citizensOnTile {
-        get { return this._citizensOnTile; }
-    }
     public List<City> isBorderOfCities {
         get { return _isBorderOfCities; }
     }
@@ -210,6 +208,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 	public GameObject clickHighlightGO {
 		get { return _clickHighlightGO; }
+	}
+	public List<ECS.Character> charactersOnTile{
+		get { return _charactersOnTile; }
 	}
     #endregion
 
@@ -1152,7 +1153,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     ShowStructures();
                 }
                 UIParent.gameObject.SetActive(true);
-                ShowAllCitizensOnTile();
+//                ShowAllCitizensOnTile();
                 break;
             case FOG_OF_WAR_STATE.SEEN:
                 newColor.a = 128f / 255f;
@@ -1168,7 +1169,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     ShowStructures();
                 }
                 UIParent.gameObject.SetActive(true);
-                HideAllCitizensOnTile();
+//                HideAllCitizensOnTile();
                 break;
             case FOG_OF_WAR_STATE.HIDDEN:
                 newColor.a = 255f / 255f;
@@ -1180,7 +1181,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     HideStructures();
                 }
                 UIParent.gameObject.SetActive(false);
-                HideAllCitizensOnTile();
+//                HideAllCitizensOnTile();
                 break;
             default:
                 break;
@@ -1298,22 +1299,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //    _visibleByKingdoms.Remove(city.kingdom);
         //}
         //this.isVisibleByCities.Remove(city);
-    }
-    public void ShowAllCitizensOnTile() {
-        for (int i = 0; i < _citizensOnTile.Count; i++) {
-            if (_citizensOnTile[i].assignedRole.avatar != null) {
-                CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
-                currCitizenAvatar.SetAvatarState(true);
-            }
-        }
-    }
-    public void HideAllCitizensOnTile() {
-        for (int i = 0; i < _citizensOnTile.Count; i++) {
-            if (_citizensOnTile[i].assignedRole.avatar != null) {
-                CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
-                currCitizenAvatar.SetAvatarState(false);
-            }
-        }
     }
     #endregion
 
@@ -1657,18 +1642,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
             text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civilians.ToString();
             text += "\n[b]Population Growth: [/b] " + (this.landmarkOnTile.totalPopulation * this.landmarkOnTile.location.region.populationGrowth).ToString();
-            text += "\n[b]Characters: [/b] ";
-            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
-                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
-                    ECS.Character currChar = landmarkOnTile.charactersOnLandmark[i];
-                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
-                    if (currChar.currentQuest != null) {
-                        text += " " + currChar.currentQuest.questType.ToString();
-                    }
-                }
-            } else {
-                text += "NONE";
-            }
+//            text += "\n[b]Characters: [/b] ";
+//            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
+//                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
+//                    ECS.Character currChar = landmarkOnTile.charactersOnLandmark[i];
+//                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+//                    if (currChar.currentQuest != null) {
+//                        text += " " + currChar.currentQuest.questType.ToString();
+//                    }
+//                }
+//            } else {
+//                text += "NONE";
+//            }
 
             text += "\n[b]ECS.Character Caps: [/b] ";
             for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
@@ -1863,12 +1848,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         tileTextMesh.gameObject.SetActive(true);
     }
 
-    internal void EnterCitizen(Citizen citizen) {
-        this._citizensOnTile.Add(citizen);
-    }
-    internal void ExitCitizen(Citizen citizen) {
-        this._citizensOnTile.Remove(citizen);
-    }
+	#region Characters
+	public void AddCharacterOnTile(ECS.Character character) {
+		if (!_charactersOnTile.Contains(character)) {
+			_charactersOnTile.Add(character);
+		}
+	}
+	public void RemoveCharacterOnTile(ECS.Character character) {
+		_charactersOnTile.Remove(character);
+	}
+	#endregion
 
 	internal void SetCorpseMound(CorpseMound corpseMound){
 		this._corpseMound = corpseMound;

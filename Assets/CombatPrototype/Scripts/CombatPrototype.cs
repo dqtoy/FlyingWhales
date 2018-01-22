@@ -123,11 +123,11 @@ namespace ECS{
 			characterActivationWeights.Clear();
 			if(isInitial){
 				for (int i = 0; i < charactersSideA.Count; i++) {
-					charactersSideA[i].actRate = charactersSideA [i].agility * 10;
+					charactersSideA[i].actRate = charactersSideA [i].agility * 5;
 					characterActivationWeights.Add (charactersSideA [i], charactersSideA[i].actRate);
 				}
 				for (int i = 0; i < charactersSideB.Count; i++) {
-					charactersSideB[i].actRate = charactersSideB [i].agility * 10;
+					charactersSideB[i].actRate = charactersSideB [i].agility * 5;
 					characterActivationWeights.Add (charactersSideB [i], charactersSideB[i].actRate);
 				}
 			}else{
@@ -143,7 +143,7 @@ namespace ECS{
 			foreach (ECS.Character character in characterActivationWeights.Keys) {
 				character.actRate += character.baseAgility;
 			}
-			chosenCharacter.actRate = 0;
+			chosenCharacter.actRate = chosenCharacter.agility * 5;
 			return chosenCharacter;
 		}
 

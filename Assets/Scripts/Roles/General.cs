@@ -32,7 +32,7 @@ public class General : Role {
 		this.avatar.transform.localPosition = Vector3.zero;
 	}
 	internal override void DestroyGO(){
-		this.location.ExitCitizen(this.citizen);
+//		this.location.ExitCitizen(this.citizen);
 		if (this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
 			GameObject.Destroy (this.avatar);

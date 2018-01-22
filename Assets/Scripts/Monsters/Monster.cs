@@ -102,11 +102,11 @@ public class Monster {
 		this._targetObject = null;
 		this.occupiedTiles.Clear ();
 		List<HexTile> tileRadius = this.location.GetTilesInRange(2);
-		for (int i = 0; i < tileRadius.Count; i++) {
-			if(tileRadius[i].isHabitable && tileRadius[i].isOccupied && (tileRadius[i].city != null && tileRadius[i].city.id != 0) || tileRadius[i].citizensOnTile.Count > 0) {
-                this.occupiedTiles.Add (tileRadius [i]);
-			}
-		}
+//		for (int i = 0; i < tileRadius.Count; i++) {
+//			if(tileRadius[i].isHabitable && tileRadius[i].isOccupied && (tileRadius[i].city != null && tileRadius[i].city.id != 0) || tileRadius[i].citizensOnTile.Count > 0) {
+//                this.occupiedTiles.Add (tileRadius [i]);
+//			}
+//		}
 		if(this.occupiedTiles.Count > 0){
 			this.targetLocation = this.occupiedTiles [UnityEngine.Random.Range (0, this.occupiedTiles.Count)];
             //this._targetObject = this.targetLocation.city;

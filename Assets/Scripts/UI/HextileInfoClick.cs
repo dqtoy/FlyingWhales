@@ -14,6 +14,11 @@ public class HextileInfoClick : MonoBehaviour {
 				if(hextile != null && hextile.landmarkOnTile != null && hextile.landmarkOnTile.id == idToUse){
 					UIManager.Instance.ShowSettlementInfo (hextile.landmarkOnTile);
 				}
+			}else if(url.Contains("_character")){
+				ECS.Character character = FactionManager.Instance.GetCharacterByID(idToUse);
+				if(character != null){
+					UIManager.Instance.ShowCharacterInfo(character);
+				}
 			}
 		}
 	}

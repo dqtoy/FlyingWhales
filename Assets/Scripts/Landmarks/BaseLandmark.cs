@@ -18,7 +18,6 @@ public class BaseLandmark {
     protected string _landmarkName;
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
-    protected List<ECS.Character> _charactersOnLandmark; //List of characters on landmark
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
     //TODO: Add list of prisoners on landmark
     protected Dictionary<RESOURCE, int> _resourceInventory; //list of resources available on landmark
@@ -59,13 +58,10 @@ public class BaseLandmark {
         get { return _owner; }
     }
     public int totalPopulation {
-        get { return (int)civilians + _charactersOnLandmark.Count; }
+        get { return (int)civilians + _location.charactersOnTile.Count; }
     }
     public float civilians {
         get { return _civilians; }
-    }
-    public List<ECS.Character> charactersOnLandmark {
-        get { return _charactersOnLandmark; }
     }
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
@@ -88,7 +84,6 @@ public class BaseLandmark {
         _landmarkName = string.Empty; //TODO: Add name generation
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
-        _charactersOnLandmark = new List<ECS.Character>();
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
         _resourceInventory = new Dictionary<RESOURCE, int>();
         ConstructTechnologiesDictionary();
@@ -211,14 +206,6 @@ public class BaseLandmark {
     #endregion
 
     #region Characters
-    public void AddCharacterOnLandmark(ECS.Character character) {
-        if (!_charactersOnLandmark.Contains(character)) {
-            _charactersOnLandmark.Add(character);
-        }
-    }
-    public void RemoveCharacterOnLandmark(ECS.Character character) {
-        _charactersOnLandmark.Remove(character);
-    }
     /*
      Make a character consider this landmark as it's home.
          */
@@ -292,8 +279,8 @@ public class BaseLandmark {
 		return false;
 	}
 	internal bool HasWarlord(){
-		for (int i = 0; i < this.charactersOnLandmark.Count; i++) {
-			if(this.charactersOnLandmark[i].role.roleType == CHARACTER_ROLE.WARLORD){
+		for (int i = 0; i < this._location.charactersOnTile.Count; i++) {
+			if(this._location.charactersOnTile[i].role.roleType == CHARACTER_ROLE.WARLORD){
 				return true;
 			}
 		}
@@ -307,5 +294,32 @@ public class BaseLandmark {
 			}
 		}
 		return count;
+	}
+	internal bool HasAdjacentUnoccupiedTile(){
+		for (int i = 0; i < this._location.region.connections.Count; i++) {
+			if(this._location.region.connections[i] is Region){
+				Region adjacentRegion = (Region)this._location.region.connections [i];
+				if(!adjacentRegion.centerOfMass.isOccupied){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	internal HexTile GetRandomAdjacentUnoccupiedTile(){
+		List<HexTile> allUnoccupiedCenterOfMass = new List<HexTile> ();
+		for (int i = 0; i < this._location.region.connections.Count; i++) {
+			if(this._location.region.connections[i] is Region){
+				Region adjacentRegion = (Region)this._location.region.connections [i];
+				if(!adjacentRegion.centerOfMass.isOccupied && !this.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, adjacentRegion.centerOfMass)){
+					allUnoccupiedCenterOfMass.Add (adjacentRegion.centerOfMass);
+				}
+			}
+		}
+		if(allUnoccupiedCenterOfMass.Count > 0){
+			return allUnoccupiedCenterOfMass [UnityEngine.Random.Range (0, allUnoccupiedCenterOfMass.Count)];
+		}else{
+			return null;
+		}
 	}
 }

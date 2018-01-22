@@ -38,7 +38,7 @@ public class CaravanAvatar : CitizenAvatar {
 			}
 			if (this.citizenRole.path != null) {
 				if (this.citizenRole.path.Count > 0) {
-					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
+//					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
 					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
 				}else{
 					CancelEventInvolvedIn ();

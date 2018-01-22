@@ -148,7 +148,7 @@ public class Party {
 			currMember.SetParty(null);
 			RemovePartyMember(currMember);
 
-			currMember.currLocation.landmarkOnTile.AddCharacterOnLandmark(currMember);
+			currMember.currLocation.AddCharacterOnTile(currMember);
 			currMember.DetermineAction();
 		}
 	}
@@ -172,9 +172,9 @@ public class Party {
         if(tile.landmarkOnTile != null) {
             if(tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY) {
                 Settlement settlement = (Settlement)tile.landmarkOnTile;
-                for (int i = 0; i < settlement.charactersOnLandmark.Count; i++) {
+                for (int i = 0; i < settlement.location.charactersOnTile.Count; i++) {
                     if(this.isOpen && !this.isFull) {
-                        ECS.Character currCharacter = settlement.charactersOnLandmark[i];
+						ECS.Character currCharacter = settlement.location.charactersOnTile[i];
                         if (currCharacter.role.roleType == role) {
                             if (currCharacter.currentQuest is DoNothing && currCharacter.party == null) {
                                 currCharacter.currentQuest.QuestCancel();

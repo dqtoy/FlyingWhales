@@ -11,6 +11,8 @@ public class SettlementInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel settlementInfoLbl;
+	[SerializeField] private GameObject expandBtnGO;
+	[SerializeField] private GameObject exploreBtnGO;
 
     internal BaseLandmark currentlyShowingSettlement;
 
@@ -27,12 +29,14 @@ public class SettlementInfoUI : UIMenu {
     public void HideSettlementInfo() {
         isShowing = false;
 		this.gameObject.SetActive (false);
+		HidePlayerActions ();
 //      tweenPos.PlayReverse();
     }
 
     public void SetSettlementAsActive(BaseLandmark settlement) {
         currentlyShowingSettlement = settlement;
 		UIManager.Instance.hexTileInfoUI.SetHexTileAsActive (settlement.location);
+		ShowPlayerActions ();
         if (isShowing) {
             UpdateSettlementInfo();
         }
@@ -54,18 +58,6 @@ public class SettlementInfoUI : UIMenu {
             text += "\n[b]Total Population: [/b] " + currentlyShowingSettlement.totalPopulation.ToString();
             text += "\n[b]Civilian Population: [/b] " + currentlyShowingSettlement.civilians.ToString();
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingSettlement.totalPopulation * currentlyShowingSettlement.location.region.populationGrowth).ToString();
-            text += "\n[b]Characters: [/b] ";
-            if (currentlyShowingSettlement.charactersOnLandmark.Count > 0) {
-                for (int i = 0; i < currentlyShowingSettlement.charactersOnLandmark.Count; i++) {
-                    ECS.Character currChar = currentlyShowingSettlement.charactersOnLandmark[i];
-					text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
-                    if (currChar.currentQuest != null) {
-                        text += " (" + currChar.currentQuest.questType.ToString() + ")";
-                    }
-                }
-            } else {
-                text += "NONE";
-            }
 
             text += "\n[b]Active Quests: [/b] ";
             if (currentlyShowingSettlement.owner.activeQuests.Count > 0) {
@@ -89,6 +81,20 @@ public class SettlementInfoUI : UIMenu {
                 text += "NONE";
             }
         }
+
+		text += "\n[b]Characters: [/b] ";
+		if (currentlyShowingSettlement.location.charactersOnTile.Count > 0) {
+			for (int i = 0; i < currentlyShowingSettlement.location.charactersOnTile.Count; i++) {
+				ECS.Character currChar = currentlyShowingSettlement.location.charactersOnTile[i];
+				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+				if (currChar.currentQuest != null) {
+					text += " (" + currChar.currentQuest.questType.ToString() + ")";
+				}
+			}
+		} else {
+			text += "NONE";
+		}
+
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = currentlyShowingSettlement.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {
@@ -144,4 +150,43 @@ public class SettlementInfoUI : UIMenu {
        
         settlementInfoLbl.text = text;
     }
+
+	public void OnClickCloseBtn(){
+//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+		HideSettlementInfo ();
+	}
+
+	public void OnClickExpandBtn(){
+		currentlyShowingSettlement.owner.internalQuestManager.CreateExpandQuest(currentlyShowingSettlement);
+	}
+	public void OnClickExploreRegionBtn(){
+		currentlyShowingSettlement.location.region.centerOfMass.landmarkOnTile.owner.internalQuestManager.CreateExploreRegionQuest();
+	}
+	private void ShowPlayerActions(){
+		expandBtnGO.SetActive (CanExpand());
+		exploreBtnGO.SetActive (CanExploreRegion ());
+	}
+	private void HidePlayerActions(){
+		expandBtnGO.SetActive (false);
+		exploreBtnGO.SetActive (false);
+	}
+	private bool CanExpand(){
+		if(isShowing && currentlyShowingSettlement != null && currentlyShowingSettlement is Settlement){
+			Settlement settlement = (Settlement)currentlyShowingSettlement;
+			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
+				if((int)settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile()){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private bool CanExploreRegion(){
+		if(isShowing && currentlyShowingSettlement != null && currentlyShowingSettlement.isHidden && !currentlyShowingSettlement.isExplored
+			&& currentlyShowingSettlement.owner == null && currentlyShowingSettlement.location.region.centerOfMass.isOccupied){
+			return true;
+		}
+		return false;
+	}
 }

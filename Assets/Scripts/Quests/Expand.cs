@@ -52,8 +52,6 @@ public class Expand : Quest {
 		goToExpandLocationAction.onQuestDoAction += goToExpandLocationAction.Expand;
 		goToExpandLocationAction.onQuestActionDone += SuccessExpansion;
 
-
-
 //		//Enqueue all actions
 		_questLine.Enqueue(collect);
 		_questLine.Enqueue(goToExpandLocationAction);
@@ -99,22 +97,11 @@ public class Expand : Quest {
 		return false;
 	}
 	internal override void QuestSuccess() {
-		ECS.Character partyLeader = this._assignedParty.partyLeader;
-		partyLeader.ChangeRole (CHARACTER_ROLE.VILLAGE_HEAD);
-        Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
-        partyLeader.SetHome (expandedTo);
-        expandedTo.SetHead(partyLeader);
-
-        this._assignedParty.JustDisbandParty ();
-//		partyLeader.DestroyAvatar ();
+		RetaskParty (_assignedParty.JustDisbandParty);
 	}
 
 	internal override void QuestFail() {
-		_isDone = true;
-		_questResult = QUEST_RESULT.FAIL;
-		_createdBy.RemoveQuest(this);
-		RetaskParty (_assignedParty.DisbandParty);
-//		this._assignedParty.DisbandParty ();
+		RetaskParty (_assignedParty.JustDisbandParty);
 	}
 	#endregion
 
@@ -126,6 +113,11 @@ public class Expand : Quest {
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
 		this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_civilians);
 		CameraMove.Instance.UpdateMinimapTexture ();
+		Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
+		ECS.Character villageHead = expandedTo.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
+		villageHead.SetHome (expandedTo);
+		expandedTo.SetHead(villageHead);
+
 		EndQuest (QUEST_RESULT.SUCCESS);
 	}
 }
