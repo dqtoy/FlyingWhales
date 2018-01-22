@@ -50,6 +50,31 @@ namespace ECS{
 		public void SetEquipped(bool state){
 			this._isEquipped = state;
 		}
+
+        #region virtuals
+        public virtual Item CreateNewCopy() {
+            Item copy = new Item();
+            SetCommonData(copy);
+            return copy;
+        }
+        #endregion
+
+        protected void SetCommonData(Item item) {
+            item.itemType = itemType;
+            item.itemName = itemName;
+            item.description = description;
+            item.bonusActRate = bonusActRate;
+            item.bonusStrength = bonusStrength;
+            item.bonusIntelligence = bonusIntelligence;
+            item.bonusAgility = bonusAgility;
+            item.bonusMaxHP = bonusMaxHP;
+            item.bonusDodgeRate = bonusDodgeRate;
+            item.bonusParryRate = bonusParryRate;
+            item.bonusBlockRate = bonusBlockRate;
+            item.durability = durability;
+            item.currDurability = currDurability;
+            item.statusEffectResistances = new List<StatusEffectRate>(statusEffectResistances);
+        }
     }
 }
 

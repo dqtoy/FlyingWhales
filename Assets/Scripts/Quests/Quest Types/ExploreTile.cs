@@ -39,6 +39,10 @@ public class ExploreTile : Quest {
         EndQuest(QUEST_RESULT.SUCCESS);
     }
 
+    private void ExplorationResults() {
+
+    }
+
     private void ScheduleRandomResult() {
         //Once it arrives, log which Landmark is hidden in the tile.
         Log newLog = new Log(GameManager.Instance.Today(), "Quests", "ExploreTile", "discover_landmark");

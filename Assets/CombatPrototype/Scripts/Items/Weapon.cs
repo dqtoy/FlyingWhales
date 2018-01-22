@@ -40,6 +40,34 @@ namespace ECS{
 //			}
 		}
 
+        /*
+         This is for the main game that uses the SkillManager to create skills.
+             */
+        public void ConstructSkillsList() {
+            _skills = new List<Skill>();
+            if (SkillManager.Instance.weaponTypeSkills.ContainsKey(this.weaponType)) {
+                List<Skill> weaponTypeSkills = SkillManager.Instance.weaponTypeSkills[weaponType];
+                for (int i = 0; i < weaponTypeSkills.Count; i++) {
+                    Skill newSkill = weaponTypeSkills[i].CreateNewCopy();
+                    newSkill.weapon = this;
+                    _skills.Add(newSkill);
+                }
+            }
+
+            for (int i = 0; i < attackSkills.Count; i++) {
+                string skillName = attackSkills[i];
+                AttackSkill currSkill = (AttackSkill)SkillManager.Instance.CreateNewSkillInstance(skillName);
+                currSkill.weapon = this;
+                _skills.Add(currSkill);
+            }
+            for (int i = 0; i < healSkills.Count; i++) {
+                string skillName = healSkills[i];
+                HealSkill currSkill = (HealSkill)SkillManager.Instance.CreateNewSkillInstance(skillName);
+                currSkill.weapon = this;
+                _skills.Add(currSkill);
+            }
+        }
+
 		public void ConstructAllSkillsList() {
 			_skills = new List<Skill>();
 			if(CombatPrototypeManager.Instance.weaponTypeSkills.ContainsKey(this.weaponType)){
@@ -68,5 +96,24 @@ namespace ECS{
 
 
 		}
-	}
+
+        #region overrides
+        public override Item CreateNewCopy() {
+            Weapon copy = new Weapon();
+            copy.weaponType = weaponType;
+            copy.material = material;
+            copy.quality = quality;
+            copy.weaponPower = weaponPower;
+            copy.attributes = new List<IBodyPart.ATTRIBUTE>(attributes);
+            copy.equipRequirements = new List<IBodyPart.ATTRIBUTE>(equipRequirements);
+            copy.bodyPartsAttached = new List<IBodyPart>(bodyPartsAttached);
+
+            copy.attackSkills = new List<string>(attackSkills);
+            copy.healSkills = new List<string>(healSkills);
+            SetCommonData(copy);
+            copy.ConstructSkillsList();
+            return copy;
+        }
+        #endregion
+    }
 }
