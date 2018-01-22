@@ -18,7 +18,21 @@ namespace ECS {
 			}
 		}
 
-		public void ConstructWeaponSkillsList() {
+        /*
+         This is for the main game that uses the SkillManager to create skills.
+             */
+        public void ConstructSkillList() {
+            for (int i = 0; i < attackSkills.Count; i++) {
+                string skillName = attackSkills[i];
+                skills.Add(SkillManager.Instance.CreateNewSkillInstance(skillName));
+            }
+            for (int i = 0; i < healSkills.Count; i++) {
+                string skillName = healSkills[i];
+                skills.Add(SkillManager.Instance.CreateNewSkillInstance(skillName));
+            }
+        }
+
+        public void ConstructWeaponSkillsList() {
 			skills = new List<Skill>();
 			for (int i = 0; i < attackSkills.Count; i++) {
 				string skillName = attackSkills[i];
