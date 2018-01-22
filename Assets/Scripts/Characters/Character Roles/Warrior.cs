@@ -10,9 +10,9 @@ using System.Collections.Generic;
 public class Warrior : CharacterRole {
     
 	public Warrior(ECS.Character character): base (character) {
-        this.allowedRoadTypes = new List<ROAD_TYPE>() {
+        this._allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
         };
-        this.canPassHiddenRoads = false;
+        this._canPassHiddenRoads = false;
     }
 }

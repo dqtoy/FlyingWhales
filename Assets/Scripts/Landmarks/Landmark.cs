@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Obsolete("This is no longer being used! Use BaseLandmark class instead!")]
 public class Landmark {
     protected HexTile _location;
     protected LANDMARK_TYPE _landmarkType;

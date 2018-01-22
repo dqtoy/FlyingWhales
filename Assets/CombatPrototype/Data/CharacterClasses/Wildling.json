@@ -1,1 +1,1 @@
-{"className":"Wildling","strPercentage":10.0,"intPercentage":10.0,"agiPercentage":5.0,"hpPercentage":0.0,"dodgeRate":0,"parryRate":0,"blockRate":0}
+{"className":"Wildling","strPercentage":10.0,"intPercentage":10.0,"agiPercentage":5.0,"hpPercentage":0.0,"dodgeRate":0,"parryRate":0,"blockRate":0,"allowedWeaponTypes":[6]}

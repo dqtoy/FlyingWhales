@@ -1225,16 +1225,41 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Notifications Area
-    public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif = null, bool addLogToHistory = true) {
+    public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif, bool addLogToHistory = true) {
         if (addLogToHistory) {
             AddLogToLogHistory(log);
         }
-        if (kingdomsThatShouldShowNotif != null) {
-            if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
-                //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
-                return;
-            }
+        if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
+            //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
+            return;
         }
+        if (notificationItemsThatCanBeReused.Count > 0) {
+            NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
+            itemToUse.SetLog(log);
+            RemoveNotificationItemFromReuseList(itemToUse);
+            itemToUse.gameObject.SetActive(true);
+        } else {
+            GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
+            notifGO.transform.localScale = Vector3.one;
+            notifGO.GetComponent<NotificationItem>().SetLog(log);
+        }
+        //notificationParent.AddChild(notifGO.transform);
+        RepositionNotificationTable();
+        //notificationScrollView.UpdatePosition();
+        //notificationParent.Reposition();
+        notificationScrollView.UpdatePosition();
+
+    }
+    public void ShowNotification(Log log, bool addLogToHistory = true) {
+        if (addLogToHistory) {
+            AddLogToLogHistory(log);
+        }
+        //if (kingdomsThatShouldShowNotif != null) {
+        //    if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
+        //        //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
+        //        return;
+        //    }
+        //}
         if (notificationItemsThatCanBeReused.Count > 0) {
             NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
             itemToUse.SetLog(log);

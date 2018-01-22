@@ -11,9 +11,9 @@ public class Trader : CharacterRole {
 
 	public Trader(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.TRADER;
-        this.allowedRoadTypes = new List<ROAD_TYPE>() {
+        this._allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
         };
-        this.canPassHiddenRoads = true;
+        this._canPassHiddenRoads = true;
     }
 }

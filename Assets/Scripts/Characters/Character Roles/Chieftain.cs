@@ -13,15 +13,20 @@ public class Chieftain : CharacterRole {
 
 	public Chieftain(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.CHIEFTAIN;
-        this.allowedRoadTypes = new List<ROAD_TYPE>() {
+        this._allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
         };
-        this.canPassHiddenRoads = true;
+        this._canPassHiddenRoads = true;
+        this._allowedQuestTypes = new List<QUEST_TYPE>() {
+            QUEST_TYPE.ATTACK,
+            QUEST_TYPE.DEFEND,
+            QUEST_TYPE.EXPLORE_TILE
+        };
     }
 
-	internal override int GetExploreRegionWeight(ExploreRegion exploreRegionQuest) {
-		int weight = 0;
-		weight += 100; //Change algo if needed
-		return weight;
-	}
+    internal override int GetExploreTileWeight(ExploreTile exploreTileQuest) {
+        int weight = 0;
+        weight += 100; //Change algo if needed
+        return weight;
+    }
 }
