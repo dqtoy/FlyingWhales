@@ -15,4 +15,16 @@ public class Colonist : CharacterRole {
         };
         this._canPassHiddenRoads = true;
     }
+
+	internal override int GetExpandWeight(Expand expandQuest) {
+		int weight = 0;
+		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, expandQuest.targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
+		if(pathToTarget != null) {
+			weight += 200 - (5 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
+		}
+		if(weight < 0){
+			weight = 0;
+		}
+		return weight;
+	}
 }

@@ -20,4 +20,26 @@ public class Warlord : CharacterRole {
             QUEST_TYPE.DEFEND
         };
     }
+	internal override int GetDefendWeight(Defend defendQuest) {
+		int weight = 0;
+		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, defendQuest.landmarkToDefend.location, PATHFINDING_MODE.MAJOR_ROADS);
+		if(pathToTarget != null) {
+			weight += 200 - (15 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
+		}
+		if(weight < 0){
+			weight = 0;
+		}
+		return weight;
+	}
+	internal override int GetAttackWeight(Attack attackQuest) {
+		int weight = 0;
+		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, attackQuest.landmarkToAttack.location, PATHFINDING_MODE.MAJOR_ROADS);
+		if(pathToTarget != null) {
+			weight += 200 - (15 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
+		}
+		if(weight < 0){
+			weight = 0;
+		}
+		return weight;
+	}
 }
