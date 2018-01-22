@@ -1028,6 +1028,11 @@ namespace ECS {
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("WarlordAvatar", this.currLocation.transform.position, Quaternion.identity);
 				WarlordAvatar avatar = avatarGO.GetComponent<WarlordAvatar>();
 				avatar.Init(this);
+			}else if(this._role.roleType == CHARACTER_ROLE.HERO){
+				//				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
+				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("HeroAvatar", this.currLocation.transform.position, Quaternion.identity);
+				HeroAvatar avatar = avatarGO.GetComponent<HeroAvatar>();
+				avatar.Init(this);
 			}else{
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
 				CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
@@ -1071,7 +1076,7 @@ namespace ECS {
             if (_party != null) {
                 _party.CheckLeavePartyAfterQuest();
             }
-            _currLocation.landmarkOnTile.AddCharacterOnLandmark(this);
+            _currLocation.AddCharacterOnTile(this);
             DestroyAvatar();
             DetermineAction();
         }

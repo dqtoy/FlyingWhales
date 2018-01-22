@@ -99,7 +99,7 @@ public class Settlement : BaseLandmark {
 		newCharacter.SetHome (this);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterOnLandmark(newCharacter);
+        this._location.AddCharacterOnTile(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.DetermineAction();
         UIManager.Instance.UpdateFactionSummary();
@@ -107,8 +107,8 @@ public class Settlement : BaseLandmark {
     }
     public List<Party> GetPartiesInSettlement() {
         List<Party> parties = new List<Party>();
-        for (int i = 0; i < charactersOnLandmark.Count; i++) {
-            ECS.Character currCharacter = charactersOnLandmark[i];
+		for (int i = 0; i < this._location.charactersOnTile.Count; i++) {
+			ECS.Character currCharacter = this._location.charactersOnTile[i];
             if(currCharacter.party != null) {
                 if (!parties.Contains(currCharacter.party)) {
                     parties.Add(currCharacter.party);

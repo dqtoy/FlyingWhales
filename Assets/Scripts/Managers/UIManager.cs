@@ -3047,9 +3047,12 @@ public class UIManager : MonoBehaviour {
 		}
 		settlementInfoUI.ShowSettlementInfo();
 		settlementInfoUI.SetSettlementAsActive(landmark);
+//		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateSettlementInfo() {
-        settlementInfoUI.UpdateSettlementInfo();
+		if(settlementInfoUI.isShowing){
+			settlementInfoUI.UpdateSettlementInfo();
+		}
     }
     #endregion
 
@@ -3067,9 +3070,12 @@ public class UIManager : MonoBehaviour {
 		}
 		factionInfoUI.ShowFactionInfo();
 		factionInfoUI.SetFactionAsActive(faction);
+//		playerActionsUI.ShowPlayerActionsUI ();
 	}
 	public void UpdateFactionInfo() {
-		factionInfoUI.UpdateFactionInfo();
+		if (factionInfoUI.isShowing) {
+			factionInfoUI.UpdateFactionInfo ();
+		}
 	}
 	#endregion
 
@@ -3087,9 +3093,12 @@ public class UIManager : MonoBehaviour {
 		}
 		characterInfoUI.ShowCharacterInfo();
 		characterInfoUI.SetCharacterAsActive(character);
+//		playerActionsUI.ShowPlayerActionsUI ();
 	}
 	public void UpdateCharacterInfo() {
-		characterInfoUI.UpdateCharacterInfo();
+		if (characterInfoUI.isShowing) {
+			characterInfoUI.UpdateCharacterInfo ();
+		}
 	}
 	#endregion
 
@@ -3107,9 +3116,12 @@ public class UIManager : MonoBehaviour {
 		}
 		hexTileInfoUI.ShowHexTileInfo();
 		hexTileInfoUI.SetHexTileAsActive(hexTile);
+//		playerActionsUI.ShowPlayerActionsUI ();
 	}
 	public void UpdateHexTileInfo() {
-		hexTileInfoUI.UpdateHexTileInfo();
+		if (hexTileInfoUI.isShowing) {
+			hexTileInfoUI.UpdateHexTileInfo ();
+		}
 	}
     #endregion
 
@@ -3127,4 +3139,14 @@ public class UIManager : MonoBehaviour {
         factionSummaryUI.UpdateFactionsSummary();
     }
     #endregion
+
+	#region Character Info
+	[SerializeField] internal PlayerActionsUI playerActionsUI;
+	public void ShowPlayerActionsInfo() {
+		playerActionsUI.ShowPlayerActionsUI();
+	}
+	public void HidePlayerActionsInfo() {
+		playerActionsUI.HidePlayerActionsUI();
+	}
+	#endregion
 }

@@ -126,4 +126,9 @@ public class CharacterInfoUI : UIMenu {
     public void CenterCameraOnCharacter() {
         CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);
     }
+
+	public void OnClickCloseBtn(){
+//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+		HideCharacterInfo ();
+	}
 }

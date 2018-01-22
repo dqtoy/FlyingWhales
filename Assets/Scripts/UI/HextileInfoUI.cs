@@ -67,6 +67,24 @@ public class HextileInfoUI : UIMenu {
 
 		text += "\n[b]Road Type:[/b] " + currentlyShowingHexTile.roadType.ToString ();;
 
+		text += "\n[b]Characters: [/b] ";
+		if (currentlyShowingHexTile.charactersOnTile.Count > 0) {
+			for (int i = 0; i < currentlyShowingHexTile.charactersOnTile.Count; i++) {
+				ECS.Character currChar = currentlyShowingHexTile.charactersOnTile[i];
+				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+				if (currChar.currentQuest != null) {
+					text += " (" + currChar.currentQuest.questType.ToString() + ")";
+				}
+			}
+		} else {
+			text += "NONE";
+		}
+
         hexTileInfoLbl.text = text;
     }
+
+	public void OnClickCloseBtn(){
+//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+		HideHexTileInfo ();
+	}
 }
