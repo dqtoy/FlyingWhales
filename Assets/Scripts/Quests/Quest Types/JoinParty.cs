@@ -16,7 +16,7 @@ public class JoinParty : Quest {
     public JoinParty(QuestCreator createdBy, int daysBeforeDeadline, Party partyToJoin) 
         : base(createdBy, daysBeforeDeadline, QUEST_TYPE.JOIN_PARTY) {
         _questFilters = new List<QuestFilter>() {
-            new MustBeRole(CHARACTER_ROLE.ADVENTURER)
+//            new MustBeRole(CHARACTER_ROLE.ADVENTURER)
         };
         onQuestAccepted += StartQuestLine;
         _partyToJoin = partyToJoin;

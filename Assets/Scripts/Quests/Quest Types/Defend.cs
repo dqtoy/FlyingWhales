@@ -16,7 +16,7 @@ public class Defend : Quest {
         : base(createdBy, daysBeforeDeadline, QUEST_TYPE.DEFEND) {
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((MilitaryManager)createdBy).owner}),
-			new MustBeRole(CHARACTER_ROLE.WARLORD),
+//			new MustBeRole(CHARACTER_ROLE.WARLORD),
 		};
 		_landmarkToDefend = landmarkToDefend;
 		_activeDuration = 30;

@@ -18,4 +18,10 @@ public class Chieftain : CharacterRole {
         };
         this.canPassHiddenRoads = true;
     }
+
+	internal override int GetExploreRegionWeight(ExploreRegion exploreRegionQuest) {
+		int weight = 0;
+		weight += 100; //Change algo if needed
+		return weight;
+	}
 }

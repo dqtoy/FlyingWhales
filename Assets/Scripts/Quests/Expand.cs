@@ -24,7 +24,7 @@ public class Expand : Quest {
 		: base(createdBy, daysBeforeDeadline, QUEST_TYPE.EXPAND) {
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((InternalQuestManager)createdBy).owner}),
-			new MustBeRole(CHARACTER_ROLE.COLONIST),
+//			new MustBeRole(CHARACTER_ROLE.COLONIST),
 		};
 		_targetUnoccupiedTile = targetUnoccupiedTile;
 	}

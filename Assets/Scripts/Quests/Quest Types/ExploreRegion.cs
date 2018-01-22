@@ -14,7 +14,7 @@ public class ExploreRegion : Quest {
     public ExploreRegion(QuestCreator createdBy, int daysBeforeDeadline, Region regionToExplore) 
         : base(createdBy, daysBeforeDeadline, QUEST_TYPE.EXPLORE_REGION) {
         _questFilters = new List<QuestFilter>() {
-            new MustBeRole(CHARACTER_ROLE.CHIEFTAIN)
+//            new MustBeRole(CHARACTER_ROLE.CHIEFTAIN)
         };
         _regionToExplore = regionToExplore;
     }

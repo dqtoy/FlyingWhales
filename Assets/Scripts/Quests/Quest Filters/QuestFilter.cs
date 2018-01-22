@@ -51,23 +51,23 @@ public class MustHaveTraits : QuestFilter {
     #endregion
 }
 
-public class MustBeRole : QuestFilter {
-
-    private CHARACTER_ROLE _requiredRole;
-
-    public MustBeRole(CHARACTER_ROLE requiredRole) {
-        _requiredRole = requiredRole;
-    }
-
-    #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
-        if(character.role != null) {
-			return character.role.roleType == _requiredRole;
-        }
-        return false;
-    }
-    #endregion
-}
+//public class MustBeRole : QuestFilter {
+//
+//    private CHARACTER_ROLE _requiredRole;
+//
+//    public MustBeRole(CHARACTER_ROLE requiredRole) {
+//        _requiredRole = requiredRole;
+//    }
+//
+//    #region overrides
+//    public override bool MeetsRequirements(ECS.Character character) {
+//        if(character.role != null) {
+//			return character.role.roleType == _requiredRole;
+//        }
+//        return false;
+//    }
+//    #endregion
+//}
 
 public class MustBeClass : QuestFilter {
 

@@ -16,7 +16,7 @@ public class Attack : Quest {
 		: base(createdBy, daysBeforeDeadline, QUEST_TYPE.ATTACK) {		
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((MilitaryManager)createdBy).owner}),
-			new MustBeRole(CHARACTER_ROLE.WARLORD),
+//			new MustBeRole(CHARACTER_ROLE.WARLORD),
 		};
 		_landmarkToAttack = landmarkToAttack;
 		_activeDuration = 30;
