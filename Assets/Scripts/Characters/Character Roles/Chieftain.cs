@@ -24,9 +24,9 @@ public class Chieftain : CharacterRole {
         };
     }
 
-	internal override int GetExploreRegionWeight(ExploreRegion exploreRegionQuest) {
-		int weight = 0;
-		weight += 100; //Change algo if needed
-		return weight;
-	}
+    internal override int GetExploreTileWeight(ExploreTile exploreTileQuest) {
+        int weight = 0;
+        weight += 100; //Change algo if needed
+        return weight;
+    }
 }

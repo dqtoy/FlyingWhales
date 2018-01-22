@@ -110,9 +110,7 @@ public class CharacterRole {
     //	return weight;
     //}
     internal virtual int GetExploreTileWeight(ExploreTile exploreTileQuest) {
-        int weight = 0;
-        weight += 100; //Change algo if needed
-        return weight;
+        return 0;
     }
     internal virtual int GetJoinPartyWeight(JoinParty joinParty) {
 		return 0;
