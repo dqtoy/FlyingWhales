@@ -90,6 +90,9 @@ public class Party: IEncounterable {
             _avatar.RemoveCharacter(member);
         }
         Debug.Log(member.name + " has left the party of " + partyLeader.name);
+        if (currentQuest != null) {
+            currentQuest.AddNewLog(member.name + " has joined the party");
+        }
         member.SetParty(null);
 		member.SetCurrentQuest (null);
         //if (_partyMembers.Count < 2) {

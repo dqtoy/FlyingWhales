@@ -164,7 +164,8 @@ public class SettlementInfoUI : UIMenu {
 	public void OnClickExploreRegionBtn(){
 		currentlyShowingSettlement.location.region.centerOfMass
             .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingSettlement);
-	}
+        exploreBtnGO.SetActive(false);
+    }
 	private void ShowPlayerActions(){
 		expandBtnGO.SetActive (CanExpand());
 		exploreBtnGO.SetActive (CanExploreRegion ());
