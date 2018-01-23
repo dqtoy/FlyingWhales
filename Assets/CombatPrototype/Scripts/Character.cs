@@ -230,7 +230,7 @@ namespace ECS {
 		}
 
 		//Enables or Disables skills based on skill requirements
-		internal void EnableDisableSkills(){
+		internal void EnableDisableSkills(CombatPrototype combat){
 			bool isAllAttacksInRange = true;
 			bool isAttackInRange = false;
 			for (int i = 0; i < this._skills.Count; i++) {
@@ -248,7 +248,7 @@ namespace ECS {
 					continue;
 				}
 				if(skill is AttackSkill){
-					isAttackInRange = CombatPrototype.Instance.HasTargetInRangeForSkill (skill, this);
+					isAttackInRange = combat.HasTargetInRangeForSkill (skill, this);
 					if(!isAttackInRange){
 						isAllAttacksInRange = false;
 						skill.isEnabled = false;
@@ -277,17 +277,17 @@ namespace ECS {
 							continue;
 						} else {
 							bool hasEnemyOnLeft = false;
-							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
-								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
-									ECS.Character enemy = CombatPrototype.Instance.charactersSideB [j];
+							if(combat.charactersSideA.Contains(this)){
+								for (int j = 0; j < combat.charactersSideB.Count; j++) {
+									ECS.Character enemy = combat.charactersSideB [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
 									}
 								}
 							}else{
-								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
-									ECS.Character enemy = CombatPrototype.Instance.charactersSideA [j];
+								for (int j = 0; j < combat.charactersSideA.Count; j++) {
+									ECS.Character enemy = combat.charactersSideA [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -304,17 +304,17 @@ namespace ECS {
 							skill.isEnabled = false;
 						} else {
 							bool hasEnemyOnRight = false;
-							if(CombatPrototype.Instance.charactersSideA.Contains(this)){
-								for (int j = 0; j < CombatPrototype.Instance.charactersSideB.Count; j++) {
-									ECS.Character enemy = CombatPrototype.Instance.charactersSideB [j];
+							if(combat.charactersSideA.Contains(this)){
+								for (int j = 0; j < combat.charactersSideB.Count; j++) {
+									ECS.Character enemy = combat.charactersSideB [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
 									}
 								}
 							}else{
-								for (int j = 0; j < CombatPrototype.Instance.charactersSideA.Count; j++) {
-									ECS.Character enemy = CombatPrototype.Instance.charactersSideA [j];
+								for (int j = 0; j < combat.charactersSideA.Count; j++) {
+									ECS.Character enemy = combat.charactersSideA [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -353,6 +353,9 @@ namespace ECS {
 		//ECS.Character's death
 		internal void Death(){
 			this._isDead = true;
+			if(this._party != null){
+				this._party.RemovePartyMember (this);
+			}
 			CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 			if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 				Messenger.Broadcast ("CharacterDeath", this);
@@ -669,7 +672,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = UnityEngine.Random.Range (0, 100);
 							if(chance < 15){
-								CombatPrototypeUI.Instance.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+								CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
