@@ -301,7 +301,10 @@ public class Party: IEncounterable {
     }
     #endregion
 
-	public void StartEncounter(ECS.Character encounteredBy) {
-	
+	public bool StartEncounter(ECS.Character encounteredBy) {
+        return true;
 	}
+    public bool StartEncounter(Party encounteredBy) {
+        return true;
+    }
 }
