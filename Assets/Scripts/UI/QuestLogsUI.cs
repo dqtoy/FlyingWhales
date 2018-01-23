@@ -24,7 +24,7 @@ public class QuestLogsUI : UIMenu {
         string text = string.Empty;
         for (int i = 0; i < currentlyShowingQuest.questLogs.Count; i++) {
             string currLog = currentlyShowingQuest.questLogs[i];
-            text += currLog + "\n";
+            text += currLog + "\n - ";
         }
         questLogsLbl.text = text;
     }
