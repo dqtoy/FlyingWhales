@@ -5,28 +5,30 @@ using System.Collections.Generic;
 public class Expand : Quest {
 
 	private HexTile _targetUnoccupiedTile;
-	private HexTile _targetFactionSettlementTile;
+	private HexTile _originTile;
+
 	private int _civilians;
 
 	#region getters/setters
 	public HexTile targetUnoccupiedTile {
 		get { return _targetUnoccupiedTile; }
 	}
-	public HexTile targetFactionSettlementTile {
-		get { return _targetFactionSettlementTile; }
+	public HexTile originTile {
+		get { return _originTile; }
 	}
 	public int civilians{
 		get { return _civilians; }
 	}
 	#endregion
 
-	public Expand(QuestCreator createdBy, int daysBeforeDeadline, HexTile targetUnoccupiedTile) 
+	public Expand(QuestCreator createdBy, int daysBeforeDeadline, HexTile targetUnoccupiedTile, HexTile originTile = null) 
 		: base(createdBy, daysBeforeDeadline, QUEST_TYPE.EXPAND) {
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((InternalQuestManager)createdBy).owner}),
 //			new MustBeRole(CHARACTER_ROLE.COLONIST),
 		};
 		_targetUnoccupiedTile = targetUnoccupiedTile;
+		_originTile = originTile;
 	}
 
 	#region overrides
@@ -35,13 +37,6 @@ public class Expand : Quest {
 	}
 	protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
-		if (_assignedParty.partyLeader.currLocation.id != this._targetFactionSettlementTile.id) {
-			GoToLocation goToSettlementLocationAction = new GoToLocation(this); //Go to the picked region
-			goToSettlementLocationAction.InititalizeAction(this._targetFactionSettlementTile);
-			goToSettlementLocationAction.onQuestDoAction += goToSettlementLocationAction.Expand;
-			goToSettlementLocationAction.onQuestActionDone += this.PerformNextQuestAction;
-			_questLine.Enqueue(goToSettlementLocationAction);
-		}
 		Collect collect = new Collect(this);
 		collect.InititalizeAction(20);
 		collect.onQuestActionDone += this.PerformNextQuestAction;
@@ -67,29 +62,14 @@ public class Expand : Quest {
 		if(!canAccept){
 			return false;
 		}
-		Settlement settlement = character.faction.GetSettlementWithHighestPopulation ();
-		if((int)settlement.civilians <= 20){
-			return false;
-		}
-		this._targetFactionSettlementTile = settlement.location;
-		if(character.currLocation.id != this._targetFactionSettlementTile.id){
-			List<HexTile> path = PathGenerator.Instance.GetPath (character.currLocation, this._targetFactionSettlementTile, PATHFINDING_MODE.MAJOR_ROADS);
-			if(path == null){
+		if(_originTile != null){
+			if((int)_originTile.landmarkOnTile.civilians > 20 && character.currLocation.id == _originTile.id){
+				return true;
+			}else{
 				return false;
 			}
-		}
-		bool isAdjacentToTribe = false;
-		for (int j = 0; j < this._targetUnoccupiedTile.region.connections.Count; j++) {
-			if(this._targetUnoccupiedTile.region.connections[j] is Region){
-				Region region = (Region)this._targetUnoccupiedTile.region.connections [j];
-				if(region.centerOfMass.landmarkOnTile.owner != null && region.centerOfMass.landmarkOnTile.owner.id == character.faction.id){
-					isAdjacentToTribe = true;
-					break;
-				}
-			}
-		}
-		if(isAdjacentToTribe){
-			List<HexTile> path = PathGenerator.Instance.GetPath (this._targetFactionSettlementTile, this._targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
+		}else{
+			List<HexTile> path = PathGenerator.Instance.GetPath (character.currLocation, this._targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
 			if(path != null){
 				return true;
 			}

@@ -143,7 +143,7 @@ public class InternalQuestManager : QuestCreator {
 	internal void CreateExpandQuest(BaseLandmark originLandmark){
 		HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
 		if(unoccupiedTile != null){
-			Expand expand = new Expand(this, 60, unoccupiedTile);
+			Expand expand = new Expand(this, 60, unoccupiedTile, originLandmark.location);
 			AddNewQuest(expand);
 		}
 	}
