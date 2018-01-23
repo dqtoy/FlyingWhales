@@ -19,7 +19,7 @@ public class ItemChest : IEncounterable {
         ConstructQualityWeightsDictionary();
     }
 
-    public void StartEncounter(ECS.Character encounteredBy) {
+    public bool StartEncounter(ECS.Character encounteredBy) {
         Debug.Log(encounteredBy.name + " has encountered a tier " + _tier.ToString() + " " + _chestType.ToString() + " chest!");
         ECS.Item gainedItem = RandomizeItemForCharacter(encounteredBy);
         if(gainedItem != null) {
@@ -35,9 +35,10 @@ public class ItemChest : IEncounterable {
         } else {
             Debug.Log(encounteredBy.name + " got nothing from the chest");
         }
+        return true;
     }
 
-    public void StartEncounter(Party party) {
+    public bool StartEncounter(Party party) {
         for (int i = 0; i < party.partyMembers.Count; i++) {
             ECS.Character currMember = party.partyMembers[i];
             ECS.Item gainedItem = RandomizeItemForCharacter(currMember);
@@ -55,6 +56,7 @@ public class ItemChest : IEncounterable {
                 Debug.Log(currMember.name + " got nothing from the chest");
             }
         }
+        return true;
     }
 
     public ECS.Item RandomizeItemForCharacter(ECS.Character character) {

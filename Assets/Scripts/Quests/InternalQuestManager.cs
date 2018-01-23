@@ -120,8 +120,8 @@ public class InternalQuestManager : QuestCreator {
     //}
     private int GetExploreLandmarkWeight(BaseLandmark landmark) {
         int weight = 0;
-        if (landmark.isHidden) {
-            weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
+        if (!landmark.isExplored) {
+            weight += 20; //Add weight if the landmark has not been explored yet
         }
         return weight;
     }

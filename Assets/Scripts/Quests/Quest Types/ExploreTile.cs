@@ -42,7 +42,10 @@ public class ExploreTile : Quest {
     private void ExplorationResults() {
         if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
             IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
-            chosenEncounter.StartEncounter(_assignedParty);
+            bool success = chosenEncounter.StartEncounter(_assignedParty);
+            if (success) {
+                _landmarkToExplore.SetExploredState(true);
+            }
         }
     }
 

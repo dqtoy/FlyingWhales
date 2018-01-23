@@ -184,7 +184,7 @@ public class SettlementInfoUI : UIMenu {
 	}
 
 	private bool CanExploreRegion(){
-		if(isShowing && currentlyShowingSettlement != null && currentlyShowingSettlement.isHidden && !currentlyShowingSettlement.isExplored
+		if(isShowing && currentlyShowingSettlement != null && !currentlyShowingSettlement.isExplored
 			&& currentlyShowingSettlement.owner == null && currentlyShowingSettlement.location.region.centerOfMass.isOccupied){
 			return true;
 		}

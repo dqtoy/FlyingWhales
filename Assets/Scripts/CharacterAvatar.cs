@@ -102,7 +102,7 @@ public class CharacterAvatar : PooledObject{
             }
             this.path.RemoveAt(0);
         }
-        RevealRoads();
+        //RevealRoads();
         RevealLandmarks();
 
         HasArrivedAtTargetLocation();
