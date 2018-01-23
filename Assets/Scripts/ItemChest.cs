@@ -96,15 +96,15 @@ public class ItemChest : IEncounterable {
                 case 2:
                     _materialWeights.AddElement(MATERIAL.COTTON, 50);
                     _materialWeights.AddElement(MATERIAL.SILK, 50);
-                    _materialWeights.AddElement(MATERIAL.LEATHER, 50);
+                    _materialWeights.AddElement(MATERIAL.LINEN, 50);
                     break;
                 case 3:
                     _materialWeights.AddElement(MATERIAL.SILK, 50);
-                    _materialWeights.AddElement(MATERIAL.LEATHER, 100);
+					_materialWeights.AddElement(MATERIAL.LINEN, 100);
                     _materialWeights.AddElement(MATERIAL.IRON, 50);
                     break;
                 case 4:
-                    _materialWeights.AddElement(MATERIAL.LEATHER, 50);
+					_materialWeights.AddElement(MATERIAL.LINEN, 50);
                     _materialWeights.AddElement(MATERIAL.IRON, 100);
                     _materialWeights.AddElement(MATERIAL.COBALT, 50);
                     break;
