@@ -301,7 +301,10 @@ public class Party: IEncounterable {
     }
     #endregion
 
-	public void StartEncounter(ECS.Character encounteredBy) {
-	
+	public virtual bool StartEncounter(ECS.Character encounteredBy){  //will return true/false if the encounter was successful or not
+		return false;
+	}
+	public virtual bool StartEncounter(Party encounteredBy){
+		return false;
 	}
 }
