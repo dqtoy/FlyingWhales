@@ -15,6 +15,7 @@ namespace ECS {
 
 		private List<Color> unusedColors = new List<Color>();
 		private List<Color> usedColors = new List<Color>();
+		public CombatPrototype combat;
 
         private void Awake() {
             Instance = this;
@@ -24,6 +25,7 @@ namespace ECS {
 			ConstructCharacterColors ();
 			ConstructAttributeSkills ();
 			ConstructWeaponTypeSkills ();
+			NewCombat ();
 		}
         private void ConstructBaseCharacters() {
             string path = "Assets/CombatPrototype/Data/CharacterSetups/";
@@ -119,6 +121,10 @@ namespace ECS {
 				}
 			}
 			return null;
+		}
+
+		internal void NewCombat(){
+			this.combat = new CombatPrototype ();
 		}
     }
 }

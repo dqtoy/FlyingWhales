@@ -9,23 +9,22 @@ namespace ECS{
 		B,
 	}
 
-	public class CombatPrototype : MonoBehaviour {
-		public static CombatPrototype Instance;
+	public class CombatPrototype {
 
-        public float updateIntervals = 0.5f;
+        public float updateIntervals = 0f;
 
 //		public Dictionary<SIDES, List<ECS.Character>> allCharactersAndSides;
 		internal List<ECS.Character> charactersSideA;
 		internal List<ECS.Character> charactersSideB;
+		internal List<string> resultsLog;
 
-		void Awake(){
-			Instance = this;
-		}
 
-		void Start(){
+		public CombatPrototype(){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
+			this.resultsLog = new List<string> ();
+
 			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
 		}
 
@@ -38,8 +37,23 @@ namespace ECS{
                 this.charactersSideB.Add(character);
             }
 			character.SetSide (side);
-            CombatPrototypeUI.Instance.UpdateCharactersList(side);
+			if(CombatPrototypeUI.Instance != null){
+				CombatPrototypeUI.Instance.UpdateCharactersList(side);
+			}
         }
+		internal void AddCharacters(SIDES side, List<ECS.Character> characters) {
+			if (side == SIDES.A) {
+				this.charactersSideA.AddRange(characters);
+			} else {
+				this.charactersSideB.AddRange(characters);
+			}
+			for (int i = 0; i < characters.Count; i++) {
+				characters[i].SetSide (side);
+			}
+			if(CombatPrototypeUI.Instance != null){
+				CombatPrototypeUI.Instance.UpdateCharactersList(side);
+			}
+		}
         //Remove a character from a side
         internal void RemoveCharacter(SIDES side, ECS.Character character) {
             if (side == SIDES.A) {
@@ -47,15 +61,21 @@ namespace ECS{
             } else {
                 this.charactersSideB.Remove(character);
             }
-            CombatPrototypeUI.Instance.UpdateCharactersList(side);
+			if (CombatPrototypeUI.Instance != null) {
+				CombatPrototypeUI.Instance.UpdateCharactersList (side);
+			}
         }
         //Remove character without specifying a side
         internal void RemoveCharacter(ECS.Character character) {
             if (this.charactersSideA.Remove(character)) {
-                CombatPrototypeUI.Instance.UpdateCharactersList(SIDES.A);
+				if (CombatPrototypeUI.Instance != null) {
+					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.A);
+				}
             } else {
                 this.charactersSideB.Remove(character);
-                CombatPrototypeUI.Instance.UpdateCharactersList(SIDES.B);
+				if (CombatPrototypeUI.Instance != null) {
+					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.B);
+				}
             }
         }
         internal List<ECS.Character> GetCharactersOnSide(SIDES side) {
@@ -67,13 +87,13 @@ namespace ECS{
         }
         #endregion
 
-        public void StartCombatSimulationCoroutine() {
-            StartCoroutine(CombatSimulation());
-        }
+//        public void StartCombatSimulationCoroutine() {
+//            StartCoroutine(CombatSimulation());
+//        }
 
         //This simulates the whole combat system
-        public IEnumerator CombatSimulation(){
-            CombatPrototypeUI.Instance.ClearCombatLogs();
+		public void CombatSimulation(){
+            ClearCombatLogs();
 			Dictionary<ECS.Character, int> characterActivationWeights = new Dictionary<ECS.Character, int> ();
             bool isInitial = true;
 			SetRowNumber (this.charactersSideA, 1);
@@ -83,7 +103,7 @@ namespace ECS{
 			while(this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0){
                 Debug.Log("========== Round " + rounds.ToString() + " ==========");
 				ECS.Character characterThatWillAct = GetCharacterThatWillAct (characterActivationWeights, this.charactersSideA, this.charactersSideB, isInitial);
-				characterThatWillAct.EnableDisableSkills ();
+				characterThatWillAct.EnableDisableSkills (this);
                 Debug.Log(characterThatWillAct.characterClass.className + " " + characterThatWillAct.name + " will act");
                 Debug.Log("Available Skills: ");
                 for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
@@ -104,10 +124,12 @@ namespace ECS{
                 if (isInitial) {
                     isInitial = false;
                 }
-                CombatPrototypeUI.Instance.UpdateCharacterSummary();
+				if (CombatPrototypeUI.Instance != null) {
+					CombatPrototypeUI.Instance.UpdateCharacterSummary();
+				}
                 Debug.Log("========== End Round " + rounds.ToString() + " ==========");
                 rounds++;
-                yield return new WaitForSeconds(updateIntervals);
+//              yield return new WaitForSeconds(updateIntervals);
             }
 		}
 
@@ -389,15 +411,15 @@ namespace ECS{
 		private void FailedSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: What happens when a skill has failed?
 			if(skill is FleeSkill){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell down!", sourceCharacter.currentSide);
+				AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell down!", sourceCharacter.currentSide);
 //				CounterAttack (targetCharacter);
 			}else if(skill is AttackSkill){
-				CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to " + skill.skillName.ToLower() + " " + targetCharacter.name + " but missed!", sourceCharacter.currentSide);
+				AddCombatLog (sourceCharacter.name + " tried to " + skill.skillName.ToLower() + " " + targetCharacter.name + " but missed!", sourceCharacter.currentSide);
 			}else if(skill is HealSkill){
 				if(sourceCharacter == targetCharacter){
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal himself/herself but it is already expired!", sourceCharacter.currentSide);
+					AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal himself/herself but it is already expired!", sourceCharacter.currentSide);
 				}else{
-					CombatPrototypeUI.Instance.AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal " + targetCharacter.name + " but it is already expired!", sourceCharacter.currentSide);
+					AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal " + targetCharacter.name + " but it is already expired!", sourceCharacter.currentSide);
 				}
 			}
 		}
@@ -424,7 +446,7 @@ namespace ECS{
 
 		private void CounterAttack(ECS.Character character){
 			//TODO: Counter attack
-			CombatPrototypeUI.Instance.AddCombatLog (character.name + " counterattacked!", character.currentSide);
+			AddCombatLog (character.name + " counterattacked!", character.currentSide);
 		}
 
 		private void InstantDeath(ECS.Character character){
@@ -441,11 +463,11 @@ namespace ECS{
 			}else{
 				//Target character has defend successfully and will roll for counter attack
 				if(defendType == DEFEND_TYPE.DODGE){
-					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " dodged " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+					AddCombatLog(targetCharacter.name + " dodged " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
 				} else if(defendType == DEFEND_TYPE.BLOCK){
-					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " blocked " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+					AddCombatLog(targetCharacter.name + " blocked " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
 				} else if(defendType == DEFEND_TYPE.PARRY){
-					CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " parried " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+					AddCombatLog(targetCharacter.name + " parried " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
 				}
 				CounterAttack(targetCharacter);
 			}
@@ -500,68 +522,10 @@ namespace ECS{
 
 			DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
 
-			CombatPrototypeUI.Instance.AddCombatLog (log, sourceCharacter.currentSide);
+			AddCombatLog (log, sourceCharacter.currentSide);
 
 			targetCharacter.AdjustHP (-damage);
 
-            //Get all armor pieces on body part that still has hit points
-//			List<Item> armorOnBodyPart = damagedBodyPart.GetAttachedItemsOfType(ITEM_TYPE.ARMOR).OrderByDescending(x => ((Armor)x).currHitPoints).ToList();
-//            if (armorOnBodyPart.Count > 0) {
-//				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
-//					for (int i = 0; i < armorOnBodyPart.Count; i++) {
-//						Armor currArmor = (Armor)armorOnBodyPart[i];
-//						if(currArmor.currHitPoints > 0) {
-//							//Deal damage to armor
-//							hasDamagedArmor = true;
-//							int damageToArmor = 0;
-//							if(damage > currArmor.currHitPoints){
-//								damageToArmor = currArmor.currHitPoints;
-//							}else{
-//								damageToArmor = damage;
-//							}
-//							damage -= damageToArmor;
-//
-//							currArmor.AdjustHitPoints (-damageToArmor);
-//							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-//								+ "'s " + currArmor.itemName + " for " + damageToArmor.ToString() + " and damages " + targetCharacter.name + " for " + damage.ToString() + ".");
-//
-//							targetCharacter.AdjustHP(-damage);
-//
-//							if(damage < 0 ){
-//								damage = 0;
-//							}
-//						}
-//					}
-//				}
-//				if (damage > 0 && !hasDamagedArmor) {
-//					//Deal damage to hp
-//					CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-//						+ " for " + damage.ToString() + ".");
-//				}
-//
-//				int damageToDurability = attackSkill.durabilityDamage; //[SkillDurabilityDamage  +  WeaponDurabilityDamage]
-//				if (weapon != null) {
-//					damageToDurability += weapon.durabilityDamage;
-//				}
-//				for (int i = 0; i < armorOnBodyPart.Count; i++) {
-//					Armor currArmor = (Armor)armorOnBodyPart[i];
-//					if(currArmor.durability > 0) {
-//						//Reduce Armor Durability
-//						currArmor.AdjustDurability(-damageToDurability);
-//						if(currArmor.durability <= 0) {
-//							CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " destroys " + targetCharacter.name + "'s " + currArmor.itemName);
-//						}
-//					}
-//				}
-//
-//                
-//                    
-//            } else {
-//                //Deal damage to hp
-//                CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + attackSkill.skillName + " and damages " + targetCharacter.name
-//					+ " for " + damage.ToString() + ".");
-//                    targetCharacter.AdjustHP(-damage);
-//            }
         }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
@@ -610,7 +574,7 @@ namespace ECS{
 					if(chance < value){
 						chosenBodyPart.AddStatusEffect(attackSkill.statusEffectRates[i].statusEffect);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (attackSkill.statusEffectRates[i].statusEffect);
-//						CombatPrototypeUI.Instance.AddCombatLog (log);
+//						AddCombatLog (log);
 					}
 				}
 			}else{
@@ -712,12 +676,6 @@ namespace ECS{
 
 		//Returns a random body part of a character
 		private BodyPart GetRandomBodyPart(ECS.Character character){
-//			List<IBodyPart> allBodyParts = new List<IBodyPart> (character.bodyParts);
-//			for (int i = 0; i < character.bodyParts.Count; i++) {
-//				allBodyParts.AddRange (character.bodyParts [i].secondaryBodyParts);
-//			}
-
-//			return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
 			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();
 			if(allBodyParts.Count > 0){
 				return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
@@ -725,34 +683,7 @@ namespace ECS{
 				return null;
 			}
 		}
-        /*
-         * Get Weapon that meets the requirements of a given skill,
-         * if the skill does not require a weapon, this will just return null.
-         * */
-//        private Weapon GetWeaponForSkill(Skill skill, ECS.Character sourceCharacter) {
-//            if (skill.RequiresItem()) {
-//                List<Weapon> weapons = sourceCharacter.GetAllAttachedWeapons();
-//                for (int i = 0; i < weapons.Count; i++) {
-//                    Weapon currWeapon = weapons[i];
-//                    bool meetsRequirements = true;
-//                    for (int j = 0; j < skill.skillRequirements.Length; j++) {
-//                        SkillRequirement currRequirement = skill.skillRequirements[j];
-//                        if(currRequirement.equipmentType == EQUIPMENT_TYPE.NONE) {
-//                            //skip requirements that don't require an item
-//                            continue;
-//                        }
-//                        if(currRequirement.equipmentType != (EQUIPMENT_TYPE)currWeapon.weaponType || !currWeapon.attributes.Contains(currRequirement.attributeRequired)) {
-//                            meetsRequirements = false;
-//                            break;
-//                        }
-//                    }
-//                    if (meetsRequirements) {
-//                        return currWeapon;
-//                    }
-//                }
-//            }
-//            return null;
-//        }
+       
 		#endregion
 
 		#region Heal Skill
@@ -760,9 +691,9 @@ namespace ECS{
 			HealSkill healSkill = (HealSkill)skill;	
 			targetCharacter.AdjustHP (healSkill.healPower);
 			if(sourceCharacter == targetCharacter){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
+				AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
 			}else if(sourceCharacter == targetCharacter){
-				CombatPrototypeUI.Instance.AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
+				AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
 			}
 
 		}
@@ -772,14 +703,14 @@ namespace ECS{
 		private void FleeSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: ECS.Character flees
 			RemoveCharacter(targetCharacter);
-			CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
+			AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
 
 		#region Obtain Item Skill
 		private void ObtainItemSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: ECS.Character obtains an item
-			CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " obtained an item.", targetCharacter.currentSide);
+			AddCombatLog(targetCharacter.name + " obtained an item.", targetCharacter.currentSide);
 		}
 		#endregion
 
@@ -789,38 +720,20 @@ namespace ECS{
 				if (targetCharacter.currentRow != 1) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow - 1);
 				}
-				CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " moved to the left. (" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
+				AddCombatLog(targetCharacter.name + " moved to the left. (" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
 			}else if(skill.skillName == "MoveRight"){
 				if (targetCharacter.currentRow != 5) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow + 1);
 				}
-				CombatPrototypeUI.Instance.AddCombatLog(targetCharacter.name + " moved to the right.(" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
+				AddCombatLog(targetCharacter.name + " moved to the right.(" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
 			}
-
-//			if(sourceCharacter.currentRow == 1){
-//				//Automatically moves to the right since 1 is the last row on the left
-//				sourceCharacter.SetRowNumber (2);
-//			}else if(sourceCharacter.currentRow == 5){
-//				//Automatically moves to the left since 5 is the last row on the right
-//				sourceCharacter.SetRowNumber (4);
-//			}else{
-//				//TODO: Is it totally random, or there will determining factors if movement is to the left or to the right
-//				int chance = UnityEngine.Random.Range (0, 2);
-//				if(chance == 0){
-//					//Move left
-//					sourceCharacter.SetRowNumber(sourceCharacter.currentRow - 1);
-//				}else{
-//					//Move right
-//					sourceCharacter.SetRowNumber(sourceCharacter.currentRow + 1);
-//				}
-//			}
 		}
 		#endregion
 
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
 		private void CharacterDeath(ECS.Character character){
 			RemoveCharacter (character);
-			CombatPrototypeUI.Instance.AddCombatLog(character.name + " died horribly!", character.currentSide);
+			AddCombatLog(character.name + " died horribly!", character.currentSide);
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death
@@ -841,20 +754,22 @@ namespace ECS{
 			InstantDeath (character);
 		}
 
-        #region Items
-//        private void ResetAllArmorHitPoints() {
-//            List<ECS.Character> allCharacters = new List<ECS.Character>(charactersSideA);
-//            allCharacters.AddRange(charactersSideB);
-//            for (int i = 0; i < allCharacters.Count; i++) {
-//                ECS.Character currCharacter = allCharacters[i];
-//                List<Armor> armorOfCharacter = currCharacter.GetAllAttachedArmor();
-//                for (int j = 0; j < armorOfCharacter.Count; j++) {
-//                    Armor currArmor = armorOfCharacter[j];
-//                    currArmor.ResetHitPoints();
-//                }
-//            }
-//        }
-        #endregion
+		#region Logs
+		public void AddCombatLog(string combatLog, SIDES side) {
+			resultsLog.Add(combatLog);
+			Debug.Log (combatLog);
+			if (CombatPrototypeUI.Instance != null) {
+				CombatPrototypeUI.Instance.AddCombatLog(combatLog, side);
+			}
+		}
+
+		public void ClearCombatLogs() {
+			resultsLog.Clear();
+			if (CombatPrototypeUI.Instance != null) {
+				CombatPrototypeUI.Instance.ClearCombatLogs();
+			}
+		}
+		#endregion
     }
 }
 

@@ -24,4 +24,13 @@ public class DungeonParty : Party {
 		}
 		member.SetParty(null);
 	}
+
+	public override bool StartEncounter(Party encounteredBy){
+		ECS.CombatPrototype combat = new ECS.CombatPrototype ();
+		combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
+		combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
+		combat.CombatSimulation ();
+
+		return false;
+	}
 }

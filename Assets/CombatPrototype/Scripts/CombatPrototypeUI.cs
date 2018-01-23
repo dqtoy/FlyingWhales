@@ -26,14 +26,11 @@ namespace ECS{
         internal ECS.Character currSelectedCharacter;
 		internal Item currSelectedItem;
 
-        internal List<string> resultsLog;
-
         private void Awake() {
             Instance = this;
         }
 
         private void Start() {
-			this.resultsLog = new List<string> ();
             LoadCharacterChoices();
             LoadItemTypeChoices();
         }
@@ -85,13 +82,13 @@ namespace ECS{
 
         public void AddCharacterToSideA() {
             ECS.Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
-            CombatPrototype.Instance.AddCharacter(SIDES.A, newChar);
+            CombatPrototypeManager.Instance.combat.AddCharacter(SIDES.A, newChar);
             CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
         public void AddCharacterToSideB() {
             ECS.Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
-            CombatPrototype.Instance.AddCharacter(SIDES.B, newChar);
+            CombatPrototypeManager.Instance.combat.AddCharacter(SIDES.B, newChar);
             CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
@@ -102,7 +99,7 @@ namespace ECS{
                 labelToUpdate = sideBCharactersLbl;
                 sideText = "_sideB";
             }
-            List<ECS.Character> charactersFromSide = CombatPrototype.Instance.GetCharactersOnSide(side);
+            List<ECS.Character> charactersFromSide = CombatPrototypeManager.Instance.combat.GetCharactersOnSide(side);
             labelToUpdate.text = string.Empty;
             for (int i = 0; i < charactersFromSide.Count; i++) {
                 ECS.Character currCharacter = charactersFromSide[i];
@@ -119,7 +116,6 @@ namespace ECS{
 
 
         public void AddCombatLog(string combatLog, SIDES side) {
-            resultsLog.Add(combatLog);
 			if(side == SIDES.B){
 				combatSummaryLbl.text += "--------------";
 			}
@@ -129,22 +125,22 @@ namespace ECS{
         }
 
         public void ClearCombatLogs() {
-            resultsLog.Clear();
             combatSummaryLbl.text = string.Empty;
             combatSummaryScrollView.ResetPosition();
             combatSummaryScrollView.UpdateScrollbars();
         }
 
         public void ResetSimulation() {
-			while (CombatPrototype.Instance.charactersSideA.Count > 0) {
-				CombatPrototype.Instance.charactersSideA [0].Death ();
+			while (CombatPrototypeManager.Instance.combat.charactersSideA.Count > 0) {
+				CombatPrototypeManager.Instance.combat.charactersSideA [0].Death ();
 			}
-			while (CombatPrototype.Instance.charactersSideB.Count > 0) {
-				CombatPrototype.Instance.charactersSideB [0].Death ();
+			while (CombatPrototypeManager.Instance.combat.charactersSideB.Count > 0) {
+				CombatPrototypeManager.Instance.combat.charactersSideB [0].Death ();
 			}
+			CombatPrototypeManager.Instance.NewCombat ();
 			ClearCombatLogs();
-//            CombatPrototype.Instance.charactersSideA.Clear();
-//            CombatPrototype.Instance.charactersSideB.Clear();
+//            CombatPrototypeManager.Instance.combat.charactersSideA.Clear();
+//            CombatPrototypeManager.Instance.combat.charactersSideB.Clear();
             UpdateCharactersList(SIDES.A);
             UpdateCharactersList(SIDES.B);
 			ResetCurrentSelectedItem ();
