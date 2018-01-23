@@ -90,7 +90,7 @@ public class InternalQuestManager : QuestCreator {
                     Region region = (Region)currConnection;
                     if (!region.centerOfMass.isOccupied && !checkedExpandRegions.Contains(region)) {
                         if (!AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, region.centerOfMass)) {
-                            questDict.AddElement(new Expand(this, 60, region.centerOfMass), GetExpandWeight(region));
+							questDict.AddElement(new Expand(this, 60, region.centerOfMass, _owner.settlements[i].location), GetExpandWeight(_owner.settlements[i]));
                         }
                     }
                 } else if (currConnection is BaseLandmark) {
@@ -125,7 +125,7 @@ public class InternalQuestManager : QuestCreator {
         }
         return weight;
     }
-	private int GetExpandWeight(Region region) {
+	private int GetExpandWeight(BaseLandmark landmark) {
 //		int weight = 1 + (5 * (region.landmarks.Count - 1));
 //		for (int i = 0; i < region.connections.Count; i++) {
 //			if(region.connections[i] is Region){
@@ -138,7 +138,7 @@ public class InternalQuestManager : QuestCreator {
 //				}
 //			}
 //		}
-		return 1 + (5 * region.landmarks.Count);
+		return 5;
 	}
 	internal void CreateExpandQuest(BaseLandmark originLandmark){
 		HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
