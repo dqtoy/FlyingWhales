@@ -565,7 +565,9 @@ namespace ECS {
 			armor.ResetDurability();
 			armor.SetOwner(this);
 			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.bodyPart.ToString());
-			CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+            if(CombatPrototypeUI.Instance != null) {
+                CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+            }
 			return true;
 		}
 		//Unequips armor of a character
@@ -639,9 +641,26 @@ namespace ECS {
 			}
 			return false;
 		}
-		#endregion
+        internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType) {
+            for (int i = 0; i < equippedItems.Count; i++) {
+                Item currItem = equippedItems[i];
+                if (currItem.itemType == ITEM_TYPE.ARMOR) {
+                    Armor armor = (Armor)currItem;
+                    if ((EQUIPMENT_TYPE)armor.armorType == equipmentType) {
+                        return true;
+                    }
+                } else if (currItem.itemType == ITEM_TYPE.WEAPON) {
+                    Weapon weapon = (Weapon)currItem;
+                    if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        #endregion
 
-		internal void CureStatusEffects(){
+        internal void CureStatusEffects(){
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
 				if(bodyPart.statusEffects.Count > 0){

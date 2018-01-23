@@ -35,12 +35,15 @@ public class ExploreTile : Quest {
     #endregion
 
     private void TriggerRandomResult() {
-        //TODO: Trigger a random result
+        ExplorationResults();
         EndQuest(QUEST_RESULT.SUCCESS);
     }
 
     private void ExplorationResults() {
-
+        if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
+            IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
+            chosenEncounter.StartEncounter(_assignedParty.partyLeader);
+        }
     }
 
     private void ScheduleRandomResult() {

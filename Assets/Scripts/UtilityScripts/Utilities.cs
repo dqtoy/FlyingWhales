@@ -388,23 +388,23 @@ public class Utilities : MonoBehaviour {
 
     public static WeightedDictionary<LANDMARK_TYPE> GetLandmarkWeights() {
         WeightedDictionary<LANDMARK_TYPE> landmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
-        landmarkWeights.AddElement(LANDMARK_TYPE.CORN, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.PIG, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.OAK, 20);
-        landmarkWeights.AddElement(LANDMARK_TYPE.YEW, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.EBONY, 6);
-        landmarkWeights.AddElement(LANDMARK_TYPE.SILK, 20);
-        landmarkWeights.AddElement(LANDMARK_TYPE.COTTON, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.LEATHER, 6);
-        landmarkWeights.AddElement(LANDMARK_TYPE.IRON, 20);
-        landmarkWeights.AddElement(LANDMARK_TYPE.COBALT, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.MITHRIL, 6);
-        landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
-        landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.CORN, 10);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.PIG, 10);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.OAK, 20);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.YEW, 10);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.EBONY, 6);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.SILK, 20);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.COTTON, 10);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.LEATHER, 6);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.IRON, 20);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.COBALT, 10);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.MITHRIL, 6);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
         landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 25);
-        landmarkWeights.AddElement(LANDMARK_TYPE.ABANDONED_DUNGEON, 25);
-        landmarkWeights.AddElement(LANDMARK_TYPE.MYSTERIOUS_TOWER, 6);
-        landmarkWeights.AddElement(LANDMARK_TYPE.SUMMONING_SHRINE, 15);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.ABANDONED_DUNGEON, 25);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.MYSTERIOUS_TOWER, 6);
+        //landmarkWeights.AddElement(LANDMARK_TYPE.SUMMONING_SHRINE, 15);
         return landmarkWeights;
     }
 
@@ -1464,6 +1464,7 @@ public class Utilities : MonoBehaviour {
 		}
 		return MATERIAL_CATEGORY.NONE;
 	}
+
     #region Characters
     public static TECHNOLOGY GetTechnologyForCharacterClass(CHARACTER_CLASS charClass) {
         switch (charClass) {
@@ -1497,4 +1498,17 @@ public class Utilities : MonoBehaviour {
         return TECHNOLOGY.BASIC_FARMING;
     }
     #endregion
+
+    public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;
+    public static WeightedDictionary<ARMOR_TYPE> GetWeightedArmorTypes() {
+        if(weightedArmorTypes == null) {
+            weightedArmorTypes = new WeightedDictionary<ARMOR_TYPE>();
+            weightedArmorTypes.AddElement(ARMOR_TYPE.SHIRT, 100);
+            weightedArmorTypes.AddElement(ARMOR_TYPE.LEGGINGS, 80);
+            weightedArmorTypes.AddElement(ARMOR_TYPE.HELMET, 60);
+            weightedArmorTypes.AddElement(ARMOR_TYPE.BRACER, 40);
+            weightedArmorTypes.AddElement(ARMOR_TYPE.BOOT, 20);
+        }
+        return weightedArmorTypes;
+    }
 }
