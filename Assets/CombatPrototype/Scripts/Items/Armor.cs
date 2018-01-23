@@ -33,5 +33,9 @@ namespace ECS{
             return copy;
         }
         #endregion
+
+        public void SetQuality(QUALITY quality) {
+            this.quality = quality;
+        }
     }
 }

@@ -47,7 +47,7 @@ public class PlayerActionsUI : MonoBehaviour {
 		UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.internalQuestManager.CreateExpandQuest(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement);
 	}
 	public void OnClickExploreRegionBtn(){
-		UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.internalQuestManager.CreateExploreRegionQuest();
+		//UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.internalQuestManager.CreateExploreRegionQuest();
 	}
 
 	public void UpdatePlayerActionsUI(){
