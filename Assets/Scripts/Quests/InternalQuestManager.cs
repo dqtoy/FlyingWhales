@@ -185,10 +185,18 @@ public class InternalQuestManager : QuestCreator {
 						return true;
 					}
 				} else if(questType == QUEST_TYPE.EXPAND){
-					HexTile hexTile = (HexTile)identifier;
-					if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
-						return true;
+					if(identifier is HexTile){
+						HexTile hexTile = (HexTile)identifier;
+						if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
+							return true;
+						}
+					}else if(identifier is BaseLandmark){
+						BaseLandmark landmark = (BaseLandmark)identifier;
+						if(((Expand)currQuest).originTile.id == landmark.location.id){
+							return true;
+						}
 					}
+
 				} else if (questType == QUEST_TYPE.EXPLORE_TILE) {
                     BaseLandmark landmark = (BaseLandmark)identifier;
                     if (((ExploreTile)currQuest).landmarkToExplore.id == landmark.id) {

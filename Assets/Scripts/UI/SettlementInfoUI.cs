@@ -160,6 +160,7 @@ public class SettlementInfoUI : UIMenu {
 
 	public void OnClickExpandBtn(){
 		currentlyShowingSettlement.owner.internalQuestManager.CreateExpandQuest(currentlyShowingSettlement);
+		expandBtnGO.SetActive (false);
 	}
 	public void OnClickExploreRegionBtn(){
 		currentlyShowingSettlement.location.region.centerOfMass
@@ -178,7 +179,7 @@ public class SettlementInfoUI : UIMenu {
 		if(isShowing && currentlyShowingSettlement != null && currentlyShowingSettlement is Settlement){
 			Settlement settlement = (Settlement)currentlyShowingSettlement;
 			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
-				if((int)settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile()){
+				if((int)settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
 					return true;
 				}
 			}
