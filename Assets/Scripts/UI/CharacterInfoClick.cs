@@ -18,6 +18,11 @@ public class CharacterInfoClick : MonoBehaviour {
 				if(UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home.id == idToUse){
 					UIManager.Instance.ShowSettlementInfo (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
 				}
+            } else if (url.Contains("_quest")) {
+                Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
+                if (quest != null) {
+                    UIManager.Instance.ShowQuestInfo(quest);
+                }
 			} 
 //			else if (url.Contains("_character")) {
 //                ECS.Character character = FactionManager.Instance.GetCharacterByID(idToUse);

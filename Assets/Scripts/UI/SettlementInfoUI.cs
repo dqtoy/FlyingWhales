@@ -63,11 +63,13 @@ public class SettlementInfoUI : UIMenu {
             if (currentlyShowingSettlement.owner.activeQuests.Count > 0) {
                 for (int i = 0; i < currentlyShowingSettlement.owner.activeQuests.Count; i++) {
                     Quest currQuest = currentlyShowingSettlement.owner.activeQuests[i];
-                    text += "\n" + currQuest.questType.ToString();
+                    text += "\n" + "[url=" + currQuest.id + "_quest]" + currQuest.questType.ToString();
                     if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
-                        text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name;
+                        text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name + "[/url]";
                     } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
-                        text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name;
+                        text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name + "[/url]";
+                    } else {
+                        text += "[/url]";
                     }
                     if (currQuest.isAccepted) {
                         text += " - A";
@@ -88,7 +90,7 @@ public class SettlementInfoUI : UIMenu {
 				ECS.Character currChar = currentlyShowingSettlement.location.charactersOnTile[i];
 				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
 				if (currChar.currentQuest != null) {
-					text += " (" + currChar.currentQuest.questType.ToString() + ")";
+					text += " ([url=" + currChar.currentQuest.id + "_quest]" + currChar.currentQuest.questType.ToString() + "[/url])";
 				}
 			}
 		} else {

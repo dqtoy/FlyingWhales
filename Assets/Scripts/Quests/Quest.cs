@@ -17,6 +17,7 @@ public class Quest {
     protected delegate void OnQuestEnd(QUEST_RESULT result);
     protected OnQuestEnd onQuestEnd;
 
+    protected int _id;
     protected QuestCreator _createdBy;
     protected QUEST_TYPE _questType;
     protected int _daysBeforeDeadline;
@@ -36,6 +37,9 @@ public class Quest {
     private Action _deadlineAction;
 
     #region getters/setters
+    public int id {
+        get { return _id; }
+    }
     public QUEST_TYPE questType {
         get { return _questType; }
     }
@@ -69,6 +73,7 @@ public class Quest {
      NOTE: Set daysBeforeDeadline to -1 if quest cannot expire.
          */
     public Quest(QuestCreator createdBy, int daysBeforeDeadline, QUEST_TYPE questType) {
+        _id = Utilities.SetID(this);
         _createdBy = createdBy;
         _questType = questType;
         _daysBeforeDeadline = daysBeforeDeadline;
@@ -78,6 +83,9 @@ public class Quest {
         //    ScheduleDeadline();
         //}
         //_createdBy.AddNewQuest(this);
+        if (!(createdBy is ECS.Character)) {
+            FactionManager.Instance.AddQuest(this);
+        }
     }
 
     #region virtuals
@@ -131,6 +139,7 @@ public class Quest {
 				_currentAction.onQuestActionDone = null;
 			}
 			_createdBy.RemoveQuest(this);
+            FactionManager.Instance.RemoveQuest(this);
 //			if(_assignedParty != null){
 //				for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
 //					_assignedParty.partyMembers [i].SetCurrentQuest (null);
