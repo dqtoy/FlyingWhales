@@ -1857,6 +1857,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public void RemoveCharacterOnTile(ECS.Character character) {
 		_charactersOnTile.Remove(character);
 	}
+	public ECS.Character GetCharacterByID(int id){
+		for (int i = 0; i < _charactersOnTile.Count; i++) {
+			if(_charactersOnTile[i].id == id){
+				return _charactersOnTile [i];
+			}
+		}
+		return null;
+	}
 	#endregion
 
 	internal void SetCorpseMound(CorpseMound corpseMound){

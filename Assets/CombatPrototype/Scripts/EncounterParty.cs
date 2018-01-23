@@ -7,21 +7,28 @@ public class EncounterParty : MonoBehaviour {
 
 	private List<ECS.CharacterSetup> _characterSetups;
 
-	void Start(){
+	internal void Initialize(){
 		_characterSetups = new List<ECS.CharacterSetup> ();
+		ConstructAllCharacterSetups ();
 	}
-
-	private void ConstructAllCharacters(){
-		string path = "Assets/CombatPrototype/Data/CharacterSetups/";
+	private void ConstructAllCharacterSetups(){
 		for (int i = 0; i < partyMembers.Length; i++) {
-			string file = path + partyMembers[i].name + ".json";
-			string dataAsJson = System.IO.File.ReadAllText(file);
-			ECS.CharacterSetup charSetup = JsonUtility.FromJson<ECS.CharacterSetup>(dataAsJson);
+			ECS.CharacterSetup charSetup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(partyMembers[i].name);
 			_characterSetups.Add(charSetup);
 		}	
 	}
 
-	internal List<ECS.CharacterSetup> GetAllCharacters(){
-		return new List<ECS.CharacterSetup> (_characterSetups);
+	internal List<ECS.Character> GetAllCharacters(DungeonLandmark originLandmark = null){
+		List<ECS.Character> characters = new List<ECS.Character> ();
+		for (int i = 0; i < _characterSetups.Count; i++) {
+			ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.NONE, _characterSetups[i]);
+			if(originLandmark != null){
+				newCharacter.SetLocation (originLandmark.location);
+				newCharacter.SetHome (originLandmark);
+				originLandmark.location.AddCharacterOnTile(newCharacter);
+			}
+			characters.Add (newCharacter);
+		}
+		return characters;
 	}
 }

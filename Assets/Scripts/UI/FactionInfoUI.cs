@@ -75,7 +75,7 @@ public class FactionInfoUI : UIMenu {
 		if (currentlyShowingFaction.characters.Count > 0) {
 			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
 				ECS.Character currChar = currentlyShowingFaction.characters[i];
-				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
 				if (currChar.currentQuest != null) {
 					text += " (" + currChar.currentQuest.questType.ToString() + ")";
 				}

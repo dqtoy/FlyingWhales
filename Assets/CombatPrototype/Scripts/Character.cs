@@ -48,7 +48,7 @@ namespace ECS {
 		private string _characterColorCode;
 		private bool _isDead;
 		private List<Quest> _activeQuests;
-		private Settlement _home;
+		private BaseLandmark _home;
 
 		internal int actRate;
 
@@ -158,7 +158,7 @@ namespace ECS {
 		internal string characterColorCode {
 			get { return _characterColorCode; }
 		}
-        public Settlement home {
+        public BaseLandmark home {
             get { return _home; }
         }
         public float missingHP {
@@ -1135,7 +1135,7 @@ namespace ECS {
         #endregion
 
         #region Utilities
-        public void SetHome(Settlement newHome) {
+		public void SetHome(BaseLandmark newHome) {
             this._home = newHome;
         }
         #endregion

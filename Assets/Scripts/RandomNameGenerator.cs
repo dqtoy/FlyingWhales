@@ -209,7 +209,7 @@ public class RandomNameGenerator : MonoBehaviour {
 		} else if(race == RACE.ELVES) {
 			return GenerateElvenName(gender);
 		}
-		return "";
+		return GenerateElvenName(gender);
 	}
 
 	public string GenerateKingdomName(RACE race){

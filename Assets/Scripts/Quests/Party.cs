@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Party {
+public class Party: IEncounterable {
 
     public delegate void OnPartyFull(Party party);
     public OnPartyFull onPartyFull;
@@ -43,23 +43,25 @@ public class Party {
     }
     #endregion
 
-    public Party(ECS.Character partyLeader) {
+	public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
         _name = RandomNameGenerator.Instance.GetAllianceName();
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
         Debug.Log(partyLeader.name + " has created " + _name);
 
         AddPartyMember(_partyLeader);
-        PartyManager.Instance.AddParty(this);
+		if(mustBeAddedToPartyList){
+			PartyManager.Instance.AddParty(this);
+		}
     }
 
     #region Party Management
     /*
      Add a new party member.
          */
-    public void AddPartyMember(ECS.Character member) {
+    public virtual void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
-            CreateRelationshipsForNewMember(member);
+			CreateRelationshipsForNewMember(member);
             _partyMembers.Add(member);
             member.SetParty(this);
             member.SetCurrentQuest(_currentQuest);
@@ -82,7 +84,7 @@ public class Party {
     /*
      Remove a character from this party.
          */
-    public void RemovePartyMember(ECS.Character member) {
+    public virtual void RemovePartyMember(ECS.Character member) {
         _partyMembers.Remove(member);
         if(_avatar != null) {
             _avatar.RemoveCharacter(member);
@@ -298,4 +300,8 @@ public class Party {
         }
     }
     #endregion
+
+	public void StartEncounter(ECS.Character encounteredBy) {
+	
+	}
 }

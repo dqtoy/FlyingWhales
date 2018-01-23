@@ -14,11 +14,13 @@ public class SkillManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        ConstructAllSkillsList();
-        ConstructAttributeSkills();
-        ConstructWeaponTypeSkills();
-    }
 
+    }
+	internal void Initialize(){
+		ConstructAllSkillsList();
+		ConstructAttributeSkills();
+		ConstructWeaponTypeSkills();
+	}
     private void ConstructAllSkillsList() {
         allSkills = new Dictionary<string, ECS.Skill>();
         string path = "Assets/CombatPrototype/Data/Skills/";

@@ -15,9 +15,10 @@ public class SettlementInfoClick : MonoBehaviour {
 					UIManager.Instance.ShowFactionInfo (faction);
 				}
 			} else if(url.Contains("_character")){
-				ECS.Character character = FactionManager.Instance.GetCharacterByID(idToUse);
+				HexTile hextile = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location;
+				ECS.Character character = hextile.GetCharacterByID(idToUse);
 				if(character != null){
-					UIManager.Instance.ShowCharacterInfo (character);
+					UIManager.Instance.ShowCharacterInfo(character);
 				}
 			} else if(url.Contains("_hextile")){
 				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.id == idToUse){

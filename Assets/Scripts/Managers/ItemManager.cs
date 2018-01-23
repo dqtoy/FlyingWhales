@@ -12,9 +12,10 @@ public class ItemManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        ConstructItemsDictionary();
     }
-
+	internal void Initialize(){
+		ConstructItemsDictionary();
+	}
     private void ConstructItemsDictionary() {
         allItems = new Dictionary<string, ECS.Item>();
         string path = "Assets/CombatPrototype/Data/Items/";

@@ -27,12 +27,12 @@ public class LocalizationManager : MonoBehaviour {
 			Destroy (this.gameObject);
 		}
 		DontDestroyOnLoad (this.gameObject);
-
+	}
+	internal void Initialize(){
 		this.language = Utilities.defaultLanguage;
 		this.filePath = Application.streamingAssetsPath + "/" + this.language.ToString();
 		LoadLocalizedTexts ();
 	}
-
 	/*
 	 * Load Localized Text From the StreamingAssets
 	 * Directory, and put them in the localizedText Dictionary
