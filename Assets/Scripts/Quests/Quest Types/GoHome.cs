@@ -23,7 +23,7 @@ public class GoHome : Quest {
         base.ConstructQuestLine();
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-        goToLocation.InititalizeAction(((ECS.Character)_createdBy).home);
+        goToLocation.InititalizeAction(((ECS.Character)_createdBy).home.location);
         goToLocation.onQuestActionDone += QuestSuccess;
         goToLocation.onQuestDoAction += goToLocation.Generic;
 

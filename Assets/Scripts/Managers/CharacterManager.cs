@@ -181,6 +181,14 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.AssignRole(charRole);
         return newCharacter;
     }
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, ECS.CharacterSetup setup) {
+		if (setup == null) {
+			return null;
+		}
+		ECS.Character newCharacter = new ECS.Character(setup);
+		newCharacter.AssignRole(charRole);
+		return newCharacter;
+	}
     #endregion
 
     #region Traits

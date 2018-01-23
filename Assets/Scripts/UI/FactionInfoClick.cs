@@ -10,8 +10,8 @@ public class FactionInfoClick : MonoBehaviour {
 			int idToUse = int.Parse (id);
 			//Debug.Log("Clicked " + url);
 			if(url.Contains("_character")){
-				ECS.Character character = FactionManager.Instance.GetCharacterByID(idToUse);
-				if(character != null){
+				ECS.Character character = UIManager.Instance.factionInfoUI.currentlyShowingFaction.GetCharacterByID(idToUse);
+				if (character != null) {
 					UIManager.Instance.ShowCharacterInfo(character);
 				}
 			}else if(url.Contains("_landmark")){

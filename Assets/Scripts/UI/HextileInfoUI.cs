@@ -71,7 +71,7 @@ public class HextileInfoUI : UIMenu {
 		if (currentlyShowingHexTile.charactersOnTile.Count > 0) {
 			for (int i = 0; i < currentlyShowingHexTile.charactersOnTile.Count; i++) {
 				ECS.Character currChar = currentlyShowingHexTile.charactersOnTile[i];
-				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
 				if (currChar.currentQuest != null) {
 					text += " (" + currChar.currentQuest.questType.ToString() + ")";
 				}

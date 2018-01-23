@@ -18,12 +18,13 @@ namespace ECS {
 
         private void Awake() {
             Instance = this;
-            ConstructBaseCharacters();
+        }
+		internal void Initialize(){
+			ConstructBaseCharacters();
 			ConstructCharacterColors ();
 			ConstructAttributeSkills ();
 			ConstructWeaponTypeSkills ();
-        }
-
+		}
         private void ConstructBaseCharacters() {
             string path = "Assets/CombatPrototype/Data/CharacterSetups/";
             string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
@@ -109,5 +110,15 @@ namespace ECS {
             }
             return null;
         }
+
+		internal CharacterSetup GetBaseCharacterSetup(string fileName) {
+			for (int i = 0; i < this.baseCharacters.Length; i++) {
+				CharacterSetup currBase = this.baseCharacters[i];
+				if (currBase.fileName == fileName) {
+					return currBase;
+				}
+			}
+			return null;
+		}
     }
 }

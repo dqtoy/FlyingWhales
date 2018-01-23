@@ -47,9 +47,24 @@ public class CharacterInfoUI : UIMenu {
         text += "[b]Name:[/b] " + currentlyShowingCharacter.name;
 		text += "\n[b]Gender:[/b] " + currentlyShowingCharacter.gender.ToString();
 		text += "\n[b]Race:[/b] " + currentlyShowingCharacter.raceSetting.race.ToString ();
-		text += "\n[b]Faction:[/b] " + "[url=" + currentlyShowingCharacter.faction.id + "_faction]" + currentlyShowingCharacter.faction.name + "[/url]";
-		text += "\n[b]Class:[/b] " + currentlyShowingCharacter.characterClass.className;
-		text += "\n[b]Role:[/b] " + currentlyShowingCharacter.role.roleType.ToString();
+		text += "\n[b]Faction:[/b] ";
+		if(currentlyShowingCharacter.faction != null){
+			text += "[url=" + currentlyShowingCharacter.faction.id + "_faction]" + currentlyShowingCharacter.faction.name + "[/url]";
+		}else{
+			text += "NONE";
+		}
+		text += "\n[b]Class:[/b] ";
+		if(currentlyShowingCharacter.characterClass != null){
+			text += currentlyShowingCharacter.characterClass.className;
+		}else{
+			text += "NONE";
+		}
+		text += "\n[b]Role:[/b] ";
+		if(currentlyShowingCharacter.role != null){
+			text += currentlyShowingCharacter.role.roleType.ToString();
+		}else{
+			text += "NONE";
+		}
 
 		text += "\n[b]Current Quest:[/b] ";
 		if(currentlyShowingCharacter.currentQuest != null){

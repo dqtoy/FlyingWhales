@@ -86,7 +86,7 @@ public class SettlementInfoUI : UIMenu {
 		if (currentlyShowingSettlement.location.charactersOnTile.Count > 0) {
 			for (int i = 0; i < currentlyShowingSettlement.location.charactersOnTile.Count; i++) {
 				ECS.Character currChar = currentlyShowingSettlement.location.charactersOnTile[i];
-				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
 				if (currChar.currentQuest != null) {
 					text += " (" + currChar.currentQuest.questType.ToString() + ")";
 				}

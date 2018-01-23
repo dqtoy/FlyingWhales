@@ -93,7 +93,7 @@ public class Settlement : BaseLandmark {
          */
 	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
         ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, _owner.race);
-        newCharacter.AssignRole(charRole);
+//        newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(_owner);
         newCharacter.SetLocation(location);
 		newCharacter.SetHome (this);

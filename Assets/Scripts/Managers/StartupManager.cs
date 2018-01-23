@@ -4,11 +4,14 @@ using System.Collections;
 public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
 
-	IEnumerator Start(){
-		while(!LocalizationManager.Instance.GetIsReady()){
-			yield return null;
-		}
+	void Start(){
+		LocalizationManager.Instance.Initialize ();
+		ItemManager.Instance.Initialize ();
+		SkillManager.Instance.Initialize ();
+		ECS.CombatPrototypeManager.Instance.Initialize ();
+		EncounterPartyManager.Instance.Initialize ();
+		CharacterManager.Instance.ConstructTraitDictionary();
 
-		//this.mapGenerator.InitializeWorld ();
+		this.mapGenerator.InitializeWorld ();
 	}
 }
