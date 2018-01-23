@@ -15,6 +15,8 @@ public class FactionManager : MonoBehaviour {
 	public List<Tribe> allTribes = new List<Tribe>();
     public List<Faction> orderedFactions = new List<Faction>();
 
+    public List<Quest> allQuests = new List<Quest>();
+
     public Dictionary<RACE, List<TECHNOLOGY>> inititalRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
         { RACE.HUMANS, new List<TECHNOLOGY>(){
             TECHNOLOGY.BASIC_FARMING,
@@ -235,4 +237,21 @@ public class FactionManager : MonoBehaviour {
     }
     #endregion
 
+    #region Quests
+    public Quest GetQuestByID(int id) {
+        for (int i = 0; i < allQuests.Count; i++) {
+            Quest currQuest = allQuests[i];
+            if (currQuest.id == id) {
+                return currQuest;
+            }
+        }
+        return null;
+    }
+    public void AddQuest(Quest quest) {
+        allQuests.Add(quest);
+    }
+    public void RemoveQuest(Quest quest) {
+        allQuests.Remove(quest);
+    }
+    #endregion
 }

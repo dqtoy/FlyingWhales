@@ -23,7 +23,12 @@ public class SettlementInfoClick : MonoBehaviour {
 				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.id == idToUse){
 					UIManager.Instance.ShowHexTileInfo (UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location);
 				}
-			}
-		}
+            } else if (url.Contains("_quest")) {
+                Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
+                if (quest != null) {
+                    UIManager.Instance.ShowQuestInfo(quest);
+                }
+            }
+        }
 	}
 }

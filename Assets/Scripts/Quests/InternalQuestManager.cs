@@ -121,7 +121,7 @@ public class InternalQuestManager : QuestCreator {
     private int GetExploreLandmarkWeight(BaseLandmark landmark) {
         int weight = 0;
         if (!landmark.isExplored) {
-            weight += 20; //Add weight if the landmark has not been explored yet
+            weight += 50; //Add 50 Weight to Explore Tile Weight
         }
         return weight;
     }

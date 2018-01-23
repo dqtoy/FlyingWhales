@@ -3070,7 +3070,10 @@ public class UIManager : MonoBehaviour {
 		if(hexTileInfoUI.isShowing){
 			hexTileInfoUI.HideHexTileInfo ();
 		}
-		settlementInfoUI.ShowSettlementInfo();
+        if (questInfoUI.isShowing) {
+            questInfoUI.HideMenu();
+        }
+        settlementInfoUI.ShowSettlementInfo();
 		settlementInfoUI.SetSettlementAsActive(landmark);
 //		playerActionsUI.ShowPlayerActionsUI ();
     }
@@ -3093,7 +3096,10 @@ public class UIManager : MonoBehaviour {
 		if(hexTileInfoUI.isShowing){
 			hexTileInfoUI.HideHexTileInfo ();
 		}
-		factionInfoUI.ShowFactionInfo();
+        if (questInfoUI.isShowing) {
+            questInfoUI.HideMenu();
+        }
+        factionInfoUI.ShowFactionInfo();
 		factionInfoUI.SetFactionAsActive(faction);
 //		playerActionsUI.ShowPlayerActionsUI ();
 	}
@@ -3116,7 +3122,10 @@ public class UIManager : MonoBehaviour {
 		if(hexTileInfoUI.isShowing){
 			hexTileInfoUI.HideHexTileInfo ();
 		}
-		characterInfoUI.ShowCharacterInfo();
+        if (questInfoUI.isShowing) {
+            questInfoUI.HideMenu();
+        }
+        characterInfoUI.ShowCharacterInfo();
 		characterInfoUI.SetCharacterAsActive(character);
 //		playerActionsUI.ShowPlayerActionsUI ();
 	}
@@ -3127,7 +3136,7 @@ public class UIManager : MonoBehaviour {
 	}
 	#endregion
 
-	#region Character Info
+	#region HexTile Info
 	[SerializeField] internal HextileInfoUI hexTileInfoUI;
 	public void ShowHexTileInfo(HexTile hexTile) {
 		if(settlementInfoUI.isShowing){
@@ -3139,6 +3148,9 @@ public class UIManager : MonoBehaviour {
 		if(characterInfoUI.isShowing){
 			characterInfoUI.HideCharacterInfo ();
 		}
+        if (questInfoUI.isShowing) {
+            questInfoUI.HideMenu();
+        }
 		hexTileInfoUI.ShowHexTileInfo();
 		hexTileInfoUI.SetHexTileAsActive(hexTile);
 //		playerActionsUI.ShowPlayerActionsUI ();
@@ -3165,7 +3177,7 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-	#region Character Info
+	#region Player Actions
 	[SerializeField] internal PlayerActionsUI playerActionsUI;
 	public void ShowPlayerActionsInfo() {
 		playerActionsUI.ShowPlayerActionsUI();
@@ -3173,5 +3185,31 @@ public class UIManager : MonoBehaviour {
 	public void HidePlayerActionsInfo() {
 		playerActionsUI.HidePlayerActionsUI();
 	}
-	#endregion
+    #endregion
+
+    #region HexTile Info
+    [SerializeField] internal QuestInfoUI questInfoUI;
+    public void ShowQuestInfo(Quest quest) {
+        if (settlementInfoUI.isShowing) {
+            settlementInfoUI.HideSettlementInfo();
+        }
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.HideFactionInfo();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.HideCharacterInfo();
+        }
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.HideHexTileInfo();
+        }
+        questInfoUI.ShowMenu();
+        questInfoUI.SetQuestAsShowing(quest);
+        //		playerActionsUI.ShowPlayerActionsUI ();
+    }
+    public void UpdateQuestInfo() {
+        if (questInfoUI.isShowing) {
+            questInfoUI.UpdateQuestInfo();
+        }
+    }
+    #endregion
 }
