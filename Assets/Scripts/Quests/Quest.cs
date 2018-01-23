@@ -80,6 +80,7 @@ public class Quest {
         _daysBeforeDeadline = daysBeforeDeadline;
 		_activeDuration = 0;
         _questFilters = new List<QuestFilter>();
+        _questLogs = new List<string>();
         //if(daysBeforeDeadline != -1) {
         //    ScheduleDeadline();
         //}
