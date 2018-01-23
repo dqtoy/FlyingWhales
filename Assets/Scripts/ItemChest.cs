@@ -9,38 +9,69 @@ public class ItemChest : IEncounterable {
     private ITEM_TYPE _chestType;
     private int _chanceToGet;
     private WeightedDictionary<MATERIAL> _materialWeights;
+    private WeightedDictionary<QUALITY> _qualityWeights;
 
     public ItemChest(int tier, ITEM_TYPE chestType, int chanceToGet = 100) {
         _tier = tier;
         _chestType = chestType;
         _chanceToGet = chanceToGet;
         ConstructMaterialWeightsDictionary();
+        ConstructQualityWeightsDictionary();
     }
 
-    public void StartEncounter(ECS.Character encounteredBy) {
+    public bool StartEncounter(ECS.Character encounteredBy) {
         Debug.Log(encounteredBy.name + " has encountered a tier " + _tier.ToString() + " " + _chestType.ToString() + " chest!");
-        if(encounteredBy.party == null) {
-            ECS.Item gainedItem = RandomizeItemForCharacter(encounteredBy);
-            if(gainedItem != null) {
-                encounteredBy.EquipItem(gainedItem); //TODO: Change this to put item in inventory, if the character cannot equip the gained item
+        ECS.Item gainedItem = RandomizeItemForCharacter(encounteredBy);
+        if(gainedItem != null) {
+            string quality = string.Empty;
+            if (gainedItem is ECS.Weapon) {
+                quality = ((ECS.Weapon)gainedItem).quality.ToString();
+            } else if (gainedItem is ECS.Armor) {
+                quality = ((ECS.Armor)gainedItem).quality.ToString();
             }
+            Debug.Log(encounteredBy.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
+            encounteredBy.PickupItem(gainedItem); //put item in inventory
+            encounteredBy.EquipItem(gainedItem); //if the character can equip the item, equip it, otherwise, keep in inventory
         } else {
-            for (int i = 0; i < encounteredBy.party.partyMembers.Count; i++) {
-                ECS.Character currMember = encounteredBy.party.partyMembers[i];
-                ECS.Item gainedItem = RandomizeItemForCharacter(currMember);
-                if (gainedItem != null) {
-                    currMember.EquipItem(gainedItem); //TODO: Change this to put item in inventory, if the character cannot equip the gained item
+            Debug.Log(encounteredBy.name + " got nothing from the chest");
+        }
+        return true;
+    }
+
+    public bool StartEncounter(Party party) {
+        for (int i = 0; i < party.partyMembers.Count; i++) {
+            ECS.Character currMember = party.partyMembers[i];
+            ECS.Item gainedItem = RandomizeItemForCharacter(currMember);
+            if (gainedItem != null) {
+                string quality = string.Empty;
+                if (gainedItem is ECS.Weapon) {
+                    quality = ((ECS.Weapon)gainedItem).quality.ToString();
+                } else if (gainedItem is ECS.Armor) {
+                    quality = ((ECS.Armor)gainedItem).quality.ToString();
                 }
+                Debug.Log(currMember.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
+                currMember.PickupItem(gainedItem); //put item in inventory
+                currMember.EquipItem(gainedItem); //if the character can equip the item, equip it, otherwise, keep in inventory
+            } else {
+                Debug.Log(currMember.name + " got nothing from the chest");
             }
         }
+        return true;
     }
 
     public ECS.Item RandomizeItemForCharacter(ECS.Character character) {
         if(UnityEngine.Random.Range(0, 100) < _chanceToGet) {
             MATERIAL equipmentMaterial = GetEquipmentMaterial();
             EQUIPMENT_TYPE equipmentType = GetRandomEquipmentType(character);
+            QUALITY equipmentQuality = GetEquipmentQuality();
             string itemName = Utilities.NormalizeString(equipmentMaterial.ToString()) + " " + Utilities.NormalizeString(equipmentType.ToString());
-            return ItemManager.Instance.CreateNewItemInstance(itemName);
+            ECS.Item item = ItemManager.Instance.CreateNewItemInstance(itemName);
+            if(_chestType == ITEM_TYPE.ARMOR) {
+                ((ECS.Armor)item).SetQuality(equipmentQuality);
+            } else if (_chestType == ITEM_TYPE.WEAPON) {
+                ((ECS.Weapon)item).SetQuality(equipmentQuality);
+            }
+            return item;
         }
         return null; //did not get anything
     }
@@ -48,12 +79,19 @@ public class ItemChest : IEncounterable {
     private EQUIPMENT_TYPE GetRandomEquipmentType(ECS.Character character) {
         switch (_chestType) {
             case ITEM_TYPE.WEAPON:
-                return EQUIPMENT_TYPE.NONE;
+                return (EQUIPMENT_TYPE)GetWeaponTypeForCharacter(character);
             case ITEM_TYPE.ARMOR:
                 return (EQUIPMENT_TYPE)GetArmorTypeForCharacter(character);
             default:
                 return EQUIPMENT_TYPE.NONE;
         }
+    }
+    /*
+     Get a random weapon type for a character
+     given its allowed weapon types.
+         */
+    private WEAPON_TYPE GetWeaponTypeForCharacter(ECS.Character character) {
+        return character.characterClass.allowedWeaponTypes[UnityEngine.Random.Range(0, character.characterClass.allowedWeaponTypes.Count)];
     }
     /*
      Get the armor type the character will get from this chest.
@@ -145,10 +183,59 @@ public class ItemChest : IEncounterable {
         }
     }
     /*
+     Construct the quality weights dictionary.
+     This is called upon initialization of this chest.
+         */
+    private void ConstructQualityWeightsDictionary() {
+        _qualityWeights = new WeightedDictionary<QUALITY>();
+        int crudeChance = 0;
+        int normalChance = 0;
+        int exceptionalChance = 0;
+        if (_chestType == ITEM_TYPE.ARMOR) {
+            switch (_tier) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    crudeChance = 30;
+                    normalChance = 50;
+                    exceptionalChance = 20;
+                    break;
+                default:
+                    break;
+            }
+        } else if (_chestType == ITEM_TYPE.WEAPON) {
+            switch (_tier) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    crudeChance = 30;
+                    normalChance = 50;
+                    exceptionalChance = 20;
+                    break;
+                default:
+                    break;
+            }
+        }
+        _qualityWeights.AddElement(QUALITY.CRUDE, crudeChance);
+        _qualityWeights.AddElement(QUALITY.NORMAL, normalChance);
+        _qualityWeights.AddElement(QUALITY.EXCEPTIONAL, exceptionalChance);
+    }
+    /*
      This will return a random item material for this chest.
      NOTE: Material weights depend on the chest tier and the chest type
          */
     private MATERIAL GetEquipmentMaterial() {
         return _materialWeights.PickRandomElementGivenWeights();
+    }
+    /*
+     This will return a random item quality for this chest.
+     NOTE: quality weights depend on the chest tier and the chest type
+         */
+    private QUALITY GetEquipmentQuality() {
+        return _qualityWeights.PickRandomElementGivenWeights();
     }
 }

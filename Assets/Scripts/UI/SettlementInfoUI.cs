@@ -160,7 +160,8 @@ public class SettlementInfoUI : UIMenu {
 		currentlyShowingSettlement.owner.internalQuestManager.CreateExpandQuest(currentlyShowingSettlement);
 	}
 	public void OnClickExploreRegionBtn(){
-		currentlyShowingSettlement.location.region.centerOfMass.landmarkOnTile.owner.internalQuestManager.CreateExploreRegionQuest();
+		currentlyShowingSettlement.location.region.centerOfMass
+            .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingSettlement);
 	}
 	private void ShowPlayerActions(){
 		expandBtnGO.SetActive (CanExpand());
@@ -183,7 +184,7 @@ public class SettlementInfoUI : UIMenu {
 	}
 
 	private bool CanExploreRegion(){
-		if(isShowing && currentlyShowingSettlement != null && currentlyShowingSettlement.isHidden && !currentlyShowingSettlement.isExplored
+		if(isShowing && currentlyShowingSettlement != null && !currentlyShowingSettlement.isExplored
 			&& currentlyShowingSettlement.owner == null && currentlyShowingSettlement.location.region.centerOfMass.isOccupied){
 			return true;
 		}
