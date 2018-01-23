@@ -147,8 +147,10 @@ public class InternalQuestManager : QuestCreator {
 			AddNewQuest(expand);
 		}
 	}
-	internal void CreateExploreRegionQuest(){
-	}
+	internal void CreateExploreTileQuest(BaseLandmark landmarkToExplore){
+        ExploreTile exploreQuest = new ExploreTile(this, 60, landmarkToExplore);
+        AddNewQuest(exploreQuest);
+    }
     #endregion
 
     #region Quest Management

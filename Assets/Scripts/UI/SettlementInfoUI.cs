@@ -160,7 +160,8 @@ public class SettlementInfoUI : UIMenu {
 		currentlyShowingSettlement.owner.internalQuestManager.CreateExpandQuest(currentlyShowingSettlement);
 	}
 	public void OnClickExploreRegionBtn(){
-		currentlyShowingSettlement.location.region.centerOfMass.landmarkOnTile.owner.internalQuestManager.CreateExploreRegionQuest();
+		currentlyShowingSettlement.location.region.centerOfMass
+            .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingSettlement);
 	}
 	private void ShowPlayerActions(){
 		expandBtnGO.SetActive (CanExpand());
