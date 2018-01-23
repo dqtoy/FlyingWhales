@@ -11,7 +11,7 @@ public class ItemManager : MonoBehaviour {
     private Dictionary<string, ECS.Item> allItems;
 
     private void Awake() {
-        Instance = null;
+        Instance = this;
         ConstructItemsDictionary();
     }
 

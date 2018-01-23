@@ -25,6 +25,7 @@ public class BaseLandmark {
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
     protected LandmarkObject _landmarkObject;
+    protected WeightedDictionary<IEncounterable> _encounterables;
 
     #region getters/setters
     public int id {
@@ -72,6 +73,9 @@ public class BaseLandmark {
     public LandmarkObject landmarkObject {
         get { return _landmarkObject; }
     }
+    public WeightedDictionary<IEncounterable> encounterables {
+        get { return _encounterables; }
+    }
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -87,6 +91,7 @@ public class BaseLandmark {
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
         _resourceInventory = new Dictionary<RESOURCE, int>();
         ConstructTechnologiesDictionary();
+        InititalizeEncounterables();
     }
 
     public void SetLandmarkObject(LandmarkObject obj) {
@@ -216,6 +221,12 @@ public class BaseLandmark {
     }
     public void RemoveCharacterHomeOnLandmark(ECS.Character character) {
         _charactersWithHomeOnLandmark.Remove(character);
+    }
+    #endregion
+
+    #region Encounterables
+    protected virtual void InititalizeEncounterables() {
+        _encounterables = new WeightedDictionary<IEncounterable>();
     }
     #endregion
 
