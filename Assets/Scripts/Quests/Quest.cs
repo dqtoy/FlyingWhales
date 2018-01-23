@@ -30,6 +30,7 @@ public class Quest {
     protected QuestAction _currentAction;
     protected QUEST_RESULT _questResult;
 	protected int _activeDuration;
+    protected List<string> _questLogs; //TODO: Change this to Logs when convenient
 
     protected Queue<QuestAction> _questLine;
 
@@ -96,7 +97,7 @@ public class Quest {
     public virtual void AcceptQuest(ECS.Character partyLeader) {
         Debug.Log(partyLeader.name + " accepts quest " + questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
         _isAccepted = true;
-
+        AddNewLog(partyLeader.name + " accepted this quest.");
         if (partyLeader.party != null) {
             //if character already has a party, assign that party to this quest
             AssignPartyToQuest(partyLeader.party);
@@ -293,6 +294,7 @@ public class Quest {
     internal void AssignPartyToQuest(Party party) {
         _assignedParty = party;
         _assignedParty.SetCurrentQuest(this);
+        AddNewLog("Party " + party.name + " is now assigned to this quest.");
         if (_assignedParty.partyLeader.avatar == null) {
             _assignedParty.partyLeader.CreateNewAvatar();//Characters that have accepted a Quest should have icon already even if they are still forming party in the city
             _assignedParty.SetAvatar(_assignedParty.partyLeader.avatar);
@@ -348,6 +350,12 @@ public class Quest {
     }
     internal void SetWaitingStatus(bool isWaiting) {
         _isWaiting = isWaiting;
+    }
+    #endregion
+
+    #region Logs
+    internal void AddNewLog(string log) {
+        _questLogs.Add(log);
     }
     #endregion
 }
