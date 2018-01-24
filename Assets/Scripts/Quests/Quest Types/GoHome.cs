@@ -29,5 +29,18 @@ public class GoHome : Quest {
 
         _questLine.Enqueue(goToLocation);
     }
+    internal override void QuestSuccess() {
+        _isDone = true;
+        _questResult = QUEST_RESULT.SUCCESS;
+        _createdBy.RemoveQuest(this);
+        if(_assignedParty == null) {
+            //When the character has gone home, determine the next action
+            ECS.Character character = ((ECS.Character)_createdBy);
+            character.DestroyAvatar();
+            character.DetermineAction();
+        } else {
+            RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
+        }
+    }
     #endregion
 }

@@ -35,6 +35,7 @@ public class ExploreTile : Quest {
     }
     internal override void QuestCancel() {
         _questResult = QUEST_RESULT.CANCEL;
+        PartyManager.Instance.RemoveParty(_assignedParty);
         ResetQuestValues();
     }
     #endregion

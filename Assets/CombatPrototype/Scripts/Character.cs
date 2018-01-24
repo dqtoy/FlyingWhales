@@ -387,7 +387,7 @@ namespace ECS {
 			if(!_isDead){
 				this._isDead = true;
 				if(this._party != null){
-				this._party.RemovePartyMember (this, true);
+				    this._party.RemovePartyMember (this, true);
 				}
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 				if(this.currentCombat != null){
@@ -1151,7 +1151,7 @@ namespace ECS {
             if (_party != null) {
                 _party.CheckLeavePartyAfterQuest();
             }
-            _currLocation.AddCharacterOnTile(this);
+            //_currLocation.AddCharacterOnTile(this);
             DestroyAvatar();
             DetermineAction();
         }

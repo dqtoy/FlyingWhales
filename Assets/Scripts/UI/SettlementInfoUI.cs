@@ -152,7 +152,7 @@ public class SettlementInfoUI : UIMenu {
 		}
        
         settlementInfoLbl.text = text;
-        infoScrollView.ResetPosition();
+        infoScrollView.UpdatePosition();
     }
 
 	public void OnClickCloseBtn(){

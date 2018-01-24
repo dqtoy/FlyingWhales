@@ -16,6 +16,7 @@ public class Party: IEncounterable {
 
     protected ECS.Character _partyLeader;
     protected List<ECS.Character> _partyMembers; //Contains all party members including the party leader
+    protected List<ECS.Character> _partyMembersOnTheWay; //Party members that just joined, but are on the way to the party leaders location
     protected Quest _currentQuest;
     protected CharacterAvatar _avatar;
 
@@ -29,7 +30,7 @@ public class Party: IEncounterable {
         get { return _name; }
     }
     public bool isFull {
-        get { return partyMembers.Count >= MAX_PARTY_MEMBERS; }
+        get { return partyMembers.Count + _partyMembersOnTheWay.Count >= MAX_PARTY_MEMBERS; }
     }
     public bool isOpen {
         get { return _isOpen; }
@@ -52,6 +53,7 @@ public class Party: IEncounterable {
         _name = RandomNameGenerator.Instance.GetAllianceName();
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
+        _partyMembersOnTheWay = new List<ECS.Character>();
         Debug.Log(partyLeader.name + " has created " + _name);
 
         AddPartyMember(_partyLeader);
@@ -90,6 +92,13 @@ public class Party: IEncounterable {
                 _currentQuest.onQuestInfoChanged();
             }
         }
+    }
+    public void AddPartyMemberAsOnTheWay(ECS.Character member) {
+        _partyMembersOnTheWay.Add(member);
+    }
+    public void PartyMemberHasArrived(ECS.Character member) {
+        _partyMembersOnTheWay.Remove(member);
+        _currentQuest.CheckPartyMembers();
     }
     /*
      Remove a character from this party.

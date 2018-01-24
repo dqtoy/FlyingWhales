@@ -6,6 +6,7 @@ public class QuestLogsUI : UIMenu {
     internal bool isShowing = false;
 
     [SerializeField] private UILabel questLogsLbl;
+    [SerializeField] private UIScrollView logsScrollView;
 
     private Quest currentlyShowingQuest;
 
@@ -31,5 +32,6 @@ public class QuestLogsUI : UIMenu {
             text +=  "- " + currLog + "\n";
         }
         questLogsLbl.text = text;
+        logsScrollView.UpdatePosition();
     }
 }
