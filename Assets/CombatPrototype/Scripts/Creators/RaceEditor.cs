@@ -21,6 +21,11 @@ namespace ECS {
 			raceComponent.baseInt = EditorGUILayout.IntField("Base Intelligence: ", raceComponent.baseInt);
 			raceComponent.baseAgi = EditorGUILayout.IntField("Base Agility: ", raceComponent.baseAgi);
 			raceComponent.baseHP = EditorGUILayout.IntField("Base HP: ", raceComponent.baseHP);
+			raceComponent.statAllocationPoints = EditorGUILayout.IntField("Stat Allocation Points: ", raceComponent.statAllocationPoints);
+			raceComponent.strWeightAllocation = EditorGUILayout.IntField("Strength Weight Allocation: ", raceComponent.strWeightAllocation);
+			raceComponent.intWeightAllocation = EditorGUILayout.IntField("Intelligence Weight Allocation: ", raceComponent.intWeightAllocation);
+			raceComponent.agiWeightAllocation = EditorGUILayout.IntField("Agility Weight Allocation: ", raceComponent.agiWeightAllocation);
+			raceComponent.hpWeightAllocation = EditorGUILayout.IntField("HP Weight Allocation: ", raceComponent.hpWeightAllocation);
 
 			SerializedProperty serializedProperty = serializedObject.FindProperty("bodyParts");
 			EditorGUILayout.PropertyField(serializedProperty, true);
