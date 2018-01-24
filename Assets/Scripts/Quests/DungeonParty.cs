@@ -17,7 +17,7 @@ public class DungeonParty : Party {
 	/*
      Remove a character from this party.
          */
-	public override void RemovePartyMember(ECS.Character member) {
+	public override void RemovePartyMember(ECS.Character member, bool forDeath = false) {
 		_partyMembers.Remove(member);
 		if(_avatar != null) {
 			_avatar.RemoveCharacter(member);
@@ -30,7 +30,11 @@ public class DungeonParty : Party {
 		combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
 		combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
 		combat.CombatSimulation ();
-
-		return false;
+        encounteredBy.currentQuest.AddNewLogs(combat.resultsLog);
+        if(combat.charactersSideA.Count > 0) {
+            return true; //party that encountered this dungeon party won the combat
+        } else {
+            return false; //party that encountered this dungeon party lost the combat
+        }
 	}
 }

@@ -28,23 +28,33 @@ public class ExploreTile : Quest {
         goToLandmark.InititalizeAction(_landmarkToExplore.location);
         goToLandmark.onQuestActionDone += ScheduleRandomResult;
         goToLandmark.onQuestDoAction += goToLandmark.Generic;
+        goToLandmark.onQuestDoAction += LogGoToLocation;
 
         //Enqueue all actions
         _questLine.Enqueue(goToLandmark);
+    }
+    internal override void QuestCancel() {
+        _questResult = QUEST_RESULT.CANCEL;
+        ResetQuestValues();
     }
     #endregion
 
     private void TriggerRandomResult() {
         ExplorationResults();
-        EndQuest(QUEST_RESULT.SUCCESS);
     }
 
     private void ExplorationResults() {
         if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
             IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
+            AddNewLog("The party encounters a " + chosenEncounter.encounterName);
             bool success = chosenEncounter.StartEncounter(_assignedParty);
             if (success) {
                 _landmarkToExplore.SetExploredState(true);
+                EndQuest(QUEST_RESULT.SUCCESS);
+                AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
+            } else {
+                AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
+                QuestCancel();
             }
         }
     }
@@ -55,7 +65,14 @@ public class ExploreTile : Quest {
         newLog.AddToFillers(_assignedParty, _assignedParty.name, LOG_IDENTIFIER.ALLIANCE_NAME);
         newLog.AddToFillers(_landmarkToExplore, Utilities.NormalizeString(_landmarkToExplore.specificLandmarkType.ToString()), LOG_IDENTIFIER.OTHER);
         UIManager.Instance.ShowNotification(newLog);
+        AddNewLog("The party discovers an " + Utilities.NormalizeString(_landmarkToExplore.specificLandmarkType.ToString()));
         //After 5 days in the tile, the Quest triggers a random result based on data from the Landmark being explored.
         ScheduleQuestAction(5, () => TriggerRandomResult());
     }
+
+    #region Logs
+    private void LogGoToLocation() {
+        AddNewLog("The party travels to " + _landmarkToExplore.location.name);
+    }
+    #endregion
 }

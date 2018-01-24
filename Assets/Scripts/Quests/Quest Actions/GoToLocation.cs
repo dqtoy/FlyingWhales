@@ -51,7 +51,9 @@ public class GoToLocation : QuestAction {
 			}
 			actionDoer.avatar.SetTarget (targetLocation);
 			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
-		}
+            actionDoer.currentQuest.AddNewLog(actionDoer.name + " goes to " + targetLocation.name);
+
+        }
 	}
 	internal void Defend() {
 		if (actionDoer.currLocation.id == targetLocation.id) {

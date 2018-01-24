@@ -99,7 +99,8 @@ namespace ECS{
         //This simulates the whole combat system
 		public void CombatSimulation(){
             ClearCombatLogs();
-			Dictionary<ECS.Character, int> characterActivationWeights = new Dictionary<ECS.Character, int> ();
+            AddCombatLog("Combat starts", SIDES.A);
+            Dictionary<ECS.Character, int> characterActivationWeights = new Dictionary<ECS.Character, int> ();
             bool isInitial = true;
 			SetRowNumber (this.charactersSideA, 1);
 			SetRowNumber (this.charactersSideB, 5);
@@ -136,7 +137,8 @@ namespace ECS{
                 rounds++;
 //              yield return new WaitForSeconds(updateIntervals);
             }
-		}
+            AddCombatLog("Combat Ends", SIDES.A);
+        }
 
 		//Set row number to a list of characters
 		private void SetRowNumber(List<ECS.Character> characters, int rowNumber){

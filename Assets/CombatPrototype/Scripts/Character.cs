@@ -387,7 +387,7 @@ namespace ECS {
 			if(!_isDead){
 				this._isDead = true;
 				if(this._party != null){
-					this._party.RemovePartyMember (this);
+				this._party.RemovePartyMember (this, true);
 				}
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 				if(this.currentCombat != null){
@@ -523,15 +523,20 @@ namespace ECS {
 			}
 		}
 
-		//TODO: For merge, this is the real way to equip an item
-		internal void EquipItem(Item item){
+        /*
+         this is the real way to equip an item
+         this will return a boolean whether the character successfully equipped
+         the item or not.
+             */
+        internal bool EquipItem(Item item){
 			if (item is Weapon) {
 				Weapon weapon = (Weapon)item;
-				TryEquipWeapon(weapon);
+				return TryEquipWeapon(weapon);
 			} else if (item is Armor) {
 				Armor armor = (Armor)item;
-				TryEquipArmor(armor);
+                return TryEquipArmor(armor);
 			}
+            return false;
 		}
 
 		//Unequips an item of a character, whether it's a weapon, armor, etc.

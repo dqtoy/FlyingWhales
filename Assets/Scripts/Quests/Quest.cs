@@ -11,6 +11,12 @@ using System;
 
 public class Quest {
 
+    public delegate void OnQuestInfoChanged();
+    public OnQuestInfoChanged onQuestInfoChanged; //For UI, to update quest info if a specific quest changes info
+
+    public delegate void OnQuestLogsChange();
+    public OnQuestLogsChange onQuestLogsChange; //For UI, to update when a specific quest adds a new log
+
     protected delegate void OnQuestAccepted();
     protected OnQuestAccepted onQuestAccepted;
 
@@ -111,17 +117,20 @@ public class Quest {
         }
         //UnScheduleDeadline();
         SchedulePartyExpiration();
+        if (onQuestInfoChanged != null) {
+            onQuestInfoChanged();
+        }
         if(onQuestAccepted != null) {
             onQuestAccepted();
         }
     }
-    /*
-     Add a new character as a party member of this quest.
-         */
-    public virtual void JoinQuest(ECS.Character member) {
-        _assignedParty.AddPartyMember(member);
-        member.SetCurrentQuest(this);
-    }
+    ///*
+    // Add a new character as a party member of this quest.
+    //     */
+    //public virtual void JoinQuest(ECS.Character member) {
+    //    _assignedParty.AddPartyMember(member);
+    //    member.SetCurrentQuest(this);
+    //}
     /*
      This is the action done, when the party assigned to this quest is full.
      Full meaning a number of characters have registered to join this quest,
@@ -145,12 +154,6 @@ public class Quest {
 			}
 			_createdBy.RemoveQuest(this);
             FactionManager.Instance.RemoveQuest(this);
-//			if(_assignedParty != null){
-//				for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
-//					_assignedParty.partyMembers [i].SetCurrentQuest (null);
-//				}
-//			}
-
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
                     QuestSuccess();
@@ -170,13 +173,13 @@ public class Quest {
 		if (_currentAction != null) {
 			_currentAction.ActionDone (QUEST_ACTION_RESULT.SUCCESS);
 		}
-		RetaskParty (_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
+		RetaskParty (_assignedParty.OnReachNonHostileSettlementAfterQuest);
     }
     internal virtual void QuestFail() {
 		if (_currentAction != null) {
 			_currentAction.ActionDone (QUEST_ACTION_RESULT.FAIL);
 		}
-		RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
+		RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
     }
     internal virtual void QuestCancel() {
         _questResult = QUEST_RESULT.CANCEL;
@@ -184,11 +187,19 @@ public class Quest {
 		if (_currentAction != null) {
 			_currentAction.ActionDone (QUEST_ACTION_RESULT.CANCEL);
 		}
-		RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
+		//RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
 		ResetQuestValues ();
     }
 	//Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
-	protected virtual void ResetQuestValues(){}
+	protected virtual void ResetQuestValues(){
+        _isAccepted = false;
+        _isWaiting = false;
+        _isExpired = false;
+        _assignedParty = null;
+        _currentAction = null;
+        _questLine.Clear();
+        onQuestEnd = null;
+    }
     /*
      Construct the list of quest actions that the party will perform.
          */
@@ -262,6 +273,9 @@ public class Quest {
         Debug.Log("Start " + this.questType.ToString() + " Quest!");
         ConstructQuestLine();
         PerformNextQuestAction();
+        if (onQuestInfoChanged != null) {
+            onQuestInfoChanged();
+        }
     }
     internal void PerformNextQuestAction() {
         _currentAction = _questLine.Dequeue();
@@ -321,7 +335,7 @@ public class Quest {
         //Make party go to nearest non hostile settlement after a quest
         //_assignedParty.SetCurrentQuest(null);
         _assignedParty.onPartyFull = null;
-		_assignedParty.partyLeader.GoToNearestNonHostileSettlement(() => action());
+		_assignedParty.GoToNearestNonHostileSettlement(() => action());
     }
     internal void CheckPartyMembers() {
         if (_assignedParty.isFull) { //if the assigned party is full
@@ -360,6 +374,17 @@ public class Quest {
     #region Logs
     internal void AddNewLog(string log) {
         _questLogs.Add(log);
+        if (onQuestLogsChange != null) {
+            onQuestLogsChange();
+        }
+    }
+    internal void AddNewLogs(List<string> logs) {
+        for (int i = 0; i < logs.Count; i++) {
+            _questLogs.Add(logs[i]);
+        }
+        if (onQuestLogsChange != null) {
+            onQuestLogsChange();
+        }
     }
     #endregion
 }

@@ -6,6 +6,7 @@ public class QuestInfoUI : UIMenu {
     internal bool isShowing = false;
 
     [SerializeField] private UILabel questInfoLbl;
+    [SerializeField] private UIButton showQuestLogsBtn;
 
     private Quest currentlyShowingQuest;
 
@@ -22,7 +23,11 @@ public class QuestInfoUI : UIMenu {
     }
 
     public void SetQuestAsShowing(Quest quest) {
+        if(currentlyShowingQuest != null) {
+            currentlyShowingQuest.onQuestInfoChanged = null;
+        }
         currentlyShowingQuest = quest;
+        quest.onQuestInfoChanged = UpdateQuestInfo;
         if (isShowing) {
             UpdateQuestInfo();
         }
@@ -46,6 +51,18 @@ public class QuestInfoUI : UIMenu {
             }
         }
         questInfoLbl.text = text;
+
+        if(currentlyShowingQuest.questLogs.Count > 0) {
+            //enable button
+            showQuestLogsBtn.GetComponent<BoxCollider>().enabled = true;
+            showQuestLogsBtn.SetState(UIButtonColor.State.Normal, true);
+        } else {
+            //disable button
+            showQuestLogsBtn.GetComponent<BoxCollider>().enabled = false;
+            showQuestLogsBtn.SetState(UIButtonColor.State.Disabled, true);
+
+        }
+
     }
 
     public void ShowQuestLogs() {

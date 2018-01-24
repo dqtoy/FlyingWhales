@@ -11,6 +11,7 @@ public class HextileInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel hexTileInfoLbl;
+    [SerializeField] private UIScrollView infoScrollView;
 
     internal HexTile currentlyShowingHexTile;
 
@@ -81,6 +82,7 @@ public class HextileInfoUI : UIMenu {
 		}
 
         hexTileInfoLbl.text = text;
+        infoScrollView.ResetPosition();
     }
 
 	public void OnClickCloseBtn(){

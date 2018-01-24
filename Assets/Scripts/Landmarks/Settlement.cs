@@ -28,6 +28,7 @@ public class Settlement : BaseLandmark {
             location.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
+            _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
         }
         DecideCharacterToCreate(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
