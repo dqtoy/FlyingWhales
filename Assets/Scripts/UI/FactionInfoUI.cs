@@ -87,7 +87,7 @@ public class FactionInfoUI : UIMenu {
 		}
 			
         factionInfoLbl.text = text;
-        infoScrollView.ResetPosition();
+        infoScrollView.UpdatePosition();
 
         //Relationships
         string relationshipText = string.Empty;
@@ -101,7 +101,7 @@ public class FactionInfoUI : UIMenu {
         }
 
         relationshipsLbl.text = relationshipText;
-        relationshipsScrollView.ResetPosition();
+        relationshipsScrollView.UpdatePosition();
     }
 	public void OnClickCloseBtn(){
 //		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();

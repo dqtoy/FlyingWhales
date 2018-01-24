@@ -34,7 +34,7 @@ public class JoinParty : Quest {
     protected override void ConstructQuestLine() {
         base.ConstructQuestLine();
 
-        _partyToJoin.AddPartyMember((ECS.Character)_createdBy); //Add member to party immediately
+        _partyToJoin.AddPartyMemberAsOnTheWay((ECS.Character)_createdBy);
 
         GoToLocation goToLocation = new GoToLocation(this);
         goToLocation.InititalizeAction(partyToJoin.partyLeader.currLocation);
@@ -47,7 +47,9 @@ public class JoinParty : Quest {
         _isDone = true;
         _questResult = QUEST_RESULT.SUCCESS;
         _createdBy.RemoveQuest(this);
-        _partyToJoin.currentQuest.CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
+        _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
+        _partyToJoin.PartyMemberHasArrived((ECS.Character)_createdBy);
+        //_partyToJoin.currentQuest.CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
     }
     #endregion
 }

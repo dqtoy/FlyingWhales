@@ -138,7 +138,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
         relationshipsLbl.text = relationshipText;
-        relationshipsScrollView.ResetPosition();
+        relationshipsScrollView.UpdatePosition();
     }
 
     public void CenterCameraOnCharacter() {
