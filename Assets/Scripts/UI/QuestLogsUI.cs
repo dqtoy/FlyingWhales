@@ -18,6 +18,7 @@ public class QuestLogsUI : UIMenu {
         quest.onQuestLogsChange = UpdateQuestLogs;
         isShowing = true;
         this.gameObject.SetActive(true);
+        logsScrollView.ResetPosition();
     }
 
     public void HideQuestLogs() {

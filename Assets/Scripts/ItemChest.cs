@@ -70,7 +70,7 @@ public class ItemChest : IEncounterable {
                 Debug.Log(currMember.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
                 currMember.PickupItem(gainedItem); //put item in inventory
                 if (currMember.EquipItem(gainedItem)) {//if the character can equip the item, equip it, otherwise, keep in inventory
-                    string log = currMember.name + " equips the " + gainedItem.itemName + " on ";
+                    string log = currMember.name + " equips the " + quality + gainedItem.itemName + " on ";
                     if(currMember.gender == GENDER.FEMALE) {
                         log += "her ";
                     } else {
