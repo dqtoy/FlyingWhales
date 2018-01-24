@@ -47,4 +47,8 @@ public class QuestInfoUI : UIMenu {
         }
         questInfoLbl.text = text;
     }
+
+    public void ShowQuestLogs() {
+        UIManager.Instance.ShowQuestLog(currentlyShowingQuest);
+    }
 }

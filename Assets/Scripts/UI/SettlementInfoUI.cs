@@ -189,7 +189,9 @@ public class SettlementInfoUI : UIMenu {
 
 	private bool CanExploreRegion(){
 		if(isShowing && currentlyShowingSettlement != null && !currentlyShowingSettlement.isExplored
-			&& currentlyShowingSettlement.owner == null && currentlyShowingSettlement.location.region.centerOfMass.isOccupied){
+			&& currentlyShowingSettlement.owner == null && currentlyShowingSettlement.location.region.centerOfMass.isOccupied 
+            && !currentlyShowingSettlement.location.region.centerOfMass
+            .landmarkOnTile.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currentlyShowingSettlement)) {
 			return true;
 		}
 		return false;

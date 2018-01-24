@@ -3187,7 +3187,7 @@ public class UIManager : MonoBehaviour {
 	}
     #endregion
 
-    #region HexTile Info
+    #region Quest Info
     [SerializeField] internal QuestInfoUI questInfoUI;
     public void ShowQuestInfo(Quest quest) {
         if (settlementInfoUI.isShowing) {
@@ -3209,6 +3209,19 @@ public class UIManager : MonoBehaviour {
     public void UpdateQuestInfo() {
         if (questInfoUI.isShowing) {
             questInfoUI.UpdateQuestInfo();
+        }
+    }
+    #endregion
+
+    #region Quest Logs
+    [SerializeField] internal QuestLogsUI questLogUI;
+    public void ShowQuestLog(Quest quest) {
+        questLogUI.ShowQuestLogs(quest);
+        questLogUI.UpdateQuestLogs();
+    }
+    public void UpdateQuestLogs() {
+        if (questLogUI.isShowing) {
+            questLogUI.UpdateQuestLogs();
         }
     }
     #endregion

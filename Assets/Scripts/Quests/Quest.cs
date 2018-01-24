@@ -68,6 +68,9 @@ public class Quest {
 	public int activeDuration {
 		get { return _activeDuration; }
 	}
+    public List<string> questLogs {
+        get { return _questLogs; }
+    }
     #endregion
     /*
      Create a new quest object.
