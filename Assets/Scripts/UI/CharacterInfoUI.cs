@@ -70,7 +70,7 @@ public class CharacterInfoUI : UIMenu {
 
 		text += "\n[b]Current Quest:[/b] ";
 		if(currentlyShowingCharacter.currentQuest != null){
-			text += currentlyShowingCharacter.currentQuest.questType.ToString();
+			text += "[url=" + currentlyShowingCharacter.currentQuest.id + "_quest]" + currentlyShowingCharacter.currentQuest.questType.ToString() + "[/url]";
 		}else{
 			text += "NONE";
 		}

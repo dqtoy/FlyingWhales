@@ -35,6 +35,7 @@ public class ExploreTile : Quest {
     }
     internal override void QuestCancel() {
         _questResult = QUEST_RESULT.CANCEL;
+        _assignedParty.partyLeader.DestroyAvatar();
         PartyManager.Instance.RemoveParty(_assignedParty);
         ResetQuestValues();
     }
@@ -64,7 +65,6 @@ public class ExploreTile : Quest {
     private void ExplorationResults() {
         if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
             IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
-            AddNewLog("The party encounters a " + chosenEncounter.encounterName);
             bool success = chosenEncounter.StartEncounter(_assignedParty);
             if (success) {
                 _landmarkToExplore.SetExploredState(true);
@@ -84,6 +84,7 @@ public class ExploreTile : Quest {
         newLog.AddToFillers(_landmarkToExplore, Utilities.NormalizeString(_landmarkToExplore.specificLandmarkType.ToString()), LOG_IDENTIFIER.OTHER);
         UIManager.Instance.ShowNotification(newLog);
         AddNewLog("The party discovers an " + Utilities.NormalizeString(_landmarkToExplore.specificLandmarkType.ToString()));
+        _landmarkToExplore.SetHiddenState(false);
         //After 5 days in the tile, the Quest triggers a random result based on data from the Landmark being explored.
         ScheduleQuestAction(5, () => TriggerRandomResult());
     }

@@ -97,6 +97,10 @@ public class FactionManager : MonoBehaviour {
         ECS.Character villageHead = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
         faction.SetLeader(chieftain);
         baseSettlement.SetHead(villageHead);
+
+        //Create 2 adventurers
+        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
+        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
     }
     public Faction CreateNewFaction(System.Type factionType, RACE race) {
         Faction newFaction = null;

@@ -124,7 +124,7 @@ public class Quest {
             onQuestAccepted();
         }
     }
-    ///*
+    /*
     // Add a new character as a party member of this quest.
     //     */
     //public virtual void JoinQuest(ECS.Character member) {
@@ -136,12 +136,12 @@ public class Quest {
      Full meaning a number of characters have registered to join this quest,
      but they might not be with the party leader yet, if they are not, wait for them to arrive,
      otherwise, start the quest immediately.
-         */
-    protected virtual void OnPartyFull(Party party) {
-        //When the party is full, check if all the characters have arrived at the party leaders location
-        //if not wait for them to arrive before starting the quest.
-        CheckPartyMembers();
-    }
+    //     */
+    //protected virtual void OnPartyFull(Party party) {
+    //    //When the party is full, check if all the characters have arrived at the party leaders location
+    //    //if not wait for them to arrive before starting the quest.
+    //    CheckPartyMembers();
+    //}
     internal virtual void EndQuest(QUEST_RESULT result) {
         if (!_isDone) {
 			_isDone = true;
@@ -153,7 +153,6 @@ public class Quest {
 				_currentAction.onQuestActionDone = null;
 			}
 			_createdBy.RemoveQuest(this);
-            FactionManager.Instance.RemoveQuest(this);
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
                     QuestSuccess();
@@ -303,7 +302,7 @@ public class Quest {
          */
     internal Party CreateNewPartyForQuest(ECS.Character partyLeader) {
         Party newParty = new Party(partyLeader);
-        newParty.onPartyFull = OnPartyFull;
+        //newParty.onPartyFull = OnPartyFull;
         AssignPartyToQuest(newParty);
         return newParty;
     }
@@ -324,7 +323,7 @@ public class Quest {
             CheckPartyMembers();
         } else {
             _assignedParty.SetOpenStatus(true); //Set party as open to members
-            _assignedParty.onPartyFull = OnPartyFull;
+            //_assignedParty.onPartyFull = OnPartyFull;
             _assignedParty.InviteCharactersOnTile(CHARACTER_ROLE.ADVENTURER, _assignedParty.partyLeader.currLocation);
         }
     }
@@ -335,7 +334,7 @@ public class Quest {
 	protected void RetaskParty(Action action) {
         //Make party go to nearest non hostile settlement after a quest
         //_assignedParty.SetCurrentQuest(null);
-        _assignedParty.onPartyFull = null;
+        //_assignedParty.onPartyFull = null;
 		_assignedParty.GoToNearestNonHostileSettlement(() => action());
     }
     internal void CheckPartyMembers() {
