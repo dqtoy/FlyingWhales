@@ -84,16 +84,26 @@ public class InternalQuestManager : QuestCreator {
             //if(!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_REGION, regionOfSettlement)) {
             //    questDict.AddElement(new ExploreRegion(this, 20, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
             //}
+
+			if (!AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, _owner.settlements[i])) {
+				checkedExpandRegions.Clear ();
+				for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
+					object currConnection = regionOfSettlement.connections [j];
+					if (currConnection is Region) {
+						Region region = (Region)currConnection;
+						if (!region.centerOfMass.isOccupied && !AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, region.centerOfMass)) {
+							checkedExpandRegions.Add (region);
+						}
+					} 
+				}
+				if(checkedExpandRegions.Count > 0){
+					Region chosenRegion = checkedExpandRegions[UnityEngine.Random.Range(0, checkedExpandRegions.Count)];
+					questDict.AddElement (new Expand (this, 60, chosenRegion.centerOfMass, _owner.settlements [i].location), GetExpandWeight (_owner.settlements [i]));
+				}
+			}
             for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
                 object currConnection = regionOfSettlement.connections[j];
-                if (currConnection is Region) {
-                    Region region = (Region)currConnection;
-                    if (!region.centerOfMass.isOccupied && !checkedExpandRegions.Contains(region)) {
-                        if (!AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, region.centerOfMass)) {
-							questDict.AddElement(new Expand(this, 60, region.centerOfMass, _owner.settlements[i].location), GetExpandWeight(_owner.settlements[i]));
-                        }
-                    }
-                } else if (currConnection is BaseLandmark) {
+                if (currConnection is BaseLandmark) {
                     BaseLandmark currLandmark = (BaseLandmark)currConnection;
                     if(currLandmark.isHidden && !currLandmark.isExplored) {
                         if (!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
