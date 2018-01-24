@@ -83,7 +83,6 @@ public class Expand : Quest {
 	internal override void QuestSuccess() {
 		RetaskParty (_assignedParty.JustDisbandParty);
 	}
-
 	internal override void QuestFail() {
         AddNewLog("The expansion failed!");
         RetaskParty (_assignedParty.JustDisbandParty);

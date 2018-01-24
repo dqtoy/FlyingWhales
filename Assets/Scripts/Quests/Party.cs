@@ -6,8 +6,8 @@ using System.Linq;
 
 public class Party: IEncounterable {
 
-    public delegate void OnPartyFull(Party party);
-    public OnPartyFull onPartyFull;
+    //public delegate void OnPartyFull(Party party);
+    //public OnPartyFull onPartyFull;
 
     protected string _name;
 
@@ -78,15 +78,18 @@ public class Party: IEncounterable {
             }
             if (!IsCharacterLeaderOfParty(member)) {
                 Debug.Log(member.name + " has joined the party of " + partyLeader.name);
+                if(_currentQuest != null) {
+                    _currentQuest.AddNewLog(member.name + " has joined the party of " + partyLeader.name);
+                }
             }
         }
-        if (_partyMembers.Count >= MAX_PARTY_MEMBERS) {
-            if (onPartyFull != null) {
-                Debug.Log("Party " + _name + " is full!");
-                //Party is now full
-                onPartyFull(this);
-            }
-        }
+        //if (_partyMembers.Count >= MAX_PARTY_MEMBERS) {
+        //    if (onPartyFull != null) {
+        //        Debug.Log("Party " + _name + " is full!");
+        //        //Party is now full
+        //        onPartyFull(this);
+        //    }
+        //}
         if(_currentQuest != null) {
             if (_currentQuest.onQuestInfoChanged != null) {
                 _currentQuest.onQuestInfoChanged();
@@ -98,7 +101,6 @@ public class Party: IEncounterable {
     }
     public void PartyMemberHasArrived(ECS.Character member) {
         _partyMembersOnTheWay.Remove(member);
-        _currentQuest.CheckPartyMembers();
     }
     /*
      Remove a character from this party.
@@ -167,7 +169,7 @@ public class Party: IEncounterable {
 		PartyManager.Instance.RemoveParty(this);
 		if (_currentQuest != null && !_currentQuest.isDone) {
 			_currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
-		}
+        }
 		SetCurrentQuest (null);
 
 		while(_partyMembers.Count > 0) {
@@ -187,6 +189,9 @@ public class Party: IEncounterable {
                 isPartyComplete = false;
                 break;
             }
+        }
+        if(_partyMembersOnTheWay.Count > 0) {
+            isPartyComplete = false;
         }
         return isPartyComplete;
     }
@@ -362,6 +367,7 @@ public class Party: IEncounterable {
      character returns to a non hostile settlement after a quest.
          */
     internal void OnReachNonHostileSettlementAfterQuest() {
+        FactionManager.Instance.RemoveQuest(currentQuest);
         if (_partyLeader.isDead) {
             //party leader is already dead!
             SetCurrentQuest(null);

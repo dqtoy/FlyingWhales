@@ -95,8 +95,8 @@ public class InternalQuestManager : QuestCreator {
                     }
                 } else if (currConnection is BaseLandmark) {
                     BaseLandmark currLandmark = (BaseLandmark)currConnection;
-                    if(currLandmark.isHidden && !currLandmark.isExplored) {
-                        if (!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
+                    if (currLandmark.isHidden && !currLandmark.isExplored) {
+                        if (GetQuestsOfType(QUEST_TYPE.EXPLORE_TILE).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
                             questDict.AddElement(new ExploreTile(this, 60, currLandmark), GetExploreLandmarkWeight(currLandmark));
                         }
                     }

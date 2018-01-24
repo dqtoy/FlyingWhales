@@ -40,6 +40,8 @@ public class QuestInfoUI : UIMenu {
         string text = string.Empty;
         text += "[b]Quest Type:[/b] " + currentlyShowingQuest.questType.ToString();
         text += "\n[b]Done:[/b] " + currentlyShowingQuest.isDone.ToString();
+        text += "\n[b]Is Waiting:[/b] " + currentlyShowingQuest.isWaiting.ToString();
+        text += "\n[b]Is Expired:[/b] " + currentlyShowingQuest.isExpired.ToString();
         if (currentlyShowingQuest.assignedParty == null) {
             text += "\n[b]Assigned Party:[/b] NONE";
         } else {

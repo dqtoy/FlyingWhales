@@ -47,9 +47,11 @@ public class JoinParty : Quest {
         _isDone = true;
         _questResult = QUEST_RESULT.SUCCESS;
         _createdBy.RemoveQuest(this);
-        _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
         _partyToJoin.PartyMemberHasArrived((ECS.Character)_createdBy);
-        //_partyToJoin.currentQuest.CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
+        _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
+        if (_partyToJoin.partyMembers.Count < 5) {
+            _partyToJoin.currentQuest.CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
+        }
     }
     #endregion
 }

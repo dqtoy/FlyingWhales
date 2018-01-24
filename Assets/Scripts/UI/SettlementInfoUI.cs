@@ -25,7 +25,8 @@ public class SettlementInfoUI : UIMenu {
     public void ShowSettlementInfo() {
         isShowing = true;
 		this.gameObject.SetActive (true);
-//      tweenPos.PlayForward();
+        infoScrollView.ResetPosition();
+        //      tweenPos.PlayForward();
     }
     public void HideSettlementInfo() {
         isShowing = false;

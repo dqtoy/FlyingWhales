@@ -43,10 +43,13 @@ public class ItemChest : IEncounterable {
     }
 
     public bool StartEncounter(Party party) {
+        bool isChestEmpty = true; //Did any party member get any loot?
+        List<string> encounterLogs = new List<string>();
         for (int i = 0; i < party.partyMembers.Count; i++) {
             ECS.Character currMember = party.partyMembers[i];
             ECS.Item gainedItem = RandomizeItemForCharacter(currMember);
             if (gainedItem != null) {
+                isChestEmpty = false;
                 string quality = string.Empty;
                 if (gainedItem is ECS.Weapon) {
                     QUALITY itemQuality = ((ECS.Weapon)gainedItem).quality;
@@ -62,7 +65,7 @@ public class ItemChest : IEncounterable {
 
                 if(party.currentQuest != null) {
                     //Add Logs
-                    party.currentQuest.AddNewLog(currMember.name + " obtains " + quality + gainedItem.itemName + " from the chest.");
+                    encounterLogs.Add(currMember.name + " obtains " + quality + gainedItem.itemName + " from the chest.");
                 }
                 Debug.Log(currMember.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
                 currMember.PickupItem(gainedItem); //put item in inventory
@@ -83,11 +86,17 @@ public class ItemChest : IEncounterable {
                         ECS.IBodyPart bodyPart = ((ECS.Armor)gainedItem).bodyPartAttached;
                         log += bodyPart.name;
                     }
-                    party.currentQuest.AddNewLog(log);
+                    encounterLogs.Add(log);
                 }
             } else {
                 Debug.Log(currMember.name + " got nothing from the chest");
             }
+        }
+        if (isChestEmpty) {
+            party.currentQuest.AddNewLog("The party found nothing");
+        } else {
+            encounterLogs.Insert(0, "The party encountered a " + this.encounterName);
+            party.currentQuest.AddNewLogs(encounterLogs);
         }
         return true;
     }
