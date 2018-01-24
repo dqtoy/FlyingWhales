@@ -65,7 +65,7 @@ public class GoToLocation : QuestAction {
 				actionDoer.CreateNewAvatar();
 			}
 			actionDoer.avatar.SetTarget (targetLocation);
-			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
 		}
 	}
 	internal void Attack() {

@@ -39,8 +39,10 @@ public class CharacterRole {
         WeightedDictionary<Quest> actionWeights = new WeightedDictionary<Quest>();
         for (int i = 0; i < _character.faction.activeQuests.Count; i++) {
             Quest currQuest = _character.faction.activeQuests[i];
-            if (currQuest.CanAcceptQuest(_character) && this.CanAcceptQuest(currQuest)) { //Check both the quest filters and the quest types this role can accept
-                actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+            if (this.CanAcceptQuest(currQuest)) { //Check both the quest filters and the quest types this role can accept
+				if(currQuest.CanAcceptQuest(_character)){
+					actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+				}
             }
         }
 
@@ -49,8 +51,10 @@ public class CharacterRole {
                 Party currParty = PartyManager.Instance.allParties[i];
                 if (!currParty.isFull && currParty.isOpen) {
                     JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
-                    if (joinPartyTask.CanAcceptQuest(_character) && this.CanAcceptQuest(joinPartyTask)) { //Check both the quest filters and the quest types this role can accept
-                        actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+                    if (this.CanAcceptQuest(joinPartyTask)) { //Check both the quest filters and the quest types this role can accept
+						if (joinPartyTask.CanAcceptQuest (_character)) {
+							actionWeights.AddElement (joinPartyTask, GetWeightForQuest (joinPartyTask));
+						}
                     }
                 }
             }

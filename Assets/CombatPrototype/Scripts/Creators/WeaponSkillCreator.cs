@@ -20,7 +20,6 @@ namespace ECS {
 			EditorGUILayout.PropertyField(equipRequirement, true);
 			serializedObject.ApplyModifiedProperties ();
 
-			SerializedProperty skillProperty = serializedObject.FindProperty("itemComponent");
 			weaponSkillComponent.skillsFoldout = EditorGUILayout.Foldout(weaponSkillComponent.skillsFoldout, "Skills");
 
 			if (weaponSkillComponent.skillsFoldout && weaponSkillComponent.skills != null) {

@@ -25,7 +25,7 @@ namespace ECS{
 			this.charactersSideB = new List<ECS.Character> ();
 			this.resultsLog = new List<string> ();
 
-			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
+//			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
 		}
 
         #region ECS.Character Management
@@ -37,6 +37,7 @@ namespace ECS{
                 this.charactersSideB.Add(character);
             }
 			character.SetSide (side);
+			character.currentCombat = this;
 			if(CombatPrototypeUI.Instance != null){
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
 			}
@@ -49,6 +50,7 @@ namespace ECS{
 			}
 			for (int i = 0; i < characters.Count; i++) {
 				characters[i].SetSide (side);
+				characters[i].currentCombat = this;
 			}
 			if(CombatPrototypeUI.Instance != null){
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
@@ -61,6 +63,7 @@ namespace ECS{
             } else {
                 this.charactersSideB.Remove(character);
             }
+			character.currentCombat = null;
 			if (CombatPrototypeUI.Instance != null) {
 				CombatPrototypeUI.Instance.UpdateCharactersList (side);
 			}
@@ -68,11 +71,13 @@ namespace ECS{
         //Remove character without specifying a side
         internal void RemoveCharacter(ECS.Character character) {
             if (this.charactersSideA.Remove(character)) {
+				character.currentCombat = null;
 				if (CombatPrototypeUI.Instance != null) {
 					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.A);
 				}
             } else {
                 this.charactersSideB.Remove(character);
+				character.currentCombat = null;
 				if (CombatPrototypeUI.Instance != null) {
 					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.B);
 				}
@@ -733,7 +738,7 @@ namespace ECS{
 		#endregion
 
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
-		private void CharacterDeath(ECS.Character character){
+		internal void CharacterDeath(ECS.Character character){
 			RemoveCharacter (character);
 			AddCombatLog(character.name + " died horribly!", character.currentSide);
 		}
