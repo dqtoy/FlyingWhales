@@ -207,24 +207,27 @@ namespace ECS {
 			statWeights.AddElement ("intelligence", _raceSetting.intWeightAllocation);
 			statWeights.AddElement ("agility", _raceSetting.agiWeightAllocation);
 			statWeights.AddElement ("hp", _raceSetting.hpWeightAllocation);
-			string chosenStat = string.Empty;
-			for (int i = 0; i < _raceSetting.statAllocationPoints; i++) {
-				chosenStat = statWeights.PickRandomElementGivenWeights ();
-				if (chosenStat == "strength") {
-					_baseStrength += 5;
-				}else if (chosenStat == "intelligence") {
-					_baseIntelligence += 5;
-				}else if (chosenStat == "agility") {
-					_baseAgility += 5;
-				}else if (chosenStat == "hp") {
-					_baseMaxHP += 50;
+
+			if(statWeights.GetTotalOfWeights() > 0){
+				string chosenStat = string.Empty;
+				for (int i = 0; i < _raceSetting.statAllocationPoints; i++) {
+					chosenStat = statWeights.PickRandomElementGivenWeights ();
+					if (chosenStat == "strength") {
+						_baseStrength += 5;
+					}else if (chosenStat == "intelligence") {
+						_baseIntelligence += 5;
+					}else if (chosenStat == "agility") {
+						_baseAgility += 5;
+					}else if (chosenStat == "hp") {
+						_baseMaxHP += 50;
+					}
 				}
 			}
 
 			_baseMaxHP += (int)((float)_baseMaxHP * (_characterClass.hpPercentage / 100f));
-			_baseStrength = (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
-			_baseAgility = (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
-			_baseIntelligence = (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
+			_baseStrength += (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
+			_baseAgility += (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
+			_baseIntelligence += (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
 		}
 		//Check if the body parts of this character has the attribute necessary and quantity
 		internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
@@ -379,13 +382,15 @@ namespace ECS {
 
 		//ECS.Character's death
 		internal void Death(){
-			this._isDead = true;
-			if(this._party != null){
-				this._party.RemovePartyMember (this);
-			}
-			CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
-			if(Messenger.eventTable.ContainsKey("CharacterDeath")){
-				Messenger.Broadcast ("CharacterDeath", this);
+			if(!_isDead){
+				this._isDead = true;
+				if(this._party != null){
+					this._party.RemovePartyMember (this);
+				}
+				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
+				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+					Messenger.Broadcast ("CharacterDeath", this);
+				}
 			}
 		}
 
