@@ -204,6 +204,7 @@ public class Quest {
      Construct the list of quest actions that the party will perform.
          */
     protected virtual void ConstructQuestLine() { _questLine = new Queue<QuestAction>(); }
+	internal virtual void Result(bool isSuccess){}
     #endregion
 
     public virtual bool CanAcceptQuest(ECS.Character character) {

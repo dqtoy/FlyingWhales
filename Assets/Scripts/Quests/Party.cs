@@ -381,4 +381,6 @@ public class Party: IEncounterable {
 	public virtual bool StartEncounter(Party encounteredBy){
 		return false;
 	}
+	public virtual void ReturnResults(object result){
+	}
 }

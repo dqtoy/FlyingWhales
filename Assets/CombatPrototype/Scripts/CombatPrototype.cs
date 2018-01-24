@@ -17,14 +17,14 @@ namespace ECS{
 		internal List<ECS.Character> charactersSideA;
 		internal List<ECS.Character> charactersSideB;
 		internal List<string> resultsLog;
+		internal object caller;
 
-
-		public CombatPrototype(){
+		public CombatPrototype(object caller){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
 			this.resultsLog = new List<string> ();
-
+			this.caller = caller;
 //			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
 		}
 
@@ -92,9 +92,17 @@ namespace ECS{
         }
         #endregion
 
-//        public void StartCombatSimulationCoroutine() {
-//            StartCoroutine(CombatSimulation());
-//        }
+		public void ReturnCombatResults(){
+			if(caller != null){
+				if(caller is IEncounterable){
+					IEncounterable encounterable = (IEncounterable)caller;
+					encounterable.ReturnResults (this);
+				}
+			}else{
+				//CombatPrototypeManager
+				CombatPrototypeManager.Instance.Result();
+			}
+		}
 
         //This simulates the whole combat system
 		public void CombatSimulation(){

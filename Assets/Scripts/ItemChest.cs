@@ -271,4 +271,8 @@ public class ItemChest : IEncounterable {
     private QUALITY GetEquipmentQuality() {
         return _qualityWeights.PickRandomElementGivenWeights();
     }
+
+	public void ReturnResults(object result){
+		
+	}
 }

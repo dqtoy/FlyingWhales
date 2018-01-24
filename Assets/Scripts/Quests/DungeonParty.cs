@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class DungeonParty : Party {
 
+	Party encounteredByParty;
+
 	public DungeonParty(ECS.Character partyLeader, bool mustBeAddedToPartyList = true): base (partyLeader, mustBeAddedToPartyList) {
 		
 	}
@@ -26,15 +28,23 @@ public class DungeonParty : Party {
 	}
 
 	public override bool StartEncounter(Party encounteredBy){
-		ECS.CombatPrototype combat = new ECS.CombatPrototype ();
+		this.encounteredByParty = encounteredBy;
+		ECS.CombatPrototype combat = new ECS.CombatPrototype (this);
 		combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
 		combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
-		combat.CombatSimulation ();
-        encounteredBy.currentQuest.AddNewLogs(combat.resultsLog);
-        if(combat.charactersSideA.Count > 0) {
-            return true; //party that encountered this dungeon party won the combat
-        } else {
-            return false; //party that encountered this dungeon party lost the combat
-        }
+		CombatThreadPool.Instance.AddToThreadPool (combat);
+		return false;
+	}
+
+	public override void ReturnResults (object result){
+		if(result is ECS.CombatPrototype){
+			ECS.CombatPrototype combat = (ECS.CombatPrototype)result;
+			encounteredByParty.currentQuest.AddNewLogs(combat.resultsLog);
+			if(combat.charactersSideA.Count > 0) {
+				encounteredByParty.currentQuest.Result (true);
+			} else {
+				encounteredByParty.currentQuest.Result (false);
+			}
+		}
 	}
 }

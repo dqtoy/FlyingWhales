@@ -124,10 +124,13 @@ namespace ECS {
 		}
 
 		internal void NewCombat(){
-			this.combat = new CombatPrototype ();
+			this.combat = new CombatPrototype (null);
 		}
 		public void StartCombat(){
 			this.combat.CombatSimulation ();
+		}
+		public void Result(){
+			
 		}
     }
 }

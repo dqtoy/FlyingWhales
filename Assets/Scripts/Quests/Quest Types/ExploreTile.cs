@@ -38,6 +38,16 @@ public class ExploreTile : Quest {
         PartyManager.Instance.RemoveParty(_assignedParty);
         ResetQuestValues();
     }
+	internal override void Result(bool isSuccess){
+		if (isSuccess) {
+			_landmarkToExplore.SetExploredState(true);
+			EndQuest(QUEST_RESULT.SUCCESS);
+			AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
+		} else {
+			AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
+			QuestCancel();
+		}
+	}
     #endregion
 
     private void TriggerRandomResult() {
@@ -50,6 +60,7 @@ public class ExploreTile : Quest {
 			chosenEncounter.StartEncounter(_assignedParty);
 		}
 	}
+
     private void ExplorationResults() {
         if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
             IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
