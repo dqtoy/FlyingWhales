@@ -41,9 +41,15 @@ public class ExploreTile : Quest {
     #endregion
 
     private void TriggerRandomResult() {
-        ExplorationResults();
+		ExplorationResults();
     }
-
+	private void StartExploration(){
+		if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
+			IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
+			AddNewLog("The party encounters a " + chosenEncounter.encounterName);
+			chosenEncounter.StartEncounter(_assignedParty);
+		}
+	}
     private void ExplorationResults() {
         if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
             IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
