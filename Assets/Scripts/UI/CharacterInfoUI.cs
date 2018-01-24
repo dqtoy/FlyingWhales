@@ -12,6 +12,8 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel characterInfoLbl;
     [SerializeField] private UILabel relationshipsLbl;
+    [SerializeField] private UIScrollView infoScrollView;
+    [SerializeField] private UIScrollView relationshipsScrollView;
 
     internal ECS.Character currentlyShowingCharacter;
 
@@ -122,6 +124,7 @@ public class CharacterInfoUI : UIMenu {
 		}
 
         characterInfoLbl.text = text;
+        infoScrollView.ResetPosition();
 
         //Relationships
         string relationshipText = string.Empty;
@@ -135,7 +138,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
         relationshipsLbl.text = relationshipText;
-
+        relationshipsScrollView.ResetPosition();
     }
 
     public void CenterCameraOnCharacter() {

@@ -18,6 +18,7 @@ public class Collect : QuestAction {
 	internal void Expand(){
 		this.actionDoer.currLocation.landmarkOnTile.AdjustPopulation (-_amount);
 		((Expand)_quest).SetCivilians (_amount);
-		ActionDone (QUEST_ACTION_RESULT.SUCCESS);
+        _quest.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + " civilians from " + this.actionDoer.currLocation.landmarkOnTile.landmarkName);
+        ActionDone (QUEST_ACTION_RESULT.SUCCESS);
 	}
 }

@@ -11,6 +11,10 @@ public class ItemChest : IEncounterable {
     private WeightedDictionary<MATERIAL> _materialWeights;
     private WeightedDictionary<QUALITY> _qualityWeights;
 
+    public string encounterName {
+        get { return "Tier " + _tier.ToString() + " " + Utilities.NormalizeString(_chestType.ToString()) + " Chest"; }
+    }
+
     public ItemChest(int tier, ITEM_TYPE chestType, int chanceToGet = 100) {
         _tier = tier;
         _chestType = chestType;
@@ -45,13 +49,42 @@ public class ItemChest : IEncounterable {
             if (gainedItem != null) {
                 string quality = string.Empty;
                 if (gainedItem is ECS.Weapon) {
-                    quality = ((ECS.Weapon)gainedItem).quality.ToString();
+                    QUALITY itemQuality = ((ECS.Weapon)gainedItem).quality;
+                    if (itemQuality != QUALITY.NORMAL) {
+                        quality = Utilities.NormalizeString(itemQuality.ToString()) + " ";
+                    }
                 } else if (gainedItem is ECS.Armor) {
-                    quality = ((ECS.Armor)gainedItem).quality.ToString();
+                    QUALITY itemQuality = ((ECS.Armor)gainedItem).quality;
+                    if (itemQuality != QUALITY.NORMAL) {
+                        quality = Utilities.NormalizeString(itemQuality.ToString()) + " ";
+                    }
+                }
+
+                if(party.currentQuest != null) {
+                    //Add Logs
+                    party.currentQuest.AddNewLog(currMember.name + " obtains " + quality + gainedItem.itemName + " from the chest.");
                 }
                 Debug.Log(currMember.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
                 currMember.PickupItem(gainedItem); //put item in inventory
-                currMember.EquipItem(gainedItem); //if the character can equip the item, equip it, otherwise, keep in inventory
+                if (currMember.EquipItem(gainedItem)) {//if the character can equip the item, equip it, otherwise, keep in inventory
+                    string log = currMember.name + " equips the " + gainedItem.itemName + " on ";
+                    if(currMember.gender == GENDER.FEMALE) {
+                        log += "her ";
+                    } else {
+                        log += "his ";
+                    }
+                    if (gainedItem is ECS.Weapon) {
+                        List<ECS.IBodyPart> bodyParts = ((ECS.Weapon)gainedItem).bodyPartsAttached;
+                        for (int j = 0; j < bodyParts.Count; j++) {
+                            ECS.IBodyPart currBodyPart = bodyParts[j];
+                            log += currBodyPart.name + " ";
+                        }
+                    } else if (gainedItem is ECS.Armor) {
+                        ECS.IBodyPart bodyPart = ((ECS.Armor)gainedItem).bodyPartAttached;
+                        log += bodyPart.name;
+                    }
+                    party.currentQuest.AddNewLog(log);
+                }
             } else {
                 Debug.Log(currMember.name + " got nothing from the chest");
             }

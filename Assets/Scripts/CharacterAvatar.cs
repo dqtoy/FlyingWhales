@@ -14,18 +14,24 @@ public class CharacterAvatar : PooledObject{
 
 	protected List<ECS.Character> _characters;
 
-	protected HexTile currLocation;
+	protected HexTile _currLocation;
     protected HexTile targetLocation;
 
 	protected List<HexTile> path;
 
 	protected bool _hasArrived = false;
 
+    #region getters/setters
+    public HexTile currLocation {
+        get { return _currLocation; }
+    }
+    #endregion
+
     internal virtual void Init(ECS.Character character) {
         this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<ECS.Character>();
         AddNewCharacter(character);
-        this.currLocation = character.currLocation;
+        _currLocation = character.currLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
     }
     internal virtual void Init(Party party) {
@@ -34,7 +40,7 @@ public class CharacterAvatar : PooledObject{
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
-        this.currLocation = party.partyLeader.currLocation;
+        _currLocation = party.partyLeader.currLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
     }
 
@@ -95,7 +101,7 @@ public class CharacterAvatar : PooledObject{
 			RemoveCharactersFromTile(this.currLocation);
 			AddCharactersToTile(this.path[0]);
 
-            this.currLocation = this.path[0];
+            _currLocation = this.path[0];
             for (int i = 0; i < _characters.Count; i++) {
                 ECS.Character currCharacter = _characters[i];
                 currCharacter.SetLocation(this.currLocation);
@@ -168,7 +174,7 @@ public class CharacterAvatar : PooledObject{
         smoothMovement.Reset();
         onPathFinished = null;
         direction = DIRECTION.LEFT;
-        currLocation = null;
+        _currLocation = null;
         targetLocation = null;
         path = null;
         _hasArrived = false;

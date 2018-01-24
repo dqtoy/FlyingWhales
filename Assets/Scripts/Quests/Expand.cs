@@ -55,6 +55,7 @@ public class Expand : Quest {
 		base.EndQuest(result);
 	}
 	protected override void ResetQuestValues(){
+        base.ResetQuestValues();
 		_civilians = 0;
 	}
 	public override bool CanAcceptQuest (ECS.Character character){
@@ -81,7 +82,8 @@ public class Expand : Quest {
 	}
 
 	internal override void QuestFail() {
-		RetaskParty (_assignedParty.JustDisbandParty);
+        AddNewLog("The expansion failed!");
+        RetaskParty (_assignedParty.JustDisbandParty);
 	}
 	#endregion
 
@@ -97,7 +99,7 @@ public class Expand : Quest {
 		ECS.Character villageHead = expandedTo.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
 		villageHead.SetHome (expandedTo);
 		expandedTo.SetHead(villageHead);
-
-		EndQuest (QUEST_RESULT.SUCCESS);
+        AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");
+        EndQuest (QUEST_RESULT.SUCCESS);
 	}
 }

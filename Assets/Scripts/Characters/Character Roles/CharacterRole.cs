@@ -124,7 +124,7 @@ public class CharacterRole {
     }
     internal virtual int GetGoHomeWeight() {
         //0 if already at Home Settlement or no path to it
-        if (_character.currLocation.isHabitable && _character.currLocation.isOccupied && _character.currLocation.landmarkOnTile.owner == _character.faction) {
+        if (_character.currLocation.isHabitable && _character.currLocation.isOccupied && _character.currLocation.id == _character.home.location.id) {
             return 0;
         }
         if (PathGenerator.Instance.GetPath(_character.currLocation, _character.home.location, PATHFINDING_MODE.USE_ROADS) == null) {

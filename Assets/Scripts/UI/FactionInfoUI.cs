@@ -12,6 +12,8 @@ public class FactionInfoUI : UIMenu {
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel factionInfoLbl;
     [SerializeField] private UILabel relationshipsLbl;
+    [SerializeField] private UIScrollView infoScrollView;
+    [SerializeField] private UIScrollView relationshipsScrollView;
 
     internal Faction currentlyShowingFaction;
 
@@ -85,6 +87,7 @@ public class FactionInfoUI : UIMenu {
 		}
 			
         factionInfoLbl.text = text;
+        infoScrollView.ResetPosition();
 
         //Relationships
         string relationshipText = string.Empty;
@@ -98,6 +101,7 @@ public class FactionInfoUI : UIMenu {
         }
 
         relationshipsLbl.text = relationshipText;
+        relationshipsScrollView.ResetPosition();
     }
 	public void OnClickCloseBtn(){
 //		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();

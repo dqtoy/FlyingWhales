@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 public class Party: IEncounterable {
 
@@ -20,6 +22,9 @@ public class Party: IEncounterable {
     private const int MAX_PARTY_MEMBERS = 5;
 
     #region getters/setters
+    public string encounterName {
+        get { return Utilities.NormalizeString(_partyLeader.raceSetting.race.ToString()) + " party"; }
+    }
     public string name {
         get { return _name; }
     }
@@ -80,19 +85,27 @@ public class Party: IEncounterable {
                 onPartyFull(this);
             }
         }
+        if(_currentQuest != null) {
+            if (_currentQuest.onQuestInfoChanged != null) {
+                _currentQuest.onQuestInfoChanged();
+            }
+        }
     }
     /*
      Remove a character from this party.
          */
-    public virtual void RemovePartyMember(ECS.Character member) {
+    public virtual void RemovePartyMember(ECS.Character member, bool forDeath = false) {
         _partyMembers.Remove(member);
         if(_avatar != null) {
             _avatar.RemoveCharacter(member);
         }
-        Debug.Log(member.name + " has left the party of " + partyLeader.name);
-        if (currentQuest != null) {
-            currentQuest.AddNewLog(member.name + " has joined the party");
+        if (!forDeath) {
+            Debug.Log(member.name + " has left the party of " + partyLeader.name);
+            if (currentQuest != null) {
+                currentQuest.AddNewLog(member.name + " has left the party");
+            }
         }
+        
         member.SetParty(null);
 		member.SetCurrentQuest (null);
         //if (_partyMembers.Count < 2) {
@@ -304,7 +317,56 @@ public class Party: IEncounterable {
     }
     #endregion
 
-	public virtual bool StartEncounter(ECS.Character encounteredBy){  //will return true/false if the encounter was successful or not
+    #region Utilities
+    public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
+        //check first if the character is already at a non hostile settlement
+        if (_avatar.currLocation.landmarkOnTile != null && _avatar.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
+            && _avatar.currLocation.landmarkOnTile.owner != null) {
+            if (partyLeader.faction.id != _avatar.currLocation.landmarkOnTile.owner.id) { //the party is not at a tile owned by the faction of the party leader
+                if (FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, _avatar.currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                    onReachSettlement();
+                    return;
+                }
+            } else {
+                onReachSettlement();
+                return;
+            }
+        }
+        //party is not on a non hostile settlement
+        List<Settlement> allSettlements = new List<Settlement>();
+        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
+            Tribe currTribe = FactionManager.Instance.allTribes[i];
+            if (partyLeader.faction.id == currTribe.id ||
+                FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, currTribe).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                allSettlements.AddRange(currTribe.settlements);
+            }
+        }
+        allSettlements = allSettlements.OrderBy(x => Vector2.Distance(_avatar.currLocation.transform.position, x.location.transform.position)).ToList();
+        //if (_avatar == null) {
+        //    _partyLeader.CreateNewAvatar();
+        //}
+        _avatar.SetTarget(allSettlements[0].location);
+        _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
+    }
+    /*
+     This is the default action to be done when a 
+     character returns to a non hostile settlement after a quest.
+         */
+    internal void OnReachNonHostileSettlementAfterQuest() {
+        if (_partyLeader.isDead) {
+            //party leader is already dead!
+            SetCurrentQuest(null);
+            DisbandParty();
+        } else {
+            CheckLeavePartyAfterQuest();
+            _partyLeader.DestroyAvatar();
+            _partyLeader.DetermineAction();
+        }
+        //_currLocation.AddCharacterOnTile(this);
+    }
+    #endregion
+
+    public virtual bool StartEncounter(ECS.Character encounteredBy){  //will return true/false if the encounter was successful or not
 		return false;
 	}
 	public virtual bool StartEncounter(Party encounteredBy){

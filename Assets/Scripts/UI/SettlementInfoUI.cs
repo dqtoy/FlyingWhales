@@ -13,6 +13,7 @@ public class SettlementInfoUI : UIMenu {
     [SerializeField] private UILabel settlementInfoLbl;
 	[SerializeField] private GameObject expandBtnGO;
 	[SerializeField] private GameObject exploreBtnGO;
+    [SerializeField] private UIScrollView infoScrollView;
 
     internal BaseLandmark currentlyShowingSettlement;
 
@@ -118,7 +119,7 @@ public class SettlementInfoUI : UIMenu {
 					Party currParty = PartyManager.Instance.allParties[i];
 					text += "\n" + currParty.name + " O: " + currParty.isOpen + " F: " + currParty.isFull;
 					if(currParty.currentQuest != null) {
-						text += "\n" + Utilities.NormalizeString(currParty.currentQuest.questType.ToString());
+						text += "\n" + "[url=" + currParty.currentQuest.id + "_quest]" + Utilities.NormalizeString(currParty.currentQuest.questType.ToString()) + "[/url]";
 						if (currParty.currentQuest.isDone) {
 							text += "(Done)";
 						} else {
@@ -151,6 +152,7 @@ public class SettlementInfoUI : UIMenu {
 		}
        
         settlementInfoLbl.text = text;
+        infoScrollView.ResetPosition();
     }
 
 	public void OnClickCloseBtn(){
