@@ -175,10 +175,7 @@ namespace ECS {
             _traits = new List<Trait> ();
             _relationships = new Dictionary<Character, Relationship>();
 
-			_baseMaxHP = _raceSetting.baseHP + (int)((float)_raceSetting.baseHP * (_characterClass.hpPercentage / 100f));
-			_baseStrength = _raceSetting.baseStr + (int)((float)_raceSetting.baseStr * (_characterClass.strPercentage / 100f));
-			_baseAgility = _raceSetting.baseAgi + (int)((float)_raceSetting.baseAgi * (_characterClass.agiPercentage / 100f));
-			_baseIntelligence = _raceSetting.baseInt + (int)((float)_raceSetting.baseInt * (_characterClass.intPercentage / 100f));
+			AllocateStatPoints ();
 
 			_maxHP = _baseMaxHP;
 			_currentHP = _maxHP;
@@ -199,6 +196,39 @@ namespace ECS {
             GenerateTraits();
 		}
 
+		private void AllocateStatPoints(){
+			_baseMaxHP = _raceSetting.baseHP;
+			_baseStrength = _raceSetting.baseStr;
+			_baseAgility = _raceSetting.baseAgi;
+			_baseIntelligence = _raceSetting.baseInt;
+
+			WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
+			statWeights.AddElement ("strength", _raceSetting.strWeightAllocation);
+			statWeights.AddElement ("intelligence", _raceSetting.intWeightAllocation);
+			statWeights.AddElement ("agility", _raceSetting.agiWeightAllocation);
+			statWeights.AddElement ("hp", _raceSetting.hpWeightAllocation);
+
+			if(statWeights.GetTotalOfWeights() > 0){
+				string chosenStat = string.Empty;
+				for (int i = 0; i < _raceSetting.statAllocationPoints; i++) {
+					chosenStat = statWeights.PickRandomElementGivenWeights ();
+					if (chosenStat == "strength") {
+						_baseStrength += 5;
+					}else if (chosenStat == "intelligence") {
+						_baseIntelligence += 5;
+					}else if (chosenStat == "agility") {
+						_baseAgility += 5;
+					}else if (chosenStat == "hp") {
+						_baseMaxHP += 50;
+					}
+				}
+			}
+
+			_baseMaxHP += (int)((float)_baseMaxHP * (_characterClass.hpPercentage / 100f));
+			_baseStrength += (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
+			_baseAgility += (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
+			_baseIntelligence += (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
+		}
 		//Check if the body parts of this character has the attribute necessary and quantity
 		internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
 			int count = 0;
@@ -352,13 +382,15 @@ namespace ECS {
 
 		//ECS.Character's death
 		internal void Death(){
-			this._isDead = true;
-			if(this._party != null){
+			if(!_isDead){
+				this._isDead = true;
+				if(this._party != null){
 				this._party.RemovePartyMember (this, true);
-			}
-			CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
-			if(Messenger.eventTable.ContainsKey("CharacterDeath")){
-				Messenger.Broadcast ("CharacterDeath", this);
+				}
+				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
+				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+					Messenger.Broadcast ("CharacterDeath", this);
+				}
 			}
 		}
 

@@ -13,6 +13,11 @@ namespace ECS {
         public int baseInt;
         public int baseAgi;
         public int baseHP;
+		public int statAllocationPoints;
+		public int strWeightAllocation;
+		public int intWeightAllocation;
+		public int agiWeightAllocation;
+		public int hpWeightAllocation;
 
         internal RaceSetting CreateNewCopy() {
             RaceSetting newRaceSetting = new RaceSetting();
@@ -26,6 +31,11 @@ namespace ECS {
             newRaceSetting.baseInt = this.baseInt;
             newRaceSetting.baseAgi = this.baseAgi;
             newRaceSetting.baseHP = this.baseHP;
+			newRaceSetting.statAllocationPoints = this.statAllocationPoints;
+			newRaceSetting.strWeightAllocation = this.strWeightAllocation;
+			newRaceSetting.intWeightAllocation = this.intWeightAllocation;
+			newRaceSetting.agiWeightAllocation = this.agiWeightAllocation;
+			newRaceSetting.hpWeightAllocation = this.hpWeightAllocation;
             return newRaceSetting;
         }
 

@@ -31,6 +31,7 @@ namespace ECS{
         }
 
         private void Start() {
+			CombatPrototypeManager.Instance.Initialize();
             LoadCharacterChoices();
             LoadItemTypeChoices();
         }

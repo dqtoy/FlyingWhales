@@ -10,6 +10,11 @@ namespace ECS{
 		public int baseInt;
 		public int baseAgi;
 		public int baseHP;
+		public int statAllocationPoints;
+		public int strWeightAllocation;
+		public int intWeightAllocation;
+		public int agiWeightAllocation;
+		public int hpWeightAllocation;
 	}
 }
 
