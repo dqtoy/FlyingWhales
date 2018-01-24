@@ -1168,7 +1168,8 @@ public class Utilities : MonoBehaviour {
 
     public static T PickRandomElementWithWeights<T>(Dictionary<T, int> weights) {
         int totalOfAllWeights = GetTotalOfWeights(weights);
-        int chance = UnityEngine.Random.Range(0, totalOfAllWeights);
+		System.Random random = new System.Random ();
+		int chance = random.Next(0, totalOfAllWeights);
         int upperBound = 0;
         int lowerBound = 0;
         foreach (KeyValuePair<T, int> kvp in weights) {

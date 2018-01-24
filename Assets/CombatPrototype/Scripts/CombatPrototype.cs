@@ -19,6 +19,8 @@ namespace ECS{
 		internal List<string> resultsLog;
 		internal object caller;
 
+		private System.Random GameManager.Instance.randomNumGen = new System.Random ();
+
 		public CombatPrototype(object caller){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
@@ -227,7 +229,7 @@ namespace ECS{
 				possibleTargets.Add (sourceCharacter);
 			}
 
-			return possibleTargets [UnityEngine.Random.Range (0, possibleTargets.Count)];
+			return possibleTargets [GameManager.Instance.randomNumGen.Next (0, possibleTargets.Count)];
 		}
 
 		//Get Skill that the character will use based on activation weights, target character must be within skill range
@@ -397,8 +399,8 @@ namespace ECS{
 		}
 		//ECS.Character will do the skill specified, but its success will be determined by the skill's accuracy
 		private void DoSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
-			float chance = UnityEngine.Random.Range (0f, 99f);
-			if(chance < skill.accuracy){
+			double chance = GameManager.Instance.randomNumGen.NextDouble ();
+			if(chance < (skill.accuracy / 100f)){
 				//Successful
 				SuccessfulSkill(skill, sourceCharacter, targetCharacter);
 			}else{
@@ -441,15 +443,15 @@ namespace ECS{
 
 		//Get DEFEND_TYPE for the attack skill, if DEFEND_TYPE is NONE, then target character has not defend successfully, therefore, the target character will be damaged
 		private DEFEND_TYPE CanTargetCharacterDefend(ECS.Character targetCharacter){
-			int dodgeChance = UnityEngine.Random.Range (0, 100);
+			int dodgeChance = GameManager.Instance.randomNumGen.Next (0, 100);
 			if(dodgeChance < targetCharacter.dodgeRate){
 				return DEFEND_TYPE.DODGE;
 			}else{
-				int parryChance = UnityEngine.Random.Range (0, 100);
+				int parryChance = GameManager.Instance.randomNumGen.Next (0, 100);
 				if(parryChance < targetCharacter.parryRate){
 					return DEFEND_TYPE.PARRY;
 				}else{
-					int blockChance = UnityEngine.Random.Range (0, 100);
+					int blockChance = GameManager.Instance.randomNumGen.Next (0, 100);
 					if(blockChance < targetCharacter.blockRate){
 						return DEFEND_TYPE.BLOCK;
 					}else{
@@ -516,7 +518,7 @@ namespace ECS{
 
 			if(armor != null){
 				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
-					int damageNullChance = UnityEngine.Random.Range (0, 100);
+					int damageNullChance = GameManager.Instance.randomNumGen.Next (0, 100);
 					if(damageNullChance < armor.damageNullificationChance){
 						log += " The attack was fully absorbed by the " + armor.itemName + ".";
 						return;
@@ -545,7 +547,7 @@ namespace ECS{
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
 		private void DealDamageToBodyPart(AttackSkill attackSkill, ECS.Character targetCharacter, ECS.Character sourceCharacter, BodyPart chosenBodyPart, ref string log){
-			int chance = UnityEngine.Random.Range (0, 100);
+			int chance = GameManager.Instance.randomNumGen.Next (0, 100);
 
 			if(attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0){
 				for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
@@ -598,10 +600,10 @@ namespace ECS{
 						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.INJURED);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
 
-						int logChance = UnityEngine.Random.Range (0, 2);
+						int logChance = GameManager.Instance.randomNumGen.Next (0, 2);
 						if(logChance == 0){
 							string[] predicate = new string[]{ "battered", "crippled", "mangled", "brokened" };
-							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate[UnityEngine.Random.Range(0, predicate.Length)] + "!";
+							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate[GameManager.Instance.randomNumGen.Next(0, predicate.Length)] + "!";
 						}else{
 							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
 							if(secondaryBodPart != null){
@@ -615,14 +617,14 @@ namespace ECS{
 						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BLEEDING);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
 
-						int logChance = UnityEngine.Random.Range (0, 2);
+						int logChance = GameManager.Instance.randomNumGen.Next (0, 2);
 						if(logChance == 0){
 							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
 							if(secondaryBodPart != null){
 								string[] adjective = new string[]{ "deep", "light", "painful", "fresh", "deadly" };
 								string[] noun = new string[]{ "gash", "wound", "lesion", "tear" };
 
-								log += " A " + adjective[UnityEngine.Random.Range(0, adjective.Length)] + " " + noun[UnityEngine.Random.Range(0, noun.Length)] + " forms near " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + ".";
+								log += " A " + adjective[GameManager.Instance.randomNumGen.Next(0, adjective.Length)] + " " + noun[GameManager.Instance.randomNumGen.Next(0, noun.Length)] + " forms near " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + ".";
 							}
 						}else{
 							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
@@ -637,9 +639,9 @@ namespace ECS{
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
 
 						string[] verb = new string[]{ "severed", "decapitated", "sliced off", "lopped off" };
-						log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb[UnityEngine.Random.Range(0, verb.Length)] + " by the attack!";
+						log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb[GameManager.Instance.randomNumGen.Next(0, verb.Length)] + " by the attack!";
 
-						int logChance = UnityEngine.Random.Range (0, 2);
+						int logChance = GameManager.Instance.randomNumGen.Next (0, 2);
 						if(logChance == 0){
 							log += " It drops to the floor lifelessly.";
 						}else{
@@ -676,12 +678,12 @@ namespace ECS{
 					if(chance < 5){
 						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BURNING);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
-						int logChance = UnityEngine.Random.Range (0, 2);
+						int logChance = GameManager.Instance.randomNumGen.Next (0, 2);
 						if(logChance == 0){
 							log += " A burnt smell emanates from " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + "!";
 						}else{
 							string[] verb = new string[]{ "charred", "burning", "roasting" };
-							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + verb[UnityEngine.Random.Range(0, verb.Length)] + "!";
+							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + verb[GameManager.Instance.randomNumGen.Next(0, verb.Length)] + "!";
 						}
 					}
 				}
@@ -693,7 +695,7 @@ namespace ECS{
 		private BodyPart GetRandomBodyPart(ECS.Character character){
 			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();
 			if(allBodyParts.Count > 0){
-				return allBodyParts [UnityEngine.Random.Range (0, allBodyParts.Count)];
+				return allBodyParts [GameManager.Instance.randomNumGen.Next (0, allBodyParts.Count)];
 			}else{
 				return null;
 			}
