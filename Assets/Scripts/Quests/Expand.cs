@@ -64,7 +64,10 @@ public class Expand : Quest {
 		}
 		if(_originTile != null){
 			if((int)_originTile.landmarkOnTile.civilians > 20 && character.currLocation.id == _originTile.id){
-				return true;
+				List<HexTile> path = PathGenerator.Instance.GetPath (_originTile, this._targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
+				if(path != null){
+					return true;
+				}
 			}else{
 				return false;
 			}

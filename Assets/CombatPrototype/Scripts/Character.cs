@@ -51,6 +51,7 @@ namespace ECS {
 		private BaseLandmark _home;
 
 		internal int actRate;
+		internal CombatPrototype currentCombat;
 
 		#region getters / setters
 		internal string name{
@@ -193,6 +194,7 @@ namespace ECS {
 			GetRandomCharacterColor ();
 
             _activeQuests = new List<Quest>();
+			currentCombat = null;
             GenerateTraits();
 		}
 
@@ -388,9 +390,14 @@ namespace ECS {
 					this._party.RemovePartyMember (this);
 				}
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
-				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
-					Messenger.Broadcast ("CharacterDeath", this);
+				if(this.currentCombat != null){
+					this.currentCombat.CharacterDeath (this);
 				}
+				this._home.RemoveCharacterHomeOnLandmark (this);
+				this.currLocation.RemoveCharacterOnTile (this);
+//				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+//					Messenger.Broadcast ("CharacterDeath", this);
+//				}
 			}
 		}
 
