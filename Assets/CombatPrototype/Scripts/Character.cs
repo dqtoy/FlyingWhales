@@ -162,7 +162,7 @@ namespace ECS {
         public BaseLandmark home {
             get { return _home; }
         }
-        public float missingHP {
+        public float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
         }
         #endregion
@@ -390,6 +390,7 @@ namespace ECS {
 				    this._party.RemovePartyMember (this, true);
 				}
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
+                this.currLocation.RemoveCharacterOnTile(this);
 				if(this.currentCombat != null){
 					this.currentCombat.CharacterDeath (this);
 				}
@@ -1004,6 +1005,7 @@ namespace ECS {
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
 				chosenAction.AcceptQuest(this);
+                Debug.Log(this.name + " decides to " + chosenAction.questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
             } else {
                 throw new Exception(this.name + " could not decide action because weights are zero!");
             }
@@ -1080,6 +1082,9 @@ namespace ECS {
 		public void RegenerateHealth() {
 			AdjustHP(regenAmount);
 		}
+        public bool IsHealthFull() {
+            return _currentHP >= _maxHP;
+        }
 		#endregion
 
 		#region Avatar

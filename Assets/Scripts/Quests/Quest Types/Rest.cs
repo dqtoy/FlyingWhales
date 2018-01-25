@@ -31,13 +31,12 @@ public class Rest : Quest {
         goToLocation.onQuestActionDone += this.PerformNextQuestAction;
         goToLocation.onQuestDoAction += goToLocation.Generic;
 
-        RestForDays restForDays = new RestForDays(this);
-        restForDays.InititalizeAction(30); //set character to rest for x days
-        restForDays.onQuestActionDone += QuestSuccess;
-        restForDays.onQuestDoAction += restForDays.Rest;
+        RestAction restAction = new RestAction(this);
+        restAction.onQuestActionDone += QuestSuccess;
+        restAction.onQuestDoAction += restAction.StartDailyRegeneration;
 
         _questLine.Enqueue(goToLocation);
-        _questLine.Enqueue(restForDays);
+        _questLine.Enqueue(restAction);
 
     }
     public override void AcceptQuest(ECS.Character partyLeader) {
@@ -52,9 +51,19 @@ public class Rest : Quest {
         }
     }
     internal override void QuestSuccess() {
+        Debug.Log(((ECS.Character)_createdBy).name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
         _isDone = true;
         _createdBy.RemoveQuest(this);
         ((ECS.Character)_createdBy).DetermineAction();
+    }
+    internal override void QuestCancel() {
+        _questResult = QUEST_RESULT.CANCEL;
+        if (_currentAction != null) {
+            _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
+        }
+        //TODO: What to do when rest is cancelled?
+        //RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
+        //ResetQuestValues();
     }
     #endregion
 }
