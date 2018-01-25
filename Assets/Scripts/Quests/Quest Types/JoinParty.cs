@@ -38,15 +38,12 @@ public class JoinParty : Quest {
 
         GoToLocation goToLocation = new GoToLocation(this);
         goToLocation.InititalizeAction(partyToJoin.partyLeader.currLocation);
-        goToLocation.onQuestActionDone += QuestSuccess;
+		goToLocation.onQuestActionDone += SuccessQuest;
         goToLocation.onQuestDoAction += goToLocation.Generic;
 
         _questLine.Enqueue(goToLocation);
     }
     internal override void QuestSuccess() {
-        _isDone = true;
-        _questResult = QUEST_RESULT.SUCCESS;
-        _createdBy.RemoveQuest(this);
         _partyToJoin.PartyMemberHasArrived((ECS.Character)_createdBy);
         _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
         if (_partyToJoin.partyMembers.Count < 5) {
@@ -54,4 +51,8 @@ public class JoinParty : Quest {
         }
     }
     #endregion
+
+	private void SuccessQuest() {
+		EndQuest (QUEST_RESULT.SUCCESS);
+	}
 }

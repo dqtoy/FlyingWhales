@@ -33,7 +33,7 @@ public class Rest : Quest {
 
         RestForDays restForDays = new RestForDays(this);
         restForDays.InititalizeAction(30); //set character to rest for x days
-        restForDays.onQuestActionDone += QuestSuccess;
+		restForDays.onQuestActionDone += SuccessQuest;
         restForDays.onQuestDoAction += restForDays.Rest;
 
         _questLine.Enqueue(goToLocation);
@@ -51,10 +51,11 @@ public class Rest : Quest {
             onQuestAccepted();
         }
     }
-    internal override void QuestSuccess() {
-        _isDone = true;
-        _createdBy.RemoveQuest(this);
-        ((ECS.Character)_createdBy).DetermineAction();
-    }
+	internal override void QuestSuccess() {
+		((ECS.Character)_createdBy).DetermineAction();
+	}
     #endregion
+	private void SuccessQuest() {
+		EndQuest (QUEST_RESULT.SUCCESS);
+	}
 }

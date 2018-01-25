@@ -19,7 +19,7 @@ namespace ECS{
 		internal List<string> resultsLog;
 		internal object caller;
 
-		private System.Random GameManager.Instance.randomNumGen = new System.Random ();
+		private System.Random randomNumGen = new System.Random ();
 
 		public CombatPrototype(object caller){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
