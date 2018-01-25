@@ -26,8 +26,9 @@ namespace ECS {
 			raceComponent.intWeightAllocation = EditorGUILayout.IntField("Intelligence Weight Allocation: ", raceComponent.intWeightAllocation);
 			raceComponent.agiWeightAllocation = EditorGUILayout.IntField("Agility Weight Allocation: ", raceComponent.agiWeightAllocation);
 			raceComponent.hpWeightAllocation = EditorGUILayout.IntField("HP Weight Allocation: ", raceComponent.hpWeightAllocation);
+            raceComponent.restRegenAmount = EditorGUILayout.IntField("Rest Regeneration Amount: ", raceComponent.restRegenAmount);
 
-			SerializedProperty serializedProperty = serializedObject.FindProperty("bodyParts");
+            SerializedProperty serializedProperty = serializedObject.FindProperty("bodyParts");
 			EditorGUILayout.PropertyField(serializedProperty, true);
 			serializedObject.ApplyModifiedProperties();
 

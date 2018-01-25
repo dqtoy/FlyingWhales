@@ -15,6 +15,7 @@ namespace ECS{
 		public int intWeightAllocation;
 		public int agiWeightAllocation;
 		public int hpWeightAllocation;
+        public int restRegenAmount;
 	}
 }
 

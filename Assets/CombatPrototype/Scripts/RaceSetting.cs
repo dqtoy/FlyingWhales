@@ -18,6 +18,7 @@ namespace ECS {
 		public int intWeightAllocation;
 		public int agiWeightAllocation;
 		public int hpWeightAllocation;
+        public int restRegenAmount;
 
         internal RaceSetting CreateNewCopy() {
             RaceSetting newRaceSetting = new RaceSetting();
@@ -36,6 +37,7 @@ namespace ECS {
 			newRaceSetting.intWeightAllocation = this.intWeightAllocation;
 			newRaceSetting.agiWeightAllocation = this.agiWeightAllocation;
 			newRaceSetting.hpWeightAllocation = this.hpWeightAllocation;
+            newRaceSetting.restRegenAmount = this.restRegenAmount;
             return newRaceSetting;
         }
 
