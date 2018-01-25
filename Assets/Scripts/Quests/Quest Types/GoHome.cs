@@ -24,15 +24,12 @@ public class GoHome : Quest {
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
         goToLocation.InititalizeAction(((ECS.Character)_createdBy).home.location);
-        goToLocation.onQuestActionDone += QuestSuccess;
+		goToLocation.onQuestActionDone += SuccessQuest;
         goToLocation.onQuestDoAction += goToLocation.Generic;
 
         _questLine.Enqueue(goToLocation);
     }
     internal override void QuestSuccess() {
-        _isDone = true;
-        _questResult = QUEST_RESULT.SUCCESS;
-        _createdBy.RemoveQuest(this);
         if(_assignedParty == null) {
             //When the character has gone home, determine the next action
             ECS.Character character = ((ECS.Character)_createdBy);
@@ -43,4 +40,8 @@ public class GoHome : Quest {
         }
     }
     #endregion
+
+	private void SuccessQuest(){
+		EndQuest (QUEST_RESULT.SUCCESS);
+	}
 }

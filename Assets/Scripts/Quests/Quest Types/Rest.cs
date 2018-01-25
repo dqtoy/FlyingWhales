@@ -32,7 +32,7 @@ public class Rest : Quest {
         goToLocation.onQuestDoAction += goToLocation.Generic;
 
         RestAction restAction = new RestAction(this);
-        restAction.onQuestActionDone += QuestSuccess;
+		restAction.onQuestActionDone += SuccessQuest;
         restAction.onQuestDoAction += restAction.StartDailyRegeneration;
 
         _questLine.Enqueue(goToLocation);
@@ -50,14 +50,11 @@ public class Rest : Quest {
             onQuestAccepted();
         }
     }
-    internal override void QuestSuccess() {
-        Debug.Log(((ECS.Character)_createdBy).name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
-        _isDone = true;
-        _createdBy.RemoveQuest(this);
-        ((ECS.Character)_createdBy).DetermineAction();
-    }
+	internal override void QuestSuccess() {
+		Debug.Log(((ECS.Character)_createdBy).name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
+		((ECS.Character)_createdBy).DetermineAction();
+	}
     internal override void QuestCancel() {
-        _questResult = QUEST_RESULT.CANCEL;
         if (_currentAction != null) {
             _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
         }
@@ -66,4 +63,7 @@ public class Rest : Quest {
         //ResetQuestValues();
     }
     #endregion
+	private void SuccessQuest() {
+		EndQuest (QUEST_RESULT.SUCCESS);
+	}
 }
