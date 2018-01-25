@@ -27,13 +27,12 @@ public class DungeonParty : Party {
 		member.SetParty(null);
 	}
 
-	public override bool StartEncounter(Party encounteredBy){
+	public override void StartEncounter(Party encounteredBy){
 		this.encounteredByParty = encounteredBy;
 		ECS.CombatPrototype combat = new ECS.CombatPrototype (this);
 		combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
 		combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
 		CombatThreadPool.Instance.AddToThreadPool (combat);
-		return false;
 	}
 
 	public override void ReturnResults (object result){

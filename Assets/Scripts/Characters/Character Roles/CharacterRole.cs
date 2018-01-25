@@ -121,8 +121,12 @@ public class CharacterRole {
     }
     internal virtual int GetRestWeight() {
         if (_character.currentHP < _character.maxHP) {
-            int percentMissing = _character.currentHP / _character.maxHP;
-            return 5 * percentMissing; //5 Weight per % of HP below max HP
+            int percentMissing = (int)(100f - (_character.remainingHP * 100));
+            if(percentMissing >= 50) {
+                return 100; //+100 if HP is below 50%
+            } else {
+                return 5 * percentMissing; //5 Weight per % of HP below max HP, 
+            }
         }
         return 0;
     }

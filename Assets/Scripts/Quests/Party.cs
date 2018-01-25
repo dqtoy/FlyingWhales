@@ -150,6 +150,7 @@ public class Party: IEncounterable {
          */
     public void DisbandParty() {
         _isDisbanded = true;
+        Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
         if (_currentQuest != null && !_currentQuest.isDone) {
             _currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
@@ -166,7 +167,8 @@ public class Party: IEncounterable {
     }
 	public void JustDisbandParty() {
 		_isDisbanded = true;
-		PartyManager.Instance.RemoveParty(this);
+        Debug.Log("Disbanded " + this.name);
+        PartyManager.Instance.RemoveParty(this);
 		if (_currentQuest != null && !_currentQuest.isDone) {
 			_currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
         }
@@ -232,9 +234,10 @@ public class Party: IEncounterable {
             //If character is injured, add 100 to Leave
             leaveWeight += 100;
         }
-        if(member.missingHP > 0.5f) {
-            //If character HP is less than 50%, add 50 to Leave
-            leaveWeight += 50;
+        
+        float memberMissingHP = (member.remainingHP * 100) - 100;
+        if(memberMissingHP >= 1) {
+            leaveWeight += 5 * (int)memberMissingHP; //Add 5 to Leave for every 1% HP below 100%
         }
         partyActionWeights.AddElement(PARTY_ACTION.STAY, stayWeight);
         partyActionWeights.AddElement(PARTY_ACTION.LEAVE, leaveWeight);
@@ -381,12 +384,8 @@ public class Party: IEncounterable {
     }
     #endregion
 
-    public virtual bool StartEncounter(ECS.Character encounteredBy){  //will return true/false if the encounter was successful or not
-		return false;
-	}
-	public virtual bool StartEncounter(Party encounteredBy){
-		return false;
-	}
+    public virtual void StartEncounter(ECS.Character encounteredBy){ }
+	public virtual void StartEncounter(Party encounteredBy){}
 	public virtual void ReturnResults(object result){
 	}
 }
