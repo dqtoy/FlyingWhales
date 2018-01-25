@@ -63,7 +63,7 @@ namespace ECS{
 
 		internal SecondaryBodyPart GetRandomSecondaryBodyPart(){
 			if(this.secondaryBodyParts.Count > 0){
-				return this.secondaryBodyParts [UnityEngine.Random.Range (0, this.secondaryBodyParts.Count)];
+				return this.secondaryBodyParts [GameManager.Instance.randomNumGen.Next (0, this.secondaryBodyParts.Count)];
 			}else{
 				Debug.LogError (this.name + " has no secondary parts!");
 				return null;
