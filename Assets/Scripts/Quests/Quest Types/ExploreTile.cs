@@ -52,7 +52,7 @@ public class ExploreTile : Quest {
     #endregion
 
     private void TriggerRandomResult() {
-		ExplorationResults();
+        StartExploration();
     }
 	private void StartExploration(){
 		if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
@@ -61,22 +61,6 @@ public class ExploreTile : Quest {
 			chosenEncounter.StartEncounter(_assignedParty);
 		}
 	}
-
-    private void ExplorationResults() {
-        if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
-            IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
-            bool success = chosenEncounter.StartEncounter(_assignedParty);
-            if (success) {
-                _landmarkToExplore.SetExploredState(true);
-                EndQuest(QUEST_RESULT.SUCCESS);
-                AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
-            } else {
-                AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
-                QuestCancel();
-            }
-        }
-    }
-
     private void ScheduleRandomResult() {
         //Once it arrives, log which Landmark is hidden in the tile.
         Log newLog = new Log(GameManager.Instance.Today(), "Quests", "ExploreTile", "discover_landmark");
