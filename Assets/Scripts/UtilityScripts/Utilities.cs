@@ -1516,4 +1516,25 @@ public class Utilities : MonoBehaviour {
         }
         return weightedArmorTypes;
     }
+
+	public static string GetNormalizedSingularRace(RACE race){
+		switch(race){
+		case RACE.HUMANS:
+			return "Human";
+		case RACE.ELVES:
+			return "Elf";
+		case RACE.MINGONS:
+			return "Mingon";
+		case RACE.CROMADS:
+			return "Cromad";
+		case RACE.GOBLIN:
+			return "Goblin";
+		case RACE.TROLL:
+			return "Troll";
+		case RACE.DRAGON:
+			return "Dragon";
+		default:
+			return Utilities.NormalizeString (race.ToString ());
+		}
+	}
 }

@@ -49,6 +49,7 @@ namespace ECS {
 		private bool _isDead;
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
+		private List<string> _history;
 
 		internal int actRate;
 		internal CombatPrototype currentCombat;
@@ -165,6 +166,9 @@ namespace ECS {
         public float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
         }
+		internal List<string> history{
+			get { return this._history; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -195,6 +199,7 @@ namespace ECS {
 
             _activeQuests = new List<Quest>();
 			currentCombat = null;
+			_history = new List<string> ();
             GenerateTraits();
 		}
 
@@ -1212,5 +1217,14 @@ namespace ECS {
             return null;
         }
         #endregion
+
+		#region History
+		internal void AddHistory(string text){
+			this._history.Add (text);
+			if(this._history.Count > 20){
+				this._history.RemoveAt (0);
+			}
+		}
+		#endregion
     }
 }

@@ -85,7 +85,7 @@ public class InternalQuestManager : QuestCreator {
             //    questDict.AddElement(new ExploreRegion(this, 20, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
             //}
 
-			if (!AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, _owner.settlements[i])) {
+			if ((int)_owner.settlements[i].civilians > 20 && !AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, _owner.settlements[i])) {
 				checkedExpandRegions.Clear ();
 				for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
 					object currConnection = regionOfSettlement.connections [j];

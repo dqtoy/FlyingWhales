@@ -10,10 +10,18 @@ public class CharacterInfoUI : UIMenu {
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private UILabel characterInfoLbl;
-    [SerializeField] private UILabel relationshipsLbl;
-    [SerializeField] private UIScrollView infoScrollView;
+    [SerializeField] private UILabel generalInfoLbl;
+	[SerializeField] private UILabel statInfoLbl;
+	[SerializeField] private UILabel traitInfoLbl;
+	[SerializeField] private UILabel equipmentInfoLbl;
+	[SerializeField] private UILabel inventoryInfoLbl;
+	[SerializeField] private UILabel relationshipsLbl;
+	[SerializeField] private UILabel historyLbl;
+
+    [SerializeField] private UIScrollView equipmentScrollView;
+	[SerializeField] private UIScrollView inventoryScrollView;
     [SerializeField] private UIScrollView relationshipsScrollView;
+	[SerializeField] private UIScrollView historyScrollView;
 
     internal ECS.Character currentlyShowingCharacter;
 
@@ -40,108 +48,166 @@ public class CharacterInfoUI : UIMenu {
             UpdateCharacterInfo();
         }
     }
-
-    public void UpdateCharacterInfo() {
-        if(currentlyShowingCharacter == null) {
-            return;
-        }
+	public void UpdateCharacterInfo(){
+		if(currentlyShowingCharacter == null) {
+			return;
+		}
+		UpdateGeneralInfo();
+		UpdateStatInfo ();
+		UpdateTraitInfo	();
+		UpdateEquipmentInfo ();
+		UpdateInventoryInfo ();
+		UpdateRelationshipInfo ();
+		UpdateHistoryInfo ();
+	}
+    public void UpdateGeneralInfo() {
+       
         string text = string.Empty;
-        text += "[b]Name:[/b] " + currentlyShowingCharacter.name;
-		text += "\n[b]Gender:[/b] " + currentlyShowingCharacter.gender.ToString();
-		text += "\n[b]Race:[/b] " + currentlyShowingCharacter.raceSetting.race.ToString ();
-		text += "\n[b]Faction:[/b] ";
+        text += currentlyShowingCharacter.name;
+		text += "\n" + Utilities.GetNormalizedSingularRace (currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString (currentlyShowingCharacter.gender.ToString ());
+		if(currentlyShowingCharacter.characterClass != null){
+			text += " " + currentlyShowingCharacter.characterClass.className;
+		}
+		if(currentlyShowingCharacter.role != null){
+			text += " (" + currentlyShowingCharacter.role.roleType.ToString() + ")";
+		}
+
+		text += "\nFaction: ";
 		if(currentlyShowingCharacter.faction != null){
 			text += "[url=" + currentlyShowingCharacter.faction.id + "_faction]" + currentlyShowingCharacter.faction.name + "[/url]";
 		}else{
 			text += "NONE";
 		}
-		text += "\n[b]Class:[/b] ";
-		if(currentlyShowingCharacter.characterClass != null){
-			text += currentlyShowingCharacter.characterClass.className;
-		}else{
-			text += "NONE";
-		}
-		text += "\n[b]Role:[/b] ";
-		if(currentlyShowingCharacter.role != null){
-			text += currentlyShowingCharacter.role.roleType.ToString();
-		}else{
-			text += "NONE";
-		}
 
-		text += "\n[b]Current Quest:[/b] ";
-		if(currentlyShowingCharacter.currentQuest != null){
-			text += "[url=" + currentlyShowingCharacter.currentQuest.id + "_quest]" + currentlyShowingCharacter.currentQuest.questType.ToString() + "[/url]";
-		}else{
-			text += "NONE";
-		}
+		text += "\nVillage: " + "[url=" + currentlyShowingCharacter.home.id + "_landmark]" + currentlyShowingCharacter.home.location.tileName + "[/url]";
 
-		text += "\n[b]Home:[/b] " + "[url=" + currentlyShowingCharacter.home.id + "_landmark]" + currentlyShowingCharacter.home.location.tileName + "[/url]";
+//		text += "\n[b]Skills:[/b] ";
+//		if(currentlyShowingCharacter.skills.Count > 0){
+//			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
+//				ECS.Skill skill = currentlyShowingCharacter.skills [i];
+//				text += "\n  - " + skill.skillName;
+//			}
+//		}else{
+//			text += "NONE";
+//		}
 
-		//Stats
-		text += "\n[b]HP:[/b] " + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString() + " (" + currentlyShowingCharacter.baseMaxHP.ToString() + ")";
-		text += "\n[b]Strength:[/b] " + currentlyShowingCharacter.strength.ToString() + " (" + currentlyShowingCharacter.baseStrength.ToString() + ")";
-		text += "\n[b]Intelligence:[/b] " + currentlyShowingCharacter.intelligence.ToString() + " (" + currentlyShowingCharacter.baseIntelligence.ToString() + ")";
-		text += "\n[b]Agility:[/b] " + currentlyShowingCharacter.agility.ToString() + " (" + currentlyShowingCharacter.baseAgility.ToString() + ")";
+        generalInfoLbl.text = text;
+//        infoScrollView.ResetPosition();
 
-		text += "\n[b]Traits:[/b] ";
+    }
+
+	private void UpdateStatInfo(){
+		string text = string.Empty;
+		text += "[b]STATS[/b]";
+		text += "\nHP: " + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+		text += "\nStr: " + currentlyShowingCharacter.strength.ToString();
+		text += "\nInt: " + currentlyShowingCharacter.intelligence.ToString();
+		text += "\nAgi: " + currentlyShowingCharacter.agility.ToString();
+		statInfoLbl.text = text;
+	}
+	private void UpdateTraitInfo(){
+		string text = string.Empty;
+		text += "[b]TRAITS[/b]";
 		if(currentlyShowingCharacter.traits.Count > 0){
+			text += "\n";
 			for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
 				Trait trait = currentlyShowingCharacter.traits [i];
-				text += "\n  - " + trait.trait.ToString();
+				if(i > 0){
+					text += ", ";
+				}
+				text += Utilities.NormalizeString(trait.trait.ToString());
 			}
 		}else{
-			text += "NONE";
+			text += "\nNONE";
 		}
-
-		text += "\n[b]Skills:[/b] ";
-		if(currentlyShowingCharacter.skills.Count > 0){
-			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
-				ECS.Skill skill = currentlyShowingCharacter.skills [i];
-				text += "\n  - " + skill.skillName;
-			}
-		}else{
-			text += "NONE";
-		}
-
-		text += "\n[b]Inventory:[/b] ";
-		if(currentlyShowingCharacter.inventory.Count > 0){
-			for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
-				ECS.Item item = currentlyShowingCharacter.inventory [i];
-				text += "\n  - " + item.itemName;
-			}
-		}else{
-			text += "NONE";
-		}
-
-		text += "\n[b]Equipped Items:[/b] ";
+		traitInfoLbl.text = text;
+	}
+	private void UpdateEquipmentInfo(){
+		string text = string.Empty;
 		if(currentlyShowingCharacter.equippedItems.Count > 0){
 			for (int i = 0; i < currentlyShowingCharacter.equippedItems.Count; i++) {
 				ECS.Item item = currentlyShowingCharacter.equippedItems [i];
-				text += "\n  - " + item.itemName + " (" + item.itemType.ToString() + ")";
+				if(i > 0){
+					text += "\n";
+				}
+				text += item.itemName;
+				if(item is ECS.Weapon){
+					ECS.Weapon weapon = (ECS.Weapon)item;
+					if(weapon.bodyPartsAttached.Count > 0){
+						text += " (";
+						for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
+							if(j > 0){
+								text += ", ";
+							}
+							text += weapon.bodyPartsAttached [j].name;
+						}
+						text += ")";
+					}
+				}else if(item is ECS.Armor){
+					ECS.Armor armor = (ECS.Armor)item;
+					text += " (" + armor.bodyPartAttached.name + ")";
+				}
 			}
 		}else{
 			text += "NONE";
 		}
+		equipmentInfoLbl.text = text;
+		equipmentScrollView.UpdatePosition ();
+	}
 
-        characterInfoLbl.text = text;
-        infoScrollView.ResetPosition();
+	private void UpdateInventoryInfo(){
+		string text = string.Empty;
+		if(currentlyShowingCharacter.inventory.Count > 0){
+			for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
+				ECS.Item item = currentlyShowingCharacter.inventory [i];
+				if(i > 0){
+					text += "\n";
+				}
+				text += item.itemName;
+			}
+		}else{
+			text += "NONE";
+		}
+		inventoryInfoLbl.text = text;
+		inventoryScrollView.UpdatePosition ();
+	}
 
-        //Relationships
-        string relationshipText = string.Empty;
-        relationshipText += "\n[b]Relationships:[/b] ";
-        if (currentlyShowingCharacter.relationships.Count > 0) {
-            foreach (KeyValuePair<ECS.Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
-                relationshipText += "\n " + kvp.Key.role.roleType.ToString() + " [url=" + kvp.Key.id + "_character]" + kvp.Key.name + "[/url]: " + kvp.Value.totalValue.ToString();
-            }
-        } else {
-            relationshipText += "NONE";
-        }
+	private void UpdateRelationshipInfo(){
+		string text = string.Empty;
+		if (currentlyShowingCharacter.relationships.Count > 0) {
+			bool isFirst = true;
+			foreach (KeyValuePair<ECS.Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
+				if(!isFirst){
+					text += "\n";
+				}else{
+					isFirst = false;
+				}
+				text += kvp.Key.role.roleType.ToString() + " [url=" + kvp.Key.id + "_character]" + kvp.Key.name + "[/url]: " + kvp.Value.totalValue.ToString();
+			}
+		} else {
+			text += "NONE";
+		}
 
-        relationshipsLbl.text = relationshipText;
-        relationshipsScrollView.UpdatePosition();
-    }
+		relationshipsLbl.text = text;
+		relationshipsScrollView.UpdatePosition();
+	}
+	private void UpdateHistoryInfo(){
+		string text = string.Empty;
+		if (currentlyShowingCharacter.history.Count > 0) {
+			for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
+				if(i > 0){
+					text += "\n";
+				}
+				text += currentlyShowingCharacter.history[i];
+			}
+		} else {
+			text += "NONE";
+		}
 
-    public void CenterCameraOnCharacter() {
+		historyLbl.text = text;
+		historyScrollView.UpdatePosition();
+	}
+	public void CenterCameraOnCharacter() {
         CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);
     }
 
