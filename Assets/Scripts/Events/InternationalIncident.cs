@@ -199,7 +199,7 @@ public class InternationalIncident : GameEvent {
 	private int GetTotalWeight(Kingdom kingdom, KingdomRelationship kr, INCIDENT_ACTIONS incidentAction){
 		int totalWeight = 0;
 		for (int i = 0; i < kingdom.king.allTraits.Count; i++) {
-			totalWeight += kingdom.king.allTraits [i].GetInternationalIncidentReactionWeight (incidentAction, kr);
+			//totalWeight += kingdom.king.allTraits [i].GetInternationalIncidentReactionWeight (incidentAction, kr);
 		}
 		if(incidentAction == INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
 			if(kr.totalLike > 0){

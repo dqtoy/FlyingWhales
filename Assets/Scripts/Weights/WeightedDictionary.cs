@@ -12,7 +12,10 @@ public class WeightedDictionary<T> {
     private Dictionary<T, int> _dictionary;
 
 	#region getters/setters
-	public int Count{
+    public Dictionary<T, int> dictionary {
+        get { return _dictionary; }
+    }
+    public int Count{
 		get { return _dictionary.Count; }
 	}
 	#endregion
@@ -44,6 +47,10 @@ public class WeightedDictionary<T> {
             int value = kvp.Value;
             AddElement(key, value);
         }
+    }
+
+    internal void AddElements(WeightedDictionary<T> otherDictionary) {
+        AddElements(otherDictionary._dictionary);
     }
 
     /*

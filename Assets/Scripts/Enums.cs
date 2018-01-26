@@ -895,6 +895,14 @@ public enum RELATIONSHIP_STATUS {
     NEUTRAL,
     HOSTILE
 }
+public enum INTERNATIONAL_INCIDENT_TYPE {
+    CHARACTER_DEATH,
+    HARMFUL_QUEST
+}
+public enum INTERNATIONAL_INCIDENT_ACTION {
+    DO_NOTHING,
+    DECLARE_WAR
+}
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
 	HEAD,

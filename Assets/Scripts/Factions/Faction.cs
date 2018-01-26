@@ -25,6 +25,7 @@ public class Faction {
     protected Dictionary<Faction, FactionRelationship> _relationships;
 	protected MilitaryManager _militaryManager;
 	protected int _threat;
+    protected List<Warfare> _activeWars;
 
 
     #region getters/setters
@@ -82,6 +83,9 @@ public class Faction {
 	public int threatValue {
 		get { return _threat; }
 	}
+    public List<Warfare> activeWars {
+        get { return _activeWars; }
+    }
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -186,6 +190,28 @@ public class Faction {
     #endregion
 
     #region Utilities
+    public List<Faction> GetMajorFactionsWithRelationshipStatus(List<RELATIONSHIP_STATUS> relStatuses) {
+        List<Faction> factionsWithStatus = new List<Faction>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
+            Faction currFaction = kvp.Key;
+            FactionRelationship currRel = kvp.Value;
+            if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatuses.Contains(currRel.relationshipStatus)) {
+                factionsWithStatus.Add(currFaction);
+            }
+        }
+        return factionsWithStatus;
+    }
+    public List<Faction> GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS relStatus) {
+        List<Faction> factionsWithStatus = new List<Faction>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
+            Faction currFaction = kvp.Key;
+            FactionRelationship currRel = kvp.Value;
+            if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatus == currRel.relationshipStatus) {
+                factionsWithStatus.Add(currFaction);
+            }
+        }
+        return factionsWithStatus;
+    }
     public ECS.Character GetCharacterByID(int id) {
         for (int i = 0; i < _characters.Count; i++) {
             if (_characters[i].id == id) {

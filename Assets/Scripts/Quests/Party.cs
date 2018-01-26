@@ -209,6 +209,14 @@ public class Party: IEncounterable {
                 for (int i = 0; i < settlement.location.charactersOnTile.Count; i++) {
                     if(this.isOpen && !this.isFull) {
 						ECS.Character currCharacter = settlement.location.charactersOnTile[i];
+                        Faction factionOfCurrCharacter = currCharacter.faction;
+                        if(factionOfCurrCharacter.id != _partyLeader.faction.id) {
+                            //the curr character is not of the same faction with the party leader
+                            if(FactionManager.Instance.GetRelationshipBetween(factionOfCurrCharacter, _partyLeader.faction).relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                                //the curr character cannot join this party, because the faction of the party leader is in hostile relations with his/her faction
+                                continue;
+                            }
+                        }
                         if (currCharacter.role.roleType == role) {
                             if (currCharacter.currentQuest is DoNothing && currCharacter.party == null) {
                                 currCharacter.currentQuest.QuestCancel();

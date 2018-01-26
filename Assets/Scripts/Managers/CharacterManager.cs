@@ -355,6 +355,9 @@ public class CharacterManager : MonoBehaviour {
      User can opt to use each characters GetRelationshipWith() instead.
          */
     public Relationship GetRelationshipBetween(ECS.Character character1, ECS.Character character2) {
+        if(character1 == null || character2 == null) {
+            return null;
+        }
         Relationship char1Rel = character1.GetRelationshipWith(character2);
         Relationship char2Rel = character2.GetRelationshipWith(character1);
         if(char1Rel == char2Rel) {

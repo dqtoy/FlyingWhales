@@ -37,11 +37,10 @@ public class Quest {
     protected QUEST_RESULT _questResult;
 	protected int _activeDuration;
     protected List<string> _questLogs; //TODO: Change this to Logs when convenient
-
     protected Queue<QuestAction> _questLine;
-
-    private GameDate _deadline;
-    private Action _deadlineAction;
+    protected Faction _targetFaction; //This is only supposed to have a value when this quest is harmful, put the faction that will be harmed by this quest
+    //private GameDate _deadline;
+    //private Action _deadlineAction;
 
     #region getters/setters
     public int id {
@@ -76,6 +75,9 @@ public class Quest {
 	}
     public List<string> questLogs {
         get { return _questLogs; }
+    }
+    public Faction targetFaction {
+        get { return _targetFaction; }
     }
     #endregion
     /*
@@ -166,6 +168,7 @@ public class Quest {
                 default:
                     break;
             }
+            CheckForInternationalIncident();
         }
     }
     internal virtual void QuestSuccess() {
@@ -220,20 +223,20 @@ public class Quest {
     }
 
     #region Deadline
-    public void ScheduleDeadline() {
-        if (_daysBeforeDeadline != -1) {
-            GameDate deadline = GameManager.Instance.Today();
-            deadline.AddDays(_daysBeforeDeadline);
-            _deadline = deadline;
-            _deadlineAction = QuestExpired;
-            SchedulingManager.Instance.AddEntry(deadline, () => _deadlineAction());
-        }
-    }
-    public void UnScheduleDeadline() {
-        if(_deadlineAction != null) {
-            SchedulingManager.Instance.RemoveSpecificEntry(_deadline.month, _deadline.day, _deadline.year, _deadlineAction);
-        }
-    }
+    //public void ScheduleDeadline() {
+    //    if (_daysBeforeDeadline != -1) {
+    //        GameDate deadline = GameManager.Instance.Today();
+    //        deadline.AddDays(_daysBeforeDeadline);
+    //        _deadline = deadline;
+    //        _deadlineAction = QuestExpired;
+    //        SchedulingManager.Instance.AddEntry(deadline, () => _deadlineAction());
+    //    }
+    //}
+    //public void UnScheduleDeadline() {
+    //    if(_deadlineAction != null) {
+    //        SchedulingManager.Instance.RemoveSpecificEntry(_deadline.month, _deadline.day, _deadline.year, _deadlineAction);
+    //    }
+    //}
     public void SchedulePartyExpiration() {
         GameDate deadline = GameManager.Instance.Today();
         deadline.AddDays(3);
@@ -384,6 +387,22 @@ public class Quest {
         }
         if (onQuestLogsChange != null) {
             onQuestLogsChange();
+        }
+    }
+    #endregion
+
+    #region International Incidents
+    protected void CheckForInternationalIncident() {
+        //Check first if this quest is targetting any faction, and if it is harmful
+        if(_targetFaction != null && FactionManager.Instance.IsQuestHarmful(this.questType)) {
+            Faction currLocationOwner = _assignedParty.partyLeader.currLocation.region.owner;
+            if (currLocationOwner != null && currLocationOwner.id != _assignedParty.partyLeader.faction.id) { //the party is at a region not owned by his/her faction
+                if (currLocationOwner.id == _targetFaction.id) {//the party is at a region owned by his/her target faction
+                    if (_assignedParty.partyLeader.faction != null) {
+                        FactionManager.Instance.InternationalIncidentOccured(_targetFaction, _assignedParty.partyLeader.faction, INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST, this);
+                    }
+                }
+            }
         }
     }
     #endregion

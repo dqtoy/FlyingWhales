@@ -37,6 +37,7 @@ public class ExploreTile : Quest {
         _questResult = QUEST_RESULT.CANCEL;
         _assignedParty.partyLeader.DestroyAvatar();
         PartyManager.Instance.RemoveParty(_assignedParty);
+        CheckForInternationalIncident();
         ResetQuestValues();
     }
 	internal override void Result(bool isSuccess){
