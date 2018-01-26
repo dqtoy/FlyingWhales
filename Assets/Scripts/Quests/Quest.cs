@@ -46,6 +46,9 @@ public class Quest {
     public int id {
         get { return _id; }
     }
+    public QuestCreator createdBy {
+        get { return _createdBy; }
+    }
     public QUEST_TYPE questType {
         get { return _questType; }
     }
@@ -207,6 +210,9 @@ public class Quest {
          */
     protected virtual void ConstructQuestLine() { _questLine = new Queue<QuestAction>(); }
 	internal virtual void Result(bool isSuccess){}
+    internal virtual HexTile GetQuestTargetLocation() {
+        return null;
+    }
     #endregion
 
     public virtual bool CanAcceptQuest(ECS.Character character) {

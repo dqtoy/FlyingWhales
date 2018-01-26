@@ -1012,12 +1012,10 @@ public class City {
 			if (newPath == null) {
 				if (role == ROLE.TRADER) {
 					pathMode = PATHFINDING_MODE.NORMAL;
-				}else if (role == ROLE.RANGER) {
-					pathMode = PATHFINDING_MODE.NO_HIDDEN_TILES;
 				}else {
 					pathMode = PATHFINDING_MODE.AVATAR;
 				}
-				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, pathMode, this.kingdom);
+				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, pathMode);
 
 				if(role != ROLE.RANGER){
 					if (path == null) {

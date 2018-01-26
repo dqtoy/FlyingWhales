@@ -1386,14 +1386,14 @@ public class Utilities : MonoBehaviour {
     #endregion
 
 	public static bool AreTwoCitiesConnected(City sourceCity, City targetCity, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
-		List<HexTile> path = PathGenerator.Instance.GetPath (sourceCity.hexTile, targetCity.hexTile, pathFindingMode, kingdom);
+		List<HexTile> path = PathGenerator.Instance.GetPath (sourceCity.hexTile, targetCity.hexTile, pathFindingMode);
 		if(path != null){
 			return true;
 		}
 		return false;
 	}
 	public static bool HasPath(HexTile startingLocation, HexTile targetLocation, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
-		List<HexTile> path = PathGenerator.Instance.GetPath (startingLocation, targetLocation, pathFindingMode, kingdom);
+		List<HexTile> path = PathGenerator.Instance.GetPath (startingLocation, targetLocation, pathFindingMode);
 		if(path != null){
 			return true;
 		}

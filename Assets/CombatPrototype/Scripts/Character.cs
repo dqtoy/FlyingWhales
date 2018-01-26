@@ -1224,6 +1224,9 @@ namespace ECS {
 		public void SetHome(BaseLandmark newHome) {
             this._home = newHome;
         }
+        public bool HasPathToParty(Party partyToJoin) {
+            return PathGenerator.Instance.GetPath(_currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
+        }
         #endregion
 
         #region Relationships

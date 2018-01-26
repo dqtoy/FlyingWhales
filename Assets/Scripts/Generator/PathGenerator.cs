@@ -19,7 +19,7 @@ public class PathGenerator : MonoBehaviour {
 
     [ContextMenu("Get Path")]
     public void GetPathForTesting() {
-        List<HexTile> path = GetPath(startTile, targetTile, modeToUse, UIManager.Instance.currentlyShowingKingdom);
+        List<HexTile> path = GetPath(startTile, targetTile, modeToUse);
         if (path != null) {
             Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
             for (int i = 0; i < path.Count; i++) {
@@ -161,7 +161,7 @@ public class PathGenerator : MonoBehaviour {
 	/*
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
-	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null){
+	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null){
 		if(startingTile == null || destinationTile == null){
 			return null;
 		}
@@ -185,7 +185,7 @@ public class PathGenerator : MonoBehaviour {
         Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
 
-		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
+		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, data);
 
 //		if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
 //			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
@@ -195,8 +195,8 @@ public class PathGenerator : MonoBehaviour {
 //		}
 
         if (path != null) {
-			if (pathfindingMode == PATHFINDING_MODE.COMBAT || pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION 
-				|| pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION || pathfindingMode == PATHFINDING_MODE.UNIQUE_LANDMARK_CREATION || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE) {
+			if (pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION 
+				|| pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE) {
 				return path.Reverse().ToList();
 			} else {
 				List<HexTile> newPath = path.Reverse().ToList();
@@ -211,23 +211,23 @@ public class PathGenerator : MonoBehaviour {
 	/*
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
-	public void CreatePath(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, Kingdom kingdom = null){
+	public void CreatePath(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, object data = null){
 		if(startingTile == null || destinationTile == null){
 			return;
 		}
 		if(startingTile.tileTag != destinationTile.tileTag) {
 			return;
 		}
-		PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, kingdom));
+		PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, data));
 	}
-    public void CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, Kingdom kingdom = null) {
+    public void CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
         if (startingTile == null || destinationTile == null) {
             return;
         }
         if (startingTile.tileTag != destinationTile.tileTag) {
             return;
         }
-        PathfindingThreadPool.Instance.AddToThreadPool(new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, kingdom));
+        PathfindingThreadPool.Instance.AddToThreadPool(new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, data));
     }
 
     /*
@@ -236,7 +236,7 @@ public class PathGenerator : MonoBehaviour {
     public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
-		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL, null);
+		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL);
 
 		if (path != null) {			
 			return (path.ToList().Count - 1);

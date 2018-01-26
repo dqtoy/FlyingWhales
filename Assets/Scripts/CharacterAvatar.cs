@@ -71,7 +71,13 @@ public class CharacterAvatar : PooledObject{
             if(actionOnPathFinished != null) {
                 onPathFinished += actionOnPathFinished;
             }
-            PathGenerator.Instance.CreatePath(this, this.currLocation, this.targetLocation, pathFindingMode, BASE_RESOURCE_TYPE.STONE, null);
+            Faction faction = null;
+            if(_characters[0].party == null) {
+                faction = _characters[0].faction;
+            } else {
+                faction = _characters[0].party.partyLeader.faction;
+            }
+            PathGenerator.Instance.CreatePath(this, this.currLocation, this.targetLocation, pathFindingMode, faction);
         }
     }
     internal virtual void ReceivePath(List<HexTile> path) {

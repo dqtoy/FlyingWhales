@@ -48,7 +48,7 @@ public class CaravaneerThread {
 		int shortestPath = 0;
 		for (int i = 0; i < citiesToChooseFrom.Count; i++) {
 			City city = citiesToChooseFrom [i];
-			List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_TRADE, this.sourceKingdom);
+			List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_TRADE);
 			if (newPath != null && newPath.Count > 0) {
 				if(chosenCity == null){
 					chosenCity = city;

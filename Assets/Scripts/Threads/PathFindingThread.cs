@@ -15,26 +15,26 @@ public class PathFindingThread {
 	private HexTile _startingTile;
 	private HexTile _destinationTile;
 	private PATHFINDING_MODE _pathfindingMode;
-	private Kingdom _kingdom;
 	private CitizenAvatar _citizenAvatar;
     private CharacterAvatar _characterAvatar;
+    private object _data;
 
-	public PathFindingThread(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null){
+	public PathFindingThread(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data){
 		receivedPath = new List<HexTile> ();
 		this._startingTile = startingTile;
 		this._destinationTile = destinationTile;
 		this._pathfindingMode = pathfindingMode;
-		this._kingdom = kingdom;
 		this._citizenAvatar = citizenAvatar;
+        this._data = data;
 	}
 
-    public PathFindingThread(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null) {
+    public PathFindingThread(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data) {
         receivedPath = new List<HexTile>();
         this._startingTile = startingTile;
         this._destinationTile = destinationTile;
         this._pathfindingMode = pathfindingMode;
-        this._kingdom = kingdom;
         this._characterAvatar = characterAvatar;
+        this._data = data;
     }
 
     public void FindPath(){
@@ -48,11 +48,10 @@ public class PathFindingThread {
 //			_destinationTile.isRoad = true;
 //		}
 
-
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - _destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - _destinationTile.yCoordinate, 2));
 
-		var path = PathFind.PathFind.FindPath (_startingTile, _destinationTile, distance, estimate, _pathfindingMode, _kingdom);
+		var path = PathFind.PathFind.FindPath (_startingTile, _destinationTile, distance, estimate, _pathfindingMode, _data);
 
 //		if (_pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
 //			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
@@ -62,7 +61,7 @@ public class PathFindingThread {
 //		}
 
 		if (path != null) {
-			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
+			if (_pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
 				|| _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE) {
 
 				receivedPath = path.Reverse ().ToList ();
