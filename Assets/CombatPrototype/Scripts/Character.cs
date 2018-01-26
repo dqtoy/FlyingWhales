@@ -403,21 +403,51 @@ namespace ECS {
 		internal void Death(){
 			if(!_isDead){
 				this._isDead = true;
-				if(this._party != null){
-				    this._party.RemovePartyMember (this, true);
-				}
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
-                this.currLocation.RemoveCharacterOnTile(this);
+
 				this._home.RemoveCharacterHomeOnLandmark (this);
 				this.currLocation.RemoveCharacterOnTile (this);
 				if(this._faction != null){
+					if(this._faction.leader.id == this.id) {
+						//If this character is the leader of a faction, set that factions leader as null
+						this._faction.SetLeader(null);
+					}
 					this._faction.RemoveCharacter (this);
 				}
+
+                CheckForInternationalIncident();
+                if (this._party != null) {
+                    this._party.RemovePartyMember(this, true);
+                }
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
-			}
+            }
 		}
+
+        private void CheckForInternationalIncident() {
+            //a non-Adventurer character from a tribe dies while in a region owned by another tribe
+            if (this._role.roleType != CHARACTER_ROLE.ADVENTURER) {
+                Faction ownerOfCurrLocation = this.currLocation.region.owner;
+                if (ownerOfCurrLocation.id != this.faction.id) {
+                    if(currentQuest != null) { //if this character is in a quest when he/she died
+                        if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
+                            //if it is, check if this character died on a region owned by the faction he/she means to negatively impact
+                            //if he/she is, do not count this character's death as an international incident
+                            if (currentQuest.targetFaction.id != ownerOfCurrLocation.id) {
+                                //otherwise, this is an international incident
+                                FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
+                            }
+                        } else {
+                            FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
+                        }
+                    } else {
+                        FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
+                    }
+                    
+                }
+            }
+        }
 
 		#region Body Parts
 		/*
@@ -928,6 +958,7 @@ namespace ECS {
                 TRAIT currTrait = baseCharacterType.allTraits[i];
                 Trait trait = CharacterManager.Instance.CreateNewTraitForCharacter(currTrait, this);
                 if (trait != null) {
+                    trait.AssignCharacter(this);
                     _traits.Add(trait);
                 }
             }

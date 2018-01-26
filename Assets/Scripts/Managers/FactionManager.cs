@@ -11,6 +11,8 @@ public class FactionManager : MonoBehaviour {
 
     private ORDER_BY orderBy = ORDER_BY.CITIES;
 
+    public List<QuestTypeSetup> questTypeSetups;
+
     public List<Faction> allFactions = new List<Faction>();
 	public List<Tribe> allTribes = new List<Tribe>();
     public List<Faction> orderedFactions = new List<Faction>();
@@ -256,6 +258,126 @@ public class FactionManager : MonoBehaviour {
     }
     public void RemoveQuest(Quest quest) {
         allQuests.Remove(quest);
+    }
+    /*
+     Check if a quest can cause harmful effects to the owner
+     of the region.
+         */
+    public bool IsQuestHarmful(QUEST_TYPE questType) {
+        for (int i = 0; i < questTypeSetups.Count; i++) {
+            QuestTypeSetup currSetup = questTypeSetups[i];
+            if(currSetup.questType == questType) {
+                return currSetup.isHarmful;
+            }
+        }
+        return false;
+    }
+    /*
+     Can a quest type be accepted by characters from another faction.
+         */
+    public bool CanQuestBeAcceptedOutsideFaction(QUEST_TYPE questType) {
+        for (int i = 0; i < questTypeSetups.Count; i++) {
+            QuestTypeSetup currSetup = questTypeSetups[i];
+            if (currSetup.questType == questType) {
+                return currSetup.canBeAcceptedOutsideFaction;
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region International Incidents
+    public void InternationalIncidentOccured(Faction aggrievedFaction, Faction aggressorFaction, INTERNATIONAL_INCIDENT_TYPE incidentType, object data) {
+        Debug.Log("An international incident has occured between " + aggrievedFaction.name + " and " + aggressorFaction.name + "/" + incidentType.ToString());
+        FactionRelationship rel = GetRelationshipBetween(aggrievedFaction, aggressorFaction);
+        if(rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {//Incidents will not occur if two factions are already hostile
+            rel.AdjustSharedOpinion(-5); //Each time an international incident occurs, Shared Opinion decreases by 5.
+
+            /*When an incident occurs, war may be declared. The likelihood of this happening is dependent on 
+            Tribal Opinion and Chieftain Traits. Any Tribe that declare war should remove existing 
+            International Incidents, Trade Deals and Alliances between them.*/
+            WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = GetInternationalIncidentWeights(aggrievedFaction, aggressorFaction, rel, incidentType, data);
+            INTERNATIONAL_INCIDENT_ACTION chosenAction = actionWeights.PickRandomElementGivenWeights();
+            if (chosenAction == INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR) {
+                //TODO: Declare War
+                Debug.Log(aggrievedFaction.name + " declares war on " + aggressorFaction.name);
+            }
+        }
+    }
+    private WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentWeights(Faction aggrievedFaction, Faction aggressorFaction, 
+        FactionRelationship relationship, INTERNATIONAL_INCIDENT_TYPE incidentType, object data) {
+
+        WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
+        actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 95); //95 Weight to do nothing
+        actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 5); //5 Weight to Declare War
+
+        //Character Death
+        if(incidentType == INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH) {
+            CHARACTER_ROLE diedRole = ((ECS.Character)data).role.roleType;
+            switch (diedRole) {
+                case CHARACTER_ROLE.CHIEFTAIN:
+                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 150); //- Chieftain: Add 150 Weight to Declare War
+                    break;
+                case CHARACTER_ROLE.WARLORD:
+                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 20); //-Warlord: Add 20 Weight to Declare War
+                    break;
+                case CHARACTER_ROLE.HERO:
+                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 20); //-Hero: Add 20 Weight to Declare War
+                    break;
+                case CHARACTER_ROLE.VILLAGE_HEAD:
+                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 50); //-Village Head: Add 50 Weight to Declare War
+                    break;
+                default:
+                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 10); //-Others: Add 10 Weight to Declare War
+                    break;
+            }
+        }
+        //Negative Quest
+        else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
+            //TODO: Add Weight to Declare War as listed on the Quest Type
+        }
+
+        //Opinions
+        if(relationship.sharedOpinion > 0) {
+            //- Add 1 Weight to Do Nothing per 1 Positive Point of Shared Opinion
+            actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, relationship.sharedOpinion);
+        } else if(relationship.sharedOpinion < 0) {
+            //- Add 1 Weight to Declare War per 1 Negative Point of Shared Opinion
+            actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, Mathf.Abs(relationship.sharedOpinion)); 
+        }
+
+        //Traits
+        if(aggrievedFaction.leader != null) {
+            for (int i = 0; i < aggrievedFaction.leader.traits.Count; i++) {
+                Trait currTrait = aggrievedFaction.leader.traits[i];
+                WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> traitWeight = currTrait
+                    .GetInternationalIncidentReactionWeight(incidentType, relationship, aggressorFaction);
+                if(traitWeight != null) {
+                    actionWeights.AddElements(traitWeight);
+                }
+            }
+        }
+
+        //All
+        //Add 50 Weight to Do Nothing if Ally
+        if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIENDLY) {
+            actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 50);
+        }
+
+        //Add 100 Weight to Do Nothing per active wars I have
+        actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 100 * aggrievedFaction.activeWars.Count); 
+
+        Relationship chieftainRel = CharacterManager.Instance.GetRelationshipBetween(aggressorFaction.leader, aggrievedFaction.leader);
+        if(chieftainRel != null) {
+            if (chieftainRel.totalValue > 0) {
+                //Add 2 Weight to Do Nothing per Positive Opinion the Chieftain has towards the other Chieftain(if they have a relationship)
+                actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 2 * chieftainRel.totalValue);
+            } else if(chieftainRel.totalValue < 0) {
+                //Add 1 Weight to Declare per Negative Opinion the Chieftain has towards the other Chieftain(if they have a relationship)
+                actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, Mathf.Abs(chieftainRel.totalValue));
+            }
+        }
+        return actionWeights;
     }
     #endregion
 }

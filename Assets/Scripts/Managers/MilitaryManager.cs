@@ -125,9 +125,6 @@ public class MilitaryManager : QuestCreator {
 						weight += 50;
 					}
 
-
-					//TODO: add 50 to Weight to Defend if it is adjacent to a Kingdom that we have an active International Incident with
-
 					foreach (FactionRelationship factionRel in _owner.relationships.Values) {
 						if(factionRel.isAdjacent){
 							Relationship rel = factionRel.faction1.leader.GetRelationshipWith (factionRel.faction2.leader);

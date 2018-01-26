@@ -111,6 +111,9 @@ public class Region {
     internal List<HexTile> roadTilesInRegion {
         get { return _roadTilesInRegion; }
     }
+    internal Faction owner {
+        get { return _centerOfMass.landmarkOnTile.owner; } //The faction that owns this region
+    }
     #endregion
 
     public Region(HexTile centerOfMass) {

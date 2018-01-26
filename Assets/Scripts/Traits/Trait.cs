@@ -11,12 +11,14 @@ public class Trait{
     public ActionWeight[] actionWeights;
 
     protected Citizen ownerOfTrait;
-
+    protected ECS.Character _ownerOfTrait;
 
     public void AssignCitizen(Citizen ownerOfTrait) {
         this.ownerOfTrait = ownerOfTrait;
     }
-
+    public void AssignCharacter(ECS.Character ownerOfTrait) {
+        _ownerOfTrait = ownerOfTrait;
+    }
     /*
      * This will return a Dictionary, containing the weights of each
      * WEIGHTED_ACTION type. This is for determining what action the citizen
@@ -78,7 +80,6 @@ public class Trait{
                 return 0;
         }
     }
-
     //internal virtual int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
     //    return 0;
     //}
@@ -109,10 +110,10 @@ public class Trait{
     internal virtual int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
         return 0;
     }
-	internal virtual int GetInternationalIncidentReactionWeight(InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
-		return 0;
-	}
-	internal virtual int GetRefugeeGovernorDecisionWeight(Refuge.GOVERNOR_DECISION decision){
+    internal virtual int GetInternationalIncidentReactionWeight(InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr) {
+        return 0;
+    }
+    internal virtual int GetRefugeeGovernorDecisionWeight(Refuge.GOVERNOR_DECISION decision){
 		return 0;
 	}
 	internal virtual int GetKingdomThreatOpinionChange(int threat, out string summary){
@@ -125,17 +126,24 @@ public class Trait{
 	internal virtual int GetMaxGeneralsModifier(){
 		return 0;
 	}
-    #endregion
-
-
     protected int GetBaseWeightOfAction(WEIGHTED_ACTION actionType) {
         int baseWeight = 0;
         for (int i = 0; i < actionWeights.Length; i++) {
             ActionWeight currWeight = actionWeights[i];
-            if(currWeight.actionType == actionType) {
+            if (currWeight.actionType == actionType) {
                 baseWeight += currWeight.weight;
             }
         }
         return baseWeight;
     }
+    #endregion
+
+    #region International Incidents
+    internal virtual WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType, FactionRelationship rel, Faction aggressor) {
+        return null;
+    }
+    #endregion
+
+
+
 }

@@ -4,6 +4,20 @@ using System.Collections.Generic;
 
 public class Deceitful : Trait {
 
+    #region International Incidents
+    internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType,
+        FactionRelationship rel, Faction aggressor) {
+        if (rel.relationshipStatus == RELATIONSHIP_STATUS.FRIENDLY) {
+            WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
+            actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, -50); //- Subtract 50 Weight to Do Nothing
+            //TODO: -Check Relative Strength, add 3 Weight to Declare War for each Positive Point of Relative Strength
+            return actionWeights;
+        }
+
+        return null;
+    }
+    #endregion
+
     //internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
     //    Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
     //    KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);

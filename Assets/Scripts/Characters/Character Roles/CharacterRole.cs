@@ -46,16 +46,45 @@ public class CharacterRole {
             }
         }
 
+        //Friendly: - characters from both factions may accept some quests on regions owned by the other faction
+        List<Faction> friendlyFactions = _character.faction.GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS.FRIENDLY);
+        for (int i = 0; i < friendlyFactions.Count; i++) {
+            Faction currFaction = friendlyFactions[i];
+            for (int j = 0; j < currFaction.activeQuests.Count; j++) {
+                Quest currQuest = currFaction.activeQuests[j];
+                if (FactionManager.Instance.CanQuestBeAcceptedOutsideFaction(currQuest.questType)) {
+                    if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
+                        actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+                    }
+                }
+            }
+        }
+
         if (_character.party == null) {
+            Faction factionOfCharacter = _character.faction;
             for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
                 Party currParty = PartyManager.Instance.allParties[i];
                 if (!currParty.isFull && currParty.isOpen) {
-                    JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
-                    if (this.CanAcceptQuest(joinPartyTask)) { //Check both the quest filters and the quest types this role can accept
-						if (joinPartyTask.CanAcceptQuest (_character)) {
-							actionWeights.AddElement (joinPartyTask, GetWeightForQuest (joinPartyTask));
-						}
+                    Faction factionOfParty = currParty.partyLeader.faction;
+                    JoinParty joinPartyTask = null;
+                    if (factionOfParty.id == factionOfCharacter.id) {
+                        //the faction of the party, is the same as the faction of the character
+                        joinPartyTask = new JoinParty(_character, -1, currParty);
+                    } else {
+                        FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(factionOfCharacter, factionOfParty);
+                        if(rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                            joinPartyTask = new JoinParty(_character, -1, currParty); //Friendly and Neutral : characters from both factions may join party of the other faction
+                        }
                     }
+                    
+                    if(joinPartyTask != null) {
+                        if (this.CanAcceptQuest(joinPartyTask)) { //Check both the quest filters and the quest types this role can accept
+                            if (joinPartyTask.CanAcceptQuest(_character)) {
+                                actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+                            }
+                        }
+                    }
+                    
                 }
             }
         }
