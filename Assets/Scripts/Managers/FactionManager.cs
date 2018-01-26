@@ -198,6 +198,14 @@ public class FactionManager : MonoBehaviour {
         }
         return null;
     }
+    public Faction GetFactionBasedOnName(string name) {
+        for (int i = 0; i < allFactions.Count; i++) {
+            if (allFactions[i].name.ToLower() == name.ToLower()) {
+                return allFactions[i];
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Relationships

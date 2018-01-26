@@ -1304,7 +1304,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     #region Monobehaviour Functions
     private void OnMouseDown() {
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
 		if(this.landmarkOnTile != null){
@@ -1352,10 +1352,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //}
     }
     private void OnMouseOver() {
-        _hoverHighlightGO.SetActive(true);
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
+        _hoverHighlightGO.SetActive(true);
         if (_landmarkOnTile != null) {
             if(_landmarkOnTile.owner != null) { //landmark is occupied
                 if (isHabitable) {
@@ -1385,10 +1385,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
    //     }
     }
     private void OnMouseExit() {
-        _hoverHighlightGO.SetActive(false);
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
+        _hoverHighlightGO.SetActive(false);
         if (_landmarkOnTile != null && isHabitable) {
             if (_landmarkOnTile.owner != null) {
                 this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
