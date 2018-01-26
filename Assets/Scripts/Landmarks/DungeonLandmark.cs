@@ -16,6 +16,7 @@ public class DungeonLandmark : BaseLandmark {
         if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
             _encounterables.AddElement(new ItemChest(1, ITEM_TYPE.ARMOR, 35), 30);
             _encounterables.AddElement (GeneratePartyEncounterable ("Goblin Party A"), 50);
+			_landmarkEncounterable = _encounterables.PickRandomElementGivenWeights();
         }
     }
     #endregion
@@ -27,6 +28,7 @@ public class DungeonLandmark : BaseLandmark {
 		for (int i = 1; i < encounterCharacters.Count; i++) {
 			party.AddPartyMember (encounterCharacters [i]);
 		}
+		party.SetName (encounterParty.name);
 		return party;
 	}
 }

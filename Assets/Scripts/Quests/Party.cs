@@ -24,7 +24,7 @@ public class Party: IEncounterable {
 
     #region getters/setters
     public string encounterName {
-        get { return Utilities.NormalizeString(_partyLeader.raceSetting.race.ToString()) + " party"; }
+		get { return _name; }
     }
     public string name {
         get { return _name; }
@@ -50,7 +50,7 @@ public class Party: IEncounterable {
     #endregion
 
 	public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
-        _name = RandomNameGenerator.Instance.GetAllianceName();
+		SetName (RandomNameGenerator.Instance.GetAllianceName ());
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
         _partyMembersOnTheWay = new List<ECS.Character>();
@@ -62,6 +62,9 @@ public class Party: IEncounterable {
 		}
     }
 
+	public void SetName(string name){
+		_name = name;
+	}
     #region Party Management
     /*
      Add a new party member.

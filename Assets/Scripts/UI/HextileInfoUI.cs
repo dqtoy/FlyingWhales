@@ -80,7 +80,6 @@ public class HextileInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
-
         hexTileInfoLbl.text = text;
         infoScrollView.ResetPosition();
     }

@@ -26,6 +26,7 @@ public class BaseLandmark {
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
     protected LandmarkObject _landmarkObject;
     protected WeightedDictionary<IEncounterable> _encounterables;
+	protected IEncounterable _landmarkEncounterable;
 
     #region getters/setters
     public int id {
@@ -76,6 +77,9 @@ public class BaseLandmark {
     public WeightedDictionary<IEncounterable> encounterables {
         get { return _encounterables; }
     }
+	public IEncounterable landmarkEncounterable {
+		get { return _landmarkEncounterable; }
+	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {

@@ -238,18 +238,24 @@ namespace ECS{
 			Dictionary<object, int> categoryActivationWeights = new Dictionary<object, int> ();
 
 			//First step: pick from general skills or body part skill or weapon skill
-			if (sourceCharacter.HasActivatableBodyPartSkill ()) {
-				categoryActivationWeights.Add ("bodypart", 10);
-			}
+			int bodyPartWeight = 10;
 			if(sourceCharacter.HasActivatableWeaponSkill()){
 				categoryActivationWeights.Add("weapon", 100);
+			}else{
+				bodyPartWeight += 100;
 			}
+			if (sourceCharacter.HasActivatableBodyPartSkill ()) {
+				categoryActivationWeights.Add ("bodypart", bodyPartWeight);
+			}
+
 			for (int i = 0; i < sourceCharacter.skills.Count; i++) {
 				Skill skill = sourceCharacter.skills [i];
 				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.GENERAL){
 					int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
 					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
 						activationWeight /= 2;
+					}else if(skill is FleeSkill){
+						activationWeight = 51 - (sourceCharacter.currentHP / ((int)(sourceCharacter.maxHP * 0.01f)));
 					}
 					categoryActivationWeights.Add (skill, activationWeight);
 				}
