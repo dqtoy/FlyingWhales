@@ -52,9 +52,16 @@ public class CharacterRole {
             Faction currFaction = friendlyFactions[i];
             for (int j = 0; j < currFaction.activeQuests.Count; j++) {
                 Quest currQuest = currFaction.activeQuests[j];
-                if (FactionManager.Instance.CanQuestBeAcceptedOutsideFaction(currQuest.questType)) {
-                    if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
-                        actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+                if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
+                    if (FactionManager.Instance.CanQuestBeAcceptedOutsideFaction(currQuest.questType)) {
+                        HexTile questTargetLocation = currQuest.GetQuestTargetLocation();
+                        if (questTargetLocation == null) {
+                            throw new System.Exception("Quest " + currQuest.questType.ToString() + " has no target!");
+                        }
+                        //Check if the character has a path towards the target location of the quest
+                        if(PathGenerator.Instance.GetPath(_character.currLocation, questTargetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _character.faction) != null) {
+                            actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+                        }
                     }
                 }
             }
@@ -66,25 +73,26 @@ public class CharacterRole {
                 Party currParty = PartyManager.Instance.allParties[i];
                 if (!currParty.isFull && currParty.isOpen) {
                     Faction factionOfParty = currParty.partyLeader.faction;
-                    JoinParty joinPartyTask = null;
-                    if (factionOfParty.id == factionOfCharacter.id) {
-                        //the faction of the party, is the same as the faction of the character
-                        joinPartyTask = new JoinParty(_character, -1, currParty);
-                    } else {
-                        FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(factionOfCharacter, factionOfParty);
-                        if(rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                            joinPartyTask = new JoinParty(_character, -1, currParty); //Friendly and Neutral : characters from both factions may join party of the other faction
+                    if (_character.HasPathToParty(currParty)) { //Does this character have a path to the party? (Considering faction relationships)
+                        JoinParty joinPartyTask = null;
+                        if (factionOfParty.id == factionOfCharacter.id) {
+                            //the faction of the party, is the same as the faction of the character
+                            joinPartyTask = new JoinParty(_character, -1, currParty);
+                        } else {
+                            FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(factionOfCharacter, factionOfParty);
+                            if (rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                                joinPartyTask = new JoinParty(_character, -1, currParty); //Friendly and Neutral : characters from both factions may join party of the other faction
+                            }
                         }
-                    }
-                    
-                    if(joinPartyTask != null) {
-                        if (this.CanAcceptQuest(joinPartyTask)) { //Check both the quest filters and the quest types this role can accept
-                            if (joinPartyTask.CanAcceptQuest(_character)) {
-                                actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+
+                        if (joinPartyTask != null) {
+                            if (this.CanAcceptQuest(joinPartyTask)) { //Check both the quest filters and the quest types this role can accept
+                                if (joinPartyTask.CanAcceptQuest(_character)) {
+                                    actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+                                }
                             }
                         }
                     }
-                    
                 }
             }
         }

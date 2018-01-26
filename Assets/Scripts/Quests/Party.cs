@@ -47,6 +47,9 @@ public class Party: IEncounterable {
     public Quest currentQuest {
         get { return _currentQuest; }
     }
+    public HexTile currLocation {
+        get { return _partyLeader.currLocation; }
+    }
     #endregion
 
 	public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
