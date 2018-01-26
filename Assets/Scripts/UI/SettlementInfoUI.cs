@@ -58,7 +58,7 @@ public class SettlementInfoUI : UIMenu {
         if (currentlyShowingSettlement.owner != null) {
 			text += "\n[b]Owner:[/b] " + "[url=" + currentlyShowingSettlement.owner.id + "_faction]" + currentlyShowingSettlement.owner.name + "[/url]" + "/" + currentlyShowingSettlement.owner.race.ToString();
             text += "\n[b]Total Population: [/b] " + currentlyShowingSettlement.totalPopulation.ToString();
-            text += "\n[b]Civilian Population: [/b] " + currentlyShowingSettlement.civilians.ToString();
+            text += "\n[b]Civilian Population: [/b] " + currentlyShowingSettlement.civiliansWithReserved.ToString();
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingSettlement.totalPopulation * currentlyShowingSettlement.location.region.populationGrowth).ToString();
 
             text += "\n[b]Active Quests: [/b] ";
@@ -185,7 +185,7 @@ public class SettlementInfoUI : UIMenu {
 		if(isShowing && currentlyShowingSettlement != null && currentlyShowingSettlement is Settlement){
 			Settlement settlement = (Settlement)currentlyShowingSettlement;
 			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
-				if((int)settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
+				if(settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
 					return true;
 				}
 			}

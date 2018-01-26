@@ -82,6 +82,9 @@ public class Faction {
 	public int threatValue {
 		get { return _threat; }
 	}
+	public float factionPower{
+		get { return this._characters.Sum (x => x.characterPower); }
+	}
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -210,7 +213,7 @@ public class Faction {
                 if (highestPopulationSettlement == null) {
                     highestPopulationSettlement = settlement;
                 } else {
-                    if ((int)settlement.civilians > (int)highestPopulationSettlement.civilians) {
+                    if (settlement.civilians > highestPopulationSettlement.civilians) {
                         highestPopulationSettlement = settlement;
                     }
                 }

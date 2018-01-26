@@ -41,7 +41,7 @@ public class Settlement : BaseLandmark {
      decide what character class and role to create.
          */
     protected void DecideCharacterToCreate() {
-        if (civilians >= 1f && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
+		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
             //Check first if the settlement has enough civilians to create a new character
             //and that it has not exceeded the max number of characters that consider this settlement as home
             WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner);
@@ -67,7 +67,7 @@ public class Settlement : BaseLandmark {
          */
     protected void CreateScheduledCharacter() {
         if(roleToCreate != CHARACTER_ROLE.NONE && classToCreate != CHARACTER_CLASS.NONE) {
-            if (civilians >= 1f && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) { 
+            if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) { 
                 //Check first if the settlement has enough civilians to create a new character
                 //and that it has not exceeded the max number of characters that consider this settlement as home
 				CreateNewCharacter(roleToCreate, Utilities.NormalizeString(classToCreate.ToString()));

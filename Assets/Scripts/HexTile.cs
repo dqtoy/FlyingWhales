@@ -1640,7 +1640,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (this.landmarkOnTile.owner != null) {
             text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
             text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
-            text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civilians.ToString();
+            text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civiliansWithReserved.ToString();
             text += "\n[b]Population Growth: [/b] " + (this.landmarkOnTile.totalPopulation * this.landmarkOnTile.location.region.populationGrowth).ToString();
 //            text += "\n[b]Characters: [/b] ";
 //            if (landmarkOnTile.charactersOnLandmark.Count > 0) {

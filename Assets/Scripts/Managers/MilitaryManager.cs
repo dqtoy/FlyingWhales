@@ -109,7 +109,7 @@ public class MilitaryManager : QuestCreator {
 				if(landmark.IsBorder()){
 					if(landmark.IsAdjacentToEnemyTribe()){
 						Settlement village = (Settlement)landmark;
-						weight += (4 * (int)village.civilians);
+						weight += (4 * village.civiliansWithReserved);
 						weight += village.resourceInventory.Sum (x => x.Value);
 						weight += (15 * village.GetTechnologyCount());
 						if(landmark.HasWarlordOnAdjacentVillage()){
@@ -177,7 +177,7 @@ public class MilitaryManager : QuestCreator {
 	private int GetAttackWeight(BaseLandmark landmark) {
 		int weight = 0;
 		weight += (15 * landmark.GetTechnologyCount ());
-		weight += (4 * (int)((Settlement)landmark).civilians);
+		weight += (4 * ((Settlement)landmark).civiliansWithReserved);
 
 		/*TODO:	- add 100 to Weight to Attack if the city produces a Deficit resource
 				- add 4 to Weight to Attack for each point of Relative Strength I have over the Faction
