@@ -3237,6 +3237,9 @@ public class UIManager : MonoBehaviour {
     [Header("Quest Logs")]
     [SerializeField] internal QuestLogsUI questLogUI;
     public void ShowQuestLog(Quest quest) {
+		if(combatLogUI.isShowing){
+			combatLogUI.HideCombatLogs ();
+		}
         questLogUI.ShowQuestLogs(quest);
         questLogUI.UpdateQuestLogs();
     }
@@ -3268,4 +3271,14 @@ public class UIManager : MonoBehaviour {
         consoleUI.HideConsole();
     }
     #endregion
+	#region Combat History Logs
+	[SerializeField] internal CombatLogsUI combatLogUI;
+	public void ShowCombatLog(ECS.CombatPrototype combat) {
+		if(questLogUI.isShowing){
+			questLogUI.HideQuestLogs ();
+		}
+		combatLogUI.ShowCombatLogs(combat);
+		combatLogUI.UpdateCombatLogs();
+	}
+	#endregion
 }

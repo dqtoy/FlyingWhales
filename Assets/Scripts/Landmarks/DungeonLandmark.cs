@@ -14,15 +14,21 @@ public class DungeonLandmark : BaseLandmark {
     protected override void InititalizeEncounterables() {
         base.InititalizeEncounterables();
         if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
-            _encounterables.AddElement(new ItemChest(1, ITEM_TYPE.ARMOR, 35), 30);
-            _encounterables.AddElement (GeneratePartyEncounterable ("Goblin Party A"), 50);
-			_landmarkEncounterable = _encounterables.PickRandomElementGivenWeights();
+            _encounterables.AddElement(ENCOUNTERABLE.ITEM_CHEST, 30);
+            _encounterables.AddElement (ENCOUNTERABLE.PARTY, 50);
+			_landmarkEncounterableType = _encounterables.PickRandomElementGivenWeights();
+			_landmarkEncounterable = GetNewEncounterable (_landmarkEncounterableType);
         }
     }
     #endregion
 
 	private Party GeneratePartyEncounterable(string partyName){
-		EncounterParty encounterParty = EncounterPartyManager.Instance.GetEncounterParty (partyName);
+		EncounterParty encounterParty = null;
+		if(partyName == "random"){
+			encounterParty = EncounterPartyManager.Instance.GetRandomEncounterParty ();
+		}else{
+			 encounterParty = EncounterPartyManager.Instance.GetEncounterParty (partyName);
+		}
 		encounterCharacters = encounterParty.GetAllCharacters (this);
 		DungeonParty party = new DungeonParty (encounterCharacters [0], false);
 		for (int i = 1; i < encounterCharacters.Count; i++) {
@@ -30,5 +36,15 @@ public class DungeonLandmark : BaseLandmark {
 		}
 		party.SetName (encounterParty.name);
 		return party;
+	}
+	private IEncounterable GetNewEncounterable(ENCOUNTERABLE encounterableType){
+		switch (encounterableType){
+		case ENCOUNTERABLE.ITEM_CHEST:
+			return new ItemChest(1, ITEM_TYPE.ARMOR, 35);
+		case ENCOUNTERABLE.PARTY:
+			return GeneratePartyEncounterable ("random");
+		default:
+			return null;
+		}
 	}
 }

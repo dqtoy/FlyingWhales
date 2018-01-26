@@ -39,6 +39,9 @@ public class DungeonParty : Party {
 		if(result is ECS.CombatPrototype){
 			ECS.CombatPrototype combat = (ECS.CombatPrototype)result;
 			encounteredByParty.currentQuest.AddNewLogs(combat.resultsLog);
+			for (int i = 0; i < encounteredByParty.partyMembers.Count; i++) {
+				encounteredByParty.partyMembers [i].AddHistory ("Encountered " + this._name + ".", combat);
+			}
 			if(combat.charactersSideA.Count > 0) {
 				encounteredByParty.currentQuest.Result (true);
 			} else {

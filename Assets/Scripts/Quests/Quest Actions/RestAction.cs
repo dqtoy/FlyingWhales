@@ -22,6 +22,9 @@ public class RestAction : QuestAction {
         } else {
             charactersToRest.Add(actionDoer);
         }
+		for (int i = 0; i < charactersToRest.Count; i++) {
+			charactersToRest [i].AddHistory ("Taking a rest.");
+		}
         Messenger.AddListener("OnDayEnd", Rest);
     }
 

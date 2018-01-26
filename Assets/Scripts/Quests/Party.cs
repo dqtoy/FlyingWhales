@@ -74,6 +74,7 @@ public class Party: IEncounterable {
          */
     public virtual void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
+			member.AddHistory ("Joined party: " + this._name + ".");
 			CreateRelationshipsForNewMember(member);
             _partyMembers.Add(member);
             member.SetParty(this);
@@ -112,6 +113,7 @@ public class Party: IEncounterable {
      Remove a character from this party.
          */
     public virtual void RemovePartyMember(ECS.Character member, bool forDeath = false) {
+		member.AddHistory ("Left party: " + this._name + ".");
         _partyMembers.Remove(member);
         if(_avatar != null) {
             _avatar.RemoveCharacter(member);

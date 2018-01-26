@@ -50,9 +50,11 @@ namespace ECS {
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
 		private List<string> _history;
+		private int _combatHistoryID;
 
 		internal int actRate;
 		internal CombatPrototype currentCombat;
+		internal Dictionary<int, CombatPrototype> combatHistory;
 
 		private float _equippedWeaponPower;
 
@@ -208,6 +210,8 @@ namespace ECS {
             _activeQuests = new List<Quest>();
 			currentCombat = null;
 			_history = new List<string> ();
+			combatHistory = new Dictionary<int, CombatPrototype> ();
+			_combatHistoryID = 0;
             GenerateTraits();
 		}
 
@@ -408,7 +412,7 @@ namespace ECS {
 				this._home.RemoveCharacterHomeOnLandmark (this);
 				this.currLocation.RemoveCharacterOnTile (this);
 				if(this._faction != null){
-					if(this._faction.leader.id == this.id) {
+					if(this._faction.leader != null && this._faction.leader.id == this.id) {
 						//If this character is the leader of a faction, set that factions leader as null
 						this._faction.SetLeader(null);
 					}
@@ -427,6 +431,9 @@ namespace ECS {
 
         private void CheckForInternationalIncident() {
             //a non-Adventurer character from a tribe dies while in a region owned by another tribe
+			if(this._role == null){
+				return;
+			}
             if (this._role.roleType != CHARACTER_ROLE.ADVENTURER) {
                 Faction ownerOfCurrLocation = this.currLocation.region.owner;
                 if (ownerOfCurrLocation.id != this.faction.id) {
@@ -523,6 +530,7 @@ namespace ECS {
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
 			this._inventory.Add (item);
+			AddHistory ("Obtained " + item.itemName + ".");
 		}
 
 		internal void ThrowItem(Item item){
@@ -577,14 +585,18 @@ namespace ECS {
          the item or not.
              */
         internal bool EquipItem(Item item){
+			bool hasEquipped = false;
 			if (item is Weapon) {
 				Weapon weapon = (Weapon)item;
-				return TryEquipWeapon(weapon);
+				hasEquipped = TryEquipWeapon(weapon);
 			} else if (item is Armor) {
 				Armor armor = (Armor)item;
-                return TryEquipArmor(armor);
+				hasEquipped = TryEquipArmor(armor);
 			}
-            return false;
+			if(hasEquipped){
+				AddHistory ("Equipped " + item.itemName + ".");
+			}
+			return hasEquipped;
 		}
 
 		//Unequips an item of a character, whether it's a weapon, armor, etc.
@@ -614,6 +626,7 @@ namespace ECS {
 			for (int i = 0; i < weapon.skills.Count; i++) {
 				this._skills.Add (weapon.skills [i]);
 			}
+
 			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
 			//CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
 			return true;
@@ -1268,7 +1281,19 @@ namespace ECS {
         #endregion
 
 		#region History
-		internal void AddHistory(string text){
+		internal void AddHistory(string text, object obj = null){
+			if(obj != null){
+				if(obj is CombatPrototype){
+					CombatPrototype combat = (CombatPrototype)obj;
+					if(this.combatHistory.Count > 20){
+						this.combatHistory.Remove (0);
+					}
+					_combatHistoryID += 1;
+					combatHistory.Add (_combatHistoryID, combat);
+					string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
+					text = combatText;
+				}
+			}
 			this._history.Add (text);
 			if(this._history.Count > 20){
 				this._history.RemoveAt (0);

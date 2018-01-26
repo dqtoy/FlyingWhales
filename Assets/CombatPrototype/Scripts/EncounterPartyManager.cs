@@ -21,4 +21,8 @@ public class EncounterPartyManager : MonoBehaviour {
 		}
 		return null;
 	}
+	internal EncounterParty GetRandomEncounterParty(){
+		Transform randomChild = this.transform.GetChild(UnityEngine.Random.Range(0, this.transform.childCount));
+		return randomChild.GetComponent<EncounterParty>();
+	}
 }

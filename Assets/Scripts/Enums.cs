@@ -1024,4 +1024,9 @@ public enum QUALITY{
 	EXCEPTIONAL,
 }
 
+public enum ENCOUNTERABLE{
+	ITEM_CHEST,
+	PARTY,
+}
+
 
