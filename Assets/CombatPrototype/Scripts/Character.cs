@@ -50,9 +50,11 @@ namespace ECS {
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
 		private List<string> _history;
+		private int _combatHistoryID;
 
 		internal int actRate;
 		internal CombatPrototype currentCombat;
+		internal Dictionary<int, CombatPrototype> combatHistory;
 
 		private float _equippedWeaponPower;
 
@@ -208,6 +210,8 @@ namespace ECS {
             _activeQuests = new List<Quest>();
 			currentCombat = null;
 			_history = new List<string> ();
+			combatHistory = new Dictionary<int, CombatPrototype> ();
+			_combatHistoryID = 0;
             GenerateTraits();
 		}
 
@@ -408,7 +412,7 @@ namespace ECS {
 				this._home.RemoveCharacterHomeOnLandmark (this);
 				this.currLocation.RemoveCharacterOnTile (this);
 				if(this._faction != null){
-					if(this._faction.leader.id == this.id) {
+					if(this._faction.leader != null && this._faction.leader.id == this.id) {
 						//If this character is the leader of a faction, set that factions leader as null
 						this._faction.SetLeader(null);
 					}
@@ -1277,7 +1281,19 @@ namespace ECS {
         #endregion
 
 		#region History
-		internal void AddHistory(string text){
+		internal void AddHistory(string text, object obj = null){
+			if(obj != null){
+				if(obj is CombatPrototype){
+					CombatPrototype combat = (CombatPrototype)obj;
+					if(this.combatHistory.Count > 20){
+						this.combatHistory.Remove (0);
+					}
+					_combatHistoryID += 1;
+					combatHistory.Add (_combatHistoryID, combat);
+					string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
+					text = combatText;
+				}
+			}
 			this._history.Add (text);
 			if(this._history.Count > 20){
 				this._history.RemoveAt (0);
