@@ -21,7 +21,7 @@ public class Expand : Quest {
 	}
 	#endregion
 
-	public Expand(QuestCreator createdBy, int daysBeforeDeadline, HexTile targetUnoccupiedTile, HexTile originTile = null) 
+	public Expand(QuestCreator createdBy, int daysBeforeDeadline, HexTile targetUnoccupiedTile, HexTile originTile) 
 		: base(createdBy, daysBeforeDeadline, QUEST_TYPE.EXPAND) {
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((InternalQuestManager)createdBy).owner}),
@@ -29,6 +29,8 @@ public class Expand : Quest {
 		};
 		_targetUnoccupiedTile = targetUnoccupiedTile;
 		_originTile = originTile;
+		_originTile.landmarkOnTile.AdjustReservedPopulation (20);
+		_originTile.landmarkOnTile.AdjustPopulation (-20);
 	}
 
 	#region overrides
@@ -64,7 +66,7 @@ public class Expand : Quest {
 			return false;
 		}
 		if(_originTile != null){
-			if((int)_originTile.landmarkOnTile.civilians > 20 && character.currLocation.id == _originTile.id){
+			if(_originTile.landmarkOnTile.civilians > 20 && character.currLocation.id == _originTile.id){
 				List<HexTile> path = PathGenerator.Instance.GetPath (_originTile, this._targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
 				if(path != null){
 					return true;

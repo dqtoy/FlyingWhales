@@ -18,6 +18,7 @@ public class BaseLandmark {
     protected string _landmarkName;
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
+	protected int _reservedCivilians;
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
     //TODO: Add list of prisoners on landmark
     protected Dictionary<RESOURCE, int> _resourceInventory; //list of resources available on landmark
@@ -60,11 +61,14 @@ public class BaseLandmark {
         get { return _owner; }
     }
     public int totalPopulation {
-        get { return (int)civilians + _location.charactersOnTile.Count; }
+		get { return civiliansWithReserved + _location.charactersOnTile.Count; }
     }
-    public float civilians {
-        get { return _civilians; }
+	public int civilians {
+		get { return (int)_civilians; }
     }
+	public int civiliansWithReserved{
+		get { return (int)_civilians + _reservedCivilians; }
+	}
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
     }
@@ -92,6 +96,7 @@ public class BaseLandmark {
         _landmarkName = string.Empty; //TODO: Add name generation
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
+		_reservedCivilians = 0;
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
         _resourceInventory = new Dictionary<RESOURCE, int>();
         ConstructTechnologiesDictionary();
@@ -212,6 +217,9 @@ public class BaseLandmark {
     public void AdjustPopulation(float adjustment) {
         _civilians += adjustment;
     }
+	public void AdjustReservedPopulation(int amount){
+		_reservedCivilians += amount;
+	}
     #endregion
 
     #region Characters

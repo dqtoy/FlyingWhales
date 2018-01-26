@@ -16,6 +16,9 @@ namespace ECS{
 //		public Dictionary<SIDES, List<ECS.Character>> allCharactersAndSides;
 		internal List<ECS.Character> charactersSideA;
 		internal List<ECS.Character> charactersSideB;
+		internal List<ECS.Character> deadCharacters;
+		internal List<ECS.Character> fledCharacters;
+
 		internal List<string> resultsLog;
 		internal object caller;
 
@@ -25,6 +28,9 @@ namespace ECS{
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
+			this.deadCharacters = new List<ECS.Character> ();
+			this.fledCharacters = new List<ECS.Character> ();
+
 			this.resultsLog = new List<string> ();
 			this.caller = caller;
 //			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
@@ -95,14 +101,12 @@ namespace ECS{
         #endregion
 
 		public void ReturnCombatResults(){
+			CombatPrototypeManager.Instance.CombatResults(this);
 			if(caller != null){
 				if(caller is IEncounterable){
 					IEncounterable encounterable = (IEncounterable)caller;
 					encounterable.ReturnResults (this);
 				}
-			}else{
-				//CombatPrototypeManager
-				CombatPrototypeManager.Instance.Result();
 			}
 		}
 
@@ -726,6 +730,7 @@ namespace ECS{
 		private void FleeSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: ECS.Character flees
 			RemoveCharacter(targetCharacter);
+			fledCharacters.Add (targetCharacter);
 			AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
@@ -756,6 +761,7 @@ namespace ECS{
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
 		internal void CharacterDeath(ECS.Character character){
 			RemoveCharacter (character);
+			deadCharacters.Add (character);
 			AddCombatLog(character.name + " died horribly!", character.currentSide);
 		}
 

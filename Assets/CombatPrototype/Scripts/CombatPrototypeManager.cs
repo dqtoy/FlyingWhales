@@ -129,8 +129,10 @@ namespace ECS {
 		public void StartCombat(){
 			this.combat.CombatSimulation ();
 		}
-		public void Result(){
-			
+		public void CombatResults(CombatPrototype combat){
+			for (int i = 0; i < combat.deadCharacters.Count; i++) {
+				combat.deadCharacters [i].Death ();
+			}
 		}
     }
 }

@@ -61,7 +61,7 @@ public class PlayerActionsUI : MonoBehaviour {
 		if(UIManager.Instance.settlementInfoUI.isShowing && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement is Settlement){
 			Settlement settlement = (Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingSettlement;
 			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
-				if((int)settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile()){
+				if(settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile()){
 					expandBtn.isEnabled = true;
 					return;
 				}

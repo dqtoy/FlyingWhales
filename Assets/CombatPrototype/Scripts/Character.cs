@@ -54,6 +54,8 @@ namespace ECS {
 		internal int actRate;
 		internal CombatPrototype currentCombat;
 
+		private float _equippedWeaponPower;
+
 		#region getters / setters
 		internal string name{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
@@ -160,14 +162,20 @@ namespace ECS {
 		internal string characterColorCode {
 			get { return _characterColorCode; }
 		}
-        public BaseLandmark home {
+        internal BaseLandmark home {
             get { return _home; }
         }
-        public float remainingHP { //Percentage of remaining HP this character has
+		internal float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
         }
 		internal List<string> history{
 			get { return this._history; }
+		}
+		internal float characterPower{
+			get { return (float)_currentHP + (float)((_strength + _intelligence + _agility) * 2) + _equippedWeaponPower;}
+		}
+		internal float equippedWeaponPower{
+			get { return _equippedWeaponPower; }
 		}
         #endregion
 
@@ -383,7 +391,11 @@ namespace ECS {
 			this._currentHP += amount;
 			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
 			if(this._currentHP == 0){
-				Death ();
+				if(this.currentCombat == null){
+					Death ();
+				}else{
+					this.currentCombat.CharacterDeath (this);
+				}
 			}
 		}
 
@@ -392,22 +404,24 @@ namespace ECS {
 			if(!_isDead){
 				this._isDead = true;
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
-                this.currLocation.RemoveCharacterOnTile(this);
-				if(this.currentCombat != null){
-					this.currentCombat.CharacterDeath(this);
-				}
-				this._home.RemoveCharacterHomeOnLandmark(this);
-				this.currLocation.RemoveCharacterOnTile(this);
 
-                if(this._faction != null && this._faction.leader.id == this.id) {
-                    //If this character is the leader of a faction, set that factions leader as null
-                    this._faction.SetLeader(null);
-                }
+				this._home.RemoveCharacterHomeOnLandmark (this);
+				this.currLocation.RemoveCharacterOnTile (this);
+				if(this._faction != null){
+					if(this._faction.leader.id == this.id) {
+						//If this character is the leader of a faction, set that factions leader as null
+						this._faction.SetLeader(null);
+					}
+					this._faction.RemoveCharacter (this);
+				}
+
                 CheckForInternationalIncident();
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
                 }
-
+//				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+//					Messenger.Broadcast ("CharacterDeath", this);
+//				}
             }
 		}
 
@@ -595,6 +609,8 @@ namespace ECS {
 			AddEquippedItem(weapon);
 			weapon.ResetDurability();
 			weapon.SetOwner(this);
+			_equippedWeaponPower += weapon.weaponPower;
+
 			for (int i = 0; i < weapon.skills.Count; i++) {
 				this._skills.Add (weapon.skills [i]);
 			}
@@ -632,6 +648,7 @@ namespace ECS {
 			for (int i = 0; i < weapon.skills.Count; i++) {
 				this._skills.Remove (weapon.skills [i]);
 			}
+			_equippedWeaponPower -= weapon.weaponPower;
 		}
 
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
