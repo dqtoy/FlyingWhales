@@ -65,6 +65,9 @@ public class ExploreTile : Quest {
 	}
     private void ScheduleRandomResult() {
         //Once it arrives, log which Landmark is hidden in the tile.
+		for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
+			_assignedParty.partyMembers [i].AddHistory ("Visited landmark on " + _landmarkToExplore.location.tileName + ".");
+		}
         Log newLog = new Log(GameManager.Instance.Today(), "Quests", "ExploreTile", "discover_landmark");
         newLog.AddToFillers(_assignedParty, _assignedParty.name, LOG_IDENTIFIER.ALLIANCE_NAME);
         newLog.AddToFillers(_landmarkToExplore, Utilities.NormalizeString(_landmarkToExplore.specificLandmarkType.ToString()), LOG_IDENTIFIER.OTHER);

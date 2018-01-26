@@ -116,6 +116,11 @@ public class CharacterAvatar : PooledObject{
     internal virtual void HasArrivedAtTargetLocation() {
         if (this.currLocation == this.targetLocation) {
             if (!this._hasArrived) {
+				if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile is Settlement){
+					for (int i = 0; i < _characters.Count; i++) {
+						_characters [i].AddHistory ("Arrived at settlement " + this.currLocation.tileName + ".");
+					}
+				}
                 SetHasArrivedState(true);
                 if(onPathFinished != null) {
                     onPathFinished();
