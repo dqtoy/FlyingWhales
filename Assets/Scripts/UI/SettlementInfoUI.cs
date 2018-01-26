@@ -113,6 +113,9 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+		if(currentlyShowingSettlement.landmarkEncounterable != null){
+			text += "\n[b]Encounterable: [/b]" + currentlyShowingSettlement.landmarkEncounterable.encounterName;
+		}
 		if(currentlyShowingSettlement is Settlement && currentlyShowingSettlement.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingSettlement.owner != null){
 			text += "\n[b]Parties: [/b] ";
 			if (PartyManager.Instance.allParties.Count > 0) {

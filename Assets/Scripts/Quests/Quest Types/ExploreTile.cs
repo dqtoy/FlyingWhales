@@ -55,10 +55,11 @@ public class ExploreTile : Quest {
         StartExploration();
     }
 	private void StartExploration(){
-		if (_landmarkToExplore.encounterables.GetTotalOfWeights() > 0) {
-			IEncounterable chosenEncounter = _landmarkToExplore.encounterables.PickRandomElementGivenWeights();
-			AddNewLog("The party encounters a " + chosenEncounter.encounterName);
-			chosenEncounter.StartEncounter(_assignedParty);
+		if(_landmarkToExplore.landmarkEncounterable != null){
+			AddNewLog("The party encounters a " + _landmarkToExplore.landmarkEncounterable.encounterName);
+			_landmarkToExplore.landmarkEncounterable.StartEncounter(_assignedParty);
+		}else{
+			throw new UnityException ("No Encounterable in Landmark " + _landmarkToExplore.location.tileName + "!");
 		}
 	}
     private void ScheduleRandomResult() {
