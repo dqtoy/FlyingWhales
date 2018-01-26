@@ -45,7 +45,8 @@ public class FactionInfoUI : UIMenu {
             return;
         }
         string text = string.Empty;
-        text += "[b]Name:[/b] " + currentlyShowingFaction.name;
+        text += "[b]ID:[/b] " + currentlyShowingFaction.id.ToString();
+        text += "\n[b]Name:[/b] " + currentlyShowingFaction.name;
 		text += "\n[b]Race:[/b] " + currentlyShowingFaction.race.ToString();
 		text += "\n[b]Faction Type:[/b] " + currentlyShowingFaction.factionType.ToString();
 		text += "\n[b]Faction Size:[/b] " + currentlyShowingFaction.factionSize.ToString();

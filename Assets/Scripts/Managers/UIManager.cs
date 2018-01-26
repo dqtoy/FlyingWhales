@@ -380,21 +380,28 @@ public class UIManager : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            if (GameManager.Instance.isPaused) {
-                Unpause();
-                if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
-                    SetProgressionSpeed1X();
-                } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
-                    SetProgressionSpeed2X();
-                } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
-                    SetProgressionSpeed4X();
-                }
-            } else {
-                Pause();
+        if (Input.GetKeyDown(KeyCode.BackQuote)) {
+            if (GameManager.Instance.allowConsole) {
+                ToggleConsole();
             }
         }
-        
+        if (!consoleUI.isShowing) {
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                if (GameManager.Instance.isPaused) {
+                    Unpause();
+                    if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+                        SetProgressionSpeed1X();
+                    } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+                        SetProgressionSpeed2X();
+                    } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+                        SetProgressionSpeed4X();
+                    }
+                } else {
+                    Pause();
+                }
+            }
+        }
+  
         //if (Input.GetMouseButton(0)) {
         //    UITexture uiTexture = minimapTextureGO.GetComponent<UITexture>();
         //    uiTexture.material.SetTexture("_MainTex", uiTexture.mainTexture);
@@ -3059,6 +3066,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Settlement Info
+    [Space(10)]
+    [Header("Settlement Info")]
     [SerializeField] internal SettlementInfoUI settlementInfoUI;
     public void ShowSettlementInfo(BaseLandmark landmark) {
 		if(factionInfoUI.isShowing){
@@ -3084,8 +3093,10 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-	#region Faction Info
-	[SerializeField] internal FactionInfoUI factionInfoUI;
+    #region Faction Info
+    [Space(10)]
+    [Header("Faction Info")]
+    [SerializeField] internal FactionInfoUI factionInfoUI;
 	public void ShowFactionInfo(Faction faction) {
 		if(settlementInfoUI.isShowing){
 			settlementInfoUI.HideSettlementInfo ();
@@ -3108,10 +3119,12 @@ public class UIManager : MonoBehaviour {
 			factionInfoUI.UpdateFactionInfo ();
 		}
 	}
-	#endregion
+    #endregion
 
-	#region Character Info
-	[SerializeField] internal CharacterInfoUI characterInfoUI;
+    #region Character Info
+    [Space(10)]
+    [Header("Character Info")]
+    [SerializeField] internal CharacterInfoUI characterInfoUI;
 	public void ShowCharacterInfo(ECS.Character character) {
 		if(settlementInfoUI.isShowing){
 			settlementInfoUI.HideSettlementInfo ();
@@ -3134,10 +3147,12 @@ public class UIManager : MonoBehaviour {
 			characterInfoUI.UpdateCharacterInfo ();
 		}
 	}
-	#endregion
+    #endregion
 
-	#region HexTile Info
-	[SerializeField] internal HextileInfoUI hexTileInfoUI;
+    #region HexTile Info
+    [Space(10)]
+    [Header("HexTile Info")]
+    [SerializeField] internal HextileInfoUI hexTileInfoUI;
 	public void ShowHexTileInfo(HexTile hexTile) {
 		if(settlementInfoUI.isShowing){
 			settlementInfoUI.HideSettlementInfo ();
@@ -3177,8 +3192,10 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-	#region Player Actions
-	[SerializeField] internal PlayerActionsUI playerActionsUI;
+    #region Player Actions
+    [Space(10)]
+    [Header("Player Actions")]
+    [SerializeField] internal PlayerActionsUI playerActionsUI;
 	public void ShowPlayerActionsInfo() {
 		playerActionsUI.ShowPlayerActionsUI();
 	}
@@ -3188,6 +3205,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Quest Info
+    [Space(10)]
+    [Header("Quest Info")]
     [SerializeField] internal QuestInfoUI questInfoUI;
     public void ShowQuestInfo(Quest quest) {
         if (settlementInfoUI.isShowing) {
@@ -3214,6 +3233,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Quest Logs
+    [Space(10)]
+    [Header("Quest Logs")]
     [SerializeField] internal QuestLogsUI questLogUI;
     public void ShowQuestLog(Quest quest) {
 		if(combatLogUI.isShowing){
@@ -3226,6 +3247,28 @@ public class UIManager : MonoBehaviour {
         if (questLogUI.isShowing) {
             questLogUI.UpdateQuestLogs();
         }
+    }
+    #endregion
+
+    #region Console
+    [Space(10)]
+    [Header("Console")]
+    [SerializeField] internal ConsoleMenu consoleUI;
+    public bool IsConsoleShowing() {
+        return consoleUI.isShowing;
+    }
+    public void ToggleConsole() {
+        if (consoleUI.isShowing) {
+            HideConsole();
+        } else {
+            ShowConsole();
+        }
+    }
+    public void ShowConsole() {
+        consoleUI.ShowConsole();
+    }
+    public void HideConsole() {
+        consoleUI.HideConsole();
     }
     #endregion
 	#region Combat History Logs
