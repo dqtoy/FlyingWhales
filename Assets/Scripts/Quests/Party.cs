@@ -17,6 +17,8 @@ public class Party: IEncounterable {
     protected ECS.Character _partyLeader;
     protected List<ECS.Character> _partyMembers; //Contains all party members including the party leader
     protected List<ECS.Character> _partyMembersOnTheWay; //Party members that just joined, but are on the way to the party leaders location
+	protected List<ECS.Character> _prisoners;
+
     protected Quest _currentQuest;
     protected CharacterAvatar _avatar;
 
@@ -131,6 +133,14 @@ public class Party: IEncounterable {
         //    DisbandParty();
         //}
     }
+	public void AddPrisoner(ECS.Character character){
+		character.SetPrisoner (true);
+		_prisoners.Add (character);
+	}
+	public void ReleasePrisoner(ECS.Character character){
+		character.SetPrisoner (false);
+		_prisoners.Remove (character);
+	}
     public void CheckLeavePartyAfterQuest() {
         //Check which party members will leave
         List<ECS.Character> charactersToLeave = new List<ECS.Character>();
