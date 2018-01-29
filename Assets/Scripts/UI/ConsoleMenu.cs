@@ -22,7 +22,9 @@ public class ConsoleMenu : UIMenu {
     internal override void Initialize() {
         commandHistory = new List<string>();
         _consoleActions = new Dictionary<string, Action<string[]>>() {
-            {"/change_faction_rel_stat", ChangeFactionRelationshipStatus}
+            {"/change_faction_rel_stat", ChangeFactionRelationshipStatus},
+            {"/force_accept_quest", AcceptQuest},
+            {"/kill",  KillCharacter}
         };
     }
 
@@ -106,8 +108,8 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of /change_faction_rel_stat");
             return;
         }
-        string faction1IDString = parameters[1];
-        string faction2IDString = parameters[2];
+        string faction1ParameterString = parameters[1];
+        string faction2ParameterString = parameters[2];
         string newRelStatusString = parameters[3];
 
         Faction faction1;
@@ -116,8 +118,8 @@ public class ConsoleMenu : UIMenu {
         int faction1ID = -1;
         int faction2ID = -1;
 
-        bool isFaction1Numeric = int.TryParse(faction1IDString, out faction1ID);
-        bool isFaction2Numeric = int.TryParse(faction2IDString, out faction2ID);
+        bool isFaction1Numeric = int.TryParse(faction1ParameterString, out faction1ID);
+        bool isFaction2Numeric = int.TryParse(faction2ParameterString, out faction2ID);
 
         string faction1Name = parameters[1];
         string faction2Name = parameters[2];
@@ -157,6 +159,64 @@ public class ConsoleMenu : UIMenu {
     }
     #endregion
 
+    #region Quests
+    private void AcceptQuest(string[] parameters) {
+        if (parameters.Length != 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /force_accept_quest");
+            return;
+        }
+        string questParameterString = parameters[1];
+        string characterParameterString = parameters[2];
+
+        int questID;
+        int characterID;
+
+        bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+
+        if (isQuestParameterNumeric && isCharacterParameterNumeric) {
+            Quest quest = FactionManager.Instance.GetQuestByID(questID);
+            ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
+
+            if(character.currentQuest != null) {
+                character.SetQuestToForceAccept(quest);
+                //cancel character's current quest
+                character.currentQuest.EndQuest(QUEST_RESULT.CANCEL);
+            } else {
+                quest.AcceptQuest(character);
+            }
+            
+
+            AddSuccessMessage(character.name + " has accepted quest " + quest.questType.ToString());
+        } else {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /force_accept_quest");
+        }
+    }
+    #endregion
+
+    #region Characters
+    private void KillCharacter(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /kill");
+            return;
+        }
+        string characterParameterString = parameters[1];
+        int characterID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+
+        if (isCharacterParameterNumeric) {
+            ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
+            character.Death();
+        } else {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /kill");
+        }
+    }
+    #endregion
 
 
 }

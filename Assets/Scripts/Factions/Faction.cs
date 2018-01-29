@@ -25,7 +25,6 @@ public class Faction {
     protected Dictionary<Faction, FactionRelationship> _relationships;
 	protected MilitaryManager _militaryManager;
 	protected int _threat;
-    protected List<Warfare> _activeWars;
 
 
     #region getters/setters
@@ -86,8 +85,8 @@ public class Faction {
 	public float factionPower{
 		get { return this._characters.Sum (x => x.characterPower); }
 	}
-    public List<Warfare> activeWars {
-        get { return _activeWars; }
+    public int activeWars {
+        get { return relationships.Where(x => x.Value.isAtWar).Count(); }
     }
     #endregion
 

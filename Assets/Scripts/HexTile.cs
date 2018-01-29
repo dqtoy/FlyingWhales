@@ -1385,10 +1385,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
    //     }
     }
     private void OnMouseExit() {
+        _hoverHighlightGO.SetActive(false);
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        _hoverHighlightGO.SetActive(false);
         if (_landmarkOnTile != null && isHabitable) {
             if (_landmarkOnTile.owner != null) {
                 this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);

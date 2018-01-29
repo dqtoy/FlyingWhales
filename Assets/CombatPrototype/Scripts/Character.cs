@@ -58,6 +58,9 @@ namespace ECS {
 
 		private float _equippedWeaponPower;
 
+        //For Testing
+        private Quest forceQuestToAccept;
+
 		#region getters / setters
 		internal string name{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
@@ -1065,6 +1068,11 @@ namespace ECS {
                     return;
                 }
             }
+            if(forceQuestToAccept != null) {
+                //Force accept quest, if any
+                forceQuestToAccept.AcceptQuest(this);
+                return;
+            }
 			WeightedDictionary<Quest> actionWeights = _role.GetActionWeights();
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
@@ -1074,7 +1082,12 @@ namespace ECS {
                 throw new Exception(this.name + " could not decide action because weights are zero!");
             }
 		}
-      
+        /*
+         This is for testing. Set a quest that this character will accept next
+             */
+        internal void SetQuestToForceAccept(Quest questToAccept) {
+            forceQuestToAccept = questToAccept;
+        }
         //private int GetWeightForQuestType(QUEST_TYPE questType) {
         //    int weight = 0;
         //    switch (questType) {

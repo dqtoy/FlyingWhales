@@ -144,6 +144,11 @@ public class Trait{
     }
     #endregion
 
+    #region War
+    internal virtual WeightedDictionary<ALLY_WAR_REACTION> GetAllyReactionWeight(Faction friend, Faction enemy) {
+        return null;
+    }
+    #endregion
 
 
 }

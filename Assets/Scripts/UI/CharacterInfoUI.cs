@@ -63,7 +63,8 @@ public class CharacterInfoUI : UIMenu {
     public void UpdateGeneralInfo() {
        
         string text = string.Empty;
-        text += currentlyShowingCharacter.name;
+        text += currentlyShowingCharacter.id;
+        text += "\n" + currentlyShowingCharacter.name;
 		text += "\n" + Utilities.GetNormalizedSingularRace (currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString (currentlyShowingCharacter.gender.ToString ());
 		if(currentlyShowingCharacter.characterClass != null){
 			text += " " + currentlyShowingCharacter.characterClass.className;

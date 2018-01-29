@@ -18,6 +18,18 @@ public class Deceitful : Trait {
     }
     #endregion
 
+    #region War
+    internal override WeightedDictionary<ALLY_WAR_REACTION> GetAllyReactionWeight(Faction friend, Faction enemy) {
+        WeightedDictionary<ALLY_WAR_REACTION> actionWeights = new WeightedDictionary<ALLY_WAR_REACTION>();
+        FactionRelationship relWithFriend = _ownerOfTrait.faction.GetRelationshipWith(friend);
+        //TODO: +2 Weight to Betray for every positive point of Relative Strength I have over the ally
+        if(relWithFriend.sharedOpinion < 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.BETRAY, Mathf.Abs(relWithFriend.sharedOpinion)); //+1 Weight to Betray for every Negative Opinion I have towards the ally
+        }
+        return actionWeights;
+    }
+    #endregion
+
     //internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
     //    Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
     //    KingdomRelationship currRel = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);

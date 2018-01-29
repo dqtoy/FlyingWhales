@@ -25,10 +25,12 @@ public class DoNothing : Quest {
         }
     }
     internal override void EndQuest(QUEST_RESULT result) {
-        _questResult = result;
-        _isDone = true;
-        _createdBy.RemoveQuest(this);
-        ((ECS.Character)_createdBy).DetermineAction();
+        if (!_isDone) {
+            _questResult = result;
+            _isDone = true;
+            _createdBy.RemoveQuest(this);
+            ((ECS.Character)_createdBy).DetermineAction();
+        }
     }
     internal override void QuestCancel() {
         _isDone = true;
