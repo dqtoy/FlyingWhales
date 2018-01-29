@@ -24,7 +24,7 @@ public class Faction {
     protected InternalQuestManager _internalQuestManager;
     protected Dictionary<Faction, FactionRelationship> _relationships;
 	protected MilitaryManager _militaryManager;
-	protected int _threat;
+	protected int _warmongering;
     protected List<Warfare> _activeWars;
 
 
@@ -80,8 +80,8 @@ public class Faction {
 	public MilitaryManager militaryManager {
 		get { return _militaryManager; }
 	}
-	public int threatValue {
-		get { return _threat; }
+	public int warmongering {
+		get { return _warmongering; }
 	}
 	public float factionPower{
 		get { return this._characters.Sum (x => x.characterPower); }
@@ -107,7 +107,7 @@ public class Faction {
         _internalQuestManager = new InternalQuestManager(this);
         _relationships = new Dictionary<Faction, FactionRelationship>();
 		_militaryManager = new MilitaryManager (this);
-		_threat = 0; //TODO: Threat computation
+		_warmongering = 0;
     }
 
     public void SetRace(RACE race) {
@@ -250,18 +250,10 @@ public class Faction {
 	}
 	public bool IsAtWar(){
 		foreach (FactionRelationship factionRel in _relationships.Values) {
-			if(factionRel.faction1.id == this._id){
-				if(factionRel.faction2.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
-					return true;
-				}else if(factionRel.faction2.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-					return true;
-				}
-			}else{
-				if(factionRel.faction1.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
-					return true;
-				}else if(factionRel.faction1.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-					return true;
-				}
+			if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
+				return true;
+			}else if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+				return true;
 			}
 		}
 		return false;

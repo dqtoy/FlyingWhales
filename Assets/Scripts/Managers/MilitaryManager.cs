@@ -135,11 +135,7 @@ public class MilitaryManager : QuestCreator {
 								}
 								weight -= (relModifier * rel.totalValue);
 							}
-							if(factionRel.faction1.id == this._owner.id){
-								weight += (4 * factionRel.faction2.threatValue);
-							}else{
-								weight += (4 * factionRel.faction1.threatValue);
-							}
+							weight += (4 * factionRel.factionLookup[factionRel.factionLookup[this._owner.id].targetFaction.id].threat);
 						}
 					}
 				}else{
