@@ -421,6 +421,25 @@ public class Party: IEncounterable {
         }
         //_currLocation.AddCharacterOnTile(this);
     }
+    public bool CanJoinParty(ECS.Character candidate) {
+        if(isFull || !_isOpen) {
+            return false; //cannot join party because it is already full or party is not open
+        }
+        Faction factionOfParty = _partyLeader.faction;
+        Faction factionOfCandidate = candidate.faction;
+        if(factionOfCandidate == null || factionOfParty == null) {
+            return true; //one of the characters are factionless, allow join
+        } else {
+            if(factionOfCandidate.id == factionOfParty.id) {
+                return true; //faction of party is the same as faction of candidate
+            }
+            FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(factionOfParty, factionOfCandidate);
+            if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                return false; //candidate cannot join party, because faction of leader and his/her faction are in hostile relations
+            }
+            return true;
+        }
+    }
     #endregion
 
     public virtual void StartEncounter(ECS.Character encounteredBy){ }

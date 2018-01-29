@@ -243,6 +243,22 @@ public class BaseLandmark {
     }
     #endregion
 
+    #region Party
+    public List<Party> GetPartiesOnLandmark() {
+        List<Party> parties = new List<Party>();
+        for (int i = 0; i < _location.charactersOnTile.Count; i++) {
+            ECS.Character currCharacter = _location.charactersOnTile[i];
+            Party partyOfChar = currCharacter.party;
+            if (partyOfChar != null) {
+                if (!parties.Contains(partyOfChar)) {
+                    parties.Add(partyOfChar);
+                }
+            }
+        }
+        return parties;
+    }
+    #endregion
+
     public void SetHiddenState(bool isHidden) {
         _isHidden = isHidden;
         landmarkObject.UpdateLandmarkVisual();

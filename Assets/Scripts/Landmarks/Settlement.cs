@@ -13,11 +13,20 @@ public class Settlement : BaseLandmark {
 
     private ECS.Character _headOfSettlement;
 
+    private List<Quest> _questBoard;
+
     private const int CHARACTER_LIMIT = 10;
+
+    #region getters/setters
+    public List<Quest> questBoard {
+        get { return _questBoard; }
+    }
+    #endregion
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
         _isHidden = false;
+        _questBoard = new List<Quest>();
     }
 
     #region Ownership
@@ -173,6 +182,15 @@ public class Settlement : BaseLandmark {
         AdjustPopulation(populationGrowth);
         UIManager.Instance.UpdateFactionSummary();
         ScheduleMonthlyPopulationIncrease();
+    }
+    #endregion
+
+    #region Quests
+    internal void AddQuestToBoard(Quest quest) {
+        _questBoard.Add(quest);
+    }
+    internal void RemoveQuestFromBoard(Quest quest) {
+        _questBoard.Remove(quest);
     }
     #endregion
 }
