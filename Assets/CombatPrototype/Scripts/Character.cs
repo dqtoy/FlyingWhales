@@ -47,10 +47,13 @@ namespace ECS {
 		private Color _characterColor;
 		private string _characterColorCode;
 		private bool _isDead;
+		private bool _isFainted;
+		private bool _isPrisoner;
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
 		private List<string> _history;
 		private int _combatHistoryID;
+		private List<ECS.Character> _prisoners;
 
 		internal int actRate;
 		internal CombatPrototype currentCombat;
@@ -131,6 +134,12 @@ namespace ECS {
 		internal bool isDead{
 			get { return this._isDead; }
 		}
+		internal bool isFainted{
+			get { return this._isFainted; }
+		}
+		internal bool isPrisoner{
+			get { return this._isPrisoner; }
+		}
 		public List<Quest> activeQuests {
 			get { return _activeQuests; }
 		}
@@ -182,6 +191,9 @@ namespace ECS {
 		internal float equippedWeaponPower{
 			get { return _equippedWeaponPower; }
 		}
+		internal List<ECS.Character> prisoners{
+			get { return this._prisoners; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -192,6 +204,10 @@ namespace ECS {
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _traits = new List<Trait> ();
             _relationships = new Dictionary<Character, Relationship>();
+			_isDead = false;
+			_isFainted = false;
+			_isPrisoner = false;
+			_prisoners = new List<ECS.Character> ();
 
 			AllocateStatPoints ();
 
@@ -398,6 +414,39 @@ namespace ECS {
 			this._currentHP += amount;
 			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
 			if(this._currentHP == 0){
+				FaintOrDeath ();
+			}
+		}
+		internal void SetHP(int amount){
+			this._currentHP = amount;
+		}
+		private string GetFaintOrDeath(){
+			WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
+			int faintWeight = 100;
+			int dieWeight = 50;
+			if(HasTrait(TRAIT.GRITTY)){
+				faintWeight += 50;
+			}
+			if(HasTrait(TRAIT.ROBUST)){
+				faintWeight += 50;
+			}
+			if(HasTrait(TRAIT.FRAGILE)){
+				dieWeight += 50;
+			}
+			faintDieDict.AddElement ("faint", 100);
+			faintDieDict.AddElement ("die", 50);
+
+			return faintDieDict.PickRandomElementGivenWeights ();
+		}
+		internal void FaintOrDeath(){
+			string pickedWeight = GetFaintOrDeath ();
+			if(pickedWeight == "faint"){
+				if(this.currentCombat == null){
+					Faint ();
+				}else{
+					this.currentCombat.CharacterFainted (this);
+				}
+			}else if(pickedWeight == "die"){
 				if(this.currentCombat == null){
 					Death ();
 				}else{
@@ -406,6 +455,16 @@ namespace ECS {
 			}
 		}
 
+		//When character will faint
+		internal void Faint(){
+			if(!_isFainted){
+				_isFainted = true;
+				AdjustHP (1);
+				if (this._party != null) {
+					this._party.RemovePartyMember(this, true);
+				}
+			}
+		}
 		//ECS.Character's death
 		internal void Death(){
 			if(!_isDead){
@@ -781,7 +840,7 @@ namespace ECS {
 					for (int j = 0; j < bodyPart.statusEffects.Count; j++) {
 						STATUS_EFFECT statusEffect = bodyPart.statusEffects [j];
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
-							int chance = GameManager.Instance.randomNumGen.Next (0, 100);
+							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
 								CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
@@ -1311,6 +1370,23 @@ namespace ECS {
 			if(this._history.Count > 20){
 				this._history.RemoveAt (0);
 			}
+		}
+		#endregion
+
+		#region Prisoner
+		internal void SetPrisoner(bool state){
+			_isPrisoner = state;
+			if(state){
+				
+			}
+		}
+		internal void AddPrisoner(ECS.Character character){
+			character.SetPrisoner (true);
+			_prisoners.Add (character);
+		}
+		internal void ReleasePrisoner(ECS.Character character){
+			character.SetPrisoner (false);
+			_prisoners.Remove (character);
 		}
 		#endregion
     }

@@ -66,7 +66,7 @@ public class CharacterInfoUI : UIMenu {
         text += currentlyShowingCharacter.id;
         text += "\n" + currentlyShowingCharacter.name;
 		text += "\n" + Utilities.GetNormalizedSingularRace (currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString (currentlyShowingCharacter.gender.ToString ());
-		if(currentlyShowingCharacter.characterClass != null){
+		if(currentlyShowingCharacter.characterClass != null && currentlyShowingCharacter.characterClass.className != "Classless"){
 			text += " " + currentlyShowingCharacter.characterClass.className;
 		}
 		if(currentlyShowingCharacter.role != null){

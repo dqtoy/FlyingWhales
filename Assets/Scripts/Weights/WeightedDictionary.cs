@@ -79,10 +79,7 @@ public class WeightedDictionary<T> {
      * dictionary.
      * */
     internal T PickRandomElementGivenWeights() {
-        if(Utilities.GetTotalOfWeights(_dictionary) > 0) {
-            return Utilities.PickRandomElementWithWeights(_dictionary);
-        }
-        throw new System.Exception("Cannot pick element because dictionary is empty!");
+        return Utilities.PickRandomElementWithWeights(_dictionary);
     }
 
     internal void LogDictionaryValues(string title) {
