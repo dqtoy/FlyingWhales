@@ -118,6 +118,14 @@ namespace ECS{
 
         public void SetQuality(QUALITY quality) {
             this.quality = quality;
+			if(quality == QUALITY.CRUDE){
+				this.weaponPower += ItemManager.Instance.crudeWeaponPowerModifier;
+				this.durability += ItemManager.Instance.crudeWeaponDurabilityModifier;
+			}else if(quality == QUALITY.EXCEPTIONAL){
+				this.weaponPower += ItemManager.Instance.exceptionalWeaponPowerModifier;
+				this.durability += ItemManager.Instance.exceptionalWeaponDurabilityModifier;
+			}
+			this.currDurability = this.durability;
         }
     }
 }

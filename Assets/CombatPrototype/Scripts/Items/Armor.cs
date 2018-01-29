@@ -36,6 +36,14 @@ namespace ECS{
 
         public void SetQuality(QUALITY quality) {
             this.quality = quality;
+			if(quality == QUALITY.CRUDE){
+				this.baseDamageMitigation += ItemManager.Instance.crudeArmorMitigationModifier;
+				this.durability += ItemManager.Instance.crudeArmorDurabilityModifier;
+			}else if(quality == QUALITY.EXCEPTIONAL){
+				this.baseDamageMitigation += ItemManager.Instance.exceptionalArmorMitigationModifier;
+				this.durability += ItemManager.Instance.exceptionalArmorDurabilityModifier;
+			}
+			this.currDurability = this.durability;
         }
     }
 }
