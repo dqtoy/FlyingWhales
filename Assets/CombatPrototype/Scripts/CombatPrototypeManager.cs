@@ -133,6 +133,53 @@ namespace ECS {
 			for (int i = 0; i < combat.deadCharacters.Count; i++) {
 				combat.deadCharacters [i].Death ();
 			}
+
+			if(combat.faintedCharacters.Count > 0){
+				//Prisoner or Leave to Die
+				List<ECS.Character> winningCharacters = null;
+				WeightedDictionary<string> prisonWeights = new WeightedDictionary<string>();
+				int prisonerWeight = 50;
+				int leaveToDieWeight = 100;
+				if(combat.winningSide == SIDES.A){
+					if(combat.charactersSideA[0].faction == null){
+						leaveToDieWeight += 200;
+					}
+					winningCharacters = combat.charactersSideA;
+				}else{
+					if(combat.charactersSideB[0].faction == null){
+						leaveToDieWeight += 200;
+					}
+					winningCharacters = combat.charactersSideB;
+				}
+				prisonWeights.AddElement ("prison", prisonerWeight);
+				prisonWeights.AddElement ("leave", leaveToDieWeight);
+				string pickedWeight = prisonWeights.PickRandomElementGivenWeights ();
+
+				if(pickedWeight == "prison"){
+					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
+						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
+							combat.faintedCharacters [i].Faint ();
+							if(winningCharacters[0].party != null){
+								//Add prisoner to party
+								winningCharacters[0].party.AddPrisoner(combat.faintedCharacters[i]);
+							}else{
+								//Add prisoner to character
+								winningCharacters[0].AddPrisoner(combat.faintedCharacters[i]);
+							}
+						}else{
+							combat.faintedCharacters [i].SetHP (1);
+						}
+					}
+				}else{
+					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
+						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
+							combat.faintedCharacters [i].Death ();
+						}else{
+							combat.faintedCharacters [i].SetHP (1);
+						}
+					}
+				}
+			}
 		}
     }
 }
