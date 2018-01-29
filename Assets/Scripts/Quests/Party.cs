@@ -59,6 +59,7 @@ public class Party: IEncounterable {
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
         _partyMembersOnTheWay = new List<ECS.Character>();
+		_prisoners = new List<ECS.Character> ();
         Debug.Log(partyLeader.name + " has created " + _name);
 
         AddPartyMember(_partyLeader);
