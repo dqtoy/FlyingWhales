@@ -292,6 +292,15 @@ public class FactionManager : MonoBehaviour {
         }
         return false;
     }
+    public QuestTypeSetup GetQuestTypeSetup(QUEST_TYPE questType) {
+        for (int i = 0; i < questTypeSetups.Count; i++) {
+            QuestTypeSetup currSetup = questTypeSetups[i];
+            if (currSetup.questType == questType) {
+                return currSetup;
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region International Incidents
@@ -307,8 +316,7 @@ public class FactionManager : MonoBehaviour {
             WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = GetInternationalIncidentWeights(aggrievedFaction, aggressorFaction, rel, incidentType, data);
             INTERNATIONAL_INCIDENT_ACTION chosenAction = actionWeights.PickRandomElementGivenWeights();
             if (chosenAction == INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR) {
-                //TODO: Declare War
-                Debug.Log(aggrievedFaction.name + " declares war on " + aggressorFaction.name);
+                DecalreWar(aggressorFaction, aggressorFaction);
             }
         }
     }
@@ -343,6 +351,8 @@ public class FactionManager : MonoBehaviour {
         //Negative Quest
         else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
             //TODO: Add Weight to Declare War as listed on the Quest Type
+            QuestTypeSetup qts = GetQuestTypeSetup(((Quest)data).questType);
+            actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, qts.declareWarWeight);
         }
 
         //Opinions
@@ -373,7 +383,7 @@ public class FactionManager : MonoBehaviour {
         }
 
         //Add 100 Weight to Do Nothing per active wars I have
-        actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 100 * aggrievedFaction.activeWars.Count); 
+        actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 100 * aggrievedFaction.activeWars); 
 
         Relationship chieftainRel = CharacterManager.Instance.GetRelationshipBetween(aggressorFaction.leader, aggrievedFaction.leader);
         if(chieftainRel != null) {
@@ -385,6 +395,109 @@ public class FactionManager : MonoBehaviour {
                 actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, Mathf.Abs(chieftainRel.totalValue));
             }
         }
+        return actionWeights;
+    }
+    public void DecalreWar(Faction faction1, Faction faction2) {
+        Debug.Log(faction1.name + " declares war on " + faction2.name);
+        FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
+        rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set relationship with each other as hostile
+        rel.SetWarStatus(true);
+        /* When war is declared, Friends of the two Tribes have to determine what to do. 
+         In determining which side to consider in case he is Friends with both, 
+         choose the one that he has highest positive Opinion of. If same, randomize. */
+        List<Faction> faction1Friends = faction1.GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS.FRIENDLY);
+        List<Faction> faction2Friends = faction2.GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS.FRIENDLY);
+        List<Faction> commonFriends = Utilities.Intersect(faction1Friends, faction2Friends);
+        for (int i = 0; i < commonFriends.Count; i++) {
+            Faction commonFriend = commonFriends[i];
+            FactionRelationship relWithFac1 = commonFriend.GetRelationshipWith(faction1);
+            FactionRelationship relWithFac2 = commonFriend.GetRelationshipWith(faction2);
+            if(relWithFac1.sharedOpinion > relWithFac2.sharedOpinion) {
+                //more friends with faction 1
+                faction2Friends.Remove(commonFriend);
+            } else if(relWithFac1.sharedOpinion < relWithFac2.sharedOpinion) {
+                //more friends with faction 2
+                faction1Friends.Remove(commonFriend);
+            } else {
+                //opinions are equal. Randomize
+                if(UnityEngine.Random.Range(0,2) == 0) {
+                    faction1Friends.Remove(commonFriend);
+                } else {
+                    faction2Friends.Remove(commonFriend);
+                }
+            }
+        }
+
+        for (int i = 0; i < faction1Friends.Count; i++) {
+            Faction currAlly = faction1Friends[i];
+            WeightedDictionary<ALLY_WAR_REACTION> allyReactionWeights = GetAllyWarReaction(currAlly, faction1, faction2);
+            ALLY_WAR_REACTION chosenReaction = allyReactionWeights.PickRandomElementGivenWeights();
+            switch (chosenReaction) {
+                case ALLY_WAR_REACTION.JOIN_WAR:
+                    //Join the war, side with faction 1
+                    FactionRelationship enemyRel = currAlly.GetRelationshipWith(faction2);
+                    enemyRel.SetWarStatus(true); //Set rel with faction 2 as at war
+                    enemyRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 2 as HOSTILE
+                    break;
+                case ALLY_WAR_REACTION.BETRAY:
+                    //Join the war, side with faction 2
+                    FactionRelationship friendRel = currAlly.GetRelationshipWith(faction2);
+                    friendRel.SetWarStatus(true); //Set rel with faction 1 as at war
+                    friendRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 1 as HOSTILE
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        for (int i = 0; i < faction2Friends.Count; i++) {
+            Faction currAlly = faction2Friends[i];
+            WeightedDictionary<ALLY_WAR_REACTION> allyReactionWeights = GetAllyWarReaction(currAlly, faction2, faction1);
+            ALLY_WAR_REACTION chosenReaction = allyReactionWeights.PickRandomElementGivenWeights();
+            switch (chosenReaction) {
+                case ALLY_WAR_REACTION.JOIN_WAR:
+                    //TODO: Join the war, side with faction 2
+                    FactionRelationship enemyRel = currAlly.GetRelationshipWith(faction1);
+                    enemyRel.SetWarStatus(true); //Set rel with faction 1 as at war
+                    enemyRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 1 as HOSTILE
+                    break;
+                case ALLY_WAR_REACTION.BETRAY:
+                    //TODO: Join the war, side with faction 1
+                    FactionRelationship friendRel = currAlly.GetRelationshipWith(faction2);
+                    friendRel.SetWarStatus(true); //Set rel with faction 2 as at war
+                    friendRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 2 as HOSTILE
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    private WeightedDictionary<ALLY_WAR_REACTION> GetAllyWarReaction(Faction faction, Faction friend, Faction enemy) {
+        WeightedDictionary<ALLY_WAR_REACTION> actionWeights = new WeightedDictionary<ALLY_WAR_REACTION>();
+        FactionRelationship relWithFriend = faction.GetRelationshipWith(friend);
+        FactionRelationship relWithEnemy = faction.GetRelationshipWith(enemy);
+        if (faction.leader != null) {
+            for (int i = 0; i < faction.leader.traits.Count; i++) {
+                Trait currTrait = faction.leader.traits[i];
+                WeightedDictionary<ALLY_WAR_REACTION> traitDict = currTrait.GetAllyReactionWeight(friend, enemy);
+                actionWeights.AddElements(traitDict);
+            }
+        }
+        //All
+        if(relWithFriend.sharedOpinion > 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.JOIN_WAR, 5 * relWithFriend.sharedOpinion); //+5 Weight to Join War for every Positive Opinion shared with friendly Tribe
+        } else if(relWithFriend.sharedOpinion < 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.REMAIN_NEUTRAL, Mathf.Abs(2 * relWithFriend.sharedOpinion));//+2 Weight to Remain Neutral for every Negative Opinion shared with friendly Tribe
+        }
+
+        if (relWithEnemy.sharedOpinion < 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.JOIN_WAR, Mathf.Abs(5 * relWithEnemy.sharedOpinion)); //+5 Weight to Join War for every Negative Opinion shared with enemy Tribe
+        } else if(relWithEnemy.sharedOpinion > 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.REMAIN_NEUTRAL, 2 * relWithEnemy.sharedOpinion); //+2 Weight to Remain Neutral for every Positive Opinion shared with enemy Tribe
+        }
+
+        //TODO: +2 Weight to Join War for every positive point of Relative Strength I have over the enemy Tribe
+        //TODO: +2 Weight to Remain Neutral for every negative point of Relative Strength I have under the enemy Tribe
         return actionWeights;
     }
     #endregion

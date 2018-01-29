@@ -73,6 +73,12 @@ public class FactionRelationship {
     }
     #endregion
 
+    #region War
+    public void SetWarStatus(bool warStatus) {
+        _isAtWar = warStatus;
+    }
+    #endregion
+
 	#region Alliance
 	public bool AreAllies(){
 		//TODO: Alliance

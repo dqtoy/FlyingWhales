@@ -902,6 +902,11 @@ public enum INTERNATIONAL_INCIDENT_ACTION {
     DO_NOTHING,
     DECLARE_WAR
 }
+public enum ALLY_WAR_REACTION {
+    JOIN_WAR,
+    REMAIN_NEUTRAL,
+    BETRAY
+}
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 public enum BODY_PART{
 	HEAD,
