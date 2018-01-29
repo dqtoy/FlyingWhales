@@ -133,10 +133,12 @@ namespace ECS{
 
         public void ResetSimulation() {
 			while (CombatPrototypeManager.Instance.combat.charactersSideA.Count > 0) {
-				CombatPrototypeManager.Instance.combat.charactersSideA [0].Death ();
+				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (CombatPrototypeManager.Instance.combat.charactersSideA[0].characterColor);
+				CombatPrototypeManager.Instance.combat.charactersSideA.RemoveAt (0);
 			}
 			while (CombatPrototypeManager.Instance.combat.charactersSideB.Count > 0) {
-				CombatPrototypeManager.Instance.combat.charactersSideB [0].Death ();
+				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (CombatPrototypeManager.Instance.combat.charactersSideB[0].characterColor);
+				CombatPrototypeManager.Instance.combat.charactersSideB.RemoveAt (0);
 			}
 			CombatPrototypeManager.Instance.NewCombat ();
 			ClearCombatLogs();

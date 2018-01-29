@@ -27,8 +27,6 @@ public class GameManager : MonoBehaviour {
 
     private float timeElapsed;
 
-	public System.Random randomNumGen;
-
 
     #region For Testing
     [ContextMenu("Print Event Table")]
@@ -54,7 +52,6 @@ public class GameManager : MonoBehaviour {
 		this.days = 1;
 		this.month = 1;
 		this.timeElapsed = 0f;
-		randomNumGen = new System.Random();
 	}
 
 	private void FixedUpdate(){

@@ -778,7 +778,7 @@ namespace ECS {
 					for (int j = 0; j < bodyPart.statusEffects.Count; j++) {
 						STATUS_EFFECT statusEffect = bodyPart.statusEffects [j];
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
-							int chance = GameManager.Instance.randomNumGen.Next (0, 100);
+							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
 								CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
