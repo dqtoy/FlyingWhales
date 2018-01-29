@@ -79,13 +79,14 @@ public class InternalQuestManager : QuestCreator {
         //Explore region weights
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
-            Region regionOfSettlement = _owner.settlements[i].location.region;
+            Settlement currSettlement = _owner.settlements[i];
+            Region regionOfSettlement = currSettlement.location.region;
             ////check if the current region already has an active quest to explore it
             //if(!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_REGION, regionOfSettlement)) {
             //    questDict.AddElement(new ExploreRegion(this, 20, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
             //}
 
-			if (_owner.settlements[i].civilians > 20 && !AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, _owner.settlements[i])) {
+			if (currSettlement.civilians > 20 && !AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, currSettlement)) {
 				checkedExpandRegions.Clear ();
 				for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
 					object currConnection = regionOfSettlement.connections [j];
@@ -98,7 +99,9 @@ public class InternalQuestManager : QuestCreator {
 				}
 				if(checkedExpandRegions.Count > 0){
 					Region chosenRegion = checkedExpandRegions[UnityEngine.Random.Range(0, checkedExpandRegions.Count)];
-					questDict.AddElement (new Expand (this, 60, chosenRegion.centerOfMass, _owner.settlements [i].location), GetExpandWeight (_owner.settlements [i]));
+                    Expand newExpandQuest = new Expand(this, 60, chosenRegion.centerOfMass, currSettlement.location);
+                    newExpandQuest.SetSettlement(currSettlement);
+                    questDict.AddElement (newExpandQuest, GetExpandWeight(currSettlement));
 				}
 			}
             for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
@@ -107,7 +110,9 @@ public class InternalQuestManager : QuestCreator {
                     BaseLandmark currLandmark = (BaseLandmark)currConnection;
                     if (currLandmark.isHidden && !currLandmark.isExplored) {
                         if (GetQuestsOfType(QUEST_TYPE.EXPLORE_TILE).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
-                            questDict.AddElement(new ExploreTile(this, 60, currLandmark), GetExploreLandmarkWeight(currLandmark));
+                            ExploreTile newExploreTileQuest = new ExploreTile(this, 60, currLandmark);
+                            newExploreTileQuest.SetSettlement(currSettlement);
+                            questDict.AddElement(newExploreTileQuest, GetExploreLandmarkWeight(currLandmark));
                         }
                     }
                 }
@@ -154,11 +159,13 @@ public class InternalQuestManager : QuestCreator {
 		HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
 		if(unoccupiedTile != null){
 			Expand expand = new Expand(this, 60, unoccupiedTile, originLandmark.location);
+            expand.SetSettlement((Settlement)originLandmark);
 			AddNewQuest(expand);
 		}
 	}
 	internal void CreateExploreTileQuest(BaseLandmark landmarkToExplore){
         ExploreTile exploreQuest = new ExploreTile(this, 60, landmarkToExplore);
+        exploreQuest.SetSettlement((Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile);
         AddNewQuest(exploreQuest);
     }
     #endregion
@@ -168,6 +175,9 @@ public class InternalQuestManager : QuestCreator {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
             _owner.AddNewQuest(quest);
+            if(quest.postedAt != null) {
+                quest.postedAt.AddQuestToBoard(quest);
+            }
             //quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }

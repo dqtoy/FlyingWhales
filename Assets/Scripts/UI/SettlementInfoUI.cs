@@ -56,35 +56,63 @@ public class SettlementInfoUI : UIMenu {
 		text += "\n[b]Is Explored:[/b] " + currentlyShowingSettlement.isExplored.ToString();
 
         if (currentlyShowingSettlement.owner != null) {
-			text += "\n[b]Owner:[/b] " + "[url=" + currentlyShowingSettlement.owner.id + "_faction]" + currentlyShowingSettlement.owner.name + "[/url]" + "/" + currentlyShowingSettlement.owner.race.ToString();
+            text += "\n[b]Owner:[/b] " + "[url=" + currentlyShowingSettlement.owner.id + "_faction]" + currentlyShowingSettlement.owner.name + "[/url]" + "/" + currentlyShowingSettlement.owner.race.ToString();
             text += "\n[b]Total Population: [/b] " + currentlyShowingSettlement.totalPopulation.ToString();
             text += "\n[b]Civilian Population: [/b] " + currentlyShowingSettlement.civiliansWithReserved.ToString();
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingSettlement.totalPopulation * currentlyShowingSettlement.location.region.populationGrowth).ToString();
 
-            text += "\n[b]Active Quests: [/b] ";
-            if (currentlyShowingSettlement.owner.activeQuests.Count > 0) {
-                for (int i = 0; i < currentlyShowingSettlement.owner.activeQuests.Count; i++) {
-                    Quest currQuest = currentlyShowingSettlement.owner.activeQuests[i];
-                    text += "\n" + "[url=" + currQuest.id + "_quest]" + currQuest.questType.ToString();
-                    if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
-                        text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name + "[/url]";
-                    } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
-                        text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name + "[/url]";
-                    } else {
-                        text += "[/url]";
+            if (currentlyShowingSettlement is Settlement) {
+                text += "\n[b]Quest Board: [/b] ";
+                Settlement settlement = (Settlement)currentlyShowingSettlement;
+                if (settlement.questBoard.Count > 0) {
+                    for (int i = 0; i < settlement.questBoard.Count; i++) {
+                        Quest currQuest = settlement.questBoard[i];
+                        text += "\n" + "[url=" + currQuest.id + "_quest]" + currQuest.questType.ToString();
+                        if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
+                            text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name + "[/url]";
+                        } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
+                            text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name + "[/url]";
+                        } else {
+                            text += "[/url]";
+                        }
+                        if (currQuest.isAccepted) {
+                            text += " - A";
+                            text += " (" + currQuest.assignedParty.name + ")";
+                        } else {
+                            text += " - N";
+                        }
+
                     }
-                    if (currQuest.isAccepted) {
-                        text += " - A";
-                        text += " (" + currQuest.assignedParty.name + ")";
-                    } else {
-                        text += " - N";
-                    }
-                    
+                } else {
+                    text += "NONE";
                 }
-            } else {
-                text += "NONE";
             }
         }
+
+        //    text += "\n[b]Active Quests: [/b] ";
+        //    if (currentlyShowingSettlement.owner.activeQuests.Count > 0) {
+        //        for (int i = 0; i < currentlyShowingSettlement.owner.activeQuests.Count; i++) {
+        //            Quest currQuest = currentlyShowingSettlement.owner.activeQuests[i];
+        //            text += "\n" + "[url=" + currQuest.id + "_quest]" + currQuest.questType.ToString();
+        //            if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
+        //                text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name + "[/url]";
+        //            } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
+        //                text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name + "[/url]";
+        //            } else {
+        //                text += "[/url]";
+        //            }
+        //            if (currQuest.isAccepted) {
+        //                text += " - A";
+        //                text += " (" + currQuest.assignedParty.name + ")";
+        //            } else {
+        //                text += " - N";
+        //            }
+                    
+        //        }
+        //    } else {
+        //        text += "NONE";
+        //    }
+        //}
 
 		text += "\n[b]Characters: [/b] ";
 		if (currentlyShowingSettlement.location.charactersOnTile.Count > 0) {

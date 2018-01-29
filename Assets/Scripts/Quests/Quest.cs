@@ -39,8 +39,7 @@ public class Quest {
     protected List<string> _questLogs; //TODO: Change this to Logs when convenient
     protected Queue<QuestAction> _questLine;
     protected Faction _targetFaction; //This is only supposed to have a value when this quest is harmful, put the faction that will be harmed by this quest
-    //private GameDate _deadline;
-    //private Action _deadlineAction;
+    protected Settlement _postedAt; //Where this quest was posted.
 
     #region getters/setters
     public int id {
@@ -81,6 +80,9 @@ public class Quest {
     }
     public Faction targetFaction {
         get { return _targetFaction; }
+    }
+    public Settlement postedAt {
+        get { return _postedAt; }
     }
     #endregion
     /*
@@ -158,6 +160,9 @@ public class Quest {
 				_currentAction.onQuestActionDone = null;
 			}
 			_createdBy.RemoveQuest(this);
+            if (_postedAt != null) {
+                _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
+            }
             switch (result) {
                 case QUEST_RESULT.SUCCESS:
                     QuestSuccess();
@@ -410,6 +415,12 @@ public class Quest {
                 }
             }
         }
+    }
+    #endregion
+
+    #region Utilities
+    public void SetSettlement(Settlement postedAt) {
+        _postedAt = postedAt;
     }
     #endregion
 }
