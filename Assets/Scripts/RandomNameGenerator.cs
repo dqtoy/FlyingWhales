@@ -71,6 +71,18 @@ public class RandomNameGenerator : MonoBehaviour {
 		"Thalion", "Turin", "Thorontur", "Voronwe", "Vaessen", "Valanyonnen"
 	};
 
+	private string[] baseAncientRuinPrefixes = new string[]{
+		"Mystic", "Obsidian", "Shadow", "Glimmer", "Frey", "Arrow", "Deep", "Moon", "Ancient", "Forbidden", "Oblivion", "Still", "Dragon", "Amber", "Wendi", "Ingle", "Isle", "White", "Black", "Grimm", "New", "Small",
+		"Hound", "Stone", "Cloud", "Frey", "Crystal", "Rage", "Mist", "Raven", "Troll", "Goblin", "Cold", "Angel", "Evil", "Mythic", "Silent", "Wailing", "Tilted", "Snobby", "Shifty", "Flush", "Greasy", "Anarchy", "Fatal",
+		"Haunted", "Junk", "Pleasant", "Lonely", "Moisty", "Forgotten", "Salty", "Cruel", "Thunder", "Oaken", "Wind", "Never", "Basin"
+	};
+
+	private string[] baseAncientRuinSuffixes = new string[]{
+		"lair", "town", "vault", "ruin", "lost", "hallow", "drift", "shade", "hold", "grove", "shell", "wick", "ville", "hill", "garde", "reach", "den", "dale", "moor", "more", "view", "wich", "borough", "chill", "berg", "burgh", "ster", "stall", 
+		"cross", "storm", "fell", "bury", "ward", "hand", "cliff", "valley", "mire", "gulch", "well", "hall", "gall", "pass", "hollow", "mere", "land", "cairn", "wood", "lands", "horn", "keep", "cre", "scar", "shield", "rand", "borne", "port", "guard", "mount", 
+		"bay", "high", "bourne", "helm", "frost", "mouth", "dusk", "wild", "ness", "dread", "warts", "nook", "spire", "steep", "frey", "fort"
+	};
+
 	#region Alliance
 	private string[] allianceType = new string[]{
 		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
@@ -126,12 +138,14 @@ public class RandomNameGenerator : MonoBehaviour {
     Sobriquet.Generator generatedElvenKingdomNames;
     Sobriquet.Generator generatedElvenFemaleNames;
     Sobriquet.Generator generatedElvenMaleNames;
+	Sobriquet.Generator generatedAncientRuinNames;
 
     private List<string> humanKingdomNames;
     private List<string> humanSurnames;
     private List<string> elvenKingdomNames;
     private List<string> elvenFemaleNames;
     private List<string> elvenMaleNames;
+	private List<string> ancientRuinNames;
 
     void Awake(){
 		Instance = this;
@@ -141,6 +155,8 @@ public class RandomNameGenerator : MonoBehaviour {
         generatedElvenKingdomNames = new Sobriquet.Generator(2, baseElvenKingdomNames);
         generatedElvenFemaleNames = new Sobriquet.Generator(2, baseElvenFemaleNames);
         generatedElvenMaleNames = new Sobriquet.Generator(2, baseElvenMaleNames);
+
+		generatedAncientRuinNames = new Sobriquet.Generator (2, baseAncientRuinPrefixes);
 
         humanKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
@@ -194,6 +210,12 @@ public class RandomNameGenerator : MonoBehaviour {
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(11).Take(10000).ToList());
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(12).Take(10000).ToList());
         elvenMaleNames = Utilities.Shuffle(elvenMaleNames);
+
+		ancientRuinNames = new List<string>();
+		for (int i = 4; i <= 6; i++) {
+			ancientRuinNames.AddRange(generatedAncientRuinNames.AllRaw(i).Take(50000).ToList());
+		}
+		ancientRuinNames = Utilities.Shuffle(ancientRuinNames);
 
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
@@ -325,7 +347,15 @@ public class RandomNameGenerator : MonoBehaviour {
 		return incidentAdjective[UnityEngine.Random.Range(0, incidentAdjective.Length)] + " " + incidentNoun[UnityEngine.Random.Range(0, incidentNoun.Length)] + " " + incidentType[UnityEngine.Random.Range(0, incidentType.Length)];
 
 	}
-
+	public string GetAncientRuinName(){
+		if(ancientRuinNames.Count <= 0) {
+			ancientRuinNames = generatedAncientRuinNames.AllRaw(6).ToList();
+		}
+		int index = UnityEngine.Random.Range (0, ancientRuinNames.Count);
+		string name = ancientRuinNames [index];
+		ancientRuinNames.RemoveAt (index);
+		return name + baseAncientRuinSuffixes [UnityEngine.Random.Range (0, baseAncientRuinSuffixes.Length)];
+	}
 //	public static string GenerateRandomName(){
 //		string firstName = firstNames [Random.Range (0, firstNames.Length)];
 //		string prefix = prefixes [Random.Range (0, prefixes.Length)];

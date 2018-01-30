@@ -115,10 +115,10 @@ public class MilitaryManager : TaskCreator {
 						if(landmark.HasWarlordOnAdjacentVillage()){
 							weight += 150;
 						}
-						if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+						if(_owner.leader != null && _owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
 							weight += 500;
 						}
-						if(_owner.leader.HasTrait(TRAIT.DEFENSIVE)){
+						if(_owner.leader != null && _owner.leader.HasTrait(TRAIT.DEFENSIVE)){
 							weight += 50;
 						}
 					}else{
@@ -127,13 +127,15 @@ public class MilitaryManager : TaskCreator {
 
 					foreach (FactionRelationship factionRel in _owner.relationships.Values) {
 						if(factionRel.isAdjacent){
-							Relationship rel = factionRel.faction1.leader.GetRelationshipWith (factionRel.faction2.leader);
-							if(rel != null){
-								int relModifier = 1;
-								if(rel.totalValue < 0){
-									relModifier = 2;
+							if(factionRel.faction1.leader != null && factionRel.faction2.leader != null){
+								Relationship rel = factionRel.faction1.leader.GetRelationshipWith (factionRel.faction2.leader);
+								if(rel != null){
+									int relModifier = 1;
+									if(rel.totalValue < 0){
+										relModifier = 2;
+									}
+									weight -= (relModifier * rel.totalValue);
 								}
-								weight -= (relModifier * rel.totalValue);
 							}
 							weight += (4 * factionRel.factionLookup[factionRel.factionLookup[this._owner.id].targetFaction.id].threat);
 						}
@@ -143,7 +145,7 @@ public class MilitaryManager : TaskCreator {
 					if(HasDiscoveredMinorFaction(landmark.location.region)){
 						weight += 30;
 					}
-					if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+					if(_owner.leader != null && _owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
 						weight += 300;
 					}
 				}
@@ -152,7 +154,7 @@ public class MilitaryManager : TaskCreator {
 				if(HasDiscoveredMinorFaction(landmark.location.region)){
 					weight += 20;
 				}
-				if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+				if(_owner.leader != null && owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
 					weight += 300;
 				}
 			}
@@ -161,7 +163,7 @@ public class MilitaryManager : TaskCreator {
 			if(HasDiscoveredMinorFaction(landmark.location.region)){
 				weight += 10;
 			}
-			if(_owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
+			if(_owner.leader != null && _owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
 				weight += 300;
 			}
 		}
@@ -176,18 +178,19 @@ public class MilitaryManager : TaskCreator {
 				- add 4 to Weight to Attack for each point of Relative Strength I have over the Faction
 				- subtract 4 to Weight to Attack for each point of Relative Strength they have over my Faction
 		*/
-		if(_owner.leader.HasTrait(TRAIT.IMPERIALIST)){
+		if(_owner.leader != null && _owner.leader.HasTrait(TRAIT.IMPERIALIST)){
 			weight += 50;
 		}
 
-
-		Relationship rel = this._owner.leader.GetRelationshipWith (landmark.owner.leader);
-		if(rel != null){
-			int relModifier = 3;
-			if(rel.totalValue < 0){
-				relModifier = 5;
+		if (this._owner.leader != null && landmark.owner.leader != null) {
+			Relationship rel = this._owner.leader.GetRelationshipWith (landmark.owner.leader);
+			if (rel != null) {
+				int relModifier = 3;
+				if (rel.totalValue < 0) {
+					relModifier = 5;
+				}
+				weight -= (relModifier * rel.totalValue);
 			}
-			weight -= (relModifier * rel.totalValue);
 		}
 		return weight;
 	}

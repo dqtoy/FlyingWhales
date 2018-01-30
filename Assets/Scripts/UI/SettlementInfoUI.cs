@@ -49,6 +49,9 @@ public class SettlementInfoUI : UIMenu {
             return;
         }
         string text = string.Empty;
+		if (currentlyShowingSettlement.landmarkName != string.Empty) {
+			text += "[b]Name:[/b] " + currentlyShowingSettlement.landmarkName + "\n";
+		}
 		text += "[b]Location:[/b] " + "[url=" + currentlyShowingSettlement.location.id + "_hextile]" + currentlyShowingSettlement.location.tileName + "[/url]";
 		text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingSettlement.canBeOccupied.ToString();
 		text += "\n[b]Is Occupied:[/b] " + currentlyShowingSettlement.isOccupied.ToString();
