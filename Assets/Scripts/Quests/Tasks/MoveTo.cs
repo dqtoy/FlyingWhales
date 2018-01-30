@@ -31,6 +31,7 @@ public class MoveTo : CharacterTask {
 
     private void SuccessTask() {
         EndTask(TASK_RESULT.SUCCESS);
+        _assignedCharacter.DestroyAvatar();
     }
 
     private void GoToTile() {

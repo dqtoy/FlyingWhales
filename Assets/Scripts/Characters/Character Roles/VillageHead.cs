@@ -11,7 +11,8 @@ public class VillageHead : CharacterRole {
 
 	public VillageHead(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.VILLAGE_HEAD;
-        this._allowedRoadTypes = new List<ROAD_TYPE>();
-        this._canPassHiddenRoads = false;
+        _allowedRoadTypes = new List<ROAD_TYPE>();
+        _canAcceptQuests = false;
+        _canPassHiddenRoads = false;
     }
 }

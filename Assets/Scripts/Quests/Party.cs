@@ -83,12 +83,12 @@ public class Party: IEncounterable {
 			member.AddHistory ("Joined party: " + this._name + ".");
 			CreateRelationshipsForNewMember(member);
             _partyMembers.Add(member);
-            member.SetParty(this);
-            member.SetCurrentTask(_currentTask);
             if(_avatar != null) {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
+            member.SetParty(this);
+            member.SetCurrentTask(_currentTask);
             if (!IsCharacterLeaderOfParty(member)) {
                 Debug.Log(member.name + " has joined the party of " + partyLeader.name);
                 if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {

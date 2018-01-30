@@ -7,6 +7,7 @@ public class Adventurer : CharacterRole {
 
 	public Adventurer(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.ADVENTURER;
+        _canAcceptQuests = false;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.JOIN_PARTY
         };
@@ -14,16 +15,23 @@ public class Adventurer : CharacterRole {
 
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
         WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
-        Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
         Region currRegionOfCharacter = _character.currLocation.region;
 
-        //Join Party
-        List<Party> partiesOnTile = currSettlement.GetPartiesInSettlement();
-        for (int i = 0; i < partiesOnTile.Count; i++) {
-            Party currParty = partiesOnTile[i];
-            if (currParty.CanJoinParty(_character)) {
-                JoinParty joinPartyTask = new JoinParty(_character, currParty);
-                questWeights.AddElement(joinPartyTask, GetWeightForTask(joinPartyTask));
+        if(_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
+            Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
+            //Join Party
+            List<Party> partiesOnTile = currSettlement.GetPartiesInSettlement();
+            for (int i = 0; i < partiesOnTile.Count; i++) {
+                Party currParty = partiesOnTile[i];
+                if (currParty.CanJoinParty(_character)) {
+                    JoinParty joinPartyTask = new JoinParty(_character, currParty);
+                    questWeights.AddElement(joinPartyTask, GetWeightForTask(joinPartyTask));
+                }
+            }
+
+            //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
+            if (currSettlement.owner.IsHostileWith(_character.faction)) {
+                questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
             }
         }
 
@@ -38,11 +46,7 @@ public class Adventurer : CharacterRole {
                 }
             }
         }
-
-        //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
-        if (currSettlement.owner.IsHostileWith(_character.faction)) {
-            questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
-        }
+        
         return questWeights;
     }
 
