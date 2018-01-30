@@ -465,6 +465,13 @@ namespace ECS {
 				}
 			}
 		}
+
+		internal void Unfaint(){
+			if (_isFainted) {
+				_isFainted = false;
+			}
+		}
+
 		//ECS.Character's death
 		internal void Death(){
 			if(!_isDead){
@@ -1121,6 +1128,9 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
+			if(_isFainted || _isPrisoner){
+				return;
+			}
             if(_party != null) {
                 //if the character is in a party, and is not the leader, do not decide any action
                 if (!_party.IsCharacterLeaderOfParty(this)) {
@@ -1386,9 +1396,11 @@ namespace ECS {
 
 		#region Prisoner
 		internal void SetPrisoner(bool state){
-			_isPrisoner = state;
-			if(state){
-				
+			if(_isPrisoner != state){
+				_isPrisoner = state;
+				if(state){
+					Unfaint ();
+				}
 			}
 		}
 		internal void AddPrisoner(ECS.Character character){
@@ -1398,6 +1410,7 @@ namespace ECS {
 		internal void ReleasePrisoner(ECS.Character character){
 			character.SetPrisoner (false);
 			_prisoners.Remove (character);
+			character.DetermineAction ();
 		}
 		#endregion
     }

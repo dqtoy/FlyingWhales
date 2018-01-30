@@ -141,6 +141,7 @@ public class Party: IEncounterable {
 	public void ReleasePrisoner(ECS.Character character){
 		character.SetPrisoner (false);
 		_prisoners.Remove (character);
+		character.DetermineAction ();
 	}
     public void CheckLeavePartyAfterQuest() {
         //Check which party members will leave

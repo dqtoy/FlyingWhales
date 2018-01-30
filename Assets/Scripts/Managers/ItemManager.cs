@@ -10,6 +10,16 @@ public class ItemManager : MonoBehaviour {
 
     private Dictionary<string, ECS.Item> allItems;
 
+	public int crudeWeaponPowerModifier;
+	public int exceptionalWeaponPowerModifier;
+	public int crudeWeaponDurabilityModifier;
+	public int exceptionalWeaponDurabilityModifier;
+
+	public int crudeArmorMitigationModifier;
+	public int exceptionalArmorMitigationModifier;
+	public int crudeArmorDurabilityModifier;
+	public int exceptionalArmorDurabilityModifier;
+
     private void Awake() {
         Instance = this;
     }

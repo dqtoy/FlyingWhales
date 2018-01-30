@@ -17,7 +17,9 @@ namespace ECS{
 		internal List<ECS.Character> charactersSideA;
 		internal List<ECS.Character> charactersSideB;
 		internal List<ECS.Character> deadCharacters;
-		internal List<ECS.Character> fledCharacters;
+		internal List<ECS.Character> faintedCharacters;
+		internal SIDES winningSide;
+		internal SIDES losingSide;
 
 		internal List<string> resultsLog;
 		internal object caller;
@@ -29,7 +31,7 @@ namespace ECS{
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
 			this.deadCharacters = new List<ECS.Character> ();
-			this.fledCharacters = new List<ECS.Character> ();
+			this.faintedCharacters = new List<ECS.Character> ();
 
 			this.resultsLog = new List<string> ();
 			this.caller = caller;
@@ -101,13 +103,13 @@ namespace ECS{
         #endregion
 
 		public void ReturnCombatResults(){
-			CombatPrototypeManager.Instance.CombatResults(this);
 			if(caller != null){
 				if(caller is IEncounterable){
 					IEncounterable encounterable = (IEncounterable)caller;
 					encounterable.ReturnResults (this);
 				}
 			}
+			CombatPrototypeManager.Instance.CombatResults(this);
 		}
 
         //This simulates the whole combat system
@@ -151,6 +153,13 @@ namespace ECS{
                 rounds++;
 //              yield return new WaitForSeconds(updateIntervals);
             }
+			if(this.charactersSideA.Count > 0){
+				winningSide = SIDES.A;
+				losingSide = SIDES.B;
+			}else{
+				winningSide = SIDES.B;
+				losingSide = SIDES.A;
+			}
             AddCombatLog("Combat Ends", SIDES.A);
         }
 
@@ -409,8 +418,8 @@ namespace ECS{
 		}
 		//ECS.Character will do the skill specified, but its success will be determined by the skill's accuracy
 		private void DoSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
-			double chance = Utilities.rng.NextDouble ();
-			if(chance < (skill.accuracy / 100f)){
+			int chance = Utilities.rng.Next (0,100);
+			if(chance < skill.accuracy){
 				//Successful
 				SuccessfulSkill(skill, sourceCharacter, targetCharacter);
 			}else{
@@ -477,7 +486,7 @@ namespace ECS{
 		}
 
 		private void InstantDeath(ECS.Character character){
-			character.Death();
+			character.FaintOrDeath();
 		}
 
 		#region Attack Skill
@@ -730,7 +739,6 @@ namespace ECS{
 		private void FleeSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: ECS.Character flees
 			RemoveCharacter(targetCharacter);
-			fledCharacters.Add (targetCharacter);
 			AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
@@ -763,6 +771,12 @@ namespace ECS{
 			RemoveCharacter (character);
 			deadCharacters.Add (character);
 			AddCombatLog(character.name + " died horribly!", character.currentSide);
+		}
+
+		internal void CharacterFainted(ECS.Character character){
+			RemoveCharacter (character);
+			faintedCharacters.Add (character);
+			AddCombatLog(character.name + " fainted!", character.currentSide);
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death
