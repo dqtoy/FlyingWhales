@@ -29,6 +29,7 @@ public class BaseLandmark {
     protected WeightedDictionary<ENCOUNTERABLE> _encounterables;
 	protected IEncounterable _landmarkEncounterable;
 	protected ENCOUNTERABLE _landmarkEncounterableType;
+	protected List<ECS.Character> _prisoners;
 
     #region getters/setters
     public int id {
@@ -85,6 +86,9 @@ public class BaseLandmark {
 	public IEncounterable landmarkEncounterable {
 		get { return _landmarkEncounterable; }
 	}
+	public List<ECS.Character> prisoners {
+		get { return _prisoners; }
+	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -100,6 +104,7 @@ public class BaseLandmark {
 		_reservedCivilians = 0;
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
         _resourceInventory = new Dictionary<RESOURCE, int>();
+		_prisoners = new List<ECS.Character> ();
         ConstructTechnologiesDictionary();
         InititalizeEncounterables();
     }
@@ -362,4 +367,14 @@ public class BaseLandmark {
 			return null;
 		}
 	}
+
+	#region Prisoner
+	internal void AddPrisoner(ECS.Character character){
+		character.SetPrisoner (true, this);
+		_prisoners.Add (character);
+	}
+	internal void RemovePrisoner(ECS.Character character){
+		_prisoners.Remove (character);
+	}
+	#endregion
 }

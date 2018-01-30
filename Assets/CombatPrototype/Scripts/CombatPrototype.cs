@@ -18,13 +18,14 @@ namespace ECS{
 		internal List<ECS.Character> charactersSideB;
 		internal List<ECS.Character> deadCharacters;
 		internal List<ECS.Character> faintedCharacters;
+		internal List<ECS.Character> sideAPrisoners;
+		internal List<ECS.Character> sideBPrisoners;
+
 		internal SIDES winningSide;
 		internal SIDES losingSide;
 
 		internal List<string> resultsLog;
 		internal object caller;
-
-		private System.Random randomNumGen = new System.Random ();
 
 		public CombatPrototype(object caller){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
@@ -32,6 +33,8 @@ namespace ECS{
 			this.charactersSideB = new List<ECS.Character> ();
 			this.deadCharacters = new List<ECS.Character> ();
 			this.faintedCharacters = new List<ECS.Character> ();
+			this.sideAPrisoners = null;
+			this.sideBPrisoners = null;
 
 			this.resultsLog = new List<string> ();
 			this.caller = caller;
@@ -55,8 +58,22 @@ namespace ECS{
 		internal void AddCharacters(SIDES side, List<ECS.Character> characters) {
 			if (side == SIDES.A) {
 				this.charactersSideA.AddRange(characters);
+				if(characters[0].party != null){
+					sideAPrisoners = characters [0].party.prisoners;
+				}else{
+					for (int i = 0; i < characters.Count; i++) {
+						sideAPrisoners = characters [i].prisoners;
+					}
+				}
 			} else {
 				this.charactersSideB.AddRange(characters);
+				if(characters[0].party != null){
+					sideBPrisoners = characters [0].party.prisoners;
+				}else{
+					for (int i = 0; i < characters.Count; i++) {
+						sideBPrisoners = characters [i].prisoners;
+					}
+				}
 			}
 			for (int i = 0; i < characters.Count; i++) {
 				characters[i].SetSide (side);

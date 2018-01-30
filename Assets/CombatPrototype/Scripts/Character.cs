@@ -49,6 +49,7 @@ namespace ECS {
 		private bool _isDead;
 		private bool _isFainted;
 		private bool _isPrisoner;
+		private object _isPrisonerOf;
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
 		private List<string> _history;
@@ -194,6 +195,9 @@ namespace ECS {
 		internal List<ECS.Character> prisoners{
 			get { return this._prisoners; }
 		}
+		internal object isPrisonerOf{
+			get { return this._isPrisonerOf; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -207,6 +211,7 @@ namespace ECS {
 			_isDead = false;
 			_isFainted = false;
 			_isPrisoner = false;
+			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 
 			AllocateStatPoints ();
@@ -492,6 +497,9 @@ namespace ECS {
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
                 }
+				if(_isPrisoner){
+					PrisonerDeath ();
+				}
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
@@ -1384,22 +1392,73 @@ namespace ECS {
 		#endregion
 
 		#region Prisoner
-		internal void SetPrisoner(bool state){
-			if(_isPrisoner != state){
-				_isPrisoner = state;
-				if(state){
-					Unfaint ();
+		internal void SetPrisoner(bool state, object prisonerOf){
+			_isPrisoner = state;
+			_isPrisonerOf = prisonerOf;
+			if(state){
+				string wardenName = string.Empty;
+				if(_isPrisonerOf is Party){
+					wardenName = ((Party)_isPrisonerOf).name;
+				}else if(_isPrisonerOf is ECS.Character){
+					wardenName = ((ECS.Character)_isPrisonerOf).name;
+				}else if(_isPrisonerOf is BaseLandmark){
+					wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				}
+				AddHistory ("Became a prisoner of " + wardenName);
+				Unfaint ();
 			}
 		}
 		internal void AddPrisoner(ECS.Character character){
-			character.SetPrisoner (true);
+			character.SetPrisoner (true, this);
 			_prisoners.Add (character);
 		}
-		internal void ReleasePrisoner(ECS.Character character){
-			character.SetPrisoner (false);
+		internal void RemovePrisoner(ECS.Character character){
 			_prisoners.Remove (character);
-			character.DetermineAction ();
+		}
+		internal void ReleasePrisoner(){
+			string wardenName = string.Empty;
+			if(_isPrisonerOf is Party){
+				wardenName = ((Party)_isPrisonerOf).name;
+				((Party)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is ECS.Character){
+				wardenName = ((ECS.Character)_isPrisonerOf).name;
+				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is BaseLandmark){
+				wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
+				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
+			}
+			AddHistory ("Released from the prison of " + wardenName);
+			SetPrisoner (false, null);
+			DetermineAction ();
+		}
+		internal void TransferPrisoner(object newPrisonerOf){
+			//Remove from previous prison
+			if(_isPrisonerOf is Party){
+				((Party)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is ECS.Character){
+				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is BaseLandmark){
+				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
+			}
+
+			//Add prisoner to new prison
+			if(newPrisonerOf is Party){
+				((Party)newPrisonerOf).AddPrisoner (this);
+			}else if(newPrisonerOf is ECS.Character){
+				((ECS.Character)newPrisonerOf).AddPrisoner (this);
+			}else if(newPrisonerOf is BaseLandmark){
+				((BaseLandmark)newPrisonerOf).AddPrisoner (this);
+			}
+		}
+		private void PrisonerDeath(){
+			if(_isPrisonerOf is Party){
+				((Party)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is ECS.Character){
+				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is BaseLandmark){
+				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
+			}
+			SetPrisoner (false, null);
 		}
 		#endregion
     }

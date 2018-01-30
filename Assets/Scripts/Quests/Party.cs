@@ -46,6 +46,9 @@ public class Party: IEncounterable {
     public List<ECS.Character> partyMembers {
         get { return _partyMembers; }
     }
+	public List<ECS.Character> prisoners {
+		get { return _prisoners; }
+	}
     public Quest currentQuest {
         get { return _currentQuest; }
     }
@@ -135,13 +138,11 @@ public class Party: IEncounterable {
         //}
     }
 	public void AddPrisoner(ECS.Character character){
-		character.SetPrisoner (true);
+		character.SetPrisoner (true, this);
 		_prisoners.Add (character);
 	}
-	public void ReleasePrisoner(ECS.Character character){
-		character.SetPrisoner (false);
+	public void RemovePrisoner(ECS.Character character){
 		_prisoners.Remove (character);
-		character.DetermineAction ();
 	}
     public void CheckLeavePartyAfterQuest() {
         //Check which party members will leave
@@ -187,6 +188,15 @@ public class Party: IEncounterable {
             _currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
         }
 		SetCurrentQuest (null);
+		if(_partyLeader.isDead){
+			while(_prisoners.Count > 0){
+				_prisoners [0].Death ();
+			}
+		}else{
+			while(_prisoners.Count > 0){
+				_prisoners [0].TransferPrisoner (_partyLeader);
+			}
+		}
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
@@ -205,6 +215,16 @@ public class Party: IEncounterable {
         }
 		SetCurrentQuest (null);
 
+		if(_partyLeader.isDead){
+			while(_prisoners.Count > 0){
+				_prisoners [0].Death ();
+			}
+		}else{
+			while(_prisoners.Count > 0){
+				_prisoners [0].TransferPrisoner (_partyLeader);
+			}
+		}
+
 		while(_partyMembers.Count > 0) {
 			ECS.Character currMember = _partyMembers[0];
 			currMember.SetParty(null);
@@ -213,6 +233,8 @@ public class Party: IEncounterable {
 			currMember.currLocation.AddCharacterOnTile(currMember);
 			currMember.DetermineAction();
 		}
+
+
 	}
     public bool AreAllPartyMembersPresent() {
         bool isPartyComplete = true;

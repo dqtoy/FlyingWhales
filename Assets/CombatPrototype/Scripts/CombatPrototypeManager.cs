@@ -134,23 +134,24 @@ namespace ECS {
 				combat.deadCharacters [i].Death ();
 			}
 
+			//Prisoner or Leave to Die
+			List<ECS.Character> winningCharacters = null;
+			int leaveToDieWeight = 100;
+			if(combat.winningSide == SIDES.A){
+				if(combat.charactersSideA[0].faction == null){
+					leaveToDieWeight += 200;
+				}
+				winningCharacters = combat.charactersSideA;
+			}else{
+				if(combat.charactersSideB[0].faction == null){
+					leaveToDieWeight += 200;
+				}
+				winningCharacters = combat.charactersSideB;
+			}
+
 			if(combat.faintedCharacters.Count > 0){
-				//Prisoner or Leave to Die
-				List<ECS.Character> winningCharacters = null;
 				WeightedDictionary<string> prisonWeights = new WeightedDictionary<string>();
 				int prisonerWeight = 50;
-				int leaveToDieWeight = 100;
-				if(combat.winningSide == SIDES.A){
-					if(combat.charactersSideA[0].faction == null){
-						leaveToDieWeight += 200;
-					}
-					winningCharacters = combat.charactersSideA;
-				}else{
-					if(combat.charactersSideB[0].faction == null){
-						leaveToDieWeight += 200;
-					}
-					winningCharacters = combat.charactersSideB;
-				}
 				prisonWeights.AddElement ("prison", prisonerWeight);
 				prisonWeights.AddElement ("leave", leaveToDieWeight);
 				string pickedWeight = prisonWeights.PickRandomElementGivenWeights ();
@@ -178,6 +179,95 @@ namespace ECS {
 							combat.faintedCharacters [i].SetHP (1);
 						}
 					}
+				}
+			}
+
+			//Check prisoners of defeated party or character
+			if(combat.losingSide == SIDES.A && combat.sideAPrisoners != null){
+				CheckDefeatedPartyPrisoners (winningCharacters, combat.sideAPrisoners);
+			}else if(combat.losingSide == SIDES.B && combat.sideBPrisoners != null){
+				CheckDefeatedPartyPrisoners (winningCharacters, combat.sideBPrisoners);
+			}
+		}
+
+		private void CheckDefeatedPartyPrisoners(List<ECS.Character> winningCharacters, List<ECS.Character> prisoners){
+			WeightedDictionary<string> weights = new WeightedDictionary<string> ();
+			string pickedWeight = string.Empty;
+			int takePrisonerWeight = 50;
+			int releaseWeight = 100;
+			int killWeight = 10;
+			if(winningCharacters[0].party != null){
+				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.RUTHLESS)){
+					killWeight += 500;
+				}
+				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.BENEVOLENT)){
+					releaseWeight += 500;
+				}
+				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.PACIFIST)){
+					killWeight -= 100;
+					if(killWeight < 0){
+						killWeight = 0;
+					}
+				}
+			}else{
+				if(winningCharacters[0].HasTrait(TRAIT.RUTHLESS)){
+					killWeight += 500;
+				}
+				if(winningCharacters[0].HasTrait(TRAIT.BENEVOLENT)){
+					releaseWeight += 500;
+				}
+				if(winningCharacters[0].HasTrait(TRAIT.PACIFIST)){
+					killWeight -= 100;
+					if(killWeight < 0){
+						killWeight = 0;
+					}
+				}
+			}
+
+			weights.AddElement ("prisoner", takePrisonerWeight);
+			weights.AddElement ("release", releaseWeight);
+
+			while(prisoners.Count > 0) {
+				if(prisoners[0].faction != null){
+					if(winningCharacters[0].faction != null){
+						if (prisoners [0].faction.id == winningCharacters [0].faction.id) {
+							prisoners [0].ReleasePrisoner ();
+							continue;
+						} else {
+							FactionRelationship fr = prisoners [0].faction.GetRelationshipWith (winningCharacters [0].faction);
+							if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+								killWeight += 200;
+							}
+						}
+					}else{
+						killWeight += 200;
+					}
+				}else{
+					killWeight += 200;
+				}
+
+				if (winningCharacters [0].party != null){
+					if (winningCharacters [0].party.partyLeader.raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].party.partyLeader.HasTrait (TRAIT.RACIST)) {
+						killWeight += 100;
+					}
+				}else{
+					if (winningCharacters [0].raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].HasTrait (TRAIT.RACIST)) {
+						killWeight += 100;
+					}
+				}
+
+				weights.ChangeElement ("kill", killWeight);
+				pickedWeight = weights.PickRandomElementGivenWeights ();
+				if(pickedWeight == "prisoner"){
+					if (winningCharacters [0].party != null) {
+						prisoners [0].TransferPrisoner (winningCharacters [0].party);
+					}else{
+						prisoners [0].TransferPrisoner (winningCharacters [0]);
+					}
+				}else if(pickedWeight == "kill"){
+					prisoners [0].Death ();
+				}else if(pickedWeight == "release"){
+					prisoners [0].ReleasePrisoner ();
 				}
 			}
 		}
