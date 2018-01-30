@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RestForDays : QuestAction {
+public class RestForDays : TaskAction {
 
     private int restDays;
 
@@ -13,7 +13,7 @@ public class RestForDays : QuestAction {
         base.InititalizeAction(days);
         restDays = days;
     }
-    public override void ActionDone(QUEST_ACTION_RESULT result) {
+    public override void ActionDone(TASK_ACTION_RESULT result) {
         _actionDoer.StopRegeneration();
         base.ActionDone(result);
     }
@@ -24,6 +24,6 @@ public class RestForDays : QuestAction {
 
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(restDays);
-        SchedulingManager.Instance.AddEntry(dueDate, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS)); //End action after number of days
+        SchedulingManager.Instance.AddEntry(dueDate, () => ActionDone(TASK_ACTION_RESULT.SUCCESS)); //End action after number of days
     }
 }

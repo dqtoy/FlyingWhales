@@ -119,9 +119,14 @@ public class SettlementInfoUI : UIMenu {
 			for (int i = 0; i < currentlyShowingSettlement.location.charactersOnTile.Count; i++) {
 				ECS.Character currChar = currentlyShowingSettlement.location.charactersOnTile[i];
 				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-				if (currChar.currentQuest != null) {
-					text += " ([url=" + currChar.currentQuest.id + "_quest]" + currChar.currentQuest.questType.ToString() + "[/url])";
-				}
+				if (currChar.currentTask != null) {
+                    if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+                        Quest currQuest = (Quest)currChar.currentTask;
+                        text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString() + "[/url])";
+                    } else {
+                        text += " (" + currChar.currentTask.taskType.ToString() + ")";
+                    }
+                }
 			}
 		} else {
 			text += "NONE";
@@ -150,21 +155,31 @@ public class SettlementInfoUI : UIMenu {
 				for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
 					Party currParty = PartyManager.Instance.allParties[i];
 					text += "\n" + currParty.name + " O: " + currParty.isOpen + " F: " + currParty.isFull;
-					if(currParty.currentQuest != null) {
-						text += "\n" + "[url=" + currParty.currentQuest.id + "_quest]" + Utilities.NormalizeString(currParty.currentQuest.questType.ToString()) + "[/url]";
-						if (currParty.currentQuest.isDone) {
-							text += "(Done)";
-						} else {
-							if (currParty.isOpen || currParty.currentQuest.isWaiting) {
-								text += "(Forming Party)";
-							} else {
-								text += "(In Progress)";
-                                if(currParty.currentQuest.currentAction != null) {
-                                    text += "(" + currParty.currentQuest.currentAction.GetType().ToString() + ")";
-                                }
+					if(currParty.currentTask != null) {
+                        if (currParty.currentTask.taskType == TASK_TYPE.QUEST) {
+                            Quest currQuest = (Quest)currParty.currentTask;
+                            text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString() + "[/url])";
+                            if (currQuest.isDone) {
+                                text += "(Done)";
+                            } else {
+                                if (currParty.isOpen || currQuest.isWaiting) {
+                                    text += "(Forming Party)";
+                                } else {
+                                    text += "(In Progress)";
+                                    if (currQuest.currentAction != null) {
+                                        text += "(" + currQuest.currentAction.GetType().ToString() + ")";
+                                    }
 
+                                }
                             }
-						}
+                        } else {
+                            text += " (" + currParty.currentTask.taskType.ToString() + ")";
+                            if (currParty.currentTask.isDone) {
+                                text += "(Done)";
+                            } else {
+                                text += "(In Progress)";
+                            }
+                        }
 					}
 					text += "\n     Leader: [url=" + currParty.partyLeader.id + "_character]" + currParty.partyLeader.name + "[/url]";
                     if(currParty.partyMembers.Count > 2) {

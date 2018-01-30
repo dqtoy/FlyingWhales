@@ -179,12 +179,12 @@ public class ConsoleMenu : UIMenu {
             Quest quest = FactionManager.Instance.GetQuestByID(questID);
             ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
 
-            if(character.currentQuest != null) {
+            if(character.currentTask != null) {
                 character.SetQuestToForceAccept(quest);
                 //cancel character's current quest
-                character.currentQuest.EndQuest(QUEST_RESULT.CANCEL);
+                character.currentTask.EndTask(TASK_RESULT.CANCEL);
             } else {
-                quest.AcceptQuest(character);
+                quest.PerformTask(character);
             }
             
 

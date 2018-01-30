@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GoToLocation : QuestAction {
+public class GoToLocation : TaskAction {
 
     private HexTile targetLocation;
     private PATHFINDING_MODE _pathfindingMode = PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP;
 
 
-    public GoToLocation(Quest quest) : base(quest) {
+    public GoToLocation(CharacterTask task) : base(task) {
     }
 
     #region overrides
@@ -15,7 +15,7 @@ public class GoToLocation : QuestAction {
         base.InititalizeAction(target);
         targetLocation = target;
     }
-    public override void ActionDone(QUEST_ACTION_RESULT result) {
+    public override void ActionDone(TASK_ACTION_RESULT result) {
         //Destroy ECS.Character Avatar
         //_actionDoer.DestroyAvatar();
 
@@ -35,56 +35,56 @@ public class GoToLocation : QuestAction {
     internal void Generic() {
         if (actionDoer.currLocation.id == targetLocation.id) {
             //action doer is already at the target location
-            ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+            ActionDone(TASK_ACTION_RESULT.SUCCESS);
         } else {
             if (actionDoer.avatar == null) {
                 //Instantiate a new character avatar
                 actionDoer.CreateNewAvatar();
             }
             actionDoer.avatar.SetTarget(targetLocation);
-            actionDoer.avatar.StartPath(_pathfindingMode, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+            actionDoer.avatar.StartPath(_pathfindingMode, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
         }
     }
 
 	internal void Expand() {
 		if (actionDoer.currLocation.id == targetLocation.id) {
 			//action doer is already at the target location
-			ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
 			if (actionDoer.avatar == null) {
 				//Instantiate a new character avatar
 				actionDoer.CreateNewAvatar();
 			}
 			actionDoer.avatar.SetTarget (targetLocation);
-			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
-            actionDoer.currentQuest.AddNewLog(actionDoer.name + " goes to " + targetLocation.name);
+			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
+            actionDoer.currentTask.AddNewLog(actionDoer.name + " goes to " + targetLocation.name);
 
         }
 	}
 	internal void Defend() {
 		if (actionDoer.currLocation.id == targetLocation.id) {
 			//action doer is already at the target location
-			ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
 			if (actionDoer.avatar == null) {
 				//Instantiate a new character avatar
 				actionDoer.CreateNewAvatar();
 			}
 			actionDoer.avatar.SetTarget (targetLocation);
-			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
 		}
 	}
 	internal void Attack() {
 		if (actionDoer.currLocation.id == targetLocation.id) {
 			//action doer is already at the target location
-			ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
 			if (actionDoer.avatar == null) {
 				//Instantiate a new character avatar
 				actionDoer.CreateNewAvatar();
 			}
 			actionDoer.avatar.SetTarget (targetLocation);
-			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
 		}
 	}
 }

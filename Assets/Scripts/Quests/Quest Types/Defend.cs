@@ -12,8 +12,7 @@ public class Defend : Quest {
 	}
 	#endregion
 
-	public Defend(QuestCreator createdBy, int daysBeforeDeadline, BaseLandmark landmarkToDefend) 
-        : base(createdBy, daysBeforeDeadline, QUEST_TYPE.DEFEND) {
+	public Defend(TaskCreator createdBy, BaseLandmark landmarkToDefend) : base(createdBy, QUEST_TYPE.DEFEND) {
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((MilitaryManager)createdBy).owner}),
 //			new MustBeRole(CHARACTER_ROLE.WARLORD),
@@ -28,14 +27,14 @@ public class Defend : Quest {
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
 		goToLocation.InititalizeAction(_landmarkToDefend.location);
-		goToLocation.onQuestActionDone += EndQuestAfterDays;
-        goToLocation.onQuestDoAction += goToLocation.Defend;
+		goToLocation.onTaskActionDone += EndQuestAfterDays;
+        goToLocation.onTaskDoAction += goToLocation.Defend;
 
         _questLine.Enqueue(goToLocation);
     }
     #endregion
 
 	private void EndQuestAfterDays() {
-		ScheduleQuestEnd(30, QUEST_RESULT.SUCCESS);
+		ScheduleQuestEnd(30, TASK_RESULT.SUCCESS);
 	}
 }

@@ -79,8 +79,13 @@ public class FactionInfoUI : UIMenu {
 			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
 				ECS.Character currChar = currentlyShowingFaction.characters[i];
 				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-				if (currChar.currentQuest != null) {
-					text += " (" + currChar.currentQuest.questType.ToString() + ")";
+				if (currChar.currentTask != null) {
+                    if(currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+                        text += " (" + ((Quest)currChar.currentTask).questType.ToString() + ")";
+                    } else {
+                        text += " (" + currChar.currentTask.taskType.ToString() + ")";
+                    }
+					
 				}
 			}
 		} else {

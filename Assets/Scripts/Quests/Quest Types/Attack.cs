@@ -12,8 +12,7 @@ public class Attack : Quest {
 	}
 	#endregion
 
-	public Attack(QuestCreator createdBy, int daysBeforeDeadline, BaseLandmark landmarkToAttack) 
-		: base(createdBy, daysBeforeDeadline, QUEST_TYPE.ATTACK) {		
+	public Attack(TaskCreator createdBy, BaseLandmark landmarkToAttack) : base(createdBy, QUEST_TYPE.ATTACK) {		
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((MilitaryManager)createdBy).owner}),
 //			new MustBeRole(CHARACTER_ROLE.WARLORD),
@@ -28,14 +27,14 @@ public class Attack : Quest {
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
 		goToLocation.InititalizeAction(_landmarkToAttack.location);
-		goToLocation.onQuestActionDone += EndQuestAfterDays;
-        goToLocation.onQuestDoAction += goToLocation.Attack;
+		goToLocation.onTaskActionDone += EndQuestAfterDays;
+        goToLocation.onTaskDoAction += goToLocation.Attack;
 
         _questLine.Enqueue(goToLocation);
     }
     #endregion
 
 	private void EndQuestAfterDays() {
-		ScheduleQuestEnd(30, QUEST_RESULT.SUCCESS);
+		ScheduleQuestEnd(30, TASK_RESULT.SUCCESS);
 	}
 }

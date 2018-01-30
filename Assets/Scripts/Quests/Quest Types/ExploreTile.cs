@@ -11,8 +11,7 @@ public class ExploreTile : Quest {
         get { return _landmarkToExplore; }
     }
     #endregion
-    public ExploreTile(QuestCreator createdBy, int daysBeforeDeadline, BaseLandmark landmarkToExplore) 
-        : base(createdBy, daysBeforeDeadline, QUEST_TYPE.EXPLORE_TILE) {
+    public ExploreTile(TaskCreator createdBy, BaseLandmark landmarkToExplore) : base(createdBy, QUEST_TYPE.EXPLORE_TILE) {
         //_questFilters = new List<QuestFilter>() {
         //    new MustBeRole(CHARACTER_ROLE.CHIEFTAIN),
         //    new MustBeRole(CHARACTER_ROLE.CHIEFTAIN)
@@ -26,15 +25,15 @@ public class ExploreTile : Quest {
 
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
         goToLandmark.InititalizeAction(_landmarkToExplore.location);
-        goToLandmark.onQuestActionDone += ScheduleRandomResult;
-        goToLandmark.onQuestDoAction += goToLandmark.Generic;
-        goToLandmark.onQuestDoAction += LogGoToLocation;
+        goToLandmark.onTaskActionDone += ScheduleRandomResult;
+        goToLandmark.onTaskDoAction += goToLandmark.Generic;
+        goToLandmark.onTaskDoAction += LogGoToLocation;
 
         //Enqueue all actions
         _questLine.Enqueue(goToLandmark);
     }
-    internal override void QuestCancel() {
-        _questResult = QUEST_RESULT.CANCEL;
+    protected override void QuestCancel() {
+        _taskResult = TASK_RESULT.CANCEL;
         _assignedParty.partyLeader.DestroyAvatar();
         PartyManager.Instance.RemoveParty(_assignedParty);
         CheckForInternationalIncident();
@@ -43,7 +42,7 @@ public class ExploreTile : Quest {
 	internal override void Result(bool isSuccess){
 		if (isSuccess) {
 			_landmarkToExplore.SetExploredState(true);
-			EndQuest(QUEST_RESULT.SUCCESS);
+			EndQuest(TASK_RESULT.SUCCESS);
 			AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
 		} else {
 			AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");

@@ -19,7 +19,7 @@ public class Party: IEncounterable {
     protected List<ECS.Character> _partyMembersOnTheWay; //Party members that just joined, but are on the way to the party leaders location
 	protected List<ECS.Character> _prisoners;
 
-    protected Quest _currentQuest;
+    protected CharacterTask _currentTask;
     protected CharacterAvatar _avatar;
 
     private const int MAX_PARTY_MEMBERS = 5;
@@ -46,8 +46,8 @@ public class Party: IEncounterable {
     public List<ECS.Character> partyMembers {
         get { return _partyMembers; }
     }
-    public Quest currentQuest {
-        get { return _currentQuest; }
+    public CharacterTask currentTask {
+        get { return _currentTask; }
     }
     public HexTile currLocation {
         get { return _partyLeader.currLocation; }
@@ -81,15 +81,15 @@ public class Party: IEncounterable {
 			CreateRelationshipsForNewMember(member);
             _partyMembers.Add(member);
             member.SetParty(this);
-            member.SetCurrentQuest(_currentQuest);
+            member.SetCurrentTask(_currentTask);
             if(_avatar != null) {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
             if (!IsCharacterLeaderOfParty(member)) {
                 Debug.Log(member.name + " has joined the party of " + partyLeader.name);
-                if(_currentQuest != null) {
-                    _currentQuest.AddNewLog(member.name + " has joined the party of " + partyLeader.name);
+                if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+                    ((Quest)_currentTask).AddNewLog(member.name + " has joined the party of " + partyLeader.name);
                 }
             }
         }
@@ -100,9 +100,10 @@ public class Party: IEncounterable {
         //        onPartyFull(this);
         //    }
         //}
-        if(_currentQuest != null) {
-            if (_currentQuest.onQuestInfoChanged != null) {
-                _currentQuest.onQuestInfoChanged();
+        if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+            Quest currQuest = (Quest)_currentTask;
+            if (currQuest.onTaskInfoChanged != null) {
+                currQuest.onTaskInfoChanged();
             }
         }
     }
@@ -123,13 +124,13 @@ public class Party: IEncounterable {
         }
         if (!forDeath) {
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
-            if (currentQuest != null) {
-                currentQuest.AddNewLog(member.name + " has left the party");
+            if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+                ((Quest)currentTask).AddNewLog(member.name + " has left the party");
             }
         }
         
         member.SetParty(null);
-		member.SetCurrentQuest (null);
+		member.SetCurrentTask (null);
         //if (_partyMembers.Count < 2) {
         //    DisbandParty();
         //}
@@ -183,10 +184,13 @@ public class Party: IEncounterable {
         _isDisbanded = true;
         Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
-        if (_currentQuest != null && !_currentQuest.isDone) {
-            _currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+        if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+            Quest currQuest = (Quest)_currentTask;
+            if (!currQuest.isDone) {
+                currQuest.EndTask(TASK_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+            }
         }
-		SetCurrentQuest (null);
+		SetCurrentTask (null);
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
@@ -200,10 +204,13 @@ public class Party: IEncounterable {
 		_isDisbanded = true;
         Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
-		if (_currentQuest != null && !_currentQuest.isDone) {
-			_currentQuest.EndQuest(QUEST_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+        if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+            Quest currQuest = (Quest)_currentTask;
+            if (!currQuest.isDone) {
+                currQuest.EndTask(TASK_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+            }
         }
-		SetCurrentQuest (null);
+        SetCurrentTask (null);
 
 		while(_partyMembers.Count > 0) {
 			ECS.Character currMember = _partyMembers[0];
@@ -249,8 +256,8 @@ public class Party: IEncounterable {
                             }
                         }
                         if (currCharacter.role.roleType == role) {
-                            if (currCharacter.currentQuest is DoNothing && currCharacter.party == null) {
-                                currCharacter.currentQuest.QuestCancel();
+                            if (currCharacter.currentTask is DoNothing && currCharacter.party == null) {
+                                currCharacter.currentTask.TaskCancel();
                                 currCharacter.JoinParty(this);
                             }
                         }
@@ -264,9 +271,9 @@ public class Party: IEncounterable {
         WeightedDictionary<PARTY_ACTION> partyActionWeights = new WeightedDictionary<PARTY_ACTION>();
         int stayWeight = 50; //Default value for Stay is 50
         int leaveWeight = 50; //Default value for Leave is 50
-        if(_currentQuest.questResult == QUEST_RESULT.SUCCESS) {
+        if(_currentTask.taskResult == TASK_RESULT.SUCCESS) {
             stayWeight += 100; //If Quest is a success, add 100 to Stay
-        } else  if(_currentQuest.questResult == QUEST_RESULT.FAIL) {
+        } else  if(_currentTask.taskResult == TASK_RESULT.FAIL) {
             leaveWeight += 100; //If Quest is a failure, add 100 to Leave
         }
         if (member.HasStatusEffect(STATUS_EFFECT.INJURED)) {
@@ -286,20 +293,25 @@ public class Party: IEncounterable {
 
     #region Quest
     /*
-     Set the current quest the party is on.
-     This will also set the current quest of all
+     Set the current task the party is on.
+     This will also set the current task of all
      the characters in the party.
          */
-    public void SetCurrentQuest(Quest quest) {
-        _currentQuest = quest;
+    public void SetCurrentTask(CharacterTask task) {
+        _currentTask = task;
         for (int i = 0; i < _partyMembers.Count; i++) {
             ECS.Character currMember = _partyMembers[i];
-            currMember.SetCurrentQuest(quest);
+            currMember.SetCurrentTask(task);
         }
-        if(quest == null) {
+        if(task == null) {
             Debug.Log("Set current quest of " + name + " to nothing");
         } else {
-            Debug.Log("Set current quest of " + name + " to " + quest.questType.ToString());
+            if(task.taskType == TASK_TYPE.QUEST) {
+                Debug.Log("Set current quest of " + name + " to " + ((Quest)task).questType.ToString());
+            } else {
+                Debug.Log("Set current task of " + name + " to " + task.taskType.ToString());
+            }
+            
         }
         
     }
@@ -312,7 +324,7 @@ public class Party: IEncounterable {
     /*
      This is called when the quest assigned to this party ends.
          */
-    public void OnQuestEnd(QUEST_RESULT result) {
+    public void OnQuestEnd(TASK_RESULT result) {
         AdjustRelationshipBasedOnQuestResult(result);
     }
     #endregion
@@ -359,12 +371,12 @@ public class Party: IEncounterable {
             }
         }
     }
-    private void AdjustRelationshipBasedOnQuestResult(QUEST_RESULT result) {
+    private void AdjustRelationshipBasedOnQuestResult(TASK_RESULT result) {
         switch (result) {
-            case QUEST_RESULT.SUCCESS:
+            case TASK_RESULT.SUCCESS:
                 AdjustPartyRelationships(5); //Succeeded in a Quest Together: +5 (cumulative)
                 break;
-            case QUEST_RESULT.FAIL:
+            case TASK_RESULT.FAIL:
                 AdjustPartyRelationships(-5); //Failed in a Quest Together: -5 (cumulative)
                 break;
             default:
@@ -376,10 +388,10 @@ public class Party: IEncounterable {
     #region Utilities
     public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
         //check first if the character is already at a non hostile settlement
-        if (_avatar.currLocation.landmarkOnTile != null && _avatar.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
-            && _avatar.currLocation.landmarkOnTile.owner != null) {
-            if (partyLeader.faction.id != _avatar.currLocation.landmarkOnTile.owner.id) { //the party is not at a tile owned by the faction of the party leader
-                if (FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, _avatar.currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+        if (currLocation.landmarkOnTile != null && currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
+            && currLocation.landmarkOnTile.owner != null) {
+            if (partyLeader.faction.id != currLocation.landmarkOnTile.owner.id) { //the party is not at a tile owned by the faction of the party leader
+                if (FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
                     onReachSettlement();
                     return;
                 }
@@ -397,7 +409,7 @@ public class Party: IEncounterable {
                 allSettlements.AddRange(currTribe.settlements);
             }
         }
-        allSettlements = allSettlements.OrderBy(x => Vector2.Distance(_avatar.currLocation.transform.position, x.location.transform.position)).ToList();
+        allSettlements = allSettlements.OrderBy(x => Vector2.Distance(currLocation.transform.position, x.location.transform.position)).ToList();
         //if (_avatar == null) {
         //    _partyLeader.CreateNewAvatar();
         //}
@@ -409,10 +421,10 @@ public class Party: IEncounterable {
      character returns to a non hostile settlement after a quest.
          */
     internal void OnReachNonHostileSettlementAfterQuest() {
-        FactionManager.Instance.RemoveQuest(currentQuest);
+        FactionManager.Instance.RemoveQuest((Quest)currentTask);
         if (_partyLeader.isDead) {
             //party leader is already dead!
-            SetCurrentQuest(null);
+            SetCurrentTask(null);
             DisbandParty();
         } else {
             CheckLeavePartyAfterQuest();

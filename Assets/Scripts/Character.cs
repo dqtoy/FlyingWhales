@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 [System.Obsolete("Use ECS.Character instead of this!")]
-public class Character : QuestCreator {
+public class Character : TaskCreator {
     public string _name;
     public GENDER _gender;
     public List<Trait> _traits;

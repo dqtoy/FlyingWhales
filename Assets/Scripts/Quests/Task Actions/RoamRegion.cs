@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class RoamRegion : QuestAction {
+public class RoamRegion : TaskAction {
 
     private Region _regionToRoam;
     private HexTile previousHexTile;
@@ -65,6 +65,6 @@ public class RoamRegion : QuestAction {
         HexTile chosenTile = GetNextHexTile();
         //previousHexTile = chosenTile;
         actionDoer.avatar.SetTarget(chosenTile);
-        actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+        actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
     }
 }

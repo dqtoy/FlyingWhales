@@ -20,13 +20,13 @@ public class Warlord : CharacterRole {
             QUEST_TYPE.DEFEND
         };
     }
-    internal override WeightedDictionary<Quest> GetActionWeights() {
-        WeightedDictionary<Quest> questWeights = base.GetActionWeights();
+    internal override WeightedDictionary<CharacterTask> GetActionWeights() {
+        WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
         //Military Quests
         for (int i = 0; i < _character.faction.militaryManager.activeQuests.Count; i++) {
             Quest currQuest = _character.faction.militaryManager.activeQuests[i];
             if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
-                questWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+                questWeights.AddElement(currQuest, GetWeightForTask(currQuest));
             }
         }
         return questWeights;

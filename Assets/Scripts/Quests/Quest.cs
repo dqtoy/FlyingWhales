@@ -8,36 +8,28 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using ECS;
 
-public class Quest {
-
-    public delegate void OnQuestInfoChanged();
-    public OnQuestInfoChanged onQuestInfoChanged; //For UI, to update quest info if a specific quest changes info
-
-    public delegate void OnQuestLogsChange();
-    public OnQuestLogsChange onQuestLogsChange; //For UI, to update when a specific quest adds a new log
+public class Quest : CharacterTask{
 
     protected delegate void OnQuestAccepted();
     protected OnQuestAccepted onQuestAccepted;
 
-    protected delegate void OnQuestEnd(QUEST_RESULT result);
+    protected delegate void OnQuestEnd(TASK_RESULT result);
     protected OnQuestEnd onQuestEnd;
 
     protected int _id;
-    protected QuestCreator _createdBy;
     protected QUEST_TYPE _questType;
-    protected int _daysBeforeDeadline;
+    //protected int _daysBeforeDeadline;
     protected bool _isExpired;
     protected bool _isAccepted;
-    protected bool _isDone;
     protected bool _isWaiting;
     protected Party _assignedParty;
     protected List<QuestFilter> _questFilters;
-    protected QuestAction _currentAction;
-    protected QUEST_RESULT _questResult;
+    protected TaskAction _currentAction;
 	protected int _activeDuration;
-    protected List<string> _questLogs; //TODO: Change this to Logs when convenient
-    protected Queue<QuestAction> _questLine;
+    
+    protected Queue<TaskAction> _questLine;
     protected Faction _targetFaction; //This is only supposed to have a value when this quest is harmful, put the faction that will be harmed by this quest
     protected Settlement _postedAt; //Where this quest was posted.
 
@@ -45,7 +37,7 @@ public class Quest {
     public int id {
         get { return _id; }
     }
-    public QuestCreator createdBy {
+    public TaskCreator createdBy {
         get { return _createdBy; }
     }
     public QUEST_TYPE questType {
@@ -57,27 +49,18 @@ public class Quest {
     public bool isAccepted {
         get { return _isAccepted; }
     }
-	public bool isDone {
-		get { return _isDone; }
-	}
     public bool isWaiting {
         get { return _isWaiting; }
     }
     public Party assignedParty {
         get { return _assignedParty; }
     }
-    public QuestAction currentAction {
+    public TaskAction currentAction {
         get { return _currentAction; }
-    }
-    public QUEST_RESULT questResult {
-        get { return _questResult; }
     }
 	public int activeDuration {
 		get { return _activeDuration; }
 	}
-    public List<string> questLogs {
-        get { return _questLogs; }
-    }
     public Faction targetFaction {
         get { return _targetFaction; }
     }
@@ -89,14 +72,13 @@ public class Quest {
      Create a new quest object.
      NOTE: Set daysBeforeDeadline to -1 if quest cannot expire.
          */
-    public Quest(QuestCreator createdBy, int daysBeforeDeadline, QUEST_TYPE questType) {
+    public Quest(TaskCreator createdBy, QUEST_TYPE questType): base (createdBy, TASK_TYPE.QUEST) {
         _id = Utilities.SetID(this);
-        _createdBy = createdBy;
         _questType = questType;
-        _daysBeforeDeadline = daysBeforeDeadline;
+        //_daysBeforeDeadline = daysBeforeDeadline;
 		_activeDuration = 0;
         _questFilters = new List<QuestFilter>();
-        _questLogs = new List<string>();
+        _taskLogs = new List<string>();
         //if(daysBeforeDeadline != -1) {
         //    ScheduleDeadline();
         //}
@@ -111,7 +93,7 @@ public class Quest {
      Accept this quest.
      Quests can only be accepted by characters that can be party leaders.
          */
-    public virtual void AcceptQuest(ECS.Character partyLeader) {
+    protected virtual void AcceptQuest(ECS.Character partyLeader) {
         Debug.Log(partyLeader.name + " accepts quest " + questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
         _isAccepted = true;
         AddNewLog(partyLeader.name + " accepted this quest.");
@@ -124,53 +106,35 @@ public class Quest {
         }
         //UnScheduleDeadline();
         SchedulePartyExpiration();
-        if (onQuestInfoChanged != null) {
-            onQuestInfoChanged();
+        if (onTaskInfoChanged != null) {
+            onTaskInfoChanged();
         }
         if(onQuestAccepted != null) {
             onQuestAccepted();
         }
     }
-    /*
-    // Add a new character as a party member of this quest.
-    //     */
-    //public virtual void JoinQuest(ECS.Character member) {
-    //    _assignedParty.AddPartyMember(member);
-    //    member.SetCurrentQuest(this);
-    //}
-    /*
-     This is the action done, when the party assigned to this quest is full.
-     Full meaning a number of characters have registered to join this quest,
-     but they might not be with the party leader yet, if they are not, wait for them to arrive,
-     otherwise, start the quest immediately.
-    //     */
-    //protected virtual void OnPartyFull(Party party) {
-    //    //When the party is full, check if all the characters have arrived at the party leaders location
-    //    //if not wait for them to arrive before starting the quest.
-    //    CheckPartyMembers();
-    //}
-    internal virtual void EndQuest(QUEST_RESULT result) {
+    protected virtual void EndQuest(TASK_RESULT result) {
         if (!_isDone) {
-			_isDone = true;
-			_questResult = result;
-            if(onQuestEnd != null) {
+            _isDone = true;
+            _taskResult = result;
+            if (onQuestEnd != null) {
                 onQuestEnd(result);
             }
 			if(_currentAction != null){
-				_currentAction.onQuestActionDone = null;
+				_currentAction.onTaskActionDone = null;
 			}
-			_createdBy.RemoveQuest(this);
+            _createdBy.RemoveQuest(this);
             if (_postedAt != null) {
                 _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
             }
             switch (result) {
-                case QUEST_RESULT.SUCCESS:
+                case TASK_RESULT.SUCCESS:
                     QuestSuccess();
                     break;
-                case QUEST_RESULT.FAIL:
+                case TASK_RESULT.FAIL:
                     QuestFail();
                     break;
-                case QUEST_RESULT.CANCEL:
+                case TASK_RESULT.CANCEL:
                     QuestCancel();
                     break;
                 default:
@@ -179,23 +143,23 @@ public class Quest {
             CheckForInternationalIncident();
         }
     }
-    internal virtual void QuestSuccess() {
+    protected virtual void QuestSuccess() {
 		if (_currentAction != null) {
-			_currentAction.ActionDone (QUEST_ACTION_RESULT.SUCCESS);
+			_currentAction.ActionDone (TASK_ACTION_RESULT.SUCCESS);
 		}
 		RetaskParty (_assignedParty.OnReachNonHostileSettlementAfterQuest);
     }
-    internal virtual void QuestFail() {
+    protected virtual void QuestFail() {
 		if (_currentAction != null) {
-			_currentAction.ActionDone (QUEST_ACTION_RESULT.FAIL);
+			_currentAction.ActionDone (TASK_ACTION_RESULT.FAIL);
 		}
 		RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
     }
-    internal virtual void QuestCancel() {
-        _questResult = QUEST_RESULT.CANCEL;
+    protected virtual void QuestCancel() {
+        _taskResult = TASK_RESULT.CANCEL;
 		_isAccepted = false;
 		if (_currentAction != null) {
-			_currentAction.ActionDone (QUEST_ACTION_RESULT.CANCEL);
+			_currentAction.ActionDone (TASK_ACTION_RESULT.CANCEL);
 		}
 		//RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
 		ResetQuestValues ();
@@ -213,17 +177,24 @@ public class Quest {
     /*
      Construct the list of quest actions that the party will perform.
          */
-    protected virtual void ConstructQuestLine() { _questLine = new Queue<QuestAction>(); }
+    protected virtual void ConstructQuestLine() { _questLine = new Queue<TaskAction>(); }
 	internal virtual void Result(bool isSuccess){}
     internal virtual HexTile GetQuestTargetLocation() {
         return null;
     }
-    #endregion
-
+    internal virtual void GiveRewards() {
+        if(_assignedParty != null) {
+            QuestTypeSetup qts = FactionManager.Instance.GetQuestTypeSetup(this.questType);
+            if(qts != null) {
+                QuestReward questReward = qts.questRewards;
+                //TODO: Give rewards to the characters
+            }
+        }
+    }
     public virtual bool CanAcceptQuest(ECS.Character character) {
-		if(_isAccepted){
-			return false;
-		}
+        if (_isAccepted) {
+            return false;
+        }
         for (int i = 0; i < _questFilters.Count; i++) {
             QuestFilter currFilter = _questFilters[i];
             if (!currFilter.MeetsRequirements(character)) {
@@ -232,22 +203,28 @@ public class Quest {
         }
         return true;
     }
+    #endregion
+
+    #region overrides
+    public override void PerformTask(ECS.Character character) {
+        base.PerformTask(character);
+        AcceptQuest(character);
+    }
+    public override void EndTask(TASK_RESULT taskResult) {
+        EndQuest(taskResult);
+    }
+    public override void TaskSuccess() {
+        QuestSuccess();
+    }
+    public override void TaskCancel() {
+        QuestCancel();
+    }
+    public override void TaskFail() {
+        QuestFail();
+    }
+    #endregion
 
     #region Deadline
-    //public void ScheduleDeadline() {
-    //    if (_daysBeforeDeadline != -1) {
-    //        GameDate deadline = GameManager.Instance.Today();
-    //        deadline.AddDays(_daysBeforeDeadline);
-    //        _deadline = deadline;
-    //        _deadlineAction = QuestExpired;
-    //        SchedulingManager.Instance.AddEntry(deadline, () => _deadlineAction());
-    //    }
-    //}
-    //public void UnScheduleDeadline() {
-    //    if(_deadlineAction != null) {
-    //        SchedulingManager.Instance.RemoveSpecificEntry(_deadline.month, _deadline.day, _deadline.year, _deadlineAction);
-    //    }
-    //}
     public void SchedulePartyExpiration() {
         GameDate deadline = GameManager.Instance.Today();
         deadline.AddDays(3);
@@ -267,7 +244,7 @@ public class Quest {
             _createdBy.RemoveQuest(this);
         }
     }
-    protected void ScheduleQuestEnd(int days, QUEST_RESULT result) {
+    protected void ScheduleQuestEnd(int days, TASK_RESULT result) {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(days);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndQuest(result));
@@ -287,8 +264,8 @@ public class Quest {
         Debug.Log("Start " + this.questType.ToString() + " Quest!");
         ConstructQuestLine();
         PerformNextQuestAction();
-        if (onQuestInfoChanged != null) {
-            onQuestInfoChanged();
+        if (onTaskInfoChanged != null) {
+            onTaskInfoChanged();
         }
     }
     internal void PerformNextQuestAction() {
@@ -325,7 +302,7 @@ public class Quest {
          */
     internal void AssignPartyToQuest(Party party) {
         _assignedParty = party;
-        _assignedParty.SetCurrentQuest(this);
+        _assignedParty.SetCurrentTask(this);
         AddNewLog("Party " + party.name + " is now assigned to this quest.");
         if (_assignedParty.partyLeader.avatar == null) {
             _assignedParty.partyLeader.CreateNewAvatar();//Characters that have accepted a Quest should have icon already even if they are still forming party in the city
@@ -382,23 +359,6 @@ public class Quest {
     }
     internal void SetWaitingStatus(bool isWaiting) {
         _isWaiting = isWaiting;
-    }
-    #endregion
-
-    #region Logs
-    internal void AddNewLog(string log) {
-        _questLogs.Add(log);
-        if (onQuestLogsChange != null) {
-            onQuestLogsChange();
-        }
-    }
-    internal void AddNewLogs(List<string> logs) {
-        for (int i = 0; i < logs.Count; i++) {
-            _questLogs.Add(logs[i]);
-        }
-        if (onQuestLogsChange != null) {
-            onQuestLogsChange();
-        }
     }
     #endregion
 

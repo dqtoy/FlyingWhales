@@ -12,10 +12,10 @@ public class QuestLogsUI : UIMenu {
 
     public void ShowQuestLogs(Quest quest) {
         if (currentlyShowingQuest != null) {
-            currentlyShowingQuest.onQuestLogsChange = null;
+            currentlyShowingQuest.onTaskLogsChange = null;
         }
         currentlyShowingQuest = quest;
-        quest.onQuestLogsChange = UpdateQuestLogs;
+        quest.onTaskLogsChange = UpdateQuestLogs;
         isShowing = true;
         this.gameObject.SetActive(true);
         logsScrollView.ResetPosition();
@@ -28,8 +28,8 @@ public class QuestLogsUI : UIMenu {
 
     public void UpdateQuestLogs() {
         string text = string.Empty;
-        for (int i = 0; i < currentlyShowingQuest.questLogs.Count; i++) {
-            string currLog = currentlyShowingQuest.questLogs[i];
+        for (int i = 0; i < currentlyShowingQuest.taskLogs.Count; i++) {
+            string currLog = currentlyShowingQuest.taskLogs[i];
             text +=  "- " + currLog + "\n";
         }
         questLogsLbl.text = text;

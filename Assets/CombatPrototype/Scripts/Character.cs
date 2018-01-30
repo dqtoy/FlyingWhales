@@ -7,7 +7,7 @@ using System;
 
 namespace ECS {
 	[System.Serializable]
-	public class Character : QuestCreator {
+	public class Character : TaskCreator {
 		[SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
@@ -36,7 +36,7 @@ namespace ECS {
 		private CharacterRole _role;
 		private Faction _faction;
 		private Party _party;
-		private Quest _currentQuest;
+		private CharacterTask _currentTask;
 		private HexTile _currLocation;
 		private CharacterAvatar _avatar;
 
@@ -104,8 +104,8 @@ namespace ECS {
 		internal Party party {
 			get { return _party; }
 		}
-		internal Quest currentQuest {
-			get { return _currentQuest; }
+		internal CharacterTask currentTask {
+			get { return _currentTask; }
 		}
 		internal HexTile currLocation{
 			get { return _currLocation; }
@@ -506,7 +506,8 @@ namespace ECS {
             if (this._role.roleType != CHARACTER_ROLE.ADVENTURER) {
                 Faction ownerOfCurrLocation = this.currLocation.region.owner;
                 if (ownerOfCurrLocation.id != this.faction.id) {
-                    if(currentQuest != null) { //if this character is in a quest when he/she died
+                    if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
+                        Quest currentQuest = (Quest)currentTask;
                         if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
                             //if it is, check if this character died on a region owned by the faction he/she means to negatively impact
                             //if he/she is, do not count this character's death as an international incident
@@ -1112,8 +1113,8 @@ namespace ECS {
          given party.
              */
         public void JoinParty(Party party) {
-            JoinParty joinParty = new JoinParty(this, -1, party);
-            joinParty.AcceptQuest(this);
+            JoinParty joinParty = new JoinParty(this, party);
+            joinParty.PerformTask(this);
         }
 		#endregion
 
@@ -1139,14 +1140,19 @@ namespace ECS {
             }
             if(forceQuestToAccept != null) {
                 //Force accept quest, if any
-                forceQuestToAccept.AcceptQuest(this);
+                forceQuestToAccept.PerformTask(this);
+                forceQuestToAccept = null;
                 return;
             }
-			WeightedDictionary<Quest> actionWeights = _role.GetActionWeights();
+			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
 			if (actionWeights.GetTotalOfWeights () > 0) {
-				Quest chosenAction = actionWeights.PickRandomElementGivenWeights();
-				chosenAction.AcceptQuest(this);
-                Debug.Log(this.name + " decides to " + chosenAction.questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
+				chosenAction.PerformTask(this);
+                if (chosenAction.taskType == TASK_TYPE.QUEST) {
+                    Debug.Log(this.name + " decides to " + ((Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+                } else {
+                    Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+                }
             } else {
                 throw new Exception(this.name + " could not decide action because weights are zero!");
             }
@@ -1308,7 +1314,7 @@ namespace ECS {
         }
 		#endregion
 
-		#region Quest Management
+		#region Task Management
 		public void AddNewQuest(Quest quest) {
 			if (!_activeQuests.Contains(quest)) {
 				_activeQuests.Add(quest);
@@ -1317,8 +1323,8 @@ namespace ECS {
 		public void RemoveQuest(Quest quest) {
 			_activeQuests.Remove(quest);
 		}
-		public void SetCurrentQuest(Quest currentQuest) {
-			this._currentQuest = currentQuest;
+		public void SetCurrentTask(CharacterTask currentTask) {
+			_currentTask = currentTask;
 		}
 		public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
 			List<Quest> quests = new List<Quest>();

@@ -11,8 +11,7 @@ public class ExploreRegion : Quest {
         get { return _regionToExplore; }
     }
     #endregion
-    public ExploreRegion(QuestCreator createdBy, int daysBeforeDeadline, Region regionToExplore) 
-        : base(createdBy, daysBeforeDeadline, QUEST_TYPE.EXPLORE_REGION) {
+    public ExploreRegion(TaskCreator createdBy, Region regionToExplore) : base(createdBy, QUEST_TYPE.EXPLORE_REGION) {
         _questFilters = new List<QuestFilter>() {
 //            new MustBeRole(CHARACTER_ROLE.CHIEFTAIN)
         };
@@ -20,7 +19,7 @@ public class ExploreRegion : Quest {
     }
 
     private void EndQuestAfterDays() {
-        ScheduleQuestEnd(30, QUEST_RESULT.SUCCESS);
+        ScheduleQuestEnd(30, TASK_RESULT.SUCCESS);
     }
 
     #region overrides
@@ -30,20 +29,20 @@ public class ExploreRegion : Quest {
 
         GoToLocation goToRegionAction = new GoToLocation(this); //Go to the picked region
         goToRegionAction.InititalizeAction(_regionToExplore.centerOfMass);
-        goToRegionAction.onQuestActionDone += this.PerformNextQuestAction;
-        goToRegionAction.onQuestActionDone += EndQuestAfterDays; //After 30 days of exploring, the Quest ends in SUCCESS.
-        goToRegionAction.onQuestDoAction += goToRegionAction.Generic;
+        goToRegionAction.onTaskActionDone += this.PerformNextQuestAction;
+        goToRegionAction.onTaskActionDone += EndQuestAfterDays; //After 30 days of exploring, the Quest ends in SUCCESS.
+        goToRegionAction.onTaskDoAction += goToRegionAction.Generic;
 
         RoamRegion roamRegionAction = new RoamRegion(this);
         roamRegionAction.InititalizeAction(_regionToExplore);
-        roamRegionAction.onQuestActionDone += RepeatCurrentAction;
-        roamRegionAction.onQuestDoAction += roamRegionAction.ExploreRegion;
+        roamRegionAction.onTaskActionDone += RepeatCurrentAction;
+        roamRegionAction.onTaskDoAction += roamRegionAction.ExploreRegion;
 
         //Enqueue all actions
         _questLine.Enqueue(goToRegionAction); 
         _questLine.Enqueue(roamRegionAction);
     }
-	internal override void EndQuest(QUEST_RESULT result) {
+	protected override void EndQuest(TASK_RESULT result) {
         //_currentAction.actionDoer.DestroyAvatar();
         base.EndQuest(result);
     }

@@ -864,7 +864,7 @@ public enum FACTION_SIZE {
     MEDIUM,
     LARGE,
 }
-public enum QUEST_RESULT {
+public enum TASK_RESULT {
     SUCCESS,
     FAIL,
     CANCEL
@@ -881,7 +881,15 @@ public enum QUEST_TYPE {
     EXPLORE_TILE,
     MOVE_TO
 }
-public enum QUEST_ACTION_RESULT {
+public enum TASK_TYPE {
+    QUEST,
+    REST,
+    GO_HOME,
+    DO_NOTHING,
+    JOIN_PARTY,
+    MOVE_TO
+}
+public enum TASK_ACTION_RESULT {
     SUCCESS,
     FAIL,
     CANCEL

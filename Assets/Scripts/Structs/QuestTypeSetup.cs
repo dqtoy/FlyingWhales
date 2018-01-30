@@ -7,4 +7,5 @@ public class QuestTypeSetup {
     public bool isHarmful;
     public bool canBeAcceptedOutsideFaction;
     public int declareWarWeight;
+    public QuestReward questRewards;
 }

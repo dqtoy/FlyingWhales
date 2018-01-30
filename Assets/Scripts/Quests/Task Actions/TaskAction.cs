@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class QuestAction {
+public class TaskAction {
 
-    public delegate void OnQuestActionDone();
-    public OnQuestActionDone onQuestActionDone;
+    public delegate void OnTaskActionDone();
+    public OnTaskActionDone onTaskActionDone;
 
-    public delegate void OnQuestDoAction();
-    public OnQuestDoAction onQuestDoAction;
+    public delegate void OnTaskDoAction();
+    public OnTaskDoAction onTaskDoAction;
 
     protected ECS.Character _actionDoer;
-    protected Quest _quest;
-    protected QUEST_ACTION_RESULT _result;
+    protected CharacterTask _task;
+    protected TASK_ACTION_RESULT _result;
     protected bool _isDone;
 
     #region getters/setters
@@ -20,8 +20,8 @@ public class QuestAction {
     }
     #endregion
 
-    public QuestAction(Quest quest) {
-        _quest = quest;
+    public TaskAction(CharacterTask task) {
+        _task = task;
     }
 
     #region virtuals
@@ -33,15 +33,15 @@ public class QuestAction {
 
     public virtual void DoAction(ECS.Character partyLeader) {
         _actionDoer = partyLeader;
-        if (onQuestDoAction != null) {
-            onQuestDoAction();
+        if (onTaskDoAction != null) {
+            onTaskDoAction();
         }
     }
-    public virtual void ActionDone(QUEST_ACTION_RESULT result) {
+    public virtual void ActionDone(TASK_ACTION_RESULT result) {
         _isDone = true;
         _result = result;
-        if(onQuestActionDone != null) {
-            onQuestActionDone();
+        if(onTaskActionDone != null) {
+            onTaskActionDone();
         }
     }
     #endregion

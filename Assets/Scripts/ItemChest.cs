@@ -39,7 +39,8 @@ public class ItemChest : IEncounterable {
         } else {
             Debug.Log(encounteredBy.name + " got nothing from the chest");
         }
-        encounteredBy.currentQuest.Result(true);
+
+        ((Quest)encounteredBy.currentTask).Result(true);
     }
 
     public void StartEncounter(Party party) {
@@ -63,7 +64,7 @@ public class ItemChest : IEncounterable {
                     }
                 }
 
-                if(party.currentQuest != null) {
+                if(party.currentTask != null) {
                     //Add Logs
                     encounterLogs.Add(currMember.name + " obtains " + quality + gainedItem.itemName + " from the chest.");
                 }
@@ -93,12 +94,12 @@ public class ItemChest : IEncounterable {
             }
         }
         if (isChestEmpty) {
-            party.currentQuest.AddNewLog("The party found nothing");
+            party.currentTask.AddNewLog("The party found nothing");
         } else {
             encounterLogs.Insert(0, "The party encountered a " + this.encounterName);
-            party.currentQuest.AddNewLogs(encounterLogs);
+            party.currentTask.AddNewLogs(encounterLogs);
         }
-        party.currentQuest.Result(true);
+        ((Quest)party.currentTask).Result(true);
     }
 
     public ECS.Item RandomizeItemForCharacter(ECS.Character character) {

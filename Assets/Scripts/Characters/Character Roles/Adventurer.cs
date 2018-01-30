@@ -12,8 +12,8 @@ public class Adventurer : CharacterRole {
         };
     }
 
-    internal override WeightedDictionary<Quest> GetActionWeights() {
-        WeightedDictionary<Quest> questWeights = base.GetActionWeights();
+    internal override WeightedDictionary<CharacterTask> GetActionWeights() {
+        WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
         Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
         Region currRegionOfCharacter = _character.currLocation.region;
 
@@ -22,10 +22,8 @@ public class Adventurer : CharacterRole {
         for (int i = 0; i < partiesOnTile.Count; i++) {
             Party currParty = partiesOnTile[i];
             if (currParty.CanJoinParty(_character)) {
-                JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
-                if (joinPartyTask.CanAcceptQuest(_character)) {
-                    questWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
-                }
+                JoinParty joinPartyTask = new JoinParty(_character, currParty);
+                questWeights.AddElement(joinPartyTask, GetWeightForTask(joinPartyTask));
             }
         }
 
@@ -35,7 +33,7 @@ public class Adventurer : CharacterRole {
             if (regionOwner != null) {
                 if (!regionOwner.IsHostileWith(_character.faction)) {
                     Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
-                    MoveTo moveToNonHostile = new MoveTo(_character, -1, adjSettlement.location, PATHFINDING_MODE.USE_ROADS);
+                    MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement.location, PATHFINDING_MODE.USE_ROADS);
                     questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
                 }
             }
@@ -43,7 +41,7 @@ public class Adventurer : CharacterRole {
 
         //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
         if (currSettlement.owner.IsHostileWith(_character.faction)) {
-            questWeights.AddElement(new MoveTo(_character, -1, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
+            questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
         }
         return questWeights;
     }

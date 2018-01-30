@@ -24,10 +24,10 @@ public class QuestInfoUI : UIMenu {
 
     public void SetQuestAsShowing(Quest quest) {
         if(currentlyShowingQuest != null) {
-            currentlyShowingQuest.onQuestInfoChanged = null;
+            currentlyShowingQuest.onTaskInfoChanged = null;
         }
         currentlyShowingQuest = quest;
-        quest.onQuestInfoChanged = UpdateQuestInfo;
+        quest.onTaskInfoChanged = UpdateQuestInfo;
         if (isShowing) {
             UpdateQuestInfo();
         }
@@ -55,7 +55,7 @@ public class QuestInfoUI : UIMenu {
         }
         questInfoLbl.text = text;
 
-        if(currentlyShowingQuest.questLogs.Count > 0) {
+        if(currentlyShowingQuest.taskLogs.Count > 0) {
             //enable button
             showQuestLogsBtn.GetComponent<BoxCollider>().enabled = true;
             showQuestLogsBtn.SetState(UIButtonColor.State.Normal, true);

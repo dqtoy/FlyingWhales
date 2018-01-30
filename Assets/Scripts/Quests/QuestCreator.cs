@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public interface QuestCreator {
+public interface TaskCreator {
 
     List<Quest> activeQuests { get;}
 

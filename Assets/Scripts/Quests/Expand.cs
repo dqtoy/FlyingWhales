@@ -21,8 +21,7 @@ public class Expand : Quest {
 	}
 	#endregion
 
-	public Expand(QuestCreator createdBy, int daysBeforeDeadline, HexTile targetUnoccupiedTile, HexTile originTile) 
-		: base(createdBy, daysBeforeDeadline, QUEST_TYPE.EXPAND) {
+	public Expand(TaskCreator createdBy, HexTile targetUnoccupiedTile, HexTile originTile) : base(createdBy, QUEST_TYPE.EXPAND) {
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((InternalQuestManager)createdBy).owner}),
 //			new MustBeRole(CHARACTER_ROLE.COLONIST),
@@ -34,26 +33,26 @@ public class Expand : Quest {
 	}
 
 	#region overrides
-	public override void AcceptQuest(ECS.Character partyLeader) {
+	protected override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
 	}
 	protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
 		Collect collect = new Collect(this);
 		collect.InititalizeAction(20);
-		collect.onQuestActionDone += this.PerformNextQuestAction;
-		collect.onQuestDoAction += collect.Expand;
+		collect.onTaskActionDone += this.PerformNextQuestAction;
+		collect.onTaskDoAction += collect.Expand;
 
 		GoToLocation goToExpandLocationAction = new GoToLocation(this); //Go to the picked region
 		goToExpandLocationAction.InititalizeAction(_targetUnoccupiedTile);
-		goToExpandLocationAction.onQuestDoAction += goToExpandLocationAction.Expand;
-		goToExpandLocationAction.onQuestActionDone += SuccessExpansion;
+		goToExpandLocationAction.onTaskDoAction += goToExpandLocationAction.Expand;
+		goToExpandLocationAction.onTaskActionDone += SuccessExpansion;
 
 //		//Enqueue all actions
 		_questLine.Enqueue(collect);
 		_questLine.Enqueue(goToExpandLocationAction);
 	}
-	internal override void EndQuest(QUEST_RESULT result) {
+	protected override void EndQuest(TASK_RESULT result) {
 		base.EndQuest(result);
 	}
 	protected override void ResetQuestValues(){
@@ -82,10 +81,10 @@ public class Expand : Quest {
 		}
 		return false;
 	}
-	internal override void QuestSuccess() {
+	protected override void QuestSuccess() {
 		RetaskParty (_assignedParty.JustDisbandParty);
 	}
-	internal override void QuestFail() {
+	protected override void QuestFail() {
         AddNewLog("The expansion failed!");
         RetaskParty (_assignedParty.JustDisbandParty);
 	}
@@ -104,6 +103,6 @@ public class Expand : Quest {
 		villageHead.SetHome (expandedTo);
 		expandedTo.SetHead(villageHead);
         AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");
-        EndQuest (QUEST_RESULT.SUCCESS);
+        EndQuest (TASK_RESULT.SUCCESS);
 	}
 }

@@ -35,8 +35,8 @@ public class CharacterRole {
     /*
          Get the weighted dictionary for what action the character will do next.
              */
-    internal virtual WeightedDictionary<Quest> GetActionWeights() {
-        WeightedDictionary<Quest> actionWeights = new WeightedDictionary<Quest>();
+    internal virtual WeightedDictionary<CharacterTask> GetActionWeights() {
+        WeightedDictionary<CharacterTask> actionWeights = new WeightedDictionary<CharacterTask>();
         if(_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
             bool canAccepQueststHere = true;
@@ -52,78 +52,61 @@ public class CharacterRole {
                 for (int i = 0; i < currSettlement.questBoard.Count; i++) {
                     Quest currQuest = currSettlement.questBoard[i];
                     if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
-                        actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+                        actionWeights.AddElement(currQuest, GetWeightForTask(currQuest));
                     }
                 }
             }
-
-            //if (allowedQuestTypes.Contains(QUEST_TYPE.JOIN_PARTY)) {
-            //    List<Party> partiesOnTile = currSettlement.GetPartiesInSettlement();
-            //    for (int i = 0; i < partiesOnTile.Count; i++) {
-            //        Party currParty = partiesOnTile[i];
-            //        if (currParty.CanJoinParty(_character)) {
-            //            JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
-            //            if (joinPartyTask.CanAcceptQuest(_character)) {
-            //                actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
-            //            }
-            //        }
-            //    }
-            //}
-
-            ////Military Quests
-            //if (allowedQuestTypes.Contains(QUEST_TYPE.ATTACK) || allowedQuestTypes.Contains(QUEST_TYPE.DEFEND)) {
-            //    for (int i = 0; i < _character.faction.militaryManager.activeQuests.Count; i++) {
-            //        Quest currQuest = _character.faction.militaryManager.activeQuests[i];
-            //        if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
-            //            actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
-            //        }
-            //    }
-            //}
         }
 
-        Rest restTask = new Rest(_character, -1);
-        actionWeights.AddElement(restTask, GetWeightForQuest(restTask));
+        Rest restTask = new Rest(_character);
+        actionWeights.AddElement(restTask, GetWeightForTask(restTask));
 
-        GoHome goHomeTask = new GoHome(_character, -1);
-        actionWeights.AddElement(goHomeTask, GetWeightForQuest(goHomeTask));
+        GoHome goHomeTask = new GoHome(_character);
+        actionWeights.AddElement(goHomeTask, GetWeightForTask(goHomeTask));
 
-        DoNothing doNothingTask = new DoNothing(_character, -1);
-        actionWeights.AddElement(doNothingTask, GetWeightForQuest(doNothingTask));
+        DoNothing doNothingTask = new DoNothing(_character);
+        actionWeights.AddElement(doNothingTask, GetWeightForTask(doNothingTask));
         return actionWeights;
     }
-    internal int GetWeightForQuest(Quest quest) {
+    internal int GetWeightForTask(CharacterTask task) {
         int weight = 0;
-        switch (quest.questType) {
-            //case QUEST_TYPE.EXPLORE_REGION:
-            //	weight += GetExploreRegionWeight((ExploreRegion)quest);
-            //	break;
-            case QUEST_TYPE.EXPLORE_TILE:
-                weight += GetExploreTileWeight((ExploreTile)quest);
-                break;
-            case QUEST_TYPE.EXPAND:
-                weight += GetExpandWeight((Expand)quest);
-                break;
-            case QUEST_TYPE.REST:
-                weight += GetRestWeight();
-                break;
-            case QUEST_TYPE.GO_HOME:
-                weight += GetGoHomeWeight();
-                break;
-            case QUEST_TYPE.DO_NOTHING:
-                weight += GetDoNothingWeight();
-                break;
-            case QUEST_TYPE.JOIN_PARTY:
-                weight += GetJoinPartyWeight((JoinParty)quest);
-                break;
-            case QUEST_TYPE.ATTACK:
-                weight += GetAttackWeight((Attack)quest);
-                break;
-            case QUEST_TYPE.DEFEND:
-                weight += GetDefendWeight((Defend)quest);
-                break;
-            default:
-                break;
+        if(task.taskType == TASK_TYPE.QUEST) {
+            Quest quest = (Quest)task;
+            switch (quest.questType) {
+                case QUEST_TYPE.EXPLORE_TILE:
+                    weight += GetExploreTileWeight((ExploreTile)task);
+                    break;
+                case QUEST_TYPE.EXPAND:
+                    weight += GetExpandWeight((Expand)task);
+                    break;
+                case QUEST_TYPE.ATTACK:
+                    weight += GetAttackWeight((Attack)task);
+                    break;
+                case QUEST_TYPE.DEFEND:
+                    weight += GetDefendWeight((Defend)task);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            switch (task.taskType) {
+                case TASK_TYPE.REST:
+                    weight += GetRestWeight();
+                    break;
+                case TASK_TYPE.GO_HOME:
+                    weight += GetGoHomeWeight();
+                    break;
+                case TASK_TYPE.DO_NOTHING:
+                    weight += GetDoNothingWeight();
+                    break;
+                case TASK_TYPE.JOIN_PARTY:
+                    weight += GetJoinPartyWeight((JoinParty)task);
+                    break;
+                default:
+                    break;
+            }
         }
+        
         return weight;
     }
     internal virtual int GetExpandWeight(Expand expandQuest) {

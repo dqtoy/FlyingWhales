@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class MilitaryManager : QuestCreator {
+public class MilitaryManager : TaskCreator {
 
     private Faction _owner;
 
@@ -84,7 +84,7 @@ public class MilitaryManager : QuestCreator {
 			if(!IsAlreadyBeingDefended(landmark)){
 				int defendWeight = GetDefendWeight (landmark);
 				if(defendWeight > 0){
-					questDict.AddElement(new Defend(this, 90, landmark), defendWeight);
+					questDict.AddElement(new Defend(this, landmark), defendWeight);
 				}
 			}
         }
@@ -95,7 +95,7 @@ public class MilitaryManager : QuestCreator {
 			for (int i = 0; i < landmarksToBeAttacked.Count; i++) {
 				int attackWeight = GetAttackWeight (landmarksToBeAttacked[i]);
 				if(attackWeight > 0){
-					questDict.AddElement(new Attack(this, 90, landmarksToBeAttacked[i]), attackWeight);
+					questDict.AddElement(new Attack(this, landmarksToBeAttacked[i]), attackWeight);
 				}
 			}
 		}

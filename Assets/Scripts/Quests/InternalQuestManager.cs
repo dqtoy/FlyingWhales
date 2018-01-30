@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class InternalQuestManager : QuestCreator {
+public class InternalQuestManager : TaskCreator {
 
     private Faction _owner;
 
@@ -99,7 +99,7 @@ public class InternalQuestManager : QuestCreator {
 				}
 				if(checkedExpandRegions.Count > 0){
 					Region chosenRegion = checkedExpandRegions[UnityEngine.Random.Range(0, checkedExpandRegions.Count)];
-                    Expand newExpandQuest = new Expand(this, 60, chosenRegion.centerOfMass, currSettlement.location);
+                    Expand newExpandQuest = new Expand(this, chosenRegion.centerOfMass, currSettlement.location);
                     newExpandQuest.SetSettlement(currSettlement);
                     questDict.AddElement (newExpandQuest, GetExpandWeight(currSettlement));
 				}
@@ -110,7 +110,7 @@ public class InternalQuestManager : QuestCreator {
                     BaseLandmark currLandmark = (BaseLandmark)currConnection;
                     if (currLandmark.isHidden && !currLandmark.isExplored) {
                         if (GetQuestsOfType(QUEST_TYPE.EXPLORE_TILE).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
-                            ExploreTile newExploreTileQuest = new ExploreTile(this, 60, currLandmark);
+                            ExploreTile newExploreTileQuest = new ExploreTile(this, currLandmark);
                             newExploreTileQuest.SetSettlement(currSettlement);
                             questDict.AddElement(newExploreTileQuest, GetExploreLandmarkWeight(currLandmark));
                         }
@@ -158,13 +158,13 @@ public class InternalQuestManager : QuestCreator {
 	internal void CreateExpandQuest(BaseLandmark originLandmark){
 		HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
 		if(unoccupiedTile != null){
-			Expand expand = new Expand(this, 60, unoccupiedTile, originLandmark.location);
+			Expand expand = new Expand(this, unoccupiedTile, originLandmark.location);
             expand.SetSettlement((Settlement)originLandmark);
 			AddNewQuest(expand);
 		}
 	}
 	internal void CreateExploreTileQuest(BaseLandmark landmarkToExplore){
-        ExploreTile exploreQuest = new ExploreTile(this, 60, landmarkToExplore);
+        ExploreTile exploreQuest = new ExploreTile(this, landmarkToExplore);
         exploreQuest.SetSettlement((Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile);
         AddNewQuest(exploreQuest);
     }

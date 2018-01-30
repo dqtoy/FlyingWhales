@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GoToRegion : QuestAction {
+public class GoToRegion : TaskAction {
 
     private Region _target;
 

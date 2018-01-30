@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class RestAction : QuestAction {
+public class RestAction : TaskAction {
 
     List<ECS.Character> charactersToRest;
 
-    public RestAction(Quest quest) : base(quest) {}
+    public RestAction(CharacterTask task) : base(task) {}
 
     #region overrides
-    public override void ActionDone(QUEST_ACTION_RESULT result) {
+    public override void ActionDone(TASK_ACTION_RESULT result) {
         Messenger.RemoveListener("OnDayEnd", Rest);
         base.ActionDone(result);
     }
@@ -46,7 +46,7 @@ public class RestAction : QuestAction {
             }
         }
         if (allCharactersRested) {
-            ActionDone(QUEST_ACTION_RESULT.SUCCESS);
+            ActionDone(TASK_ACTION_RESULT.SUCCESS);
         }
     }
 }
