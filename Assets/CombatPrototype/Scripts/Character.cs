@@ -444,8 +444,8 @@ namespace ECS {
 				if(this.currentCombat == null){
 					Faint ();
 				}else{
-					this.currentCombat.CharacterFainted (this);
-				}
+                    this.currentCombat.CharacterFainted(this);
+                }
 			}else if(pickedWeight == "die"){
 				if(this.currentCombat == null){
 					Death ();
@@ -1328,6 +1328,17 @@ namespace ECS {
         }
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(_currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
+        }
+        public Settlement GetNearestNonHostileSettlement() {
+            List<Faction> nonHostileFactions = faction.GetMajorFactionsWithRelationshipStatus
+                (new List<RELATIONSHIP_STATUS>() { RELATIONSHIP_STATUS.FRIENDLY, RELATIONSHIP_STATUS.NEUTRAL });
+
+            List<Settlement> settlements = new List<Settlement>();
+            nonHostileFactions.ForEach(x => settlements.AddRange(x.settlements));
+
+            settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.location));
+
+            return settlements.First();
         }
         #endregion
 

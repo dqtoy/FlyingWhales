@@ -4,6 +4,8 @@ using System.Collections;
 public class GoToLocation : QuestAction {
 
     private HexTile targetLocation;
+    private PATHFINDING_MODE _pathfindingMode = PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP;
+
 
     public GoToLocation(Quest quest) : base(quest) {
     }
@@ -21,6 +23,10 @@ public class GoToLocation : QuestAction {
     }
     #endregion
 
+    internal void SetPathfindingMode(PATHFINDING_MODE pathfindingMode) {
+        _pathfindingMode = pathfindingMode;
+    }
+
     /*
      This will check if the character is already at target location,
      if it is, action is done, otherwise, make the character move
@@ -36,7 +42,7 @@ public class GoToLocation : QuestAction {
                 actionDoer.CreateNewAvatar();
             }
             actionDoer.avatar.SetTarget(targetLocation);
-            actionDoer.avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
+            actionDoer.avatar.StartPath(_pathfindingMode, () => ActionDone(QUEST_ACTION_RESULT.SUCCESS));
         }
     }
 

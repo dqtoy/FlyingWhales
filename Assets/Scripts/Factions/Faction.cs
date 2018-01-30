@@ -290,6 +290,13 @@ public class Faction {
 		}
 		return allPossibleLandmarksToAttack;
     }
+    public bool IsHostileWith(Faction faction) {
+        if(faction.id == this.id) {
+            return false;
+        }
+        FactionRelationship rel = GetRelationshipWith(faction);
+        return rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE;
+    }
     #endregion
 
     #region Relationships

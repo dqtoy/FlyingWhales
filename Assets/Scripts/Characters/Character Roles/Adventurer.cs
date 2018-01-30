@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Adventurer : CharacterRole {
 
@@ -11,7 +12,43 @@ public class Adventurer : CharacterRole {
         };
     }
 
-	internal override int GetJoinPartyWeight(JoinParty joinParty) {
+    internal override WeightedDictionary<Quest> GetActionWeights() {
+        WeightedDictionary<Quest> questWeights = base.GetActionWeights();
+        Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
+        Region currRegionOfCharacter = _character.currLocation.region;
+
+        //Join Party
+        List<Party> partiesOnTile = currSettlement.GetPartiesInSettlement();
+        for (int i = 0; i < partiesOnTile.Count; i++) {
+            Party currParty = partiesOnTile[i];
+            if (currParty.CanJoinParty(_character)) {
+                JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
+                if (joinPartyTask.CanAcceptQuest(_character)) {
+                    questWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+                }
+            }
+        }
+
+        for (int i = 0; i < currRegionOfCharacter.adjacentRegionsViaMajorRoad.Count; i++) {
+            Region adjRegion = currRegionOfCharacter.adjacentRegionsViaMajorRoad[i];
+            Faction regionOwner = adjRegion.owner;
+            if (regionOwner != null) {
+                if (!regionOwner.IsHostileWith(_character.faction)) {
+                    Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
+                    MoveTo moveToNonHostile = new MoveTo(_character, -1, adjSettlement.location, PATHFINDING_MODE.USE_ROADS);
+                    questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
+                }
+            }
+        }
+
+        //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
+        if (currSettlement.owner.IsHostileWith(_character.faction)) {
+            questWeights.AddElement(new MoveTo(_character, -1, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
+        }
+        return questWeights;
+    }
+
+    internal override int GetJoinPartyWeight(JoinParty joinParty) {
 		if(_character.party != null) {
 			return 0; //if already in a party
 		}
@@ -27,4 +64,22 @@ public class Adventurer : CharacterRole {
 		}
 		return Mathf.Max(0, weight);
 	}
+
+    internal override int GetGoHomeWeight() {
+        //0 if already at Home Settlement or no path to it
+        if (_character.currLocation.isHabitable && _character.currLocation.isOccupied && _character.currLocation.id == _character.home.location.id) {
+            return 0;
+        }
+        if (PathGenerator.Instance.GetPath(_character.currLocation, _character.home.location, PATHFINDING_MODE.USE_ROADS) == null) {
+            return 0;
+        }
+        return 20; //20 if not
+    }
+
+    private int GetMoveToNonAdjacentVillageWeight(Settlement target) {
+        int weight = 0;
+        //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)
+        weight += 5 + (30 * target.questBoard.Count);
+        return weight;
+    }
 }

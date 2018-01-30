@@ -23,7 +23,31 @@ public class Hero : CharacterRole {
         };
     }
 
-	internal override int GetExpandWeight(Expand expandQuest) {
+    internal override WeightedDictionary<Quest> GetActionWeights() {
+        WeightedDictionary<Quest> questWeights = base.GetActionWeights();
+        Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
+        Region currRegionOfCharacter = _character.currLocation.region;
+
+        for (int i = 0; i < currRegionOfCharacter.adjacentRegionsViaMajorRoad.Count; i++) {
+            Region adjRegion = currRegionOfCharacter.adjacentRegionsViaMajorRoad[i];
+            Faction regionOwner = adjRegion.owner;
+            if (regionOwner != null) {
+                if (!regionOwner.IsHostileWith(_character.faction)) {
+                    Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
+                    MoveTo moveToNonHostile = new MoveTo(_character, -1, adjSettlement.location, PATHFINDING_MODE.USE_ROADS);
+                    questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
+                }
+            }
+        }
+
+        //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
+        if (currSettlement.owner.IsHostileWith(_character.faction)) {
+            questWeights.AddElement(new MoveTo(_character, -1, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
+        }
+        return questWeights;
+    }
+
+    internal override int GetExpandWeight(Expand expandQuest) {
 		int weight = 0;
 		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, expandQuest.targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
 		if(pathToTarget != null) {
@@ -34,4 +58,11 @@ public class Hero : CharacterRole {
 		}
 		return weight;
 	}
+
+    private int GetMoveToNonAdjacentVillageWeight(Settlement target) {
+        int weight = 0;
+        //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)
+        weight += 5 + (30 * target.questBoard.Count);
+        return weight;
+    }
 }
