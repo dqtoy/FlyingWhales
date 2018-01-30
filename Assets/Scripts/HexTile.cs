@@ -1027,24 +1027,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #region Structures Functions
     internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
-        GameObject[] gameObjectsToChooseFrom = null;
-        if (this.ownedByCity.kingdom != null) {
-            //TODO: Remove this when code has fully transitioned to factions instead of kingdoms
-            gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
-        } else {
-            gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
-        }
-         
+        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
+
         string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
 		GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
 		structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
-        if (this.ownedByCity.kingdom != null) {
-            //TODO: Remove this when code has fully transitioned to factions instead of kingdoms
-            structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState, this);
-        } else {
-            structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
-        }
+        structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
 
         this._centerPiece.SetActive(false);
 

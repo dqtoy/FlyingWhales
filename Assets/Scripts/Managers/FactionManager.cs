@@ -350,7 +350,7 @@ public class FactionManager : MonoBehaviour {
         }
         //Negative Quest
         else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
-            //TODO: Add Weight to Declare War as listed on the Quest Type
+            //Add Weight to Declare War as listed on the Quest Type
             QuestTypeSetup qts = GetQuestTypeSetup(((Quest)data).questType);
             actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, qts.declareWarWeight);
         }
@@ -496,8 +496,14 @@ public class FactionManager : MonoBehaviour {
             actionWeights.AddElement(ALLY_WAR_REACTION.REMAIN_NEUTRAL, 2 * relWithEnemy.sharedOpinion); //+2 Weight to Remain Neutral for every Positive Opinion shared with enemy Tribe
         }
 
-        //TODO: +2 Weight to Join War for every positive point of Relative Strength I have over the enemy Tribe
-        //TODO: +2 Weight to Remain Neutral for every negative point of Relative Strength I have under the enemy Tribe
+        int relativeStrTowardsEnemy = relWithEnemy.factionLookup[faction.id].relativeStrength;
+        if (relativeStrTowardsEnemy > 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.JOIN_WAR, 2 * relativeStrTowardsEnemy);//+2 Weight to Join War for every positive point of Relative Strength I have over the enemy Tribe
+        } else if(relativeStrTowardsEnemy < 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.REMAIN_NEUTRAL, Mathf.Abs(2 * relativeStrTowardsEnemy));//+2 Weight to Remain Neutral for every negative point of Relative Strength I have under the enemy Tribe
+        }
+        
+        
         return actionWeights;
     }
     #endregion

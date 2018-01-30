@@ -9,8 +9,12 @@ public class Deceitful : Trait {
         FactionRelationship rel, Faction aggressor) {
         if (rel.relationshipStatus == RELATIONSHIP_STATUS.FRIENDLY) {
             WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
-            actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, -50); //- Subtract 50 Weight to Do Nothing
-            //TODO: -Check Relative Strength, add 3 Weight to Declare War for each Positive Point of Relative Strength
+            actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, -50); //Subtract 50 Weight to Do Nothing
+            int relativeStr = rel.factionLookup[_ownerOfTrait.faction.id].relativeStrength;
+            if (relativeStr > 0) {
+                actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 3 * relativeStr); //Check Relative Strength, add 3 Weight to Declare War for each Positive Point of Relative Strength
+            }
+
             return actionWeights;
         }
 
@@ -22,8 +26,12 @@ public class Deceitful : Trait {
     internal override WeightedDictionary<ALLY_WAR_REACTION> GetAllyReactionWeight(Faction friend, Faction enemy) {
         WeightedDictionary<ALLY_WAR_REACTION> actionWeights = new WeightedDictionary<ALLY_WAR_REACTION>();
         FactionRelationship relWithFriend = _ownerOfTrait.faction.GetRelationshipWith(friend);
-        //TODO: +2 Weight to Betray for every positive point of Relative Strength I have over the ally
-        if(relWithFriend.sharedOpinion < 0) {
+        
+        int relativeStr = relWithFriend.factionLookup[_ownerOfTrait.faction.id].relativeStrength;
+        if (relativeStr > 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.BETRAY, 2 * relativeStr); //+2 Weight to Betray for every positive point of Relative Strength I have over the ally
+        }
+        if (relWithFriend.sharedOpinion < 0) {
             actionWeights.AddElement(ALLY_WAR_REACTION.BETRAY, Mathf.Abs(relWithFriend.sharedOpinion)); //+1 Weight to Betray for every Negative Opinion I have towards the ally
         }
         return actionWeights;
