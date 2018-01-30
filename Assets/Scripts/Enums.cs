@@ -887,7 +887,8 @@ public enum TASK_TYPE {
     GO_HOME,
     DO_NOTHING,
     JOIN_PARTY,
-    MOVE_TO
+    MOVE_TO,
+    TAKE_QUEST
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

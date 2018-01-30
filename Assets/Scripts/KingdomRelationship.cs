@@ -425,7 +425,6 @@ public class KingdomRelationship {
     ///*
     // * <summary>
     // * Put targetKing's kingdom in sourceKing's kingdom embargo list.
-    // * TODO: Add embargo reason from gameEventReasonForEmbargo when adding
     // * kingdom to embargo list.
     // * </summary>
     // * */

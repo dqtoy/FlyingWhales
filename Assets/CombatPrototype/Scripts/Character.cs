@@ -1257,21 +1257,37 @@ namespace ECS {
 //				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
 				ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
-				avatar.Init(this);
+                if(party != null) {
+                    avatar.Init(party);
+                } else {
+                    avatar.Init(this);
+                }
 			}else if(this._role.roleType == CHARACTER_ROLE.WARLORD){
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("WarlordAvatar", this.currLocation.transform.position, Quaternion.identity);
 				WarlordAvatar avatar = avatarGO.GetComponent<WarlordAvatar>();
-				avatar.Init(this);
-			}else if(this._role.roleType == CHARACTER_ROLE.HERO){
+                if (party != null) {
+                    avatar.Init(party);
+                } else {
+                    avatar.Init(this);
+                }
+            } else if(this._role.roleType == CHARACTER_ROLE.HERO){
 				//				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("HeroAvatar", this.currLocation.transform.position, Quaternion.identity);
 				HeroAvatar avatar = avatarGO.GetComponent<HeroAvatar>();
-				avatar.Init(this);
-			}else{
+                if (party != null) {
+                    avatar.Init(party);
+                } else {
+                    avatar.Init(this);
+                }
+            } else{
 				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
 				CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-				avatar.Init(this);
-			}
+                if (party != null) {
+                    avatar.Init(party);
+                } else {
+                    avatar.Init(this);
+                }
+            }
         }
 		public void SetAvatar(CharacterAvatar avatar) {
 			_avatar = avatar;
@@ -1279,8 +1295,9 @@ namespace ECS {
 		public void DestroyAvatar() {
 			if(_avatar != null) {
 				_avatar.DestroyObject();
-			}
-		}
+                SetAvatar(null);
+            }
+        }
         public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
             //check first if the character is already at a non hostile settlement
             if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY

@@ -13,11 +13,12 @@ public class Chieftain : CharacterRole {
 
 	public Chieftain(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.CHIEFTAIN;
-        this._allowedRoadTypes = new List<ROAD_TYPE>() {
+        _allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
         };
-        this._canPassHiddenRoads = true;
-        this._allowedQuestTypes = new List<QUEST_TYPE>() {
+        _canPassHiddenRoads = true;
+        _canAcceptQuests = true;
+        _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.ATTACK,
             QUEST_TYPE.DEFEND,
             QUEST_TYPE.EXPLORE_TILE

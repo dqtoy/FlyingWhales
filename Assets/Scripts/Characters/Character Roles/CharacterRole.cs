@@ -12,6 +12,7 @@ public class CharacterRole {
     protected CHARACTER_ROLE _roleType;
     protected List<ROAD_TYPE> _allowedRoadTypes; //states what roads this role can use.
     protected bool _canPassHiddenRoads; //can the character use roads that haven't been discovered yet?
+    protected bool _canAcceptQuests;
     protected List<QUEST_TYPE> _allowedQuestTypes;
 
     #region getters/setters
@@ -37,27 +38,13 @@ public class CharacterRole {
              */
     internal virtual WeightedDictionary<CharacterTask> GetActionWeights() {
         WeightedDictionary<CharacterTask> actionWeights = new WeightedDictionary<CharacterTask>();
-        if(_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
-            Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
-            bool canAccepQueststHere = true;
-            if(_character.faction.id != currSettlement.owner.id) {
-                //character is not of the same faction as the settlement
-                FactionRelationship relWithFaction = FactionManager.Instance.GetRelationshipBetween(_character.faction, currSettlement.owner);
-                if (relWithFaction.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                    canAccepQueststHere = false; //cannot accept quests at this settlement
-                }
-            }
-            
-            if (canAccepQueststHere) {
-                for (int i = 0; i < currSettlement.questBoard.Count; i++) {
-                    Quest currQuest = currSettlement.questBoard[i];
-                    if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
-                        actionWeights.AddElement(currQuest, GetWeightForTask(currQuest));
-                    }
-                }
+        if (_canAcceptQuests) {
+            if (_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
+                TakeQuest takeQuestTask = new TakeQuest(_character);
+                actionWeights.AddElement(takeQuestTask, GetWeightForTask(takeQuestTask));
             }
         }
-
+        
         Rest restTask = new Rest(_character);
         actionWeights.AddElement(restTask, GetWeightForTask(restTask));
 
@@ -67,6 +54,30 @@ public class CharacterRole {
         DoNothing doNothingTask = new DoNothing(_character);
         actionWeights.AddElement(doNothingTask, GetWeightForTask(doNothingTask));
         return actionWeights;
+    }
+    internal WeightedDictionary<CharacterTask> GetQuestWeights() {
+        WeightedDictionary<CharacterTask> questWeights = new WeightedDictionary<CharacterTask>();
+        if (_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
+            Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
+            bool canAccepQueststHere = true;
+            if (_character.faction.id != currSettlement.owner.id) {
+                //character is not of the same faction as the settlement
+                FactionRelationship relWithFaction = FactionManager.Instance.GetRelationshipBetween(_character.faction, currSettlement.owner);
+                if (relWithFaction.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                    canAccepQueststHere = false; //cannot accept quests at this settlement
+                }
+            }
+
+            if (canAccepQueststHere) {
+                for (int i = 0; i < currSettlement.questBoard.Count; i++) {
+                    Quest currQuest = currSettlement.questBoard[i];
+                    if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
+                        questWeights.AddElement(currQuest, GetWeightForTask(currQuest));
+                    }
+                }
+            }
+        }
+        return questWeights;
     }
     internal int GetWeightForTask(CharacterTask task) {
         int weight = 0;
@@ -102,6 +113,9 @@ public class CharacterRole {
                 case TASK_TYPE.JOIN_PARTY:
                     weight += GetJoinPartyWeight((JoinParty)task);
                     break;
+                case TASK_TYPE.TAKE_QUEST:
+                    weight += GetTakeQuestWeight();
+                    break;
                 default:
                     break;
             }
@@ -122,6 +136,14 @@ public class CharacterRole {
     }
     internal virtual int GetJoinPartyWeight(JoinParty joinParty) {
 		return 0;
+    }
+    internal virtual int GetTakeQuestWeight() {
+        Settlement settlement = (Settlement)_character.currLocation.landmarkOnTile;
+        //Take Quest - 400 (0 if no quest available in the current settlement)
+        if (settlement.questBoard.Count > 0) {
+            return 400;
+        }
+        return 0;
     }
     internal virtual int GetRestWeight() {
         if (_character.currentHP < _character.maxHP) {
@@ -149,7 +171,7 @@ public class CharacterRole {
             if(_character.currLocation.landmarkOnTile is Settlement) {
                 Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
                 if(currSettlement.owner != null) {
-                    if (currSettlement.owner.IsHostileWith(_character.faction)) {
+                    if (!currSettlement.owner.IsHostileWith(_character.faction)) {
                         return 200;//Do Nothing - 200 if in a non-hostile Settlement (0 otherwise)
                     }
                 }
