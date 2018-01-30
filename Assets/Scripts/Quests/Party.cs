@@ -52,8 +52,6 @@ public class Party: IEncounterable {
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
 	}
-
-    }
     public HexTile currLocation {
         get { return _partyLeader.currLocation; }
     }
