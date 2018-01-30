@@ -35,7 +35,7 @@ public class CharacterRole {
     /*
          Get the weighted dictionary for what action the character will do next.
              */
-    internal WeightedDictionary<Quest> GetActionWeights() {
+    internal virtual WeightedDictionary<Quest> GetActionWeights() {
         WeightedDictionary<Quest> actionWeights = new WeightedDictionary<Quest>();
         if(_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
@@ -57,28 +57,28 @@ public class CharacterRole {
                 }
             }
 
-            if (allowedQuestTypes.Contains(QUEST_TYPE.JOIN_PARTY)) {
-                List<Party> partiesOnTile = currSettlement.GetPartiesInSettlement();
-                for (int i = 0; i < partiesOnTile.Count; i++) {
-                    Party currParty = partiesOnTile[i];
-                    if (currParty.CanJoinParty(_character)) {
-                        JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
-                        if (joinPartyTask.CanAcceptQuest(_character)) {
-                            actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
-                        }
-                    }
-                }
-            }
+            //if (allowedQuestTypes.Contains(QUEST_TYPE.JOIN_PARTY)) {
+            //    List<Party> partiesOnTile = currSettlement.GetPartiesInSettlement();
+            //    for (int i = 0; i < partiesOnTile.Count; i++) {
+            //        Party currParty = partiesOnTile[i];
+            //        if (currParty.CanJoinParty(_character)) {
+            //            JoinParty joinPartyTask = new JoinParty(_character, -1, currParty);
+            //            if (joinPartyTask.CanAcceptQuest(_character)) {
+            //                actionWeights.AddElement(joinPartyTask, GetWeightForQuest(joinPartyTask));
+            //            }
+            //        }
+            //    }
+            //}
 
-            //Military Quests
-            if (allowedQuestTypes.Contains(QUEST_TYPE.ATTACK) || allowedQuestTypes.Contains(QUEST_TYPE.DEFEND)) {
-                for (int i = 0; i < _character.faction.militaryManager.activeQuests.Count; i++) {
-                    Quest currQuest = _character.faction.militaryManager.activeQuests[i];
-                    if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
-                        actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
-                    }
-                }
-            }
+            ////Military Quests
+            //if (allowedQuestTypes.Contains(QUEST_TYPE.ATTACK) || allowedQuestTypes.Contains(QUEST_TYPE.DEFEND)) {
+            //    for (int i = 0; i < _character.faction.militaryManager.activeQuests.Count; i++) {
+            //        Quest currQuest = _character.faction.militaryManager.activeQuests[i];
+            //        if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
+            //            actionWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+            //        }
+            //    }
+            //}
         }
 
         Rest restTask = new Rest(_character, -1);
@@ -162,6 +162,16 @@ public class CharacterRole {
         return 5; //5 if not
     }
     internal virtual int GetDoNothingWeight() {
+        if(_character.currLocation.landmarkOnTile != null) {
+            if(_character.currLocation.landmarkOnTile is Settlement) {
+                Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
+                if(currSettlement.owner != null) {
+                    if (currSettlement.owner.IsHostileWith(_character.faction)) {
+                        return 200;//Do Nothing - 200 if in a non-hostile Settlement (0 otherwise)
+                    }
+                }
+            }
+        }
         return 10;
     }
     internal virtual int GetDefendWeight(Defend defendQuest) {

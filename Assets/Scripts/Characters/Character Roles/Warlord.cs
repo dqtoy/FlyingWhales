@@ -20,7 +20,19 @@ public class Warlord : CharacterRole {
             QUEST_TYPE.DEFEND
         };
     }
-	internal override int GetDefendWeight(Defend defendQuest) {
+    internal override WeightedDictionary<Quest> GetActionWeights() {
+        WeightedDictionary<Quest> questWeights = base.GetActionWeights();
+        //Military Quests
+        for (int i = 0; i < _character.faction.militaryManager.activeQuests.Count; i++) {
+            Quest currQuest = _character.faction.militaryManager.activeQuests[i];
+            if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
+                questWeights.AddElement(currQuest, GetWeightForQuest(currQuest));
+            }
+        }
+        return questWeights;
+    }
+
+    internal override int GetDefendWeight(Defend defendQuest) {
 		int weight = 0;
 		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, defendQuest.landmarkToDefend.location, PATHFINDING_MODE.MAJOR_ROADS);
 		if(pathToTarget != null) {

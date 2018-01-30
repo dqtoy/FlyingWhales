@@ -878,7 +878,8 @@ public enum QUEST_TYPE {
     JOIN_PARTY,
 	ATTACK,
 	DEFEND,
-    EXPLORE_TILE
+    EXPLORE_TILE,
+    MOVE_TO
 }
 public enum QUEST_ACTION_RESULT {
     SUCCESS,

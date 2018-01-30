@@ -28,6 +28,7 @@ public class Rest : Quest {
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
         goToLocation.InititalizeAction(targetSettlement.location);
+        goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
         goToLocation.onQuestActionDone += this.PerformNextQuestAction;
         goToLocation.onQuestDoAction += goToLocation.Generic;
 
