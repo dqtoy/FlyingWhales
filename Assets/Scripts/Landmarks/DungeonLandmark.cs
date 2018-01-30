@@ -14,6 +14,7 @@ public class DungeonLandmark : BaseLandmark {
     protected override void InititalizeEncounterables() {
         base.InititalizeEncounterables();
         if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
+			_landmarkName = RandomNameGenerator.Instance.GetAncientRuinName ();
             _encounterables.AddElement(ENCOUNTERABLE.ITEM_CHEST, 30);
             _encounterables.AddElement (ENCOUNTERABLE.PARTY, 50);
 			_landmarkEncounterableType = _encounterables.PickRandomElementGivenWeights();

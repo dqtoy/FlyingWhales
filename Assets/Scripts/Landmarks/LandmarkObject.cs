@@ -15,7 +15,11 @@ public class LandmarkObject : MonoBehaviour {
         _landmark = landmark;
         if(landmarkLbl != null) {
             //Landmark object is an empty city
-            landmarkLbl.text = Utilities.NormalizeString(landmark.specificLandmarkType.ToString());
+			if(_landmark.landmarkName != string.Empty){
+				landmarkLbl.text = Utilities.NormalizeString(landmark.landmarkName);
+			}else{
+				landmarkLbl.text = Utilities.NormalizeString(landmark.specificLandmarkType.ToString());
+			}
         }
         UpdateLandmarkVisual();
     }
