@@ -500,6 +500,9 @@ namespace ECS {
 				if(_isPrisoner){
 					PrisonerDeath ();
 				}
+				if(this.currLocation.landmarkOnTile != null){
+					this.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
+				}
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
@@ -1413,6 +1416,8 @@ namespace ECS {
 			_isPrisoner = state;
 			_isPrisonerOf = prisonerOf;
 			if(state){
+				this._currLocation.RemoveCharacterOnTile (this);
+				SetLocation (null);
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){
 					wardenName = ((Party)_isPrisonerOf).name;
@@ -1437,12 +1442,15 @@ namespace ECS {
 			if(_isPrisonerOf is Party){
 				wardenName = ((Party)_isPrisonerOf).name;
 				((Party)_isPrisonerOf).RemovePrisoner (this);
+				SetLocation (((Party)_isPrisonerOf).currLocation);
 			}else if(_isPrisonerOf is ECS.Character){
 				wardenName = ((ECS.Character)_isPrisonerOf).name;
 				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
+				SetLocation (((ECS.Character)_isPrisonerOf).currLocation);
 			}else if(_isPrisonerOf is BaseLandmark){
 				wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
+				SetLocation (((BaseLandmark)_isPrisonerOf).location);
 			}
 			AddHistory ("Released from the prison of " + wardenName);
 			SetPrisoner (false, null);

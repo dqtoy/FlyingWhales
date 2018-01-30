@@ -30,6 +30,9 @@ public class BaseLandmark {
 	protected IEncounterable _landmarkEncounterable;
 	protected ENCOUNTERABLE _landmarkEncounterableType;
 	protected List<ECS.Character> _prisoners;
+	protected List<string> _history;
+	protected int _combatHistoryID;
+	protected Dictionary<int, ECS.CombatPrototype> _combatHistory;
 
     #region getters/setters
     public int id {
@@ -89,6 +92,12 @@ public class BaseLandmark {
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
 	}
+	public List<string> history{
+		get { return this._history; }
+	}
+	public Dictionary<int, ECS.CombatPrototype> combatHistory {
+		get { return _combatHistory; }
+	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -105,6 +114,9 @@ public class BaseLandmark {
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
         _resourceInventory = new Dictionary<RESOURCE, int>();
 		_prisoners = new List<ECS.Character> ();
+		_history = new List<string> ();
+		_combatHistory = new Dictionary<int, ECS.CombatPrototype> ();
+		_combatHistoryID = 0;
         ConstructTechnologiesDictionary();
         InititalizeEncounterables();
     }
@@ -375,6 +387,27 @@ public class BaseLandmark {
 	}
 	internal void RemovePrisoner(ECS.Character character){
 		_prisoners.Remove (character);
+	}
+	#endregion
+
+	#region History
+	internal void AddHistory(string text, object obj = null){
+		if(obj != null){
+			if(obj is ECS.CombatPrototype){
+				ECS.CombatPrototype combat = (ECS.CombatPrototype)obj;
+				if(this.combatHistory.Count > 20){
+					this.combatHistory.Remove (0);
+				}
+				_combatHistoryID += 1;
+				combatHistory.Add (_combatHistoryID, combat);
+				string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
+				text = combatText;
+			}
+		}
+		this._history.Add (text);
+		if(this._history.Count > 20){
+			this._history.RemoveAt (0);
+		}
 	}
 	#endregion
 }

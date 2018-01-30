@@ -11,9 +11,11 @@ public class SettlementInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel settlementInfoLbl;
+	[SerializeField] private UILabel settlementHistoryInfoLbl;
 	[SerializeField] private GameObject expandBtnGO;
 	[SerializeField] private GameObject exploreBtnGO;
     [SerializeField] private UIScrollView infoScrollView;
+	[SerializeField] private UIScrollView historyScrollView;
 
     internal BaseLandmark currentlyShowingSettlement;
 
@@ -203,8 +205,25 @@ public class SettlementInfoUI : UIMenu {
        
         settlementInfoLbl.text = text;
         infoScrollView.UpdatePosition();
-    }
 
+		UpdateHistoryInfo ();
+    }
+	private void UpdateHistoryInfo(){
+		string text = string.Empty;
+		if (currentlyShowingSettlement.history.Count > 0) {
+			for (int i = 0; i < currentlyShowingSettlement.history.Count; i++) {
+				if(i > 0){
+					text += "\n";
+				}
+				text += currentlyShowingSettlement.history[i];
+			}
+		} else {
+			text += "NONE";
+		}
+
+		settlementHistoryInfoLbl.text = text;
+		historyScrollView.UpdatePosition();
+	}
 	public void OnClickCloseBtn(){
 //		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
 		HideSettlementInfo ();

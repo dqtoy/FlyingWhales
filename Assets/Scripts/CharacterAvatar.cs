@@ -82,6 +82,16 @@ public class CharacterAvatar : PooledObject{
     }
     internal virtual void ReceivePath(List<HexTile> path) {
         if (path != null && path.Count > 0) {
+			if(this.currLocation.landmarkOnTile != null){
+				if(_characters[0].party != null){
+					this.currLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " left.");
+				}else{
+					for (int i = 0; i < _characters.Count; i++) {
+						this.currLocation.landmarkOnTile.AddHistory (_characters [i].name + " left.");
+					}
+				}
+			}
+
             this.path = path;
             NewMove();
         }
@@ -122,9 +132,22 @@ public class CharacterAvatar : PooledObject{
     internal virtual void HasArrivedAtTargetLocation() {
         if (this.currLocation == this.targetLocation) {
             if (!this._hasArrived) {
-				if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile is Settlement){
-					for (int i = 0; i < _characters.Count; i++) {
-						_characters [i].AddHistory ("Arrived at settlement " + this.currLocation.landmarkOnTile.landmarkName + ".");
+				if(this.currLocation.landmarkOnTile != null){
+					string historyText = "Visited landmark ";
+					if (this.currLocation.landmarkOnTile is Settlement) {
+						historyText = "Arrived at settlement ";
+					}
+						
+					if(_characters[0].party != null){
+						this.currLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
+						for (int i = 0; i < _characters.Count; i++) {
+							_characters [i].AddHistory (historyText + this.currLocation.landmarkOnTile.landmarkName + ".");
+						}
+					}else{
+						for (int i = 0; i < _characters.Count; i++) {
+							_characters [i].AddHistory (historyText + this.currLocation.landmarkOnTile.landmarkName + ".");
+							this.currLocation.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
+						}
 					}
 				}
                 SetHasArrivedState(true);
