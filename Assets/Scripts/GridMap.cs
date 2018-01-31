@@ -360,7 +360,7 @@ public class GridMap : MonoBehaviour {
             Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
         }
         Dictionary<LANDMARK_TYPE, int> createdLandmarksDict = new Dictionary<LANDMARK_TYPE, int>();
-        int numOfLandmarksToCreate = Mathf.FloorToInt(4 * (float)allRegions.Count); //Increase Landmarks to 4 times the number of regions
+        int numOfLandmarksToCreate = Mathf.FloorToInt(6 * (float)allRegions.Count); //Increase Landmarks to 4 times the number of regions
         Debug.Log("Creating " + numOfLandmarksToCreate.ToString() + " landmarks..... ");
         int createdLandmarks = 0;
 
@@ -371,7 +371,7 @@ public class GridMap : MonoBehaviour {
             }
             HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
             elligibleTiles.Remove(chosenTile);
-            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(2);
+            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
             Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
             List<HexTile> createdRoad = chosenTile.CreateRandomLandmark();
 
