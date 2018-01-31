@@ -22,6 +22,8 @@ public class Party: IEncounterable {
     protected CharacterTask _currentTask;
     protected CharacterAvatar _avatar;
 
+	protected HexTile _currLocation;
+
     private const int MAX_PARTY_MEMBERS = 5;
 
     #region getters/setters
@@ -53,7 +55,7 @@ public class Party: IEncounterable {
 		get { return _prisoners; }
 	}
     public HexTile currLocation {
-        get { return _partyLeader.currLocation; }
+        get { return _currLocation; }
     }
     #endregion
 
@@ -64,8 +66,10 @@ public class Party: IEncounterable {
         _partyMembersOnTheWay = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character> ();
         Debug.Log(partyLeader.name + " has created " + _name);
+		partyLeader.currLocation.AddCharacterOnTile (this);
 
         AddPartyMember(_partyLeader);
+
 		if(mustBeAddedToPartyList){
 			PartyManager.Instance.AddParty(this);
 		}
@@ -73,6 +77,9 @@ public class Party: IEncounterable {
 
 	public void SetName(string name){
 		_name = name;
+	}
+	public void SetLocation(HexTile hextile){
+		_currLocation = hextile;
 	}
     #region Party Management
     /*
@@ -87,6 +94,7 @@ public class Party: IEncounterable {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
+			this._currLocation.RemoveCharacterOnTile (member);
             member.SetParty(this);
             member.SetCurrentTask(_currentTask);
             if (!IsCharacterLeaderOfParty(member)) {
@@ -120,12 +128,13 @@ public class Party: IEncounterable {
      Remove a character from this party.
          */
     public virtual void RemovePartyMember(ECS.Character member, bool forDeath = false) {
-		member.AddHistory ("Left party: " + this._name + ".");
         _partyMembers.Remove(member);
         if(_avatar != null) {
             _avatar.RemoveCharacter(member);
         }
         if (!forDeath) {
+			member.AddHistory ("Left party: " + this._name + ".");
+			member.currLocation.AddCharacterOnTile(member);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 ((Quest)currentTask).AddNewLog(member.name + " has left the party");
@@ -207,6 +216,7 @@ public class Party: IEncounterable {
             if (_avatar != null && currMember != partyLeader) {
                 _avatar.RemoveCharacter(currMember);
             }
+			currMember.currLocation.AddCharacterOnTile(currMember);
             currMember.GoToNearestNonHostileSettlement(() => currMember.OnReachNonHostileSettlementAfterQuest());
         }
     }
@@ -236,8 +246,6 @@ public class Party: IEncounterable {
 			ECS.Character currMember = _partyMembers[0];
 			currMember.SetParty(null);
 			RemovePartyMember(currMember);
-
-			currMember.currLocation.AddCharacterOnTile(currMember);
 			currMember.DetermineAction();
 		}
 
@@ -267,9 +275,13 @@ public class Party: IEncounterable {
             if(tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY) {
                 Settlement settlement = (Settlement)tile.landmarkOnTile;
                 for (int i = 0; i < settlement.location.charactersOnTile.Count; i++) {
-                    if(this.isOpen && !this.isFull) {
-						ECS.Character currCharacter = settlement.location.charactersOnTile[i];
+					if(this.isOpen && !this.isFull && settlement.location.charactersOnTile[i] is ECS.Character) {
+						ECS.Character currCharacter = (ECS.Character)settlement.location.charactersOnTile[i];
                         Faction factionOfCurrCharacter = currCharacter.faction;
+						if(factionOfCurrCharacter == null){
+							//Unaligned characters are hostile by default
+							continue;
+						}
                         if(factionOfCurrCharacter.id != _partyLeader.faction.id) {
                             //the curr character is not of the same faction with the party leader
                             if(FactionManager.Instance.GetRelationshipBetween(factionOfCurrCharacter, _partyLeader.faction).relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
@@ -476,8 +488,19 @@ public class Party: IEncounterable {
     }
     #endregion
 
+	public ECS.Character GetCharacterByID(int id){
+		if(_partyLeader.id == id){
+			return _partyLeader;
+		}
+		for (int i = 0; i < _partyMembers.Count; i++) {
+			if (_partyMembers [i].id == id){
+				return _partyMembers [i];
+			}
+		}
+		return null;
+	}
+
     public virtual void StartEncounter(ECS.Character encounteredBy){ }
 	public virtual void StartEncounter(Party encounteredBy){}
-	public virtual void ReturnResults(object result){
-	}
+	public virtual void ReturnResults(object result){}
 }

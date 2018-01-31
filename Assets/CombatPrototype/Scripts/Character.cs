@@ -109,7 +109,7 @@ namespace ECS {
 			get { return _currentTask; }
 		}
 		internal HexTile currLocation{
-			get { return _currLocation; }
+			get { return (party == null ? _currLocation : party.currLocation); }
 		}
 		internal CharacterAvatar avatar{
 			get { return _avatar; }
@@ -117,7 +117,7 @@ namespace ECS {
 		internal List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
 		}
-		internal List<Item> equippedItems{
+		internal List<Item> equippedItems {
 			get { return this._equippedItems; }
 		}
 		internal List<Item> inventory{
@@ -464,7 +464,7 @@ namespace ECS {
 		internal void Faint(){
 			if(!_isFainted){
 				_isFainted = true;
-				AdjustHP (1);
+				SetHP (1);
 				if (this._party != null) {
 					this._party.RemovePartyMember(this, true);
 				}
@@ -474,6 +474,7 @@ namespace ECS {
 		internal void Unfaint(){
 			if (_isFainted) {
 				_isFainted = false;
+				SetHP (1);
 			}
 		}
 
@@ -1371,7 +1372,7 @@ namespace ECS {
             this._home = newHome;
         }
         public bool HasPathToParty(Party partyToJoin) {
-            return PathGenerator.Instance.GetPath(_currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
+            return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
         }
         public Settlement GetNearestNonHostileSettlement() {
             List<Faction> nonHostileFactions = faction.GetMajorFactionsWithRelationshipStatus
@@ -1433,8 +1434,7 @@ namespace ECS {
 			_isPrisoner = state;
 			_isPrisonerOf = prisonerOf;
 			if(state){
-				this._currLocation.RemoveCharacterOnTile (this);
-				SetLocation (null);
+				this.currLocation.RemoveCharacterOnTile (this);
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){
 					wardenName = ((Party)_isPrisonerOf).name;

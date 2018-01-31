@@ -66,7 +66,7 @@ public class BaseLandmark {
         get { return _owner; }
     }
     public int totalPopulation {
-		get { return civiliansWithReserved + _location.charactersOnTile.Count; }
+		get { return civiliansWithReserved + _location.CharactersCount(); }
     }
 	public int civilians {
 		get { return (int)_civilians; }
@@ -264,13 +264,9 @@ public class BaseLandmark {
     public List<Party> GetPartiesOnLandmark() {
         List<Party> parties = new List<Party>();
         for (int i = 0; i < _location.charactersOnTile.Count; i++) {
-            ECS.Character currCharacter = _location.charactersOnTile[i];
-            Party partyOfChar = currCharacter.party;
-            if (partyOfChar != null) {
-                if (!parties.Contains(partyOfChar)) {
-                    parties.Add(partyOfChar);
-                }
-            }
+			if(_location.charactersOnTile[i] is Party){
+				parties.Add((Party)_location.charactersOnTile[i]);
+			}
         }
         return parties;
     }
@@ -337,8 +333,14 @@ public class BaseLandmark {
 	}
 	internal bool HasWarlord(){
 		for (int i = 0; i < this._location.charactersOnTile.Count; i++) {
-			if(this._location.charactersOnTile[i].role.roleType == CHARACTER_ROLE.WARLORD){
-				return true;
+			if(this._location.charactersOnTile[i] is ECS.Character){
+				if(((ECS.Character)this._location.charactersOnTile[i]).role.roleType == CHARACTER_ROLE.WARLORD){
+					return true;
+				}
+			}else if(this._location.charactersOnTile[i] is Party){
+				if(((Party)this._location.charactersOnTile[i]).partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
+					return true;
+				}
 			}
 		}
 		return false;

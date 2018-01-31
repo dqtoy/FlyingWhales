@@ -122,21 +122,25 @@ public class SettlementInfoUI : UIMenu {
 		text += "\n[b]Characters: [/b] ";
 		if (currentlyShowingSettlement.location.charactersOnTile.Count > 0) {
 			for (int i = 0; i < currentlyShowingSettlement.location.charactersOnTile.Count; i++) {
-				ECS.Character currChar = currentlyShowingSettlement.location.charactersOnTile[i];
-				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-				if (currChar.currentTask != null) {
-                    if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-                        Quest currQuest = (Quest)currChar.currentTask;
-                        text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString() + "[/url])";
-                    } else {
-                        text += " (" + currChar.currentTask.taskType.ToString() + ")";
-                    }
-                }
+				if (currentlyShowingSettlement.location.charactersOnTile[i] is ECS.Character) {
+					ECS.Character currChar = (ECS.Character)currentlyShowingSettlement.location.charactersOnTile [i];
+					text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
+					if (currChar.currentTask != null) {
+						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+							Quest currQuest = (Quest)currChar.currentTask;
+							text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString () + "[/url])";
+						} else {
+							text += " (" + currChar.currentTask.taskType.ToString () + ")";
+						}
+					}
+				} else if (currentlyShowingSettlement.location.charactersOnTile[i] is Party) {
+					Party currParty = (Party)currentlyShowingSettlement.location.charactersOnTile [i];
+					text += "\n" + "[url=" + currParty.partyLeader.id + "_party]" + currParty.name + "[/url]" + " - " + currParty.currentTask.ToString ();
+				}
 			}
 		} else {
 			text += "NONE";
 		}
-
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = currentlyShowingSettlement.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {

@@ -20,7 +20,7 @@ public class Adventurer : CharacterRole {
         if(_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
             //Join Party
-            List<Party> partiesOnTile = currSettlement.GetPartiesInSettlement();
+            List<Party> partiesOnTile = currSettlement.GetPartiesOnLandmark();
             for (int i = 0; i < partiesOnTile.Count; i++) {
                 Party currParty = partiesOnTile[i];
                 if (currParty.CanJoinParty(_character)) {

@@ -14,6 +14,7 @@ public class DungeonParty : Party {
 		if (!_partyMembers.Contains(member)) {
 			_partyMembers.Add(member);
 			member.SetParty(this);
+			this._currLocation.RemoveCharacterOnTile (member);
 		}
 	}
 	/*
@@ -23,6 +24,9 @@ public class DungeonParty : Party {
 		_partyMembers.Remove(member);
 		if(_avatar != null) {
 			_avatar.RemoveCharacter(member);
+		}
+		if(!forDeath){
+			member.currLocation.AddCharacterOnTile(member);
 		}
 		member.SetParty(null);
 	}

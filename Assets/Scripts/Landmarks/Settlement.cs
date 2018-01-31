@@ -105,7 +105,6 @@ public class Settlement : BaseLandmark {
         ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, _owner.race);
 //        newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(_owner);
-        newCharacter.SetLocation(location);
 		newCharacter.SetHome (this);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
@@ -114,18 +113,6 @@ public class Settlement : BaseLandmark {
         newCharacter.DetermineAction();
         UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
-    }
-    public List<Party> GetPartiesInSettlement() {
-        List<Party> parties = new List<Party>();
-		for (int i = 0; i < this._location.charactersOnTile.Count; i++) {
-			ECS.Character currCharacter = this._location.charactersOnTile[i];
-            if(currCharacter.party != null) {
-                if (!parties.Contains(currCharacter.party)) {
-                    parties.Add(currCharacter.party);
-                }
-            }
-        }
-        return parties;
     }
     public void SetHead(ECS.Character head) {
         _headOfSettlement = head;

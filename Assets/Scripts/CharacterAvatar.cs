@@ -118,10 +118,6 @@ public class CharacterAvatar : PooledObject{
 			AddCharactersToTile(this.path[0]);
 
             _currLocation = this.path[0];
-            for (int i = 0; i < _characters.Count; i++) {
-                ECS.Character currCharacter = _characters[i];
-                currCharacter.SetLocation(this.currLocation);
-            }
             this.path.RemoveAt(0);
         }
         //RevealRoads();
@@ -185,18 +181,28 @@ public class CharacterAvatar : PooledObject{
         }
     }
     private void RemoveCharactersFromTile(HexTile hextile) {
-        for (int i = 0; i < _characters.Count; i++) {
-            ECS.Character currCharacter = _characters[i];
-			hextile.RemoveCharacterOnTile(currCharacter);
-        }
+		if(_characters[0].party == null){
+			for (int i = 0; i < _characters.Count; i++) {
+				ECS.Character currCharacter = _characters[i];
+				hextile.RemoveCharacterOnTile(currCharacter);
+			}
+		}else{
+			hextile.RemoveCharacterOnTile(_characters[0].party);
+		}
+        
 		UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateSettlementInfo();
     }
 	private void AddCharactersToTile(HexTile hextile) {
-        for (int i = 0; i < _characters.Count; i++) {
-            ECS.Character currCharacter = _characters[i];
-			hextile.AddCharacterOnTile(currCharacter);
-        }
+		if(_characters[0].party == null){
+			for (int i = 0; i < _characters.Count; i++) {
+				ECS.Character currCharacter = _characters[i];
+				hextile.AddCharacterOnTile(currCharacter);
+			}
+		}else{
+			hextile.AddCharacterOnTile(_characters[0].party);
+		}
+
 		UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateSettlementInfo();
     }
