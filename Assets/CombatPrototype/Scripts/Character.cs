@@ -466,7 +466,7 @@ namespace ECS {
 				_isFainted = true;
 				SetHP (1);
 				if (this._party != null) {
-					this._party.RemovePartyMember(this, true);
+					this._party.RemovePartyMember(this);
 				}
 			}
 		}
@@ -485,7 +485,6 @@ namespace ECS {
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
 				this._home.RemoveCharacterHomeOnLandmark (this);
-				this.currLocation.RemoveCharacterOnTile (this);
 				if(this._faction != null){
 					if(this._faction.leader != null && this._faction.leader.id == this.id) {
 						//If this character is the leader of a faction, set that factions leader as null
@@ -504,6 +503,7 @@ namespace ECS {
 				if(this.currLocation.landmarkOnTile != null){
 					this.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
 				}
+				this.currLocation.RemoveCharacterOnTile (this);
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
