@@ -3082,6 +3082,9 @@ public class UIManager : MonoBehaviour {
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
+		if(partyinfoUI.isShowing){
+			partyinfoUI.HidePartyInfo ();
+		}
         settlementInfoUI.ShowSettlementInfo();
 		settlementInfoUI.SetSettlementAsActive(landmark);
 //		playerActionsUI.ShowPlayerActionsUI ();
@@ -3110,6 +3113,9 @@ public class UIManager : MonoBehaviour {
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
+		if(partyinfoUI.isShowing){
+			partyinfoUI.HidePartyInfo ();
+		}
         factionInfoUI.ShowFactionInfo();
 		factionInfoUI.SetFactionAsActive(faction);
 //		playerActionsUI.ShowPlayerActionsUI ();
@@ -3138,6 +3144,9 @@ public class UIManager : MonoBehaviour {
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
+		if(partyinfoUI.isShowing){
+			partyinfoUI.HidePartyInfo ();
+		}
         characterInfoUI.ShowCharacterInfo();
 		characterInfoUI.SetCharacterAsActive(character);
 //		playerActionsUI.ShowPlayerActionsUI ();
@@ -3166,6 +3175,9 @@ public class UIManager : MonoBehaviour {
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
+		if(partyinfoUI.isShowing){
+			partyinfoUI.HidePartyInfo ();
+		}
 		hexTileInfoUI.ShowHexTileInfo();
 		hexTileInfoUI.SetHexTileAsActive(hexTile);
 //		playerActionsUI.ShowPlayerActionsUI ();
@@ -3176,6 +3188,37 @@ public class UIManager : MonoBehaviour {
 		}
 	}
     #endregion
+
+	#region HexTile Info
+	[Space(10)]
+	[Header("Party Info")]
+	[SerializeField] internal PartyInfoUI partyinfoUI;
+	public void ShowPartyInfo(Party party) {
+		if(settlementInfoUI.isShowing){
+			settlementInfoUI.HideSettlementInfo ();
+		}
+		if(factionInfoUI.isShowing){
+			factionInfoUI.HideFactionInfo ();
+		}
+		if(characterInfoUI.isShowing){
+			characterInfoUI.HideCharacterInfo ();
+		}
+		if (questInfoUI.isShowing) {
+			questInfoUI.HideMenu();
+		}
+		if(hexTileInfoUI.isShowing){
+			hexTileInfoUI.HideHexTileInfo ();
+		}
+		partyinfoUI.ShowPartyInfo();
+		partyinfoUI.SetPartyAsActive(party);
+	}
+	public void UpdatePartyInfo() {
+		if (partyinfoUI.isShowing) {
+			partyinfoUI.UpdatePartyInfo ();
+		}
+	}
+	#endregion
+
 
     #region Faction Summary
     public void ShowFactionsSummary() {

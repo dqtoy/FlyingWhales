@@ -71,15 +71,20 @@ public class HextileInfoUI : UIMenu {
 		text += "\n[b]Characters: [/b] ";
 		if (currentlyShowingHexTile.charactersOnTile.Count > 0) {
 			for (int i = 0; i < currentlyShowingHexTile.charactersOnTile.Count; i++) {
-				ECS.Character currChar = currentlyShowingHexTile.charactersOnTile[i];
-				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-				if (currChar.currentTask != null) {
-                    if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-                        Quest currQuest = (Quest)currChar.currentTask;
-                        text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString() + "[/url])";
-                    } else {
-                        text += " (" + currChar.currentTask.taskType.ToString() + ")";
-                    }
+				if (currentlyShowingHexTile.charactersOnTile[i] is ECS.Character) {
+					ECS.Character currChar = (ECS.Character)currentlyShowingHexTile.charactersOnTile [i];
+					text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
+					if (currChar.currentTask != null) {
+						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+							Quest currQuest = (Quest)currChar.currentTask;
+							text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString () + "[/url])";
+						} else {
+							text += " (" + currChar.currentTask.taskType.ToString () + ")";
+						}
+					}
+				} else if (currentlyShowingHexTile.charactersOnTile[i] is Party) {
+					Party currParty = (Party)currentlyShowingHexTile.charactersOnTile [i];
+					text += "\n" + "[url=" + currParty.partyLeader.id + "_party]" + currParty.name + "[/url]" + " - " + currParty.currentTask.ToString ();
 				}
 			}
 		} else {

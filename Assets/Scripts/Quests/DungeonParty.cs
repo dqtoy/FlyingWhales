@@ -14,6 +14,7 @@ public class DungeonParty : Party {
 		if (!_partyMembers.Contains(member)) {
 			_partyMembers.Add(member);
 			member.SetParty(this);
+			this._currLocation.RemoveCharacterOnTile (member);
 		}
 	}
 	/*
@@ -24,12 +25,15 @@ public class DungeonParty : Party {
 		if(_avatar != null) {
 			_avatar.RemoveCharacter(member);
 		}
+		if(!forDeath){
+			member.currLocation.AddCharacterOnTile(member);
+		}
 		member.SetParty(null);
 	}
 
 	public override void StartEncounter(Party encounteredBy){
 		this.encounteredByParty = encounteredBy;
-		ECS.CombatPrototype combat = new ECS.CombatPrototype (this);
+		ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
 		combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
 		combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
 		CombatThreadPool.Instance.AddToThreadPool (combat);

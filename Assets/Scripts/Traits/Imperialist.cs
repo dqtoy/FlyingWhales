@@ -9,8 +9,12 @@ public class Imperialist : Trait {
         FactionRelationship rel, Faction aggressor) {
         if (rel.relationshipStatus == RELATIONSHIP_STATUS.NEUTRAL) {
             WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
-            //TODO:- Check Relative Strength, add 2 Weight to Declare War for each Positive Point of Relative Strength
-            //TODO:- Check Relative Strength, add 5 Weight to Do Nothing for each Negative Point of Relative Strength
+            int relativeStr = rel.factionLookup[_ownerOfTrait.faction.id].relativeStrength;
+            if (relativeStr > 0) {
+                actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 2 * relativeStr); //Check Relative Strength, add 2 Weight to Declare War for each Positive Point of Relative Strength
+            } else if(relativeStr < 0) {
+                actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, Mathf.Abs(2 * relativeStr)); //Check Relative Strength, add 5 Weight to Do Nothing for each Negative Point of Relative Strength
+            }
             return actionWeights;
         }
         return null;

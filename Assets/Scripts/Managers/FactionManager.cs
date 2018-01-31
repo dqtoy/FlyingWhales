@@ -316,7 +316,7 @@ public class FactionManager : MonoBehaviour {
             WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = GetInternationalIncidentWeights(aggrievedFaction, aggressorFaction, rel, incidentType, data);
             INTERNATIONAL_INCIDENT_ACTION chosenAction = actionWeights.PickRandomElementGivenWeights();
             if (chosenAction == INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR) {
-                DecalreWar(aggressorFaction, aggressorFaction);
+                DecalreWar(aggressorFaction, aggressorFaction, incidentType, data);
             }
         }
     }
@@ -350,7 +350,7 @@ public class FactionManager : MonoBehaviour {
         }
         //Negative Quest
         else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
-            //TODO: Add Weight to Declare War as listed on the Quest Type
+            //Add Weight to Declare War as listed on the Quest Type
             QuestTypeSetup qts = GetQuestTypeSetup(((Quest)data).questType);
             actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, qts.declareWarWeight);
         }
@@ -397,11 +397,31 @@ public class FactionManager : MonoBehaviour {
         }
         return actionWeights;
     }
-    public void DecalreWar(Faction faction1, Faction faction2) {
+    public void DecalreWar(Faction faction1, Faction faction2, INTERNATIONAL_INCIDENT_TYPE reason, object data) {
         Debug.Log(faction1.name + " declares war on " + faction2.name);
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
         rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set relationship with each other as hostile
         rel.SetWarStatus(true);
+        if (reason == INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH) {
+            Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_character_death");
+            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
+            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
+            ECS.Character character = (ECS.Character)data;
+            declareWarLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            declareWarLog.AddToFillers(character.currLocation.region.centerOfMass.landmarkOnTile, character.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
+            UIManager.Instance.ShowNotification(declareWarLog);
+        } else {
+            Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_quest");
+            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
+            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
+            Quest quest = (Quest)data;
+            declareWarLog.AddToFillers(quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            declareWarLog.AddToFillers(quest, Utilities.NormalizeString(quest.questType.ToString()), LOG_IDENTIFIER.OTHER);
+            declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
+            UIManager.Instance.ShowNotification(declareWarLog);
+        }
+        
+
         /* When war is declared, Friends of the two Tribes have to determine what to do. 
          In determining which side to consider in case he is Friends with both, 
          choose the one that he has highest positive Opinion of. If same, randomize. */
@@ -438,12 +458,14 @@ public class FactionManager : MonoBehaviour {
                     FactionRelationship enemyRel = currAlly.GetRelationshipWith(faction2);
                     enemyRel.SetWarStatus(true); //Set rel with faction 2 as at war
                     enemyRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 2 as HOSTILE
+                    ShowJoinWarLog(currAlly, faction2);
                     break;
                 case ALLY_WAR_REACTION.BETRAY:
                     //Join the war, side with faction 2
                     FactionRelationship friendRel = currAlly.GetRelationshipWith(faction2);
                     friendRel.SetWarStatus(true); //Set rel with faction 1 as at war
                     friendRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 1 as HOSTILE
+                    ShowBetrayalLog(currAlly, faction1);
                     break;
                 default:
                     break;
@@ -460,17 +482,31 @@ public class FactionManager : MonoBehaviour {
                     FactionRelationship enemyRel = currAlly.GetRelationshipWith(faction1);
                     enemyRel.SetWarStatus(true); //Set rel with faction 1 as at war
                     enemyRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 1 as HOSTILE
+                    ShowJoinWarLog(currAlly, faction1);
                     break;
                 case ALLY_WAR_REACTION.BETRAY:
                     //TODO: Join the war, side with faction 1
                     FactionRelationship friendRel = currAlly.GetRelationshipWith(faction2);
                     friendRel.SetWarStatus(true); //Set rel with faction 2 as at war
                     friendRel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set rel with faction 2 as HOSTILE
+                    ShowBetrayalLog(currAlly, faction2);
                     break;
                 default:
                     break;
             }
         }
+    }
+    private void ShowJoinWarLog(Faction faction, Faction enemy) {
+        Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_help_friend");
+        declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.KINGDOM_1);
+        declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.KINGDOM_2);
+        UIManager.Instance.ShowNotification(declareWarLog);
+    }
+    private void ShowBetrayalLog(Faction faction, Faction enemy) {
+        Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_betrayal");
+        declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.KINGDOM_1);
+        declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.KINGDOM_2);
+        UIManager.Instance.ShowNotification(declareWarLog);
     }
     private WeightedDictionary<ALLY_WAR_REACTION> GetAllyWarReaction(Faction faction, Faction friend, Faction enemy) {
         WeightedDictionary<ALLY_WAR_REACTION> actionWeights = new WeightedDictionary<ALLY_WAR_REACTION>();
@@ -496,8 +532,14 @@ public class FactionManager : MonoBehaviour {
             actionWeights.AddElement(ALLY_WAR_REACTION.REMAIN_NEUTRAL, 2 * relWithEnemy.sharedOpinion); //+2 Weight to Remain Neutral for every Positive Opinion shared with enemy Tribe
         }
 
-        //TODO: +2 Weight to Join War for every positive point of Relative Strength I have over the enemy Tribe
-        //TODO: +2 Weight to Remain Neutral for every negative point of Relative Strength I have under the enemy Tribe
+        int relativeStrTowardsEnemy = relWithEnemy.factionLookup[faction.id].relativeStrength;
+        if (relativeStrTowardsEnemy > 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.JOIN_WAR, 2 * relativeStrTowardsEnemy);//+2 Weight to Join War for every positive point of Relative Strength I have over the enemy Tribe
+        } else if(relativeStrTowardsEnemy < 0) {
+            actionWeights.AddElement(ALLY_WAR_REACTION.REMAIN_NEUTRAL, Mathf.Abs(2 * relativeStrTowardsEnemy));//+2 Weight to Remain Neutral for every negative point of Relative Strength I have under the enemy Tribe
+        }
+        
+        
         return actionWeights;
     }
     #endregion

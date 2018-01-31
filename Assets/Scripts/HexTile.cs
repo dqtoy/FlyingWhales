@@ -132,7 +132,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private CorpseMound _corpseMound = null;
 	private GameDate _corpseMoundDestroyDate;
 
-	protected List<ECS.Character> _charactersOnTile = new List<ECS.Character>(); //List of characters on landmark
+	protected List<object> _charactersOnTile = new List<object>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -209,7 +209,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject clickHighlightGO {
 		get { return _clickHighlightGO; }
 	}
-	public List<ECS.Character> charactersOnTile{
+	public List<object> charactersOnTile{
 		get { return _charactersOnTile; }
 	}
     #endregion
@@ -1027,24 +1027,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #region Structures Functions
     internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
-        GameObject[] gameObjectsToChooseFrom = null;
-        if (this.ownedByCity.kingdom != null) {
-            //TODO: Remove this when code has fully transitioned to factions instead of kingdoms
-            gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
-        } else {
-            gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
-        }
-         
+        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
+
         string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
 		GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
 		structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
-        if (this.ownedByCity.kingdom != null) {
-            //TODO: Remove this when code has fully transitioned to factions instead of kingdoms
-            structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState, this);
-        } else {
-            structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
-        }
+        structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
 
         this._centerPiece.SetActive(false);
 
@@ -1849,21 +1838,54 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
 	#region Characters
-	public void AddCharacterOnTile(ECS.Character character) {
+	public void AddCharacterOnTile(object character) {
 		if (!_charactersOnTile.Contains(character)) {
 			_charactersOnTile.Add(character);
+			if(character is ECS.Character){
+				((ECS.Character)character).SetLocation (this);
+			}else if(character is Party){
+				((Party)character).SetLocation (this);
+			}
 		}
 	}
-	public void RemoveCharacterOnTile(ECS.Character character) {
+	public void RemoveCharacterOnTile(object character) {
 		_charactersOnTile.Remove(character);
+		if(character is ECS.Character){
+			((ECS.Character)character).SetLocation (null);
+		}else if(character is Party){
+			((Party)character).SetLocation (null);
+		}
 	}
 	public ECS.Character GetCharacterByID(int id){
 		for (int i = 0; i < _charactersOnTile.Count; i++) {
-			if(_charactersOnTile[i].id == id){
-				return _charactersOnTile [i];
+			if(_charactersOnTile[i]	is ECS.Character){
+				if(((ECS.Character)_charactersOnTile[i]).id == id){
+					return (ECS.Character)_charactersOnTile [i];
+				}
 			}
 		}
 		return null;
+	}
+	public Party GetPartyByLeaderID(int id){
+		for (int i = 0; i < _charactersOnTile.Count; i++) {
+			if(_charactersOnTile[i]	is Party){
+				if(((Party)_charactersOnTile[i]).partyLeader.id == id){
+					return (Party)_charactersOnTile [i];
+				}
+			}
+		}
+		return null;
+	}
+	public int CharactersCount(){
+		int count = 0;
+		for (int i = 0; i < _charactersOnTile.Count; i++) {
+			if(_charactersOnTile[i]	is Party){
+				count += ((Party)_charactersOnTile [i]).partyMembers.Count;
+			}else {
+				count += 1;
+			}
+		}
+		return count;
 	}
 	#endregion
 

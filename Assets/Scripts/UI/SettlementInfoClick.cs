@@ -29,7 +29,13 @@ public class SettlementInfoClick : MonoBehaviour {
                 if (quest != null) {
                     UIManager.Instance.ShowQuestInfo(quest);
                 }
-            }
+			} else if (url.Contains("_party")) {
+				HexTile hextile = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location;
+				Party party = hextile.GetPartyByLeaderID(idToUse);
+				if(party != null){
+					UIManager.Instance.ShowPartyInfo(party);
+				}
+			}
         }
 	}
 }

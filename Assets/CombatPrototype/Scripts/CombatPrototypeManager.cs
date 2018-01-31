@@ -124,7 +124,7 @@ namespace ECS {
 		}
 
 		internal void NewCombat(){
-			this.combat = new CombatPrototype (null);
+			this.combat = new CombatPrototype (null, null);
 		}
 		public void StartCombat(){
 			this.combat.CombatSimulation ();
@@ -160,15 +160,9 @@ namespace ECS {
 					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
 						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
 							combat.faintedCharacters [i].Faint ();
-							if(winningCharacters[0].party != null){
-								//Add prisoner to party
-								winningCharacters[0].party.AddPrisoner(combat.faintedCharacters[i]);
-							}else{
-								//Add prisoner to character
-								winningCharacters[0].AddPrisoner(combat.faintedCharacters[i]);
-							}
+							winningCharacters[0].AddPrisoner(combat.faintedCharacters[i]);
 						}else{
-							combat.faintedCharacters [i].SetHP (1);
+							combat.faintedCharacters [i].Unfaint();
 						}
 					}
 				}else{
@@ -176,7 +170,7 @@ namespace ECS {
 						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
 							combat.faintedCharacters [i].Death ();
 						}else{
-							combat.faintedCharacters [i].SetHP (1);
+							combat.faintedCharacters [i].Unfaint();
 						}
 					}
 				}

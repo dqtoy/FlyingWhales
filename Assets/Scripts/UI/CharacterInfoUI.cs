@@ -61,7 +61,6 @@ public class CharacterInfoUI : UIMenu {
 		UpdateHistoryInfo ();
 	}
     public void UpdateGeneralInfo() {
-       
         string text = string.Empty;
         text += currentlyShowingCharacter.id;
         text += "\n" + currentlyShowingCharacter.name;

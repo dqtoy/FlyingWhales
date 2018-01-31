@@ -3439,9 +3439,6 @@ public class Kingdom{
             case WEIGHTED_ACTION.FLATTER:
                 CreateSubterfugeEvent(SUBTERFUGE_ACTIONS.FLATTER, (Kingdom)target);
                 break;
-            case WEIGHTED_ACTION.SEND_AID:
-                //TODO: Add Send Aid Trigger
-                break;
             //case WEIGHTED_ACTION.DECLARE_PEACE:
             //    ((Warfare)target).PeaceDeclaration(this);
             //    break;

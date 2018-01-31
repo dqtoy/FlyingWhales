@@ -294,6 +294,7 @@ public class Quest : CharacterTask{
     internal Party CreateNewPartyForQuest(ECS.Character partyLeader) {
         Party newParty = new Party(partyLeader);
         //newParty.onPartyFull = OnPartyFull;
+		partyLeader.currLocation.AddCharacterOnTile (newParty);
         AssignPartyToQuest(newParty);
         return newParty;
     }
@@ -315,7 +316,7 @@ public class Quest : CharacterTask{
         } else {
             _assignedParty.SetOpenStatus(true); //Set party as open to members
             //_assignedParty.onPartyFull = OnPartyFull;
-            _assignedParty.InviteCharactersOnTile(CHARACTER_ROLE.ADVENTURER, _assignedParty.partyLeader.currLocation);
+            _assignedParty.InviteCharactersOnTile(CHARACTER_ROLE.ADVENTURER, _assignedParty.currLocation);
         }
     }
     /*

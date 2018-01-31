@@ -26,8 +26,9 @@ namespace ECS{
 
 		internal List<string> resultsLog;
 		internal object caller;
+		internal HexTile location;
 
-		public CombatPrototype(object caller){
+		public CombatPrototype(object caller, HexTile location){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
@@ -35,6 +36,7 @@ namespace ECS{
 			this.faintedCharacters = new List<ECS.Character> ();
 			this.sideAPrisoners = null;
 			this.sideBPrisoners = null;
+			this.location = location;
 
 			this.resultsLog = new List<string> ();
 			this.caller = caller;
@@ -178,6 +180,9 @@ namespace ECS{
 				losingSide = SIDES.A;
 			}
             AddCombatLog("Combat Ends", SIDES.A);
+			if(location != null && location.landmarkOnTile != null){
+				location.landmarkOnTile.AddHistory ("A combat took place!", this);
+			}
         }
 
 		//Set row number to a list of characters
