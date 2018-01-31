@@ -1448,8 +1448,12 @@ namespace ECS {
 			}
 		}
 		internal void AddPrisoner(ECS.Character character){
-			character.SetPrisoner (true, this);
-			_prisoners.Add (character);
+			if (this._party != null) {
+				this._party.AddPrisoner(character);
+			}else{
+				character.SetPrisoner (true, this);
+				_prisoners.Add (character);
+			}
 		}
 		internal void RemovePrisoner(ECS.Character character){
 			_prisoners.Remove (character);

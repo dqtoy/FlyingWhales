@@ -160,13 +160,7 @@ namespace ECS {
 					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
 						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
 							combat.faintedCharacters [i].Faint ();
-							if(winningCharacters[0].party != null){
-								//Add prisoner to party
-								winningCharacters[0].party.AddPrisoner(combat.faintedCharacters[i]);
-							}else{
-								//Add prisoner to character
-								winningCharacters[0].AddPrisoner(combat.faintedCharacters[i]);
-							}
+							winningCharacters[0].AddPrisoner(combat.faintedCharacters[i]);
 						}else{
 							combat.faintedCharacters [i].SetHP (1);
 						}
