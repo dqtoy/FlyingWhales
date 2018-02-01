@@ -218,7 +218,7 @@ public class ConsoleMenu : UIMenu {
         bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
         if (isQuestParameterNumeric) {
             Quest quest = FactionManager.Instance.GetQuestByID(questID);
-            quest.EndTask(TASK_RESULT.CANCEL);
+            quest.GoBackToQuestGiver(TASK_RESULT.CANCEL);
 
             AddSuccessMessage(quest.questType.ToString() + " quest posted at " + quest.postedAt.location.name + " was cancelled.");
         } else {

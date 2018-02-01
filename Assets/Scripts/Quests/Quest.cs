@@ -15,9 +15,6 @@ public class Quest : CharacterTask{
     protected delegate void OnQuestAccepted();
     protected OnQuestAccepted onQuestAccepted;
 
-    protected delegate void OnQuestEnd(TASK_RESULT result);
-    protected OnQuestEnd onQuestEnd;
-
     protected int _id;
     protected QUEST_TYPE _questType;
     //protected int _daysBeforeDeadline;
@@ -116,9 +113,6 @@ public class Quest : CharacterTask{
     protected virtual void EndQuest(TASK_RESULT result) {
         if (!_isDone) {
             _taskResult = result;
-            if (onQuestEnd != null) {
-                onQuestEnd(result);
-            }
 			if(_currentAction != null){
 				_currentAction.onTaskActionDone = null;
 			}
@@ -149,7 +143,7 @@ public class Quest : CharacterTask{
 		}
         //RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
         GiveRewards();
-        _assignedParty.OnReachNonHostileSettlementAfterQuest();
+        _assignedParty.OnQuestEnd();
     }
     protected virtual void QuestFail() {
 		_isDone = true;
@@ -160,8 +154,8 @@ public class Quest : CharacterTask{
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.FAIL);
 		}
+        _assignedParty.OnQuestEnd();
         //RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
-        _assignedParty.OnReachNonHostileSettlementAfterQuest();
     }
     protected virtual void QuestCancel() {
 		_isAccepted = false;
@@ -169,7 +163,7 @@ public class Quest : CharacterTask{
 			_currentAction.ActionDone (TASK_ACTION_RESULT.CANCEL);
 		}
         //RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
-        _assignedParty.OnReachNonHostileSettlementAfterQuest();
+        _assignedParty.OnQuestEnd();
         ResetQuestValues ();
     }
 	//Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
@@ -180,7 +174,6 @@ public class Quest : CharacterTask{
         _assignedParty = null;
         _currentAction = null;
         _questLine.Clear();
-        onQuestEnd = null;
     }
     /*
      Construct the list of quest actions that the party will perform.
@@ -335,7 +328,7 @@ public class Quest : CharacterTask{
             _assignedParty.partyLeader.CreateNewAvatar();//Characters that have accepted a Quest should have icon already even if they are still forming party in the city
             _assignedParty.SetAvatar(_assignedParty.partyLeader.avatar);
         }
-        onQuestEnd += _assignedParty.OnQuestEnd;
+        //onQuestEnd += _assignedParty.OnQuestEnd;
         if (_assignedParty.isFull) {
             //Party is already full, check party members
             CheckPartyMembers();
@@ -357,7 +350,7 @@ public class Quest : CharacterTask{
      Make the assigned party go back to the settlement that
      gave the quest.
          */
-    protected void GoBackToQuestGiver(TASK_RESULT taskResult) {
+    internal void GoBackToQuestGiver(TASK_RESULT taskResult) {
         _assignedParty.GoBackToQuestGiver(taskResult);
     }
     internal void CheckPartyMembers() {
