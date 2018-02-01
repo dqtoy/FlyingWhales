@@ -32,7 +32,6 @@ public class ExploreTile : Quest {
         //Enqueue all actions
         _questLine.Enqueue(goToLandmark);
     }
-
 	internal override void Result(bool isSuccess){
 		if (isSuccess) {
 			_landmarkToExplore.SetExploredState(true);
@@ -40,7 +39,7 @@ public class ExploreTile : Quest {
 			AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
             GoBackToQuestGiver(TASK_RESULT.SUCCESS);
 		} else {
-			AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
+			//AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
 			GoBackToQuestGiver(TASK_RESULT.CANCEL);
 		}
 	}
@@ -60,7 +59,7 @@ public class ExploreTile : Quest {
 			AddNewLog("The party encounters a " + _landmarkToExplore.landmarkEncounterable.encounterName);
 			_landmarkToExplore.landmarkEncounterable.StartEncounter(_assignedParty);
 		}else{
-			Result (false);
+			Result (true);
 		}
 	}
     private void ScheduleRandomResult() {

@@ -368,12 +368,12 @@ public class Party: IEncounterable, ICombatInitializer {
     public void DetermineNextAction() {
         _partyLeader.DetermineAction();
     }
-    /*
-     This is called when the quest assigned to this party ends.
-         */
-    public void OnQuestEnd(TASK_RESULT result) {
-        AdjustRelationshipBasedOnQuestResult(result);
-    }
+    ///*
+    // This is called when the quest assigned to this party ends.
+    //     */
+    //public void OnQuestEnd(TASK_RESULT result) {
+    //    AdjustRelationshipBasedOnQuestResult(result);
+    //}
     #endregion
 
     #region Character Avatar
@@ -473,9 +473,10 @@ public class Party: IEncounterable, ICombatInitializer {
     }
     /*
      This is the default action to be done when a 
-     character returns to a non hostile settlement after a quest.
+     party returns to the quest giver settlement after a quest.
          */
-    internal void OnReachNonHostileSettlementAfterQuest() {
+    internal void OnQuestEnd() {
+        AdjustRelationshipBasedOnQuestResult(currentTask.taskResult);
         FactionManager.Instance.RemoveQuest((Quest)currentTask);
         if (_partyLeader.isDead) {
             //party leader is already dead!
