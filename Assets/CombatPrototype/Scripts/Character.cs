@@ -49,6 +49,7 @@ namespace ECS {
 		private bool _isDead;
 		private bool _isFainted;
 		private bool _isPrisoner;
+		private bool _isDefeated;
 		private object _isPrisonerOf;
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
@@ -205,7 +206,10 @@ namespace ECS {
         }
         internal int prestige {
             get { return _prestige; }
-        }
+		}
+		public bool isDefeated {
+			get { return _isDefeated; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -219,6 +223,7 @@ namespace ECS {
 			_isDead = false;
 			_isFainted = false;
 			_isPrisoner = false;
+			_isDefeated = false;
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 
@@ -1565,6 +1570,9 @@ namespace ECS {
 		}
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
 
+		}
+		public void SetIsDefeated(bool state){
+			_isDefeated = state;
 		}
 		#endregion
     }

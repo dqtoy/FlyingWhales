@@ -29,6 +29,10 @@ public class DungeonParty : Party {
 			member.currLocation.AddCharacterOnTile(member, false);
 		}
 		member.SetParty(null);
+		member.SetCurrentTask (null);
+		if (_partyMembers.Count <= 0) {
+			this._currLocation.RemoveCharacterOnTile(this);
+		}
 	}
 
 	public override void StartEncounter(Party encounteredBy){

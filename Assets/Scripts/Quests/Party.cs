@@ -24,7 +24,7 @@ public class Party: IEncounterable, ICombatInitializer {
 
 	protected HexTile _currLocation;
 
-	protected bool _isCurrentTaskCancelled;
+	protected bool _isDefeated;
 
     private const int MAX_PARTY_MEMBERS = 5;
 
@@ -59,8 +59,8 @@ public class Party: IEncounterable, ICombatInitializer {
     public HexTile currLocation {
         get { return _currLocation; }
     }
-	public bool isCurrentTaskCancelled {
-		get { return _isCurrentTaskCancelled; }
+	public bool isDefeated {
+		get { return _isDefeated; }
 	}
     #endregion
 
@@ -70,7 +70,7 @@ public class Party: IEncounterable, ICombatInitializer {
         _partyMembers = new List<ECS.Character>();
         _partyMembersOnTheWay = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character> ();
-		_isCurrentTaskCancelled = false;
+		_isDefeated = false;
         Debug.Log(partyLeader.name + " has created " + _name);
 		partyLeader.currLocation.AddCharacterOnTile (this, false);
 
@@ -87,8 +87,11 @@ public class Party: IEncounterable, ICombatInitializer {
 	public void SetLocation(HexTile hextile){
 		_currLocation = hextile;
 	}
-	public void SetIsCurrentTaskCancelled(bool state){
-		_isCurrentTaskCancelled = state;
+	public void SetIsDefeated(bool state){
+		_isDefeated = state;
+		for (int i = 0; i < _partyMembers.Count; i++) {
+			_partyMembers [i].SetIsDefeated (state);
+		}
 	}
     #region Party Management
     /*
@@ -342,7 +345,7 @@ public class Party: IEncounterable, ICombatInitializer {
          */
     public void SetCurrentTask(CharacterTask task) {
         _currentTask = task;
-		SetIsCurrentTaskCancelled (false);
+		SetIsDefeated (false);
         for (int i = 0; i < _partyMembers.Count; i++) {
             ECS.Character currMember = _partyMembers[i];
             currMember.SetCurrentTask(task);
@@ -532,6 +535,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	public virtual void StartEncounter(Party encounteredBy){}
 	public virtual void ReturnResults(object result){}
 	public virtual bool InitializeCombat(){
+		if(isDefeated){
+			return false;
+		}
 		if(_partyLeader.faction == null){
 			ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
 			if(enemy != null){

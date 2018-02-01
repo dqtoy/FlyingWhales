@@ -186,10 +186,12 @@ namespace ECS {
 			for (int i = 0; i < combat.fledCharacters.Count; i++) {
 				if(combat.fledCharacters[i].currentSide == combat.losingSide){
 					if(combat.fledCharacters[i].party != null){
-						combat.fledCharacters [i].party.currLocation.RemoveCharacterOnTile (combat.fledCharacters [i].party);
+						combat.fledCharacters [i].party.SetIsDefeated (false);
+						combat.fledCharacters [i].party.GoBackToQuestGiver(TASK_RESULT.CANCEL);
 						break;
 					}else{
-						combat.fledCharacters [i].currLocation.RemoveCharacterOnTile (combat.fledCharacters [i]);
+						combat.fledCharacters [i].party.SetIsDefeated (false);
+						combat.fledCharacters [i].GoToNearestNonHostileSettlement (() => combat.fledCharacters [i].DetermineAction());
 					}
 				}
 			}
