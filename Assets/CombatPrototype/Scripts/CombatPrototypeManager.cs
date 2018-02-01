@@ -164,7 +164,7 @@ namespace ECS {
 							combat.faintedCharacters [i].Faint ();
 							winningCharacters[0].AddPrisoner(combat.faintedCharacters[i]);
 						}else{
-							combat.faintedCharacters [i].Unfaint();
+							combat.faintedCharacters [i].SetHP(1);
 						}
 					}
 				}else{
@@ -172,7 +172,7 @@ namespace ECS {
 						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
 							combat.faintedCharacters [i].Death ();
 						}else{
-							combat.faintedCharacters [i].Unfaint();
+							combat.faintedCharacters [i].SetHP(1);
 						}
 					}
 				}

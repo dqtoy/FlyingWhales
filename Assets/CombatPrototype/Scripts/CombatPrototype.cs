@@ -21,6 +21,8 @@ namespace ECS{
 		internal List<ECS.Character> fledCharacters;
 		internal List<ECS.Character> sideAPrisoners;
 		internal List<ECS.Character> sideBPrisoners;
+		internal ECS.Character[] characterSideACopy;
+		internal ECS.Character[] characterSideBCopy;
 
 		internal SIDES winningSide;
 		internal SIDES losingSide;
@@ -69,6 +71,7 @@ namespace ECS{
 		internal void AddCharacters(SIDES side, List<ECS.Character> characters) {
 			if (side == SIDES.A) {
 				this.charactersSideA.AddRange(characters);
+				this.characterSideACopy = this.charactersSideA.ToArray ();
 				if(characters[0].party != null){
 					sideAParty = characters [0].party;
 					sideAPrisoners = characters [0].party.prisoners;
@@ -79,6 +82,8 @@ namespace ECS{
 				}
 			} else {
 				this.charactersSideB.AddRange(characters);
+				this.characterSideBCopy = this.charactersSideB.ToArray ();
+
 				if(characters[0].party != null){
 					sideBParty = characters [0].party;
 					sideBPrisoners = characters [0].party.prisoners;
