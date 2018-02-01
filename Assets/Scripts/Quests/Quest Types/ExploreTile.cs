@@ -32,14 +32,16 @@ public class ExploreTile : Quest {
         //Enqueue all actions
         _questLine.Enqueue(goToLandmark);
     }
+
 	internal override void Result(bool isSuccess){
 		if (isSuccess) {
 			_landmarkToExplore.SetExploredState(true);
-			EndQuest(TASK_RESULT.SUCCESS);
+			//EndQuest(TASK_RESULT.SUCCESS);
 			AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
+            GoBackToQuestGiver(TASK_RESULT.SUCCESS);
 		} else {
 			AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
-			EndQuest(TASK_RESULT.CANCEL);
+			GoBackToQuestGiver(TASK_RESULT.CANCEL);
 		}
 	}
     #endregion

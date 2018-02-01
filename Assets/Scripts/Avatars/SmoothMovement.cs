@@ -38,7 +38,10 @@ public class SmoothMovement : MonoBehaviour {
         hasAttacked = false;
 		onMoveFinished = null;
     }
-
+    public void ForceStopMovement() {
+        this.isMoving = false;
+        this.targetPosition = Vector3.zero;
+    }
     private void StopMoving(){
 		this.isMoving = false;
 		this.targetPosition = Vector3.zero;

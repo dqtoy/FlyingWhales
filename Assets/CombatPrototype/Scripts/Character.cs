@@ -11,8 +11,8 @@ namespace ECS {
 		[SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
-        private CharacterType _characterType; //Base Character Type(For Traits)
-		private List<Trait>	_traits;
+        [System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
+        [System.NonSerialized] private List<Trait>	_traits;
         private Dictionary<Character, Relationship> _relationships;
 
 		//Stats
@@ -61,6 +61,8 @@ namespace ECS {
 		internal Dictionary<int, CombatPrototype> combatHistory;
 
 		private float _equippedWeaponPower;
+        private int _gold;
+        private int _prestige;
 
         //For Testing
         private Quest forceQuestToAccept;
@@ -198,6 +200,12 @@ namespace ECS {
 		internal object isPrisonerOf{
 			get { return this._isPrisonerOf; }
 		}
+        internal int gold {
+            get { return _gold; }
+        }
+        internal int prestige {
+            get { return _prestige; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -519,7 +527,6 @@ namespace ECS {
 //				}
             }
 		}
-
         private void CheckForInternationalIncident() {
             //a non-Adventurer character from a tribe dies while in a region owned by another tribe
 			if(this._role == null){
@@ -860,6 +867,14 @@ namespace ECS {
                 }
             }
             return false;
+        }
+        internal void AdjustGold(int amount) {
+            _gold += amount;
+            _gold = Mathf.Max(0, _gold);
+        }
+        internal void AdjustPrestige(int amount) {
+            _prestige += amount;
+            _prestige = Mathf.Max(0, _prestige);
         }
         #endregion
 

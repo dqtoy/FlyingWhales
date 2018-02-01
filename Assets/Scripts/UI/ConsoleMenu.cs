@@ -22,9 +22,11 @@ public class ConsoleMenu : UIMenu {
     internal override void Initialize() {
         commandHistory = new List<string>();
         _consoleActions = new Dictionary<string, Action<string[]>>() {
+            {"/help", ShowHelp},
             {"/change_faction_rel_stat", ChangeFactionRelationshipStatus},
             {"/force_accept_quest", AcceptQuest},
-            {"/kill",  KillCharacter}
+            {"/kill",  KillCharacter},
+            {"/quest_cancel", CancelQuest}
         };
     }
 
@@ -74,6 +76,7 @@ public class ConsoleMenu : UIMenu {
         ShowCommandHistory();
     }
     private void AddErrorMessage(string errorMessage) {
+        errorMessage += ". Use /help for a list of commands";
         commandHistoryLbl.text += "[FF0000]" + errorMessage + "[-]\n";
         ShowCommandHistory();
     }
@@ -100,6 +103,14 @@ public class ConsoleMenu : UIMenu {
             }
         }
     }
+
+    #region Misc
+    private void ShowHelp(string[] parameters) {
+        for (int i = 0; i < _consoleActions.Count; i++) {
+            AddCommandHistory(_consoleActions.Keys.ElementAt(i));
+        }
+    }
+    #endregion
 
     #region Faction Relationship
     private void ChangeFactionRelationshipStatus(string[] parameters) {
@@ -192,6 +203,27 @@ public class ConsoleMenu : UIMenu {
         } else {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /force_accept_quest");
+        }
+    }
+    private void CancelQuest(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /quest_cancel");
+            return;
+        }
+        string questParameterString = parameters[1];
+
+        int questID;
+
+        bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
+        if (isQuestParameterNumeric) {
+            Quest quest = FactionManager.Instance.GetQuestByID(questID);
+            quest.EndTask(TASK_RESULT.CANCEL);
+
+            AddSuccessMessage(quest.questType.ToString() + " quest posted at " + quest.postedAt.location.name + " was cancelled.");
+        } else {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /cancel_quest");
         }
     }
     #endregion
