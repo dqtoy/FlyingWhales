@@ -20,6 +20,12 @@ public class PartyInfoClick : MonoBehaviour {
 				if (quest != null) {
 					UIManager.Instance.ShowQuestInfo(quest);
 				}
+			}  else if(url.Contains("_prisoner")){
+				Party party = UIManager.Instance.partyinfoUI.currentlyShowingParty;
+				ECS.Character character = party.GetPrisonerByID(idToUse);
+				if(character != null){
+					UIManager.Instance.ShowCharacterInfo(character);
+				}
 			} 
         }
 	}

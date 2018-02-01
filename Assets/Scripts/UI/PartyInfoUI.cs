@@ -60,6 +60,16 @@ public class PartyInfoUI : UIMenu {
 			text += "NONE";
 		}
 
+		text += "\n[b]Prisoners:[/b] ";
+		if(currentlyShowingParty.prisoners.Count > 0){
+			for (int i = 0; i < currentlyShowingParty.prisoners.Count; i++) {
+				ECS.Character prisoner = currentlyShowingParty.prisoners [i];
+				text += "\n" + "[url=" + prisoner.id + "_prisoner]" + prisoner.name + "[/url]";
+			}
+		} else {
+			text += "NONE";
+		}
+
 		text += "\n[b]Current Task:[/b] ";
 		if (currentlyShowingParty.currentTask != null) {
 			if (currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST) {

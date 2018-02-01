@@ -135,7 +135,7 @@ public class SettlementInfoUI : UIMenu {
 					}
 				} else if (currentlyShowingSettlement.location.charactersOnTile[i] is Party) {
 					Party currParty = (Party)currentlyShowingSettlement.location.charactersOnTile [i];
-					text += "\n" + "[url=" + currParty.partyLeader.id + "_party]" + currParty.name + "[/url]" + " - " + currParty.currentTask.ToString ();
+					text += "\n" + "[url=" + currParty.partyLeader.id + "_party]" + currParty.name + "[/url]" + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
 				}
 			}
 		} else {
