@@ -7,6 +7,7 @@ public class LandmarkManager : MonoBehaviour {
     public static LandmarkManager Instance = null;
 
     public List<CharacterProductionWeight> characterProductionWeights;
+	public DungeonEncounterChances[] dungeonEncounterChances;
 
     private void Awake() {
         Instance = this;
@@ -83,4 +84,13 @@ public class LandmarkManager : MonoBehaviour {
         return classes;
     }
     #endregion
+
+	public DungeonEncounterChances GetDungeonEncounterChances(LANDMARK_TYPE dungeonType){
+		for (int i = 0; i < dungeonEncounterChances.Length; i++) {
+			if(dungeonType == dungeonEncounterChances[i].dungeonType){
+				return dungeonEncounterChances [i];
+			}
+		}
+		return new DungeonEncounterChances ();
+	}
 }

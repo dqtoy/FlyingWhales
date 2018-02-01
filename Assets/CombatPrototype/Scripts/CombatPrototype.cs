@@ -18,15 +18,20 @@ namespace ECS{
 		internal List<ECS.Character> charactersSideB;
 		internal List<ECS.Character> deadCharacters;
 		internal List<ECS.Character> faintedCharacters;
+		internal List<ECS.Character> fledCharacters;
 		internal List<ECS.Character> sideAPrisoners;
 		internal List<ECS.Character> sideBPrisoners;
 
 		internal SIDES winningSide;
 		internal SIDES losingSide;
 
+		internal Party sideAParty;
+		internal Party sideBParty;
+
 		internal List<string> resultsLog;
 		internal object caller;
 		internal HexTile location;
+		internal bool isDone;
 
 		public CombatPrototype(object caller, HexTile location){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
@@ -34,9 +39,13 @@ namespace ECS{
 			this.charactersSideB = new List<ECS.Character> ();
 			this.deadCharacters = new List<ECS.Character> ();
 			this.faintedCharacters = new List<ECS.Character> ();
+			this.fledCharacters = new List<Character> ();
 			this.sideAPrisoners = null;
 			this.sideBPrisoners = null;
+			this.sideAParty = null;
+			this.sideBParty = null;
 			this.location = location;
+			this.isDone = false;
 
 			this.resultsLog = new List<string> ();
 			this.caller = caller;
@@ -61,6 +70,7 @@ namespace ECS{
 			if (side == SIDES.A) {
 				this.charactersSideA.AddRange(characters);
 				if(characters[0].party != null){
+					sideAParty = characters [0].party;
 					sideAPrisoners = characters [0].party.prisoners;
 				}else{
 					for (int i = 0; i < characters.Count; i++) {
@@ -70,6 +80,7 @@ namespace ECS{
 			} else {
 				this.charactersSideB.AddRange(characters);
 				if(characters[0].party != null){
+					sideBParty = characters [0].party;
 					sideBPrisoners = characters [0].party.prisoners;
 				}else{
 					for (int i = 0; i < characters.Count; i++) {
@@ -122,13 +133,17 @@ namespace ECS{
         #endregion
 
 		public void ReturnCombatResults(){
-			if(caller != null){
-				if(caller is IEncounterable){
-					IEncounterable encounterable = (IEncounterable)caller;
-					encounterable.ReturnResults (this);
-				}
-			}
+//			if(caller != null){
+//				if(caller is ICombatInitializer){
+//					ICombatInitializer combatInitializer = (ICombatInitializer)caller;
+//					combatInitializer.ReturnCombatResults (this);
+//				}else if(caller is IEncounterable){
+//					IEncounterable encounterable = (IEncounterable)caller;
+//					encounterable.ReturnResults (this);
+//				}
+//			}
 			CombatPrototypeManager.Instance.CombatResults(this);
+			this.location.StartCombatInTile ();
 		}
 
         //This simulates the whole combat system
@@ -175,14 +190,21 @@ namespace ECS{
 			if(this.charactersSideA.Count > 0){
 				winningSide = SIDES.A;
 				losingSide = SIDES.B;
+				if(sideBParty != null){
+					sideBParty.SetIsCurrentTaskCancelled (true);
+				}
 			}else{
 				winningSide = SIDES.B;
 				losingSide = SIDES.A;
+				if(sideAParty != null){
+					sideAParty.SetIsCurrentTaskCancelled (true);
+				}
 			}
             AddCombatLog("Combat Ends", SIDES.A);
 			if(location != null && location.landmarkOnTile != null){
 				location.landmarkOnTile.AddHistory ("A combat took place!", this);
 			}
+			isDone = true;
         }
 
 		//Set row number to a list of characters
@@ -761,6 +783,7 @@ namespace ECS{
 		private void FleeSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: ECS.Character flees
 			RemoveCharacter(targetCharacter);
+			fledCharacters.Add (targetCharacter);
 			AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion

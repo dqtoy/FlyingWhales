@@ -108,7 +108,7 @@ public class Settlement : BaseLandmark {
 		newCharacter.SetHome (this);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
-        this._location.AddCharacterOnTile(newCharacter);
+        this._location.AddCharacterOnTile(newCharacter, false);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.DetermineAction();
         UIManager.Instance.UpdateFactionSummary();

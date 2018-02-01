@@ -7,7 +7,7 @@ using System;
 
 namespace ECS {
 	[System.Serializable]
-	public class Character : TaskCreator {
+	public class Character : TaskCreator, ICombatInitializer {
 		[SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
@@ -328,10 +328,12 @@ namespace ECS {
 						continue;
 					}
 				}else if (skill is FleeSkill){
-					if(this.currentHP >= (this.maxHP / 2)){
-						skill.isEnabled = false;
-						continue;
-					}
+					skill.isEnabled = false;
+					continue;
+//					if(this.currentHP >= (this.maxHP / 2)){
+//						skill.isEnabled = false;
+//						continue;
+//					}
 				}
 			}
 
@@ -494,16 +496,24 @@ namespace ECS {
 				}
 
                 CheckForInternationalIncident();
+
                 if (this._party != null) {
+					if(this.party.currLocation.landmarkOnTile != null){
+						this.party.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
+					}
                     this._party.RemovePartyMember(this, true);
-                }
+				}else{
+					if(this.currLocation.landmarkOnTile != null){
+						this.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
+					}
+				}
 				if(_isPrisoner){
 					PrisonerDeath ();
 				}
-				if(this.currLocation.landmarkOnTile != null){
-					this.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
+				if (this.currLocation != null) {
+					this.currLocation.RemoveCharacterOnTile (this);
 				}
-				this.currLocation.RemoveCharacterOnTile (this);
+
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
@@ -1505,6 +1515,41 @@ namespace ECS {
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
 			}
 			SetPrisoner (false, null);
+		}
+		#endregion
+
+		#region ICombatInitializer
+		public bool InitializeCombat(){
+			if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
+				//Start Combat with hostile or unaligned
+				ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
+				if(enemy != null){
+					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
+					combat.AddCharacters (ECS.SIDES.A, new List<ECS.Character>(){this});
+					if(enemy is Party){
+						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
+					}else{
+						combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
+					}
+					this.currLocation.SetCurrentCombat (combat);
+					CombatThreadPool.Instance.AddToThreadPool (combat);
+					return true;
+				}
+				return false;
+			}else{
+				return false;
+			}
+		}
+		public bool CanBattleThis(ICombatInitializer combatInitializer){
+			if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
+				//Check here if the combatInitializer is hostile with this character, if yes, return true
+				return true;
+			}else{
+				return false;
+			}
+		}
+		public void ReturnCombatResults(ECS.CombatPrototype combat){
+
 		}
 		#endregion
     }

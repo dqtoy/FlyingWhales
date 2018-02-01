@@ -115,7 +115,6 @@ public class Quest : CharacterTask{
     }
     protected virtual void EndQuest(TASK_RESULT result) {
         if (!_isDone) {
-            _isDone = true;
             _taskResult = result;
             if (onQuestEnd != null) {
                 onQuestEnd(result);
@@ -123,10 +122,6 @@ public class Quest : CharacterTask{
 			if(_currentAction != null){
 				_currentAction.onTaskActionDone = null;
 			}
-            _createdBy.RemoveQuest(this);
-            if (_postedAt != null) {
-                _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
-            }
             switch (result) {
                 case TASK_RESULT.SUCCESS:
                     QuestSuccess();
@@ -144,19 +139,28 @@ public class Quest : CharacterTask{
         }
     }
     protected virtual void QuestSuccess() {
+		_isDone = true;
+		_createdBy.RemoveQuest(this);
+		if (_postedAt != null) {
+			_postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
+		}
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.SUCCESS);
 		}
 		RetaskParty (_assignedParty.OnReachNonHostileSettlementAfterQuest);
     }
     protected virtual void QuestFail() {
+		_isDone = true;
+		_createdBy.RemoveQuest(this);
+		if (_postedAt != null) {
+			_postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
+		}
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.FAIL);
 		}
 		RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
     }
     protected virtual void QuestCancel() {
-        _taskResult = TASK_RESULT.CANCEL;
 		_isAccepted = false;
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.CANCEL);
@@ -294,7 +298,6 @@ public class Quest : CharacterTask{
     internal Party CreateNewPartyForQuest(ECS.Character partyLeader) {
         Party newParty = new Party(partyLeader);
         //newParty.onPartyFull = OnPartyFull;
-		partyLeader.currLocation.AddCharacterOnTile (newParty);
         AssignPartyToQuest(newParty);
         return newParty;
     }

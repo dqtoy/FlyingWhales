@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class Party: IEncounterable {
+public class Party: IEncounterable, ICombatInitializer {
 
     //public delegate void OnPartyFull(Party party);
     //public OnPartyFull onPartyFull;
@@ -23,6 +23,8 @@ public class Party: IEncounterable {
     protected CharacterAvatar _avatar;
 
 	protected HexTile _currLocation;
+
+	protected bool _isCurrentTaskCancelled;
 
     private const int MAX_PARTY_MEMBERS = 5;
 
@@ -57,6 +59,9 @@ public class Party: IEncounterable {
     public HexTile currLocation {
         get { return _currLocation; }
     }
+	public bool isCurrentTaskCancelled {
+		get { return _isCurrentTaskCancelled; }
+	}
     #endregion
 
 	public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
@@ -65,8 +70,9 @@ public class Party: IEncounterable {
         _partyMembers = new List<ECS.Character>();
         _partyMembersOnTheWay = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character> ();
+		_isCurrentTaskCancelled = false;
         Debug.Log(partyLeader.name + " has created " + _name);
-		partyLeader.currLocation.AddCharacterOnTile (this);
+		partyLeader.currLocation.AddCharacterOnTile (this, false);
 
         AddPartyMember(_partyLeader);
 
@@ -80,6 +86,9 @@ public class Party: IEncounterable {
 	}
 	public void SetLocation(HexTile hextile){
 		_currLocation = hextile;
+	}
+	public void SetIsCurrentTaskCancelled(bool state){
+		_isCurrentTaskCancelled = state;
 	}
     #region Party Management
     /*
@@ -134,7 +143,7 @@ public class Party: IEncounterable {
         }
         if (!forDeath) {
 			member.AddHistory ("Left party: " + this._name + ".");
-			member.currLocation.AddCharacterOnTile(member);
+			member.currLocation.AddCharacterOnTile(member, false);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 ((Quest)currentTask).AddNewLog(member.name + " has left the party");
@@ -143,9 +152,9 @@ public class Party: IEncounterable {
         
         member.SetParty(null);
 		member.SetCurrentTask (null);
-        //if (_partyMembers.Count < 2) {
-        //    DisbandParty();
-        //}
+        if (_partyMembers.Count <= 0) {
+			this._currLocation.RemoveCharacterOnTile(this);
+        }
     }
 	public void AddPrisoner(ECS.Character character){
 		character.SetPrisoner (true, this);
@@ -216,7 +225,7 @@ public class Party: IEncounterable {
             if (_avatar != null && currMember != partyLeader) {
                 _avatar.RemoveCharacter(currMember);
             }
-			currMember.currLocation.AddCharacterOnTile(currMember);
+			currMember.currLocation.AddCharacterOnTile(currMember, false);
             currMember.GoToNearestNonHostileSettlement(() => currMember.OnReachNonHostileSettlementAfterQuest());
         }
     }
@@ -333,6 +342,7 @@ public class Party: IEncounterable {
          */
     public void SetCurrentTask(CharacterTask task) {
         _currentTask = task;
+		SetIsCurrentTaskCancelled (false);
         for (int i = 0; i < _partyMembers.Count; i++) {
             ECS.Character currMember = _partyMembers[i];
             currMember.SetCurrentTask(task);
@@ -500,7 +510,73 @@ public class Party: IEncounterable {
 		return null;
 	}
 
+	public ECS.Character GetPrisonerByID(int id){
+		for (int i = 0; i < _prisoners.Count; i++) {
+			if (_prisoners [i].id == id){
+				return _prisoners [i];
+			}
+		}
+		return null;
+	}
+
+	#region Virtuals
     public virtual void StartEncounter(ECS.Character encounteredBy){ }
 	public virtual void StartEncounter(Party encounteredBy){}
 	public virtual void ReturnResults(object result){}
+	public virtual bool InitializeCombat(){
+		if(_partyLeader.faction == null){
+			ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
+			if(enemy != null){
+				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
+				combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
+				if(enemy is Party){
+					combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
+				}else{
+					combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
+				}
+				this.currLocation.SetCurrentCombat (combat);
+				CombatThreadPool.Instance.AddToThreadPool (combat);
+				return true;
+			}
+			return false;
+		}else{
+			if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
+				ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
+				if(enemy != null){
+					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
+					combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
+					if(enemy is Party){
+						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
+					}else{
+						combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
+					}
+					this.currLocation.SetCurrentCombat (combat);
+					CombatThreadPool.Instance.AddToThreadPool (combat);
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+	}
+	public virtual bool CanBattleThis(ICombatInitializer combatInitializer){
+		if(_partyLeader.faction == null){
+			return true;
+		}else{
+			if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
+				//Check here if the combatInitializer is hostile with this character, if yes, return true
+				return true;
+			}
+			return false;
+		}
+	}
+	public virtual void ReturnCombatResults(ECS.CombatPrototype combat){
+		if(combat.winningSide == ECS.SIDES.A){
+			//This is the winner
+		}else{
+			//Enemy won
+		}
+	}
+	#endregion
+
 }

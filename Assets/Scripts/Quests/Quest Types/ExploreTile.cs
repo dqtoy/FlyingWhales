@@ -32,13 +32,6 @@ public class ExploreTile : Quest {
         //Enqueue all actions
         _questLine.Enqueue(goToLandmark);
     }
-    protected override void QuestCancel() {
-        _taskResult = TASK_RESULT.CANCEL;
-        _assignedParty.partyLeader.DestroyAvatar();
-        PartyManager.Instance.RemoveParty(_assignedParty);
-        CheckForInternationalIncident();
-        ResetQuestValues();
-    }
 	internal override void Result(bool isSuccess){
 		if (isSuccess) {
 			_landmarkToExplore.SetExploredState(true);
@@ -46,20 +39,31 @@ public class ExploreTile : Quest {
 			AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
 		} else {
 			AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
-			QuestCancel();
+			EndQuest(TASK_RESULT.CANCEL);
 		}
 	}
     #endregion
 
     private void TriggerRandomResult() {
-        StartExploration();
+		if(!_assignedParty.isCurrentTaskCancelled){
+			if(_assignedParty.currLocation.currentCombat == null){
+				StartExploration();
+			}else{
+				ScheduleQuestAction(1, () => TriggerRandomResult());
+			}
+		}else{
+			if(_assignedParty.partyMembers.Count > 0){
+				//Go home and cancel quest
+			}
+		}
+
     }
 	private void StartExploration(){
 		if(_landmarkToExplore.landmarkEncounterable != null){
 			AddNewLog("The party encounters a " + _landmarkToExplore.landmarkEncounterable.encounterName);
 			_landmarkToExplore.landmarkEncounterable.StartEncounter(_assignedParty);
 		}else{
-			throw new UnityException ("No Encounterable in Landmark " + _landmarkToExplore.location.tileName + "!");
+			Result (false);
 		}
 	}
     private void ScheduleRandomResult() {

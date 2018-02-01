@@ -131,8 +131,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private GameObject _corpseMoundGO = null;
 	private CorpseMound _corpseMound = null;
 	private GameDate _corpseMoundDestroyDate;
+	private ECS.CombatPrototype _currentCombat;
 
-	protected List<object> _charactersOnTile = new List<object>(); //List of characters/party on landmark
+	protected List<ICombatInitializer> _charactersOnTile = new List<ICombatInitializer>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -209,8 +210,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject clickHighlightGO {
 		get { return _clickHighlightGO; }
 	}
-	public List<object> charactersOnTile{
+	public List<ICombatInitializer> charactersOnTile{
 		get { return _charactersOnTile; }
+	}
+	public ECS.CombatPrototype currentCombat{
+		get { return _currentCombat; }
 	}
     #endregion
 
@@ -1838,7 +1842,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
 	#region Characters
-	public void AddCharacterOnTile(object character) {
+	public void AddCharacterOnTile(ICombatInitializer character, bool startCombat = true) {
 		if (!_charactersOnTile.Contains(character)) {
 			_charactersOnTile.Add(character);
 			if(character is ECS.Character){
@@ -1846,9 +1850,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}else if(character is Party){
 				((Party)character).SetLocation (this);
 			}
+			if(startCombat){
+				StartCombatInTile ();
+			}
 		}
 	}
-	public void RemoveCharacterOnTile(object character) {
+	public void RemoveCharacterOnTile(ICombatInitializer character) {
 		_charactersOnTile.Remove(character);
 		if(character is ECS.Character){
 			((ECS.Character)character).SetLocation (null);
@@ -1926,4 +1933,33 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		return count;
 	}
+
+	#region Combat
+	internal void StartCombatInTile(){
+		if(!CombatInTile()){
+			this._currentCombat = null;
+		}
+	}
+	internal bool CombatInTile(){
+		for (int i = 0; i < _charactersOnTile.Count; i++) {
+			if(_charactersOnTile[i].InitializeCombat ()){
+				return true;
+			}
+		}
+		return false;
+	}
+	internal ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer){
+		for (int i = 0; i < _charactersOnTile.Count; i++) {
+			if(_charactersOnTile[i] != combatInitializer){
+				if(combatInitializer.CanBattleThis(_charactersOnTile[i])){
+					return _charactersOnTile [i];
+				}
+			}
+		}
+		return null;
+	}
+	internal void SetCurrentCombat (ECS.CombatPrototype combat){
+		_currentCombat = combat;
+	}
+	#endregion
 }

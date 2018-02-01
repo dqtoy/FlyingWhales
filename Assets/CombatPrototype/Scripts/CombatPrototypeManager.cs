@@ -182,6 +182,17 @@ namespace ECS {
 			}else if(combat.losingSide == SIDES.B && combat.sideBPrisoners != null){
 				CheckDefeatedPartyPrisoners (winningCharacters, combat.sideBPrisoners);
 			}
+
+			for (int i = 0; i < combat.fledCharacters.Count; i++) {
+				if(combat.fledCharacters[i].currentSide == combat.losingSide){
+					if(combat.fledCharacters[i].party != null){
+						combat.fledCharacters [i].party.currLocation.RemoveCharacterOnTile (combat.fledCharacters [i].party);
+						break;
+					}else{
+						combat.fledCharacters [i].currLocation.RemoveCharacterOnTile (combat.fledCharacters [i]);
+					}
+				}
+			}
 		}
 
 		private void CheckDefeatedPartyPrisoners(List<ECS.Character> winningCharacters, List<ECS.Character> prisoners){
