@@ -10,8 +10,8 @@ public class Trait{
     public TRAIT trait;
     public ActionWeight[] actionWeights;
 
-    protected Citizen ownerOfTrait;
-    protected ECS.Character _ownerOfTrait;
+    [System.NonSerialized] protected Citizen ownerOfTrait;
+    [System.NonSerialized] protected ECS.Character _ownerOfTrait;
 
     public void AssignCitizen(Citizen ownerOfTrait) {
         this.ownerOfTrait = ownerOfTrait;

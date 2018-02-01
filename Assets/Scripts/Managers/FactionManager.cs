@@ -280,18 +280,18 @@ public class FactionManager : MonoBehaviour {
         }
         return false;
     }
-    /*
-     Can a quest type be accepted by characters from another faction.
-         */
-    public bool CanQuestBeAcceptedOutsideFaction(QUEST_TYPE questType) {
-        for (int i = 0; i < questTypeSetups.Count; i++) {
-            QuestTypeSetup currSetup = questTypeSetups[i];
-            if (currSetup.questType == questType) {
-                return currSetup.canBeAcceptedOutsideFaction;
-            }
-        }
-        return false;
-    }
+    ///*
+    // Can a quest type be accepted by characters from another faction.
+    //     */
+    //public bool CanQuestBeAcceptedOutsideFaction(QUEST_TYPE questType) {
+    //    for (int i = 0; i < questTypeSetups.Count; i++) {
+    //        QuestTypeSetup currSetup = questTypeSetups[i];
+    //        if (currSetup.questType == questType) {
+    //            return currSetup.canBeAcceptedOutsideFaction;
+    //        }
+    //    }
+    //    return false;
+    //}
     public QuestTypeSetup GetQuestTypeSetup(QUEST_TYPE questType) {
         for (int i = 0; i < questTypeSetups.Count; i++) {
             QuestTypeSetup currSetup = questTypeSetups[i];

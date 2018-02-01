@@ -11,8 +11,8 @@ namespace ECS {
 		[SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
-        private CharacterType _characterType; //Base Character Type(For Traits)
-		private List<Trait>	_traits;
+        [System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
+        [System.NonSerialized] private List<Trait>	_traits;
         private Dictionary<Character, Relationship> _relationships;
 
 		//Stats
@@ -509,15 +509,14 @@ namespace ECS {
 					PrisonerDeath ();
 				}
 				if(this.currLocation.landmarkOnTile != null){
-					this.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
+					this.currLocation.landmarkOnTile.AddHistory(this._name + " died.");
 				}
-				this.currLocation.RemoveCharacterOnTile (this);
+				this.currLocation.RemoveCharacterOnTile(this);
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
             }
 		}
-
         private void CheckForInternationalIncident() {
             //a non-Adventurer character from a tribe dies while in a region owned by another tribe
 			if(this._role == null){

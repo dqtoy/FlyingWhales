@@ -65,7 +65,7 @@ public class Party: IEncounterable {
         _partyMembers = new List<ECS.Character>();
         _partyMembersOnTheWay = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character> ();
-        Debug.Log(partyLeader.name + " has created " + _name);
+        //Debug.Log(partyLeader.name + " has created " + _name);
 		partyLeader.currLocation.AddCharacterOnTile (this);
 
         AddPartyMember(_partyLeader);
@@ -420,6 +420,14 @@ public class Party: IEncounterable {
     #endregion
 
     #region Utilities
+    public void GoBackToQuestGiver(TASK_RESULT taskResult) {
+        if(currentTask == null || currentTask.taskType != TASK_TYPE.QUEST) {
+            throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
+        }
+        Quest currentQuest = (Quest)currentTask;
+        _avatar.SetTarget(currentQuest.postedAt.location);
+        _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => currentQuest.TurnInQuest(taskResult));
+    }
     public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
         //check first if the character is already at a non hostile settlement
         if (currLocation.landmarkOnTile != null && currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY

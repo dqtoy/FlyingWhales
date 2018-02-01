@@ -6,8 +6,9 @@ using System;
 
 public class CharacterAvatar : PooledObject{
 
-    public delegate void OnPathFinished();
-    public OnPathFinished onPathFinished;
+    //public delegate void OnPathFinished();
+    //public OnPathFinished onPathFinished;
+    private Action onPathFinished;
 
 	[SerializeField] protected SmoothMovement smoothMovement;
 	[SerializeField] protected DIRECTION direction;
@@ -64,13 +65,16 @@ public class CharacterAvatar : PooledObject{
     internal void SetTarget(HexTile target) {
         targetLocation = target;
     }
-    internal void StartPath(PATHFINDING_MODE pathFindingMode, OnPathFinished actionOnPathFinished = null) {
+    internal void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null) {
+        if (smoothMovement.isMoving) {
+            smoothMovement.ForceStopMovement();
+        }
         if (this.targetLocation != null) {
             SetHasArrivedState(false);
-            onPathFinished = null;
-            if(actionOnPathFinished != null) {
-                onPathFinished += actionOnPathFinished;
-            }
+            onPathFinished = actionOnPathFinished;
+            //if(actionOnPathFinished != null) {
+            //    onPathFinished += actionOnPathFinished;
+            //}
             Faction faction = null;
             if(_characters[0].party == null) {
                 faction = _characters[0].faction;

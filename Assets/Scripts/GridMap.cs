@@ -360,11 +360,11 @@ public class GridMap : MonoBehaviour {
             Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
         }
         Dictionary<LANDMARK_TYPE, int> createdLandmarksDict = new Dictionary<LANDMARK_TYPE, int>();
-        int numOfLandmarksToCreate = Mathf.FloorToInt(6 * (float)allRegions.Count); //Increase Landmarks to 4 times the number of regions
+        int numOfLandmarksToCreate = Mathf.FloorToInt(6 * (float)allRegions.Count); //Increase Landmarks to 6 times the number of regions
         Debug.Log("Creating " + numOfLandmarksToCreate.ToString() + " landmarks..... ");
         int createdLandmarks = 0;
 
-        for (int i = 0; i < numOfLandmarksToCreate; i++) {
+        while(createdLandmarks != numOfLandmarksToCreate) {
             if(elligibleTiles.Count <= 0) {
                 Debug.Log("Only created " + createdLandmarks.ToString() + " landmarks");
                 return;
@@ -383,11 +383,12 @@ public class GridMap : MonoBehaviour {
                 } else {
                     createdLandmarksDict.Add(createdLandmarkType, 1);
                 }
+                createdLandmarks++;
             }
             if(createdRoad != null) {
                 Utilities.ListRemoveRange(elligibleTiles, createdRoad);
             }
-            createdLandmarks++;
+            
         }
         Debug.Log("Created " + createdLandmarks.ToString() + " landmarks");
 

@@ -122,8 +122,9 @@ public class SettlementInfoUI : UIMenu {
 		text += "\n[b]Characters: [/b] ";
 		if (currentlyShowingSettlement.location.charactersOnTile.Count > 0) {
 			for (int i = 0; i < currentlyShowingSettlement.location.charactersOnTile.Count; i++) {
-				if (currentlyShowingSettlement.location.charactersOnTile[i] is ECS.Character) {
-					ECS.Character currChar = (ECS.Character)currentlyShowingSettlement.location.charactersOnTile [i];
+                object currObject = currentlyShowingSettlement.location.charactersOnTile[i];
+                if (currObject is ECS.Character) {
+					ECS.Character currChar = (ECS.Character)currObject;
 					text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 					if (currChar.currentTask != null) {
 						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
@@ -133,8 +134,8 @@ public class SettlementInfoUI : UIMenu {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";
 						}
 					}
-				} else if (currentlyShowingSettlement.location.charactersOnTile[i] is Party) {
-					Party currParty = (Party)currentlyShowingSettlement.location.charactersOnTile [i];
+				} else if (currObject is Party && !(currObject is DungeonParty)) {
+					Party currParty = (Party)currObject;
 					text += "\n" + "[url=" + currParty.partyLeader.id + "_party]" + currParty.name + "[/url]" + " - " + currParty.currentTask.ToString ();
 				}
 			}

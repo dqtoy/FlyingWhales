@@ -147,14 +147,16 @@ public class Quest : CharacterTask{
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.SUCCESS);
 		}
-        RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
+        //RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
         GiveRewards();
+        _assignedParty.OnReachNonHostileSettlementAfterQuest();
     }
     protected virtual void QuestFail() {
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.FAIL);
 		}
-		RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
+        //RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
+        _assignedParty.OnReachNonHostileSettlementAfterQuest();
     }
     protected virtual void QuestCancel() {
         _taskResult = TASK_RESULT.CANCEL;
@@ -162,8 +164,9 @@ public class Quest : CharacterTask{
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.CANCEL);
 		}
-		//RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
-		ResetQuestValues ();
+        //RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
+        _assignedParty.OnReachNonHostileSettlementAfterQuest();
+        ResetQuestValues ();
     }
 	//Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
 	protected virtual void ResetQuestValues(){
@@ -297,6 +300,13 @@ public class Quest : CharacterTask{
             _currentAction.DoAction(_assignedParty.partyLeader);
         }
     }
+    /*
+     Turn in this quest, This will end this quest and give the rewards to
+     the characters if any.
+         */
+    public void TurnInQuest(TASK_RESULT taskResult) {
+        EndTask(taskResult);
+    }
     #endregion
 
     #region Party
@@ -338,9 +348,14 @@ public class Quest : CharacterTask{
          */
 	protected void RetaskParty(Action action) {
         //Make party go to nearest non hostile settlement after a quest
-        //_assignedParty.SetCurrentQuest(null);
-        //_assignedParty.onPartyFull = null;
 		_assignedParty.GoToNearestNonHostileSettlement(() => action());
+    }
+    /*
+     Make the assigned party go back to the settlement that
+     gave the quest.
+         */
+    protected void GoBackToQuestGiver(TASK_RESULT taskResult) {
+        _assignedParty.GoBackToQuestGiver(taskResult);
     }
     internal void CheckPartyMembers() {
         if (_assignedParty.isFull) { //if the assigned party is full

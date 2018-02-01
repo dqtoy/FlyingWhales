@@ -80,16 +80,17 @@ public class CharacterInfoUI : UIMenu {
 		}
 
 		text += "\nVillage: " + "[url=" + currentlyShowingCharacter.home.id + "_landmark]" + currentlyShowingCharacter.home.location.tileName + "[/url]";
-
-//		text += "\n[b]Skills:[/b] ";
-//		if(currentlyShowingCharacter.skills.Count > 0){
-//			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
-//				ECS.Skill skill = currentlyShowingCharacter.skills [i];
-//				text += "\n  - " + skill.skillName;
-//			}
-//		}else{
-//			text += "NONE";
-//		}
+        text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
+        text += "\nPrestige: " + currentlyShowingCharacter.prestige.ToString();
+        //		text += "\n[b]Skills:[/b] ";
+        //		if(currentlyShowingCharacter.skills.Count > 0){
+        //			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
+        //				ECS.Skill skill = currentlyShowingCharacter.skills [i];
+        //				text += "\n  - " + skill.skillName;
+        //			}
+        //		}else{
+        //			text += "NONE";
+        //		}
 
         generalInfoLbl.text = text;
 //        infoScrollView.ResetPosition();

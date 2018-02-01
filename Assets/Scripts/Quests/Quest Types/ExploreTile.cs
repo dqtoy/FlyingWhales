@@ -32,22 +32,24 @@ public class ExploreTile : Quest {
         //Enqueue all actions
         _questLine.Enqueue(goToLandmark);
     }
-    protected override void QuestCancel() {
-        _taskResult = TASK_RESULT.CANCEL;
-        _assignedParty.partyLeader.DestroyAvatar();
-        PartyManager.Instance.RemoveParty(_assignedParty);
-        CheckForInternationalIncident();
-        ResetQuestValues();
-    }
+    //protected override void QuestCancel() {
+    //    _taskResult = TASK_RESULT.CANCEL;
+    //    _assignedParty.partyLeader.DestroyAvatar();
+    //    PartyManager.Instance.RemoveParty(_assignedParty);
+    //    CheckForInternationalIncident();
+    //    ResetQuestValues();
+    //}
 	internal override void Result(bool isSuccess){
 		if (isSuccess) {
 			_landmarkToExplore.SetExploredState(true);
-			EndQuest(TASK_RESULT.SUCCESS);
+			//EndQuest(TASK_RESULT.SUCCESS);
 			AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
+            GoBackToQuestGiver(TASK_RESULT.SUCCESS);
 		} else {
 			AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
-			QuestCancel();
-		}
+            //QuestCancel();
+            GoBackToQuestGiver(TASK_RESULT.CANCEL);
+        }
 	}
     #endregion
 
