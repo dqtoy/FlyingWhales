@@ -146,7 +146,7 @@ public class Party: IEncounterable, ICombatInitializer {
         }
         if (!forDeath) {
 			member.AddHistory ("Left party: " + this._name + ".");
-			member.currLocation.AddCharacterOnTile(member, false);
+			this._currLocation.AddCharacterOnTile(member, false);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 ((Quest)currentTask).AddNewLog(member.name + " has left the party");

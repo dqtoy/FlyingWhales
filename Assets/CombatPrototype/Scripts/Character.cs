@@ -997,6 +997,10 @@ namespace ECS {
 			_characterColor = CombatPrototypeManager.Instance.UseRandomCharacterColor ();
 			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
 		}
+		public void SetCharacterColor(Color color){
+			_characterColor = color;
+			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
+		}
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
 			switch (role) {

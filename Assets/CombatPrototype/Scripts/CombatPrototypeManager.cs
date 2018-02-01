@@ -57,7 +57,9 @@ namespace ECS {
 				unusedColors.Remove (chosenColor);
 				usedColors.Add (chosenColor);
 			}else{
-				chosenColor = characterColors [UnityEngine.Random.Range (0, characterColors.Length)];
+				if(characterColors != null && characterColors.Length > 0){
+					chosenColor = characterColors [UnityEngine.Random.Range (0, characterColors.Length)];
+				}
 			}
 			return chosenColor;
 		}

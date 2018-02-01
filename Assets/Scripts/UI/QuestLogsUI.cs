@@ -28,10 +28,12 @@ public class QuestLogsUI : UIMenu {
 
     public void UpdateQuestLogs() {
         string text = string.Empty;
+		text += "[000000]";
         for (int i = 0; i < currentlyShowingQuest.taskLogs.Count; i++) {
             string currLog = currentlyShowingQuest.taskLogs[i];
             text +=  "- " + currLog + "\n";
         }
+		text += "[-]";
         questLogsLbl.text = text;
         logsScrollView.UpdatePosition();
     }
