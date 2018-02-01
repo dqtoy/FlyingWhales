@@ -135,7 +135,7 @@ public class Region {
 
         //Generate population growth
 //        int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
-		_populationGrowth = UnityEngine.Random.Range(0.1f, 0.5f) / 100f;
+		_populationGrowth = UnityEngine.Random.Range(0.3f, 1.5f) / 100f;
     }
 
     #region Center Of Mass Functions
