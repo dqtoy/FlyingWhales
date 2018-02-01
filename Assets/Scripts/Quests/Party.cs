@@ -267,7 +267,7 @@ public class Party: IEncounterable, ICombatInitializer {
         bool isPartyComplete = true;
         for (int i = 0; i < _partyMembers.Count; i++) {
             ECS.Character currMember = _partyMembers[i];
-            if (currMember.currLocation.id != _partyLeader.currLocation.id) {
+			if (currMember.currLocation.id != this._currLocation.id) {
                 isPartyComplete = false;
                 break;
             }

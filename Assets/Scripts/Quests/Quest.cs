@@ -391,7 +391,7 @@ public class Quest : CharacterTask{
     protected void CheckForInternationalIncident() {
         //Check first if this quest is targetting any faction, and if it is harmful
         if(_targetFaction != null && FactionManager.Instance.IsQuestHarmful(this.questType)) {
-            Faction currLocationOwner = _assignedParty.partyLeader.currLocation.region.owner;
+            Faction currLocationOwner = _assignedParty.currLocation.region.owner;
             if (currLocationOwner != null && currLocationOwner.id != _assignedParty.partyLeader.faction.id) { //the party is at a region not owned by his/her faction
                 if (currLocationOwner.id == _targetFaction.id) {//the party is at a region owned by his/her target faction
                     if (_assignedParty.partyLeader.faction != null) {
