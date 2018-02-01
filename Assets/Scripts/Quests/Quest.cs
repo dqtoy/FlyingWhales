@@ -147,7 +147,8 @@ public class Quest : CharacterTask{
 		if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.SUCCESS);
 		}
-		RetaskParty (_assignedParty.OnReachNonHostileSettlementAfterQuest);
+        RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
+        GiveRewards();
     }
     protected virtual void QuestFail() {
 		if (_currentAction != null) {
@@ -187,7 +188,19 @@ public class Quest : CharacterTask{
             QuestTypeSetup qts = FactionManager.Instance.GetQuestTypeSetup(this.questType);
             if(qts != null) {
                 QuestReward questReward = qts.questRewards;
-                //TODO: Give rewards to the characters
+                //Give rewards to the characters
+                for (int i = 0; i < _assignedParty.partyMembers.Count; i++) {
+                    ECS.Character currMember = _assignedParty.partyMembers[i];
+                    if (_assignedParty.IsCharacterLeaderOfParty(currMember)) {
+                        //CurrMember is Party Leader
+                        currMember.AdjustGold(questReward.leaderGoldReward);
+                        currMember.AdjustGold(questReward.leaderPrestigeReward);
+                    } else {
+                        //CurrMember is a member
+                        currMember.AdjustGold(questReward.membersGoldReward);
+                        currMember.AdjustGold(questReward.membersPrestigeReward);
+                    }
+                }
             }
         }
     }

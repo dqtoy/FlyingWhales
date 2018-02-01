@@ -61,6 +61,8 @@ namespace ECS {
 		internal Dictionary<int, CombatPrototype> combatHistory;
 
 		private float _equippedWeaponPower;
+        private int _gold;
+        private int _prestige;
 
         //For Testing
         private Quest forceQuestToAccept;
@@ -198,6 +200,12 @@ namespace ECS {
 		internal object isPrisonerOf{
 			get { return this._isPrisonerOf; }
 		}
+        internal int gold {
+            get { return _gold; }
+        }
+        internal int prestige {
+            get { return _prestige; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -850,6 +858,14 @@ namespace ECS {
                 }
             }
             return false;
+        }
+        internal void AdjustGold(int amount) {
+            _gold += amount;
+            _gold = Mathf.Max(0, _gold);
+        }
+        internal void AdjustPrestige(int amount) {
+            _prestige += amount;
+            _prestige = Mathf.Max(0, _prestige);
         }
         #endregion
 

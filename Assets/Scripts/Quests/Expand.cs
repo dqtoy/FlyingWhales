@@ -82,11 +82,12 @@ public class Expand : Quest {
 		return false;
 	}
 	protected override void QuestSuccess() {
-		RetaskParty (_assignedParty.JustDisbandParty);
+		RetaskParty(_assignedParty.JustDisbandParty);
+        GiveRewards();
 	}
 	protected override void QuestFail() {
         AddNewLog("The expansion failed!");
-        RetaskParty (_assignedParty.JustDisbandParty);
+        RetaskParty(_assignedParty.JustDisbandParty);
 	}
 	#endregion
 
