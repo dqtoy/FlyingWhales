@@ -96,7 +96,14 @@ public class GridMap : MonoBehaviour {
 
         outerGridList = new List<HexTile>();
         outerGrid = new HexTile[newWidth, newHeight];
-
+        if(width % 2 != 0) {
+            //odd
+            newX += xOffset / 2f;
+        }
+        if (height % 2 != 0) {
+            //odd
+            newY += yOffset / 2f;
+        }
         _borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {
