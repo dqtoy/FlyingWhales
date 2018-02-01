@@ -22,6 +22,7 @@ public class EncounterParty : MonoBehaviour {
 		List<ECS.Character> characters = new List<ECS.Character> ();
 		for (int i = 0; i < _characterSetups.Count; i++) {
 			ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.NONE, _characterSetups[i]);
+			newCharacter.SetCharacterColor (Color.red);
 			if(originLandmark != null){
 				newCharacter.SetHome (originLandmark);
 				originLandmark.location.AddCharacterOnTile(newCharacter, false);

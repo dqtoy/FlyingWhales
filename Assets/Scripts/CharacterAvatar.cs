@@ -41,7 +41,7 @@ public class CharacterAvatar : PooledObject{
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
-        _currLocation = party.partyLeader.currLocation;
+        _currLocation = party.currLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
     }
 

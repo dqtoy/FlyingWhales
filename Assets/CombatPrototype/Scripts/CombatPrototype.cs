@@ -191,13 +191,13 @@ namespace ECS{
 				winningSide = SIDES.A;
 				losingSide = SIDES.B;
 				if(sideBParty != null){
-					sideBParty.SetIsCurrentTaskCancelled (true);
+					sideBParty.SetIsDefeated (true);
 				}
 			}else{
 				winningSide = SIDES.B;
 				losingSide = SIDES.A;
 				if(sideAParty != null){
-					sideAParty.SetIsCurrentTaskCancelled (true);
+					sideAParty.SetIsDefeated (true);
 				}
 			}
             AddCombatLog("Combat Ends", SIDES.A);
@@ -784,6 +784,7 @@ namespace ECS{
 			//TODO: ECS.Character flees
 			RemoveCharacter(targetCharacter);
 			fledCharacters.Add (targetCharacter);
+			targetCharacter.SetIsDefeated (true);
 			AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
@@ -815,12 +816,14 @@ namespace ECS{
 		internal void CharacterDeath(ECS.Character character){
 			RemoveCharacter (character);
 			deadCharacters.Add (character);
+			character.SetIsDefeated (true);
 			AddCombatLog(character.name + " died horribly!", character.currentSide);
 		}
 
 		internal void CharacterFainted(ECS.Character character){
 			RemoveCharacter (character);
 			faintedCharacters.Add (character);
+			character.SetIsDefeated (true);
 			AddCombatLog(character.name + " fainted!", character.currentSide);
 		}
 

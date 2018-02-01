@@ -1938,6 +1938,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal void StartCombatInTile(){
 		if(!CombatInTile()){
 			this._currentCombat = null;
+			for (int i = 0; i < _charactersOnTile.Count; i++) {
+				_charactersOnTile [i].SetIsDefeated (false);
+			}
 		}
 	}
 	internal bool CombatInTile(){
@@ -1951,6 +1954,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer){
 		for (int i = 0; i < _charactersOnTile.Count; i++) {
 			if(_charactersOnTile[i] != combatInitializer){
+				if(_charactersOnTile[i] is Party){
+					if(((Party)_charactersOnTile[i]).isDefeated){
+						continue;
+					}
+				}
 				if(combatInitializer.CanBattleThis(_charactersOnTile[i])){
 					return _charactersOnTile [i];
 				}

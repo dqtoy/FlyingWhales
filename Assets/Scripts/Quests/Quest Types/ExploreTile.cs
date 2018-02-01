@@ -46,20 +46,14 @@ public class ExploreTile : Quest {
     #endregion
 
     private void TriggerRandomResult() {
-		if(!_assignedParty.isCurrentTaskCancelled){
+		if(!_assignedParty.isDefeated){
 			if(_assignedParty.currLocation.currentCombat == null){
 				StartExploration();
 			}else{
 				ScheduleQuestAction(1, () => TriggerRandomResult());
 			}
-		}else{
-			if(_assignedParty.partyMembers.Count > 0){
-                //Go home and cancel quest
-                GoBackToQuestGiver(TASK_RESULT.CANCEL);
-            }
 		}
-
-    }
+	}
 	private void StartExploration(){
 		if(_landmarkToExplore.landmarkEncounterable != null){
 			AddNewLog("The party encounters a " + _landmarkToExplore.landmarkEncounterable.encounterName);

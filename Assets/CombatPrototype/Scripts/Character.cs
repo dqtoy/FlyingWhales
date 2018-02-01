@@ -49,6 +49,7 @@ namespace ECS {
 		private bool _isDead;
 		private bool _isFainted;
 		private bool _isPrisoner;
+		private bool _isDefeated;
 		private object _isPrisonerOf;
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
@@ -205,7 +206,10 @@ namespace ECS {
         }
         internal int prestige {
             get { return _prestige; }
-        }
+		}
+		public bool isDefeated {
+			get { return _isDefeated; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -219,6 +223,7 @@ namespace ECS {
 			_isDead = false;
 			_isFainted = false;
 			_isPrisoner = false;
+			_isDefeated = false;
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 
@@ -992,6 +997,10 @@ namespace ECS {
 			_characterColor = CombatPrototypeManager.Instance.UseRandomCharacterColor ();
 			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
 		}
+		public void SetCharacterColor(Color color){
+			_characterColor = color;
+			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
+		}
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
 			switch (role) {
@@ -1565,6 +1574,9 @@ namespace ECS {
 		}
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
 
+		}
+		public void SetIsDefeated(bool state){
+			_isDefeated = state;
 		}
 		#endregion
     }

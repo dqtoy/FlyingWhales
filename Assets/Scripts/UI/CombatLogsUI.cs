@@ -24,10 +24,12 @@ public class CombatLogsUI : UIMenu {
 
 	public void UpdateCombatLogs() {
         string text = string.Empty;
+		text += "[000000]";
         for (int i = 0; i < currentlyShowingCombat.resultsLog.Count; i++) {
 			string currLog = currentlyShowingCombat.resultsLog[i];
             text +=  "- " + currLog + "\n";
         }
+		text += "[-]";
 		combatLogsLbl.text = text;
         logsScrollView.UpdatePosition();
     }

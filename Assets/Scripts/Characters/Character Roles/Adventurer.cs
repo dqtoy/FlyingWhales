@@ -55,7 +55,7 @@ public class Adventurer : CharacterRole {
 			return 0; //if already in a party
 		}
 		int weight = 0;
-		if(joinParty.partyToJoin.partyLeader.currLocation.id == _character.currLocation.id) {
+		if(joinParty.partyToJoin.currLocation.id == _character.currLocation.id) {
 			//party leader and this character are at the same tile
 			return 200;
 		} else {
