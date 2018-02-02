@@ -109,7 +109,7 @@ public class InternalQuestManager : TaskCreator {
                 if (currConnection is BaseLandmark) {
                     BaseLandmark currLandmark = (BaseLandmark)currConnection;
                     if (currLandmark.isHidden && !currLandmark.isExplored) {
-                        if (GetQuestsOfType(QUEST_TYPE.EXPLORE_TILE).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
+                        if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPLORE_TILE).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
                             ExploreTile newExploreTileQuest = new ExploreTile(this, currLandmark);
                             newExploreTileQuest.SetSettlement(currSettlement);
                             questDict.AddElement(newExploreTileQuest, GetExploreLandmarkWeight(currLandmark));

@@ -187,5 +187,15 @@ public class Settlement : BaseLandmark {
 		}
 		return null;
 	}
+    internal List<Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
+        List<Quest> quests = new List<Quest>();
+        for (int i = 0; i < _questBoard.Count; i++) {
+            Quest currQuest = _questBoard[i];
+            if(currQuest.questType == questType) {
+                quests.Add(currQuest);
+            }
+        }
+        return quests;
+    }
     #endregion
 }
