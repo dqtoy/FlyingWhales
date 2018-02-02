@@ -47,13 +47,13 @@ public class PartyInfoUI : UIMenu {
 		text += "\n[b]IsDisbanded:[/b] " + currentlyShowingParty.isDisbanded.ToString ();
 		text += "\n[b]IsOpen:[/b] " + currentlyShowingParty.isOpen.ToString ();
 		text += "\n[b]IsFull:[/b] " + currentlyShowingParty.isFull.ToString ();
-		text += "\n[b]Party Leader:[/b] " + "[url=" + currentlyShowingParty.partyLeader.id + "_character]" + currentlyShowingParty.partyLeader.name + "[/url]";
+		text += "\n[b]Party Leader:[/b] " + currentlyShowingParty.partyLeader.urlName;
 		text += "\n[b]Members:[/b] ";
 		if((currentlyShowingParty.partyMembers.Count - 1) > 0){
 			for (int i = 0; i < currentlyShowingParty.partyMembers.Count; i++) {
 				if(currentlyShowingParty.partyMembers[i].id != currentlyShowingParty.partyLeader.id){
 					ECS.Character member = currentlyShowingParty.partyMembers [i];
-					text += "\n" + "[url=" + member.id + "_character]" + member.name + "[/url]";
+					text += "\n" + member.urlName;
 				}
 			}
 		} else {
@@ -64,7 +64,7 @@ public class PartyInfoUI : UIMenu {
 		if(currentlyShowingParty.prisoners.Count > 0){
 			for (int i = 0; i < currentlyShowingParty.prisoners.Count; i++) {
 				ECS.Character prisoner = currentlyShowingParty.prisoners [i];
-				text += "\n" + "[url=" + prisoner.id + "_prisoner]" + prisoner.name + "[/url]";
+				text += "\n" + prisoner.prisonerName;
 			}
 		} else {
 			text += "NONE";
@@ -74,7 +74,7 @@ public class PartyInfoUI : UIMenu {
 		if (currentlyShowingParty.currentTask != null) {
 			if (currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST) {
 				Quest currQuest = (Quest)currentlyShowingParty.currentTask;
-				text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString () + "[/url])";
+				text += " (" + currQuest.urlName + ")";
 			} else {
 				text += " (" + currentlyShowingParty.currentTask.taskType.ToString () + ")";
 			}
@@ -84,7 +84,9 @@ public class PartyInfoUI : UIMenu {
         partyInfoLbl.text = text;
         infoScrollView.ResetPosition();
     }
-
+	public void CenterCameraOnParty() {
+		CameraMove.Instance.CenterCameraOn(currentlyShowingParty.currLocation.gameObject);
+	}
 	public void OnClickCloseBtn(){
 //		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
 		HidePartyInfo ();

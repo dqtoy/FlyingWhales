@@ -179,5 +179,13 @@ public class Settlement : BaseLandmark {
     internal void RemoveQuestFromBoard(Quest quest) {
         _questBoard.Remove(quest);
     }
+	internal Quest GetQuestByID(int id){
+		for (int i = 0; i < _questBoard.Count; i++) {
+			if(_questBoard[i].id == id){
+				return _questBoard [i];
+			}
+		}
+		return null;
+	}
     #endregion
 }

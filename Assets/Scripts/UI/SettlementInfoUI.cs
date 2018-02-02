@@ -54,14 +54,14 @@ public class SettlementInfoUI : UIMenu {
 		if (currentlyShowingSettlement.landmarkName != string.Empty) {
 			text += "[b]Name:[/b] " + currentlyShowingSettlement.landmarkName + "\n";
 		}
-		text += "[b]Location:[/b] " + "[url=" + currentlyShowingSettlement.location.id + "_hextile]" + currentlyShowingSettlement.location.tileName + "[/url]";
+		text += "[b]Location:[/b] " + currentlyShowingSettlement.location.urlName;
 		text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingSettlement.canBeOccupied.ToString();
 		text += "\n[b]Is Occupied:[/b] " + currentlyShowingSettlement.isOccupied.ToString();
 		text += "\n[b]Is Hidden:[/b] " + currentlyShowingSettlement.isHidden.ToString();
 		text += "\n[b]Is Explored:[/b] " + currentlyShowingSettlement.isExplored.ToString();
 
         if (currentlyShowingSettlement.owner != null) {
-            text += "\n[b]Owner:[/b] " + "[url=" + currentlyShowingSettlement.owner.id + "_faction]" + currentlyShowingSettlement.owner.name + "[/url]" + "/" + currentlyShowingSettlement.owner.race.ToString();
+            text += "\n[b]Owner:[/b] " + currentlyShowingSettlement.owner.urlName + "/" + currentlyShowingSettlement.owner.race.ToString();
             text += "\n[b]Total Population: [/b] " + currentlyShowingSettlement.totalPopulation.ToString();
             text += "\n[b]Civilian Population: [/b] " + currentlyShowingSettlement.civiliansWithReserved.ToString();
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingSettlement.totalPopulation * currentlyShowingSettlement.location.region.populationGrowth).ToString();
@@ -72,14 +72,15 @@ public class SettlementInfoUI : UIMenu {
                 if (settlement.questBoard.Count > 0) {
                     for (int i = 0; i < settlement.questBoard.Count; i++) {
                         Quest currQuest = settlement.questBoard[i];
-                        text += "\n" + "[url=" + currQuest.id + "_quest]" + currQuest.questType.ToString();
+                        text += "\n" + currQuest.urlName;
                         if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
-                            text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name + "[/url]";
+                            text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name;
                         } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
-                            text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name + "[/url]";
-                        } else {
-                            text += "[/url]";
-                        }
+                            text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name;
+                        } 
+//						else {
+//                            text += "[/url]";
+//                        }
                         if (currQuest.isAccepted) {
                             text += " - A";
                             text += " (" + currQuest.assignedParty.name + ")";
@@ -125,18 +126,18 @@ public class SettlementInfoUI : UIMenu {
                 object currObject = currentlyShowingSettlement.location.charactersOnTile[i];
                 if (currObject is ECS.Character) {
 					ECS.Character currChar = (ECS.Character)currObject;
-					text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
+					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 					if (currChar.currentTask != null) {
 						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
 							Quest currQuest = (Quest)currChar.currentTask;
-							text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString () + "[/url])";
+							text += " (" + currQuest.urlName + ")";
 						} else {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";
 						}
 					}
 				} else if (currentlyShowingSettlement.location.charactersOnTile[i] is Party) {
 					Party currParty = (Party)currentlyShowingSettlement.location.charactersOnTile [i];
-					text += "\n" + "[url=" + currParty.partyLeader.id + "_party]" + currParty.name + "[/url]" + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
+					text += "\n" + currParty.urlName + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
 				}
 			}
 		} else {
@@ -164,11 +165,11 @@ public class SettlementInfoUI : UIMenu {
 			if (PartyManager.Instance.allParties.Count > 0) {
 				for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
 					Party currParty = PartyManager.Instance.allParties[i];
-					text += "\n" + currParty.name + " O: " + currParty.isOpen + " F: " + currParty.isFull;
+					text += "\n" + currParty.urlName + " O: " + currParty.isOpen + " F: " + currParty.isFull;
 					if(currParty.currentTask != null) {
                         if (currParty.currentTask.taskType == TASK_TYPE.QUEST) {
                             Quest currQuest = (Quest)currParty.currentTask;
-                            text += " ([url=" + currQuest.id + "_quest]" + currQuest.questType.ToString() + "[/url])";
+                            text += " (" + currQuest.urlName + ")";
                             if (currQuest.isDone) {
                                 text += "(Done)";
                             } else {
@@ -191,14 +192,14 @@ public class SettlementInfoUI : UIMenu {
                             }
                         }
 					}
-					text += "\n     Leader: [url=" + currParty.partyLeader.id + "_character]" + currParty.partyLeader.name + "[/url]";
+					text += "\n     Leader: " + currParty.partyLeader.urlName;
                     if(currParty.partyMembers.Count > 2) {
                         text += "\n          Members:";
                     }
 					for (int j = 0; j < currParty.partyMembers.Count; j++) {
 						ECS.Character currMember = currParty.partyMembers[j];
 						if(currMember.id != currParty.partyLeader.id) {
-							text += "\n          [url=" + currMember.id + "_character]" + currMember.name + "[/url]";
+							text += "\n          " + currMember.urlName;
 						}
 					}
                     text += "\n";

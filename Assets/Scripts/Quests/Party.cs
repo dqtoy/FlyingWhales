@@ -35,6 +35,9 @@ public class Party: IEncounterable, ICombatInitializer {
     public string name {
         get { return _name; }
     }
+	public string urlName {
+		get { return "[url=" + _partyLeader.id.ToString() + "_party]" + _name + "[/url]"; }
+	}
     public bool isFull {
         get { return partyMembers.Count + _partyMembersOnTheWay.Count >= MAX_PARTY_MEMBERS; }
     }

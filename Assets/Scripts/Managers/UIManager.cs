@@ -3264,6 +3264,9 @@ public class UIManager : MonoBehaviour {
         if (hexTileInfoUI.isShowing) {
             hexTileInfoUI.HideHexTileInfo();
         }
+		if(partyinfoUI.isShowing){
+			partyinfoUI.HidePartyInfo ();
+		}
         questInfoUI.ShowMenu();
         questInfoUI.SetQuestAsShowing(quest);
         //		playerActionsUI.ShowPlayerActionsUI ();

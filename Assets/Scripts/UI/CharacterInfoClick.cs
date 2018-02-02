@@ -10,7 +10,7 @@ public class CharacterInfoClick : MonoBehaviour {
 			int idToUse = int.Parse (id);
 			//Debug.Log("Clicked " + url);
 			if(url.Contains("_faction")){
-				Faction faction = FactionManager.Instance.GetFactionBasedOnID (idToUse);
+				Faction faction = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction;
 				if(faction != null){
 					UIManager.Instance.ShowFactionInfo (faction);
 				}

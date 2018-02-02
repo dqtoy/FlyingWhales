@@ -8,7 +8,11 @@ public class QuestInfoUI : UIMenu {
     [SerializeField] private UILabel questInfoLbl;
     [SerializeField] private UIButton showQuestLogsBtn;
 
-    private Quest currentlyShowingQuest;
+    private Quest _currentlyShowingQuest;
+
+	public Quest currentlyShowingQuest{
+		get { return _currentlyShowingQuest; }
+	}
 
     public void ShowMenu() {
         isShowing = true;
@@ -23,10 +27,10 @@ public class QuestInfoUI : UIMenu {
     }
 
     public void SetQuestAsShowing(Quest quest) {
-        if(currentlyShowingQuest != null) {
-            currentlyShowingQuest.onTaskInfoChanged = null;
+		if(_currentlyShowingQuest != null) {
+			_currentlyShowingQuest.onTaskInfoChanged = null;
         }
-        currentlyShowingQuest = quest;
+		_currentlyShowingQuest = quest;
         quest.onTaskInfoChanged = UpdateQuestInfo;
         if (isShowing) {
             UpdateQuestInfo();
@@ -34,28 +38,28 @@ public class QuestInfoUI : UIMenu {
     }
 
     public void UpdateQuestInfo() {
-        if (currentlyShowingQuest == null) {
+		if (_currentlyShowingQuest == null) {
             return;
         }
         string text = string.Empty;
-        text += "[b]Quest ID:[/b] " + currentlyShowingQuest.id.ToString();
-        text += "\n[b]Quest Type:[/b] " + currentlyShowingQuest.questType.ToString();
-        text += "\n[b]Done:[/b] " + currentlyShowingQuest.isDone.ToString();
-        text += "\n[b]Is Waiting:[/b] " + currentlyShowingQuest.isWaiting.ToString();
-        text += "\n[b]Is Expired:[/b] " + currentlyShowingQuest.isExpired.ToString();
-        if (currentlyShowingQuest.assignedParty == null) {
+		text += "[b]Quest ID:[/b] " + _currentlyShowingQuest.id.ToString();
+		text += "\n[b]Quest Type:[/b] " + _currentlyShowingQuest.questType.ToString();
+		text += "\n[b]Done:[/b] " + _currentlyShowingQuest.isDone.ToString();
+		text += "\n[b]Is Waiting:[/b] " + _currentlyShowingQuest.isWaiting.ToString();
+		text += "\n[b]Is Expired:[/b] " + _currentlyShowingQuest.isExpired.ToString();
+		if (_currentlyShowingQuest.assignedParty == null) {
             text += "\n[b]Assigned Party:[/b] NONE";
         } else {
-            text += "\n[b]Assigned Party:[/b] " + currentlyShowingQuest.assignedParty.name;
-            if(currentlyShowingQuest.currentAction == null) {
+			text += "\n[b]Assigned Party:[/b] " + _currentlyShowingQuest.assignedParty.urlName;
+			if(_currentlyShowingQuest.currentAction == null) {
                 text += "\n[b]Current Action:[/b] Forming Party";
             } else {
-                text += "\n[b]Current Action:[/b] " + currentlyShowingQuest.currentAction.ToString();
+				text += "\n[b]Current Action:[/b] " + _currentlyShowingQuest.currentAction.ToString();
             }
         }
         questInfoLbl.text = text;
 
-        if(currentlyShowingQuest.taskLogs.Count > 0) {
+		if(_currentlyShowingQuest.taskLogs.Count > 0) {
             //enable button
             showQuestLogsBtn.GetComponent<BoxCollider>().enabled = true;
             showQuestLogsBtn.SetState(UIButtonColor.State.Normal, true);
@@ -69,6 +73,6 @@ public class QuestInfoUI : UIMenu {
     }
 
     public void ShowQuestLogs() {
-        UIManager.Instance.ShowQuestLog(currentlyShowingQuest);
+		UIManager.Instance.ShowQuestLog(_currentlyShowingQuest);
     }
 }

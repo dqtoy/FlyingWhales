@@ -21,6 +21,8 @@ namespace ECS{
 		internal List<ECS.Character> fledCharacters;
 		internal List<ECS.Character> sideAPrisoners;
 		internal List<ECS.Character> sideBPrisoners;
+		internal ECS.Character[] characterSideACopy;
+		internal ECS.Character[] characterSideBCopy;
 
 		internal SIDES winningSide;
 		internal SIDES losingSide;
@@ -71,6 +73,7 @@ namespace ECS{
 		internal void AddCharacters(SIDES side, List<ECS.Character> characters) {
 			if (side == SIDES.A) {
 				this.charactersSideA.AddRange(characters);
+				this.characterSideACopy = this.charactersSideA.ToArray ();
 				if(characters[0].party != null){
 					sideAParty = characters [0].party;
 					sideAPrisoners = characters [0].party.prisoners;
@@ -81,6 +84,8 @@ namespace ECS{
 				}
 			} else {
 				this.charactersSideB.AddRange(characters);
+				this.characterSideBCopy = this.charactersSideB.ToArray ();
+
 				if(characters[0].party != null){
 					sideBParty = characters [0].party;
 					sideBPrisoners = characters [0].party.prisoners;
@@ -498,15 +503,15 @@ namespace ECS{
 		private void FailedSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: What happens when a skill has failed?
 			if(skill is FleeSkill){
-				AddCombatLog(sourceCharacter.name + " tried to flee but got tripped over and fell down!", sourceCharacter.currentSide);
+				AddCombatLog(sourceCharacter.coloredUrlName + " tried to flee but got tripped over and fell down!", sourceCharacter.currentSide);
 //				CounterAttack (targetCharacter);
 			}else if(skill is AttackSkill){
-				AddCombatLog (sourceCharacter.name + " tried to " + skill.skillName.ToLower() + " " + targetCharacter.name + " but missed!", sourceCharacter.currentSide);
+				AddCombatLog (sourceCharacter.coloredUrlName + " tried to " + skill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " but missed!", sourceCharacter.currentSide);
 			}else if(skill is HealSkill){
 				if(sourceCharacter == targetCharacter){
-					AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal himself/herself but it is already expired!", sourceCharacter.currentSide);
+					AddCombatLog (sourceCharacter.coloredUrlName + " tried to use " + skill.skillName.ToLower() + " to heal himself/herself but it is already expired!", sourceCharacter.currentSide);
 				}else{
-					AddCombatLog (sourceCharacter.name + " tried to use " + skill.skillName.ToLower() + " to heal " + targetCharacter.name + " but it is already expired!", sourceCharacter.currentSide);
+					AddCombatLog (sourceCharacter.coloredUrlName + " tried to use " + skill.skillName.ToLower() + " to heal " + targetCharacter.coloredUrlName + " but it is already expired!", sourceCharacter.currentSide);
 				}
 			}
 		}
@@ -533,7 +538,7 @@ namespace ECS{
 
 		private void CounterAttack(ECS.Character character){
 			//TODO: Counter attack
-			AddCombatLog (character.name + " counterattacked!", character.currentSide);
+			AddCombatLog (character.coloredUrlName + " counterattacked!", character.currentSide);
 		}
 
 		private void InstantDeath(ECS.Character character){
@@ -550,11 +555,11 @@ namespace ECS{
 			}else{
 				//Target character has defend successfully and will roll for counter attack
 				if(defendType == DEFEND_TYPE.DODGE){
-					AddCombatLog(targetCharacter.name + " dodged " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+					AddCombatLog(targetCharacter.coloredUrlName + " dodged " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
 				} else if(defendType == DEFEND_TYPE.BLOCK){
-					AddCombatLog(targetCharacter.name + " blocked " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+					AddCombatLog(targetCharacter.coloredUrlName + " blocked " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
 				} else if(defendType == DEFEND_TYPE.PARRY){
-					AddCombatLog(targetCharacter.name + " parried " + sourceCharacter.name + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+					AddCombatLog(targetCharacter.coloredUrlName + " parried " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
 				}
 				CounterAttack(targetCharacter);
 			}
@@ -571,7 +576,7 @@ namespace ECS{
 				return;
 			}
 			Armor armor = chosenBodyPart.GetArmor ();
-			log += sourceCharacter.name + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.name + " in the " + chosenBodyPart.name.ToLower();
+			log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
             if(weapon != null) {
 				weaponPower = weapon.weaponPower;
@@ -673,11 +678,11 @@ namespace ECS{
 						int logChance = Utilities.rng.Next (0, 2);
 						if(logChance == 0){
 							string[] predicate = new string[]{ "battered", "crippled", "mangled", "brokened" };
-							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate[Utilities.rng.Next(0, predicate.Length)] + "!";
+							log += " " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate[Utilities.rng.Next(0, predicate.Length)] + "!";
 						}else{
 							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
 							if(secondaryBodPart != null){
-								log += " " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + " makes a crunching noise!";
+								log += " " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + " makes a crunching noise!";
 							}
 						}
 
@@ -694,12 +699,12 @@ namespace ECS{
 								string[] adjective = new string[]{ "deep", "light", "painful", "fresh", "deadly" };
 								string[] noun = new string[]{ "gash", "wound", "lesion", "tear" };
 
-								log += " A " + adjective[Utilities.rng.Next(0, adjective.Length)] + " " + noun[Utilities.rng.Next(0, noun.Length)] + " forms near " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + ".";
+								log += " A " + adjective[Utilities.rng.Next(0, adjective.Length)] + " " + noun[Utilities.rng.Next(0, noun.Length)] + " forms near " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + ".";
 							}
 						}else{
 							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
 							if(secondaryBodPart != null){
-								log += " Blood erupts from " + targetCharacter.name + "'s " + secondaryBodPart.name.ToLower() + "!";
+								log += " Blood erupts from " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + "!";
 							}
 						}
 					}
@@ -709,7 +714,7 @@ namespace ECS{
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
 
 						string[] verb = new string[]{ "severed", "decapitated", "sliced off", "lopped off" };
-						log += targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb[Utilities.rng.Next(0, verb.Length)] + " by the attack!";
+						log += targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb[Utilities.rng.Next(0, verb.Length)] + " by the attack!";
 
 						int logChance = Utilities.rng.Next (0, 2);
 						if(logChance == 0){
@@ -736,7 +741,7 @@ namespace ECS{
 							}
 						}
 						if(allWeaponDropped != string.Empty){
-							log += " " + targetCharacter.name + " drops " + allWeaponDropped + ".";
+							log += " " + targetCharacter.coloredUrlName + " drops " + allWeaponDropped + ".";
 						}
 
 						//If body part is essential, instant death to the character
@@ -750,10 +755,10 @@ namespace ECS{
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
 						int logChance = Utilities.rng.Next (0, 2);
 						if(logChance == 0){
-							log += " A burnt smell emanates from " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + "!";
+							log += " A burnt smell emanates from " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + "!";
 						}else{
 							string[] verb = new string[]{ "charred", "burning", "roasting" };
-							log += " " + targetCharacter.name + "'s " + chosenBodyPart.name.ToLower() + " is " + verb[Utilities.rng.Next(0, verb.Length)] + "!";
+							log += " " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " is " + verb[Utilities.rng.Next(0, verb.Length)] + "!";
 						}
 					}
 				}
@@ -778,9 +783,9 @@ namespace ECS{
 			HealSkill healSkill = (HealSkill)skill;	
 			targetCharacter.AdjustHP (healSkill.healPower);
 			if(sourceCharacter == targetCharacter){
-				AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
+				AddCombatLog(sourceCharacter.coloredUrlName + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
 			}else if(sourceCharacter == targetCharacter){
-				AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
+				AddCombatLog(sourceCharacter.coloredUrlName + " used " + healSkill.skillName + " and healed " + targetCharacter.coloredUrlName + " for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
 			}
 
 		}
@@ -792,14 +797,14 @@ namespace ECS{
 			RemoveCharacter(targetCharacter);
 			fledCharacters.Add (targetCharacter);
 			targetCharacter.SetIsDefeated (true);
-			AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
+			AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
 
 		#region Obtain Item Skill
 		private void ObtainItemSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			//TODO: ECS.Character obtains an item
-			AddCombatLog(targetCharacter.name + " obtained an item.", targetCharacter.currentSide);
+			AddCombatLog(targetCharacter.coloredUrlName + " obtained an item.", targetCharacter.currentSide);
 		}
 		#endregion
 
@@ -809,12 +814,12 @@ namespace ECS{
 				if (targetCharacter.currentRow != 1) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow - 1);
 				}
-				AddCombatLog(targetCharacter.name + " moved to the left. (" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
+				AddCombatLog(targetCharacter.coloredUrlName + " moved to the left. (" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
 			}else if(skill.skillName == "MoveRight"){
 				if (targetCharacter.currentRow != 5) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow + 1);
 				}
-				AddCombatLog(targetCharacter.name + " moved to the right.(" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
+				AddCombatLog(targetCharacter.coloredUrlName + " moved to the right.(" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
 			}
 		}
 		#endregion
@@ -824,14 +829,14 @@ namespace ECS{
 			RemoveCharacter (character);
 			deadCharacters.Add (character);
 			character.SetIsDefeated (true);
-			AddCombatLog(character.name + " died horribly!", character.currentSide);
+			AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
 		}
 
 		internal void CharacterFainted(ECS.Character character){
 			RemoveCharacter (character);
 			faintedCharacters.Add (character);
 			character.SetIsDefeated (true);
-			AddCombatLog(character.name + " fainted!", character.currentSide);
+			AddCombatLog(character.coloredUrlName + " fainted!", character.currentSide);
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death
@@ -868,6 +873,20 @@ namespace ECS{
 			}
 		}
 		#endregion
+
+		public ECS.Character GetAliveCharacterByID(int id){
+			for (int i = 0; i < this.characterSideACopy.Length; i++) {
+				if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id){
+					return this.characterSideACopy [i];
+				}
+			}
+			for (int i = 0; i < this.characterSideBCopy.Length; i++) {
+				if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id){
+					return this.characterSideBCopy [i];
+				}
+			}
+			return null;
+		}
     }
 }
 

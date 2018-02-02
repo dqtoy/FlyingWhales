@@ -34,6 +34,9 @@ public class Quest : CharacterTask{
     public int id {
         get { return _id; }
     }
+	public string urlName{
+		get { return "[url=" + this._id.ToString() + "_quest]" + _questType.ToString() + "[/url]"; }
+	}
     public TaskCreator createdBy {
         get { return _createdBy; }
     }
