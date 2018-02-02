@@ -52,9 +52,9 @@ public class Expand : Quest {
 		_questLine.Enqueue(collect);
 		_questLine.Enqueue(goToExpandLocationAction);
 	}
-	protected override void EndQuest(TASK_RESULT result) {
-		base.EndQuest(result);
-	}
+	//protected override void EndQuest(TASK_RESULT result) {
+	//	base.EndQuest(result);
+	//}
 	protected override void ResetQuestValues(){
         base.ResetQuestValues();
 		_civilians = 0;
@@ -81,14 +81,14 @@ public class Expand : Quest {
 		}
 		return false;
 	}
-	protected override void QuestSuccess() {
-		RetaskParty(_assignedParty.JustDisbandParty);
-        GiveRewards();
-	}
-	protected override void QuestFail() {
-        AddNewLog("The expansion failed!");
-        RetaskParty(_assignedParty.JustDisbandParty);
-	}
+	//protected override void QuestSuccess() {
+	//	RetaskParty(_assignedParty.JustDisbandParty);
+ //       GiveRewards();
+	//}
+	//protected override void QuestFail() {
+ //       AddNewLog("The expansion failed!");
+ //       RetaskParty(_assignedParty.JustDisbandParty);
+	//}
 	#endregion
 
 	internal void SetCivilians(int amount){
@@ -104,6 +104,7 @@ public class Expand : Quest {
 		villageHead.SetHome (expandedTo);
 		expandedTo.SetHead(villageHead);
         AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");
-        EndQuest (TASK_RESULT.SUCCESS);
+        GoBackToQuestGiver(TASK_STATUS.SUCCESS);
+        //EndQuest (TASK_RESULT.SUCCESS);
 	}
 }

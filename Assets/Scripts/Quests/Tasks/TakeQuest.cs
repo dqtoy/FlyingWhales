@@ -15,34 +15,15 @@ public class TakeQuest : CharacterTask {
         Settlement currSettlement = (Settlement)character.currLocation.landmarkOnTile; //NOTE: Make sure the character is at a settlement before performing this task
 
         WeightedDictionary<CharacterTask> questWeights = character.role.GetQuestWeights();
-        if(questWeights.GetTotalOfWeights() > 0) {
-            CharacterTask chosenQuest = questWeights.PickRandomElementGivenWeights();
-            chosenQuest.PerformTask(character);
+        CharacterTask chosenTask = null;
+        if (questWeights.GetTotalOfWeights() > 0) {
+            chosenTask = questWeights.PickRandomElementGivenWeights();
         } else {
-            //Do nothing
-            DoNothing doNothing = new DoNothing(character);
-            doNothing.PerformTask(character);
+            chosenTask = new DoNothing(character);
         }
-        
+        character.SetTaskToDoNext(chosenTask);
 
-        EndTask(TASK_RESULT.SUCCESS);
-    }
-    public override void EndTask(TASK_RESULT taskResult) {
-        _taskResult = taskResult;
-        _isDone = true;
-        switch (taskResult) {
-            case TASK_RESULT.SUCCESS:
-                TaskSuccess();
-                break;
-            case TASK_RESULT.FAIL:
-                TaskFail();
-                break;
-            case TASK_RESULT.CANCEL:
-                TaskCancel();
-                break;
-            default:
-                break;
-        }
+        EndTask(TASK_STATUS.SUCCESS);
     }
     #endregion
 }

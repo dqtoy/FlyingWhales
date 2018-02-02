@@ -19,7 +19,7 @@ public class ExploreRegion : Quest {
     }
 
     private void EndQuestAfterDays() {
-        ScheduleQuestEnd(30, TASK_RESULT.SUCCESS);
+        ScheduleQuestEnd(30, TASK_STATUS.SUCCESS);
     }
 
     #region overrides
@@ -42,7 +42,7 @@ public class ExploreRegion : Quest {
         _questLine.Enqueue(goToRegionAction); 
         _questLine.Enqueue(roamRegionAction);
     }
-	protected override void EndQuest(TASK_RESULT result) {
+	protected override void EndQuest(TASK_STATUS result) {
         //_currentAction.actionDoer.DestroyAvatar();
         base.EndQuest(result);
     }

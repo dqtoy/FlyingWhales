@@ -110,20 +110,20 @@ public class Quest : CharacterTask{
             onQuestAccepted();
         }
     }
-    protected virtual void EndQuest(TASK_RESULT result) {
+    protected virtual void EndQuest(TASK_STATUS result) {
         if (!_isDone) {
-            _taskResult = result;
+            _taskStatus = result;
 			if(_currentAction != null){
 				_currentAction.onTaskActionDone = null;
 			}
             switch (result) {
-                case TASK_RESULT.SUCCESS:
+                case TASK_STATUS.SUCCESS:
                     QuestSuccess();
                     break;
-                case TASK_RESULT.FAIL:
+                case TASK_STATUS.FAIL:
                     QuestFail();
                     break;
-                case TASK_RESULT.CANCEL:
+                case TASK_STATUS.CANCEL:
                     QuestCancel();
                     break;
                 default:
@@ -223,7 +223,7 @@ public class Quest : CharacterTask{
         base.PerformTask(character);
         AcceptQuest(character);
     }
-    public override void EndTask(TASK_RESULT taskResult) {
+    public override void EndTask(TASK_STATUS taskResult) {
         EndQuest(taskResult);
     }
     public override void TaskSuccess() {
@@ -257,7 +257,7 @@ public class Quest : CharacterTask{
             _createdBy.RemoveQuest(this);
         }
     }
-    protected void ScheduleQuestEnd(int days, TASK_RESULT result) {
+    protected void ScheduleQuestEnd(int days, TASK_STATUS result) {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(days);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndQuest(result));
@@ -301,7 +301,7 @@ public class Quest : CharacterTask{
      Turn in this quest, This will end this quest and give the rewards to
      the characters if any.
          */
-    public void TurnInQuest(TASK_RESULT taskResult) {
+    public void TurnInQuest(TASK_STATUS taskResult) {
         EndTask(taskResult);
     }
     #endregion
@@ -350,7 +350,7 @@ public class Quest : CharacterTask{
      Make the assigned party go back to the settlement that
      gave the quest.
          */
-    internal void GoBackToQuestGiver(TASK_RESULT taskResult) {
+    internal void GoBackToQuestGiver(TASK_STATUS taskResult) {
         _assignedParty.GoBackToQuestGiver(taskResult);
     }
     internal void CheckPartyMembers() {

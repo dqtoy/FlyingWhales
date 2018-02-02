@@ -1,14 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 using ECS;
+using System;
 
 public class DoNothing : CharacterTask {
+
+    private Action endAction;
+    private GameDate endDate;
+
     public DoNothing(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.DO_NOTHING) {
     }
 
     private void EndQuestAfterDays() {
-        ScheduleTaskEnd(Random.Range(4, 9), TASK_RESULT.SUCCESS); //Do Nothing should only last for a random number of days between 4 days to 8 days
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddDays(UnityEngine.Random.Range(4, 9));
+        endDate = dueDate;
+        endAction = () => EndTask(TASK_STATUS.SUCCESS);
+        SchedulingManager.Instance.AddEntry(dueDate, () => endAction());
+        //ScheduleTaskEnd(Random.Range(4, 9), TASK_RESULT.SUCCESS); //Do Nothing should only last for a random number of days between 4 days to 8 days
     }
 
     #region overrides
@@ -19,6 +29,10 @@ public class DoNothing : CharacterTask {
             character.party.SetCurrentTask(this);
         }
         EndQuestAfterDays();
+    }
+    public override void TaskCancel() {
+        //Unschedule task end!
+        SchedulingManager.Instance.RemoveSpecificEntry(endDate, endAction);
     }
     //public override void AcceptQuest(ECS.Character partyLeader) {
     //    _isAccepted = true;

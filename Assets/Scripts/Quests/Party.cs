@@ -62,6 +62,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	public bool isDefeated {
 		get { return _isDefeated; }
 	}
+    public Faction faction {
+        get { return _partyLeader.faction; }
+    }
     #endregion
 
 	public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
@@ -209,7 +212,7 @@ public class Party: IEncounterable, ICombatInitializer {
         if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
             Quest currQuest = (Quest)_currentTask;
             if (!currQuest.isDone) {
-                currQuest.EndTask(TASK_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+                currQuest.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
             }
         }
 		SetCurrentTask (null);
@@ -225,6 +228,7 @@ public class Party: IEncounterable, ICombatInitializer {
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
+            currMember.SetLocation(_currLocation);
             if (_avatar != null && currMember != partyLeader) {
                 _avatar.RemoveCharacter(currMember);
             }
@@ -239,7 +243,7 @@ public class Party: IEncounterable, ICombatInitializer {
         if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
             Quest currQuest = (Quest)_currentTask;
             if (!currQuest.isDone) {
-                currQuest.EndTask(TASK_RESULT.CANCEL); //Cancel Quest if party is currently on a quest
+                currQuest.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
             }
         }
         SetCurrentTask (null);
@@ -303,8 +307,10 @@ public class Party: IEncounterable, ICombatInitializer {
                         }
                         if (currCharacter.role.roleType == role) {
                             if (currCharacter.currentTask is DoNothing && currCharacter.party == null) {
-                                currCharacter.currentTask.TaskCancel();
-                                currCharacter.JoinParty(this);
+                                JoinParty joinPartyTask = new JoinParty(currCharacter, this);
+                                currCharacter.SetTaskToDoNext(joinPartyTask); //Set the characters next task to join party before ending it's current task
+                                currCharacter.currentTask.EndTask(TASK_STATUS.CANCEL);
+                                //currCharacter.JoinParty(this);
                             }
                         }
                     }
@@ -317,9 +323,9 @@ public class Party: IEncounterable, ICombatInitializer {
         WeightedDictionary<PARTY_ACTION> partyActionWeights = new WeightedDictionary<PARTY_ACTION>();
         int stayWeight = 50; //Default value for Stay is 50
         int leaveWeight = 50; //Default value for Leave is 50
-        if(_currentTask.taskResult == TASK_RESULT.SUCCESS) {
+        if(_currentTask.taskStatus == TASK_STATUS.SUCCESS) {
             stayWeight += 100; //If Quest is a success, add 100 to Stay
-        } else  if(_currentTask.taskResult == TASK_RESULT.FAIL) {
+        } else  if(_currentTask.taskStatus == TASK_STATUS.FAIL) {
             leaveWeight += 100; //If Quest is a failure, add 100 to Leave
         }
         if (member.HasStatusEffect(STATUS_EFFECT.INJURED)) {
@@ -418,12 +424,12 @@ public class Party: IEncounterable, ICombatInitializer {
             }
         }
     }
-    private void AdjustRelationshipBasedOnQuestResult(TASK_RESULT result) {
+    private void AdjustRelationshipBasedOnQuestResult(TASK_STATUS result) {
         switch (result) {
-            case TASK_RESULT.SUCCESS:
+            case TASK_STATUS.SUCCESS:
                 AdjustPartyRelationships(5); //Succeeded in a Quest Together: +5 (cumulative)
                 break;
-            case TASK_RESULT.FAIL:
+            case TASK_STATUS.FAIL:
                 AdjustPartyRelationships(-5); //Failed in a Quest Together: -5 (cumulative)
                 break;
             default:
@@ -433,7 +439,7 @@ public class Party: IEncounterable, ICombatInitializer {
     #endregion
 
     #region Utilities
-    public void GoBackToQuestGiver(TASK_RESULT taskResult) {
+    public void GoBackToQuestGiver(TASK_STATUS taskResult) {
         if(currentTask == null || currentTask.taskType != TASK_TYPE.QUEST) {
             throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
         }
@@ -476,7 +482,7 @@ public class Party: IEncounterable, ICombatInitializer {
      party returns to the quest giver settlement after a quest.
          */
     internal void OnQuestEnd() {
-        AdjustRelationshipBasedOnQuestResult(currentTask.taskResult);
+        AdjustRelationshipBasedOnQuestResult(currentTask.taskStatus);
         FactionManager.Instance.RemoveQuest((Quest)currentTask);
         if (_partyLeader.isDead) {
             //party leader is already dead!
@@ -542,7 +548,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		if(_partyLeader.faction == null){
 			ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
 			if(enemy != null){
-				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
+				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.currLocation);
 				combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
 				if(enemy is Party){
 					combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
@@ -558,7 +564,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
 				ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
 				if(enemy != null){
-					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
+					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.currLocation);
 					combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
 					if(enemy is Party){
 						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
@@ -575,22 +581,40 @@ public class Party: IEncounterable, ICombatInitializer {
 		}
 	}
 	public virtual bool CanBattleThis(ICombatInitializer combatInitializer){
-		if(_partyLeader.faction == null){
+		if(this.faction == null){
 			return true;
 		}else{
 			if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
-				//Check here if the combatInitializer is hostile with this character, if yes, return true
-				return true;
+                //Check here if the combatInitializer is hostile with this character, if yes, return true
+                Faction factionOfEnemy = null;
+                if (combatInitializer is ECS.Character) {
+                    factionOfEnemy = (combatInitializer as ECS.Character).faction;
+                } else if (combatInitializer is Party) {
+                    factionOfEnemy = (combatInitializer as Party).faction;
+                }
+                if (factionOfEnemy != null) {
+                    if (factionOfEnemy.id == this.faction.id) {
+                        return false; //characters are of same faction
+                    }
+                    FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
+                    if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                        return true; //factions of combatants are hostile
+                    }
+                    return false;
+                } else {
+                    return true; //enemy has no faction
+                }
 			}
 			return false;
 		}
 	}
 	public virtual void ReturnCombatResults(ECS.CombatPrototype combat){
-		if(combat.winningSide == ECS.SIDES.A){
-			//This is the winner
-		}else{
-			//Enemy won
-		}
+        if (this.isDefeated) {
+            //this party was defeated
+            if(_currentTask != null) {
+                _currentTask.EndTask(TASK_STATUS.CANCEL);
+            }
+        }
 	}
 	#endregion
 

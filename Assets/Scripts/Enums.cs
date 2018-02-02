@@ -864,7 +864,8 @@ public enum FACTION_SIZE {
     MEDIUM,
     LARGE,
 }
-public enum TASK_RESULT {
+public enum TASK_STATUS {
+    IN_PROGRESS,
     SUCCESS,
     FAIL,
     CANCEL

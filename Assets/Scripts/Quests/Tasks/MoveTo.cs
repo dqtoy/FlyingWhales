@@ -30,7 +30,7 @@ public class MoveTo : CharacterTask {
     #endregion
 
     private void SuccessTask() {
-        EndTask(TASK_RESULT.SUCCESS);
+        EndTask(TASK_STATUS.SUCCESS);
         _assignedCharacter.DestroyAvatar();
     }
 

@@ -37,7 +37,7 @@ public class DungeonParty : Party {
 
 	public override void StartEncounter(Party encounteredBy){
 		this.encounteredByParty = encounteredBy;
-		ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
+		ECS.CombatPrototype combat = new ECS.CombatPrototype (encounteredBy, this, this.currLocation);
 		combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
 		combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
 		CombatThreadPool.Instance.AddToThreadPool (combat);

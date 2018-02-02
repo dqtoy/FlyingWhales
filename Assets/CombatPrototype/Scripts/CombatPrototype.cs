@@ -29,11 +29,12 @@ namespace ECS{
 		internal Party sideBParty;
 
 		internal List<string> resultsLog;
-		internal object caller;
-		internal HexTile location;
+		internal ICombatInitializer attacker;
+        internal ICombatInitializer defender;
+        internal HexTile location;
 		internal bool isDone;
 
-		public CombatPrototype(object caller, HexTile location){
+		public CombatPrototype(ICombatInitializer attacker, ICombatInitializer defender, HexTile location){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
@@ -48,7 +49,8 @@ namespace ECS{
 			this.isDone = false;
 
 			this.resultsLog = new List<string> ();
-			this.caller = caller;
+			this.attacker = attacker;
+            this.defender = defender;
 //			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
 		}
 
@@ -133,16 +135,21 @@ namespace ECS{
         #endregion
 
 		public void ReturnCombatResults(){
-//			if(caller != null){
-//				if(caller is ICombatInitializer){
-//					ICombatInitializer combatInitializer = (ICombatInitializer)caller;
-//					combatInitializer.ReturnCombatResults (this);
-//				}else if(caller is IEncounterable){
-//					IEncounterable encounterable = (IEncounterable)caller;
-//					encounterable.ReturnResults (this);
-//				}
-//			}
-			CombatPrototypeManager.Instance.CombatResults(this);
+            if (attacker != null) {
+                attacker.ReturnCombatResults(this);
+                //else if (caller is IEncounterable) {
+                //    IEncounterable encounterable = (IEncounterable)caller;
+                //    encounterable.ReturnResults(this);
+                //}
+            }
+            if (defender != null) {
+                defender.ReturnCombatResults(this);
+                //else if (caller is IEncounterable) {
+                //    IEncounterable encounterable = (IEncounterable)caller;
+                //    encounterable.ReturnResults(this);
+                //}
+            }
+            CombatPrototypeManager.Instance.CombatResults(this);
 			this.location.StartCombatInTile ();
 		}
 

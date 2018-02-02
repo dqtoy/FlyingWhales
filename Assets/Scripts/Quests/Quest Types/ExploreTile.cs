@@ -37,15 +37,18 @@ public class ExploreTile : Quest {
 			_landmarkToExplore.SetExploredState(true);
 			//EndQuest(TASK_RESULT.SUCCESS);
 			AddNewLog(_assignedParty.name + " successfully explores " + _landmarkToExplore.location.name);
-            GoBackToQuestGiver(TASK_RESULT.SUCCESS);
+            GoBackToQuestGiver(TASK_STATUS.SUCCESS);
 		} else {
 			//AddNewLog("All members of " + _assignedParty.name + " died in combat, they were unable to explore the landmark.");
-			GoBackToQuestGiver(TASK_RESULT.CANCEL);
+			GoBackToQuestGiver(TASK_STATUS.CANCEL);
 		}
 	}
     #endregion
 
     private void TriggerRandomResult() {
+        if (_taskStatus != TASK_STATUS.IN_PROGRESS) {
+            return;
+        }
 		if(!_assignedParty.isDefeated){
 			if(_assignedParty.currLocation.currentCombat == null){
 				StartExploration();
