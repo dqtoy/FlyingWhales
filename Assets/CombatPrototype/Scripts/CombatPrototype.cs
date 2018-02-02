@@ -138,15 +138,6 @@ namespace ECS{
         #endregion
 
 		public void ReturnCombatResults(){
-//			if(caller != null){
-//				if(caller is ICombatInitializer){
-//					ICombatInitializer combatInitializer = (ICombatInitializer)caller;
-//					combatInitializer.ReturnCombatResults (this);
-//				}else if(caller is IEncounterable){
-//					IEncounterable encounterable = (IEncounterable)caller;
-//					encounterable.ReturnResults (this);
-//				}
-//			}
 			CombatPrototypeManager.Instance.CombatResults(this);
 			this.location.StartCombatInTile ();
 		}
