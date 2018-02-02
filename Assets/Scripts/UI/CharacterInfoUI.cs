@@ -76,7 +76,7 @@ public class CharacterInfoUI : UIMenu {
 		text += ",    Village: " + currentlyShowingCharacter.home.urlName;
         text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
-		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.name : "NONE");
+		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
 		text += "\nCivilians: " + currentlyShowingCharacter.civilians.ToString ();
 
         //		text += "\n[b]Skills:[/b] ";

@@ -57,7 +57,7 @@ public class CombatLogsUI : UIMenu {
 			text += currLog;
 		}
 		sideALbl.text = text;
-//		sideAScrollView.UpdatePosition();
+		sideAScrollView.ResetPosition();
 	}
 	private void SideBCharacters(){
 		string text = string.Empty;
@@ -70,6 +70,6 @@ public class CombatLogsUI : UIMenu {
 			text += currLog;
 		}
 		sideBLbl.text = text;
-//		sideBScrollView.UpdatePosition();
+		sideBScrollView.ResetPosition();
 	}
 }
