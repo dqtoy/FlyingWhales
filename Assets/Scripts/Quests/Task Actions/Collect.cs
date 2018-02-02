@@ -16,8 +16,8 @@ public class Collect : TaskAction {
 
 	//This is the DoAction Function in Expand Quest
 	internal void Expand(){
-		this.actionDoer.currLocation.landmarkOnTile.AdjustReservedPopulation (-_amount);
-		((Expand)_task).SetCivilians (_amount);
+		((Expand)_task).assignedParty.currLocation.landmarkOnTile.AdjustReservedPopulation (-_amount);
+		((Expand)_task).assignedParty.SetCivilians (_amount);
         _task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + " civilians from " + this.actionDoer.currLocation.landmarkOnTile.landmarkName);
         ActionDone (TASK_ACTION_RESULT.SUCCESS);
 	}

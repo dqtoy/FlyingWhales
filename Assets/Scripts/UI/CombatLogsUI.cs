@@ -54,9 +54,10 @@ public class CombatLogsUI : UIMenu {
 			}
 			ECS.Character character = _currentlyShowingCombat.characterSideACopy [i];
 			string currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
+			text += currLog;
 		}
 		sideALbl.text = text;
-//		sideAScrollView.UpdatePosition();
+		sideAScrollView.ResetPosition();
 	}
 	private void SideBCharacters(){
 		string text = string.Empty;
@@ -66,9 +67,9 @@ public class CombatLogsUI : UIMenu {
 			}
 			ECS.Character character = _currentlyShowingCombat.characterSideBCopy [i];
 			string currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
-			text += currLog + "\n";
+			text += currLog;
 		}
 		sideBLbl.text = text;
-//		sideBScrollView.UpdatePosition();
+		sideBScrollView.ResetPosition();
 	}
 }

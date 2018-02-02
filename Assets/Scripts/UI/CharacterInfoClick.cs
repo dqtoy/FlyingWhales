@@ -23,13 +23,12 @@ public class CharacterInfoClick : MonoBehaviour {
                 if (quest != null) {
                     UIManager.Instance.ShowQuestInfo(quest);
                 }
-			} 
-//			else if (url.Contains("_character")) {
-//                ECS.Character character = FactionManager.Instance.GetCharacterByID(idToUse);
-//                if (character != null) {
-//                    UIManager.Instance.ShowCharacterInfo(character);
-//                }
-//            }
+			} else if (url.Contains("_party")) {
+				Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
+				if(party != null){
+					UIManager.Instance.ShowPartyInfo(party);
+				}
+			}
         }
 	}
 }

@@ -72,16 +72,13 @@ public class CharacterInfoUI : UIMenu {
 			text += " (" + currentlyShowingCharacter.role.roleType.ToString() + ")";
 		}
 
-		text += "\nFaction: ";
-		if(currentlyShowingCharacter.faction != null){
-			text += currentlyShowingCharacter.faction.urlName;
-		}else{
-			text += "NONE";
-		}
-
+		text += "\nFaction: " + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
 		text += ",    Village: " + currentlyShowingCharacter.home.urlName;
         text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
+		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
+		text += "\nCivilians: " + currentlyShowingCharacter.civilians.ToString ();
+
         //		text += "\n[b]Skills:[/b] ";
         //		if(currentlyShowingCharacter.skills.Count > 0){
         //			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {

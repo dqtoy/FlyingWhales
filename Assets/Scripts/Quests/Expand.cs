@@ -7,7 +7,6 @@ public class Expand : Quest {
 	private HexTile _targetUnoccupiedTile;
 	private HexTile _originTile;
 
-	private int _civilians;
 
 	#region getters/setters
 	public HexTile targetUnoccupiedTile {
@@ -15,9 +14,6 @@ public class Expand : Quest {
 	}
 	public HexTile originTile {
 		get { return _originTile; }
-	}
-	public int civilians{
-		get { return _civilians; }
 	}
 	#endregion
 
@@ -52,13 +48,7 @@ public class Expand : Quest {
 		_questLine.Enqueue(collect);
 		_questLine.Enqueue(goToExpandLocationAction);
 	}
-	//protected override void EndQuest(TASK_RESULT result) {
-	//	base.EndQuest(result);
-	//}
-	protected override void ResetQuestValues(){
-        base.ResetQuestValues();
-		_civilians = 0;
-	}
+
 	public override bool CanAcceptQuest (ECS.Character character){
 		bool canAccept = base.CanAcceptQuest (character);
 		if(!canAccept){
@@ -91,13 +81,10 @@ public class Expand : Quest {
 	//}
 	#endregion
 
-	internal void SetCivilians(int amount){
-		_civilians = amount;
-	}
-
 	private void SuccessExpansion(){
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
-		this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_civilians);
+		this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_assignedParty.civilians);
+		_assignedParty.SetCivilians (0);
 		CameraMove.Instance.UpdateMinimapTexture ();
 		Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
 		ECS.Character villageHead = expandedTo.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");

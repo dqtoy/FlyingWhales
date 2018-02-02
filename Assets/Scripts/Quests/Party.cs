@@ -25,6 +25,7 @@ public class Party: IEncounterable, ICombatInitializer {
 	protected HexTile _currLocation;
 
 	protected bool _isDefeated;
+	protected int _civilians;
 
     private const int MAX_PARTY_MEMBERS = 5;
 
@@ -64,6 +65,9 @@ public class Party: IEncounterable, ICombatInitializer {
     }
 	public bool isDefeated {
 		get { return _isDefeated; }
+	}
+	public int civilians{
+		get { return _civilians; }
 	}
     public Faction faction {
         get { return _partyLeader.faction; }
@@ -161,7 +165,10 @@ public class Party: IEncounterable, ICombatInitializer {
         
         member.SetParty(null);
 		member.SetCurrentTask (null);
-        if (_partyMembers.Count <= 0) {
+		if (_partyMembers.Count <= 0) {
+			if(!_isDisbanded){
+				JustDisbandParty ();
+			}
 			this._currLocation.RemoveCharacterOnTile(this);
         }
     }
@@ -228,6 +235,9 @@ public class Party: IEncounterable, ICombatInitializer {
 				_prisoners [0].TransferPrisoner (_partyLeader);
 			}
 		}
+
+		_partyLeader.AdjustCivilians (this._civilians);
+
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
@@ -263,14 +273,14 @@ public class Party: IEncounterable, ICombatInitializer {
 			}
 		}
 
+		_partyLeader.AdjustCivilians (this._civilians);
+
 		while(_partyMembers.Count > 0) {
 			ECS.Character currMember = _partyMembers[0];
 			currMember.SetParty(null);
 			RemovePartyMember(currMember);
 			currMember.DetermineAction();
 		}
-
-
 	}
     public bool AreAllPartyMembersPresent() {
         bool isPartyComplete = true;
@@ -545,6 +555,8 @@ public class Party: IEncounterable, ICombatInitializer {
 	#region Virtuals
     public virtual void StartEncounter(ECS.Character encounteredBy){ }
 	public virtual void StartEncounter(Party encounteredBy){}
+
+	#region ICombatInitializer
 	public virtual void ReturnResults(object result){}
 	public virtual bool InitializeCombat(){
 		if(isDefeated){
@@ -621,6 +633,17 @@ public class Party: IEncounterable, ICombatInitializer {
             }
         }
 	}
+	public void SetCivilians(int amount){
+		_civilians = amount;
+	}
+	public void AdjustCivilians(int amount){
+		_civilians += amount;
+		if(_civilians < 0){
+			_civilians = 0;
+		}
+	}
+	#endregion
+
 	#endregion
 
 }
