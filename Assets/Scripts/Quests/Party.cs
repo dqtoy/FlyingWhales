@@ -253,7 +253,9 @@ public class Party: IEncounterable, ICombatInitializer {
 
 		if(_partyLeader.isDead){
 			while(_prisoners.Count > 0){
-				_prisoners [0].Death ();
+                ECS.Character currPrisoner = _prisoners[0];
+                currPrisoner.SetLocation(currLocation);
+                currPrisoner.Death ();
 			}
 		}else{
 			while(_prisoners.Count > 0){

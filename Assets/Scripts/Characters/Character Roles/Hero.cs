@@ -65,6 +65,12 @@ public class Hero : CharacterRole {
 		return weight;
 	}
 
+    internal override int GetExploreTileWeight(ExploreTile exploreTile) {
+        int weight = 0;
+        weight += 100;
+        return weight;
+    }
+
     private int GetMoveToNonAdjacentVillageWeight(Settlement target) {
         int weight = 0;
         //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)

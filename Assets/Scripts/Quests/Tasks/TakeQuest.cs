@@ -18,8 +18,10 @@ public class TakeQuest : CharacterTask {
         CharacterTask chosenTask = null;
         if (questWeights.GetTotalOfWeights() > 0) {
             chosenTask = questWeights.PickRandomElementGivenWeights();
+            Debug.Log(character.name + " chose to take quest " + chosenTask.taskType.ToString());
         } else {
             chosenTask = new DoNothing(character);
+            Debug.Log(character.name + " could not find any quest to take.");
         }
         character.SetTaskToDoNext(chosenTask);
 
