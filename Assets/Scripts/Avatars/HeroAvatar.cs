@@ -7,7 +7,7 @@ public class HeroAvatar : CharacterAvatar {
         CharacterTask currTask = _characters[0].currentTask;
         if (currTask is Expand) {
             if (this.targetLocation.isOccupied && ((Expand)currTask).targetUnoccupiedTile.id == this.targetLocation.id) {
-                _characters[0].currentTask.EndTask(TASK_RESULT.FAIL);
+                _characters[0].currentTask.EndTask(TASK_STATUS.FAIL);
                 return;
             }
         }

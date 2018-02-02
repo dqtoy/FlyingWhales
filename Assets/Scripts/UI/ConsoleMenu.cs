@@ -191,9 +191,9 @@ public class ConsoleMenu : UIMenu {
             ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
 
             if(character.currentTask != null) {
-                character.SetQuestToForceAccept(quest);
+                character.SetTaskToDoNext(quest);
                 //cancel character's current quest
-                character.currentTask.EndTask(TASK_RESULT.CANCEL);
+                character.currentTask.EndTask(TASK_STATUS.CANCEL);
             } else {
                 quest.PerformTask(character);
             }
@@ -218,7 +218,7 @@ public class ConsoleMenu : UIMenu {
         bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
         if (isQuestParameterNumeric) {
             Quest quest = FactionManager.Instance.GetQuestByID(questID);
-            quest.GoBackToQuestGiver(TASK_RESULT.CANCEL);
+            quest.GoBackToQuestGiver(TASK_STATUS.CANCEL);
 
             AddSuccessMessage(quest.questType.ToString() + " quest posted at " + quest.postedAt.location.name + " was cancelled.");
         } else {

@@ -48,9 +48,7 @@ public class Expand : Quest {
 		_questLine.Enqueue(collect);
 		_questLine.Enqueue(goToExpandLocationAction);
 	}
-	protected override void EndQuest(TASK_RESULT result) {
-		base.EndQuest(result);
-	}
+
 	public override bool CanAcceptQuest (ECS.Character character){
 		bool canAccept = base.CanAcceptQuest (character);
 		if(!canAccept){
@@ -73,14 +71,14 @@ public class Expand : Quest {
 		}
 		return false;
 	}
-	protected override void QuestSuccess() {
-		RetaskParty(_assignedParty.JustDisbandParty);
-        GiveRewards();
-	}
-	protected override void QuestFail() {
-        AddNewLog("The expansion failed!");
-        RetaskParty(_assignedParty.JustDisbandParty);
-	}
+	//protected override void QuestSuccess() {
+	//	RetaskParty(_assignedParty.JustDisbandParty);
+ //       GiveRewards();
+	//}
+	//protected override void QuestFail() {
+ //       AddNewLog("The expansion failed!");
+ //       RetaskParty(_assignedParty.JustDisbandParty);
+	//}
 	#endregion
 
 	private void SuccessExpansion(){
@@ -93,6 +91,7 @@ public class Expand : Quest {
 		villageHead.SetHome (expandedTo);
 		expandedTo.SetHead(villageHead);
         AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");
-        EndQuest (TASK_RESULT.SUCCESS);
+        GoBackToQuestGiver(TASK_STATUS.SUCCESS);
+        //EndQuest (TASK_RESULT.SUCCESS);
 	}
 }

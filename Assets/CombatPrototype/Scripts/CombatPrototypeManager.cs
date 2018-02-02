@@ -126,7 +126,7 @@ namespace ECS {
 		}
 
 		internal void NewCombat(){
-			this.combat = new CombatPrototype (null, null);
+			this.combat = new CombatPrototype (null, null, null);
 		}
 		public void StartCombat(){
 			this.combat.CombatSimulation ();
@@ -189,7 +189,7 @@ namespace ECS {
 				if(combat.fledCharacters[i].currentSide == combat.losingSide){
 					if(combat.fledCharacters[i].party != null){
 						combat.fledCharacters [i].party.SetIsDefeated (false);
-						combat.fledCharacters [i].party.GoBackToQuestGiver(TASK_RESULT.CANCEL);
+						combat.fledCharacters [i].party.GoBackToQuestGiver(TASK_STATUS.CANCEL);
 						break;
 					}else{
 						combat.fledCharacters [i].party.SetIsDefeated (false);

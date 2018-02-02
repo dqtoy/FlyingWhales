@@ -52,7 +52,7 @@ public class JoinParty : CharacterTask {
         if (_partyToJoin.partyMembers.Count < 5) {
             ((Quest)_partyToJoin.currentTask).CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
         }
-        EndTask(TASK_RESULT.SUCCESS);
+        EndTask(TASK_STATUS.SUCCESS);
 	}
 
     private void StartGoingToParty() {

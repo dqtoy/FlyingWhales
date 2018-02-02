@@ -19,7 +19,7 @@ public class CharacterTask {
     protected TASK_TYPE _taskType;
     protected ECS.Character _assignedCharacter;
     protected bool _isDone;
-    protected TASK_RESULT _taskResult;
+    protected TASK_STATUS _taskStatus;
     protected List<string> _taskLogs; //TODO: Change this to Logs when convenient
 
     #region getters/setters
@@ -29,8 +29,8 @@ public class CharacterTask {
     public bool isDone {
         get { return _isDone; }
     }
-    public TASK_RESULT taskResult {
-        get { return _taskResult; }
+    public TASK_STATUS taskStatus {
+        get { return _taskStatus; }
     }
     public List<string> taskLogs {
         get { return _taskLogs; }
@@ -40,6 +40,7 @@ public class CharacterTask {
     public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType) {
         _createdBy = createdBy;
         _taskType = taskType;
+        _taskLogs = new List<string>();
     }
 
     #region virtual
@@ -47,18 +48,21 @@ public class CharacterTask {
      Override this to make the character do something when
      he/she chooses to perform this task.
          */
-    public virtual void PerformTask(ECS.Character character) { _assignedCharacter = character; }
-    public virtual void EndTask(TASK_RESULT taskResult) {
-        _taskResult = taskResult;
+    public virtual void PerformTask(ECS.Character character) {
+        _taskStatus = TASK_STATUS.IN_PROGRESS;
+        _assignedCharacter = character;
+    }
+    public virtual void EndTask(TASK_STATUS taskResult) {
+        _taskStatus = taskResult;
         _isDone = true;
         switch (taskResult) {
-            case TASK_RESULT.SUCCESS:
+            case TASK_STATUS.SUCCESS:
                 TaskSuccess();
                 break;
-            case TASK_RESULT.FAIL:
+            case TASK_STATUS.FAIL:
                 TaskFail();
                 break;
-            case TASK_RESULT.CANCEL:
+            case TASK_STATUS.CANCEL:
                 TaskCancel();
                 break;
             default:
@@ -71,7 +75,7 @@ public class CharacterTask {
     public virtual void TaskFail() { }
     #endregion
 
-    protected void ScheduleTaskEnd(int days, TASK_RESULT result) {
+    protected void ScheduleTaskEnd(int days, TASK_STATUS result) {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(days);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndTask(result));

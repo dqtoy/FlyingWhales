@@ -66,8 +66,8 @@ namespace ECS {
         private int _gold;
         private int _prestige;
 
-        //For Testing
-        private Quest forceQuestToAccept;
+        //When the character should have a next action it should do after it's current one.
+        private CharacterTask nextTaskToDo;
 
 		#region getters / setters
 		internal string name{
@@ -125,7 +125,11 @@ namespace ECS {
 			get { return _currentTask; }
 		}
 		internal HexTile currLocation{
-			get { return (party == null ? _currLocation : party.currLocation); }
+			get {
+                HexTile tile = null;
+                tile = (party == null ? _currLocation : party.currLocation);
+                return tile;
+            }
 		}
 		internal CharacterAvatar avatar{
 			get { return _avatar; }
@@ -521,9 +525,8 @@ namespace ECS {
 						//If this character is the leader of a faction, set that factions leader as null
 						this._faction.SetLeader(null);
 					}
-					this._faction.RemoveCharacter (this);
+					this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
 				}
-
                 CheckForInternationalIncident();
 
                 if (this._party != null) {
@@ -536,7 +539,10 @@ namespace ECS {
 						this.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
 					}
 				}
-				if(_isPrisoner){
+                if (_avatar != null) {
+                    _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
+                }
+                if (_isPrisoner){
 					PrisonerDeath ();
 				}
 				if (this.currLocation != null) {
@@ -1191,7 +1197,7 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
-			if(_isFainted || _isPrisoner){
+			if(_isFainted || _isPrisoner || _isDead){
 				return;
 			}
             if(_party != null) {
@@ -1200,30 +1206,30 @@ namespace ECS {
                     return;
                 }
             }
-            if(forceQuestToAccept != null) {
+            if(nextTaskToDo != null) {
                 //Force accept quest, if any
-                forceQuestToAccept.PerformTask(this);
-                forceQuestToAccept = null;
+                nextTaskToDo.PerformTask(this);
+                nextTaskToDo = null;
                 return;
             }
 			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
-				chosenAction.PerformTask(this);
                 if (chosenAction.taskType == TASK_TYPE.QUEST) {
                     Debug.Log(this.name + " decides to " + ((Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
                 } else {
                     Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
                 }
+                chosenAction.PerformTask(this);
             } else {
                 throw new Exception(this.name + " could not decide action because weights are zero!");
             }
 		}
         /*
-         This is for testing. Set a quest that this character will accept next
+         Set a task that this character will accept next
              */
-        internal void SetQuestToForceAccept(Quest questToAccept) {
-            forceQuestToAccept = questToAccept;
+        internal void SetTaskToDoNext(CharacterTask taskToDo) {
+            nextTaskToDo = taskToDo;
         }
         //private int GetWeightForQuestType(QUEST_TYPE questType) {
         //    int weight = 0;
@@ -1564,7 +1570,7 @@ namespace ECS {
 				//Start Combat with hostile or unaligned
 				ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
 				if(enemy != null){
-					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, this.currLocation);
+					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.currLocation);
 					combat.AddCharacters (ECS.SIDES.A, new List<ECS.Character>(){this});
 					if(enemy is Party){
 						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
@@ -1582,15 +1588,35 @@ namespace ECS {
 		}
 		public bool CanBattleThis(ICombatInitializer combatInitializer){
 			if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
-				//Check here if the combatInitializer is hostile with this character, if yes, return true
-				return true;
+                //Check here if the combatInitializer is hostile with this character, if yes, return true
+                Faction factionOfEnemy = null;
+                if(combatInitializer is ECS.Character) {
+                    factionOfEnemy = (combatInitializer as ECS.Character).faction;
+                }else if(combatInitializer is Party) {
+                    factionOfEnemy = (combatInitializer as Party).faction;
+                }
+                if(factionOfEnemy != null) {
+                    if(factionOfEnemy.id == this.faction.id) {
+                        return false; //characters are of same faction
+                    }
+                    FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
+                    if(rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                        return true; //factions of combatants are hostile
+                    }
+                    return false;
+                } else {
+                    return true; //enemy has no faction
+                }
 			}else{
 				return false;
 			}
 		}
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
-
-		}
+            if (this.isDefeated) {
+                //this character was defeated
+                _currentTask.EndTask(TASK_STATUS.CANCEL);
+            }
+        }
 		public void SetIsDefeated(bool state){
 			_isDefeated = state;
 		}

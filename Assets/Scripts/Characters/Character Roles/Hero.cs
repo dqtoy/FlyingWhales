@@ -40,7 +40,12 @@ public class Hero : CharacterRole {
                 }
             }
         }
-
+        if (currSettlement == null) {
+            throw new System.Exception("NO SETTLEMENT!");
+        }
+        if (currSettlement.owner == null) {
+            throw new System.Exception("NO SETTLEMENT OWNER!");
+        }
         //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
         if (currSettlement.owner.IsHostileWith(_character.faction)) {
             questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);

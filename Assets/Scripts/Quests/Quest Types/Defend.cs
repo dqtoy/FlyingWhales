@@ -35,6 +35,6 @@ public class Defend : Quest {
     #endregion
 
 	private void EndQuestAfterDays() {
-		ScheduleQuestEnd(30, TASK_RESULT.SUCCESS);
+		ScheduleQuestEnd(30, TASK_STATUS.SUCCESS);
 	}
 }

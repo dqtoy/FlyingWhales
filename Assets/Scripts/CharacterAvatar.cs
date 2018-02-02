@@ -21,8 +21,12 @@ public class CharacterAvatar : PooledObject{
 	protected List<HexTile> path;
 
 	protected bool _hasArrived = false;
+    private bool _isInititalized = false;
 
     #region getters/setters
+    public List<ECS.Character> characters {
+        get { return _characters; }
+    }
     public HexTile currLocation {
         get { return _currLocation; }
     }
@@ -34,6 +38,7 @@ public class CharacterAvatar : PooledObject{
         AddNewCharacter(character);
         _currLocation = character.currLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
+        _isInititalized = true;
     }
     internal virtual void Init(Party party) {
         this.smoothMovement.avatarGO = this.gameObject;
@@ -43,6 +48,7 @@ public class CharacterAvatar : PooledObject{
         }
         _currLocation = party.currLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
+        _isInititalized = true;
     }
 
     #region ECS.Character Management
@@ -76,16 +82,24 @@ public class CharacterAvatar : PooledObject{
             //    onPathFinished += actionOnPathFinished;
             //}
             Faction faction = null;
-            if(_characters[0].party == null) {
+            if (_characters[0].party == null) {
                 faction = _characters[0].faction;
             } else {
                 faction = _characters[0].party.partyLeader.faction;
             }
             PathGenerator.Instance.CreatePath(this, this.currLocation, this.targetLocation, pathFindingMode, faction);
+            //this.path = PathGenerator.Instance.GetPath(this.currLocation, this.targetLocation, pathFindingMode, faction);
+            //NewMove();
         }
     }
     internal virtual void ReceivePath(List<HexTile> path) {
+        if (!_isInititalized) {
+            return;
+        }
         if (path != null && path.Count > 0) {
+            if (this.currLocation == null) {
+                throw new Exception("Curr location of avatar is null! Is Inititalized: " + _isInititalized.ToString());
+            }
 			if(this.currLocation.landmarkOnTile != null){
 				if(_characters[0].party != null){
 					this.currLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " left.");
@@ -222,6 +236,7 @@ public class CharacterAvatar : PooledObject{
         targetLocation = null;
         path = null;
         _hasArrived = false;
+        _isInititalized = false;
     }
     #endregion
 }
