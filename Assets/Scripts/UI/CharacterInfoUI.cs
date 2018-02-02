@@ -74,14 +74,14 @@ public class CharacterInfoUI : UIMenu {
 
 		text += "\nFaction: ";
 		if(currentlyShowingCharacter.faction != null){
-			text += "[url=" + currentlyShowingCharacter.faction.id + "_faction]" + currentlyShowingCharacter.faction.name + "[/url]";
+			text += currentlyShowingCharacter.faction.urlName;
 		}else{
 			text += "NONE";
 		}
 
-		text += "\nVillage: " + "[url=" + currentlyShowingCharacter.home.id + "_landmark]" + currentlyShowingCharacter.home.location.tileName + "[/url]";
+		text += ",    Village: " + currentlyShowingCharacter.home.urlName;
         text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
-        text += "\nPrestige: " + currentlyShowingCharacter.prestige.ToString();
+        text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
         //		text += "\n[b]Skills:[/b] ";
         //		if(currentlyShowingCharacter.skills.Count > 0){
         //			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
@@ -183,7 +183,7 @@ public class CharacterInfoUI : UIMenu {
 				}else{
 					isFirst = false;
 				}
-				text += kvp.Key.role.roleType.ToString() + " [url=" + kvp.Key.id + "_character]" + kvp.Key.name + "[/url]: " + kvp.Value.totalValue.ToString();
+				text += kvp.Key.role.roleType.ToString() + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
 			}
 		} else {
 			text += "NONE";

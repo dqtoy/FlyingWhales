@@ -10,7 +10,7 @@ public class SettlementInfoClick : MonoBehaviour {
 			int idToUse = int.Parse (id);
 			//Debug.Log("Clicked " + url);
 			if(url.Contains("_faction")){
-				Faction faction = FactionManager.Instance.GetFactionBasedOnID (idToUse);
+				Faction faction = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner;
 				if(faction != null){
 					UIManager.Instance.ShowFactionInfo (faction);
 				}
@@ -25,13 +25,14 @@ public class SettlementInfoClick : MonoBehaviour {
 					UIManager.Instance.ShowHexTileInfo (UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location);
 				}
             } else if (url.Contains("_quest")) {
-                Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
-                if (quest != null) {
-                    UIManager.Instance.ShowQuestInfo(quest);
-                }
+				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement is Settlement){
+					Quest quest = ((Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingSettlement).GetQuestByID(idToUse);
+					if (quest != null) {
+						UIManager.Instance.ShowQuestInfo(quest);
+					}	
+				}
 			} else if (url.Contains("_party")) {
-				HexTile hextile = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location;
-				Party party = hextile.GetPartyByLeaderID(idToUse);
+				Party party = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.GetPartyByLeaderID(idToUse);
 				if(party != null){
 					UIManager.Instance.ShowPartyInfo(party);
 				}

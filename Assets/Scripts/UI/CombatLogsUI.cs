@@ -13,10 +13,14 @@ public class CombatLogsUI : UIMenu {
 	[SerializeField] private UIScrollView sideAScrollView;
 	[SerializeField] private UIScrollView sideBScrollView;
 
-	private ECS.CombatPrototype currentlyShowingCombat;
+	private ECS.CombatPrototype _currentlyShowingCombat;
+
+	public ECS.CombatPrototype currentlyShowingCombat{
+		get { return _currentlyShowingCombat; }
+	}
 
 	public void ShowCombatLogs(ECS.CombatPrototype combat) {
-		currentlyShowingCombat = combat;
+		_currentlyShowingCombat = combat;
         isShowing = true;
         this.gameObject.SetActive(true);
         logsScrollView.ResetPosition();
@@ -34,8 +38,8 @@ public class CombatLogsUI : UIMenu {
 	private void CombatLogs() {
         string text = string.Empty;
 		text += "[000000]";
-        for (int i = 0; i < currentlyShowingCombat.resultsLog.Count; i++) {
-			string currLog = currentlyShowingCombat.resultsLog[i];
+		for (int i = 0; i < _currentlyShowingCombat.resultsLog.Count; i++) {
+			string currLog = _currentlyShowingCombat.resultsLog[i];
             text +=  "- " + currLog + "\n";
         }
 		text += "[-]";
@@ -44,19 +48,24 @@ public class CombatLogsUI : UIMenu {
     }
 	private void SideACharacters(){
 		string text = string.Empty;
-		for (int i = 0; i < currentlyShowingCombat.characterSideACopy.Length; i++) {
-			ECS.Character character = currentlyShowingCombat.characterSideACopy [i];
-			string currLog = character.name + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
-			text += currLog + "\n";
+		for (int i = 0; i < _currentlyShowingCombat.characterSideACopy.Length; i++) {
+			if(i > 0){
+				text += "\n";
+			}
+			ECS.Character character = _currentlyShowingCombat.characterSideACopy [i];
+			string currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
 		}
 		sideALbl.text = text;
 //		sideAScrollView.UpdatePosition();
 	}
 	private void SideBCharacters(){
 		string text = string.Empty;
-		for (int i = 0; i < currentlyShowingCombat.characterSideBCopy.Length; i++) {
-			ECS.Character character = currentlyShowingCombat.characterSideBCopy [i];
-			string currLog = character.name + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
+		for (int i = 0; i < _currentlyShowingCombat.characterSideBCopy.Length; i++) {
+			if(i > 0){
+				text += "\n";
+			}
+			ECS.Character character = _currentlyShowingCombat.characterSideBCopy [i];
+			string currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
 			text += currLog + "\n";
 		}
 		sideBLbl.text = text;

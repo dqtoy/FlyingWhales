@@ -21,5 +21,12 @@ public class PartyManager : MonoBehaviour {
         allParties.Remove(party);
     }
 
-
+	public Party GetPartyByLeaderID(int id){
+		for (int i = 0; i < allParties.Count; i++) {
+			if(allParties[i].partyLeader.id == id){
+				return allParties [i];
+			}
+		}
+		return null;
+	}
 }

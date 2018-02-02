@@ -38,6 +38,12 @@ public class BaseLandmark {
     public int id {
         get { return _id; }
     }
+	public string landmarkName {
+		get { return _landmarkName; }
+	}
+	public string urlName {
+		get { return "[url=" + this._id.ToString() + "_landmark]" + _landmarkName + "[/url]"; }
+	}
     public HexTile location {
         get { return _location; }
     }
@@ -59,9 +65,7 @@ public class BaseLandmark {
     public bool isExplored {
         get { return _isExplored; }
     }
-    public string landmarkName {
-        get { return _landmarkName; }
-    }
+   
     public Faction owner {
         get { return _owner; }
     }

@@ -54,7 +54,7 @@ public class FactionInfoUI : UIMenu {
 		if(currentlyShowingFaction.ownedLandmarks.Count > 0){
 			for (int i = 0; i < currentlyShowingFaction.ownedLandmarks.Count; i++) {
 				BaseLandmark landmark = currentlyShowingFaction.ownedLandmarks [i];
-				text += "[url=" + landmark.id + "_landmark]" + "\n  - " + landmark.location.tileName + " (" + landmark.specificLandmarkType.ToString() + ")" + "[/url]";
+				text += "\n  - " + landmark.urlName + " (" + landmark.specificLandmarkType.ToString() + ")";
 			}
 		}else{
 			text += "NONE";
@@ -78,10 +78,10 @@ public class FactionInfoUI : UIMenu {
 		if (currentlyShowingFaction.characters.Count > 0) {
 			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
 				ECS.Character currChar = currentlyShowingFaction.characters[i];
-				text += "\n" + "[url=" + currChar.id + "_character]" + currChar.name  + "[/url]" + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+				text += "\n" + currChar.urlName  + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
 				if (currChar.currentTask != null) {
                     if(currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-                        text += " (" + ((Quest)currChar.currentTask).questType.ToString() + ")";
+                        text += " (" + ((Quest)currChar.currentTask).urlName + ")";
                     } else {
                         text += " (" + currChar.currentTask.taskType.ToString() + ")";
                     }
@@ -100,7 +100,7 @@ public class FactionInfoUI : UIMenu {
         relationshipText += "\n[b]Relationships:[/b] ";
         if (currentlyShowingFaction.relationships.Count > 0) {
             foreach (KeyValuePair<Faction, FactionRelationship> kvp in currentlyShowingFaction.relationships) {
-                relationshipText += "\n "  + kvp.Key.factionType.ToString() + "[-] [url=" + kvp.Key.id + "_faction]" + kvp.Key.name + "[/url]: " + kvp.Value.relationshipStatus.ToString();
+                relationshipText += "\n " + kvp.Key.factionType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.relationshipStatus.ToString();
             }
         } else {
             relationshipText += "NONE";

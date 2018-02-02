@@ -70,7 +70,19 @@ namespace ECS {
 
 		#region getters / setters
 		internal string name{
+			get { return this._name; }
+		}
+		internal string coloredName{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
+		}
+		internal string urlName{
+			get { return "[url=" + this._id.ToString() + "_character]" + this._name + "[/url]"; }
+		}
+		internal string coloredUrlName{
+			get { return "[url=" + this._id.ToString() + "_character]" + "[" + this._characterColorCode + "]" + this._name + "[-]" + "[/url]"; }
+		}
+		internal string prisonerName{
+			get { return "[url=" + this._id.ToString() + "_prisoner]" + this._name + "[/url]"; }
 		}
         internal int id {
             get { return _id; }

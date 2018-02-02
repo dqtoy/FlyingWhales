@@ -32,8 +32,11 @@ public class Faction {
 		get { return _id; }
 	}
     public string name {
-        get { return _name; }
+		get { return _name; }
     }
+	public string urlName {
+		get { return "[url=" + this._id.ToString() + "_faction]" + this._name + "[/url]"; }
+	}
     public ECS.Character leader {
         get { return _leader; }
     }

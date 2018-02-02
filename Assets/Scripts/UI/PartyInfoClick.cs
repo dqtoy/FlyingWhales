@@ -16,9 +16,11 @@ public class PartyInfoClick : MonoBehaviour {
 					UIManager.Instance.ShowCharacterInfo(character);
 				}
 			} else if (url.Contains("_quest")) {
-				Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
-				if (quest != null) {
-					UIManager.Instance.ShowQuestInfo(quest);
+				if(UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST){
+					Quest quest = (Quest)UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask;
+					if (quest != null) {
+						UIManager.Instance.ShowQuestInfo(quest);
+					}
 				}
 			}  else if(url.Contains("_prisoner")){
 				Party party = UIManager.Instance.partyinfoUI.currentlyShowingParty;
