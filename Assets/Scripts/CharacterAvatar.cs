@@ -93,6 +93,9 @@ public class CharacterAvatar : PooledObject{
         }
     }
     internal virtual void ReceivePath(List<HexTile> path) {
+        if (!_isInititalized) {
+            return;
+        }
         if (path != null && path.Count > 0) {
             if (this.currLocation == null) {
                 throw new Exception("Curr location of avatar is null! Is Inititalized: " + _isInititalized.ToString());
