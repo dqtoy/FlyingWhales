@@ -154,6 +154,10 @@ public class Party: IEncounterable, ICombatInitializer {
         if(_avatar != null) {
             _avatar.RemoveCharacter(member);
         }
+		//If party is unaligned, change party leader immediately if party leader died
+		if(faction == null && member.id == _partyLeader.id && _partyMembers.Count > 0){
+			_partyLeader = _partyMembers[0];
+		}
         if (!forDeath) {
 			member.AddHistory ("Left party: " + this._name + ".");
 			this._currLocation.AddCharacterOnTile(member, false);
@@ -626,10 +630,14 @@ public class Party: IEncounterable, ICombatInitializer {
 	public virtual void ReturnCombatResults(ECS.CombatPrototype combat){
         if (this.isDefeated) {
             //this party was defeated
-            if(_currentTask != null) {
+            if(_currentTask != null && faction != null) {
                 _currentTask.EndTask(TASK_STATUS.CANCEL);
             }
-        }
+		}else{
+			if(faction == null){
+				_partyLeader.UnalignedDetermineAction ();
+			}
+		}
 	}
 	public void SetCivilians(int amount){
 		_civilians = amount;
@@ -644,4 +652,12 @@ public class Party: IEncounterable, ICombatInitializer {
 
 	#endregion
 
+	public bool IsPartyWounded(){
+		for (int i = 0; i < _partyMembers.Count; i++) {
+			if(_partyMembers[i].currentHP < _partyMembers[i].maxHP){
+				return true;
+			}
+		}
+		return false;
+	}
 }

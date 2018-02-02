@@ -68,11 +68,28 @@ public class CharacterTask {
             default:
                 break;
         }
-        _assignedCharacter.DetermineAction();
     }
-    public virtual void TaskSuccess() { }
-    public virtual void TaskCancel() { }
-    public virtual void TaskFail() { }
+    public virtual void TaskSuccess() {
+		if(_assignedCharacter.faction == null){
+			_assignedCharacter.UnalignedDetermineAction ();
+		}else{
+			_assignedCharacter.DetermineAction();
+		}
+	}
+    public virtual void TaskCancel() {
+		if(_assignedCharacter.faction == null){
+			_assignedCharacter.UnalignedDetermineAction ();
+		}else{
+			_assignedCharacter.DetermineAction();
+		}
+	}
+    public virtual void TaskFail() {
+		if(_assignedCharacter.faction == null){
+			_assignedCharacter.UnalignedDetermineAction ();
+		}else{
+			_assignedCharacter.DetermineAction();
+		}
+	}
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

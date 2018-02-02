@@ -33,6 +33,9 @@ public class DoNothing : CharacterTask {
     public override void TaskCancel() {
         //Unschedule task end!
         SchedulingManager.Instance.RemoveSpecificEntry(endDate, endAction);
+		if(_assignedCharacter.faction != null){
+			_assignedCharacter.DetermineAction ();
+		}
     }
     //public override void AcceptQuest(ECS.Character partyLeader) {
     //    _isAccepted = true;
