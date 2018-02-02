@@ -56,6 +56,7 @@ namespace ECS {
 		private List<string> _history;
 		private int _combatHistoryID;
 		private List<ECS.Character> _prisoners;
+		private int _civilians;
 
 		internal int actRate;
 		internal CombatPrototype currentCombat;
@@ -221,6 +222,9 @@ namespace ECS {
 		}
 		public bool isDefeated {
 			get { return _isDefeated; }
+		}
+		public int civilians{
+			get { return _civilians; }
 		}
         #endregion
 
@@ -1589,6 +1593,15 @@ namespace ECS {
 		}
 		public void SetIsDefeated(bool state){
 			_isDefeated = state;
+		}
+		public void SetCivilians(int amount){
+			_civilians = amount;
+		}
+		public void AdjustCivilians(int amount){
+			_civilians += amount;
+			if(_civilians < 0){
+				_civilians = 0;
+			}
 		}
 		#endregion
     }

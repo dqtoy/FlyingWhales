@@ -81,6 +81,8 @@ public class PartyInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
+		text += "\n[b]Civilians:[/b] " + currentlyShowingParty.civilians.ToString ();
+
         partyInfoLbl.text = text;
         infoScrollView.ResetPosition();
     }
