@@ -6,7 +6,7 @@ public class CharacterProductionCap {
     public CHARACTER_PRODUCTION_CAP capReq;
     public int cap;
 
-    public bool IsCapReached(CHARACTER_ROLE role, Faction faction) {
+    public bool IsCapReached(CHARACTER_ROLE role, Faction faction, Settlement settlement) {
         int numOfCharacters = 0;
         switch (capReq) {
             case CHARACTER_PRODUCTION_CAP.CITY_COUNT:
@@ -60,6 +60,13 @@ public class CharacterProductionCap {
                     return true;
                 }
                 return false; //faction has less characters than cap
+            case CHARACTER_PRODUCTION_CAP.PER_SETTLEMENT:
+                numOfCharacters = settlement.GetCharactersCreatedInSettlement(role).Count;
+                numOfCharacters = faction.GetCharactersOfType(role).Count;
+                if (numOfCharacters >= cap) {
+                    return true;
+                }
+                return false; //settlement has less characters than cap
         }
         return false;
     }

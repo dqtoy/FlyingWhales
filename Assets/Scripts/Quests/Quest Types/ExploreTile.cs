@@ -24,7 +24,7 @@ public class ExploreTile : Quest {
         base.ConstructQuestLine();
 
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
-        goToLandmark.InititalizeAction(_landmarkToExplore.location);
+        goToLandmark.InititalizeAction(_landmarkToExplore);
         goToLandmark.onTaskActionDone += ScheduleRandomResult;
         goToLandmark.onTaskDoAction += goToLandmark.Generic;
         goToLandmark.onTaskDoAction += LogGoToLocation;
@@ -43,6 +43,18 @@ public class ExploreTile : Quest {
 			GoBackToQuestGiver(TASK_STATUS.CANCEL);
 		}
 	}
+    /*
+     This party failed to explore the tile, and died.
+         */
+    protected override void QuestFail() {
+        _isAccepted = false;
+        if (_currentAction != null) {
+            _currentAction.ActionDone(TASK_ACTION_RESULT.FAIL);
+        }
+        //RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
+        //_assignedParty.OnQuestEnd();
+        ResetQuestValues();
+    }
     #endregion
 
     private void TriggerRandomResult() {

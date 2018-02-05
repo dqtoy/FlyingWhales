@@ -25,10 +25,9 @@ public class TaskAction {
     }
 
     #region virtuals
-    public virtual void InititalizeAction(HexTile target) { }
+    public virtual void InititalizeAction(ILocation target) { }
     public virtual void InititalizeAction(Region target) { }
     public virtual void InititalizeAction(ECS.Character target) { }
-    public virtual void InititalizeAction(Settlement target) { }
     public virtual void InititalizeAction(int days) { }
 
     public virtual void DoAction(ECS.Character partyLeader) {

@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BaseLandmark {
+public class BaseLandmark : ILocation {
     protected int _id;
     protected HexTile _location;
     protected LANDMARK_TYPE _specificLandmarkType;
@@ -20,7 +20,6 @@ public class BaseLandmark {
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
 	protected int _reservedCivilians;
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
-    //TODO: Add list of prisoners on landmark
     protected Dictionary<RESOURCE, int> _resourceInventory; //list of resources available on landmark
     //TODO: Add list of items on landmark
     protected List<TECHNOLOGY> _technologiesOnLandmark;
@@ -29,10 +28,12 @@ public class BaseLandmark {
     protected WeightedDictionary<ENCOUNTERABLE> _encounterables;
 	protected IEncounterable _landmarkEncounterable;
 	protected ENCOUNTERABLE _landmarkEncounterableType;
-	protected List<ECS.Character> _prisoners;
-	protected List<string> _history;
+	protected List<ECS.Character> _prisoners; //list of prisoners on landmark
+    protected List<string> _history;
 	protected int _combatHistoryID;
 	protected Dictionary<int, ECS.CombatPrototype> _combatHistory;
+    protected List<ICombatInitializer> _charactersAtLocation;
+    protected ECS.CombatPrototype _currentCombat;
 
     #region getters/setters
     public int id {
@@ -65,7 +66,6 @@ public class BaseLandmark {
     public bool isExplored {
         get { return _isExplored; }
     }
-   
     public Faction owner {
         get { return _owner; }
     }
@@ -102,6 +102,9 @@ public class BaseLandmark {
 	public Dictionary<int, ECS.CombatPrototype> combatHistory {
 		get { return _combatHistory; }
 	}
+    public List<ICombatInitializer> charactersAtLocation {
+        get { return _charactersAtLocation; }
+    }
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -121,6 +124,7 @@ public class BaseLandmark {
 		_history = new List<string> ();
 		_combatHistory = new Dictionary<int, ECS.CombatPrototype> ();
 		_combatHistoryID = 0;
+        _charactersAtLocation = new List<ICombatInitializer>();
         ConstructTechnologiesDictionary();
         InititalizeEncounterables();
     }
@@ -267,12 +271,81 @@ public class BaseLandmark {
     #region Party
     public List<Party> GetPartiesOnLandmark() {
         List<Party> parties = new List<Party>();
-        for (int i = 0; i < _location.charactersOnTile.Count; i++) {
-			if(_location.charactersOnTile[i] is Party){
-				parties.Add((Party)_location.charactersOnTile[i]);
+        for (int i = 0; i < _location.charactersAtLocation.Count; i++) {
+			if(_location.charactersAtLocation[i] is Party){
+				parties.Add((Party)_location.charactersAtLocation[i]);
 			}
         }
         return parties;
+    }
+    #endregion
+
+    #region Location
+    public void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true) {
+        if (!_charactersAtLocation.Contains(character)) {
+            _charactersAtLocation.Add(character);
+            if (character is ECS.Character) {
+                ECS.Character currChar = character as ECS.Character;
+                this.location.RemoveCharacterFromLocation(currChar);
+                currChar.SetLocation(this.location);
+                currChar.SetSpecificLocation(this);
+            } else if (character is Party) {
+                Party currParty = character as Party;
+                this.location.RemoveCharacterFromLocation(currParty);
+                currParty.SetLocation(this.location);
+                currParty.SetSpecificLocation(this);
+            }
+            if (startCombat) {
+                StartCombatAtLocation();
+            }
+        }
+    }
+    public void RemoveCharacterFromLocation(ICombatInitializer character) {
+        _charactersAtLocation.Remove(character);
+        if (character is ECS.Character) {
+            ECS.Character currChar = character as ECS.Character;
+            currChar.SetSpecificLocation(this.location); //make the characters location, the hex tile that this landmark is on, meaning that the character exited the structure
+        } else if (character is Party) {
+            Party currParty = character as Party;
+            currParty.SetSpecificLocation(this.location);//make the party's location, the hex tile that this landmark is on, meaning that the party exited the structure
+        }
+    }
+    #endregion
+
+    #region Combat
+    public void StartCombatAtLocation() {
+        if (!CombatAtLocation()) {
+            this._currentCombat = null;
+            for (int i = 0; i < _charactersAtLocation.Count; i++) {
+                _charactersAtLocation[i].SetIsDefeated(false);
+            }
+        }
+    }
+    public bool CombatAtLocation() {
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            if (_charactersAtLocation[i].InitializeCombat()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer) {
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            if (_charactersAtLocation[i] != combatInitializer) {
+                if (_charactersAtLocation[i] is Party) {
+                    if (((Party)_charactersAtLocation[i]).isDefeated) {
+                        continue;
+                    }
+                }
+                if (combatInitializer.CanBattleThis(_charactersAtLocation[i])) {
+                    return _charactersAtLocation[i];
+                }
+            }
+        }
+        return null;
+    }
+    public void SetCurrentCombat(ECS.CombatPrototype combat) {
+        _currentCombat = combat;
     }
     #endregion
 
@@ -336,13 +409,13 @@ public class BaseLandmark {
 		return false;
 	}
 	internal bool HasWarlord(){
-		for (int i = 0; i < this._location.charactersOnTile.Count; i++) {
-			if(this._location.charactersOnTile[i] is ECS.Character){
-				if(((ECS.Character)this._location.charactersOnTile[i]).role.roleType == CHARACTER_ROLE.WARLORD){
+		for (int i = 0; i < this._location.charactersAtLocation.Count; i++) {
+			if(this._location.charactersAtLocation[i] is ECS.Character){
+				if(((ECS.Character)this._location.charactersAtLocation[i]).role.roleType == CHARACTER_ROLE.WARLORD){
 					return true;
 				}
-			}else if(this._location.charactersOnTile[i] is Party){
-				if(((Party)this._location.charactersOnTile[i]).partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
+			}else if(this._location.charactersAtLocation[i] is Party){
+				if(((Party)this._location.charactersAtLocation[i]).partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
 					return true;
 				}
 			}

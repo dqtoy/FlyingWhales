@@ -54,7 +54,7 @@ public class Rest : CharacterTask {
 		if(targetSettlement == null){
 			goToLocation.InititalizeAction(character.currLocation);
 		}else{
-			goToLocation.InititalizeAction(targetSettlement.location);
+			goToLocation.InititalizeAction(targetSettlement);
 		}
         goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
         goToLocation.onTaskActionDone += StartRest;
@@ -64,7 +64,11 @@ public class Rest : CharacterTask {
     }
     public override void TaskSuccess() {
 		Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
-        _assignedCharacter.DetermineAction();
+        if(_assignedCharacter.faction == null) {
+            _assignedCharacter.UnalignedDetermineAction();
+        } else {
+            _assignedCharacter.DetermineAction();
+        }
 	}
     //public override void TaskCancel() {
     //    if (_currentAction != null) {

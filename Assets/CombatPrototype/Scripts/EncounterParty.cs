@@ -25,7 +25,7 @@ public class EncounterParty : MonoBehaviour {
 			newCharacter.SetCharacterColor (Color.red);
 			if(originLandmark != null){
 				newCharacter.SetHome (originLandmark);
-				originLandmark.location.AddCharacterOnTile(newCharacter, false);
+				originLandmark.location.AddCharacterToLocation(newCharacter, false);
 			}
 			characters.Add (newCharacter);
 		}

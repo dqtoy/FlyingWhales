@@ -59,7 +59,7 @@ public class JoinParty : CharacterTask {
         _partyToJoin.AddPartyMemberAsOnTheWay(_assignedCharacter);
 
         GoToLocation goToLocation = new GoToLocation(this);
-        goToLocation.InititalizeAction(partyToJoin.currLocation);
+        goToLocation.InititalizeAction(partyToJoin.specificLocation);
         goToLocation.onTaskActionDone += SuccessTask;
         goToLocation.onTaskDoAction += goToLocation.Generic;
 

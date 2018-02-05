@@ -33,10 +33,10 @@ namespace ECS{
 		internal List<string> resultsLog;
 		internal ICombatInitializer attacker;
         internal ICombatInitializer defender;
-        internal HexTile location;
+        internal ILocation location;
 		internal bool isDone;
 
-		public CombatPrototype(ICombatInitializer attacker, ICombatInitializer defender, HexTile location){
+		public CombatPrototype(ICombatInitializer attacker, ICombatInitializer defender, ILocation location){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
@@ -163,7 +163,7 @@ namespace ECS{
                 //}
             }
             CombatPrototypeManager.Instance.CombatResults(this);
-			this.location.StartCombatInTile ();
+			this.location.StartCombatAtLocation ();
 		}
 
         //This simulates the whole combat system
@@ -220,9 +220,13 @@ namespace ECS{
 					sideAParty.SetIsDefeated (true);
 				}
 			}
-            AddCombatLog("Combat Ends", SIDES.A);
-			if(location != null && location.landmarkOnTile != null){
-				location.landmarkOnTile.AddHistory ("A combat took place!", this);
+            Party winner = sideAParty;
+            if(winningSide == SIDES.B) {
+                winner = sideBParty;
+            }
+            AddCombatLog("Combat Ends. Winner is: " + winner.name, SIDES.A);
+			if(location != null && location is BaseLandmark){
+				(location as BaseLandmark).AddHistory ("A combat took place!", this);
 			}
 			isDone = true;
         }

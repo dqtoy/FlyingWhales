@@ -37,6 +37,7 @@ namespace ECS {
 		private Faction _faction;
 		private Party _party;
 		private CharacterTask _currentTask;
+        private ILocation _specificLocation;
 		private HexTile _currLocation;
 		private CharacterAvatar _avatar;
 
@@ -124,6 +125,9 @@ namespace ECS {
 		public CharacterTask currentTask {
 			get { return _currentTask; }
 		}
+        public ILocation specificLocation {
+            get { return _specificLocation; }
+        }
 		internal HexTile currLocation{
 			get {
                 HexTile tile = null;
@@ -546,8 +550,9 @@ namespace ECS {
 					PrisonerDeath ();
 				}
 				if (this.currLocation != null) {
-					this.currLocation.RemoveCharacterOnTile (this);
-				}
+                    this._specificLocation.RemoveCharacterFromLocation(this);
+                    this.currLocation.RemoveCharacterFromLocation(this);
+                }
 
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
@@ -1190,6 +1195,9 @@ namespace ECS {
 		public void SetLocation(HexTile location) {
 			_currLocation = location;
 		}
+        public void SetSpecificLocation(ILocation specificLocation) {
+            _specificLocation = specificLocation;
+        }
 		#endregion
 
 		#region Quests
@@ -1514,7 +1522,7 @@ namespace ECS {
 			_isPrisoner = state;
 			_isPrisonerOf = prisonerOf;
 			if(state){
-				this.currLocation.RemoveCharacterOnTile (this);
+				this.currLocation.RemoveCharacterFromLocation (this);
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){
 					wardenName = ((Party)_isPrisonerOf).name;
@@ -1592,16 +1600,16 @@ namespace ECS {
 		public bool InitializeCombat(){
 			if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
 				//Start Combat with hostile or unaligned
-				ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
+				ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
 				if(enemy != null){
-					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.currLocation);
+					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
 					combat.AddCharacters (ECS.SIDES.A, new List<ECS.Character>(){this});
 					if(enemy is Party){
 						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
 					}else{
 						combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
 					}
-					this.currLocation.SetCurrentCombat (combat);
+					this.specificLocation.SetCurrentCombat (combat);
 					CombatThreadPool.Instance.AddToThreadPool (combat);
 					return true;
 				}
@@ -1637,11 +1645,12 @@ namespace ECS {
 		}
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
 			if (this.isDefeated) {
-				//this party was defeated
+				//this character was defeated
 				if(_currentTask != null && faction != null) {
-					_currentTask.EndTask(TASK_STATUS.CANCEL);
+					_currentTask.EndTask(TASK_STATUS.FAIL);
 				}
-			}else{
+                this._specificLocation.RemoveCharacterFromLocation(this);
+            } else{
 				if(faction == null){
 					UnalignedDetermineAction ();
 				}

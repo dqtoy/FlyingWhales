@@ -15,8 +15,9 @@ public class CharacterAvatar : PooledObject{
 
 	protected List<ECS.Character> _characters;
 
-	protected HexTile _currLocation;
-    protected HexTile targetLocation;
+	protected ILocation _currLocation;
+    protected ILocation targetLocation;
+    protected bool _startCombatOnReachLocation;
 
 	protected List<HexTile> path;
 
@@ -27,8 +28,26 @@ public class CharacterAvatar : PooledObject{
     public List<ECS.Character> characters {
         get { return _characters; }
     }
-    public HexTile currLocation {
+    public ILocation currLocation {
         get { return _currLocation; }
+    }
+    public HexTile currTile {
+        get {
+            if (_currLocation is BaseLandmark) {
+                return (_currLocation as BaseLandmark).location;
+            } else {
+                return (_currLocation as HexTile);
+            }
+        }
+    }
+    public HexTile targetTile {
+        get {
+                if (targetLocation is BaseLandmark) {
+                    return (targetLocation as BaseLandmark).location;
+                } else {
+                    return (targetLocation as HexTile);
+                }
+            }
     }
     #endregion
 
@@ -36,7 +55,7 @@ public class CharacterAvatar : PooledObject{
         this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<ECS.Character>();
         AddNewCharacter(character);
-        _currLocation = character.currLocation;
+        _currLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
@@ -46,7 +65,7 @@ public class CharacterAvatar : PooledObject{
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
-        _currLocation = party.currLocation;
+        _currLocation = party.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
@@ -68,8 +87,9 @@ public class CharacterAvatar : PooledObject{
     #endregion
 
     #region Pathfinding
-    internal void SetTarget(HexTile target) {
+    internal void SetTarget(ILocation target, bool startCombatOnReachLocation = false) {
         targetLocation = target;
+        _startCombatOnReachLocation = startCombatOnReachLocation;
     }
     internal void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null) {
         if (smoothMovement.isMoving) {
@@ -87,7 +107,12 @@ public class CharacterAvatar : PooledObject{
             } else {
                 faction = _characters[0].party.partyLeader.faction;
             }
-            PathGenerator.Instance.CreatePath(this, this.currLocation, this.targetLocation, pathFindingMode, faction);
+            if(targetLocation is BaseLandmark) {
+                PathGenerator.Instance.CreatePath(this, this.currTile, (targetLocation as BaseLandmark).location, pathFindingMode, faction);
+            } else {
+                PathGenerator.Instance.CreatePath(this, this.currTile, (targetLocation as HexTile), pathFindingMode, faction);
+            }
+            
             //this.path = PathGenerator.Instance.GetPath(this.currLocation, this.targetLocation, pathFindingMode, faction);
             //NewMove();
         }
@@ -97,15 +122,15 @@ public class CharacterAvatar : PooledObject{
             return;
         }
         if (path != null && path.Count > 0) {
-            if (this.currLocation == null) {
+            if (this.currTile == null) {
                 throw new Exception("Curr location of avatar is null! Is Inititalized: " + _isInititalized.ToString());
             }
-			if(this.currLocation.landmarkOnTile != null){
+			if(this.currTile.landmarkOnTile != null){
 				if(_characters[0].party != null){
-					this.currLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " left.");
+					this.currTile.landmarkOnTile.AddHistory (_characters [0].party.name + " left.");
 				}else{
 					for (int i = 0; i < _characters.Count; i++) {
-						this.currLocation.landmarkOnTile.AddHistory (_characters [i].name + " left.");
+						this.currTile.landmarkOnTile.AddHistory (_characters [i].name + " left.");
 					}
 				}
 			}
@@ -118,7 +143,7 @@ public class CharacterAvatar : PooledObject{
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
-                    this.MakeCitizenMove(this.currLocation, this.path[0]);
+                    this.MakeCitizenMove(this.currTile, this.path[0]);
                 }
             }
         }
@@ -132,8 +157,8 @@ public class CharacterAvatar : PooledObject{
          */
     internal virtual void OnMoveFinished() {
         if (this.path.Count > 0) {
-			RemoveCharactersFromTile(this.currLocation);
-			AddCharactersToTile(this.path[0]);
+			RemoveCharactersFromLocation(this.currLocation);
+			AddCharactersToLocation(this.path[0]);
 
             _currLocation = this.path[0];
             this.path.RemoveAt(0);
@@ -144,23 +169,24 @@ public class CharacterAvatar : PooledObject{
         HasArrivedAtTargetLocation();
     }
     internal virtual void HasArrivedAtTargetLocation() {
-        if (this.currLocation == this.targetLocation) {
+        if (this.currTile == targetTile) {
             if (!this._hasArrived) {
-				if(this.currLocation.landmarkOnTile != null){
+                AddCharactersToLocation(targetLocation, _startCombatOnReachLocation);
+				if(this.currTile.landmarkOnTile != null){
 					string historyText = "Visited landmark ";
-					if (this.currLocation.landmarkOnTile is Settlement) {
+					if (this.currTile.landmarkOnTile is Settlement) {
 						historyText = "Arrived at settlement ";
 					}
 						
 					if(_characters[0].party != null){
-						this.currLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
+						this.currTile.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
 						for (int i = 0; i < _characters.Count; i++) {
-							_characters [i].AddHistory (historyText + this.currLocation.landmarkOnTile.landmarkName + ".");
+							_characters [i].AddHistory (historyText + this.currTile.landmarkOnTile.landmarkName + ".");
 						}
 					}else{
 						for (int i = 0; i < _characters.Count; i++) {
-							_characters [i].AddHistory (historyText + this.currLocation.landmarkOnTile.landmarkName + ".");
-							this.currLocation.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
+							_characters [i].AddHistory (historyText + this.currTile.landmarkOnTile.landmarkName + ".");
+							this.currTile.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
 						}
 					}
 				}
@@ -191,34 +217,34 @@ public class CharacterAvatar : PooledObject{
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
     private void RevealRoads() {
-        this.currLocation.SetRoadState(true);
+        this.currTile.SetRoadState(true);
     }
     private void RevealLandmarks() {
-        if(this.currLocation.landmarkOnTile != null) {
-            this.currLocation.landmarkOnTile.SetHiddenState(false);
+        if(this.currTile.landmarkOnTile != null) {
+            this.currTile.landmarkOnTile.SetHiddenState(false);
         }
     }
-    private void RemoveCharactersFromTile(HexTile hextile) {
+    private void RemoveCharactersFromLocation(ILocation location) {
 		if(_characters[0].party == null){
 			for (int i = 0; i < _characters.Count; i++) {
 				ECS.Character currCharacter = _characters[i];
-				hextile.RemoveCharacterOnTile(currCharacter);
+				location.RemoveCharacterFromLocation(currCharacter);
 			}
 		}else{
-			hextile.RemoveCharacterOnTile(_characters[0].party);
+			location.RemoveCharacterFromLocation(_characters[0].party);
 		}
         
 		UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateSettlementInfo();
     }
-	private void AddCharactersToTile(HexTile hextile) {
+	private void AddCharactersToLocation(ILocation location, bool startCombatOnReachLocation = true) {
 		if(_characters[0].party == null){
 			for (int i = 0; i < _characters.Count; i++) {
 				ECS.Character currCharacter = _characters[i];
-				hextile.AddCharacterOnTile(currCharacter);
+				location.AddCharacterToLocation(currCharacter, startCombatOnReachLocation);
 			}
 		}else{
-			hextile.AddCharacterOnTile(_characters[0].party);
+			location.AddCharacterToLocation(_characters[0].party, startCombatOnReachLocation);
 		}
 
 		UIManager.Instance.UpdateHexTileInfo();

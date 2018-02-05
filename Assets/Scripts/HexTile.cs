@@ -6,7 +6,7 @@ using System.Linq;
 using Panda;
 using Pathfinding;
 
-public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
+public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     [Header("General Tile Details")]
     public int id;
     public int xCoordinate;
@@ -133,7 +133,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private GameDate _corpseMoundDestroyDate;
 	private ECS.CombatPrototype _currentCombat;
 
-	protected List<ICombatInitializer> _charactersOnTile = new List<ICombatInitializer>(); //List of characters/party on landmark
+	protected List<ICombatInitializer> _charactersAtLocation = new List<ICombatInitializer>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -213,8 +213,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject clickHighlightGO {
 		get { return _clickHighlightGO; }
 	}
-	public List<ICombatInitializer> charactersOnTile{
-		get { return _charactersOnTile; }
+	public List<ICombatInitializer> charactersAtLocation{
+		get { return _charactersAtLocation; }
 	}
 	public ECS.CombatPrototype currentCombat{
 		get { return _currentCombat; }
@@ -296,7 +296,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         return null;
     }
-
     public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
         this.hasLandmark = true;
         GameObject landmarkGO = null;
@@ -1359,7 +1358,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 }
             }
             //ShowLandmarkInfo();
-        }
+        } 
+        //else {
+        //    ShowHexTileInfo();
+        //}
 
    //     if (this.isOccupied) {
 			//if(!this.isHabitable){
@@ -1621,73 +1623,114 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
+    private void ShowHexTileInfo() {
+        string text = string.Empty;
+        text += "Characters in tile: ";
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            ICombatInitializer currObj = _charactersAtLocation[i];
+            if (currObj is Party) {
+                text += "\n" + ((Party)currObj).name;
+            } else if (currObj is ECS.Character) {
+                text += "\n" + ((ECS.Character)currObj).name;
+            }
+        }
+    }
+
     private void ShowLandmarkInfo() {
         string text = string.Empty;
-        text += "[b]Tile:[/b] " + this.name + "\n";
-        text += "[b]Connections:[/b] " + this.landmarkOnTile.connections.Count.ToString();
-        for (int i = 0; i < this.landmarkOnTile.connections.Count; i++) {
-            object currConnection = this.landmarkOnTile.connections[i];
-            if(currConnection is Region) {
-                text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
-            } else {
-                text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
-            }
-        }
-        if (this.landmarkOnTile.owner != null) {
-            text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
-            text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
-            text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civiliansWithReserved.ToString();
-            text += "\n[b]Population Growth: [/b] " + (this.landmarkOnTile.totalPopulation * this.landmarkOnTile.location.region.populationGrowth).ToString();
-//            text += "\n[b]Characters: [/b] ";
-//            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
-//                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
-//                    ECS.Character currChar = landmarkOnTile.charactersOnLandmark[i];
-//                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
-//                    if (currChar.currentQuest != null) {
-//                        text += " " + currChar.currentQuest.questType.ToString();
-//                    }
-//                }
-//            } else {
-//                text += "NONE";
-//            }
-
-            text += "\n[b]ECS.Character Caps: [/b] ";
-            for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
-                CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
-                bool isCapReached = false;
-                for (int j = 0; j < currWweight.productionCaps.Count; j++) {
-                    CharacterProductionCap cap = currWweight.productionCaps[j];
-                    if(cap.IsCapReached(currWweight.role, this.landmarkOnTile.owner)) {
-                        isCapReached = true;
-                        break;
-                    }
-                }
-                text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
-            }
-
-            text += "\n[b]Active Quests: [/b] ";
-            if (landmarkOnTile.owner.internalQuestManager.activeQuests.Count > 0) {
-                for (int i = 0; i < landmarkOnTile.owner.internalQuestManager.activeQuests.Count; i++) {
-                    Quest currQuest = landmarkOnTile.owner.internalQuestManager.activeQuests[i];
-                    text += "\n" + currQuest.GetType().ToString();
-                }
-            } else {
-                text += "NONE";
-            }
-        }
-        text += "\n[b]Technologies: [/b] ";
-        List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
-        if (availableTech.Count > 0) {
-            for (int i = 0; i < availableTech.Count; i++) {
-                TECHNOLOGY currTech = availableTech[i];
-                text += currTech.ToString();
-                if(i + 1 != availableTech.Count) {
-                    text += ", ";
+        text += "[b]Characters in landmark: [/b]";
+        if(_landmarkOnTile.charactersAtLocation.Count > 0) {
+            for (int i = 0; i < _landmarkOnTile.charactersAtLocation.Count; i++) {
+                ICombatInitializer currObj = _landmarkOnTile.charactersAtLocation[i];
+                if (currObj is Party) {
+                    text += "\n" + ((Party)currObj).name;
+                } else if (currObj is ECS.Character) {
+                    text += "\n" + ((ECS.Character)currObj).name;
                 }
             }
         } else {
             text += "NONE";
         }
+        
+        text += "\n[b]Characters in tile: [/b]";
+        if (_charactersAtLocation.Count > 0) {
+            for (int i = 0; i < _charactersAtLocation.Count; i++) {
+                ICombatInitializer currObj = _charactersAtLocation[i];
+                if (currObj is Party) {
+                    text += "\n" + ((Party)currObj).name;
+                } else if (currObj is ECS.Character) {
+                    text += "\n" + ((ECS.Character)currObj).name;
+                }
+            }
+        } else {
+            text += "NONE";
+        }
+
+        //        text += "[b]Tile:[/b] " + this.name + "\n";
+        //        text += "[b]Connections:[/b] " + this.landmarkOnTile.connections.Count.ToString();
+        //        for (int i = 0; i < this.landmarkOnTile.connections.Count; i++) {
+        //            object currConnection = this.landmarkOnTile.connections[i];
+        //            if(currConnection is Region) {
+        //                text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
+        //            } else {
+        //                text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
+        //            }
+        //        }
+        //        if (this.landmarkOnTile.owner != null) {
+        //            text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
+        //            text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
+        //            text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civiliansWithReserved.ToString();
+        //            text += "\n[b]Population Growth: [/b] " + (this.landmarkOnTile.totalPopulation * this.landmarkOnTile.location.region.populationGrowth).ToString();
+        ////            text += "\n[b]Characters: [/b] ";
+        ////            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
+        ////                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
+        ////                    ECS.Character currChar = landmarkOnTile.charactersOnLandmark[i];
+        ////                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
+        ////                    if (currChar.currentQuest != null) {
+        ////                        text += " " + currChar.currentQuest.questType.ToString();
+        ////                    }
+        ////                }
+        ////            } else {
+        ////                text += "NONE";
+        ////            }
+
+        //            text += "\n[b]ECS.Character Caps: [/b] ";
+        //            for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
+        //                CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
+        //                bool isCapReached = false;
+        //                for (int j = 0; j < currWweight.productionCaps.Count; j++) {
+        //                    CharacterProductionCap cap = currWweight.productionCaps[j];
+        //                    if(cap.IsCapReached(currWweight.role, this.landmarkOnTile.owner)) {
+        //                        isCapReached = true;
+        //                        break;
+        //                    }
+        //                }
+        //                text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
+        //            }
+
+        //            text += "\n[b]Active Quests: [/b] ";
+        //            if (landmarkOnTile.owner.internalQuestManager.activeQuests.Count > 0) {
+        //                for (int i = 0; i < landmarkOnTile.owner.internalQuestManager.activeQuests.Count; i++) {
+        //                    Quest currQuest = landmarkOnTile.owner.internalQuestManager.activeQuests[i];
+        //                    text += "\n" + currQuest.GetType().ToString();
+        //                }
+        //            } else {
+        //                text += "NONE";
+        //            }
+        //        }
+        //        text += "\n[b]Technologies: [/b] ";
+        //        List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
+        //        if (availableTech.Count > 0) {
+        //            for (int i = 0; i < availableTech.Count; i++) {
+        //                TECHNOLOGY currTech = availableTech[i];
+        //                text += currTech.ToString();
+        //                if(i + 1 != availableTech.Count) {
+        //                    text += ", ";
+        //                }
+        //            }
+        //        } else {
+        //            text += "NONE";
+        //        }
         UIManager.Instance.ShowSmallInfo(text);
     }
 
@@ -1845,42 +1888,50 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
 	#region Characters
-	public void AddCharacterOnTile(ICombatInitializer character, bool startCombat = true) {
-		if (!_charactersOnTile.Contains(character)) {
-			_charactersOnTile.Add(character);
+	public void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true) {
+		if (!_charactersAtLocation.Contains(character)) {
+			_charactersAtLocation.Add(character);
 			if(character is ECS.Character){
-				((ECS.Character)character).SetLocation (this);
+                ECS.Character currChar = character as ECS.Character;
+                currChar.SetLocation (this);
+                currChar.SetSpecificLocation(this);
 			}else if(character is Party){
-				((Party)character).SetLocation (this);
+                Party currParty = character as Party;
+                currParty.SetLocation (this);
+                currParty.SetSpecificLocation(this);
 			}
 			if(startCombat){
-				StartCombatInTile ();
+				StartCombatAtLocation ();
 			}
 		}
 	}
-	public void RemoveCharacterOnTile(ICombatInitializer character) {
-		_charactersOnTile.Remove(character);
+	public void RemoveCharacterFromLocation(ICombatInitializer character) {
+		_charactersAtLocation.Remove(character);
 		if(character is ECS.Character){
-			((ECS.Character)character).SetLocation (null);
-		}else if(character is Party){
-			((Party)character).SetLocation (null);
+            ECS.Character currChar = character as ECS.Character;
+            currChar.SetLocation(null);
+            currChar.SetSpecificLocation(null);
+        } else if(character is Party){
+            Party currParty = character as Party;
+            currParty.SetLocation (null);
+            currParty.SetSpecificLocation(null);
 		}
 	}
 	public ECS.Character GetCharacterByID(int id){
-		for (int i = 0; i < _charactersOnTile.Count; i++) {
-			if(_charactersOnTile[i]	is ECS.Character){
-				if(((ECS.Character)_charactersOnTile[i]).id == id){
-					return (ECS.Character)_charactersOnTile [i];
+		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if(_charactersAtLocation[i]	is ECS.Character){
+				if(((ECS.Character)_charactersAtLocation[i]).id == id){
+					return (ECS.Character)_charactersAtLocation [i];
 				}
 			}
 		}
 		return null;
 	}
 	public Party GetPartyByLeaderID(int id){
-		for (int i = 0; i < _charactersOnTile.Count; i++) {
-			if(_charactersOnTile[i]	is Party){
-				if(((Party)_charactersOnTile[i]).partyLeader.id == id){
-					return (Party)_charactersOnTile [i];
+		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if(_charactersAtLocation[i]	is Party){
+				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
+					return (Party)_charactersAtLocation [i];
 				}
 			}
 		}
@@ -1888,9 +1939,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	public int CharactersCount(){
 		int count = 0;
-		for (int i = 0; i < _charactersOnTile.Count; i++) {
-			if(_charactersOnTile[i]	is Party){
-				count += ((Party)_charactersOnTile [i]).partyMembers.Count;
+		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if(_charactersAtLocation[i]	is Party){
+				count += ((Party)_charactersAtLocation [i]).partyMembers.Count;
 			}else {
 				count += 1;
 			}
@@ -1938,38 +1989,38 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	#region Combat
-	internal void StartCombatInTile(){
-		if(!CombatInTile()){
+	public void StartCombatAtLocation(){
+		if(!CombatAtLocation()){
 			this._currentCombat = null;
-			for (int i = 0; i < _charactersOnTile.Count; i++) {
-				_charactersOnTile [i].SetIsDefeated (false);
+			for (int i = 0; i < _charactersAtLocation.Count; i++) {
+				_charactersAtLocation[i].SetIsDefeated (false);
 			}
 		}
 	}
-	internal bool CombatInTile(){
-		for (int i = 0; i < _charactersOnTile.Count; i++) {
-			if(_charactersOnTile[i].InitializeCombat ()){
+    public bool CombatAtLocation(){
+		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if(_charactersAtLocation[i].InitializeCombat ()){
 				return true;
 			}
 		}
 		return false;
 	}
-	internal ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer){
-		for (int i = 0; i < _charactersOnTile.Count; i++) {
-			if(_charactersOnTile[i] != combatInitializer){
-				if(_charactersOnTile[i] is Party){
-					if(((Party)_charactersOnTile[i]).isDefeated){
+    public ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer){
+		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if(_charactersAtLocation[i] != combatInitializer){
+				if(_charactersAtLocation[i] is Party){
+					if(((Party)_charactersAtLocation[i]).isDefeated){
 						continue;
 					}
 				}
-				if(combatInitializer.CanBattleThis(_charactersOnTile[i])){
-					return _charactersOnTile [i];
+				if(combatInitializer.CanBattleThis(_charactersAtLocation[i])){
+					return _charactersAtLocation [i];
 				}
 			}
 		}
 		return null;
 	}
-	internal void SetCurrentCombat (ECS.CombatPrototype combat){
+    public void SetCurrentCombat (ECS.CombatPrototype combat){
 		_currentCombat = combat;
 	}
 	#endregion

@@ -26,8 +26,21 @@ public class Hero : CharacterRole {
 
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
         WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
-        Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
         Region currRegionOfCharacter = _character.currLocation.region;
+
+        if (_character.currLocation.landmarkOnTile is Settlement) {
+            Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
+            if (currSettlement == null) {
+                throw new System.Exception("NO SETTLEMENT!");
+            }
+            if (currSettlement.owner == null) {
+                throw new System.Exception("NO SETTLEMENT OWNER!");
+            }
+            //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
+            if (currSettlement.owner.IsHostileWith(_character.faction)) {
+                questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement(), PATHFINDING_MODE.USE_ROADS), 500);
+            }
+        }
 
         for (int i = 0; i < currRegionOfCharacter.adjacentRegionsViaMajorRoad.Count; i++) {
             Region adjRegion = currRegionOfCharacter.adjacentRegionsViaMajorRoad[i];
@@ -35,21 +48,12 @@ public class Hero : CharacterRole {
             if (regionOwner != null) {
                 if (!regionOwner.IsHostileWith(_character.faction)) {
                     Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
-                    MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement.location, PATHFINDING_MODE.USE_ROADS);
+                    MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement, PATHFINDING_MODE.USE_ROADS);
                     questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
                 }
             }
         }
-        if (currSettlement == null) {
-            throw new System.Exception("NO SETTLEMENT!");
-        }
-        if (currSettlement.owner == null) {
-            throw new System.Exception("NO SETTLEMENT OWNER!");
-        }
-        //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
-        if (currSettlement.owner.IsHostileWith(_character.faction)) {
-            questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
-        }
+        
         return questWeights;
     }
 
