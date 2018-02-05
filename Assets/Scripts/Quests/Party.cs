@@ -228,8 +228,10 @@ public class Party: IEncounterable, ICombatInitializer {
 		SetCurrentTask (null);
 		if(_partyLeader.isDead){
 			while(_prisoners.Count > 0){
-				_prisoners [0].Death ();
-			}
+                ECS.Character currPrisoner = _prisoners[0];
+                currPrisoner.SetLocation(currLocation);
+                currPrisoner.Death();
+            }
 		}else{
 			while(_prisoners.Count > 0){
 				_prisoners [0].TransferPrisoner (_partyLeader);
@@ -459,6 +461,9 @@ public class Party: IEncounterable, ICombatInitializer {
             throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
         }
         Quest currentQuest = (Quest)currentTask;
+        if(_avatar == null) {
+            _partyLeader.CreateNewAvatar();
+        }
         _avatar.SetTarget(currentQuest.postedAt.location);
         _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => currentQuest.TurnInQuest(taskResult));
     }
@@ -629,7 +634,15 @@ public class Party: IEncounterable, ICombatInitializer {
         if (this.isDefeated) {
             //this party was defeated
             if(_currentTask != null) {
-                _currentTask.EndTask(TASK_STATUS.CANCEL);
+                if(partyMembers.Count > 0) {
+                    //the party was defeated in combat, but there are still members that are alive,
+                    //make them go back to the quest giver and have the quest cancelled.
+                    (_currentTask as Quest).GoBackToQuestGiver(TASK_STATUS.CANCEL);
+                } else {
+                    //The party was defeated in combat, and no one survived, mark the quest as 
+                    //failed, so that other characters can try to do the quest.
+                    _currentTask.EndTask(TASK_STATUS.FAIL);
+                }
             }
         }
 	}

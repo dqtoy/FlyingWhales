@@ -1614,7 +1614,7 @@ namespace ECS {
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
             if (this.isDefeated) {
                 //this character was defeated
-                _currentTask.EndTask(TASK_STATUS.CANCEL);
+                _currentTask.EndTask(TASK_STATUS.FAIL);
             }
         }
 		public void SetIsDefeated(bool state){

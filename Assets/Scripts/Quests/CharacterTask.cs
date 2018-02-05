@@ -70,9 +70,9 @@ public class CharacterTask {
         }
         _assignedCharacter.DetermineAction();
     }
-    public virtual void TaskSuccess() { }
-    public virtual void TaskCancel() { }
-    public virtual void TaskFail() { }
+    public virtual void TaskSuccess(){ }
+    public virtual void TaskCancel(){ }
+    public virtual void TaskFail(){ }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

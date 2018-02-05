@@ -149,12 +149,12 @@ public class Quest : CharacterTask{
         _assignedParty.OnQuestEnd();
     }
     protected virtual void QuestFail() {
-		_isDone = true;
-		_createdBy.RemoveQuest(this);
-		if (_postedAt != null) {
-			_postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
-		}
-		if (_currentAction != null) {
+        _isAccepted = false;
+        _createdBy.RemoveQuest(this);
+        if (_postedAt != null) {
+            _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
+        }
+        if (_currentAction != null) {
 			_currentAction.ActionDone (TASK_ACTION_RESULT.FAIL);
 		}
         _assignedParty.OnQuestEnd();
