@@ -64,7 +64,11 @@ public class Rest : CharacterTask {
     }
     public override void TaskSuccess() {
 		Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
-        _assignedCharacter.DetermineAction();
+        if(_assignedCharacter.faction == null) {
+            _assignedCharacter.UnalignedDetermineAction();
+        } else {
+            _assignedCharacter.DetermineAction();
+        }
 	}
     //public override void TaskCancel() {
     //    if (_currentAction != null) {

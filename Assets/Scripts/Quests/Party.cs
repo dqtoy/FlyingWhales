@@ -648,11 +648,14 @@ public class Party: IEncounterable, ICombatInitializer {
                 if(partyMembers.Count > 0) {
                     //the party was defeated in combat, but there are still members that are alive,
                     //make them go back to the quest giver and have the quest cancelled.
+                    this._specificLocation.RemoveCharacterFromLocation(this); //Remove the party from 
                     (_currentTask as Quest).GoBackToQuestGiver(TASK_STATUS.CANCEL);
                 } else {
                     //The party was defeated in combat, and no one survived, mark the quest as 
                     //failed, so that other characters can try to do the quest.
                     _currentTask.EndTask(TASK_STATUS.FAIL);
+                    this._specificLocation.RemoveCharacterFromLocation(this);
+                    PartyManager.Instance.RemoveParty(this);
                 }
             }
 		}else{

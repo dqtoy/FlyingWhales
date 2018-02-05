@@ -1645,11 +1645,12 @@ namespace ECS {
 		}
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
 			if (this.isDefeated) {
-				//this party was defeated
+				//this character was defeated
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.FAIL);
 				}
-			}else{
+                this._specificLocation.RemoveCharacterFromLocation(this);
+            } else{
 				if(faction == null){
 					UnalignedDetermineAction ();
 				}
