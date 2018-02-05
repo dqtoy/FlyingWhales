@@ -53,7 +53,7 @@ public class Settlement : BaseLandmark {
 		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
             //Check first if the settlement has enough civilians to create a new character
             //and that it has not exceeded the max number of characters that consider this settlement as home
-            WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner);
+            WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
             WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this);
             if (characterRoleProductionDictionary.GetTotalOfWeights() > 0 && characterClassProductionDictionary.GetTotalOfWeights() > 0) {
                 roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
@@ -148,6 +148,16 @@ public class Settlement : BaseLandmark {
             }
             
         }
+    }
+    public List<ECS.Character> GetCharactersCreatedInSettlement(CHARACTER_ROLE charRole) {
+        List<ECS.Character> characters = new List<ECS.Character>();
+        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
+            ECS.Character currChar = _charactersWithHomeOnLandmark[i];
+            if(currChar.role.roleType == charRole) {
+                characters.Add(currChar);
+            }
+        }
+        return characters;
     }
     #endregion
 
