@@ -24,7 +24,7 @@ public class ExploreTile : Quest {
         base.ConstructQuestLine();
 
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
-        goToLandmark.InititalizeAction(_landmarkToExplore.location);
+        goToLandmark.InititalizeAction(_landmarkToExplore);
         goToLandmark.onTaskActionDone += ScheduleRandomResult;
         goToLandmark.onTaskDoAction += goToLandmark.Generic;
         goToLandmark.onTaskDoAction += LogGoToLocation;

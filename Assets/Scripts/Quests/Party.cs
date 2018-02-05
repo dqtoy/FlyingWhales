@@ -22,6 +22,7 @@ public class Party: IEncounterable, ICombatInitializer {
     protected CharacterTask _currentTask;
     protected CharacterAvatar _avatar;
 
+    protected ILocation _specificLocation;
 	protected HexTile _currLocation;
 
 	protected bool _isDefeated;
@@ -60,6 +61,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
 	}
+    public ILocation specificLocation {
+        get { return _specificLocation; }
+    }
     public HexTile currLocation {
         get { return _currLocation; }
     }
@@ -82,7 +86,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		_prisoners = new List<ECS.Character> ();
 		_isDefeated = false;
         Debug.Log(partyLeader.name + " has created " + _name);
-		partyLeader.currLocation.AddCharacterOnTile (this, false);
+		partyLeader.specificLocation.AddCharacterToLocation (this, false);
 
         AddPartyMember(_partyLeader);
 
@@ -97,6 +101,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	public void SetLocation(HexTile hextile){
 		_currLocation = hextile;
 	}
+    public void SetSpecificLocation(ILocation specificLocation) {
+        _specificLocation = specificLocation;
+    }
 	public void SetIsDefeated(bool state){
 		_isDefeated = state;
 		for (int i = 0; i < _partyMembers.Count; i++) {
@@ -116,7 +123,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
-			this._currLocation.RemoveCharacterOnTile (member);
+			this._currLocation.RemoveCharacterFromLocation (member);
             member.SetParty(this);
             member.SetCurrentTask(_currentTask);
             if (!IsCharacterLeaderOfParty(member)) {
@@ -160,7 +167,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		}
         if (!forDeath) {
 			member.AddHistory ("Left party: " + this._name + ".");
-			this._currLocation.AddCharacterOnTile(member, false);
+			this._currLocation.AddCharacterToLocation(member, false);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 ((Quest)currentTask).AddNewLog(member.name + " has left the party");
@@ -173,7 +180,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			if(!_isDisbanded){
 				JustDisbandParty ();
 			}
-			this._currLocation.RemoveCharacterOnTile(this);
+			this._currLocation.RemoveCharacterFromLocation(this);
         }
     }
 	public void AddPrisoner(ECS.Character character){
@@ -251,7 +258,7 @@ public class Party: IEncounterable, ICombatInitializer {
             if (_avatar != null && currMember != partyLeader) {
                 _avatar.RemoveCharacter(currMember);
             }
-			currMember.currLocation.AddCharacterOnTile(currMember, false);
+			currMember.currLocation.AddCharacterToLocation(currMember, false);
             currMember.GoToNearestNonHostileSettlement(() => currMember.OnReachNonHostileSettlementAfterQuest());
         }
     }
@@ -311,9 +318,9 @@ public class Party: IEncounterable, ICombatInitializer {
         if(tile.landmarkOnTile != null) {
             if(tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY) {
                 Settlement settlement = (Settlement)tile.landmarkOnTile;
-                for (int i = 0; i < settlement.location.charactersOnTile.Count; i++) {
-					if(this.isOpen && !this.isFull && settlement.location.charactersOnTile[i] is ECS.Character) {
-						ECS.Character currCharacter = (ECS.Character)settlement.location.charactersOnTile[i];
+                for (int i = 0; i < settlement.location.charactersAtLocation.Count; i++) {
+					if(this.isOpen && !this.isFull && settlement.location.charactersAtLocation[i] is ECS.Character) {
+						ECS.Character currCharacter = (ECS.Character)settlement.location.charactersAtLocation[i];
                         Faction factionOfCurrCharacter = currCharacter.faction;
 						if(factionOfCurrCharacter == null){
 							//Unaligned characters are hostile by default
@@ -468,7 +475,7 @@ public class Party: IEncounterable, ICombatInitializer {
         if(_avatar == null) {
             _partyLeader.CreateNewAvatar();
         }
-        _avatar.SetTarget(currentQuest.postedAt.location);
+        _avatar.SetTarget(currentQuest.postedAt);
         _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => currentQuest.TurnInQuest(taskResult));
     }
     public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
@@ -572,32 +579,32 @@ public class Party: IEncounterable, ICombatInitializer {
 			return false;
 		}
 		if(_partyLeader.faction == null){
-			ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
+			ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
 			if(enemy != null){
-				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.currLocation);
+				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
 				combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
 				if(enemy is Party){
 					combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
 				}else{
 					combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
 				}
-				this.currLocation.SetCurrentCombat (combat);
+				this.specificLocation.SetCurrentCombat (combat);
 				CombatThreadPool.Instance.AddToThreadPool (combat);
 				return true;
 			}
 			return false;
 		}else{
 			if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
-				ICombatInitializer enemy = this.currLocation.GetCombatEnemy (this);
+				ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
 				if(enemy != null){
-					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.currLocation);
+					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
 					combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
 					if(enemy is Party){
 						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
 					}else{
 						combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
 					}
-					this.currLocation.SetCurrentCombat (combat);
+					this.specificLocation.SetCurrentCombat (combat);
 					CombatThreadPool.Instance.AddToThreadPool (combat);
 					return true;
 				}

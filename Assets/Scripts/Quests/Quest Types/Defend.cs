@@ -26,7 +26,7 @@ public class Defend : Quest {
         base.ConstructQuestLine();
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-		goToLocation.InititalizeAction(_landmarkToDefend.location);
+		goToLocation.InititalizeAction(_landmarkToDefend);
 		goToLocation.onTaskActionDone += EndQuestAfterDays;
         goToLocation.onTaskDoAction += goToLocation.Defend;
 

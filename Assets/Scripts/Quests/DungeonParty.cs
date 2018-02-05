@@ -14,7 +14,7 @@ public class DungeonParty : Party {
 		if (!_partyMembers.Contains(member)) {
 			_partyMembers.Add(member);
 			member.SetParty(this);
-			this._currLocation.RemoveCharacterOnTile (member);
+			this._currLocation.RemoveCharacterFromLocation (member);
 		}
 	}
 	/*
@@ -26,12 +26,12 @@ public class DungeonParty : Party {
 			_avatar.RemoveCharacter(member);
 		}
 		if(!forDeath){
-			member.currLocation.AddCharacterOnTile(member, false);
+			member.currLocation.AddCharacterToLocation(member, false);
 		}
 		member.SetParty(null);
 		member.SetCurrentTask (null);
 		if (_partyMembers.Count <= 0) {
-			this._currLocation.RemoveCharacterOnTile(this);
+			this._currLocation.RemoveCharacterFromLocation(this);
 		}
 	}
 

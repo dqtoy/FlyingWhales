@@ -68,10 +68,10 @@ public class HextileInfoUI : UIMenu {
 		text += "\n[b]Road Type:[/b] " + currentlyShowingHexTile.roadType.ToString ();;
 
 		text += "\n[b]Characters: [/b] ";
-		if (currentlyShowingHexTile.charactersOnTile.Count > 0) {
-			for (int i = 0; i < currentlyShowingHexTile.charactersOnTile.Count; i++) {
-				if (currentlyShowingHexTile.charactersOnTile[i] is ECS.Character) {
-					ECS.Character currChar = (ECS.Character)currentlyShowingHexTile.charactersOnTile [i];
+		if (currentlyShowingHexTile.charactersAtLocation.Count > 0) {
+			for (int i = 0; i < currentlyShowingHexTile.charactersAtLocation.Count; i++) {
+				if (currentlyShowingHexTile.charactersAtLocation[i] is ECS.Character) {
+					ECS.Character currChar = (ECS.Character)currentlyShowingHexTile.charactersAtLocation [i];
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 					if (currChar.currentTask != null) {
 						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
@@ -81,8 +81,8 @@ public class HextileInfoUI : UIMenu {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";
 						}
 					}
-				} else if (currentlyShowingHexTile.charactersOnTile[i] is Party) {
-					Party currParty = (Party)currentlyShowingHexTile.charactersOnTile [i];
+				} else if (currentlyShowingHexTile.charactersAtLocation[i] is Party) {
+					Party currParty = (Party)currentlyShowingHexTile.charactersAtLocation [i];
 					text += "\n" + currParty.urlName + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
 				}
 			}

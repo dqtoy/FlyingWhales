@@ -2,18 +2,24 @@
 using System.Collections;
 
 public class MoveTo : CharacterTask {
-    private HexTile _targetTile;
+    private ILocation _targetLocation;
     private PATHFINDING_MODE _pathfindingMode;
 
     #region getters/setters
     public HexTile targetTile {
-        get { return _targetTile; }
+        get {
+            if (_targetLocation is BaseLandmark) {
+                return (_targetLocation as BaseLandmark).location;
+            } else {
+                return (_targetLocation as HexTile);
+            }
+        }
     }
     #endregion
 
-    public MoveTo(TaskCreator createdBy, HexTile targetTile, PATHFINDING_MODE pathFindingMode) 
+    public MoveTo(TaskCreator createdBy, ILocation targetLocation, PATHFINDING_MODE pathFindingMode) 
         : base(createdBy, TASK_TYPE.MOVE_TO) {
-        _targetTile = targetTile;
+        _targetLocation = targetLocation;
         _pathfindingMode = pathFindingMode;
     }
 
@@ -36,7 +42,7 @@ public class MoveTo : CharacterTask {
 
     private void GoToTile() {
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-        goToLocation.InititalizeAction(_targetTile);
+        goToLocation.InititalizeAction(_targetLocation);
         goToLocation.SetPathfindingMode(_pathfindingMode);
         goToLocation.onTaskActionDone += SuccessTask;
         goToLocation.onTaskDoAction += goToLocation.Generic;

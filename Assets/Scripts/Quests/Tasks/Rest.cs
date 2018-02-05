@@ -54,7 +54,7 @@ public class Rest : CharacterTask {
 		if(targetSettlement == null){
 			goToLocation.InititalizeAction(character.currLocation);
 		}else{
-			goToLocation.InititalizeAction(targetSettlement.location);
+			goToLocation.InititalizeAction(targetSettlement);
 		}
         goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
         goToLocation.onTaskActionDone += StartRest;

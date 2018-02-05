@@ -42,11 +42,13 @@ public class DungeonLandmark : BaseLandmark {
 		}
 		List<ECS.Character> encounterCharacters = encounterParty.GetAllCharacters (this);
 		DungeonParty party = new DungeonParty (encounterCharacters [0], false);
-		for (int i = 1; i < encounterCharacters.Count; i++) {
+        for (int i = 1; i < encounterCharacters.Count; i++) {
 			party.AddPartyMember (encounterCharacters [i]);
 		}
 		party.SetName (encounterParty.name);
-		return party;
+        //this.location.RemoveCharacterFromLocation(party);
+        this.AddCharacterToLocation(party, false);
+        return party;
 	}
 	private IEncounterable GetNewEncounterable(ENCOUNTERABLE encounterableType){
 		switch (encounterableType){

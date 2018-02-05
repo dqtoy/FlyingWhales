@@ -3,15 +3,26 @@ using System.Collections;
 
 public class GoToLocation : TaskAction {
 
-    private HexTile targetLocation;
+    private ILocation targetLocation;
     private PATHFINDING_MODE _pathfindingMode = PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP;
 
+    #region getters/setters
+    public HexTile targetTile {
+        get {
+            if (targetLocation is BaseLandmark) {
+                return (targetLocation as BaseLandmark).location;
+            } else {
+                return (targetLocation as HexTile);
+            }
+        }
+    }
+    #endregion
 
     public GoToLocation(CharacterTask task) : base(task) {
     }
 
     #region overrides
-    public override void InititalizeAction(HexTile target) {
+    public override void InititalizeAction(ILocation target) {
         base.InititalizeAction(target);
         targetLocation = target;
     }
@@ -33,7 +44,7 @@ public class GoToLocation : TaskAction {
      to the target location.
          */
     internal void Generic() {
-        if (actionDoer.currLocation.id == targetLocation.id) {
+        if (actionDoer.currLocation.id == targetTile.id) {
             //action doer is already at the target location
             ActionDone(TASK_ACTION_RESULT.SUCCESS);
         } else {
@@ -41,13 +52,13 @@ public class GoToLocation : TaskAction {
                 //Instantiate a new character avatar
                 actionDoer.CreateNewAvatar();
             }
-            actionDoer.avatar.SetTarget(targetLocation);
+            actionDoer.avatar.SetTarget(targetLocation, true);
             actionDoer.avatar.StartPath(_pathfindingMode, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
         }
     }
 
 	internal void Expand() {
-		if (actionDoer.currLocation.id == targetLocation.id) {
+		if (actionDoer.currLocation.id == targetTile.id) {
 			//action doer is already at the target location
 			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
@@ -57,12 +68,12 @@ public class GoToLocation : TaskAction {
 			}
 			actionDoer.avatar.SetTarget (targetLocation);
 			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
-            actionDoer.currentTask.AddNewLog(actionDoer.name + " goes to " + targetLocation.name);
+            actionDoer.currentTask.AddNewLog(actionDoer.name + " goes to " + targetTile.name);
 
         }
 	}
 	internal void Defend() {
-		if (actionDoer.currLocation.id == targetLocation.id) {
+		if (actionDoer.currLocation.id == targetTile.id) {
 			//action doer is already at the target location
 			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
@@ -75,7 +86,7 @@ public class GoToLocation : TaskAction {
 		}
 	}
 	internal void Attack() {
-		if (actionDoer.currLocation.id == targetLocation.id) {
+		if (actionDoer.currLocation.id == targetTile.id) {
 			//action doer is already at the target location
 			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {

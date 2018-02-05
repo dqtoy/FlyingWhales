@@ -31,7 +31,7 @@ public class Adventurer : CharacterRole {
 
             //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
             if (currSettlement.owner.IsHostileWith(_character.faction)) {
-                questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement().location, PATHFINDING_MODE.USE_ROADS), 500);
+                questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement(), PATHFINDING_MODE.USE_ROADS), 500);
             }
         }
 
@@ -41,7 +41,7 @@ public class Adventurer : CharacterRole {
             if (regionOwner != null) {
                 if (!regionOwner.IsHostileWith(_character.faction)) {
                     Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
-                    MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement.location, PATHFINDING_MODE.USE_ROADS);
+                    MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement, PATHFINDING_MODE.USE_ROADS);
                     questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
                 }
             }
