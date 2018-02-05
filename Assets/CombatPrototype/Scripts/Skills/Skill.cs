@@ -7,6 +7,7 @@ namespace ECS {
     [System.Serializable]
     public class Skill {
         public string skillName;
+		public SKILL_TYPE skillType;
 		public string description;
 		public SKILL_CATEGORY skillCategory;
 		public ACTIVATION_WEIGHT_TYPE actWeightType;
@@ -39,6 +40,7 @@ namespace ECS {
 			return null;
 		}
 		public void SetCommonData(Skill skill){
+			skill.skillType = this.skillType;
 			skill.skillName = this.skillName;
 			skill.description = this.description;
 			skill.skillCategory = this.skillCategory;

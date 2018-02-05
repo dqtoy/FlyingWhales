@@ -28,11 +28,11 @@ namespace ECS {
 			serializedObject.ApplyModifiedProperties ();
 
 			if (GUILayout.Button("Save Armor Material")) {
-				SaveWeaponSkill(Utilities.NormalizeString(armorMaterialComponent.material.ToString()));
+				SaveArmorMaterial(Utilities.NormalizeString(armorMaterialComponent.material.ToString()));
 			}
 		}
 
-		private void SaveWeaponSkill(string fileName) {
+		private void SaveArmorMaterial(string fileName) {
 			if (string.IsNullOrEmpty(fileName)) {
 				EditorUtility.DisplayDialog("Error", "Please specify a filename", "OK");
 				return;

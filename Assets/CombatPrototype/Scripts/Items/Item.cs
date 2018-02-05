@@ -17,6 +17,7 @@ namespace ECS{
 		public int bonusBlockRate;
 		public int durability;
         public int currDurability;
+		public int cost;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
         protected ECS.Character _owner;
@@ -73,6 +74,7 @@ namespace ECS{
             item.bonusBlockRate = bonusBlockRate;
             item.durability = durability;
             item.currDurability = currDurability;
+			item.cost = cost;
             item.statusEffectResistances = new List<StatusEffectRate>(statusEffectResistances);
         }
     }

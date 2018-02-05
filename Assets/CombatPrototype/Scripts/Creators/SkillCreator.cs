@@ -106,6 +106,7 @@ namespace ECS {
             Debug.Log("Successfully saved skill at " + path);
         }
         private void SetCommonData(Skill newSkill) {
+			newSkill.skillType = skillComponent.skillType;
 			newSkill.skillName = skillComponent.skillName;
 			newSkill.skillCategory = skillComponent.skillCategory;
 			newSkill.description = skillComponent.description;

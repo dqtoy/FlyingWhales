@@ -87,14 +87,14 @@ public class SkillManager : MonoBehaviour {
     }
 
     private void ConstructWeaponTypeSkills() {
-        string path = "Assets/CombatPrototype/Data/WeaponTypeSkills/";
-        string[] weaponSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
-        for (int i = 0; i < weaponSkillsJson.Length; i++) {
-            string file = weaponSkillsJson[i];
+        string path = "Assets/CombatPrototype/Data/WeaponTypes/";
+        string[] weaponTypesJson = System.IO.Directory.GetFiles(path, "*.json");
+		for (int i = 0; i < weaponTypesJson.Length; i++) {
+			string file = weaponTypesJson[i];
             string dataAsJson = System.IO.File.ReadAllText(file);
-            ECS.WeaponSkill weapSkill = JsonUtility.FromJson<ECS.WeaponSkill>(dataAsJson);
-            weapSkill.ConstructWeaponSkillsList();
-            weaponTypeSkills.Add(weapSkill.weaponType, new List<ECS.Skill>(weapSkill.skills));
+			ECS.WeaponType weapType = JsonUtility.FromJson<ECS.WeaponType>(dataAsJson);
+			weapType.ConstructWeaponSkillsList();
+			weaponTypeSkills.Add(weapType.weaponType, new List<ECS.Skill>(weapType.skills));
         }
     }
 }

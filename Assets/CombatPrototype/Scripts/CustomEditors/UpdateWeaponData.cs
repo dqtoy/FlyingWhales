@@ -14,26 +14,27 @@ namespace ECS{
 		}
 
 		private static void UpdateData(){
-			string materialPath = "Assets/CombatPrototype/Data/WeaponMaterials/";
-			foreach (string materialFile in System.IO.Directory.GetFiles(materialPath, "*.json")) {
-				WeaponMaterial weaponMaterial = JsonUtility.FromJson<WeaponMaterial> (System.IO.File.ReadAllText (materialFile));
-				string weaponTypePath = "Assets/CombatPrototype/Data/WeaponTypeSkills/";
-				foreach (string weaponTypeFile in System.IO.Directory.GetFiles(weaponTypePath, "*.json")) {
-					WeaponSkill weaponTypeSkill = JsonUtility.FromJson<WeaponSkill> (System.IO.File.ReadAllText (weaponTypeFile));
-					Weapon weapon = CreateWeapon (weaponMaterial, weaponTypeSkill);
-					SaveWeapon (weapon);
+			string weaponTypePath = "Assets/CombatPrototype/Data/WeaponTypes/";
+			foreach (string weaponTypeFile in System.IO.Directory.GetFiles(weaponTypePath, "*.json")) {
+				WeaponType weaponType = JsonUtility.FromJson<WeaponType> (System.IO.File.ReadAllText (weaponTypeFile));
+				if(weaponType.weaponMaterials != null){
+					for (int i = 0; i < weaponType.weaponMaterials.Count; i++) {
+						Weapon weapon = CreateWeapon (weaponType.weaponMaterials[i], weaponType);
+						SaveWeapon (weapon);
+					}
 				}
 			}
 		}
 
-		private static Weapon CreateWeapon(WeaponMaterial weaponMaterial, WeaponSkill weaponTypeSkill){
+		private static Weapon CreateWeapon(WeaponMaterial weaponMaterial, WeaponType weaponType){
 			Weapon weapon = new Weapon ();
-			weapon.weaponType = weaponTypeSkill.weaponType;
+			weapon.weaponType = weaponType.weaponType;
 			weapon.material = weaponMaterial.material;
 			weapon.quality = QUALITY.NORMAL;
 			weapon.weaponPower = weaponMaterial.power;
 			weapon.durability = weaponMaterial.durability;
-			weapon.equipRequirements = new List<IBodyPart.ATTRIBUTE> (weaponTypeSkill.equipRequirements);
+			weapon.cost = weaponMaterial.cost;
+			weapon.equipRequirements = new List<IBodyPart.ATTRIBUTE> (weaponType.equipRequirements);
 			weapon.itemType = ITEM_TYPE.WEAPON;
 			weapon.itemName = Utilities.NormalizeString (weapon.material.ToString ()) + " " + Utilities.NormalizeString (weapon.weaponType.ToString ());
 			weapon.description = weapon.itemName;

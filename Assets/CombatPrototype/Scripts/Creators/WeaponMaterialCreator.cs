@@ -19,11 +19,11 @@ namespace ECS {
 			weaponMaterialComponent.durability = EditorGUILayout.IntField ("Normal Durability : ", weaponMaterialComponent.durability);
 
 			if (GUILayout.Button("Save Weapon Material")) {
-				SaveWeaponSkill(Utilities.NormalizeString(weaponMaterialComponent.material.ToString()));
+				SaveWeaponMaterial(Utilities.NormalizeString(weaponMaterialComponent.material.ToString()));
 			}
 		}
 
-		private void SaveWeaponSkill(string fileName) {
+		private void SaveWeaponMaterial(string fileName) {
 			if (string.IsNullOrEmpty(fileName)) {
 				EditorUtility.DisplayDialog("Error", "Please specify a filename", "OK");
 				return;

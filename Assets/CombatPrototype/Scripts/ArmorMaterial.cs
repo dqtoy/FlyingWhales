@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace ECS{
+	[System.Serializable]
 	public class ArmorMaterial {
 		//The stats here is for NORMAL quality
 		public MATERIAL material;
@@ -11,6 +12,7 @@ namespace ECS{
 		public List<ATTACK_TYPE> ineffectiveAttackTypes;
 		public List<ATTACK_TYPE> effectiveAttackTypes;
 		public int durability;
+		public int cost;
 	}
 }
 
