@@ -11,13 +11,16 @@ public class Rest : CharacterTask {
 
     private Settlement GetTargetSettlement() {
         ECS.Character character = (ECS.Character)_createdBy;
-        List<Settlement> factionSettlements = character.faction.settlements.OrderBy(x => Vector2.Distance(character.currLocation.transform.position, x.location.transform.position)).ToList();
-        for (int i = 0; i < factionSettlements.Count; i++) {
-            Settlement currSettlement = factionSettlements[i];
-            if(PathGenerator.Instance.GetPath(character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
-                return currSettlement;
-            }
-        }
+		if (character.faction != null) {
+			List<Settlement> factionSettlements = character.faction.settlements.OrderBy (x => Vector2.Distance (character.currLocation.transform.position, x.location.transform.position)).ToList ();
+			for (int i = 0; i < factionSettlements.Count; i++) {
+				Settlement currSettlement = factionSettlements [i];
+				if (PathGenerator.Instance.GetPath (character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
+					return currSettlement;
+				}
+			}
+		}
+        
         return null;
     }
 
@@ -48,7 +51,11 @@ public class Rest : CharacterTask {
         }
         Settlement targetSettlement = GetTargetSettlement();
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-        goToLocation.InititalizeAction(targetSettlement.location);
+		if(targetSettlement == null){
+			goToLocation.InititalizeAction(character.currLocation);
+		}else{
+			goToLocation.InititalizeAction(targetSettlement.location);
+		}
         goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
         goToLocation.onTaskActionDone += StartRest;
         goToLocation.onTaskDoAction += goToLocation.Generic;

@@ -115,13 +115,13 @@ namespace ECS {
 		internal CharacterRole role {
 			get { return _role; }
 		}
-		internal Faction faction {
+		public Faction faction {
 			get { return _faction; }
 		}
 		internal Party party {
 			get { return _party; }
 		}
-		internal CharacterTask currentTask {
+		public CharacterTask currentTask {
 			get { return _currentTask; }
 		}
 		internal HexTile currLocation{
@@ -1225,6 +1225,30 @@ namespace ECS {
                 throw new Exception(this.name + " could not decide action because weights are zero!");
             }
 		}
+
+		internal void UnalignedDetermineAction(){
+			if(_isFainted || _isPrisoner || _isDead){
+				return;
+			}
+
+			if(_party != null){
+				if(_party.IsPartyWounded()){
+					Rest rest = new Rest (this);
+					rest.PerformTask (this);
+				}else{
+					DoNothing doNothing = new DoNothing (this);
+					doNothing.PerformTask (this);
+				}
+			}else{
+				if(_currentHP < maxHP){
+					Rest rest = new Rest (this);
+					rest.PerformTask (this);
+				}else{
+					DoNothing doNothing = new DoNothing (this);
+					doNothing.PerformTask (this);
+				}
+			}
+		}
         /*
          Set a task that this character will accept next
              */
@@ -1612,10 +1636,16 @@ namespace ECS {
 			}
 		}
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
-            if (this.isDefeated) {
-                //this character was defeated
-                _currentTask.EndTask(TASK_STATUS.FAIL);
-            }
+			if (this.isDefeated) {
+				//this party was defeated
+				if(_currentTask != null && faction != null) {
+					_currentTask.EndTask(TASK_STATUS.FAIL);
+				}
+			}else{
+				if(faction == null){
+					UnalignedDetermineAction ();
+				}
+			}
         }
 		public void SetIsDefeated(bool state){
 			_isDefeated = state;

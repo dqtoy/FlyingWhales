@@ -24,6 +24,7 @@ public class DungeonLandmark : BaseLandmark {
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < dungeonEncounterChances.encounterPartyChance){
 				_dungeonParty = (DungeonParty)GeneratePartyEncounterable ("random");
+				_dungeonParty.partyLeader.UnalignedDetermineAction ();
 			}
 			if (chance < dungeonEncounterChances.encounterLootChance) {
 				_landmarkEncounterable = new ItemChest (1, ITEM_TYPE.ARMOR, 35);
