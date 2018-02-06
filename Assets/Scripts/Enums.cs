@@ -146,6 +146,9 @@ public enum MATERIAL{
 	IRON,
 	COBALT,
 	MITHRIL,
+    FLAX,
+    CORN,
+    RICE
 }
 public enum MATERIAL_CATEGORY{
 	NONE,
