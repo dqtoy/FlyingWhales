@@ -17,7 +17,7 @@ public class Faction {
     private Sprite _emblemBG;
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
     protected List<BaseLandmark> _ownedLandmarks;//List of settlements (cities/landmarks) owned by this faction
-    protected List<TECHNOLOGY> _inititalTechnologies;
+    protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
     protected List<Quest> _activeQuests;
@@ -64,8 +64,8 @@ public class Faction {
     public List<Settlement> settlements {
         get { return _ownedLandmarks.Where(x => x is Settlement).Select(x => (Settlement)x).ToList(); }
     }
-    public List<TECHNOLOGY> inititalTechnologies {
-        get { return _inititalTechnologies; }
+    public List<TECHNOLOGY> initialTechnologies {
+        get { return _initialTechnologies; }
     }
     public List<ECS.Character> characters {
         get { return _characters; }
@@ -165,9 +165,9 @@ public class Faction {
 
     #region Technologies
     protected void ConstructInititalTechnologies() {
-        _inititalTechnologies = new List<TECHNOLOGY>();
-        if (FactionManager.Instance.inititalRaceTechnologies.ContainsKey(this.race)) {
-            _inititalTechnologies.AddRange(FactionManager.Instance.inititalRaceTechnologies[this.race]);
+        _initialTechnologies = new List<TECHNOLOGY>();
+        if (FactionManager.Instance.initialRaceTechnologies.ContainsKey(this.race)) {
+            _initialTechnologies.AddRange(FactionManager.Instance.initialRaceTechnologies[this.race]);
         }
     }
     #endregion
@@ -337,6 +337,24 @@ public class Faction {
     #region Death
     public void Death() {
         FactionManager.Instance.RemoveRelationshipsWith(this);
+    }
+    #endregion
+
+    #region Resources
+    internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material, Region exceptRegion = null) {
+        int count = 0;
+        for (int i = 0; i < settlements.Count; i++) {
+            Settlement currSettlement = settlements[i];
+            Region regionOfSettlement = currSettlement.location.region;
+            if(exceptRegion != null) {
+                if(regionOfSettlement.id == exceptRegion.id) {
+                    //Skip this region
+                    continue;
+                }
+            }
+            count += regionOfSettlement.GetActivelyHarvestedMaterialsOfType(material);
+        }
+        return count;
     }
     #endregion
 }

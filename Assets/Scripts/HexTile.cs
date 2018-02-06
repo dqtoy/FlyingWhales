@@ -1123,6 +1123,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 
         }
     }
+    /*
+     Does this tile have a structure on it?
+         */
+    public bool HasStructure() {
+        return structureObjOnTile != null;
+    }
     #endregion
 
     #region Fog of War Functions

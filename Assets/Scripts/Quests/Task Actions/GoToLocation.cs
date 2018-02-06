@@ -18,8 +18,7 @@ public class GoToLocation : TaskAction {
     }
     #endregion
 
-    public GoToLocation(CharacterTask task) : base(task) {
-    }
+    public GoToLocation(CharacterTask task) : base(task) {}
 
     #region overrides
     public override void InititalizeAction(ILocation target) {

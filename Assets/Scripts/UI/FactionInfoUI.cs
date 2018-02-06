@@ -61,12 +61,12 @@ public class FactionInfoUI : UIMenu {
 		}
 
 		text += "\n[b]Initial Technologies: [/b] ";
-		if (currentlyShowingFaction.inititalTechnologies.Count > 0) {
+		if (currentlyShowingFaction.initialTechnologies.Count > 0) {
 			text += "\n";
-			for (int i = 0; i < currentlyShowingFaction.inititalTechnologies.Count; i++) {
-				TECHNOLOGY currTech = currentlyShowingFaction.inititalTechnologies[i];
+			for (int i = 0; i < currentlyShowingFaction.initialTechnologies.Count; i++) {
+				TECHNOLOGY currTech = currentlyShowingFaction.initialTechnologies[i];
 				text += currTech.ToString();
-				if (i + 1 != currentlyShowingFaction.inititalTechnologies.Count) {
+				if (i + 1 != currentlyShowingFaction.initialTechnologies.Count) {
 					text += ", ";
 				}
 			}

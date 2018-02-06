@@ -74,55 +74,75 @@ public class InternalQuestManager : TaskCreator {
         SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
     }
     private WeightedDictionary<Quest> GetQuestWeightedDictionary() {
-        WeightedDictionary<Quest> questDict = new WeightedDictionary<Quest>();
-		List<Region> checkedExpandRegions = new List<Region> ();
-        //Explore region weights
+        WeightedDictionary<Quest> questWeights = new WeightedDictionary<Quest>();
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
             Settlement currSettlement = _owner.settlements[i];
             Region regionOfSettlement = currSettlement.location.region;
-            ////check if the current region already has an active quest to explore it
-            //if(!AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_REGION, regionOfSettlement)) {
-            //    questDict.AddElement(new ExploreRegion(this, 20, regionOfSettlement), GetExploreRegionWeight(regionOfSettlement));
-            //}
 
-			if (currSettlement.civilians > 20 && !AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, currSettlement)) {
-				checkedExpandRegions.Clear ();
-				for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
-					object currConnection = regionOfSettlement.connections [j];
-					if (currConnection is Region) {
-						Region region = (Region)currConnection;
-						if (!region.centerOfMass.isOccupied && !AlreadyHasQuestOfType (QUEST_TYPE.EXPAND, region.centerOfMass)) {
-							checkedExpandRegions.Add (region);
-						}
-					} 
-				}
-				if(checkedExpandRegions.Count > 0){
-					Region chosenRegion = checkedExpandRegions[UnityEngine.Random.Range(0, checkedExpandRegions.Count)];
-                    Expand newExpandQuest = new Expand(this, chosenRegion.centerOfMass, currSettlement.location);
-                    newExpandQuest.SetSettlement(currSettlement);
-                    questDict.AddElement (newExpandQuest, GetExpandWeight(currSettlement));
-				}
-			}
-            for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
-                object currConnection = regionOfSettlement.connections[j];
-                if (currConnection is BaseLandmark) {
-                    BaseLandmark currLandmark = (BaseLandmark)currConnection;
-                    if (currLandmark.isHidden && !currLandmark.isExplored) {
-                        if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPLORE_TILE).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
-                            ExploreTile newExploreTileQuest = new ExploreTile(this, currLandmark);
-                            newExploreTileQuest.SetSettlement(currSettlement);
-                            questDict.AddElement(newExploreTileQuest, GetExploreLandmarkWeight(currLandmark));
-                        }
+            AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
+            AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
+            AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
+        }
+        return questWeights;
+    }
+    private void AddExploreTileWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+        for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
+            object currConnection = regionOfSettlement.connections[j];
+            if (currConnection is BaseLandmark) {
+                BaseLandmark currLandmark = (BaseLandmark)currConnection;
+                if (currLandmark.isHidden && !currLandmark.isExplored) {
+                    if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPLORE_TILE).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currLandmark)) {
+                        ExploreTile newExploreTileQuest = new ExploreTile(this, currLandmark);
+                        newExploreTileQuest.SetSettlement(currSettlement);
+                        questWeights.AddElement(newExploreTileQuest, GetExploreLandmarkWeight(currLandmark));
                     }
                 }
             }
         }
-        //End Explore Region Weights
-        
-        return questDict;
     }
-
+    private void AddExpandWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+        List<Region> checkedExpandRegions = new List<Region>();
+        if (currSettlement.civilians > 20 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, currSettlement)) {
+            //checkedExpandRegions.Clear();
+            for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
+                object currConnection = regionOfSettlement.connections[j];
+                if (currConnection is Region) {
+                    Region region = (Region)currConnection;
+                    if (!region.centerOfMass.isOccupied && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, region.centerOfMass)) {
+                        checkedExpandRegions.Add(region);
+                    }
+                }
+            }
+            if (checkedExpandRegions.Count > 0) {
+                Region chosenRegion = checkedExpandRegions[UnityEngine.Random.Range(0, checkedExpandRegions.Count)];
+                Expand newExpandQuest = new Expand(this, chosenRegion.centerOfMass, currSettlement.location);
+                newExpandQuest.SetSettlement(currSettlement);
+                questWeights.AddElement(newExpandQuest, GetExpandWeight(currSettlement));
+            }
+        }
+    }
+    private void AddBuildStructureWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+        if(currSettlement.civilians >= 5) {
+            for (int i = 0; i < regionOfSettlement.landmarks.Count; i++) {
+                BaseLandmark currLandmark = regionOfSettlement.landmarks[i];
+                if (currLandmark is ResourceLandmark && !currLandmark.location.HasStructure()) { //Loop through each Resource Tile that doesn't have any structures yet.
+                    int totalWeightForLandmark = 0;
+                    ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
+                    MATERIAL materialOnLandmark = resourceLandmark.materialOnLandmark;
+                    if (currSettlement.HasTechnology(Utilities.GetNeededTechnologyForMaterial(materialOnLandmark)) && !AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, resourceLandmark)) {
+                        totalWeightForLandmark += 60; //Add 60 Weight to Build Structure if relevant technology is available
+                        totalWeightForLandmark -= 30 * regionOfSettlement.GetActivelyHarvestedMaterialsOfType(materialOnLandmark); //- Subtract 30 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in the same region
+                        totalWeightForLandmark -= 10 * _owner.GetActivelyHarvestedMaterialsOfType(materialOnLandmark, regionOfSettlement); //- Subtract 10 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in other regions owned by the same Tribe
+                        totalWeightForLandmark = Mathf.Max(0, totalWeightForLandmark);
+                        BuildStructure buildStructureQuest = new BuildStructure(this, resourceLandmark);
+                        buildStructureQuest.SetSettlement(currSettlement);
+                        questWeights.AddElement(buildStructureQuest, totalWeightForLandmark);
+                    }
+                }
+            }
+        }
+    }
     //private int GetExploreRegionWeight(Region region) {
     //    int weight = 0;
     //    for (int i = 0; i < region.landmarks.Count; i++) {
@@ -220,6 +240,11 @@ public class InternalQuestManager : TaskCreator {
 				} else if (questType == QUEST_TYPE.EXPLORE_TILE) {
                     BaseLandmark landmark = (BaseLandmark)identifier;
                     if (((ExploreTile)currQuest).landmarkToExplore.id == landmark.id) {
+                        return true;
+                    }
+                } else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
+                    BaseLandmark landmark = (BaseLandmark)identifier;
+                    if (((BuildStructure)currQuest).target.id == landmark.id) {
                         return true;
                     }
                 }

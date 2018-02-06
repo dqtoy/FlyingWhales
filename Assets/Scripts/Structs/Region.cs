@@ -18,11 +18,10 @@ public class Region {
 
     //Landmarks
     private RESOURCE _specialResource;
-    private HexTile _tileWithSpecialResource;
-	private HexTile _tileWithSummoningShrine;
-	private HexTile _tileWithHabitat;
+    [System.Obsolete] private HexTile _tileWithSpecialResource;
+    [System.Obsolete] private HexTile _tileWithSummoningShrine;
+    [System.Obsolete] private HexTile _tileWithHabitat;
     private List<BaseLandmark> _landmarks; //This contains all the landmarks in the region, except for it's city
-	private int _landmarkCount;
 
     private Dictionary<RACE, int> _naturalResourceLevel;
     private int _cityLevelCap;
@@ -102,9 +101,6 @@ public class Region {
     internal List<BaseLandmark> landmarks {
         get { return _landmarks; }
     }
-	internal int landmarkCount {
-		get { return this._landmarkCount; }
-	}
     internal List<object> connections {
         get { return _connections; }
     }
@@ -515,6 +511,20 @@ public class Region {
         }
         text += "/" + _naturalResourceLevel[race].ToString();
         midPoint.SetTileText(text, 6, Color.white, "Minimap");
+    }
+    internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material) {
+        int count = 0;
+        for (int i = 0; i < _landmarks.Count; i++) {
+            BaseLandmark currLandmark = _landmarks[i];
+            if(currLandmark is ResourceLandmark) {
+                ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
+                //check if the landmark has the material specified, and already has a structure built on it.
+                if (resourceLandmark.materialOnLandmark == material && resourceLandmark.location.HasStructure()) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
     #endregion
 

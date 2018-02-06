@@ -95,6 +95,10 @@ public class MustBeFaction : QuestFilter {
     public MustBeFaction(List<Faction> allowedFactions) {
         _allowedFactions = allowedFactions;
     }
+    public MustBeFaction(Faction allowedFaction) {
+        _allowedFactions = new List<Faction>();
+        _allowedFactions.Add(allowedFaction);
+    }
 
     #region overrides
     public override bool MeetsRequirements(ECS.Character character) {
