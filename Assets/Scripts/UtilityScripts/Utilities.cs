@@ -237,7 +237,7 @@ public class Utilities : MonoBehaviour {
                     resourceType == RESOURCE.PIG) {
                     return STRUCTURE_TYPE.HUNTING_LODGE;
                 } else {
-                    return STRUCTURE_TYPE.MINES; //TODO: Change to Farm when farm is available
+                    return STRUCTURE_TYPE.MINE; //TODO: Change to Farm when farm is available
                 }
             } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.WOOD) {
                 if(race == RACE.HUMANS) {
@@ -252,7 +252,7 @@ public class Utilities : MonoBehaviour {
                     return STRUCTURE_TYPE.QUARRY;
                 }
             } else {
-                return STRUCTURE_TYPE.MINES;
+                return STRUCTURE_TYPE.MINE;
             }
         }
         return STRUCTURE_TYPE.GENERIC;
@@ -1465,6 +1465,16 @@ public class Utilities : MonoBehaviour {
 			return MATERIAL_CATEGORY.METAL;
 		}else if(material == MATERIAL.OAK || material == MATERIAL.YEW || material == MATERIAL.EBONY){
 			return MATERIAL_CATEGORY.WOOD;
+		}else if(material == MATERIAL.CLAY || material == MATERIAL.LIMESTONE || material == MATERIAL.MARBLE || material == MATERIAL.GRANITE){
+			return MATERIAL_CATEGORY.STONE;
+		}else if(material == MATERIAL.SILK || material == MATERIAL.COTTON || material == MATERIAL.FLAX || material == MATERIAL.LINEN){
+			return MATERIAL_CATEGORY.CLOTH;
+		}else if(material == MATERIAL.CORN || material == MATERIAL.RICE){
+			return MATERIAL_CATEGORY.PLANT;
+		}else if(material == MATERIAL.PIGMEAT || material == MATERIAL.COWMEAT){
+			return MATERIAL_CATEGORY.MEAT;
+		}else if(material == MATERIAL.COWHIDE || material == MATERIAL.GOATHIDE || material == MATERIAL.DEERHIDE || material == MATERIAL.BEHEMOTHHIDE){
+			return MATERIAL_CATEGORY.LEATHER;
 		}
 		return MATERIAL_CATEGORY.NONE;
 	}

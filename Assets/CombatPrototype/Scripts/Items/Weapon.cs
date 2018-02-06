@@ -68,35 +68,6 @@ namespace ECS{
             }
         }
 
-		public void ConstructAllSkillsList() {
-			_skills = new List<Skill>();
-			if(CombatPrototypeManager.Instance.weaponTypeSkills.ContainsKey(this.weaponType)){
-				List<Skill> weaponTypeSkills = CombatPrototypeManager.Instance.weaponTypeSkills [weaponType];
-				for (int i = 0; i < weaponTypeSkills.Count; i++) {
-					Skill newSkill = weaponTypeSkills [i].CreateNewCopy ();
-					newSkill.weapon = this;
-					_skills.Add (newSkill);
-				}
-			}
-
-			for (int i = 0; i < attackSkills.Count; i++) {
-				string skillName = attackSkills[i];
-				string path = "Assets/CombatPrototype/Data/Skills/WEAPON/ATTACK/" + skillName + ".json";
-				AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
-				currSkill.weapon = this;
-				_skills.Add(currSkill);
-			}
-			for (int i = 0; i < healSkills.Count; i++) {
-				string skillName = healSkills[i];
-				string path = "Assets/CombatPrototype/Data/Skills/WEAPON/HEAL/" + skillName + ".json";
-				HealSkill currSkill = JsonUtility.FromJson<HealSkill>(System.IO.File.ReadAllText(path));
-				currSkill.weapon = this;
-				_skills.Add(currSkill);
-			}
-
-
-		}
-
         #region overrides
         public override Item CreateNewCopy() {
             Weapon copy = new Weapon();

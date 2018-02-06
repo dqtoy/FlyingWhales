@@ -36,6 +36,7 @@ namespace ECS {
 			itemComponent.bonusParryRate = EditorGUILayout.IntField("Bonus Parry Rate: ", itemComponent.bonusParryRate);
 			itemComponent.bonusBlockRate = EditorGUILayout.IntField("Bonus Block Rate: ", itemComponent.bonusBlockRate);
 			itemComponent.durability = EditorGUILayout.IntField("Durability :", itemComponent.durability);
+			itemComponent.cost = EditorGUILayout.IntField("Cost :", itemComponent.cost);
 
 			SerializedProperty statusEffectResistance = serializedObject.FindProperty("statusEffectResistances");
 			EditorGUILayout.PropertyField(statusEffectResistance, true);
@@ -149,6 +150,7 @@ namespace ECS {
 			newItem.bonusParryRate = itemComponent.bonusParryRate;
 			newItem.bonusBlockRate = itemComponent.bonusBlockRate;
 			newItem.durability = itemComponent.durability;
+			newItem.cost = itemComponent.cost;
         }
         private void SaveWeapon(string path) {
 			Weapon weapon = new Weapon();

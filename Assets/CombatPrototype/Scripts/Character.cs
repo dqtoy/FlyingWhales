@@ -689,7 +689,7 @@ namespace ECS {
 				string dataAsJson = System.IO.File.ReadAllText(path);
 				if (strItemType.Contains("WEAPON")) {
 					Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-					weapon.ConstructAllSkillsList ();
+					weapon.ConstructSkillsList ();
 					TryEquipWeapon(weapon);
 				} else if (strItemType.Contains("ARMOR")) {
 					Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
@@ -702,7 +702,7 @@ namespace ECS {
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (itemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-				weapon.ConstructAllSkillsList ();
+				weapon.ConstructSkillsList ();
 				TryEquipWeapon(weapon);
 			} else if (itemType.Contains("ARMOR")) {
 				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);

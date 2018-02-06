@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace ECS{
-	public class WeaponSkillComponent : MonoBehaviour {
+	public class WeaponTypeComponent : MonoBehaviour {
 		public WEAPON_TYPE weaponType;
 		public List<Skill> skills;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements;
+		public List<WeaponMaterial> weaponMaterials;
 
 		internal bool skillsFoldout;
 		internal SKILL_TYPE skillTypeToAdd;

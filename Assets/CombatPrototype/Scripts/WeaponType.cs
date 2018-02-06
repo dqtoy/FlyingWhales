@@ -3,17 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace ECS {
-	public class WeaponSkill {
+	public class WeaponType {
 		public WEAPON_TYPE weaponType;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements;
 		public List<Skill> skills;
+		public List<WeaponMaterial> weaponMaterials;
 		public List<string> attackSkills = new List<string>();
 		public List<string> healSkills = new List<string>();
 
 		public void AddSkill(Skill skillToAdd) {
-			if(skillToAdd is AttackSkill){
+			if(skillToAdd.skillType == SKILL_TYPE.ATTACK){
 				attackSkills.Add(skillToAdd.skillName);
-			}else if(skillToAdd is HealSkill){
+			}else if(skillToAdd.skillType == SKILL_TYPE.HEAL){
 				healSkills.Add(skillToAdd.skillName);
 			}
 		}

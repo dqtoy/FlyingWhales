@@ -14,15 +14,16 @@ namespace ECS{
 		}
 
 		private static void UpdateData(){
-			string materialPath = "Assets/CombatPrototype/Data/ArmorMaterials/";
-			foreach (string materialFile in System.IO.Directory.GetFiles(materialPath, "*.json")) {
-				ArmorMaterial armorMaterial = JsonUtility.FromJson<ArmorMaterial> (System.IO.File.ReadAllText (materialFile));
-				string armorTypePath = "Assets/CombatPrototype/Data/ArmorTypes/";
-				foreach (string armorTypeFile in System.IO.Directory.GetFiles(armorTypePath, "*.json")) {
-					ArmorType armorType = JsonUtility.FromJson<ArmorType> (System.IO.File.ReadAllText (armorTypeFile));
-					Armor armor = CreateArmor (armorMaterial, armorType);
-					SaveArmor (armor);
+			string armorTypePath = "Assets/CombatPrototype/Data/ArmorTypes/";
+			foreach (string armorTypeFile in System.IO.Directory.GetFiles(armorTypePath, "*.json")) {
+				ArmorType armorType = JsonUtility.FromJson<ArmorType> (System.IO.File.ReadAllText (armorTypeFile));
+				if(armorType.armorMaterials != null){
+					for (int i = 0; i < armorType.armorMaterials.Count; i++) {
+						Armor armor = CreateArmor (armorType.armorMaterials[i], armorType);
+						SaveArmor (armor);
+					}
 				}
+
 			}
 		}
 
@@ -37,6 +38,7 @@ namespace ECS{
 			armor.ineffectiveAttackTypes = new List<ATTACK_TYPE> (armorMaterial.ineffectiveAttackTypes);
 			armor.effectiveAttackTypes = new List<ATTACK_TYPE> (armorMaterial.effectiveAttackTypes);
 			armor.durability = armorMaterial.durability;
+			armor.cost = armorMaterial.cost;
 			armor.itemType = ITEM_TYPE.ARMOR;
 			armor.itemName = Utilities.NormalizeString (armor.material.ToString ()) + " " + Utilities.NormalizeString (armor.armorType.ToString ());
 			armor.description = armor.itemName;

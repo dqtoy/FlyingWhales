@@ -24,7 +24,6 @@ namespace ECS {
 			ConstructBaseCharacters();
 			ConstructCharacterColors ();
 			ConstructAttributeSkills ();
-			ConstructWeaponTypeSkills ();
 			NewCombat ();
 		}
         private void ConstructBaseCharacters() {
@@ -82,19 +81,6 @@ namespace ECS {
 				attributeSkills[i] = attSkill;
 			}
 		}
-
-		private void ConstructWeaponTypeSkills(){
-			string path = "Assets/CombatPrototype/Data/WeaponTypeSkills/";
-			string[] weaponSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
-			for (int i = 0; i < weaponSkillsJson.Length; i++) {
-				string file = weaponSkillsJson[i];
-				string dataAsJson = System.IO.File.ReadAllText(file);
-				WeaponSkill weapSkill = JsonUtility.FromJson<WeaponSkill>(dataAsJson);
-				weapSkill.ConstructWeaponSkillsList ();
-				weaponTypeSkills.Add (weapSkill.weaponType, new List<Skill> (weapSkill.skills));
-			}
-		}
-
 		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
 			for (int i = 0; i < this.baseCharacters.Length; i++) {
                 CharacterSetup currBase = this.baseCharacters[i];

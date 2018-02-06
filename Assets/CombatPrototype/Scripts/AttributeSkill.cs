@@ -10,9 +10,9 @@ namespace ECS {
 		public List<string> healSkills = new List<string>();
 
 		public void AddSkill(Skill skillToAdd) {
-			if(skillToAdd is AttackSkill){
+			if(skillToAdd.skillType == SKILL_TYPE.ATTACK){
 				attackSkills.Add(skillToAdd.skillName);
-			}else if(skillToAdd is HealSkill){
+			}else if(skillToAdd.skillType == SKILL_TYPE.HEAL){
 				healSkills.Add(skillToAdd.skillName);
 			}
 		}
