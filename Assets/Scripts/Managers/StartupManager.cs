@@ -11,6 +11,8 @@ public class StartupManager : MonoBehaviour {
 		ECS.CombatPrototypeManager.Instance.Initialize ();
 		EncounterPartyManager.Instance.Initialize ();
 		CharacterManager.Instance.ConstructTraitDictionary();
+		MaterialManager.Instance.Initialize ();
+		ProductionManager.Instance.Initialize ();
 
 		this.mapGenerator.InitializeWorld ();
 	}

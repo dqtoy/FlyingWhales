@@ -10,22 +10,67 @@ public class ProductionManager : MonoBehaviour {
 	public GameObject trainingRoleGO;
 	public GameObject trainingClassGO;
 
-	private WeaponProduction[] _weaponProductions;
-	private ArmorProduction[] _armorProductions;
-	private Construction[] _constructions;
-	private TrainingRole[] _trainingRoles;
-	private TrainingClass[] _trainingClasses;
+	private Dictionary<WEAPON_TYPE, WeaponProduction> _weaponProductionsLookup;
+	private Dictionary<ARMOR_TYPE, ArmorProduction> _armorProductionsLookup;
+	private Dictionary<string, Construction> _constructionsLookup;
+	private Dictionary<CHARACTER_ROLE, TrainingRole> _trainingRolesLookup;
+	private Dictionary<CHARACTER_CLASS, TrainingClass> _trainingClassesLookup;
 
+
+	#region getters/setters
+	public Dictionary<WEAPON_TYPE, WeaponProduction> weaponProductionsLookup{
+		get { return _weaponProductionsLookup; }
+	}
+	public Dictionary<ARMOR_TYPE, ArmorProduction> armorProductionsLookup{
+		get { return _armorProductionsLookup; }
+	}
+	public Dictionary<string, Construction> constructionsLookup{
+		get { return _constructionsLookup; }
+	}
+	public Dictionary<CHARACTER_ROLE, TrainingRole> trainingRolesLookup{
+		get { return _trainingRolesLookup; }
+	}
+	public Dictionary<CHARACTER_CLASS, TrainingClass> trainingClassesLookup{
+		get { return _trainingClassesLookup; }
+	}
+
+	#endregion
 	void Awake(){
 		Instance = this;
 	}
-
+	internal void Initialize(){
+		ConstructProductions ();
+	}
 	private void ConstructProductions(){
-		_weaponProductions = weaponProductionGO.GetComponents<WeaponProduction> ();
-		_armorProductions = armorProductionGO.GetComponents<ArmorProduction> ();
-		_constructions = constructionGO.GetComponents<Construction> ();
-		_trainingRoles = trainingRoleGO.GetComponents<TrainingRole> ();
-		_trainingClasses = trainingClassGO.GetComponents<TrainingClass> ();
+		_weaponProductionsLookup = new Dictionary<WEAPON_TYPE, WeaponProduction> ();
+		_armorProductionsLookup = new Dictionary<ARMOR_TYPE, ArmorProduction> ();
+		_constructionsLookup = new Dictionary<string, Construction> ();
+		_trainingRolesLookup = new Dictionary<CHARACTER_ROLE, TrainingRole> ();
+		_trainingClassesLookup = new Dictionary<CHARACTER_CLASS, TrainingClass> ();
 
+		WeaponProduction[] arrWeapProduction = weaponProductionGO.GetComponents<WeaponProduction> ();
+		for (int i = 0; i < arrWeapProduction.Length; i++) {
+			_weaponProductionsLookup.Add (arrWeapProduction [i].weaponType, arrWeapProduction [i]);
+		}
+
+		ArmorProduction[] arrArmorProduction = armorProductionGO.GetComponents<ArmorProduction> ();
+		for (int i = 0; i < arrArmorProduction.Length; i++) {
+			_armorProductionsLookup.Add (arrArmorProduction [i].armorType, arrArmorProduction [i]);
+		}
+
+		Construction[] arrConstruction = constructionGO.GetComponents<Construction> ();
+		for (int i = 0; i < arrConstruction.Length; i++) {
+			_constructionsLookup.Add (arrConstruction [i].structure.name, arrConstruction [i]);
+		}
+
+		TrainingRole[] arrTrainingRole = trainingRoleGO.GetComponents<TrainingRole> ();
+		for (int i = 0; i < arrTrainingRole.Length; i++) {
+			_trainingRolesLookup.Add (arrTrainingRole [i].roleType, arrTrainingRole [i]);
+		}
+
+		TrainingClass[] arrTrainingClass = trainingClassGO.GetComponents<TrainingClass> ();
+		for (int i = 0; i < arrTrainingClass.Length; i++) {
+			_trainingClassesLookup.Add (arrTrainingClass [i].classType, arrTrainingClass [i]);
+		}
 	}
 }
