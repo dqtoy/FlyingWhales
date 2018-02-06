@@ -115,9 +115,7 @@ public class Utilities : MonoBehaviour {
 		}
 		return (T[])Enum.GetValues(typeof(T));
 	}
-
-
-
+    
     public static List<BIOMES> biomeLayering = new List<BIOMES>() {
         BIOMES.GRASSLAND,
         BIOMES.WOODLAND,
@@ -257,8 +255,28 @@ public class Utilities : MonoBehaviour {
         }
         return STRUCTURE_TYPE.GENERIC;
     }
-            
-	public static Color GetColorForRelationship(KINGDOM_RELATIONSHIP_STATUS status){
+
+    public static STRUCTURE_TYPE GetStructureTypeForMaterial(MATERIAL material) {
+        MATERIAL_CATEGORY matCat = GetMaterialCategory(material);
+        switch (matCat) {
+            case MATERIAL_CATEGORY.METAL:
+                return STRUCTURE_TYPE.MINE;
+            case MATERIAL_CATEGORY.WOOD:
+                return STRUCTURE_TYPE.LUMBERYARD;
+            case MATERIAL_CATEGORY.STONE:
+                return STRUCTURE_TYPE.QUARRY;
+            case MATERIAL_CATEGORY.CLOTH:
+            case MATERIAL_CATEGORY.PLANT:
+            case MATERIAL_CATEGORY.MEAT:
+                return STRUCTURE_TYPE.GENERIC; //TODO: Change this to farm, when farm structure prefab is available
+            case MATERIAL_CATEGORY.LEATHER:
+                return STRUCTURE_TYPE.HUNTING_LODGE;
+            default:
+                return STRUCTURE_TYPE.GENERIC;
+        }
+    }
+
+    public static Color GetColorForRelationship(KINGDOM_RELATIONSHIP_STATUS status){
 		if (status == KINGDOM_RELATIONSHIP_STATUS.LOVE) {
 			return new Color (0f, (139f/255f), (69f/255f), 1f);
 		} else if (status == KINGDOM_RELATIONSHIP_STATUS.AFFECTIONATE) {
@@ -392,17 +410,26 @@ public class Utilities : MonoBehaviour {
 
     public static WeightedDictionary<LANDMARK_TYPE> GetLandmarkWeights() {
         WeightedDictionary<LANDMARK_TYPE> landmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
-        //landmarkWeights.AddElement(LANDMARK_TYPE.CORN, 10);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.PIG, 10);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.OAK, 20);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.YEW, 10);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.EBONY, 6);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.SILK, 20);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.COTTON, 10);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.LEATHER, 6);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.IRON, 20);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.COBALT, 10);
-        //landmarkWeights.AddElement(LANDMARK_TYPE.MITHRIL, 6);
+        landmarkWeights.AddElement(LANDMARK_TYPE.CLAY, 5);
+        landmarkWeights.AddElement(LANDMARK_TYPE.LIMESTONE, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.GRANITE, 15);
+        landmarkWeights.AddElement(LANDMARK_TYPE.MARBLE, 2);
+        landmarkWeights.AddElement(LANDMARK_TYPE.SILK, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.COTTON, 5);
+        landmarkWeights.AddElement(LANDMARK_TYPE.FLAX, 2);
+        landmarkWeights.AddElement(LANDMARK_TYPE.CORN, 20);
+        landmarkWeights.AddElement(LANDMARK_TYPE.RICE, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.PIG_MEAT, 20);
+        landmarkWeights.AddElement(LANDMARK_TYPE.COW_MEAT, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.GOAT_HIDE, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.DEER_HIDE, 5);
+        landmarkWeights.AddElement(LANDMARK_TYPE.BEHEMOTH_HIDE, 2);
+        landmarkWeights.AddElement(LANDMARK_TYPE.OAK, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.YEW, 5);
+        landmarkWeights.AddElement(LANDMARK_TYPE.EBONY, 2);
+        landmarkWeights.AddElement(LANDMARK_TYPE.IRON, 10);
+        landmarkWeights.AddElement(LANDMARK_TYPE.COBALT, 5);
+        landmarkWeights.AddElement(LANDMARK_TYPE.MITHRIL, 2);
         //landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
         //landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
         landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 25);
@@ -1405,17 +1432,83 @@ public class Utilities : MonoBehaviour {
         return GENDER.FEMALE;
     }
 
+    #region Resources
+    public static MATERIAL GetMaterialForLandmarkType(LANDMARK_TYPE landmarkType) {
+        try {
+            MATERIAL mat = (MATERIAL) System.Enum.Parse(typeof(MATERIAL), landmarkType.ToString(), true);
+            return mat;
+        } catch {
+            return MATERIAL.NONE;
+        }
+    }
+    public static TECHNOLOGY GetNeededTechnologyForMaterial(MATERIAL material) {
+        switch (material) {
+            case MATERIAL.IRON:
+                return TECHNOLOGY.BASIC_MINING;
+            case MATERIAL.OAK:
+                return TECHNOLOGY.BASIC_WOODCUTTING;
+            case MATERIAL.COBALT:
+                return TECHNOLOGY.ADVANCED_MINING;
+            case MATERIAL.YEW:
+                return TECHNOLOGY.ADVANCED_WOODCUTTING;
+            case MATERIAL.MITHRIL:
+                return TECHNOLOGY.ADVANCED_MINING;
+            case MATERIAL.EBONY:
+                return TECHNOLOGY.ADVANCED_WOODCUTTING;
+            case MATERIAL.COTTON:
+                return TECHNOLOGY.ADVANCED_FARMING;
+            case MATERIAL.SILK:
+                return TECHNOLOGY.BASIC_FARMING;
+            case MATERIAL.DEER_HIDE:
+                return TECHNOLOGY.ADVANCED_HUNTING;
+            case MATERIAL.GOAT_HIDE:
+                return TECHNOLOGY.BASIC_HUNTING;
+            case MATERIAL.CLAY:
+                return TECHNOLOGY.BASIC_QUARRYING;
+            case MATERIAL.LIMESTONE:
+                return TECHNOLOGY.BASIC_QUARRYING;
+            case MATERIAL.MARBLE:
+                return TECHNOLOGY.ADVANCED_QUARRYING;
+            case MATERIAL.GRANITE:
+                return TECHNOLOGY.ADVANCED_QUARRYING;
+            case MATERIAL.FLAX:
+                return TECHNOLOGY.ADVANCED_FARMING;
+            case MATERIAL.CORN:
+                return TECHNOLOGY.BASIC_FARMING;
+            case MATERIAL.RICE:
+                return TECHNOLOGY.ADVANCED_FARMING;
+            case MATERIAL.PIG_MEAT:
+                return TECHNOLOGY.BASIC_FARMING;
+            case MATERIAL.COW_MEAT:
+                return TECHNOLOGY.ADVANCED_FARMING;
+            case MATERIAL.BEHEMOTH_HIDE:
+                return TECHNOLOGY.ADVANCED_HUNTING;
+            default:
+                throw new Exception(material.ToString() + " is not included in the switch case statement!");
+        }
+    }
+    #endregion
+
     #region Landmarks
     public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
         switch (landmarkType) {
+            case LANDMARK_TYPE.CLAY:
+            case LANDMARK_TYPE.LIMESTONE:
+            case LANDMARK_TYPE.GRANITE:
+            case LANDMARK_TYPE.MARBLE:
+            case LANDMARK_TYPE.SILK:
+            case LANDMARK_TYPE.COTTON:
+            case LANDMARK_TYPE.FLAX:
             case LANDMARK_TYPE.CORN:
-            case LANDMARK_TYPE.PIG:
+            case LANDMARK_TYPE.RICE:
+            case LANDMARK_TYPE.PIG_MEAT:
+            case LANDMARK_TYPE.COW_MEAT:
+            case LANDMARK_TYPE.GOAT_HIDE:
+            case LANDMARK_TYPE.DEER_HIDE:
+            case LANDMARK_TYPE.BEHEMOTH_HIDE:
             case LANDMARK_TYPE.OAK:
             case LANDMARK_TYPE.YEW:
             case LANDMARK_TYPE.EBONY:
-            case LANDMARK_TYPE.SILK:
-            case LANDMARK_TYPE.COTTON:
-            case LANDMARK_TYPE.LEATHER:
             case LANDMARK_TYPE.IRON:
             case LANDMARK_TYPE.COBALT:
             case LANDMARK_TYPE.MITHRIL:
@@ -1467,13 +1560,13 @@ public class Utilities : MonoBehaviour {
 			return MATERIAL_CATEGORY.WOOD;
 		}else if(material == MATERIAL.CLAY || material == MATERIAL.LIMESTONE || material == MATERIAL.MARBLE || material == MATERIAL.GRANITE){
 			return MATERIAL_CATEGORY.STONE;
-		}else if(material == MATERIAL.SILK || material == MATERIAL.COTTON || material == MATERIAL.FLAX || material == MATERIAL.LINEN){
+		}else if(material == MATERIAL.SILK || material == MATERIAL.COTTON || material == MATERIAL.FLAX){
 			return MATERIAL_CATEGORY.CLOTH;
 		}else if(material == MATERIAL.CORN || material == MATERIAL.RICE){
 			return MATERIAL_CATEGORY.PLANT;
-		}else if(material == MATERIAL.PIGMEAT || material == MATERIAL.COWMEAT){
+		}else if(material == MATERIAL.PIG_MEAT || material == MATERIAL.COW_MEAT){
 			return MATERIAL_CATEGORY.MEAT;
-		}else if(material == MATERIAL.COWHIDE || material == MATERIAL.GOATHIDE || material == MATERIAL.DEERHIDE || material == MATERIAL.BEHEMOTHHIDE){
+		}else if(material == MATERIAL.GOAT_HIDE || material == MATERIAL.DEER_HIDE || material == MATERIAL.BEHEMOTH_HIDE){
 			return MATERIAL_CATEGORY.LEATHER;
 		}
 		return MATERIAL_CATEGORY.NONE;
@@ -1504,8 +1597,8 @@ public class Utilities : MonoBehaviour {
                 return TECHNOLOGY.BATTLEMAGE_CLASS;
             case CHARACTER_CLASS.SENTRY:
                 return TECHNOLOGY.ARCANIST_CLASS;
-            case CHARACTER_CLASS.SAVAGE:
-                return TECHNOLOGY.SAVAGE_CLASS;
+            case CHARACTER_CLASS.NIGHTBLADE:
+                return TECHNOLOGY.NIGHTBLADE_CLASS;
             case CHARACTER_CLASS.SCOUT:
                 return TECHNOLOGY.SCOUT_CLASS;
         }

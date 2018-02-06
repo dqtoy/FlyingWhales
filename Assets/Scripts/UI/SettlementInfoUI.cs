@@ -77,10 +77,12 @@ public class SettlementInfoUI : UIMenu {
                             text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name;
                         } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
                             text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name;
-                        } 
-//						else {
-//                            text += "[/url]";
-//                        }
+                        } else if (currQuest.questType == QUEST_TYPE.BUILD_STRUCTURE) {
+                            text += " " + ((BuildStructure)currQuest).target.location.name;
+                        }
+                        //						else {
+                        //                            text += "[/url]";
+                        //                        }
                         if (currQuest.isAccepted) {
                             text += " - A";
                             text += " (" + currQuest.assignedParty.name + ")";
@@ -169,13 +171,12 @@ public class SettlementInfoUI : UIMenu {
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = currentlyShowingSettlement.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {
-            text += "\n";
             for (int i = 0; i < availableTech.Count; i++) {
                 TECHNOLOGY currTech = availableTech[i];
-                text += currTech.ToString();
-                if (i + 1 != availableTech.Count) {
-                    text += ", ";
-                }
+                text += "\n" + currTech.ToString();
+                //if (i + 1 != availableTech.Count) {
+                //    text += ", ";
+                //}
             }
         } else {
             text += "NONE";

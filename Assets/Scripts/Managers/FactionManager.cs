@@ -19,7 +19,7 @@ public class FactionManager : MonoBehaviour {
 
     public List<Quest> allQuests = new List<Quest>();
 
-    public Dictionary<RACE, List<TECHNOLOGY>> inititalRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
+    public Dictionary<RACE, List<TECHNOLOGY>> initialRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
         { RACE.HUMANS, new List<TECHNOLOGY>(){
             TECHNOLOGY.BASIC_FARMING,
             TECHNOLOGY.BASIC_MINING,
@@ -29,7 +29,8 @@ public class FactionManager : MonoBehaviour {
             TECHNOLOGY.SWORD_MAKING,
             TECHNOLOGY.SPEAR_MAKING,
             TECHNOLOGY.AXE_MAKING,
-            TECHNOLOGY.BASIC_SMITHING
+            TECHNOLOGY.CHEST_ARMOR_MAKING,
+            TECHNOLOGY.HELMET_MAKING
         }},
         { RACE.ELVES, new List<TECHNOLOGY>(){
             TECHNOLOGY.BASIC_HUNTING,
@@ -40,7 +41,8 @@ public class FactionManager : MonoBehaviour {
             TECHNOLOGY.BOW_MAKING,
             TECHNOLOGY.DAGGER_MAKING,
             TECHNOLOGY.STAFF_MAKING,
-            TECHNOLOGY.BASIC_WOODCRAFTING
+            TECHNOLOGY.LEGGINGS_MAKING,
+            TECHNOLOGY.GLOVE_MAKING
         }}
     };
 

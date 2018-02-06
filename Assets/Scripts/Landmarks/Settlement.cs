@@ -185,6 +185,7 @@ public class Settlement : BaseLandmark {
     #region Quests
     internal void AddQuestToBoard(Quest quest) {
         _questBoard.Add(quest);
+        quest.OnQuestPosted(); //Call On Quest Posted after quest is posted
     }
     internal void RemoveQuestFromBoard(Quest quest) {
         _questBoard.Remove(quest);

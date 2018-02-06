@@ -90,6 +90,12 @@ public class Quest : CharacterTask{
 
     #region virtuals
     /*
+     This is called when a quest is posted on the board.
+     This will perform the actions needed by the quest, once it is posted,
+     such as reserve citizens, setup data, etc.
+         */
+    public virtual void OnQuestPosted() {}
+    /*
      Accept this quest.
      Quests can only be accepted by characters that can be party leaders.
          */

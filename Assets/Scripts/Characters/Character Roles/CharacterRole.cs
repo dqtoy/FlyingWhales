@@ -96,6 +96,9 @@ public class CharacterRole {
                 case QUEST_TYPE.DEFEND:
                     weight += GetDefendWeight((Defend)task);
                     break;
+                case QUEST_TYPE.BUILD_STRUCTURE:
+                    weight += GetBuildStructureWeight((BuildStructure)task);
+                    break;
                 default:
                     break;
             }
@@ -184,6 +187,9 @@ public class CharacterRole {
     }
     internal virtual int GetAttackWeight(Attack attackQuest) {
 		return 0;
+    }
+    internal virtual int GetBuildStructureWeight(BuildStructure buildStructure) {
+        return 0;
     }
     #endregion
 

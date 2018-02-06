@@ -132,6 +132,10 @@ public class BaseLandmark : ILocation {
     public void SetLandmarkObject(LandmarkObject obj) {
         _landmarkObject = obj;
         _landmarkObject.SetLandmark(this);
+        if(this is ResourceLandmark) {
+            SetHiddenState(false);
+            SetExploredState(true);
+        }
     }
 
     #region Connections
@@ -185,13 +189,13 @@ public class BaseLandmark : ILocation {
      Set the initial technologies of a faction as enabled on this landmark.
          */
     private void EnableInitialTechnologies(Faction faction) {
-        SetTechnologyState(faction.inititalTechnologies, true);
+        SetTechnologyState(faction.initialTechnologies, true);
     }
     /*
      Set the initital technologies of a faction as disabled on this landmark.
          */
     private void DisableInititalTechnologies(Faction faction) {
-        SetTechnologyState(faction.inititalTechnologies, false);
+        SetTechnologyState(faction.initialTechnologies, false);
     }
     /*
      Enable/Disable technologies in a landmark.
@@ -230,12 +234,18 @@ public class BaseLandmark : ILocation {
     public void RemoveTechnologyOnLandmark(TECHNOLOGY technology) {
         if (_technologiesOnLandmark.Contains(technology)) {
             _technologiesOnLandmark.Remove(technology);
-            if(_owner != null && _owner.inititalTechnologies.Contains(technology)) {
+            if(_owner != null && _owner.initialTechnologies.Contains(technology)) {
                 //Do not disable technology, since the owner of the landmark has that technology inherent to itself
             } else {
                 SetTechnologyState(technology, false);
             }
         }
+    }
+    /*
+     Does this landmark have a specific technology?
+         */
+    public bool HasTechnology(TECHNOLOGY technology) {
+        return technologies[technology];
     }
     #endregion
 
