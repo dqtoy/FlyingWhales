@@ -236,7 +236,7 @@ namespace ECS {
 		}
         #endregion
 
-        public Character(CharacterSetup baseSetup) {
+		public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
@@ -251,7 +251,7 @@ namespace ECS {
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 
-			AllocateStatPoints ();
+			AllocateStatPoints (statAllocationBonus);
 
 			_maxHP = _baseMaxHP;
 			_currentHP = _maxHP;
@@ -276,7 +276,7 @@ namespace ECS {
             GenerateTraits();
 		}
 
-		private void AllocateStatPoints(){
+		private void AllocateStatPoints(int statAllocationBonus){
 			_baseMaxHP = _raceSetting.baseHP;
 			_baseStrength = _raceSetting.baseStr;
 			_baseAgility = _raceSetting.baseAgi;
@@ -290,7 +290,8 @@ namespace ECS {
 
 			if(statWeights.GetTotalOfWeights() > 0){
 				string chosenStat = string.Empty;
-				for (int i = 0; i < _raceSetting.statAllocationPoints; i++) {
+				int totalStatAllocation = _raceSetting.statAllocationPoints + statAllocationBonus;
+				for (int i = 0; i < totalStatAllocation; i++) {
 					chosenStat = statWeights.PickRandomElementGivenWeights ();
 					if (chosenStat == "strength") {
 						_baseStrength += 5;

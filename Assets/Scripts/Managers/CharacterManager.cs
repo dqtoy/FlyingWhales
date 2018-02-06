@@ -172,6 +172,9 @@ public class CharacterManager : MonoBehaviour {
      Create a new character, given a role, class and race.
          */
     public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race) {
+		if(className == "None"){
+			className = "Classless";
+		}
         ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(className, race);
         if (setup == null) {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + className + "!");

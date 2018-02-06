@@ -1455,9 +1455,9 @@ public class Utilities : MonoBehaviour {
                 return TECHNOLOGY.ADVANCED_FARMING;
             case MATERIAL.SILK:
                 return TECHNOLOGY.BASIC_FARMING;
-            case MATERIAL.DEER_HIDE:
+            case MATERIAL.DEERHIDE:
                 return TECHNOLOGY.ADVANCED_HUNTING;
-            case MATERIAL.GOAT_HIDE:
+            case MATERIAL.GOATHIDE:
                 return TECHNOLOGY.BASIC_HUNTING;
             case MATERIAL.CLAY:
                 return TECHNOLOGY.BASIC_QUARRYING;
@@ -1473,11 +1473,11 @@ public class Utilities : MonoBehaviour {
                 return TECHNOLOGY.BASIC_FARMING;
             case MATERIAL.RICE:
                 return TECHNOLOGY.ADVANCED_FARMING;
-            case MATERIAL.PIG_MEAT:
+            case MATERIAL.PIGMEAT:
                 return TECHNOLOGY.BASIC_FARMING;
-            case MATERIAL.COW_MEAT:
+            case MATERIAL.COWMEAT:
                 return TECHNOLOGY.ADVANCED_FARMING;
-            case MATERIAL.BEHEMOTH_HIDE:
+            case MATERIAL.BEHEMOTHHIDE:
                 return TECHNOLOGY.ADVANCED_HUNTING;
             default:
                 throw new Exception(material.ToString() + " is not included in the switch case statement!");
@@ -1560,9 +1560,9 @@ public class Utilities : MonoBehaviour {
 			return MATERIAL_CATEGORY.CLOTH;
 		}else if(material == MATERIAL.CORN || material == MATERIAL.RICE){
 			return MATERIAL_CATEGORY.PLANT;
-		}else if(material == MATERIAL.PIG_MEAT || material == MATERIAL.COW_MEAT){
+		}else if(material == MATERIAL.PIGMEAT || material == MATERIAL.COWMEAT){
 			return MATERIAL_CATEGORY.MEAT;
-		}else if(material == MATERIAL.GOAT_HIDE || material == MATERIAL.DEER_HIDE || material == MATERIAL.BEHEMOTH_HIDE){
+		}else if(material == MATERIAL.GOATHIDE || material == MATERIAL.DEERHIDE || material == MATERIAL.BEHEMOTHHIDE){
 			return MATERIAL_CATEGORY.LEATHER;
 		}
 		return MATERIAL_CATEGORY.NONE;
@@ -1642,5 +1642,12 @@ public class Utilities : MonoBehaviour {
 		default:
 			return Utilities.NormalizeString (race.ToString ());
 		}
+	}
+
+	public static bool IsRoleClassless(CHARACTER_ROLE role){
+		if(role == CHARACTER_ROLE.WORKER){
+			return true;
+		}
+		return false;
 	}
 }

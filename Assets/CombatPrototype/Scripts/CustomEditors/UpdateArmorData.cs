@@ -27,18 +27,21 @@ namespace ECS{
 			}
 		}
 
-		private static Armor CreateArmor(ArmorMaterial armorMaterial, ArmorType armorType){
+		private static Armor CreateArmor(MATERIAL materialType, ArmorType armorType){
+			string materialPath = "Assets/CombatPrototype/Data/Materials/" + Utilities.NormalizeString(materialType.ToString()) + ".json";
+			Materials material = JsonUtility.FromJson<Materials> (System.IO.File.ReadAllText (materialPath));
+
 			Armor armor = new Armor ();
 			armor.armorType = armorType.armorType;
 			armor.armorBodyType = armorType.armorBodyType;
-			armor.material = armorMaterial.material;
+			armor.material = materialType;
 			armor.quality = QUALITY.NORMAL;
-			armor.baseDamageMitigation = armorMaterial.baseDamageMitigation;
-			armor.damageNullificationChance = armorMaterial.damageNullificationChance;
-			armor.ineffectiveAttackTypes = new List<ATTACK_TYPE> (armorMaterial.ineffectiveAttackTypes);
-			armor.effectiveAttackTypes = new List<ATTACK_TYPE> (armorMaterial.effectiveAttackTypes);
-			armor.durability = armorMaterial.durability;
-			armor.cost = armorMaterial.cost;
+			armor.baseDamageMitigation = material.armorData.baseDamageMitigation;
+			armor.damageNullificationChance = material.armorData.damageNullificationChance;
+			armor.ineffectiveAttackTypes = new List<ATTACK_TYPE> (material.armorData.ineffectiveAttackTypes);
+			armor.effectiveAttackTypes = new List<ATTACK_TYPE> (material.armorData.effectiveAttackTypes);
+			armor.durability = material.armorData.durability;
+			armor.cost = material.armorData.cost;
 			armor.itemType = ITEM_TYPE.ARMOR;
 			armor.itemName = Utilities.NormalizeString (armor.material.ToString ()) + " " + Utilities.NormalizeString (armor.armorType.ToString ());
 			armor.description = armor.itemName;

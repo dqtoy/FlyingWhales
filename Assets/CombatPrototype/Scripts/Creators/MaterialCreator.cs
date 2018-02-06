@@ -15,6 +15,7 @@ public class MaterialCreator : Editor {
 		}
 		materialComponent.material = (MATERIAL)EditorGUILayout.EnumPopup ("Material : ", materialComponent.material);
 		materialComponent.category = (MATERIAL_CATEGORY)EditorGUILayout.EnumPopup ("Category : ", materialComponent.category);
+		materialComponent.technology = (TECHNOLOGY)EditorGUILayout.EnumPopup ("Technology : ", materialComponent.technology);
 
 		materialComponent.weight = EditorGUILayout.IntField ("Weight : ", materialComponent.weight);
 		materialComponent.isEdible = EditorGUILayout.Toggle ("Is Edible : ", materialComponent.isEdible);
@@ -22,6 +23,42 @@ public class MaterialCreator : Editor {
 		SerializedProperty structure = serializedObject.FindProperty("structure");
 		EditorGUILayout.PropertyField(structure, true);
 		serializedObject.ApplyModifiedProperties ();
+
+		//Weapon Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Weapon Data ", EditorStyles.boldLabel);
+		SerializedProperty weaponData = serializedObject.FindProperty("weaponData");
+		EditorGUILayout.PropertyField(weaponData, true);
+		serializedObject.ApplyModifiedProperties ();
+//		GUI.enabled = true;
+		GUILayout.EndHorizontal();
+
+		//Armor Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Armor Data ", EditorStyles.boldLabel);
+		SerializedProperty armorData = serializedObject.FindProperty("armorData");
+		EditorGUILayout.PropertyField(armorData, true);
+		serializedObject.ApplyModifiedProperties ();
+//		GUI.enabled = true;
+		GUILayout.EndHorizontal();
+
+		//Construction Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Construction Data ", EditorStyles.boldLabel);
+		materialComponent.sturdiness = EditorGUILayout.IntField ("Sturdiness : ", materialComponent.sturdiness);
+		GUILayout.EndHorizontal();
+
+		//Training Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Training Data ", EditorStyles.boldLabel);
+		materialComponent.trainingStatBonus = EditorGUILayout.IntField ("Training Stat Bonus : ", materialComponent.trainingStatBonus);
+		GUILayout.EndHorizontal();
+
+		GUI.enabled = true;
 
 		if (GUILayout.Button("Save Material")) {
 			SaveMaterial(Utilities.NormalizeString(materialComponent.material.ToString()));
@@ -47,9 +84,14 @@ public class MaterialCreator : Editor {
 		Materials material = new Materials ();
 		material.material = materialComponent.material;
 		material.category = materialComponent.category;
+		material.technology = materialComponent.technology;
 		material.weight = materialComponent.weight;
 		material.isEdible = materialComponent.isEdible;
 		material.structure = materialComponent.structure;
+		material.weaponData = materialComponent.weaponData;
+		material.armorData = materialComponent.armorData;
+		material.sturdiness = materialComponent.sturdiness;
+		material.trainingStatBonus = materialComponent.trainingStatBonus;
 
 		string jsonString = JsonUtility.ToJson(material);
 

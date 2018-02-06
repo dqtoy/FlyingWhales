@@ -15,6 +15,7 @@ namespace ECS {
 				weaponTypeComponent = (WeaponTypeComponent)target;
 			}
 			weaponTypeComponent.weaponType = (WEAPON_TYPE)EditorGUILayout.EnumPopup ("Weapon Type: ", weaponTypeComponent.weaponType);
+			weaponTypeComponent.powerModifier = EditorGUILayout.FloatField ("Power Modifier: ", weaponTypeComponent.powerModifier);
 
 			SerializedProperty equipRequirement = serializedObject.FindProperty("equipRequirements");
 			EditorGUILayout.PropertyField(equipRequirement, true);
@@ -73,6 +74,7 @@ namespace ECS {
 		private void Save(string path){
 			WeaponType weaponType = new WeaponType ();
 			weaponType.weaponType = weaponTypeComponent.weaponType;
+			weaponType.powerModifier = weaponTypeComponent.powerModifier;
 			weaponType.equipRequirements = weaponTypeComponent.equipRequirements;
 			weaponType.weaponMaterials = weaponTypeComponent.weaponMaterials;
 			for (int i = 0; i < weaponTypeComponent.skills.Count; i++) {

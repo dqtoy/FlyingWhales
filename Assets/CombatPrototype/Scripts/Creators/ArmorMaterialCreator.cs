@@ -49,7 +49,7 @@ namespace ECS {
 		}
 		private void Save(string path){
 			ArmorMaterial armorMaterial = new ArmorMaterial ();
-			armorMaterial.material = armorMaterialComponent.material;
+//			armorMaterial.material = armorMaterialComponent.material;
 			armorMaterial.baseDamageMitigation = armorMaterialComponent.baseDamageMitigation;
 			armorMaterial.damageNullificationChance = armorMaterialComponent.damageNullificationChance;
 			armorMaterial.ineffectiveAttackTypes = armorMaterialComponent.ineffectiveAttackTypes;
