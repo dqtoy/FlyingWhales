@@ -1,1 +1,1 @@
-{"weaponType":1,"equipRequirements":[2],"skills":[],"weaponMaterials":[{"material":1,"power":30,"durability":20,"cost":5}],"attackSkills":["Medium Slash","Medium Stab"],"healSkills":[]}
+{"weaponType":1,"powerModifier":0.0,"equipRequirements":[2],"skills":[],"weaponMaterials":[],"attackSkills":["Medium Slash","Medium Stab"],"healSkills":[]}
