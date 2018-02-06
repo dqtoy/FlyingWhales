@@ -1501,6 +1501,14 @@ public class Utilities : MonoBehaviour {
         }
         return TECHNOLOGY.BASIC_FARMING;
     }
+    //This is the list of armor, set by priority, change if needed
+    public static List<ARMOR_TYPE> orderedArmorTypes = new List<ARMOR_TYPE>() {
+            ARMOR_TYPE.SHIRT,
+            ARMOR_TYPE.LEGGINGS,
+            ARMOR_TYPE.HELMET,
+            ARMOR_TYPE.BRACER,
+            ARMOR_TYPE.BOOT
+        };
     #endregion
 
     public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;

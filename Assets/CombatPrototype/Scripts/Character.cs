@@ -900,6 +900,23 @@ namespace ECS {
             }
             return false;
         }
+        internal ARMOR_TYPE GetNeededArmorType() {
+            for (int i = 0; i < Utilities.orderedArmorTypes.Count; i++) {
+                ARMOR_TYPE currArmorType = Utilities.orderedArmorTypes[i];
+                //Get the armor type that the character doesn't currently have
+                if (!this.HasEquipmentOfType((EQUIPMENT_TYPE)currArmorType)) {
+                    return currArmorType; //character has not yet equipped an armor of this type
+                }
+            }
+            return ARMOR_TYPE.NONE;
+        }
+        /*
+        Get a random weapon type for a character
+        given its allowed weapon types.
+             */
+        internal WEAPON_TYPE GetWeaponTypeForCharacter() {
+            return this.characterClass.allowedWeaponTypes[UnityEngine.Random.Range(0, this.characterClass.allowedWeaponTypes.Count)];
+        }
         internal void AdjustGold(int amount) {
             _gold += amount;
             _gold = Mathf.Max(0, _gold);

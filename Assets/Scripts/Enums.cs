@@ -891,7 +891,8 @@ public enum TASK_TYPE {
     DO_NOTHING,
     JOIN_PARTY,
     MOVE_TO,
-    TAKE_QUEST
+    TAKE_QUEST,
+    UPGRADE_GEAR
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

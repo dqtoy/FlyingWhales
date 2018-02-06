@@ -27,6 +27,8 @@ public class Hero : CharacterRole {
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
         WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
         Region currRegionOfCharacter = _character.currLocation.region;
+        
+        //TODO: ADD WEIGHT FOR UPGRADE GEAR!
 
         if (_character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;

@@ -25,24 +25,6 @@ public class Rest : CharacterTask {
     }
 
     #region overrides
-  //  protected override void ConstructQuestLine() {
-  //      base.ConstructQuestLine();
-  //      Settlement targetSettlement = GetTargetSettlement();
-
-  //      GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-  //      goToLocation.InititalizeAction(targetSettlement.location);
-  //      goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
-  //      goToLocation.onQuestActionDone += this.PerformNextQuestAction;
-  //      goToLocation.onQuestDoAction += goToLocation.Generic;
-
-  //      RestAction restAction = new RestAction(this);
-		//restAction.onQuestActionDone += SuccessQuest;
-  //      restAction.onQuestDoAction += restAction.StartDailyRegeneration;
-
-  //      _questLine.Enqueue(goToLocation);
-  //      _questLine.Enqueue(restAction);
-
-  //  }
     public override void PerformTask(ECS.Character character) {
         base.PerformTask(character);
         character.SetCurrentTask(this);
@@ -70,18 +52,7 @@ public class Rest : CharacterTask {
             _assignedCharacter.DetermineAction();
         }
 	}
-    //public override void TaskCancel() {
-    //    if (_currentAction != null) {
-    //        _currentAction.ActionDone(QUEST_ACTION_RESULT.CANCEL);
-    //    }
-    //    //TODO: What to do when rest is cancelled?
-    //    //RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
-    //    //ResetQuestValues();
-    //}
     #endregion
-	//private void SuccessQuest() {
-	//	EndQuest (TASK_RESULT.SUCCESS);
-	//}
 
     private void StartRest() {
         RestAction restAction = new RestAction(this);

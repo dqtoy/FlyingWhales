@@ -122,36 +122,21 @@ public class ItemChest : IEncounterable {
     private EQUIPMENT_TYPE GetRandomEquipmentType(ECS.Character character) {
         switch (_chestType) {
             case ITEM_TYPE.WEAPON:
-                return (EQUIPMENT_TYPE)GetWeaponTypeForCharacter(character);
+                return (EQUIPMENT_TYPE)character.GetWeaponTypeForCharacter();
             case ITEM_TYPE.ARMOR:
                 return (EQUIPMENT_TYPE)GetArmorTypeForCharacter(character);
             default:
                 return EQUIPMENT_TYPE.NONE;
         }
     }
-    /*
-     Get a random weapon type for a character
-     given its allowed weapon types.
-         */
-    private WEAPON_TYPE GetWeaponTypeForCharacter(ECS.Character character) {
-        return character.characterClass.allowedWeaponTypes[UnityEngine.Random.Range(0, character.characterClass.allowedWeaponTypes.Count)];
-    }
+    
     /*
      Get the armor type the character will get from this chest.
      NOTE: This will only be triggered if the chest type is ARMOR.
          */
     private ARMOR_TYPE GetArmorTypeForCharacter(ECS.Character character) {
-        //This is the list of armor, set by priority, change if needed
-        List<ARMOR_TYPE> orderedArmorTypes = new List<ARMOR_TYPE>() {
-            ARMOR_TYPE.SHIRT,
-            ARMOR_TYPE.LEGGINGS,
-            ARMOR_TYPE.HELMET,
-            ARMOR_TYPE.BRACER,
-            ARMOR_TYPE.BOOT
-        };
-
-        for (int i = 0; i < orderedArmorTypes.Count; i++) {
-            ARMOR_TYPE currArmorType = orderedArmorTypes[i];
+        for (int i = 0; i < Utilities.orderedArmorTypes.Count; i++) {
+            ARMOR_TYPE currArmorType = Utilities.orderedArmorTypes[i];
             //Get the armor type that the character doesn't currently have
             if (!character.HasEquipmentOfType((EQUIPMENT_TYPE)currArmorType)) {
                 return currArmorType; //character has not yet equipped an armor of this type
