@@ -50,6 +50,13 @@ public class MaterialCreator : Editor {
 		materialComponent.sturdiness = EditorGUILayout.IntField ("Sturdiness : ", materialComponent.sturdiness);
 		GUILayout.EndHorizontal();
 
+		//Training Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Training Data ", EditorStyles.boldLabel);
+		materialComponent.trainingStatBonus = EditorGUILayout.IntField ("Training Stat Bonus : ", materialComponent.trainingStatBonus);
+		GUILayout.EndHorizontal();
+
 		GUI.enabled = true;
 
 		if (GUILayout.Button("Save Material")) {

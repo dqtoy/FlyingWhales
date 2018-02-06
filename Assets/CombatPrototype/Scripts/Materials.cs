@@ -18,4 +18,7 @@ public class Materials {
 
 	//Construction Data
 	public int sturdiness;
+
+	//Training Data
+	public int trainingStatBonus;
 }

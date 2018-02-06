@@ -17,5 +17,8 @@ public class MaterialComponent: MonoBehaviour {
 
 	//Construction Data
 	public int sturdiness;
+
+	//Training Data
+	public int trainingStatBonus;
 }
 
