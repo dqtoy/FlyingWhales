@@ -23,6 +23,35 @@ public class MaterialCreator : Editor {
 		EditorGUILayout.PropertyField(structure, true);
 		serializedObject.ApplyModifiedProperties ();
 
+		//Weapon Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Weapon Data ", EditorStyles.boldLabel);
+		SerializedProperty weaponData = serializedObject.FindProperty("weaponData");
+		EditorGUILayout.PropertyField(weaponData, true);
+		serializedObject.ApplyModifiedProperties ();
+//		GUI.enabled = true;
+		GUILayout.EndHorizontal();
+
+		//Armor Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Armor Data ", EditorStyles.boldLabel);
+		SerializedProperty armorData = serializedObject.FindProperty("armorData");
+		EditorGUILayout.PropertyField(armorData, true);
+		serializedObject.ApplyModifiedProperties ();
+//		GUI.enabled = true;
+		GUILayout.EndHorizontal();
+
+		//Construction Data Area
+		GUILayout.Space(10);
+		GUILayout.BeginVertical(EditorStyles.helpBox);
+		GUILayout.Label("Construction Data ", EditorStyles.boldLabel);
+		materialComponent.sturdiness = EditorGUILayout.IntField ("Sturdiness : ", materialComponent.sturdiness);
+		GUILayout.EndHorizontal();
+
+		GUI.enabled = true;
+
 		if (GUILayout.Button("Save Material")) {
 			SaveMaterial(Utilities.NormalizeString(materialComponent.material.ToString()));
 		}

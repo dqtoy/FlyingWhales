@@ -26,14 +26,17 @@ namespace ECS{
 			}
 		}
 
-		private static Weapon CreateWeapon(WeaponMaterial weaponMaterial, WeaponType weaponType){
+		private static Weapon CreateWeapon(MATERIAL materialType, WeaponType weaponType){
+			string materialPath = "Assets/CombatPrototype/Data/Materials/" + Utilities.NormalizeString(materialType.ToString()) + ".json";
+			Materials material = JsonUtility.FromJson<Materials> (System.IO.File.ReadAllText (materialPath));
+
 			Weapon weapon = new Weapon ();
 			weapon.weaponType = weaponType.weaponType;
-			weapon.material = weaponMaterial.material;
+			weapon.material = materialType;
 			weapon.quality = QUALITY.NORMAL;
-			weapon.weaponPower = weaponMaterial.power;
-			weapon.durability = weaponMaterial.durability;
-			weapon.cost = weaponMaterial.cost;
+			weapon.weaponPower = ((float)material.weaponData.power * ((weaponType.powerModifier / 100f) + 1f));
+			weapon.durability = material.weaponData.durability;
+			weapon.cost = material.weaponData.cost;
 			weapon.equipRequirements = new List<IBodyPart.ATTRIBUTE> (weaponType.equipRequirements);
 			weapon.itemType = ITEM_TYPE.WEAPON;
 			weapon.itemName = Utilities.NormalizeString (weapon.material.ToString ()) + " " + Utilities.NormalizeString (weapon.weaponType.ToString ());

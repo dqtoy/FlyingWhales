@@ -5,9 +5,10 @@ using System.Collections.Generic;
 namespace ECS {
 	public class WeaponType {
 		public WEAPON_TYPE weaponType;
+		public float powerModifier;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements;
 		public List<Skill> skills;
-		public List<WeaponMaterial> weaponMaterials;
+		public List<MATERIAL> weaponMaterials;
 		public List<string> attackSkills = new List<string>();
 		public List<string> healSkills = new List<string>();
 

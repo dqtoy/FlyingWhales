@@ -8,5 +8,14 @@ public class MaterialComponent: MonoBehaviour {
 	public int weight;
 	public bool isEdible;
 	public Structure structure;
+
+	//Weapon Data
+	public ECS.WeaponMaterial weaponData;
+
+	//Armor Data
+	public ECS.ArmorMaterial armorData;
+
+	//Construction Data
+	public int sturdiness;
 }
 

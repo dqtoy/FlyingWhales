@@ -40,7 +40,7 @@ namespace ECS {
 		}
 		private void Save(string path){
 			WeaponMaterial weaponMaterial = new WeaponMaterial ();
-			weaponMaterial.material = weaponMaterialComponent.material;
+//			weaponMaterial.material = weaponMaterialComponent.material;
 			weaponMaterial.power = weaponMaterialComponent.power;
 			weaponMaterial.durability = weaponMaterialComponent.durability;
 

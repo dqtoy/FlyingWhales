@@ -5,9 +5,10 @@ using System.Collections.Generic;
 namespace ECS{
 	public class WeaponTypeComponent : MonoBehaviour {
 		public WEAPON_TYPE weaponType;
+		public float powerModifier;
 		public List<Skill> skills;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements;
-		public List<WeaponMaterial> weaponMaterials;
+		public List<MATERIAL> weaponMaterials;
 
 		internal bool skillsFoldout;
 		internal SKILL_TYPE skillTypeToAdd;
