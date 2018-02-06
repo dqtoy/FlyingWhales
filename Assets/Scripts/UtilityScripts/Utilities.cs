@@ -1647,4 +1647,11 @@ public class Utilities : MonoBehaviour {
 			return Utilities.NormalizeString (race.ToString ());
 		}
 	}
+
+	public static bool IsRoleClassless(CHARACTER_ROLE role){
+		if(role == CHARACTER_ROLE.WORKER){
+			return true;
+		}
+		return false;
+	}
 }

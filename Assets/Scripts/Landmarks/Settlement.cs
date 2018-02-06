@@ -45,6 +45,44 @@ public class Settlement : BaseLandmark {
     #endregion
 
     #region Characters
+	protected void CreateCharacterInSettlement(){
+		bool canCreateCharacter = false;
+		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
+			//Check first if the settlement has enough civilians to create a new character
+			//and that it has not exceeded the max number of characters that consider this settlement as home
+			WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
+			if (characterRoleProductionDictionary.GetTotalOfWeights() > 0) {
+				roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+				if(roleToCreate != CHARACTER_ROLE.NONE){
+					if (Utilities.IsRoleClassless (roleToCreate)) {
+						classToCreate = CHARACTER_CLASS.NONE;
+						canCreateCharacter = true;
+					} else {
+						WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary (this);
+						if (characterClassProductionDictionary.GetTotalOfWeights () > 0) {
+							classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights ();
+							canCreateCharacter = true;
+						}else{
+							classToCreate = CHARACTER_CLASS.NONE;
+						}
+					}
+				}
+			} else {
+				roleToCreate = CHARACTER_ROLE.NONE;
+				classToCreate = CHARACTER_CLASS.NONE;
+			}
+		} else {
+			roleToCreate = CHARACTER_ROLE.NONE;
+			classToCreate = CHARACTER_CLASS.NONE;
+		}
+		if (canCreateCharacter) {
+			CreateNewCharacter (roleToCreate, Utilities.NormalizeString (classToCreate.ToString ()));
+		} else {
+			GameDate createCharacterDate = new GameDate(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year);
+			SchedulingManager.Instance.AddEntry(createCharacterDate.month, createCharacterDate.day, createCharacterDate.year, () => CreateCharacterInSettlement());
+		}
+	}
+
     /*
      At the start of the month, the settlement will
      decide what character class and role to create.
@@ -57,7 +95,11 @@ public class Settlement : BaseLandmark {
             WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this);
             if (characterRoleProductionDictionary.GetTotalOfWeights() > 0 && characterClassProductionDictionary.GetTotalOfWeights() > 0) {
                 roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-                classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights();
+				if(Utilities.IsRoleClassless(roleToCreate)){
+					classToCreate = CHARACTER_CLASS.NONE;
+				}else{
+					classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights();
+				}
             } else {
                 roleToCreate = CHARACTER_ROLE.NONE;
                 classToCreate = CHARACTER_CLASS.NONE;
@@ -75,7 +117,7 @@ public class Settlement : BaseLandmark {
      character given the attributes it decided at the start of the month.
          */
     protected void CreateScheduledCharacter() {
-        if(roleToCreate != CHARACTER_ROLE.NONE && classToCreate != CHARACTER_CLASS.NONE) {
+        if(roleToCreate != CHARACTER_ROLE.NONE) {
             if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) { 
                 //Check first if the settlement has enough civilians to create a new character
                 //and that it has not exceeded the max number of characters that consider this settlement as home
@@ -114,6 +156,11 @@ public class Settlement : BaseLandmark {
         UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
+
+	public bool TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass){
+		
+		return false;
+	}
     public void SetHead(ECS.Character head) {
         _headOfSettlement = head;
         if(_owner.leader != null) {
