@@ -39,15 +39,24 @@ public class BuildStructure : Quest {
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
         goToLandmark.InititalizeAction(_target);
         goToLandmark.onTaskDoAction += goToLandmark.Generic;
-        goToLandmark.onTaskActionDone += OnReachLandmark;
+        goToLandmark.onTaskActionDone += WaitForDays;
+
+        _questLine.Enqueue(collect);
+        _questLine.Enqueue(goToLandmark);
     }
     #endregion
 
-    private void OnReachLandmark() {
+    private void WaitForDays() {
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddDays(5);
+        SchedulingManager.Instance.AddEntry(dueDate, () => OccupyTarget());
+    }
+
+    private void OccupyTarget() {
         //Build a new structure on that tile
         _target.OccupyLandmark((createdBy as InternalQuestManager).owner);
         _target.AdjustPopulation(5);
         _assignedParty.AdjustCivilians(-5);
-        EndQuest(TASK_STATUS.SUCCESS);
+        GoBackToQuestGiver(TASK_STATUS.SUCCESS);
     }
 }

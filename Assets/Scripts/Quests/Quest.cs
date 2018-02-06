@@ -344,7 +344,7 @@ public class Quest : CharacterTask{
         } else {
             _assignedParty.SetOpenStatus(true); //Set party as open to members
             //_assignedParty.onPartyFull = OnPartyFull;
-            _assignedParty.InviteCharactersOnTile(CHARACTER_ROLE.ADVENTURER, _assignedParty.currLocation);
+            _assignedParty.InviteCharactersOnLocation(CHARACTER_ROLE.ADVENTURER, _assignedParty.specificLocation);
         }
     }
     /*

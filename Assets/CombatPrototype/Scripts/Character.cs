@@ -1060,29 +1060,17 @@ namespace ECS {
 			case CHARACTER_ROLE.HERO:
 				_role = new Hero(this);
 				break;
-			case CHARACTER_ROLE.TRADER:
-				_role = new Trader(this);
-				break;
 			case CHARACTER_ROLE.ADVENTURER:
 				_role = new Adventurer(this);
 				break;
 			case CHARACTER_ROLE.COLONIST:
 				_role = new Colonist(this);
 				break;
-			case CHARACTER_ROLE.SPY:
-				_role = new Spy(this);
-				break;
-			case CHARACTER_ROLE.MEDIATOR:
-				_role = new Mediator(this);
-				break;
-			case CHARACTER_ROLE.NECROMANCER:
-				_role = new Necromancer(this);
-				break;
-			case CHARACTER_ROLE.DRAGON_TAMER:
-				_role = new DragonTamer(this);
-				break;
-			default:
-				break;
+            case CHARACTER_ROLE.WORKER:
+                _role = new Worker(this);
+                break;
+            default:
+			    break;
 			}
 		}
 

@@ -191,6 +191,12 @@ public class CharacterRole {
     internal virtual int GetBuildStructureWeight(BuildStructure buildStructure) {
         return 0;
     }
+    internal virtual int GetMoveToNonAdjacentVillageWeight(Settlement target) {
+        int weight = 0;
+        //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)
+        weight += 5 + (30 * target.questBoard.Count);
+        return weight;
+    }
     #endregion
 
     #region Utilities
