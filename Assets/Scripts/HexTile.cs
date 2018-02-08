@@ -1054,7 +1054,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
         GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
-        structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
+        if(structureType != STRUCTURE_TYPE.FARM && structureType != STRUCTURE_TYPE.GENERIC) {
+            structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
+        }
 
         structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
         this._centerPiece.SetActive(false);

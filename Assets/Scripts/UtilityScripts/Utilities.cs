@@ -256,25 +256,25 @@ public class Utilities : MonoBehaviour {
         return STRUCTURE_TYPE.GENERIC;
     }
 
-    public static STRUCTURE_TYPE GetStructureTypeForMaterial(MATERIAL material) {
-        MATERIAL_CATEGORY matCat = GetMaterialCategory(material);
-        switch (matCat) {
-            case MATERIAL_CATEGORY.METAL:
-                return STRUCTURE_TYPE.MINE;
-            case MATERIAL_CATEGORY.WOOD:
-                return STRUCTURE_TYPE.LUMBERYARD;
-            case MATERIAL_CATEGORY.STONE:
-                return STRUCTURE_TYPE.QUARRY;
-            case MATERIAL_CATEGORY.CLOTH:
-            case MATERIAL_CATEGORY.PLANT:
-            case MATERIAL_CATEGORY.MEAT:
-                return STRUCTURE_TYPE.GENERIC; //TODO: Change this to farm, when farm structure prefab is available
-            case MATERIAL_CATEGORY.LEATHER:
-                return STRUCTURE_TYPE.HUNTING_LODGE;
-            default:
-                return STRUCTURE_TYPE.GENERIC;
-        }
-    }
+    //public static STRUCTURE_TYPE GetStructureTypeForMaterial(MATERIAL material) {
+    //    MATERIAL_CATEGORY matCat = GetMaterialCategory(material);
+    //    switch (matCat) {
+    //        case MATERIAL_CATEGORY.METAL:
+    //            return STRUCTURE_TYPE.MINE;
+    //        case MATERIAL_CATEGORY.WOOD:
+    //            return STRUCTURE_TYPE.LUMBERYARD;
+    //        case MATERIAL_CATEGORY.STONE:
+    //            return STRUCTURE_TYPE.QUARRY;
+    //        case MATERIAL_CATEGORY.CLOTH:
+    //        case MATERIAL_CATEGORY.PLANT:
+    //        case MATERIAL_CATEGORY.MEAT:
+    //            return STRUCTURE_TYPE.GENERIC; //TODO: Change this to farm, when farm structure prefab is available
+    //        case MATERIAL_CATEGORY.LEATHER:
+    //            return STRUCTURE_TYPE.HUNTING_LODGE;
+    //        default:
+    //            return STRUCTURE_TYPE.GENERIC;
+    //    }
+    //}
 
     public static Color GetColorForRelationship(KINGDOM_RELATIONSHIP_STATUS status){
 		if (status == KINGDOM_RELATIONSHIP_STATUS.LOVE) {
@@ -410,26 +410,14 @@ public class Utilities : MonoBehaviour {
 
     public static WeightedDictionary<LANDMARK_TYPE> GetLandmarkWeights() {
         WeightedDictionary<LANDMARK_TYPE> landmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
-        landmarkWeights.AddElement(LANDMARK_TYPE.CLAY, 5);
-        landmarkWeights.AddElement(LANDMARK_TYPE.LIMESTONE, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.GRANITE, 15);
-        landmarkWeights.AddElement(LANDMARK_TYPE.MARBLE, 2);
-        landmarkWeights.AddElement(LANDMARK_TYPE.SILK, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.COTTON, 5);
-        landmarkWeights.AddElement(LANDMARK_TYPE.FLAX, 2);
-        landmarkWeights.AddElement(LANDMARK_TYPE.CORN, 20);
-        landmarkWeights.AddElement(LANDMARK_TYPE.RICE, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.PIG_MEAT, 20);
-        landmarkWeights.AddElement(LANDMARK_TYPE.COW_MEAT, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.GOAT_HIDE, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.DEER_HIDE, 5);
-        landmarkWeights.AddElement(LANDMARK_TYPE.BEHEMOTH_HIDE, 2);
-        landmarkWeights.AddElement(LANDMARK_TYPE.OAK, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.YEW, 5);
-        landmarkWeights.AddElement(LANDMARK_TYPE.EBONY, 2);
-        landmarkWeights.AddElement(LANDMARK_TYPE.IRON, 10);
-        landmarkWeights.AddElement(LANDMARK_TYPE.COBALT, 5);
-        landmarkWeights.AddElement(LANDMARK_TYPE.MITHRIL, 2);
+        MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
+        for (int i = 0; i < allMaterials.Length; i++) {
+            MATERIAL currMat = allMaterials[i];
+            if (currMat != MATERIAL.NONE) {
+                LANDMARK_TYPE landmarkType = ConvertMaterialToLandmarkType(currMat);
+                landmarkWeights.AddElement(landmarkType, MaterialManager.Instance.materialsLookup[currMat].weight);
+            }
+        }
         //landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
         //landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
         landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 25);
@@ -1433,12 +1421,20 @@ public class Utilities : MonoBehaviour {
     }
 
     #region Resources
-    public static MATERIAL GetMaterialForLandmarkType(LANDMARK_TYPE landmarkType) {
+    public static MATERIAL ConvertLandmarkTypeToMaterial(LANDMARK_TYPE landmarkType) {
         try {
             MATERIAL mat = (MATERIAL) System.Enum.Parse(typeof(MATERIAL), landmarkType.ToString(), true);
             return mat;
         } catch {
             return MATERIAL.NONE;
+        }
+    }
+    public static LANDMARK_TYPE ConvertMaterialToLandmarkType(MATERIAL material) {
+        try {
+            LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)System.Enum.Parse(typeof(LANDMARK_TYPE), material.ToString(), true);
+            return landmarkType;
+        } catch {
+            throw new Exception("THERE IS NO LANDMARK TYPE FOR MATERIAL " + material.ToString());
         }
     }
     public static TECHNOLOGY GetNeededTechnologyForMaterial(MATERIAL material) {

@@ -1,1 +1,1 @@
-{"material":1,"category":3,"technology":19,"weight":5,"isEdible":false,"structure":{"structureType":4,"structureQuality":1},"weaponData":{"power":30,"durability":20,"cost":5},"armorData":{"baseDamageMitigation":0.0,"damageNullificationChance":0.0,"ineffectiveAttackTypes":[],"effectiveAttackTypes":[],"durability":0,"cost":0},"sturdiness":0,"trainingStatBonus":0}
+{"material":11,"category":3,"technology":19,"weight":5,"isEdible":false,"structure":{"structureType":4,"structureQuality":1}}

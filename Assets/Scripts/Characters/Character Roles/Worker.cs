@@ -1,34 +1,25 @@
-﻿/*
- The hero explores the world for both monsters and treasures. 
- They form party with Warriors to perform their duties. 
- They create Minor Roads when they explore roadless tiles.
- Place functions unique to heroes here. 
- */
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
+using ECS;
 using System.Collections.Generic;
 
-public class Hero : CharacterRole {
-
-	public Hero(ECS.Character character): base (character) {
-        _roleType = CHARACTER_ROLE.HERO;
+public class Worker : CharacterRole {
+    public Worker(ECS.Character character) : base(character) {
+        _roleType = CHARACTER_ROLE.WORKER;
         _allowedRoadTypes = new List<ROAD_TYPE>() {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
         };
         _canPassHiddenRoads = true;
         _canAcceptQuests = true;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
-            QUEST_TYPE.DEFEND,
-            QUEST_TYPE.EXPLORE_TILE,
-            QUEST_TYPE.EXPAND
+            QUEST_TYPE.BUILD_STRUCTURE
         };
     }
 
+    #region overrides
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
         WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
         Region currRegionOfCharacter = _character.currLocation.region;
-        
-        //TODO: ADD WEIGHT FOR UPGRADE GEAR!
 
         if (_character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
@@ -43,32 +34,19 @@ public class Hero : CharacterRole {
             Faction regionOwner = adjRegion.owner;
             if (regionOwner != null) {
                 if (!regionOwner.IsHostileWith(_character.faction)) {
-                    //Move to an adjacent non-hostile Village
                     Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
                     MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement, PATHFINDING_MODE.USE_ROADS);
                     questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
                 }
             }
         }
-        
+
         return questWeights;
     }
 
-    internal override int GetExpandWeight(Expand expandQuest) {
-		int weight = 0;
-		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, expandQuest.targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
-		if(pathToTarget != null) {
-			weight += 200 - (5 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
-		}
-		if(weight < 0){
-			weight = 0;
-		}
-		return weight;
-	}
-
-    internal override int GetExploreTileWeight(ExploreTile exploreTile) {
-        int weight = 0;
-        weight += 100;
-        return weight;
+    internal override int GetBuildStructureWeight(BuildStructure buildStructure) {
+        return 100;
     }
+    #endregion
+    
 }

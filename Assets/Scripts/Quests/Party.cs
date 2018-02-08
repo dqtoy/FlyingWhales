@@ -86,7 +86,8 @@ public class Party: IEncounterable, ICombatInitializer {
 		_prisoners = new List<ECS.Character> ();
 		_isDefeated = false;
         Debug.Log(partyLeader.name + " has created " + _name);
-		partyLeader.specificLocation.AddCharacterToLocation (this, false);
+        partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
+        partyLeader.specificLocation.AddCharacterToLocation (this, false);
 
         AddPartyMember(_partyLeader);
 
@@ -123,7 +124,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
-			this._currLocation.RemoveCharacterFromLocation (member);
+            member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
             member.SetCurrentTask(_currentTask);
             if (!IsCharacterLeaderOfParty(member)) {
@@ -167,7 +168,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		}
         if (!forDeath) {
 			member.AddHistory ("Left party: " + this._name + ".");
-			this._currLocation.AddCharacterToLocation(member, false);
+			this.specificLocation.AddCharacterToLocation(member, false);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 ((Quest)currentTask).AddNewLog(member.name + " has left the party");
@@ -180,7 +181,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			if(!_isDisbanded){
 				JustDisbandParty ();
 			}
-			this._currLocation.RemoveCharacterFromLocation(this);
+			this.specificLocation.RemoveCharacterFromLocation(this);
         }
     }
 	public void AddPrisoner(ECS.Character character){
@@ -314,37 +315,33 @@ public class Party: IEncounterable, ICombatInitializer {
         //Do Nothing adventurers within the same city will be informed whenever a new character is registering for a Party. They will have first choice to join the party.
 
     }
-    public void InviteCharactersOnTile(CHARACTER_ROLE role, HexTile tile) {
-        if(tile.landmarkOnTile != null) {
-            if(tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY) {
-                Settlement settlement = (Settlement)tile.landmarkOnTile;
-                for (int i = 0; i < settlement.location.charactersAtLocation.Count; i++) {
-					if(this.isOpen && !this.isFull && settlement.location.charactersAtLocation[i] is ECS.Character) {
-						ECS.Character currCharacter = (ECS.Character)settlement.location.charactersAtLocation[i];
-                        Faction factionOfCurrCharacter = currCharacter.faction;
-						if(factionOfCurrCharacter == null){
-							//Unaligned characters are hostile by default
-							continue;
-						}
-                        if(factionOfCurrCharacter.id != _partyLeader.faction.id) {
-                            //the curr character is not of the same faction with the party leader
-                            if(FactionManager.Instance.GetRelationshipBetween(factionOfCurrCharacter, _partyLeader.faction).relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                                //the curr character cannot join this party, because the faction of the party leader is in hostile relations with his/her faction
-                                continue;
-                            }
-                        }
-                        if (currCharacter.role.roleType == role) {
-                            if (currCharacter.currentTask is DoNothing && currCharacter.party == null) {
-                                JoinParty joinPartyTask = new JoinParty(currCharacter, this);
-                                currCharacter.SetTaskToDoNext(joinPartyTask); //Set the characters next task to join party before ending it's current task
-                                currCharacter.currentTask.EndTask(TASK_STATUS.CANCEL);
-                                //currCharacter.JoinParty(this);
-                            }
-                        }
+    public void InviteCharactersOnLocation(CHARACTER_ROLE role, ILocation location) {
+        for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+			if(this.isOpen && !this.isFull && location.charactersAtLocation[i] is ECS.Character) {
+				ECS.Character currCharacter = (ECS.Character)location.charactersAtLocation[i];
+                Faction factionOfCurrCharacter = currCharacter.faction;
+				if(factionOfCurrCharacter == null){
+					//Unaligned characters are hostile by default
+					continue;
+				}
+                if(factionOfCurrCharacter.id != _partyLeader.faction.id) {
+                    //the curr character is not of the same faction with the party leader
+                    if(FactionManager.Instance.GetRelationshipBetween(factionOfCurrCharacter, _partyLeader.faction).relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                        //the curr character cannot join this party, because the faction of the party leader is in hostile relations with his/her faction
+                        continue;
+                    }
+                }
+                if (currCharacter.role.roleType == role) {
+                    if (currCharacter.currentTask is DoNothing && currCharacter.party == null) {
+                        JoinParty joinPartyTask = new JoinParty(currCharacter, this);
+                        currCharacter.SetTaskToDoNext(joinPartyTask); //Set the characters next task to join party before ending it's current task
+                        currCharacter.currentTask.EndTask(TASK_STATUS.CANCEL);
+                        //currCharacter.JoinParty(this);
                     }
                 }
             }
         }
+
     }
 
     public WeightedDictionary<PARTY_ACTION> GetPartyActionWeightsForCharacter(ECS.Character member) {

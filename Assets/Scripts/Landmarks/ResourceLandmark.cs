@@ -4,6 +4,7 @@ using System.Collections;
 public class ResourceLandmark : BaseLandmark {
 
     private MATERIAL _materialOnLandmark;
+    private Materials _materialData;
 
     #region getters/setters
     public MATERIAL materialOnLandmark {
@@ -13,14 +14,15 @@ public class ResourceLandmark : BaseLandmark {
 
     public ResourceLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
-        _materialOnLandmark = Utilities.GetMaterialForLandmarkType(specificLandmarkType);
+        _materialOnLandmark = Utilities.ConvertLandmarkTypeToMaterial(specificLandmarkType);
+        _materialData = MaterialManager.Instance.materialsLookup[_materialOnLandmark];
     }
 
     #region Ownership
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
         //Create structures on location
-        location.CreateStructureOnTile(faction, Utilities.GetStructureTypeForMaterial(_materialOnLandmark));
+        location.CreateStructureOnTile(faction, _materialData.structure.structureType);
     }
     #endregion
 }

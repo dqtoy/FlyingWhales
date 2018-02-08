@@ -128,16 +128,13 @@ public enum RESOURCE_TYPE{
 	ORE,
 }
 public enum MATERIAL{
-	NONE,
-	CLAY,
-	LIMESTONE,
-	GRANITE,
+	NONE, //0
+	CLAY, //11
+	LIMESTONE, //12
+	GRANITE, //14
 	MARBLE,
 	SILK,
 	COTTON,
-	FLAX,
-	CORN,
-	RICE,
 	PIGMEAT,
 	COWMEAT,
 	GOATHIDE,
@@ -149,6 +146,9 @@ public enum MATERIAL{
 	IRON,
 	COBALT,
 	MITHRIL,
+    FLAX,
+    CORN,
+    RICE
 }
 public enum MATERIAL_CATEGORY{
 	NONE,
@@ -856,13 +856,8 @@ public enum CHARACTER_ROLE {
     CHIEFTAIN,
     WARLORD,
     HERO,
-    TRADER,
     ADVENTURER,
     COLONIST,
-    SPY,
-    MEDIATOR,
-    NECROMANCER,
-    DRAGON_TAMER,
     VILLAGE_HEAD,
     WORKER
 }
