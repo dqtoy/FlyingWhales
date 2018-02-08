@@ -1497,11 +1497,11 @@ public class Utilities : MonoBehaviour {
             case LANDMARK_TYPE.FLAX:
             case LANDMARK_TYPE.CORN:
             case LANDMARK_TYPE.RICE:
-            case LANDMARK_TYPE.PIG_MEAT:
-            case LANDMARK_TYPE.COW_MEAT:
-            case LANDMARK_TYPE.GOAT_HIDE:
-            case LANDMARK_TYPE.DEER_HIDE:
-            case LANDMARK_TYPE.BEHEMOTH_HIDE:
+            case LANDMARK_TYPE.PIGMEAT:
+            case LANDMARK_TYPE.COWMEAT:
+            case LANDMARK_TYPE.GOATHIDE:
+            case LANDMARK_TYPE.DEERHIDE:
+            case LANDMARK_TYPE.BEHEMOTHHIDE:
             case LANDMARK_TYPE.OAK:
             case LANDMARK_TYPE.YEW:
             case LANDMARK_TYPE.EBONY:
