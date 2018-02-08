@@ -15,10 +15,15 @@ public class SettlementInfoClick : MonoBehaviour {
 					UIManager.Instance.ShowFactionInfo (faction);
 				}
 			} else if(url.Contains("_character")){
-				HexTile hextile = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location;
-				ECS.Character character = hextile.GetCharacterByID(idToUse);
+				BaseLandmark landmark = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement;
+				ECS.Character character = landmark.GetCharacterAtLocationByID(idToUse);
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
+				}else{
+					character = landmark.location.GetCharacterAtLocationByID(idToUse);
+					if(character != null){
+						UIManager.Instance.ShowCharacterInfo(character);
+					}
 				}
 			} else if(url.Contains("_hextile")){
 				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.id == idToUse){
@@ -32,9 +37,14 @@ public class SettlementInfoClick : MonoBehaviour {
 					}	
 				}
 			} else if (url.Contains("_party")) {
-				Party party = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.GetPartyByLeaderID(idToUse);
-				if(party != null){
-					UIManager.Instance.ShowPartyInfo(party);
+				Party party = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.GetPartyAtLocationByLeaderID(idToUse);
+				if (party != null) {
+					UIManager.Instance.ShowPartyInfo (party);
+				} else {
+					party = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.GetPartyAtLocationByLeaderID(idToUse);
+					if (party != null) {
+						UIManager.Instance.ShowPartyInfo (party);
+					}
 				}
 			}
         }

@@ -1504,6 +1504,8 @@ namespace ECS {
 
 		#region History
 		internal void AddHistory(string text, object obj = null){
+			GameDate today = GameManager.Instance.Today ();
+			string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
 			if(obj != null){
 				if(obj is CombatPrototype){
 					CombatPrototype combat = (CombatPrototype)obj;
@@ -1516,9 +1518,9 @@ namespace ECS {
 					text = combatText;
 				}
 			}
-			this._history.Add (text);
+			this._history.Insert (0, date + " " + text);
 			if(this._history.Count > 20){
-				this._history.RemoveAt (0);
+				this._history.RemoveAt (this._history.Count - 1);
 			}
 		}
 		#endregion

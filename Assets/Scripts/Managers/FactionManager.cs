@@ -99,6 +99,8 @@ public class FactionManager : MonoBehaviour {
         Settlement baseSettlement = faction.settlements[0];
 		ECS.Character chieftain = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
         ECS.Character villageHead = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
+		ECS.Character worker = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.WORKER, "Classless");
+
         faction.SetLeader(chieftain);
         baseSettlement.SetHead(villageHead);
 

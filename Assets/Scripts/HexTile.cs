@@ -1925,7 +1925,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             currParty.SetSpecificLocation(null);
 		}
 	}
-	public ECS.Character GetCharacterByID(int id){
+	public ECS.Character GetCharacterAtLocationByID(int id){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
 			if(_charactersAtLocation[i]	is ECS.Character){
 				if(((ECS.Character)_charactersAtLocation[i]).id == id){
@@ -1935,7 +1935,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		}
 		return null;
 	}
-	public Party GetPartyByLeaderID(int id){
+	public Party GetPartyAtLocationByLeaderID(int id){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
 			if(_charactersAtLocation[i]	is Party){
 				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){

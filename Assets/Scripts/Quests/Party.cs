@@ -86,8 +86,8 @@ public class Party: IEncounterable, ICombatInitializer {
 		_prisoners = new List<ECS.Character> ();
 		_isDefeated = false;
         Debug.Log(partyLeader.name + " has created " + _name);
+		partyLeader.specificLocation.AddCharacterToLocation (this, false);
         partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
-        partyLeader.specificLocation.AddCharacterToLocation (this, false);
 
         AddPartyMember(_partyLeader);
 

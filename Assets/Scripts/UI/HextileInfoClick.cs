@@ -16,7 +16,7 @@ public class HextileInfoClick : MonoBehaviour {
 				}
 			} else if(url.Contains("_character")){
 				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
-				ECS.Character character = hextile.GetCharacterByID(idToUse);
+				ECS.Character character = hextile.GetCharacterAtLocationByID(idToUse);
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
 				}
@@ -27,7 +27,7 @@ public class HextileInfoClick : MonoBehaviour {
                 }
 			} else if (url.Contains("_party")) {
 				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
-				Party party = hextile.GetPartyByLeaderID(idToUse);
+				Party party = hextile.GetPartyAtLocationByLeaderID(idToUse);
 				if(party != null){
 					UIManager.Instance.ShowPartyInfo(party);
 				}

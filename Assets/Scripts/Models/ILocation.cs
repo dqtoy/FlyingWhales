@@ -13,4 +13,7 @@ public interface ILocation {
     bool CombatAtLocation();
     ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer);
     void SetCurrentCombat(ECS.CombatPrototype combat);
+
+	ECS.Character GetCharacterAtLocationByID (int id);
+	Party GetPartyAtLocationByLeaderID (int id);
 }

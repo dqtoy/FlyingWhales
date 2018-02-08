@@ -270,6 +270,26 @@ public class BaseLandmark : ILocation {
     public void RemoveCharacterHomeOnLandmark(ECS.Character character) {
         _charactersWithHomeOnLandmark.Remove(character);
     }
+	public ECS.Character GetCharacterAtLocationByID(int id){
+		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if(_charactersAtLocation[i]	is ECS.Character){
+				if(((ECS.Character)_charactersAtLocation[i]).id == id){
+					return (ECS.Character)_charactersAtLocation [i];
+				}
+			}
+		}
+		return null;
+	}
+	public Party GetPartyAtLocationByLeaderID(int id){
+		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if(_charactersAtLocation[i]	is Party){
+				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
+					return (Party)_charactersAtLocation [i];
+				}
+			}
+		}
+		return null;
+	}
     #endregion
 
     #region Encounterables
@@ -481,6 +501,8 @@ public class BaseLandmark : ILocation {
 
 	#region History
 	internal void AddHistory(string text, object obj = null){
+		GameDate today = GameManager.Instance.Today ();
+		string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
 		if(obj != null){
 			if(obj is ECS.CombatPrototype){
 				ECS.CombatPrototype combat = (ECS.CombatPrototype)obj;
@@ -493,9 +515,9 @@ public class BaseLandmark : ILocation {
 				text = combatText;
 			}
 		}
-		this._history.Add (text);
+		this._history.Insert (0, date + " " + text);
 		if(this._history.Count > 20){
-			this._history.RemoveAt (0);
+			this._history.RemoveAt (this._history.Count - 1);
 		}
 	}
 	#endregion
