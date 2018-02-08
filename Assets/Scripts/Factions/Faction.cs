@@ -16,7 +16,7 @@ public class Faction {
     private Sprite _emblem;
     private Sprite _emblemBG;
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
-    protected List<BaseLandmark> _ownedLandmarks;//List of settlements (cities/landmarks) owned by this faction
+    protected List<BaseLandmark> _ownedLandmarks; //List of settlements (cities/landmarks) owned by this faction
     protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
@@ -25,7 +25,7 @@ public class Faction {
     protected Dictionary<Faction, FactionRelationship> _relationships;
 	protected MilitaryManager _militaryManager;
 	protected int _warmongering;
-
+	protected Dictionary<PRODUCTION_TYPE, List<MATERIAL>> _productionPreferences;
 
     #region getters/setters
 	public int id {
@@ -91,6 +91,9 @@ public class Faction {
     public int activeWars {
         get { return relationships.Where(x => x.Value.isAtWar).Count(); }
     }
+	public Dictionary<PRODUCTION_TYPE, List<MATERIAL>> productionPreferences {
+		get { return _productionPreferences; }
+	}
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -110,6 +113,7 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
 		_militaryManager = new MilitaryManager (this);
 		_warmongering = 0;
+		MaterialPreferences ();
     }
 
     public void SetRace(RACE race) {
@@ -356,5 +360,18 @@ public class Faction {
         }
         return count;
     }
+	private void MaterialPreferences(){
+		List<MATERIAL> materialsList = (Utilities.GetEnumValues<MATERIAL>()).ToList();
+		materialsList.RemoveAt (0);
+
+		_productionPreferences = new Dictionary<PRODUCTION_TYPE, List<MATERIAL>> ();
+		_productionPreferences.Add(PRODUCTION_TYPE.WEAPON, Utilities.Shuffle<MATERIAL>(materialsList));
+		_productionPreferences.Add(PRODUCTION_TYPE.ARMOR, Utilities.Shuffle<MATERIAL>(materialsList));
+		_productionPreferences.Add(PRODUCTION_TYPE.CONSTRUCTION, Utilities.Shuffle<MATERIAL>(materialsList));
+		_productionPreferences.Add(PRODUCTION_TYPE.TRAINING, Utilities.Shuffle<MATERIAL>(materialsList));
+	}
+	private MATERIAL GetTopRank(PRODUCTION_TYPE productionType){
+		return _productionPreferences [productionType] [0];
+	}
     #endregion
 }

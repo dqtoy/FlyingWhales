@@ -20,7 +20,7 @@ public class BaseLandmark : ILocation {
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
 	protected int _reservedCivilians;
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
-    protected Dictionary<RESOURCE, int> _resourceInventory; //list of resources available on landmark
+    protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials available on landmark
     //TODO: Add list of items on landmark
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
@@ -78,8 +78,8 @@ public class BaseLandmark : ILocation {
 	public int civiliansWithReserved{
 		get { return (int)_civilians + _reservedCivilians; }
 	}
-    public Dictionary<RESOURCE, int> resourceInventory {
-        get { return _resourceInventory; }
+	public Dictionary<MATERIAL, MaterialValues> materialsInventory {
+		get { return _materialsInventory; }
     }
     public Dictionary<TECHNOLOGY, bool> technologies {
         get { return _technologies; }
@@ -119,13 +119,13 @@ public class BaseLandmark : ILocation {
         _civilians = 0f;
 		_reservedCivilians = 0;
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
-        _resourceInventory = new Dictionary<RESOURCE, int>();
 		_prisoners = new List<ECS.Character> ();
 		_history = new List<string> ();
 		_combatHistory = new Dictionary<int, ECS.CombatPrototype> ();
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
         ConstructTechnologiesDictionary();
+		ConstructMaterialValues ();
         InititalizeEncounterables();
     }
 
@@ -496,6 +496,63 @@ public class BaseLandmark : ILocation {
 		this._history.Add (text);
 		if(this._history.Count > 20){
 			this._history.RemoveAt (0);
+		}
+	}
+	#endregion
+
+	#region Materials
+	private void ConstructMaterialValues(){
+		_materialsInventory = new Dictionary<MATERIAL, MaterialValues>();
+		MATERIAL[] materials = Utilities.GetEnumValues<MATERIAL> ();
+		for (int i = 1; i < materials.Length; i++) {
+			_materialsInventory.Add (materials [i], new MaterialValues ());
+		}
+	}
+	internal void AdjustMaterial(MATERIAL material, int amount){
+		_materialsInventory [material].count += amount;
+		if(_materialsInventory [material].count < 0){
+			_materialsInventory [material].count = 0;
+		}
+	}
+	internal void SetMaterial(MATERIAL material, int amount){
+		_materialsInventory [material].count = amount;
+	}
+	internal void ReserveMaterial(MATERIAL material, int amount){
+		AdjustMaterial (material, -amount);
+		_materialsInventory [material].reserved += amount;
+		if(_materialsInventory [material].reserved < 0){
+			_materialsInventory [material].reserved = 0;
+		}
+	}
+	internal void ReduceReserveMaterial(MATERIAL material, int amount){
+		_materialsInventory [material].reserved -= amount;
+		if(_materialsInventory [material].reserved < 0){
+			_materialsInventory [material].reserved = 0;
+		}
+	}
+	internal int GetTotalFoodCount(){
+		int count = 0;
+		for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
+			MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
+			count += _materialsInventory [material].count;
+		}
+		return count;
+	}
+	internal void ReduceTotalFoodCount(int amount){
+		int totalAmount = amount;
+		for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
+			MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
+			if(totalAmount > 0){
+				if(totalAmount > _materialsInventory [material].count){
+					totalAmount -= _materialsInventory [material].count;
+					SetMaterial (material, 0);
+				}else{
+					AdjustMaterial (material, -totalAmount);
+					break;
+				}
+			}else{
+				break;
+			}
 		}
 	}
 	#endregion

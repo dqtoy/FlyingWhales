@@ -1101,4 +1101,11 @@ public enum CHARACTER_TAG{
 	EGG_GUY,
 }
 
+public enum PRODUCTION_TYPE{
+	WEAPON,
+	ARMOR,
+	CONSTRUCTION,
+	TRAINING,
+}
+
 

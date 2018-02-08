@@ -45,8 +45,8 @@ public class Settlement : BaseLandmark {
     #endregion
 
     #region Characters
-	protected void CreateCharacterInSettlement(){
-		bool canCreateCharacter = false;
+	protected void TrainCharacterInSettlement(){
+		bool canTrainCharacter = false;
 		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
 			//Check first if the settlement has enough civilians to create a new character
 			//and that it has not exceeded the max number of characters that consider this settlement as home
@@ -56,12 +56,12 @@ public class Settlement : BaseLandmark {
 				if(roleToCreate != CHARACTER_ROLE.NONE){
 					if (Utilities.IsRoleClassless (roleToCreate)) {
 						classToCreate = CHARACTER_CLASS.NONE;
-						canCreateCharacter = true;
+						canTrainCharacter = true;
 					} else {
 						WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary (this);
 						if (characterClassProductionDictionary.GetTotalOfWeights () > 0) {
 							classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights ();
-							canCreateCharacter = true;
+							canTrainCharacter = true;
 						}else{
 							classToCreate = CHARACTER_CLASS.NONE;
 						}
@@ -75,12 +75,13 @@ public class Settlement : BaseLandmark {
 			roleToCreate = CHARACTER_ROLE.NONE;
 			classToCreate = CHARACTER_CLASS.NONE;
 		}
-		if (canCreateCharacter) {
-			CreateNewCharacter (roleToCreate, Utilities.NormalizeString (classToCreate.ToString ()));
-		} else {
-			GameDate createCharacterDate = new GameDate(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year);
-			SchedulingManager.Instance.AddEntry(createCharacterDate.month, createCharacterDate.day, createCharacterDate.year, () => CreateCharacterInSettlement());
+		if (canTrainCharacter) {
+			if(TrainNewCharacter (roleToCreate, classToCreate)){
+				return;
+			}
 		}
+		GameDate createCharacterDate = new GameDate(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year);
+		SchedulingManager.Instance.AddEntry(createCharacterDate.month, createCharacterDate.day, createCharacterDate.year, () => TrainCharacterInSettlement());
 	}
 
     /*
@@ -157,8 +158,45 @@ public class Settlement : BaseLandmark {
         return newCharacter;
     }
 
+	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType){
+		AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + Utilities.NormalizeString (classType.ToString ()));
+		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(roleType, Utilities.NormalizeString(classType.ToString()), _owner.race);
+		newCharacter.SetFaction(_owner);
+		newCharacter.SetHome (this);
+		this.owner.AddNewCharacter(newCharacter);
+		this.AddCharacterToLocation(newCharacter, false);
+		this.AddCharacterHomeOnLandmark(newCharacter);
+		newCharacter.DetermineAction();
+		UIManager.Instance.UpdateFactionSummary();
+		return newCharacter;
+	}
+
 	public bool TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass){
-		
+		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
+		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
+		Production combinedProduction = new Production ();
+		combinedProduction.Combine(trainingRole.production, trainingClass.production);
+
+		if(combinedProduction.civilianCost <= civilians && combinedProduction.foodCost <= GetTotalFoodCount()){
+			MATERIAL materialToUse = MATERIAL.NONE;
+			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING];
+			for (int i = 0; i < trainingPreference.Count; i++) {
+				if(trainingClass.materials.Contains(trainingPreference[i]) && combinedProduction.resourceCost <= _materialsInventory[trainingPreference[i]].count){
+					materialToUse = trainingPreference [i];
+				}
+			}
+			if(materialToUse != MATERIAL.NONE){
+				ReduceTotalFoodCount (combinedProduction.foodCost);
+				AdjustPopulation (-combinedProduction.civilianCost);
+				AdjustMaterial (materialToUse, combinedProduction.resourceCost);
+
+				AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + Utilities.NormalizeString (charClass.ToString ()));
+				GameDate trainCharacterDate = GameManager.Instance.Today ();
+				trainCharacterDate.AddDays (combinedProduction.duration);
+				SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass));
+				return true;
+			}
+		}
 		return false;
 	}
     public void SetHead(ECS.Character head) {

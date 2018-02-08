@@ -89,10 +89,7 @@ public class SettlementInfoUI : UIMenu {
                         } else {
                             text += " - N";
                         }
-
                     }
-                } else {
-                    text += "NONE";
                 }
             }
         }

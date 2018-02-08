@@ -110,7 +110,7 @@ public class MilitaryManager : TaskCreator {
 					if(landmark.IsAdjacentToEnemyTribe()){
 						Settlement village = (Settlement)landmark;
 						weight += (4 * village.civiliansWithReserved);
-						weight += village.resourceInventory.Sum (x => x.Value);
+						weight += village.materialsInventory.Sum (x => x.Value.totalCount);
 						weight += (15 * village.GetTechnologyCount());
 						if(landmark.HasWarlordOnAdjacentVillage()){
 							weight += 150;

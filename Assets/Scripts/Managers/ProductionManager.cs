@@ -73,4 +73,34 @@ public class ProductionManager : MonoBehaviour {
 			_trainingClassesLookup.Add (arrTrainingClass [i].classType, arrTrainingClass [i]);
 		}
 	}
+	internal WeaponProduction GetWeaponProduction(WEAPON_TYPE weaponType){
+		if(_weaponProductionsLookup.ContainsKey(weaponType)){
+			return _weaponProductionsLookup [weaponType];
+		}
+		return null;
+	}
+	internal ArmorProduction GetArmorProduction(ARMOR_TYPE armorType){
+		if(_armorProductionsLookup.ContainsKey(armorType)){
+			return _armorProductionsLookup [armorType];
+		}
+		return null;
+	}
+	internal Construction GetConstruction(string structure){
+		if(_constructionsLookup.ContainsKey(structure)){
+			return _constructionsLookup [structure];
+		}
+		return null;
+	}
+	internal TrainingRole GetTrainingRole(CHARACTER_ROLE role){
+		if(_trainingRolesLookup.ContainsKey(role)){
+			return _trainingRolesLookup [role];
+		}
+		return null;
+	}
+	internal TrainingClass GetTrainingClass(CHARACTER_CLASS classType){
+		if(_trainingClassesLookup.ContainsKey(classType)){
+			return _trainingClassesLookup [classType];
+		}
+		return null;
+	}
 }
