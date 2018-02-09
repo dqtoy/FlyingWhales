@@ -70,7 +70,7 @@ public class Settlement : BaseLandmark {
 		ScheduleUpdateAvailableMaterialsToGet ();
 		ScheduleUpdateNeededMaterials ();
 		ScheduleMonthlyQuests ();
-        DecideCharacterToCreate(); //Start Character Creation Process
+		DecideCharacterToCreate(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
     public override void UnoccupyLandmark() {
