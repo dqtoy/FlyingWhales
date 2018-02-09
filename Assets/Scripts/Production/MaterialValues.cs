@@ -11,5 +11,7 @@ public class MaterialValues {
 	public int count;
 	public int reserved;
 	public int capacity;
-	public int availableExcessOfOthers;
+	public int availableExcessOfOtherSettlements;
+	public int availableExcessOfResourceLandmarks;
+	public bool isNeeded;
 }

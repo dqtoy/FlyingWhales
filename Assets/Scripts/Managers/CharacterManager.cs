@@ -171,7 +171,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race) {
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, int statAllocationBonus = 0) {
 		if(className == "None"){
 			className = "Classless";
 		}
@@ -180,15 +180,15 @@ public class CharacterManager : MonoBehaviour {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + className + "!");
             return null;
         }
-        ECS.Character newCharacter = new ECS.Character(setup);
+		ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
         newCharacter.AssignRole(charRole);
         return newCharacter;
     }
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, ECS.CharacterSetup setup) {
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, ECS.CharacterSetup setup, int statAllocationBonus = 0) {
 		if (setup == null) {
 			return null;
 		}
-		ECS.Character newCharacter = new ECS.Character(setup);
+		ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
 		newCharacter.AssignRole(charRole);
 		return newCharacter;
 	}

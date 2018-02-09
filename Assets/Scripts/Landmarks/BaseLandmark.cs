@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BaseLandmark : ILocation {
+public class BaseLandmark : ILocation, TaskCreator {
     protected int _id;
     protected HexTile _location;
     protected LANDMARK_TYPE _specificLandmarkType;
@@ -36,6 +36,7 @@ public class BaseLandmark : ILocation {
 	protected Dictionary<int, ECS.CombatPrototype> _combatHistory;
     protected List<ICombatInitializer> _charactersAtLocation;
     protected ECS.CombatPrototype _currentCombat;
+	protected List<Quest> _activeQuests;
 
     #region getters/setters
     public int id {
@@ -107,6 +108,9 @@ public class BaseLandmark : ILocation {
     public List<ICombatInitializer> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
+	public List<Quest> activeQuests {
+		get { return _activeQuests; }
+	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -584,6 +588,70 @@ public class BaseLandmark : ILocation {
 				break;
 			}
 		}
+	}
+	#endregion
+
+	#region Quests
+	public void AddNewQuest(Quest quest) {
+		if (!_activeQuests.Contains(quest)) {
+			_activeQuests.Add(quest);
+			_owner.AddNewQuest(quest);
+			if(quest.postedAt != null) {
+				quest.postedAt.AddQuestToBoard(quest);
+			}
+			//quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
+		}
+	}
+	public void RemoveQuest(Quest quest) {
+		_activeQuests.Remove(quest);
+		_owner.RemoveQuest(quest);
+	}
+	public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
+		List<Quest> quests = new List<Quest>();
+		for (int i = 0; i < _activeQuests.Count; i++) {
+			Quest currQuest = _activeQuests[i];
+			if(currQuest.questType == questType) {
+				quests.Add(currQuest);
+			}
+		}
+		return quests;
+	}
+	public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
+		for (int i = 0; i < _activeQuests.Count; i++) {
+			Quest currQuest = _activeQuests[i];
+			if(currQuest.questType == questType) {
+				if(questType == QUEST_TYPE.EXPLORE_REGION){
+					Region region = (Region)identifier;
+					if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
+						return true;
+					}
+				} else if(questType == QUEST_TYPE.EXPAND){
+					if(identifier is HexTile){
+						HexTile hexTile = (HexTile)identifier;
+						if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
+							return true;
+						}
+					}else if(identifier is BaseLandmark){
+						BaseLandmark landmark = (BaseLandmark)identifier;
+						if(((Expand)currQuest).originTile.id == landmark.location.id){
+							return true;
+						}
+					}
+
+				} else if (questType == QUEST_TYPE.EXPLORE_TILE) {
+					BaseLandmark landmark = (BaseLandmark)identifier;
+					if (((ExploreTile)currQuest).landmarkToExplore.id == landmark.id) {
+						return true;
+					}
+				} else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
+					BaseLandmark landmark = (BaseLandmark)identifier;
+					if (((BuildStructure)currQuest).target.id == landmark.id) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	#endregion
 }
