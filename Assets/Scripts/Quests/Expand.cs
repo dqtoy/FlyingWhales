@@ -7,7 +7,6 @@ public class Expand : Quest {
 	private HexTile _targetUnoccupiedTile;
 	private HexTile _originTile;
 
-
 	#region getters/setters
 	public HexTile targetUnoccupiedTile {
 		get { return _targetUnoccupiedTile; }
@@ -28,8 +27,12 @@ public class Expand : Quest {
 		_originTile.landmarkOnTile.AdjustPopulation (-20);
 	}
 
-	#region overrides
-	protected override void AcceptQuest(ECS.Character partyLeader) {
+    #region overrides
+    //public override void OnQuestPosted() {
+    //    Construction constructionData = ProductionManager.Instance.GetConstruction("BASIC CITY");
+
+    //}
+    protected override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
 	}
 	protected override void ConstructQuestLine() {

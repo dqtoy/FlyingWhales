@@ -10,6 +10,9 @@ public class ResourceLandmark : BaseLandmark {
     public MATERIAL materialOnLandmark {
         get { return _materialOnLandmark; }
     }
+    public Materials materialData {
+        get { return _materialData; }
+    }
     #endregion
 
     public ResourceLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {

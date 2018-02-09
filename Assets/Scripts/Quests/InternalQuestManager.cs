@@ -103,7 +103,8 @@ public class InternalQuestManager : TaskCreator {
     }
     private void AddExpandWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
         List<Region> checkedExpandRegions = new List<Region>();
-        if (currSettlement.civilians > 20 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, currSettlement)) {
+        Construction constructionData = ProductionManager.Instance.GetConstruction("BASIC CITY");
+        if (currSettlement.CanAffordConstruction(constructionData) && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, currSettlement)) {
             //checkedExpandRegions.Clear();
             for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
                 object currConnection = regionOfSettlement.connections[j];
@@ -130,7 +131,11 @@ public class InternalQuestManager : TaskCreator {
                     int totalWeightForLandmark = 0;
                     ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
                     MATERIAL materialOnLandmark = resourceLandmark.materialOnLandmark;
-                    if (currSettlement.HasTechnology(Utilities.GetNeededTechnologyForMaterial(materialOnLandmark)) && !AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, resourceLandmark)) {
+                    Construction constructionData = ProductionManager.Instance.GetConstruction(resourceLandmark.materialData.structure.name);
+                    if (currSettlement.HasTechnology(ProductionManager.Instance.GetConstruction(resourceLandmark.materialData.structure.name).technology) 
+                        && currSettlement.CanAffordConstruction(constructionData)
+                        && !AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, resourceLandmark)) {
+
                         totalWeightForLandmark += 60; //Add 60 Weight to Build Structure if relevant technology is available
                         totalWeightForLandmark -= 30 * regionOfSettlement.GetActivelyHarvestedMaterialsOfType(materialOnLandmark); //- Subtract 30 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in the same region
                         totalWeightForLandmark -= 10 * _owner.GetActivelyHarvestedMaterialsOfType(materialOnLandmark, regionOfSettlement); //- Subtract 10 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in other regions owned by the same Tribe

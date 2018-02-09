@@ -587,10 +587,41 @@ public class BaseLandmark : ILocation, TaskCreator {
 			}
 		}
 	}
-	#endregion
+    internal bool HasAvailableMaterial(MATERIAL material, int amount) {
+        if(_materialsInventory[material].count >= amount) {
+            return true;
+        }
+        return false;
+    }
+    /*
+     Can this landmark afford to construct a structure?
+         */
+    public bool CanAffordConstruction(Construction constructionData) {
+        if (GetTotalFoodCount() < constructionData.production.foodCost) {
+            return false;
+        }
+        if(civilians < constructionData.production.civilianCost) {
+            return false;
+        }
+        for (int i = 0; i < _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials.Count; i++) {
+            MATERIAL currMat = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials[i];
+            if (constructionData.materials.Contains(currMat)) {
+                if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
+                    return true; //Check if this landmark has a resource with the required amount, that can build the structure
+                }
+            }
+        }
+        return false;
+    }
+    //public void ReduceAssets(Production productionCost) {
+    //    AdjustPopulation(-productionCost.civilianCost);
+    //    ReduceTotalFoodCount(-productionCost.foodCost);
 
-	#region Quests
-	public void AddNewQuest(Quest quest) {
+    //}
+    #endregion
+
+    #region Quests
+    public void AddNewQuest(Quest quest) {
 		if (!_activeQuests.Contains(quest)) {
 			_activeQuests.Add(quest);
 			_owner.AddNewQuest(quest);
