@@ -54,4 +54,8 @@ public struct GameDate {
 		}
 		return false;
 	}
+
+	public void SetDay(int day){
+		this.day = day;
+	}
 }

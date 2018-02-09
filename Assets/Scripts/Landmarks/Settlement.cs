@@ -35,9 +35,6 @@ public class Settlement : BaseLandmark {
 		_ownedLandmarks = new List<BaseLandmark>();
 		_materialWeights = new WeightedDictionary<MATERIAL> ();
 //		ConstructNeededMaterials ();
-		ScheduleUpdateAvailableMaterialsToGet ();
-		ScheduleUpdateNeededMaterials ();
-		ScheduleMonthlyQuests ();
     }
 
     #region Ownership
@@ -69,6 +66,10 @@ public class Settlement : BaseLandmark {
             location.emptyCityGO.SetActive(false);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
         }
+		//Start Quest Creation
+		ScheduleUpdateAvailableMaterialsToGet ();
+		ScheduleUpdateNeededMaterials ();
+		ScheduleMonthlyQuests ();
         DecideCharacterToCreate(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
@@ -339,13 +340,15 @@ public class Settlement : BaseLandmark {
 		return count;
 	}
 	private void ScheduleUpdateAvailableMaterialsToGet(){
-		GameDate newSched = new GameDate (GameManager.Instance.month, GameManager.daysInMonth [GameManager.Instance.month] - 1, GameManager.Instance.year);
+		GameDate newSched = GameManager.Instance.Today();
 		newSched.AddMonths (1);
+		newSched.SetDay (GameManager.daysInMonth [newSched.month] - 1);
 		SchedulingManager.Instance.AddEntry (newSched, () => UpdateAvailableMaterialsToGet ());
 	}
 	private void ScheduleUpdateNeededMaterials(){
-		GameDate newSched = new GameDate (GameManager.Instance.month, GameManager.daysInMonth [GameManager.Instance.month], GameManager.Instance.year);
+		GameDate newSched = GameManager.Instance.Today();
 		newSched.AddMonths (1);
+		newSched.SetDay (GameManager.daysInMonth [newSched.month]);
 		SchedulingManager.Instance.AddEntry (newSched, () => UpdateNeededMaterials ());
 	}
 	private void ScheduleMonthlyQuests(){
