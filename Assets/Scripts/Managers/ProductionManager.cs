@@ -91,6 +91,9 @@ public class ProductionManager : MonoBehaviour {
 		}
 		return null;
 	}
+    internal Construction GetConstructionDataForCity() {
+        return GetConstruction("BASIC CITY");
+    }
 	internal TrainingRole GetTrainingRole(CHARACTER_ROLE role){
 		if(_trainingRolesLookup.ContainsKey(role)){
 			return _trainingRolesLookup [role];

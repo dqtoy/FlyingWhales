@@ -270,7 +270,8 @@ public class SettlementInfoUI : UIMenu {
 		if(isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark is Settlement){
 			Settlement settlement = (Settlement)currentlyShowingLandmark;
 			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
-				if(settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
+                Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
+                if (settlement.CanAffordConstruction(constructionData) && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
 					return true;
 				}
 			}
@@ -295,7 +296,8 @@ public class SettlementInfoUI : UIMenu {
             && currentlyShowingLandmark is ResourceLandmark) {
             Settlement settlement = currentlyShowingLandmark.location.region.centerOfMass.landmarkOnTile as Settlement;
             ResourceLandmark resourceLandmark = currentlyShowingLandmark as ResourceLandmark;
-            if (settlement.civilians >= 5 && settlement.HasTechnology(Utilities.GetNeededTechnologyForMaterial(resourceLandmark.materialOnLandmark))) {
+            Construction constructionData = ProductionManager.Instance.GetConstruction(resourceLandmark.materialData.structure.name);
+            if (settlement.CanAffordConstruction(constructionData) && settlement.HasTechnology(Utilities.GetNeededTechnologyForMaterial(resourceLandmark.materialOnLandmark))) {
                 return true;
             }
         }

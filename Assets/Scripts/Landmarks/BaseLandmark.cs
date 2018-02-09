@@ -599,26 +599,50 @@ public class BaseLandmark : ILocation, TaskCreator {
          */
     public bool CanAffordConstruction(Construction constructionData) {
         if (GetTotalFoodCount() < constructionData.production.foodCost) {
-            return false;
+            return false; //this landmark does not have enough food to build the structure
         }
         if(civilians < constructionData.production.civilianCost) {
-            return false;
+            return false; //this landmark does not have enough civilians to build the structure
         }
-        for (int i = 0; i < _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials.Count; i++) {
-            MATERIAL currMat = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials[i];
+        if(GetMaterialForConstruction(constructionData) == MATERIAL.NONE) {
+            return false; //the landmark does not have any materials that can build the structure
+        }
+        return true; //this landmark meets all the requirements
+    }
+    public MATERIAL GetMaterialForConstruction(Construction constructionData) {
+        List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
+        for (int i = 0; i < preferredMats.Count; i++) {
+            MATERIAL currMat = preferredMats[i];
             if (constructionData.materials.Contains(currMat)) {
                 if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
-                    return true; //Check if this landmark has a resource with the required amount, that can build the structure
+                    return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
                 }
             }
         }
-        return false;
+        return MATERIAL.NONE;
     }
-    //public void ReduceAssets(Production productionCost) {
-    //    AdjustPopulation(-productionCost.civilianCost);
-    //    ReduceTotalFoodCount(-productionCost.foodCost);
-
-    //}
+    /*
+     This will reduce this landmarks assets based on
+     a given Production Cost and a material.
+         */
+    public void ReduceAssets(Production productionCost, MATERIAL materialToUse) {
+        AdjustPopulation(-productionCost.civilianCost);
+        ReduceTotalFoodCount(-productionCost.foodCost);
+        AdjustMaterial(materialToUse, -productionCost.resourceCost);
+    }
+    /*
+     This will reduce a landmarks assets based on Construction Data,
+     this will determine what material to use on it's own.
+         */
+    public void ReduceAssets(Construction constructionData) {
+        AdjustPopulation(-constructionData.production.civilianCost);
+        ReduceTotalFoodCount(-constructionData.production.foodCost);
+        MATERIAL matToUse = GetMaterialForConstruction(constructionData);
+        if(matToUse == MATERIAL.NONE) {
+            throw new System.Exception("There is no materials to build a " + constructionData.structure.name);
+        }
+        AdjustMaterial(matToUse, constructionData.production.resourceCost);
+    }
     #endregion
 
     #region Quests
