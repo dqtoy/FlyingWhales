@@ -103,6 +103,7 @@ public class Faction {
         _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
         factionColor = Utilities.GetColorForFaction();
         _characters = new List<ECS.Character>();
+        _settlements = new List<Settlement>();
         ConstructInititalTechnologies();
         _activeQuests = new List<Quest>();
         _internalQuestManager = new InternalQuestManager(this);
