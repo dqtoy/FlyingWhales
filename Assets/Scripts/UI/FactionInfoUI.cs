@@ -51,9 +51,10 @@ public class FactionInfoUI : UIMenu {
 		text += "\n[b]Faction Type:[/b] " + currentlyShowingFaction.factionType.ToString();
 		text += "\n[b]Faction Size:[/b] " + currentlyShowingFaction.factionSize.ToString();
 		text += "\n[b]Owned Landmarks: [/b] ";
-		if(currentlyShowingFaction.ownedLandmarks.Count > 0){
-			for (int i = 0; i < currentlyShowingFaction.ownedLandmarks.Count; i++) {
-				BaseLandmark landmark = currentlyShowingFaction.ownedLandmarks [i];
+        List<BaseLandmark> ownedLandmarks = currentlyShowingFaction.GetAllOwnedLandmarks();
+        if (ownedLandmarks.Count > 0){
+			for (int i = 0; i < ownedLandmarks.Count; i++) {
+				BaseLandmark landmark = ownedLandmarks [i];
 				text += "\n  - " + landmark.urlName + " (" + landmark.specificLandmarkType.ToString() + ")";
 			}
 		}else{

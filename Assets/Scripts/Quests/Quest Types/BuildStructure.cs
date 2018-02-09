@@ -55,6 +55,7 @@ public class BuildStructure : Quest {
     private void OccupyTarget() {
         //Build a new structure on that tile
         _target.OccupyLandmark((createdBy as InternalQuestManager).owner);
+        _postedAt.AddLandmarkAsOwned(_target);
         _target.AdjustPopulation(5);
         _assignedParty.AdjustCivilians(-5);
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);

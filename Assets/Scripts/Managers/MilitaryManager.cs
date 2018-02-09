@@ -78,9 +78,10 @@ public class MilitaryManager : TaskCreator {
         WeightedDictionary<Quest> questDict = new WeightedDictionary<Quest>();
 
         //Loop through each owned landmarks without active defend quest.
-		//Defend weights
-        for (int i = 0; i < _owner.ownedLandmarks.Count; i++) {
-			BaseLandmark landmark = _owner.ownedLandmarks [i];
+        //Defend weights
+        List<BaseLandmark> allOwnedLandmarks = _owner.GetAllOwnedLandmarks();
+        for (int i = 0; i < allOwnedLandmarks.Count; i++) {
+			BaseLandmark landmark = allOwnedLandmarks[i];
 			if(!IsAlreadyBeingDefended(landmark)){
 				int defendWeight = GetDefendWeight (landmark);
 				if(defendWeight > 0){
