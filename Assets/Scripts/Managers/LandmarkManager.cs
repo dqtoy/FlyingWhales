@@ -93,4 +93,36 @@ public class LandmarkManager : MonoBehaviour {
 		}
 		return new DungeonEncounterChances ();
 	}
+
+    public BaseLandmark GetLandmarkByID(int id) {
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if(currRegion.mainLandmark.id == id) {
+                return currRegion.mainLandmark;
+            }
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if(currLandmark.id == id) {
+                    return currLandmark;
+                }
+            }
+        }
+        return null;
+    }
+
+    public BaseLandmark GetLandmarkByName(string name) {
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if (currRegion.mainLandmark.landmarkName == name) {
+                return currRegion.mainLandmark;
+            }
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if (currLandmark.landmarkName == name) {
+                    return currLandmark;
+                }
+            }
+        }
+        return null;
+    }
 }
