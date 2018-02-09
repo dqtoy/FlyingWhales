@@ -16,6 +16,7 @@ namespace ECS {
 			}
 			weaponTypeComponent.weaponType = (WEAPON_TYPE)EditorGUILayout.EnumPopup ("Weapon Type: ", weaponTypeComponent.weaponType);
 			weaponTypeComponent.powerModifier = EditorGUILayout.FloatField ("Power Modifier: ", weaponTypeComponent.powerModifier);
+			weaponTypeComponent.damageRange = EditorGUILayout.FloatField ("Damage Range: ", weaponTypeComponent.damageRange);
 
 			SerializedProperty equipRequirement = serializedObject.FindProperty("equipRequirements");
 			EditorGUILayout.PropertyField(equipRequirement, true);

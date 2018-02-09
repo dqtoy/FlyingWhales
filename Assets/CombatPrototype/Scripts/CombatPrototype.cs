@@ -588,9 +588,9 @@ namespace ECS{
 
             if(weapon != null) {
 				weaponPower = weapon.weaponPower;
-				if(Utilities.GetMaterialCategory(weapon.material) == MATERIAL_CATEGORY.WOOD && (weapon.weaponType == WEAPON_TYPE.BOW || weapon.weaponType == WEAPON_TYPE.STAFF)){
-					weaponPower *= 2f;
-				}
+//				if(Utilities.GetMaterialCategory(weapon.material) == MATERIAL_CATEGORY.WOOD && (weapon.weaponType == WEAPON_TYPE.BOW || weapon.weaponType == WEAPON_TYPE.STAFF)){
+//					weaponPower *= 2f;
+//				}
 				//reduce weapon durability by durability cost of skill
 				weapon.AdjustDurability(-attackSkill.durabilityCost);
 				log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
@@ -598,6 +598,8 @@ namespace ECS{
 				log += ".";
 			}
 			int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
+			int damageRange = (int)((float)damage * weapon.damageRange);
+			damage = Utilities.rng.Next ((damage - damageRange), (damage + damageRange) + 1);
 
 			if(armor != null){
 				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){

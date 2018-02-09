@@ -35,6 +35,7 @@ namespace ECS{
 			weapon.material = materialType;
 			weapon.quality = QUALITY.NORMAL;
 			weapon.weaponPower = ((float)material.weaponData.power * ((weaponType.powerModifier / 100f) + 1f));
+			weapon.damageRange = weaponType.damageRange;
 			weapon.durability = material.weaponData.durability;
 			weapon.cost = material.weaponData.cost;
 			weapon.equipRequirements = new List<IBodyPart.ATTRIBUTE> (weaponType.equipRequirements);
