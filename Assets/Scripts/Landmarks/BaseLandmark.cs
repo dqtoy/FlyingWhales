@@ -130,6 +130,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_combatHistory = new Dictionary<int, ECS.CombatPrototype> ();
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
+		_activeQuests = new List<Quest> ();
         ConstructTechnologiesDictionary();
 		ConstructMaterialValues ();
         InititalizeEncounterables();
