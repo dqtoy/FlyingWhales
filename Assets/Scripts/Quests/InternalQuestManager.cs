@@ -188,6 +188,11 @@ public class InternalQuestManager : TaskCreator {
         exploreQuest.SetSettlement((Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile);
         AddNewQuest(exploreQuest);
     }
+    internal void CreateBuildStructureQuest(BaseLandmark landmarkToExplore) {
+        BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore);
+        buildStructure.SetSettlement((Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile);
+        AddNewQuest(buildStructure);
+    }
     #endregion
 
     #region Quest Management

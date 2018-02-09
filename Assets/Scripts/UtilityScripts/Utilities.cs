@@ -1605,9 +1605,9 @@ public class Utilities : MonoBehaviour {
             ARMOR_TYPE.SHIRT,
             ARMOR_TYPE.LEGGINGS,
             ARMOR_TYPE.HELMET,
-            ARMOR_TYPE.BRACER,
-            ARMOR_TYPE.BOOT
-        };
+            ARMOR_TYPE.BOOT,
+            ARMOR_TYPE.BRACER
+    };
     #endregion
 
     public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;
@@ -1650,4 +1650,24 @@ public class Utilities : MonoBehaviour {
 		}
 		return false;
 	}
+
+    public static ITEM_TYPE GetItemTypeOfEquipment(EQUIPMENT_TYPE equipmentType) {
+        switch (equipmentType) {
+            case EQUIPMENT_TYPE.SWORD:
+            case EQUIPMENT_TYPE.DAGGER:
+            case EQUIPMENT_TYPE.SPEAR:
+            case EQUIPMENT_TYPE.BOW:
+            case EQUIPMENT_TYPE.STAFF:
+            case EQUIPMENT_TYPE.AXE:
+                return ITEM_TYPE.WEAPON;
+            case EQUIPMENT_TYPE.SHIRT:
+            case EQUIPMENT_TYPE.BRACER:
+            case EQUIPMENT_TYPE.HELMET:
+            case EQUIPMENT_TYPE.LEGGINGS:
+            case EQUIPMENT_TYPE.BOOT:
+                return ITEM_TYPE.ARMOR;
+            default:
+                return ITEM_TYPE.WEAPON;
+        }
+    }
 }

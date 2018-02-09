@@ -44,7 +44,7 @@ public class PlayerActionsUI : MonoBehaviour {
 		}
 	}
 	public void OnClickExpandBtn(){
-		UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.internalQuestManager.CreateExpandQuest(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement);
+		UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.owner.internalQuestManager.CreateExpandQuest(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark);
 	}
 	public void OnClickExploreRegionBtn(){
 		//UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.internalQuestManager.CreateExploreRegionQuest();
@@ -58,8 +58,8 @@ public class PlayerActionsUI : MonoBehaviour {
 	}
 
 	private void ShowExpand(){
-		if(UIManager.Instance.settlementInfoUI.isShowing && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement is Settlement){
-			Settlement settlement = (Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingSettlement;
+		if(UIManager.Instance.settlementInfoUI.isShowing && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark is Settlement){
+			Settlement settlement = (Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark;
 			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
 				if(settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile()){
 					expandBtn.isEnabled = true;
@@ -71,8 +71,8 @@ public class PlayerActionsUI : MonoBehaviour {
 	}
 
 	private void ShowExploreRegion(){
-		if(UIManager.Instance.settlementInfoUI.isShowing && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.isHidden && !UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.isExplored
-			&& UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner == null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.region.centerOfMass.isOccupied){
+		if(UIManager.Instance.settlementInfoUI.isShowing && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isHidden && !UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isExplored
+			&& UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.owner == null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location.region.centerOfMass.isOccupied){
 			exploreBtn.isEnabled = true;
 			return;
 		}

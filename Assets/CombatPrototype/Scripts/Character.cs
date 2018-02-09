@@ -901,6 +901,11 @@ namespace ECS {
             }
             return false;
         }
+        /*
+         Get the most needed armor type of this character,
+         if this returns NONE. That means that this character already
+         has all types of armor equipped.
+             */
         internal ARMOR_TYPE GetNeededArmorType() {
             for (int i = 0; i < Utilities.orderedArmorTypes.Count; i++) {
                 ARMOR_TYPE currArmorType = Utilities.orderedArmorTypes[i];
@@ -910,6 +915,20 @@ namespace ECS {
                 }
             }
             return ARMOR_TYPE.NONE;
+        }
+        /*
+         Get armor types that this character has not equipped yet.
+             */
+        internal List<EQUIPMENT_TYPE> GetMissingArmorTypes() {
+            List<EQUIPMENT_TYPE> missingArmor = new List<EQUIPMENT_TYPE>();
+            for (int i = 0; i < Utilities.orderedArmorTypes.Count; i++) {
+                EQUIPMENT_TYPE currArmorType = (EQUIPMENT_TYPE)Utilities.orderedArmorTypes[i];
+                //Get the armor type that the character doesn't currently have
+                if (!this.HasEquipmentOfType((EQUIPMENT_TYPE)currArmorType)) {
+                    missingArmor.Add(currArmorType); //character has not yet equipped an armor of this type
+                }
+            }
+            return missingArmor;
         }
         /*
         Get a random weapon type for a character
@@ -925,6 +944,28 @@ namespace ECS {
         internal void AdjustPrestige(int amount) {
             _prestige += amount;
             _prestige = Mathf.Max(0, _prestige);
+        }
+        /*
+         Get the Item type that this character needs,
+         this is mainly used for upgrading gear at a settlement.
+             */
+        internal ITEM_TYPE GetNeededItemType() {
+            if (!HasWeaponEquipped()) {
+                return ITEM_TYPE.WEAPON;
+            }
+            return ITEM_TYPE.ARMOR;
+        }
+        /*
+         Get the list of equipment that
+         this character needs
+             */
+        internal List<EQUIPMENT_TYPE> GetNeededEquipmentTypes() {
+            List<EQUIPMENT_TYPE> neededEquipment = new List<EQUIPMENT_TYPE>();
+            if (!HasWeaponEquipped()) {
+                neededEquipment.Add((EQUIPMENT_TYPE)GetWeaponTypeForCharacter());
+            }
+            neededEquipment.AddRange(GetMissingArmorTypes());
+            return neededEquipment;
         }
         #endregion
 
@@ -1474,6 +1515,7 @@ namespace ECS {
 
             List<Settlement> settlements = new List<Settlement>();
             nonHostileFactions.ForEach(x => settlements.AddRange(x.settlements));
+            settlements.AddRange(_faction.settlements); //Add the settlements of the faction that this character belongs to
 
             settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.location));
 

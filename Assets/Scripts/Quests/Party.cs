@@ -386,10 +386,7 @@ public class Party: IEncounterable, ICombatInitializer {
         } else {
             if(task.taskType == TASK_TYPE.QUEST) {
                 Debug.Log("Set current quest of " + name + " to " + ((Quest)task).questType.ToString());
-            } else {
-                Debug.Log("Set current task of " + name + " to " + task.taskType.ToString());
             }
-            
         }
         
     }

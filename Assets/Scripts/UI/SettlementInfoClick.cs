@@ -10,12 +10,12 @@ public class SettlementInfoClick : MonoBehaviour {
 			int idToUse = int.Parse (id);
 			//Debug.Log("Clicked " + url);
 			if(url.Contains("_faction")){
-				Faction faction = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner;
+				Faction faction = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.owner;
 				if(faction != null){
 					UIManager.Instance.ShowFactionInfo (faction);
 				}
 			} else if(url.Contains("_character")){
-				BaseLandmark landmark = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement;
+				BaseLandmark landmark = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark;
 				ECS.Character character = landmark.GetCharacterAtLocationByID(idToUse);
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
@@ -26,22 +26,22 @@ public class SettlementInfoClick : MonoBehaviour {
 					}
 				}
 			} else if(url.Contains("_hextile")){
-				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null && UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.id == idToUse){
-					UIManager.Instance.ShowHexTileInfo (UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location);
+				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location.id == idToUse){
+					UIManager.Instance.ShowHexTileInfo (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location);
 				}
             } else if (url.Contains("_quest")) {
-				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement is Settlement){
-					Quest quest = ((Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingSettlement).GetQuestByID(idToUse);
+				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark is Settlement){
+					Quest quest = ((Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark).GetQuestByID(idToUse);
 					if (quest != null) {
 						UIManager.Instance.ShowQuestInfo(quest);
 					}	
 				}
 			} else if (url.Contains("_party")) {
-				Party party = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.GetPartyAtLocationByLeaderID(idToUse);
+				Party party = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.GetPartyAtLocationByLeaderID(idToUse);
 				if (party != null) {
 					UIManager.Instance.ShowPartyInfo (party);
 				} else {
-					party = UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.location.GetPartyAtLocationByLeaderID(idToUse);
+					party = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location.GetPartyAtLocationByLeaderID(idToUse);
 					if (party != null) {
 						UIManager.Instance.ShowPartyInfo (party);
 					}

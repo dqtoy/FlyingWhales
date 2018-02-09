@@ -172,7 +172,8 @@ public class CharacterAvatar : PooledObject{
         if (this.currTile == targetTile) {
             if (!this._hasArrived) {
                 AddCharactersToLocation(targetLocation, _startCombatOnReachLocation);
-				if(this.currTile.landmarkOnTile != null){
+                _currLocation = targetLocation; //set location as the target location, in case the target location is a landmark
+                if (this.currTile.landmarkOnTile != null){
 					string historyText = "Visited landmark ";
 					if (this.currTile.landmarkOnTile is Settlement) {
 						historyText = "Arrived at settlement ";

@@ -119,6 +119,9 @@ public class CharacterRole {
                 case TASK_TYPE.TAKE_QUEST:
                     weight += GetTakeQuestWeight();
                     break;
+                case TASK_TYPE.UPGRADE_GEAR:
+                    weight += GetUpgradeGearWeight();
+                    break;
                 default:
                     break;
             }
@@ -196,6 +199,9 @@ public class CharacterRole {
         //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)
         weight += 5 + (30 * target.questBoard.Count);
         return weight;
+    }
+    internal virtual int GetUpgradeGearWeight() {
+        return 0;
     }
     #endregion
 

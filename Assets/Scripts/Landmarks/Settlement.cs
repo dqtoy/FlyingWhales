@@ -315,4 +315,56 @@ public class Settlement : BaseLandmark {
         _ownedLandmarks.Remove(landmark);
     }
     #endregion
+
+    #region Items
+    /*
+     Produce an item for a character.
+     This will automatically reduce the materials used in the settlement,
+     and the gold of the character.
+         */
+    public ECS.Item ProduceItemForCharacter(EQUIPMENT_TYPE specificItem, ECS.Character character) {
+        ITEM_TYPE itemType = Utilities.GetItemTypeOfEquipment(specificItem);
+        MATERIAL matToUse = GetMaterialForItem(itemType, specificItem, character);
+        if(matToUse != MATERIAL.NONE) {
+            AdjustMaterial(matToUse, GetCostToProduceItem(itemType, specificItem));
+            character.AdjustGold(-ItemManager.Instance.GetGoldCostOfItem(itemType, matToUse));
+            return ItemManager.Instance.CreateNewItemInstance(matToUse, specificItem);
+        }
+        return null;
+    }
+    private MATERIAL GetMaterialForItem(ITEM_TYPE itemType, EQUIPMENT_TYPE equipmentType, ECS.Character character) {
+        int productionMaterialCost = GetCostToProduceItem(itemType, equipmentType);
+        List<MATERIAL> elligibleMaterials = new List<MATERIAL>();
+        List<MATERIAL> preferredMaterials = new List<MATERIAL>();
+        if (itemType == ITEM_TYPE.ARMOR) {
+            elligibleMaterials = ItemManager.Instance.GetArmorTypeData((ARMOR_TYPE)equipmentType).armorMaterials;
+            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.ARMOR];
+        } else if (itemType == ITEM_TYPE.WEAPON) {
+            elligibleMaterials = ItemManager.Instance.GetWeaponTypeData((WEAPON_TYPE)equipmentType).weaponMaterials;
+            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.WEAPON];
+        }
+        for (int i = 0; i < preferredMaterials.Count; i++) {
+            MATERIAL currMat = preferredMaterials[i];
+            if (elligibleMaterials.Contains(currMat)) { //check if the curr preferred material is elligible for the item type
+                int goldCost = ItemManager.Instance.GetGoldCostOfItem(itemType, currMat);
+                
+                if (_materialsInventory[currMat].count >= productionMaterialCost && character.gold >= goldCost) {
+                    //check if this settlement has enough resources to make the item
+                    return currMat;
+                }
+            }
+        }
+        return MATERIAL.NONE;
+    }
+    private int GetCostToProduceItem(ITEM_TYPE itemType, EQUIPMENT_TYPE equipmentType) {
+        if (itemType == ITEM_TYPE.ARMOR) {
+            ArmorProduction productionDetails = ProductionManager.Instance.GetArmorProduction((ARMOR_TYPE)equipmentType);
+            return productionDetails.production.resourceCost;
+        } else if (itemType == ITEM_TYPE.WEAPON) {
+            WeaponProduction productionDetails = ProductionManager.Instance.GetWeaponProduction((WEAPON_TYPE)equipmentType);
+            return productionDetails.production.resourceCost;
+        }
+        return 0;
+    }
+    #endregion
 }

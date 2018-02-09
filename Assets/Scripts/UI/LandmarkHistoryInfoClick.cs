@@ -10,9 +10,9 @@ public class LandmarkHistoryInfoClick : MonoBehaviour {
 			int idToUse = int.Parse (id);
 			//Debug.Log("Clicked " + url);
 			if(url.Contains("_combat")){
-				if(UIManager.Instance.settlementInfoUI.currentlyShowingSettlement != null){
-					if (UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.combatHistory.ContainsKey (idToUse)){
-						UIManager.Instance.ShowCombatLog (UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.combatHistory[idToUse]);
+				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null){
+					if (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.combatHistory.ContainsKey (idToUse)){
+						UIManager.Instance.ShowCombatLog (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.combatHistory[idToUse]);
 					}
 				}
 			}
