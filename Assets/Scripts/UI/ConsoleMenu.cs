@@ -26,7 +26,8 @@ public class ConsoleMenu : UIMenu {
             {"/change_faction_rel_stat", ChangeFactionRelationshipStatus},
             {"/force_accept_quest", AcceptQuest},
             {"/kill",  KillCharacter},
-            {"/quest_cancel", CancelQuest}
+            {"/quest_cancel", CancelQuest},
+            {"/adjust_gold", AdjustGold}
         };
     }
 
@@ -246,6 +247,29 @@ public class ConsoleMenu : UIMenu {
         } else {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /kill");
+        }
+    }
+    private void AdjustGold(string[] parameters) {
+        if (parameters.Length != 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /adjust_gold");
+            return;
+        }
+        string characterParameterString = parameters[1];
+        string goldAdjustmentParamterString = parameters[2];
+
+        int characterID;
+        int goldAdjustment;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        bool isGoldParameterNumeric = int.TryParse(goldAdjustmentParamterString, out goldAdjustment);
+        if (isCharacterParameterNumeric && isGoldParameterNumeric) {
+            ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
+            character.AdjustGold(goldAdjustment);
+            AddSuccessMessage(character.name + "'s gold was adjusted by " + goldAdjustment.ToString() + ". New gold is " + character.gold.ToString());
+        } else {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /adjust_gold");
         }
     }
     #endregion

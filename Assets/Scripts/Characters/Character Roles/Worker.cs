@@ -18,14 +18,14 @@ public class Worker : CharacterRole {
 
     #region overrides
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
-        WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
+        WeightedDictionary<CharacterTask> actionWeights = base.GetActionWeights();
         Region currRegionOfCharacter = _character.currLocation.region;
 
         if (_character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
             //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
             if (currSettlement.owner.IsHostileWith(_character.faction)) {
-                questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement(), PATHFINDING_MODE.USE_ROADS), 500);
+                actionWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement(), PATHFINDING_MODE.USE_ROADS), 500);
             }
         }
 
@@ -36,12 +36,12 @@ public class Worker : CharacterRole {
                 if (!regionOwner.IsHostileWith(_character.faction)) {
                     Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
                     MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement, PATHFINDING_MODE.USE_ROADS);
-                    questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
+                    actionWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
                 }
             }
         }
 
-        return questWeights;
+        return actionWeights;
     }
 
     internal override int GetBuildStructureWeight(BuildStructure buildStructure) {
