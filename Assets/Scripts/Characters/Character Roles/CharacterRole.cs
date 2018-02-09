@@ -53,6 +53,13 @@ public class CharacterRole {
 
         DoNothing doNothingTask = new DoNothing(_character);
         actionWeights.AddElement(doNothingTask, GetWeightForTask(doNothingTask));
+
+		int dropPrisonersWeight = GetDropPrisonersWeight ();
+		if(dropPrisonersWeight > 0){
+			DropPrisoners dropPrisonersTask = new DropPrisoners(_character);
+			actionWeights.AddElement(dropPrisonersTask, dropPrisonersWeight);
+		}
+
         return actionWeights;
     }
     internal WeightedDictionary<CharacterTask> GetQuestWeights() {
@@ -203,6 +210,18 @@ public class CharacterRole {
         weight += 5 + (30 * target.questBoard.Count);
         return weight;
     }
+	internal virtual int GetDropPrisonersWeight(){
+		int dropPrisonersWeight = 0;
+		List<ECS.Character> prisoners = ((_character.party != null) ? _character.party.prisoners : character.prisoners);
+		if (prisoners != null && prisoners.Count > 0) {
+			for (int i = 0; i < prisoners.Count; i++) {
+				if(_character.faction.id != prisoners[i].faction.id){
+					dropPrisonersWeight += 5;
+				}
+			}
+		}
+		return dropPrisonersWeight;
+	}
     #endregion
 
     #region Utilities

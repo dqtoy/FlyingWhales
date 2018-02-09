@@ -922,7 +922,8 @@ public enum TASK_TYPE {
     JOIN_PARTY,
     MOVE_TO,
     TAKE_QUEST,
-    UPGRADE_GEAR
+    UPGRADE_GEAR,
+	DROP_PRISONERS,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
