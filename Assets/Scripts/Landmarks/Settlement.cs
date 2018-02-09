@@ -482,10 +482,10 @@ public class Settlement : BaseLandmark {
         List<MATERIAL> preferredMaterials = new List<MATERIAL>();
         if (itemType == ITEM_TYPE.ARMOR) {
             elligibleMaterials = ItemManager.Instance.GetArmorTypeData((ARMOR_TYPE)equipmentType).armorMaterials;
-            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.ARMOR];
+            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials;
         } else if (itemType == ITEM_TYPE.WEAPON) {
             elligibleMaterials = ItemManager.Instance.GetWeaponTypeData((WEAPON_TYPE)equipmentType).weaponMaterials;
-            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.WEAPON];
+            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.WEAPON].prioritizedMaterials;
         }
         for (int i = 0; i < preferredMaterials.Count; i++) {
             MATERIAL currMat = preferredMaterials[i];
