@@ -14,10 +14,11 @@ public class SettlementInfoUI : UIMenu {
 	[SerializeField] private UILabel settlementHistoryInfoLbl;
 	[SerializeField] private GameObject expandBtnGO;
 	[SerializeField] private GameObject exploreBtnGO;
+    [SerializeField] private GameObject buildStructureBtnGO;
     [SerializeField] private UIScrollView infoScrollView;
 	[SerializeField] private UIScrollView historyScrollView;
 
-    internal BaseLandmark currentlyShowingSettlement;
+    internal BaseLandmark currentlyShowingLandmark;
 
     internal override void Initialize() {
         Messenger.AddListener("UpdateUI", UpdateSettlementInfo);
@@ -38,7 +39,7 @@ public class SettlementInfoUI : UIMenu {
     }
 
     public void SetSettlementAsActive(BaseLandmark settlement) {
-        currentlyShowingSettlement = settlement;
+        currentlyShowingLandmark = settlement;
 		UIManager.Instance.hexTileInfoUI.SetHexTileAsActive (settlement.location);
 		ShowPlayerActions ();
         if (isShowing) {
@@ -47,28 +48,28 @@ public class SettlementInfoUI : UIMenu {
     }
 
     public void UpdateSettlementInfo() {
-        if(currentlyShowingSettlement == null) {
+        if(currentlyShowingLandmark == null) {
             return;
         }
         string text = string.Empty;
-		if (currentlyShowingSettlement.landmarkName != string.Empty) {
-			text += "[b]Name:[/b] " + currentlyShowingSettlement.landmarkName + "\n";
+		if (currentlyShowingLandmark.landmarkName != string.Empty) {
+			text += "[b]Name:[/b] " + currentlyShowingLandmark.landmarkName + "\n";
 		}
-		text += "[b]Location:[/b] " + currentlyShowingSettlement.location.urlName;
-		text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingSettlement.canBeOccupied.ToString();
-		text += "\n[b]Is Occupied:[/b] " + currentlyShowingSettlement.isOccupied.ToString();
-		text += "\n[b]Is Hidden:[/b] " + currentlyShowingSettlement.isHidden.ToString();
-		text += "\n[b]Is Explored:[/b] " + currentlyShowingSettlement.isExplored.ToString();
+		text += "[b]Location:[/b] " + currentlyShowingLandmark.location.urlName;
+		text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
+		text += "\n[b]Is Occupied:[/b] " + currentlyShowingLandmark.isOccupied.ToString();
+		text += "\n[b]Is Hidden:[/b] " + currentlyShowingLandmark.isHidden.ToString();
+		text += "\n[b]Is Explored:[/b] " + currentlyShowingLandmark.isExplored.ToString();
 
-        if (currentlyShowingSettlement.owner != null) {
-            text += "\n[b]Owner:[/b] " + currentlyShowingSettlement.owner.urlName + "/" + currentlyShowingSettlement.owner.race.ToString();
-            text += "\n[b]Total Population: [/b] " + currentlyShowingSettlement.totalPopulation.ToString();
-            text += "\n[b]Civilian Population: [/b] " + currentlyShowingSettlement.civiliansWithReserved.ToString();
-            text += "\n[b]Population Growth: [/b] " + (currentlyShowingSettlement.totalPopulation * currentlyShowingSettlement.location.region.populationGrowth).ToString();
+        if (currentlyShowingLandmark.owner != null) {
+            text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
+            text += "\n[b]Total Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
+            text += "\n[b]Civilian Population: [/b] " + currentlyShowingLandmark.civiliansWithReserved.ToString();
+            text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.location.region.populationGrowth).ToString();
 
-            if (currentlyShowingSettlement is Settlement) {
+            if (currentlyShowingLandmark is Settlement) {
                 text += "\n[b]Quest Board: [/b] ";
-                Settlement settlement = (Settlement)currentlyShowingSettlement;
+                Settlement settlement = (Settlement)currentlyShowingLandmark;
                 if (settlement.questBoard.Count > 0) {
                     for (int i = 0; i < settlement.questBoard.Count; i++) {
                         Quest currQuest = settlement.questBoard[i];
@@ -94,35 +95,10 @@ public class SettlementInfoUI : UIMenu {
             }
         }
 
-        //    text += "\n[b]Active Quests: [/b] ";
-        //    if (currentlyShowingSettlement.owner.activeQuests.Count > 0) {
-        //        for (int i = 0; i < currentlyShowingSettlement.owner.activeQuests.Count; i++) {
-        //            Quest currQuest = currentlyShowingSettlement.owner.activeQuests[i];
-        //            text += "\n" + "[url=" + currQuest.id + "_quest]" + currQuest.questType.ToString();
-        //            if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
-        //                text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name + "[/url]";
-        //            } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
-        //                text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name + "[/url]";
-        //            } else {
-        //                text += "[/url]";
-        //            }
-        //            if (currQuest.isAccepted) {
-        //                text += " - A";
-        //                text += " (" + currQuest.assignedParty.name + ")";
-        //            } else {
-        //                text += " - N";
-        //            }
-                    
-        //        }
-        //    } else {
-        //        text += "NONE";
-        //    }
-        //}
-
 		text += "\n[b]Characters At Landmark: [/b] ";
-        if (currentlyShowingSettlement.charactersAtLocation.Count > 0) {
-			for (int i = 0; i < currentlyShowingSettlement.charactersAtLocation.Count; i++) {
-                object currObject = currentlyShowingSettlement.charactersAtLocation[i];
+        if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
+			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
+                object currObject = currentlyShowingLandmark.charactersAtLocation[i];
                 if (currObject is ECS.Character) {
 					ECS.Character currChar = (ECS.Character)currObject;
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
@@ -143,9 +119,9 @@ public class SettlementInfoUI : UIMenu {
 			text += "NONE";
 		}
         text += "\n[b]Characters At Tile: [/b] ";
-        if (currentlyShowingSettlement.location.charactersAtLocation.Count > 0) {
-            for (int i = 0; i < currentlyShowingSettlement.location.charactersAtLocation.Count; i++) {
-                object currObject = currentlyShowingSettlement.location.charactersAtLocation[i];
+        if (currentlyShowingLandmark.location.charactersAtLocation.Count > 0) {
+            for (int i = 0; i < currentlyShowingLandmark.location.charactersAtLocation.Count; i++) {
+                object currObject = currentlyShowingLandmark.location.charactersAtLocation[i];
                 if (currObject is ECS.Character) {
                     ECS.Character currChar = (ECS.Character)currObject;
                     text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
@@ -166,7 +142,7 @@ public class SettlementInfoUI : UIMenu {
             text += "NONE";
         }
         text += "\n[b]Technologies: [/b] ";
-        List<TECHNOLOGY> availableTech = currentlyShowingSettlement.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
+        List<TECHNOLOGY> availableTech = currentlyShowingLandmark.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {
             for (int i = 0; i < availableTech.Count; i++) {
                 TECHNOLOGY currTech = availableTech[i];
@@ -178,10 +154,21 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-		if(currentlyShowingSettlement.landmarkEncounterable != null){
-			text += "\n[b]Encounterable: [/b]" + currentlyShowingSettlement.landmarkEncounterable.encounterName;
+        text += "\n[b]Materials: [/b] ";
+        Dictionary<MATERIAL, MaterialValues> materials = currentlyShowingLandmark.materialsInventory;
+        if (materials.Sum(x => x.Value.totalCount) > 0) {
+            foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in materials) {
+                if(kvp.Value.totalCount > 0) {
+                    text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.totalCount;
+                }
+            }
+        } else {
+            text += "NONE";
+        }
+        if (currentlyShowingLandmark.landmarkEncounterable != null){
+			text += "\n[b]Encounterable: [/b]" + currentlyShowingLandmark.landmarkEncounterable.encounterName;
 		}
-		if(currentlyShowingSettlement is Settlement && currentlyShowingSettlement.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingSettlement.owner != null){
+		if(currentlyShowingLandmark is Settlement && currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingLandmark.owner != null){
 			text += "\n[b]Parties: [/b] ";
 			if (PartyManager.Instance.allParties.Count > 0) {
 				for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
@@ -237,12 +224,12 @@ public class SettlementInfoUI : UIMenu {
     }
 	private void UpdateHistoryInfo(){
 		string text = string.Empty;
-		if (currentlyShowingSettlement.history.Count > 0) {
-			for (int i = 0; i < currentlyShowingSettlement.history.Count; i++) {
+		if (currentlyShowingLandmark.history.Count > 0) {
+			for (int i = 0; i < currentlyShowingLandmark.history.Count; i++) {
 				if(i > 0){
 					text += "\n";
 				}
-				text += currentlyShowingSettlement.history[i];
+				text += currentlyShowingLandmark.history[i];
 			}
 		} else {
 			text += "NONE";
@@ -257,25 +244,31 @@ public class SettlementInfoUI : UIMenu {
 	}
 
 	public void OnClickExpandBtn(){
-		currentlyShowingSettlement.owner.internalQuestManager.CreateExpandQuest(currentlyShowingSettlement);
+		currentlyShowingLandmark.owner.internalQuestManager.CreateExpandQuest(currentlyShowingLandmark);
 		expandBtnGO.SetActive (false);
 	}
 	public void OnClickExploreRegionBtn(){
-		currentlyShowingSettlement.location.region.centerOfMass
-            .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingSettlement);
+		currentlyShowingLandmark.location.region.centerOfMass
+            .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingLandmark);
         exploreBtnGO.SetActive(false);
     }
-	private void ShowPlayerActions(){
+    public void OnClickBuildStructureBtn() {
+        currentlyShowingLandmark.location.region.centerOfMass
+            .landmarkOnTile.owner.internalQuestManager.CreateBuildStructureQuest(currentlyShowingLandmark);
+        buildStructureBtnGO.SetActive(false);
+    }
+    private void ShowPlayerActions(){
 		expandBtnGO.SetActive (CanExpand());
-		exploreBtnGO.SetActive (CanExploreRegion ());
-	}
+		exploreBtnGO.SetActive (CanExploreTile ());
+        buildStructureBtnGO.SetActive(CanBuildStructure());
+    }
 	private void HidePlayerActions(){
 		expandBtnGO.SetActive (false);
 		exploreBtnGO.SetActive (false);
 	}
 	private bool CanExpand(){
-		if(isShowing && currentlyShowingSettlement != null && currentlyShowingSettlement is Settlement){
-			Settlement settlement = (Settlement)currentlyShowingSettlement;
+		if(isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark is Settlement){
+			Settlement settlement = (Settlement)currentlyShowingLandmark;
 			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
 				if(settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
 					return true;
@@ -285,13 +278,27 @@ public class SettlementInfoUI : UIMenu {
 		return false;
 	}
 
-	private bool CanExploreRegion(){
-		if(isShowing && currentlyShowingSettlement != null && !currentlyShowingSettlement.isExplored
-			&& currentlyShowingSettlement.owner == null && currentlyShowingSettlement.location.region.centerOfMass.isOccupied 
-            && !currentlyShowingSettlement.location.region.centerOfMass
-            .landmarkOnTile.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currentlyShowingSettlement)) {
+	private bool CanExploreTile(){
+		if(isShowing && currentlyShowingLandmark != null && !currentlyShowingLandmark.isExplored
+			&& currentlyShowingLandmark.owner == null && currentlyShowingLandmark.location.region.centerOfMass.isOccupied 
+            && !currentlyShowingLandmark.location.region.centerOfMass
+            .landmarkOnTile.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currentlyShowingLandmark)) {
 			return true;
 		}
 		return false;
 	}
+
+    private bool CanBuildStructure() {
+        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.location.region.owner != null 
+            && currentlyShowingLandmark.owner == null && !currentlyShowingLandmark.location.HasStructure()
+            && !currentlyShowingLandmark.location.region.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, currentlyShowingLandmark)
+            && currentlyShowingLandmark is ResourceLandmark) {
+            Settlement settlement = currentlyShowingLandmark.location.region.centerOfMass.landmarkOnTile as Settlement;
+            ResourceLandmark resourceLandmark = currentlyShowingLandmark as ResourceLandmark;
+            if (settlement.civilians >= 5 && settlement.HasTechnology(Utilities.GetNeededTechnologyForMaterial(resourceLandmark.materialOnLandmark))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

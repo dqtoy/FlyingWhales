@@ -129,6 +129,9 @@ public class CharacterRole {
                 case TASK_TYPE.TAKE_QUEST:
                     weight += GetTakeQuestWeight();
                     break;
+                case TASK_TYPE.UPGRADE_GEAR:
+                    weight += GetUpgradeGearWeight();
+                    break;
                 default:
                     break;
             }
@@ -222,6 +225,9 @@ public class CharacterRole {
 		}
 		return dropPrisonersWeight;
 	}
+    internal virtual int GetUpgradeGearWeight() {
+        return 0;
+    }
     #endregion
 
     #region Utilities

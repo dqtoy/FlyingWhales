@@ -14,10 +14,14 @@ public class Adventurer : CharacterRole {
     }
 
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
-        WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
+        WeightedDictionary<CharacterTask> actionWeights = base.GetActionWeights();
         Region currRegionOfCharacter = _character.currLocation.region;
 
-        if(_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
+        //Upgrade Gear
+        UpgradeGear upgradeGearTask = new UpgradeGear(_character);
+        actionWeights.AddElement(upgradeGearTask, GetWeightForTask(upgradeGearTask));
+
+        if (_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
             //Join Party
             List<Party> partiesOnTile = currSettlement.GetPartiesOnLandmark();
@@ -25,13 +29,13 @@ public class Adventurer : CharacterRole {
                 Party currParty = partiesOnTile[i];
                 if (currParty.CanJoinParty(_character)) {
                     JoinParty joinPartyTask = new JoinParty(_character, currParty);
-                    questWeights.AddElement(joinPartyTask, GetWeightForTask(joinPartyTask));
+                    actionWeights.AddElement(joinPartyTask, GetWeightForTask(joinPartyTask));
                 }
             }
 
             //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
             if (currSettlement.owner.IsHostileWith(_character.faction)) {
-                questWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement(), PATHFINDING_MODE.USE_ROADS), 500);
+                actionWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement(), PATHFINDING_MODE.USE_ROADS), 500);
             }
         }
 
@@ -42,12 +46,12 @@ public class Adventurer : CharacterRole {
                 if (!regionOwner.IsHostileWith(_character.faction)) {
                     Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
                     MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement, PATHFINDING_MODE.USE_ROADS);
-                    questWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
+                    actionWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
                 }
             }
         }
         
-        return questWeights;
+        return actionWeights;
     }
 
     internal override int GetJoinPartyWeight(JoinParty joinParty) {
@@ -78,10 +82,29 @@ public class Adventurer : CharacterRole {
         return 20; //20 if not
     }
 
-    private int GetMoveToNonAdjacentVillageWeight(Settlement target) {
+    internal override int GetMoveToNonAdjacentVillageWeight(Settlement target) {
         int weight = 0;
         //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)
         weight += 5 + (30 * target.questBoard.Count);
+        return weight;
+    }
+
+    internal override int GetUpgradeGearWeight() {
+        int weight = 0;
+        if(_character.GetNeededEquipmentTypes().Count > 0) { //check if character needs any equipment
+            if (_character.gold >= 30) { // 0 if Gold is less than 30g
+                if (!_character.HasWeaponEquipped()) {
+                    weight += 200; //+200 if missing Weapon
+                }
+                List<EQUIPMENT_TYPE> missingArmor = _character.GetMissingArmorTypes();
+                weight += 50 * missingArmor.Count; //+50 for each missing armor part
+
+                //+20 for every 10g above 30g
+                int goldAbove = _character.gold - 30;
+                goldAbove /= 10;
+                weight += 20 * goldAbove;
+            }
+        }
         return weight;
     }
 }

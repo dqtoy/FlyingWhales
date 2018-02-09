@@ -900,7 +900,7 @@ public enum TASK_STATUS {
     FAIL,
     CANCEL
 }
-public enum QUEST_TYPE {
+public enum QUEST_TYPE { //This is a list of actions a character can choose to accept. These are usually created by the Internal Quest Manager/Military Manager
     EXPLORE_REGION,
     EXPAND,
     REST,
@@ -910,11 +910,10 @@ public enum QUEST_TYPE {
 	ATTACK,
 	DEFEND,
     EXPLORE_TILE,
-    MOVE_TO,
     BUILD_STRUCTURE,
 	OBTAIN_MATERIAL,
 }
-public enum TASK_TYPE {
+public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
     REST,
     GO_HOME,

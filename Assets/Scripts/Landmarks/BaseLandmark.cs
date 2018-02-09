@@ -544,9 +544,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 
 	internal void AdjustMaterial(MATERIAL material, int amount){
 		_materialsInventory [material].count += amount;
-		if(_materialsInventory [material].count < 0){
-			_materialsInventory [material].count = 0;
-		}
+        _materialsInventory[material].count = Mathf.Clamp(_materialsInventory[material].count, 0, _materialsInventory[material].maximumStorage);
 	}
 	internal void SetMaterial(MATERIAL material, int amount){
 		_materialsInventory [material].count = amount;
@@ -653,5 +651,5 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return false;
 	}
-	#endregion
+    #endregion
 }
