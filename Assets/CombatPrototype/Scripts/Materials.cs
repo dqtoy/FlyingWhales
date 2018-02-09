@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Materials {
 	public MATERIAL material;
 	public MATERIAL_CATEGORY category;
-	public TECHNOLOGY technology;
+//	public TECHNOLOGY technology;
 	public int weight;
 	public bool isEdible;
 	public Structure structure;

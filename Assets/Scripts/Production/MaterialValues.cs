@@ -11,4 +11,5 @@ public class MaterialValues {
 	public int count;
 	public int reserved;
 	public int capacity;
+	public int availableExcessOfOthers;
 }

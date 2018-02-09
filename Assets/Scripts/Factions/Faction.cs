@@ -230,6 +230,9 @@ public class Faction {
     public BaseLandmark GetLandmarkByID(int id) {
         for (int i = 0; i < _settlements.Count; i++) {
             Settlement currSettlement = _settlements[i];
+			if (currSettlement.id == id) {
+				return currSettlement;
+			}
             for (int j = 0; j < currSettlement.ownedLandmarks.Count; j++) {
                 if (currSettlement.ownedLandmarks[j].id == id) {
                     return currSettlement.ownedLandmarks[j];

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Construction : MonoBehaviour {
 	public Structure structure;
+	public TECHNOLOGY technology;
 	public Production production;
 	public List<StructureMaterial> structureMaterials;
 

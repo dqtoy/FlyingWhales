@@ -324,7 +324,24 @@ public class Settlement : BaseLandmark {
     }
 	private void UpdateAvailableMaterialsToGet(){
 		foreach (MATERIAL material in _materialsInventory.Keys) {
-			_materialsInventory [material].availableExcessOfOthers = (this._owner.ownedLandmarks.Sum (x => x.materialsInventory [material].excess)) - _materialsInventory[material].excess;
+			_materialsInventory [material].availableExcessOfOthers = (this._owner.settlements.Sum (x => x.materialsInventory [material].excess)) - _materialsInventory[material].excess;
+			_materialsInventory [material].availableExcessOfOthers += this._ownedLandmarks.Sum (x => x.materialsInventory [material].excess);
+			_materialsInventory [material].capacity = 0;
+		}
+	}
+	private void UpdateNeededMaterials(){
+		int count = this._owner.productionPreferences [PRODUCTION_TYPE.WEAPON].prioritizedMaterials.Count;
+		List<PRODUCTION_TYPE> productionTypes = _neededMaterials.Keys.ToList ();
+		for (int i = 0; i < count; i++) {
+			for (int j = 0; j < productionTypes.Count; j++) {
+				MATERIAL material = this._owner.productionPreferences [productionTypes[j]].prioritizedMaterials [i];
+				if(_materialsInventory[material].availableExcessOfOthers > 0){
+					_neededMaterials [productionTypes[j]] = material;
+					_materialsInventory [material].capacity += 200;
+					productionTypes.RemoveAt (j);
+					j--;
+				}
+			}
 		}
 	}
 	private void GetObtainMaterialTarget(){
