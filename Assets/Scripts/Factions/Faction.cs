@@ -16,7 +16,7 @@ public class Faction {
     private Sprite _emblem;
     private Sprite _emblemBG;
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
-    protected List<BaseLandmark> _ownedLandmarks; //List of settlements (cities/landmarks) owned by this faction
+    protected List<Settlement> _settlements;
     protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
@@ -55,14 +55,11 @@ public class Faction {
     public Sprite emblemBG {
         get { return _emblemBG; }
     }
-    public List<BaseLandmark> ownedLandmarks {
-        get { return _ownedLandmarks; }
-    }
     public int totalPopulation {
         get { return settlements.Sum(x => x.totalPopulation); }
     }
     public List<Settlement> settlements {
-        get { return _ownedLandmarks.Where(x => x is Settlement).Select(x => (Settlement)x).ToList(); }
+        get { return _settlements; }
     }
     public List<TECHNOLOGY> initialTechnologies {
         get { return _initialTechnologies; }
@@ -104,9 +101,9 @@ public class Faction {
         _factionSize = FACTION_SIZE.SMALL;
         _emblem = FactionManager.Instance.GenerateFactionEmblem(this);
         _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
-        _ownedLandmarks = new List<BaseLandmark>();
         factionColor = Utilities.GetColorForFaction();
         _characters = new List<ECS.Character>();
+        _settlements = new List<Settlement>();
         ConstructInititalTechnologies();
         _activeQuests = new List<Quest>();
         _internalQuestManager = new InternalQuestManager(this);
@@ -139,15 +136,15 @@ public class Faction {
     #endregion
 
     #region Settlements
-    public void AddLandmarkAsOwned(BaseLandmark landmark) {
-        if (!_ownedLandmarks.Contains(landmark)) {
-            _ownedLandmarks.Add(landmark);
+    public void AddSettlement(Settlement settlement) {
+        if (!_settlements.Contains(settlement)) {
+            _settlements.Add(settlement);
             RecalculateFactionSize();
             FactionManager.Instance.UpdateFactionOrderBy();
         }
     }
-    public void RemoveLandmarkAsOwned(BaseLandmark landmark) {
-        _ownedLandmarks.Remove(landmark);
+    public void RemoveSettlement(Settlement settlement) {
+        _settlements.Remove(settlement);
         RecalculateFactionSize();
         FactionManager.Instance.UpdateFactionOrderBy();
     }
@@ -231,24 +228,25 @@ public class Faction {
         return null;
     }
     public BaseLandmark GetLandmarkByID(int id) {
-        for (int i = 0; i < _ownedLandmarks.Count; i++) {
-            if (_ownedLandmarks[i].id == id) {
-                return _ownedLandmarks[i];
+        for (int i = 0; i < _settlements.Count; i++) {
+            Settlement currSettlement = _settlements[i];
+            for (int j = 0; j < currSettlement.ownedLandmarks.Count; j++) {
+                if (currSettlement.ownedLandmarks[j].id == id) {
+                    return currSettlement.ownedLandmarks[j];
+                }
             }
         }
         return null;
     }
     public Settlement GetSettlementWithHighestPopulation() {
         Settlement highestPopulationSettlement = null;
-        for (int i = 0; i < _ownedLandmarks.Count; i++) {
-			if(_ownedLandmarks[i] is Settlement && _ownedLandmarks[i].specificLandmarkType == LANDMARK_TYPE.CITY){
-                Settlement settlement = (Settlement)_ownedLandmarks[i];
-                if (highestPopulationSettlement == null) {
+        for (int i = 0; i < _settlements.Count; i++) {
+            Settlement settlement = _settlements[i];
+            if (highestPopulationSettlement == null) {
+                highestPopulationSettlement = settlement;
+            } else {
+                if (settlement.civilians > highestPopulationSettlement.civilians) {
                     highestPopulationSettlement = settlement;
-                } else {
-                    if (settlement.civilians > highestPopulationSettlement.civilians) {
-                        highestPopulationSettlement = settlement;
-                    }
                 }
             }
         }
@@ -266,10 +264,10 @@ public class Faction {
 	}
 	public List<BaseLandmark> GetAllPossibleLandmarksToAttack(){
 		List<BaseLandmark> allPossibleLandmarksToAttack = new List<BaseLandmark> ();
-		for (int i = 0; i < _ownedLandmarks.Count; i++) {
-			BaseLandmark ownedLandmark = _ownedLandmarks [i];
-			for (int j = 0; j < ownedLandmark.location.region.landmarks.Count; j++) {
-				BaseLandmark regionLandmark = ownedLandmark.location.region.landmarks [j];
+		for (int i = 0; i < _settlements.Count; i++) {
+			BaseLandmark settlement = _settlements[i];
+			for (int j = 0; j < settlement.location.region.landmarks.Count; j++) {
+				BaseLandmark regionLandmark = settlement.location.region.landmarks [j];
 				if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
 					FactionRelationship factionRel = GetRelationshipWith(regionLandmark.owner);
 					if (factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
@@ -279,9 +277,9 @@ public class Faction {
 					}
 				}
 			}
-			for (int j = 0; j < ownedLandmark.location.region.connections.Count; j++) {
-				if(ownedLandmark.location.region.connections[j] is Region){
-					Region adjacentRegion = (Region)ownedLandmark.location.region.connections [j];
+			for (int j = 0; j < settlement.location.region.connections.Count; j++) {
+				if(settlement.location.region.connections[j] is Region){
+					Region adjacentRegion = (Region)settlement.location.region.connections [j];
 					if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
 						FactionRelationship factionRel = GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
 						if (factionRel != null && factionRel.isAtWar) {
@@ -373,5 +371,21 @@ public class Faction {
 	internal MATERIAL GetHighestMaterialPriority(PRODUCTION_TYPE productionType){
 		return _productionPreferences [productionType].prioritizedMaterials [0];
 	}
+    #endregion
+
+    #region Landmarks
+    /*
+     This returns a list of all the owned landmarks
+     of this faction, this includes settlements as well.
+         */
+    public List<BaseLandmark> GetAllOwnedLandmarks() {
+        List<BaseLandmark> ownedLandmarks = new List<BaseLandmark>();
+        for (int i = 0; i < _settlements.Count; i++) {
+            Settlement currSettlement = _settlements[i];
+            ownedLandmarks.Add(currSettlement);
+            ownedLandmarks.AddRange(currSettlement.ownedLandmarks);
+        }
+        return ownedLandmarks;
+    }
     #endregion
 }

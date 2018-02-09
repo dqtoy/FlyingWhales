@@ -159,7 +159,6 @@ public class BaseLandmark : ILocation {
         _isOccupied = true;
         SetHiddenState(false);
         SetExploredState(true);
-        faction.AddLandmarkAsOwned(this);
         _location.Occupy();
         EnableInitialTechnologies(faction);
     }
@@ -168,7 +167,6 @@ public class BaseLandmark : ILocation {
             throw new System.Exception("Landmark doesn't have an owner but something is trying to unoccupy it!");
         }
         _isOccupied = false;
-        _owner.RemoveLandmarkAsOwned(this);
         _location.Unoccupy();
         DisableInititalTechnologies(_owner);
         _owner = null;

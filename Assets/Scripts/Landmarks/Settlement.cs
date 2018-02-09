@@ -14,6 +14,7 @@ public class Settlement : BaseLandmark {
     private ECS.Character _headOfSettlement;
 
     private List<Quest> _questBoard;
+    private List<BaseLandmark> _ownedLandmarks;
 
     private const int CHARACTER_LIMIT = 10;
 
@@ -21,12 +22,16 @@ public class Settlement : BaseLandmark {
     public List<Quest> questBoard {
         get { return _questBoard; }
     }
+    public List<BaseLandmark> ownedLandmarks {
+        get { return _ownedLandmarks; }
+    }
     #endregion
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
         _isHidden = false;
         _questBoard = new List<Quest>();
+		_ownedLandmarks = new List<BaseLandmark>();
 		ConstructNeededMaterials ();
     }
 
@@ -53,6 +58,7 @@ public class Settlement : BaseLandmark {
 //		}
         if (location.isHabitable) {
             //Create structures on location
+            faction.AddSettlement(this);
             location.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
@@ -61,10 +67,14 @@ public class Settlement : BaseLandmark {
         DecideCharacterToCreate(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
+    public override void UnoccupyLandmark() {
+        base.UnoccupyLandmark();
+        _owner.RemoveSettlement(this);
+    }
     #endregion
 
     #region Characters
-	protected void TrainCharacterInSettlement(){
+    protected void TrainCharacterInSettlement(){
 		bool canTrainCharacter = false;
 		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
 			//Check first if the settlement has enough civilians to create a new character
@@ -320,5 +330,16 @@ public class Settlement : BaseLandmark {
 	private void GetObtainMaterialTarget(){
 		
 	}
+    #endregion
+
+    #region Landmarks
+    public void AddLandmarkAsOwned(BaseLandmark landmark) {
+        if (!_ownedLandmarks.Contains(landmark)) {
+            _ownedLandmarks.Add(landmark);
+        }
+    }
+    public void RemoveLandmarkAsOwned(BaseLandmark landmark) {
+        _ownedLandmarks.Remove(landmark);
+    }
     #endregion
 }
