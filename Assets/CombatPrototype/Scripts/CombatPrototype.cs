@@ -220,11 +220,7 @@ namespace ECS{
 					sideAParty.SetIsDefeated (true);
 				}
 			}
-            Party winner = sideAParty;
-            if(winningSide == SIDES.B) {
-                winner = sideBParty;
-            }
-            AddCombatLog("Combat Ends. Winner is: " + winner.name, SIDES.A);
+			AddCombatLog("Combat Ends", SIDES.A);
 			if(location != null && location is BaseLandmark){
 				(location as BaseLandmark).AddHistory ("A combat took place!", this);
 			}
