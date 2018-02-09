@@ -99,6 +99,9 @@ public class CharacterRole {
                 case QUEST_TYPE.BUILD_STRUCTURE:
                     weight += GetBuildStructureWeight((BuildStructure)task);
                     break;
+				case QUEST_TYPE.OBTAIN_MATERIAL:
+					weight += GetObtainMaterialWeight((ObtainMaterial)task);
+					break;
                 default:
                     break;
             }
@@ -194,6 +197,9 @@ public class CharacterRole {
     internal virtual int GetBuildStructureWeight(BuildStructure buildStructure) {
         return 0;
     }
+	internal virtual int GetObtainMaterialWeight(ObtainMaterial obtainMaterial) {
+		return 0;
+	}
     internal virtual int GetMoveToNonAdjacentVillageWeight(Settlement target) {
         int weight = 0;
         //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)

@@ -6,6 +6,7 @@ namespace ECS {
 	public class WeaponType {
 		public WEAPON_TYPE weaponType;
 		public float powerModifier;
+		public float damageRange;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements;
 		public List<Skill> skills;
 		public List<MATERIAL> weaponMaterials;

@@ -97,4 +97,8 @@ public class WeightedDictionary<T> {
     internal int GetTotalOfWeights() {
         return Utilities.GetTotalOfWeights(_dictionary);
     }
+
+	internal void Clear(){
+		_dictionary.Clear ();
+	}
 }

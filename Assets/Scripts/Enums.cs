@@ -849,7 +849,9 @@ public enum TECHNOLOGY {
     GOBLIN_LANGUAGE,
     ELVEN_LANGUAGE,
     HUMAN_LANGUAGE,
-    TROLL_LANGUAGE
+    TROLL_LANGUAGE,
+
+	NONE,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -908,7 +910,8 @@ public enum QUEST_TYPE { //This is a list of actions a character can choose to a
 	ATTACK,
 	DEFEND,
     EXPLORE_TILE,
-    BUILD_STRUCTURE
+    BUILD_STRUCTURE,
+	OBTAIN_MATERIAL,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,

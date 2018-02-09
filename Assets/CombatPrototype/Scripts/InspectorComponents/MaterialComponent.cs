@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class MaterialComponent: MonoBehaviour {
 	public MATERIAL material;
 	public MATERIAL_CATEGORY category;
-	public TECHNOLOGY technology;
+//	public TECHNOLOGY technology;
 	public int weight;
 	public bool isEdible;
 	public Structure structure;

@@ -30,4 +30,10 @@ public class Collect : TaskAction {
         _task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + " civilians from " + bsQuest.postedAt.landmarkName);
         ActionDone(TASK_ACTION_RESULT.SUCCESS);
     }
+
+	internal void ObtainMaterial(){
+		ObtainMaterial obtainMaterial = (ObtainMaterial)_task;
+		obtainMaterial.target.ReduceReserveMaterial (obtainMaterial.materialToObtain, _amount);
+		_task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + Utilities.NormalizeString(obtainMaterial.materialToObtain.ToString()) + " from " + obtainMaterial.target.landmarkName);
+	}
 }

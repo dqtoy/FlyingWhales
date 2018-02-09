@@ -47,6 +47,9 @@ public class Worker : CharacterRole {
     internal override int GetBuildStructureWeight(BuildStructure buildStructure) {
         return 100;
     }
+	internal override int GetObtainMaterialWeight(ObtainMaterial obtainMaterial) {
+		return 100;
+	}
     #endregion
     
 }
