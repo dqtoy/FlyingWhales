@@ -599,7 +599,9 @@ namespace ECS{
 			}
 			int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
 			int damageRange = (int)((float)damage * weapon.damageRange);
-			damage = Utilities.rng.Next ((damage - damageRange), (damage + damageRange) + 1);
+			int minDamageRange = damage - damageRange;
+			int maxDamageRange = damage + damageRange;
+			damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
 
 			if(armor != null){
 				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
