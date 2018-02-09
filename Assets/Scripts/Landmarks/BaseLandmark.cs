@@ -20,7 +20,9 @@ public class BaseLandmark : ILocation {
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
 	protected int _reservedCivilians;
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
-    protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials available on landmark
+    protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
+	protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
+
     //TODO: Add list of items on landmark
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
@@ -157,7 +159,6 @@ public class BaseLandmark : ILocation {
         _isOccupied = true;
         SetHiddenState(false);
         SetExploredState(true);
-        faction.AddLandmarkAsOwned(this);
         _location.Occupy();
         EnableInitialTechnologies(faction);
     }
@@ -166,7 +167,6 @@ public class BaseLandmark : ILocation {
             throw new System.Exception("Landmark doesn't have an owner but something is trying to unoccupy it!");
         }
         _isOccupied = false;
-        _owner.RemoveLandmarkAsOwned(this);
         _location.Unoccupy();
         DisableInititalTechnologies(_owner);
         _owner = null;
@@ -530,6 +530,14 @@ public class BaseLandmark : ILocation {
 			_materialsInventory.Add (materials [i], new MaterialValues ());
 		}
 	}
+	protected void ConstructNeededMaterials(){
+		_neededMaterials = new Dictionary<PRODUCTION_TYPE, MATERIAL>();
+		PRODUCTION_TYPE[] production = Utilities.GetEnumValues<PRODUCTION_TYPE> ();
+		for (int i = 1; i < production.Length; i++) {
+			_neededMaterials.Add (production [i], MATERIAL.NONE);
+		}
+	}
+
 	internal void AdjustMaterial(MATERIAL material, int amount){
 		_materialsInventory [material].count += amount;
 		if(_materialsInventory [material].count < 0){
