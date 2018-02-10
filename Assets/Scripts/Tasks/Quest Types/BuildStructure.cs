@@ -36,17 +36,17 @@ public class BuildStructure : Quest {
     protected override void ConstructQuestLine() {
         base.ConstructQuestLine();
 
-        //Collect collect = new Collect(this);
-        //collect.InititalizeAction(5);
-        //collect.onTaskActionDone += this.PerformNextQuestAction;
-        //collect.onTaskDoAction += collect.BuildStructure;
+        Collect collect = new Collect(this);
+        collect.InititalizeAction(_constructionData.production.civilianCost);
+        collect.onTaskActionDone += this.PerformNextQuestAction;
+        collect.onTaskDoAction += collect.BuildStructure;
 
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
         goToLandmark.InititalizeAction(_target);
         goToLandmark.onTaskDoAction += goToLandmark.Generic;
         goToLandmark.onTaskActionDone += WaitForDays;
 
-        //_questLine.Enqueue(collect);
+        _questLine.Enqueue(collect);
         _questLine.Enqueue(goToLandmark);
     }
     #endregion

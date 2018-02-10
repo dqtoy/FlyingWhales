@@ -54,6 +54,7 @@ namespace ECS {
 		private object _isPrisonerOf;
 		private List<Quest> _activeQuests;
 		private BaseLandmark _home;
+        private BaseLandmark _lair;
 		private List<string> _history;
 		private int _combatHistoryID;
 		private List<ECS.Character> _prisoners;
@@ -207,6 +208,9 @@ namespace ECS {
 		}
         internal BaseLandmark home {
             get { return _home; }
+        }
+        internal BaseLandmark lair {
+            get { return _lair; }
         }
 		internal float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
@@ -1288,6 +1292,7 @@ namespace ECS {
                 return;
             }
 			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
+            //AddActionWeightsFromTags(actionWeights); //Add weights from tags
 			if (actionWeights.GetTotalOfWeights () > 0) {
 				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
                 if (chosenAction.taskType == TASK_TYPE.QUEST) {
@@ -1334,7 +1339,69 @@ namespace ECS {
          Add tag specific actions to action weights
              */
         private void AddActionWeightsFromTags(WeightedDictionary<CharacterTask> actionWeights) {
-
+            for (int i = 0; i < _raceSetting.tags.Count; i++) {
+                CHARACTER_TAG currTag = _raceSetting.tags[i];
+                switch (currTag) {
+                    case CHARACTER_TAG.PREDATOR:
+                        AddHuntPreyWeights(actionWeights);
+                        break;
+                    case CHARACTER_TAG.NESTING:
+                        break;
+                    case CHARACTER_TAG.HIBERNATES:
+                        AddHibernateWeights(actionWeights);
+                        break;
+                    case CHARACTER_TAG.PILLAGER:
+                        break;
+                    case CHARACTER_TAG.HOARDER:
+                        break;
+                    case CHARACTER_TAG.DESTRUCTIVE:
+                        break;
+                    case CHARACTER_TAG.ALPHA:
+                        break;
+                    case CHARACTER_TAG.BETA:
+                        break;
+                    case CHARACTER_TAG.ROAMER:
+                        break;
+                    case CHARACTER_TAG.SHY:
+                        break;
+                    case CHARACTER_TAG.DOCILE:
+                        break;
+                    case CHARACTER_TAG.HOSTILE:
+                        break;
+                    case CHARACTER_TAG.KIDNAPPER:
+                        break;
+                    case CHARACTER_TAG.SAPIENT:
+                        break;
+                    case CHARACTER_TAG.EGG_GUY:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        private void AddHuntPreyWeights(WeightedDictionary<CharacterTask> actionWeights) {
+            Region mainRegion = currLocation.region;
+            List<Region> elligibleRegions = new List<Region>(mainRegion.adjacentRegionsViaMajorRoad);
+            elligibleRegions.Add(mainRegion);
+            for (int i = 0; i < elligibleRegions.Count; i++) {
+                Region currRegion = elligibleRegions[i];
+                for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                    BaseLandmark currLandmark = currRegion.landmarks[j];
+                    int weight = 0;
+                    if(currLandmark.civilians > 0) {
+                        weight += 5 * currLandmark.civilians; //+5 Weight per Civilian in that landmark
+                        weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
+                        if(weight > 0) {
+                            actionWeights.AddElement(new HuntPrey(this, currLandmark), weight);
+                        }
+                    }
+                }
+            }
+        }
+        private void AddHibernateWeights(WeightedDictionary<CharacterTask> actionWeights) {
+            if(lair != null) {
+                actionWeights.AddElement(new Hibernate(this), 5); //Hibernate - 5, 0 if the monster does not have a Lair
+            }
         }
         #endregion
 
@@ -1475,6 +1542,9 @@ namespace ECS {
         #region Utilities
 		public void SetHome(BaseLandmark newHome) {
             this._home = newHome;
+        }
+        public void SetLair(BaseLandmark newLair) {
+            this._lair = newLair;
         }
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
