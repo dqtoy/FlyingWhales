@@ -26,14 +26,13 @@ public class UpgradeGear : CharacterTask {
 
         goToLocation.DoAction(_assignedCharacter);
     }
-    public override void TaskSuccess() {
-        Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
-        if (_assignedCharacter.faction == null) {
-            _assignedCharacter.UnalignedDetermineAction();
-        } else {
-            _assignedCharacter.DetermineAction();
-        }
-    }
+    //public override void TaskSuccess() {
+    //    if (_assignedCharacter.faction == null) {
+    //        _assignedCharacter.UnalignedDetermineAction();
+    //    } else {
+    //        _assignedCharacter.DetermineAction();
+    //    }
+    //}
     #endregion
 
     private void PurchaseEquipment() {

@@ -173,7 +173,7 @@ public class Settlement : BaseLandmark {
          */
     public bool CanProduceClass(CHARACTER_CLASS charClass) {
         TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
-        if (_technologies[neededTech]) {
+        if (neededTech != TECHNOLOGY.NONE && _technologies[neededTech]) {
             return true;
         }
         return false;
