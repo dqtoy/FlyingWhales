@@ -1114,6 +1114,9 @@ namespace ECS {
             case CHARACTER_ROLE.WORKER:
                 _role = new Worker(this);
                 break;
+			case CHARACTER_ROLE.TAMED_BEAST:
+				_role = new TamedBeast(this);
+				break;
             default:
 			    break;
 			}

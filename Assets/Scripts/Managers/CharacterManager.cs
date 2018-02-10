@@ -370,4 +370,10 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
+	#region Prisoner Conversion
+	public void SchedulePrisonerConversion(){
+		GameDate newSched = GameManager.Instance.Today ();
+		newSched.AddDays (7);
+	}
+	#endregion
 }

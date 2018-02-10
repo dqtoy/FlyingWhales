@@ -199,7 +199,7 @@ public class Party: IEncounterable, ICombatInitializer {
             ECS.Character currMember = _partyMembers[i];
             Faction factionOfMember = currMember.faction;
             if (!IsCharacterLeaderOfParty(currMember)) {
-                if(factionOfMember != null && factionOfLeader.id != factionOfMember.id) {//if the faction of the member is different from the faction of the leader
+				if((currMember.role == null || currMember.role.roleType != CHARACTER_ROLE.TAMED_BEAST) && factionOfMember != null && factionOfLeader.id != factionOfMember.id) {//if the faction of the member is different from the faction of the leader
                     FactionRelationship factionRel = FactionManager.Instance.GetRelationshipBetween(factionOfLeader, factionOfMember);
                     if(factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
                         //- if hostile, characters from both factions must leave party led by a character from the other faction after completing a quest
