@@ -12,7 +12,8 @@ public class Worker : CharacterRole {
         _canPassHiddenRoads = true;
         _canAcceptQuests = true;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
-            QUEST_TYPE.BUILD_STRUCTURE
+            QUEST_TYPE.BUILD_STRUCTURE,
+			QUEST_TYPE.OBTAIN_MATERIAL,
         };
     }
 

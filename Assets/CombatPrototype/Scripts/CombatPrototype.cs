@@ -586,6 +586,8 @@ namespace ECS{
 			Armor armor = chosenBodyPart.GetArmor ();
 			log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
+			int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
+
             if(weapon != null) {
 				weaponPower = weapon.weaponPower;
 //				if(Utilities.GetMaterialCategory(weapon.material) == MATERIAL_CATEGORY.WOOD && (weapon.weaponType == WEAPON_TYPE.BOW || weapon.weaponType == WEAPON_TYPE.STAFF)){
@@ -594,14 +596,14 @@ namespace ECS{
 				//reduce weapon durability by durability cost of skill
 				weapon.AdjustDurability(-attackSkill.durabilityCost);
 				log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
+
+				int damageRange = (int)((float)damage * weapon.damageRange);
+				int minDamageRange = damage - damageRange;
+				int maxDamageRange = damage + damageRange;
+				damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
 			}else{
 				log += ".";
 			}
-			int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
-			int damageRange = (int)((float)damage * weapon.damageRange);
-			int minDamageRange = damage - damageRange;
-			int maxDamageRange = damage + damageRange;
-			damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
 
 			if(armor != null){
 				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
