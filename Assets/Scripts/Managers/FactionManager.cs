@@ -81,11 +81,26 @@ public class FactionManager : MonoBehaviour {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
+        List<Region> elligibleRegions = new List<Region>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if (currRegion.landmarks.Where(x => x is ResourceLandmark && (x as ResourceLandmark).materialData.isEdible 
+            && (x as ResourceLandmark).materialData.structure.structureQuality == STRUCTURE_QUALITY.BASIC).Any()) {
+                elligibleRegions.Add(currRegion);
+            }
+        }
         for (int i = 0; i < inititalRaces.Length; i++) {
             RACE inititalRace = inititalRaces[i];
             Faction newFaction = CreateNewFaction(typeof(Tribe), inititalRace);
-            Region regionForFaction = allRegions[Random.Range(0, allRegions.Count)];
+            Region regionForFaction = null;
+            if (elligibleRegions.Count > 0) {
+                regionForFaction = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
+            } else if(allRegions.Count > 0) {
+                regionForFaction = allRegions[Random.Range(0, allRegions.Count)];
+            }
+            elligibleRegions.Remove(regionForFaction);
             allRegions.Remove(regionForFaction);
+            Utilities.ListRemoveRange(elligibleRegions, regionForFaction.adjacentRegions);
             Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
             LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
             regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
