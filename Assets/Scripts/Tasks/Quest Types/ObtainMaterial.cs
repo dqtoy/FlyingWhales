@@ -49,9 +49,9 @@ public class ObtainMaterial : Quest {
 		collect.onTaskDoAction += collect.ObtainMaterial;
 
 		GoToLocation goBackToSettlement = new GoToLocation(this); //Go to the picked region
-		goToLandmark.InititalizeAction(((Settlement)_createdBy));
-		goToLandmark.onTaskDoAction += goToLandmark.Generic;
-		goToLandmark.onTaskActionDone += TransferMaterialToSettlement;
+		goBackToSettlement.InititalizeAction(((Settlement)_createdBy));
+		goBackToSettlement.onTaskDoAction += goBackToSettlement.Generic;
+		goBackToSettlement.onTaskActionDone += TransferMaterialToSettlement;
 
 		_questLine.Enqueue(goToLandmark);
 		_questLine.Enqueue(collect);
@@ -64,6 +64,7 @@ public class ObtainMaterial : Quest {
 	}
 	private void TransferMaterialToSettlement(){
 		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + ((Settlement)_createdBy).landmarkName);
+		((Settlement)_createdBy).AddHistory (_assignedParty.name + " transfered " + _materialToCollect.ToString () + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + ".");
 		((Settlement)_createdBy).AdjustMaterial (_materialToObtain, _materialToCollect);
 		EndQuest (TASK_STATUS.SUCCESS);
 	}
