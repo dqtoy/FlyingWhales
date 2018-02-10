@@ -1464,41 +1464,52 @@ namespace ECS {
 		#region Avatar
 		public void CreateNewAvatar() {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
-			if(this._role.roleType == CHARACTER_ROLE.COLONIST){
-//				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
-				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
-				ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
-                if(party != null) {
-                    avatar.Init(party);
+            if(this._role != null) {
+                if (this._role.roleType == CHARACTER_ROLE.COLONIST) {
+                    //				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
+                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
+                    ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
+                    if (party != null) {
+                        avatar.Init(party);
+                    } else {
+                        avatar.Init(this);
+                    }
+                } else if (this._role.roleType == CHARACTER_ROLE.WARLORD) {
+                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("WarlordAvatar", this.currLocation.transform.position, Quaternion.identity);
+                    WarlordAvatar avatar = avatarGO.GetComponent<WarlordAvatar>();
+                    if (party != null) {
+                        avatar.Init(party);
+                    } else {
+                        avatar.Init(this);
+                    }
+                } else if (this._role.roleType == CHARACTER_ROLE.HERO) {
+                    //				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
+                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("HeroAvatar", this.currLocation.transform.position, Quaternion.identity);
+                    HeroAvatar avatar = avatarGO.GetComponent<HeroAvatar>();
+                    if (party != null) {
+                        avatar.Init(party);
+                    } else {
+                        avatar.Init(this);
+                    }
                 } else {
-                    avatar.Init(this);
+                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
+                    CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
+                    if (party != null) {
+                        avatar.Init(party);
+                    } else {
+                        avatar.Init(this);
+                    }
                 }
-			}else if(this._role.roleType == CHARACTER_ROLE.WARLORD){
-				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("WarlordAvatar", this.currLocation.transform.position, Quaternion.identity);
-				WarlordAvatar avatar = avatarGO.GetComponent<WarlordAvatar>();
-                if (party != null) {
-                    avatar.Init(party);
-                } else {
-                    avatar.Init(this);
-                }
-            } else if(this._role.roleType == CHARACTER_ROLE.HERO){
-				//				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
-				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("HeroAvatar", this.currLocation.transform.position, Quaternion.identity);
-				HeroAvatar avatar = avatarGO.GetComponent<HeroAvatar>();
-                if (party != null) {
-                    avatar.Init(party);
-                } else {
-                    avatar.Init(this);
-                }
-            } else{
-				GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
-				CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
+            } else {
+                GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
+                CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
                 if (party != null) {
                     avatar.Init(party);
                 } else {
                     avatar.Init(this);
                 }
             }
+			
         }
 		public void SetAvatar(CharacterAvatar avatar) {
 			_avatar = avatar;
