@@ -20,9 +20,9 @@ public class ObtainMaterial : Quest {
 	}
 	#endregion
 
-	public ObtainMaterial(TaskCreator createdBy, MATERIAL materialToObtain) : base(createdBy, QUEST_TYPE.OBTAIN_MATERIAL) {
+	public ObtainMaterial(TaskCreator createdBy, MATERIAL materialToObtain, BaseLandmark target) : base(createdBy, QUEST_TYPE.OBTAIN_MATERIAL) {
 		_materialToObtain = materialToObtain;
-		_target = GetTarget ();
+		_target = target;
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction((createdBy as BaseLandmark).owner)
 		};
@@ -67,27 +67,5 @@ public class ObtainMaterial : Quest {
 		((Settlement)_createdBy).AddHistory (_assignedParty.name + " transfered " + _materialToCollect.ToString () + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + ".");
 		((Settlement)_createdBy).AdjustMaterial (_materialToObtain, _materialToCollect);
 		EndQuest (TASK_STATUS.SUCCESS);
-	}
-
-	private BaseLandmark GetTarget(){
-		WeightedDictionary<BaseLandmark> targetWeights = new WeightedDictionary<BaseLandmark> ();
-		Settlement settlement = (Settlement)_createdBy;
-		for (int i = 0; i < settlement.owner.settlements.Count; i++) {
-			if(settlement.id == settlement.owner.settlements[i].id){
-				for (int j = 0; j < settlement.ownedLandmarks.Count; j++) {
-					if(settlement.ownedLandmarks[j].materialsInventory[_materialToObtain].excess > 0){
-						targetWeights.AddElement (settlement.ownedLandmarks [j], settlement.ownedLandmarks [j].materialsInventory [_materialToObtain].excess);
-					}
-				}
-			}else{
-				if(settlement.owner.settlements[i].materialsInventory[_materialToObtain].excess > 0){
-					targetWeights.AddElement (settlement.owner.settlements[i], settlement.owner.settlements[i].materialsInventory [_materialToObtain].excess);
-				}
-			}
-		}
-		if(targetWeights.Count > 0){
-			return targetWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
 	}
 }

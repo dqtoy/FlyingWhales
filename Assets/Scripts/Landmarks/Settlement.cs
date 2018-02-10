@@ -453,15 +453,24 @@ public class Settlement : BaseLandmark {
 		if(questType == QUEST_TYPE.OBTAIN_MATERIAL){
 			if(noOfQuestsOnBoard < maxNoOfQuests){
 				MATERIAL material = GetObtainMaterialTarget ();
+				MATERIAL previousMaterial = MATERIAL.NONE;
 				for (int i = 0; i < 2; i++) {
-					if(material != MATERIAL.NONE && !AlreadyHasQuestOfType(QUEST_TYPE.OBTAIN_MATERIAL, material)){
-						ObtainMaterial obtainMaterialQuest = new ObtainMaterial (this, material);
-						obtainMaterialQuest.SetSettlement (this);
-						AddNewQuest (obtainMaterialQuest);
-						if((noOfQuestsOnBoard + 1) < maxNoOfQuests){
-							material = RepickObtainMaterialTarget ();
+					if(material != MATERIAL.NONE && material != previousMaterial && !AlreadyHasQuestOfType(QUEST_TYPE.OBTAIN_MATERIAL, material)){
+						previousMaterial = material;
+						BaseLandmark target = GetTargetObtainMaterial (material);
+						if(target != null){
+							ObtainMaterial obtainMaterialQuest = new ObtainMaterial (this, material, target);
+							obtainMaterialQuest.SetSettlement (this);
+							AddNewQuest (obtainMaterialQuest);
+							if((noOfQuestsOnBoard + 1) < maxNoOfQuests){
+								material = RepickObtainMaterialTarget ();
+							}else{
+								break;
+							}
 						}else{
-							break;
+							if(i == 0){
+								material = RepickObtainMaterialTarget ();
+							}
 						}
 					}else{
 						break;
@@ -475,6 +484,26 @@ public class Settlement : BaseLandmark {
 			return 3;
 		}
 		return 0;
+	}
+	private BaseLandmark GetTargetObtainMaterial(MATERIAL materialToObtain){
+		WeightedDictionary<BaseLandmark> targetWeights = new WeightedDictionary<BaseLandmark> ();
+		for (int i = 0; i < this.owner.settlements.Count; i++) {
+			if(this.id == this.owner.settlements[i].id){
+				for (int j = 0; j < this.ownedLandmarks.Count; j++) {
+					if(this.ownedLandmarks[j].materialsInventory[materialToObtain].excess > 0){
+						targetWeights.AddElement (this.ownedLandmarks [j], this.ownedLandmarks [j].materialsInventory [materialToObtain].excess);
+					}
+				}
+			}else{
+				if(this.owner.settlements[i].materialsInventory[materialToObtain].excess > 0){
+					targetWeights.AddElement (this.owner.settlements[i], this.owner.settlements[i].materialsInventory [materialToObtain].excess);
+				}
+			}
+		}
+		if(targetWeights.Count > 0){
+			return targetWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
     #endregion
 
