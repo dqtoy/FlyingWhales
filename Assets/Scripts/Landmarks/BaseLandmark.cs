@@ -645,7 +645,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Dictionary<MATERIAL, int> ReduceAssets(Production productionCost, MATERIAL materialToUse) {
         AdjustPopulation(-productionCost.civilianCost);
         AdjustMaterial(materialToUse, -productionCost.resourceCost);
-        return ReduceTotalFoodCount(-productionCost.foodCost);
+        return ReduceTotalFoodCount(productionCost.foodCost);
     }
     /*
      This will reduce a landmarks assets based on Construction Data,
@@ -658,8 +658,8 @@ public class BaseLandmark : ILocation, TaskCreator {
         if(matToUse == MATERIAL.NONE) {
             throw new System.Exception("There is no materials to build a " + constructionData.structure.name);
         }
-        AdjustMaterial(matToUse, constructionData.production.resourceCost);
-        return ReduceTotalFoodCount(-constructionData.production.foodCost);
+        AdjustMaterial(matToUse, -constructionData.production.resourceCost);
+        return ReduceTotalFoodCount(constructionData.production.foodCost);
     }
     #endregion
 

@@ -209,6 +209,9 @@ namespace ECS {
         internal BaseLandmark home {
             get { return _home; }
         }
+        internal BaseLandmark lair {
+            get { return _lair; }
+        }
 		internal float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
         }
@@ -1345,6 +1348,7 @@ namespace ECS {
                     case CHARACTER_TAG.NESTING:
                         break;
                     case CHARACTER_TAG.HIBERNATES:
+                        AddHibernateWeights(actionWeights);
                         break;
                     case CHARACTER_TAG.PILLAGER:
                         break;
@@ -1392,6 +1396,11 @@ namespace ECS {
                         }
                     }
                 }
+            }
+        }
+        private void AddHibernateWeights(WeightedDictionary<CharacterTask> actionWeights) {
+            if(lair != null) {
+                actionWeights.AddElement(new Hibernate(this), 5); //Hibernate - 5, 0 if the monster does not have a Lair
             }
         }
         #endregion
