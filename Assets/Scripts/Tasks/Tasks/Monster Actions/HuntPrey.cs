@@ -45,6 +45,7 @@ public class HuntPrey : CharacterTask {
     }
 
     private void StartHunt() {
+        _target.AddHistory("Monster " + _assignedCharacter.name + " is hunting for food");
         GameDate nextDate = GameManager.Instance.Today();
         nextDate.AddDays(1);
         SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
