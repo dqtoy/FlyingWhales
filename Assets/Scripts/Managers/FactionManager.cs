@@ -108,10 +108,11 @@ public class FactionManager : MonoBehaviour {
             allRegions.Remove(regionForFaction);
             Utilities.ListRemoveRange(elligibleRegions, regionForFaction.adjacentRegions);
             Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
+			CreateInitialResourcesForSettlement((Settlement)regionForFaction.mainLandmark, newFaction);
+			regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
             LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
-            regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
             CreateInititalFactionCharacters(newFaction);
-            CreateInitialResourcesForSettlement(newFaction.settlements.First());
+//            CreateInitialResourcesForSettlement(newFaction.settlements.First());
         }
     }
     /*
@@ -147,8 +148,7 @@ public class FactionManager : MonoBehaviour {
      factions have initial resources, that depends on the material preferences, 
      the initial settlement will have 200 of each preferred material. NOTE: This stacks
          */
-    private void CreateInitialResourcesForSettlement(Settlement initialSettlement) {
-        Faction owner = initialSettlement.owner;
+    private void CreateInitialResourcesForSettlement(Settlement initialSettlement, Faction owner) {
         PRODUCTION_TYPE[] productionTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
         for (int i = 0; i < productionTypes.Length; i++) {
             PRODUCTION_TYPE currProdType = productionTypes[i];
