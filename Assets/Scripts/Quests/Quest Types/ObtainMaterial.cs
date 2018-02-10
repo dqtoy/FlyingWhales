@@ -58,6 +58,9 @@ public class ObtainMaterial : Quest {
 	}
 	#endregion
 
+	internal void AdjustMaterialToCollect(int amount){
+		_materialToCollect += amount;
+	}
 	private void TransferMaterialToSettlement(){
 		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + ((Settlement)_createdBy).landmarkName);
 		((Settlement)_createdBy).AdjustMaterial (_materialToObtain, _materialToCollect);

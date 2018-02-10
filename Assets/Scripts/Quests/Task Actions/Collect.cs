@@ -34,6 +34,12 @@ public class Collect : TaskAction {
 	internal void ObtainMaterial(){
 		ObtainMaterial obtainMaterial = (ObtainMaterial)_task;
 		obtainMaterial.target.ReduceReserveMaterial (obtainMaterial.materialToObtain, _amount);
+		if(obtainMaterial.target.materialsInventory[obtainMaterial.materialToObtain].excess > 0){
+			int excess = obtainMaterial.target.materialsInventory [obtainMaterial.materialToObtain].excess;
+			_amount += excess;
+			obtainMaterial.AdjustMaterialToCollect (excess);
+			obtainMaterial.target.AdjustMaterial (obtainMaterial.materialToObtain, -excess);
+		}
 		_task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + Utilities.NormalizeString(obtainMaterial.materialToObtain.ToString()) + " from " + obtainMaterial.target.landmarkName);
 	}
 }

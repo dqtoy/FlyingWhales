@@ -80,7 +80,9 @@ public class SettlementInfoUI : UIMenu {
                             text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name;
                         } else if (currQuest.questType == QUEST_TYPE.BUILD_STRUCTURE) {
                             text += " " + ((BuildStructure)currQuest).target.location.name;
-                        }
+						} else if (currQuest.questType == QUEST_TYPE.OBTAIN_MATERIAL) {
+							text += " " + ((ObtainMaterial)currQuest).materialToObtain.ToString();
+						}
                         //						else {
                         //                            text += "[/url]";
                         //                        }
