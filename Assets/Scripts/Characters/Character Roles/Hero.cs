@@ -28,10 +28,6 @@ public class Hero : CharacterRole {
         WeightedDictionary<CharacterTask> actionWeights = base.GetActionWeights();
         Region currRegionOfCharacter = _character.currLocation.region;
 
-        //Upgrade Gear
-        UpgradeGear upgradeGearTask = new UpgradeGear(_character);
-        actionWeights.AddElement(upgradeGearTask, GetWeightForTask(upgradeGearTask));
-
         if (_character.currLocation.landmarkOnTile is Settlement) {
             Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
             //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
@@ -71,25 +67,6 @@ public class Hero : CharacterRole {
     internal override int GetExploreTileWeight(ExploreTile exploreTile) {
         int weight = 0;
         weight += 100;
-        return weight;
-    }
-
-    internal override int GetUpgradeGearWeight() {
-        int weight = 0;
-        if (_character.GetNeededEquipmentTypes().Count > 0) { //check if character needs any equipment
-            if (_character.gold >= 30) { // 0 if Gold is less than 30g
-                if (!_character.HasWeaponEquipped()) {
-                    weight += 200; //+200 if missing Weapon
-                }
-                List<EQUIPMENT_TYPE> missingArmor = _character.GetMissingArmorTypes();
-                weight += 50 * missingArmor.Count; //+50 for each missing armor part
-
-                //+20 for every 10g above 30g
-                int goldAbove = _character.gold - 30;
-                goldAbove /= 10;
-                weight += 20 * goldAbove;
-            }
-        }
         return weight;
     }
 }
