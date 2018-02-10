@@ -532,7 +532,9 @@ namespace ECS {
 				this._isDead = true;
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
-				this._home.RemoveCharacterHomeOnLandmark (this);
+				if(this._home != null){
+					this._home.RemoveCharacterHomeOnLandmark (this);
+				}
 				if(this._faction != null){
 					if(this._faction.leader != null && this._faction.leader.id == this.id) {
 						//If this character is the leader of a faction, set that factions leader as null
