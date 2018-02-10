@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour {
 		UIManager.Instance.x1Btn.SetAsClicked();
         //Messenger.Broadcast("UpdateUI");
         SetPausedState(false);
+		SchedulingManager.Instance.StartScheduleCalls ();
 	}
 
     public GameDate Today() {

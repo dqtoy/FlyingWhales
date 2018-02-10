@@ -221,7 +221,7 @@ public class CharacterRole {
 		List<ECS.Character> prisoners = ((_character.party != null) ? _character.party.prisoners : character.prisoners);
 		if (prisoners != null && prisoners.Count > 0) {
 			for (int i = 0; i < prisoners.Count; i++) {
-				if(_character.faction.id != prisoners[i].faction.id){
+				if(_character.faction == null || _character.faction.id != prisoners[i].faction.id){
 					dropPrisonersWeight += 5;
 				}
 			}

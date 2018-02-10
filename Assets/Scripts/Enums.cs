@@ -861,7 +861,8 @@ public enum CHARACTER_ROLE {
     ADVENTURER,
     COLONIST,
     VILLAGE_HEAD,
-    WORKER
+    WORKER,
+	TAMED_BEAST,
 }
 public enum CHARACTER_CLASS {
     NONE,
