@@ -82,19 +82,20 @@ public class Settlement : BaseLandmark {
     #region Characters
     protected void TrainCharacterInSettlement(){
 		bool canTrainCharacter = false;
+		MATERIAL materialToUse = MATERIAL.NONE;
 		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
 			//Check first if the settlement has enough civilians to create a new character
 			//and that it has not exceeded the max number of characters that consider this settlement as home
 			WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
-			if (characterRoleProductionDictionary.GetTotalOfWeights() > 0) {
+			if (characterRoleProductionDictionary.Count > 0 && characterRoleProductionDictionary.GetTotalOfWeights() > 0) {
 				roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
 				if(roleToCreate != CHARACTER_ROLE.NONE){
 					if (Utilities.IsRoleClassless (roleToCreate)) {
 						classToCreate = CHARACTER_CLASS.NONE;
 						canTrainCharacter = true;
 					} else {
-						WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary (this);
-						if (characterClassProductionDictionary.GetTotalOfWeights () > 0) {
+						WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary (this, ref materialToUse);
+						if (characterClassProductionDictionary.Count > 0 && characterClassProductionDictionary.GetTotalOfWeights () > 0) {
 							classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights ();
 							canTrainCharacter = true;
 						}else{
@@ -110,10 +111,12 @@ public class Settlement : BaseLandmark {
 			roleToCreate = CHARACTER_ROLE.NONE;
 			classToCreate = CHARACTER_CLASS.NONE;
 		}
-		if (canTrainCharacter) {
-			if(TrainNewCharacter (roleToCreate, classToCreate)){
-				return;
-			}
+		if (canTrainCharacter && materialToUse != MATERIAL.NONE) {
+//			if(TrainNewCharacter (roleToCreate, classToCreate, materialToUse)){
+//				return;
+//			}
+			TrainNewCharacter (roleToCreate, classToCreate, materialToUse);
+			return;
 		}
 		ScheduleTrainCharacter ();
 	}
@@ -130,8 +133,9 @@ public class Settlement : BaseLandmark {
 		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
             //Check first if the settlement has enough civilians to create a new character
             //and that it has not exceeded the max number of characters that consider this settlement as home
+			MATERIAL material = MATERIAL.NONE;
             WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
-            WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this);
+			WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
             if (characterRoleProductionDictionary.GetTotalOfWeights() > 0 && characterClassProductionDictionary.GetTotalOfWeights() > 0) {
                 roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
 				if(Utilities.IsRoleClassless(roleToCreate)){
@@ -171,13 +175,27 @@ public class Settlement : BaseLandmark {
      Does the settlement have the required technology
      to produce a class?
          */
-    public bool CanProduceClass(CHARACTER_CLASS charClass) {
+	public bool CanProduceClass(CHARACTER_CLASS charClass, ref MATERIAL material) {
         TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
         if (neededTech != TECHNOLOGY.NONE && _technologies[neededTech]) {
-            return true;
+			TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup [charClass];
+			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+			for (int i = 0; i < trainingPreference.Count; i++) {
+				if(trainingClass.materials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count){
+					material = trainingPreference [i];
+					return true;
+				}
+			}
         }
         return false;
     }
+	public bool CanProduceRole(CHARACTER_ROLE roleType){
+		TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup [roleType];
+		if(trainingRole.production.civilianCost <= civilians && trainingRole.production.foodCost <= GetTotalFoodCount()){
+			return true;
+		}
+		return false;
+	}
     /*
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
@@ -211,33 +229,35 @@ public class Settlement : BaseLandmark {
 		return newCharacter;
 	}
 
-	public bool TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass){
+	public void TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass, MATERIAL materialToUse){
 		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
 		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
-		Production combinedProduction = new Production ();
-		combinedProduction.Combine(trainingRole.production, trainingClass.production);
+//		Production combinedProduction = new Production ();
+//		combinedProduction.Combine(trainingRole.production, trainingClass.production);
+//
+//		if(combinedProduction.civilianCost <= civilians && combinedProduction.foodCost <= GetTotalFoodCount()){
+//			MATERIAL materialToUse = MATERIAL.NONE;
+//			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+//			for (int i = 0; i < trainingPreference.Count; i++) {
+//				if(trainingClass.materials.Contains(trainingPreference[i]) && combinedProduction.resourceCost <= _materialsInventory[trainingPreference[i]].count){
+//					materialToUse = trainingPreference [i];
+//				}
+//			}
+//			if(materialToUse != MATERIAL.NONE){
+//				
+//				return true;
+//			}
+//		}
 
-		if(combinedProduction.civilianCost <= civilians && combinedProduction.foodCost <= GetTotalFoodCount()){
-			MATERIAL materialToUse = MATERIAL.NONE;
-			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
-			for (int i = 0; i < trainingPreference.Count; i++) {
-				if(trainingClass.materials.Contains(trainingPreference[i]) && combinedProduction.resourceCost <= _materialsInventory[trainingPreference[i]].count){
-					materialToUse = trainingPreference [i];
-				}
-			}
-			if(materialToUse != MATERIAL.NONE){
-				ReduceTotalFoodCount (combinedProduction.foodCost);
-				AdjustPopulation (-combinedProduction.civilianCost);
-				AdjustMaterial (materialToUse, -combinedProduction.resourceCost);
+		ReduceTotalFoodCount (trainingRole.production.foodCost);
+		AdjustPopulation (-trainingRole.production.civilianCost);
+		AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
 
-				AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + Utilities.NormalizeString (charClass.ToString ()) + ".");
-				GameDate trainCharacterDate = GameManager.Instance.Today ();
-				trainCharacterDate.AddDays (combinedProduction.duration);
-				SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse));
-				return true;
-			}
-		}
-		return false;
+		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + Utilities.NormalizeString (charClass.ToString ()) + ".");
+		GameDate trainCharacterDate = GameManager.Instance.Today ();
+		trainCharacterDate.AddDays (trainingRole.production.duration + trainingClass.production.duration);
+		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse));
+//		return false;
 	}
     public void SetHead(ECS.Character head) {
         _headOfSettlement = head;
