@@ -38,22 +38,22 @@ public class Expand : Quest {
     }
     protected override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
-	}
-	protected override void ConstructQuestLine() {
+    }
+    protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
-		//Collect collect = new Collect(this);
-		//collect.InititalizeAction(20);
-		//collect.onTaskActionDone += this.PerformNextQuestAction;
-		//collect.onTaskDoAction += collect.Expand;
+        Collect collect = new Collect(this);
+        collect.InititalizeAction(_constructionData.production.civilianCost);
+        collect.onTaskActionDone += this.PerformNextQuestAction;
+        collect.onTaskDoAction += collect.Expand;
 
-		GoToLocation goToExpandLocationAction = new GoToLocation(this); //Go to the picked region
+        GoToLocation goToExpandLocationAction = new GoToLocation(this); //Go to the picked region
 		goToExpandLocationAction.InititalizeAction(_targetUnoccupiedTile);
 		goToExpandLocationAction.onTaskDoAction += goToExpandLocationAction.Expand;
 		goToExpandLocationAction.onTaskActionDone += SuccessExpansion;
 
-//		//Enqueue all actions
-		//_questLine.Enqueue(collect);
-		_questLine.Enqueue(goToExpandLocationAction);
+        //Enqueue all actions
+        _questLine.Enqueue(collect);
+        _questLine.Enqueue(goToExpandLocationAction);
 	}
 
 	public override bool CanAcceptQuest (ECS.Character character){
@@ -90,9 +90,9 @@ public class Expand : Quest {
 
 	private void SuccessExpansion(){
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
-		//this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_assignedParty.civilians);
-		//_assignedParty.SetCivilians (0);
-		CameraMove.Instance.UpdateMinimapTexture ();
+        //this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_assignedParty.civilians);
+        _assignedParty.SetCivilians(0);
+        CameraMove.Instance.UpdateMinimapTexture ();
 		Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
 		ECS.Character villageHead = expandedTo.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
 		villageHead.SetHome (expandedTo);

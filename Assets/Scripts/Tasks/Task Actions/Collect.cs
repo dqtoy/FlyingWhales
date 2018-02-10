@@ -16,8 +16,8 @@ public class Collect : TaskAction {
 
 	//This is the DoAction Function in Expand Quest
 	internal void Expand(){
-		((Expand)_task).assignedParty.currLocation.landmarkOnTile.AdjustReservedPopulation (-_amount);
-		((Expand)_task).assignedParty.SetCivilians (_amount);
+        //add civilians to party
+        ((Expand)_task).assignedParty.SetCivilians (_amount);
         _task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + " civilians from " + this.actionDoer.currLocation.landmarkOnTile.landmarkName);
         ActionDone (TASK_ACTION_RESULT.SUCCESS);
 	}
@@ -25,7 +25,6 @@ public class Collect : TaskAction {
     //This is the DoAction Function for the build structure quest
     internal void BuildStructure() {
         BuildStructure bsQuest = _task as BuildStructure;
-        bsQuest.postedAt.AdjustReservedPopulation(-_amount);
         bsQuest.assignedParty.SetCivilians(_amount);
         _task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + " civilians from " + bsQuest.postedAt.landmarkName);
         ActionDone(TASK_ACTION_RESULT.SUCCESS);
