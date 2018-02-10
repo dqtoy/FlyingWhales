@@ -935,7 +935,7 @@ namespace ECS {
         given its allowed weapon types.
              */
         internal WEAPON_TYPE GetWeaponTypeForCharacter() {
-            if (this.characterClass == null) {
+            if (_characterClass.className.Equals("Classless")) {
                 return WEAPON_TYPE.NONE;
             }
             return this.characterClass.allowedWeaponTypes[UnityEngine.Random.Range(0, this.characterClass.allowedWeaponTypes.Count)];
@@ -964,7 +964,7 @@ namespace ECS {
              */
         internal List<EQUIPMENT_TYPE> GetNeededEquipmentTypes() {
             List<EQUIPMENT_TYPE> neededEquipment = new List<EQUIPMENT_TYPE>();
-            if (_characterClass != null && !HasWeaponEquipped()) {
+            if (!_characterClass.className.Equals("Classless") && !HasWeaponEquipped()) {
                 neededEquipment.Add((EQUIPMENT_TYPE)GetWeaponTypeForCharacter());
             }
             neededEquipment.AddRange(GetMissingArmorTypes());
