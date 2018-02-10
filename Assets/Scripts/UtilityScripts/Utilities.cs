@@ -420,7 +420,7 @@ public class Utilities : MonoBehaviour {
         }
         //landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
         //landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
-        landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 25);
+        landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 40);
         //landmarkWeights.AddElement(LANDMARK_TYPE.ABANDONED_DUNGEON, 25);
         //landmarkWeights.AddElement(LANDMARK_TYPE.MYSTERIOUS_TOWER, 6);
         //landmarkWeights.AddElement(LANDMARK_TYPE.SUMMONING_SHRINE, 15);
