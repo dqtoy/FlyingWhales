@@ -58,5 +58,9 @@ public class ResourceLandmark : BaseLandmark {
             AdjustMaterial(materialOnLandmark, producedResourceQuantity);
         }
     }
+    internal override void AdjustMaterial(MATERIAL material, int amount) {
+        _materialsInventory[material].count += amount;
+        _materialsInventory[material].count = Mathf.Clamp(_materialsInventory[material].count, 0, _materialsInventory[material].maximumStorage);
+    }
     #endregion
 }

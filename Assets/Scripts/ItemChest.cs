@@ -106,15 +106,17 @@ public class ItemChest : IEncounterable {
         if(UnityEngine.Random.Range(0, 100) < _chanceToGet) {
             MATERIAL equipmentMaterial = GetEquipmentMaterial();
             EQUIPMENT_TYPE equipmentType = GetRandomEquipmentType(character);
-            QUALITY equipmentQuality = GetEquipmentQuality();
-            string itemName = Utilities.NormalizeString(equipmentMaterial.ToString()) + " " + Utilities.NormalizeString(equipmentType.ToString());
-            ECS.Item item = ItemManager.Instance.CreateNewItemInstance(itemName);
-            if(_chestType == ITEM_TYPE.ARMOR) {
-                ((ECS.Armor)item).SetQuality(equipmentQuality);
-            } else if (_chestType == ITEM_TYPE.WEAPON) {
-                ((ECS.Weapon)item).SetQuality(equipmentQuality);
+            if(equipmentType != EQUIPMENT_TYPE.NONE) {
+                QUALITY equipmentQuality = GetEquipmentQuality();
+                string itemName = Utilities.NormalizeString(equipmentMaterial.ToString()) + " " + Utilities.NormalizeString(equipmentType.ToString());
+                ECS.Item item = ItemManager.Instance.CreateNewItemInstance(itemName);
+                if (_chestType == ITEM_TYPE.ARMOR) {
+                    ((ECS.Armor)item).SetQuality(equipmentQuality);
+                } else if (_chestType == ITEM_TYPE.WEAPON) {
+                    ((ECS.Weapon)item).SetQuality(equipmentQuality);
+                }
+                return item;
             }
-            return item;
         }
         return null; //did not get anything
     }

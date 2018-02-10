@@ -542,10 +542,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 			_neededMaterials.Add (production [i], MATERIAL.NONE);
 		}
 	}
-
-	internal void AdjustMaterial(MATERIAL material, int amount){
+	internal virtual void AdjustMaterial(MATERIAL material, int amount){
 		_materialsInventory [material].count += amount;
-        _materialsInventory[material].count = Mathf.Clamp(_materialsInventory[material].count, 0, _materialsInventory[material].maximumStorage);
+        _materialsInventory[material].count = Mathf.Max(_materialsInventory[material].count, 0);
 	}
 	internal void SetMaterial(MATERIAL material, int amount){
 		_materialsInventory [material].count = amount;
