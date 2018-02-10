@@ -187,7 +187,8 @@ public class BaseLandmark : ILocation, TaskCreator {
         TECHNOLOGY[] allTechnologies = Utilities.GetEnumValues<TECHNOLOGY>();
         _technologies = new Dictionary<TECHNOLOGY, bool>();
         for (int i = 0; i < allTechnologies.Length; i++) {
-            _technologies.Add(allTechnologies[i], false);
+            TECHNOLOGY currTech = allTechnologies[i];
+            _technologies.Add(currTech, false);
         }
     }
     /*

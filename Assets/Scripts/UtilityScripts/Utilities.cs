@@ -1598,7 +1598,7 @@ public class Utilities : MonoBehaviour {
             case CHARACTER_CLASS.SCOUT:
                 return TECHNOLOGY.SCOUT_CLASS;
         }
-        return TECHNOLOGY.BASIC_FARMING;
+        return TECHNOLOGY.NONE;
     }
     //This is the list of armor, set by priority, change if needed
     public static List<ARMOR_TYPE> orderedArmorTypes = new List<ARMOR_TYPE>() {

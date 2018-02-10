@@ -1313,62 +1313,12 @@ namespace ECS {
         internal void SetTaskToDoNext(CharacterTask taskToDo) {
             nextTaskToDo = taskToDo;
         }
-        //private int GetWeightForQuestType(QUEST_TYPE questType) {
-        //    int weight = 0;
-        //    switch (questType) {
-        //        case QUEST_TYPE.EXPLORE_REGION:
-        //            weight += GetExploreRegionWeight();
-        //            break;
-        //        case QUEST_TYPE.OCCUPY_LANDMARK:
-        //            break;
-        //        case QUEST_TYPE.INVESTIGATE_LANDMARK:
-        //            break;
-        //        case QUEST_TYPE.OBTAIN_RESOURCE:
-        //            break;
-        //        case QUEST_TYPE.EXPAND:
-        //            break;
-        //        case QUEST_TYPE.REST:
-        //            weight += GetRestWeight();
-        //            break;
-        //        case QUEST_TYPE.GO_HOME:
-        //            weight += GetGoHomeWeight();
-        //            break;
-        //        case QUEST_TYPE.DO_NOTHING:
-        //            weight += GetDoNothingWeight();
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    return weight;
-        //}
-        //private int GetExploreRegionWeight() {
-        //    int weight = 0;
-        //    switch (_role.roleType) {
-        //        case CHARACTER_ROLE.CHIEFTAIN:
-        //            weight += 100;
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    return weight;
-        //}
-        //private int GetRestWeight() {
-        //    if (_currentHP < maxHP) {
-        //        int percentMissing = _currentHP / maxHP;
-        //        return 5 * percentMissing;
-        //    }
-        //    return 0;
-        //}
-        //private int GetGoHomeWeight() {
-        //    //0 if already at Home Settlement or no path to it
-        //    if (currLocation.isHabitable && currLocation.isOccupied && currLocation.landmarkOnTile.owner == this._faction) {
-        //        return 0;
-        //    }
-        //    if (PathGenerator.Instance.GetPath(currLocation, _faction.settlements[0].location, PATHFINDING_MODE.USE_ROADS) == null) {
-        //        return 0;
-        //    }
-        //    return 5; //5 if not
-        //}
+        /*
+         Add tag specific actions to action weights
+             */
+        private void AddActionWeightsFromTags(WeightedDictionary<CharacterTask> actionWeights) {
+
+        }
         #endregion
 
         #region HP
