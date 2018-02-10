@@ -925,7 +925,8 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
     UPGRADE_GEAR,
 	DROP_PRISONERS,
     HUNT_PREY,
-    HIBERNATE
+    HIBERNATE,
+    PILLAGE
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

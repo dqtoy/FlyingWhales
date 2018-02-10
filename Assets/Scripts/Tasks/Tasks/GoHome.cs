@@ -15,7 +15,12 @@ public class GoHome : CharacterTask {
 		}
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-        goToLocation.InititalizeAction(((ECS.Character)_createdBy).home);
+        if(character.faction == null) {
+            goToLocation.InititalizeAction(((ECS.Character)_createdBy).lair);
+        } else {
+            goToLocation.InititalizeAction(((ECS.Character)_createdBy).home);
+        }
+        
         goToLocation.onTaskActionDone += SuccessTask;
         goToLocation.onTaskDoAction += goToLocation.Generic;
 

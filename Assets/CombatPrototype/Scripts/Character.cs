@@ -1292,8 +1292,8 @@ namespace ECS {
                 return;
             }
 			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
-            //AddActionWeightsFromTags(actionWeights); //Add weights from tags
-			if (actionWeights.GetTotalOfWeights () > 0) {
+            AddActionWeightsFromTags(actionWeights); //Add weights from tags
+            if (actionWeights.GetTotalOfWeights () > 0) {
 				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
                 if (chosenAction.taskType == TASK_TYPE.QUEST) {
                     Debug.Log(this.name + " decides to " + ((Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
@@ -1310,30 +1310,49 @@ namespace ECS {
 			if(_isFainted || _isPrisoner || _isDead){
 				return;
 			}
-
-			if(_party != null){
-				if(_party.IsPartyWounded()){
-					Rest rest = new Rest (this);
-					rest.PerformTask (this);
-				}else{
-					DoNothing doNothing = new DoNothing (this);
-					doNothing.PerformTask (this);
-				}
-			}else{
-				if(_currentHP < maxHP){
-					Rest rest = new Rest (this);
-					rest.PerformTask (this);
-				}else{
-					DoNothing doNothing = new DoNothing (this);
-					doNothing.PerformTask (this);
-				}
-			}
-		}
+            WeightedDictionary<CharacterTask> actionWeights = GetUnalignedActionWeights();
+            AddActionWeightsFromTags(actionWeights);
+            CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
+            chosenTask.PerformTask(this);
+            //if(_party != null){
+            //	if(_party.IsPartyWounded()){
+            //		Rest rest = new Rest (this);
+            //		rest.PerformTask (this);
+            //	}else{
+            //		DoNothing doNothing = new DoNothing (this);
+            //		doNothing.PerformTask (this);
+            //	}
+            //}else{
+            //	if(_currentHP < maxHP){
+            //		Rest rest = new Rest (this);
+            //		rest.PerformTask (this);
+            //	}else{
+            //		DoNothing doNothing = new DoNothing (this);
+            //		doNothing.PerformTask (this);
+            //	}
+            //}
+        }
         /*
          Set a task that this character will accept next
              */
         internal void SetTaskToDoNext(CharacterTask taskToDo) {
             nextTaskToDo = taskToDo;
+        }
+        private WeightedDictionary<CharacterTask> GetUnalignedActionWeights() {
+            WeightedDictionary<CharacterTask> actionWeights = new WeightedDictionary<CharacterTask>();
+
+            Rest restTask = new Rest(this);
+            actionWeights.AddElement(restTask, GetUnalignedRestWeight());
+
+            if(_lair != null) {
+                GoHome goHomeTask = new GoHome(this);
+                actionWeights.AddElement(goHomeTask, GetUnalignedGoHomeWeight());
+            }
+
+            DoNothing doNothingTask = new DoNothing(this);
+            actionWeights.AddElement(doNothingTask, GetUnalignedDoNothingWeight());
+
+            return actionWeights;
         }
         /*
          Add tag specific actions to action weights
@@ -1345,34 +1364,11 @@ namespace ECS {
                     case CHARACTER_TAG.PREDATOR:
                         AddHuntPreyWeights(actionWeights);
                         break;
-                    case CHARACTER_TAG.NESTING:
-                        break;
                     case CHARACTER_TAG.HIBERNATES:
                         AddHibernateWeights(actionWeights);
                         break;
                     case CHARACTER_TAG.PILLAGER:
-                        break;
-                    case CHARACTER_TAG.HOARDER:
-                        break;
-                    case CHARACTER_TAG.DESTRUCTIVE:
-                        break;
-                    case CHARACTER_TAG.ALPHA:
-                        break;
-                    case CHARACTER_TAG.BETA:
-                        break;
-                    case CHARACTER_TAG.ROAMER:
-                        break;
-                    case CHARACTER_TAG.SHY:
-                        break;
-                    case CHARACTER_TAG.DOCILE:
-                        break;
-                    case CHARACTER_TAG.HOSTILE:
-                        break;
-                    case CHARACTER_TAG.KIDNAPPER:
-                        break;
-                    case CHARACTER_TAG.SAPIENT:
-                        break;
-                    case CHARACTER_TAG.EGG_GUY:
+                        AddPillageWeights(actionWeights);
                         break;
                     default:
                         break;
@@ -1385,8 +1381,10 @@ namespace ECS {
             elligibleRegions.Add(mainRegion);
             for (int i = 0; i < elligibleRegions.Count; i++) {
                 Region currRegion = elligibleRegions[i];
-                for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                    BaseLandmark currLandmark = currRegion.landmarks[j];
+                List<BaseLandmark> allLandmarksInRegion = new List<BaseLandmark>(currRegion.landmarks);
+                allLandmarksInRegion.Add(currRegion.mainLandmark);
+                for (int j = 0; j < allLandmarksInRegion.Count; j++) {
+                    BaseLandmark currLandmark = allLandmarksInRegion[j];
                     int weight = 0;
                     if(currLandmark.civilians > 0) {
                         weight += 5 * currLandmark.civilians; //+5 Weight per Civilian in that landmark
@@ -1402,6 +1400,44 @@ namespace ECS {
             if(lair != null) {
                 actionWeights.AddElement(new Hibernate(this), 5); //Hibernate - 5, 0 if the monster does not have a Lair
             }
+        }
+        private void AddPillageWeights(WeightedDictionary<CharacterTask> actionWeights) {
+            Region mainRegion = currLocation.region;
+            List<Region> elligibleRegions = new List<Region>(mainRegion.adjacentRegionsViaMajorRoad);
+            elligibleRegions.Add(mainRegion);
+            for (int i = 0; i < elligibleRegions.Count; i++) {
+                Region currRegion = elligibleRegions[i];
+                List<BaseLandmark> allLandmarksInRegion = new List<BaseLandmark>(currRegion.landmarks);
+                allLandmarksInRegion.Add(currRegion.mainLandmark);
+                for (int j = 0; j < allLandmarksInRegion.Count; j++) {
+                    BaseLandmark currLandmark = allLandmarksInRegion[j];
+                    int weight = 0;
+                    int totalMaterials = currLandmark.materialsInventory.Sum(x => x.Value.count);
+                    weight += totalMaterials / 20; //+1 Weight per 20 resource in the landmark (regardless of value).
+                    weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
+                    if(weight > 0) {
+                        actionWeights.AddElement(new Pillage(this, currLandmark), weight);
+                    }
+                }
+
+            }
+        }
+        private int GetUnalignedRestWeight() {
+            if (currentHP < maxHP) {
+                int percentMissing = (int)(100f - (remainingHP * 100));
+                if (percentMissing >= 50) {
+                    return 100; //+100 if HP is below 50%
+                } else {
+                    return 5 * percentMissing; //5 Weight per % of HP below max HP, 
+                }
+            }
+            return 0;
+        }
+        private int GetUnalignedDoNothingWeight() {
+            return 300;
+        }
+        private int GetUnalignedGoHomeWeight() {
+            return 50;
         }
         #endregion
 
