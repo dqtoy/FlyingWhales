@@ -197,7 +197,7 @@ public class Settlement : BaseLandmark {
     }
 
 	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType, MATERIAL materialUsed){
-		AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + Utilities.NormalizeString (classType.ToString ()));
+		AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + (classType != CHARACTER_CLASS.NONE ? Utilities.NormalizeString (classType.ToString ()) : "Classless") + ".");
 		int trainingStatBonus = MaterialManager.Instance.materialsLookup [materialUsed].trainingStatBonus;
 		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(roleType, Utilities.NormalizeString(classType.ToString()), _owner.race, trainingStatBonus);
 		newCharacter.SetFaction(_owner);
@@ -207,6 +207,7 @@ public class Settlement : BaseLandmark {
 		this.AddCharacterHomeOnLandmark(newCharacter);
 		newCharacter.DetermineAction();
 		UIManager.Instance.UpdateFactionSummary();
+		TrainCharacterInSettlement ();
 		return newCharacter;
 	}
 
@@ -229,7 +230,7 @@ public class Settlement : BaseLandmark {
 				AdjustPopulation (-combinedProduction.civilianCost);
 				AdjustMaterial (materialToUse, -combinedProduction.resourceCost);
 
-				AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + Utilities.NormalizeString (charClass.ToString ()));
+				AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + Utilities.NormalizeString (charClass.ToString ()) + ".");
 				GameDate trainCharacterDate = GameManager.Instance.Today ();
 				trainCharacterDate.AddDays (combinedProduction.duration);
 				SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse));
