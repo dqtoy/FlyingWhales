@@ -155,6 +155,7 @@ public class FactionManager : MonoBehaviour {
             MATERIAL prefMat = owner.GetHighestElligibleMaterialPriority(currProdType);
             initialSettlement.AdjustMaterial(prefMat, 200);
         }
+        initialSettlement.AdjustMaterial(MATERIAL.CORN, 200);
     }
     #endregion
 
