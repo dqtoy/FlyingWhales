@@ -146,7 +146,7 @@ public class FactionManager : MonoBehaviour {
         PRODUCTION_TYPE[] productionTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
         for (int i = 0; i < productionTypes.Length; i++) {
             PRODUCTION_TYPE currProdType = productionTypes[i];
-            MATERIAL prefMat = owner.GetHighestMaterialPriority(currProdType);
+            MATERIAL prefMat = owner.GetHighestElligibleMaterialPriority(currProdType);
             initialSettlement.AdjustMaterial(prefMat, 200);
         }
     }

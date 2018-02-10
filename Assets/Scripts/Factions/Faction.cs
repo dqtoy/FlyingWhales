@@ -374,6 +374,20 @@ public class Faction {
 	internal MATERIAL GetHighestMaterialPriority(PRODUCTION_TYPE productionType){
 		return _productionPreferences [productionType].prioritizedMaterials [0];
 	}
+    /*
+     Get the preferred material for the production type that can
+     be used on that production type.
+         */
+    internal MATERIAL GetHighestElligibleMaterialPriority(PRODUCTION_TYPE productionType) {
+        List<MATERIAL> preferredMats = _productionPreferences[productionType].prioritizedMaterials;
+        for (int i = 0; i < preferredMats.Count; i++) {
+            MATERIAL currMat = preferredMats[i];
+            if(MaterialManager.Instance.CanMaterialBeUsedFor(currMat, productionType)) {
+                return currMat;
+            }
+        }
+        throw new System.Exception("There is no material that can be used for " + productionType.ToString());
+    }
     #endregion
 
     #region Landmarks

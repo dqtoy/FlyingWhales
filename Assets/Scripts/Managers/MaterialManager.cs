@@ -36,4 +36,18 @@ public class MaterialManager : MonoBehaviour {
 			}
 		}
 	}
+    public bool CanMaterialBeUsedFor(MATERIAL material, PRODUCTION_TYPE productionType) {
+        switch (productionType) {
+            case PRODUCTION_TYPE.WEAPON:
+                return ItemManager.Instance.CanMaterialBeUsedForWeapon(material);
+            case PRODUCTION_TYPE.ARMOR:
+                return ItemManager.Instance.CanMaterialBeUsedForArmor(material);
+            case PRODUCTION_TYPE.CONSTRUCTION:
+                return ProductionManager.Instance.CanMaterialBeUsedForConstruction(material);
+            case PRODUCTION_TYPE.TRAINING:
+                return ProductionManager.Instance.CanMaterialBeUsedForTraining(material);
+            default:
+                return false;
+        }
+    }
 }

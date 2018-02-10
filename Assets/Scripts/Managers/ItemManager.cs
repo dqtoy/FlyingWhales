@@ -113,4 +113,22 @@ public class ItemManager : MonoBehaviour {
         }
         return -1;
     }
+
+    internal bool CanMaterialBeUsedForWeapon(MATERIAL material) {
+        foreach (KeyValuePair<WEAPON_TYPE, ECS.WeaponType> kvp in _weaponTypeData) {
+            if (kvp.Value.weaponMaterials.Contains(material)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    internal bool CanMaterialBeUsedForArmor(MATERIAL material) {
+        foreach (KeyValuePair<ARMOR_TYPE, ECS.ArmorType> kvp in _armorTypeData) {
+            if (kvp.Value.armorMaterials.Contains(material)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

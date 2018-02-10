@@ -106,4 +106,21 @@ public class ProductionManager : MonoBehaviour {
 		}
 		return null;
 	}
+
+    internal bool CanMaterialBeUsedForConstruction(MATERIAL material) {
+        foreach (KeyValuePair<string, Construction> kvp in _constructionsLookup) {
+            if (kvp.Value.materials.Contains(material)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    internal bool CanMaterialBeUsedForTraining(MATERIAL material) {
+        foreach (KeyValuePair<CHARACTER_CLASS, TrainingClass> kvp in _trainingClassesLookup) {
+            if (kvp.Value.materials.Contains(material)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
