@@ -87,8 +87,8 @@ public class InternalQuestManager : TaskCreator {
         return questWeights;
     }
     private void AddExploreTileWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
-        for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
-            object currConnection = regionOfSettlement.connections[j];
+        for (int j = 0; j < regionOfSettlement.landmarks.Count; j++) {
+            object currConnection = regionOfSettlement.landmarks[j];
             if (currConnection is BaseLandmark) {
                 BaseLandmark currLandmark = (BaseLandmark)currConnection;
                 if (currLandmark.isHidden && !currLandmark.isExplored) {

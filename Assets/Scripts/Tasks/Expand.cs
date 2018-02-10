@@ -8,6 +8,7 @@ public class Expand : Quest {
 	private HexTile _originTile;
     private MATERIAL _materialToUse;
     private Construction _constructionData;
+    private Dictionary<MATERIAL, int> _foodBrought;
 
 	#region getters/setters
 	public HexTile targetUnoccupiedTile {
@@ -33,7 +34,7 @@ public class Expand : Quest {
     public override void OnQuestPosted() {
         //_originTile.landmarkOnTile.AdjustReservedPopulation(20);
         //_originTile.landmarkOnTile.AdjustPopulation(-20);
-        _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
+        _foodBrought = _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
     }
     protected override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
@@ -89,14 +90,17 @@ public class Expand : Quest {
 
 	private void SuccessExpansion(){
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
-		this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_assignedParty.civilians);
+		//this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_assignedParty.civilians);
 		//_assignedParty.SetCivilians (0);
 		CameraMove.Instance.UpdateMinimapTexture ();
 		Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
 		ECS.Character villageHead = expandedTo.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
 		villageHead.SetHome (expandedTo);
 		expandedTo.SetHead(villageHead);
-        //TODO: Ask sir marvs about food, will the new settlement get just 1 tyoe of food, or does the food brought have to be specified
+        //Transfer food
+        foreach (KeyValuePair<MATERIAL, int> kvp in _foodBrought) {
+            expandedTo.AdjustMaterial(kvp.Key, kvp.Value);
+        }
         expandedTo.AdjustPopulation(_constructionData.production.civilianCost);
         expandedTo.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost);
         AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");

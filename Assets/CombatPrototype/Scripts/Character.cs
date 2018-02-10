@@ -126,7 +126,11 @@ namespace ECS {
 			get { return _currentTask; }
 		}
         public ILocation specificLocation {
-            get { return _specificLocation; }
+            get {
+                ILocation loc = null;
+                loc = (party == null ? _specificLocation : party.specificLocation);
+                return loc;
+            }
         }
 		internal HexTile currLocation{
 			get {
@@ -552,7 +556,7 @@ namespace ECS {
 				}
 				if (this.currLocation != null) {
                     this._specificLocation.RemoveCharacterFromLocation(this);
-                    this.currLocation.RemoveCharacterFromLocation(this);
+                    //this.currLocation.RemoveCharacterFromLocation(this);
                 }
 
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){

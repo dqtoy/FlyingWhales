@@ -582,23 +582,28 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return count;
 	}
-	internal void ReduceTotalFoodCount(int amount){
+	internal Dictionary<MATERIAL, int> ReduceTotalFoodCount(int amount){
+        Dictionary<MATERIAL, int> foodReduced = new Dictionary<MATERIAL, int>();
 		int totalAmount = amount;
 		for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
 			MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
 			if(totalAmount > 0){
 				if(totalAmount > _materialsInventory [material].count){
-					totalAmount -= _materialsInventory [material].count;
+                    foodReduced.Add(material, materialsInventory[material].count);
+                    totalAmount -= _materialsInventory [material].count;
 					SetMaterial (material, 0);
-				}else{
-					AdjustMaterial (material, -totalAmount);
+                } else{
+                    foodReduced.Add(material, totalAmount);
+                    AdjustMaterial (material, -totalAmount);
 					break;
 				}
 			}else{
 				break;
 			}
 		}
-	}
+        return foodReduced;
+
+    }
     internal bool HasAvailableMaterial(MATERIAL material, int amount) {
         if(_materialsInventory[material].count >= amount) {
             return true;
@@ -634,25 +639,27 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     /*
      This will reduce this landmarks assets based on
-     a given Production Cost and a material.
+     a given Production Cost and a material. This will return
+     a list of food materials that was reduced.
          */
-    public void ReduceAssets(Production productionCost, MATERIAL materialToUse) {
+    public Dictionary<MATERIAL, int> ReduceAssets(Production productionCost, MATERIAL materialToUse) {
         AdjustPopulation(-productionCost.civilianCost);
-        ReduceTotalFoodCount(-productionCost.foodCost);
         AdjustMaterial(materialToUse, -productionCost.resourceCost);
+        return ReduceTotalFoodCount(-productionCost.foodCost);
     }
     /*
      This will reduce a landmarks assets based on Construction Data,
-     this will determine what material to use on it's own.
+     this will determine what material to use on it's own. This will return
+     a list of food materials that was reduced.
          */
-    public void ReduceAssets(Construction constructionData) {
+    public Dictionary<MATERIAL, int> ReduceAssets(Construction constructionData) {
         AdjustPopulation(-constructionData.production.civilianCost);
-        ReduceTotalFoodCount(-constructionData.production.foodCost);
         MATERIAL matToUse = GetMaterialForConstruction(constructionData);
         if(matToUse == MATERIAL.NONE) {
             throw new System.Exception("There is no materials to build a " + constructionData.structure.name);
         }
         AdjustMaterial(matToUse, constructionData.production.resourceCost);
+        return ReduceTotalFoodCount(-constructionData.production.foodCost);
     }
     #endregion
 

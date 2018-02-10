@@ -48,6 +48,9 @@ public class CharacterRole {
         Rest restTask = new Rest(_character);
         actionWeights.AddElement(restTask, GetWeightForTask(restTask));
 
+        UpgradeGear upgradeGearTask = new UpgradeGear(_character);
+        actionWeights.AddElement(upgradeGearTask, GetWeightForTask(upgradeGearTask));
+
         GoHome goHomeTask = new GoHome(_character);
         actionWeights.AddElement(goHomeTask, GetWeightForTask(goHomeTask));
 
@@ -226,7 +229,22 @@ public class CharacterRole {
 		return dropPrisonersWeight;
 	}
     internal virtual int GetUpgradeGearWeight() {
-        return 0;
+        int weight = 0;
+        if (_character.GetNeededEquipmentTypes().Count > 0) { //check if character needs any equipment
+            if (_character.gold >= 30) { // 0 if Gold is less than 30g
+                if (!_character.HasWeaponEquipped()) {
+                    weight += 200; //+200 if missing Weapon
+                }
+                List<EQUIPMENT_TYPE> missingArmor = _character.GetMissingArmorTypes();
+                weight += 50 * missingArmor.Count; //+50 for each missing armor part
+
+                //+20 for every 10g above 30g
+                int goldAbove = _character.gold - 30;
+                goldAbove /= 10;
+                weight += 20 * goldAbove;
+            }
+        }
+        return weight;
     }
     #endregion
 
