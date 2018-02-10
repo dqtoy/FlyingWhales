@@ -55,6 +55,7 @@ public class ObtainMaterial : Quest {
 
 		_questLine.Enqueue(goToLandmark);
 		_questLine.Enqueue(collect);
+		_questLine.Enqueue(goBackToSettlement);
 	}
 	#endregion
 
