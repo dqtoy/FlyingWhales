@@ -713,6 +713,11 @@ public class BaseLandmark : ILocation, TaskCreator {
 					if (((BuildStructure)currQuest).target.id == landmark.id) {
 						return true;
 					}
+				} else if (questType == QUEST_TYPE.OBTAIN_MATERIAL) {
+					MATERIAL material = (MATERIAL)identifier;
+					if (((ObtainMaterial)currQuest).materialToObtain == material) {
+						return true;
+					}
 				}
 			}
 		}

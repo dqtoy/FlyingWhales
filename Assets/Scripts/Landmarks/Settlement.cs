@@ -390,11 +390,13 @@ public class Settlement : BaseLandmark {
 	private MATERIAL GetObtainMaterialTarget(){
 		_materialWeights.Clear ();
 		foreach (MATERIAL material in _materialsInventory.Keys) {
-			if(_materialsInventory[material].isNeeded){
-				if(_materialsInventory[material].count < _materialsInventory[material].capacity){
-					_materialWeights.AddElement (material, 200);
-				}else{
-					_materialWeights.AddElement (material, 30);
+			if (_materialsInventory [material].isNeeded) {
+				if (_materialsInventory [material].availableExcessOfOtherSettlements > 0 || materialsInventory [material].availableExcessOfResourceLandmarks > 0) {
+					if (_materialsInventory [material].count < _materialsInventory [material].capacity) {
+						_materialWeights.AddElement (material, 200);
+					} else {
+						_materialWeights.AddElement (material, 30);
+					}
 				}
 			}else{
 				if(_materialsInventory [material].availableExcessOfResourceLandmarks > 0){
@@ -452,48 +454,6 @@ public class Settlement : BaseLandmark {
 			return 3;
 		}
 		return 0;
-	}
-	public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
-		for (int i = 0; i < _activeQuests.Count; i++) {
-			Quest currQuest = _activeQuests[i];
-			if(currQuest.questType == questType) {
-				if(questType == QUEST_TYPE.EXPLORE_REGION){
-					Region region = (Region)identifier;
-					if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
-						return true;
-					}
-				} else if(questType == QUEST_TYPE.EXPAND){
-					if(identifier is HexTile){
-						HexTile hexTile = (HexTile)identifier;
-						if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
-							return true;
-						}
-					}else if(identifier is BaseLandmark){
-						BaseLandmark landmark = (BaseLandmark)identifier;
-						if(((Expand)currQuest).originTile.id == landmark.location.id){
-							return true;
-						}
-					}
-
-				} else if (questType == QUEST_TYPE.EXPLORE_TILE) {
-					BaseLandmark landmark = (BaseLandmark)identifier;
-					if (((ExploreTile)currQuest).landmarkToExplore.id == landmark.id) {
-						return true;
-					}
-				} else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
-					BaseLandmark landmark = (BaseLandmark)identifier;
-					if (((BuildStructure)currQuest).target.id == landmark.id) {
-						return true;
-					}
-				} else if (questType == QUEST_TYPE.OBTAIN_MATERIAL) {
-					MATERIAL material = (MATERIAL)identifier;
-					if (((ObtainMaterial)currQuest).materialToObtain == material) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
 	}
     #endregion
 
