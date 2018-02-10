@@ -29,7 +29,11 @@ namespace ECS {
             raceComponent.restRegenAmount = EditorGUILayout.IntField("Rest Regeneration Amount: ", raceComponent.restRegenAmount);
 
             SerializedProperty serializedProperty = serializedObject.FindProperty("bodyParts");
-			EditorGUILayout.PropertyField(serializedProperty, true);
+            EditorGUILayout.PropertyField(serializedProperty, true);
+            //serializedObject.ApplyModifiedProperties();
+
+            SerializedProperty serializedTags = serializedObject.FindProperty("tags");
+			EditorGUILayout.PropertyField(serializedTags, true);
 			serializedObject.ApplyModifiedProperties();
 
             if (GUILayout.Button("Save Race Settings")) {
