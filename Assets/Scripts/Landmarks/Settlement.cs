@@ -70,7 +70,7 @@ public class Settlement : BaseLandmark {
 		ScheduleUpdateAvailableMaterialsToGet ();
 		ScheduleUpdateNeededMaterials ();
 		ScheduleMonthlyQuests ();
-		DecideCharacterToCreate(); //Start Character Creation Process
+		TrainCharacterInSettlement(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
     public override void UnoccupyLandmark() {
@@ -115,10 +115,13 @@ public class Settlement : BaseLandmark {
 				return;
 			}
 		}
-		GameDate createCharacterDate = new GameDate(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year);
-		SchedulingManager.Instance.AddEntry(createCharacterDate.month, createCharacterDate.day, createCharacterDate.year, () => TrainCharacterInSettlement());
+		ScheduleTrainCharacter ();
 	}
-
+	private void ScheduleTrainCharacter(){
+		GameDate dueDate = new GameDate(GameManager.Instance.month, 2, GameManager.Instance.year);
+		dueDate.AddMonths (1);
+		SchedulingManager.Instance.AddEntry(dueDate, () => TrainCharacterInSettlement());
+	}
     /*
      At the start of the month, the settlement will
      decide what character class and role to create.
@@ -224,7 +227,7 @@ public class Settlement : BaseLandmark {
 			if(materialToUse != MATERIAL.NONE){
 				ReduceTotalFoodCount (combinedProduction.foodCost);
 				AdjustPopulation (-combinedProduction.civilianCost);
-				AdjustMaterial (materialToUse, combinedProduction.resourceCost);
+				AdjustMaterial (materialToUse, -combinedProduction.resourceCost);
 
 				AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + Utilities.NormalizeString (charClass.ToString ()));
 				GameDate trainCharacterDate = GameManager.Instance.Today ();
