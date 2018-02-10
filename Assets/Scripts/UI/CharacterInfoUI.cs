@@ -73,7 +73,12 @@ public class CharacterInfoUI : UIMenu {
 		}
 
 		text += "\nFaction: " + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
-		text += ",    Village: " + currentlyShowingCharacter.home.urlName;
+        text += ",    Village: ";
+        if (currentlyShowingCharacter.home != null) {
+            text += currentlyShowingCharacter.home.urlName;
+        } else {
+            text += "NONE";
+        }
         text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
 		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
