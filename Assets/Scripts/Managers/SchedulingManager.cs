@@ -12,7 +12,7 @@ public class SchedulingManager : MonoBehaviour {
 	void Awake(){
 		Instance = this;
 	}
-	void Start(){
+	public void StartScheduleCalls(){
 		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		Messenger.AddListener ("OnDayEnd", CheckSchedule);
 	}

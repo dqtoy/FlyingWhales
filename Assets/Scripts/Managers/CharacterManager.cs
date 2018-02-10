@@ -374,6 +374,23 @@ public class CharacterManager : MonoBehaviour {
 	public void SchedulePrisonerConversion(){
 		GameDate newSched = GameManager.Instance.Today ();
 		newSched.AddDays (7);
+		SchedulingManager.Instance.AddEntry (newSched, () => PrisonerConversion ());
+	}
+	private void PrisonerConversion(){
+		int allPrisonersWorldwide = FactionManager.Instance.allFactions.Sum (x => x.settlements.Sum (y => y.prisoners.Count));
+		if(allPrisonersWorldwide > 0){
+			int chance = UnityEngine.Random.Range (0, 100);
+			float value = (float)allPrisonersWorldwide * 0.2f;
+
+			if(chance < value){
+				Faction faction = FactionManager.Instance.allFactions [UnityEngine.Random.Range (0, FactionManager.Instance.allFactions.Count)];
+				Settlement settlement = faction.settlements [UnityEngine.Random.Range (0, faction.settlements.Count)];
+				ECS.Character characterToBeConverted = settlement.prisoners [UnityEngine.Random.Range (0, settlement.prisoners.Count)];
+				characterToBeConverted.ConvertToFaction ();
+			}
+		}
+
+		SchedulePrisonerConversion ();
 	}
 	#endregion
 }

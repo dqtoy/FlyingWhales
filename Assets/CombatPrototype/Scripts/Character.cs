@@ -1125,10 +1125,20 @@ namespace ECS {
 			    break;
 			}
 		}
-
-		public void ChangeRole(CHARACTER_ROLE role){
+		public void ChangeRole(){
 			//TODO: Things to do when a character changes role
-			AssignRole(role);
+
+//			AssignRole(role);
+			if(_raceSetting.tags.Contains(CHARACTER_TAG.SAPIENT)){
+				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.WORKER;
+				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this._faction, (Settlement)this._home);
+				if (characterRoleProductionDictionary.GetTotalOfWeights () > 0) {
+					roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights ();
+				}
+				AssignRole(roleToCreate);
+			}else{
+				AssignRole (CHARACTER_ROLE.TAMED_BEAST);
+			}
 		}
 		#endregion
 		#region Character Class
@@ -1603,6 +1613,18 @@ namespace ECS {
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
 			}
 			SetPrisoner (false, null);
+		}
+		public void ConvertToFaction(){
+			BaseLandmark prison = (BaseLandmark)_isPrisonerOf;
+			Faction faction = prison.owner;
+			SetFaction (faction);
+			SetHome (prison);
+			prison.AddCharacterToLocation(this, false);
+			prison.AddCharacterHomeOnLandmark(this);
+			ChangeRole ();
+			prison.owner.AddNewCharacter(this);
+			AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString ());
+			prison.AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString ());
 		}
 		#endregion
 
