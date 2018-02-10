@@ -110,6 +110,9 @@ public class Region {
     internal Faction owner {
         get { return _centerOfMass.landmarkOnTile.owner; } //The faction that owns this region
     }
+    internal BaseLandmark mainLandmark {
+        get { return _centerOfMass.landmarkOnTile; }
+    }
     #endregion
 
     public Region(HexTile centerOfMass) {

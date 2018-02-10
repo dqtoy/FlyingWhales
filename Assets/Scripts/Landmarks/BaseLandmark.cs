@@ -542,10 +542,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 			_neededMaterials.Add (production [i], MATERIAL.NONE);
 		}
 	}
-
-	internal void AdjustMaterial(MATERIAL material, int amount){
+	internal virtual void AdjustMaterial(MATERIAL material, int amount){
 		_materialsInventory [material].count += amount;
-        _materialsInventory[material].count = Mathf.Clamp(_materialsInventory[material].count, 0, _materialsInventory[material].maximumStorage);
+        _materialsInventory[material].count = Mathf.Max(_materialsInventory[material].count, 0);
 	}
 	internal void SetMaterial(MATERIAL material, int amount){
 		_materialsInventory [material].count = amount;
@@ -588,10 +587,65 @@ public class BaseLandmark : ILocation, TaskCreator {
 			}
 		}
 	}
-	#endregion
+    internal bool HasAvailableMaterial(MATERIAL material, int amount) {
+        if(_materialsInventory[material].count >= amount) {
+            return true;
+        }
+        return false;
+    }
+    /*
+     Can this landmark afford to construct a structure?
+         */
+    public bool CanAffordConstruction(Construction constructionData) {
+        if (GetTotalFoodCount() < constructionData.production.foodCost) {
+            return false; //this landmark does not have enough food to build the structure
+        }
+        if(civilians < constructionData.production.civilianCost) {
+            return false; //this landmark does not have enough civilians to build the structure
+        }
+        if(GetMaterialForConstruction(constructionData) == MATERIAL.NONE) {
+            return false; //the landmark does not have any materials that can build the structure
+        }
+        return true; //this landmark meets all the requirements
+    }
+    public MATERIAL GetMaterialForConstruction(Construction constructionData) {
+        List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
+        for (int i = 0; i < preferredMats.Count; i++) {
+            MATERIAL currMat = preferredMats[i];
+            if (constructionData.materials.Contains(currMat)) {
+                if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
+                    return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
+                }
+            }
+        }
+        return MATERIAL.NONE;
+    }
+    /*
+     This will reduce this landmarks assets based on
+     a given Production Cost and a material.
+         */
+    public void ReduceAssets(Production productionCost, MATERIAL materialToUse) {
+        AdjustPopulation(-productionCost.civilianCost);
+        ReduceTotalFoodCount(-productionCost.foodCost);
+        AdjustMaterial(materialToUse, -productionCost.resourceCost);
+    }
+    /*
+     This will reduce a landmarks assets based on Construction Data,
+     this will determine what material to use on it's own.
+         */
+    public void ReduceAssets(Construction constructionData) {
+        AdjustPopulation(-constructionData.production.civilianCost);
+        ReduceTotalFoodCount(-constructionData.production.foodCost);
+        MATERIAL matToUse = GetMaterialForConstruction(constructionData);
+        if(matToUse == MATERIAL.NONE) {
+            throw new System.Exception("There is no materials to build a " + constructionData.structure.name);
+        }
+        AdjustMaterial(matToUse, constructionData.production.resourceCost);
+    }
+    #endregion
 
-	#region Quests
-	public void AddNewQuest(Quest quest) {
+    #region Quests
+    public void AddNewQuest(Quest quest) {
 		if (!_activeQuests.Contains(quest)) {
 			_activeQuests.Add(quest);
 			_owner.AddNewQuest(quest);

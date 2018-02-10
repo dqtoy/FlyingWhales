@@ -27,7 +27,8 @@ public class ConsoleMenu : UIMenu {
             {"/force_accept_quest", AcceptQuest},
             {"/kill",  KillCharacter},
             {"/quest_cancel", CancelQuest},
-            {"/adjust_gold", AdjustGold}
+            {"/adjust_gold", AdjustGold},
+            {"/adjust_resources", AdjustResources}
         };
     }
 
@@ -270,6 +271,55 @@ public class ConsoleMenu : UIMenu {
         } else {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /adjust_gold");
+        }
+    }
+    #endregion
+
+    #region Resources
+    private void AdjustResources(string[] parameters) {
+        if (parameters.Length != 4) { //command, landmark, material, adjustment 
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /adjust_resources");
+            return;
+        }
+        string landmarkParameterString = parameters[1];
+        string materialParameterString = parameters[2];
+        string adjustmentParamterString = parameters[3];
+
+        int landmarkID;
+        MATERIAL material;
+        int adjustment;
+
+        BaseLandmark landmark = null;
+
+        bool isLandmarkParameterNumeric = int.TryParse(landmarkParameterString, out landmarkID);
+        if (isLandmarkParameterNumeric) {
+            landmark = LandmarkManager.Instance.GetLandmarkByID(landmarkID);
+        } else {
+            landmark = LandmarkManager.Instance.GetLandmarkByName(landmarkParameterString);
+        }
+
+        try {
+            material = (MATERIAL)Enum.Parse(typeof(MATERIAL), materialParameterString, true);
+        } catch {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /adjust_resources");
+            return;
+        }
+
+        bool isAdjustmentParamterNumeric = int.TryParse(adjustmentParamterString, out adjustment);
+        if (!isAdjustmentParamterNumeric) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /adjust_resources");
+            return;
+        }
+
+        if(landmark != null) {
+            landmark.AdjustMaterial(material, adjustment);
+            AddSuccessMessage("Added " + adjustment.ToString() + " " + material.ToString() + " to " + landmark.landmarkName + ". Total is " + landmark.materialsInventory[material].totalCount);
+        } else {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /adjust_resources");
         }
     }
     #endregion

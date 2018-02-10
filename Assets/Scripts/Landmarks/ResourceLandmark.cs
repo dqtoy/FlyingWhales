@@ -10,6 +10,9 @@ public class ResourceLandmark : BaseLandmark {
     public MATERIAL materialOnLandmark {
         get { return _materialOnLandmark; }
     }
+    public Materials materialData {
+        get { return _materialData; }
+    }
     #endregion
 
     public ResourceLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
@@ -54,6 +57,10 @@ public class ResourceLandmark : BaseLandmark {
             }
             AdjustMaterial(materialOnLandmark, producedResourceQuantity);
         }
+    }
+    internal override void AdjustMaterial(MATERIAL material, int amount) {
+        _materialsInventory[material].count += amount;
+        _materialsInventory[material].count = Mathf.Clamp(_materialsInventory[material].count, 0, _materialsInventory[material].maximumStorage);
     }
     #endregion
 }

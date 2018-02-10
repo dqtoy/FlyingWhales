@@ -7,6 +7,8 @@ public class BuildStructure : Quest {
 
     private BaseLandmark _target;
     private int _civilians;
+    private MATERIAL _materialToUse;
+    private Construction _constructionData;
 
     #region getters/setters
     public BaseLandmark target {
@@ -14,8 +16,10 @@ public class BuildStructure : Quest {
     }
     #endregion
 
-    public BuildStructure(TaskCreator createdBy, BaseLandmark target) : base(createdBy, QUEST_TYPE.BUILD_STRUCTURE) {
+    public BuildStructure(TaskCreator createdBy, BaseLandmark target, MATERIAL materialToUse, Construction constructionData) : base(createdBy, QUEST_TYPE.BUILD_STRUCTURE) {
         _target = target;
+        _materialToUse = materialToUse;
+        _constructionData = constructionData;
         _questFilters = new List<QuestFilter>() {
             new MustBeFaction((createdBy as InternalQuestManager).owner)
         };
@@ -24,31 +28,32 @@ public class BuildStructure : Quest {
     #region overrides
     public override void OnQuestPosted() {
         base.OnQuestPosted();
-        //reserve 5 civilians
-        _postedAt.AdjustReservedPopulation(5);
-        _postedAt.AdjustPopulation(-5);
+        _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
+        ////reserve 5 civilians
+        //_postedAt.AdjustReservedPopulation(5);
+        //_postedAt.AdjustPopulation(-5);
     }
     protected override void ConstructQuestLine() {
         base.ConstructQuestLine();
 
-        Collect collect = new Collect(this);
-        collect.InititalizeAction(5);
-        collect.onTaskActionDone += this.PerformNextQuestAction;
-        collect.onTaskDoAction += collect.BuildStructure;
+        //Collect collect = new Collect(this);
+        //collect.InititalizeAction(5);
+        //collect.onTaskActionDone += this.PerformNextQuestAction;
+        //collect.onTaskDoAction += collect.BuildStructure;
 
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
         goToLandmark.InititalizeAction(_target);
         goToLandmark.onTaskDoAction += goToLandmark.Generic;
         goToLandmark.onTaskActionDone += WaitForDays;
 
-        _questLine.Enqueue(collect);
+        //_questLine.Enqueue(collect);
         _questLine.Enqueue(goToLandmark);
     }
     #endregion
 
     private void WaitForDays() {
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddDays(5);
+        dueDate.AddDays(_constructionData.production.duration);
         SchedulingManager.Instance.AddEntry(dueDate, () => OccupyTarget());
     }
 
@@ -56,8 +61,9 @@ public class BuildStructure : Quest {
         //Build a new structure on that tile
         _target.OccupyLandmark((createdBy as InternalQuestManager).owner);
         _postedAt.AddLandmarkAsOwned(_target);
-        _target.AdjustPopulation(5);
-        _assignedParty.AdjustCivilians(-5);
+        //_target.AdjustPopulation(5);
+        _target.AdjustPopulation(_constructionData.production.civilianCost);
+        //_assignedParty.AdjustCivilians(-5);
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);
     }
 }
