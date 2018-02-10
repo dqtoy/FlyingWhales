@@ -73,7 +73,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         get { return _owner; }
     }
     public int totalPopulation {
-		get { return civiliansWithReserved + _location.CharactersCount(); }
+		get { return civiliansWithReserved + _location.CharactersCount() + CharactersCount(); }
     }
 	public int civilians {
 		get { return (int)_civilians; }
@@ -344,6 +344,17 @@ public class BaseLandmark : ILocation, TaskCreator {
             Party currParty = character as Party;
             currParty.SetSpecificLocation(this.location);//make the party's location, the hex tile that this landmark is on, meaning that the party exited the structure
         }
+    }
+    public int CharactersCount() {
+        int count = 0;
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            if (_charactersAtLocation[i] is Party) {
+                count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
+            } else {
+                count += 1;
+            }
+        }
+        return count;
     }
     #endregion
 

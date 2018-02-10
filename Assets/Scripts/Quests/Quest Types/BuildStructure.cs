@@ -55,9 +55,11 @@ public class BuildStructure : Quest {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(_constructionData.production.duration);
         SchedulingManager.Instance.AddEntry(dueDate, () => OccupyTarget());
+        _target.AddHistory(_assignedParty.name + " started building a " + Utilities.NormalizeString(_constructionData.structure.name));
     }
 
     private void OccupyTarget() {
+        _target.AddHistory(_assignedParty.name + " finished building a " + Utilities.NormalizeString(_constructionData.structure.name));
         //Build a new structure on that tile
         _target.OccupyLandmark((createdBy as InternalQuestManager).owner);
         _postedAt.AddLandmarkAsOwned(_target);
