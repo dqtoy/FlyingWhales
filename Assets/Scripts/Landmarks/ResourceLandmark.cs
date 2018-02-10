@@ -19,6 +19,7 @@ public class ResourceLandmark : BaseLandmark {
         _canBeOccupied = true;
         _materialOnLandmark = Utilities.ConvertLandmarkTypeToMaterial(specificLandmarkType);
         _materialData = MaterialManager.Instance.materialsLookup[_materialOnLandmark];
+		_landmarkName = Utilities.NormalizeString(_materialOnLandmark.ToString ());
     }
 
     #region Ownership
