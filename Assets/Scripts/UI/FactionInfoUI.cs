@@ -92,6 +92,14 @@ public class FactionInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
+
+		text += "\n[b]Production Preferences: [/b] ";
+		foreach (PRODUCTION_TYPE prodType in currentlyShowingFaction.productionPreferences.Keys) {
+			text += "\n" + prodType.ToString ();
+			for (int i = 0; i < currentlyShowingFaction.productionPreferences[prodType].prioritizedMaterials.Count; i++) {
+				text += "\n - " + Utilities.NormalizeString(currentlyShowingFaction.productionPreferences[prodType].prioritizedMaterials[i].ToString ());
+			}
+		}
 			
         factionInfoLbl.text = text;
         infoScrollView.UpdatePosition();
