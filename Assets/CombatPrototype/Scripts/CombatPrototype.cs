@@ -170,6 +170,16 @@ namespace ECS{
 		public void CombatSimulation(){
             ClearCombatLogs();
             AddCombatLog("Combat starts", SIDES.A);
+            string sideAChars = string.Empty;
+            string sideBChars = string.Empty;
+            for (int i = 0; i < charactersSideA.Count; i++) {
+                sideAChars += charactersSideA[i].name + "\n";
+            }
+            for (int i = 0; i < charactersSideB.Count; i++) {
+                sideBChars += charactersSideB[i].name + "\n";
+            }
+            Debug.Log("Side A : \n" + sideAChars);
+            Debug.Log("Side B : \n" + sideBChars);
             Dictionary<ECS.Character, int> characterActivationWeights = new Dictionary<ECS.Character, int> ();
             bool isInitial = true;
 			SetRowNumber (this.charactersSideA, 1);
@@ -221,7 +231,17 @@ namespace ECS{
 				}
 			}
 			AddCombatLog("Combat Ends", SIDES.A);
-			if(location != null && location is BaseLandmark){
+            sideAChars = string.Empty;
+            sideBChars = string.Empty;
+            for (int i = 0; i < charactersSideA.Count; i++) {
+                sideAChars += charactersSideA[i].name + "\n";
+            }
+            for (int i = 0; i < charactersSideB.Count; i++) {
+                sideBChars += charactersSideB[i].name + "\n";
+            }
+            Debug.Log("Side A : \n" + sideAChars);
+            Debug.Log("Side B : \n" + sideBChars);
+            if (location != null && location is BaseLandmark){
 				(location as BaseLandmark).AddHistory ("A combat took place!", this);
 			}
 			isDone = true;

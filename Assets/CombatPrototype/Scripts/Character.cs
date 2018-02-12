@@ -137,7 +137,7 @@ namespace ECS {
 		internal HexTile currLocation{
 			get { return this.specificLocation.tileLocation; }
 		}
-		internal CharacterAvatar avatar{
+		public CharacterAvatar avatar{
 			get { return _avatar; }
 		}
 		internal List<BodyPart> bodyParts{

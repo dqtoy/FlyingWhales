@@ -371,7 +371,18 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (!CombatAtLocation()) {
             this._currentCombat = null;
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                _charactersAtLocation[i].SetIsDefeated(false);
+                ICombatInitializer currItem = _charactersAtLocation[i];
+                currItem.SetIsDefeated(false);
+                if (currItem.avatar != null) {
+                    currItem.avatar.ResumeMovement();
+                }
+            }
+        } else {
+            for (int i = 0; i < _charactersAtLocation.Count; i++) {
+                ICombatInitializer currItem = _charactersAtLocation[i];
+                if (currItem.avatar != null) {
+                    currItem.avatar.PauseMovement();
+                }
             }
         }
     }

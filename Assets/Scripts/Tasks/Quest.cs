@@ -347,14 +347,14 @@ public class Quest : CharacterTask{
             _assignedParty.InviteCharactersOnLocation(CHARACTER_ROLE.ADVENTURER, _assignedParty.specificLocation);
         }
     }
-    /*
-     This will check which characters will choose to leave
-     the party. 
-         */
-	protected void RetaskParty(Action action) {
-        //Make party go to nearest non hostile settlement after a quest
-		_assignedParty.GoToNearestNonHostileSettlement(() => action());
-    }
+ //   /*
+ //    This will check which characters will choose to leave
+ //    the party. 
+ //        */
+	//protected void RetaskParty(Action action) {
+ //       //Make party go to nearest non hostile settlement after a quest
+	//	_assignedParty.GoToNearestNonHostileSettlement(() => action());
+ //   }
     /*
      Make the assigned party go back to the settlement that
      gave the quest.

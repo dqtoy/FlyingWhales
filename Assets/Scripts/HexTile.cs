@@ -2006,19 +2006,30 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		if(!CombatAtLocation()){
 			this._currentCombat = null;
 			for (int i = 0; i < _charactersAtLocation.Count; i++) {
-				_charactersAtLocation[i].SetIsDefeated (false);
-			}
-		}
+                ICombatInitializer currItem = _charactersAtLocation[i];
+                currItem.SetIsDefeated (false);
+                if (currItem.avatar != null) {
+                    currItem.avatar.ResumeMovement();
+                }
+            }
+        } else {
+            for (int i = 0; i < _charactersAtLocation.Count; i++) {
+                ICombatInitializer currItem = _charactersAtLocation[i];
+                if (currItem.avatar != null) {
+                    currItem.avatar.PauseMovement();
+                }
+            }
+        }
 	}
     public bool CombatAtLocation(){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i].InitializeCombat ()){
+			if(_charactersAtLocation[i].InitializeCombat()){
 				return true;
 			}
 		}
 		return false;
 	}
-    public ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer){
+    public ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer) {
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
 			if(_charactersAtLocation[i] != combatInitializer){
 				if(_charactersAtLocation[i] is Party){
@@ -2033,7 +2044,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		}
 		return null;
 	}
-    public void SetCurrentCombat (ECS.CombatPrototype combat){
+    public void SetCurrentCombat(ECS.CombatPrototype combat) {
 		_currentCombat = combat;
 	}
 	#endregion

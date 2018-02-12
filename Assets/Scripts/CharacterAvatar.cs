@@ -23,6 +23,7 @@ public class CharacterAvatar : PooledObject{
 
 	protected bool _hasArrived = false;
     private bool _isInititalized = false;
+    private bool _isMovementPaused = false;
 
     #region getters/setters
     public List<ECS.Character> characters {
@@ -37,7 +38,7 @@ public class CharacterAvatar : PooledObject{
         this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<ECS.Character>();
         AddNewCharacter(character);
-        _currLocation = character.specificLocation.tileLocation;
+        _currLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
@@ -47,7 +48,7 @@ public class CharacterAvatar : PooledObject{
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
-		_currLocation = party.specificLocation.tileLocation;
+		_currLocation = party.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
@@ -189,11 +190,21 @@ public class CharacterAvatar : PooledObject{
                 }
             }
 		}else{
-			NewMove();
+            if (!_isMovementPaused) {
+                NewMove();
+            }
 		}
     }
     internal void SetHasArrivedState(bool state) {
         _hasArrived = state;
+    }
+    internal void PauseMovement() {
+        _isMovementPaused = true;
+        smoothMovement.ForceStopMovement();
+    }
+    internal void ResumeMovement() {
+        _isMovementPaused = false;
+        NewMove();
     }
     #endregion
 

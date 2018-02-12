@@ -80,6 +80,9 @@ public class Party: IEncounterable, ICombatInitializer {
     public Dictionary<MATERIAL, int> materialInventory {
         get { return _materialInventory; }
     }
+    public CharacterAvatar avatar {
+        get { return _partyLeader.avatar; }
+    }
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
@@ -476,39 +479,42 @@ public class Party: IEncounterable, ICombatInitializer {
         if(_avatar == null) {
             _partyLeader.CreateNewAvatar();
         }
+        if(currentQuest.postedAt == null) {
+            throw new Exception("Posted at of quest " + currentQuest.questType.ToString() + " is null!");
+        }
         _avatar.SetTarget(currentQuest.postedAt);
         _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => currentQuest.TurnInQuest(taskResult));
     }
-    public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
-        //check first if the character is already at a non hostile settlement
-        if (currLocation.landmarkOnTile != null && currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
-            && currLocation.landmarkOnTile.owner != null) {
-            if (partyLeader.faction.id != currLocation.landmarkOnTile.owner.id) { //the party is not at a tile owned by the faction of the party leader
-                if (FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                    onReachSettlement();
-                    return;
-                }
-            } else {
-                onReachSettlement();
-                return;
-            }
-        }
-        //party is not on a non hostile settlement
-        List<Settlement> allSettlements = new List<Settlement>();
-        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
-            Tribe currTribe = FactionManager.Instance.allTribes[i];
-            if (partyLeader.faction.id == currTribe.id ||
-                FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, currTribe).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                allSettlements.AddRange(currTribe.settlements);
-            }
-        }
-        allSettlements = allSettlements.OrderBy(x => Vector2.Distance(currLocation.transform.position, x.location.transform.position)).ToList();
-        //if (_avatar == null) {
-        //    _partyLeader.CreateNewAvatar();
-        //}
-        _avatar.SetTarget(allSettlements[0].location);
-        _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
-    }
+    //public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
+    //    //check first if the character is already at a non hostile settlement
+    //    if (currLocation.landmarkOnTile != null && currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
+    //        && currLocation.landmarkOnTile.owner != null) {
+    //        if (partyLeader.faction.id != currLocation.landmarkOnTile.owner.id) { //the party is not at a tile owned by the faction of the party leader
+    //            if (FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+    //                onReachSettlement();
+    //                return;
+    //            }
+    //        } else {
+    //            onReachSettlement();
+    //            return;
+    //        }
+    //    }
+    //    //party is not on a non hostile settlement
+    //    List<Settlement> allSettlements = new List<Settlement>();
+    //    for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
+    //        Tribe currTribe = FactionManager.Instance.allTribes[i];
+    //        if (partyLeader.faction.id == currTribe.id ||
+    //            FactionManager.Instance.GetRelationshipBetween(partyLeader.faction, currTribe).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+    //            allSettlements.AddRange(currTribe.settlements);
+    //        }
+    //    }
+    //    allSettlements = allSettlements.OrderBy(x => Vector2.Distance(currLocation.transform.position, x.location.transform.position)).ToList();
+    //    //if (_avatar == null) {
+    //    //    _partyLeader.CreateNewAvatar();
+    //    //}
+    //    _avatar.SetTarget(allSettlements[0].location);
+    //    _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
+    //}
     /*
      This is the default action to be done when a 
      party returns to the quest giver settlement after a quest.

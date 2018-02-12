@@ -19,4 +19,13 @@ public class VillageHead : CharacterRole {
             QUEST_TYPE.BUILD_STRUCTURE
         };
     }
+
+    #region overrides
+    internal override int GetBuildStructureWeight(BuildStructure buildStructure) {
+        return 100;
+    }
+    internal override int GetObtainMaterialWeight(ObtainMaterial obtainMaterial) {
+        return 100;
+    }
+    #endregion
 }
