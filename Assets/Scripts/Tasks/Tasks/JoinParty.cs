@@ -22,8 +22,13 @@ public class JoinParty : CharacterTask {
     public override void PerformTask(ECS.Character character) {
         base.PerformTask(character);
         character.SetCurrentTask(this);
-        ((Quest)_partyToJoin.currentTask).SetWaitingStatus(true); //wait for the character that will join the party
-        StartGoingToParty();
+        _partyToJoin.AddPartyMember(character);
+        if(_partyToJoin.currentTask != null && _partyToJoin.currentTask is Quest) {
+            (_partyToJoin.currentTask as Quest).OnPartyMemberJoined();
+        }
+        EndTask(TASK_STATUS.SUCCESS);
+        //((Quest)_partyToJoin.currentTask).SetWaitingStatus(true); //wait for the character that will join the party
+        //StartGoingToParty();
     }
   //  protected override void ConstructQuestLine() {
   //      base.ConstructQuestLine();
@@ -46,23 +51,23 @@ public class JoinParty : CharacterTask {
   //  }
     #endregion
 
-	private void SuccessTask() {
-        _partyToJoin.PartyMemberHasArrived((ECS.Character)_createdBy);
-        _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
-        if (_partyToJoin.partyMembers.Count < 5) {
-            ((Quest)_partyToJoin.currentTask).CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
-        }
-        EndTask(TASK_STATUS.SUCCESS);
-	}
+	//private void SuccessTask() {
+ //       //_partyToJoin.PartyMemberHasArrived((ECS.Character)_createdBy);
+ //       _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
+ //       //if (_partyToJoin.partyMembers.Count < 5) {
+ //           //((Quest)_partyToJoin.currentTask).CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
+ //       //}
+ //       EndTask(TASK_STATUS.SUCCESS);
+	//}
 
-    private void StartGoingToParty() {
-        _partyToJoin.AddPartyMemberAsOnTheWay(_assignedCharacter);
+    //private void StartGoingToParty() {
+    //    //_partyToJoin.AddPartyMemberAsOnTheWay(_assignedCharacter);
 
-        GoToLocation goToLocation = new GoToLocation(this);
-        goToLocation.InititalizeAction(partyToJoin.specificLocation);
-        goToLocation.onTaskActionDone += SuccessTask;
-        goToLocation.onTaskDoAction += goToLocation.Generic;
+    //    GoToLocation goToLocation = new GoToLocation(this);
+    //    goToLocation.InititalizeAction(partyToJoin.specificLocation);
+    //    goToLocation.onTaskActionDone += SuccessTask;
+    //    goToLocation.onTaskDoAction += goToLocation.Generic;
 
-        goToLocation.DoAction(_assignedCharacter);
-    }
+    //    goToLocation.DoAction(_assignedCharacter);
+    //}
 }
