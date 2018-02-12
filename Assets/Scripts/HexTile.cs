@@ -222,6 +222,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	public ECS.CombatPrototype currentCombat{
 		get { return _currentCombat; }
 	}
+	public HexTile tileLocation{
+		get { return this; }
+	}
+	public LOCATION_IDENTIFIER locIdentifier{
+		get { return LOCATION_IDENTIFIER.HEXTILE; }
+	}
     #endregion
 
     #region Region Functions
@@ -1904,11 +1910,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 			_charactersAtLocation.Add(character);
 			if(character is ECS.Character){
                 ECS.Character currChar = character as ECS.Character;
-                currChar.SetLocation (this);
                 currChar.SetSpecificLocation(this);
 			}else if(character is Party){
                 Party currParty = character as Party;
-                currParty.SetLocation (this);
                 currParty.SetSpecificLocation(this);
 			}
 			if(startCombat){
@@ -1920,11 +1924,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		_charactersAtLocation.Remove(character);
 		if(character is ECS.Character){
             ECS.Character currChar = character as ECS.Character;
-            currChar.SetLocation(null);
             currChar.SetSpecificLocation(null);
         } else if(character is Party){
             Party currParty = character as Party;
-            currParty.SetLocation (null);
             currParty.SetSpecificLocation(null);
 		}
 	}

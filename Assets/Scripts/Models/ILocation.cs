@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public interface ILocation {
-
+	LOCATION_IDENTIFIER locIdentifier { get; }
+	HexTile tileLocation { get; }
     string locationName { get; }
     List<ICombatInitializer> charactersAtLocation { get; }
 

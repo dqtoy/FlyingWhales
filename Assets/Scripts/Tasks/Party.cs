@@ -23,7 +23,6 @@ public class Party: IEncounterable, ICombatInitializer {
     protected CharacterAvatar _avatar;
 
     protected ILocation _specificLocation;
-	protected HexTile _currLocation;
 
 	protected bool _isDefeated;
 	protected int _civilians;
@@ -67,7 +66,7 @@ public class Party: IEncounterable, ICombatInitializer {
         get { return _specificLocation; }
     }
     public HexTile currLocation {
-        get { return _currLocation; }
+		get { return this.specificLocation.tileLocation; }
     }
 	public bool isDefeated {
 		get { return _isDefeated; }
@@ -107,9 +106,6 @@ public class Party: IEncounterable, ICombatInitializer {
 
 	public void SetName(string name){
 		_name = name;
-	}
-	public void SetLocation(HexTile hextile){
-		_currLocation = hextile;
 	}
     public void SetSpecificLocation(ILocation specificLocation) {
         _specificLocation = specificLocation;
@@ -250,7 +246,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		if(_partyLeader.isDead){
 			while(_prisoners.Count > 0){
                 ECS.Character currPrisoner = _prisoners[0];
-                currPrisoner.SetLocation(currLocation);
+                currPrisoner.SetSpecificLocation(specificLocation);
                 currPrisoner.Death();
             }
 		}else{
@@ -264,7 +260,7 @@ public class Party: IEncounterable, ICombatInitializer {
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
             currMember.SetParty(null);
-            currMember.SetLocation(_currLocation);
+			currMember.SetSpecificLocation(specificLocation);
             if (_avatar != null && currMember != partyLeader) {
                 _avatar.RemoveCharacter(currMember);
             }
@@ -287,7 +283,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		if(_partyLeader.isDead){
 			while(_prisoners.Count > 0){
                 ECS.Character currPrisoner = _prisoners[0];
-                currPrisoner.SetLocation(currLocation);
+				currPrisoner.SetSpecificLocation(specificLocation);
                 currPrisoner.Death ();
 			}
 		}else{
@@ -309,10 +305,15 @@ public class Party: IEncounterable, ICombatInitializer {
         bool isPartyComplete = true;
         for (int i = 0; i < _partyMembers.Count; i++) {
             ECS.Character currMember = _partyMembers[i];
-			if (currMember.currLocation.id != this._currLocation.id) {
+			if (currMember.currLocation.id != this.currLocation.id) {
                 isPartyComplete = false;
                 break;
-            }
+			}else{
+				if(currMember.specificLocation.locIdentifier != currMember.specificLocation.locIdentifier){
+					isPartyComplete = false;
+					break;
+				}
+			}
         }
         if(_partyMembersOnTheWay.Count > 0) {
             isPartyComplete = false;
@@ -661,7 +662,7 @@ public class Party: IEncounterable, ICombatInitializer {
             if(partyMembers.Count > 0) {
                 //the party was defeated in combat, but there are still members that are alive,
                 //make them go back to the quest giver and have the quest cancelled.
-                this._specificLocation.RemoveCharacterFromLocation(this); //Remove the party from 
+                this.specificLocation.RemoveCharacterFromLocation(this); //Remove the party from 
                 if (_currentTask != null && _currentTask is Quest) {
                     (_currentTask as Quest).GoBackToQuestGiver(TASK_STATUS.CANCEL);
                 }
@@ -671,7 +672,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 if(_currentTask != null) {
                     _currentTask.EndTask(TASK_STATUS.FAIL);
                 }
-                this._specificLocation.RemoveCharacterFromLocation(this);
+                this.specificLocation.RemoveCharacterFromLocation(this);
                 PartyManager.Instance.RemoveParty(this);
             }
 		}else{

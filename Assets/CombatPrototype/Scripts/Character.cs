@@ -38,7 +38,6 @@ namespace ECS {
 		private Party _party;
 		private CharacterTask _currentTask;
         private ILocation _specificLocation;
-		private HexTile _currLocation;
 		private CharacterAvatar _avatar;
 
 		[SerializeField] private List<BodyPart> _bodyParts;
@@ -136,11 +135,7 @@ namespace ECS {
             }
         }
 		internal HexTile currLocation{
-			get {
-                HexTile tile = null;
-                tile = (party == null ? _currLocation : party.currLocation);
-                return tile;
-            }
+			get { return this.specificLocation.tileLocation; }
 		}
 		public CharacterAvatar avatar{
 			get { return _avatar; }
@@ -566,7 +561,7 @@ namespace ECS {
                 if (_isPrisoner){
 					PrisonerDeath ();
 				}
-				if (this.currLocation != null) {
+				if (this.specificLocation != null) {
                     this.specificLocation.RemoveCharacterFromLocation(this);
                     //this.currLocation.RemoveCharacterFromLocation(this);
                 }
@@ -1271,9 +1266,6 @@ namespace ECS {
 		#endregion
 
 		#region Location
-		public void SetLocation(HexTile location) {
-			_currLocation = location;
-		}
         public void SetSpecificLocation(ILocation specificLocation) {
             _specificLocation = specificLocation;
         }
@@ -1696,15 +1688,15 @@ namespace ECS {
 			if(_isPrisonerOf is Party){
 				wardenName = ((Party)_isPrisonerOf).name;
 				((Party)_isPrisonerOf).RemovePrisoner (this);
-				SetLocation (((Party)_isPrisonerOf).currLocation);
+				SetSpecificLocation (((Party)_isPrisonerOf).specificLocation);
 			}else if(_isPrisonerOf is ECS.Character){
 				wardenName = ((ECS.Character)_isPrisonerOf).name;
 				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
-				SetLocation (((ECS.Character)_isPrisonerOf).currLocation);
+				SetSpecificLocation (((ECS.Character)_isPrisonerOf).specificLocation);
 			}else if(_isPrisonerOf is BaseLandmark){
 				wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
-				SetLocation (((BaseLandmark)_isPrisonerOf).location);
+				SetSpecificLocation (((BaseLandmark)_isPrisonerOf));
 			}
 			AddHistory ("Released from the prison of " + wardenName);
 			SetPrisoner (false, null);

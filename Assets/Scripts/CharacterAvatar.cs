@@ -32,31 +32,13 @@ public class CharacterAvatar : PooledObject{
     public ILocation currLocation {
         get { return _currLocation; }
     }
-    public HexTile currTile {
-        get {
-            if (_currLocation is BaseLandmark) {
-                return (_currLocation as BaseLandmark).location;
-            } else {
-                return (_currLocation as HexTile);
-            }
-        }
-    }
-    public HexTile targetTile {
-        get {
-                if (targetLocation is BaseLandmark) {
-                    return (targetLocation as BaseLandmark).location;
-                } else {
-                    return (targetLocation as HexTile);
-                }
-            }
-    }
     #endregion
 
     internal virtual void Init(ECS.Character character) {
         this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<ECS.Character>();
         AddNewCharacter(character);
-        _currLocation = character.specificLocation;
+        _currLocation = character.specificLocation.tileLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
@@ -66,7 +48,7 @@ public class CharacterAvatar : PooledObject{
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
-        _currLocation = party.specificLocation;
+		_currLocation = party.specificLocation.tileLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
@@ -122,11 +104,7 @@ public class CharacterAvatar : PooledObject{
             } else {
                 faction = _characters[0].party.partyLeader.faction;
             }
-            if(targetLocation is BaseLandmark) {
-                PathGenerator.Instance.CreatePath(this, this.currTile, (targetLocation as BaseLandmark).location, pathFindingMode, faction);
-            } else {
-                PathGenerator.Instance.CreatePath(this, this.currTile, (targetLocation as HexTile), pathFindingMode, faction);
-            }
+			PathGenerator.Instance.CreatePath(this, this.currLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
             
             //this.path = PathGenerator.Instance.GetPath(this.currLocation, this.targetLocation, pathFindingMode, faction);
             //NewMove();
@@ -137,15 +115,15 @@ public class CharacterAvatar : PooledObject{
             return;
         }
         if (path != null && path.Count > 0) {
-            if (this.currTile == null) {
+            if (this.currLocation.tileLocation == null) {
                 throw new Exception("Curr location of avatar is null! Is Inititalized: " + _isInititalized.ToString());
             }
-			if(this.currTile.landmarkOnTile != null){
+			if(this.currLocation.tileLocation.landmarkOnTile != null){
 				if(_characters[0].party != null){
-					this.currTile.landmarkOnTile.AddHistory (_characters [0].party.name + " left.");
+					this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " left.");
 				}else{
 					for (int i = 0; i < _characters.Count; i++) {
-						this.currTile.landmarkOnTile.AddHistory (_characters [i].name + " left.");
+						this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [i].name + " left.");
 					}
 				}
 			}
@@ -158,7 +136,7 @@ public class CharacterAvatar : PooledObject{
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
-                    this.MakeCitizenMove(this.currTile, this.path[0]);
+                    this.MakeCitizenMove(this.currLocation.tileLocation, this.path[0]);
                 }
             }
         }
@@ -184,25 +162,25 @@ public class CharacterAvatar : PooledObject{
         HasArrivedAtTargetLocation();
     }
     internal virtual void HasArrivedAtTargetLocation() {
-        if (this.currTile == targetTile) {
+        if (this.currLocation.tileLocation == targetLocation.tileLocation) {
             if (!this._hasArrived) {
                 AddCharactersToLocation(targetLocation, _startCombatOnReachLocation);
                 _currLocation = targetLocation; //set location as the target location, in case the target location is a landmark
-                if (this.currTile.landmarkOnTile != null){
+                if (this.currLocation.tileLocation.landmarkOnTile != null){
 					string historyText = "Visited landmark ";
-					if (this.currTile.landmarkOnTile is Settlement) {
+					if (this.currLocation.tileLocation.landmarkOnTile is Settlement) {
 						historyText = "Arrived at settlement ";
 					}
 						
 					if(_characters[0].party != null){
-						this.currTile.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
+						this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
 						for (int i = 0; i < _characters.Count; i++) {
-							_characters [i].AddHistory (historyText + this.currTile.landmarkOnTile.landmarkName + ".");
+							_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
 						}
 					}else{
 						for (int i = 0; i < _characters.Count; i++) {
-							_characters [i].AddHistory (historyText + this.currTile.landmarkOnTile.landmarkName + ".");
-							this.currTile.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
+							_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
+							this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
 						}
 					}
 				}
@@ -243,11 +221,11 @@ public class CharacterAvatar : PooledObject{
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
     private void RevealRoads() {
-        this.currTile.SetRoadState(true);
+        this.currLocation.tileLocation.SetRoadState(true);
     }
     private void RevealLandmarks() {
-        if(this.currTile.landmarkOnTile != null) {
-            this.currTile.landmarkOnTile.SetHiddenState(false);
+        if(this.currLocation.tileLocation.landmarkOnTile != null) {
+            this.currLocation.tileLocation.landmarkOnTile.SetHiddenState(false);
         }
     }
     private void RemoveCharactersFromLocation(ILocation location) {

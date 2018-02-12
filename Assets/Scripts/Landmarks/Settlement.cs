@@ -92,7 +92,9 @@ public class Settlement : BaseLandmark {
 				if(roleToCreate != CHARACTER_ROLE.NONE){
 					if (Utilities.IsRoleClassless (roleToCreate)) {
 						classToCreate = CHARACTER_CLASS.NONE;
-						canTrainCharacter = true;
+						if(CanProduceClass(classToCreate, ref materialToUse)){
+							canTrainCharacter = true;
+						}
 					} else {
 						WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary (this, ref materialToUse);
 						if (characterClassProductionDictionary.Count > 0 && characterClassProductionDictionary.GetTotalOfWeights () > 0) {
@@ -177,7 +179,7 @@ public class Settlement : BaseLandmark {
          */
 	public bool CanProduceClass(CHARACTER_CLASS charClass, ref MATERIAL material) {
         TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
-        if (neededTech != TECHNOLOGY.NONE && _technologies[neededTech]) {
+        if (neededTech == TECHNOLOGY.NONE || _technologies[neededTech]) {
 			TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup [charClass];
 			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
 			for (int i = 0; i < trainingPreference.Count; i++) {
@@ -253,7 +255,7 @@ public class Settlement : BaseLandmark {
 		AdjustPopulation (-trainingRole.production.civilianCost);
 		AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
 
-		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + Utilities.NormalizeString (charClass.ToString ()) + ".");
+		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
 		GameDate trainCharacterDate = GameManager.Instance.Today ();
 		trainCharacterDate.AddDays (trainingRole.production.duration + trainingClass.production.duration);
 		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse));

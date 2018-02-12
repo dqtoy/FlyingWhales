@@ -222,7 +222,7 @@ public class CharacterRole {
 		if (prisoners != null && prisoners.Count > 0) {
 			for (int i = 0; i < prisoners.Count; i++) {
 				if(_character.faction == null || prisoners[i].faction == null || _character.faction.id != prisoners[i].faction.id){
-					dropPrisonersWeight += 5;
+					dropPrisonersWeight += 40;
 				}
 			}
 		}
