@@ -16,7 +16,7 @@ public class Party: IEncounterable, ICombatInitializer {
 
     protected ECS.Character _partyLeader;
     protected List<ECS.Character> _partyMembers; //Contains all party members including the party leader
-    protected List<ECS.Character> _partyMembersOnTheWay; //Party members that just joined, but are on the way to the party leaders location
+    //protected List<ECS.Character> _partyMembersOnTheWay; //Party members that just joined, but are on the way to the party leaders location
 	protected List<ECS.Character> _prisoners;
 
     protected CharacterTask _currentTask;
@@ -42,7 +42,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		get { return "[url=" + _partyLeader.id.ToString() + "_party]" + _name + "[/url]"; }
 	}
     public bool isFull {
-        get { return partyMembers.Count + _partyMembersOnTheWay.Count >= MAX_PARTY_MEMBERS; }
+        get { return partyMembers.Count >= MAX_PARTY_MEMBERS; }
     }
     public bool isOpen {
         get { return _isOpen; }
@@ -89,7 +89,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		SetName (RandomNameGenerator.Instance.GetAllianceName ());
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
-        _partyMembersOnTheWay = new List<ECS.Character>();
+        //_partyMembersOnTheWay = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character> ();
 		_isDefeated = false;
         Debug.Log(partyLeader.name + " has created " + _name);
@@ -143,13 +143,6 @@ public class Party: IEncounterable, ICombatInitializer {
                 }
             }
         }
-        //if (_partyMembers.Count >= MAX_PARTY_MEMBERS) {
-        //    if (onPartyFull != null) {
-        //        Debug.Log("Party " + _name + " is full!");
-        //        //Party is now full
-        //        onPartyFull(this);
-        //    }
-        //}
         if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
             Quest currQuest = (Quest)_currentTask;
             if (currQuest.onTaskInfoChanged != null) {
@@ -157,12 +150,12 @@ public class Party: IEncounterable, ICombatInitializer {
             }
         }
     }
-    public void AddPartyMemberAsOnTheWay(ECS.Character member) {
-        _partyMembersOnTheWay.Add(member);
-    }
-    public void PartyMemberHasArrived(ECS.Character member) {
-        _partyMembersOnTheWay.Remove(member);
-    }
+    //public void AddPartyMemberAsOnTheWay(ECS.Character member) {
+    //    _partyMembersOnTheWay.Add(member);
+    //}
+    //public void PartyMemberHasArrived(ECS.Character member) {
+    //    _partyMembersOnTheWay.Remove(member);
+    //}
     /*
      Remove a character from this party.
          */
@@ -319,9 +312,9 @@ public class Party: IEncounterable, ICombatInitializer {
 				}
 			}
         }
-        if(_partyMembersOnTheWay.Count > 0) {
-            isPartyComplete = false;
-        }
+        //if(_partyMembersOnTheWay.Count > 0) {
+        //    isPartyComplete = false;
+        //}
         return isPartyComplete;
     }
     public void SetOpenStatus(bool isOpen) {

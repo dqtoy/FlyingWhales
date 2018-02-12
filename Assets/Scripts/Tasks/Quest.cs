@@ -257,14 +257,9 @@ public class Quest : CharacterTask{
         _isExpired = true;
         //Quest has reached the expiry date
         if (_isAccepted) {
-            if (!_isWaiting) {//Check first if all the party members have arrived
-                //Quest has already been accepted, and all registered party members have arrived
-                StartQuestLine();
-            }
-        } else {
-            //Quest has not been accepted, remove quest from quest log
-            _createdBy.RemoveQuest(this);
-        }
+            //Quest has already been accepted, and all registered party members have arrived
+            StartQuestLine();
+        } 
     }
     protected void ScheduleQuestEnd(int days, TASK_STATUS result) {
         GameDate dueDate = GameManager.Instance.Today();
@@ -322,7 +317,6 @@ public class Quest : CharacterTask{
          */
     internal Party CreateNewPartyForQuest(ECS.Character partyLeader) {
         Party newParty = new Party(partyLeader);
-        //newParty.onPartyFull = OnPartyFull;
         AssignPartyToQuest(newParty);
 
 		if(newParty.specificLocation is BaseLandmark){
@@ -342,59 +336,29 @@ public class Quest : CharacterTask{
             _assignedParty.partyLeader.CreateNewAvatar();//Characters that have accepted a Quest should have icon already even if they are still forming party in the city
             _assignedParty.SetAvatar(_assignedParty.partyLeader.avatar);
         }
-        //onQuestEnd += _assignedParty.OnQuestEnd;
         if (_assignedParty.isFull) {
-            //Party is already full, check party members
-            CheckPartyMembers();
+            //Party is already full, Start the quest
+            StartQuestLine();
         } else {
             _assignedParty.SetOpenStatus(true); //Set party as open to members
-            //_assignedParty.onPartyFull = OnPartyFull;
             _assignedParty.InviteCharactersOnLocation(CHARACTER_ROLE.ADVENTURER, _assignedParty.specificLocation);
         }
     }
- //   /*
- //    This will check which characters will choose to leave
- //    the party. 
- //        */
-	//protected void RetaskParty(Action action) {
- //       //Make party go to nearest non hostile settlement after a quest
-	//	_assignedParty.GoToNearestNonHostileSettlement(() => action());
- //   }
+    /*
+     When a party member has joined the party,
+     check if the party is full, if it is, start the quest
+         */
+    internal void OnPartyMemberJoined() {
+        if (_assignedParty.isFull) {
+            StartQuestLine();
+        }
+    }
     /*
      Make the assigned party go back to the settlement that
      gave the quest.
          */
     internal void GoBackToQuestGiver(TASK_STATUS taskResult) {
         _assignedParty.GoBackToQuestGiver(taskResult);
-    }
-    internal void CheckPartyMembers() {
-        if (_assignedParty.isFull) { //if the assigned party is full
-            if (_assignedParty.AreAllPartyMembersPresent()) { //check if all the party members are present
-                //if they are all present, start the quest
-                SetWaitingStatus(false);
-                StartQuestLine();
-            } else {
-                SetWaitingStatus(true);
-            }
-        } else { //otherwise, if the party is not yet full
-            if (_isExpired) { //check if the quest has expired
-                //if the quest has expired
-                //check if all the registered members are present
-                if (_assignedParty.AreAllPartyMembersPresent()) {
-                    //if they are present, start the quest.
-                    SetWaitingStatus(false);
-                    StartQuestLine();
-                } else {
-                    //if not, wait for them
-                    SetWaitingStatus(true);
-                }
-            } else {
-                //if has not expired, and the party is not yet full, wait for participants until expiration
-                if (_assignedParty.AreAllPartyMembersPresent()) {
-                    SetWaitingStatus(false);
-                }
-            }
-        }
     }
     internal void SetWaitingStatus(bool isWaiting) {
         _isWaiting = isWaiting;
