@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public interface ILocation {
 
+    string locationName { get; }
     List<ICombatInitializer> charactersAtLocation { get; }
 
     void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true);

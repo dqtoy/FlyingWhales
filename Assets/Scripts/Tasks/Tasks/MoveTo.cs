@@ -30,6 +30,7 @@ public class MoveTo : CharacterTask {
         if (character.party != null) {
             character.party.SetCurrentTask(this);
         }
+        Debug.Log(character.name + " goes to " + _targetLocation.locationName);
         GoToTile();
     }
     #endregion

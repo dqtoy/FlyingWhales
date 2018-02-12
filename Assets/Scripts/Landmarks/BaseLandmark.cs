@@ -42,7 +42,10 @@ public class BaseLandmark : ILocation, TaskCreator {
     public int id {
         get { return _id; }
     }
-	public string landmarkName {
+    public string locationName {
+        get { return landmarkName; }
+    }
+    public string landmarkName {
 		get { return _landmarkName; }
 	}
 	public string urlName {

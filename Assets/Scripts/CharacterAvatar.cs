@@ -70,6 +70,20 @@ public class CharacterAvatar : PooledObject{
         _isInititalized = true;
     }
 
+    #region For Testing
+    [ContextMenu("Log Characters")]
+    public void LogPartyMembers() {
+        Debug.Log("========== Characters ==========");
+        if (characters[0].party != null) {
+            Debug.Log("Party: " + characters[0].party.name);
+        }
+        for (int i = 0; i < characters.Count; i++) {
+            ECS.Character currMember = characters[i];
+            Debug.Log(currMember.name);
+        }
+    }
+    #endregion
+
     #region ECS.Character Management
     public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {

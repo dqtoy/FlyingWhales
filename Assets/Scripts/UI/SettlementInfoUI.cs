@@ -143,6 +143,17 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+        text += "\n[b]Materials: [/b] ";
+        Dictionary<MATERIAL, MaterialValues> materials = currentlyShowingLandmark.materialsInventory;
+        if (materials.Sum(x => x.Value.totalCount) > 0) {
+            foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in materials) {
+                if (kvp.Value.totalCount > 0) {
+                    text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.totalCount;
+                }
+            }
+        } else {
+            text += "NONE";
+        }
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = currentlyShowingLandmark.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {
@@ -156,68 +167,56 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-        text += "\n[b]Materials: [/b] ";
-        Dictionary<MATERIAL, MaterialValues> materials = currentlyShowingLandmark.materialsInventory;
-        if (materials.Sum(x => x.Value.totalCount) > 0) {
-            foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in materials) {
-                if(kvp.Value.totalCount > 0) {
-                    text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.totalCount;
-                }
-            }
-        } else {
-            text += "NONE";
-        }
         if (currentlyShowingLandmark.landmarkEncounterable != null){
 			text += "\n[b]Encounterable: [/b]" + currentlyShowingLandmark.landmarkEncounterable.encounterName;
 		}
-		if(currentlyShowingLandmark is Settlement && currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingLandmark.owner != null){
-			text += "\n[b]Parties: [/b] ";
-			if (PartyManager.Instance.allParties.Count > 0) {
-				for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
-					Party currParty = PartyManager.Instance.allParties[i];
-					text += "\n" + currParty.urlName + " O: " + currParty.isOpen + " F: " + currParty.isFull;
-					if(currParty.currentTask != null) {
-                        if (currParty.currentTask.taskType == TASK_TYPE.QUEST) {
-                            Quest currQuest = (Quest)currParty.currentTask;
-                            text += " (" + currQuest.urlName + ")";
-                            if (currQuest.isDone) {
-                                text += "(Done)";
-                            } else {
-                                if (currParty.isOpen || currQuest.isWaiting) {
-                                    text += "(Forming Party)";
-                                } else {
-                                    text += "(In Progress)";
-                                    if (currQuest.currentAction != null) {
-                                        text += "(" + currQuest.currentAction.GetType().ToString() + ")";
-                                    }
-
-                                }
-                            }
-                        } else {
-                            text += " (" + currParty.currentTask.taskType.ToString() + ")";
-                            if (currParty.currentTask.isDone) {
-                                text += "(Done)";
-                            } else {
-                                text += "(In Progress)";
-                            }
-                        }
-					}
-					text += "\n     Leader: " + currParty.partyLeader.urlName;
-                    if(currParty.partyMembers.Count > 2) {
-                        text += "\n          Members:";
-                    }
-					for (int j = 0; j < currParty.partyMembers.Count; j++) {
-						ECS.Character currMember = currParty.partyMembers[j];
-						if(currMember.id != currParty.partyLeader.id) {
-							text += "\n          " + currMember.urlName;
-						}
-					}
-                    text += "\n";
-				}
-			} else {
-				text += "NONE";
-			}
-		}
+		//if(currentlyShowingLandmark is Settlement && currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingLandmark.owner != null){
+		//	text += "\n[b]Parties: [/b] ";
+		//	if (PartyManager.Instance.allParties.Count > 0) {
+		//		for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
+		//			Party currParty = PartyManager.Instance.allParties[i];
+		//			text += "\n" + currParty.urlName + " O: " + currParty.isOpen + " F: " + currParty.isFull;
+		//			if(currParty.currentTask != null) {
+  //                      if (currParty.currentTask.taskType == TASK_TYPE.QUEST) {
+  //                          Quest currQuest = (Quest)currParty.currentTask;
+  //                          text += " (" + currQuest.urlName + ")";
+  //                          if (currQuest.isDone) {
+  //                              text += "(Done)";
+  //                          } else {
+  //                              if (currParty.isOpen || currQuest.isWaiting) {
+  //                                  text += "(Forming Party)";
+  //                              } else {
+  //                                  text += "(In Progress)";
+  //                                  if (currQuest.currentAction != null) {
+  //                                      text += "(" + currQuest.currentAction.GetType().ToString() + ")";
+  //                                  }
+  //                              }
+  //                          }
+  //                      } else {
+  //                          text += " (" + currParty.currentTask.taskType.ToString() + ")";
+  //                          if (currParty.currentTask.isDone) {
+  //                              text += "(Done)";
+  //                          } else {
+  //                              text += "(In Progress)";
+  //                          }
+  //                      }
+		//			}
+		//			text += "\n     Leader: " + currParty.partyLeader.urlName;
+  //                  if(currParty.partyMembers.Count > 2) {
+  //                      text += "\n          Members:";
+  //                  }
+		//			for (int j = 0; j < currParty.partyMembers.Count; j++) {
+		//				ECS.Character currMember = currParty.partyMembers[j];
+		//				if(currMember.id != currParty.partyLeader.id) {
+		//					text += "\n          " + currMember.urlName;
+		//				}
+		//			}
+  //                  text += "\n";
+		//		}
+		//	} else {
+		//		text += "NONE";
+		//	}
+		//}
        
         settlementInfoLbl.text = text;
         infoScrollView.UpdatePosition();

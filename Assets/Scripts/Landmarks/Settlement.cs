@@ -528,7 +528,7 @@ public class Settlement : BaseLandmark {
         ITEM_TYPE itemType = Utilities.GetItemTypeOfEquipment(specificItem);
         MATERIAL matToUse = GetMaterialForItem(itemType, specificItem, character);
         if(matToUse != MATERIAL.NONE) {
-            AdjustMaterial(matToUse, GetCostToProduceItem(itemType, specificItem));
+            AdjustMaterial(matToUse, -GetCostToProduceItem(itemType, specificItem));
             character.AdjustGold(-ItemManager.Instance.GetGoldCostOfItem(itemType, matToUse));
             return ItemManager.Instance.CreateNewItemInstance(matToUse, specificItem);
         }

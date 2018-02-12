@@ -158,6 +158,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public List<HexTile> sameTagNeighbours;
 
 	#region getters/setters
+    public string locationName {
+        get { return name; }
+    }
 	public string urlName{
 		get { return "[url=" + this.id.ToString() + "_hextile]" + tileName + "[/url]"; }
 	}
