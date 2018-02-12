@@ -1110,4 +1110,8 @@ public enum PRODUCTION_TYPE{
 	TRAINING,
 }
 
+public enum LOCATION_IDENTIFIER{
+	LANDMARK,
+	HEXTILE,
+}
 

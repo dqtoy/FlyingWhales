@@ -114,6 +114,12 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public List<Quest> activeQuests {
 		get { return _activeQuests; }
 	}
+	public HexTile tileLocation{
+		get { return _location; }
+	}
+	public LOCATION_IDENTIFIER locIdentifier{
+		get { return LOCATION_IDENTIFIER.LANDMARK; }
+	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -326,12 +332,10 @@ public class BaseLandmark : ILocation, TaskCreator {
             if (character is ECS.Character) {
                 ECS.Character currChar = character as ECS.Character;
                 this.location.RemoveCharacterFromLocation(currChar);
-                currChar.SetLocation(this.location);
                 currChar.SetSpecificLocation(this);
             } else if (character is Party) {
                 Party currParty = character as Party;
                 this.location.RemoveCharacterFromLocation(currParty);
-                currParty.SetLocation(this.location);
                 currParty.SetSpecificLocation(this);
             }
             if (startCombat) {

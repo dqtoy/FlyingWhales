@@ -14,7 +14,7 @@ public class DungeonParty : Party {
 		if (!_partyMembers.Contains(member)) {
 			_partyMembers.Add(member);
 			member.SetParty(this);
-			this._currLocation.RemoveCharacterFromLocation (member);
+			this.specificLocation.RemoveCharacterFromLocation (member);
 		}
 	}
 	/*
@@ -31,7 +31,7 @@ public class DungeonParty : Party {
 		member.SetParty(null);
 		member.SetCurrentTask (null);
 		if (_partyMembers.Count <= 0) {
-			this._currLocation.RemoveCharacterFromLocation(this);
+			this.specificLocation.RemoveCharacterFromLocation(this);
 		}
 	}
 
