@@ -38,7 +38,7 @@ public class CharacterAvatar : PooledObject{
         this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<ECS.Character>();
         AddNewCharacter(character);
-        _currLocation = character.specificLocation.tileLocation;
+        _currLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
@@ -48,7 +48,7 @@ public class CharacterAvatar : PooledObject{
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
-		_currLocation = party.specificLocation.tileLocation;
+		_currLocation = party.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInititalized = true;
     }
