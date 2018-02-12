@@ -122,7 +122,11 @@ public class Party: IEncounterable, ICombatInitializer {
          */
     public virtual void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
-			member.AddHistory ("Joined party: " + this._name + ".");
+			if(member.id == partyLeader.id){
+				member.AddHistory ("Created party: " + this._name + ".");
+			}else{
+				member.AddHistory ("Joined party: " + this._name + ".");
+			}
 			CreateRelationshipsForNewMember(member);
             _partyMembers.Add(member);
             if(_avatar != null) {

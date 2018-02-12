@@ -318,6 +318,11 @@ public class Quest : CharacterTask{
     internal Party CreateNewPartyForQuest(ECS.Character partyLeader) {
         Party newParty = new Party(partyLeader);
         AssignPartyToQuest(newParty);
+
+		if(newParty.specificLocation is BaseLandmark){
+			BaseLandmark landmark = (BaseLandmark)newParty.specificLocation;
+			landmark.AddHistory (partyLeader.name + " created " + newParty.name + ".");
+		}
         return newParty;
     }
     /*

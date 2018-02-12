@@ -736,9 +736,9 @@ namespace ECS {
 				Armor armor = (Armor)item;
 				hasEquipped = TryEquipArmor(armor);
 			}
-			if(hasEquipped){
-				AddHistory ("Equipped " + item.itemName + ".");
-			}
+//			if(hasEquipped){
+//				AddHistory ("Equipped " + item.itemName + ".");
+//			}
 			return hasEquipped;
 		}
 

@@ -34,7 +34,7 @@ public class Rest : CharacterTask {
         Settlement targetSettlement = GetTargetSettlement();
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
 		if(targetSettlement == null){
-			goToLocation.InititalizeAction(character.currLocation);
+			goToLocation.InititalizeAction(character.specificLocation);
 		}else{
 			goToLocation.InititalizeAction(targetSettlement);
 		}

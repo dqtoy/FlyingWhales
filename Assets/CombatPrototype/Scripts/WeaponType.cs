@@ -9,7 +9,7 @@ namespace ECS {
 		public float damageRange;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements;
 		public List<Skill> skills;
-		public List<MATERIAL> weaponMaterials;
+//		public List<MATERIAL> weaponMaterials;
 		public List<string> attackSkills = new List<string>();
 		public List<string> healSkills = new List<string>();
 

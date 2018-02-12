@@ -15,11 +15,14 @@ namespace ECS{
 
 		private static void UpdateData(){
 			string weaponTypePath = "Assets/CombatPrototype/Data/WeaponTypes/";
+			GameObject productionManagerGO = GameObject.Find("Production");
+			ProductionManager productionManager = productionManagerGO.GetComponent<ProductionManager> ();
+
 			foreach (string weaponTypeFile in System.IO.Directory.GetFiles(weaponTypePath, "*.json")) {
 				WeaponType weaponType = JsonUtility.FromJson<WeaponType> (System.IO.File.ReadAllText (weaponTypeFile));
-				if(weaponType.weaponMaterials != null){
-					for (int i = 0; i < weaponType.weaponMaterials.Count; i++) {
-						Weapon weapon = CreateWeapon (weaponType.weaponMaterials[i], weaponType);
+				if(productionManager.weaponMaterials != null){
+					for (int i = 0; i < productionManager.weaponMaterials.Count; i++) {
+						Weapon weapon = CreateWeapon (productionManager.weaponMaterials[i], weaponType);
 						SaveWeapon (weapon);
 					}
 				}

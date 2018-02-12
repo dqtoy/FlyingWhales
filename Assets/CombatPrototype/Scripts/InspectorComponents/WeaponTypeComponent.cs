@@ -9,7 +9,7 @@ namespace ECS{
 		public float damageRange;
 		public List<Skill> skills;
 		public List<IBodyPart.ATTRIBUTE> equipRequirements;
-		public List<MATERIAL> weaponMaterials;
+//		public List<MATERIAL> weaponMaterials;
 
 		internal bool skillsFoldout;
 		internal SKILL_TYPE skillTypeToAdd;

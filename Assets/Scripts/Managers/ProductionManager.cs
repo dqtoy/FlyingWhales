@@ -16,6 +16,10 @@ public class ProductionManager : MonoBehaviour {
 	private Dictionary<CHARACTER_ROLE, TrainingRole> _trainingRolesLookup;
 	private Dictionary<CHARACTER_CLASS, TrainingClass> _trainingClassesLookup;
 
+	public List<MATERIAL> weaponMaterials;
+	public List<MATERIAL> armorMaterials;
+	public List<MATERIAL> constructionMaterials;
+	public List<MATERIAL> trainingMaterials;
 
 	#region getters/setters
 	public Dictionary<WEAPON_TYPE, WeaponProduction> weaponProductionsLookup{
@@ -108,19 +112,15 @@ public class ProductionManager : MonoBehaviour {
 	}
 
     internal bool CanMaterialBeUsedForConstruction(MATERIAL material) {
-        foreach (KeyValuePair<string, Construction> kvp in _constructionsLookup) {
-            if (kvp.Value.materials.Contains(material)) {
-                return true;
-            }
-        }
+		if (constructionMaterials.Contains(material)) {
+			return true;
+		}
         return false;
     }
     internal bool CanMaterialBeUsedForTraining(MATERIAL material) {
-        foreach (KeyValuePair<CHARACTER_CLASS, TrainingClass> kvp in _trainingClassesLookup) {
-            if (kvp.Value.materials.Contains(material)) {
-                return true;
-            }
-        }
+		if (trainingMaterials.Contains(material)) {
+			return true;
+		}
         return false;
     }
 }

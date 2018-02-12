@@ -647,7 +647,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
         for (int i = 0; i < preferredMats.Count; i++) {
             MATERIAL currMat = preferredMats[i];
-            if (constructionData.materials.Contains(currMat)) {
+            if (ProductionManager.Instance.constructionMaterials.Contains(currMat)) {
                 if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
                     return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
                 }

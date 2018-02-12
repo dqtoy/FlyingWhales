@@ -183,7 +183,7 @@ public class Settlement : BaseLandmark {
 			TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup [charClass];
 			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
 			for (int i = 0; i < trainingPreference.Count; i++) {
-				if(trainingClass.materials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count){
+				if(ProductionManager.Instance.trainingMaterials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count){
 					material = trainingPreference [i];
 					return true;
 				}
@@ -541,10 +541,10 @@ public class Settlement : BaseLandmark {
         List<MATERIAL> elligibleMaterials = new List<MATERIAL>();
         List<MATERIAL> preferredMaterials = new List<MATERIAL>();
         if (itemType == ITEM_TYPE.ARMOR) {
-            elligibleMaterials = ItemManager.Instance.GetArmorTypeData((ARMOR_TYPE)equipmentType).armorMaterials;
+            elligibleMaterials = ProductionManager.Instance.armorMaterials;
             preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials;
         } else if (itemType == ITEM_TYPE.WEAPON) {
-            elligibleMaterials = ItemManager.Instance.GetWeaponTypeData((WEAPON_TYPE)equipmentType).weaponMaterials;
+			elligibleMaterials = ProductionManager.Instance.weaponMaterials;
             preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.WEAPON].prioritizedMaterials;
         }
         for (int i = 0; i < preferredMaterials.Count; i++) {

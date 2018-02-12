@@ -17,9 +17,9 @@ namespace ECS {
 			armorTypeComponent.armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup ("Armor Type: ", armorTypeComponent.armorType);
 			armorTypeComponent.armorBodyType = (BODY_PART)EditorGUILayout.EnumPopup ("Armor Body Type: ", armorTypeComponent.armorBodyType);
 
-			SerializedProperty armorMaterial = serializedObject.FindProperty("armorMaterials");
-			EditorGUILayout.PropertyField(armorMaterial, true);
-			serializedObject.ApplyModifiedProperties ();
+//			SerializedProperty armorMaterial = serializedObject.FindProperty("armorMaterials");
+//			EditorGUILayout.PropertyField(armorMaterial, true);
+//			serializedObject.ApplyModifiedProperties ();
 
 			if (GUILayout.Button("Save Armor Type")) {
 				SaveArmorType(Utilities.NormalizeString(armorTypeComponent.armorType.ToString()));
@@ -45,7 +45,7 @@ namespace ECS {
 			ArmorType armorType = new ArmorType ();
 			armorType.armorType = armorTypeComponent.armorType;
 			armorType.armorBodyType = armorTypeComponent.armorBodyType;
-			armorType.armorMaterials = armorTypeComponent.armorMaterials;
+//			armorType.armorMaterials = armorTypeComponent.armorMaterials;
 
 			string jsonString = JsonUtility.ToJson(armorType);
 
