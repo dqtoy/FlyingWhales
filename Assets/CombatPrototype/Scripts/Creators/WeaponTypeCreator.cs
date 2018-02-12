@@ -22,9 +22,9 @@ namespace ECS {
 			EditorGUILayout.PropertyField(equipRequirement, true);
 			serializedObject.ApplyModifiedProperties ();
 
-			SerializedProperty weaponMaterial = serializedObject.FindProperty("weaponMaterials");
-			EditorGUILayout.PropertyField(weaponMaterial, true);
-			serializedObject.ApplyModifiedProperties ();
+//			SerializedProperty weaponMaterial = serializedObject.FindProperty("weaponMaterials");
+//			EditorGUILayout.PropertyField(weaponMaterial, true);
+//			serializedObject.ApplyModifiedProperties ();
 
 			weaponTypeComponent.skillsFoldout = EditorGUILayout.Foldout(weaponTypeComponent.skillsFoldout, "Skills");
 
@@ -77,7 +77,7 @@ namespace ECS {
 			weaponType.weaponType = weaponTypeComponent.weaponType;
 			weaponType.powerModifier = weaponTypeComponent.powerModifier;
 			weaponType.equipRequirements = weaponTypeComponent.equipRequirements;
-			weaponType.weaponMaterials = weaponTypeComponent.weaponMaterials;
+//			weaponType.weaponMaterials = weaponTypeComponent.weaponMaterials;
 			for (int i = 0; i < weaponTypeComponent.skills.Count; i++) {
 				weaponType.AddSkill (weaponTypeComponent.skills [i]);
 			}

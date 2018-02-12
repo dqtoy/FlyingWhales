@@ -15,11 +15,14 @@ namespace ECS{
 
 		private static void UpdateData(){
 			string armorTypePath = "Assets/CombatPrototype/Data/ArmorTypes/";
+			GameObject productionManagerGO = GameObject.Find("Production");
+			ProductionManager productionManager = productionManagerGO.GetComponent<ProductionManager> ();
+
 			foreach (string armorTypeFile in System.IO.Directory.GetFiles(armorTypePath, "*.json")) {
 				ArmorType armorType = JsonUtility.FromJson<ArmorType> (System.IO.File.ReadAllText (armorTypeFile));
-				if(armorType.armorMaterials != null){
-					for (int i = 0; i < armorType.armorMaterials.Count; i++) {
-						Armor armor = CreateArmor (armorType.armorMaterials[i], armorType);
+				if(productionManager.armorMaterials != null){
+					for (int i = 0; i < productionManager.armorMaterials.Count; i++) {
+						Armor armor = CreateArmor (productionManager.armorMaterials[i], armorType);
 						SaveArmor (armor);
 					}
 				}

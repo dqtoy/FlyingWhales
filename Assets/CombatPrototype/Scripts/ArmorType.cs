@@ -6,6 +6,6 @@ namespace ECS {
 	public class ArmorType {
 		public ARMOR_TYPE armorType;
 		public BODY_PART armorBodyType;
-		public List<MATERIAL> armorMaterials;
+//		public List<MATERIAL> armorMaterials;
 	}
 }
