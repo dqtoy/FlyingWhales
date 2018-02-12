@@ -83,6 +83,15 @@ public class RandomNameGenerator : MonoBehaviour {
 		"bay", "high", "bourne", "helm", "frost", "mouth", "dusk", "wild", "ness", "dread", "warts", "nook", "spire", "steep", "frey", "fort"
 	};
 
+	private string[] baseTileNames = new string[]{
+		"Aecianara", "Graggadalar", "Chussirah", "Strukimelan", "Slaeddithis", "Plobeonata", "Zeaconet", "Ceapiarial", "Inniariel", "Oseotara", "Kruziven", "Creokkiogarth", "Gloyiarial", "Pephadin", "Wubegus",
+		"Uqupia", "Vreakkezan", "Kriaggagarth", "Craepenet", "Caeqarus", "Iobeocion", "Headragana", "Jiacrariel", "Yidrelan", "Sleatania", "Edramar", "Abbedran", "Stassuspea", "Gruhorene", "Paddiriel",
+		"Eddiothis", "Olasia", "Chommagarth", "Luveaxath", "Pollonor", "Criassatuary", "Bresarea", "Heappeala", "Tiacrithaer", "Iodorune", "Annetika", "Waeqiomond", "Goglalan", "Caecasia", "Ashocia",
+		"Chiafoxus", "Bruniothis", "Fliayetha", "Ugrimund", "Ialisia", "Ioppeamos", "Heahearia", "Iocearim", "Aereaphere", "Eachemar", "Ostreatara", "Acliovar", "Eollezan", "Siagrarath", "Flioddearea",
+		"Staebbiaphere", "Teastrelar", "Ximiathra", "Wokkelar", "Umular", "Iossaque", "Kloddenet", "Ecether", "Greaxoque", "Ioweotha", "Tatatope", "Funiomond", "Riocrituary", "Dreohasos", "Eossigana",
+		"Kreaqiodin", "Meammeaspea", "Bresalan", "Struledore", "Ihorynn", "Bleagirah", "Heanniodu", "Zemmolas", "Cistiapia", "Ottelon", "Heomiorim", "Rummemos", "Wreassiogana", "Accanara", "Wreoddiaryon"
+	};
+
 	#region Alliance
 	private string[] allianceType = new string[]{
 		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
@@ -139,6 +148,7 @@ public class RandomNameGenerator : MonoBehaviour {
     Sobriquet.Generator generatedElvenFemaleNames;
     Sobriquet.Generator generatedElvenMaleNames;
 	Sobriquet.Generator generatedAncientRuinNames;
+	Sobriquet.Generator generatedTileNames;
 
     private List<string> humanKingdomNames;
     private List<string> humanSurnames;
@@ -146,6 +156,7 @@ public class RandomNameGenerator : MonoBehaviour {
     private List<string> elvenFemaleNames;
     private List<string> elvenMaleNames;
 	private List<string> ancientRuinNames;
+	private List<string> tileNames;
 
     void Awake(){
 		Instance = this;
@@ -157,6 +168,7 @@ public class RandomNameGenerator : MonoBehaviour {
         generatedElvenMaleNames = new Sobriquet.Generator(2, baseElvenMaleNames);
 
 		generatedAncientRuinNames = new Sobriquet.Generator (2, baseAncientRuinPrefixes);
+		generatedTileNames = new Sobriquet.Generator (2, baseTileNames);
 
         humanKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
@@ -216,6 +228,12 @@ public class RandomNameGenerator : MonoBehaviour {
 			ancientRuinNames.AddRange(generatedAncientRuinNames.AllRaw(i).Take(50000).ToList());
 		}
 		ancientRuinNames = Utilities.Shuffle(ancientRuinNames);
+
+		tileNames = new List<string>();
+		for (int i = 6; i <= 9; i++) {
+			tileNames.AddRange(generatedTileNames.AllRaw(i).Take(20000).ToList());
+		}
+		tileNames = Utilities.Shuffle(tileNames);
 
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
@@ -355,6 +373,15 @@ public class RandomNameGenerator : MonoBehaviour {
 		string name = ancientRuinNames [index];
 		ancientRuinNames.RemoveAt (index);
 		return name + baseAncientRuinSuffixes [UnityEngine.Random.Range (0, baseAncientRuinSuffixes.Length)];
+	}
+	public string GetTileName(){
+		if(tileNames.Count <= 0) {
+			tileNames = generatedTileNames.AllRaw(6).ToList();
+		}
+		int index = UnityEngine.Random.Range (0, tileNames.Count);
+		string name = tileNames [index];
+		tileNames.RemoveAt (index);
+		return name;
 	}
 //	public static string GenerateRandomName(){
 //		string firstName = firstNames [Random.Range (0, firstNames.Length)];
