@@ -324,6 +324,11 @@ public class Quest : CharacterTask{
         Party newParty = new Party(partyLeader);
         //newParty.onPartyFull = OnPartyFull;
         AssignPartyToQuest(newParty);
+
+		if(newParty.specificLocation is BaseLandmark){
+			BaseLandmark landmark = (BaseLandmark)newParty.specificLocation;
+			landmark.AddHistory (partyLeader.name + " created " + newParty.name + ".");
+		}
         return newParty;
     }
     /*
