@@ -30,6 +30,8 @@ public class Party: IEncounterable, ICombatInitializer {
 
     private const int MAX_PARTY_MEMBERS = 5;
 
+    private Dictionary<MATERIAL, int> _materialInventory;
+
     #region getters/setters
     public string encounterName {
 		get { return _name; }
@@ -76,9 +78,12 @@ public class Party: IEncounterable, ICombatInitializer {
     public Faction faction {
         get { return _partyLeader.faction; }
     }
+    public Dictionary<MATERIAL, int> materialInventory {
+        get { return _materialInventory; }
+    }
     #endregion
 
-	public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
+    public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
 		SetName (RandomNameGenerator.Instance.GetAllianceName ());
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
@@ -90,6 +95,7 @@ public class Party: IEncounterable, ICombatInitializer {
         partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
 
         AddPartyMember(_partyLeader);
+        ConstructMaterialInventory();
 
 		if(mustBeAddedToPartyList){
 			PartyManager.Instance.AddParty(this);
@@ -539,9 +545,17 @@ public class Party: IEncounterable, ICombatInitializer {
             return true;
         }
     }
+    public bool IsPartyWounded() {
+        for (int i = 0; i < _partyMembers.Count; i++) {
+            if (_partyMembers[i].currentHP < _partyMembers[i].maxHP) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
-	public ECS.Character GetCharacterByID(int id){
+    public ECS.Character GetCharacterByID(int id){
 		if(_partyLeader.id == id){
 			return _partyLeader;
 		}
@@ -671,12 +685,61 @@ public class Party: IEncounterable, ICombatInitializer {
 
 	#endregion
 
-	public bool IsPartyWounded(){
-		for (int i = 0; i < _partyMembers.Count; i++) {
-			if(_partyMembers[i].currentHP < _partyMembers[i].maxHP){
-				return true;
-			}
-		}
-		return false;
-	}
+    #region Materials
+    private void ConstructMaterialInventory() {
+        _materialInventory = new Dictionary<MATERIAL, int>();
+        MATERIAL[] allMaterials = Utilities.GetEnumValues<MATERIAL>();
+        for (int i = 0; i < allMaterials.Length; i++) {
+            MATERIAL currMat = allMaterials[i];
+            if (currMat != MATERIAL.NONE) {
+                _materialInventory.Add(currMat, 0);
+            }
+        }
+    }
+    public void AdjustMaterial(MATERIAL material, int amount) {
+        int newAmount = _materialInventory[material] + amount;
+        newAmount = Mathf.Max(0, newAmount);
+        _materialInventory[material] = newAmount;
+    }
+    /*
+     Transfer materials from this party to
+     a character.
+        */
+    public void TransferMaterials(ECS.Character transferTo, MATERIAL material, int amount) {
+        AdjustMaterial(material, -amount);
+        transferTo.AdjustMaterial(material, amount);
+    }
+    /*
+     Transfer materials from this party
+     to another party
+         */
+    public void TransferMaterials(Party party, MATERIAL material, int amount) {
+        AdjustMaterial(material, -amount);
+        party.AdjustMaterial(material, amount);
+    }
+    /*
+     Transfer ALL materials from this party to
+     a character.
+         */
+    public void TransferMaterials(ECS.Character transferTo) {
+        foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
+            MATERIAL currMat = kvp.Key;
+            int amount = kvp.Value;
+            AdjustMaterial(currMat, -amount);
+            transferTo.AdjustMaterial(currMat, amount);
+        }
+    }
+    /*
+     Transfer ALL materials from this party
+     to another party
+         */
+    public void TransferMaterials(Party otherParty) {
+        foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
+            MATERIAL currMat = kvp.Key;
+            int amount = kvp.Value;
+            AdjustMaterial(currMat, -amount);
+            otherParty.AdjustMaterial(currMat, amount);
+        }
+    }
+    #endregion
 }

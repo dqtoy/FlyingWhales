@@ -71,6 +71,8 @@ namespace ECS {
         //When the character should have a next action it should do after it's current one.
         private CharacterTask nextTaskToDo;
 
+        private Dictionary<MATERIAL, int> _materialInventory;
+
 		#region getters / setters
 		internal string name{
 			get { return this._name; }
@@ -242,6 +244,9 @@ namespace ECS {
 		public int civilians{
 			get { return _civilians; }
 		}
+        public Dictionary<MATERIAL, int> materialInventory {
+            get { return _materialInventory; }
+        }
         #endregion
 
 		public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -281,6 +286,7 @@ namespace ECS {
 			_history = new List<string> ();
 			combatHistory = new Dictionary<int, CombatPrototype> ();
 			_combatHistoryID = 0;
+            ConstructMaterialInventory();
             GenerateTraits();
 		}
 
@@ -1819,6 +1825,64 @@ namespace ECS {
 				_civilians = 0;
 			}
 		}
-		#endregion
+        #endregion
+
+        #region Materials
+        private void ConstructMaterialInventory() {
+            _materialInventory = new Dictionary<MATERIAL, int>();
+            MATERIAL[] allMaterials = Utilities.GetEnumValues<MATERIAL>();
+            for (int i = 0; i < allMaterials.Length; i++) {
+                MATERIAL currMat = allMaterials[i];
+                if(currMat != MATERIAL.NONE) {
+                    _materialInventory.Add(currMat, 0);
+                }
+            }
+        }
+        public void AdjustMaterial(MATERIAL material, int amount) {
+            int newAmount = _materialInventory[material] + amount;
+            newAmount = Mathf.Max(0, newAmount);
+            _materialInventory[material] = newAmount;
+        }
+        /*
+         Transfer materials from this character to
+         another character.
+             */
+        public void TransferMaterials(ECS.Character transferTo, MATERIAL material, int amount) {
+            AdjustMaterial(material, -amount);
+            transferTo.AdjustMaterial(material, amount);
+        }
+        /*
+         Transfer materials from this character
+         to a party
+             */
+        public void TransferMaterials(Party party, MATERIAL material, int amount) {
+            AdjustMaterial(material, -amount);
+            party.AdjustMaterial(material, amount);
+        }
+        /*
+         Transfer ALL materials from this character to
+         another character.
+             */
+        public void TransferMaterials(ECS.Character transferTo) {
+            foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
+                MATERIAL currMat = kvp.Key;
+                int amount = kvp.Value;
+                AdjustMaterial(currMat, -amount);
+                transferTo.AdjustMaterial(currMat, amount);
+            }
+        }
+        /*
+         Transfer ALL materials from this character
+         to a party
+             */
+        public void TransferMaterials(Party party) {
+            foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
+                MATERIAL currMat = kvp.Key;
+                int amount = kvp.Value;
+                AdjustMaterial(currMat, -amount);
+                party.AdjustMaterial(currMat, amount);
+            }
+        }
+        #endregion
     }
 }

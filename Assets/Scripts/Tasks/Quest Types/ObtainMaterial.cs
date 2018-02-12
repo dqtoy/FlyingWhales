@@ -66,6 +66,7 @@ public class ObtainMaterial : Quest {
 		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + ((Settlement)_createdBy).landmarkName);
 		((Settlement)_createdBy).AddHistory (_assignedParty.name + " transfered " + _materialToCollect.ToString () + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + ".");
 		((Settlement)_createdBy).AdjustMaterial (_materialToObtain, _materialToCollect);
-		EndQuest (TASK_STATUS.SUCCESS);
+        _assignedParty.AdjustMaterial(_materialToObtain, -_materialToCollect); //remove materials from the assigned party
+        EndQuest (TASK_STATUS.SUCCESS);
 	}
 }

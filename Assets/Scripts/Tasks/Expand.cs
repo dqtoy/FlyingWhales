@@ -38,6 +38,7 @@ public class Expand : Quest {
     }
     protected override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
+        _assignedParty.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost); //Give the resources to build the structure to the party
     }
     protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
@@ -90,8 +91,10 @@ public class Expand : Quest {
 
 	private void SuccessExpansion(){
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
-        //this._targetUnoccupiedTile.landmarkOnTile.AdjustPopulation (_assignedParty.civilians);
+
         _assignedParty.SetCivilians(0);
+        _assignedParty.AdjustMaterial(_materialToUse, -_constructionData.production.resourceCost); //Remove the resources used to build the structure from the party
+
         CameraMove.Instance.UpdateMinimapTexture ();
 		Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
 		ECS.Character villageHead = expandedTo.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
