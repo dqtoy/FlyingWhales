@@ -142,7 +142,7 @@ namespace ECS {
                 return tile;
             }
 		}
-		internal CharacterAvatar avatar{
+		public CharacterAvatar avatar{
 			get { return _avatar; }
 		}
 		internal List<BodyPart> bodyParts{

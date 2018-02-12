@@ -23,6 +23,7 @@ public class CharacterAvatar : PooledObject{
 
 	protected bool _hasArrived = false;
     private bool _isInititalized = false;
+    private bool _isMovementPaused = false;
 
     #region getters/setters
     public List<ECS.Character> characters {
@@ -211,11 +212,21 @@ public class CharacterAvatar : PooledObject{
                 }
             }
 		}else{
-			NewMove();
+            if (!_isMovementPaused) {
+                NewMove();
+            }
 		}
     }
     internal void SetHasArrivedState(bool state) {
         _hasArrived = state;
+    }
+    internal void PauseMovement() {
+        _isMovementPaused = true;
+        smoothMovement.ForceStopMovement();
+    }
+    internal void ResumeMovement() {
+        _isMovementPaused = false;
+        NewMove();
     }
     #endregion
 

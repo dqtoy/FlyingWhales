@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public interface ICombatInitializer {
+    CharacterAvatar avatar { get; }
 	bool isDefeated { get;}
 	int civilians { get;}
 	Faction faction { get;}

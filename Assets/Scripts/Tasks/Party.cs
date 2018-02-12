@@ -81,6 +81,9 @@ public class Party: IEncounterable, ICombatInitializer {
     public Dictionary<MATERIAL, int> materialInventory {
         get { return _materialInventory; }
     }
+    public CharacterAvatar avatar {
+        get { return _partyLeader.avatar; }
+    }
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
@@ -474,6 +477,9 @@ public class Party: IEncounterable, ICombatInitializer {
         Quest currentQuest = (Quest)currentTask;
         if(_avatar == null) {
             _partyLeader.CreateNewAvatar();
+        }
+        if(currentQuest.postedAt == null) {
+            throw new Exception("Posted at of quest " + currentQuest.questType.ToString() + " is null!");
         }
         _avatar.SetTarget(currentQuest.postedAt);
         _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => currentQuest.TurnInQuest(taskResult));
