@@ -561,7 +561,7 @@ namespace ECS {
                 if (_isPrisoner){
 					PrisonerDeath ();
 				}
-				if (this.currLocation != null) {
+				if (this.specificLocation != null) {
                     this.specificLocation.RemoveCharacterFromLocation(this);
                     //this.currLocation.RemoveCharacterFromLocation(this);
                 }
