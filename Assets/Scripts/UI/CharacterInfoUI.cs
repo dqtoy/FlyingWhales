@@ -155,7 +155,7 @@ public class CharacterInfoUI : UIMenu {
 			text += "NONE";
 		}
 		equipmentInfoLbl.text = text;
-		equipmentScrollView.ResetPosition ();
+		equipmentScrollView.UpdatePosition ();
 	}
 
 	private void UpdateInventoryInfo(){
@@ -177,7 +177,7 @@ public class CharacterInfoUI : UIMenu {
 			text += "NONE";
 		}
 		inventoryInfoLbl.text = text;
-		inventoryScrollView.ResetPosition ();
+		inventoryScrollView.UpdatePosition ();
 	}
 
 	private void UpdateRelationshipInfo(){
@@ -197,7 +197,7 @@ public class CharacterInfoUI : UIMenu {
 		}
 
 		relationshipsLbl.text = text;
-		relationshipsScrollView.ResetPosition();
+		relationshipsScrollView.UpdatePosition();
 	}
 	private void UpdateHistoryInfo(){
 		string text = string.Empty;
@@ -213,7 +213,7 @@ public class CharacterInfoUI : UIMenu {
 		}
 
 		historyLbl.text = text;
-		historyScrollView.ResetPosition();
+		historyScrollView.UpdatePosition();
 	}
 	public void CenterCameraOnCharacter() {
         CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);

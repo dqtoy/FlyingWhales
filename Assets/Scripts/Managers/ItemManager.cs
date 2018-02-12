@@ -22,6 +22,15 @@ public class ItemManager : MonoBehaviour {
 	public int crudeArmorDurabilityModifier;
 	public int exceptionalArmorDurabilityModifier;
 
+	#region getters/setters
+	public Dictionary<ARMOR_TYPE, ECS.ArmorType> armorTypeData{
+		get { return _armorTypeData; }
+	}
+	public Dictionary<WEAPON_TYPE, ECS.WeaponType> weaponTypeData{
+		get { return _weaponTypeData; }
+	}
+	#endregion
+
     private void Awake() {
         Instance = this;
     }

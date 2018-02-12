@@ -119,18 +119,42 @@ public class FactionManager : MonoBehaviour {
      Initital tribes should have a chieftain and a village head.
          */
     private void CreateInititalFactionCharacters(Faction faction) {
+		MATERIAL armorMaterialToUse = MATERIAL.NONE;
+		for (int i = 0; i < faction.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials.Count; i++) {
+			MATERIAL material = faction.productionPreferences [PRODUCTION_TYPE.ARMOR].prioritizedMaterials [i];
+			if(ProductionManager.Instance.armorMaterials.Contains(material)){
+				armorMaterialToUse = material;
+				break;
+			}
+		}
         Settlement baseSettlement = faction.settlements[0];
 		ECS.Character chieftain = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
+		EquipFullArmorSet (armorMaterialToUse, chieftain);
         ECS.Character villageHead = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
+		EquipFullArmorSet (armorMaterialToUse, villageHead);
 		ECS.Character worker = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.WORKER, "Classless");
+		EquipFullArmorSet (armorMaterialToUse, worker);
+
 
         faction.SetLeader(chieftain);
         baseSettlement.SetHead(villageHead);
 
         //Create 2 adventurers
-        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
-        baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
+		ECS.Character adventurer1 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
+		EquipFullArmorSet (armorMaterialToUse, adventurer1);
+		ECS.Character adventurer2 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
+		EquipFullArmorSet (armorMaterialToUse, adventurer2);
     }
+	private void EquipFullArmorSet(MATERIAL materialToUse, ECS.Character character){
+		if(materialToUse == MATERIAL.NONE){
+			return;
+		}
+		foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
+			string armorName = Utilities.NormalizeString(materialToUse.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
+			ECS.Item item = ItemManager.Instance.CreateNewItemInstance (armorName);
+			character.EquipItem (item);
+		}
+	}
     public Faction CreateNewFaction(System.Type factionType, RACE race) {
         Faction newFaction = null;
         if (factionType == typeof(Tribe)) {
