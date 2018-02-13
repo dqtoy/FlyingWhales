@@ -75,8 +75,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Faction owner {
         get { return _owner; }
     }
-    public int totalPopulation {
-		get { return civiliansWithReserved + _location.CharactersCount() + CharactersCount(); }
+    public virtual int totalPopulation {
+		get { return civiliansWithReserved + CharactersCount(); }
     }
 	public int civilians {
 		get { return (int)_civilians; }
@@ -353,9 +353,19 @@ public class BaseLandmark : ILocation, TaskCreator {
             currParty.SetSpecificLocation(this.location);//make the party's location, the hex tile that this landmark is on, meaning that the party exited the structure
         }
     }
-    public int CharactersCount() {
+	public int CharactersCount(bool includeHostile = false) {
         int count = 0;
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			if (includeHostile && this._owner != null) {
+				if(_charactersAtLocation[i].faction == null){
+					continue;
+				}else{
+					FactionRelationship fr = this._owner.GetRelationshipWith (_charactersAtLocation [i].faction);
+					if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+						continue;
+					}
+				}
+			}
             if (_charactersAtLocation[i] is Party) {
                 count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
             } else {

@@ -1954,7 +1954,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		}
 		return null;
 	}
-	public int CharactersCount(){
+	public int CharactersCount(bool includeHostile = false){
 		int count = 0;
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
 			if(_charactersAtLocation[i]	is Party){
