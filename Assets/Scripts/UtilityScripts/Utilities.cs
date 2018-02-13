@@ -410,14 +410,14 @@ public class Utilities : MonoBehaviour {
 
     public static WeightedDictionary<LANDMARK_TYPE> GetLandmarkWeights() {
         WeightedDictionary<LANDMARK_TYPE> landmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
-        MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
-        for (int i = 0; i < allMaterials.Length; i++) {
-            MATERIAL currMat = allMaterials[i];
-            if (currMat != MATERIAL.NONE) {
-                LANDMARK_TYPE landmarkType = ConvertMaterialToLandmarkType(currMat);
-                landmarkWeights.AddElement(landmarkType, MaterialManager.Instance.materialsLookup[currMat].weight);
-            }
-        }
+        //MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
+        //for (int i = 0; i < allMaterials.Length; i++) {
+        //    MATERIAL currMat = allMaterials[i];
+        //    if (currMat != MATERIAL.NONE) {
+        //        LANDMARK_TYPE landmarkType = ConvertMaterialToLandmarkType(currMat);
+        //        landmarkWeights.AddElement(landmarkType, MaterialManager.Instance.materialsLookup[currMat].weight);
+        //    }
+        //}
         //landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
         //landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
         landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 40);
@@ -425,6 +425,18 @@ public class Utilities : MonoBehaviour {
         //landmarkWeights.AddElement(LANDMARK_TYPE.MYSTERIOUS_TOWER, 6);
         //landmarkWeights.AddElement(LANDMARK_TYPE.SUMMONING_SHRINE, 15);
         return landmarkWeights;
+    }
+
+    public static WeightedDictionary<MATERIAL> GetMaterialWeights() {
+        WeightedDictionary<MATERIAL> materialWeights = new WeightedDictionary<MATERIAL>();
+        MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
+        for (int i = 0; i < allMaterials.Length; i++) {
+            MATERIAL currMat = allMaterials[i];
+            if (currMat != MATERIAL.NONE) {
+                materialWeights.AddElement(currMat, MaterialManager.Instance.materialsLookup[currMat].weight);
+            }
+        }
+        return materialWeights;
     }
 
     //public static Dictionary<WEIGHTED_ACTION, List<TRAIT>> weightedActionValidTraits = new Dictionary<WEIGHTED_ACTION, List<TRAIT>>() {

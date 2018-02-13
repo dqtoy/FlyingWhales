@@ -56,7 +56,8 @@ public class SettlementInfoUI : UIMenu {
 			text += "[b]Name:[/b] " + currentlyShowingLandmark.landmarkName + "\n";
 		}
 		text += "[b]Location:[/b] " + currentlyShowingLandmark.location.urlName;
-		text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
+        text += "\n[b]Material:[/b] " + currentlyShowingLandmark.location.materialOnTile.ToString();
+        text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
 		text += "\n[b]Is Occupied:[/b] " + currentlyShowingLandmark.isOccupied.ToString();
 		text += "\n[b]Is Hidden:[/b] " + currentlyShowingLandmark.isHidden.ToString();
 		text += "\n[b]Is Explored:[/b] " + currentlyShowingLandmark.isExplored.ToString();
@@ -79,7 +80,7 @@ public class SettlementInfoUI : UIMenu {
                         } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
                             text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name;
                         } else if (currQuest.questType == QUEST_TYPE.BUILD_STRUCTURE) {
-                            text += " " + ((BuildStructure)currQuest).target.location.name;
+                            text += " " + ((BuildStructure)currQuest).target.name;
 						} else if (currQuest.questType == QUEST_TYPE.OBTAIN_MATERIAL) {
 							text += " " + ((ObtainMaterial)currQuest).materialToObtain.ToString();
 						}
@@ -253,15 +254,15 @@ public class SettlementInfoUI : UIMenu {
             .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingLandmark);
         exploreBtnGO.SetActive(false);
     }
-    public void OnClickBuildStructureBtn() {
-        currentlyShowingLandmark.location.region.centerOfMass
-            .landmarkOnTile.owner.internalQuestManager.CreateBuildStructureQuest(currentlyShowingLandmark);
-        buildStructureBtnGO.SetActive(false);
-    }
+    //public void OnClickBuildStructureBtn() {
+    //    currentlyShowingLandmark.location.region.centerOfMass
+    //        .landmarkOnTile.owner.internalQuestManager.CreateBuildStructureQuest(currentlyShowingLandmark);
+    //    buildStructureBtnGO.SetActive(false);
+    //}
     private void ShowPlayerActions(){
 		expandBtnGO.SetActive (CanExpand());
 		exploreBtnGO.SetActive (CanExploreTile ());
-        buildStructureBtnGO.SetActive(CanBuildStructure());
+        //buildStructureBtnGO.SetActive(CanBuildStructure());
     }
 	private void HidePlayerActions(){
 		expandBtnGO.SetActive (false);
@@ -290,18 +291,18 @@ public class SettlementInfoUI : UIMenu {
 		return false;
 	}
 
-    private bool CanBuildStructure() {
-        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.location.region.owner != null 
-            && currentlyShowingLandmark.owner == null && !currentlyShowingLandmark.location.HasStructure()
-            && !currentlyShowingLandmark.location.region.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, currentlyShowingLandmark)
-            && currentlyShowingLandmark is ResourceLandmark) {
-            Settlement settlement = currentlyShowingLandmark.location.region.centerOfMass.landmarkOnTile as Settlement;
-            ResourceLandmark resourceLandmark = currentlyShowingLandmark as ResourceLandmark;
-            Construction constructionData = ProductionManager.Instance.GetConstruction(resourceLandmark.materialData.structure.name);
-            if (settlement.CanAffordConstruction(constructionData) && settlement.HasTechnology(Utilities.GetNeededTechnologyForMaterial(resourceLandmark.materialOnLandmark))) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //private bool CanBuildStructure() {
+    //    if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.location.region.owner != null 
+    //        && currentlyShowingLandmark.owner == null && !currentlyShowingLandmark.location.HasStructure()
+    //        && !currentlyShowingLandmark.location.region.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, currentlyShowingLandmark)
+    //        && currentlyShowingLandmark is ResourceLandmark) {
+    //        Settlement settlement = currentlyShowingLandmark.location.region.centerOfMass.landmarkOnTile as Settlement;
+    //        ResourceLandmark resourceLandmark = currentlyShowingLandmark as ResourceLandmark;
+    //        Construction constructionData = ProductionManager.Instance.GetConstruction(resourceLandmark.materialData.structure.name);
+    //        if (settlement.CanAffordConstruction(constructionData) && settlement.HasTechnology(Utilities.GetNeededTechnologyForMaterial(resourceLandmark.materialOnLandmark))) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
 }

@@ -148,10 +148,10 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void SetLandmarkObject(LandmarkObject obj) {
         _landmarkObject = obj;
         _landmarkObject.SetLandmark(this);
-        if(this is ResourceLandmark) {
-            SetHiddenState(false);
-            SetExploredState(true);
-        }
+        //if(this is ResourceLandmark) {
+        //    SetHiddenState(false);
+        //    SetExploredState(true);
+        //}
     }
 
     #region Connections

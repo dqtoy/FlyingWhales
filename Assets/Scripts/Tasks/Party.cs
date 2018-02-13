@@ -479,8 +479,13 @@ public class Party: IEncounterable, ICombatInitializer {
         if(currentQuest.postedAt == null) {
             throw new Exception("Posted at of quest " + currentQuest.questType.ToString() + " is null!");
         }
+        PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;
+        if(this.specificLocation is Settlement) {
+            pathMode = PATHFINDING_MODE.MAJOR_ROADS; //if this party is at a settlement, use major roads
+        }
+
         _avatar.SetTarget(currentQuest.postedAt);
-        _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => currentQuest.TurnInQuest(taskResult));
+        _avatar.StartPath(pathMode, () => currentQuest.TurnInQuest(taskResult));
     }
     //public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
     //    //check first if the character is already at a non hostile settlement

@@ -14,6 +14,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public int tileTag;
 	public string tileName;
     private Region _region;
+    private MATERIAL _materialOnTile = MATERIAL.NONE;
 
     [Space(10)]
     [Header("Biome Settings")]
@@ -228,6 +229,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	public LOCATION_IDENTIFIER locIdentifier{
 		get { return LOCATION_IDENTIFIER.HEXTILE; }
 	}
+    public MATERIAL materialOnTile {
+        get { return _materialOnTile; }
+    }
     #endregion
 
     #region Region Functions
@@ -278,39 +282,39 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #endregion
 
     #region Landmarks
-    //This will return the created road
-    internal List<HexTile> CreateRandomLandmark() {
-        List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
-        elligibleTilesToConnectTo.AddRange(this.region.landmarks.Select(x => x.location));
-        elligibleTilesToConnectTo.Add(this.region.centerOfMass);
+    internal void CreateRandomLandmark() {
+        LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkToCreate);
 
-        //Connect to the nearest landmark
-        elligibleTilesToConnectTo = new List<HexTile>(elligibleTilesToConnectTo.OrderBy(x => Vector2.Distance(this.transform.position, x.transform.position)));
-        for (int j = 0; j < elligibleTilesToConnectTo.Count; j++) {
-            HexTile currTileToConnectTo = elligibleTilesToConnectTo[j];
-            List<HexTile> path = PathGenerator.Instance.GetPath(this, currTileToConnectTo, PATHFINDING_MODE.LANDMARK_CONNECTION);
-            if (path != null) {
-                //Create new random landmark given weights
-                LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
-                LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkToCreate);
-                if (currTileToConnectTo.isHabitable) {
-                    RoadManager.Instance.ConnectLandmarkToRegion(this, currTileToConnectTo.region);
-                } else {
-                    RoadManager.Instance.ConnectLandmarkToLandmark(this, currTileToConnectTo);
-                }
+        //List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
+        //elligibleTilesToConnectTo.AddRange(this.region.landmarks.Select(x => x.location));
+        //elligibleTilesToConnectTo.Add(this.region.centerOfMass);
 
-                RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-                return path;
-            }
-        }
-        return null;
+        ////Connect to the nearest landmark
+        //elligibleTilesToConnectTo = new List<HexTile>(elligibleTilesToConnectTo.OrderBy(x => Vector2.Distance(this.transform.position, x.transform.position)));
+        //for (int j = 0; j < elligibleTilesToConnectTo.Count; j++) {
+        //    HexTile currTileToConnectTo = elligibleTilesToConnectTo[j];
+        //    List<HexTile> path = PathGenerator.Instance.GetPath(this, currTileToConnectTo, PATHFINDING_MODE.LANDMARK_CONNECTION);
+        //    if (path != null) {
+        //        //Create new random landmark given weights
+        //        LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
+        //        LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkToCreate);
+        //        if (currTileToConnectTo.isHabitable) {
+        //            RoadManager.Instance.ConnectLandmarkToRegion(this, currTileToConnectTo.region);
+        //        } else {
+        //            RoadManager.Instance.ConnectLandmarkToLandmark(this, currTileToConnectTo);
+        //        }
+
+        //        RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
+        //    }
+        //}
     }
     public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
         this.hasLandmark = true;
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-        if (landmarkType != LANDMARK_TYPE.CITY) {
-            //NOTE: Only create landmark object if landmark type is not a city!
+        if (landmarkType != LANDMARK_TYPE.CITY && baseLandmarkType != BASE_LANDMARK_TYPE.RESOURCE) {
+            //NOTE: Only create landmark object if landmark type is not a city and a resource!
             landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
@@ -361,33 +365,33 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #endregion
 
     #region Resource
-    internal void AssignSpecialResource(){
-		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
-			return;
-		}
-		int specialChance = UnityEngine.Random.Range (0, 100);
-        int specialChanceForBiome = 0;
+  //  internal void AssignSpecialResource(){
+		//if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
+		//	return;
+		//}
+		//int specialChance = UnityEngine.Random.Range (0, 100);
+  //      int specialChanceForBiome = 0;
 
-        if (this.biomeType == BIOMES.GRASSLAND || this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST) {
-            specialChanceForBiome = 5;
-        } else if (this.biomeType == BIOMES.DESERT) {
-            specialChanceForBiome = 3;
-        } else if (this.biomeType == BIOMES.TUNDRA || this.biomeType == BIOMES.SNOW) {
-            specialChanceForBiome = 3;
-        }
+  //      if (this.biomeType == BIOMES.GRASSLAND || this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST) {
+  //          specialChanceForBiome = 5;
+  //      } else if (this.biomeType == BIOMES.DESERT) {
+  //          specialChanceForBiome = 3;
+  //      } else if (this.biomeType == BIOMES.TUNDRA || this.biomeType == BIOMES.SNOW) {
+  //          specialChanceForBiome = 3;
+  //      }
 
-		if (specialChance < specialChanceForBiome) {
-			this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
-			if (this.specialResource != RESOURCE.NONE) {
-                resourceIcon.SetResource(specialResource);
-                GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
-                resource.transform.localPosition = Vector3.zero;
-                resource.transform.localScale = Vector3.one;
-            }
-		} else {
-			this.specialResource = RESOURCE.NONE;
-		}
-    }
+		//if (specialChance < specialChanceForBiome) {
+		//	this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
+		//	if (this.specialResource != RESOURCE.NONE) {
+  //              resourceIcon.SetResource(specialResource);
+  //              GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
+  //              resource.transform.localPosition = Vector3.zero;
+  //              resource.transform.localScale = Vector3.one;
+  //          }
+		//} else {
+		//	this.specialResource = RESOURCE.NONE;
+		//}
+  //  }
 	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
 		int totalChance = 0;
 		int lowerLimit = 0;
@@ -2047,5 +2051,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public void SetCurrentCombat(ECS.CombatPrototype combat) {
 		_currentCombat = combat;
 	}
-	#endregion
+    #endregion
+
+    #region Materials
+    public void SetMaterialOnTile(MATERIAL material) {
+        _materialOnTile = material;
+    }
+    #endregion
 }

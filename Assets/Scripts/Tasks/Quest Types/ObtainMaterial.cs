@@ -40,6 +40,7 @@ public class ObtainMaterial : Quest {
 
 		GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
 		goToLandmark.InititalizeAction(_target);
+        goToLandmark.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
 		goToLandmark.onTaskDoAction += goToLandmark.Generic;
 		goToLandmark.onTaskActionDone += PerformNextQuestAction;
 
@@ -50,7 +51,8 @@ public class ObtainMaterial : Quest {
 
 		GoToLocation goBackToSettlement = new GoToLocation(this); //Go to the picked region
 		goBackToSettlement.InititalizeAction(((Settlement)_createdBy));
-		goBackToSettlement.onTaskDoAction += goBackToSettlement.Generic;
+        goBackToSettlement.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
+        goBackToSettlement.onTaskDoAction += goBackToSettlement.Generic;
 		goBackToSettlement.onTaskActionDone += TransferMaterialToSettlement;
 
 		_questLine.Enqueue(goToLandmark);
