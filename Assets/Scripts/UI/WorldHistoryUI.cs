@@ -17,8 +17,6 @@ public class WorldHistoryUI : UIMenu {
     [SerializeField] private UIScrollView worldHistoryScrollView;
     [SerializeField] private UITable worldHistoryTable;
 
-    private bool isShowing = false;
-
     //Emblems
     private HashSet<Kingdom> allKingdomsInMenu;
     private List<KingdomEmblem> inactiveEmblems;
@@ -32,6 +30,7 @@ public class WorldHistoryUI : UIMenu {
     [SerializeField] private List<Kingdom> selectedKingdoms;
 
     internal override void Initialize() {
+        base.Initialize();
         allKingdomsInMenu = new HashSet<Kingdom>();
         inactiveEmblems = new List<KingdomEmblem>();
         activeEmblems = new Dictionary<Kingdom, KingdomEmblem>();

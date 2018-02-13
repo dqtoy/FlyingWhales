@@ -3,63 +3,51 @@ using System.Collections;
 
 public class QuestInfoUI : UIMenu {
 
-    internal bool isShowing = false;
-
     [SerializeField] private UILabel questInfoLbl;
     [SerializeField] private UIButton showQuestLogsBtn;
 
-    private Quest _currentlyShowingQuest;
-
 	public Quest currentlyShowingQuest{
-		get { return _currentlyShowingQuest; }
+		get { return _data as Quest; }
 	}
-
-    public void ShowMenu() {
-        isShowing = true;
-        this.gameObject.SetActive(true);
-        //        tweenPos.PlayForward();
-    }
-    public void HideMenu() {
-        isShowing = false;
-        //        tweenPos.PlayReverse();
-        this.gameObject.SetActive(false);
-        //        UpdateCharacterInfo();
+    public override void OpenMenu() {
+        base.OpenMenu();
+        UpdateQuestInfo();
     }
 
-    public void SetQuestAsShowing(Quest quest) {
-		if(_currentlyShowingQuest != null) {
-			_currentlyShowingQuest.onTaskInfoChanged = null;
+    public override void SetData(object data) {
+        if (currentlyShowingQuest != null) {
+            currentlyShowingQuest.onTaskInfoChanged = null;
         }
-		_currentlyShowingQuest = quest;
-        quest.onTaskInfoChanged = UpdateQuestInfo;
+        base.SetData(data);
+        (data as Quest).onTaskInfoChanged = UpdateQuestInfo;
         if (isShowing) {
             UpdateQuestInfo();
         }
     }
 
     public void UpdateQuestInfo() {
-		if (_currentlyShowingQuest == null) {
+		if (currentlyShowingQuest == null) {
             return;
         }
         string text = string.Empty;
-		text += "[b]Quest ID:[/b] " + _currentlyShowingQuest.id.ToString();
-		text += "\n[b]Quest Type:[/b] " + _currentlyShowingQuest.questType.ToString();
-		text += "\n[b]Done:[/b] " + _currentlyShowingQuest.isDone.ToString();
-		text += "\n[b]Is Waiting:[/b] " + _currentlyShowingQuest.isWaiting.ToString();
-		text += "\n[b]Is Expired:[/b] " + _currentlyShowingQuest.isExpired.ToString();
-		if (_currentlyShowingQuest.assignedParty == null) {
+		text += "[b]Quest ID:[/b] " + currentlyShowingQuest.id.ToString();
+		text += "\n[b]Quest Type:[/b] " + currentlyShowingQuest.questType.ToString();
+		text += "\n[b]Done:[/b] " + currentlyShowingQuest.isDone.ToString();
+		text += "\n[b]Is Waiting:[/b] " + currentlyShowingQuest.isWaiting.ToString();
+		text += "\n[b]Is Expired:[/b] " + currentlyShowingQuest.isExpired.ToString();
+		if (currentlyShowingQuest.assignedParty == null) {
             text += "\n[b]Assigned Party:[/b] NONE";
         } else {
-			text += "\n[b]Assigned Party:[/b] " + _currentlyShowingQuest.assignedParty.urlName;
-			if(_currentlyShowingQuest.currentAction == null) {
+			text += "\n[b]Assigned Party:[/b] " + currentlyShowingQuest.assignedParty.urlName;
+			if(currentlyShowingQuest.currentAction == null) {
                 text += "\n[b]Current Action:[/b] Forming Party";
             } else {
-				text += "\n[b]Current Action:[/b] " + _currentlyShowingQuest.currentAction.ToString();
+				text += "\n[b]Current Action:[/b] " + currentlyShowingQuest.currentAction.ToString();
             }
         }
         questInfoLbl.text = text;
 
-		if(_currentlyShowingQuest.taskLogs.Count > 0) {
+		if(currentlyShowingQuest.taskLogs.Count > 0) {
             //enable button
             showQuestLogsBtn.GetComponent<BoxCollider>().enabled = true;
             showQuestLogsBtn.SetState(UIButtonColor.State.Normal, true);
@@ -71,8 +59,7 @@ public class QuestInfoUI : UIMenu {
         }
 
     }
-
     public void ShowQuestLogs() {
-		UIManager.Instance.ShowQuestLog(_currentlyShowingQuest);
+		UIManager.Instance.ShowQuestLog(currentlyShowingQuest);
     }
 }

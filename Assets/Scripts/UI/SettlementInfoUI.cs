@@ -5,8 +5,6 @@ using System.Linq;
 
 public class SettlementInfoUI : UIMenu {
 
-    internal bool isShowing;
-
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
@@ -18,30 +16,33 @@ public class SettlementInfoUI : UIMenu {
     [SerializeField] private UIScrollView infoScrollView;
 	[SerializeField] private UIScrollView historyScrollView;
 
-    internal BaseLandmark currentlyShowingLandmark;
+    internal BaseLandmark currentlyShowingLandmark {
+        get { return _data as BaseLandmark; }
+    }
 
     internal override void Initialize() {
+        base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateSettlementInfo);
         tweenPos.AddOnFinished(() => UpdateSettlementInfo());
     }
 
-    public void ShowSettlementInfo() {
-        isShowing = true;
-		this.gameObject.SetActive (true);
-        infoScrollView.ResetPosition();
-        //      tweenPos.PlayForward();
-    }
-    public void HideSettlementInfo() {
-        isShowing = false;
-		this.gameObject.SetActive (false);
-		HidePlayerActions ();
-//      tweenPos.PlayReverse();
+    public override void OpenMenu() {
+        base.OpenMenu();
+        UpdateSettlementInfo();
     }
 
-    public void SetSettlementAsActive(BaseLandmark settlement) {
-        currentlyShowingLandmark = settlement;
-		UIManager.Instance.hexTileInfoUI.SetHexTileAsActive (settlement.location);
-		ShowPlayerActions ();
+    public override void ShowMenu() {
+        base.ShowMenu();
+        infoScrollView.ResetPosition();
+    }
+    public override void HideMenu() {
+        base.HideMenu();
+		HidePlayerActions();
+    }
+    public override void SetData(object data) {
+        base.SetData(data);
+        UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).location);
+        ShowPlayerActions();
         if (isShowing) {
             UpdateSettlementInfo();
         }
@@ -242,7 +243,7 @@ public class SettlementInfoUI : UIMenu {
 	}
 	public void OnClickCloseBtn(){
 //		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-		HideSettlementInfo ();
+		HideMenu ();
 	}
 
 	public void OnClickExpandBtn(){

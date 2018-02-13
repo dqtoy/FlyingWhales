@@ -3,8 +3,6 @@ using System.Collections;
 
 public class CombatLogsUI : UIMenu {
 
-    internal bool isShowing = false;
-
     [SerializeField] private UILabel combatLogsLbl;
 	[SerializeField] private UILabel sideALbl;
 	[SerializeField] private UILabel sideBLbl;

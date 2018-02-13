@@ -6,8 +6,6 @@ using System.Linq;
 
 public class ConsoleMenu : UIMenu {
 
-    public bool isShowing = false;
-
     private Dictionary<string, Action<string[]>> _consoleActions;
 
     private List<string> commandHistory;

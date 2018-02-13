@@ -5,34 +5,28 @@ using System.Linq;
 
 public class PartyInfoUI : UIMenu {
 
-    internal bool isShowing;
-
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel partyInfoLbl;
     [SerializeField] private UIScrollView infoScrollView;
 
-    internal Party currentlyShowingParty;
+    internal Party currentlyShowingParty {
+        get { return _data as Party; }
+    }
 
     internal override void Initialize() {
+        base.Initialize();
         Messenger.AddListener("UpdateUI", UpdatePartyInfo);
         tweenPos.AddOnFinished(() => UpdatePartyInfo());
     }
 
-    public void ShowPartyInfo() {
-        isShowing = true;
-		this.gameObject.SetActive (true);
-//        tweenPos.PlayForward();
+    public override void OpenMenu() {
+        base.OpenMenu();
+        UpdatePartyInfo();
     }
-    public void HidePartyInfo() {
-        isShowing = false;
-//        tweenPos.PlayReverse();
-		this.gameObject.SetActive (false);
-    }
-
-	public void SetPartyAsActive(Party party) {
-        currentlyShowingParty = party;
+    public override void SetData(object data) {
+        base.SetData(data);
         if (isShowing) {
             UpdatePartyInfo();
         }
@@ -101,8 +95,8 @@ public class PartyInfoUI : UIMenu {
 	public void CenterCameraOnParty() {
 		CameraMove.Instance.CenterCameraOn(currentlyShowingParty.currLocation.gameObject);
 	}
-	public void OnClickCloseBtn(){
-//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-		HidePartyInfo ();
-	}
+//	public void OnClickCloseBtn(){
+////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+//		HideMenu ();
+//	}
 }
