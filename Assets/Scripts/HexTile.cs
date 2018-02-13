@@ -160,7 +160,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 
 	#region getters/setters
     public string locationName {
-        get { return name; }
+        get { return tileName; }
     }
 	public string urlName{
 		get { return "[url=" + this.id.ToString() + "_hextile]" + tileName + "[/url]"; }
