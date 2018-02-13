@@ -178,7 +178,7 @@ namespace ECS {
 						combat.fledCharacters [i].party.GoBackToQuestGiver(TASK_STATUS.CANCEL);
 						break;
 					}else{
-						combat.fledCharacters [i].party.SetIsDefeated (false);
+						combat.fledCharacters [i].SetIsDefeated (false);
 						combat.fledCharacters [i].GoToNearestNonHostileSettlement (() => combat.fledCharacters [i].DetermineAction());
 					}
 				}
