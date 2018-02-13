@@ -672,7 +672,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 //The party was defeated in combat, and no one survived, mark the quest as 
                 //failed, so that other characters can try to do the quest.
                 if(_currentTask != null) {
-                    _currentTask.EndTask(TASK_STATUS.FAIL);
+                    _currentTask.EndTask(TASK_STATUS.CANCEL);
                 }
                 this.specificLocation.RemoveCharacterFromLocation(this);
                 PartyManager.Instance.RemoveParty(this);
@@ -727,6 +727,14 @@ public class Party: IEncounterable, ICombatInitializer {
     public void TransferMaterials(Party party, MATERIAL material, int amount) {
         AdjustMaterial(material, -amount);
         party.AdjustMaterial(material, amount);
+    }
+    /*
+    Transfer materials from this party
+    to a landmark
+        */
+    public void TransferMaterials(BaseLandmark landmark, MATERIAL material, int amount) {
+        AdjustMaterial(material, -amount);
+        landmark.AdjustMaterial(material, amount);
     }
     /*
      Transfer ALL materials from this party to
