@@ -38,7 +38,7 @@ public class Pillage : CharacterTask {
     private void GoToTargetLocation() {
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
         goToLocation.InititalizeAction(_target);
-        goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
+        goToLocation.SetPathfindingMode(PATHFINDING_MODE.NORMAL);
         goToLocation.onTaskActionDone += StartPillage;
         goToLocation.onTaskDoAction += goToLocation.Generic;
 
