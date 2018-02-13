@@ -92,7 +92,6 @@ public class Expand : Quest {
 	private void SuccessExpansion(){
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
 
-        _assignedParty.SetCivilians(0);
         _assignedParty.AdjustMaterial(_materialToUse, -_constructionData.production.resourceCost); //Remove the resources used to build the structure from the party
 
         CameraMove.Instance.UpdateMinimapTexture ();
@@ -104,8 +103,9 @@ public class Expand : Quest {
         foreach (KeyValuePair<MATERIAL, int> kvp in _foodBrought) {
             expandedTo.AdjustMaterial(kvp.Key, kvp.Value);
         }
-        expandedTo.AdjustPopulation(_constructionData.production.civilianCost);
+        expandedTo.AdjustPopulation(_assignedParty.civilians);
         expandedTo.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost);
+		_assignedParty.SetCivilians(0);
         AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);
         //EndQuest (TASK_RESULT.SUCCESS);

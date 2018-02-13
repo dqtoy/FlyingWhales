@@ -12,9 +12,9 @@ public class Settlement : BaseLandmark {
     private CHARACTER_ROLE roleToCreate;
 
     private ECS.Character _headOfSettlement;
+	private List<BaseLandmark> _ownedLandmarks;
 
     private List<Quest> _questBoard;
-    private List<BaseLandmark> _ownedLandmarks;
 	private WeightedDictionary<MATERIAL> _materialWeights;
 
     private const int CHARACTER_LIMIT = 10;
@@ -26,6 +26,9 @@ public class Settlement : BaseLandmark {
     public List<BaseLandmark> ownedLandmarks {
         get { return _ownedLandmarks; }
     }
+	public override int totalPopulation {
+		get { return civiliansWithReserved + CharactersCount() + this._ownedLandmarks.Sum(x => x.civiliansWithReserved); }
+	}
     #endregion
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
