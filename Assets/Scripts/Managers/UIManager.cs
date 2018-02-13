@@ -3299,6 +3299,13 @@ public class UIManager : MonoBehaviour {
 
     #region Menu History
     public void AddMenuToQueue(UIMenu menu, object data) {
+        UIMenuSettings latestSetting = _menuHistory.ElementAtOrDefault(0);
+        if(latestSetting != null) {
+            if(latestSetting.menu == menu && latestSetting.data == data) {
+                //the menu settings to be added are the same as the latest one, ignore.
+                return;
+            }
+        }
         _menuHistory.Add(new UIMenuSettings(menu, data));
         //string text = string.Empty;
         //for (int i = 0; i < _menuHistory.Count; i++) {
