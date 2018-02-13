@@ -269,13 +269,13 @@ public class Biomes : MonoBehaviour {
             currentHexTile.movementDays = 3;
         }
     }
-	internal void GenerateSpecialResources(){
-		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
-//			GameObject currentHexTileGO = GridMap.Instance.listHexes [i];
-			HexTile currentHexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
-			currentHexTile.AssignSpecialResource();
-		}
-	}
+//	internal void GenerateSpecialResources(){
+//		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+////			GameObject currentHexTileGO = GridMap.Instance.listHexes [i];
+//			HexTile currentHexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
+//			currentHexTile.AssignSpecialResource();
+//		}
+//	}
 	internal void DeactivateCenterPieces(){
 		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 //			GameObject currentHexTileGO = GridMap.Instance.listHexes [i];

@@ -90,8 +90,8 @@ public class FactionManager : MonoBehaviour {
         List<Region> elligibleRegions = new List<Region>();
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.landmarks.Where(x => x is ResourceLandmark && (x as ResourceLandmark).materialData.isEdible 
-            && (x as ResourceLandmark).materialData.structure.structureQuality == STRUCTURE_QUALITY.BASIC).Any()) {
+            if (currRegion.tilesInRegion.Where(x => x.materialOnTile != MATERIAL.NONE && MaterialManager.Instance.materialsLookup[x.materialOnTile].isEdible
+            && MaterialManager.Instance.materialsLookup[x.materialOnTile].structure.structureQuality == STRUCTURE_QUALITY.BASIC).Any()) {
                 elligibleRegions.Add(currRegion);
             }
         }

@@ -124,23 +124,24 @@ public class InternalQuestManager : TaskCreator {
         }
     }
     private void AddBuildStructureWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
-        for (int i = 0; i < regionOfSettlement.landmarks.Count; i++) {
-            BaseLandmark currLandmark = regionOfSettlement.landmarks[i];
-            if (currLandmark is ResourceLandmark && !currLandmark.location.HasStructure()) { //Loop through each Resource Tile that doesn't have any structures yet.
+        for (int i = 0; i < regionOfSettlement.tilesInRegion.Count; i++) {
+            HexTile currTile = regionOfSettlement.tilesInRegion[i];
+            //BaseLandmark currLandmark = regionOfSettlement.landmarks[i];
+            if (currTile.materialOnTile != MATERIAL.NONE && !currTile.HasStructure() && currTile.landmarkOnTile == null) { //Loop through each Resource Tile that doesn't have any structures yet.
                 int totalWeightForLandmark = 0;
-                ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
-                MATERIAL materialOnLandmark = resourceLandmark.materialOnLandmark;
-                Construction constructionData = ProductionManager.Instance.GetConstruction(resourceLandmark.materialData.structure.name);
-                if (currSettlement.HasTechnology(ProductionManager.Instance.GetConstruction(resourceLandmark.materialData.structure.name).technology) 
+                MATERIAL materialOnTile = currTile.materialOnTile;
+                Materials materialData = MaterialManager.Instance.materialsLookup[materialOnTile];
+                Construction constructionData = ProductionManager.Instance.GetConstruction(materialData.structure.name);
+                if (currSettlement.HasTechnology(ProductionManager.Instance.GetConstruction(materialData.structure.name).technology) 
                     && currSettlement.CanAffordConstruction(constructionData)
                     && GetQuestsOfType(QUEST_TYPE.BUILD_STRUCTURE).Count <= 0
-                    && !AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, resourceLandmark)) {
+                    && !AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, currTile)) {
 
                     totalWeightForLandmark += 60; //Add 60 Weight to Build Structure if relevant technology is available
-                    totalWeightForLandmark -= 30 * regionOfSettlement.GetActivelyHarvestedMaterialsOfType(materialOnLandmark); //- Subtract 30 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in the same region
-                    totalWeightForLandmark -= 10 * _owner.GetActivelyHarvestedMaterialsOfType(materialOnLandmark, regionOfSettlement); //- Subtract 10 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in other regions owned by the same Tribe
+                    totalWeightForLandmark -= 30 * regionOfSettlement.GetActivelyHarvestedMaterialsOfType(materialOnTile); //- Subtract 30 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in the same region
+                    totalWeightForLandmark -= 10 * _owner.GetActivelyHarvestedMaterialsOfType(materialOnTile, regionOfSettlement); //- Subtract 10 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in other regions owned by the same Tribe
                     totalWeightForLandmark = Mathf.Max(0, totalWeightForLandmark);
-                    BuildStructure buildStructureQuest = new BuildStructure(this, resourceLandmark, currSettlement.GetMaterialForConstruction(constructionData), constructionData);
+                    BuildStructure buildStructureQuest = new BuildStructure(this, currTile, currSettlement.GetMaterialForConstruction(constructionData), constructionData);
                     buildStructureQuest.SetSettlement(currSettlement);
                     questWeights.AddElement(buildStructureQuest, totalWeightForLandmark);
                 }
@@ -197,7 +198,7 @@ public class InternalQuestManager : TaskCreator {
     internal void CreateBuildStructureQuest(BaseLandmark landmarkToExplore) {
         Construction constructionData = ProductionManager.Instance.GetConstruction((landmarkToExplore as ResourceLandmark).materialData.structure.name);
         Settlement settlement = (Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile;
-        BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore, settlement.GetMaterialForConstruction(constructionData), constructionData);
+        BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore.location, settlement.GetMaterialForConstruction(constructionData), constructionData);
         buildStructure.SetSettlement(settlement);
         AddNewQuest(buildStructure);
     }
@@ -256,8 +257,8 @@ public class InternalQuestManager : TaskCreator {
                         return true;
                     }
                 } else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
-                    BaseLandmark landmark = (BaseLandmark)identifier;
-                    if (((BuildStructure)currQuest).target.id == landmark.id) {
+                    HexTile tile = (HexTile)identifier;
+                    if (((BuildStructure)currQuest).target.id == tile.id) {
                         return true;
                     }
                 }

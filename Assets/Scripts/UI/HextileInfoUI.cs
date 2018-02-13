@@ -50,8 +50,9 @@ public class HextileInfoUI : UIMenu {
         text += "[b]Name:[/b] " + currentlyShowingHexTile.tileName;
 		text += "\n[b]Biome:[/b] " + currentlyShowingHexTile.biomeType.ToString();
 		text += "\n[b]Elevation:[/b] " + currentlyShowingHexTile.elevationType.ToString ();
+        text += "\n[b]Material:[/b] " + currentlyShowingHexTile.materialOnTile.ToString();
 
-		text += "\n[b]Landmark Name:[/b] ";
+        text += "\n[b]Landmark Name:[/b] ";
 		if(currentlyShowingHexTile.landmarkOnTile != null){
 			text += currentlyShowingHexTile.landmarkOnTile.landmarkName;
 		}else{
