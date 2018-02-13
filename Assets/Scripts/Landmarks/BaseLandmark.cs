@@ -689,6 +689,18 @@ public class BaseLandmark : ILocation, TaskCreator {
         AdjustMaterial(matToUse, -constructionData.production.resourceCost);
         return ReduceTotalFoodCount(constructionData.production.foodCost);
     }
+    public bool HasMaterialsFor(PRODUCTION_TYPE prodType) {
+        foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in _materialsInventory) {
+            MATERIAL currMat = kvp.Key;
+            MaterialValues matVal = kvp.Value;
+            if (matVal.count > 0) {
+                if(MaterialManager.Instance.CanMaterialBeUsedFor(currMat, prodType)) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
     #endregion
 
     #region Quests

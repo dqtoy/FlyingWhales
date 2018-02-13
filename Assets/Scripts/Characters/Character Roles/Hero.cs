@@ -20,7 +20,8 @@ public class Hero : CharacterRole {
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.DEFEND,
             QUEST_TYPE.EXPLORE_TILE,
-            QUEST_TYPE.EXPAND
+            QUEST_TYPE.EXPAND,
+            QUEST_TYPE.EXPEDITION
         };
     }
 
@@ -63,10 +64,12 @@ public class Hero : CharacterRole {
 		}
 		return weight;
 	}
-
     internal override int GetExploreTileWeight(ExploreTile exploreTile) {
         int weight = 0;
         weight += 100;
         return weight;
+    }
+    internal override int GetExpeditionWeight(Expedition expedition) {
+        return 100;
     }
 }

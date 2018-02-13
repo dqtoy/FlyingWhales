@@ -112,6 +112,9 @@ public class CharacterRole {
 				case QUEST_TYPE.OBTAIN_MATERIAL:
 					weight += GetObtainMaterialWeight((ObtainMaterial)task);
 					break;
+                case QUEST_TYPE.EXPEDITION:
+                    weight += GetExpeditionWeight((Expedition)task);
+                    break;
                 default:
                     break;
             }
@@ -245,6 +248,9 @@ public class CharacterRole {
             }
         }
         return weight;
+    }
+    internal virtual int GetExpeditionWeight(Expedition expedition) {
+        return 0;
     }
     #endregion
 
