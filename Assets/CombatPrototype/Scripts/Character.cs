@@ -1659,7 +1659,9 @@ namespace ECS {
 			_isPrisoner = state;
 			_isPrisonerOf = prisonerOf;
 			if(state){
-				this.currLocation.RemoveCharacterFromLocation (this);
+				if(this.specificLocation != null){
+					this.specificLocation.RemoveCharacterFromLocation (this);
+				}
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){
 					wardenName = ((Party)_isPrisonerOf).name;
