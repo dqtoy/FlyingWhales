@@ -195,27 +195,6 @@ public class Party: IEncounterable, ICombatInitializer {
 			}
         }
     }
-	public virtual void RemovePartyMemberInCombat(ECS.Character member, bool forDeath = false) {
-		_partyMembers.Remove(member);
-		if(_avatar != null) {
-			_avatar.RemoveCharacter(member);
-		}
-		//If party is unaligned, change party leader immediately if party leader died
-		if(faction == null && member.id == _partyLeader.id && _partyMembers.Count > 0){
-			_partyLeader = _partyMembers[0];
-		}
-		if (!forDeath) {
-			member.AddHistory ("Left party: " + this._name + ".");
-			this.specificLocation.AddCharacterToLocation(member, false);
-			Debug.Log(member.name + " has left the party of " + partyLeader.name);
-			if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-				((Quest)currentTask).AddNewLog(member.name + " has left the party");
-			}
-		}
-
-		member.SetParty(null);
-		member.SetCurrentTask (null);
-	}
 	public void AddPrisoner(ECS.Character character){
 		character.SetPrisoner (true, this);
 		_prisoners.Add (character);
