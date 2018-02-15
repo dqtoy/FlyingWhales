@@ -25,7 +25,10 @@ public class WeightedDictionary<T> {
     }
 
     public WeightedDictionary(Dictionary<T, int> dictionary) {
-        _dictionary = dictionary;
+        _dictionary = new Dictionary<T, int>();
+        foreach (KeyValuePair<T, int> kvp in dictionary) {
+            _dictionary.Add(kvp.Key, kvp.Value);
+        }
     }
 
     /*

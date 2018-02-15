@@ -5,6 +5,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BaseLandmark : ILocation, TaskCreator {
     protected int _id;
@@ -22,6 +23,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
     protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
 	protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
+    protected Dictionary<RACE, int> _civiliansByRace;
 
     //TODO: Add list of items on landmark
     protected List<TECHNOLOGY> _technologiesOnLandmark;
@@ -82,7 +84,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		get { return (int)_civilians; }
     }
 	public int civiliansWithReserved{
-		get { return (int)_civilians + _reservedCivilians; }
+		get { return civilians + _reservedCivilians; }
 	}
 	public Dictionary<MATERIAL, MaterialValues> materialsInventory {
 		get { return _materialsInventory; }
@@ -134,14 +136,15 @@ public class BaseLandmark : ILocation, TaskCreator {
         _civilians = 0f;
 		_reservedCivilians = 0;
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
-		_prisoners = new List<ECS.Character> ();
-		_history = new List<string> ();
-		_combatHistory = new Dictionary<int, ECS.CombatPrototype> ();
+		_prisoners = new List<ECS.Character>();
+		_history = new List<string>();
+		_combatHistory = new Dictionary<int, ECS.CombatPrototype>();
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
-		_activeQuests = new List<Quest> ();
+		_activeQuests = new List<Quest>();
         ConstructTechnologiesDictionary();
-		ConstructMaterialValues ();
+		ConstructMaterialValues();
+        ConstructCiviliansDictionary();
         InititalizeEncounterables();
     }
 
@@ -265,6 +268,17 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Population
+    private void ConstructCiviliansDictionary() {
+        _civiliansByRace = new Dictionary<RACE, int>();
+        RACE[] allRaces = Utilities.GetEnumValues<RACE>();
+        for (int i = 0; i < allRaces.Length; i++) {
+            RACE currRace = allRaces[i];
+            _civiliansByRace.Add(currRace, 0);
+        }
+    }
+    public void AdjustCivilians(RACE race, int amount) {
+        _civiliansByRace[race] += amount;
+    }
     public void AdjustPopulation(float adjustment) {
         _civilians += adjustment;
     }
@@ -699,7 +713,29 @@ public class BaseLandmark : ILocation, TaskCreator {
                 }
             }
         }
-        return true;
+        return false;
+    }
+    public bool HasAccessTo(PRODUCTION_TYPE prodType) {
+        for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
+            HexTile currTile = location.region.tilesInRegion[i];
+            if (currTile.materialOnTile != MATERIAL.NONE) {
+                if (MaterialManager.Instance.CanMaterialBeUsedFor(currTile.materialOnTile, prodType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasAccessToFood() {
+        for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
+            HexTile currTile = location.region.tilesInRegion[i];
+            if (currTile.materialOnTile != MATERIAL.NONE) {
+                if (MaterialManager.Instance.materialsLookup[currTile.materialOnTile].isEdible) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     #endregion
 

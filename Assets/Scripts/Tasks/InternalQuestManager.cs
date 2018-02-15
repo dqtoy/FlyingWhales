@@ -154,7 +154,7 @@ public class InternalQuestManager : TaskCreator {
         PRODUCTION_TYPE[] allProdTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
         for (int i = 0; i < allProdTypes.Length; i++) {
             PRODUCTION_TYPE currProdType = allProdTypes[i];
-            if (!currSettlement.HasMaterialsFor(currProdType) ) {
+            if (!currSettlement.HasAccessTo(currProdType) ) {
                 if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, currProdType.ToString())) {
                     Expedition newExpedition = new Expedition(this, currProdType.ToString());
                     newExpedition.SetSettlement(currSettlement);
@@ -162,7 +162,7 @@ public class InternalQuestManager : TaskCreator {
                 }
             }
         }
-        if(currSettlement.GetTotalFoodCount() <= 0) {
+        if(!currSettlement.HasAccessToFood()) {
             if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, "FOOD")) {
                 Expedition newExpedition = new Expedition(this, "FOOD");
                 newExpedition.SetSettlement(currSettlement);

@@ -26,6 +26,7 @@ public class Party: IEncounterable, ICombatInitializer {
 
 	protected bool _isDefeated;
 	protected int _civilians;
+    protected Dictionary<RACE, int> _civiliansByRace;
 
     private const int MAX_PARTY_MEMBERS = 5;
 
@@ -101,6 +102,7 @@ public class Party: IEncounterable, ICombatInitializer {
         //_partyMembersOnTheWay = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character> ();
 		_isDefeated = false;
+        _civiliansByRace = new Dictionary<RACE, int>();
         Debug.Log(partyLeader.name + " has created " + _name);
 		partyLeader.specificLocation.AddCharacterToLocation (this, false);
         partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
