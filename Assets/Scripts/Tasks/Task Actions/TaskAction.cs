@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TaskAction {
 
@@ -28,7 +29,8 @@ public class TaskAction {
     public virtual void InititalizeAction(ILocation target) { }
     public virtual void InititalizeAction(Region target) { }
     public virtual void InititalizeAction(ECS.Character target) { }
-    public virtual void InititalizeAction(int days) { }
+    public virtual void InititalizeAction(int value) { }
+    public virtual void InititalizeAction(Dictionary<RACE, int> civilians) { }
 
     public virtual void DoAction(ECS.Character partyLeader) {
 		if(partyLeader.party != null){

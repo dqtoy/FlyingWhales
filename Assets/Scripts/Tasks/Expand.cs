@@ -9,6 +9,7 @@ public class Expand : Quest {
     private MATERIAL _materialToUse;
     private Construction _constructionData;
     private Dictionary<MATERIAL, int> _foodBrought;
+    private Dictionary<RACE, int> _civiliansBrought;
 
 	#region getters/setters
 	public HexTile targetUnoccupiedTile {
@@ -35,6 +36,7 @@ public class Expand : Quest {
         //_originTile.landmarkOnTile.AdjustReservedPopulation(20);
         //_originTile.landmarkOnTile.AdjustPopulation(-20);
         _foodBrought = _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
+        _civiliansBrought = _postedAt.ReduceCivilians(_constructionData.production.civilianCost);
     }
     protected override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
@@ -43,7 +45,7 @@ public class Expand : Quest {
     protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
         Collect collect = new Collect(this);
-        collect.InititalizeAction(_constructionData.production.civilianCost);
+        collect.InititalizeAction(_civiliansBrought);
         collect.onTaskActionDone += this.PerformNextQuestAction;
         collect.onTaskDoAction += collect.Expand;
 
@@ -103,9 +105,9 @@ public class Expand : Quest {
         foreach (KeyValuePair<MATERIAL, int> kvp in _foodBrought) {
             expandedTo.AdjustMaterial(kvp.Key, kvp.Value);
         }
-        expandedTo.AdjustPopulation(_assignedParty.civilians);
         expandedTo.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost);
-		_assignedParty.SetCivilians(0);
+		_assignedParty.TransferCivilians(expandedTo, _civiliansBrought);
+
         AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);
         //EndQuest (TASK_RESULT.SUCCESS);

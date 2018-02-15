@@ -355,7 +355,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     }
 
     internal void HideLandmarkObject() {
-        if(_landmarkOnTile != null && GameManager.Instance.hideLandmarks) {
+        if(_landmarkOnTile != null && _landmarkOnTile.landmarkObject != null && GameManager.Instance.hideLandmarks) {
             _landmarkOnTile.landmarkObject.gameObject.SetActive(false);
         }
     }

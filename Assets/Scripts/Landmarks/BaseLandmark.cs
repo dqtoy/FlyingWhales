@@ -78,15 +78,15 @@ public class BaseLandmark : ILocation, TaskCreator {
         get { return _owner; }
     }
     public virtual int totalPopulation {
-		get { return civiliansWithReserved + CharactersCount(); }
+		get { return civilians + CharactersCount(); }
     }
 	public int civilians {
-		get { return (int)_civilians; }
+		get { return _civiliansByRace.Sum(x => x.Value); }
     }
-	public int civiliansWithReserved{
-		get { return civilians + _reservedCivilians; }
-	}
-	public Dictionary<MATERIAL, MaterialValues> materialsInventory {
+    public Dictionary<RACE, int> civiliansByRace {
+        get { return _civiliansByRace; }
+    }
+    public Dictionary<MATERIAL, MaterialValues> materialsInventory {
 		get { return _materialsInventory; }
     }
     public Dictionary<TECHNOLOGY, bool> technologies {
@@ -134,7 +134,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         _landmarkName = string.Empty; //TODO: Add name generation
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
-		_reservedCivilians = 0;
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character>();
 		_history = new List<string>();
@@ -278,13 +277,39 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public void AdjustCivilians(RACE race, int amount) {
         _civiliansByRace[race] += amount;
+        _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
     }
-    public void AdjustPopulation(float adjustment) {
-        _civilians += adjustment;
+    public void AdjustCivilians(Dictionary<RACE, int> civilians) {
+        foreach (KeyValuePair<RACE, int> kvp in civilians) {
+            AdjustCivilians(kvp.Key, kvp.Value);
+        }
     }
-	public void AdjustReservedPopulation(int amount){
-		_reservedCivilians += amount;
-	}
+    public Dictionary<RACE, int> ReduceCivilians(int amount) {
+        Dictionary<RACE, int> reducedCivilians = new Dictionary<RACE, int>();
+        for (int i = 0; i < Mathf.Abs(amount); i++) {
+            RACE chosenRace = GetRaceBasedOnProportion();
+            AdjustCivilians(chosenRace, -1);
+            if (reducedCivilians.ContainsKey(chosenRace)) {
+                reducedCivilians[chosenRace] += 1;
+            } else {
+                reducedCivilians.Add(chosenRace, 1);
+            }
+        }
+        return reducedCivilians;
+    }
+    //public void AdjustPopulation(float adjustment) {
+    //    _civilians += adjustment;
+    //}
+	//public void AdjustReservedPopulation(int amount){
+	//	_reservedCivilians += amount;
+	//}
+    protected RACE GetRaceBasedOnProportion() {
+        WeightedDictionary<RACE> raceDict = new WeightedDictionary<RACE>(_civiliansByRace);
+        if (raceDict.GetTotalOfWeights() > 0) {
+            return raceDict.PickRandomElementGivenWeights();
+        }
+        throw new System.Exception("Cannot get race to produce!");
+    }
     #endregion
 
     #region Characters
@@ -440,12 +465,16 @@ public class BaseLandmark : ILocation, TaskCreator {
 
     public void SetHiddenState(bool isHidden) {
         _isHidden = isHidden;
-        landmarkObject.UpdateLandmarkVisual();
+        if(landmarkObject != null) {
+            landmarkObject.UpdateLandmarkVisual();
+        }
     }
 
     public void SetExploredState(bool isExplored) {
         _isExplored = isExplored;
-        landmarkObject.UpdateLandmarkVisual();
+        if (landmarkObject != null) {
+            landmarkObject.UpdateLandmarkVisual();
+        }
     }
 	internal bool IsBorder(){
 		if(this.owner == null){
@@ -682,10 +711,12 @@ public class BaseLandmark : ILocation, TaskCreator {
     /*
      This will reduce this landmarks assets based on
      a given Production Cost and a material. This will return
-     a list of food materials that was reduced.
+     a list of food materials that was reduced. 
+     NOTE: This will only reduce materials, not civilians
+     civilian adjustment needs a separate call.
          */
     public Dictionary<MATERIAL, int> ReduceAssets(Production productionCost, MATERIAL materialToUse) {
-        AdjustPopulation(-productionCost.civilianCost);
+        //AdjustPopulation(-productionCost.civilianCost);
         AdjustMaterial(materialToUse, -productionCost.resourceCost);
         return ReduceTotalFoodCount(productionCost.foodCost);
     }
@@ -693,9 +724,11 @@ public class BaseLandmark : ILocation, TaskCreator {
      This will reduce a landmarks assets based on Construction Data,
      this will determine what material to use on it's own. This will return
      a list of food materials that was reduced.
+     NOTE: This will only reduce materials, not civilians
+     civilian adjustment needs a separate call.
          */
     public Dictionary<MATERIAL, int> ReduceAssets(Construction constructionData) {
-        AdjustPopulation(-constructionData.production.civilianCost);
+        //AdjustPopulation(-constructionData.production.civilianCost);
         MATERIAL matToUse = GetMaterialForConstruction(constructionData);
         if(matToUse == MATERIAL.NONE) {
             throw new System.Exception("There is no materials to build a " + constructionData.structure.name);

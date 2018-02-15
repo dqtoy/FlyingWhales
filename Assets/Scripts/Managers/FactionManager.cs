@@ -109,8 +109,8 @@ public class FactionManager : MonoBehaviour {
             Utilities.ListRemoveRange(elligibleRegions, regionForFaction.adjacentRegions);
             Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
 			CreateInitialResourcesForSettlement((Settlement)regionForFaction.mainLandmark, newFaction);
-            regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
-            //regionForFaction.centerOfMass.landmarkOnTile.AdjustCivilians(inititalRace, 100);
+            //regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
+            regionForFaction.centerOfMass.landmarkOnTile.AdjustCivilians(inititalRace, 100);
             LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
             CreateInititalFactionCharacters(newFaction);
 //            CreateInitialResourcesForSettlement(newFaction.settlements.First());

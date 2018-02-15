@@ -30,7 +30,7 @@ public class Settlement : BaseLandmark {
         get { return _ownedLandmarks; }
     }
 	public override int totalPopulation {
-		get { return civiliansWithReserved + CharactersCount() + this._ownedLandmarks.Sum(x => x.civiliansWithReserved); }
+		get { return civilians + CharactersCount() + this._ownedLandmarks.Sum(x => x.civilians); }
 	}
     #endregion
 
@@ -216,8 +216,8 @@ public class Settlement : BaseLandmark {
 //        newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(_owner);
 		newCharacter.SetHome (this);
-        //AdjustCivilians(raceOfChar, -1);
-        this.AdjustPopulation(-1); //Adjust population by -1
+        AdjustCivilians(raceOfChar, -1);
+        //this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter, false);
         this.AddCharacterHomeOnLandmark(newCharacter);
@@ -263,9 +263,9 @@ public class Settlement : BaseLandmark {
 //		}
 
 		ReduceTotalFoodCount (trainingRole.production.foodCost);
-        AdjustPopulation(-trainingRole.production.civilianCost);
-        //AdjustCivilians(raceForChar, -trainingRole.production.civilianCost);
-		AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
+        //AdjustPopulation(-trainingRole.production.civilianCost);
+        AdjustCivilians(raceForChar, -trainingRole.production.civilianCost);
+        AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
 
 		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
 		GameDate trainCharacterDate = GameManager.Instance.Today ();
@@ -335,23 +335,16 @@ public class Settlement : BaseLandmark {
          */
     private void IncreasePopulationPerMonth() {
         float populationGrowth = this.totalPopulation * this.location.region.populationGrowth;
-        //_currentPopulationProduction += populationGrowth;
-        //if(_currentPopulationProduction >= 1f) {
-        //    float excess = _currentPopulationProduction - 1f;
-        //    AdjustCivilians(_producingPopulationFor, 1);
-        //    _producingPopulationFor = GetRaceBasedOnProportion();
-        //    _currentPopulationProduction = excess;
-        //}
-        AdjustPopulation(populationGrowth);
+        _currentPopulationProduction += populationGrowth;
+        if (_currentPopulationProduction >= 1f) {
+            float excess = _currentPopulationProduction - 1f;
+            AdjustCivilians(_producingPopulationFor, 1);
+            _producingPopulationFor = GetRaceBasedOnProportion();
+            _currentPopulationProduction = excess;
+        }
+        //AdjustPopulation(populationGrowth);
         UIManager.Instance.UpdateFactionSummary();
         ScheduleMonthlyPopulationIncrease();
-    }
-    private RACE GetRaceBasedOnProportion() {
-        WeightedDictionary<RACE> raceDict = new WeightedDictionary<RACE>(_civiliansByRace);
-        if (raceDict.GetTotalOfWeights() > 0) {
-            return raceDict.PickRandomElementGivenWeights();
-        }
-        throw new System.Exception("Cannot get race to produce!");
     }
     #endregion
 

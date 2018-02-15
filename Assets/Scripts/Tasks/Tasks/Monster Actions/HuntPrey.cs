@@ -70,7 +70,7 @@ public class HuntPrey : CharacterTask {
     }
 
     private void EatCivilian() {
-        _target.AdjustPopulation(-1);
+        _target.ReduceCivilians(1);
         if(_target.civilians > 0) {
             GameDate nextDate = GameManager.Instance.Today();
             nextDate.AddDays(1);

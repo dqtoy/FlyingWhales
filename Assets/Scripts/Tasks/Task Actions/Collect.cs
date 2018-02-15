@@ -1,32 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Collect : TaskAction {
 
 	private int _amount;
+    private Dictionary<RACE, int> _civilians;
+
 
 	public Collect(Quest quest): base (quest){}
 
 	#region overrides
-	public override void InititalizeAction(int amount) {
-		base.InititalizeAction(amount);
-		_amount = amount;
+	public override void InititalizeAction(Dictionary<RACE, int> civilians) {
+		base.InititalizeAction(civilians);
+		_civilians = civilians;
 	}
 	#endregion
 
 	//This is the DoAction Function in Expand Quest
 	internal void Expand(){
         //add civilians to party
-        ((Expand)_task).assignedParty.SetCivilians (_amount);
-        _task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + " civilians from " + this.actionDoer.currLocation.landmarkOnTile.landmarkName);
+        ((Expand)_task).assignedParty.AdjustCivilians(_civilians);
+        _task.AddNewLog(this.actionDoer.name + " takes " + _civilians.Sum(x => x.Value).ToString() + " civilians from " + this.actionDoer.currLocation.landmarkOnTile.landmarkName);
         ActionDone (TASK_ACTION_RESULT.SUCCESS);
 	}
 
     //This is the DoAction Function for the build structure quest
     internal void BuildStructure() {
         BuildStructure bsQuest = _task as BuildStructure;
-        bsQuest.assignedParty.AdjustCivilians(_amount);
-        _task.AddNewLog(this.actionDoer.name + " takes " + _amount.ToString() + " civilians from " + bsQuest.postedAt.landmarkName);
+        bsQuest.assignedParty.AdjustCivilians(_civilians);
+        _task.AddNewLog(this.actionDoer.name + " takes " + _civilians.Sum(x => x.Value).ToString() + " civilians from " + bsQuest.postedAt.landmarkName);
         ActionDone(TASK_ACTION_RESULT.SUCCESS);
     }
 

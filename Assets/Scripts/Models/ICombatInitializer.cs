@@ -16,8 +16,8 @@ public interface ICombatInitializer {
 	bool CanBattleThis (ICombatInitializer combatInitializer);
 	void ReturnCombatResults(ECS.CombatPrototype combat);
 	void SetIsDefeated (bool state);
-	void SetCivilians (int amount);
-	void AdjustCivilians (int amount);
+	//void SetCivilians (int amount);
+	//void AdjustCivilians (int amount);
 	void SetIsInCombat (bool state);
 	void SetCurrentFunction (Action function);
 }

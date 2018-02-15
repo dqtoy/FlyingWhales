@@ -66,7 +66,11 @@ public class SettlementInfoUI : UIMenu {
         if (currentlyShowingLandmark.owner != null) {
             text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
             text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
-            text += "\n[b]Settlement Population: [/b] " + currentlyShowingLandmark.civiliansWithReserved.ToString();
+            text += "\n[b]Settlement Population: [/b] " + currentlyShowingLandmark.civilians.ToString();
+            text += "\n[b]Civilians: [/b] ";
+            foreach (KeyValuePair<RACE, int> kvp in currentlyShowingLandmark.civiliansByRace) {
+                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            }
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.location.region.populationGrowth).ToString();
 
             if (currentlyShowingLandmark is Settlement) {

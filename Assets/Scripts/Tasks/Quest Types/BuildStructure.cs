@@ -9,6 +9,7 @@ public class BuildStructure : Quest {
     private int _civilians;
     private MATERIAL _materialToUse;
     private Construction _constructionData;
+    private Dictionary<RACE, int> _civiliansBrought;
 
     #region getters/setters
     public HexTile target {
@@ -29,6 +30,7 @@ public class BuildStructure : Quest {
     public override void OnQuestPosted() {
         base.OnQuestPosted();
         _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
+        _civiliansBrought = _postedAt.ReduceCivilians(_constructionData.production.civilianCost);
         ////reserve 5 civilians
         //_postedAt.AdjustReservedPopulation(5);
         //_postedAt.AdjustPopulation(-5);
@@ -37,7 +39,7 @@ public class BuildStructure : Quest {
         base.ConstructQuestLine();
 
         Collect collect = new Collect(this);
-        collect.InititalizeAction(_constructionData.production.civilianCost);
+        collect.InititalizeAction(_civiliansBrought);
         collect.onTaskActionDone += this.PerformNextQuestAction;
         collect.onTaskDoAction += collect.BuildStructure;
 
@@ -66,8 +68,8 @@ public class BuildStructure : Quest {
         _target.landmarkOnTile.OccupyLandmark((createdBy as InternalQuestManager).owner);
         _postedAt.AddLandmarkAsOwned(_target.landmarkOnTile);
         //_target.AdjustPopulation(5);
-        _target.landmarkOnTile.AdjustPopulation(_constructionData.production.civilianCost);
-        _assignedParty.AdjustCivilians(-_constructionData.production.civilianCost);
+        //_target.landmarkOnTile.AdjustPopulation(_constructionData.production.civilianCost);
+        _assignedParty.TransferCivilians(_target.landmarkOnTile, _civiliansBrought);
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);
     }
 }

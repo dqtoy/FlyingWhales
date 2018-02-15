@@ -109,7 +109,6 @@ public class Party: IEncounterable, ICombatInitializer {
 
         AddPartyMember(_partyLeader);
         ConstructMaterialInventory();
-
 		if(mustBeAddedToPartyList){
 			PartyManager.Instance.AddParty(this);
 		}
@@ -699,15 +698,36 @@ public class Party: IEncounterable, ICombatInitializer {
 			}
 		}
 	}
-	public void SetCivilians(int amount){
-		_civilians = amount;
-	}
-	public void AdjustCivilians(int amount){
-		_civilians += amount;
-		if(_civilians < 0){
-			_civilians = 0;
-		}
-	}
+	//public void SetCivilians(int amount){
+	//	_civilians = amount;
+	//}
+	//public void AdjustCivilians(int amount){
+	//	_civilians += amount;
+	//	if(_civilians < 0){
+	//		_civilians = 0;
+	//	}
+	//}
+    public void AdjustCivilians(Dictionary<RACE, int> civilians) {
+        foreach (KeyValuePair<RACE, int> kvp in civilians) {
+            AdjustCivilians(kvp.Key, kvp.Value);
+        }
+    }
+    public void ReduceCivilians(Dictionary<RACE, int> civilians) {
+        foreach (KeyValuePair<RACE, int> kvp in civilians) {
+            AdjustCivilians(kvp.Key, -kvp.Value);
+        }
+    }
+    public void AdjustCivilians(RACE race, int amount) {
+        if (!_civiliansByRace.ContainsKey(race)) {
+            _civiliansByRace.Add(race, 0);
+        }
+        _civiliansByRace[race] += amount;
+        _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
+    }
+    public void TransferCivilians(BaseLandmark to, Dictionary<RACE, int> civilians) {
+        ReduceCivilians(civilians);
+        to.AdjustCivilians(civilians);
+    }
 	#endregion
 
 	#endregion
