@@ -337,8 +337,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 break;
         }
         if(_landmarkOnTile != null) {
-            if(landmarkGO != null) {
-                _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+            if(landmarkType != LANDMARK_TYPE.CITY) {
+                if (landmarkGO != null) {
+                    _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+                }
                 _region.AddLandmarkToRegion(_landmarkOnTile);
             } else {
                 //Created landmark was a city
@@ -392,155 +394,155 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		//	this.specialResource = RESOURCE.NONE;
 		//}
   //  }
-	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
-		int totalChance = 0;
-		int lowerLimit = 0;
-		int upperLimit = specialResources.chance [0];
-		for(int i = 0; i < specialResources.resource.Length; i++){
-			totalChance += specialResources.chance[i];
-		}
+	//private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
+	//	int totalChance = 0;
+	//	int lowerLimit = 0;
+	//	int upperLimit = specialResources.chance [0];
+	//	for(int i = 0; i < specialResources.resource.Length; i++){
+	//		totalChance += specialResources.chance[i];
+	//	}
 
-		int chance = UnityEngine.Random.Range (0, totalChance);
-		for(int i = 0; i < specialResources.resource.Length; i++){
-			if(chance >= lowerLimit && chance < upperLimit){
-				return specialResources.resource[i];
-			}else{
-				lowerLimit = upperLimit;
-				if (i + 1 < specialResources.resource.Length) {
-					upperLimit += specialResources.chance [i + 1];
-				}
-			}
-		}
-		return RESOURCE.NONE;
-	}
-	private void SetSpecialResourceType(){
-		if (this.specialResource == RESOURCE.DEER || this.specialResource == RESOURCE.PIG || this.specialResource == RESOURCE.BEHEMOTH
-		   || this.specialResource == RESOURCE.WHEAT || this.specialResource == RESOURCE.RICE || this.specialResource == RESOURCE.CORN) {
+	//	int chance = UnityEngine.Random.Range (0, totalChance);
+	//	for(int i = 0; i < specialResources.resource.Length; i++){
+	//		if(chance >= lowerLimit && chance < upperLimit){
+	//			return specialResources.resource[i];
+	//		}else{
+	//			lowerLimit = upperLimit;
+	//			if (i + 1 < specialResources.resource.Length) {
+	//				upperLimit += specialResources.chance [i + 1];
+	//			}
+	//		}
+	//	}
+	//	return RESOURCE.NONE;
+	//}
+	//private void SetSpecialResourceType(){
+	//	if (this.specialResource == RESOURCE.DEER || this.specialResource == RESOURCE.PIG || this.specialResource == RESOURCE.BEHEMOTH
+	//	   || this.specialResource == RESOURCE.WHEAT || this.specialResource == RESOURCE.RICE || this.specialResource == RESOURCE.CORN) {
 
-			this.specialResourceType = RESOURCE_TYPE.FOOD;
-		} else if(this.specialResource == RESOURCE.SLATE || this.specialResource == RESOURCE.GRANITE || this.specialResource == RESOURCE.OAK
-			|| this.specialResource == RESOURCE.EBONY){
+	//		this.specialResourceType = RESOURCE_TYPE.FOOD;
+	//	} else if(this.specialResource == RESOURCE.SLATE || this.specialResource == RESOURCE.GRANITE || this.specialResource == RESOURCE.OAK
+	//		|| this.specialResource == RESOURCE.EBONY){
 
-			this.specialResourceType = RESOURCE_TYPE.MATERIAL;
-		} else if(this.specialResource == RESOURCE.COBALT || this.specialResource == RESOURCE.MANA_STONE || this.specialResource == RESOURCE.MITHRIL){
+	//		this.specialResourceType = RESOURCE_TYPE.MATERIAL;
+	//	} else if(this.specialResource == RESOURCE.COBALT || this.specialResource == RESOURCE.MANA_STONE || this.specialResource == RESOURCE.MITHRIL){
 
-			this.specialResourceType = RESOURCE_TYPE.ORE;
-		}
-	}
-	private void SetCityCapacity(){
-		switch(this.specialResource){
-		case RESOURCE.DEER:
-			this.cityCapacity = 3;
-			break;
-		case RESOURCE.PIG:
-			this.cityCapacity = 4;
-			break;
-		case RESOURCE.BEHEMOTH:
-			this.cityCapacity = 5;
-			break;
-		case RESOURCE.WHEAT:
-			this.cityCapacity = 3;
-			break;
-		case RESOURCE.RICE:
-			this.cityCapacity = 4;
-			break;
-		case RESOURCE.CORN:
-			this.cityCapacity = 5;
-			break;
-		case RESOURCE.SLATE:
-			this.cityCapacity = 4;
-			break;
-		case RESOURCE.GRANITE:
-			this.cityCapacity = 5;
-			break;
-		case RESOURCE.OAK:
-			this.cityCapacity = 4;
-			break;
-		case RESOURCE.EBONY:
-			this.cityCapacity = 5;
-			break;
-		case RESOURCE.COBALT:
-			this.cityCapacity = 3;
-			break;
-		case RESOURCE.MANA_STONE:
-			this.cityCapacity = 4;
-			break;
-		case RESOURCE.MITHRIL:
-			this.cityCapacity = 5;
-			break;
-		}
-	}
-	internal void ProduceResource(){
-        if (this.region.occupant == null) {
-            Debug.Log(name + " is trying to produce resource, but occupant is null");
-			return;
-        }
+	//		this.specialResourceType = RESOURCE_TYPE.ORE;
+	//	}
+	//}
+	//private void SetCityCapacity(){
+	//	switch(this.specialResource){
+	//	case RESOURCE.DEER:
+	//		this.cityCapacity = 3;
+	//		break;
+	//	case RESOURCE.PIG:
+	//		this.cityCapacity = 4;
+	//		break;
+	//	case RESOURCE.BEHEMOTH:
+	//		this.cityCapacity = 5;
+	//		break;
+	//	case RESOURCE.WHEAT:
+	//		this.cityCapacity = 3;
+	//		break;
+	//	case RESOURCE.RICE:
+	//		this.cityCapacity = 4;
+	//		break;
+	//	case RESOURCE.CORN:
+	//		this.cityCapacity = 5;
+	//		break;
+	//	case RESOURCE.SLATE:
+	//		this.cityCapacity = 4;
+	//		break;
+	//	case RESOURCE.GRANITE:
+	//		this.cityCapacity = 5;
+	//		break;
+	//	case RESOURCE.OAK:
+	//		this.cityCapacity = 4;
+	//		break;
+	//	case RESOURCE.EBONY:
+	//		this.cityCapacity = 5;
+	//		break;
+	//	case RESOURCE.COBALT:
+	//		this.cityCapacity = 3;
+	//		break;
+	//	case RESOURCE.MANA_STONE:
+	//		this.cityCapacity = 4;
+	//		break;
+	//	case RESOURCE.MITHRIL:
+	//		this.cityCapacity = 5;
+	//		break;
+	//	}
+	//}
+	//internal void ProduceResource(){
+ //       if (this.region.occupant == null) {
+ //           Debug.Log(name + " is trying to produce resource, but occupant is null");
+	//		return;
+ //       }
 
-        switch (this.specialResource){
-		case RESOURCE.DEER:
-			this.resourceCount += UnityEngine.Random.Range (15, 26);
-			break;
-		case RESOURCE.PIG:
-			this.resourceCount += UnityEngine.Random.Range (25, 36);
-			break;
-		case RESOURCE.BEHEMOTH:
-			this.resourceCount += UnityEngine.Random.Range (35, 46);
-			break;
-		case RESOURCE.WHEAT:
-			this.resourceCount += 18;
-			break;
-		case RESOURCE.RICE:
-			this.resourceCount += 32;
-			break;
-		case RESOURCE.CORN:
-			this.resourceCount += 42;
-			break;
-		case RESOURCE.SLATE:
-			this.resourceCount += UnityEngine.Random.Range (25, 36);
-			break;
-		case RESOURCE.GRANITE:
-			this.resourceCount += UnityEngine.Random.Range (35, 46);
-			break;
-		case RESOURCE.OAK:
-			this.resourceCount += UnityEngine.Random.Range (25, 36);
-			break;
-		case RESOURCE.EBONY:
-			this.resourceCount += UnityEngine.Random.Range (35, 46);
-			break;
-		case RESOURCE.COBALT:
-			this.resourceCount += UnityEngine.Random.Range (10, 21);
-			break;
-		case RESOURCE.MANA_STONE:
-			this.resourceCount += UnityEngine.Random.Range (20, 31);
-			break;
-		case RESOURCE.MITHRIL:
-			this.resourceCount += UnityEngine.Random.Range (30, 41);
-			break;
-		}
-		CheckResourceCount ();
-	}
-	private void CheckResourceCount(){
-		if(this.specialResourceType == RESOURCE_TYPE.FOOD){
-			if(this.resourceCount >= this.region.occupant.foodReserved){
-				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
-				this.resourceCount = 0;
-			}
-		}else if(this.specialResourceType == RESOURCE_TYPE.MATERIAL){
-			if(this.resourceCount >= this.region.occupant.materialReserved){
-				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
-				this.resourceCount = 0;
-			}
-		}else if(this.specialResourceType == RESOURCE_TYPE.ORE){
-			if(this.resourceCount >= this.region.occupant.oreReserved){
-				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
-				this.resourceCount = 0;
-			}
-		}
+ //       switch (this.specialResource){
+	//	case RESOURCE.DEER:
+	//		this.resourceCount += UnityEngine.Random.Range (15, 26);
+	//		break;
+	//	case RESOURCE.PIG:
+	//		this.resourceCount += UnityEngine.Random.Range (25, 36);
+	//		break;
+	//	case RESOURCE.BEHEMOTH:
+	//		this.resourceCount += UnityEngine.Random.Range (35, 46);
+	//		break;
+	//	case RESOURCE.WHEAT:
+	//		this.resourceCount += 18;
+	//		break;
+	//	case RESOURCE.RICE:
+	//		this.resourceCount += 32;
+	//		break;
+	//	case RESOURCE.CORN:
+	//		this.resourceCount += 42;
+	//		break;
+	//	case RESOURCE.SLATE:
+	//		this.resourceCount += UnityEngine.Random.Range (25, 36);
+	//		break;
+	//	case RESOURCE.GRANITE:
+	//		this.resourceCount += UnityEngine.Random.Range (35, 46);
+	//		break;
+	//	case RESOURCE.OAK:
+	//		this.resourceCount += UnityEngine.Random.Range (25, 36);
+	//		break;
+	//	case RESOURCE.EBONY:
+	//		this.resourceCount += UnityEngine.Random.Range (35, 46);
+	//		break;
+	//	case RESOURCE.COBALT:
+	//		this.resourceCount += UnityEngine.Random.Range (10, 21);
+	//		break;
+	//	case RESOURCE.MANA_STONE:
+	//		this.resourceCount += UnityEngine.Random.Range (20, 31);
+	//		break;
+	//	case RESOURCE.MITHRIL:
+	//		this.resourceCount += UnityEngine.Random.Range (30, 41);
+	//		break;
+	//	}
+	//	CheckResourceCount ();
+	//}
+	//private void CheckResourceCount(){
+	//	if(this.specialResourceType == RESOURCE_TYPE.FOOD){
+	//		if(this.resourceCount >= this.region.occupant.foodReserved){
+	//			//Create Caravan
+	//			EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
+	//			this.resourceCount = 0;
+	//		}
+	//	}else if(this.specialResourceType == RESOURCE_TYPE.MATERIAL){
+	//		if(this.resourceCount >= this.region.occupant.materialReserved){
+	//			//Create Caravan
+	//			EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
+	//			this.resourceCount = 0;
+	//		}
+	//	}else if(this.specialResourceType == RESOURCE_TYPE.ORE){
+	//		if(this.resourceCount >= this.region.occupant.oreReserved){
+	//			//Create Caravan
+	//			EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this.specialResourceType, this.specialResource, this, this.region.occupant.hexTile, this.region.occupant);
+	//			this.resourceCount = 0;
+	//		}
+	//	}
 
-	}
+	//}
     #endregion
 
     #region Tile Utilities
@@ -2056,6 +2058,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #region Materials
     public void SetMaterialOnTile(MATERIAL material) {
         _materialOnTile = material;
+        GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
+        resource.transform.localPosition = Vector3.zero;
+        resource.transform.localScale = Vector3.one;
     }
     #endregion
 }

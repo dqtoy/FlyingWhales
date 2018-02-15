@@ -19,6 +19,9 @@ public class Settlement : BaseLandmark {
 
     private const int CHARACTER_LIMIT = 10;
 
+    private RACE _producingPopulationFor;
+    private float _currentPopulationProduction;
+
     #region getters/setters
     public List<Quest> questBoard {
         get { return _questBoard; }
@@ -37,6 +40,7 @@ public class Settlement : BaseLandmark {
         _questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
 		_materialWeights = new WeightedDictionary<MATERIAL> ();
+        _producingPopulationFor = RACE.NONE;
 //		ConstructNeededMaterials ();
     }
 
@@ -68,6 +72,7 @@ public class Settlement : BaseLandmark {
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
+            _producingPopulationFor = GetRaceBasedOnProportion();
         }
 		//Start Quest Creation
 		ScheduleUpdateAvailableMaterialsToGet ();
@@ -206,10 +211,12 @@ public class Settlement : BaseLandmark {
      This will also subtract from the civilian population.
          */
 	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, _owner.race);
+        RACE raceOfChar = GetRaceBasedOnProportion();
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
 //        newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(_owner);
 		newCharacter.SetHome (this);
+        //AdjustCivilians(raceOfChar, -1);
         this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter, false);
@@ -219,10 +226,10 @@ public class Settlement : BaseLandmark {
         return newCharacter;
     }
 
-	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType, MATERIAL materialUsed){
-		AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + (classType != CHARACTER_CLASS.NONE ? Utilities.NormalizeString (classType.ToString ()) : "Classless") + ".");
+	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType, MATERIAL materialUsed, RACE raceOfChar){
+        AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + (classType != CHARACTER_CLASS.NONE ? Utilities.NormalizeString (classType.ToString ()) : "Classless") + ".");
 		int trainingStatBonus = MaterialManager.Instance.materialsLookup [materialUsed].trainingStatBonus;
-		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(roleType, Utilities.NormalizeString(classType.ToString()), _owner.race, trainingStatBonus);
+		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(roleType, Utilities.NormalizeString(classType.ToString()), raceOfChar, trainingStatBonus);
 		newCharacter.SetFaction(_owner);
 		newCharacter.SetHome (this);
 		this.owner.AddNewCharacter(newCharacter);
@@ -237,6 +244,7 @@ public class Settlement : BaseLandmark {
 	public void TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass, MATERIAL materialToUse){
 		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
 		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
+        RACE raceForChar = GetRaceBasedOnProportion();
 //		Production combinedProduction = new Production ();
 //		combinedProduction.Combine(trainingRole.production, trainingClass.production);
 //
@@ -255,13 +263,14 @@ public class Settlement : BaseLandmark {
 //		}
 
 		ReduceTotalFoodCount (trainingRole.production.foodCost);
-		AdjustPopulation (-trainingRole.production.civilianCost);
+        AdjustPopulation(-trainingRole.production.civilianCost);
+        //AdjustCivilians(raceForChar, -trainingRole.production.civilianCost);
 		AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
 
 		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
 		GameDate trainCharacterDate = GameManager.Instance.Today ();
 		trainCharacterDate.AddDays (trainingRole.production.duration + trainingClass.production.duration);
-		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse));
+		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, raceForChar));
 //		return false;
 	}
     public void SetHead(ECS.Character head) {
@@ -326,9 +335,23 @@ public class Settlement : BaseLandmark {
          */
     private void IncreasePopulationPerMonth() {
         float populationGrowth = this.totalPopulation * this.location.region.populationGrowth;
+        //_currentPopulationProduction += populationGrowth;
+        //if(_currentPopulationProduction >= 1f) {
+        //    float excess = _currentPopulationProduction - 1f;
+        //    AdjustCivilians(_producingPopulationFor, 1);
+        //    _producingPopulationFor = GetRaceBasedOnProportion();
+        //    _currentPopulationProduction = excess;
+        //}
         AdjustPopulation(populationGrowth);
         UIManager.Instance.UpdateFactionSummary();
         ScheduleMonthlyPopulationIncrease();
+    }
+    private RACE GetRaceBasedOnProportion() {
+        WeightedDictionary<RACE> raceDict = new WeightedDictionary<RACE>(_civiliansByRace);
+        if (raceDict.GetTotalOfWeights() > 0) {
+            return raceDict.PickRandomElementGivenWeights();
+        }
+        throw new System.Exception("Cannot get race to produce!");
     }
     #endregion
 

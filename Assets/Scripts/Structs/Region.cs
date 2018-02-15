@@ -369,7 +369,7 @@ public class Region {
         if (_specialResource != RESOURCE.NONE) {
             _tileWithSpecialResource.Unoccupy();
         }
-		StopProducing ();
+		//StopProducing ();
     }
     private void SetAdjacentRegionsAsVisibleForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {
@@ -665,19 +665,19 @@ public class Region {
 		this._corpseMoundTiles.Remove (hexTile);
 	}
 
-	internal void StartProducing(){
-		Messenger.AddListener("OnDayEnd", ProduceResource);
-	}
-	internal void StopProducing(){
-		Messenger.RemoveListener("OnDayEnd", ProduceResource);
-	}
-	private void ProduceResource(){
-		if(!isOtherDay){
-			isOtherDay = true;
-			return;
-		}else{
-			isOtherDay = false;
-		}
-		this._tileWithSpecialResource.ProduceResource();
-	}
+	//internal void StartProducing(){
+	//	Messenger.AddListener("OnDayEnd", ProduceResource);
+	//}
+	//internal void StopProducing(){
+	//	Messenger.RemoveListener("OnDayEnd", ProduceResource);
+	//}
+	//private void ProduceResource(){
+	//	if(!isOtherDay){
+	//		isOtherDay = true;
+	//		return;
+	//	}else{
+	//		isOtherDay = false;
+	//	}
+	//	this._tileWithSpecialResource.ProduceResource();
+	//}
 }
