@@ -383,16 +383,16 @@ public class BaseLandmark : ILocation, TaskCreator {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
                 ICombatInitializer currItem = _charactersAtLocation[i];
                 currItem.SetIsDefeated(false);
-                if (currItem.avatar != null) {
-                    currItem.avatar.ResumeMovement();
-                }
+				currItem.SetIsInCombat (false);
+				if(currItem.currentFunction != null){
+					currItem.currentFunction ();
+				}
+				currItem.SetCurrentFunction(null);
             }
         } else {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
                 ICombatInitializer currItem = _charactersAtLocation[i];
-                if (currItem.avatar != null) {
-                    currItem.avatar.PauseMovement();
-                }
+				currItem.SetIsInCombat (true);
             }
         }
     }

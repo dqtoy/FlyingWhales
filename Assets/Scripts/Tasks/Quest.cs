@@ -120,6 +120,10 @@ public class Quest : CharacterTask{
         }
     }
     protected virtual void EndQuest(TASK_STATUS result) {
+		if(_assignedParty.isInCombat){
+			_assignedParty.SetCurrentFunction (() => EndTask (result));
+			return;
+		}
         if (!_isDone) {
             _taskStatus = result;
 			if(_currentAction != null){

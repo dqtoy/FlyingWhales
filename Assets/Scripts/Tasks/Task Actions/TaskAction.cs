@@ -31,12 +31,20 @@ public class TaskAction {
     public virtual void InititalizeAction(int days) { }
 
     public virtual void DoAction(ECS.Character partyLeader) {
+		if(partyLeader.party.isInCombat){
+			partyLeader.party.SetCurrentFunction (() => DoAction (partyLeader));
+			return;
+		}
         _actionDoer = partyLeader;
         if (onTaskDoAction != null) {
             onTaskDoAction();
         }
     }
     public virtual void ActionDone(TASK_ACTION_RESULT result) {
+		if(_actionDoer.party.isInCombat){
+			_actionDoer.party.SetCurrentFunction (() => ActionDone (result));
+			return;
+		}
         _isDone = true;
         _result = result;
         if(onTaskActionDone != null) {

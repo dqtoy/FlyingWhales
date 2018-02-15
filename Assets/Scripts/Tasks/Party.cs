@@ -31,6 +31,9 @@ public class Party: IEncounterable, ICombatInitializer {
 
     private Dictionary<MATERIAL, int> _materialInventory;
 
+	private Action _currentFunction;
+	private bool _isInCombat;
+
     #region getters/setters
     public string encounterName {
 		get { return _name; }
@@ -83,6 +86,12 @@ public class Party: IEncounterable, ICombatInitializer {
     public CharacterAvatar avatar {
         get { return _partyLeader.avatar; }
     }
+	public bool isInCombat{
+		get { return _isInCombat; }
+	}
+	public Action currentFunction{
+		get { return _currentFunction; }
+	}
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
@@ -183,7 +192,6 @@ public class Party: IEncounterable, ICombatInitializer {
 			if(!_isDisbanded){
 				JustDisbandParty ();
 			}
-			this.specificLocation.RemoveCharacterFromLocation(this);
         }
     }
 	public void AddPrisoner(ECS.Character character){
@@ -233,12 +241,11 @@ public class Party: IEncounterable, ICombatInitializer {
         _isDisbanded = true;
         Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
-        if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-            Quest currQuest = (Quest)_currentTask;
-            if (!currQuest.isDone) {
-                currQuest.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
-            }
-        }
+		if (_currentTask != null) {
+			if (!_currentTask.isDone) {
+				_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
+			}
+		}
 		SetCurrentTask (null);
 		if(_partyLeader.isDead){
 			while(_prisoners.Count > 0){
@@ -269,10 +276,9 @@ public class Party: IEncounterable, ICombatInitializer {
 		_isDisbanded = true;
         Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
-        if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-            Quest currQuest = (Quest)_currentTask;
-            if (!currQuest.isDone) {
-                currQuest.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
+        if (_currentTask != null) {
+			if (!_currentTask.isDone) {
+				_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
             }
         }
         SetCurrentTask (null);
@@ -297,6 +303,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			RemovePartyMember(currMember);
 			currMember.DetermineAction();
 		}
+		this.specificLocation.RemoveCharacterFromLocation (this);
 	}
     public bool AreAllPartyMembersPresent() {
         bool isPartyComplete = true;
@@ -383,7 +390,6 @@ public class Party: IEncounterable, ICombatInitializer {
          */
     public void SetCurrentTask(CharacterTask task) {
         _currentTask = task;
-		SetIsDefeated (false);
         for (int i = 0; i < _partyMembers.Count; i++) {
             ECS.Character currMember = _partyMembers[i];
             currMember.SetCurrentTask(task);
@@ -469,6 +475,10 @@ public class Party: IEncounterable, ICombatInitializer {
 
     #region Utilities
     public void GoBackToQuestGiver(TASK_STATUS taskResult) {
+		if(isInCombat){
+			SetCurrentFunction (() => GoBackToQuestGiver (taskResult));
+			return;
+		}
         if(currentTask == null || currentTask.taskType != TASK_TYPE.QUEST) {
             throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
         }
@@ -664,18 +674,22 @@ public class Party: IEncounterable, ICombatInitializer {
             if(partyMembers.Count > 0) {
                 //the party was defeated in combat, but there are still members that are alive,
                 //make them go back to the quest giver and have the quest cancelled.
-                this.specificLocation.RemoveCharacterFromLocation(this); //Remove the party from 
                 if (_currentTask != null && _currentTask is Quest) {
                     (_currentTask as Quest).GoBackToQuestGiver(TASK_STATUS.CANCEL);
                 }
             } else {
                 //The party was defeated in combat, and no one survived, mark the quest as 
                 //failed, so that other characters can try to do the quest.
-                if(_currentTask != null) {
-                    _currentTask.EndTask(TASK_STATUS.FAIL);
-                }
-                this.specificLocation.RemoveCharacterFromLocation(this);
-                PartyManager.Instance.RemoveParty(this);
+				if(!isDisbanded){
+					JustDisbandParty ();
+				}
+
+				//This is done because the party will no longer be in the _charactersAtLocation List, any function associated with _currentFunction won't be called anymore after CombatAtLocation
+				SetIsInCombat (false);
+				if(_currentFunction != null) {
+					_currentFunction();
+				}
+				SetCurrentFunction(null);
             }
 		}else{
 			if(faction == null){
@@ -753,4 +767,13 @@ public class Party: IEncounterable, ICombatInitializer {
         }
     }
     #endregion
+
+	#region Combat Handlers
+	public void SetIsInCombat (bool state){
+		_isInCombat = state;
+	}
+	public void SetCurrentFunction (Action function){
+		_currentFunction = function;
+	}
+	#endregion
 }

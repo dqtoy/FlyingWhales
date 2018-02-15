@@ -49,10 +49,18 @@ public class CharacterTask {
      he/she chooses to perform this task.
          */
     public virtual void PerformTask(ECS.Character character) {
+		if(character.isInCombat){
+			character.SetCurrentFunction (() => PerformTask (character));
+			return;
+		}
         _taskStatus = TASK_STATUS.IN_PROGRESS;
         _assignedCharacter = character;
     }
     public virtual void EndTask(TASK_STATUS taskResult) {
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => EndTask (taskResult));
+			return;
+		}
         _taskStatus = taskResult;
         _isDone = true;
         switch (taskResult) {

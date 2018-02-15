@@ -25,12 +25,6 @@ public class GoToLocation : TaskAction {
         base.InititalizeAction(target);
         targetLocation = target;
     }
-    public override void ActionDone(TASK_ACTION_RESULT result) {
-        //Destroy ECS.Character Avatar
-        //_actionDoer.DestroyAvatar();
-
-        base.ActionDone(result);
-    }
     #endregion
 
     internal void SetPathfindingMode(PATHFINDING_MODE pathfindingMode) {
