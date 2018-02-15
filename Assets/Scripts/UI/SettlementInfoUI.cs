@@ -69,7 +69,9 @@ public class SettlementInfoUI : UIMenu {
             text += "\n[b]Settlement Population: [/b] " + currentlyShowingLandmark.civilians.ToString();
             text += "\n[b]Civilians: [/b] ";
             foreach (KeyValuePair<RACE, int> kvp in currentlyShowingLandmark.civiliansByRace) {
-                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+                if (kvp.Value > 0) {
+                    text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+                }
             }
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.location.region.populationGrowth).ToString();
 

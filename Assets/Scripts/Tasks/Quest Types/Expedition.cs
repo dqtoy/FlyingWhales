@@ -81,7 +81,7 @@ public class Expedition : Quest {
         base.ConstructQuestLine();
 
         _target = GetTargetHexTile();
-
+        AddNewLog(_assignedParty.name + " goes to " + _target.locationName);
         GoToLocation goToTarget = new GoToLocation(this); //Go to the target tile
         goToTarget.InititalizeAction(_target);
         goToTarget.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
@@ -110,6 +110,7 @@ public class Expedition : Quest {
     private void StopGathering() {
         Messenger.RemoveListener("OnDayEnd", GatherResource);
         _assignedParty.AdjustMaterial(_target.materialOnTile, _gatheredAmt); //take the gathered resources, and give it to the party
+        AddNewLog(_assignedParty.name + " succcessfully gathers " + _gatheredAmt.ToString() + " " + Utilities.NormalizeString(_target.materialOnTile.ToString()) + " from " + _target.locationName);
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);
     }
 }

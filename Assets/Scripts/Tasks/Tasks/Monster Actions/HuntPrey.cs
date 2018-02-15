@@ -27,6 +27,16 @@ public class HuntPrey : CharacterTask {
         huntActions.AddElement(HUNT_ACTION.END, 15);
         huntActions.AddElement(HUNT_ACTION.NOTHING, 70);
     }
+    public override void TaskCancel() {
+        base.TaskCancel();
+        Messenger.RemoveListener("OnDayEnd", Hunt);
+        _assignedCharacter.DestroyAvatar();
+    }
+    public override void TaskFail() {
+        base.TaskFail();
+        Messenger.RemoveListener("OnDayEnd", Hunt);
+        _assignedCharacter.DestroyAvatar();
+    }
     #endregion
 
     private void GoToTargetLocation() {
@@ -41,9 +51,10 @@ public class HuntPrey : CharacterTask {
 
     private void StartHunt() {
         _target.AddHistory("Monster " + _assignedCharacter.name + " is hunting for food");
-        GameDate nextDate = GameManager.Instance.Today();
-        nextDate.AddDays(1);
-        SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
+        Messenger.AddListener("OnDayEnd", Hunt);
+        //GameDate nextDate = GameManager.Instance.Today();
+        //nextDate.AddDays(1);
+        //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
 		TriggerSaveLandmarkQuest ();
     }
 
@@ -88,7 +99,8 @@ public class HuntPrey : CharacterTask {
 	}
 
 	private void End(){
-		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+        Messenger.RemoveListener("OnDayEnd", Hunt);
+        if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
 			settlement.CancelSaveALandmark (_target);
 		}

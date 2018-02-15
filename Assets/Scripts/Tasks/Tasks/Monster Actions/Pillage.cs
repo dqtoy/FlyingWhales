@@ -28,6 +28,16 @@ public class Pillage : CharacterTask {
         pillageActions.AddElement(PILLAGE_ACTION.END, 15);
         pillageActions.AddElement(PILLAGE_ACTION.NOTHING, 70);
     }
+    public override void TaskCancel() {
+        base.TaskCancel();
+        Messenger.RemoveListener("OnDayEnd", DoPillage);
+        _assignedCharacter.DestroyAvatar();
+    }
+    public override void TaskFail() {
+        base.TaskFail();
+        Messenger.RemoveListener("OnDayEnd", DoPillage);
+        _assignedCharacter.DestroyAvatar();
+    }
     #endregion
 
     private void GoToTargetLocation() {
@@ -42,9 +52,10 @@ public class Pillage : CharacterTask {
 
     private void StartPillage() {
         _target.AddHistory("Monster " + _assignedCharacter.name + " has started pillaging " + _target.landmarkName);
-        GameDate nextDate = GameManager.Instance.Today();
-        nextDate.AddDays(1);
-        SchedulingManager.Instance.AddEntry(nextDate, () => DoPillage());
+        Messenger.AddListener("OnDayEnd", DoPillage);
+        //GameDate nextDate = GameManager.Instance.Today();
+        //nextDate.AddDays(1);
+        //SchedulingManager.Instance.AddEntry(nextDate, () => DoPillage());
 		TriggerSaveLandmarkQuest ();
     }
 
@@ -88,7 +99,8 @@ public class Pillage : CharacterTask {
 	}
 
 	private void End(){
-		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+        Messenger.RemoveListener("OnDayEnd", DoPillage);
+        if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
 			settlement.CancelSaveALandmark (_target);
 		}
