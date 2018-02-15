@@ -319,6 +319,14 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
+	public ECS.Character GetPrisonerByID(int id){
+		for (int i = 0; i < _prisoners.Count; i++) {
+			if (_prisoners [i].id == id){
+				return _prisoners [i];
+			}
+		}
+		return null;
+	}
     #endregion
 
     #region Encounterables

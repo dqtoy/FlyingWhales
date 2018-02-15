@@ -72,7 +72,7 @@ public class Settlement : BaseLandmark {
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
-            _producingPopulationFor = GetRaceBasedOnProportion();
+//            _producingPopulationFor = GetRaceBasedOnProportion();
         }
 		//Start Quest Creation
 		ScheduleUpdateAvailableMaterialsToGet ();
@@ -211,8 +211,8 @@ public class Settlement : BaseLandmark {
      This will also subtract from the civilian population.
          */
 	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-        RACE raceOfChar = GetRaceBasedOnProportion();
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+//        RACE raceOfChar = GetRaceBasedOnProportion();
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, _owner.race);
 //        newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(_owner);
 		newCharacter.SetHome (this);
@@ -244,7 +244,7 @@ public class Settlement : BaseLandmark {
 	public void TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass, MATERIAL materialToUse){
 		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
 		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
-        RACE raceForChar = GetRaceBasedOnProportion();
+//        RACE raceForChar = GetRaceBasedOnProportion();
 //		Production combinedProduction = new Production ();
 //		combinedProduction.Combine(trainingRole.production, trainingClass.production);
 //
@@ -270,7 +270,7 @@ public class Settlement : BaseLandmark {
 		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
 		GameDate trainCharacterDate = GameManager.Instance.Today ();
 		trainCharacterDate.AddDays (trainingRole.production.duration + trainingClass.production.duration);
-		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, raceForChar));
+		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, _owner.race));
 //		return false;
 	}
     public void SetHead(ECS.Character head) {
