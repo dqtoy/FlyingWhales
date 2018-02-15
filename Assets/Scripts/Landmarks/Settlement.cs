@@ -602,7 +602,12 @@ public class Settlement : BaseLandmark {
 			if(_questBoard[i].questType == QUEST_TYPE.SAVE_LANDMARK){
 				SaveLandmark saveLandmark = (SaveLandmark)_questBoard [i];
 				if(saveLandmark.target.id == landmarkToSave.id){
-					saveLandmark.assignedParty.GoBackToQuestGiver (TASK_STATUS.FAIL);
+					if(saveLandmark.isAccepted){
+						saveLandmark.assignedParty.GoBackToQuestGiver (TASK_STATUS.FAIL);
+					}else{
+						RemoveQuestFromBoard (saveLandmark);
+						RemoveQuest (saveLandmark);
+					}
 					break;
 				}
 			}

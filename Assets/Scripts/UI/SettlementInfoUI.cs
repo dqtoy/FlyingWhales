@@ -81,13 +81,15 @@ public class SettlementInfoUI : UIMenu {
                         Quest currQuest = settlement.questBoard[i];
                         text += "\n" + currQuest.urlName;
                         if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
-                            text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.name;
+                            text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.tileName;
                         } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
-                            text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.name;
+                            text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.tileName;
                         } else if (currQuest.questType == QUEST_TYPE.BUILD_STRUCTURE) {
-                            text += " " + ((BuildStructure)currQuest).target.name;
+                            text += " " + ((BuildStructure)currQuest).target.tileName;
 						} else if (currQuest.questType == QUEST_TYPE.OBTAIN_MATERIAL) {
 							text += " " + ((ObtainMaterial)currQuest).materialToObtain.ToString();
+						} else if (currQuest.questType == QUEST_TYPE.SAVE_LANDMARK) {
+							text += " " + ((SaveLandmark)currQuest).target.location.tileName;
 						}
                         //						else {
                         //                            text += "[/url]";

@@ -185,15 +185,17 @@ public class Party: IEncounterable, ICombatInitializer {
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 ((Quest)currentTask).AddNewLog(member.name + " has left the party");
             }
-        }
+		}else{
+			if(this.specificLocation.tileLocation.landmarkOnTile != null){
+				this.specificLocation.tileLocation.landmarkOnTile.AddHistory (member.name + " died.");
+			}
+		}
         
         member.SetParty(null);
 		member.SetCurrentTask (null);
 
-		if (_partyMembers.Count <= 0 && !isInCombat) {
-			if(!_isDisbanded){
-				JustDisbandParty ();
-			}
+		if (_partyMembers.Count <= 0) {
+			JustDisbandParty ();
         }
     }
 	public void AddPrisoner(ECS.Character character){
@@ -240,6 +242,9 @@ public class Party: IEncounterable, ICombatInitializer {
      non hostile settlements and determine their action there.
          */
     public void DisbandParty() {
+		if(_isDisbanded){
+			return;
+		}
         _isDisbanded = true;
         Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
@@ -277,6 +282,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	public void JustDisbandParty() {
 		if(isInCombat){
 			SetCurrentFunction (() => JustDisbandParty ());
+			return;
+		}
+		if(_isDisbanded){
 			return;
 		}
 		_isDisbanded = true;

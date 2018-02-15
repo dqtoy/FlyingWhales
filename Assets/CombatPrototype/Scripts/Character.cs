@@ -554,15 +554,9 @@ namespace ECS {
 				}
                 CheckForInternationalIncident();
 
+
                 if (this._party != null) {
-					if(this.party.currLocation.landmarkOnTile != null){
-						this.party.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
-					}
                     this._party.RemovePartyMember(this, true);
-				}else{
-					if(this.currLocation.landmarkOnTile != null){
-						this.currLocation.landmarkOnTile.AddHistory (this._name + " died.");
-					}
 				}
                 if (_avatar != null) {
                     _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
@@ -571,6 +565,7 @@ namespace ECS {
 					PrisonerDeath ();
 				}
 				if (this.specificLocation != null) {
+
                     this.specificLocation.RemoveCharacterFromLocation(this);
                     //this.currLocation.RemoveCharacterFromLocation(this);
                 }
@@ -1433,7 +1428,7 @@ namespace ECS {
                     weight += totalMaterials / 20; //+1 Weight per 20 resource in the landmark (regardless of value).
                     weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
                     if(weight > 0) {
-                        actionWeights.AddElement(new Pillage(this, currLandmark), 500);
+                        actionWeights.AddElement(new Pillage(this, currLandmark), weight);
                     }
                 }
 

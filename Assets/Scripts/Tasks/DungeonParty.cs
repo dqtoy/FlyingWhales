@@ -26,7 +26,7 @@ public class DungeonParty : Party {
 			_avatar.RemoveCharacter(member);
 		}
 		if(!forDeath){
-			member.currLocation.AddCharacterToLocation(member, false);
+			member.specificLocation.AddCharacterToLocation(member, false);
 		}
 		member.SetParty(null);
 		member.SetCurrentTask (null);
