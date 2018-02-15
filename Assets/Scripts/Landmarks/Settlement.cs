@@ -72,7 +72,7 @@ public class Settlement : BaseLandmark {
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
-//            _producingPopulationFor = GetRaceBasedOnProportion();
+            _producingPopulationFor = GetRaceBasedOnProportion();
         }
 		//Start Quest Creation
 		ScheduleUpdateAvailableMaterialsToGet ();
