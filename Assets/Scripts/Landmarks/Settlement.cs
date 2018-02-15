@@ -211,8 +211,8 @@ public class Settlement : BaseLandmark {
      This will also subtract from the civilian population.
          */
 	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-//        RACE raceOfChar = GetRaceBasedOnProportion();
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, _owner.race);
+        RACE raceOfChar = GetRaceBasedOnProportion();
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
 //        newCharacter.AssignRole(charRole);
         newCharacter.SetFaction(_owner);
 		newCharacter.SetHome (this);
@@ -244,25 +244,25 @@ public class Settlement : BaseLandmark {
 	public void TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass, MATERIAL materialToUse){
 		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
 		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
-//        RACE raceForChar = GetRaceBasedOnProportion();
-//		Production combinedProduction = new Production ();
-//		combinedProduction.Combine(trainingRole.production, trainingClass.production);
-//
-//		if(combinedProduction.civilianCost <= civilians && combinedProduction.foodCost <= GetTotalFoodCount()){
-//			MATERIAL materialToUse = MATERIAL.NONE;
-//			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
-//			for (int i = 0; i < trainingPreference.Count; i++) {
-//				if(trainingClass.materials.Contains(trainingPreference[i]) && combinedProduction.resourceCost <= _materialsInventory[trainingPreference[i]].count){
-//					materialToUse = trainingPreference [i];
-//				}
-//			}
-//			if(materialToUse != MATERIAL.NONE){
-//				
-//				return true;
-//			}
-//		}
+        RACE raceForChar = GetRaceBasedOnProportion();
+        //		Production combinedProduction = new Production ();
+        //		combinedProduction.Combine(trainingRole.production, trainingClass.production);
+        //
+        //		if(combinedProduction.civilianCost <= civilians && combinedProduction.foodCost <= GetTotalFoodCount()){
+        //			MATERIAL materialToUse = MATERIAL.NONE;
+        //			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+        //			for (int i = 0; i < trainingPreference.Count; i++) {
+        //				if(trainingClass.materials.Contains(trainingPreference[i]) && combinedProduction.resourceCost <= _materialsInventory[trainingPreference[i]].count){
+        //					materialToUse = trainingPreference [i];
+        //				}
+        //			}
+        //			if(materialToUse != MATERIAL.NONE){
+        //				
+        //				return true;
+        //			}
+        //		}
 
-		ReduceTotalFoodCount (trainingRole.production.foodCost);
+        ReduceTotalFoodCount (trainingRole.production.foodCost);
         //AdjustPopulation(-trainingRole.production.civilianCost);
         AdjustCivilians(raceForChar, -trainingRole.production.civilianCost);
         AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
@@ -270,7 +270,7 @@ public class Settlement : BaseLandmark {
 		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
 		GameDate trainCharacterDate = GameManager.Instance.Today ();
 		trainCharacterDate.AddDays (trainingRole.production.duration + trainingClass.production.duration);
-		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, _owner.race));
+		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, raceForChar));
 //		return false;
 	}
     public void SetHead(ECS.Character head) {

@@ -273,7 +273,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         RACE[] allRaces = Utilities.GetEnumValues<RACE>();
         for (int i = 0; i < allRaces.Length; i++) {
             RACE currRace = allRaces[i];
-            _civiliansByRace.Add(currRace, 0);
+            if(currRace != RACE.NONE) {
+                _civiliansByRace.Add(currRace, 0);
+            }
         }
     }
     public void AdjustCivilians(RACE race, int amount) {
