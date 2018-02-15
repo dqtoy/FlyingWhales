@@ -46,7 +46,13 @@ public class SettlementInfoClick : MonoBehaviour {
 						UIManager.Instance.ShowPartyInfo (party);
 					}
 				}
-			}
+			} else if(url.Contains("_prisoner")){
+				BaseLandmark landmark = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark;
+				ECS.Character character = landmark.GetPrisonerByID(idToUse);
+				if(character != null){
+					UIManager.Instance.ShowCharacterInfo(character);
+				}
+			} 
         }
 	}
 }

@@ -177,6 +177,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         SetExploredState(true);
         _location.Occupy();
         EnableInitialTechnologies(faction);
+		AddHistory ("Occupied by " + _owner.name);
     }
     public virtual void UnoccupyLandmark() {
         if(_owner == null) {
@@ -340,6 +341,14 @@ public class BaseLandmark : ILocation, TaskCreator {
 				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
 					return (Party)_charactersAtLocation [i];
 				}
+			}
+		}
+		return null;
+	}
+	public ECS.Character GetPrisonerByID(int id){
+		for (int i = 0; i < _prisoners.Count; i++) {
+			if (_prisoners [i].id == id){
+				return _prisoners [i];
 			}
 		}
 		return null;

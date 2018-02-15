@@ -984,6 +984,10 @@ public enum BODY_PART{
 	MOUTH,
 	WING,
 	HORN,
+	HIP,
+	CROTCH,
+	ASS,
+	PELVIS,
 }
 
 public enum CHARACTER_CLASS_TYPE {

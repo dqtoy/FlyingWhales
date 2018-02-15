@@ -149,6 +149,17 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+
+		text += "\n[b]Prisoners:[/b] ";
+		if(currentlyShowingLandmark.prisoners.Count > 0){
+			for (int i = 0; i < currentlyShowingLandmark.prisoners.Count; i++) {
+				ECS.Character prisoner = currentlyShowingLandmark.prisoners [i];
+				text += "\n" + prisoner.prisonerName;
+			}
+		} else {
+			text += "NONE";
+		}
+
         text += "\n[b]Materials: [/b] ";
         Dictionary<MATERIAL, MaterialValues> materials = currentlyShowingLandmark.materialsInventory;
         if (materials.Sum(x => x.Value.totalCount) > 0) {
