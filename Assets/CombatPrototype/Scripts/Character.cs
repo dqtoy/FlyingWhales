@@ -1722,6 +1722,10 @@ namespace ECS {
 				SetSpecificLocation (((BaseLandmark)_isPrisonerOf));
 			}
 			AddHistory ("Released from the prison of " + wardenName);
+			if(this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				BaseLandmark landmark = (BaseLandmark)this.specificLocation;
+				landmark.AddHistory ("Prisoner " + this.name + " is released.");
+			}
 			SetPrisoner (false, null);
 			DetermineAction ();
 		}

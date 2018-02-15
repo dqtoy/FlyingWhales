@@ -156,6 +156,10 @@ namespace ECS {
 				}else{
 					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
 						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
+							if(combat.faintedCharacters[i].specificLocation != null && combat.faintedCharacters[i].specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+								BaseLandmark landmark = (BaseLandmark)combat.faintedCharacters[i].specificLocation;
+								landmark.AddHistory (combat.faintedCharacters [i].name + " is left to die.");
+							}
 							combat.faintedCharacters [i].Death ();
 						}else{
 							combat.faintedCharacters [i].SetHP(1);
