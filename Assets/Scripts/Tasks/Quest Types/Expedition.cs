@@ -43,26 +43,36 @@ public class Expedition : Quest {
                 }
                 int weightForTile = 500;
                 List<HexTile> path = PathGenerator.Instance.GetPath(_postedAt.location, currTile, PATHFINDING_MODE.NORMAL);
-                weightForTile -= 2 * path.Count; //-2 weight for every tile distance away from settlement
-                Faction regionOwner = currTile.region.owner;
-                if (regionOwner != null) {
-                    if(regionOwner.id != _postedAt.owner.id) {
-                        FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(regionOwner, _postedAt.owner);
-                        if(rel.relationshipStatus == RELATIONSHIP_STATUS.NEUTRAL) {
-                            weightForTile -= 200; //-200 Weight if the tile's region is owned by a Neutral Tribe
-                        } else if (rel.relationshipStatus == RELATIONSHIP_STATUS.FRIENDLY) {
-                            weightForTile -= 300; //-300 Weight if the tile's region is owned by a Friendly Tribe
+                if(path != null) {
+                    weightForTile -= 2 * path.Count; //-2 weight for every tile distance away from settlement
+                    Faction regionOwner = currTile.region.owner;
+                    if (regionOwner != null) {
+                        if (regionOwner.id != _postedAt.owner.id) {
+                            FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(regionOwner, _postedAt.owner);
+                            if (rel.relationshipStatus == RELATIONSHIP_STATUS.NEUTRAL) {
+                                weightForTile -= 200; //-200 Weight if the tile's region is owned by a Neutral Tribe
+                            } else if (rel.relationshipStatus == RELATIONSHIP_STATUS.FRIENDLY) {
+                                weightForTile -= 300; //-300 Weight if the tile's region is owned by a Friendly Tribe
+                            }
                         }
                     }
+
+                    int preferenceLvl;
+                    List<MATERIAL> materials = _postedAt.owner.productionPreferences[prodTypeToUse].prioritizedMaterials;
+                    preferenceLvl = materials.IndexOf(currTile.materialOnTile);
+
+                    //+20 x Preference for that Material based on the type (Food uses Training Preference)
+                    weightForTile += 20 * (materials.Count - preferenceLvl);
+
+                    if(weightForTile > 0) {
+                        tileWeights.AddElement(currTile, weightForTile);
+                    }
                 }
-
-                int preferenceLvl;
-                List<MATERIAL> materials = _postedAt.owner.productionPreferences[prodTypeToUse].prioritizedMaterials;
-                preferenceLvl = materials.IndexOf(currTile.materialOnTile);
-
-                //+20 x Preference for that Material based on the type (Food uses Training Preference)
-                weightForTile += 20 * (materials.Count - preferenceLvl);
+                
             }
+        }
+        if(tileWeights.GetTotalOfWeights() <= 0) {
+            throw new System.Exception("Could not find tile to expedite!");
         }
         return tileWeights.PickRandomElementGivenWeights();
     }

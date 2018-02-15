@@ -83,7 +83,7 @@ public class InternalQuestManager : TaskCreator {
             AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
             AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
             AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
-            AddExpedittionWeights(questWeights, currSettlement, regionOfSettlement);
+            AddExpeditionWeights(questWeights, currSettlement, regionOfSettlement);
         }
         return questWeights;
     }
@@ -149,7 +149,7 @@ public class InternalQuestManager : TaskCreator {
             }
         }
     }
-    private void AddExpedittionWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    private void AddExpeditionWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
         //Check if there is a category of Resource Type (Weapon, Armor, Construction, Training, Food) that the Settlement doesnt have any access to.
         PRODUCTION_TYPE[] allProdTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
         for (int i = 0; i < allProdTypes.Length; i++) {
