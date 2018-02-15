@@ -252,6 +252,9 @@ public class CharacterRole {
     internal virtual int GetExpeditionWeight(Expedition expedition) {
         return 0;
     }
+	internal virtual int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
+		return 0;
+	}
     #endregion
 
     #region Utilities

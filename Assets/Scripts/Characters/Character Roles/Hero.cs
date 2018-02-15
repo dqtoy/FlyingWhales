@@ -21,7 +21,8 @@ public class Hero : CharacterRole {
             QUEST_TYPE.DEFEND,
             QUEST_TYPE.EXPLORE_TILE,
             QUEST_TYPE.EXPAND,
-            QUEST_TYPE.EXPEDITION
+			QUEST_TYPE.EXPEDITION,
+			QUEST_TYPE.SAVE_LANDMARK,
         };
     }
 
@@ -72,4 +73,7 @@ public class Hero : CharacterRole {
     internal override int GetExpeditionWeight(Expedition expedition) {
         return 100;
     }
+	internal override int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
+		return 200;
+	}
 }

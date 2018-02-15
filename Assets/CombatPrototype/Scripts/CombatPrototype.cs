@@ -148,6 +148,7 @@ namespace ECS{
         #endregion
 
 		public void ReturnCombatResults(){
+			CombatPrototypeManager.Instance.CombatResults(this);
             if (attacker != null) {
                 attacker.ReturnCombatResults(this);
                 //else if (caller is IEncounterable) {
@@ -162,7 +163,6 @@ namespace ECS{
                 //    encounterable.ReturnResults(this);
                 //}
             }
-            CombatPrototypeManager.Instance.CombatResults(this);
 			this.location.StartCombatAtLocation ();
 		}
 

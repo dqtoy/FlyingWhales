@@ -120,6 +120,10 @@ public class Quest : CharacterTask{
         }
     }
     protected virtual void EndQuest(TASK_STATUS result) {
+		if(_assignedParty.isInCombat){
+			_assignedParty.SetCurrentFunction (() => EndTask (result));
+			return;
+		}
         if (!_isDone) {
             _taskStatus = result;
 			if(_currentAction != null){
@@ -286,6 +290,9 @@ public class Quest : CharacterTask{
         }
     }
     internal void PerformNextQuestAction() {
+		if(_isDone){
+			return;
+		}
         _currentAction = _questLine.Dequeue();
         if(_assignedParty == null) {
             if(_createdBy is ECS.Character) {

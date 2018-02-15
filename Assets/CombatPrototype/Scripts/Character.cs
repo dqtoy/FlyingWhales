@@ -67,6 +67,9 @@ namespace ECS {
         private int _gold;
         private int _prestige;
 
+		private Action _currentFunction;
+		private bool _isInCombat;
+
         //When the character should have a next action it should do after it's current one.
         private CharacterTask nextTaskToDo;
 
@@ -242,6 +245,12 @@ namespace ECS {
         public Dictionary<MATERIAL, int> materialInventory {
             get { return _materialInventory; }
         }
+		public bool isInCombat{
+			get { return _isInCombat; }
+		}
+		public Action currentFunction{
+			get { return _currentFunction; }
+		}
         #endregion
 
 		public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -1276,6 +1285,10 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
+			if(isInCombat){
+				SetCurrentFunction (() => DetermineAction ());
+				return;
+			}
 			if(_isFainted || _isPrisoner || _isDead){
 				return;
 			}
@@ -1307,6 +1320,10 @@ namespace ECS {
 		}
 
 		internal void UnalignedDetermineAction(){
+			if(isInCombat){
+				SetCurrentFunction (() => UnalignedDetermineAction ());
+				return;
+			}
 			if(_isFainted || _isPrisoner || _isDead){
 				return;
 			}
@@ -1519,6 +1536,10 @@ namespace ECS {
             }
         }
         public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
+			if(isInCombat){
+				SetCurrentFunction (() => GoToNearestNonHostileSettlement (() => onReachSettlement()));
+				return;
+			}
             //check first if the character is already at a non hostile settlement
             if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
                 && this.currLocation.landmarkOnTile.owner != null) {
@@ -1800,7 +1821,6 @@ namespace ECS {
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
-                this._specificLocation.RemoveCharacterFromLocation(this);
             } else{
 				if(faction == null){
 					UnalignedDetermineAction ();
@@ -1878,5 +1898,14 @@ namespace ECS {
             }
         }
         #endregion
+
+		#region Combat Handlers
+		public void SetIsInCombat (bool state){
+			_isInCombat = state;
+		}
+		public void SetCurrentFunction (Action function){
+			_currentFunction = function;
+		}
+		#endregion
     }
 }

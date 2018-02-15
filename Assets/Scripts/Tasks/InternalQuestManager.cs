@@ -279,7 +279,12 @@ public class InternalQuestManager : TaskCreator {
                     if (((Expedition)currQuest).productionType.Equals(productionType)) {
                         return true;
                     }
-                }
+				} else if (questType == QUEST_TYPE.SAVE_LANDMARK) {
+					BaseLandmark target = (BaseLandmark)identifier;
+					if (((SaveLandmark)currQuest).target.id == target.id) {
+						return true;
+					}
+				}
             }
 		}
 		return false;
