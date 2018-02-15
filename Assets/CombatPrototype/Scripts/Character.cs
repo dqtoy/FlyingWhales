@@ -1433,7 +1433,7 @@ namespace ECS {
                     weight += totalMaterials / 20; //+1 Weight per 20 resource in the landmark (regardless of value).
                     weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
                     if(weight > 0) {
-                        actionWeights.AddElement(new Pillage(this, currLandmark), weight);
+                        actionWeights.AddElement(new Pillage(this, currLandmark), 500);
                     }
                 }
 
