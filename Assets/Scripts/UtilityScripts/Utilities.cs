@@ -1553,6 +1553,8 @@ public class Utilities : MonoBehaviour {
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
             case BODY_PART.LEG:
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
+			case BODY_PART.HIP:
+				return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HIP_ARMOR;
             case BODY_PART.FEET:
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
             default:

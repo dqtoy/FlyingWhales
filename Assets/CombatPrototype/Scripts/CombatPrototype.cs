@@ -743,6 +743,9 @@ namespace ECS{
 						}
 					}
 				}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
+					if (chosenBodyPart.HasAttribute (IBodyPart.ATTRIBUTE.NONDECAPITATABLE)){
+						return;
+					}
 					if(chance < 5){
 						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.DECAPITATED);
 						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);

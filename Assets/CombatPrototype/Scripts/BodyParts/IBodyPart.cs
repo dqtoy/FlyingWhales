@@ -34,7 +34,9 @@ namespace ECS{
 			CLAWED_NO_WEAPON,
 			CAN_GRIP_NO_WEAPON,
 			CAN_FLAME_BREATH_NO_WEAPON,
-            NONE
+            NONE,
+			CAN_EQUIP_HIP_ARMOR,
+			NONDECAPITATABLE,
         }
 
 		[SerializeField] internal string name;

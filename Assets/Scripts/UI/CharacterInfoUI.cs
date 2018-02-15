@@ -184,7 +184,7 @@ public class CharacterInfoUI : UIMenu {
 				}else{
 					isFirst = false;
 				}
-				text += kvp.Key.role.roleType.ToString() + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
+				text += kvp.Key.role.roleType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
 			}
 		} else {
 			text += "NONE";
