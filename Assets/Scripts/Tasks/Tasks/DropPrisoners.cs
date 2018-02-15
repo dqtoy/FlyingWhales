@@ -54,9 +54,8 @@ public class DropPrisoners : CharacterTask {
 		if(region.centerOfMass.landmarkOnTile.owner != null){
 			for (int i = 0; i < _prisoners.Count; i++) {
 				if(_prisoners[i].faction == null || region.centerOfMass.landmarkOnTile.owner.id != _prisoners[i].faction.id){
-					_prisoners [i].TransferPrisoner(region.centerOfMass.landmarkOnTile);
 					region.centerOfMass.landmarkOnTile.AddHistory ("Dropped prisoner " + _prisoners [i].name);
-					_prisoners.RemoveAt (i);
+					_prisoners [i].TransferPrisoner(region.centerOfMass.landmarkOnTile);
 					i--;
 				}
 			}

@@ -188,12 +188,34 @@ public class Party: IEncounterable, ICombatInitializer {
         
         member.SetParty(null);
 		member.SetCurrentTask (null);
-		if (_partyMembers.Count <= 0) {
+
+		if (_partyMembers.Count <= 0 && !isInCombat) {
 			if(!_isDisbanded){
 				JustDisbandParty ();
 			}
         }
     }
+	public virtual void RemovePartyMemberInCombat(ECS.Character member, bool forDeath = false) {
+		_partyMembers.Remove(member);
+		if(_avatar != null) {
+			_avatar.RemoveCharacter(member);
+		}
+		//If party is unaligned, change party leader immediately if party leader died
+		if(faction == null && member.id == _partyLeader.id && _partyMembers.Count > 0){
+			_partyLeader = _partyMembers[0];
+		}
+		if (!forDeath) {
+			member.AddHistory ("Left party: " + this._name + ".");
+			this.specificLocation.AddCharacterToLocation(member, false);
+			Debug.Log(member.name + " has left the party of " + partyLeader.name);
+			if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+				((Quest)currentTask).AddNewLog(member.name + " has left the party");
+			}
+		}
+
+		member.SetParty(null);
+		member.SetCurrentTask (null);
+	}
 	public void AddPrisoner(ECS.Character character){
 		character.SetPrisoner (true, this);
 		_prisoners.Add (character);
@@ -273,6 +295,10 @@ public class Party: IEncounterable, ICombatInitializer {
         }
     }
 	public void JustDisbandParty() {
+		if(isInCombat){
+			SetCurrentFunction (() => JustDisbandParty ());
+			return;
+		}
 		_isDisbanded = true;
         Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
@@ -489,13 +515,17 @@ public class Party: IEncounterable, ICombatInitializer {
         if(currentQuest.postedAt == null) {
             throw new Exception("Posted at of quest " + currentQuest.questType.ToString() + " is null!");
         }
-        PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;
-        if(this.specificLocation is Settlement) {
-            pathMode = PATHFINDING_MODE.MAJOR_ROADS; //if this party is at a settlement, use major roads
-        }
+		if(_avatar.currLocation.tileLocation.id == currentQuest.postedAt.location.id){
+			currentQuest.TurnInQuest (taskResult);
+		}else{
+			PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;
+			if(this.specificLocation is Settlement) {
+				pathMode = PATHFINDING_MODE.MAJOR_ROADS; //if this party is at a settlement, use major roads
+			}
 
-        _avatar.SetTarget(currentQuest.postedAt);
-        _avatar.StartPath(pathMode, () => currentQuest.TurnInQuest(taskResult));
+			_avatar.SetTarget(currentQuest.postedAt);
+			_avatar.StartPath(pathMode, () => currentQuest.TurnInQuest(taskResult));
+		}
     }
     //public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
     //    //check first if the character is already at a non hostile settlement
@@ -680,16 +710,7 @@ public class Party: IEncounterable, ICombatInitializer {
             } else {
                 //The party was defeated in combat, and no one survived, mark the quest as 
                 //failed, so that other characters can try to do the quest.
-				if(!isDisbanded){
-					JustDisbandParty (); //Also cancels current task
-				}
-
-				//This is done because the party will no longer be in the _charactersAtLocation List, any function associated with _currentFunction won't be called anymore after CombatAtLocation
-				SetIsInCombat (false);
-				if(_currentFunction != null) {
-					_currentFunction();
-				}
-				SetCurrentFunction(null);
+				JustDisbandParty ();
             }
 		}else{
 			if(faction == null){

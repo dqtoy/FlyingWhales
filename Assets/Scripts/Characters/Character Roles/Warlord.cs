@@ -18,7 +18,8 @@ public class Warlord : CharacterRole {
         _canAcceptQuests = true;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.ATTACK,
-            QUEST_TYPE.DEFEND
+            QUEST_TYPE.DEFEND,
+			QUEST_TYPE.SAVE_LANDMARK,
         };
     }
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
@@ -54,5 +55,8 @@ public class Warlord : CharacterRole {
 			weight = 0;
 		}
 		return weight;
+	}
+	internal override int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
+		return 200;
 	}
 }

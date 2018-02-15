@@ -290,6 +290,9 @@ public class Quest : CharacterTask{
         }
     }
     internal void PerformNextQuestAction() {
+		if(_isDone){
+			return;
+		}
         _currentAction = _questLine.Dequeue();
         if(_assignedParty == null) {
             if(_createdBy is ECS.Character) {

@@ -29,11 +29,6 @@ public class HuntPrey : CharacterTask {
     }
     #endregion
 
-    private void SuccessTask() {
-        EndTask(TASK_STATUS.SUCCESS);
-        _assignedCharacter.DestroyAvatar();
-    }
-
     private void GoToTargetLocation() {
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
         goToLocation.InititalizeAction(_target);
@@ -49,6 +44,7 @@ public class HuntPrey : CharacterTask {
         GameDate nextDate = GameManager.Instance.Today();
         nextDate.AddDays(1);
         SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
+		TriggerSaveLandmarkQuest ();
     }
 
     private void Hunt() {
@@ -61,7 +57,7 @@ public class HuntPrey : CharacterTask {
                 EatCivilian();
                 break;
             case HUNT_ACTION.END:
-                EndTask(TASK_STATUS.SUCCESS);
+				End();
                 break;
             case HUNT_ACTION.NOTHING:
                 GameDate nextDate = GameManager.Instance.Today();
@@ -80,7 +76,22 @@ public class HuntPrey : CharacterTask {
             nextDate.AddDays(1);
             SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
         } else {
-            EndTask(TASK_STATUS.SUCCESS);
+            End();
         }
     }
+
+	private void TriggerSaveLandmarkQuest(){
+		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied && !_target.location.region.centerOfMass.landmarkOnTile.AlreadyHasQuestOfType(QUEST_TYPE.SAVE_LANDMARK, _target)){
+			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
+			settlement.SaveALandmark (_target);
+		}
+	}
+
+	private void End(){
+		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
+			settlement.CancelSaveALandmark (_target);
+		}
+		EndTask(TASK_STATUS.SUCCESS);
+	}
 }

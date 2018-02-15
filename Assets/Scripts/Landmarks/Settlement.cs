@@ -574,4 +574,23 @@ public class Settlement : BaseLandmark {
         return 0;
     }
     #endregion
+
+	#region Save Landmark
+	internal void SaveALandmark(BaseLandmark landmarkToSave){
+		SaveLandmark saveLandmarkQuest = new SaveLandmark (this, landmarkToSave);
+		saveLandmarkQuest.SetSettlement (this);
+		AddNewQuest (saveLandmarkQuest);
+	}
+	internal void CancelSaveALandmark(BaseLandmark landmarkToSave){
+		for (int i = 0; i < _questBoard.Count; i++) {
+			if(_questBoard[i].questType == QUEST_TYPE.SAVE_LANDMARK){
+				SaveLandmark saveLandmark = (SaveLandmark)_questBoard [i];
+				if(saveLandmark.target.id == landmarkToSave.id){
+					saveLandmark.assignedParty.GoBackToQuestGiver (TASK_STATUS.FAIL);
+					break;
+				}
+			}
+		}
+	}
+	#endregion
 }

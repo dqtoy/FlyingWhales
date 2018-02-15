@@ -50,7 +50,7 @@ public class ObtainMaterial : Quest {
 		collect.onTaskDoAction += collect.ObtainMaterial;
 
 		GoToLocation goBackToSettlement = new GoToLocation(this); //Go to the picked region
-		goBackToSettlement.InititalizeAction(((Settlement)_createdBy));
+		goBackToSettlement.InititalizeAction(_postedAt);
         goBackToSettlement.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
         goBackToSettlement.onTaskDoAction += goBackToSettlement.Generic;
 		goBackToSettlement.onTaskActionDone += TransferMaterialToSettlement;
@@ -65,9 +65,9 @@ public class ObtainMaterial : Quest {
 		_materialToCollect += amount;
 	}
 	private void TransferMaterialToSettlement(){
-		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + ((Settlement)_createdBy).landmarkName);
-		((Settlement)_createdBy).AddHistory (_assignedParty.name + " transfered " + _materialToCollect.ToString () + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + ".");
-		((Settlement)_createdBy).AdjustMaterial (_materialToObtain, _materialToCollect);
+		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + _postedAt.landmarkName);
+		_postedAt.AddHistory (_assignedParty.name + " transfered " + _materialToCollect.ToString () + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + ".");
+		_postedAt.AdjustMaterial (_materialToObtain, _materialToCollect);
         _assignedParty.AdjustMaterial(_materialToObtain, -_materialToCollect); //remove materials from the assigned party
         EndQuest (TASK_STATUS.SUCCESS);
 	}

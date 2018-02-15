@@ -914,7 +914,8 @@ public enum QUEST_TYPE { //This is a list of actions a character can choose to a
     EXPLORE_TILE,
     BUILD_STRUCTURE,
 	OBTAIN_MATERIAL,
-    EXPEDITION
+    EXPEDITION,
+	SAVE_LANDMARK,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
