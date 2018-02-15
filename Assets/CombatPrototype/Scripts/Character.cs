@@ -57,7 +57,8 @@ namespace ECS {
 		private List<string> _history;
 		private int _combatHistoryID;
 		private List<ECS.Character> _prisoners;
-		private int _civilians;
+
+        private Dictionary<RACE, int> _civiliansByRace;
 
 		internal int actRate;
 		internal CombatPrototype currentCombat;
@@ -239,8 +240,11 @@ namespace ECS {
 		public bool isDefeated {
 			get { return _isDefeated; }
 		}
-		public int civilians{
-			get { return _civilians; }
+        public int civilians {
+            get { return _civiliansByRace.Sum(x => x.Value); }
+        }
+		public Dictionary<RACE, int> civiliansByRace{
+			get { return _civiliansByRace; }
 		}
         public Dictionary<MATERIAL, int> materialInventory {
             get { return _materialInventory; }
@@ -1834,15 +1838,36 @@ namespace ECS {
 		public void SetIsDefeated(bool state){
 			_isDefeated = state;
 		}
-		public void SetCivilians(int amount){
-			_civilians = amount;
-		}
-		public void AdjustCivilians(int amount){
-			_civilians += amount;
-			if(_civilians < 0){
-				_civilians = 0;
-			}
-		}
+        //public void SetCivilians(int amount){
+        //	_civilians = amount;
+        //}
+        //public void AdjustCivilians(int amount){
+        //	_civilians += amount;
+        //	if(_civilians < 0){
+        //		_civilians = 0;
+        //	}
+        //}
+        public void AdjustCivilians(Dictionary<RACE, int> civilians) {
+            foreach (KeyValuePair<RACE, int> kvp in civilians) {
+                AdjustCivilians(kvp.Key, kvp.Value);
+            }
+        }
+        public void ReduceCivilians(Dictionary<RACE, int> civilians) {
+            foreach (KeyValuePair<RACE, int> kvp in civilians) {
+                AdjustCivilians(kvp.Key, -kvp.Value);
+            }
+        }
+        public void AdjustCivilians(RACE race, int amount) {
+            if (!_civiliansByRace.ContainsKey(race)) {
+                _civiliansByRace.Add(race, 0);
+            }
+            _civiliansByRace[race] += amount;
+            _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
+        }
+        public void TransferCivilians(BaseLandmark to, Dictionary<RACE, int> civilians) {
+            ReduceCivilians(civilians);
+            to.AdjustCivilians(civilians);
+        }
         #endregion
 
         #region Materials
