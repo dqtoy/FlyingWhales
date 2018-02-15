@@ -76,6 +76,11 @@ public class PartyInfoUI : UIMenu {
 			text += "NONE";
 		}
 		text += "\n[b]Civilians:[/b] " + currentlyShowingParty.civilians.ToString ();
+        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingParty.civiliansByRace) {
+            if (kvp.Value > 0) {
+                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            }
+        }
 
         text += "\n[b]Materials:[/b] ";
         if (currentlyShowingParty.materialInventory.Sum(x => x.Value) > 0) {

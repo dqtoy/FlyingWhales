@@ -3269,7 +3269,7 @@ public class UIManager : MonoBehaviour {
 			partyinfoUI.HideMenu ();
 		}
         questInfoUI.SetData(quest);
-        questInfoUI.ShowMenu();
+        questInfoUI.OpenMenu();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateQuestInfo() {

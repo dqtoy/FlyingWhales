@@ -64,6 +64,7 @@ public class BuildStructure : Quest {
     private void OccupyTarget() {
         LandmarkManager.Instance.CreateNewLandmarkOnTile(_target, Utilities.ConvertMaterialToLandmarkType(_target.materialOnTile));
         _target.landmarkOnTile.AddHistory(_assignedParty.name + " finished building a " + Utilities.NormalizeString(_constructionData.structure.name));
+        AddNewLog(_assignedParty.name + " finished building a " + Utilities.NormalizeString(_constructionData.structure.name) + " at " + _target.locationName);
         //Build a new structure on that tile
         _target.landmarkOnTile.OccupyLandmark((createdBy as InternalQuestManager).owner);
         _postedAt.AddLandmarkAsOwned(_target.landmarkOnTile);

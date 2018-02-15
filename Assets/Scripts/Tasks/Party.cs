@@ -25,7 +25,6 @@ public class Party: IEncounterable, ICombatInitializer {
     protected ILocation _specificLocation;
 
 	protected bool _isDefeated;
-	protected int _civilians;
     protected Dictionary<RACE, int> _civiliansByRace;
 
     private const int MAX_PARTY_MEMBERS = 5;
@@ -76,8 +75,11 @@ public class Party: IEncounterable, ICombatInitializer {
 		get { return _isDefeated; }
 	}
 	public int civilians{
-		get { return _civilians; }
+		get { return _civiliansByRace.Sum(x => x.Value); }
 	}
+    public Dictionary<RACE, int> civiliansByRace {
+        get { return _civiliansByRace; }
+    }
     public Faction faction {
         get { return _partyLeader.faction; }
     }
@@ -261,7 +263,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			}
 		}
 
-		_partyLeader.AdjustCivilians (this._civilians);
+		_partyLeader.AdjustCivilians (_civiliansByRace);
 
         for (int i = 0; i < partyMembers.Count; i++) {
             ECS.Character currMember = partyMembers[i];
@@ -301,7 +303,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			}
 		}
 
-		_partyLeader.AdjustCivilians (this._civilians);
+		_partyLeader.AdjustCivilians (_civiliansByRace);
 
 		while(_partyMembers.Count > 0) {
 			ECS.Character currMember = _partyMembers[0];
