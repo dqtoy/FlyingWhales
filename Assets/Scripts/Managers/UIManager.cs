@@ -344,9 +344,14 @@ public class UIManager : MonoBehaviour {
     private List<Log> logHistory;
 	private bool isShowKingdomHistoryOnly;
 
+    private List<UIMenuSettings> _menuHistory;
+
     #region getters/setters
     internal GameObject minimapTexture {
         get { return minimapTextureGO; }
+    }
+    internal List<UIMenuSettings> menuHistory {
+        get { return _menuHistory; }
     }
     #endregion
 
@@ -354,6 +359,7 @@ public class UIManager : MonoBehaviour {
 		Instance = this;
         logHistory = new List<Log>();
         notificationItemsThatCanBeReused = new List<NotificationItem>();
+        _menuHistory = new List<UIMenuSettings>();
         //kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
         onAddNewBattleLog += UpdateBattleLogs;
     }
@@ -454,7 +460,6 @@ public class UIManager : MonoBehaviour {
 
     }
     #endregion
-
 
     private void UpdateUI(){
         dateLbl.text = GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString ();
@@ -591,7 +596,6 @@ public class UIManager : MonoBehaviour {
             ShowLogHistory();
         }
     }
-    
     internal void PreviewKingdomInfo(Kingdom kingdom) {
         string text = "[b]" + kingdom.name + "[/b]\n";
 
@@ -631,7 +635,6 @@ public class UIManager : MonoBehaviour {
         kingdomInfoPreviewGO.transform.position = v3;
         kingdomInfoPreviewGO.SetActive(true);
     }
-
     internal void HideKingdomInfoPreview() {
         kingdomInfoPreviewGO.SetActive(false);
     }
@@ -1880,7 +1883,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-
     #region Intervene Menu
     public void ToggleInterveneMenu() {
         if (interveneMenuGO.activeSelf) {
@@ -1912,7 +1914,6 @@ public class UIManager : MonoBehaviour {
         interveneMenuBtn.SetClickState(false);
         interveneMenuGO.SetActive(false);
     }
-
     public void ToggleInterveneActionsMenu() {
         if (interveneActonsGO.activeSelf) {
             HideInterveneActionsMenu();
@@ -3071,22 +3072,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField] internal SettlementInfoUI settlementInfoUI;
     public void ShowSettlementInfo(BaseLandmark landmark) {
 		if(factionInfoUI.isShowing){
-			factionInfoUI.HideFactionInfo ();
+			factionInfoUI.HideMenu ();
 		}
 		if(characterInfoUI.isShowing){
-			characterInfoUI.HideCharacterInfo ();
+			characterInfoUI.HideMenu ();
 		}
 		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideHexTileInfo ();
+			hexTileInfoUI.HideMenu ();
 		}
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
 		if(partyinfoUI.isShowing){
-			partyinfoUI.HidePartyInfo ();
+			partyinfoUI.HideMenu ();
 		}
-        settlementInfoUI.ShowSettlementInfo();
-		settlementInfoUI.SetSettlementAsActive(landmark);
+        settlementInfoUI.SetData(landmark);
+        settlementInfoUI.OpenMenu();
 //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateSettlementInfo() {
@@ -3102,22 +3103,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField] internal FactionInfoUI factionInfoUI;
 	public void ShowFactionInfo(Faction faction) {
 		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideSettlementInfo ();
+			settlementInfoUI.HideMenu ();
 		}
 		if(characterInfoUI.isShowing){
-			characterInfoUI.HideCharacterInfo ();
+			characterInfoUI.HideMenu ();
 		}
 		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideHexTileInfo ();
+			hexTileInfoUI.HideMenu ();
 		}
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
 		if(partyinfoUI.isShowing){
-			partyinfoUI.HidePartyInfo ();
+			partyinfoUI.HideMenu ();
 		}
-        factionInfoUI.ShowFactionInfo();
-		factionInfoUI.SetFactionAsActive(faction);
+        factionInfoUI.SetData(faction);
+        factionInfoUI.OpenMenu();
 //		playerActionsUI.ShowPlayerActionsUI ();
 	}
 	public void UpdateFactionInfo() {
@@ -3133,22 +3134,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField] internal CharacterInfoUI characterInfoUI;
 	public void ShowCharacterInfo(ECS.Character character) {
 		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideSettlementInfo ();
+			settlementInfoUI.HideMenu ();
 		}
 		if(factionInfoUI.isShowing){
-			factionInfoUI.HideFactionInfo ();
+			factionInfoUI.HideMenu ();
 		}
 		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideHexTileInfo ();
+			hexTileInfoUI.HideMenu ();
 		}
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
 		if(partyinfoUI.isShowing){
-			partyinfoUI.HidePartyInfo ();
+			partyinfoUI.HideMenu ();
 		}
-        characterInfoUI.ShowCharacterInfo();
-		characterInfoUI.SetCharacterAsActive(character);
+        characterInfoUI.SetData(character);
+        characterInfoUI.OpenMenu();
 //		playerActionsUI.ShowPlayerActionsUI ();
 	}
 	public void UpdateCharacterInfo() {
@@ -3164,22 +3165,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField] internal HextileInfoUI hexTileInfoUI;
 	public void ShowHexTileInfo(HexTile hexTile) {
 		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideSettlementInfo ();
+			settlementInfoUI.HideMenu ();
 		}
 		if(factionInfoUI.isShowing){
-			factionInfoUI.HideFactionInfo ();
+			factionInfoUI.HideMenu ();
 		}
 		if(characterInfoUI.isShowing){
-			characterInfoUI.HideCharacterInfo ();
+			characterInfoUI.HideMenu ();
 		}
         if (questInfoUI.isShowing) {
             questInfoUI.HideMenu();
         }
 		if(partyinfoUI.isShowing){
-			partyinfoUI.HidePartyInfo ();
+			partyinfoUI.HideMenu ();
 		}
-		hexTileInfoUI.ShowHexTileInfo();
-		hexTileInfoUI.SetHexTileAsActive(hexTile);
+        hexTileInfoUI.SetData(hexTile);
+        hexTileInfoUI.OpenMenu();
 //		playerActionsUI.ShowPlayerActionsUI ();
 	}
 	public void UpdateHexTileInfo() {
@@ -3189,28 +3190,28 @@ public class UIManager : MonoBehaviour {
 	}
     #endregion
 
-	#region HexTile Info
+	#region Party Info
 	[Space(10)]
 	[Header("Party Info")]
 	[SerializeField] internal PartyInfoUI partyinfoUI;
 	public void ShowPartyInfo(Party party) {
 		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideSettlementInfo ();
+			settlementInfoUI.HideMenu ();
 		}
 		if(factionInfoUI.isShowing){
-			factionInfoUI.HideFactionInfo ();
+			factionInfoUI.HideMenu ();
 		}
 		if(characterInfoUI.isShowing){
-			characterInfoUI.HideCharacterInfo ();
+			characterInfoUI.HideMenu ();
 		}
 		if (questInfoUI.isShowing) {
 			questInfoUI.HideMenu();
 		}
 		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideHexTileInfo ();
+			hexTileInfoUI.HideMenu ();
 		}
-		partyinfoUI.ShowPartyInfo();
-		partyinfoUI.SetPartyAsActive(party);
+        partyinfoUI.SetData(party);
+        partyinfoUI.OpenMenu();
 	}
 	public void UpdatePartyInfo() {
 		if (partyinfoUI.isShowing) {
@@ -3253,22 +3254,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField] internal QuestInfoUI questInfoUI;
     public void ShowQuestInfo(Quest quest) {
         if (settlementInfoUI.isShowing) {
-            settlementInfoUI.HideSettlementInfo();
+            settlementInfoUI.HideMenu();
         }
         if (factionInfoUI.isShowing) {
-            factionInfoUI.HideFactionInfo();
+            factionInfoUI.HideMenu();
         }
         if (characterInfoUI.isShowing) {
-            characterInfoUI.HideCharacterInfo();
+            characterInfoUI.HideMenu();
         }
         if (hexTileInfoUI.isShowing) {
-            hexTileInfoUI.HideHexTileInfo();
+            hexTileInfoUI.HideMenu();
         }
 		if(partyinfoUI.isShowing){
-			partyinfoUI.HidePartyInfo ();
+			partyinfoUI.HideMenu ();
 		}
+        questInfoUI.SetData(quest);
         questInfoUI.ShowMenu();
-        questInfoUI.SetQuestAsShowing(quest);
         //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateQuestInfo() {
@@ -3293,6 +3294,69 @@ public class UIManager : MonoBehaviour {
         if (questLogUI.isShowing) {
             questLogUI.UpdateQuestLogs();
         }
+    }
+    #endregion
+
+    #region Menu History
+    public void AddMenuToQueue(UIMenu menu, object data) {
+        UIMenuSettings latestSetting = _menuHistory.ElementAtOrDefault(0);
+        if(latestSetting != null) {
+            if(latestSetting.menu == menu && latestSetting.data == data) {
+                //the menu settings to be added are the same as the latest one, ignore.
+                return;
+            }
+        }
+        _menuHistory.Add(new UIMenuSettings(menu, data));
+        //string text = string.Empty;
+        //for (int i = 0; i < _menuHistory.Count; i++) {
+        //    UIMenuSettings currSetting = _menuHistory.ElementAt(i);
+        //    text += currSetting.menu.GetType().ToString();
+        //    if(currSetting.data is Faction) {
+        //        text += " - Faction " + (currSetting.data as Faction).name;
+        //    } else if(currSetting.data is Party) {
+        //        text += " - Party " + (currSetting.data as Party).name;
+        //    } else if (currSetting.data is HexTile) {
+        //        text += " - HexTile " + (currSetting.data as HexTile).name;
+        //    } else if (currSetting.data is BaseLandmark) {
+        //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
+        //    } else if (currSetting.data is ECS.Character) {
+        //        text += " - Character " + (currSetting.data as ECS.Character).name;
+        //    } else if (currSetting.data is Quest) {
+        //        text += " - Quest " + (currSetting.data as Quest).questType.ToString();
+        //    }
+        //    text += "\n";
+        //}
+        //Debug.Log(text);
+    }
+    public void ShowPreviousMenu() {
+        _menuHistory.RemoveAt(_menuHistory.Count - 1);
+        UIMenuSettings menuToShow = _menuHistory.ElementAt(_menuHistory.Count - 1);
+        //_menuHistory.Remove(menuToShow);
+        menuToShow.menu.ShowMenu();
+        menuToShow.menu.SetData(menuToShow.data);
+        //string text = string.Empty;
+        //for (int i = 0; i < _menuHistory.Count; i++) {
+        //    UIMenuSettings currSetting = _menuHistory.ElementAt(i);
+        //    text += currSetting.menu.GetType().ToString();
+        //    if (currSetting.data is Faction) {
+        //        text += " - Faction " + (currSetting.data as Faction).name;
+        //    } else if (currSetting.data is Party) {
+        //        text += " - Party " + (currSetting.data as Party).name;
+        //    } else if (currSetting.data is HexTile) {
+        //        text += " - HexTile " + (currSetting.data as HexTile).name;
+        //    } else if (currSetting.data is BaseLandmark) {
+        //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
+        //    } else if (currSetting.data is ECS.Character) {
+        //        text += " - Character " + (currSetting.data as ECS.Character).name;
+        //    } else if (currSetting.data is Quest) {
+        //        text += " - Quest " + (currSetting.data as Quest).questType.ToString();
+        //    }
+        //    text += "\n";
+        //}
+        //Debug.Log(text);
+    }
+    public void ClearMenuHistory() {
+        _menuHistory.Clear();
     }
     #endregion
 

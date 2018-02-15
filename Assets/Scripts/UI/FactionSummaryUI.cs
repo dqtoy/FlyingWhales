@@ -5,8 +5,6 @@ using System.Linq;
 
 public class FactionSummaryUI : UIMenu {
 
-    internal bool isShowing;
-
     [SerializeField] private UIGrid _factionsGrid;
     [SerializeField] private UIEventTrigger orderBySettlements;
     [SerializeField] private UIEventTrigger orderByPopulation;
@@ -14,10 +12,16 @@ public class FactionSummaryUI : UIMenu {
     private FactionSummaryEntry[] factionSummaryEntries;
 
     internal override void Initialize() {
+        base.Initialize();
         factionSummaryEntries = Utilities.GetComponentsInDirectChildren<FactionSummaryEntry>(_factionsGrid.gameObject);
         EventDelegate.Add(orderBySettlements.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.CITIES));
         EventDelegate.Add(orderByPopulation.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.POPULATION));
         EventDelegate.Add(orderByCharacters.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.CHARACTERS));
+    }
+
+    public override void OpenMenu() {
+        base.OpenMenu();
+        UpdateFactionsSummary();
     }
 
     public void ShowFactionSummary() {

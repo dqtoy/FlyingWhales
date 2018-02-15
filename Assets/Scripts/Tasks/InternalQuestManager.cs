@@ -83,6 +83,7 @@ public class InternalQuestManager : TaskCreator {
             AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
             AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
             AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
+            AddExpeditionWeights(questWeights, currSettlement, regionOfSettlement);
         }
         return questWeights;
     }
@@ -148,16 +149,28 @@ public class InternalQuestManager : TaskCreator {
             }
         }
     }
-    //private int GetExploreRegionWeight(Region region) {
-    //    int weight = 0;
-    //    for (int i = 0; i < region.landmarks.Count; i++) {
-    //        BaseLandmark landmark = region.landmarks[i];
-    //        if (landmark.isHidden) {
-    //            weight += 20; //Add 20 Weight to Explore Region for each undiscovered Landmark
-    //        }
-    //    }
-    //    return weight;
-    //}
+    private void AddExpeditionWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+        //Check if there is a category of Resource Type (Weapon, Armor, Construction, Training, Food) that the Settlement doesnt have any access to.
+        PRODUCTION_TYPE[] allProdTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
+        for (int i = 0; i < allProdTypes.Length; i++) {
+            PRODUCTION_TYPE currProdType = allProdTypes[i];
+            if (!currSettlement.HasMaterialsFor(currProdType) ) {
+                if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, currProdType.ToString())) {
+                    Expedition newExpedition = new Expedition(this, currProdType.ToString());
+                    newExpedition.SetSettlement(currSettlement);
+                    questWeights.AddElement(newExpedition, 100);//-Add 100 Weight for each category type
+                }
+            }
+        }
+        if(currSettlement.GetTotalFoodCount() <= 0) {
+            if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, "FOOD")) {
+                Expedition newExpedition = new Expedition(this, "FOOD");
+                newExpedition.SetSettlement(currSettlement);
+                questWeights.AddElement(newExpedition, 100);//-Add 100 Weight for each category type
+            }
+        }
+    }
+
     private int GetExploreLandmarkWeight(BaseLandmark landmark) {
         int weight = 0;
         if (!landmark.isExplored) {
@@ -259,6 +272,11 @@ public class InternalQuestManager : TaskCreator {
                 } else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
                     HexTile tile = (HexTile)identifier;
                     if (((BuildStructure)currQuest).target.id == tile.id) {
+                        return true;
+                    }
+                } else if (questType == QUEST_TYPE.EXPEDITION) {
+                    string productionType = (string)identifier;
+                    if (((Expedition)currQuest).productionType.Equals(productionType)) {
                         return true;
                     }
                 }

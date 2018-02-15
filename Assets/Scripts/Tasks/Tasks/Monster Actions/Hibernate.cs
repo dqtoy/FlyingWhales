@@ -20,7 +20,7 @@ public class Hibernate : CharacterTask {
         // The monster will move towards its Lair and then rest there indefinitely
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
         goToLocation.InititalizeAction(_assignedCharacter.lair);
-        goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
+        goToLocation.SetPathfindingMode(PATHFINDING_MODE.NORMAL);
         goToLocation.onTaskActionDone += StartHibernation;
         goToLocation.onTaskDoAction += goToLocation.Generic;
 

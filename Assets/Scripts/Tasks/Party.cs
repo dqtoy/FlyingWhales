@@ -681,7 +681,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 //The party was defeated in combat, and no one survived, mark the quest as 
                 //failed, so that other characters can try to do the quest.
 				if(!isDisbanded){
-					JustDisbandParty ();
+					JustDisbandParty (); //Also cancels current task
 				}
 
 				//This is done because the party will no longer be in the _charactersAtLocation List, any function associated with _currentFunction won't be called anymore after CombatAtLocation
@@ -741,6 +741,14 @@ public class Party: IEncounterable, ICombatInitializer {
     public void TransferMaterials(Party party, MATERIAL material, int amount) {
         AdjustMaterial(material, -amount);
         party.AdjustMaterial(material, amount);
+    }
+    /*
+    Transfer materials from this party
+    to a landmark
+        */
+    public void TransferMaterials(BaseLandmark landmark, MATERIAL material, int amount) {
+        AdjustMaterial(material, -amount);
+        landmark.AdjustMaterial(material, amount);
     }
     /*
      Transfer ALL materials from this party to

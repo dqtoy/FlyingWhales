@@ -5,8 +5,6 @@ using System.Linq;
 
 public class FactionInfoUI : UIMenu {
 
-    internal bool isShowing;
-
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
@@ -15,26 +13,23 @@ public class FactionInfoUI : UIMenu {
     [SerializeField] private UIScrollView infoScrollView;
     [SerializeField] private UIScrollView relationshipsScrollView;
 
-    internal Faction currentlyShowingFaction;
+    internal Faction currentlyShowingFaction {
+        get { return _data as Faction; }
+    }
 
     internal override void Initialize() {
+        base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateFactionInfo);
         tweenPos.AddOnFinished(() => UpdateFactionInfo());
     }
 
-    public void ShowFactionInfo() {
-        isShowing = true;
-//        tweenPos.PlayForward();
-		this.gameObject.SetActive (true);
-    }
-    public void HideFactionInfo() {
-        isShowing = false;
-//        tweenPos.PlayReverse();
-		this.gameObject.SetActive (false);
+    public override void OpenMenu() {
+        base.OpenMenu();
+        UpdateFactionInfo();
     }
 
-    public void SetFactionAsActive(Faction faction) {
-        currentlyShowingFaction = faction;
+    public override void SetData(object data) {
+        base.SetData(data);
         if (isShowing) {
             UpdateFactionInfo();
         }
@@ -118,8 +113,8 @@ public class FactionInfoUI : UIMenu {
         relationshipsLbl.text = relationshipText;
         relationshipsScrollView.UpdatePosition();
     }
-	public void OnClickCloseBtn(){
-//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-		HideFactionInfo ();
-	}
+//	public void OnClickCloseBtn(){
+////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+//		HideMenu ();
+//	}
 }

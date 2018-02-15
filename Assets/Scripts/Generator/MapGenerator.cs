@@ -75,7 +75,6 @@ public class MapGenerator : MonoBehaviour {
         //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
         CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().location.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
-
     }
 
     internal void ReloadScene() {

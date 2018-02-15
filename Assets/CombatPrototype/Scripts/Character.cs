@@ -1819,7 +1819,7 @@ namespace ECS {
 			if (this.isDefeated) {
 				//this character was defeated
 				if(_currentTask != null && faction != null) {
-					_currentTask.EndTask(TASK_STATUS.FAIL);
+					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
             } else{
 				if(faction == null){

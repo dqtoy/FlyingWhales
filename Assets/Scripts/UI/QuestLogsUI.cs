@@ -3,8 +3,6 @@ using System.Collections;
 
 public class QuestLogsUI : UIMenu {
 
-    internal bool isShowing = false;
-
     [SerializeField] private UILabel questLogsLbl;
     [SerializeField] private UIScrollView logsScrollView;
 

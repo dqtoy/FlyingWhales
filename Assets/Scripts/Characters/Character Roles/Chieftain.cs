@@ -21,7 +21,8 @@ public class Chieftain : CharacterRole {
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.ATTACK,
             QUEST_TYPE.DEFEND,
-            QUEST_TYPE.EXPLORE_TILE
+            QUEST_TYPE.EXPLORE_TILE,
+            QUEST_TYPE.EXPEDITION
         };
     }
 
@@ -29,5 +30,8 @@ public class Chieftain : CharacterRole {
         int weight = 0;
         weight += 100; //Change algo if needed
         return weight;
+    }
+    internal override int GetExpeditionWeight(Expedition expedition) {
+        return 100;
     }
 }

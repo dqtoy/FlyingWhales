@@ -5,38 +5,33 @@ using System.Linq;
 
 public class HextileInfoUI : UIMenu {
 
-    internal bool isShowing;
-
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
     [SerializeField] private UILabel hexTileInfoLbl;
     [SerializeField] private UIScrollView infoScrollView;
 
-    internal HexTile currentlyShowingHexTile;
+    internal HexTile currentlyShowingHexTile {
+        get { return _data as HexTile; }
+    }
 
     internal override void Initialize() {
+        base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateHexTileInfo);
         tweenPos.AddOnFinished(() => UpdateHexTileInfo());
     }
 
-    public void ShowHexTileInfo() {
-        isShowing = true;
-		this.gameObject.SetActive (true);
-//        tweenPos.PlayForward();
-    }
-    public void HideHexTileInfo() {
-        isShowing = false;
-//        tweenPos.PlayReverse();
-		this.gameObject.SetActive (false);
+    public override void OpenMenu() {
+        base.OpenMenu();
+        UpdateHexTileInfo();
     }
 
-	public void SetHexTileAsActive(HexTile hexTile) {
-		if(currentlyShowingHexTile != null){
-			currentlyShowingHexTile.clickHighlightGO.SetActive (false);
-		}
-        currentlyShowingHexTile = hexTile;
-		hexTile.clickHighlightGO.SetActive (true);
+    public override void SetData(object data) {
+        if (currentlyShowingHexTile != null) {
+            currentlyShowingHexTile.clickHighlightGO.SetActive(false);
+        }
+        base.SetData(data); //replace this existing data
+        currentlyShowingHexTile.clickHighlightGO.SetActive(true);
         if (isShowing) {
             UpdateHexTileInfo();
         }
@@ -94,8 +89,8 @@ public class HextileInfoUI : UIMenu {
         infoScrollView.ResetPosition();
     }
 
-	public void OnClickCloseBtn(){
-//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-		HideHexTileInfo ();
-	}
+//	public void OnClickCloseBtn(){
+////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+//		HideMenu ();
+//	}
 }

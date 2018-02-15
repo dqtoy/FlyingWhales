@@ -5,8 +5,6 @@ using System.Linq;
 
 public class CharacterInfoUI : UIMenu {
 
-    internal bool isShowing;
-
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
@@ -23,31 +21,27 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private UIScrollView relationshipsScrollView;
 	[SerializeField] private UIScrollView historyScrollView;
 
-    internal ECS.Character currentlyShowingCharacter;
+    internal ECS.Character currentlyShowingCharacter {
+        get { return _data as ECS.Character; }
+    }
 
     internal override void Initialize() {
+        base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
-        //tweenPos.AddOnFinished(() => UpdateCharacterInfo());
     }
 
-    public void ShowCharacterInfo() {
-        isShowing = true;
-		this.gameObject.SetActive (true);
-//        tweenPos.PlayForward();
-    }
-    public void HideCharacterInfo() {
-        isShowing = false;
-//        tweenPos.PlayReverse();
-		this.gameObject.SetActive (false);
-//        UpdateCharacterInfo();
+    public override void OpenMenu() {
+        base.OpenMenu();
+        UpdateCharacterInfo();
     }
 
-	public void SetCharacterAsActive(ECS.Character character) {
-        currentlyShowingCharacter = character;
+    public override void SetData(object data) {
+        base.SetData(data);
         if (isShowing) {
             UpdateCharacterInfo();
         }
     }
+
 	public void UpdateCharacterInfo(){
 		if(currentlyShowingCharacter == null) {
 			return;
@@ -219,8 +213,8 @@ public class CharacterInfoUI : UIMenu {
         CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);
     }
 
-	public void OnClickCloseBtn(){
-//		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-		HideCharacterInfo ();
-	}
+//	public void OnClickCloseBtn(){
+////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+//		HideMenu ();
+//	}
 }
