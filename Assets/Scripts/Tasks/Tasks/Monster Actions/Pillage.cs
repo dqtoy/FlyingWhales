@@ -32,11 +32,19 @@ public class Pillage : CharacterTask {
         base.TaskCancel();
         Messenger.RemoveListener("OnDayEnd", DoPillage);
         _assignedCharacter.DestroyAvatar();
+		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
+			settlement.CancelSaveALandmark (_target);
+		}
     }
     public override void TaskFail() {
         base.TaskFail();
         Messenger.RemoveListener("OnDayEnd", DoPillage);
         _assignedCharacter.DestroyAvatar();
+		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
+			settlement.CancelSaveALandmark (_target);
+		}
     }
     #endregion
 
