@@ -241,7 +241,12 @@ namespace ECS {
 			get { return _isDefeated; }
 		}
         public int civilians {
-            get { return _civiliansByRace.Sum(x => x.Value); }
+            get { 
+				if(_civiliansByRace == null){
+					return 0;
+				}
+				return _civiliansByRace.Sum(x => x.Value); 
+			}
         }
 		public Dictionary<RACE, int> civiliansByRace{
 			get { return _civiliansByRace; }
@@ -361,6 +366,25 @@ namespace ECS {
 			}
 			return false;
 		}
+
+		internal bool HasBodyPart(BODY_PART bodyPartType){
+			for (int i = 0; i < this._bodyParts.Count; i++) {
+				BodyPart bodyPart = this._bodyParts [i];
+
+				if(bodyPart.bodyPart == bodyPartType){
+					return true;
+				}
+
+				for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
+					SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
+					if(secondaryBodyPart.bodyPart == bodyPartType){
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 
 		//Enables or Disables skills based on skill requirements
 		internal void EnableDisableSkills(CombatPrototype combat){
@@ -546,6 +570,10 @@ namespace ECS {
 				this._isDead = true;
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
+				if(this.specificLocation.tileLocation.landmarkOnTile != null){
+					this.specificLocation.tileLocation.landmarkOnTile.AddHistory (this.name + " died.");
+				}
+
 				if(this._home != null){
 					this._home.RemoveCharacterHomeOnLandmark (this);
 				}
@@ -561,6 +589,8 @@ namespace ECS {
 
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
+				}else{
+					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
                 if (_avatar != null) {
                     _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
@@ -568,11 +598,7 @@ namespace ECS {
                 if (_isPrisoner){
 					PrisonerDeath ();
 				}
-				if (this.specificLocation != null) {
 
-                    this.specificLocation.RemoveCharacterFromLocation(this);
-                    //this.currLocation.RemoveCharacterFromLocation(this);
-                }
 
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
@@ -1690,7 +1716,7 @@ namespace ECS {
 				}else if(_isPrisonerOf is BaseLandmark){
 					wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				}
-				AddHistory ("Became a prisoner of " + wardenName);
+				AddHistory ("Became a prisoner of " + wardenName + ".");
 				Unfaint ();
 			}
 		}
@@ -1720,7 +1746,7 @@ namespace ECS {
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
 				SetSpecificLocation (((BaseLandmark)_isPrisonerOf));
 			}
-			AddHistory ("Released from the prison of " + wardenName);
+			AddHistory ("Released from the prison of " + wardenName + ".");
 			if(this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 				BaseLandmark landmark = (BaseLandmark)this.specificLocation;
 				landmark.AddHistory ("Prisoner " + this.name + " is released.");
@@ -1766,8 +1792,8 @@ namespace ECS {
 			prison.AddCharacterHomeOnLandmark(this);
 			ChangeRole ();
 			prison.owner.AddNewCharacter(this);
-			AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString ());
-			prison.AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString ());
+			AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
+			prison.AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
 		}
 		#endregion
 
@@ -1921,6 +1947,34 @@ namespace ECS {
                 party.AdjustMaterial(currMat, amount);
             }
         }
+
+		public ECS.Item GetItemByName(string itemName){
+			if(_equippedItems.Count > 0){
+				for (int i = 0; i < _equippedItems.Count; i++) {
+					if(_equippedItems[i].itemName == itemName){
+						return _equippedItems [i];
+					}
+				}
+			}
+			if(_inventory.Count > 0){
+				for (int i = 0; i < _inventory.Count; i++) {
+					if(_inventory[i].itemName == itemName){
+						return _inventory [i];
+					}
+				}
+			}
+			return null;
+		}
+		public ECS.Item GetEquippedItemByName(string itemName){
+			if(_equippedItems.Count > 0){
+				for (int i = 0; i < _equippedItems.Count; i++) {
+					if(_equippedItems[i].itemName == itemName){
+						return _equippedItems [i];
+					}
+				}
+			}
+			return null;
+		}
         #endregion
 
 		#region Combat Handlers

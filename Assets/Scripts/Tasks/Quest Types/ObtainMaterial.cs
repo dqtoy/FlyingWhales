@@ -65,7 +65,7 @@ public class ObtainMaterial : Quest {
 		_materialToCollect += amount;
 	}
 	private void TransferMaterialToSettlement(){
-		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + _postedAt.landmarkName);
+		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + _postedAt.landmarkName + ".");
 		_postedAt.AddHistory (_assignedParty.name + " transfered " + _materialToCollect.ToString () + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + ".");
 		_postedAt.AdjustMaterial (_materialToObtain, _materialToCollect);
         _assignedParty.AdjustMaterial(_materialToObtain, -_materialToCollect); //remove materials from the assigned party

@@ -51,7 +51,7 @@ public class Pillage : CharacterTask {
     }
 
     private void StartPillage() {
-        _target.AddHistory("Monster " + _assignedCharacter.name + " has started pillaging " + _target.landmarkName);
+        _target.AddHistory("Monster " + _assignedCharacter.name + " has started pillaging " + _target.landmarkName + ".");
         Messenger.AddListener("OnDayEnd", DoPillage);
         //GameDate nextDate = GameManager.Instance.Today();
         //nextDate.AddDays(1);

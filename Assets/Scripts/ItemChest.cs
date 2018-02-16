@@ -10,96 +10,208 @@ public class ItemChest : IEncounterable {
     private int _chanceToGet;
     private WeightedDictionary<MATERIAL> _materialWeights;
     private WeightedDictionary<QUALITY> _qualityWeights;
+	private List<ECS.Item> _itemsInChest;
+	private List<ECS.Character> _allNeed;
+	private List<ECS.Character> _allGreed;
 
+	#region getters/setters
     public string encounterName {
         get { return "Tier " + _tier.ToString() + " " + Utilities.NormalizeString(_chestType.ToString()) + " Chest"; }
     }
+	public List<ECS.Item> itemsInChest{
+		get { return _itemsInChest; }
+	}
+	#endregion
 
     public ItemChest(int tier, ITEM_TYPE chestType, int chanceToGet = 100) {
         _tier = tier;
         _chestType = chestType;
         _chanceToGet = chanceToGet;
+		_allNeed = new List<ECS.Character> ();
+		_allGreed = new List<ECS.Character> ();
         ConstructMaterialWeightsDictionary();
         ConstructQualityWeightsDictionary();
+		PopulateItemChest ();
     }
 
     public void StartEncounter(ECS.Character encounteredBy) {
         Debug.Log(encounteredBy.name + " has encountered a tier " + _tier.ToString() + " " + _chestType.ToString() + " chest!");
-        ECS.Item gainedItem = RandomizeItemForCharacter(encounteredBy);
-        if(gainedItem != null) {
-            string quality = string.Empty;
-            if (gainedItem is ECS.Weapon) {
-                quality = ((ECS.Weapon)gainedItem).quality.ToString();
-            } else if (gainedItem is ECS.Armor) {
-                quality = ((ECS.Armor)gainedItem).quality.ToString();
-            }
-            Debug.Log(encounteredBy.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
-            encounteredBy.PickupItem(gainedItem); //put item in inventory
-            encounteredBy.EquipItem(gainedItem); //if the character can equip the item, equip it, otherwise, keep in inventory
-        } else {
-            Debug.Log(encounteredBy.name + " got nothing from the chest");
-        }
+		for (int i = 0; i < _itemsInChest.Count; i++) {
+			ECS.Item itemInChest = _itemsInChest [i];
+			if(itemInChest.itemType == ITEM_TYPE.WEAPON){
+				ECS.Weapon weapon = (ECS.Weapon)itemInChest;
+				if(!encounteredBy.characterClass.allowedWeaponTypes.Contains(weapon.weaponType)){
+					continue;
+				}
+			}else if(itemInChest.itemType == ITEM_TYPE.ARMOR){
+				ECS.Armor armor = (ECS.Armor)itemInChest;
+				if(!encounteredBy.HasBodyPart(armor.armorBodyType)){
+					continue;
+				}
+			}		
+			encounteredBy.PickupItem (itemInChest);
+			Debug.Log(encounteredBy.name + " obtains " + itemInChest.nameWithQuality + " from the chest.");
 
-        ((Quest)encounteredBy.currentTask).Result(true);
+			if(encounteredBy.EquipItem (itemInChest)){
+				Debug.Log(encounteredBy.name + " equips the " + itemInChest.nameWithQuality + ".");
+			}
+			_itemsInChest.RemoveAt (i);
+			i--;
+		}
+		((Quest)encounteredBy.currentTask).Result(true);
+
+//        ECS.Item gainedItem = RandomizeItemForCharacter(encounteredBy);
+//        if(gainedItem != null) {
+//            string quality = string.Empty;
+//            if (gainedItem is ECS.Weapon) {
+//                quality = ((ECS.Weapon)gainedItem).quality.ToString();
+//            } else if (gainedItem is ECS.Armor) {
+//                quality = ((ECS.Armor)gainedItem).quality.ToString();
+//            }
+//            Debug.Log(encounteredBy.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
+//            encounteredBy.PickupItem(gainedItem); //put item in inventory
+//            encounteredBy.EquipItem(gainedItem); //if the character can equip the item, equip it, otherwise, keep in inventory
+//        } else {
+//            Debug.Log(encounteredBy.name + " got nothing from the chest");
+//        }
     }
 
     public void StartEncounter(Party party) {
-        bool isChestEmpty = true; //Did any party member get any loot?
-        List<string> encounterLogs = new List<string>();
-        for (int i = 0; i < party.partyMembers.Count; i++) {
-            ECS.Character currMember = party.partyMembers[i];
-            ECS.Item gainedItem = RandomizeItemForCharacter(currMember);
-            if (gainedItem != null) {
-                isChestEmpty = false;
-                string quality = string.Empty;
-                if (gainedItem is ECS.Weapon) {
-                    QUALITY itemQuality = ((ECS.Weapon)gainedItem).quality;
-                    if (itemQuality != QUALITY.NORMAL) {
-                        quality = Utilities.NormalizeString(itemQuality.ToString()) + " ";
-                    }
-                } else if (gainedItem is ECS.Armor) {
-                    QUALITY itemQuality = ((ECS.Armor)gainedItem).quality;
-                    if (itemQuality != QUALITY.NORMAL) {
-                        quality = Utilities.NormalizeString(itemQuality.ToString()) + " ";
-                    }
-                }
+		List<string> encounterLogs = new List<string>();
+		encounterLogs.Add("The party encountered a " + this.encounterName);
+		for (int i = 0; i < _itemsInChest.Count; i++) {
+			_allNeed.Clear();
+			_allGreed.Clear();
 
-                if(party.currentTask != null) {
-                    //Add Logs
-                    encounterLogs.Add(currMember.name + " obtains " + quality + gainedItem.itemName + " from the chest.");
-                }
-                Debug.Log(currMember.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
-                currMember.PickupItem(gainedItem); //put item in inventory
-                if (currMember.EquipItem(gainedItem)) {//if the character can equip the item, equip it, otherwise, keep in inventory
-                    string log = currMember.name + " equips the " + quality + gainedItem.itemName + " on ";
-                    if(currMember.gender == GENDER.FEMALE) {
-                        log += "her ";
-                    } else {
-                        log += "his ";
-                    }
-                    if (gainedItem is ECS.Weapon) {
-                        List<ECS.IBodyPart> bodyParts = ((ECS.Weapon)gainedItem).bodyPartsAttached;
-                        for (int j = 0; j < bodyParts.Count; j++) {
-                            ECS.IBodyPart currBodyPart = bodyParts[j];
-                            log += currBodyPart.name + " ";
-                        }
-                    } else if (gainedItem is ECS.Armor) {
-                        ECS.IBodyPart bodyPart = ((ECS.Armor)gainedItem).bodyPartAttached;
-                        log += bodyPart.name;
-                    }
-                    encounterLogs.Add(log);
-                }
-            } else {
-                Debug.Log(currMember.name + " got nothing from the chest");
-            }
-        }
-        if (isChestEmpty) {
-            party.currentTask.AddNewLog("The party found nothing");
-        } else {
-            encounterLogs.Insert(0, "The party encountered a " + this.encounterName);
-            party.currentTask.AddNewLogs(encounterLogs);
-        }
-        ((Quest)party.currentTask).Result(true);
+			ECS.Item itemInChest = _itemsInChest [i];
+			for (int j = 0; j < party.partyMembers.Count; j++) {
+				ECS.Character currMember = party.partyMembers [j];
+				if(itemInChest.itemType == ITEM_TYPE.WEAPON){
+					ECS.Weapon weapon = (ECS.Weapon)itemInChest;
+					if(!currMember.characterClass.allowedWeaponTypes.Contains(weapon.weaponType)){
+						continue;
+					}
+					ECS.Item currentWeapon = currMember.GetEquippedItemByName (weapon.itemName);
+					if(currentWeapon == null){//does not have item
+						_allNeed.Add(currMember);
+					}else{
+						if(((ECS.Weapon)currentWeapon).weaponPower < weapon.weaponPower){
+							_allNeed.Add(currMember);
+						}else{
+							_allGreed.Add (currMember);
+						}
+					}
+				}else if(itemInChest.itemType == ITEM_TYPE.ARMOR){
+					ECS.Armor armor = (ECS.Armor)itemInChest;
+					if(!currMember.HasBodyPart(armor.armorBodyType)){
+						continue;
+					}
+					ECS.Item currentArmor = currMember.GetEquippedItemByName (armor.itemName);
+					if(currentArmor == null){//does not have item
+						_allNeed.Add(currMember);
+					}else{
+						if(((ECS.Armor)currentArmor).baseDamageMitigation < armor.baseDamageMitigation){
+							_allNeed.Add(currMember);
+						}else{
+							_allGreed.Add (currMember);
+						}
+					}
+				}
+			}
+			if(_allNeed.Count > 0){
+				ECS.Character chosenCharacter = _allNeed [UnityEngine.Random.Range (0, _allNeed.Count)];
+				chosenCharacter.PickupItem (itemInChest);
+
+				string obtainLog = chosenCharacter.name + " obtains " + itemInChest.nameWithQuality + " from the chest.";
+				encounterLogs.Add(obtainLog);
+				Debug.Log(obtainLog);
+
+				if(chosenCharacter.EquipItem (itemInChest)){
+					string equipLog = chosenCharacter.name + " equips the " + itemInChest.nameWithQuality + ".";
+					encounterLogs.Add(equipLog);
+					Debug.Log(equipLog);
+				}
+				_itemsInChest.RemoveAt (i);
+				i--;
+			}else{
+				if(_allGreed.Count > 0){
+					ECS.Character chosenCharacter = _allGreed [UnityEngine.Random.Range (0, _allGreed.Count)];
+					chosenCharacter.PickupItem (itemInChest);
+
+					string obtainLog = chosenCharacter.name + " obtains " + itemInChest.nameWithQuality + " from the chest.";
+					encounterLogs.Add(obtainLog);
+					Debug.Log(obtainLog);
+
+					if(chosenCharacter.EquipItem (itemInChest)){
+						string equipLog = chosenCharacter.name + " equips the " + itemInChest.nameWithQuality + ".";
+						encounterLogs.Add(equipLog);
+						Debug.Log(equipLog);
+					}
+					_itemsInChest.RemoveAt (i);
+					i--;
+				}
+			}
+		}
+		if(party.currentTask != null){
+			party.currentTask.AddNewLogs(encounterLogs);
+		}
+		((Quest)party.currentTask).Result(true);
+
+
+//        bool isChestEmpty = true; //Did any party member get any loot?
+//        for (int i = 0; i < party.partyMembers.Count; i++) {
+//            ECS.Character currMember = party.partyMembers[i];
+//            ECS.Item gainedItem = RandomizeItemForCharacter(currMember);
+//            if (gainedItem != null) {
+//                isChestEmpty = false;
+//                string quality = string.Empty;
+//                if (gainedItem is ECS.Weapon) {
+//                    QUALITY itemQuality = ((ECS.Weapon)gainedItem).quality;
+//                    if (itemQuality != QUALITY.NORMAL) {
+//                        quality = Utilities.NormalizeString(itemQuality.ToString()) + " ";
+//                    }
+//                } else if (gainedItem is ECS.Armor) {
+//                    QUALITY itemQuality = ((ECS.Armor)gainedItem).quality;
+//                    if (itemQuality != QUALITY.NORMAL) {
+//                        quality = Utilities.NormalizeString(itemQuality.ToString()) + " ";
+//                    }
+//                }
+//
+//                if(party.currentTask != null) {
+//                    //Add Logs
+//                    encounterLogs.Add(currMember.name + " obtains " + quality + gainedItem.itemName + " from the chest.");
+//                }
+//                Debug.Log(currMember.name + " obtains " + quality + " " + gainedItem.itemName + " from the chest.");
+//                currMember.PickupItem(gainedItem); //put item in inventory
+//                if (currMember.EquipItem(gainedItem)) {//if the character can equip the item, equip it, otherwise, keep in inventory
+//                    string log = currMember.name + " equips the " + quality + gainedItem.itemName + " on ";
+//                    if(currMember.gender == GENDER.FEMALE) {
+//                        log += "her ";
+//                    } else {
+//                        log += "his ";
+//                    }
+//                    if (gainedItem is ECS.Weapon) {
+//                        List<ECS.IBodyPart> bodyParts = ((ECS.Weapon)gainedItem).bodyPartsAttached;
+//                        for (int j = 0; j < bodyParts.Count; j++) {
+//                            ECS.IBodyPart currBodyPart = bodyParts[j];
+//                            log += currBodyPart.name + " ";
+//                        }
+//                    } else if (gainedItem is ECS.Armor) {
+//                        ECS.IBodyPart bodyPart = ((ECS.Armor)gainedItem).bodyPartAttached;
+//                        log += bodyPart.name;
+//                    }
+//                    encounterLogs.Add(log);
+//                }
+//            } else {
+//                Debug.Log(currMember.name + " got nothing from the chest");
+//            }
+//        }
+//        if (isChestEmpty) {
+//            party.currentTask.AddNewLog("The party found nothing");
+//        } else {
+//            encounterLogs.Insert(0, "The party encountered a " + this.encounterName);
+//            party.currentTask.AddNewLogs(encounterLogs);
+//        }
     }
 
     public ECS.Item RandomizeItemForCharacter(ECS.Character character) {
@@ -131,6 +243,9 @@ public class ItemChest : IEncounterable {
                 return EQUIPMENT_TYPE.NONE;
         }
     }
+	private EQUIPMENT_TYPE GetRandomEquipmentType() {
+		return ItemManager.Instance.GetRandomEquipmentTypeByItemType (_chestType);
+	}
     
     /*
      Get the armor type the character will get from this chest.
@@ -210,7 +325,7 @@ public class ItemChest : IEncounterable {
                 default:
                     break;
             }
-        }
+		}
     }
     /*
      Construct the quality weights dictionary.
@@ -269,7 +384,21 @@ public class ItemChest : IEncounterable {
         return _qualityWeights.PickRandomElementGivenWeights();
     }
 
-	public void ReturnResults(object result){
-		
+	//This will put Items in the Item Chest
+	private void PopulateItemChest(){
+		_itemsInChest = new List<ECS.Item> ();
+		int numOfItems = UnityEngine.Random.Range (1, 4);
+		for (int i = 0; i < numOfItems; i++) {
+			ECS.Item item = ItemManager.Instance.GetRandomTier (_tier, _chestType);
+			QUALITY equipmentQuality = GetEquipmentQuality();
+			if (item.itemType == ITEM_TYPE.ARMOR) {
+				((ECS.Armor)item).SetQuality(equipmentQuality);
+			} else if (item.itemType == ITEM_TYPE.WEAPON) {
+				((ECS.Weapon)item).SetQuality(equipmentQuality);
+			}
+			_itemsInChest.Add(item);
+		}
+
 	}
+	public void ReturnResults(object result){}
 }

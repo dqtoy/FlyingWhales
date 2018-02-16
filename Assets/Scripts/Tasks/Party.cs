@@ -187,10 +187,6 @@ public class Party: IEncounterable, ICombatInitializer {
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 ((Quest)currentTask).AddNewLog(member.name + " has left the party");
             }
-		}else{
-			if(this.specificLocation.tileLocation.landmarkOnTile != null){
-				this.specificLocation.tileLocation.landmarkOnTile.AddHistory (member.name + " died.");
-			}
 		}
         
         member.SetParty(null);
@@ -290,7 +286,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			return;
 		}
 		_isDisbanded = true;
-        Debug.Log("Disbanded " + this.name);
+        Debug.Log("Just Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
         if (_currentTask != null) {
 			if (!_currentTask.isDone) {

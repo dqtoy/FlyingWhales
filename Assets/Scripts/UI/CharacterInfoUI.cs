@@ -76,12 +76,12 @@ public class CharacterInfoUI : UIMenu {
         text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
 		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
-		text += "\nCivilians: " + currentlyShowingCharacter.civilians.ToString ();
-        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
-            if (kvp.Value > 0) {
-                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-            }
-        }
+		text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
+//        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
+//            if (kvp.Value > 0) {
+//                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+//            }
+//        }
         //		text += "\n[b]Skills:[/b] ";
         //		if(currentlyShowingCharacter.skills.Count > 0){
         //			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {

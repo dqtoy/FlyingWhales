@@ -30,6 +30,16 @@ namespace ECS{
 		public ECS.Character owner{
 			get { return _owner; }
 		}
+		public string nameWithQuality{
+			get{
+				if(itemType == ITEM_TYPE.ARMOR){
+					return Utilities.NormalizeString (((Armor)this).quality.ToString ()) + " " + itemName;
+				}else if(itemType == ITEM_TYPE.WEAPON){
+					return Utilities.NormalizeString (((Weapon)this).quality.ToString ()) + " " + itemName;
+				}
+				return itemName;
+			}
+		}
 
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;

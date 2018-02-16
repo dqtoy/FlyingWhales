@@ -1038,6 +1038,7 @@ public enum CHARACTER_ATTRIBUTES {
 public enum ITEM_TYPE{
 	WEAPON,
 	ARMOR,
+	ITEM,
 }
 
 public enum EQUIPMENT_TYPE {

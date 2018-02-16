@@ -66,13 +66,7 @@ public class SettlementInfoUI : UIMenu {
         if (currentlyShowingLandmark.owner != null) {
             text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
             text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
-            text += "\n[b]Settlement Population: [/b] " + currentlyShowingLandmark.civilians.ToString();
-            text += "\n[b]Civilians: [/b] ";
-            foreach (KeyValuePair<RACE, int> kvp in currentlyShowingLandmark.civiliansByRace) {
-                if (kvp.Value > 0) {
-                    text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-                }
-            }
+            text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.civilians.ToString() + "[/url]";
             text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.location.region.populationGrowth).ToString();
 
             if (currentlyShowingLandmark is Settlement) {
@@ -189,7 +183,7 @@ public class SettlementInfoUI : UIMenu {
             text += "NONE";
         }
         if (currentlyShowingLandmark.landmarkEncounterable != null){
-			text += "\n[b]Encounterable: [/b]" + currentlyShowingLandmark.landmarkEncounterable.encounterName;
+			text += "\n[b]Encounterable: [/b]" + "[url=itemchest]" + currentlyShowingLandmark.landmarkEncounterable.encounterName + "[/url]";
 		}
 		//if(currentlyShowingLandmark is Settlement && currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingLandmark.owner != null){
 		//	text += "\n[b]Parties: [/b] ";

@@ -50,7 +50,7 @@ public class HuntPrey : CharacterTask {
     }
 
     private void StartHunt() {
-        _target.AddHistory("Monster " + _assignedCharacter.name + " is hunting for food");
+        _target.AddHistory("Monster " + _assignedCharacter.name + " is hunting for food.");
         Messenger.AddListener("OnDayEnd", Hunt);
         //GameDate nextDate = GameManager.Instance.Today();
         //nextDate.AddDays(1);
