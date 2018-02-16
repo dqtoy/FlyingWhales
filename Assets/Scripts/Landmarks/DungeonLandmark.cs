@@ -16,8 +16,8 @@ public class DungeonLandmark : BaseLandmark {
 		DungeonEncounterChances dungeonEncounterChances = LandmarkManager.Instance.GetDungeonEncounterChances (specificLandmarkType);
         if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
 			_landmarkName = RandomNameGenerator.Instance.GetAncientRuinName ();
-//            _encounterables.AddElement(ENCOUNTERABLE.ITEM_CHEST, 30);
-//            _encounterables.AddElement (ENCOUNTERABLE.PARTY, 50);
+//          _encounterables.AddElement(ENCOUNTERABLE.ITEM_CHEST, 30);
+//          _encounterables.AddElement (ENCOUNTERABLE.PARTY, 50);
 //			_landmarkEncounterableType = _encounterables.PickRandomElementGivenWeights();
 //			_landmarkEncounterable = GetNewEncounterable (_landmarkEncounterableType);
 
@@ -27,7 +27,7 @@ public class DungeonLandmark : BaseLandmark {
 				_dungeonParty.partyLeader.UnalignedDetermineAction ();
 			}
 			if (chance < dungeonEncounterChances.encounterLootChance) {
-				_landmarkEncounterable = new ItemChest (1, ITEM_TYPE.ARMOR, 35);
+				_landmarkEncounterable = new ItemChest (1, ITEM_TYPE.ITEM, 35);
 			}
         }
     }
