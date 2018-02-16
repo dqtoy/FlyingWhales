@@ -1752,7 +1752,11 @@ namespace ECS {
 				landmark.AddHistory ("Prisoner " + this.name + " is released.");
 			}
 			SetPrisoner (false, null);
-			DetermineAction ();
+			if(faction == null){
+				UnalignedDetermineAction ();
+			}else{
+				DetermineAction ();
+			}
 		}
 		internal void TransferPrisoner(object newPrisonerOf){
 			//Remove from previous prison
