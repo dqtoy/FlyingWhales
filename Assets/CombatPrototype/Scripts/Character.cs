@@ -13,6 +13,7 @@ namespace ECS {
 		private GENDER _gender;
         [System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
         [System.NonSerialized] private List<Trait>	_traits;
+        private List<TRAIT> _allTraits;
         private Dictionary<Character, Relationship> _relationships;
 
 		//Stats
@@ -108,7 +109,7 @@ namespace ECS {
 			get { return this._currentHP; }
 		}
 		internal int maxHP {
-			get { return this._maxHP; }
+			get { return this._maxHP + GetHPTraitModification(); }
 		}
 		internal int baseMaxHP {
 			get { return _baseMaxHP; }
@@ -175,19 +176,19 @@ namespace ECS {
 			get { return _activeQuests; }
 		}
 		internal int strength {
-			get { return _strength + _equippedItems.Sum(x => x.bonusStrength); }
+			get { return _strength + _equippedItems.Sum(x => x.bonusStrength) + GetStrengthTraitModification(); }
 		}
 		internal int baseStrength {
 			get { return _baseStrength; }
 		}
 		internal int intelligence {
-			get { return _intelligence + _equippedItems.Sum(x => x.bonusIntelligence); }
+			get { return _intelligence + _equippedItems.Sum(x => x.bonusIntelligence) + GetIntelligenceTraitModification(); }
 		}
 		internal int baseIntelligence {
 			get { return _baseIntelligence; }
 		}
 		internal int agility {
-			get { return _agility + _equippedItems.Sum(x => x.bonusAgility); }
+			get { return _agility + _equippedItems.Sum(x => x.bonusAgility) + GetAgilityTraitModification(); }
 		}
 		internal int baseAgility {
 			get { return _baseAgility; }
@@ -279,8 +280,10 @@ namespace ECS {
 
 			AllocateStatPoints (statAllocationBonus);
 
-			_maxHP = _baseMaxHP;
-			_currentHP = _maxHP;
+            GenerateTraits();
+
+            _maxHP = _baseMaxHP;
+			_currentHP = maxHP;
 			_strength = _baseStrength;
 			_agility = _baseAgility;
 			_intelligence = _baseIntelligence;
@@ -300,7 +303,6 @@ namespace ECS {
 			combatHistory = new Dictionary<int, CombatPrototype> ();
 			_combatHistoryID = 0;
             ConstructMaterialInventory();
-            GenerateTraits();
 		}
 
 		private void AllocateStatPoints(int statAllocationBonus){
@@ -1192,34 +1194,71 @@ namespace ECS {
         private void GenerateTraits() {
             CharacterType baseCharacterType = CharacterManager.Instance.GetRandomCharacterType();
             _characterType = baseCharacterType;
-            List<TRAIT> allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
+            _allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
             //Charisma
             if (baseCharacterType.charismaTrait == CHARISMA.NONE) {
-                allTraits.Add(GenerateCharismaTrait());
+                TRAIT charismaTrait = GenerateCharismaTrait();
+                if(charismaTrait != TRAIT.NONE) {
+                    _allTraits.Add(charismaTrait);
+                }
             } else {
-                allTraits.Add((TRAIT)baseCharacterType.charismaTrait);
+                _allTraits.Add((TRAIT)baseCharacterType.charismaTrait);
             }
             //Intelligence
             if (baseCharacterType.intelligenceTrait == INTELLIGENCE.NONE) {
-                allTraits.Add(GenerateIntelligenceTrait());
+                TRAIT intTrait = GenerateIntelligenceTrait();
+                if(intTrait != TRAIT.NONE) {
+                    _allTraits.Add(intTrait);
+                }
             } else {
-                allTraits.Add((TRAIT)baseCharacterType.intelligenceTrait);
+                _allTraits.Add((TRAIT)baseCharacterType.intelligenceTrait);
             }
             //Efficiency
             if (baseCharacterType.efficiencyTrait == EFFICIENCY.NONE) {
-                allTraits.Add(GenerateEfficiencyTrait());
+                TRAIT efficiencyTrait = GenerateEfficiencyTrait();
+                if (efficiencyTrait != TRAIT.NONE) {
+                    _allTraits.Add(efficiencyTrait);
+                }
             } else {
-                allTraits.Add((TRAIT)baseCharacterType.efficiencyTrait);
+                _allTraits.Add((TRAIT)baseCharacterType.efficiencyTrait);
             }
             //Military
             if (baseCharacterType.militaryTrait == MILITARY.NONE) {
-                allTraits.Add(GenerateMilitaryTrait());
+                TRAIT militaryTrait = GenerateMilitaryTrait();
+                _allTraits.Add(militaryTrait);
             } else {
-                allTraits.Add((TRAIT)baseCharacterType.militaryTrait);
+                _allTraits.Add((TRAIT)baseCharacterType.militaryTrait);
+            }
+            //Health
+            if (baseCharacterType.healthTrait == HEALTH.NONE) {
+                TRAIT healthTrait = GenerateHealthTrait();
+                if(healthTrait != TRAIT.NONE) {
+                    _allTraits.Add(healthTrait);
+                }
+            } else {
+                _allTraits.Add((TRAIT)baseCharacterType.healthTrait);
+            }
+            //Strength
+            if (baseCharacterType.strengthTrait == STRENGTH.NONE) {
+                TRAIT strengthTrait = GenerateStrengthTrait();
+                if (strengthTrait != TRAIT.NONE) {
+                    _allTraits.Add(strengthTrait);
+                }
+            } else {
+                _allTraits.Add((TRAIT)baseCharacterType.strengthTrait);
+            }
+            //Agility
+            if (baseCharacterType.agilityTrait == AGILITY.NONE) {
+                TRAIT agilityTrait = GenerateAgilityTrait();
+                if (agilityTrait != TRAIT.NONE) {
+                    _allTraits.Add(agilityTrait);
+                }
+            } else {
+                _allTraits.Add((TRAIT)baseCharacterType.agilityTrait);
             }
             _traits = new List<Trait>();
-            for (int i = 0; i < baseCharacterType.allTraits.Count; i++) {
-                TRAIT currTrait = baseCharacterType.allTraits[i];
+            for (int i = 0; i < _allTraits.Count; i++) {
+                TRAIT currTrait = _allTraits[i];
                 Trait trait = CharacterManager.Instance.CreateNewTraitForCharacter(currTrait, this);
                 if (trait != null) {
                     trait.AssignCharacter(this);
@@ -1230,9 +1269,9 @@ namespace ECS {
         private TRAIT GenerateCharismaTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
-                return TRAIT.CHARISMATIC;
+                return TRAIT.CHARISMATIC; //20%
             } else if (chance >= 20 && chance < 40) {
-                return TRAIT.REPULSIVE;
+                return TRAIT.REPULSIVE; //20%
             } else {
                 return TRAIT.NONE;
             }
@@ -1240,9 +1279,9 @@ namespace ECS {
         private TRAIT GenerateIntelligenceTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
-                return TRAIT.SMART;
+                return TRAIT.SMART; //20%
             } else if (chance >= 20 && chance < 40) {
-                return TRAIT.DUMB;
+                return TRAIT.DUMB; //20%
             } else {
                 return TRAIT.NONE;
             }
@@ -1250,21 +1289,49 @@ namespace ECS {
         private TRAIT GenerateEfficiencyTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
-                return TRAIT.EFFICIENT;
+                return TRAIT.EFFICIENT; //20%
             } else if (chance >= 20 && chance < 40) {
-                return TRAIT.INEFFICIENT;
+                return TRAIT.INEPT; //20%
             } else {
                 return TRAIT.NONE;
             }
         }
         private TRAIT GenerateMilitaryTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 10) {
-                return TRAIT.HOSTILE;
-            } else if (chance >= 10 && chance < 25) {
-                return TRAIT.MILITANT;
-            } else if (chance >= 25 && chance < 40) {
-                return TRAIT.PACIFIST;
+            if (chance < 20) {
+                return TRAIT.HOSTILE; //20%
+            } else if (chance >= 20 && chance < 40) {
+                return TRAIT.PACIFIST; //20%
+            } else {
+                return TRAIT.NONE;
+            }
+        }
+        private TRAIT GenerateHealthTrait() {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 20) {
+                return TRAIT.ROBUST; //20%
+            } else if (chance >= 20 && chance < 40) {
+                return TRAIT.FRAGILE; //20%
+            } else {
+                return TRAIT.NONE;
+            }
+        }
+        private TRAIT GenerateStrengthTrait() {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 20) {
+                return TRAIT.STRONG; //20%
+            } else if (chance >= 20 && chance < 40) {
+                return TRAIT.WEAK; //20%
+            } else {
+                return TRAIT.NONE;
+            }
+        }
+        private TRAIT GenerateAgilityTrait() {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 20) {
+                return TRAIT.AGILE; //20%
+            } else if (chance >= 20 && chance < 40) {
+                return TRAIT.CLUMSY; //20%
             } else {
                 return TRAIT.NONE;
             }
@@ -1277,10 +1344,25 @@ namespace ECS {
 			}
 			return false;
 		}
-		#endregion
+        private int GetIntelligenceTraitModification() {
+            int currIntelligence = _intelligence + _equippedItems.Sum(x => x.bonusIntelligence);
+            return (int)(currIntelligence * _traits.Sum(x => x.bonusIntPercent));
+        }
+        private int GetStrengthTraitModification() {
+            int currStrength = _strength + _equippedItems.Sum(x => x.bonusStrength);
+            return (int)(currStrength * _traits.Sum(x => x.bonusStrengthPercent));
+        }
+        private int GetAgilityTraitModification() {
+            int currAgi = _agility + _equippedItems.Sum(x => x.bonusAgility);
+            return (int)(currAgi * _traits.Sum(x => x.bonusAgiPercent));
+        }
+        private int GetHPTraitModification() {
+            return (int)(_maxHP * _traits.Sum(x => x.bonusHPPercent));
+        }
+        #endregion
 
-		#region Faction
-		public void SetFaction(Faction faction) {
+        #region Faction
+        public void SetFaction(Faction faction) {
 			_faction = faction;
 		}
 		#endregion

@@ -48,11 +48,11 @@ public class MilitaryManager2 {
 //			this.maxGenerals += this._kingdom.king.allTraits [i].GetMaxGeneralsModifier ();
 //		}
 		if(this._kingdom.king != null){
-			if(this._kingdom.king.HasTrait(TRAIT.MILITANT) || this._kingdom.king.HasTrait(TRAIT.HOSTILE)){
-				this.maxGenerals += 1;
-			}else if(this._kingdom.king.HasTrait(TRAIT.PACIFIST)){
-				this.maxGenerals -= 1;
-			}
+			//if(this._kingdom.king.HasTrait(TRAIT.MILITANT) || this._kingdom.king.HasTrait(TRAIT.HOSTILE)){
+			//	this.maxGenerals += 1;
+			//}else if(this._kingdom.king.HasTrait(TRAIT.PACIFIST)){
+			//	this.maxGenerals -= 1;
+			//}
 		}
 	}
 

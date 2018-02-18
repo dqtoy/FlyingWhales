@@ -657,12 +657,12 @@ public class Utilities : MonoBehaviour {
                 return darkRed;
             case TRAIT.EFFICIENT:
                 return darkGreen;
-            case TRAIT.INEFFICIENT:
+            case TRAIT.INEPT:
                 return darkRed;
             case TRAIT.HOSTILE:
                 return darkRed;
-            case TRAIT.MILITANT:
-                return lightRed;
+            //case TRAIT.MILITANT:
+            //    return lightRed;
             case TRAIT.PACIFIST:
                 return darkGreen;
             default:

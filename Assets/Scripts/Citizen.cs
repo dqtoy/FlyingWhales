@@ -638,7 +638,7 @@ public class Citizen {
                     return 1;
                 case TRAIT.NONE:
                     return 0;
-                case TRAIT.INEFFICIENT:
+                case TRAIT.INEPT:
                     return -1;
                 default:
                     return 0;
@@ -687,7 +687,7 @@ public class Citizen {
             switch (_efficiency) {
                 case TRAIT.EFFICIENT:
                     return 2;
-                case TRAIT.INEFFICIENT:
+                case TRAIT.INEPT:
                     return 0;
                 default:
                     return 1;
@@ -788,7 +788,7 @@ public class Citizen {
         if(king.efficiency == TRAIT.EFFICIENT) {
             efficiencyAdjustment = 15;
             efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
-        } else if(king.efficiency == TRAIT.INEFFICIENT){
+        } else if(king.efficiency == TRAIT.INEPT){
             efficiencyAdjustment = -15;
             efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
         }
@@ -1141,7 +1141,7 @@ public class Citizen {
         if (chance < 20) {
             return TRAIT.EFFICIENT;
         } else if (chance >= 20 && chance < 40) {
-            return TRAIT.INEFFICIENT;
+            return TRAIT.INEPT;
         } else {
             return TRAIT.NONE;
         }
@@ -1162,9 +1162,11 @@ public class Citizen {
         int chance = Random.Range(0, 100);
         if (chance < 10) {
             return TRAIT.HOSTILE;
-        } else if (chance >= 10 && chance < 25) {
-            return TRAIT.MILITANT;
-        } else if (chance >= 25 && chance < 40) {
+        } 
+        //else if (chance >= 10 && chance < 25) {
+        //    return TRAIT.MILITANT;
+        //} 
+        else if (chance >= 25 && chance < 40) {
             return TRAIT.PACIFIST;
         } else {
             return TRAIT.NONE;
@@ -1194,15 +1196,17 @@ public class Citizen {
 			}else{
 				return WARMONGER.LOW;
 			}
-		}else if((MILITARY)this._military == MILITARY.MILITANT){
-			if(chance < 15){
-				return WARMONGER.VERY_HIGH;
-			}else if(chance >= 15 && chance < 50){
-				return WARMONGER.HIGH;
-			}else{
-				return WARMONGER.AVERAGE;
-			}
-		}else{
+		}
+  //      else if((MILITARY)this._military == MILITARY.MILITANT){
+		//	if(chance < 15){
+		//		return WARMONGER.VERY_HIGH;
+		//	}else if(chance >= 15 && chance < 50){
+		//		return WARMONGER.HIGH;
+		//	}else{
+		//		return WARMONGER.AVERAGE;
+		//	}
+		//}
+        else{
 			if(chance < 5){
 				return WARMONGER.VERY_HIGH;
 			}else if(chance >= 5 && chance < 25){
@@ -1239,7 +1243,7 @@ public class Citizen {
 		if (chance < 20) {
 			return TRAIT.EFFICIENT;
 		} else if (chance >= 20 && chance < 40) {
-			return TRAIT.INEFFICIENT;
+			return TRAIT.INEPT;
 		} else {
 			return TRAIT.NONE;
 		}
@@ -1248,9 +1252,11 @@ public class Citizen {
 		int chance = Random.Range(0, 100);
 		if (chance < 40) {
 			return TRAIT.HOSTILE;
-		} else if (chance >= 40 && chance < 70) {
-			return TRAIT.MILITANT;
-		} else {
+		}
+  //      else if (chance >= 40 && chance < 70) {
+		//	return TRAIT.MILITANT;
+		//} 
+        else {
 			return TRAIT.NONE;
 		}
 	}

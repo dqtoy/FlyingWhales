@@ -90,10 +90,10 @@ public class AllianceOfConquestOffer : GameEvent {
             //+10 Weight on Accept
             acceptanceWeight += 10;
         }
-        if (otherKingdom.king.HasTrait(TRAIT.MILITANT)) {
-            //+5 Weight on Accept
-            acceptanceWeight += 5;
-        }
+        //if (otherKingdom.king.HasTrait(TRAIT.MILITANT)) {
+        //    //+5 Weight on Accept
+        //    acceptanceWeight += 5;
+        //}
         if (otherKingdom.king.HasTrait(TRAIT.OPPORTUNIST)) {
             //+2 Weight on Accept for each positive point of Relative Strength of the Deal Source
             if(relWithOfferingKingdom.relativeStrength > 0) {

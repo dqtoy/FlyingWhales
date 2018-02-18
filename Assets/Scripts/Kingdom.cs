@@ -2469,9 +2469,9 @@ public class Kingdom{
             case TRAIT.HOSTILE:
                 _draftRateFromKing = 0.10f;
                 break;
-            case TRAIT.MILITANT:
-                _draftRateFromKing = 0.05f;
-                break;
+            //case TRAIT.MILITANT:
+            //    _draftRateFromKing = 0.05f;
+            //    break;
             case TRAIT.PACIFIST:
                 _draftRateFromKing = -0.05f;
                 break;
@@ -3084,7 +3084,7 @@ public class Kingdom{
 			//Fail
 			int criticalFailChance = UnityEngine.Random.Range (0, 100);
 			int criticalFailValue = 20;
-			if(this.king.HasTrait(TRAIT.INEFFICIENT)){
+			if(this.king.HasTrait(TRAIT.INEPT)){
 				criticalFailValue += 5;
 			}else if(this.king.HasTrait(TRAIT.EFFICIENT)){
 				criticalFailValue -= 5;

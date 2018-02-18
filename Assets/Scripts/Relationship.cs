@@ -38,11 +38,23 @@ public class Relationship {
         } else {
             if (_character1.HasTrait(TRAIT.RACIST) || 
                 _character2.HasTrait(TRAIT.RACIST)) {
-                _baseValue -= 25; //Different Race: -25 (if racist)
+                if(_character1.raceSetting.race != _character2.raceSetting.race) {
+                    _baseValue -= 25; //Different Race: -25 (if racist)
+                }
             }
         }
 
-        if(_character1.HasTrait(TRAIT.CHARISMATIC) || 
+        if (_character1.HasTrait(TRAIT.RUTHLESS)) {
+            if (_character2.HasTrait(TRAIT.BENEVOLENT)) {
+                _baseValue -= 20; //Ruthless (-20 Opinion vs Benevolent)
+            }
+        } else if (_character2.HasTrait(TRAIT.RUTHLESS)) {
+            if (_character1.HasTrait(TRAIT.BENEVOLENT)) {
+                _baseValue -= 20; //Ruthless (-20 Opinion vs Benevolent)
+            }
+        }
+
+        if (_character1.HasTrait(TRAIT.CHARISMATIC) || 
             _character2.HasTrait(TRAIT.CHARISMATIC)) {
             _baseValue += 25; //Charismatic: +15
         }
@@ -69,13 +81,13 @@ public class Relationship {
         if (_character1.HasTrait(TRAIT.EFFICIENT)) {
             if (_character2.HasTrait(TRAIT.EFFICIENT)) {
                 _baseValue += 10; //Both Efficient: +10
-            } else if (_character2.HasTrait(TRAIT.INEFFICIENT)) {
+            } else if (_character2.HasTrait(TRAIT.INEPT)) {
                 _baseValue -= 10; //Efficient vs Inept: -10
             }
         } else if (_character2.HasTrait(TRAIT.EFFICIENT)) {
             if (_character1.HasTrait(TRAIT.EFFICIENT)) {
                 _baseValue += 10; //Both Efficient: +10
-            } else if (_character1.HasTrait(TRAIT.INEFFICIENT)) {
+            } else if (_character1.HasTrait(TRAIT.INEPT)) {
                 _baseValue -= 10; //Efficient vs Inept: -10
             }
         }
@@ -94,22 +106,23 @@ public class Relationship {
             }
         }
 
-        if (_character1.HasTrait(TRAIT.DIPLOMATIC) ||
-                _character2.HasTrait(TRAIT.DIPLOMATIC)) {
-            _baseValue += 10;//Diplomatic (this character): +10
+        if (_character1.HasTrait(TRAIT.DIPLOMATIC)) {
+            if (_character2.HasTrait(TRAIT.HOSTILE)) {
+                _baseValue -= 20;//Diplomatic (-20 Opinion vs Hostile) (exclusive from Hostile and Opportunist)
+            }
+        } else if (_character2.HasTrait(TRAIT.DIPLOMATIC)) {
+            if (_character1.HasTrait(TRAIT.HOSTILE)) {
+                _baseValue -= 20;//Diplomatic (-20 Opinion vs Hostile) (exclusive from Hostile and Opportunist)
+            }
         }
 
         if (_character1.HasTrait(TRAIT.HONEST)) {
-            if (_character2.HasTrait(TRAIT.HONEST)) {
-                _baseValue += 10; //Both Honest: +10
-            } else if (_character2.HasTrait(TRAIT.SCHEMING)) {
-                _baseValue -= 10; //Honest vs Scheming: -10
+            if (_character2.HasTrait(TRAIT.SCHEMING) || _character2.HasTrait(TRAIT.DECEITFUL)) {
+                _baseValue -= 20; //Honest (-20 Opinion vs Deceitful and Scheming) (exclusive from Deceitful and Scheming)
             }
         } else if (_character2.HasTrait(TRAIT.HONEST)) {
-            if (_character1.HasTrait(TRAIT.HONEST)) {
-                _baseValue += 10; //Both Honest: +10
-            } else if (_character1.HasTrait(TRAIT.SCHEMING)) {
-                _baseValue -= 10; //Honest vs Scheming: -10
+            if (_character1.HasTrait(TRAIT.SCHEMING) || _character1.HasTrait(TRAIT.DECEITFUL)) {
+                _baseValue -= 20; //Honest (-20 Opinion vs Deceitful and Scheming) (exclusive from Deceitful and Scheming)
             }
         }
 

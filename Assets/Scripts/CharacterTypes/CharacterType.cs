@@ -11,6 +11,9 @@ public struct CharacterType {
     public INTELLIGENCE intelligenceTrait;
     public EFFICIENCY efficiencyTrait;
     public MILITARY militaryTrait;
+    public HEALTH healthTrait;
+    public STRENGTH strengthTrait;
+    public AGILITY agilityTrait;
 
     public List<TRAIT> otherTraits;
 
@@ -22,6 +25,9 @@ public struct CharacterType {
             _allTraits.Add((TRAIT)intelligenceTrait);
             _allTraits.Add((TRAIT)efficiencyTrait);
             _allTraits.Add((TRAIT)militaryTrait);
+            _allTraits.Add((TRAIT)healthTrait);
+            _allTraits.Add((TRAIT)strengthTrait);
+            _allTraits.Add((TRAIT)agilityTrait);
             _allTraits.AddRange(otherTraits);
             return _allTraits;
         }

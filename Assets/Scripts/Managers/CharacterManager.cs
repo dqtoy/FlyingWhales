@@ -237,12 +237,6 @@ public class CharacterManager : MonoBehaviour {
         }
         Trait createdTrait = null;
         switch (traitType) {
-            case TRAIT.OPPORTUNIST:
-                createdTrait = JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
-                break;
-            case TRAIT.DECEITFUL:
-                createdTrait = JsonUtility.FromJson<Deceitful>(traitDictionary[traitType]);
-                break;
             case TRAIT.IMPERIALIST:
                 createdTrait = JsonUtility.FromJson<Imperialist>(traitDictionary[traitType]);
                 break;
@@ -255,14 +249,70 @@ public class CharacterManager : MonoBehaviour {
             case TRAIT.SCHEMING:
                 createdTrait = JsonUtility.FromJson<Scheming>(traitDictionary[traitType]);
                 break;
-            case TRAIT.DIPLOMATIC:
-                createdTrait = JsonUtility.FromJson<Diplomatic>(traitDictionary[traitType]);
+            case TRAIT.OPPORTUNIST:
+                createdTrait = JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
+                break;
+            case TRAIT.EFFICIENT:
+                createdTrait = JsonUtility.FromJson<Efficient>(traitDictionary[traitType]);
+                break;
+            case TRAIT.INEPT:
+                createdTrait = JsonUtility.FromJson<Inept>(traitDictionary[traitType]);
+                break;
+            case TRAIT.MEDDLER:
+                createdTrait = JsonUtility.FromJson<Meddler>(traitDictionary[traitType]);
+                break;
+            case TRAIT.SMART:
+                createdTrait = JsonUtility.FromJson<Smart>(traitDictionary[traitType]);
+                break;
+            case TRAIT.DUMB:
+                createdTrait = JsonUtility.FromJson<Dumb>(traitDictionary[traitType]);
+                break;
+            case TRAIT.CHARISMATIC:
+                createdTrait = JsonUtility.FromJson<Charismatic>(traitDictionary[traitType]);
+                break;
+            case TRAIT.REPULSIVE:
+                createdTrait = JsonUtility.FromJson<Repulsive>(traitDictionary[traitType]);
+                break;
+            case TRAIT.RUTHLESS:
+                createdTrait = JsonUtility.FromJson<Ruthless>(traitDictionary[traitType]);
+                break;
+            case TRAIT.DECEITFUL:
+                createdTrait = JsonUtility.FromJson<Deceitful>(traitDictionary[traitType]);
                 break;
             case TRAIT.BENEVOLENT:
                 createdTrait = JsonUtility.FromJson<Benevolent>(traitDictionary[traitType]);
                 break;
-            case TRAIT.RUTHLESS:
-                createdTrait = JsonUtility.FromJson<Ruthless>(traitDictionary[traitType]);
+            case TRAIT.DIPLOMATIC:
+                createdTrait = JsonUtility.FromJson<Diplomatic>(traitDictionary[traitType]);
+                break;
+            case TRAIT.DEFENSIVE:
+                createdTrait = JsonUtility.FromJson<Defensive>(traitDictionary[traitType]);
+                break;
+            case TRAIT.HONEST:
+                createdTrait = JsonUtility.FromJson<Honest>(traitDictionary[traitType]);
+                break;
+            case TRAIT.RACIST:
+                createdTrait = JsonUtility.FromJson<Racist>(traitDictionary[traitType]);
+                break;
+            case TRAIT.ROBUST:
+                createdTrait = JsonUtility.FromJson<Robust>(traitDictionary[traitType]);
+                break;
+            case TRAIT.FRAGILE:
+                createdTrait = JsonUtility.FromJson<Fragile>(traitDictionary[traitType]);
+                break;
+            case TRAIT.STRONG:
+                createdTrait = JsonUtility.FromJson<Strong>(traitDictionary[traitType]);
+                break;
+            case TRAIT.WEAK:
+                createdTrait = JsonUtility.FromJson<Weak>(traitDictionary[traitType]);
+                break;
+            case TRAIT.CLUMSY:
+                createdTrait = JsonUtility.FromJson<Clumsy>(traitDictionary[traitType]);
+                break;
+            case TRAIT.AGILE:
+                createdTrait = JsonUtility.FromJson<Agile>(traitDictionary[traitType]);
+                break;
+            default:
                 break;
         }
         //if (character != null && createdTrait != null) {
