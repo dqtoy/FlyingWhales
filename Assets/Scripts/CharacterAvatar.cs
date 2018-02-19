@@ -24,6 +24,7 @@ public class CharacterAvatar : PooledObject{
 	protected bool _hasArrived = false;
     private bool _isInititalized = false;
     private bool _isMovementPaused = false;
+    private bool _isTravelling = false;
 
     #region getters/setters
     public List<ECS.Character> characters {
@@ -31,6 +32,9 @@ public class CharacterAvatar : PooledObject{
     }
     public ILocation currLocation {
         get { return _currLocation; }
+    }
+    public bool isTravelling {
+        get { return _isTravelling; }
     }
     #endregion
 
@@ -129,6 +133,7 @@ public class CharacterAvatar : PooledObject{
 			}
 
             this.path = path;
+            _isTravelling = true;
             NewMove();
         }
     }
@@ -172,6 +177,7 @@ public class CharacterAvatar : PooledObject{
     internal virtual void HasArrivedAtTargetLocation() {
         if (this.currLocation.tileLocation == targetLocation.tileLocation) {
             if (!this._hasArrived) {
+                _isTravelling = false;
                 AddCharactersToLocation(targetLocation, _startCombatOnReachLocation);
                 _currLocation = targetLocation; //set location as the target location, in case the target location is a landmark
                 if (this.currLocation.tileLocation.landmarkOnTile != null){

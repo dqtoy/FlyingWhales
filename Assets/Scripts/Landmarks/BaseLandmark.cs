@@ -388,9 +388,9 @@ public class BaseLandmark : ILocation, TaskCreator {
                 this.location.RemoveCharacterFromLocation(currParty);
                 currParty.SetSpecificLocation(this);
             }
-            if (startCombat) {
-                StartCombatAtLocation();
-            }
+            //if (startCombat) {
+            //    StartCombatAtLocation();
+            //}
         }
     }
     public void RemoveCharacterFromLocation(ICombatInitializer character) {
@@ -427,51 +427,51 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Combat
-    public void StartCombatAtLocation() {
-        if (!CombatAtLocation()) {
-            this._currentCombat = null;
-            for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currItem = _charactersAtLocation[i];
-                currItem.SetIsDefeated(false);
-				currItem.SetIsInCombat (false);
-				if(currItem.currentFunction != null){
-					currItem.currentFunction ();
-				}
-				currItem.SetCurrentFunction(null);
-            }
-        } else {
-            for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currItem = _charactersAtLocation[i];
-				currItem.SetIsInCombat (true);
-            }
-        }
-    }
-    public bool CombatAtLocation() {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            if (_charactersAtLocation[i].InitializeCombat()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer) {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            if (_charactersAtLocation[i] != combatInitializer) {
-                if (_charactersAtLocation[i] is Party) {
-                    if (((Party)_charactersAtLocation[i]).isDefeated) {
-                        continue;
-                    }
-                }
-                if (combatInitializer.CanBattleThis(_charactersAtLocation[i])) {
-                    return _charactersAtLocation[i];
-                }
-            }
-        }
-        return null;
-    }
-    public void SetCurrentCombat(ECS.CombatPrototype combat) {
-        _currentCombat = combat;
-    }
+    //public void StartCombatAtLocation() {
+    //    if (!CombatAtLocation()) {
+    //        this._currentCombat = null;
+    //        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //            ICombatInitializer currItem = _charactersAtLocation[i];
+    //            currItem.SetIsDefeated(false);
+				//currItem.SetIsInCombat (false);
+				//if(currItem.currentFunction != null){
+				//	currItem.currentFunction ();
+				//}
+				//currItem.SetCurrentFunction(null);
+    //        }
+    //    } else {
+    //        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //            ICombatInitializer currItem = _charactersAtLocation[i];
+				//currItem.SetIsInCombat (true);
+    //        }
+    //    }
+    //}
+    //public bool CombatAtLocation() {
+    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //        if (_charactersAtLocation[i].InitializeCombat()) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer) {
+    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //        if (_charactersAtLocation[i] != combatInitializer) {
+    //            if (_charactersAtLocation[i] is Party) {
+    //                if (((Party)_charactersAtLocation[i]).isDefeated) {
+    //                    continue;
+    //                }
+    //            }
+    //            if (combatInitializer.IsHostileWith(_charactersAtLocation[i])) {
+    //                return _charactersAtLocation[i];
+    //            }
+    //        }
+    //    }
+    //    return null;
+    //}
+    //public void SetCurrentCombat(ECS.CombatPrototype combat) {
+    //    _currentCombat = combat;
+    //}
     #endregion
 
     public void SetHiddenState(bool isHidden) {

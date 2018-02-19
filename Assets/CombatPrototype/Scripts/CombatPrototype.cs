@@ -163,7 +163,7 @@ namespace ECS{
                 //    encounterable.ReturnResults(this);
                 //}
             }
-			this.location.StartCombatAtLocation ();
+			//this.location.StartCombatAtLocation ();
 		}
 
         //This simulates the whole combat system

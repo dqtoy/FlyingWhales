@@ -12,12 +12,14 @@ public interface ICombatInitializer {
 	bool isInCombat { get; }
 	Action currentFunction { get; }
 
-	bool InitializeCombat();
-	bool CanBattleThis (ICombatInitializer combatInitializer);
+	//bool InitializeCombat();
+	bool IsHostileWith (ICombatInitializer combatInitializer);
 	void ReturnCombatResults(ECS.CombatPrototype combat);
 	void SetIsDefeated (bool state);
 	//void SetCivilians (int amount);
 	//void AdjustCivilians (int amount);
 	void SetIsInCombat (bool state);
 	void SetCurrentFunction (Action function);
+
+    STANCE GetCurrentStance();
 }

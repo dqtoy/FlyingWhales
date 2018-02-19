@@ -11,10 +11,10 @@ public interface ILocation {
     void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true);
 	void RemoveCharacterFromLocation(ICombatInitializer character);
 
-    void StartCombatAtLocation();
-    bool CombatAtLocation();
-    ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer);
-    void SetCurrentCombat(ECS.CombatPrototype combat);
+    //void StartCombatAtLocation();
+    //bool CombatAtLocation();
+    //ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer);
+    //void SetCurrentCombat(ECS.CombatPrototype combat);
 	int CharactersCount(bool includeHostile = false);
 
     ECS.Character GetCharacterAtLocationByID (int id);

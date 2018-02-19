@@ -1884,76 +1884,72 @@ namespace ECS {
 		#endregion
 
 		#region ICombatInitializer
-		public bool InitializeCombat(){
-			if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
-				//Start Combat with hostile or unaligned
-				ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
-				if(enemy != null){
-					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
-					combat.AddCharacters (ECS.SIDES.A, new List<ECS.Character>(){this});
-					if(enemy is Party){
-						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
-					}else{
-						combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
-					}
-					this.specificLocation.SetCurrentCombat (combat);
-					CombatThreadPool.Instance.AddToThreadPool (combat);
-					return true;
-				}
-				return false;
-			}else{
-				return false;
-			}
-		}
-		public bool CanBattleThis(ICombatInitializer combatInitializer){
-			if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
-                //Check here if the combatInitializer is hostile with this character, if yes, return true
-                Faction factionOfEnemy = null;
-                if(combatInitializer is ECS.Character) {
-                    factionOfEnemy = (combatInitializer as ECS.Character).faction;
-                }else if(combatInitializer is Party) {
-                    factionOfEnemy = (combatInitializer as Party).faction;
+		//public bool InitializeCombat(){
+		//	if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
+		//		//Start Combat with hostile or unaligned
+		//		ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
+		//		if(enemy != null){
+		//			ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
+		//			combat.AddCharacters (ECS.SIDES.A, new List<ECS.Character>(){this});
+		//			if(enemy is Party){
+		//				combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
+		//			}else{
+		//				combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
+		//			}
+		//			this.specificLocation.SetCurrentCombat (combat);
+		//			CombatThreadPool.Instance.AddToThreadPool (combat);
+		//			return true;
+		//		}
+		//		return false;
+		//	}else{
+		//		return false;
+		//	}
+		//}
+		public bool IsHostileWith(ICombatInitializer combatInitializer){
+            //Check here if the combatInitializer is hostile with this character, if yes, return true
+            Faction factionOfEnemy = null;
+            if(combatInitializer is ECS.Character) {
+                factionOfEnemy = (combatInitializer as ECS.Character).faction;
+            }else if(combatInitializer is Party) {
+                factionOfEnemy = (combatInitializer as Party).faction;
+            }
+            if(factionOfEnemy != null) {
+                if(factionOfEnemy.id == this.faction.id) {
+                    return false; //characters are of same faction
                 }
-                if(factionOfEnemy != null) {
-                    if(factionOfEnemy.id == this.faction.id) {
-                        return false; //characters are of same faction
-                    }
-                    FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
-                    if(rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                        return true; //factions of combatants are hostile
-                    }
-                    return false;
-                } else {
-                    return true; //enemy has no faction
+                FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
+                if(rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                    return true; //factions of combatants are hostile
                 }
-			}else{
-				return false;
-			}
+                return false;
+            } else {
+                return true; //enemy has no faction
+            }
+			
 		}
 		public void ReturnCombatResults(ECS.CombatPrototype combat){
+            this.SetIsInCombat(false);
 			if (this.isDefeated) {
 				//this character was defeated
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
             } else{
-				if(faction == null){
-					UnalignedDetermineAction ();
-				}
+                if (currentFunction != null) {
+                    currentFunction();
+                    SetCurrentFunction(null);
+                } else {
+                    if (faction == null) {
+                        UnalignedDetermineAction();
+                    } else {
+                        DetermineAction();
+                    }
+                }
 			}
         }
 		public void SetIsDefeated(bool state){
 			_isDefeated = state;
 		}
-        //public void SetCivilians(int amount){
-        //	_civilians = amount;
-        //}
-        //public void AdjustCivilians(int amount){
-        //	_civilians += amount;
-        //	if(_civilians < 0){
-        //		_civilians = 0;
-        //	}
-        //}
         public void AdjustCivilians(Dictionary<RACE, int> civilians) {
             foreach (KeyValuePair<RACE, int> kvp in civilians) {
                 AdjustCivilians(kvp.Key, kvp.Value);
@@ -1974,6 +1970,21 @@ namespace ECS {
         public void TransferCivilians(BaseLandmark to, Dictionary<RACE, int> civilians) {
             ReduceCivilians(civilians);
             to.AdjustCivilians(civilians);
+        }
+        public STANCE GetCurrentStance() {
+            if(currentTask != null) {
+                if (avatar != null && avatar.isTravelling) {
+                    return STANCE.NEUTRAL;
+                }
+                if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                    return STANCE.COMBAT;
+                } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is Quest && !(currentTask as Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
+                    return STANCE.NEUTRAL;
+                } else if (currentTask is ExploreTile) {
+                    return STANCE.STEALTHY;
+                }
+            }
+            return STANCE.NEUTRAL;
         }
         #endregion
 

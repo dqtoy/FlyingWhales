@@ -1137,3 +1137,9 @@ public enum LOCATION_IDENTIFIER{
 	HEXTILE,
 }
 
+public enum STANCE {
+    COMBAT,
+    NEUTRAL,
+    STEALTHY
+}
+

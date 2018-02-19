@@ -617,74 +617,68 @@ public class Party: IEncounterable, ICombatInitializer {
 
 	#region ICombatInitializer
 	public virtual void ReturnResults(object result){}
-	public virtual bool InitializeCombat(){
-		if(isDefeated){
-			return false;
-		}
-		if(_partyLeader.faction == null){
-			ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
-			if(enemy != null){
-				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
-				combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
-				if(enemy is Party){
-					combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
-				}else{
-					combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
-				}
-				this.specificLocation.SetCurrentCombat (combat);
-				CombatThreadPool.Instance.AddToThreadPool (combat);
-				return true;
-			}
-			return false;
-		}else{
-			if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
-				ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
-				if(enemy != null){
-					ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
-					combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
-					if(enemy is Party){
-						combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
-					}else{
-						combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
-					}
-					this.specificLocation.SetCurrentCombat (combat);
-					CombatThreadPool.Instance.AddToThreadPool (combat);
-					return true;
-				}
-				return false;
-			}
-			return false;
-		}
-	}
-	public virtual bool CanBattleThis(ICombatInitializer combatInitializer){
-		if(this.faction == null){
-			return true;
-		}else{
-			if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
-                //Check here if the combatInitializer is hostile with this character, if yes, return true
-                Faction factionOfEnemy = null;
-                if (combatInitializer is ECS.Character) {
-                    factionOfEnemy = (combatInitializer as ECS.Character).faction;
-                } else if (combatInitializer is Party) {
-                    factionOfEnemy = (combatInitializer as Party).faction;
-                }
-                if (factionOfEnemy != null) {
-                    if (factionOfEnemy.id == this.faction.id) {
-                        return false; //characters are of same faction
-                    }
-                    FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
-                    if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                        return true; //factions of combatants are hostile
-                    }
-                    return false;
-                } else {
-                    return true; //enemy has no faction
-                }
-			}
-			return false;
-		}
+	//public virtual bool InitializeCombat(){
+	//	if(isDefeated){
+	//		return false;
+	//	}
+	//	if(_partyLeader.faction == null){
+	//		ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
+	//		if(enemy != null){
+	//			ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
+	//			combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
+	//			if(enemy is Party){
+	//				combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
+	//			}else{
+	//				combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
+	//			}
+	//			this.specificLocation.SetCurrentCombat (combat);
+	//			CombatThreadPool.Instance.AddToThreadPool (combat);
+	//			return true;
+	//		}
+	//		return false;
+	//	}else{
+	//		if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
+	//			ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
+	//			if(enemy != null){
+	//				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
+	//				combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
+	//				if(enemy is Party){
+	//					combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
+	//				}else{
+	//					combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
+	//				}
+	//				this.specificLocation.SetCurrentCombat (combat);
+	//				CombatThreadPool.Instance.AddToThreadPool (combat);
+	//				return true;
+	//			}
+	//			return false;
+	//		}
+	//		return false;
+	//	}
+	//}
+	public virtual bool IsHostileWith(ICombatInitializer combatInitializer){
+        //Check here if the combatInitializer is hostile with this character, if yes, return true
+        Faction factionOfEnemy = null;
+        if (combatInitializer is ECS.Character) {
+            factionOfEnemy = (combatInitializer as ECS.Character).faction;
+        } else if (combatInitializer is Party) {
+            factionOfEnemy = (combatInitializer as Party).faction;
+        }
+        if (factionOfEnemy != null) {
+            if (factionOfEnemy.id == this.faction.id) {
+                return false; //characters are of same faction
+            }
+            FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
+            if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                return true; //factions of combatants are hostile
+            }
+            return false;
+        } else {
+            return true;
+        }
 	}
 	public virtual void ReturnCombatResults(ECS.CombatPrototype combat){
+        this.SetIsInCombat(false);
         if (this.isDefeated) {
             //this party was defeated
             if(partyMembers.Count > 0) {
@@ -699,10 +693,17 @@ public class Party: IEncounterable, ICombatInitializer {
 				JustDisbandParty ();
             }
 		}else{
-			if(faction == null){
-				_partyLeader.UnalignedDetermineAction ();
-			}
-		}
+            if (currentFunction != null) {
+                currentFunction();
+                SetCurrentFunction(null);
+            } else {
+                if (faction == null) {
+                    _partyLeader.UnalignedDetermineAction();
+                } else {
+                    _partyLeader.DetermineAction();
+                }
+            }
+        }
 	}
 	//public void SetCivilians(int amount){
 	//	_civilians = amount;
@@ -734,9 +735,24 @@ public class Party: IEncounterable, ICombatInitializer {
         ReduceCivilians(civilians);
         to.AdjustCivilians(civilians);
     }
-	#endregion
+    public STANCE GetCurrentStance() {
+        if (currentTask != null) {
+            if (avatar != null && avatar.isTravelling) {
+                return STANCE.NEUTRAL;
+            }
+            if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                return STANCE.COMBAT;
+            } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is Quest && !(currentTask as Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
+                return STANCE.NEUTRAL;
+            } else if (currentTask is ExploreTile) {
+                return STANCE.STEALTHY;
+            }
+        }
+        return STANCE.NEUTRAL;
+    }
+    #endregion
 
-	#endregion
+    #endregion
 
     #region Materials
     private void ConstructMaterialInventory() {
