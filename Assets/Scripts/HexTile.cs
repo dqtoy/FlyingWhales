@@ -132,7 +132,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	private GameObject _corpseMoundGO = null;
 	private CorpseMound _corpseMound = null;
 	private GameDate _corpseMoundDestroyDate;
-	private ECS.CombatPrototype _currentCombat;
 
 	protected List<ICombatInitializer> _charactersAtLocation = new List<ICombatInitializer>(); //List of characters/party on landmark
 
@@ -221,9 +220,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
 	public List<ICombatInitializer> charactersAtLocation{
 		get { return _charactersAtLocation; }
-	}
-	public ECS.CombatPrototype currentCombat{
-		get { return _currentCombat; }
 	}
 	public HexTile tileLocation{
 		get { return this; }
@@ -2030,17 +2026,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
          */
     public void CheckForCombat() {
         //At the start of each day:
-        if (HasHostilities()) {
-            //1. Attacking characters will attempt to initiate combat:
-            CheckAttackingGroupsCombat();
-            //2. Patrolling characters will attempt to initiate combat:
-            CheckPatrollingGroupsCombat();
-        }
+		if(_charactersAtLocation.Count > 1){
+			if (HasHostilities()) {
+				//1. Attacking characters will attempt to initiate combat:
+				CheckAttackingGroupsCombat();
+				//2. Patrolling characters will attempt to initiate combat:
+				CheckPatrollingGroupsCombat();
+			}
+		}
         //3. Pillaging and Hunting characters will perform their daily action if they havent been engaged in combat
         //4. Exploring and Stealing characters will perform their daily action if they havent been engaged in combat
         //5. Resting and Hibernating characters will recover HP if they havent been engaged in combat
         ContinueDailyActions();
-
     }
     public void CheckAttackingGroupsCombat() {
         List<ICombatInitializer> attackingGroups = GetAttackingGroups();

@@ -138,12 +138,8 @@ public class CharacterAvatar : PooledObject{
         }
     }
     internal virtual void NewMove() {
-		ICombatInitializer combatInitializer = _characters[0];
-		if(_characters[0].party != null){
-			combatInitializer = _characters [0].party;
-		}
-		if(combatInitializer.isInCombat){
-			combatInitializer.SetCurrentFunction (() => NewMove ());
+		if(_characters[0].isInCombat){
+			_characters[0].SetCurrentFunction (() => NewMove ());
 			return;
 		}
         if (this.targetLocation != null) {

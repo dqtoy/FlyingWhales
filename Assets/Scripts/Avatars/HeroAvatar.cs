@@ -4,12 +4,8 @@ using System.Collections;
 public class HeroAvatar : CharacterAvatar {
 
 	internal override void NewMove() {
-		ICombatInitializer combatInitializer = _characters[0];
-		if(_characters[0].party != null){
-			combatInitializer = _characters [0].party;
-		}
-		if(combatInitializer.isInCombat){
-			combatInitializer.SetCurrentFunction (() => NewMove ());
+		if(_characters[0].isInCombat){
+			_characters[0].SetCurrentFunction (() => NewMove ());
 			return;
 		}
         CharacterTask currTask = _characters[0].currentTask;

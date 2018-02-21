@@ -75,7 +75,12 @@ public class Party: IEncounterable, ICombatInitializer {
 		get { return _isDefeated; }
 	}
 	public int civilians{
-		get { return _civiliansByRace.Sum(x => x.Value); }
+		get { 
+			if(_civiliansByRace == null){
+				return 0;
+			}
+			return _civiliansByRace.Sum(x => x.Value); 
+		}
 	}
     public Dictionary<RACE, int> civiliansByRace {
         get { return _civiliansByRace; }

@@ -1003,11 +1003,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 						}
 					}
 
-				} else if (questType == QUEST_TYPE.EXPLORE_TILE) {
-					BaseLandmark landmark = (BaseLandmark)identifier;
-					if (((ExploreTile)currQuest).landmarkToExplore.id == landmark.id) {
-						return true;
-					}
 				} else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
 					BaseLandmark landmark = (BaseLandmark)identifier;
 					if (((BuildStructure)currQuest).target.id == landmark.id) {

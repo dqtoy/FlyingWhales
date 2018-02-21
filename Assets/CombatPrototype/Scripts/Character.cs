@@ -76,6 +76,7 @@ namespace ECS {
         private CharacterTask nextTaskToDo;
 
         private Dictionary<MATERIAL, int> _materialInventory;
+		private Dictionary<int, BaseLandmark> _exploredLandmarks;
 
 		#region getters / setters
 		internal string name{
@@ -239,7 +240,12 @@ namespace ECS {
             get { return _prestige; }
 		}
 		public bool isDefeated {
-			get { return _isDefeated; }
+			get {
+//				if(_party != null){
+//					return _party.isDefeated;
+//				}
+				return _isDefeated; 
+			}
 		}
         public int civilians {
             get { 
@@ -255,11 +261,24 @@ namespace ECS {
         public Dictionary<MATERIAL, int> materialInventory {
             get { return _materialInventory; }
         }
+		public Dictionary<int, BaseLandmark> exploredLandmarks {
+			get { return _exploredLandmarks; }
+		}
 		public bool isInCombat{
-			get { return _isInCombat; }
+			get {
+				if(_party != null){
+					return _party.isInCombat;
+				}
+				return _isInCombat; 
+			}
 		}
 		public Action currentFunction{
-			get { return _currentFunction; }
+			get { 
+//				if(_party != null){
+//					return _party.currentFunction;
+//				}
+				return _currentFunction; 
+			}
 		}
         #endregion
 
@@ -271,6 +290,7 @@ namespace ECS {
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _traits = new List<Trait> ();
             _relationships = new Dictionary<Character, Relationship>();
+			_exploredLandmarks = new Dictionary<int, BaseLandmark> ();
 			_isDead = false;
 			_isFainted = false;
 			_isPrisoner = false;
@@ -710,6 +730,9 @@ namespace ECS {
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
 			this._inventory.Add (item);
+			if(item.owner == null){
+				OwnItem (item);
+			}
 			AddHistory ("Obtained " + item.itemName + ".");
 		}
 
@@ -791,20 +814,24 @@ namespace ECS {
 
 		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
 		internal bool UnownItem(Item item){
-			if(item is Weapon){
-				Weapon weapon = (Weapon)item;
-				if(weapon.owner.id == this._id){
-					weapon.SetOwner (null);
-					return true;
-				}
-			}else if(item is Armor){
-				Armor armor = (Armor)item;
-				if(armor.owner.id == this._id){
-					armor.SetOwner (null);
-					return true;
-				}
+			if(item.owner.id == this._id){
+				AddHistory ("Unowned " + item.nameWithQuality + ".");
+				item.SetOwner (null);
+				return true;
 			}
 			return false;
+		}
+
+		//Own an Item
+		internal void OwnItem(Item item){
+			AddHistory ("Owned " + item.nameWithQuality + ".");
+			item.SetOwner (this);
+		}
+
+		//Transfer item ownership
+		internal void TransferItemOwnership(Item item, Character newOwner){
+			AddHistory ("Transfered " + item.nameWithQuality + " ownership to " + newOwner.name + ".");
+			newOwner.OwnItem (item);
 		}
 
 		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
@@ -819,6 +846,9 @@ namespace ECS {
 			AddEquippedItem(weapon);
 			weapon.ResetDurability();
 //			weapon.SetOwner(this);
+			if(weapon.owner == null){
+				OwnItem (weapon);
+			}
 			_equippedWeaponPower += weapon.weaponPower;
 
 			for (int i = 0; i < weapon.skills.Count; i++) {
@@ -873,6 +903,9 @@ namespace ECS {
 			AddEquippedItem(armor);
 			armor.ResetDurability();
 //			armor.SetOwner(this);
+			if(armor.owner == null){
+				OwnItem (armor);
+			}
 			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.bodyPart.ToString());
             if(CombatPrototypeUI.Instance != null) {
                 CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
@@ -2106,7 +2139,19 @@ namespace ECS {
 			_isInCombat = state;
 		}
 		public void SetCurrentFunction (Action function){
-			_currentFunction = function;
+			if(_party != null){
+				_party.SetCurrentFunction (() => function ());
+			}else{
+				_currentFunction = function;
+			}
+		}
+		#endregion
+
+		#region Landmarks
+		public void AddExploredLandmark(BaseLandmark landmark){
+			if(!_exploredLandmarks.ContainsKey(landmark.id)){
+				_exploredLandmarks.Add (landmark.id, landmark);
+			}
 		}
 		#endregion
     }
