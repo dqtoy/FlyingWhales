@@ -182,8 +182,15 @@ public class SettlementInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-        if (currentlyShowingLandmark.landmarkEncounterable != null){
-			text += "\n[b]Encounterable: [/b]" + "[url=itemchest]" + currentlyShowingLandmark.landmarkEncounterable.encounterName + "[/url]";
+
+		text += "\n[b]Items: [/b] ";
+		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
+			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
+				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
+				text += "\n" + item.nameWithQuality;
+			}
+		} else {
+			text += "NONE";
 		}
 		//if(currentlyShowingLandmark is Settlement && currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingLandmark.owner != null){
 		//	text += "\n[b]Parties: [/b] ";
@@ -275,7 +282,8 @@ public class SettlementInfoUI : UIMenu {
     //}
     private void ShowPlayerActions(){
 		expandBtnGO.SetActive (CanExpand());
-		exploreBtnGO.SetActive (CanExploreTile ());
+//		exploreBtnGO.SetActive (CanExploreTile ());
+		exploreBtnGO.SetActive (false);
         //buildStructureBtnGO.SetActive(CanBuildStructure());
     }
 	private void HidePlayerActions(){

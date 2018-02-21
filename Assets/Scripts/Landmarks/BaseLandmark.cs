@@ -29,9 +29,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
     protected LandmarkObject _landmarkObject;
-    protected WeightedDictionary<ENCOUNTERABLE> _encounterables;
-	protected IEncounterable _landmarkEncounterable;
-	protected ENCOUNTERABLE _landmarkEncounterableType;
 	protected List<ECS.Character> _prisoners; //list of prisoners on landmark
     protected List<string> _history;
 	protected int _combatHistoryID;
@@ -39,6 +36,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<ICombatInitializer> _charactersAtLocation;
     protected ECS.CombatPrototype _currentCombat;
 	protected List<Quest> _activeQuests;
+	protected List<ECS.Item> _itemsInLandmark;
 
     #region getters/setters
     public int id {
@@ -95,12 +93,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     public LandmarkObject landmarkObject {
         get { return _landmarkObject; }
     }
-    public WeightedDictionary<ENCOUNTERABLE> encounterables {
-        get { return _encounterables; }
-    }
-	public IEncounterable landmarkEncounterable {
-		get { return _landmarkEncounterable; }
-	}
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
 	}
@@ -122,6 +114,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public LOCATION_IDENTIFIER locIdentifier{
 		get { return LOCATION_IDENTIFIER.LANDMARK; }
 	}
+	public List<ECS.Item> itemsInLandmark {
+		get { return _itemsInLandmark; }
+	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -141,11 +136,16 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
 		_activeQuests = new List<Quest>();
+		_itemsInLandmark = new List<ECS.Item> ();
         ConstructTechnologiesDictionary();
 		ConstructMaterialValues();
         ConstructCiviliansDictionary();
-        InititalizeEncounterables();
+        Inititalize();
     }
+
+	#region Virtuals
+	protected virtual void Inititalize() {}
+	#endregion
 
     public void SetLandmarkObject(LandmarkObject obj) {
         _landmarkObject = obj;
@@ -355,12 +355,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
-    #endregion
-
-    #region Encounterables
-    protected virtual void InititalizeEncounterables() {
-        _encounterables = new WeightedDictionary<ENCOUNTERABLE>();
-    }
     #endregion
 
     #region Party

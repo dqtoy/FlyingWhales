@@ -788,6 +788,24 @@ namespace ECS {
 			RemoveEquippedItem(item);
 		}
 
+		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
+		internal bool UnownItem(Item item){
+			if(item is Weapon){
+				Weapon weapon = (Weapon)item;
+				if(weapon.owner.id == this._id){
+					weapon.SetOwner (null);
+					return true;
+				}
+			}else if(item is Armor){
+				Armor armor = (Armor)item;
+				if(armor.owner.id == this._id){
+					armor.SetOwner (null);
+					return true;
+				}
+			}
+			return false;
+		}
+
 		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipWeapon(Weapon weapon){
 			for (int j = 0; j < weapon.equipRequirements.Count; j++) {
@@ -799,7 +817,7 @@ namespace ECS {
 			}
 			AddEquippedItem(weapon);
 			weapon.ResetDurability();
-			weapon.SetOwner(this);
+//			weapon.SetOwner(this);
 			_equippedWeaponPower += weapon.weaponPower;
 
 			for (int i = 0; i < weapon.skills.Count; i++) {
@@ -853,7 +871,7 @@ namespace ECS {
 			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(armor);
 			armor.ResetDurability();
-			armor.SetOwner(this);
+//			armor.SetOwner(this);
 			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.bodyPart.ToString());
             if(CombatPrototypeUI.Instance != null) {
                 CombatPrototypeUI.Instance.UpdateCharacterSummary(this);

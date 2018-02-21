@@ -81,7 +81,7 @@ public class InternalQuestManager : TaskCreator {
             Region regionOfSettlement = currSettlement.location.region;
 
             AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
-            AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
+//            AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
             AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
             AddExpeditionWeights(questWeights, currSettlement, regionOfSettlement);
         }
