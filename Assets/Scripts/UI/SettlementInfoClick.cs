@@ -22,18 +22,19 @@ public class SettlementInfoClick : MonoBehaviour {
 					hoverText.TrimEnd ('\n');
 					UIManager.Instance.ShowSmallInfo (hoverText);
 					return;
-				}else if(url == "itemchest"){
-					ItemChest itemChest = (ItemChest)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkEncounterable;
-					if(itemChest.itemsInChest.Count > 0){
-						string hoverText = string.Empty;
-						for (int i = 0; i < itemChest.itemsInChest.Count; i++) {
-							hoverText += itemChest.itemsInChest[i].nameWithQuality + "\n";
-						}
-						hoverText.TrimEnd ('\n');
-						UIManager.Instance.ShowSmallInfo (hoverText);
-						return;
-					}
 				}
+//				else if(url == "itemchest"){
+//					ItemChest itemChest = (ItemChest)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkEncounterable;
+//					if(itemChest.itemsInChest.Count > 0){
+//						string hoverText = string.Empty;
+//						for (int i = 0; i < itemChest.itemsInChest.Count; i++) {
+//							hoverText += itemChest.itemsInChest[i].nameWithQuality + "\n";
+//						}
+//						hoverText.TrimEnd ('\n');
+//						UIManager.Instance.ShowSmallInfo (hoverText);
+//						return;
+//					}
+//				}
 			}
 
 			if(UIManager.Instance.smallInfoGO.activeSelf){

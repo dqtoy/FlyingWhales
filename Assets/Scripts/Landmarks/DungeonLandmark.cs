@@ -11,15 +11,11 @@ public class DungeonLandmark : BaseLandmark {
     }
 
     #region Encounterables
-    protected override void InititalizeEncounterables() {
-        base.InititalizeEncounterables();
+    protected override void Inititalize() {
+        base.Inititalize();
 		DungeonEncounterChances dungeonEncounterChances = LandmarkManager.Instance.GetDungeonEncounterChances (specificLandmarkType);
         if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
 			_landmarkName = RandomNameGenerator.Instance.GetAncientRuinName ();
-//          _encounterables.AddElement(ENCOUNTERABLE.ITEM_CHEST, 30);
-//          _encounterables.AddElement (ENCOUNTERABLE.PARTY, 50);
-//			_landmarkEncounterableType = _encounterables.PickRandomElementGivenWeights();
-//			_landmarkEncounterable = GetNewEncounterable (_landmarkEncounterableType);
 
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < dungeonEncounterChances.encounterPartyChance){
@@ -27,7 +23,7 @@ public class DungeonLandmark : BaseLandmark {
 				_dungeonParty.partyLeader.UnalignedDetermineAction ();
 			}
 			if (chance < dungeonEncounterChances.encounterLootChance) {
-				_landmarkEncounterable = new ItemChest (1, ITEM_TYPE.ITEM, 35);
+				LandmarkItemsSpawn ();
 			}
         }
     }
@@ -59,5 +55,29 @@ public class DungeonLandmark : BaseLandmark {
 		default:
 			return null;
 		}
+	}
+	private void LandmarkItemsSpawn(){
+		int numOfItems = UnityEngine.Random.Range (1, 4);
+		for (int i = 0; i < numOfItems; i++) {
+			ECS.Item item = ItemManager.Instance.GetRandomTier (1, ITEM_TYPE.ITEM);
+			QUALITY equipmentQuality = GetEquipmentQuality();
+			if (item.itemType == ITEM_TYPE.ARMOR) {
+				((ECS.Armor)item).SetQuality(equipmentQuality);
+			} else if (item.itemType == ITEM_TYPE.WEAPON) {
+				((ECS.Weapon)item).SetQuality(equipmentQuality);
+			}
+			_itemsInLandmark.Add(item);
+		}
+	}
+	private QUALITY GetEquipmentQuality(){
+		int crudeChance = 30;
+		int exceptionalChance = crudeChance + 20;
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < crudeChance){
+			return QUALITY.CRUDE;
+		}else if(chance >= crudeChance && chance < exceptionalChance){
+			return QUALITY.EXCEPTIONAL;
+		}
+		return QUALITY.NORMAL;
 	}
 }

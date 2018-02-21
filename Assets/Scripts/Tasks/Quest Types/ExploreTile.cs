@@ -71,12 +71,12 @@ public class ExploreTile : Quest {
 		}
 	}
 	private void StartExploration(){
-		if(_landmarkToExplore.landmarkEncounterable != null){
-			AddNewLog("The party encounters a " + _landmarkToExplore.landmarkEncounterable.encounterName);
-			_landmarkToExplore.landmarkEncounterable.StartEncounter(_assignedParty);
-		}else{
-			Result (true);
-		}
+//		if(_landmarkToExplore.landmarkEncounterable != null){
+//			AddNewLog("The party encounters a " + _landmarkToExplore.landmarkEncounterable.encounterName);
+//			_landmarkToExplore.landmarkEncounterable.StartEncounter(_assignedParty);
+//		}else{
+//			Result (true);
+//		}
 	}
     private void ScheduleRandomResult() {
         //Once it arrives, log which Landmark is hidden in the tile.
