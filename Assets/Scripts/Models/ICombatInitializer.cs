@@ -20,6 +20,7 @@ public interface ICombatInitializer {
 	//void AdjustCivilians (int amount);
 	void SetIsInCombat (bool state);
 	void SetCurrentFunction (Action function);
+    void ContinueDailyAction();
 
     STANCE GetCurrentStance();
 }

@@ -22,6 +22,8 @@ public class CharacterTask {
     protected TASK_STATUS _taskStatus;
     protected List<string> _taskLogs; //TODO: Change this to Logs when convenient
 
+    protected bool _canDoDailyAction = false;
+
     #region getters/setters
     public TASK_TYPE taskType {
         get { return _taskType; }
@@ -98,12 +100,16 @@ public class CharacterTask {
 			_assignedCharacter.DetermineAction();
 		}
 	}
+    public virtual void PerformDailyAction() { }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(days);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndTask(result));
+    }
+    protected void SetCanDoDailyAction(bool state) {
+        _canDoDailyAction = state;
     }
 
     #region Logs

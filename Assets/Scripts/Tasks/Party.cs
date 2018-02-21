@@ -657,6 +657,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	//	}
 	//}
 	public virtual bool IsHostileWith(ICombatInitializer combatInitializer){
+        if (this.faction == null) {
+            return true; //this party has no faction
+        }
         //Check here if the combatInitializer is hostile with this character, if yes, return true
         Faction factionOfEnemy = null;
         if (combatInitializer is ECS.Character) {
@@ -749,6 +752,11 @@ public class Party: IEncounterable, ICombatInitializer {
             }
         }
         return STANCE.NEUTRAL;
+    }
+    public void ContinueDailyAction() {
+        if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
+            currentTask.PerformDailyAction();
+        }
     }
     #endregion
 

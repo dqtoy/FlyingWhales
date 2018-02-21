@@ -29,13 +29,19 @@ public class HuntPrey : CharacterTask {
     }
     public override void TaskCancel() {
         base.TaskCancel();
-        Messenger.RemoveListener("OnDayEnd", Hunt);
+        //Messenger.RemoveListener("OnDayEnd", Hunt);
         _assignedCharacter.DestroyAvatar();
     }
     public override void TaskFail() {
         base.TaskFail();
-        Messenger.RemoveListener("OnDayEnd", Hunt);
+        //Messenger.RemoveListener("OnDayEnd", Hunt);
         _assignedCharacter.DestroyAvatar();
+    }
+    public override void PerformDailyAction() {
+        if (_canDoDailyAction) {
+            base.PerformDailyAction();
+            Hunt();
+        }
     }
     #endregion
 
@@ -51,7 +57,8 @@ public class HuntPrey : CharacterTask {
 
     private void StartHunt() {
         _target.AddHistory("Monster " + _assignedCharacter.name + " is hunting for food.");
-        Messenger.AddListener("OnDayEnd", Hunt);
+        SetCanDoDailyAction(true);
+        //Messenger.AddListener("OnDayEnd", Hunt);
         //GameDate nextDate = GameManager.Instance.Today();
         //nextDate.AddDays(1);
         //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
@@ -71,9 +78,9 @@ public class HuntPrey : CharacterTask {
 				End();
                 break;
             case HUNT_ACTION.NOTHING:
-                GameDate nextDate = GameManager.Instance.Today();
-                nextDate.AddDays(1);
-                SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
+                //GameDate nextDate = GameManager.Instance.Today();
+                //nextDate.AddDays(1);
+                //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
                 break;
             default:
                 break;
@@ -81,11 +88,11 @@ public class HuntPrey : CharacterTask {
     }
 
     private void EatCivilian() {
-        _target.ReduceCivilians(1);
         if(_target.civilians > 0) {
-            GameDate nextDate = GameManager.Instance.Today();
-            nextDate.AddDays(1);
-            SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
+            _target.ReduceCivilians(1);
+            //GameDate nextDate = GameManager.Instance.Today();
+            //nextDate.AddDays(1);
+            //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
         } else {
             End();
         }
@@ -99,7 +106,8 @@ public class HuntPrey : CharacterTask {
 	}
 
 	private void End(){
-        Messenger.RemoveListener("OnDayEnd", Hunt);
+        //Messenger.RemoveListener("OnDayEnd", Hunt);
+        SetCanDoDailyAction(false);
         if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
 			settlement.CancelSaveALandmark (_target);
