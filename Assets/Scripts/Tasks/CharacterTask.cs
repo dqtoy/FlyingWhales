@@ -22,6 +22,7 @@ public class CharacterTask {
     protected TASK_STATUS _taskStatus;
     protected List<string> _taskLogs; //TODO: Change this to Logs when convenient
 
+    protected int _baseWeight;
     protected STANCE _stance;
 
     protected bool _canDoDailyAction = false;
@@ -41,6 +42,9 @@ public class CharacterTask {
     }
     public STANCE stance {
         get { return _stance; }
+    }
+    public int totalWeight {
+        get { return _baseWeight; }
     }
     #endregion
 

@@ -878,6 +878,7 @@ public enum CHARACTER_ROLE {
     VILLAGE_HEAD,
     WORKER,
 	TAMED_BEAST,
+    FOLLOWER
 }
 public enum CHARACTER_CLASS {
     NONE,
@@ -943,7 +944,8 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	DROP_PRISONERS,
     HUNT_PREY,
     HIBERNATE,
-    PILLAGE
+    PILLAGE,
+    RECRUIT_FOLLOWERS
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

@@ -32,7 +32,21 @@ public class CharacterRole {
         _allowedQuestTypes = new List<QUEST_TYPE>();
 	}
 
-    #region OldQuest.Quest Weights
+    #region Action Weights
+    public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
+        if (_canAcceptQuests) {
+            if (_character.currLocation.landmarkOnTile != null && _character.currLocation.landmarkOnTile is Settlement) {
+                TakeQuest takeQuestTask = new TakeQuest(_character);
+                tasks.AddElement(takeQuestTask, GetWeightForTask(takeQuestTask));
+            }
+        }
+
+        Rest restTask = new Rest(_character);
+        tasks.AddElement(restTask, GetWeightForTask(restTask));
+
+        DoNothing doNothingTask = new DoNothing(_character);
+        tasks.AddElement(doNothingTask, GetWeightForTask(doNothingTask));
+    }
     /*
          Get the weighted dictionary for what action the character will do next.
              */
