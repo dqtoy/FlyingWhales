@@ -98,7 +98,7 @@ public class Party: IEncounterable, ICombatInitializer {
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
-		SetName (RandomNameGenerator.Instance.GetAllianceName ());
+		SetName(partyLeader.firstName + "'s Party");
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
         //_partyMembersOnTheWay = new List<ECS.Character>();

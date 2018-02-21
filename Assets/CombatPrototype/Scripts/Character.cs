@@ -78,6 +78,9 @@ namespace ECS {
         private Dictionary<MATERIAL, int> _materialInventory;
 
 		#region getters / setters
+        internal string firstName {
+            get { return name.Split(' ')[0]; }
+        }
 		internal string name{
 			get { return this._name; }
 		}
