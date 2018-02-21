@@ -2,6 +2,9 @@
 using System.Collections;
 
 public class Hibernate : CharacterTask {
+
+    private RestAction restAction;
+
     public Hibernate(TaskCreator createdBy) : base(createdBy, TASK_TYPE.HIBERNATE) {
     }
 
@@ -13,6 +16,16 @@ public class Hibernate : CharacterTask {
             character.party.SetCurrentTask(this);
         }
         GoToTargetLocation();
+    }
+    public override void PerformDailyAction() {
+        if (_canDoDailyAction) {
+            base.PerformDailyAction();
+            restAction.DoAction(_assignedCharacter);
+        }
+    }
+    public override void EndTask(TASK_STATUS taskResult) {
+        SetCanDoDailyAction(false);
+        base.EndTask(taskResult);
     }
     #endregion
 
@@ -28,9 +41,10 @@ public class Hibernate : CharacterTask {
     }
 
     private void StartHibernation() {
-        RestAction restAction = new RestAction(this);
+        SetCanDoDailyAction(true);
+        restAction = new RestAction(this);
         //restAction.onTaskActionDone += TaskSuccess; //rest indefinitely
-        restAction.onTaskDoAction += restAction.StartDailyRegeneration;
+        restAction.onTaskDoAction += restAction.RestIndefinitely;
         restAction.DoAction(_assignedCharacter);
     }
 

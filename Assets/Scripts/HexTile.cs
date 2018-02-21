@@ -1923,13 +1923,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 Party currParty = character as Party;
                 currParty.SetSpecificLocation(this);
 			}
-            //if (!_hasScheduledCombatCheck && HasHostilities()) {
-            //    ScheduleCombatCheck();
+            if (!_hasScheduledCombatCheck) {
+                ScheduleCombatCheck();
+            }
+            //if(startCombat){
+            //	StartCombatAtLocation ();
             //}
-			//if(startCombat){
-			//	StartCombatAtLocation ();
-			//}
-		}
+        }
 	}
 	public void RemoveCharacterFromLocation(ICombatInitializer character) {
 		_charactersAtLocation.Remove(character);
@@ -1940,7 +1940,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             Party currParty = character as Party;
             currParty.SetSpecificLocation(null);
 		}
-        if(_charactersAtLocation.Count == 0) {
+        if(_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();
         }
 	}
@@ -2016,11 +2016,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
 
 	#region Combat
-    private void ScheduleCombatCheck() {
+    public void ScheduleCombatCheck() {
         _hasScheduledCombatCheck = true;
         Messenger.AddListener("OnDayEnd", CheckForCombat);
     }
-    private void UnScheduleCombatCheck() {
+    public void UnScheduleCombatCheck() {
         _hasScheduledCombatCheck = false;
         Messenger.RemoveListener("OnDayEnd", CheckForCombat);
     }
@@ -2028,16 +2028,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
      Check this location for encounters, start if any.
      Mechanics can be found at https://trello.com/c/PgK25YvC/837-encounter-mechanics.
          */
-    private void CheckForCombat() {
+    public void CheckForCombat() {
         //At the start of each day:
-        //1. Attacking characters will attempt to initiate combat:
-        CheckAttackingGroupsCombat();
-        //2. Patrolling characters will attempt to initiate combat:
-        CheckPatrollingGroupsCombat();
+        if (HasHostilities()) {
+            //1. Attacking characters will attempt to initiate combat:
+            CheckAttackingGroupsCombat();
+            //2. Patrolling characters will attempt to initiate combat:
+            CheckPatrollingGroupsCombat();
+        }
         //3. Pillaging and Hunting characters will perform their daily action if they havent been engaged in combat
+        //4. Exploring and Stealing characters will perform their daily action if they havent been engaged in combat
+        //5. Resting and Hibernating characters will recover HP if they havent been engaged in combat
+        ContinueDailyActions();
 
     }
-    private void CheckAttackingGroupsCombat() {
+    public void CheckAttackingGroupsCombat() {
         List<ICombatInitializer> attackingGroups = GetAttackingGroups();
         for (int i = 0; i < attackingGroups.Count; i++) {
             ICombatInitializer currAttackingGroup = attackingGroups[i];
@@ -2072,7 +2077,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             }
         }
     }
-    private void CheckPatrollingGroupsCombat() {
+    public void CheckPatrollingGroupsCombat() {
         List<ICombatInitializer> patrollingGroups = GetPatrollingGroups();
         for (int i = 0; i < patrollingGroups.Count; i++) {
             ICombatInitializer currPatrollingGroup = patrollingGroups[i];
@@ -2107,7 +2112,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             }
         }
     }
-    private bool HasHostilities() {
+    public bool HasHostilities() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currItem = _charactersAtLocation[i];
             for (int j = 0; j < _charactersAtLocation.Count; j++) {
@@ -2121,7 +2126,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return false;
     }
-    private List<ICombatInitializer> GetAttackingGroups() {
+    public List<ICombatInitializer> GetAttackingGroups() {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currGroup = _charactersAtLocation[i];
@@ -2131,7 +2136,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return groups;
     }
-    private List<ICombatInitializer> GetPatrollingGroups() {
+    public List<ICombatInitializer> GetPatrollingGroups() {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currGroup = _charactersAtLocation[i];
@@ -2141,7 +2146,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return groups;
     }
-    private List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
+    public List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currGroup = _charactersAtLocation[i];
@@ -2159,7 +2164,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return groups;
     }
-    private void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
+    public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
         ECS.CombatPrototype combat = new ECS.CombatPrototype(combatant1, combatant2, this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
@@ -2175,6 +2180,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         //this.specificLocation.SetCurrentCombat(combat);
         CombatThreadPool.Instance.AddToThreadPool(combat);
+    }
+    public void ContinueDailyActions() {
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            ICombatInitializer currItem = _charactersAtLocation[i];
+            currItem.ContinueDailyAction();
+        }
     }
 
  //   public void StartCombatAtLocation(){

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Rest : CharacterTask {
+
+    private RestAction restAction;
+
     public Rest(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.REST) {
         
@@ -45,6 +48,7 @@ public class Rest : CharacterTask {
         goToLocation.DoAction(_assignedCharacter);
     }
     public override void TaskSuccess() {
+        SetCanDoDailyAction(false);
 		Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
         if(_assignedCharacter.faction == null) {
             _assignedCharacter.UnalignedDetermineAction();
@@ -52,12 +56,23 @@ public class Rest : CharacterTask {
             _assignedCharacter.DetermineAction();
         }
 	}
+    public override void PerformDailyAction() {
+        if (_canDoDailyAction) {
+            base.PerformDailyAction();
+            PerformRest();
+        }
+    }
     #endregion
 
     private void StartRest() {
-        RestAction restAction = new RestAction(this);
+        SetCanDoDailyAction(true);
+        restAction = new RestAction(this);
+        restAction.InititalizeAction(_assignedCharacter);
         restAction.onTaskActionDone += TaskSuccess;
-        restAction.onTaskDoAction += restAction.StartDailyRegeneration;
+        restAction.onTaskDoAction += restAction.Rest;
+    }
+
+    private void PerformRest() {
         restAction.DoAction(_assignedCharacter);
     }
 }

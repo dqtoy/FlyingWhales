@@ -282,8 +282,6 @@ namespace ECS {
 
             GenerateTraits();
 
-            _maxHP = _baseMaxHP;
-			_currentHP = maxHP;
 			_strength = _baseStrength;
 			_agility = _baseAgility;
 			_intelligence = _baseIntelligence;
@@ -296,6 +294,9 @@ namespace ECS {
 
 			EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
+
+            _maxHP = _baseMaxHP;
+            _currentHP = maxHP;
 
             _activeQuests = new List<Quest>();
 			currentCombat = null;
@@ -1924,6 +1925,9 @@ namespace ECS {
 		//	}
 		//}
 		public bool IsHostileWith(ICombatInitializer combatInitializer){
+            if (this.faction == null) {
+                return true; //this character has no faction
+            }
             //Check here if the combatInitializer is hostile with this character, if yes, return true
             Faction factionOfEnemy = null;
             if(combatInitializer is ECS.Character) {
@@ -2003,6 +2007,11 @@ namespace ECS {
                 }
             }
             return STANCE.NEUTRAL;
+        }
+        public void ContinueDailyAction() {
+            if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
+                currentTask.PerformDailyAction();
+            }
         }
         #endregion
 
