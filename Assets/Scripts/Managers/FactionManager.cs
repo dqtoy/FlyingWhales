@@ -17,7 +17,7 @@ public class FactionManager : MonoBehaviour {
 	public List<Tribe> allTribes = new List<Tribe>();
     public List<Faction> orderedFactions = new List<Faction>();
 
-    public List<Quest> allQuests = new List<Quest>();
+    public List<OldQuest.Quest> allQuests = new List<OldQuest.Quest>();
 
     public Dictionary<RACE, List<TECHNOLOGY>> initialRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
         { RACE.HUMANS, new List<TECHNOLOGY>(){
@@ -140,11 +140,11 @@ public class FactionManager : MonoBehaviour {
         faction.SetLeader(chieftain);
         baseSettlement.SetHead(villageHead);
 
-        //Create 2 adventurers
-		ECS.Character adventurer1 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
-		EquipFullArmorSet (armorMaterialToUse, adventurer1);
-		ECS.Character adventurer2 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
-		EquipFullArmorSet (armorMaterialToUse, adventurer2);
+        ////Create 2 adventurers
+		//ECS.Character adventurer1 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
+		//EquipFullArmorSet (armorMaterialToUse, adventurer1);
+		//ECS.Character adventurer2 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
+		//EquipFullArmorSet (armorMaterialToUse, adventurer2);
     }
 	private void EquipFullArmorSet(MATERIAL materialToUse, ECS.Character character){
 		if(materialToUse == MATERIAL.NONE){
@@ -317,19 +317,19 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Quests
-    public Quest GetQuestByID(int id) {
+    public OldQuest.Quest GetQuestByID(int id) {
         for (int i = 0; i < allQuests.Count; i++) {
-            Quest currQuest = allQuests[i];
+            OldQuest.Quest currQuest = allQuests[i];
             if (currQuest.id == id) {
                 return currQuest;
             }
         }
         return null;
     }
-    public void AddQuest(Quest quest) {
+    public void AddQuest(OldQuest.Quest quest) {
         allQuests.Add(quest);
     }
-    public void RemoveQuest(Quest quest) {
+    public void RemoveQuest(OldQuest.Quest quest) {
         allQuests.Remove(quest);
     }
     /*
@@ -413,10 +413,10 @@ public class FactionManager : MonoBehaviour {
                     break;
             }
         }
-        //Negative Quest
+        //Negative OldQuest.Quest
         else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
-            //Add Weight to Declare War as listed on the Quest Type
-            QuestTypeSetup qts = GetQuestTypeSetup(((Quest)data).questType);
+            //Add Weight to Declare War as listed on the OldQuest.Quest Type
+            QuestTypeSetup qts = GetQuestTypeSetup(((OldQuest.Quest)data).questType);
             actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, qts.declareWarWeight);
         }
 
@@ -479,7 +479,7 @@ public class FactionManager : MonoBehaviour {
             Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_quest");
             declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
             declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
-            Quest quest = (Quest)data;
+            OldQuest.Quest quest = (OldQuest.Quest)data;
             declareWarLog.AddToFillers(quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             declareWarLog.AddToFillers(quest, Utilities.NormalizeString(quest.questType.ToString()), LOG_IDENTIFIER.OTHER);
             declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);

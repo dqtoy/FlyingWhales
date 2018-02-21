@@ -22,6 +22,8 @@ public class CharacterTask {
     protected TASK_STATUS _taskStatus;
     protected List<string> _taskLogs; //TODO: Change this to Logs when convenient
 
+    protected STANCE _stance;
+
     protected bool _canDoDailyAction = false;
 
     #region getters/setters
@@ -36,6 +38,9 @@ public class CharacterTask {
     }
     public List<string> taskLogs {
         get { return _taskLogs; }
+    }
+    public STANCE stance {
+        get { return _stance; }
     }
     #endregion
 

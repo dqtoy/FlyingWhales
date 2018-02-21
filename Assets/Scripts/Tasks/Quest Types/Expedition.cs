@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Expedition : Quest {
+public class Expedition : OldQuest.Quest {
 
     private string _productionType;
     private HexTile _target;

@@ -5,7 +5,7 @@ public class RestForDays : TaskAction {
 
     private int restDays;
 
-    public RestForDays(Quest quest) : base(quest) {
+    public RestForDays(OldQuest.Quest quest) : base(quest) {
     }
 
     #region overrides

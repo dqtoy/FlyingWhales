@@ -1,5 +1,5 @@
 ﻿/*
- This is the Internal Quest Manager. Each Faction has one,
+ This is the Internal OldQuest.Quest Manager. Each Faction has one,
  it is responsible for generating new quests for each faction.
  Reference: https://trello.com/c/Wf38ZqLM/737-internal-manager-ai
  */
@@ -13,20 +13,20 @@ public class InternalQuestManager : TaskCreator {
 
     private Faction _owner;
 
-    private List<Quest> _activeQuests;
+    private List<OldQuest.Quest> _activeQuests;
 
     #region getters/setters
     public Faction owner {
         get { return _owner; }
     }
-    public List<Quest> activeQuests {
+    public List<OldQuest.Quest> activeQuests {
         get { return _activeQuests; }
     }
     #endregion
 
     public InternalQuestManager(Faction owner) {
         _owner = owner;
-        _activeQuests = new List<Quest>();
+        _activeQuests = new List<OldQuest.Quest>();
         if(owner is Tribe) {
             GameDate dueDate = new GameDate(GameManager.Instance.month, 15, GameManager.Instance.year);
             SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
@@ -54,17 +54,17 @@ public class InternalQuestManager : TaskCreator {
         }
     }
 
-    #region Quest Generation
+    #region OldQuest.Quest Generation
     /*
      At the start of each month, if the Faction has not yet reached the cap of active Internal Quests, 
      it will attempt to create a new one.
          */
     private void GenerateMonthlyQuests() {
         if(_activeQuests.Count < GetMaxActiveQuests()) {
-            WeightedDictionary<Quest> questDictionary = GetQuestWeightedDictionary();
-            questDictionary.LogDictionaryValues("Quest Creation Weights: ");
+            WeightedDictionary<OldQuest.Quest> questDictionary = GetQuestWeightedDictionary();
+            questDictionary.LogDictionaryValues("OldQuest.Quest Creation Weights: ");
             if(questDictionary.GetTotalOfWeights() > 0) {
-                Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
+                OldQuest.Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
                 AddNewQuest(chosenQuestToCreate);
             }
         }
@@ -73,8 +73,8 @@ public class InternalQuestManager : TaskCreator {
         dueDate.AddDays(15);
         SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
     }
-    private WeightedDictionary<Quest> GetQuestWeightedDictionary() {
-        WeightedDictionary<Quest> questWeights = new WeightedDictionary<Quest>();
+    private WeightedDictionary<OldQuest.Quest> GetQuestWeightedDictionary() {
+        WeightedDictionary<OldQuest.Quest> questWeights = new WeightedDictionary<OldQuest.Quest>();
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
             Settlement currSettlement = _owner.settlements[i];
@@ -87,7 +87,7 @@ public class InternalQuestManager : TaskCreator {
         }
         return questWeights;
     }
-    private void AddExploreTileWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    private void AddExploreTileWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
         for (int j = 0; j < regionOfSettlement.landmarks.Count; j++) {
             object currConnection = regionOfSettlement.landmarks[j];
             if (currConnection is BaseLandmark) {
@@ -102,7 +102,7 @@ public class InternalQuestManager : TaskCreator {
             }
         }
     }
-    private void AddExpandWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    private void AddExpandWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
         List<Region> checkedExpandRegions = new List<Region>();
         Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
         if (currSettlement.CanAffordConstruction(constructionData) && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, currSettlement)) {
@@ -124,7 +124,7 @@ public class InternalQuestManager : TaskCreator {
             }
         }
     }
-    private void AddBuildStructureWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    private void AddBuildStructureWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
         for (int i = 0; i < regionOfSettlement.tilesInRegion.Count; i++) {
             HexTile currTile = regionOfSettlement.tilesInRegion[i];
             //BaseLandmark currLandmark = regionOfSettlement.landmarks[i];
@@ -149,7 +149,7 @@ public class InternalQuestManager : TaskCreator {
             }
         }
     }
-    private void AddExpeditionWeights(WeightedDictionary<Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    private void AddExpeditionWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
         //Check if there is a category of Resource Type (Weapon, Armor, Construction, Training, Food) that the Settlement doesnt have any access to.
         PRODUCTION_TYPE[] allProdTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
         for (int i = 0; i < allProdTypes.Length; i++) {
@@ -217,8 +217,8 @@ public class InternalQuestManager : TaskCreator {
     }
     #endregion
 
-    #region Quest Management
-    public void AddNewQuest(Quest quest) {
+    #region OldQuest.Quest Management
+    public void AddNewQuest(OldQuest.Quest quest) {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
             _owner.AddNewQuest(quest);
@@ -228,14 +228,14 @@ public class InternalQuestManager : TaskCreator {
             //quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }
-    public void RemoveQuest(Quest quest) {
+    public void RemoveQuest(OldQuest.Quest quest) {
         _activeQuests.Remove(quest);
         _owner.RemoveQuest(quest);
     }
-    public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
-        List<Quest> quests = new List<Quest>();
+    public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
+        List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
         for (int i = 0; i < _activeQuests.Count; i++) {
-            Quest currQuest = _activeQuests[i];
+            OldQuest.Quest currQuest = _activeQuests[i];
             if(currQuest.questType == questType) {
                 quests.Add(currQuest);
             }
@@ -244,7 +244,7 @@ public class InternalQuestManager : TaskCreator {
     }
 	public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
 		for (int i = 0; i < _activeQuests.Count; i++) {
-			Quest currQuest = _activeQuests[i];
+			OldQuest.Quest currQuest = _activeQuests[i];
 			if(currQuest.questType == questType) {
 				if(questType == QUEST_TYPE.EXPLORE_REGION){
 					Region region = (Region)identifier;

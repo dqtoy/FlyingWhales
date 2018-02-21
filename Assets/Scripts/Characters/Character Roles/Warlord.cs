@@ -26,7 +26,7 @@ public class Warlord : CharacterRole {
         WeightedDictionary<CharacterTask> questWeights = base.GetActionWeights();
         //Military Quests
         for (int i = 0; i < _character.faction.militaryManager.activeQuests.Count; i++) {
-            Quest currQuest = _character.faction.militaryManager.activeQuests[i];
+            OldQuest.Quest currQuest = _character.faction.militaryManager.activeQuests[i];
             if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
                 questWeights.AddElement(currQuest, GetWeightForTask(currQuest));
             }

@@ -13,16 +13,16 @@ public class Character : TaskCreator {
     public Faction _faction;
     public Party _party;
     public HexTile currLocation;
-    public Quest currentQuest;
+    public OldQuest.Quest currentQuest;
     public CharacterAvatar _avatar;
 
     public int hp;
     public int maxHP;
 
-    private List<Quest> _activeQuests; //This contains a list of the active quests created by the character
+    private List<OldQuest.Quest> _activeQuests; //This contains a list of the active quests created by the character
 
     #region getters/setters
-    public List<Quest> activeQuests {
+    public List<OldQuest.Quest> activeQuests {
         get { return _activeQuests; }
     }
     public Settlement home {
@@ -36,7 +36,7 @@ public class Character : TaskCreator {
         _name = RandomNameGenerator.Instance.GenerateRandomName(_race, _gender);
         maxHP = 100;
         hp = 100;
-        _activeQuests = new List<Quest>();
+        _activeQuests = new List<OldQuest.Quest>();
     }
 
     #region Roles
@@ -117,15 +117,15 @@ public class Character : TaskCreator {
     #endregion
 
     #region Quests
-    public void AddNewQuest(Quest newQuest) {
+    public void AddNewQuest(OldQuest.Quest newQuest) {
         if (!_activeQuests.Contains(newQuest)) {
             _activeQuests.Add(newQuest);
         }
     }
-    public void RemoveQuest(Quest quest) {
+    public void RemoveQuest(OldQuest.Quest quest) {
         _activeQuests.Remove(quest);
     }
-    public void SetCurrentQuest(Quest currentQuest) {
+    public void SetCurrentQuest(OldQuest.Quest currentQuest) {
         this.currentQuest = currentQuest;
     }
     public void DetermineAction() {
@@ -134,11 +134,11 @@ public class Character : TaskCreator {
             QUEST_TYPE chosenAction = actionWeights.PickRandomElementGivenWeights();
 //            switch (chosenAction) {
 //                case QUEST_TYPE.EXPLORE_REGION:
-//                    List<Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
+//                    List<OldQuest.Quest> exploreQuests = _faction.internalQuestManager.GetQuestsOfType(QUEST_TYPE.EXPLORE_REGION);
 //                    if(exploreQuests.Count < 0) {
 //                        throw new System.Exception("No explore region quests available! Explore region quest type should not have weight!");
 //                    }
-//                    Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
+//                    OldQuest.Quest exploreQuest = exploreQuests[Random.Range(0, exploreQuests.Count)];
 ////                    exploreQuest.AcceptQuest(this);
 //                    break;
 //                case QUEST_TYPE.OCCUPY_LANDMARK:
@@ -167,7 +167,7 @@ public class Character : TaskCreator {
     private WeightedDictionary<QUEST_TYPE> GetActionWeights() {
         WeightedDictionary<QUEST_TYPE> actionWeights = new WeightedDictionary<QUEST_TYPE>();
         for (int i = 0; i < _faction.internalQuestManager.activeQuests.Count; i++) {
-            Quest currQuest = _faction.internalQuestManager.activeQuests[i];
+            OldQuest.Quest currQuest = _faction.internalQuestManager.activeQuests[i];
             if (!currQuest.isAccepted) { //if the quest has already been accepted, do not add weight
                 //if (currQuest.CanAcceptQuest(this)) {
                 //    actionWeights.AddElement(currQuest.questType, GetWeightForQuestType(currQuest.questType));

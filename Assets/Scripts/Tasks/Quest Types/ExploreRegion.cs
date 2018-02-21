@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ExploreRegion : Quest {
+public class ExploreRegion : OldQuest.Quest {
 
     private Region _regionToExplore;
 
@@ -30,7 +30,7 @@ public class ExploreRegion : Quest {
         GoToLocation goToRegionAction = new GoToLocation(this); //Go to the picked region
         goToRegionAction.InititalizeAction(_regionToExplore.centerOfMass);
         goToRegionAction.onTaskActionDone += this.PerformNextQuestAction;
-        goToRegionAction.onTaskActionDone += EndQuestAfterDays; //After 30 days of exploring, the Quest ends in SUCCESS.
+        goToRegionAction.onTaskActionDone += EndQuestAfterDays; //After 30 days of exploring, the OldQuest.Quest ends in SUCCESS.
         goToRegionAction.onTaskDoAction += goToRegionAction.Generic;
 
         RoamRegion roamRegionAction = new RoamRegion(this);

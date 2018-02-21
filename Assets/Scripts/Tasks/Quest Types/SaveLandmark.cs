@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class SaveLandmark : Quest {
+public class SaveLandmark : OldQuest.Quest {
 
 	private BaseLandmark _target;
 

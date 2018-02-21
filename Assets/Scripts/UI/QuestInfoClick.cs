@@ -24,7 +24,7 @@ public class QuestInfoClick : MonoBehaviour {
                     UIManager.Instance.ShowCharacterInfo(character);
                 }
             } else if (url.Contains("_quest")) {
-                Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
+                OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
                 if (quest != null) {
                     UIManager.Instance.ShowQuestInfo(quest);
                 }

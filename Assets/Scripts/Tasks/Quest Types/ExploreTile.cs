@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ExploreTile : Quest {
+public class ExploreTile : OldQuest.Quest {
 
     private BaseLandmark _landmarkToExplore;
 
@@ -86,7 +86,7 @@ public class ExploreTile : Quest {
         UIManager.Instance.ShowNotification(newLog);
         AddNewLog("The party discovers an " + Utilities.NormalizeString(_landmarkToExplore.specificLandmarkType.ToString()));
         _landmarkToExplore.SetHiddenState(false);
-        //After 5 days in the tile, the Quest triggers a random result based on data from the Landmark being explored.
+        //After 5 days in the tile, the OldQuest.Quest triggers a random result based on data from the Landmark being explored.
         ScheduleQuestAction(5, () => TriggerRandomResult());
     }
 

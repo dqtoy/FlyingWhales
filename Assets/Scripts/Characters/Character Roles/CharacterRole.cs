@@ -32,7 +32,7 @@ public class CharacterRole {
         _allowedQuestTypes = new List<QUEST_TYPE>();
 	}
 
-    #region Quest Weights
+    #region OldQuest.Quest Weights
     /*
          Get the weighted dictionary for what action the character will do next.
              */
@@ -80,7 +80,7 @@ public class CharacterRole {
 
             if (canAccepQueststHere) {
                 for (int i = 0; i < currSettlement.questBoard.Count; i++) {
-                    Quest currQuest = currSettlement.questBoard[i];
+                    OldQuest.Quest currQuest = currSettlement.questBoard[i];
                     if (this.CanAcceptQuest(currQuest) && currQuest.CanAcceptQuest(_character)) { //Check both the quest filters and the quest types this role can accept
                         questWeights.AddElement(currQuest, GetWeightForTask(currQuest));
                     }
@@ -92,7 +92,7 @@ public class CharacterRole {
     internal int GetWeightForTask(CharacterTask task) {
         int weight = 0;
         if(task.taskType == TASK_TYPE.QUEST) {
-            Quest quest = (Quest)task;
+            OldQuest.Quest quest = (OldQuest.Quest)task;
             switch (quest.questType) {
                 case QUEST_TYPE.EXPLORE_TILE:
                     weight += GetExploreTileWeight((ExploreTile)task);
@@ -161,7 +161,7 @@ public class CharacterRole {
     }
     internal virtual int GetTakeQuestWeight() {
         Settlement settlement = (Settlement)_character.currLocation.landmarkOnTile;
-        //Take Quest - 400 (0 if no quest available in the current settlement)
+        //Take OldQuest.Quest - 400 (0 if no quest available in the current settlement)
         if (settlement.questBoard.Count > 0) {
             return 400;
         }
@@ -215,7 +215,7 @@ public class CharacterRole {
 	}
     internal virtual int GetMoveToNonAdjacentVillageWeight(Settlement target) {
         int weight = 0;
-        //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)
+        //Move to an adjacent non-hostile Village - 5 + (30 x Available OldQuest.Quest in that Village)
         weight += 5 + (30 * target.questBoard.Count);
         return weight;
     }
@@ -261,7 +261,7 @@ public class CharacterRole {
     /*
      Check if this role can accept a quest.
          */
-    public bool CanAcceptQuest(Quest quest) {
+    public bool CanAcceptQuest(OldQuest.Quest quest) {
         if (_allowedQuestTypes.Contains(quest.questType)) {
             return true;
         }

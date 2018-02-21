@@ -6,9 +6,9 @@ public class QuestLogsUI : UIMenu {
     [SerializeField] private UILabel questLogsLbl;
     [SerializeField] private UIScrollView logsScrollView;
 
-    private Quest currentlyShowingQuest;
+    private OldQuest.Quest currentlyShowingQuest;
 
-    public void ShowQuestLogs(Quest quest) {
+    public void ShowQuestLogs(OldQuest.Quest quest) {
         if (currentlyShowingQuest != null) {
             currentlyShowingQuest.onTaskLogsChange = null;
         }

@@ -8,7 +8,7 @@ public class RoamRegion : TaskAction {
     private Region _regionToRoam;
     private HexTile previousHexTile;
 
-    public RoamRegion(Quest quest) : base(quest) {
+    public RoamRegion(OldQuest.Quest quest) : base(quest) {
     }
 
     #region overrides

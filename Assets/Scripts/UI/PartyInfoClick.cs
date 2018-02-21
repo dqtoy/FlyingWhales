@@ -17,7 +17,7 @@ public class PartyInfoClick : MonoBehaviour {
 				}
 			} else if (url.Contains("_quest")) {
 				if(UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST){
-					Quest quest = (Quest)UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask;
+					OldQuest.Quest quest = (OldQuest.Quest)UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask;
 					if (quest != null) {
 						UIManager.Instance.ShowQuestInfo(quest);
 					}

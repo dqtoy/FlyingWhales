@@ -873,7 +873,7 @@ public enum CHARACTER_ROLE {
     CHIEFTAIN,
     WARLORD,
     HERO,
-    ADVENTURER,
+    //ADVENTURER,
     COLONIST,
     VILLAGE_HEAD,
     WORKER,
@@ -916,7 +916,7 @@ public enum TASK_STATUS {
     FAIL,
     CANCEL
 }
-public enum QUEST_TYPE { //This is a list of actions a character can choose to accept. These are usually created by the Internal Quest Manager/Military Manager
+public enum QUEST_TYPE { //This is a list of actions a character can choose to accept. These are usually created by the Internal OldQuest.Quest Manager/Military Manager
     EXPLORE_REGION,
     EXPAND,
     REST,

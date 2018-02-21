@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Defend : Quest {
+public class Defend : OldQuest.Quest {
 
 	private BaseLandmark _landmarkToDefend;
 

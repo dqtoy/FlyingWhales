@@ -187,7 +187,7 @@ public class ConsoleMenu : UIMenu {
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
 
         if (isQuestParameterNumeric && isCharacterParameterNumeric) {
-            Quest quest = FactionManager.Instance.GetQuestByID(questID);
+            OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
             ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
 
             if(character.currentTask != null) {
@@ -217,7 +217,7 @@ public class ConsoleMenu : UIMenu {
 
         bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
         if (isQuestParameterNumeric) {
-            Quest quest = FactionManager.Instance.GetQuestByID(questID);
+            OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
             quest.GoBackToQuestGiver(TASK_STATUS.CANCEL);
 
             AddSuccessMessage(quest.questType.ToString() + " quest posted at " + quest.postedAt.location.name + " was cancelled.");

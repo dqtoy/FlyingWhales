@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Expand : Quest {
+public class Expand : OldQuest.Quest {
 
 	private HexTile _targetUnoccupiedTile;
 	private HexTile _originTile;

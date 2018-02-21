@@ -6,11 +6,11 @@ using System.Linq;
 public class Adventurer : CharacterRole {
 
 	public Adventurer(ECS.Character character): base (character) {
-        _roleType = CHARACTER_ROLE.ADVENTURER;
-        _canAcceptQuests = false;
-        _allowedQuestTypes = new List<QUEST_TYPE>() {
-            QUEST_TYPE.JOIN_PARTY
-        };
+        //_roleType = CHARACTER_ROLE.ADVENTURER;
+        //_canAcceptQuests = false;
+        //_allowedQuestTypes = new List<QUEST_TYPE>() {
+        //    QUEST_TYPE.JOIN_PARTY
+        //};
     }
 
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
@@ -84,7 +84,7 @@ public class Adventurer : CharacterRole {
 
     internal override int GetMoveToNonAdjacentVillageWeight(Settlement target) {
         int weight = 0;
-        //Move to an adjacent non-hostile Village - 5 + (30 x Available Quest in that Village)
+        //Move to an adjacent non-hostile Village - 5 + (30 x Available OldQuest.Quest in that Village)
         weight += 5 + (30 * target.questBoard.Count);
         return weight;
     }
