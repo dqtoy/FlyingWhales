@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ObtainMaterial : Quest {
+public class ObtainMaterial : OldQuest.Quest {
 
 	private BaseLandmark _target;
 	private MATERIAL _materialToObtain;

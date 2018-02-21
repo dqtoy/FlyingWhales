@@ -52,7 +52,7 @@ public class CharacterInfoClick : MonoBehaviour {
 					UIManager.Instance.ShowSettlementInfo (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
 				}
             } else if (url.Contains("_quest")) {
-                Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
+                OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
                 if (quest != null) {
                     UIManager.Instance.ShowQuestInfo(quest);
                 }

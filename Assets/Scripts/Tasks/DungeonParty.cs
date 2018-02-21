@@ -51,9 +51,9 @@ public class DungeonParty : Party {
 				encounteredByParty.partyMembers [i].AddHistory ("Encountered " + this._name + ".", combat);
 			}
 			if(combat.charactersSideA.Count > 0) {
-				((Quest)encounteredByParty.currentTask).Result (true);
+				((OldQuest.Quest)encounteredByParty.currentTask).Result (true);
 			} else {
-				((Quest)encounteredByParty.currentTask).Result (false);
+				((OldQuest.Quest)encounteredByParty.currentTask).Result (false);
 			}
 		}
 	}

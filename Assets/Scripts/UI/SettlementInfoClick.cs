@@ -73,7 +73,7 @@ public class SettlementInfoClick : MonoBehaviour {
 				}
             } else if (url.Contains("_quest")) {
 				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark is Settlement){
-					Quest quest = ((Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark).GetQuestByID(idToUse);
+					OldQuest.Quest quest = ((Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark).GetQuestByID(idToUse);
 					if (quest != null) {
 						UIManager.Instance.ShowQuestInfo(quest);
 					}	

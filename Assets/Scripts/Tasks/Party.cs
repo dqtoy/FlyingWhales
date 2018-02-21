@@ -103,7 +103,7 @@ public class Party: IEncounterable, ICombatInitializer {
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
-		SetName (RandomNameGenerator.Instance.GetAllianceName ());
+		SetName(partyLeader.firstName + "'s Party");
         _partyLeader = partyLeader;
         _partyMembers = new List<ECS.Character>();
         //_partyMembersOnTheWay = new List<ECS.Character>();
@@ -156,12 +156,12 @@ public class Party: IEncounterable, ICombatInitializer {
             if (!IsCharacterLeaderOfParty(member)) {
                 Debug.Log(member.name + " has joined the party of " + partyLeader.name);
                 if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-                    ((Quest)_currentTask).AddNewLog(member.name + " has joined the party of " + partyLeader.name);
+                    ((OldQuest.Quest)_currentTask).AddNewLog(member.name + " has joined the party of " + partyLeader.name);
                 }
             }
         }
         if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-            Quest currQuest = (Quest)_currentTask;
+            OldQuest.Quest currQuest = (OldQuest.Quest)_currentTask;
             if (currQuest.onTaskInfoChanged != null) {
                 currQuest.onTaskInfoChanged();
             }
@@ -190,7 +190,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			this.specificLocation.AddCharacterToLocation(member, false);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-                ((Quest)currentTask).AddNewLog(member.name + " has left the party");
+                ((OldQuest.Quest)currentTask).AddNewLog(member.name + " has left the party");
             }
 		}
         
@@ -253,7 +253,7 @@ public class Party: IEncounterable, ICombatInitializer {
         PartyManager.Instance.RemoveParty(this);
 		if (_currentTask != null) {
 			if (!_currentTask.isDone) {
-				_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
+				_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel OldQuest.Quest if party is currently on a quest
 			}
 		}
 		SetCurrentTask (null);
@@ -295,7 +295,7 @@ public class Party: IEncounterable, ICombatInitializer {
         PartyManager.Instance.RemoveParty(this);
         if (_currentTask != null) {
 			if (!_currentTask.isDone) {
-				_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel Quest if party is currently on a quest
+				_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel OldQuest.Quest if party is currently on a quest
             }
         }
         SetCurrentTask (null);
@@ -380,9 +380,9 @@ public class Party: IEncounterable, ICombatInitializer {
         int stayWeight = 50; //Default value for Stay is 50
         int leaveWeight = 50; //Default value for Leave is 50
         if(_currentTask.taskStatus == TASK_STATUS.SUCCESS) {
-            stayWeight += 100; //If Quest is a success, add 100 to Stay
+            stayWeight += 100; //If OldQuest.Quest is a success, add 100 to Stay
         } else  if(_currentTask.taskStatus == TASK_STATUS.FAIL) {
-            leaveWeight += 100; //If Quest is a failure, add 100 to Leave
+            leaveWeight += 100; //If OldQuest.Quest is a failure, add 100 to Leave
         }
         if (member.HasStatusEffect(STATUS_EFFECT.INJURED)) {
             //If character is injured, add 100 to Leave
@@ -399,7 +399,7 @@ public class Party: IEncounterable, ICombatInitializer {
     }
     #endregion
 
-    #region Quest
+    #region OldQuest.Quest
     /*
      Set the current task the party is on.
      This will also set the current task of all
@@ -415,7 +415,7 @@ public class Party: IEncounterable, ICombatInitializer {
             Debug.Log("Set current quest of " + name + " to nothing");
         } else {
             if(task.taskType == TASK_TYPE.QUEST) {
-                Debug.Log("Set current quest of " + name + " to " + ((Quest)task).questType.ToString());
+                Debug.Log("Set current quest of " + name + " to " + ((OldQuest.Quest)task).questType.ToString());
             }
         }
         
@@ -479,10 +479,10 @@ public class Party: IEncounterable, ICombatInitializer {
     private void AdjustRelationshipBasedOnQuestResult(TASK_STATUS result) {
         switch (result) {
             case TASK_STATUS.SUCCESS:
-                AdjustPartyRelationships(5); //Succeeded in a Quest Together: +5 (cumulative)
+                AdjustPartyRelationships(5); //Succeeded in a OldQuest.Quest Together: +5 (cumulative)
                 break;
             case TASK_STATUS.FAIL:
-                AdjustPartyRelationships(-5); //Failed in a Quest Together: -5 (cumulative)
+                AdjustPartyRelationships(-5); //Failed in a OldQuest.Quest Together: -5 (cumulative)
                 break;
             default:
                 break;
@@ -499,7 +499,7 @@ public class Party: IEncounterable, ICombatInitializer {
         if(currentTask == null || currentTask.taskType != TASK_TYPE.QUEST) {
             throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
         }
-        Quest currentQuest = (Quest)currentTask;
+        OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
         if(_avatar == null) {
             _partyLeader.CreateNewAvatar();
         }
@@ -554,7 +554,7 @@ public class Party: IEncounterable, ICombatInitializer {
          */
     internal void OnQuestEnd() {
         AdjustRelationshipBasedOnQuestResult(currentTask.taskStatus);
-        FactionManager.Instance.RemoveQuest((Quest)currentTask);
+        FactionManager.Instance.RemoveQuest((OldQuest.Quest)currentTask);
         if (_partyLeader.isDead) {
             //party leader is already dead!
             SetCurrentTask(null);
@@ -692,8 +692,8 @@ public class Party: IEncounterable, ICombatInitializer {
             if(partyMembers.Count > 0) {
                 //the party was defeated in combat, but there are still members that are alive,
                 //make them go back to the quest giver and have the quest cancelled.
-                if (_currentTask != null && _currentTask is Quest) {
-                    (_currentTask as Quest).GoBackToQuestGiver(TASK_STATUS.CANCEL);
+                if (_currentTask != null && _currentTask is OldQuest.Quest) {
+                    (_currentTask as OldQuest.Quest).GoBackToQuestGiver(TASK_STATUS.CANCEL);
                 }
             } else {
                 //The party was defeated in combat, and no one survived, mark the quest as 
@@ -744,13 +744,17 @@ public class Party: IEncounterable, ICombatInitializer {
         to.AdjustCivilians(civilians);
     }
     public STANCE GetCurrentStance() {
+        //TODO: Make this more elegant! Add a stance variable per quest type maybe?
         if (currentTask != null) {
             if (avatar != null && avatar.isTravelling) {
+                if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                    return STANCE.COMBAT;
+                }
                 return STANCE.NEUTRAL;
             }
             if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
                 return STANCE.COMBAT;
-            } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is Quest && !(currentTask as Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
+            } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
                 return STANCE.NEUTRAL;
             } else if (currentTask is ExploreTile) {
                 return STANCE.STEALTHY;
@@ -759,8 +763,10 @@ public class Party: IEncounterable, ICombatInitializer {
         return STANCE.NEUTRAL;
     }
     public void ContinueDailyAction() {
-        if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
-            currentTask.PerformDailyAction();
+        if (!isInCombat) {
+            if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
+                currentTask.PerformDailyAction();
+            }
         }
     }
     #endregion

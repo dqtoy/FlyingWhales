@@ -52,7 +52,7 @@ namespace ECS {
 		private bool _isPrisoner;
 		private bool _isDefeated;
 		private object _isPrisonerOf;
-		private List<Quest> _activeQuests;
+		private List<OldQuest.Quest> _activeQuests;
 		private BaseLandmark _home;
         private BaseLandmark _lair;
 		private List<string> _history;
@@ -79,6 +79,9 @@ namespace ECS {
 		private Dictionary<int, BaseLandmark> _exploredLandmarks;
 
 		#region getters / setters
+        internal string firstName {
+            get { return name.Split(' ')[0]; }
+        }
 		internal string name{
 			get { return this._name; }
 		}
@@ -173,7 +176,7 @@ namespace ECS {
 		internal bool isPrisoner{
 			get { return this._isPrisoner; }
 		}
-		public List<Quest> activeQuests {
+		public List<OldQuest.Quest> activeQuests {
 			get { return _activeQuests; }
 		}
 		internal int strength {
@@ -318,7 +321,7 @@ namespace ECS {
             _maxHP = _baseMaxHP;
             _currentHP = maxHP;
 
-            _activeQuests = new List<Quest>();
+            _activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
 			_history = new List<string> ();
 			combatHistory = new Dictionary<int, CombatPrototype> ();
@@ -633,26 +636,24 @@ namespace ECS {
 			if(this._role == null){
 				return;
 			}
-            if (this._role.roleType != CHARACTER_ROLE.ADVENTURER) {
-                Faction ownerOfCurrLocation = this.currLocation.region.owner;
-                if (ownerOfCurrLocation.id != this.faction.id) {
-                    if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
-                        Quest currentQuest = (Quest)currentTask;
-                        if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
-                            //if it is, check if this character died on a region owned by the faction he/she means to negatively impact
-                            //if he/she is, do not count this character's death as an international incident
-                            if (currentQuest.targetFaction.id != ownerOfCurrLocation.id) {
-                                //otherwise, this is an international incident
-                                FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
-                            }
-                        } else {
+            Faction ownerOfCurrLocation = this.currLocation.region.owner;
+            if (ownerOfCurrLocation.id != this.faction.id) {
+                if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
+                    OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
+                    if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
+                        //if it is, check if this character died on a region owned by the faction he/she means to negatively impact
+                        //if he/she is, do not count this character's death as an international incident
+                        if (currentQuest.targetFaction.id != ownerOfCurrLocation.id) {
+                            //otherwise, this is an international incident
                             FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
                         }
                     } else {
                         FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
                     }
-                    
+                } else {
+                    FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
                 }
+                    
             }
         }
 
@@ -1204,9 +1205,9 @@ namespace ECS {
 			case CHARACTER_ROLE.HERO:
 				_role = new Hero(this);
 				break;
-			case CHARACTER_ROLE.ADVENTURER:
-				_role = new Adventurer(this);
-				break;
+			//case CHARACTER_ROLE.ADVENTURER:
+			//	_role = new Adventurer(this);
+			//	break;
 			case CHARACTER_ROLE.COLONIST:
 				_role = new Colonist(this);
 				break;
@@ -1468,7 +1469,7 @@ namespace ECS {
             if (actionWeights.GetTotalOfWeights () > 0) {
 				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
                 if (chosenAction.taskType == TASK_TYPE.QUEST) {
-                    Debug.Log(this.name + " decides to " + ((Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+                    Debug.Log(this.name + " decides to " + ((OldQuest.Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
                 } else {
                     Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
                 }
@@ -1743,21 +1744,21 @@ namespace ECS {
 		#endregion
 
 		#region Task Management
-		public void AddNewQuest(Quest quest) {
+		public void AddNewQuest(OldQuest.Quest quest) {
 			if (!_activeQuests.Contains(quest)) {
 				_activeQuests.Add(quest);
 			}
 		}
-		public void RemoveQuest(Quest quest) {
+		public void RemoveQuest(OldQuest.Quest quest) {
 			_activeQuests.Remove(quest);
 		}
 		public void SetCurrentTask(CharacterTask currentTask) {
 			_currentTask = currentTask;
 		}
-		public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
-			List<Quest> quests = new List<Quest>();
+		public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
+			List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
 			for (int i = 0; i < _activeQuests.Count; i++) {
-				Quest currQuest = _activeQuests[i];
+				OldQuest.Quest currQuest = _activeQuests[i];
 				if(currQuest.questType == questType) {
 					quests.Add(currQuest);
 				}
@@ -2027,13 +2028,17 @@ namespace ECS {
             to.AdjustCivilians(civilians);
         }
         public STANCE GetCurrentStance() {
-            if(currentTask != null) {
+            //TODO: Make this more elegant! Add a stance variable per quest type maybe?
+            if (currentTask != null) {
                 if (avatar != null && avatar.isTravelling) {
+                    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                        return STANCE.COMBAT;
+                    }
                     return STANCE.NEUTRAL;
                 }
                 if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
                     return STANCE.COMBAT;
-                } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is Quest && !(currentTask as Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
+                } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
                     return STANCE.NEUTRAL;
                 } else if (currentTask is ExploreTile) {
                     return STANCE.STEALTHY;
@@ -2042,8 +2047,10 @@ namespace ECS {
             return STANCE.NEUTRAL;
         }
         public void ContinueDailyAction() {
-            if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
-                currentTask.PerformDailyAction();
+            if (!isInCombat) {
+                if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
+                    currentTask.PerformDailyAction();
+                }
             }
         }
         #endregion

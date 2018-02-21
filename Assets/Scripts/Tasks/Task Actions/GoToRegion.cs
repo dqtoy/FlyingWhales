@@ -5,7 +5,7 @@ public class GoToRegion : TaskAction {
 
     private Region _target;
 
-    public GoToRegion(Quest quest) : base(quest) {
+    public GoToRegion(OldQuest.Quest quest) : base(quest) {
     }
 
     #region overrides

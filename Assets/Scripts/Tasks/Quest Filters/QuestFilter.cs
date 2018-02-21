@@ -85,7 +85,7 @@ public class MustBeClass : QuestFilter {
 }
 
 public class MustHaveSkills : QuestFilter {
-    //TODO: Create MustHaveSkill Quest Filter on Merge of Combat Prototype 
+    //TODO: Create MustHaveSkill OldQuest.Quest Filter on Merge of Combat Prototype 
 }
 
 public class MustBeFaction : QuestFilter {

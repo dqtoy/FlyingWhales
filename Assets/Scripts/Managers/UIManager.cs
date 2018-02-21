@@ -3252,7 +3252,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Quest Info")]
     [SerializeField] internal QuestInfoUI questInfoUI;
-    public void ShowQuestInfo(Quest quest) {
+    public void ShowQuestInfo(OldQuest.Quest quest) {
         if (settlementInfoUI.isShowing) {
             settlementInfoUI.HideMenu();
         }
@@ -3283,7 +3283,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Quest Logs")]
     [SerializeField] internal QuestLogsUI questLogUI;
-    public void ShowQuestLog(Quest quest) {
+    public void ShowQuestLog(OldQuest.Quest quest) {
 		if(combatLogUI.isShowing){
 			combatLogUI.HideCombatLogs ();
 		}
@@ -3321,8 +3321,8 @@ public class UIManager : MonoBehaviour {
         //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
         //    } else if (currSetting.data is ECS.Character) {
         //        text += " - Character " + (currSetting.data as ECS.Character).name;
-        //    } else if (currSetting.data is Quest) {
-        //        text += " - Quest " + (currSetting.data as Quest).questType.ToString();
+        //    } else if (currSetting.data is OldQuest.Quest) {
+        //        text += " - OldQuest.Quest " + (currSetting.data as OldQuest.Quest).questType.ToString();
         //    }
         //    text += "\n";
         //}
@@ -3348,8 +3348,8 @@ public class UIManager : MonoBehaviour {
         //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
         //    } else if (currSetting.data is ECS.Character) {
         //        text += " - Character " + (currSetting.data as ECS.Character).name;
-        //    } else if (currSetting.data is Quest) {
-        //        text += " - Quest " + (currSetting.data as Quest).questType.ToString();
+        //    } else if (currSetting.data is OldQuest.Quest) {
+        //        text += " - OldQuest.Quest " + (currSetting.data as OldQuest.Quest).questType.ToString();
         //    }
         //    text += "\n";
         //}

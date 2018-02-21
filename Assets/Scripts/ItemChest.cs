@@ -58,7 +58,7 @@ public class ItemChest : IEncounterable {
 			_itemsInChest.RemoveAt (i);
 			i--;
 		}
-		((Quest)encounteredBy.currentTask).Result(true);
+		((OldQuest.Quest)encounteredBy.currentTask).Result(true);
 
 //        ECS.Item gainedItem = RandomizeItemForCharacter(encounteredBy);
 //        if(gainedItem != null) {
@@ -155,7 +155,7 @@ public class ItemChest : IEncounterable {
 		if(party.currentTask != null){
 			party.currentTask.AddNewLogs(encounterLogs);
 		}
-		((Quest)party.currentTask).Result(true);
+		((OldQuest.Quest)party.currentTask).Result(true);
 
 
 //        bool isChestEmpty = true; //Did any party member get any loot?

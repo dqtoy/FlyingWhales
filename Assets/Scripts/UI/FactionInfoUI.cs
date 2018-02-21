@@ -77,7 +77,7 @@ public class FactionInfoUI : UIMenu {
 				text += "\n" + currChar.urlName  + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
 				if (currChar.currentTask != null) {
                     if(currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-                        text += " (" + ((Quest)currChar.currentTask).urlName + ")";
+                        text += " (" + ((OldQuest.Quest)currChar.currentTask).urlName + ")";
                     } else {
                         text += " (" + currChar.currentTask.taskType.ToString() + ")";
                     }

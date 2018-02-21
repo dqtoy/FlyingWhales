@@ -14,7 +14,7 @@ public class Settlement : BaseLandmark {
     private ECS.Character _headOfSettlement;
 	private List<BaseLandmark> _ownedLandmarks;
 
-    private List<Quest> _questBoard;
+    private List<OldQuest.Quest> _questBoard;
 	private WeightedDictionary<MATERIAL> _materialWeights;
 
     private const int CHARACTER_LIMIT = 10;
@@ -23,7 +23,7 @@ public class Settlement : BaseLandmark {
     private float _currentPopulationProduction;
 
     #region getters/setters
-    public List<Quest> questBoard {
+    public List<OldQuest.Quest> questBoard {
         get { return _questBoard; }
     }
     public List<BaseLandmark> ownedLandmarks {
@@ -37,7 +37,7 @@ public class Settlement : BaseLandmark {
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
         _isHidden = false;
-        _questBoard = new List<Quest>();
+        _questBoard = new List<OldQuest.Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
 		_materialWeights = new WeightedDictionary<MATERIAL> ();
         _producingPopulationFor = RACE.NONE;
@@ -74,7 +74,7 @@ public class Settlement : BaseLandmark {
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
             _producingPopulationFor = GetRaceBasedOnProportion();
         }
-		//Start Quest Creation
+		//Start OldQuest.Quest Creation
 		ScheduleUpdateAvailableMaterialsToGet ();
 		ScheduleUpdateNeededMaterials ();
 		ScheduleMonthlyQuests ();
@@ -349,14 +349,14 @@ public class Settlement : BaseLandmark {
     #endregion
 
     #region Quests
-    internal void AddQuestToBoard(Quest quest) {
+    internal void AddQuestToBoard(OldQuest.Quest quest) {
         _questBoard.Add(quest);
-        quest.OnQuestPosted(); //Call On Quest Posted after quest is posted
+        quest.OnQuestPosted(); //Call On OldQuest.Quest Posted after quest is posted
     }
-    internal void RemoveQuestFromBoard(Quest quest) {
+    internal void RemoveQuestFromBoard(OldQuest.Quest quest) {
         _questBoard.Remove(quest);
     }
-	internal Quest GetQuestByID(int id){
+	internal OldQuest.Quest GetQuestByID(int id){
 		for (int i = 0; i < _questBoard.Count; i++) {
 			if(_questBoard[i].id == id){
 				return _questBoard [i];
@@ -364,10 +364,10 @@ public class Settlement : BaseLandmark {
 		}
 		return null;
 	}
-    internal List<Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
-        List<Quest> quests = new List<Quest>();
+    internal List<OldQuest.Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
+        List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
         for (int i = 0; i < _questBoard.Count; i++) {
-            Quest currQuest = _questBoard[i];
+            OldQuest.Quest currQuest = _questBoard[i];
             if(currQuest.questType == questType) {
                 quests.Add(currQuest);
             }
@@ -377,7 +377,7 @@ public class Settlement : BaseLandmark {
 	internal int GetNumberOfQuestsOnBoardByType(QUEST_TYPE questType){
 		int count = 0;
 		for (int i = 0; i < _questBoard.Count; i++) {
-			Quest currQuest = _questBoard[i];
+			OldQuest.Quest currQuest = _questBoard[i];
 			if(currQuest.questType == questType) {
 				count++;
 			}
@@ -458,10 +458,10 @@ public class Settlement : BaseLandmark {
 		return MATERIAL.NONE;
 	}
 	private void GenerateMonthlyQuests() {
-//		WeightedDictionary<Quest> questDictionary = new WeightedDictionary<Quest>();
-//		questDictionary.LogDictionaryValues("Quest Creation Weights: ");
+//		WeightedDictionary<OldQuest.Quest> questDictionary = new WeightedDictionary<OldQuest.Quest>();
+//		questDictionary.LogDictionaryValues("OldQuest.Quest Creation Weights: ");
 //		if(questDictionary.GetTotalOfWeights() > 0) {
-//			Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
+//			OldQuest.Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
 //			AddNewQuest(chosenQuestToCreate);
 //		}
 		CreateQuest(QUEST_TYPE.OBTAIN_MATERIAL);

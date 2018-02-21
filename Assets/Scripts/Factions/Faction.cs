@@ -20,7 +20,7 @@ public class Faction {
     protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
-    protected List<Quest> _activeQuests;
+    protected List<OldQuest.Quest> _activeQuests;
     protected InternalQuestManager _internalQuestManager;
     protected Dictionary<Faction, FactionRelationship> _relationships;
 	protected MilitaryManager _militaryManager;
@@ -67,7 +67,7 @@ public class Faction {
     public List<ECS.Character> characters {
         get { return _characters; }
     }
-    public List<Quest> activeQuests {
+    public List<OldQuest.Quest> activeQuests {
         get { return _activeQuests; }
     }
     public InternalQuestManager internalQuestManager {
@@ -105,7 +105,7 @@ public class Faction {
         _characters = new List<ECS.Character>();
         _settlements = new List<Settlement>();
         ConstructInititalTechnologies();
-        _activeQuests = new List<Quest>();
+        _activeQuests = new List<OldQuest.Quest>();
         _internalQuestManager = new InternalQuestManager(this);
         _relationships = new Dictionary<Faction, FactionRelationship>();
 		_militaryManager = new MilitaryManager (this);
@@ -329,12 +329,12 @@ public class Faction {
     #endregion
 
     #region Quests
-    public void AddNewQuest(Quest quest) {
+    public void AddNewQuest(OldQuest.Quest quest) {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
         }
     }
-    public void RemoveQuest(Quest quest) {
+    public void RemoveQuest(OldQuest.Quest quest) {
         _activeQuests.Remove(quest);
     }
     #endregion

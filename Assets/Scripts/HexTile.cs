@@ -1732,7 +1732,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //            text += "\n[b]Active Quests: [/b] ";
         //            if (landmarkOnTile.owner.internalQuestManager.activeQuests.Count > 0) {
         //                for (int i = 0; i < landmarkOnTile.owner.internalQuestManager.activeQuests.Count; i++) {
-        //                    Quest currQuest = landmarkOnTile.owner.internalQuestManager.activeQuests[i];
+        //                    OldQuest.Quest currQuest = landmarkOnTile.owner.internalQuestManager.activeQuests[i];
         //                    text += "\n" + currQuest.GetType().ToString();
         //                }
         //            } else {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ECS;
 
-public class BuildStructure : Quest {
+public class BuildStructure : OldQuest.Quest {
 
     private HexTile _target;
     private int _civilians;

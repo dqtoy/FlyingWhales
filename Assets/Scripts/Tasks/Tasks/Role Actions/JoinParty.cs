@@ -23,11 +23,11 @@ public class JoinParty : CharacterTask {
         base.PerformTask(character);
         character.SetCurrentTask(this);
         _partyToJoin.AddPartyMember(character);
-        if(_partyToJoin.currentTask != null && _partyToJoin.currentTask is Quest) {
-            (_partyToJoin.currentTask as Quest).OnPartyMemberJoined();
+        if(_partyToJoin.currentTask != null && _partyToJoin.currentTask is OldQuest.Quest) {
+            (_partyToJoin.currentTask as OldQuest.Quest).OnPartyMemberJoined();
         }
         EndTask(TASK_STATUS.SUCCESS);
-        //((Quest)_partyToJoin.currentTask).SetWaitingStatus(true); //wait for the character that will join the party
+        //((OldQuest.Quest)_partyToJoin.currentTask).SetWaitingStatus(true); //wait for the character that will join the party
         //StartGoingToParty();
     }
   //  protected override void ConstructQuestLine() {
@@ -46,7 +46,7 @@ public class JoinParty : CharacterTask {
   //      _partyToJoin.PartyMemberHasArrived((ECS.Character)_createdBy);
   //      _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
   //      if (_partyToJoin.partyMembers.Count < 5) {
-  //          ((Quest)_partyToJoin.currentTask).CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
+  //          ((OldQuest.Quest)_partyToJoin.currentTask).CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
   //      }
   //  }
     #endregion
@@ -55,7 +55,7 @@ public class JoinParty : CharacterTask {
  //       //_partyToJoin.PartyMemberHasArrived((ECS.Character)_createdBy);
  //       _partyToJoin.AddPartyMember((ECS.Character)_createdBy);
  //       //if (_partyToJoin.partyMembers.Count < 5) {
- //           //((Quest)_partyToJoin.currentTask).CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
+ //           //((OldQuest.Quest)_partyToJoin.currentTask).CheckPartyMembers(); //When the character successfully arrives at the party leaders location, check if all the party members are present
  //       //}
  //       EndTask(TASK_STATUS.SUCCESS);
 	//}

@@ -9,7 +9,7 @@ public class Collect : TaskAction {
     private Dictionary<RACE, int> _civilians;
 
 
-	public Collect(Quest quest): base (quest){}
+	public Collect(OldQuest.Quest quest): base (quest){}
 
 	#region overrides
 	public override void InititalizeAction(Dictionary<RACE, int> civilians) {
@@ -18,7 +18,7 @@ public class Collect : TaskAction {
 	}
 	#endregion
 
-	//This is the DoAction Function in Expand Quest
+	//This is the DoAction Function in Expand OldQuest.Quest
 	internal void Expand(){
         //add civilians to party
         ((Expand)_task).assignedParty.AdjustCivilians(_civilians);

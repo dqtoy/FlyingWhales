@@ -71,7 +71,7 @@ public class HextileInfoUI : UIMenu {
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 					if (currChar.currentTask != null) {
 						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-							Quest currQuest = (Quest)currChar.currentTask;
+							OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
 							text += " (" + currQuest.urlName + ")";
 						} else {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";

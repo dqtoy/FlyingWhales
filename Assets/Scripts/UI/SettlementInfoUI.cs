@@ -74,7 +74,7 @@ public class SettlementInfoUI : UIMenu {
                 Settlement settlement = (Settlement)currentlyShowingLandmark;
                 if (settlement.questBoard.Count > 0) {
                     for (int i = 0; i < settlement.questBoard.Count; i++) {
-                        Quest currQuest = settlement.questBoard[i];
+                        OldQuest.Quest currQuest = settlement.questBoard[i];
                         text += "\n" + currQuest.urlName;
                         if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
                             text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.tileName;
@@ -108,7 +108,7 @@ public class SettlementInfoUI : UIMenu {
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 					if (currChar.currentTask != null) {
 						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-							Quest currQuest = (Quest)currChar.currentTask;
+							OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
 							text += " (" + currQuest.urlName + ")";
 						} else {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";
@@ -131,7 +131,7 @@ public class SettlementInfoUI : UIMenu {
                     text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
                     if (currChar.currentTask != null) {
                         if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-                            Quest currQuest = (Quest)currChar.currentTask;
+                            OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
                             text += " (" + currQuest.urlName + ")";
                         } else {
                             text += " (" + currChar.currentTask.taskType.ToString() + ")";
@@ -198,7 +198,7 @@ public class SettlementInfoUI : UIMenu {
 		//			text += "\n" + currParty.urlName + " O: " + currParty.isOpen + " F: " + currParty.isFull;
 		//			if(currParty.currentTask != null) {
   //                      if (currParty.currentTask.taskType == TASK_TYPE.QUEST) {
-  //                          Quest currQuest = (Quest)currParty.currentTask;
+  //                          OldQuest.Quest currQuest = (OldQuest.Quest)currParty.currentTask;
   //                          text += " (" + currQuest.urlName + ")";
   //                          if (currQuest.isDone) {
   //                              text += "(Done)";

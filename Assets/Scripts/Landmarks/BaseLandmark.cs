@@ -35,7 +35,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected Dictionary<int, ECS.CombatPrototype> _combatHistory;
     protected List<ICombatInitializer> _charactersAtLocation;
     protected ECS.CombatPrototype _currentCombat;
-	protected List<Quest> _activeQuests;
+	protected List<OldQuest.Quest> _activeQuests;
 	protected List<ECS.Item> _itemsInLandmark;
 
     private bool _hasScheduledCombatCheck = false;
@@ -107,7 +107,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public List<ICombatInitializer> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
-	public List<Quest> activeQuests {
+	public List<OldQuest.Quest> activeQuests {
 		get { return _activeQuests; }
 	}
 	public HexTile tileLocation{
@@ -137,7 +137,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_combatHistory = new Dictionary<int, ECS.CombatPrototype>();
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
-		_activeQuests = new List<Quest>();
+		_activeQuests = new List<OldQuest.Quest>();
 		_itemsInLandmark = new List<ECS.Item> ();
         ConstructTechnologiesDictionary();
 		ConstructMaterialValues();
@@ -957,7 +957,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Quests
-    public void AddNewQuest(Quest quest) {
+    public void AddNewQuest(OldQuest.Quest quest) {
 		if (!_activeQuests.Contains(quest)) {
 			_activeQuests.Add(quest);
 			_owner.AddNewQuest(quest);
@@ -967,14 +967,14 @@ public class BaseLandmark : ILocation, TaskCreator {
 			//quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
 		}
 	}
-	public void RemoveQuest(Quest quest) {
+	public void RemoveQuest(OldQuest.Quest quest) {
 		_activeQuests.Remove(quest);
 		_owner.RemoveQuest(quest);
 	}
-	public List<Quest> GetQuestsOfType(QUEST_TYPE questType) {
-		List<Quest> quests = new List<Quest>();
+	public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
+		List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
 		for (int i = 0; i < _activeQuests.Count; i++) {
-			Quest currQuest = _activeQuests[i];
+			OldQuest.Quest currQuest = _activeQuests[i];
 			if(currQuest.questType == questType) {
 				quests.Add(currQuest);
 			}
@@ -983,7 +983,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	}
 	public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
 		for (int i = 0; i < _activeQuests.Count; i++) {
-			Quest currQuest = _activeQuests[i];
+			OldQuest.Quest currQuest = _activeQuests[i];
 			if(currQuest.questType == questType) {
 				if(questType == QUEST_TYPE.EXPLORE_REGION){
 					Region region = (Region)identifier;

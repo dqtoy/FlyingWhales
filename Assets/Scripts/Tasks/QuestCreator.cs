@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 public interface TaskCreator {
 
-    List<Quest> activeQuests { get;}
+    List<OldQuest.Quest> activeQuests { get;}
 
-    void AddNewQuest(Quest quest);
-    void RemoveQuest(Quest quest);
+    void AddNewQuest(OldQuest.Quest quest);
+    void RemoveQuest(OldQuest.Quest quest);
 }
