@@ -33,16 +33,9 @@ public class TaskAction {
     public virtual void InititalizeAction(Dictionary<RACE, int> civilians) { }
 
     public virtual void DoAction(ECS.Character partyLeader) {
-		if(partyLeader.party != null){
-			if(partyLeader.party.isInCombat){
-				partyLeader.party.SetCurrentFunction (() => DoAction (partyLeader));
-				return;
-			}
-		}else{
-			if(partyLeader.isInCombat){
-				partyLeader.SetCurrentFunction (() => DoAction (partyLeader));
-				return;
-			}
+		if(partyLeader.isInCombat){
+			partyLeader.SetCurrentFunction (() => DoAction (partyLeader));
+			return;
 		}
         _actionDoer = partyLeader;
         if (onTaskDoAction != null) {
@@ -50,16 +43,9 @@ public class TaskAction {
         }
     }
     public virtual void ActionDone(TASK_ACTION_RESULT result) {
-		if(_actionDoer.party != null){
-			if(_actionDoer.party.isInCombat){
-				_actionDoer.party.SetCurrentFunction (() => ActionDone (result));
-				return;
-			}
-		}else{
-			if(_actionDoer.isInCombat){
-				_actionDoer.SetCurrentFunction (() => ActionDone (result));
-				return;
-			}
+		if(_actionDoer.isInCombat){
+			_actionDoer.SetCurrentFunction (() => ActionDone (result));
+			return;
 		}
         _isDone = true;
         _result = result;

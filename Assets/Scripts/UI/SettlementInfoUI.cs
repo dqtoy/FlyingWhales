@@ -78,8 +78,6 @@ public class SettlementInfoUI : UIMenu {
                         text += "\n" + currQuest.urlName;
                         if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
                             text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.tileName;
-                        } else if (currQuest.questType == QUEST_TYPE.EXPLORE_TILE) {
-                            text += " " + ((ExploreTile)currQuest).landmarkToExplore.location.tileName;
                         } else if (currQuest.questType == QUEST_TYPE.BUILD_STRUCTURE) {
                             text += " " + ((BuildStructure)currQuest).target.tileName;
 						} else if (currQuest.questType == QUEST_TYPE.OBTAIN_MATERIAL) {
@@ -187,7 +185,7 @@ public class SettlementInfoUI : UIMenu {
 		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
 				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
-				text += "\n" + item.nameWithQuality;
+				text += "\n" + item.nameWithQuality + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
 			}
 		} else {
 			text += "NONE";
