@@ -2053,21 +2053,21 @@ namespace ECS {
             to.AdjustCivilians(civilians);
         }
         public STANCE GetCurrentStance() {
-            //TODO: Make this more elegant! Add a stance variable per quest type maybe?
             if (currentTask != null) {
-                if (avatar != null && avatar.isTravelling) {
-                    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-                        return STANCE.COMBAT;
-                    }
-                    return STANCE.NEUTRAL;
-                }
-                if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-                    return STANCE.COMBAT;
-                } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
-                    return STANCE.NEUTRAL;
-                } else if (currentTask is ExploreTile) {
-                    return STANCE.STEALTHY;
-                }
+                return currentTask.stance;
+                //if (avatar != null && avatar.isTravelling) {
+                //    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                //        return STANCE.COMBAT;
+                //    }
+                //    return STANCE.NEUTRAL;
+                //}
+                //if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                //    return STANCE.COMBAT;
+                //} else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
+                //    return STANCE.NEUTRAL;
+                //} else if (currentTask is ExploreTile) {
+                //    return STANCE.STEALTHY;
+                //}
             }
             return STANCE.NEUTRAL;
         }
