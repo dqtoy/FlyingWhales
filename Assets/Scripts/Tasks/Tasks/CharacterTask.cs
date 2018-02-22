@@ -64,11 +64,11 @@ public class CharacterTask {
      Override this to make the character do something when
      he/she chooses to perform this task.
          */
-    public virtual void PerformTask(ECS.Character character) {
-		//if(character.isInCombat){
-		//	character.SetCurrentFunction (() => PerformTask (character));
-		//	return;
-		//}
+    public virtual void PerformTask() {
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => PerformTask ());
+			return;
+		}
     }
     public virtual void EndTask(TASK_STATUS taskResult) {
 		if(_assignedCharacter.isInCombat){
@@ -92,25 +92,13 @@ public class CharacterTask {
         }
     }
     public virtual void TaskSuccess() {
-		if(_assignedCharacter.faction == null){
-			_assignedCharacter.UnalignedDetermineAction ();
-		}else{
-			_assignedCharacter.DetermineAction();
-		}
+		_assignedCharacter.DetermineAction();
 	}
     public virtual void TaskCancel() {
-		if(_assignedCharacter.faction == null){
-			_assignedCharacter.UnalignedDetermineAction ();
-		}else{
-			_assignedCharacter.DetermineAction();
-		}
+		_assignedCharacter.DetermineAction();
 	}
     public virtual void TaskFail() {
-		if(_assignedCharacter.faction == null){
-			_assignedCharacter.UnalignedDetermineAction ();
-		}else{
-			_assignedCharacter.DetermineAction();
-		}
+		_assignedCharacter.DetermineAction();
 	}
     public virtual void PerformDailyAction() { }
 	public virtual void ResetTask(){}

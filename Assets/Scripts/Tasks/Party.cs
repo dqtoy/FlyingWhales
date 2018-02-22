@@ -705,11 +705,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 currentFunction();
                 SetCurrentFunction(null);
             } else {
-                if (faction == null) {
-                    _partyLeader.UnalignedDetermineAction();
-                } else {
-                    _partyLeader.DetermineAction();
-                }
+				_partyLeader.DetermineAction();
             }
         }
 	}

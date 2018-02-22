@@ -195,7 +195,8 @@ public class ConsoleMenu : UIMenu {
                 //cancel character's current quest
                 character.currentTask.EndTask(TASK_STATUS.CANCEL);
             } else {
-                quest.PerformTask(character);
+				quest.OnChooseTask (character);
+                quest.PerformTask();
             }
             
 

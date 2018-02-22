@@ -5,25 +5,25 @@ public class TakeQuest : CharacterTask {
     public TakeQuest(TaskCreator createdBy) : base(createdBy, TASK_TYPE.TAKE_QUEST) {}
 
     #region overrides
-    public override void PerformTask(ECS.Character character) {
-        base.PerformTask(character);
-        character.SetCurrentTask(this);
-        if (character.party != null) {
-            character.party.SetCurrentTask(this);
+    public override void PerformTask() {
+        base.PerformTask();
+		_assignedCharacter.SetCurrentTask(this);
+		if (_assignedCharacter.party != null) {
+			_assignedCharacter.party.SetCurrentTask(this);
         }
 
-        Settlement currSettlement = (Settlement)character.currLocation.landmarkOnTile; //NOTE: Make sure the character is at a settlement before performing this task
+		Settlement currSettlement = (Settlement)_assignedCharacter.currLocation.landmarkOnTile; //NOTE: Make sure the character is at a settlement before performing this task
 
-        WeightedDictionary<CharacterTask> questWeights = character.role.GetQuestWeights();
-        CharacterTask chosenTask = null;
-        if (questWeights.GetTotalOfWeights() > 0) {
-            chosenTask = questWeights.PickRandomElementGivenWeights();
-            Debug.Log(character.name + " chose to take quest " + chosenTask.taskType.ToString());
-        } else {
-            chosenTask = new DoNothing(character);
-            Debug.Log(character.name + " could not find any quest to take.");
-        }
-        character.SetTaskToDoNext(chosenTask);
+//		WeightedDictionary<CharacterTask> questWeights = _assignedCharacter.role.GetQuestWeights();
+//        CharacterTask chosenTask = null;
+//        if (questWeights.GetTotalOfWeights() > 0) {
+//            chosenTask = questWeights.PickRandomElementGivenWeights();
+//			Debug.Log(_assignedCharacter.name + " chose to take quest " + chosenTask.taskType.ToString());
+//        } else {
+//			chosenTask = new DoNothing(_assignedCharacter);
+//			Debug.Log(_assignedCharacter.name + " could not find any quest to take.");
+//        }
+//		_assignedCharacter.SetTaskToDoNext(chosenTask);
 
         EndTask(TASK_STATUS.SUCCESS);
     }

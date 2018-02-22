@@ -22,11 +22,11 @@ public class DoNothing : CharacterTask {
     }
 
     #region overrides
-    public override void PerformTask(ECS.Character character) {
-        base.PerformTask(character);
-        character.SetCurrentTask(this);
-        if(character.party != null) {
-            character.party.SetCurrentTask(this);
+    public override void PerformTask() {
+        base.PerformTask();
+		_assignedCharacter.SetCurrentTask(this);
+		if(_assignedCharacter.party != null) {
+			_assignedCharacter.party.SetCurrentTask(this);
         }
         EndQuestAfterDays();
     }

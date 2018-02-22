@@ -15,8 +15,6 @@ public class ExploreTile : CharacterTask {
     #endregion
     public ExploreTile(TaskCreator createdBy) : base(createdBy, TASK_TYPE.EXPLORE_TILE) {
 		_character = (ECS.Character)createdBy;
-		_daysLeft = 5;
-		_landmarkToExplore = GetLandmarkToExplore();
     }
 
 	private BaseLandmark GetLandmarkToExplore(){
@@ -24,14 +22,19 @@ public class ExploreTile : CharacterTask {
 		return null;
 	}
     #region overrides
-	public override void PerformTask (ECS.Character character){
-		base.PerformTask (character);
-		if (character.avatar == null) {
+	public override void OnChooseTask (ECS.Character character){
+		base.OnChooseTask (character);
+		_daysLeft = 5;
+		_landmarkToExplore = GetLandmarkToExplore();
+	}
+	public override void PerformTask (){
+		base.PerformTask ();
+		if (_assignedCharacter.avatar == null) {
 			//Instantiate a new character avatar
-			character.CreateNewAvatar();
+			_assignedCharacter.CreateNewAvatar();
 		}
-		character.avatar.SetTarget(_landmarkToExplore);
-		character.avatar.StartPath(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => StartExploration());
+		_assignedCharacter.avatar.SetTarget(_landmarkToExplore);
+		_assignedCharacter.avatar.StartPath(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => StartExploration());
 	}
     #endregion
 

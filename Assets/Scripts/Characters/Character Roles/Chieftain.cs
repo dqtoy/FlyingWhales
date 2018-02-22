@@ -27,15 +27,17 @@ public class Chieftain : CharacterRole {
         };
     }
 
-    internal override int GetExploreTileWeight(ExploreTile exploreTileQuest) {
-        int weight = 0;
-        weight += 100; //Change algo if needed
-        return weight;
-    }
-    internal override int GetExpeditionWeight(Expedition expedition) {
-        return 100;
-    }
-	internal override int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
-		return 200;
-	}
+	#region Overrides
+//    internal override int GetExploreTileWeight(ExploreTile exploreTileQuest) {
+//        int weight = 0;
+//        weight += 100; //Change algo if needed
+//        return weight;
+//    }
+//    internal override int GetExpeditionWeight(Expedition expedition) {
+//        return 100;
+//    }
+//	internal override int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
+//		return 200;
+//	}
+	#endregion
 }

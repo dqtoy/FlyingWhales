@@ -17,8 +17,8 @@ public class RecruitFollowers : CharacterTask {
         base.OnChooseTask(character);
         //Once triggered, the character will be in Recruit Followers stance for 5 days or until the location has no more civilians
     }
-    public override void PerformTask(ECS.Character character) {
-        base.PerformTask(character);
+    public override void PerformTask() {
+        base.PerformTask();
 
     }
     #endregion
