@@ -1464,19 +1464,30 @@ namespace ECS {
                 nextTaskToDo = null;
                 return;
             }
-			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
-            AddActionWeightsFromTags(actionWeights); //Add weights from tags
-            if (actionWeights.GetTotalOfWeights () > 0) {
-				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
-                if (chosenAction.taskType == TASK_TYPE.QUEST) {
-                    Debug.Log(this.name + " decides to " + ((OldQuest.Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
-                } else {
-                    Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
-                }
-                chosenAction.PerformTask(this);
-            } else {
-                throw new Exception(this.name + " could not decide action because weights are zero!");
-            }
+			WeightedDictionary<CharacterTask> actionWeights = new WeightedDictionary<CharacterTask> ();
+			if(_role != null){
+				_role.AddActionWeights (actionWeights);
+			}
+			//TODO: Tag Tasks
+			//TODO: Quest Tasks
+
+			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
+			chosenTask.ResetTask ();
+			chosenTask.PerformTask (this);
+
+//			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
+//            AddActionWeightsFromTags(actionWeights); //Add weights from tags
+//            if (actionWeights.GetTotalOfWeights () > 0) {
+//				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
+//                if (chosenAction.taskType == TASK_TYPE.QUEST) {
+//                    Debug.Log(this.name + " decides to " + ((OldQuest.Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+//                } else {
+//                    Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+//                }
+//                chosenAction.PerformTask(this);
+//            } else {
+//                throw new Exception(this.name + " could not decide action because weights are zero!");
+//            }
 		}
 
 		internal void UnalignedDetermineAction(){

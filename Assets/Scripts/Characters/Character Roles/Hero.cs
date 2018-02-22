@@ -24,8 +24,22 @@ public class Hero : CharacterRole {
 			QUEST_TYPE.EXPEDITION,
 			QUEST_TYPE.SAVE_LANDMARK,
         };
+
+		_roleTasks.Add (new Rest (this._character));
+		_roleTasks.Add (new ExploreTile (this._character));
+		_roleTasks.Add (new UpgradeGear (this._character));
+		_roleTasks.Add (new MoveTo (this._character));
+		_roleTasks.Add (new TakeQuest (this._character));
+//		_roleTasks.Add (new Rest (this._character));
     }
 
+	#region Overrides
+	internal override void AddActionWeights (WeightedDictionary<CharacterTask> actionWeights){
+		base.AddActionWeights (actionWeights);
+		for (int i = 0; i < _roleTasks.Count; i++) {
+			actionWeights.AddElement (_roleTasks [i], _roleTasks [i].weight);
+		}
+	}
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
         WeightedDictionary<CharacterTask> actionWeights = base.GetActionWeights();
         Region currRegionOfCharacter = _character.currLocation.region;
@@ -76,4 +90,5 @@ public class Hero : CharacterRole {
 	internal override int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
 		return 200;
 	}
+	#endregion
 }

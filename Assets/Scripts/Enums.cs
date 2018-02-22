@@ -945,6 +945,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
     HIBERNATE,
     PILLAGE,
 	EXPLORE_TILE,
+	RECRUIT_FOLLOWERS,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

@@ -14,6 +14,7 @@ public class CharacterRole {
     protected bool _canPassHiddenRoads; //can the character use roads that haven't been discovered yet?
     protected bool _canAcceptQuests;
     protected List<QUEST_TYPE> _allowedQuestTypes;
+	protected List<CharacterTask> _roleTasks;
 
     #region getters/setters
     public CHARACTER_ROLE roleType {
@@ -25,14 +26,20 @@ public class CharacterRole {
     public List<QUEST_TYPE> allowedQuestTypes {
         get { return _allowedQuestTypes; }
     }
+	public List<CharacterTask> roleTasks {
+		get { return _roleTasks; }
+	}
     #endregion
 
 	public CharacterRole(ECS.Character character){
 		_character = character;
         _allowedQuestTypes = new List<QUEST_TYPE>();
+		_roleTasks = new List<CharacterTask> ();
 	}
 
-    #region OldQuest.Quest Weights
+    #region Quest Weights
+	internal virtual void AddActionWeights(WeightedDictionary<CharacterTask> actionWeights){}
+
     /*
          Get the weighted dictionary for what action the character will do next.
              */
@@ -186,7 +193,7 @@ public class CharacterRole {
         if (PathGenerator.Instance.GetPath(_character.currLocation, _character.home.location, PATHFINDING_MODE.USE_ROADS) == null) {
             return 0;
         }
-        return 5; //5 if not
+        return 5;
     }
     internal virtual int GetDoNothingWeight() {
         if(_character.currLocation.landmarkOnTile != null) {
