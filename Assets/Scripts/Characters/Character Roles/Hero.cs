@@ -34,12 +34,6 @@ public class Hero : CharacterRole {
     }
 
 	#region Overrides
-	internal override void AddActionWeights (WeightedDictionary<CharacterTask> actionWeights){
-		base.AddActionWeights (actionWeights);
-		for (int i = 0; i < _roleTasks.Count; i++) {
-			actionWeights.AddElement (_roleTasks [i], _roleTasks [i].weight);
-		}
-	}
     internal override WeightedDictionary<CharacterTask> GetActionWeights() {
         WeightedDictionary<CharacterTask> actionWeights = base.GetActionWeights();
         Region currRegionOfCharacter = _character.currLocation.region;

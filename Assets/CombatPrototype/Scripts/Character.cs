@@ -37,6 +37,7 @@ namespace ECS {
 		private CharacterRole _role;
 		private Faction _faction;
 		private Party _party;
+        private Quest _currentQuest;
 		private CharacterTask _currentTask;
         private ILocation _specificLocation;
 		private CharacterAvatar _avatar;
@@ -285,7 +286,7 @@ namespace ECS {
 		}
         #endregion
 
-		public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
+        public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
@@ -1488,6 +1489,7 @@ namespace ECS {
 //            } else {
 //                throw new Exception(this.name + " could not decide action because weights are zero!");
 //            }
+
 		}
 
 		internal void UnalignedDetermineAction(){
@@ -1499,7 +1501,7 @@ namespace ECS {
 				return;
 			}
             WeightedDictionary<CharacterTask> actionWeights = GetUnalignedActionWeights();
-            AddActionWeightsFromTags(actionWeights);
+            AddTaskWeightsFromTags(actionWeights);
             CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
             chosenTask.PerformTask(this);
             //if(_party != null){
@@ -1542,10 +1544,48 @@ namespace ECS {
 
             return actionWeights;
         }
+        
+        private int GetUnalignedRestWeight() {
+            if (currentHP < maxHP) {
+                int percentMissing = (int)(100f - (remainingHP * 100));
+                if (percentMissing >= 50) {
+                    return 100; //+100 if HP is below 50%
+                } else {
+                    return 5 * percentMissing; //5 Weight per % of HP below max HP, 
+                }
+            }
+            return 0;
+        }
+        private int GetUnalignedDoNothingWeight() {
+            return 300;
+        }
+        private int GetUnalignedGoHomeWeight() {
+            return 50;
+        }
+
+        private void AddTaskWeightsFromQuest(WeightedDictionary<CharacterTask> tasks) {
+            if (_currentQuest != null) {
+                CharacterTask currentTaskForQuest = _currentQuest.GetCurrentTaskOfQuest();
+                tasks.AddElement(currentTaskForQuest, currentTaskForQuest.totalWeight);
+            }
+        }
+
+        private WeightedDictionary<CharacterTask> GetTaskWeights() {
+            WeightedDictionary<CharacterTask> taskWeights = new WeightedDictionary<CharacterTask>();
+            if (_role != null) {
+                _role.AddTaskWeightsFromRole(taskWeights);
+            }
+            AddTaskWeightsFromTags(taskWeights);
+            AddTaskWeightsFromQuest(taskWeights);
+            return taskWeights;
+        }
+        #endregion
+
+        #region Tags
         /*
          Add tag specific actions to action weights
              */
-        private void AddActionWeightsFromTags(WeightedDictionary<CharacterTask> actionWeights) {
+        private void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> actionWeights) {
             for (int i = 0; i < _raceSetting.tags.Count; i++) {
                 CHARACTER_TAG currTag = _raceSetting.tags[i];
                 switch (currTag) {
@@ -1574,10 +1614,10 @@ namespace ECS {
                 for (int j = 0; j < allLandmarksInRegion.Count; j++) {
                     BaseLandmark currLandmark = allLandmarksInRegion[j];
                     int weight = 0;
-                    if(currLandmark.civilians > 0) {
+                    if (currLandmark.civilians > 0) {
                         weight += 5 * currLandmark.civilians; //+5 Weight per Civilian in that landmark
                         weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
-                        if(weight > 0) {
+                        if (weight > 0) {
                             actionWeights.AddElement(new HuntPrey(this, currLandmark), weight);
                         }
                     }
@@ -1585,7 +1625,7 @@ namespace ECS {
             }
         }
         private void AddHibernateWeights(WeightedDictionary<CharacterTask> actionWeights) {
-            if(lair != null) {
+            if (lair != null) {
                 actionWeights.AddElement(new Hibernate(this), 5); //Hibernate - 5, 0 if the monster does not have a Lair
             }
         }
@@ -1603,29 +1643,12 @@ namespace ECS {
                     int totalMaterials = currLandmark.materialsInventory.Sum(x => x.Value.count);
                     weight += totalMaterials / 20; //+1 Weight per 20 resource in the landmark (regardless of value).
                     weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
-                    if(weight > 0) {
+                    if (weight > 0) {
                         actionWeights.AddElement(new Pillage(this, currLandmark), weight);
                     }
                 }
 
             }
-        }
-        private int GetUnalignedRestWeight() {
-            if (currentHP < maxHP) {
-                int percentMissing = (int)(100f - (remainingHP * 100));
-                if (percentMissing >= 50) {
-                    return 100; //+100 if HP is below 50%
-                } else {
-                    return 5 * percentMissing; //5 Weight per % of HP below max HP, 
-                }
-            }
-            return 0;
-        }
-        private int GetUnalignedDoNothingWeight() {
-            return 300;
-        }
-        private int GetUnalignedGoHomeWeight() {
-            return 50;
         }
         #endregion
 
@@ -1755,6 +1778,9 @@ namespace ECS {
 		#endregion
 
 		#region Task Management
+        public void SetCurrentQuest(Quest currentQuest) {
+            _currentQuest = currentQuest;
+        }
 		public void AddNewQuest(OldQuest.Quest quest) {
 			if (!_activeQuests.Contains(quest)) {
 				_activeQuests.Add(quest);
@@ -2039,21 +2065,21 @@ namespace ECS {
             to.AdjustCivilians(civilians);
         }
         public STANCE GetCurrentStance() {
-            //TODO: Make this more elegant! Add a stance variable per quest type maybe?
             if (currentTask != null) {
-                if (avatar != null && avatar.isTravelling) {
-                    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-                        return STANCE.COMBAT;
-                    }
-                    return STANCE.NEUTRAL;
-                }
-                if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-                    return STANCE.COMBAT;
-                } else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
-                    return STANCE.NEUTRAL;
-                } else if (currentTask is ExploreTile) {
-                    return STANCE.STEALTHY;
-                }
+                return currentTask.stance;
+                //if (avatar != null && avatar.isTravelling) {
+                //    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                //        return STANCE.COMBAT;
+                //    }
+                //    return STANCE.NEUTRAL;
+                //}
+                //if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
+                //    return STANCE.COMBAT;
+                //} else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
+                //    return STANCE.NEUTRAL;
+                //} else if (currentTask is ExploreTile) {
+                //    return STANCE.STEALTHY;
+                //}
             }
             return STANCE.NEUTRAL;
         }

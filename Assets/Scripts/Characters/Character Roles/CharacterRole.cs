@@ -36,10 +36,13 @@ public class CharacterRole {
         _allowedQuestTypes = new List<QUEST_TYPE>();
 		_roleTasks = new List<CharacterTask> ();
 	}
-
-    #region Quest Weights
-	internal virtual void AddActionWeights(WeightedDictionary<CharacterTask> actionWeights){}
-
+		
+    #region Action Weights
+    public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
+		for (int i = 0; i < _roleTasks.Count; i++) {
+			tasks.AddElement (_roleTasks [i], _roleTasks [i].weight);
+		}
+    }
     /*
          Get the weighted dictionary for what action the character will do next.
              */

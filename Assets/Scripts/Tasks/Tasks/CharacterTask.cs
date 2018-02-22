@@ -55,17 +55,20 @@ public class CharacterTask {
     }
 
     #region virtual
+    public virtual void OnChooseTask(ECS.Character character) {
+        _taskStatus = TASK_STATUS.IN_PROGRESS;
+        _assignedCharacter = character;
+        character.SetCurrentTask(this);
+    }
     /*
      Override this to make the character do something when
      he/she chooses to perform this task.
          */
     public virtual void PerformTask(ECS.Character character) {
-		if(character.isInCombat){
-			character.SetCurrentFunction (() => PerformTask (character));
-			return;
-		}
-        _taskStatus = TASK_STATUS.IN_PROGRESS;
-        _assignedCharacter = character;
+		//if(character.isInCombat){
+		//	character.SetCurrentFunction (() => PerformTask (character));
+		//	return;
+		//}
     }
     public virtual void EndTask(TASK_STATUS taskResult) {
 		if(_assignedCharacter.isInCombat){
@@ -137,6 +140,12 @@ public class CharacterTask {
         if (onTaskLogsChange != null) {
             onTaskLogsChange();
         }
+    }
+    #endregion
+
+    #region Utilities
+    protected void SetStance(STANCE stance) {
+        _stance = stance;
     }
     #endregion
 }

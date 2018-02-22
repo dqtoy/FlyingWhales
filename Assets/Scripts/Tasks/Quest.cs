@@ -34,15 +34,24 @@ public class Quest {
         return 0;
     }
     public virtual void AcceptQuest(ECS.Character accepter) {
-
+        _isAccepted = true;
+        accepter.SetCurrentQuest(this);
+    }
+    public virtual void QuestTaskDone(TASK_ACTION_RESULT result) {
+        if (result == TASK_ACTION_RESULT.SUCCESS) {
+            AdvancePhase();
+        }
     }
     #endregion
 
-    /*
-     Add the weight of the next task in this quest to a characters action weights.
-         */
-    public void AddNextTaskWeightToDictionary(WeightedDictionary<CharacterTask> actionWeights) {
-
+    public CharacterTask GetCurrentTaskOfQuest() {
+        return _tasks[_currentPhase];
+    }
+    private void AdvancePhase() {
+        _currentPhase += 1;
+    }
+    private void ReversePhase() {
+        _currentPhase -= 1;
     }
 }
 
