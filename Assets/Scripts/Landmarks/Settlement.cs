@@ -181,51 +181,6 @@ public class Settlement : BaseLandmark {
         decideCharacterDate.AddDays(1);
         SchedulingManager.Instance.AddEntry(decideCharacterDate.month, decideCharacterDate.day, decideCharacterDate.year, () => DecideCharacterToCreate());
     }
-    /*
-     Does the settlement have the required technology
-     to produce a class?
-         */
-	public bool CanProduceClass(CHARACTER_CLASS charClass, ref MATERIAL material) {
-        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
-        if (neededTech == TECHNOLOGY.NONE || _technologies[neededTech]) {
-			TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup [charClass];
-			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
-			for (int i = 0; i < trainingPreference.Count; i++) {
-				if(ProductionManager.Instance.trainingMaterials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count){
-					material = trainingPreference [i];
-					return true;
-				}
-			}
-        }
-        return false;
-    }
-	public bool CanProduceRole(CHARACTER_ROLE roleType){
-		TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup [roleType];
-		if(trainingRole.production.civilianCost <= civilians && trainingRole.production.foodCost <= GetTotalFoodCount()){
-			return true;
-		}
-		return false;
-	}
-    /*
-     Create a new character, given a role and class.
-     This will also subtract from the civilian population.
-         */
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-        RACE raceOfChar = GetRaceBasedOnProportion();
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
-//        newCharacter.AssignRole(charRole);
-        newCharacter.SetFaction(_owner);
-		newCharacter.SetHome (this);
-        AdjustCivilians(raceOfChar, -1);
-        //this.AdjustPopulation(-1); //Adjust population by -1
-        this.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterToLocation(newCharacter, false);
-        this.AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.DetermineAction();
-        UIManager.Instance.UpdateFactionSummary();
-        return newCharacter;
-    }
-
 	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType, MATERIAL materialUsed, RACE raceOfChar){
         AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + (classType != CHARACTER_CLASS.NONE ? Utilities.NormalizeString (classType.ToString ()) : "Classless") + ".");
 		int trainingStatBonus = MaterialManager.Instance.materialsLookup [materialUsed].trainingStatBonus;

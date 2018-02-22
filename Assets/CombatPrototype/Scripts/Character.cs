@@ -1218,6 +1218,9 @@ namespace ECS {
 			case CHARACTER_ROLE.TAMED_BEAST:
 				_role = new TamedBeast(this);
 				break;
+            case CHARACTER_ROLE.FOLLOWER:
+                _role = new Follower(this);
+                break;
             default:
 			    break;
 			}
@@ -1422,6 +1425,13 @@ namespace ECS {
 		#endregion
 
 		#region Party
+        /*
+         Create a new Party with this character as the leader.
+             */
+        public Party CreateNewParty() {
+            Party newParty = new Party(this);
+            return newParty;
+        }
 		public void SetParty(Party party) {
 			_party = party;
 		}
