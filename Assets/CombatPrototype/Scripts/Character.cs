@@ -315,8 +315,9 @@ namespace ECS {
 			_inventory = new List<Item> ();
 			_skills = GetGeneralSkills();
 			_skills.AddRange (GetBodyPartSkills ());
+            _history = new List<string>();
 
-			EquipPreEquippedItems (baseSetup);
+            EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
 
             _maxHP = _baseMaxHP;
@@ -324,7 +325,6 @@ namespace ECS {
 
             _activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
-			_history = new List<string> ();
 			combatHistory = new Dictionary<int, CombatPrototype> ();
 			_combatHistoryID = 0;
             ConstructMaterialInventory();
@@ -1457,6 +1457,7 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
+            return;
 			if(isInCombat){
 				SetCurrentFunction (() => DetermineAction ());
 				return;
@@ -1548,7 +1549,7 @@ namespace ECS {
         private void AddTaskWeightsFromQuest(WeightedDictionary<CharacterTask> tasks) {
             if (_currentQuest != null) {
                 CharacterTask currentTaskForQuest = _currentQuest.GetCurrentTaskOfQuest();
-                tasks.AddElement(currentTaskForQuest, currentTaskForQuest.weight);
+                tasks.AddElement(currentTaskForQuest, currentTaskForQuest.GetTaskWeight(this));
             }
         }
 

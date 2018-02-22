@@ -43,9 +43,6 @@ public class CharacterTask {
     public STANCE stance {
         get { return _stance; }
     }
-	public int weight{
-		get { return GetTaskWeight (); }
-	}
     #endregion
 
     public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType) {
@@ -102,7 +99,7 @@ public class CharacterTask {
 	}
     public virtual void PerformDailyAction() { }
 	public virtual void ResetTask(){}
-	protected virtual int GetTaskWeight(){ return 0; }
+	public virtual int GetTaskWeight(ECS.Character character){ return 0; }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

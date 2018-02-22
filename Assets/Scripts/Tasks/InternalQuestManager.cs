@@ -27,10 +27,10 @@ public class InternalQuestManager : TaskCreator {
     public InternalQuestManager(Faction owner) {
         _owner = owner;
         _activeQuests = new List<OldQuest.Quest>();
-        if(owner is Tribe) {
-            GameDate dueDate = new GameDate(GameManager.Instance.month, 15, GameManager.Instance.year);
-            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
-        }
+        //if(owner is Tribe) {
+        //    GameDate dueDate = new GameDate(GameManager.Instance.month, 15, GameManager.Instance.year);
+        //    SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+        //}
     }
 
     /*
@@ -80,10 +80,10 @@ public class InternalQuestManager : TaskCreator {
             Settlement currSettlement = _owner.settlements[i];
             Region regionOfSettlement = currSettlement.location.region;
 
-            AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
+            //AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
 //            AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
-            AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
-            AddExpeditionWeights(questWeights, currSettlement, regionOfSettlement);
+            //AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
+            //AddExpeditionWeights(questWeights, currSettlement, regionOfSettlement);
         }
         return questWeights;
     }
@@ -103,74 +103,74 @@ public class InternalQuestManager : TaskCreator {
 //        }
 //    }
 
-    private void AddExpandWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
-        List<Region> checkedExpandRegions = new List<Region>();
-        Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
-        if (currSettlement.CanAffordConstruction(constructionData) && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, currSettlement)) {
-            //checkedExpandRegions.Clear();
-            for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
-                object currConnection = regionOfSettlement.connections[j];
-                if (currConnection is Region) {
-                    Region region = (Region)currConnection;
-                    if (!region.centerOfMass.isOccupied && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, region.centerOfMass)) {
-                        checkedExpandRegions.Add(region);
-                    }
-                }
-            }
-            if (checkedExpandRegions.Count > 0) {
-                Region chosenRegion = checkedExpandRegions[UnityEngine.Random.Range(0, checkedExpandRegions.Count)];
-                Expand newExpandQuest = new Expand(this, chosenRegion.centerOfMass, currSettlement.location, currSettlement.GetMaterialForConstruction(constructionData), constructionData);
-                newExpandQuest.SetSettlement(currSettlement);
-                questWeights.AddElement(newExpandQuest, GetExpandWeight(currSettlement));
-            }
-        }
-    }
-    private void AddBuildStructureWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
-        for (int i = 0; i < regionOfSettlement.tilesInRegion.Count; i++) {
-            HexTile currTile = regionOfSettlement.tilesInRegion[i];
-            //BaseLandmark currLandmark = regionOfSettlement.landmarks[i];
-            if (currTile.materialOnTile != MATERIAL.NONE && !currTile.HasStructure() && currTile.landmarkOnTile == null) { //Loop through each Resource Tile that doesn't have any structures yet.
-                int totalWeightForLandmark = 0;
-                MATERIAL materialOnTile = currTile.materialOnTile;
-                Materials materialData = MaterialManager.Instance.materialsLookup[materialOnTile];
-                Construction constructionData = ProductionManager.Instance.GetConstruction(materialData.structure.name);
-                if (currSettlement.HasTechnology(ProductionManager.Instance.GetConstruction(materialData.structure.name).technology) 
-                    && currSettlement.CanAffordConstruction(constructionData)
-                    && GetQuestsOfType(QUEST_TYPE.BUILD_STRUCTURE).Count <= 0
-                    && !AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, currTile)) {
+    //private void AddExpandWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    //    List<Region> checkedExpandRegions = new List<Region>();
+    //    Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
+    //    if (currSettlement.CanAffordConstruction(constructionData) && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, currSettlement)) {
+    //        //checkedExpandRegions.Clear();
+    //        for (int j = 0; j < regionOfSettlement.connections.Count; j++) {
+    //            object currConnection = regionOfSettlement.connections[j];
+    //            if (currConnection is Region) {
+    //                Region region = (Region)currConnection;
+    //                if (!region.centerOfMass.isOccupied && !AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, region.centerOfMass)) {
+    //                    checkedExpandRegions.Add(region);
+    //                }
+    //            }
+    //        }
+    //        if (checkedExpandRegions.Count > 0) {
+    //            Region chosenRegion = checkedExpandRegions[UnityEngine.Random.Range(0, checkedExpandRegions.Count)];
+    //            Expand newExpandQuest = new Expand(this, chosenRegion.centerOfMass, currSettlement.location, currSettlement.GetMaterialForConstruction(constructionData), constructionData);
+    //            newExpandQuest.SetSettlement(currSettlement);
+    //            questWeights.AddElement(newExpandQuest, GetExpandWeight(currSettlement));
+    //        }
+    //    }
+    //}
+    //private void AddBuildStructureWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    //    for (int i = 0; i < regionOfSettlement.tilesInRegion.Count; i++) {
+    //        HexTile currTile = regionOfSettlement.tilesInRegion[i];
+    //        //BaseLandmark currLandmark = regionOfSettlement.landmarks[i];
+    //        if (currTile.materialOnTile != MATERIAL.NONE && !currTile.HasStructure() && currTile.landmarkOnTile == null) { //Loop through each Resource Tile that doesn't have any structures yet.
+    //            int totalWeightForLandmark = 0;
+    //            MATERIAL materialOnTile = currTile.materialOnTile;
+    //            Materials materialData = MaterialManager.Instance.materialsLookup[materialOnTile];
+    //            Construction constructionData = ProductionManager.Instance.GetConstruction(materialData.structure.name);
+    //            if (currSettlement.HasTechnology(ProductionManager.Instance.GetConstruction(materialData.structure.name).technology) 
+    //                && currSettlement.CanAffordConstruction(constructionData)
+    //                && GetQuestsOfType(QUEST_TYPE.BUILD_STRUCTURE).Count <= 0
+    //                && !AlreadyHasQuestOfType(QUEST_TYPE.BUILD_STRUCTURE, currTile)) {
 
-                    totalWeightForLandmark += 60; //Add 60 Weight to Build Structure if relevant technology is available
-                    totalWeightForLandmark -= 30 * regionOfSettlement.GetActivelyHarvestedMaterialsOfType(materialOnTile); //- Subtract 30 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in the same region
-                    totalWeightForLandmark -= 10 * _owner.GetActivelyHarvestedMaterialsOfType(materialOnTile, regionOfSettlement); //- Subtract 10 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in other regions owned by the same Tribe
-                    totalWeightForLandmark = Mathf.Max(0, totalWeightForLandmark);
-                    BuildStructure buildStructureQuest = new BuildStructure(this, currTile, currSettlement.GetMaterialForConstruction(constructionData), constructionData);
-                    buildStructureQuest.SetSettlement(currSettlement);
-                    questWeights.AddElement(buildStructureQuest, totalWeightForLandmark);
-                }
-            }
-        }
-    }
-    private void AddExpeditionWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
-        //Check if there is a category of Resource Type (Weapon, Armor, Construction, Training, Food) that the Settlement doesnt have any access to.
-        PRODUCTION_TYPE[] allProdTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
-        for (int i = 0; i < allProdTypes.Length; i++) {
-            PRODUCTION_TYPE currProdType = allProdTypes[i];
-            if (!currSettlement.HasAccessTo(currProdType) ) {
-                if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, currProdType.ToString())) {
-                    Expedition newExpedition = new Expedition(this, currProdType.ToString());
-                    newExpedition.SetSettlement(currSettlement);
-                    questWeights.AddElement(newExpedition, 100);//-Add 100 Weight for each category type
-                }
-            }
-        }
-        if(!currSettlement.HasAccessToFood()) {
-            if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, "FOOD")) {
-                Expedition newExpedition = new Expedition(this, "FOOD");
-                newExpedition.SetSettlement(currSettlement);
-                questWeights.AddElement(newExpedition, 100);//-Add 100 Weight for each category type
-            }
-        }
-    }
+    //                totalWeightForLandmark += 60; //Add 60 Weight to Build Structure if relevant technology is available
+    //                totalWeightForLandmark -= 30 * regionOfSettlement.GetActivelyHarvestedMaterialsOfType(materialOnTile); //- Subtract 30 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in the same region
+    //                totalWeightForLandmark -= 10 * _owner.GetActivelyHarvestedMaterialsOfType(materialOnTile, regionOfSettlement); //- Subtract 10 Weight to Build Structure for each Resource Tile of the same type already actively being harvested in other regions owned by the same Tribe
+    //                totalWeightForLandmark = Mathf.Max(0, totalWeightForLandmark);
+    //                BuildStructure buildStructureQuest = new BuildStructure(this, currTile, currSettlement.GetMaterialForConstruction(constructionData), constructionData);
+    //                buildStructureQuest.SetSettlement(currSettlement);
+    //                questWeights.AddElement(buildStructureQuest, totalWeightForLandmark);
+    //            }
+    //        }
+    //    }
+    //}
+    //private void AddExpeditionWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
+    //    //Check if there is a category of Resource Type (Weapon, Armor, Construction, Training, Food) that the Settlement doesnt have any access to.
+    //    PRODUCTION_TYPE[] allProdTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
+    //    for (int i = 0; i < allProdTypes.Length; i++) {
+    //        PRODUCTION_TYPE currProdType = allProdTypes[i];
+    //        if (!currSettlement.HasAccessTo(currProdType) ) {
+    //            if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, currProdType.ToString())) {
+    //                Expedition newExpedition = new Expedition(this, currProdType.ToString());
+    //                newExpedition.SetSettlement(currSettlement);
+    //                questWeights.AddElement(newExpedition, 100);//-Add 100 Weight for each category type
+    //            }
+    //        }
+    //    }
+    //    if(!currSettlement.HasAccessToFood()) {
+    //        if (currSettlement.GetQuestsOnBoardByType(QUEST_TYPE.EXPEDITION).Count <= 0 && !AlreadyHasQuestOfType(QUEST_TYPE.EXPEDITION, "FOOD")) {
+    //            Expedition newExpedition = new Expedition(this, "FOOD");
+    //            newExpedition.SetSettlement(currSettlement);
+    //            questWeights.AddElement(newExpedition, 100);//-Add 100 Weight for each category type
+    //        }
+    //    }
+    //}
 
     private int GetExploreLandmarkWeight(BaseLandmark landmark) {
         int weight = 0;
@@ -223,9 +223,9 @@ public class InternalQuestManager : TaskCreator {
         if (!_activeQuests.Contains(quest)) {
             _activeQuests.Add(quest);
             _owner.AddNewQuest(quest);
-            if(quest.postedAt != null) {
-                quest.postedAt.AddQuestToBoard(quest);
-            }
+            //if(quest.postedAt != null) {
+            //    quest.postedAt.AddQuestToBoard(quest);
+            //}
             //quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
         }
     }

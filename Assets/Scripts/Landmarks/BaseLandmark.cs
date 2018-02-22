@@ -1022,9 +1022,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 		if (!_activeQuests.Contains(quest)) {
 			_activeQuests.Add(quest);
 			_owner.AddNewQuest(quest);
-			if(quest.postedAt != null) {
-				quest.postedAt.AddQuestToBoard(quest);
-			}
+			//if(quest.postedAt != null) {
+			//	quest.postedAt.AddQuestToBoard(quest);
+			//}
 			//quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
 		}
 	}
