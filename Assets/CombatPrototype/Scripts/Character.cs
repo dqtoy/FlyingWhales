@@ -301,6 +301,7 @@ namespace ECS {
 			_isDefeated = false;
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
+			_history = new List<string> ();
 
 			AllocateStatPoints (statAllocationBonus);
 
@@ -324,7 +325,6 @@ namespace ECS {
 
             _activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
-			_history = new List<string> ();
 			combatHistory = new Dictionary<int, CombatPrototype> ();
 			_combatHistoryID = 0;
             ConstructMaterialInventory();
@@ -1447,6 +1447,7 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
+			return;
 			if(isInCombat){
 				SetCurrentFunction (() => DetermineAction ());
 				return;
@@ -1460,6 +1461,9 @@ namespace ECS {
                     return;
                 }
             }
+			if(_currentTask != null && !_currentTask.isDone){
+				_currentTask.SetIsHalted (true);
+			}
             if(nextTaskToDo != null) {
                 //Force accept quest, if any
 				nextTaskToDo.OnChooseTask(this);
@@ -1747,6 +1751,21 @@ namespace ECS {
             DestroyAvatar();
             DetermineAction();
         }
+		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
+			if (currLocation.id == targetLocation.tileLocation.id) {
+				//action doer is already at the target location
+				if(doneAction != null){
+					doneAction ();
+				}
+			} else {
+				if (_avatar == null) {
+					//Instantiate a new character avatar
+					CreateNewAvatar();
+				}
+				_avatar.SetTarget(targetLocation, true);
+				_avatar.StartPath(pathfindingMode, () => doneAction());
+			}
+		}
 		#endregion
 
 		#region Task Management
@@ -1773,6 +1792,44 @@ namespace ECS {
 				}
 			}
 			return quests;
+		}
+		public List<CharacterTask> GetAllPossibleTasks(ILocation location){
+			List<CharacterTask> possibleTasks = new List<CharacterTask> ();
+			if(_role != null){
+				for (int i = 0; i < _role.roleTasks.Count; i++) {
+					CharacterTask currentTask = _role.roleTasks [i];
+					if(CanTaskBeDone(currentTask, location)){
+						possibleTasks.Add (currentTask);
+					}
+				}
+			}
+
+			//TODO: Tag and Quest Tasks
+
+			return possibleTasks;
+		}
+		private bool CanTaskBeDone(CharacterTask task, ILocation location){
+			if(task.taskType == TASK_TYPE.MOVE_TO){
+				return true;
+			}else if(task.taskType == TASK_TYPE.UPGRADE_GEAR || task.taskType == TASK_TYPE.REST){
+				if(location.tileLocation.landmarkOnTile != null && this.faction != null && location.tileLocation.landmarkOnTile is Settlement){
+					Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
+					if(settlement.owner.id == this.faction.id){
+						return true;
+					}
+				}
+			}else if(task.taskType == TASK_TYPE.EXPLORE_TILE){
+				if(location.tileLocation.landmarkOnTile != null){
+					if(_exploredLandmarks.ContainsKey(location.tileLocation.landmarkOnTile.id)){
+						if(_exploredLandmarks[location.tileLocation.landmarkOnTile.id].itemsInLandmark.Count > 0){
+							return true;
+						}
+					}else{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
         #endregion
 

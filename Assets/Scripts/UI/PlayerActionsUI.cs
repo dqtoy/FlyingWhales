@@ -1,81 +1,60 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerActionsUI : MonoBehaviour {
-	public UIButton expandBtn;
-	public UIButton exploreBtn;
+	public GameObject characterTaskButtonGO;
+	public UIGrid buttonsGrid;
 
-	public UIGrid grid;
-	public UILabel openCloseLbl;
-	public TweenPosition tweenPos;
+	private ILocation location;
+	private List<CharacterTaskButton> taskButtons = new List<CharacterTaskButton>();
 
-	public bool isShowing;
-
-	void OnEnable(){
-		DisableAllActions ();
-	}
-	private void DisableAllActions (){
-		expandBtn.isEnabled = false;
-		exploreBtn.isEnabled = false;
-	}
-	public void ShowPlayerActionsUI(){
-		this.gameObject.SetActive (true);
-		UpdatePlayerActionsUI ();
+	public void ShowPlayerActionsUI(ILocation location){
+		this.location = location;
+		OnShow ();
 	}
 	public void HidePlayerActionsUI(){
-		this.gameObject.SetActive (false);	
-	}
-	public void OpenClosePlayerActionsUI(){
-		if(isShowing){
-			DisableAllActions ();
-			tweenPos.PlayReverse ();
-		}else{
-			tweenPos.PlayForward ();
-		}
-	}
-	public void OnFinishAnimation(){
-		if(isShowing){
-			isShowing = false;
-			openCloseLbl.text = "[b]<[/b]";
-		}else{
-			isShowing = true;
-			openCloseLbl.text = "[b]>[/b]";
-			UpdatePlayerActionsUI ();
-		}
-	}
-	public void OnClickExpandBtn(){
-		UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.owner.internalQuestManager.CreateExpandQuest(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark);
-	}
-	public void OnClickExploreRegionBtn(){
-		//UIManager.Instance.settlementInfoUI.currentlyShowingSettlement.owner.internalQuestManager.CreateExploreRegionQuest();
+		this.gameObject.SetActive (false);
 	}
 
-	public void UpdatePlayerActionsUI(){
-		if(isShowing){
-			ShowExpand ();
-			ShowExploreRegion ();
+	private void OnShow(){
+		ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter;
+		if(character == null){
+			return;
 		}
-	}
-
-	private void ShowExpand(){
-		if(UIManager.Instance.settlementInfoUI.isShowing && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark is Settlement){
-			Settlement settlement = (Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark;
-			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
-				if(settlement.civilians > 20 && settlement.HasAdjacentUnoccupiedTile()){
-					expandBtn.isEnabled = true;
-					return;
+		List<CharacterTask> tasksAvailable = character.GetAllPossibleTasks (this.location);
+		if(tasksAvailable.Count > taskButtons.Count){
+			for (int i = 0; i < tasksAvailable.Count; i++) {
+				if(i < taskButtons.Count){
+					taskButtons [i].SetTask (tasksAvailable [i]);
+					taskButtons [i].SetLocation (this.location);
+					taskButtons [i].gameObject.SetActive (true);
+				}else{
+					CreateButton (tasksAvailable [i]);
+				}
+			}
+		}else{
+			for (int i = 0; i < taskButtons.Count; i++) {
+				if(i < tasksAvailable.Count){
+					taskButtons [i].SetTask (tasksAvailable [i]);
+					taskButtons [i].SetLocation (this.location);
+					taskButtons [i].gameObject.SetActive (true);
+				}else{
+					taskButtons [i].gameObject.SetActive (false);
 				}
 			}
 		}
-		expandBtn.isEnabled = false;
+		this.gameObject.SetActive (true);
+		buttonsGrid.Reposition ();
 	}
+	private void CreateButton(CharacterTask task){
+		GameObject characterTaskButton = (GameObject)GameObject.Instantiate (characterTaskButtonGO, buttonsGrid.transform);
+		characterTaskButton.transform.localScale = Vector3.one;
+		characterTaskButton.transform.localPosition = Vector3.zero;
 
-	private void ShowExploreRegion(){
-		if(UIManager.Instance.settlementInfoUI.isShowing && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isHidden && !UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isExplored
-			&& UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.owner == null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location.region.centerOfMass.isOccupied){
-			exploreBtn.isEnabled = true;
-			return;
-		}
-		exploreBtn.isEnabled = false;
+		CharacterTaskButton taskButton = characterTaskButton.GetComponent<CharacterTaskButton> ();
+		taskButton.SetTask (task);
+		taskButton.SetLocation (this.location);
+		taskButtons.Add (taskButton);
 	}
 }

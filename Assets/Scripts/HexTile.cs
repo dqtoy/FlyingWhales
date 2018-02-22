@@ -1319,7 +1319,40 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #endregion
 
     #region Monobehaviour Functions
-    private void OnMouseDown() {
+//	private void OnMouseDown(){
+//		
+//	}
+	private void OnMouseOver() {
+		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+			return;
+		}
+		_hoverHighlightGO.SetActive(true);
+		if (_landmarkOnTile != null) {
+			if(_landmarkOnTile.owner != null) { //landmark is occupied
+				if (isHabitable) {
+					this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+				}
+			}
+		} 
+		if(Input.GetMouseButtonDown(0)){
+			LeftClick ();
+		}else if(Input.GetMouseButtonDown(1)){
+			RightClick ();
+		}
+	}
+	private void OnMouseExit() {
+		_hoverHighlightGO.SetActive(false);
+		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+			return;
+		}
+		if (_landmarkOnTile != null && isHabitable) {
+			if (_landmarkOnTile.owner != null) {
+				this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
+			}
+		}
+		HideSmallInfoWindow();
+	}
+    private void LeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
@@ -1328,118 +1361,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		}else{
 			UIManager.Instance.ShowHexTileInfo (this);
 		}
-        //    if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
-        //        CameraMove.Instance.CenterCameraOn(this.gameObject);
-        //        if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
-        //            UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
-        //if(UIManager.Instance.notificationCityHistoryGO.activeSelf){
-        //	UIManager.Instance.ShowCityHistory (this.city);
-        //}
-        //        }
-        //    }
-
-//        if (this.isHabitable && this.isOccupied) {
-//            CameraMove.Instance.CenterCameraOn(this.gameObject);
-//            UIManager.Instance.ShowSettlementInfo((Settlement)this.landmarkOnTile);
-//        }
-
-
-        //if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
-        //    if(UIManager.Instance.spawnType == AGENT_TYPE.NECROMANCER) {
-        //        //Spawn New Necromancer
-        //        Necromancer newNecromancer = new Necromancer();
-        //        AIBehaviour attackBehaviour = new AttackHostiles(newNecromancer);
-        //        AIBehaviour fleeBehaviour = new RunAwayFromHostile(newNecromancer);
-        //        AIBehaviour randomBehaviour = new SearchForCorpseMound(newNecromancer);
-        //        newNecromancer.SetAttackBehaviour(attackBehaviour);
-        //        newNecromancer.SetFleeBehaviour(fleeBehaviour);
-        //        newNecromancer.SetRandomBehaviour(randomBehaviour);
-
-        //        GameObject necromancerObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", Vector3.zero, Quaternion.identity, this.transform);
-        //        AgentObject agentObj = necromancerObj.GetComponent<AgentObject>();
-        //        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //        pos.z = 0f;
-        //        agentObj.aiPath.transform.position = pos;
-        //        newNecromancer.SetAgentObj(agentObj);
-        //        agentObj.Initialize(newNecromancer, new int[] {-1});
-        //        UIManager.Instance.spawnType = AGENT_TYPE.NONE;
-        //        UIManager.Instance._spawnNecromancerBtn.SetAsUnClicked();
-        //    }
-        //}
+		UIManager.Instance.HidePlayerActions ();
     }
-    private void OnMouseOver() {
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
-            return;
-        }
-        _hoverHighlightGO.SetActive(true);
-        if (_landmarkOnTile != null) {
-            if(_landmarkOnTile.owner != null) { //landmark is occupied
-                if (isHabitable) {
-                    this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
-                }
-            }
-            //ShowLandmarkInfo();
-        } 
-        //else {
-        //    ShowHexTileInfo();
-        //}
+	private void RightClick(){
+		if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.currentlyShowingCharacter == null || this.landmarkOnTile == null) {
+			return;
+		}
+		UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
 
-   //     if (this.isOccupied) {
-			//if(!this.isHabitable){
-			//	if(this.city == null){
-			//		return;
-			//	}
-			//}
-   //         //this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-   //         //this.ShowKingdomInfo();
-            
-   //     } else {
-   //         if (this.isHabitable) {
-   //             ShowRegionInfo();
-   //         } else {
-   //             if(landmarkOnTile != null) {
-   //                 ShowLandmarkInfo();
-   //             }
-   //         }
-   //     }
-    }
-    private void OnMouseExit() {
-        _hoverHighlightGO.SetActive(false);
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
-            return;
-        }
-        if (_landmarkOnTile != null && isHabitable) {
-            if (_landmarkOnTile.owner != null) {
-                this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
-            }
-        }
-        HideSmallInfoWindow();
-        //     if (this.isOccupied) {
-        //if(!this.isHabitable){
-        //	if(this.city == null){
-        //		return;
-        //	}
-        //}
-        //         this.HideSmallInfoWindow();
-        //         this.city.HighlightAllOwnedTiles(69f / 255f);
-        //         //if(this.ownedByCity != null) {
-        //         //    this.ownedByCity.kingdom.UnHighlightAllOwnedTilesInKingdom();
-        //         //}
-        //         //if (UIManager.Instance.currentlyShowingKingdom != null) {
-        //         //    UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
-        //         //}
-        //     } else {
-        //         if (this.isHabitable) {
-        //             if (this.city == null) {
-        //                 HideRegionInfo();
-        //             }
-        //         } else {
-        //             if (landmarkOnTile != null) {
-        //                 HideSmallInfoWindow();
-        //             }
-        //         }
-        //     }
-    }
+//		if(this.landmarkOnTile == null){
+//			UIManager.Instance.ShowPlayerActions (this);
+//		}else{
+//			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
+//		}
+	}
+
     #endregion
 
     internal bool HasCombatPathTo(HexTile target){

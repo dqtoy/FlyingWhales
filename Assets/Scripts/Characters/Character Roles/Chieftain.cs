@@ -17,7 +17,6 @@ public class Chieftain : CharacterRole {
             ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
         };
         _canPassHiddenRoads = true;
-        _canAcceptQuests = true;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.ATTACK,
             QUEST_TYPE.DEFEND,
@@ -25,6 +24,12 @@ public class Chieftain : CharacterRole {
 			QUEST_TYPE.EXPEDITION,
 			QUEST_TYPE.SAVE_LANDMARK,
         };
+
+		_roleTasks.Add (new Rest (this._character));
+		_roleTasks.Add (new ExploreTile (this._character));
+		_roleTasks.Add (new UpgradeGear (this._character));
+		_roleTasks.Add (new MoveTo (this._character));
+		_roleTasks.Add (new TakeQuest (this._character));
     }
 
 	#region Overrides

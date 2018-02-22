@@ -15,7 +15,6 @@ public class Warlord : CharacterRole {
             ROAD_TYPE.MAJOR
         };
         _canPassHiddenRoads = false;
-        _canAcceptQuests = true;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.ATTACK,
             QUEST_TYPE.DEFEND,

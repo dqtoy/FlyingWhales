@@ -20,12 +20,15 @@ public class CharacterTask {
 	protected string _taskName;
     protected ECS.Character _assignedCharacter;
     protected bool _isDone;
+	protected bool _isHalted;
     protected TASK_STATUS _taskStatus;
     protected List<string> _taskLogs; //TODO: Change this to Logs when convenient
 
     protected STANCE _stance;
 
     protected bool _canDoDailyAction = false;
+	protected bool _forPlayerOnly;
+	protected ILocation _targetLocation;
 
     #region getters/setters
     public TASK_TYPE taskType {
@@ -34,6 +37,9 @@ public class CharacterTask {
     public bool isDone {
         get { return _isDone; }
     }
+	public bool isHalted {
+		get { return _isHalted; }
+	}
     public TASK_STATUS taskStatus {
         get { return _taskStatus; }
     }
@@ -46,12 +52,21 @@ public class CharacterTask {
 	public int weight{
 		get { return GetTaskWeight (); }
 	}
+	public bool forPlayerOnly{
+		get { return _forPlayerOnly; }
+	}
+	public ILocation targetLocation{
+		get { return _targetLocation; }
+	}
     #endregion
 
     public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType) {
         _createdBy = createdBy;
         _taskType = taskType;
         _taskLogs = new List<string>();
+		_forPlayerOnly = false;
+		SetIsHalted (false);
+		_isDone = false;
     }
 
     #region virtual
@@ -69,10 +84,16 @@ public class CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => PerformTask ());
 			return;
 		}
+		if(_isHalted){
+			return;
+		}
     }
     public virtual void EndTask(TASK_STATUS taskResult) {
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => EndTask (taskResult));
+			return;
+		}
+		if(_isHalted){
 			return;
 		}
         _taskStatus = taskResult;
@@ -101,7 +122,14 @@ public class CharacterTask {
 		_assignedCharacter.DetermineAction();
 	}
     public virtual void PerformDailyAction() { }
-	public virtual void ResetTask(){}
+	public virtual void ResetTask(){
+		_assignedCharacter = null;
+		_targetLocation = null;
+		_isDone = false;
+		SetIsHalted (false);
+		_taskStatus = TASK_STATUS.IN_PROGRESS;
+		_taskLogs.Clear ();
+	}
 	protected virtual int GetTaskWeight(){ return 0; }
     #endregion
 
@@ -135,5 +163,11 @@ public class CharacterTask {
     protected void SetStance(STANCE stance) {
         _stance = stance;
     }
+	public void SetLocation(ILocation targetLocation){
+		_targetLocation = targetLocation;
+	}
+	public void SetIsHalted (bool state){
+		_isHalted = state;
+	}
     #endregion
 }

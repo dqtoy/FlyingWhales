@@ -7,14 +7,23 @@ public class DoNothing : CharacterTask {
 
     private Action endAction;
     private GameDate endDate;
+	private int daysLeft;
 
     public DoNothing(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.DO_NOTHING) {
+		daysLeft = 0;
     }
 
+	public void SetDays (int days){
+		this.daysLeft = days;
+	}
     private void EndQuestAfterDays() {
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddDays(UnityEngine.Random.Range(4, 9));
+		if(daysLeft == 0){
+			dueDate.AddDays(UnityEngine.Random.Range(4, 9));
+		}else{
+			dueDate.AddDays(daysLeft);
+		}
         endDate = dueDate;
         endAction = () => EndTask(TASK_STATUS.SUCCESS);
         SchedulingManager.Instance.AddEntry(dueDate, () => endAction());

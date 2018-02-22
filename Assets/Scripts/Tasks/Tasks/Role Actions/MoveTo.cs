@@ -2,8 +2,7 @@
 using System.Collections;
 
 public class MoveTo : CharacterTask {
-    private ILocation _targetLocation;
-    private PATHFINDING_MODE _pathfindingMode;
+//    private PATHFINDING_MODE _pathfindingMode;
 
     #region getters/setters
     public HexTile targetTile {
@@ -19,12 +18,8 @@ public class MoveTo : CharacterTask {
 
     public MoveTo(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.MOVE_TO) {
+		_forPlayerOnly = true;
     }
-
-	public void SetParameters(ILocation targetLocation, PATHFINDING_MODE pathfindingMode){
-		_targetLocation = targetLocation;
-		_pathfindingMode = pathfindingMode;
-	}
 
     #region overrides
 	public override void OnChooseTask (ECS.Character character){
@@ -37,22 +32,16 @@ public class MoveTo : CharacterTask {
 			_assignedCharacter.party.SetCurrentTask(this);
         }
 		Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
-        GoToTile();
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL, () => SuccessTask ());
     }
     #endregion
 
     private void SuccessTask() {
         EndTask(TASK_STATUS.SUCCESS);
         _assignedCharacter.DestroyAvatar();
-    }
-
-    private void GoToTile() {
-        GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-        goToLocation.InititalizeAction(_targetLocation);
-        goToLocation.SetPathfindingMode(_pathfindingMode);
-        goToLocation.onTaskActionDone += SuccessTask;
-        goToLocation.onTaskDoAction += goToLocation.Generic;
-
-        goToLocation.DoAction(_assignedCharacter);
+		DoNothing doNothing = new DoNothing (_assignedCharacter);
+		doNothing.SetDays (3);
+		doNothing.OnChooseTask (_assignedCharacter);
+		doNothing.PerformTask ();
     }
 }

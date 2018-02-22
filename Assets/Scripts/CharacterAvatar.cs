@@ -25,6 +25,8 @@ public class CharacterAvatar : PooledObject{
     private bool _isInititalized = false;
     private bool _isMovementPaused = false;
     private bool _isTravelling = false;
+	private bool _isMovingToHex = false;
+	private Action queuedAction = null;
 
     #region getters/setters
     public List<ECS.Character> characters {
@@ -36,6 +38,9 @@ public class CharacterAvatar : PooledObject{
     public bool isTravelling {
         get { return _isTravelling; }
     }
+	public bool isMovingToHex {
+		get { return _isMovingToHex; }
+	}
     #endregion
 
     internal virtual void Init(ECS.Character character) {
@@ -152,6 +157,7 @@ public class CharacterAvatar : PooledObject{
         }
     }
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
+		_isMovingToHex = true;
         this.smoothMovement.Move(targetTile.transform.position, this.direction);
     }
     /*
@@ -159,6 +165,7 @@ public class CharacterAvatar : PooledObject{
      saved path.
          */
     internal virtual void OnMoveFinished() {
+		_isMovingToHex = false;
         if (this.path.Count > 0) {
 			//RemoveCharactersFromLocation(this.currLocation);
 			AddCharactersToLocation(this.path[0]);
@@ -168,7 +175,6 @@ public class CharacterAvatar : PooledObject{
         }
         //RevealRoads();
         //RevealLandmarks();
-
         HasArrivedAtTargetLocation();
     }
     internal virtual void HasArrivedAtTargetLocation() {
@@ -200,7 +206,16 @@ public class CharacterAvatar : PooledObject{
                     onPathFinished();
                 }
             }
+			if(queuedAction != null){
+				queuedAction ();
+				queuedAction = null;
+			}
 		}else{
+			if(queuedAction != null){
+				queuedAction ();
+				queuedAction = null;
+				return;
+			}
             if (!_isMovementPaused) {
                 NewMove();
             }
@@ -265,6 +280,9 @@ public class CharacterAvatar : PooledObject{
 		UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateSettlementInfo();
     }
+	public void SetQueuedAction(Action action){
+		queuedAction = action;
+	}
     #endregion
 
     #region overrides

@@ -6,7 +6,6 @@ public class TamedBeast : CharacterRole {
 	
 	public TamedBeast(ECS.Character character): base (character) {
 		_roleType = CHARACTER_ROLE.TAMED_BEAST;
-		_canAcceptQuests = false;
 		_allowedQuestTypes = new List<QUEST_TYPE>() {
 			QUEST_TYPE.JOIN_PARTY
 		};

@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject eventLogsGO;
     public GameObject kingdomCitiesGO;
     public GameObject interveneMenuGO;
+	public GameObject playerActionsMenuGO;
     [SerializeField] private GameObject kingdomSummaryGO;
 
 	[Space(10)]
@@ -1078,7 +1079,6 @@ public class UIManager : MonoBehaviour {
         smallInfoGO.transform.parent = this.transform;
     }
     #endregion
-
     #region Family Tree
     public void ToggleFamilyTree() {
         if (familyTreeGO.activeSelf) {
@@ -3240,10 +3240,30 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Player Actions")]
     [SerializeField] internal PlayerActionsUI playerActionsUI;
-	public void ShowPlayerActionsInfo() {
-		playerActionsUI.ShowPlayerActionsUI();
+	public void ShowPlayerActions(ILocation location){
+		var v3 = Input.mousePosition;
+		v3.z = 10.0f;
+		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+		v3.y -= 0.15f;
+
+		//Bounds uiCameraBounds = uiCamera.GetComponent<Camera>().bound
+
+		if (v3.y <= 0f) {
+			v3 = Input.mousePosition;
+			v3.z = 10.0f;
+			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+			v3.y += 0.1f;
+		}
+		if (v3.x >= -13.8f) {
+			v3 = Input.mousePosition;
+			v3.z = 10.0f;
+			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+			v3.x -= 0.2f;
+		}
+		playerActionsUI.transform.position = v3;
+		playerActionsUI.ShowPlayerActionsUI(location);
 	}
-	public void HidePlayerActionsInfo() {
+	public void HidePlayerActions() {
 		playerActionsUI.HidePlayerActionsUI();
 	}
     #endregion

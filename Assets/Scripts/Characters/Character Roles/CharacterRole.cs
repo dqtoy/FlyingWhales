@@ -12,7 +12,6 @@ public class CharacterRole {
     protected CHARACTER_ROLE _roleType;
     protected List<ROAD_TYPE> _allowedRoadTypes; //states what roads this role can use.
     protected bool _canPassHiddenRoads; //can the character use roads that haven't been discovered yet?
-    protected bool _canAcceptQuests;
     protected List<QUEST_TYPE> _allowedQuestTypes;
 	protected List<CharacterTask> _roleTasks;
 
@@ -40,6 +39,9 @@ public class CharacterRole {
     #region Action Weights
     public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
 		for (int i = 0; i < _roleTasks.Count; i++) {
+			if(_roleTasks[i].forPlayerOnly){
+				continue;
+			}
 			tasks.AddElement (_roleTasks [i], _roleTasks [i].weight);
 		}
     }

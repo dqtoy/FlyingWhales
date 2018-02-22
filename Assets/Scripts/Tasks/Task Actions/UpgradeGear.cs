@@ -9,7 +9,6 @@ public class UpgradeGear : CharacterTask {
     public UpgradeGear(TaskCreator createdBy) : base(createdBy, TASK_TYPE.UPGRADE_GEAR) {
 
     }
-
     #region overrides
     public override void PerformTask() {
         base.PerformTask();
@@ -17,14 +16,11 @@ public class UpgradeGear : CharacterTask {
 		if (_assignedCharacter.party != null) {
 			_assignedCharacter.party.SetCurrentTask(this);
         }
-		_settlement = _assignedCharacter.GetNearestNonHostileSettlement();
-        GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-        goToLocation.InititalizeAction(_settlement);
-        goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
-        goToLocation.onTaskActionDone += PurchaseEquipment;
-        goToLocation.onTaskDoAction += goToLocation.Generic;
-
-        goToLocation.DoAction(_assignedCharacter);
+		if(_targetLocation == null){
+			_targetLocation = _assignedCharacter.GetNearestNonHostileSettlement();
+		}
+		_settlement = (Settlement)_targetLocation;
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => SchedulePurchaseEquipment ());
     }
     //public override void TaskSuccess() {
     //    if (_assignedCharacter.faction == null) {
@@ -35,6 +31,11 @@ public class UpgradeGear : CharacterTask {
     //}
     #endregion
 
+	private void SchedulePurchaseEquipment(){
+		GameDate newSched = GameManager.Instance.Today ();
+		newSched.AddDays (1);
+		SchedulingManager.Instance.AddEntry (newSched, () => PurchaseEquipment ());
+	}
     private void PurchaseEquipment() {
         List<ECS.Character> charactersToPurchase = new List<ECS.Character>();
         if(_assignedCharacter.party == null) {
