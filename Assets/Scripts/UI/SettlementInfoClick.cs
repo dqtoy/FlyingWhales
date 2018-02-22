@@ -73,10 +73,10 @@ public class SettlementInfoClick : MonoBehaviour {
 				}
             } else if (url.Contains("_quest")) {
 				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark is Settlement){
-					OldQuest.Quest quest = ((Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark).GetQuestByID(idToUse);
-					if (quest != null) {
-						UIManager.Instance.ShowQuestInfo(quest);
-					}	
+					//OldQuest.Quest quest = ((Settlement)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark).GetQuestByID(idToUse);
+					//if (quest != null) {
+					//	UIManager.Instance.ShowQuestInfo(quest);
+					//}	
 				}
 			} else if (url.Contains("_party")) {
 				Party party = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.GetPartyAtLocationByLeaderID(idToUse);

@@ -39,10 +39,11 @@ public class CharacterRole {
     #region Action Weights
     public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
 		for (int i = 0; i < _roleTasks.Count; i++) {
-			if(_roleTasks[i].forPlayerOnly){
+			CharacterTask currTask = _roleTasks[i];
+			if(currTask.forPlayerOnly){
 				continue;
 			}
-			tasks.AddElement (_roleTasks [i], _roleTasks [i].weight);
+			tasks.AddElement (currTask, currTask.GetTaskWeight(_character));
 		}
     }
     /*

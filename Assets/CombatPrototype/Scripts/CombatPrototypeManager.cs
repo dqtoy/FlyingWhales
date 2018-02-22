@@ -146,23 +146,33 @@ namespace ECS {
 
 				if(pickedWeight == "prison"){
 					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
-						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
-							combat.faintedCharacters [i].Faint ();
-							winningCharacters[0].AddPrisoner(combat.faintedCharacters[i]);
+                        ECS.Character currFaintedChar = combat.faintedCharacters[i];
+                        if (currFaintedChar.currentSide != combat.winningSide){
+                            currFaintedChar.Faint ();
+                            //if the currFaintedChar has a party, and it is not yet disbanded
+                            if (currFaintedChar.party != null && !currFaintedChar.party.isDisbanded) {
+                                //Check if he/she is the party leader
+                                if (currFaintedChar.party.IsCharacterLeaderOfParty(currFaintedChar)) {
+                                    //if he/she is, disband the party
+                                    currFaintedChar.party.DisbandParty();
+                                }
+                            }
+							winningCharacters[0].AddPrisoner(currFaintedChar);
 						}else{
-							combat.faintedCharacters [i].SetHP(1);
+                            currFaintedChar.SetHP(1);
 						}
 					}
 				}else{
 					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
-						if(combat.faintedCharacters[i].currentSide != combat.winningSide){
-							if(combat.faintedCharacters[i].specificLocation != null && combat.faintedCharacters[i].specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-								BaseLandmark landmark = (BaseLandmark)combat.faintedCharacters[i].specificLocation;
-								landmark.AddHistory (combat.faintedCharacters [i].name + " is left to die.");
+                        ECS.Character currFaintedChar = combat.faintedCharacters[i];
+                        if (currFaintedChar.currentSide != combat.winningSide){
+							if(currFaintedChar.specificLocation != null && currFaintedChar.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+								BaseLandmark landmark = currFaintedChar.specificLocation as BaseLandmark;
+								landmark.AddHistory (currFaintedChar.name + " is left to die.");
 							}
-							combat.faintedCharacters [i].Death ();
+                            currFaintedChar.Death();
 						}else{
-							combat.faintedCharacters [i].SetHP(1);
+                            currFaintedChar.SetHP(1);
 						}
 					}
 				}
@@ -176,16 +186,29 @@ namespace ECS {
 			}
 
 			for (int i = 0; i < combat.fledCharacters.Count; i++) {
-				if(combat.fledCharacters[i].currentSide == combat.losingSide){
-					if(combat.fledCharacters[i].party != null){
-						combat.fledCharacters [i].party.SetIsDefeated (false);
-						combat.fledCharacters [i].party.GoBackToQuestGiver(TASK_STATUS.CANCEL);
-						break;
-					}else{
-						combat.fledCharacters [i].SetIsDefeated (false);
-						combat.fledCharacters [i].GoToNearestNonHostileSettlement (() => combat.fledCharacters [i].DetermineAction());
-					}
-				}
+                ECS.Character currFleeCharacter = combat.fledCharacters[i];
+                //if the current character is a follower, check if his/her party leader also fled
+                if (currFleeCharacter.isFollower) {
+                    //if they did, keep the current character in the party
+                    if (!combat.fledCharacters.Contains(currFleeCharacter.party.partyLeader)) {
+                        //if they did not, remove the current character from the party and add him/her as a civilian in the nearest settlement of his/her faction
+                        currFleeCharacter.party.RemovePartyMember(currFleeCharacter);
+                        Settlement nearestSettlement = currFleeCharacter.GetNearestSettlementFromFaction();
+                        nearestSettlement.AdjustCivilians(currFleeCharacter.raceSetting.race, 1);
+                    }
+                }
+
+				//if(currFleeCharacter.currentSide == combat.losingSide){
+    //                //the current character is part of the losing side
+				//	if(currFleeCharacter.party != null){
+				//		combat.fledCharacters [i].party.SetIsDefeated (false);
+				//		combat.fledCharacters [i].party.GoBackToQuestGiver(TASK_STATUS.CANCEL);
+				//		break;
+				//	}else{
+				//		combat.fledCharacters [i].SetIsDefeated (false);
+				//		combat.fledCharacters [i].GoToNearestNonHostileSettlement (() => combat.fledCharacters [i].DetermineAction());
+				//	}
+				//}
 			}
 		}
 

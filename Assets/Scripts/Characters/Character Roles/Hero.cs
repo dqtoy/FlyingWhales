@@ -29,6 +29,7 @@ public class Hero : CharacterRole {
 		_roleTasks.Add (new UpgradeGear (this._character));
 		_roleTasks.Add (new MoveTo (this._character));
 		_roleTasks.Add (new TakeQuest (this._character));
+        _roleTasks.Add(new RecruitFollowers(this._character));
 //		_roleTasks.Add (new Rest (this._character));
     }
 

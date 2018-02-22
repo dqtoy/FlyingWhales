@@ -20,7 +20,16 @@ public class Quest {
     protected ECS.Character _assignedCharacter;
     protected int _currentPhase; //The index of the task the quest is currently on
     protected List<CharacterTask> _tasks; //The list of tasks that the character has to do to progress through the quest
-    
+
+    #region getters/setters
+    public int id {
+        get { return _id; }
+    }
+    public QUEST_TYPE questType {
+        get { return _questType; }
+    }
+    #endregion
+
     public Quest(TaskCreator createdBy, QUEST_TYPE questType) {
         _createdBy = createdBy;
         _questType = questType;
@@ -194,9 +203,9 @@ namespace OldQuest{
         protected virtual void QuestSuccess() {
             _isDone = true;
             _createdBy.RemoveQuest(this);
-            if (_postedAt != null) {
-                _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
-            }
+            //if (_postedAt != null) {
+            //    _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
+            //}
             if (_currentAction != null) {
                 _currentAction.ActionDone(TASK_ACTION_RESULT.SUCCESS);
             }
@@ -207,9 +216,9 @@ namespace OldQuest{
         protected virtual void QuestFail() {
             _isAccepted = false;
             _createdBy.RemoveQuest(this);
-            if (_postedAt != null) {
-                _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
-            }
+            //if (_postedAt != null) {
+            //    _postedAt.RemoveQuestFromBoard(this);//Remove quest from quest board
+            //}
             if (_currentAction != null) {
                 _currentAction.ActionDone(TASK_ACTION_RESULT.FAIL);
             }

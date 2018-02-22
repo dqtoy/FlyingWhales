@@ -357,6 +357,59 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
+
+    public ECS.Character CreateNewFollower() {
+        MATERIAL material = MATERIAL.NONE;
+        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
+        CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.NONE, Utilities.NormalizeString(chosenClass.ToString()));
+        newFollower.SetFollowerState(true);
+        return newFollower;
+    }
+    /*
+     Create a new character, given a role and class.
+     This will also subtract from the civilian population.
+         */
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
+        RACE raceOfChar = GetRaceBasedOnProportion();
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+        //        newCharacter.AssignRole(charRole);
+        newCharacter.SetFaction(_owner);
+        newCharacter.SetHome(this);
+        AdjustCivilians(raceOfChar, -1);
+        //this.AdjustPopulation(-1); //Adjust population by -1
+        this.owner.AddNewCharacter(newCharacter);
+        this.AddCharacterToLocation(newCharacter, false);
+        this.AddCharacterHomeOnLandmark(newCharacter);
+        newCharacter.DetermineAction();
+        UIManager.Instance.UpdateFactionSummary();
+        return newCharacter;
+    }
+    /*
+     Does the settlement have the required technology
+     to produce a class?
+         */
+    public bool CanProduceClass(CHARACTER_CLASS charClass, ref MATERIAL material) {
+        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
+        if (neededTech == TECHNOLOGY.NONE || _technologies[neededTech]) {
+            TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup[charClass];
+            List<MATERIAL> trainingPreference = this._owner.productionPreferences[PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+            for (int i = 0; i < trainingPreference.Count; i++) {
+                if (ProductionManager.Instance.trainingMaterials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count) {
+                    material = trainingPreference[i];
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool CanProduceRole(CHARACTER_ROLE roleType) {
+        TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup[roleType];
+        if (trainingRole.production.civilianCost <= civilians && trainingRole.production.foodCost <= GetTotalFoodCount()) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Party
@@ -647,122 +700,131 @@ public class BaseLandmark : ILocation, TaskCreator {
     //}
     #endregion
 
+    #region Utilities
     public void SetHiddenState(bool isHidden) {
         _isHidden = isHidden;
-        if(landmarkObject != null) {
+        if (landmarkObject != null) {
             landmarkObject.UpdateLandmarkVisual();
         }
     }
-
     public void SetExploredState(bool isExplored) {
         _isExplored = isExplored;
         if (landmarkObject != null) {
             landmarkObject.UpdateLandmarkVisual();
         }
     }
-	internal bool IsBorder(){
-		if(this.owner == null){
-			return false;
-		}
-		for (int i = 0; i < this.location.region.connections.Count; i++) {
-			if(this.location.region.connections[i] is Region){
-				Region adjacentRegion = (Region)this.location.region.connections [i];
-				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	internal bool IsAdjacentToEnemyTribe(){
-		if(this.owner == null || (this.owner != null && !(this.owner is Tribe))){
-			return false;
-		}
-		for (int i = 0; i < this.location.region.connections.Count; i++) {
-			if(this.location.region.connections[i] is Region){
-				Region adjacentRegion = (Region)this.location.region.connections [i];
-				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && this.owner is Tribe && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
-					FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-					if(factionRel != null && factionRel.isAtWar){
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-	internal bool HasWarlordOnAdjacentVillage(){
-		if(this.owner == null){
-			return false;
-		}
-		for (int i = 0; i < this.location.region.connections.Count; i++) {
-			if(this.location.region.connections[i] is Region){
-				Region adjacentRegion = (Region)this.location.region.connections [i];
-				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id){
-					FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-					if (factionRel != null && factionRel.isAtWar) {
-						if (adjacentRegion.centerOfMass.landmarkOnTile.HasWarlord ()) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-	internal bool HasWarlord(){
-		for (int i = 0; i < this._location.charactersAtLocation.Count; i++) {
-			if(this._location.charactersAtLocation[i] is ECS.Character){
-				if(((ECS.Character)this._location.charactersAtLocation[i]).role.roleType == CHARACTER_ROLE.WARLORD){
-					return true;
-				}
-			}else if(this._location.charactersAtLocation[i] is Party){
-				if(((Party)this._location.charactersAtLocation[i]).partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	internal int GetTechnologyCount(){
-		int count = 0;
-		foreach (bool isTrue in _technologies.Values) {
-			if(isTrue){
-				count += 1;
-			}
-		}
-		return count;
-	}
-	internal bool HasAdjacentUnoccupiedTile(){
-		for (int i = 0; i < this._location.region.connections.Count; i++) {
-			if(this._location.region.connections[i] is Region){
-				Region adjacentRegion = (Region)this._location.region.connections [i];
-				if(!adjacentRegion.centerOfMass.isOccupied){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	internal HexTile GetRandomAdjacentUnoccupiedTile(){
-		List<HexTile> allUnoccupiedCenterOfMass = new List<HexTile> ();
-		for (int i = 0; i < this._location.region.connections.Count; i++) {
-			if(this._location.region.connections[i] is Region){
-				Region adjacentRegion = (Region)this._location.region.connections [i];
-				if(!adjacentRegion.centerOfMass.isOccupied && !this.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, adjacentRegion.centerOfMass)){
-					allUnoccupiedCenterOfMass.Add (adjacentRegion.centerOfMass);
-				}
-			}
-		}
-		if(allUnoccupiedCenterOfMass.Count > 0){
-			return allUnoccupiedCenterOfMass [UnityEngine.Random.Range (0, allUnoccupiedCenterOfMass.Count)];
-		}else{
-			return null;
-		}
-	}
+    internal bool IsBorder() {
+        if (this.owner == null) {
+            return false;
+        }
+        for (int i = 0; i < this.location.region.connections.Count; i++) {
+            if (this.location.region.connections[i] is Region) {
+                Region adjacentRegion = (Region)this.location.region.connections[i];
+                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    internal bool IsAdjacentToEnemyTribe() {
+        if (this.owner == null || (this.owner != null && !(this.owner is Tribe))) {
+            return false;
+        }
+        for (int i = 0; i < this.location.region.connections.Count; i++) {
+            if (this.location.region.connections[i] is Region) {
+                Region adjacentRegion = (Region)this.location.region.connections[i];
+                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && this.owner is Tribe && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
+                    FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
+                    if (factionRel != null && factionRel.isAtWar) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    internal bool HasWarlordOnAdjacentVillage() {
+        if (this.owner == null) {
+            return false;
+        }
+        for (int i = 0; i < this.location.region.connections.Count; i++) {
+            if (this.location.region.connections[i] is Region) {
+                Region adjacentRegion = (Region)this.location.region.connections[i];
+                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
+                    FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
+                    if (factionRel != null && factionRel.isAtWar) {
+                        if (adjacentRegion.centerOfMass.landmarkOnTile.HasWarlord()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    internal bool HasWarlord() {
+        for (int i = 0; i < this._location.charactersAtLocation.Count; i++) {
+            if (this._location.charactersAtLocation[i] is ECS.Character) {
+                if (((ECS.Character)this._location.charactersAtLocation[i]).role.roleType == CHARACTER_ROLE.WARLORD) {
+                    return true;
+                }
+            } else if (this._location.charactersAtLocation[i] is Party) {
+                if (((Party)this._location.charactersAtLocation[i]).partyLeader.role.roleType == CHARACTER_ROLE.WARLORD) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    internal int GetTechnologyCount() {
+        int count = 0;
+        foreach (bool isTrue in _technologies.Values) {
+            if (isTrue) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+    internal bool HasAdjacentUnoccupiedTile() {
+        for (int i = 0; i < this._location.region.connections.Count; i++) {
+            if (this._location.region.connections[i] is Region) {
+                Region adjacentRegion = (Region)this._location.region.connections[i];
+                if (!adjacentRegion.centerOfMass.isOccupied) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    internal HexTile GetRandomAdjacentUnoccupiedTile() {
+        List<HexTile> allUnoccupiedCenterOfMass = new List<HexTile>();
+        for (int i = 0; i < this._location.region.connections.Count; i++) {
+            if (this._location.region.connections[i] is Region) {
+                Region adjacentRegion = (Region)this._location.region.connections[i];
+                if (!adjacentRegion.centerOfMass.isOccupied && !this.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, adjacentRegion.centerOfMass)) {
+                    allUnoccupiedCenterOfMass.Add(adjacentRegion.centerOfMass);
+                }
+            }
+        }
+        if (allUnoccupiedCenterOfMass.Count > 0) {
+            return allUnoccupiedCenterOfMass[UnityEngine.Random.Range(0, allUnoccupiedCenterOfMass.Count)];
+        } else {
+            return null;
+        }
+    }
+    internal int GetMinimumCivilianRequirement() {
+        if (this is ResourceLandmark) {
+            return 5;
+        }else if(this is Settlement) {
+            return 20;
+        }
+        return 0;
+    }
+    #endregion
 
-	#region Prisoner
-	internal void AddPrisoner(ECS.Character character){
+    #region Prisoner
+    internal void AddPrisoner(ECS.Character character){
 		character.SetPrisoner (true, this);
 		_prisoners.Add (character);
 	}
@@ -961,9 +1023,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 		if (!_activeQuests.Contains(quest)) {
 			_activeQuests.Add(quest);
 			_owner.AddNewQuest(quest);
-			if(quest.postedAt != null) {
-				quest.postedAt.AddQuestToBoard(quest);
-			}
+			//if(quest.postedAt != null) {
+			//	quest.postedAt.AddQuestToBoard(quest);
+			//}
 			//quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
 		}
 	}

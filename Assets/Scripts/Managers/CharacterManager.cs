@@ -181,7 +181,9 @@ public class CharacterManager : MonoBehaviour {
             return null;
         }
 		ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
-        newCharacter.AssignRole(charRole);
+        if(charRole != CHARACTER_ROLE.NONE) {
+            newCharacter.AssignRole(charRole);
+        }
         return newCharacter;
     }
 	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, ECS.CharacterSetup setup, int statAllocationBonus = 0) {

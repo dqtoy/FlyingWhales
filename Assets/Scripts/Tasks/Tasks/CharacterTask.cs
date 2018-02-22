@@ -49,9 +49,9 @@ public class CharacterTask {
     public STANCE stance {
         get { return _stance; }
     }
-	public int weight{
-		get { return GetTaskWeight (); }
-	}
+//	public int weight{
+//		get { return GetTaskWeight (); }
+//	}
 	public bool forPlayerOnly{
 		get { return _forPlayerOnly; }
 	}
@@ -122,6 +122,7 @@ public class CharacterTask {
 		_assignedCharacter.DetermineAction();
 	}
     public virtual void PerformDailyAction() { }
+
 	public virtual void ResetTask(){
 		_assignedCharacter = null;
 		_targetLocation = null;
@@ -130,7 +131,8 @@ public class CharacterTask {
 		_taskStatus = TASK_STATUS.IN_PROGRESS;
 		_taskLogs.Clear ();
 	}
-	protected virtual int GetTaskWeight(){ return 0; }
+
+	public virtual int GetTaskWeight(ECS.Character character){ return 0; }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

@@ -92,12 +92,12 @@ public class LandmarkManager : MonoBehaviour {
      This will eliminate any character classes that the settlement cannot
      produce due to a lack of technologies.
          */
-	public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(Settlement settlement, ref MATERIAL material) {
+	public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark, ref MATERIAL material) {
         WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
         CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
         for (int i = 1; i < allClasses.Length; i++) {
             CHARACTER_CLASS charClass = allClasses[i];
-			if (settlement.CanProduceClass(charClass, ref material)) { //Does the settlement have the required technologies to produce this class
+			if (landmark.CanProduceClass(charClass, ref material)) { //Does the settlement have the required technologies to produce this class
                 classes.AddElement(charClass, 200);
             }
         }

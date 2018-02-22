@@ -14,7 +14,7 @@ public class Settlement : BaseLandmark {
     private ECS.Character _headOfSettlement;
 	private List<BaseLandmark> _ownedLandmarks;
 
-    private List<OldQuest.Quest> _questBoard;
+    private List<Quest> _questBoard;
 	private WeightedDictionary<MATERIAL> _materialWeights;
 
     private const int CHARACTER_LIMIT = 10;
@@ -23,7 +23,7 @@ public class Settlement : BaseLandmark {
     private float _currentPopulationProduction;
 
     #region getters/setters
-    public List<OldQuest.Quest> questBoard {
+    public List<Quest> questBoard {
         get { return _questBoard; }
     }
     public List<BaseLandmark> ownedLandmarks {
@@ -37,7 +37,7 @@ public class Settlement : BaseLandmark {
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
         _isHidden = false;
-        _questBoard = new List<OldQuest.Quest>();
+        _questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
 		_materialWeights = new WeightedDictionary<MATERIAL> ();
         _producingPopulationFor = RACE.NONE;
@@ -77,8 +77,8 @@ public class Settlement : BaseLandmark {
 		//Start OldQuest.Quest Creation
 		ScheduleUpdateAvailableMaterialsToGet ();
 		ScheduleUpdateNeededMaterials ();
-		ScheduleMonthlyQuests ();
-		TrainCharacterInSettlement(); //Start Character Creation Process
+		//ScheduleMonthlyQuests ();
+		//TrainCharacterInSettlement(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
     public override void UnoccupyLandmark() {
@@ -181,51 +181,6 @@ public class Settlement : BaseLandmark {
         decideCharacterDate.AddDays(1);
         SchedulingManager.Instance.AddEntry(decideCharacterDate.month, decideCharacterDate.day, decideCharacterDate.year, () => DecideCharacterToCreate());
     }
-    /*
-     Does the settlement have the required technology
-     to produce a class?
-         */
-	public bool CanProduceClass(CHARACTER_CLASS charClass, ref MATERIAL material) {
-        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
-        if (neededTech == TECHNOLOGY.NONE || _technologies[neededTech]) {
-			TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup [charClass];
-			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
-			for (int i = 0; i < trainingPreference.Count; i++) {
-				if(ProductionManager.Instance.trainingMaterials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count){
-					material = trainingPreference [i];
-					return true;
-				}
-			}
-        }
-        return false;
-    }
-	public bool CanProduceRole(CHARACTER_ROLE roleType){
-		TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup [roleType];
-		if(trainingRole.production.civilianCost <= civilians && trainingRole.production.foodCost <= GetTotalFoodCount()){
-			return true;
-		}
-		return false;
-	}
-    /*
-     Create a new character, given a role and class.
-     This will also subtract from the civilian population.
-         */
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-        RACE raceOfChar = GetRaceBasedOnProportion();
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
-//        newCharacter.AssignRole(charRole);
-        newCharacter.SetFaction(_owner);
-		newCharacter.SetHome (this);
-        AdjustCivilians(raceOfChar, -1);
-        //this.AdjustPopulation(-1); //Adjust population by -1
-        this.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterToLocation(newCharacter, false);
-        this.AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.DetermineAction();
-        UIManager.Instance.UpdateFactionSummary();
-        return newCharacter;
-    }
-
 	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType, MATERIAL materialUsed, RACE raceOfChar){
         AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + (classType != CHARACTER_CLASS.NONE ? Utilities.NormalizeString (classType.ToString ()) : "Classless") + ".");
 		int trainingStatBonus = MaterialManager.Instance.materialsLookup [materialUsed].trainingStatBonus;
@@ -349,14 +304,14 @@ public class Settlement : BaseLandmark {
     #endregion
 
     #region Quests
-    internal void AddQuestToBoard(OldQuest.Quest quest) {
+    internal void AddQuestToBoard(Quest quest) {
         _questBoard.Add(quest);
-        quest.OnQuestPosted(); //Call On OldQuest.Quest Posted after quest is posted
+        //quest.OnQuestPosted(); //Call On OldQuest.Quest Posted after quest is posted
     }
-    internal void RemoveQuestFromBoard(OldQuest.Quest quest) {
+    internal void RemoveQuestFromBoard(Quest quest) {
         _questBoard.Remove(quest);
     }
-	internal OldQuest.Quest GetQuestByID(int id){
+	internal Quest GetQuestByID(int id){
 		for (int i = 0; i < _questBoard.Count; i++) {
 			if(_questBoard[i].id == id){
 				return _questBoard [i];
@@ -364,10 +319,10 @@ public class Settlement : BaseLandmark {
 		}
 		return null;
 	}
-    internal List<OldQuest.Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
-        List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
+    internal List<Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
+        List<Quest> quests = new List<Quest>();
         for (int i = 0; i < _questBoard.Count; i++) {
-            OldQuest.Quest currQuest = _questBoard[i];
+            Quest currQuest = _questBoard[i];
             if(currQuest.questType == questType) {
                 quests.Add(currQuest);
             }
@@ -377,7 +332,7 @@ public class Settlement : BaseLandmark {
 	internal int GetNumberOfQuestsOnBoardByType(QUEST_TYPE questType){
 		int count = 0;
 		for (int i = 0; i < _questBoard.Count; i++) {
-			OldQuest.Quest currQuest = _questBoard[i];
+			Quest currQuest = _questBoard[i];
 			if(currQuest.questType == questType) {
 				count++;
 			}
@@ -599,18 +554,18 @@ public class Settlement : BaseLandmark {
 	}
 	internal void CancelSaveALandmark(BaseLandmark landmarkToSave){
 		for (int i = 0; i < _questBoard.Count; i++) {
-			if(_questBoard[i].questType == QUEST_TYPE.SAVE_LANDMARK){
-				SaveLandmark saveLandmark = (SaveLandmark)_questBoard [i];
-				if(saveLandmark.target.id == landmarkToSave.id){
-					if(saveLandmark.isAccepted){
-						saveLandmark.assignedParty.GoBackToQuestGiver (TASK_STATUS.FAIL);
-					}else{
-						RemoveQuestFromBoard (saveLandmark);
-						RemoveQuest (saveLandmark);
-					}
-					break;
-				}
-			}
+			//if(_questBoard[i].questType == QUEST_TYPE.SAVE_LANDMARK){
+			//	SaveLandmark saveLandmark = (SaveLandmark)_questBoard [i];
+			//	if(saveLandmark.target.id == landmarkToSave.id){
+			//		if(saveLandmark.isAccepted){
+			//			saveLandmark.assignedParty.GoBackToQuestGiver (TASK_STATUS.FAIL);
+			//		}else{
+			//			RemoveQuestFromBoard (saveLandmark);
+			//			RemoveQuest (saveLandmark);
+			//		}
+			//		break;
+			//	}
+			//}
 		}
 	}
 	#endregion
