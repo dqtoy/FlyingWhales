@@ -20,7 +20,7 @@ public class DungeonLandmark : BaseLandmark {
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < dungeonEncounterChances.encounterPartyChance){
 				_dungeonParty = (DungeonParty)GeneratePartyEncounterable ("random");
-				_dungeonParty.partyLeader.UnalignedDetermineAction ();
+				_dungeonParty.partyLeader.DetermineAction ();
 			}
 			if (chance < dungeonEncounterChances.encounterLootChance) {
 				LandmarkItemsSpawn ();

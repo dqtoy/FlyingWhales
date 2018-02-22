@@ -278,9 +278,9 @@ namespace OldQuest{
         #endregion
 
         #region overrides
-        public override void PerformTask(ECS.Character character) {
-            base.PerformTask(character);
-            AcceptQuest(character);
+        public override void PerformTask() {
+            base.PerformTask();
+            AcceptQuest(_assignedCharacter);
         }
         public override void EndTask(TASK_STATUS taskResult) {
             EndQuest(taskResult);

@@ -20,8 +20,8 @@ public class RecruitFollowers : CharacterTask {
         SchedulingManager.Instance.AddEntry(dueDate, () => EndRecruitment());
         Messenger.AddListener("OnDayEnd", CheckCivilians);
     }
-    public override void PerformTask(ECS.Character character) {
-        base.PerformTask(character);
+    public override void PerformTask() {
+        base.PerformTask();
         if (character.specificLocation is HexTile) {
             throw new System.Exception(character.name + " is at a hextile rather than a landmark!");
         }

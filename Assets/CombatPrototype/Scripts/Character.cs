@@ -1441,7 +1441,8 @@ namespace ECS {
              */
         public void JoinParty(Party party) {
             JoinParty joinParty = new JoinParty(this, party);
-            joinParty.PerformTask(this);
+			joinParty.OnChooseTask (this);
+            joinParty.PerformTask();
         }
 		#endregion
 
@@ -1471,55 +1472,38 @@ namespace ECS {
             }
             if(nextTaskToDo != null) {
                 //Force accept quest, if any
-                nextTaskToDo.PerformTask(this);
+				nextTaskToDo.OnChooseTask(this);
+                nextTaskToDo.PerformTask();
                 nextTaskToDo = null;
                 return;
             }
-			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
-            AddTaskWeightsFromTags(actionWeights); //Add weights from tags
-            if (actionWeights.GetTotalOfWeights () > 0) {
-				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
-                if (chosenAction.taskType == TASK_TYPE.QUEST) {
-                    Debug.Log(this.name + " decides to " + ((OldQuest.Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
-                } else {
-                    Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
-                }
-                chosenAction.PerformTask(this);
-            } else {
-                throw new Exception(this.name + " could not decide action because weights are zero!");
-            }
-		}
+			WeightedDictionary<CharacterTask> actionWeights = new WeightedDictionary<CharacterTask> ();
+			if(_role != null){
+				_role.AddTaskWeightsFromRole (actionWeights);
+			}
+			//TODO: Tag Tasks
+			//TODO: Quest Tasks
 
-		internal void UnalignedDetermineAction(){
-			if(isInCombat){
-				SetCurrentFunction (() => UnalignedDetermineAction ());
-				return;
-			}
-			if(_isFainted || _isPrisoner || _isDead){
-				return;
-			}
-            WeightedDictionary<CharacterTask> actionWeights = GetUnalignedActionWeights();
-            AddTaskWeightsFromTags(actionWeights);
-            CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
-            chosenTask.PerformTask(this);
-            //if(_party != null){
-            //	if(_party.IsPartyWounded()){
-            //		Rest rest = new Rest (this);
-            //		rest.PerformTask (this);
-            //	}else{
-            //		DoNothing doNothing = new DoNothing (this);
-            //		doNothing.PerformTask (this);
-            //	}
-            //}else{
-            //	if(_currentHP < maxHP){
-            //		Rest rest = new Rest (this);
-            //		rest.PerformTask (this);
-            //	}else{
-            //		DoNothing doNothing = new DoNothing (this);
-            //		doNothing.PerformTask (this);
-            //	}
-            //}
-        }
+			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
+			chosenTask.ResetTask ();
+			chosenTask.OnChooseTask (this);
+			chosenTask.PerformTask ();
+
+//			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
+//            AddActionWeightsFromTags(actionWeights); //Add weights from tags
+//            if (actionWeights.GetTotalOfWeights () > 0) {
+//				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
+//                if (chosenAction.taskType == TASK_TYPE.QUEST) {
+//                    Debug.Log(this.name + " decides to " + ((OldQuest.Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+//                } else {
+//                    Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
+//                }
+//                chosenAction.PerformTask(this);
+//            } else {
+//                throw new Exception(this.name + " could not decide action because weights are zero!");
+//            }
+
+		}
         /*
          Set a task that this character will accept next
              */
@@ -1564,7 +1548,7 @@ namespace ECS {
         private void AddTaskWeightsFromQuest(WeightedDictionary<CharacterTask> tasks) {
             if (_currentQuest != null) {
                 CharacterTask currentTaskForQuest = _currentQuest.GetCurrentTaskOfQuest();
-                tasks.AddElement(currentTaskForQuest, currentTaskForQuest.totalWeight);
+                tasks.AddElement(currentTaskForQuest, currentTaskForQuest.weight);
             }
         }
 
@@ -1922,11 +1906,7 @@ namespace ECS {
 				landmark.AddHistory ("Prisoner " + this.name + " is released.");
 			}
 			SetPrisoner (false, null);
-			if(faction == null){
-				UnalignedDetermineAction ();
-			}else{
-				DetermineAction ();
-			}
+			DetermineAction ();
 		}
 		internal void TransferPrisoner(object newPrisonerOf){
 			//Remove from previous prison
@@ -2030,11 +2010,7 @@ namespace ECS {
                     currentFunction();
                     SetCurrentFunction(null);
                 } else {
-                    if (faction == null) {
-                        UnalignedDetermineAction();
-                    } else {
-                        DetermineAction();
-                    }
+					DetermineAction();
                 }
 			}
         }

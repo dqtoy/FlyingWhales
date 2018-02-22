@@ -17,12 +17,12 @@ public class CharacterTask {
 
     protected TaskCreator _createdBy;
     protected TASK_TYPE _taskType;
+	protected string _taskName;
     protected ECS.Character _assignedCharacter;
     protected bool _isDone;
     protected TASK_STATUS _taskStatus;
     protected List<string> _taskLogs; //TODO: Change this to Logs when convenient
 
-    protected int _baseWeight;
     protected STANCE _stance;
 
     protected bool _canDoDailyAction = false;
@@ -43,9 +43,9 @@ public class CharacterTask {
     public STANCE stance {
         get { return _stance; }
     }
-    public int totalWeight {
-        get { return _baseWeight; }
-    }
+	public int weight{
+		get { return GetTaskWeight (); }
+	}
     #endregion
 
     public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType) {
@@ -64,11 +64,11 @@ public class CharacterTask {
      Override this to make the character do something when
      he/she chooses to perform this task.
          */
-    public virtual void PerformTask(ECS.Character character) {
-		//if(character.isInCombat){
-		//	character.SetCurrentFunction (() => PerformTask (character));
-		//	return;
-		//}
+    public virtual void PerformTask() {
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => PerformTask ());
+			return;
+		}
     }
     public virtual void EndTask(TASK_STATUS taskResult) {
 		if(_assignedCharacter.isInCombat){
@@ -92,27 +92,17 @@ public class CharacterTask {
         }
     }
     public virtual void TaskSuccess() {
-		if(_assignedCharacter.faction == null){
-			_assignedCharacter.UnalignedDetermineAction ();
-		}else{
-			_assignedCharacter.DetermineAction();
-		}
+		_assignedCharacter.DetermineAction();
 	}
     public virtual void TaskCancel() {
-		if(_assignedCharacter.faction == null){
-			_assignedCharacter.UnalignedDetermineAction ();
-		}else{
-			_assignedCharacter.DetermineAction();
-		}
+		_assignedCharacter.DetermineAction();
 	}
     public virtual void TaskFail() {
-		if(_assignedCharacter.faction == null){
-			_assignedCharacter.UnalignedDetermineAction ();
-		}else{
-			_assignedCharacter.DetermineAction();
-		}
+		_assignedCharacter.DetermineAction();
 	}
     public virtual void PerformDailyAction() { }
+	public virtual void ResetTask(){}
+	protected virtual int GetTaskWeight(){ return 0; }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

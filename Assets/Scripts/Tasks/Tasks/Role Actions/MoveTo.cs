@@ -17,20 +17,26 @@ public class MoveTo : CharacterTask {
     }
     #endregion
 
-    public MoveTo(TaskCreator createdBy, ILocation targetLocation, PATHFINDING_MODE pathFindingMode) 
+    public MoveTo(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.MOVE_TO) {
-        _targetLocation = targetLocation;
-        _pathfindingMode = pathFindingMode;
     }
 
+	public void SetParameters(ILocation targetLocation, PATHFINDING_MODE pathfindingMode){
+		_targetLocation = targetLocation;
+		_pathfindingMode = pathfindingMode;
+	}
+
     #region overrides
-    public override void PerformTask(ECS.Character character) {
-        base.PerformTask(character);
-        character.SetCurrentTask(this);
-        if (character.party != null) {
-            character.party.SetCurrentTask(this);
+	public override void OnChooseTask (ECS.Character character){
+		base.OnChooseTask (character);
+	}
+    public override void PerformTask() {
+		base.PerformTask();
+		_assignedCharacter.SetCurrentTask(this);
+		if (_assignedCharacter.party != null) {
+			_assignedCharacter.party.SetCurrentTask(this);
         }
-        Debug.Log(character.name + " goes to " + _targetLocation.locationName);
+		Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
         GoToTile();
     }
     #endregion

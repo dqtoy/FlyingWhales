@@ -19,10 +19,10 @@ public class JoinParty : CharacterTask {
     }
 
     #region overrides
-    public override void PerformTask(ECS.Character character) {
-        base.PerformTask(character);
-        character.SetCurrentTask(this);
-        _partyToJoin.AddPartyMember(character);
+    public override void PerformTask() {
+        base.PerformTask();
+		_assignedCharacter.SetCurrentTask(this);
+		_partyToJoin.AddPartyMember(_assignedCharacter);
         if(_partyToJoin.currentTask != null && _partyToJoin.currentTask is OldQuest.Quest) {
             (_partyToJoin.currentTask as OldQuest.Quest).OnPartyMemberJoined();
         }

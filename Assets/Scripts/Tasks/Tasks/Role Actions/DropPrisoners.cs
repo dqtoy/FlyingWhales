@@ -13,19 +13,19 @@ public class DropPrisoners : CharacterTask {
 	}
 
 	#region overrides
-	public override void PerformTask(ECS.Character character) {
-		base.PerformTask(character);
-		character.SetCurrentTask(this);
+	public override void PerformTask() {
+		base.PerformTask();
+		_assignedCharacter.SetCurrentTask(this);
 		HexTile currLocation = null;
-		if(character.party != null) {
-			character.party.SetCurrentTask(this);
-			region = character.party.currLocation.region;
-			_prisoners = character.party.prisoners;
-			currLocation = character.party.currLocation;
+		if(_assignedCharacter.party != null) {
+			_assignedCharacter.party.SetCurrentTask(this);
+			region = _assignedCharacter.party.currLocation.region;
+			_prisoners = _assignedCharacter.party.prisoners;
+			currLocation = _assignedCharacter.party.currLocation;
 		}else{
-			region = character.currLocation.region;
-			_prisoners = character.prisoners;
-			currLocation = character.currLocation;
+			region = _assignedCharacter.currLocation.region;
+			_prisoners = _assignedCharacter.prisoners;
+			currLocation = _assignedCharacter.currLocation;
 		}
 		if(currLocation.id == region.centerOfMass.id){
 			Drop ();

@@ -7,15 +7,15 @@ public class GoHome : CharacterTask {
     }
 
     #region overrides
-	public override void PerformTask(ECS.Character character) {
-        base.PerformTask(character);
-		character.SetCurrentTask(this);
-		if (character.party != null) {
-			character.party.SetCurrentTask(this);
+	public override void PerformTask() {
+        base.PerformTask();
+		_assignedCharacter.SetCurrentTask(this);
+		if (_assignedCharacter.party != null) {
+			_assignedCharacter.party.SetCurrentTask(this);
 		}
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-        if(character.faction == null) {
+		if(_assignedCharacter.faction == null) {
             goToLocation.InititalizeAction(((ECS.Character)_createdBy).lair);
         } else {
             goToLocation.InititalizeAction(((ECS.Character)_createdBy).home);
@@ -24,7 +24,7 @@ public class GoHome : CharacterTask {
         goToLocation.onTaskActionDone += SuccessTask;
         goToLocation.onTaskDoAction += goToLocation.Generic;
 
-        goToLocation.DoAction(character);
+		goToLocation.DoAction(_assignedCharacter);
     }
     #endregion
 
