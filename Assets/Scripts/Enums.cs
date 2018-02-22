@@ -878,7 +878,6 @@ public enum CHARACTER_ROLE {
     VILLAGE_HEAD,
     WORKER,
 	TAMED_BEAST,
-    FOLLOWER
 }
 public enum CHARACTER_CLASS {
     NONE,

@@ -51,6 +51,7 @@ namespace ECS {
 		private bool _isDead;
 		private bool _isFainted;
 		private bool _isPrisoner;
+        private bool _isFollower;
 		private bool _isDefeated;
 		private object _isPrisonerOf;
 		private List<OldQuest.Quest> _activeQuests;
@@ -177,6 +178,9 @@ namespace ECS {
 		internal bool isPrisoner{
 			get { return this._isPrisoner; }
 		}
+        internal bool isFollower {
+            get { return _isFollower; }
+        }
 		public List<OldQuest.Quest> activeQuests {
 			get { return _activeQuests; }
 		}
@@ -594,16 +598,17 @@ namespace ECS {
 		//ECS.Character's death
 		internal void Death(){
 			if(!_isDead){
-				this._isDead = true;
+				_isDead = true;
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
-				if(this.specificLocation.tileLocation.landmarkOnTile != null){
-					this.specificLocation.tileLocation.landmarkOnTile.AddHistory (this.name + " died.");
+				if(specificLocation is BaseLandmark){
+					(specificLocation as BaseLandmark).AddHistory (this.name + " died.");
+				}
+				if(_home != null){
+                    //Remove character home on landmark
+					_home.RemoveCharacterHomeOnLandmark (this);
 				}
 
-				if(this._home != null){
-					this._home.RemoveCharacterHomeOnLandmark (this);
-				}
 				if(this._faction != null){
 					if(this._faction.leader != null && this._faction.leader.id == this.id) {
 						//If this character is the leader of a faction, set that factions leader as null
@@ -611,22 +616,22 @@ namespace ECS {
 					}
 					this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
 				}
-                CheckForInternationalIncident();
 
+                CheckForInternationalIncident();
 
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
 				}else{
 					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
+
                 if (_avatar != null) {
                     _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
                 }
+
                 if (_isPrisoner){
 					PrisonerDeath ();
 				}
-
-
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
@@ -1191,6 +1196,7 @@ namespace ECS {
 			_characterColor = color;
 			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
 		}
+
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
 			switch (role) {
@@ -1218,9 +1224,6 @@ namespace ECS {
 			case CHARACTER_ROLE.TAMED_BEAST:
 				_role = new TamedBeast(this);
 				break;
-            case CHARACTER_ROLE.FOLLOWER:
-                _role = new Follower(this);
-                break;
             default:
 			    break;
 			}
@@ -1241,6 +1244,7 @@ namespace ECS {
 			}
 		}
 		#endregion
+
 		#region Character Class
 		public void AssignClass(CharacterClass charClass) {
 			_characterClass = charClass;
@@ -1435,15 +1439,6 @@ namespace ECS {
 		public void SetParty(Party party) {
 			_party = party;
 		}
-        /*
-         This will force the character to start a join party quest for the
-         given party.
-             */
-        public void JoinParty(Party party) {
-            JoinParty joinParty = new JoinParty(this, party);
-			joinParty.OnChooseTask (this);
-            joinParty.PerformTask();
-        }
 		#endregion
 
 		#region Location
@@ -1751,9 +1746,9 @@ namespace ECS {
          character returns to a non hostile settlement after a quest.
              */
         internal void OnReachNonHostileSettlementAfterQuest() {
-            if (_party != null) {
-                _party.CheckLeavePartyAfterQuest();
-            }
+            //if (_party != null) {
+            //    _party.CheckLeavePartyAfterQuest();
+            //}
             //_currLocation.AddCharacterOnTile(this);
             DestroyAvatar();
             DetermineAction();
@@ -1788,6 +1783,9 @@ namespace ECS {
         #endregion
 
         #region Utilities
+        public void SetFollowerState(bool state) {
+            _isFollower = state;
+        }
 		public void SetHome(BaseLandmark newHome) {
             this._home = newHome;
         }
@@ -1808,6 +1806,16 @@ namespace ECS {
             settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.location));
 
             return settlements.First();
+        }
+        public Settlement GetNearestSettlementFromFaction() {
+            if(this.faction != null) {
+                List<Settlement> factionSettlements = new List<Settlement>(faction.settlements);
+                if (factionSettlements.Count > 0) {
+                    factionSettlements.OrderBy(x => this.currLocation.GetDistanceTo(x.location)).ToList();
+                    return factionSettlements[0];
+                }
+            }
+            return null;
         }
         #endregion
 
@@ -1888,26 +1896,46 @@ namespace ECS {
 		}
 		internal void ReleasePrisoner(){
 			string wardenName = string.Empty;
-			if(_isPrisonerOf is Party){
-				wardenName = ((Party)_isPrisonerOf).name;
-				((Party)_isPrisonerOf).RemovePrisoner (this);
-				SetSpecificLocation (((Party)_isPrisonerOf).specificLocation);
-			}else if(_isPrisonerOf is ECS.Character){
-				wardenName = ((ECS.Character)_isPrisonerOf).name;
-				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
-				SetSpecificLocation (((ECS.Character)_isPrisonerOf).specificLocation);
-			}else if(_isPrisonerOf is BaseLandmark){
-				wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
-				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
-				SetSpecificLocation (((BaseLandmark)_isPrisonerOf));
-			}
-			AddHistory ("Released from the prison of " + wardenName + ".");
-			if(this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-				BaseLandmark landmark = (BaseLandmark)this.specificLocation;
-				landmark.AddHistory ("Prisoner " + this.name + " is released.");
-			}
-			SetPrisoner (false, null);
-			DetermineAction ();
+            ILocation location = null;
+            if (_isPrisonerOf is Party) {
+                Party prisonerOf = _isPrisonerOf as Party;
+                wardenName = prisonerOf.name;
+                prisonerOf.RemovePrisoner(this);
+                location = prisonerOf.specificLocation;
+            } else if (_isPrisonerOf is ECS.Character) {
+                ECS.Character prisonerOf = _isPrisonerOf as ECS.Character;
+                wardenName = prisonerOf.name;
+                prisonerOf.RemovePrisoner(this);
+                location = prisonerOf.specificLocation;
+            } else if (_isPrisonerOf is BaseLandmark) {
+                BaseLandmark prisonerOf = _isPrisonerOf as BaseLandmark;
+                wardenName = prisonerOf.landmarkName;
+                prisonerOf.RemovePrisoner(this);
+                location = prisonerOf;
+            }
+
+            SetPrisoner(false, null);
+
+            AddHistory("Released from the prison of " + wardenName + ".");
+            if (this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                BaseLandmark landmark = (BaseLandmark)this.specificLocation;
+                landmark.AddHistory("Prisoner " + this.name + " is released.");
+            }
+
+            //When this character is released from imprisonment
+            //Check if this character is a follower
+            if (this.isFollower) {
+                //if this character is
+                if (this.faction != null) {
+                    //Set this character as a civilian of the nearest settlement of his/her faction
+                    Settlement settlement = GetNearestSettlementFromFaction();
+                    settlement.AdjustCivilians(this.raceSetting.race, 1);
+                }
+            } else {
+                //if not, make this character decide for itself again
+                location.AddCharacterToLocation(this);
+                DetermineAction();
+            }
 		}
 		internal void TransferPrisoner(object newPrisonerOf){
 			//Remove from previous prison
@@ -2007,12 +2035,14 @@ namespace ECS {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
             } else{
+                //this character won the combat, continue his/her current action if any
                 if (currentFunction != null) {
                     currentFunction();
                     SetCurrentFunction(null);
-                } else {
-					DetermineAction();
                 }
+     //           else {
+					//DetermineAction();
+     //           }
 			}
         }
 		public void SetIsDefeated(bool state){
