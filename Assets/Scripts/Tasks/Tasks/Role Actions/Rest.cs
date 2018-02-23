@@ -34,18 +34,10 @@ public class Rest : CharacterTask {
 		if (_assignedCharacter.party != null) {
 			_assignedCharacter.party.SetCurrentTask(this);
         }
-        Settlement targetSettlement = GetTargetSettlement();
-        GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-		if(targetSettlement == null){
-			goToLocation.InititalizeAction(_assignedCharacter.specificLocation);
-		}else{
-			goToLocation.InititalizeAction(targetSettlement);
+		if(_targetLocation == null){
+			_targetLocation = GetTargetSettlement();
 		}
-        goToLocation.SetPathfindingMode(PATHFINDING_MODE.USE_ROADS);
-        goToLocation.onTaskActionDone += StartRest;
-        goToLocation.onTaskDoAction += goToLocation.Generic;
-
-        goToLocation.DoAction(_assignedCharacter);
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => StartRest ());
     }
     public override void TaskSuccess() {
         SetCanDoDailyAction(false);

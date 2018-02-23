@@ -5,10 +5,19 @@ using System.Collections.Generic;
 public class PlayerActionsUI : MonoBehaviour {
 	public GameObject characterTaskButtonGO;
 	public UIGrid buttonsGrid;
+	public UI2DSprite stretchableBG;
 
 	private ILocation location;
 	private List<CharacterTaskButton> taskButtons = new List<CharacterTaskButton>();
+//	private UIWidget buttonsGridWidget;
+	private int defaultWidgetHeight;
+	private int characterTaskButtonHeight;
 
+	void Awake(){
+//		buttonsGridWidget = buttonsGrid.GetComponent<UIWidget>();
+		characterTaskButtonHeight = characterTaskButtonGO.GetComponent<UI2DSprite>().height;
+		defaultWidgetHeight = buttonsGrid.GetComponent<UIWidget>().height;
+	}
 	public void ShowPlayerActionsUI(ILocation location){
 		this.location = location;
 		OnShow ();
@@ -46,6 +55,7 @@ public class PlayerActionsUI : MonoBehaviour {
 		}
 		this.gameObject.SetActive (true);
 		buttonsGrid.Reposition ();
+		UpdateGrid();
 	}
 	private void CreateButton(CharacterTask task){
 		GameObject characterTaskButton = (GameObject)GameObject.Instantiate (characterTaskButtonGO, buttonsGrid.transform);
@@ -56,5 +66,15 @@ public class PlayerActionsUI : MonoBehaviour {
 		taskButton.SetTask (task);
 		taskButton.SetLocation (this.location);
 		taskButtons.Add (taskButton);
+	}
+
+	[ContextMenu("Update Grid")]
+	public void UpdateGrid(){
+		int childCount = buttonsGrid.transform.childCount;
+		if(childCount > 0){
+			stretchableBG.height = childCount * characterTaskButtonHeight;
+		}else{
+			stretchableBG.height = defaultWidgetHeight;
+		}
 	}
 }

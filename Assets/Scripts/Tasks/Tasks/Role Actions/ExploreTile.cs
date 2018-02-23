@@ -46,13 +46,18 @@ public class ExploreTile : CharacterTask {
 			_character.SetCurrentFunction (() => Explore ());
 			return;
 		}
-		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 35){
-			ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
-			if(!_character.EquipItem(itemFound)){
-				_character.PickupItem (itemFound);
+		if(_isHalted){
+			return;
+		}
+		if( _landmarkToExplore.itemsInLandmark.Count > 0){
+			int chance = UnityEngine.Random.Range (0, 100);
+			if(chance < 35){
+				ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
+				if(!_character.EquipItem(itemFound)){
+					_character.PickupItem (itemFound);
+				}
+				_landmarkToExplore.itemsInLandmark.Remove (itemFound);
 			}
-			_landmarkToExplore.itemsInLandmark.Remove (itemFound);
 		}
 		if(_daysLeft != 0){
 			ScheduleExploration ();

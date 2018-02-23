@@ -69,7 +69,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     [SerializeField] private ResourceIcon resourceIcon;
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
-    [SerializeField] private Transform UIParent;
+    [SerializeField] internal Transform UIParent;
     [SerializeField] private Transform resourceParent;
     [SerializeField] private GameObject biomeDetailParentGO;
     [SerializeField] private TextMesh tileTextMesh;

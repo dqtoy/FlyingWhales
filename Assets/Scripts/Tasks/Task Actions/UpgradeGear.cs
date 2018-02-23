@@ -20,7 +20,7 @@ public class UpgradeGear : CharacterTask {
 			_targetLocation = _assignedCharacter.GetNearestNonHostileSettlement();
 		}
 		_settlement = (Settlement)_targetLocation;
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => SchedulePurchaseEquipment ());
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => SchedulePurchaseEquipment ());
     }
     //public override void TaskSuccess() {
     //    if (_assignedCharacter.faction == null) {

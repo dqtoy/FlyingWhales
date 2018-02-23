@@ -1453,6 +1453,7 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
+			return;
 			if(isInCombat){
 				SetCurrentFunction (() => DetermineAction ());
 				return;
