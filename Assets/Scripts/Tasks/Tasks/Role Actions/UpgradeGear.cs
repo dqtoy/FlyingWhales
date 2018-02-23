@@ -7,7 +7,7 @@ public class UpgradeGear : CharacterTask {
     private Settlement _settlement;
 
     public UpgradeGear(TaskCreator createdBy) : base(createdBy, TASK_TYPE.UPGRADE_GEAR) {
-
+		SetStance(STANCE.NEUTRAL);
     }
     #region overrides
     public override void PerformTask() {

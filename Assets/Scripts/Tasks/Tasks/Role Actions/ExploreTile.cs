@@ -15,6 +15,7 @@ public class ExploreTile : CharacterTask {
     #endregion
     public ExploreTile(TaskCreator createdBy) : base(createdBy, TASK_TYPE.EXPLORE_TILE) {
 		_character = (ECS.Character)createdBy;
+		SetStance(STANCE.STEALTHY);
     }
 
 	private BaseLandmark GetLandmarkToExplore(){

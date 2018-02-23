@@ -19,6 +19,7 @@ public class MoveTo : CharacterTask {
     public MoveTo(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.MOVE_TO) {
 		_forPlayerOnly = true;
+		SetStance(STANCE.NEUTRAL);
     }
 
     #region overrides

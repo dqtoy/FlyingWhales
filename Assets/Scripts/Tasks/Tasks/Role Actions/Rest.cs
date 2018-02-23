@@ -9,7 +9,7 @@ public class Rest : CharacterTask {
 
     public Rest(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.REST) {
-        
+		SetStance(STANCE.NEUTRAL);
     }
 
     private Settlement GetTargetSettlement() {
