@@ -41,7 +41,7 @@ public class MoveTo : CharacterTask {
         EndTask(TASK_STATUS.SUCCESS);
         _assignedCharacter.DestroyAvatar();
 		DoNothing doNothing = new DoNothing (_assignedCharacter);
-		doNothing.SetDays (3);
+		doNothing.SetDaysLeft (3);
 		doNothing.OnChooseTask (_assignedCharacter);
 		doNothing.PerformTask ();
     }

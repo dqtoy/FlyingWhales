@@ -6,7 +6,6 @@ public class ExploreTile : CharacterTask {
 
     private BaseLandmark _landmarkToExplore;
 	private ECS.Character _character;
-	private int _daysLeft;
 
     #region getters/setters
     public BaseLandmark landmarkToExplore {
@@ -16,6 +15,8 @@ public class ExploreTile : CharacterTask {
     public ExploreTile(TaskCreator createdBy) : base(createdBy, TASK_TYPE.EXPLORE_TILE) {
 		_character = (ECS.Character)createdBy;
 		SetStance(STANCE.STEALTHY);
+		SetDefaultDaysLeft(5);
+		SetDaysLeft(5);
     }
 
 	private BaseLandmark GetLandmarkToExplore(){
@@ -25,7 +26,6 @@ public class ExploreTile : CharacterTask {
     #region overrides
 	public override void OnChooseTask (ECS.Character character){
 		base.OnChooseTask (character);
-		_daysLeft = 5;
 		if(_targetLocation == null){
 			_landmarkToExplore = GetLandmarkToExplore();
 		}else{

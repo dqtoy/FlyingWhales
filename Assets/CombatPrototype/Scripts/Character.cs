@@ -1834,6 +1834,15 @@ namespace ECS {
 						return true;
 					}
 				}
+			}else if(task.taskType == TASK_TYPE.RECRUIT_FOLLOWERS){
+				if(currLocation != null && currLocation.id == location.tileLocation.id && location.tileLocation.landmarkOnTile != null){
+					if(this.faction != null && location.tileLocation.landmarkOnTile is Settlement){
+						Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
+						if(settlement.owner.id == this.faction.id){
+							return true;
+						}
+					}
+				}
 			}
 			return false;
 		}

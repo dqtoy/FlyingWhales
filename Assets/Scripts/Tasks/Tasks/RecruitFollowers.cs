@@ -12,15 +12,14 @@ public class RecruitFollowers : CharacterTask {
 
     public RecruitFollowers(TaskCreator createdBy) : base(createdBy, TASK_TYPE.RECRUIT_FOLLOWERS) {
         SetStance(STANCE.NEUTRAL); //Recruit Followers is a Neutral Stance action.
+		SetDefaultDaysLeft(5);
+		SetDaysLeft(5);
     }
 
     #region overrides
     public override void OnChooseTask(ECS.Character character) {
         base.OnChooseTask(character);
         //Once triggered, the character will be in Recruit Followers stance for 5 days or until the location has no more civilians
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddDays(5);
-        SchedulingManager.Instance.AddEntry(dueDate, () => EndRecruitment());
         Messenger.AddListener("OnDayEnd", CheckCivilians);
     }
     public override void PerformTask() {
@@ -45,19 +44,36 @@ public class RecruitFollowers : CharacterTask {
             EndRecruitment();
         }
     }
+	public override void ResetTask (){
+		base.ResetTask ();
+		Messenger.RemoveListener("OnDayEnd", CheckCivilians);
+	}
     #endregion
 
     private void EndRecruitment() {
         //End Rucruit Followers stance, and determine next action.
+		Messenger.RemoveListener("OnDayEnd", CheckCivilians);
         EndTask(TASK_STATUS.SUCCESS);
     }
 
     private void CheckCivilians() {
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => CheckCivilians ());
+			return;
+		}
+		if(_isHalted){
+			return;
+		}
         BaseLandmark location = _assignedCharacter.specificLocation as BaseLandmark;
-        if(location.civilians == 0) {
-            //The landmark has no more civilians
-            EndRecruitment();
-        }
+        if(location.civilians > 0) {
+			PerformTask();
+		}
+		if(_daysLeft != 0){
+			_daysLeft--;
+			return;
+		}
+		//This landmark has no more civilians or the task has expired
+		EndRecruitment();
     }
 
     private WeightedDictionary<string> GetRecruitmentDictionary(BaseLandmark location) {

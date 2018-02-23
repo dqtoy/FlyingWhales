@@ -29,6 +29,8 @@ public class CharacterTask {
     protected bool _canDoDailyAction = false;
 	protected bool _forPlayerOnly;
 	protected ILocation _targetLocation;
+	protected int _daysLeft;
+	protected int _defaultDaysLeft;
 
     #region getters/setters
     public TASK_TYPE taskType {
@@ -71,6 +73,10 @@ public class CharacterTask {
 
     #region virtual
     public virtual void OnChooseTask(ECS.Character character) {
+		if(character.isInCombat){
+			character.SetCurrentFunction (() => OnChooseTask (character));
+			return;
+		}
         _taskStatus = TASK_STATUS.IN_PROGRESS;
         _assignedCharacter = character;
         character.SetCurrentTask(this);
@@ -130,6 +136,7 @@ public class CharacterTask {
 		SetIsHalted (false);
 		_taskStatus = TASK_STATUS.IN_PROGRESS;
 		_taskLogs.Clear ();
+		_daysLeft = _defaultDaysLeft;
 	}
 
 	public virtual int GetTaskWeight(ECS.Character character){ return 0; }
@@ -170,6 +177,12 @@ public class CharacterTask {
 	}
 	public void SetIsHalted (bool state){
 		_isHalted = state;
+	}
+	public void SetDefaultDaysLeft(int days){
+		_defaultDaysLeft = days;
+	}
+	public void SetDaysLeft (int days){
+		_daysLeft = days;
 	}
     #endregion
 }

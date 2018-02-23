@@ -28,8 +28,8 @@ public class MilitaryManager : TaskCreator {
         _owner = owner;
         _activeQuests = new List<OldQuest.Quest>();
         if(owner is Tribe) {
-            GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+//            GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+//            SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
         }
     }
 
