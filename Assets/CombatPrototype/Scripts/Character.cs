@@ -146,7 +146,7 @@ namespace ECS {
             }
         }
 		internal HexTile currLocation{
-			get { return this.specificLocation.tileLocation; }
+			get { return (this.specificLocation != null ? this.specificLocation.tileLocation : null); }
 		}
 		public CharacterAvatar avatar{
 			get { return _avatar; }

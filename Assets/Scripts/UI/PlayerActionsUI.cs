@@ -27,7 +27,7 @@ public class PlayerActionsUI : MonoBehaviour {
 	}
 
 	private void OnShow(){
-		ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter;
+		ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
 		if(character == null){
 			return;
 		}

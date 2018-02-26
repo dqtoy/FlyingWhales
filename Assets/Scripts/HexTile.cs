@@ -1364,7 +1364,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		UIManager.Instance.HidePlayerActions ();
     }
 	private void RightClick(){
-		if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.currentlyShowingCharacter == null || this.landmarkOnTile == null) {
+		if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
 			return;
 		}
 		UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);

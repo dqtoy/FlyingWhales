@@ -21,9 +21,15 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private UIScrollView relationshipsScrollView;
 	[SerializeField] private UIScrollView historyScrollView;
 
+	private ECS.Character _activeCharacter;
+
     internal ECS.Character currentlyShowingCharacter {
         get { return _data as ECS.Character; }
     }
+
+	internal ECS.Character activeCharacter{
+		get { return _activeCharacter; }
+	}
 
     internal override void Initialize() {
         base.Initialize();
@@ -32,6 +38,7 @@ public class CharacterInfoUI : UIMenu {
 
     public override void OpenMenu() {
         base.OpenMenu();
+		_activeCharacter = (ECS.Character)_data;
         UpdateCharacterInfo();
     }
 
@@ -217,6 +224,12 @@ public class CharacterInfoUI : UIMenu {
         CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);
     }
 
+	#region Overrides
+	public override void HideMenu (){
+		_activeCharacter = null;
+		base.HideMenu ();
+	}
+	#endregion
 //	public void OnClickCloseBtn(){
 ////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
 //		HideMenu ();
