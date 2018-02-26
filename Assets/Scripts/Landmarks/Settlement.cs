@@ -33,7 +33,7 @@ public class Settlement : BaseLandmark {
 		get { return civilians + CharactersCount() + this._ownedLandmarks.Sum(x => x.civilians); }
 	}
     public List<MATERIAL> availableMaterials {
-        get { return _ownedLandmarks.Where(x => x is ResourceLandmark).Select(x => (x as ResourceLandmark).materialOnLandmark).ToList(); }
+        get { return _ownedLandmarks.Where(x => x is ResourceLandmark && x.civilians >= x.GetMinimumCivilianRequirement()).Select(x => (x as ResourceLandmark).materialOnLandmark).ToList(); }
     }
     #endregion
 
@@ -516,11 +516,17 @@ public class Settlement : BaseLandmark {
     #endregion
 
     #region Materials
+    /*
+     Settlements only keep track of Materials that it has access to. 
+     This is determined by the resources in his region that has gathering 
+     structure and the minimum required civilians of his faction.
+         */
     public bool HasAccessToMaterial(MATERIAL material) {
         for (int i = 0; i < _ownedLandmarks.Count; i++) {
             BaseLandmark currLandmark = _ownedLandmarks[i];
             if (currLandmark is ResourceLandmark) {
-                if ((currLandmark as ResourceLandmark).materialOnLandmark == material) {
+                ResourceLandmark currResLandmark = currLandmark as ResourceLandmark;
+                if (currResLandmark.materialOnLandmark == material && currResLandmark.civilians >= GetMinimumCivilianRequirement()) {
                     return true;
                 }
             }
