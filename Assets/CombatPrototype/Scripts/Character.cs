@@ -1817,11 +1817,30 @@ namespace ECS {
 		private bool CanTaskBeDone(CharacterTask task, ILocation location){
 			if(task.taskType == TASK_TYPE.MOVE_TO){
 				return true;
-			}else if(task.taskType == TASK_TYPE.UPGRADE_GEAR || task.taskType == TASK_TYPE.REST){
+			}else if(task.taskType == TASK_TYPE.UPGRADE_GEAR){
 				if(location.tileLocation.landmarkOnTile != null && this.faction != null && location.tileLocation.landmarkOnTile is Settlement){
 					Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
-					if(settlement.owner.id == this.faction.id){
+					if(settlement.owner != null && settlement.owner.id == this.faction.id){
 						return true;
+					}
+				}
+			}else if (task.taskType == TASK_TYPE.REST){
+				if(location.tileLocation.landmarkOnTile != null){
+					if(this.faction == null){
+						BaseLandmark home = this._home;
+						if(home == null){
+							home = this._lair;
+						}
+						if(home != null && location.tileLocation.landmarkOnTile.id == home.id){
+							return true;
+						}
+					}else{
+						if(location.tileLocation.landmarkOnTile is Settlement && location.tileLocation.landmarkOnTile.owner != null){
+							Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
+							if(settlement.owner.id == this.faction.id){
+								return true;
+							}
+						}
 					}
 				}
 			}else if(task.taskType == TASK_TYPE.EXPLORE_TILE){
