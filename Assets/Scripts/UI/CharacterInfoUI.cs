@@ -36,9 +36,12 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
     }
 
+	public override void ShowMenu (){
+		base.ShowMenu ();
+		_activeCharacter = (ECS.Character)_data;
+	}
     public override void OpenMenu() {
         base.OpenMenu();
-		_activeCharacter = (ECS.Character)_data;
         UpdateCharacterInfo();
     }
 
