@@ -198,10 +198,13 @@ public class InternalQuestManager : TaskCreator {
 		HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
 		if(unoccupiedTile != null){
             Settlement settlement = originLandmark as Settlement;
-            Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
-            Expand expand = new Expand(this, unoccupiedTile, originLandmark.location, settlement.GetMaterialForConstruction(constructionData), constructionData);
-            expand.SetSettlement((Settlement)originLandmark);
-			AddNewQuest(expand);
+            //Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
+            MATERIAL matForConstruction = settlement.GetMaterialForConstruction();
+            if(matForConstruction != MATERIAL.NONE) {
+                Expand expand = new Expand(this, unoccupiedTile, originLandmark.location, matForConstruction);
+                expand.SetSettlement((Settlement)originLandmark);
+                AddNewQuest(expand);
+            }
 		}
 	}
 	internal void CreateExploreTileQuest(BaseLandmark landmarkToExplore){
@@ -212,7 +215,7 @@ public class InternalQuestManager : TaskCreator {
     internal void CreateBuildStructureQuest(BaseLandmark landmarkToExplore) {
         Construction constructionData = ProductionManager.Instance.GetConstruction((landmarkToExplore as ResourceLandmark).materialData.structure.name);
         Settlement settlement = (Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile;
-        BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore.location, settlement.GetMaterialForConstruction(constructionData), constructionData);
+        BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore.location, settlement.GetMaterialForConstruction(), constructionData);
         buildStructure.SetSettlement(settlement);
         AddNewQuest(buildStructure);
     }

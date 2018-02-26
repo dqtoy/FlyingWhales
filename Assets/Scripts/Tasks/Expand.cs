@@ -7,8 +7,8 @@ public class Expand : OldQuest.Quest {
 	private HexTile _targetUnoccupiedTile;
 	private HexTile _originTile;
     private MATERIAL _materialToUse;
-    private Construction _constructionData;
-    private Dictionary<MATERIAL, int> _foodBrought;
+    //private Construction _constructionData;
+    //private Dictionary<MATERIAL, int> _foodBrought;
     private Dictionary<RACE, int> _civiliansBrought;
 
 	#region getters/setters
@@ -20,7 +20,7 @@ public class Expand : OldQuest.Quest {
 	}
 	#endregion
 
-	public Expand(TaskCreator createdBy, HexTile targetUnoccupiedTile, HexTile originTile, MATERIAL materialToUse, Construction constructionData) : base(createdBy, QUEST_TYPE.EXPAND) {
+	public Expand(TaskCreator createdBy, HexTile targetUnoccupiedTile, HexTile originTile, MATERIAL materialToUse) : base(createdBy, QUEST_TYPE.EXPAND) {
 		_questFilters = new List<QuestFilter>() {
 			new MustBeFaction(new List<Faction>(){((InternalQuestManager)createdBy).owner}),
 //			new MustBeRole(CHARACTER_ROLE.COLONIST),
@@ -28,19 +28,19 @@ public class Expand : OldQuest.Quest {
 		_targetUnoccupiedTile = targetUnoccupiedTile;
 		_originTile = originTile;
         _materialToUse = materialToUse;
-        _constructionData = constructionData;
+        //_constructionData = constructionData;
     }
 
     #region overrides
-    public override void OnQuestPosted() {
+    //public override void OnQuestPosted() {
         //_originTile.landmarkOnTile.AdjustReservedPopulation(20);
         //_originTile.landmarkOnTile.AdjustPopulation(-20);
-        _foodBrought = _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
-        _civiliansBrought = _postedAt.ReduceCivilians(_constructionData.production.civilianCost);
-    }
+        //_foodBrought = _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
+        //_civiliansBrought = _postedAt.ReduceCivilians(_constructionData.production.civilianCost);
+    //}
     protected override void AcceptQuest(ECS.Character partyLeader) {
 		base.AcceptQuest (partyLeader);
-        _assignedParty.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost); //Give the resources to build the structure to the party
+        //_assignedParty.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost); //Give the resources to build the structure to the party
     }
     protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
@@ -94,18 +94,18 @@ public class Expand : OldQuest.Quest {
 	private void SuccessExpansion(){
 		LandmarkManager.Instance.OccupyLandmark (this._targetUnoccupiedTile, this._assignedParty.partyLeader.faction);
 
-        _assignedParty.AdjustMaterial(_materialToUse, -_constructionData.production.resourceCost); //Remove the resources used to build the structure from the party
+        //_assignedParty.AdjustMaterial(_materialToUse, -_constructionData.production.resourceCost); //Remove the resources used to build the structure from the party
 
         CameraMove.Instance.UpdateMinimapTexture ();
 		Settlement expandedTo = (Settlement)this._targetUnoccupiedTile.landmarkOnTile;
 		ECS.Character villageHead = expandedTo.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
 		villageHead.SetHome (expandedTo);
 		expandedTo.SetHead(villageHead);
-        //Transfer food
-        foreach (KeyValuePair<MATERIAL, int> kvp in _foodBrought) {
-            expandedTo.AdjustMaterial(kvp.Key, kvp.Value);
-        }
-        expandedTo.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost);
+        ////Transfer food
+        //foreach (KeyValuePair<MATERIAL, int> kvp in _foodBrought) {
+        //    expandedTo.AdjustMaterial(kvp.Key, kvp.Value);
+        //}
+        //expandedTo.AdjustMaterial(_materialToUse, _constructionData.production.resourceCost);
 		_assignedParty.TransferCivilians(expandedTo, _civiliansBrought);
 
         AddNewLog("The expansion was successful " + villageHead.name + " is set as the head of the new settlement");

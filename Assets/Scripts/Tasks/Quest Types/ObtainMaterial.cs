@@ -31,8 +31,8 @@ public class ObtainMaterial : OldQuest.Quest {
 	public override void OnQuestPosted() {
 		base.OnQuestPosted();
 		//reserve 5 civilians
-		_materialToCollect = _target.materialsInventory[_materialToObtain].excess;
-		_target.ReserveMaterial(_materialToObtain, _materialToCollect);
+		//_materialToCollect = _target.materialsInventory[_materialToObtain].excess;
+		//_target.ReserveMaterial(_materialToObtain, _materialToCollect);
 		//TODO: Unreserve material when quest expires
 	}
 	protected override void ConstructQuestLine() {
@@ -67,8 +67,8 @@ public class ObtainMaterial : OldQuest.Quest {
 	private void TransferMaterialToSettlement(){
 		AddNewLog ("Transfered " + _materialToCollect + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + " to " + _postedAt.landmarkName + ".");
 		_postedAt.AddHistory (_assignedParty.name + " transfered " + _materialToCollect.ToString () + " " + Utilities.NormalizeString (_materialToObtain.ToString ()) + ".");
-		_postedAt.AdjustMaterial (_materialToObtain, _materialToCollect);
-        _assignedParty.AdjustMaterial(_materialToObtain, -_materialToCollect); //remove materials from the assigned party
+		//_postedAt.AdjustMaterial (_materialToObtain, _materialToCollect);
+  //      _assignedParty.AdjustMaterial(_materialToObtain, -_materialToCollect); //remove materials from the assigned party
         EndQuest (TASK_STATUS.SUCCESS);
 	}
 }

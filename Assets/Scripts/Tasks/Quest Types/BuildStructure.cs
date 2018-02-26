@@ -29,7 +29,7 @@ public class BuildStructure : OldQuest.Quest {
     #region overrides
     public override void OnQuestPosted() {
         base.OnQuestPosted();
-        _postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
+        //_postedAt.ReduceAssets(_constructionData.production, _materialToUse); //reduce the assets of the settlement that posted this quest. TODO: Return resources when quest is cancelled or failed?
         _civiliansBrought = _postedAt.ReduceCivilians(_constructionData.production.civilianCost);
         ////reserve 5 civilians
         //_postedAt.AdjustReservedPopulation(5);

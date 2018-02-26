@@ -332,7 +332,7 @@ namespace ECS {
 			currentCombat = null;
 			combatHistory = new Dictionary<int, CombatPrototype> ();
 			_combatHistoryID = 0;
-            ConstructMaterialInventory();
+            //ConstructMaterialInventory();
 		}
 
 		private void AllocateStatPoints(int statAllocationBonus){
@@ -1453,7 +1453,11 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
-			return;
+            //Set Task of character to do nothing for now
+            DoNothing doNothing = new DoNothing(this);
+            doNothing.OnChooseTask(this);
+            return;
+
 			if(isInCombat){
 				SetCurrentFunction (() => DetermineAction ());
 				return;
@@ -1622,8 +1626,8 @@ namespace ECS {
                 for (int j = 0; j < allLandmarksInRegion.Count; j++) {
                     BaseLandmark currLandmark = allLandmarksInRegion[j];
                     int weight = 0;
-                    int totalMaterials = currLandmark.materialsInventory.Sum(x => x.Value.count);
-                    weight += totalMaterials / 20; //+1 Weight per 20 resource in the landmark (regardless of value).
+                    //int totalMaterials = currLandmark.materialsInventory.Sum(x => x.Value.count);
+                    //weight += totalMaterials / 20; //+1 Weight per 20 resource in the landmark (regardless of value).
                     weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
                     if (weight > 0) {
                         actionWeights.AddElement(new Pillage(this, currLandmark), weight);
@@ -2175,71 +2179,72 @@ namespace ECS {
         }
         public void ContinueDailyAction() {
             if (!isInCombat) {
-                //if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
                 if (currentTask != null) {
+                    if (avatar != null && avatar.isTravelling) {
+                        return;
+                    }
                     currentTask.PerformTask();
                 }
-                //}
             }
         }
         #endregion
 
         #region Materials
-        private void ConstructMaterialInventory() {
-            _materialInventory = new Dictionary<MATERIAL, int>();
-            MATERIAL[] allMaterials = Utilities.GetEnumValues<MATERIAL>();
-            for (int i = 0; i < allMaterials.Length; i++) {
-                MATERIAL currMat = allMaterials[i];
-                if(currMat != MATERIAL.NONE) {
-                    _materialInventory.Add(currMat, 0);
-                }
-            }
-        }
-        public void AdjustMaterial(MATERIAL material, int amount) {
-            int newAmount = _materialInventory[material] + amount;
-            newAmount = Mathf.Max(0, newAmount);
-            _materialInventory[material] = newAmount;
-        }
-        /*
-         Transfer materials from this character to
-         another character.
-             */
-        public void TransferMaterials(ECS.Character transferTo, MATERIAL material, int amount) {
-            AdjustMaterial(material, -amount);
-            transferTo.AdjustMaterial(material, amount);
-        }
-        /*
-         Transfer materials from this character
-         to a party
-             */
-        public void TransferMaterials(Party party, MATERIAL material, int amount) {
-            AdjustMaterial(material, -amount);
-            party.AdjustMaterial(material, amount);
-        }
-        /*
-         Transfer ALL materials from this character to
-         another character.
-             */
-        public void TransferMaterials(ECS.Character transferTo) {
-            foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
-                MATERIAL currMat = kvp.Key;
-                int amount = kvp.Value;
-                AdjustMaterial(currMat, -amount);
-                transferTo.AdjustMaterial(currMat, amount);
-            }
-        }
-        /*
-         Transfer ALL materials from this character
-         to a party
-             */
-        public void TransferMaterials(Party party) {
-            foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
-                MATERIAL currMat = kvp.Key;
-                int amount = kvp.Value;
-                AdjustMaterial(currMat, -amount);
-                party.AdjustMaterial(currMat, amount);
-            }
-        }
+        //private void ConstructMaterialInventory() {
+        //    _materialInventory = new Dictionary<MATERIAL, int>();
+        //    MATERIAL[] allMaterials = Utilities.GetEnumValues<MATERIAL>();
+        //    for (int i = 0; i < allMaterials.Length; i++) {
+        //        MATERIAL currMat = allMaterials[i];
+        //        if(currMat != MATERIAL.NONE) {
+        //            _materialInventory.Add(currMat, 0);
+        //        }
+        //    }
+        //}
+        //public void AdjustMaterial(MATERIAL material, int amount) {
+        //    int newAmount = _materialInventory[material] + amount;
+        //    newAmount = Mathf.Max(0, newAmount);
+        //    _materialInventory[material] = newAmount;
+        //}
+        ///*
+        // Transfer materials from this character to
+        // another character.
+        //     */
+        //public void TransferMaterials(ECS.Character transferTo, MATERIAL material, int amount) {
+        //    AdjustMaterial(material, -amount);
+        //    transferTo.AdjustMaterial(material, amount);
+        //}
+        ///*
+        // Transfer materials from this character
+        // to a party
+        //     */
+        //public void TransferMaterials(Party party, MATERIAL material, int amount) {
+        //    AdjustMaterial(material, -amount);
+        //    party.AdjustMaterial(material, amount);
+        //}
+        ///*
+        // Transfer ALL materials from this character to
+        // another character.
+        //     */
+        //public void TransferMaterials(ECS.Character transferTo) {
+        //    foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
+        //        MATERIAL currMat = kvp.Key;
+        //        int amount = kvp.Value;
+        //        AdjustMaterial(currMat, -amount);
+        //        transferTo.AdjustMaterial(currMat, amount);
+        //    }
+        //}
+        ///*
+        // Transfer ALL materials from this character
+        // to a party
+        //     */
+        //public void TransferMaterials(Party party) {
+        //    foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
+        //        MATERIAL currMat = kvp.Key;
+        //        int amount = kvp.Value;
+        //        AdjustMaterial(currMat, -amount);
+        //        party.AdjustMaterial(currMat, amount);
+        //    }
+        //}
 
 		public ECS.Item GetItemByName(string itemName){
 			if(_equippedItems.Count > 0){

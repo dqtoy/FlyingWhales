@@ -95,9 +95,15 @@ public class LandmarkManager : MonoBehaviour {
 	public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark, ref MATERIAL material) {
         WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
         CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
+        Settlement settlement = null;
+        if(landmark is Settlement) {
+            settlement = landmark as Settlement;
+        } else {
+            settlement = landmark.location.region.mainLandmark as Settlement;
+        }
         for (int i = 1; i < allClasses.Length; i++) {
             CHARACTER_CLASS charClass = allClasses[i];
-			if (landmark.CanProduceClass(charClass, ref material)) { //Does the settlement have the required technologies to produce this class
+			if (settlement.CanProduceClass(charClass, ref material)) { //Does the settlement have the required technologies to produce this class
                 classes.AddElement(charClass, 200);
             }
         }

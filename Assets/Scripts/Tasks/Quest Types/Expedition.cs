@@ -91,7 +91,7 @@ public class Expedition : OldQuest.Quest {
         _questLine.Enqueue(goToTarget);
     }
     protected override void QuestSuccess() {
-        _assignedParty.TransferMaterials(_postedAt, _target.materialOnTile, _gatheredAmt); //Transfer materials to the settlement that posted the quest
+        //_assignedParty.TransferMaterials(_postedAt, _target.materialOnTile, _gatheredAmt); //Transfer materials to the settlement that posted the quest
         base.QuestSuccess();
     }
     #endregion
@@ -109,7 +109,7 @@ public class Expedition : OldQuest.Quest {
 
     private void StopGathering() {
         Messenger.RemoveListener("OnDayEnd", GatherResource);
-        _assignedParty.AdjustMaterial(_target.materialOnTile, _gatheredAmt); //take the gathered resources, and give it to the party
+        //_assignedParty.AdjustMaterial(_target.materialOnTile, _gatheredAmt); //take the gathered resources, and give it to the party
         AddNewLog(_assignedParty.name + " succcessfully gathers " + _gatheredAmt.ToString() + " " + Utilities.NormalizeString(_target.materialOnTile.ToString()) + " from " + _target.locationName);
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);
     }

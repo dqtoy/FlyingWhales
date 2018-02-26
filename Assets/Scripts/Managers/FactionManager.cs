@@ -108,7 +108,7 @@ public class FactionManager : MonoBehaviour {
             allRegions.Remove(regionForFaction);
             Utilities.ListRemoveRange(elligibleRegions, regionForFaction.adjacentRegions);
             Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
-			CreateInitialResourcesForSettlement((Settlement)regionForFaction.mainLandmark, newFaction);
+			//CreateInitialResourcesForSettlement((Settlement)regionForFaction.mainLandmark, newFaction);
             //regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
             regionForFaction.centerOfMass.landmarkOnTile.AdjustCivilians(inititalRace, 100);
             LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
@@ -169,19 +169,19 @@ public class FactionManager : MonoBehaviour {
         UIManager.Instance.UpdateFactionSummary();
         return newFaction;
     }
-    /*
-     factions have initial resources, that depends on the material preferences, 
-     the initial settlement will have 200 of each preferred material. NOTE: This stacks
-         */
-    private void CreateInitialResourcesForSettlement(Settlement initialSettlement, Faction owner) {
-        PRODUCTION_TYPE[] productionTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
-        for (int i = 0; i < productionTypes.Length; i++) {
-            PRODUCTION_TYPE currProdType = productionTypes[i];
-            MATERIAL prefMat = owner.GetHighestElligibleMaterialPriority(currProdType);
-            initialSettlement.AdjustMaterial(prefMat, 200);
-        }
-        initialSettlement.AdjustMaterial(MATERIAL.CORN, 200);
-    }
+    ///*
+    // factions have initial resources, that depends on the material preferences, 
+    // the initial settlement will have 200 of each preferred material. NOTE: This stacks
+    //     */
+    //private void CreateInitialResourcesForSettlement(Settlement initialSettlement, Faction owner) {
+    //    PRODUCTION_TYPE[] productionTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
+    //    for (int i = 0; i < productionTypes.Length; i++) {
+    //        PRODUCTION_TYPE currProdType = productionTypes[i];
+    //        MATERIAL prefMat = owner.GetHighestElligibleMaterialPriority(currProdType);
+    //        initialSettlement.AdjustMaterial(prefMat, 200);
+    //    }
+    //    initialSettlement.AdjustMaterial(MATERIAL.CORN, 200);
+    //}
     #endregion
 
     #region Emblem
