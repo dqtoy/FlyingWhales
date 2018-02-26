@@ -26,7 +26,10 @@ public class CharacterTaskButton : MonoBehaviour {
 	}
 
 	private void ClickAction(){
-		ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter;
+		ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+		if(character == null){
+			return;
+		}
 		if(character.avatar != null && character.avatar.isMovingToHex){
 			character.avatar.SetQueuedAction (() => ClickAction ());
 			UIManager.Instance.HidePlayerActions ();
