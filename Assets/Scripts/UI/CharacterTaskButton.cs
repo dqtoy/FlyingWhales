@@ -20,9 +20,15 @@ public class CharacterTaskButton : MonoBehaviour {
 	}
 
 	void OnClick(){
+		if(UICamera.currentTouchID == -1){
+			ClickAction ();
+		}
+	}
+
+	private void ClickAction(){
 		ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter;
 		if(character.avatar != null && character.avatar.isMovingToHex){
-			character.avatar.SetQueuedAction (() => OnClick ());
+			character.avatar.SetQueuedAction (() => ClickAction ());
 			UIManager.Instance.HidePlayerActions ();
 			return;
 		}

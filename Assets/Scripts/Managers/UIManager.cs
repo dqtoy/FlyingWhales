@@ -2265,7 +2265,7 @@ public class UIManager : MonoBehaviour {
             if (Minimap.Instance.isDragging) {
                 return true;
             }
-            if (UICamera.hoveredObject != null && UICamera.hoveredObject.layer == LayerMask.NameToLayer("UI")) {
+			if (UICamera.hoveredObject != null && (UICamera.hoveredObject.layer == LayerMask.NameToLayer("UI") || UICamera.hoveredObject.layer == LayerMask.NameToLayer("PlayerActions"))) {
                 return true;
             }
         }
