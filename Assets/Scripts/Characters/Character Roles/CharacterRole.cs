@@ -281,4 +281,16 @@ public class CharacterRole {
         return false;
     }
     #endregion
+
+	#region Role Tasks
+	public CharacterTask GetRoleTask(TASK_TYPE taskType){
+		for (int i = 0; i < _roleTasks.Count; i++) {
+			CharacterTask task = _roleTasks [i];
+			if(task.taskType == taskType){
+				return task;
+			}
+		}
+		return null;
+	}
+	#endregion
 }

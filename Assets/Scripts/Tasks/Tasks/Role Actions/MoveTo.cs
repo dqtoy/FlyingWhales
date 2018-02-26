@@ -16,8 +16,8 @@ public class MoveTo : CharacterTask {
     }
     #endregion
 
-    public MoveTo(TaskCreator createdBy) 
-        : base(createdBy, TASK_TYPE.MOVE_TO) {
+	public MoveTo(TaskCreator createdBy, int defaultDaysLeft = -1) 
+        : base(createdBy, TASK_TYPE.MOVE_TO, defaultDaysLeft) {
 		_forPlayerOnly = true;
 		SetStance(STANCE.NEUTRAL);
     }
@@ -25,15 +25,12 @@ public class MoveTo : CharacterTask {
     #region overrides
 	public override void OnChooseTask (ECS.Character character){
 		base.OnChooseTask (character);
+		Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL);
 	}
     public override void PerformTask() {
 		base.PerformTask();
-		_assignedCharacter.SetCurrentTask(this);
-		if (_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
-        }
-		Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL, () => SuccessTask ());
+		SuccessTask ();
     }
     #endregion
 
@@ -43,6 +40,5 @@ public class MoveTo : CharacterTask {
 		DoNothing doNothing = new DoNothing (_assignedCharacter);
 		doNothing.SetDaysLeft (3);
 		doNothing.OnChooseTask (_assignedCharacter);
-		doNothing.PerformTask ();
     }
 }

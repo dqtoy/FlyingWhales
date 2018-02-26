@@ -51,9 +51,6 @@ public class CharacterTask {
     public STANCE stance {
         get { return _stance; }
     }
-//	public int weight{
-//		get { return GetTaskWeight (); }
-//	}
 	public bool forPlayerOnly{
 		get { return _forPlayerOnly; }
 	}
@@ -62,13 +59,15 @@ public class CharacterTask {
 	}
     #endregion
 
-    public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType) {
+	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1) {
         _createdBy = createdBy;
         _taskType = taskType;
         _taskLogs = new List<string>();
 		_forPlayerOnly = false;
 		SetIsHalted (false);
 		_isDone = false;
+		SetDefaultDaysLeft (defaultDaysLeft);
+		SetDaysLeft (defaultDaysLeft);
     }
 
     #region virtual
@@ -80,17 +79,20 @@ public class CharacterTask {
         _taskStatus = TASK_STATUS.IN_PROGRESS;
         _assignedCharacter = character;
         character.SetCurrentTask(this);
+		if (character.party != null) {
+			character.party.SetCurrentTask(this);
+		}
     }
     /*
      Override this to make the character do something when
      he/she chooses to perform this task.
          */
-    public virtual void PerformTask() {
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => PerformTask ());
-			return;
-		}
-		if(_isHalted){
+    public virtual void PerformTask() { //Everyday action of the task
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => PerformTask ());
+//			return;
+//		}
+		if(_isHalted || _isDone){
 			return;
 		}
     }
@@ -104,6 +106,7 @@ public class CharacterTask {
 		}
         _taskStatus = taskResult;
         _isDone = true;
+
         switch (taskResult) {
             case TASK_STATUS.SUCCESS:
                 TaskSuccess();
@@ -183,6 +186,11 @@ public class CharacterTask {
 	}
 	public void SetDaysLeft (int days){
 		_daysLeft = days;
+	}
+	public void ReduceDaysLeft(int days){
+		if(_daysLeft > 0){
+			_daysLeft -= days;
+		}
 	}
     #endregion
 }

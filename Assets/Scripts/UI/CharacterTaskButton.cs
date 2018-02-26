@@ -41,7 +41,7 @@ public class CharacterTaskButton : MonoBehaviour {
 		task.ResetTask ();
 		task.SetLocation (this.location);
 		task.OnChooseTask (character);
-		task.PerformTask ();
+//		task.PerformTask ();
 		UIManager.Instance.HidePlayerActions ();
 	}
 }
