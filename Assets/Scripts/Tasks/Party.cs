@@ -143,7 +143,7 @@ public class Party: IEncounterable, ICombatInitializer {
     public virtual void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
             _partyMembers.Add(member);
-            CreateRelationshipsForNewMember(member);
+            //CreateRelationshipsForNewMember(member);
             if(_avatar != null) {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
@@ -760,9 +760,12 @@ public class Party: IEncounterable, ICombatInitializer {
     }
     public void ContinueDailyAction() {
         if (!isInCombat) {
-            if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
-                currentTask.PerformDailyAction();
+            if (currentTask != null) {
+                currentTask.PerformTask();
             }
+            //if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
+                
+            //}
         }
     }
     #endregion

@@ -2175,9 +2175,11 @@ namespace ECS {
         }
         public void ContinueDailyAction() {
             if (!isInCombat) {
-                if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
-                    currentTask.PerformDailyAction();
+                //if (currentTask is Pillage || currentTask is HuntPrey || currentTask is Rest || currentTask is Hibernate) {
+                if (currentTask != null) {
+                    currentTask.PerformTask();
                 }
+                //}
             }
         }
         #endregion

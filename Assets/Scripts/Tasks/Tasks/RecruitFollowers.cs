@@ -87,7 +87,7 @@ public class RecruitFollowers : CharacterTask {
             createWeight -= 300; //-300 Weight to Create New Follower if civilian count is equal or less than Minimum Cap
             createWeight = Mathf.Max(0, createWeight);
         } else {
-            createWeight += 5 * (minimumCivilianReq - location.civilians); //+5 Weight to Create New Follower for each civilian over Minimum Cap
+            createWeight += 5 * (location.civilians - minimumCivilianReq); //+5 Weight to Create New Follower for each civilian over Minimum Cap
         }
         if (_assignedCharacter.HasTrait(TRAIT.CHARISMATIC)) {
             createWeight += 50; //+50 Weight to Create New Follower if character is Charismatic
