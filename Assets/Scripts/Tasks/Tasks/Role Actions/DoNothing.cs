@@ -10,6 +10,7 @@ public class DoNothing : CharacterTask {
 
     public DoNothing(TaskCreator createdBy) 
         : base(createdBy, TASK_TYPE.DO_NOTHING) {
+        SetStance(STANCE.NEUTRAL);
     }
     private void EndQuestAfterDays() {
         GameDate dueDate = GameManager.Instance.Today();
@@ -25,14 +26,18 @@ public class DoNothing : CharacterTask {
     }
 
     #region overrides
-    public override void PerformTask() {
-        base.PerformTask();
-		_assignedCharacter.SetCurrentTask(this);
-		if(_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
-        }
+    public override void OnChooseTask(ECS.Character character) {
+        base.OnChooseTask(character);
         EndQuestAfterDays();
     }
+  //  public override void PerformTask() {
+  //      base.PerformTask();
+		//_assignedCharacter.SetCurrentTask(this);
+		//if(_assignedCharacter.party != null) {
+		//	_assignedCharacter.party.SetCurrentTask(this);
+  //      }
+        
+  //  }
     public override void TaskCancel() {
         //Unschedule task end!
         SchedulingManager.Instance.RemoveSpecificEntry(endDate, endAction);

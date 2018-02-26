@@ -32,6 +32,9 @@ public class Settlement : BaseLandmark {
 	public override int totalPopulation {
 		get { return civilians + CharactersCount() + this._ownedLandmarks.Sum(x => x.civilians); }
 	}
+    public List<MATERIAL> availableMaterials {
+        get { return _ownedLandmarks.Where(x => x is ResourceLandmark).Select(x => (x as ResourceLandmark).materialOnLandmark).ToList(); }
+    }
     #endregion
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
@@ -39,7 +42,7 @@ public class Settlement : BaseLandmark {
         _isHidden = false;
         _questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
-		_materialWeights = new WeightedDictionary<MATERIAL> ();
+		_materialWeights = new WeightedDictionary<MATERIAL>();
         _producingPopulationFor = RACE.NONE;
 //		ConstructNeededMaterials ();
     }
@@ -75,8 +78,8 @@ public class Settlement : BaseLandmark {
             _producingPopulationFor = GetRaceBasedOnProportion();
         }
 		//Start OldQuest.Quest Creation
-		ScheduleUpdateAvailableMaterialsToGet ();
-		ScheduleUpdateNeededMaterials ();
+		//ScheduleUpdateAvailableMaterialsToGet ();
+		//ScheduleUpdateNeededMaterials ();
 		//ScheduleMonthlyQuests ();
 		//TrainCharacterInSettlement(); //Start Character Creation Process
         IncreasePopulationPerMonth(); //Start Population Increase Process
@@ -200,27 +203,11 @@ public class Settlement : BaseLandmark {
 		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
 		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
         RACE raceForChar = GetRaceBasedOnProportion();
-        //		Production combinedProduction = new Production ();
-        //		combinedProduction.Combine(trainingRole.production, trainingClass.production);
-        //
-        //		if(combinedProduction.civilianCost <= civilians && combinedProduction.foodCost <= GetTotalFoodCount()){
-        //			MATERIAL materialToUse = MATERIAL.NONE;
-        //			List<MATERIAL> trainingPreference = this._owner.productionPreferences [PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
-        //			for (int i = 0; i < trainingPreference.Count; i++) {
-        //				if(trainingClass.materials.Contains(trainingPreference[i]) && combinedProduction.resourceCost <= _materialsInventory[trainingPreference[i]].count){
-        //					materialToUse = trainingPreference [i];
-        //				}
-        //			}
-        //			if(materialToUse != MATERIAL.NONE){
-        //				
-        //				return true;
-        //			}
-        //		}
 
-        ReduceTotalFoodCount (trainingRole.production.foodCost);
+        //ReduceTotalFoodCount (trainingRole.production.foodCost);
         //AdjustPopulation(-trainingRole.production.civilianCost);
         AdjustCivilians(raceForChar, -trainingRole.production.civilianCost);
-        AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
+        //AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
 
 		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
 		GameDate trainCharacterDate = GameManager.Instance.Today ();
@@ -228,6 +215,52 @@ public class Settlement : BaseLandmark {
 		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, raceForChar));
 //		return false;
 	}
+    /*
+     Does the settlement have the required technology
+     to produce a class?
+         */
+    public bool CanProduceClass(CHARACTER_CLASS charClass, ref MATERIAL material) {
+        if(_owner == null) {
+            return false;
+        }
+        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
+        List<MATERIAL> trainingPreference = this._owner.productionPreferences[PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+        for (int i = 0; i < trainingPreference.Count; i++) {
+            MATERIAL currMat = trainingPreference[i];
+            if (ProductionManager.Instance.trainingMaterials.Contains(currMat) && HasAccessToMaterial(currMat)) {
+                material = trainingPreference[i];
+            }
+        }
+        if (material == MATERIAL.NONE) {
+            return false; //this settlement has no access to materials for training.
+        }
+        if (neededTech == TECHNOLOGY.NONE) {
+            return true;
+        } else {
+            return _technologies[neededTech];
+        }
+        //if (neededTech == TECHNOLOGY.NONE || _technologies[neededTech]) {
+        //    TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup[charClass];
+        //    List<MATERIAL> trainingPreference = this._owner.productionPreferences[PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+        //    for (int i = 0; i < trainingPreference.Count; i++) {
+        //        if (ProductionManager.Instance.trainingMaterials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count) {
+        //            material = trainingPreference[i];
+        //            return true;
+        //        }
+        //    }
+        //}
+        //return false;
+    }
+    public bool CanProduceRole(CHARACTER_ROLE roleType) {
+        TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup[roleType];
+        if (trainingRole.production.civilianCost <= civilians) {
+            return true;
+        }
+        //if (trainingRole.production.civilianCost <= civilians && trainingRole.production.foodCost <= GetTotalFoodCount()) {
+        //    return true;
+        //}
+        return false;
+    }
     public void SetHead(ECS.Character head) {
         _headOfSettlement = head;
         if(_owner.leader != null) {
@@ -339,73 +372,73 @@ public class Settlement : BaseLandmark {
 		}
 		return count;
 	}
-	private void ScheduleUpdateAvailableMaterialsToGet(){
-		GameDate newSched = GameManager.Instance.Today();
-		newSched.AddMonths (1);
-		newSched.SetDay (GameManager.daysInMonth [newSched.month] - 1);
-		SchedulingManager.Instance.AddEntry (newSched, () => UpdateAvailableMaterialsToGet ());
-	}
-	private void ScheduleUpdateNeededMaterials(){
-		GameDate newSched = GameManager.Instance.Today();
-		newSched.AddMonths (1);
-		newSched.SetDay (GameManager.daysInMonth [newSched.month]);
-		SchedulingManager.Instance.AddEntry (newSched, () => UpdateNeededMaterials ());
-	}
+	//private void ScheduleUpdateAvailableMaterialsToGet(){
+	//	GameDate newSched = GameManager.Instance.Today();
+	//	newSched.AddMonths (1);
+	//	newSched.SetDay (GameManager.daysInMonth [newSched.month] - 1);
+	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateAvailableMaterialsToGet ());
+	//}
+	//private void ScheduleUpdateNeededMaterials(){
+	//	GameDate newSched = GameManager.Instance.Today();
+	//	newSched.AddMonths (1);
+	//	newSched.SetDay (GameManager.daysInMonth [newSched.month]);
+	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateNeededMaterials ());
+	//}
 	private void ScheduleMonthlyQuests(){
 		GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 		dueDate.AddMonths (1);
 		SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
 	}
-	private void UpdateAvailableMaterialsToGet(){
-		foreach (MATERIAL material in _materialsInventory.Keys) {
-			_materialsInventory [material].availableExcessOfOtherSettlements = (this._owner.settlements.Sum (x => x.materialsInventory [material].excess)) - _materialsInventory[material].excess;
-			_materialsInventory [material].availableExcessOfResourceLandmarks = this._ownedLandmarks.Sum (x => x.materialsInventory [material].excess);
-			_materialsInventory [material].capacity = 0;
-			_materialsInventory [material].isNeeded = false;
-		}
-		ScheduleUpdateAvailableMaterialsToGet ();
-	}
-	private void UpdateNeededMaterials(){
-		int count = this._owner.productionPreferences [PRODUCTION_TYPE.WEAPON].prioritizedMaterials.Count;
-		List<PRODUCTION_TYPE> productionTypes = this._owner.productionPreferences.Keys.ToList ();
-		for (int i = 0; i < count; i++) {
-			for (int j = 0; j < productionTypes.Count; j++) {
-				MATERIAL material = this._owner.productionPreferences [productionTypes[j]].prioritizedMaterials [i];
-				if((_materialsInventory[material].availableExcessOfOtherSettlements + _materialsInventory [material].availableExcessOfResourceLandmarks) > 0){
-					_materialsInventory [material].capacity += 200;
-					_materialsInventory [material].isNeeded = true;
-					productionTypes.RemoveAt (j);
-					j--;
-				}
-			}
-			if(productionTypes.Count <= 0){
-				break;
-			}
-		}
-		ScheduleUpdateNeededMaterials ();
-	}
-	private MATERIAL GetObtainMaterialTarget(){
-		_materialWeights.Clear ();
-		foreach (MATERIAL material in _materialsInventory.Keys) {
-			if (_materialsInventory [material].isNeeded) {
-				if (_materialsInventory [material].availableExcessOfOtherSettlements > 0 || materialsInventory [material].availableExcessOfResourceLandmarks > 0) {
-					if (_materialsInventory [material].count < _materialsInventory [material].capacity) {
-						_materialWeights.AddElement (material, 200);
-					} else {
-						_materialWeights.AddElement (material, 30);
-					}
-				}
-			}else{
-				if(_materialsInventory [material].availableExcessOfResourceLandmarks > 0){
-					_materialWeights.AddElement (material, 60);
-				}
-			}
-		}
-		if(_materialWeights.Count > 0){
-			return _materialWeights.PickRandomElementGivenWeights ();
-		}
-		return MATERIAL.NONE;
-	}
+	//private void UpdateAvailableMaterialsToGet(){
+	//	foreach (MATERIAL material in _materialsInventory.Keys) {
+	//		_materialsInventory [material].availableExcessOfOtherSettlements = (this._owner.settlements.Sum (x => x.materialsInventory [material].excess)) - _materialsInventory[material].excess;
+	//		_materialsInventory [material].availableExcessOfResourceLandmarks = this._ownedLandmarks.Sum (x => x.materialsInventory [material].excess);
+	//		_materialsInventory [material].capacity = 0;
+	//		_materialsInventory [material].isNeeded = false;
+	//	}
+	//	ScheduleUpdateAvailableMaterialsToGet ();
+	//}
+	//private void UpdateNeededMaterials(){
+	//	int count = this._owner.productionPreferences [PRODUCTION_TYPE.WEAPON].prioritizedMaterials.Count;
+	//	List<PRODUCTION_TYPE> productionTypes = this._owner.productionPreferences.Keys.ToList ();
+	//	for (int i = 0; i < count; i++) {
+	//		for (int j = 0; j < productionTypes.Count; j++) {
+	//			MATERIAL material = this._owner.productionPreferences [productionTypes[j]].prioritizedMaterials [i];
+	//			if((_materialsInventory[material].availableExcessOfOtherSettlements + _materialsInventory [material].availableExcessOfResourceLandmarks) > 0){
+	//				_materialsInventory [material].capacity += 200;
+	//				_materialsInventory [material].isNeeded = true;
+	//				productionTypes.RemoveAt (j);
+	//				j--;
+	//			}
+	//		}
+	//		if(productionTypes.Count <= 0){
+	//			break;
+	//		}
+	//	}
+	//	ScheduleUpdateNeededMaterials ();
+	//}
+	//private MATERIAL GetObtainMaterialTarget(){
+	//	_materialWeights.Clear ();
+	//	foreach (MATERIAL material in _materialsInventory.Keys) {
+	//		if (_materialsInventory [material].isNeeded) {
+	//			if (_materialsInventory [material].availableExcessOfOtherSettlements > 0 || materialsInventory [material].availableExcessOfResourceLandmarks > 0) {
+	//				if (_materialsInventory [material].count < _materialsInventory [material].capacity) {
+	//					_materialWeights.AddElement (material, 200);
+	//				} else {
+	//					_materialWeights.AddElement (material, 30);
+	//				}
+	//			}
+	//		}else{
+	//			if(_materialsInventory [material].availableExcessOfResourceLandmarks > 0){
+	//				_materialWeights.AddElement (material, 60);
+	//			}
+	//		}
+	//	}
+	//	if(_materialWeights.Count > 0){
+	//		return _materialWeights.PickRandomElementGivenWeights ();
+	//	}
+	//	return MATERIAL.NONE;
+	//}
 	private MATERIAL RepickObtainMaterialTarget(){
 		if(_materialWeights.Count > 0){
 			return _materialWeights.PickRandomElementGivenWeights ();
@@ -422,38 +455,37 @@ public class Settlement : BaseLandmark {
 		CreateQuest(QUEST_TYPE.OBTAIN_MATERIAL);
 		ScheduleMonthlyQuests();
 	}
-
 	private void CreateQuest(QUEST_TYPE questType){
 		int noOfQuestsOnBoard = GetNumberOfQuestsOnBoardByType (questType);
 		int maxNoOfQuests = GetMaxQuests (questType);
-		if(questType == QUEST_TYPE.OBTAIN_MATERIAL){
-			if(noOfQuestsOnBoard < maxNoOfQuests){
-				MATERIAL material = GetObtainMaterialTarget ();
-				MATERIAL previousMaterial = MATERIAL.NONE;
-				for (int i = 0; i < 2; i++) {
-					if(material != MATERIAL.NONE && material != previousMaterial && !AlreadyHasQuestOfType(QUEST_TYPE.OBTAIN_MATERIAL, material)){
-						previousMaterial = material;
-						BaseLandmark target = GetTargetObtainMaterial (material);
-						if(target != null){
-							ObtainMaterial obtainMaterialQuest = new ObtainMaterial (this, material, target);
-							obtainMaterialQuest.SetSettlement (this);
-							AddNewQuest (obtainMaterialQuest);
-							if((noOfQuestsOnBoard + 1) < maxNoOfQuests){
-								material = RepickObtainMaterialTarget ();
-							}else{
-								break;
-							}
-						}else{
-							if(i == 0){
-								material = RepickObtainMaterialTarget ();
-							}
-						}
-					}else{
-						break;
-					}
-				}
-			}
-		}
+		//if(questType == QUEST_TYPE.OBTAIN_MATERIAL){
+		//	if(noOfQuestsOnBoard < maxNoOfQuests){
+  //              MATERIAL material = GetObtainMaterialTarget();
+  //              MATERIAL previousMaterial = MATERIAL.NONE;
+		//		for (int i = 0; i < 2; i++) {
+		//			if(material != MATERIAL.NONE && material != previousMaterial && !AlreadyHasQuestOfType(QUEST_TYPE.OBTAIN_MATERIAL, material)){
+		//				previousMaterial = material;
+		//				BaseLandmark target = GetTargetObtainMaterial (material);
+		//				if(target != null){
+		//					ObtainMaterial obtainMaterialQuest = new ObtainMaterial (this, material, target);
+		//					obtainMaterialQuest.SetSettlement (this);
+		//					AddNewQuest (obtainMaterialQuest);
+		//					if((noOfQuestsOnBoard + 1) < maxNoOfQuests){
+		//						material = RepickObtainMaterialTarget ();
+		//					}else{
+		//						break;
+		//					}
+		//				}else{
+		//					if(i == 0){
+		//						material = RepickObtainMaterialTarget ();
+		//					}
+		//				}
+		//			}else{
+		//				break;
+		//			}
+		//		}
+		//	}
+		//}
 	}
 	private int GetMaxQuests(QUEST_TYPE questType){
 		if (questType == QUEST_TYPE.OBTAIN_MATERIAL) {
@@ -461,26 +493,55 @@ public class Settlement : BaseLandmark {
 		}
 		return 0;
 	}
-	private BaseLandmark GetTargetObtainMaterial(MATERIAL materialToObtain){
-		WeightedDictionary<BaseLandmark> targetWeights = new WeightedDictionary<BaseLandmark> ();
-		for (int i = 0; i < this.owner.settlements.Count; i++) {
-			if(this.id == this.owner.settlements[i].id){
-				for (int j = 0; j < this.ownedLandmarks.Count; j++) {
-					if(this.ownedLandmarks[j].materialsInventory[materialToObtain].excess > 0){
-						targetWeights.AddElement (this.ownedLandmarks [j], this.ownedLandmarks [j].materialsInventory [materialToObtain].excess);
-					}
-				}
-			}else{
-				if(this.owner.settlements[i].materialsInventory[materialToObtain].excess > 0){
-					targetWeights.AddElement (this.owner.settlements[i], this.owner.settlements[i].materialsInventory [materialToObtain].excess);
-				}
-			}
-		}
-		if(targetWeights.Count > 0){
-			return targetWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
-	}
+    //private BaseLandmark GetTargetObtainMaterial(MATERIAL materialToObtain){
+    //	WeightedDictionary<BaseLandmark> targetWeights = new WeightedDictionary<BaseLandmark> ();
+    //	for (int i = 0; i < this.owner.settlements.Count; i++) {
+    //		if(this.id == this.owner.settlements[i].id){
+    //			for (int j = 0; j < this.ownedLandmarks.Count; j++) {
+    //				if(this.ownedLandmarks[j].materialsInventory[materialToObtain].excess > 0){
+    //					targetWeights.AddElement (this.ownedLandmarks [j], this.ownedLandmarks [j].materialsInventory [materialToObtain].excess);
+    //				}
+    //			}
+    //		}else{
+    //			if(this.owner.settlements[i].materialsInventory[materialToObtain].excess > 0){
+    //				targetWeights.AddElement (this.owner.settlements[i], this.owner.settlements[i].materialsInventory [materialToObtain].excess);
+    //			}
+    //		}
+    //	}
+    //	if(targetWeights.Count > 0){
+    //		return targetWeights.PickRandomElementGivenWeights ();
+    //	}
+    //	return null;
+    //}
+    #endregion
+
+    #region Materials
+    public bool HasAccessToMaterial(MATERIAL material) {
+        for (int i = 0; i < _ownedLandmarks.Count; i++) {
+            BaseLandmark currLandmark = _ownedLandmarks[i];
+            if (currLandmark is ResourceLandmark) {
+                if ((currLandmark as ResourceLandmark).materialOnLandmark == material) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public MATERIAL GetMaterialForConstruction() {
+        List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
+        for (int i = 0; i < preferredMats.Count; i++) {
+            MATERIAL currMat = preferredMats[i];
+            if (ProductionManager.Instance.constructionMaterials.Contains(currMat)) {
+                if (HasAccessToMaterial(currMat)) {
+                    return currMat;
+                }
+                //if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
+                //    return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
+                //}
+            }
+        }
+        return MATERIAL.NONE;
+    }
     #endregion
 
     #region Landmarks
@@ -504,14 +565,12 @@ public class Settlement : BaseLandmark {
         ITEM_TYPE itemType = Utilities.GetItemTypeOfEquipment(specificItem);
         MATERIAL matToUse = GetMaterialForItem(itemType, specificItem, character);
         if(matToUse != MATERIAL.NONE) {
-            AdjustMaterial(matToUse, -GetCostToProduceItem(itemType, specificItem));
             character.AdjustGold(-ItemManager.Instance.GetGoldCostOfItem(itemType, matToUse));
             return ItemManager.Instance.CreateNewItemInstance(matToUse, specificItem);
         }
         return null;
     }
     private MATERIAL GetMaterialForItem(ITEM_TYPE itemType, EQUIPMENT_TYPE equipmentType, ECS.Character character) {
-        int productionMaterialCost = GetCostToProduceItem(itemType, equipmentType);
         List<MATERIAL> elligibleMaterials = new List<MATERIAL>();
         List<MATERIAL> preferredMaterials = new List<MATERIAL>();
         if (itemType == ITEM_TYPE.ARMOR) {
@@ -525,8 +584,7 @@ public class Settlement : BaseLandmark {
             MATERIAL currMat = preferredMaterials[i];
             if (elligibleMaterials.Contains(currMat)) { //check if the curr preferred material is elligible for the item type
                 int goldCost = ItemManager.Instance.GetGoldCostOfItem(itemType, currMat);
-                
-                if (_materialsInventory[currMat].count >= productionMaterialCost && character.gold >= goldCost) {
+                if (HasAccessToMaterial(currMat) && character.gold >= goldCost) {
                     //check if this settlement has enough resources to make the item
                     return currMat;
                 }
@@ -534,16 +592,16 @@ public class Settlement : BaseLandmark {
         }
         return MATERIAL.NONE;
     }
-    private int GetCostToProduceItem(ITEM_TYPE itemType, EQUIPMENT_TYPE equipmentType) {
-        if (itemType == ITEM_TYPE.ARMOR) {
-            ArmorProduction productionDetails = ProductionManager.Instance.GetArmorProduction((ARMOR_TYPE)equipmentType);
-            return productionDetails.production.resourceCost;
-        } else if (itemType == ITEM_TYPE.WEAPON) {
-            WeaponProduction productionDetails = ProductionManager.Instance.GetWeaponProduction((WEAPON_TYPE)equipmentType);
-            return productionDetails.production.resourceCost;
-        }
-        return 0;
-    }
+    //private int GetCostToProduceItem(ITEM_TYPE itemType, EQUIPMENT_TYPE equipmentType) {
+    //    if (itemType == ITEM_TYPE.ARMOR) {
+    //        ArmorProduction productionDetails = ProductionManager.Instance.GetArmorProduction((ARMOR_TYPE)equipmentType);
+    //        return productionDetails.production.resourceCost;
+    //    } else if (itemType == ITEM_TYPE.WEAPON) {
+    //        WeaponProduction productionDetails = ProductionManager.Instance.GetWeaponProduction((WEAPON_TYPE)equipmentType);
+    //        return productionDetails.production.resourceCost;
+    //    }
+    //    return 0;
+    //}
     #endregion
 
 	#region Save Landmark

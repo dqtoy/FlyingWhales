@@ -156,17 +156,19 @@ public class SettlementInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-        text += "\n[b]Materials: [/b] ";
-        Dictionary<MATERIAL, MaterialValues> materials = currentlyShowingLandmark.materialsInventory;
-        if (materials.Sum(x => x.Value.totalCount) > 0) {
-            foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in materials) {
-                if (kvp.Value.totalCount > 0) {
-                    text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.totalCount;
+        if (currentlyShowingLandmark is Settlement) {
+            Settlement currSettlement = currentlyShowingLandmark as Settlement;
+            text += "\n[b]Materials: [/b] ";
+            if (currSettlement.availableMaterials.Count > 0) {
+                for (int i = 0; i < currSettlement.availableMaterials.Count; i++) {
+                    MATERIAL currMat = currSettlement.availableMaterials[i];
+                    text += "\n" + currMat.ToString();
                 }
+            } else {
+                text += "NONE";
             }
-        } else {
-            text += "NONE";
         }
+       
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = currentlyShowingLandmark.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {
@@ -293,10 +295,13 @@ public class SettlementInfoUI : UIMenu {
 			Settlement settlement = (Settlement)currentlyShowingLandmark;
 			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
                 Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
-                if (settlement.CanAffordConstruction(constructionData) && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
-					return true;
-				}
-			}
+                if (settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)) {
+                    return true;
+                }
+                //            if (settlement.CanAffordConstruction(constructionData) && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
+                //	return true;
+                //}
+            }
 		}
 		return false;
 	}

@@ -89,7 +89,7 @@ public class Pillage : CharacterTask {
         PILLAGE_ACTION chosenAct = pillageActions.PickRandomElementGivenWeights();
         switch (chosenAct) {
             case PILLAGE_ACTION.TAKE_RESOURCE:
-                TakeResource();
+                //TakeResource(); //TODO: Change to take item!
                 break;
             case PILLAGE_ACTION.END:
                 End();
@@ -103,17 +103,17 @@ public class Pillage : CharacterTask {
                 break;
         }
     }
-    private void TakeResource() {
-        Dictionary<MATERIAL, MaterialValues> elligibleMaterials = _target.materialsInventory.Where(x => x.Value.count > 0).ToDictionary(x => x.Key, y => y.Value);
-        if (elligibleMaterials.Count > 0) {
-            MATERIAL randomResource = elligibleMaterials.Keys.ElementAt(Random.Range(0, elligibleMaterials.Count));
-            int randomAmount = Random.Range(1, elligibleMaterials[randomResource].count + 1);
-            _target.AdjustMaterial(randomResource, randomAmount);
-        } else {
-			End();
-        }
+   // private void TakeResource() {
+   //     Dictionary<MATERIAL, MaterialValues> elligibleMaterials = _target.materialsInventory.Where(x => x.Value.count > 0).ToDictionary(x => x.Key, y => y.Value);
+   //     if (elligibleMaterials.Count > 0) {
+   //         MATERIAL randomResource = elligibleMaterials.Keys.ElementAt(Random.Range(0, elligibleMaterials.Count));
+   //         int randomAmount = Random.Range(1, elligibleMaterials[randomResource].count + 1);
+   //         _target.AdjustMaterial(randomResource, randomAmount);
+   //     } else {
+			//End();
+   //     }
         
-    }
+   // }
 	private void TriggerSaveLandmarkQuest(){
 		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied && !_target.location.region.centerOfMass.landmarkOnTile.AlreadyHasQuestOfType(QUEST_TYPE.SAVE_LANDMARK, _target)){
 			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;

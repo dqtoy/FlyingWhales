@@ -26,7 +26,6 @@ public class Rest : CharacterTask {
 				}
 			}
 		}
-        
         return null;
     }
 

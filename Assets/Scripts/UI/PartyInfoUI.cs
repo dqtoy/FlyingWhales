@@ -82,17 +82,17 @@ public class PartyInfoUI : UIMenu {
             }
         }
 
-        text += "\n[b]Materials:[/b] ";
-        if (currentlyShowingParty.materialInventory.Sum(x => x.Value) > 0) {
-            text += "\n";
-            foreach (KeyValuePair<MATERIAL, int> kvp in currentlyShowingParty.materialInventory) {
-                if (kvp.Value > 0) {
-                    text += kvp.Key.ToString() + " - " + kvp.Value.ToString();
-                }
-            }
-        } else {
-            text += "NONE";
-        }
+        //text += "\n[b]Materials:[/b] ";
+        //if (currentlyShowingParty.materialInventory.Sum(x => x.Value) > 0) {
+        //    text += "\n";
+        //    foreach (KeyValuePair<MATERIAL, int> kvp in currentlyShowingParty.materialInventory) {
+        //        if (kvp.Value > 0) {
+        //            text += kvp.Key.ToString() + " - " + kvp.Value.ToString();
+        //        }
+        //    }
+        //} else {
+        //    text += "NONE";
+        //}
 
         partyInfoLbl.text = text;
         infoScrollView.ResetPosition();

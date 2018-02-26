@@ -21,7 +21,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
 	protected int _reservedCivilians;
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
-    protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
+    //protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
 	protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
     protected Dictionary<RACE, int> _civiliansByRace;
 
@@ -86,9 +86,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Dictionary<RACE, int> civiliansByRace {
         get { return _civiliansByRace; }
     }
-    public Dictionary<MATERIAL, MaterialValues> materialsInventory {
-		get { return _materialsInventory; }
-    }
+  //  public Dictionary<MATERIAL, MaterialValues> materialsInventory {
+		//get { return _materialsInventory; }
+  //  }
     public Dictionary<TECHNOLOGY, bool> technologies {
         get { return _technologies; }
     }
@@ -140,7 +140,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_activeQuests = new List<OldQuest.Quest>();
 		_itemsInLandmark = new List<ECS.Item> ();
         ConstructTechnologiesDictionary();
-		ConstructMaterialValues();
+		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
         Inititalize();
     }
@@ -318,6 +318,33 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Characters
+    public ECS.Character CreateNewFollower() {
+        MATERIAL material = MATERIAL.NONE;
+        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
+        CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.NONE, Utilities.NormalizeString(chosenClass.ToString()));
+        newFollower.SetFollowerState(true);
+        return newFollower;
+    }
+    /*
+     Create a new character, given a role and class.
+     This will also subtract from the civilian population.
+         */
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
+        RACE raceOfChar = GetRaceBasedOnProportion();
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+        //        newCharacter.AssignRole(charRole);
+        newCharacter.SetFaction(_owner);
+        newCharacter.SetHome(this);
+        AdjustCivilians(raceOfChar, -1);
+        //this.AdjustPopulation(-1); //Adjust population by -1
+        this.owner.AddNewCharacter(newCharacter);
+        this.AddCharacterToLocation(newCharacter, false);
+        this.AddCharacterHomeOnLandmark(newCharacter);
+        newCharacter.DetermineAction();
+        UIManager.Instance.UpdateFactionSummary();
+        return newCharacter;
+    }
     /*
      Make a character consider this landmark as it's home.
          */
@@ -357,59 +384,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
-
-    public ECS.Character CreateNewFollower() {
-        MATERIAL material = MATERIAL.NONE;
-        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
-        CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.NONE, Utilities.NormalizeString(chosenClass.ToString()));
-        newFollower.SetFollowerState(true);
-        return newFollower;
-    }
-    /*
-     Create a new character, given a role and class.
-     This will also subtract from the civilian population.
-         */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
-        RACE raceOfChar = GetRaceBasedOnProportion();
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
-        //        newCharacter.AssignRole(charRole);
-        newCharacter.SetFaction(_owner);
-        newCharacter.SetHome(this);
-        AdjustCivilians(raceOfChar, -1);
-        //this.AdjustPopulation(-1); //Adjust population by -1
-        this.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterToLocation(newCharacter, false);
-        this.AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.DetermineAction();
-        UIManager.Instance.UpdateFactionSummary();
-        return newCharacter;
-    }
-    /*
-     Does the settlement have the required technology
-     to produce a class?
-         */
-    public bool CanProduceClass(CHARACTER_CLASS charClass, ref MATERIAL material) {
-        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
-        if (neededTech == TECHNOLOGY.NONE || _technologies[neededTech]) {
-            TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup[charClass];
-            List<MATERIAL> trainingPreference = this._owner.productionPreferences[PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
-            for (int i = 0; i < trainingPreference.Count; i++) {
-                if (ProductionManager.Instance.trainingMaterials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count) {
-                    material = trainingPreference[i];
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool CanProduceRole(CHARACTER_ROLE roleType) {
-        TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup[roleType];
-        if (trainingRole.production.civilianCost <= civilians && trainingRole.production.foodCost <= GetTotalFoodCount()) {
-            return true;
-        }
-        return false;
-    }
     #endregion
 
     #region Party
@@ -649,7 +623,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void ContinueDailyActions() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currItem = _charactersAtLocation[i];
-            currItem.ContinueDailyAction();
+            if (!currItem.isInCombat) {
+                currItem.ContinueDailyAction();
+            }
         }
     }
 
@@ -857,165 +833,165 @@ public class BaseLandmark : ILocation, TaskCreator {
 	#endregion
 
 	#region Materials
-	private void ConstructMaterialValues(){
-		_materialsInventory = new Dictionary<MATERIAL, MaterialValues>();
-		MATERIAL[] materials = Utilities.GetEnumValues<MATERIAL> ();
-		for (int i = 1; i < materials.Length; i++) {
-			_materialsInventory.Add (materials [i], new MaterialValues ());
-		}
-	}
-	protected void ConstructNeededMaterials(){
-		_neededMaterials = new Dictionary<PRODUCTION_TYPE, MATERIAL>();
-		PRODUCTION_TYPE[] production = Utilities.GetEnumValues<PRODUCTION_TYPE> ();
-		for (int i = 1; i < production.Length; i++) {
-			_neededMaterials.Add (production [i], MATERIAL.NONE);
-		}
-	}
-	internal virtual void AdjustMaterial(MATERIAL material, int amount){
-		_materialsInventory [material].count += amount;
-        _materialsInventory[material].count = Mathf.Max(_materialsInventory[material].count, 0);
-	}
-	internal void SetMaterial(MATERIAL material, int amount){
-		_materialsInventory [material].count = amount;
-	}
-	internal void ReserveMaterial(MATERIAL material, int amount){
-		AdjustMaterial (material, -amount);
-		_materialsInventory [material].reserved += amount;
-		if(_materialsInventory [material].reserved < 0){
-			_materialsInventory [material].reserved = 0;
-		}
-	}
-	internal void ReduceReserveMaterial(MATERIAL material, int amount){
-		_materialsInventory [material].reserved -= amount;
-		if(_materialsInventory [material].reserved < 0){
-			_materialsInventory [material].reserved = 0;
-		}
-	}
-	internal int GetTotalFoodCount(){
-		int count = 0;
-		for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
-			MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
-			count += _materialsInventory [material].count;
-		}
-		return count;
-	}
-	internal Dictionary<MATERIAL, int> ReduceTotalFoodCount(int amount){
-        Dictionary<MATERIAL, int> foodReduced = new Dictionary<MATERIAL, int>();
-		int totalAmount = amount;
-		for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
-			MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
-			if(totalAmount > 0){
-				if(totalAmount > _materialsInventory [material].count){
-                    foodReduced.Add(material, materialsInventory[material].count);
-                    totalAmount -= _materialsInventory [material].count;
-					SetMaterial (material, 0);
-                } else{
-                    foodReduced.Add(material, totalAmount);
-                    AdjustMaterial (material, -totalAmount);
-					break;
-				}
-			}else{
-				break;
-			}
-		}
-        return foodReduced;
+	//private void ConstructMaterialValues(){
+	//	_materialsInventory = new Dictionary<MATERIAL, MaterialValues>();
+	//	MATERIAL[] materials = Utilities.GetEnumValues<MATERIAL> ();
+	//	for (int i = 1; i < materials.Length; i++) {
+	//		_materialsInventory.Add (materials [i], new MaterialValues ());
+	//	}
+	//}
+	//protected void ConstructNeededMaterials(){
+	//	_neededMaterials = new Dictionary<PRODUCTION_TYPE, MATERIAL>();
+	//	PRODUCTION_TYPE[] production = Utilities.GetEnumValues<PRODUCTION_TYPE> ();
+	//	for (int i = 1; i < production.Length; i++) {
+	//		_neededMaterials.Add (production [i], MATERIAL.NONE);
+	//	}
+	//}
+	//internal virtual void AdjustMaterial(MATERIAL material, int amount){
+	//	_materialsInventory [material].count += amount;
+ //       _materialsInventory[material].count = Mathf.Max(_materialsInventory[material].count, 0);
+	//}
+	//internal void SetMaterial(MATERIAL material, int amount){
+	//	_materialsInventory [material].count = amount;
+	//}
+	//internal void ReserveMaterial(MATERIAL material, int amount){
+	//	AdjustMaterial (material, -amount);
+	//	_materialsInventory [material].reserved += amount;
+	//	if(_materialsInventory [material].reserved < 0){
+	//		_materialsInventory [material].reserved = 0;
+	//	}
+	//}
+	//internal void ReduceReserveMaterial(MATERIAL material, int amount){
+	//	_materialsInventory [material].reserved -= amount;
+	//	if(_materialsInventory [material].reserved < 0){
+	//		_materialsInventory [material].reserved = 0;
+	//	}
+	//}
+	//internal int GetTotalFoodCount(){
+	//	int count = 0;
+	//	for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
+	//		MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
+	//		count += _materialsInventory [material].count;
+	//	}
+	//	return count;
+	//}
+	//internal Dictionary<MATERIAL, int> ReduceTotalFoodCount(int amount){
+ //       Dictionary<MATERIAL, int> foodReduced = new Dictionary<MATERIAL, int>();
+	//	int totalAmount = amount;
+	//	for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
+	//		MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
+	//		if(totalAmount > 0){
+	//			if(totalAmount > _materialsInventory [material].count){
+ //                   foodReduced.Add(material, materialsInventory[material].count);
+ //                   totalAmount -= _materialsInventory [material].count;
+	//				SetMaterial (material, 0);
+ //               } else{
+ //                   foodReduced.Add(material, totalAmount);
+ //                   AdjustMaterial (material, -totalAmount);
+	//				break;
+	//			}
+	//		}else{
+	//			break;
+	//		}
+	//	}
+ //       return foodReduced;
 
-    }
-    internal bool HasAvailableMaterial(MATERIAL material, int amount) {
-        if(_materialsInventory[material].count >= amount) {
-            return true;
-        }
-        return false;
-    }
-    /*
-     Can this landmark afford to construct a structure?
-         */
-    public bool CanAffordConstruction(Construction constructionData) {
-        if (GetTotalFoodCount() < constructionData.production.foodCost) {
-            return false; //this landmark does not have enough food to build the structure
-        }
-        if(civilians < constructionData.production.civilianCost) {
-            return false; //this landmark does not have enough civilians to build the structure
-        }
-        if(GetMaterialForConstruction(constructionData) == MATERIAL.NONE) {
-            return false; //the landmark does not have any materials that can build the structure
-        }
-        return true; //this landmark meets all the requirements
-    }
-    public MATERIAL GetMaterialForConstruction(Construction constructionData) {
-        List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
-        for (int i = 0; i < preferredMats.Count; i++) {
-            MATERIAL currMat = preferredMats[i];
-            if (ProductionManager.Instance.constructionMaterials.Contains(currMat)) {
-                if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
-                    return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
-                }
-            }
-        }
-        return MATERIAL.NONE;
-    }
-    /*
-     This will reduce this landmarks assets based on
-     a given Production Cost and a material. This will return
-     a list of food materials that was reduced. 
-     NOTE: This will only reduce materials, not civilians
-     civilian adjustment needs a separate call.
-         */
-    public Dictionary<MATERIAL, int> ReduceAssets(Production productionCost, MATERIAL materialToUse) {
-        //AdjustPopulation(-productionCost.civilianCost);
-        AdjustMaterial(materialToUse, -productionCost.resourceCost);
-        return ReduceTotalFoodCount(productionCost.foodCost);
-    }
-    /*
-     This will reduce a landmarks assets based on Construction Data,
-     this will determine what material to use on it's own. This will return
-     a list of food materials that was reduced.
-     NOTE: This will only reduce materials, not civilians
-     civilian adjustment needs a separate call.
-         */
-    public Dictionary<MATERIAL, int> ReduceAssets(Construction constructionData) {
-        //AdjustPopulation(-constructionData.production.civilianCost);
-        MATERIAL matToUse = GetMaterialForConstruction(constructionData);
-        if(matToUse == MATERIAL.NONE) {
-            throw new System.Exception("There is no materials to build a " + constructionData.structure.name);
-        }
-        AdjustMaterial(matToUse, -constructionData.production.resourceCost);
-        return ReduceTotalFoodCount(constructionData.production.foodCost);
-    }
-    public bool HasMaterialsFor(PRODUCTION_TYPE prodType) {
-        foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in _materialsInventory) {
-            MATERIAL currMat = kvp.Key;
-            MaterialValues matVal = kvp.Value;
-            if (matVal.count > 0) {
-                if(MaterialManager.Instance.CanMaterialBeUsedFor(currMat, prodType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasAccessTo(PRODUCTION_TYPE prodType) {
-        for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
-            HexTile currTile = location.region.tilesInRegion[i];
-            if (currTile.materialOnTile != MATERIAL.NONE) {
-                if (MaterialManager.Instance.CanMaterialBeUsedFor(currTile.materialOnTile, prodType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasAccessToFood() {
-        for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
-            HexTile currTile = location.region.tilesInRegion[i];
-            if (currTile.materialOnTile != MATERIAL.NONE) {
-                if (MaterialManager.Instance.materialsLookup[currTile.materialOnTile].isEdible) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+ //   }
+    //internal bool HasAvailableMaterial(MATERIAL material, int amount) {
+    //    if(_materialsInventory[material].count >= amount) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    ///*
+    // Can this landmark afford to construct a structure?
+    //     */
+    //public bool CanAffordConstruction(Construction constructionData) {
+    //    if (GetTotalFoodCount() < constructionData.production.foodCost) {
+    //        return false; //this landmark does not have enough food to build the structure
+    //    }
+    //    if(civilians < constructionData.production.civilianCost) {
+    //        return false; //this landmark does not have enough civilians to build the structure
+    //    }
+    //    if(GetMaterialForConstruction(constructionData) == MATERIAL.NONE) {
+    //        return false; //the landmark does not have any materials that can build the structure
+    //    }
+    //    return true; //this landmark meets all the requirements
+    //}
+    //public MATERIAL GetMaterialForConstruction(Construction constructionData) {
+    //    List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
+    //    for (int i = 0; i < preferredMats.Count; i++) {
+    //        MATERIAL currMat = preferredMats[i];
+    //        if (ProductionManager.Instance.constructionMaterials.Contains(currMat)) {
+    //            if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
+    //                return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
+    //            }
+    //        }
+    //    }
+    //    return MATERIAL.NONE;
+    //}
+    ///*
+    // This will reduce this landmarks assets based on
+    // a given Production Cost and a material. This will return
+    // a list of food materials that was reduced. 
+    // NOTE: This will only reduce materials, not civilians
+    // civilian adjustment needs a separate call.
+    //     */
+    //public Dictionary<MATERIAL, int> ReduceAssets(Production productionCost, MATERIAL materialToUse) {
+    //    //AdjustPopulation(-productionCost.civilianCost);
+    //    AdjustMaterial(materialToUse, -productionCost.resourceCost);
+    //    return ReduceTotalFoodCount(productionCost.foodCost);
+    //}
+    ///*
+    // This will reduce a landmarks assets based on Construction Data,
+    // this will determine what material to use on it's own. This will return
+    // a list of food materials that was reduced.
+    // NOTE: This will only reduce materials, not civilians
+    // civilian adjustment needs a separate call.
+    //     */
+    //public Dictionary<MATERIAL, int> ReduceAssets(Construction constructionData) {
+    //    //AdjustPopulation(-constructionData.production.civilianCost);
+    //    MATERIAL matToUse = GetMaterialForConstruction(constructionData);
+    //    if(matToUse == MATERIAL.NONE) {
+    //        throw new System.Exception("There is no materials to build a " + constructionData.structure.name);
+    //    }
+    //    AdjustMaterial(matToUse, -constructionData.production.resourceCost);
+    //    return ReduceTotalFoodCount(constructionData.production.foodCost);
+    //}
+    //public bool HasMaterialsFor(PRODUCTION_TYPE prodType) {
+    //    foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in _materialsInventory) {
+    //        MATERIAL currMat = kvp.Key;
+    //        MaterialValues matVal = kvp.Value;
+    //        if (matVal.count > 0) {
+    //            if(MaterialManager.Instance.CanMaterialBeUsedFor(currMat, prodType)) {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public bool HasAccessTo(PRODUCTION_TYPE prodType) {
+    //    for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
+    //        HexTile currTile = location.region.tilesInRegion[i];
+    //        if (currTile.materialOnTile != MATERIAL.NONE) {
+    //            if (MaterialManager.Instance.CanMaterialBeUsedFor(currTile.materialOnTile, prodType)) {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public bool HasAccessToFood() {
+    //    for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
+    //        HexTile currTile = location.region.tilesInRegion[i];
+    //        if (currTile.materialOnTile != MATERIAL.NONE) {
+    //            if (MaterialManager.Instance.materialsLookup[currTile.materialOnTile].isEdible) {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Quests
