@@ -11,8 +11,8 @@ public class Pillage : CharacterTask {
 
     private WeightedDictionary<PILLAGE_ACTION> pillageActions;
 
-    public Pillage(TaskCreator createdBy, BaseLandmark target) 
-        : base(createdBy, TASK_TYPE.PILLAGE) {
+	public Pillage(TaskCreator createdBy, BaseLandmark target, int defaultDaysLeft = -1) 
+        : base(createdBy, TASK_TYPE.PILLAGE, defaultDaysLeft) {
         _target = target;
     }
 
@@ -28,10 +28,6 @@ public class Pillage : CharacterTask {
     }
     public override void PerformTask() {
         base.PerformTask();
-		_assignedCharacter.SetCurrentTask(this);
-		if (_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
-        }
         //GoToTargetLocation();
         DoPillage();
         
