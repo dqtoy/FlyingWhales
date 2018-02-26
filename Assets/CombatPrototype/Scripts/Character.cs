@@ -1473,7 +1473,7 @@ namespace ECS {
             if(nextTaskToDo != null) {
                 //Force accept quest, if any
 				nextTaskToDo.OnChooseTask(this);
-                nextTaskToDo.PerformTask();
+//                nextTaskToDo.PerformTask();
                 nextTaskToDo = null;
                 return;
             }
@@ -1487,7 +1487,7 @@ namespace ECS {
 			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
 			chosenTask.ResetTask ();
 			chosenTask.OnChooseTask (this);
-			chosenTask.PerformTask ();
+//			chosenTask.PerformTask ();
 
 //			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
 //            AddActionWeightsFromTags(actionWeights); //Add weights from tags
