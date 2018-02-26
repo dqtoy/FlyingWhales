@@ -26,7 +26,7 @@ public class CharacterTask {
 
     protected STANCE _stance;
 
-    protected bool _canDoDailyAction = false;
+    //protected bool _canDoDailyAction = false;
 	protected bool _forPlayerOnly;
 	protected ILocation _targetLocation;
 	protected int _daysLeft;
@@ -127,7 +127,7 @@ public class CharacterTask {
     public virtual void TaskFail() {
 		_assignedCharacter.DetermineAction();
 	}
-    public virtual void PerformDailyAction() { }
+    //public virtual void PerformDailyAction() { }
 
 	public virtual void ResetTask(){
 		_assignedCharacter = null;
@@ -147,9 +147,9 @@ public class CharacterTask {
         dueDate.AddDays(days);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndTask(result));
     }
-    protected void SetCanDoDailyAction(bool state) {
-        _canDoDailyAction = state;
-    }
+    //protected void SetCanDoDailyAction(bool state) {
+    //    _canDoDailyAction = state;
+    //}
 
     #region Logs
     internal void AddNewLog(string log) {
