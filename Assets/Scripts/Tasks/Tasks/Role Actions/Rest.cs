@@ -39,13 +39,10 @@ public class Rest : CharacterTask {
         } else {
             _charactersToRest.Add(character);
         }
-        for (int i = 0; i < _charactersToRest.Count; i++) {
-            _charactersToRest[i].AddHistory("Taking a rest.");
-        }
 		if(_targetLocation == null){
 			_targetLocation = GetTargetSettlement();
 		}
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL, () => StartRest());
     }
     public override void PerformTask() {
 		base.PerformTask();
@@ -57,6 +54,16 @@ public class Rest : CharacterTask {
 	}
     #endregion
 
+	private void StartRest(){
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => StartRest ());
+			return;
+		}
+		for (int i = 0; i < _charactersToRest.Count; i++) {
+			_charactersToRest[i].AddHistory("Taking a rest.");
+		}
+		_assignedCharacter.DestroyAvatar ();
+	}
 	private bool CheckIfCharactersAreFullyRested(List<ECS.Character> charactersToRest) {
         bool allCharactersRested = true;
         for (int i = 0; i < charactersToRest.Count; i++) {

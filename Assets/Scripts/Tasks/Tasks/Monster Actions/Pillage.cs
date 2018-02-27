@@ -34,24 +34,24 @@ public class Pillage : CharacterTask {
         DoPillage();
         
     }
-//    public override void TaskCancel() {
-//        base.TaskCancel();
-//        //Messenger.RemoveListener("OnDayEnd", DoPillage);
-//        _assignedCharacter.DestroyAvatar();
+    public override void TaskCancel() {
+        base.TaskCancel();
+        //Messenger.RemoveListener("OnDayEnd", DoPillage);
+        _assignedCharacter.DestroyAvatar();
 //		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 //			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
 //			settlement.CancelSaveALandmark (_target);
 //		}
-//    }
-//    public override void TaskFail() {
-//        base.TaskFail();
-//        //Messenger.RemoveListener("OnDayEnd", DoPillage);
-//        _assignedCharacter.DestroyAvatar();
+    }
+    public override void TaskFail() {
+        base.TaskFail();
+        //Messenger.RemoveListener("OnDayEnd", DoPillage);
+        _assignedCharacter.DestroyAvatar();
 //		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 //			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
 //			settlement.CancelSaveALandmark (_target);
 //		}
-//    }
+    }
     //public override void PerformDailyAction() {
     //    if (_canDoDailyAction) {
     //        base.PerformDailyAction();
@@ -104,8 +104,8 @@ public class Pillage : CharacterTask {
 		}
 	}
 	private void CivilianDies(){
-		int civilians = _target.civilians;
-		if(civilians > 0){
+//		int civilians = _target.civilians;
+		if(_target.civilians > 0){
 			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);

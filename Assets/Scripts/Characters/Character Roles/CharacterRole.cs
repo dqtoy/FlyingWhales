@@ -14,6 +14,7 @@ public class CharacterRole {
     protected bool _canPassHiddenRoads; //can the character use roads that haven't been discovered yet?
     protected List<QUEST_TYPE> _allowedQuestTypes;
 	protected List<CharacterTask> _roleTasks;
+	protected CharacterTask _defaultRoleTask;
 
     #region getters/setters
     public CHARACTER_ROLE roleType {
@@ -27,6 +28,9 @@ public class CharacterRole {
     }
 	public List<CharacterTask> roleTasks {
 		get { return _roleTasks; }
+	}
+	public CharacterTask defaultRoleTask {
+		get { return _defaultRoleTask; }
 	}
     #endregion
 

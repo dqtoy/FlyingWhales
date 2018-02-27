@@ -1,29 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 using ECS;
 
 public class HuntPrey : CharacterTask {
 
     private BaseLandmark _target;
 
-    private enum HUNT_ACTION { EAT, END, NOTHING }
+	private string hunterName;
 
-    private WeightedDictionary<HUNT_ACTION> huntActions;
-
-	public HuntPrey(TaskCreator createdBy, BaseLandmark target, int defaultDaysLeft = -1) 
+	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1) 
         : base(createdBy, TASK_TYPE.HUNT_PREY, defaultDaysLeft) {
-        _target = target;
+		SetStance (STANCE.COMBAT);
     }
 
     #region overrides
     public override void OnChooseTask(ECS.Character character) {
         base.OnChooseTask(character);
-        huntActions = new WeightedDictionary<HUNT_ACTION>();
-        huntActions.AddElement(HUNT_ACTION.EAT, 15);
-        huntActions.AddElement(HUNT_ACTION.END, 15);
-        huntActions.AddElement(HUNT_ACTION.NOTHING, 70);
-        _target.AddHistory("Monster " + _assignedCharacter.name + " is hunting for food.");
-        TriggerSaveLandmarkQuest();
+		if(_targetLocation == null){
+			//TODO: get target location
+		}
+		_target = (BaseLandmark)_targetLocation;
+		hunterName = _assignedCharacter.name;
+		if(_assignedCharacter.party != null){
+			hunterName = _assignedCharacter.party.name;
+		}
+		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.NORMAL, () => StartHunt ());
+
+//        TriggerSaveLandmarkQuest();
     }
     public override void PerformTask() {
         base.PerformTask();
@@ -58,21 +62,20 @@ public class HuntPrey : CharacterTask {
     //    goToLocation.DoAction(_assignedCharacter);
     //}
 
-  //  private void StartHunt() {
-  //      _target.AddHistory("Monster " + _assignedCharacter.name + " is hunting for food.");
-  //      //SetCanDoDailyAction(true);
-  //      //Messenger.AddListener("OnDayEnd", Hunt);
-  //      //GameDate nextDate = GameManager.Instance.Today();
-  //      //nextDate.AddDays(1);
-  //      //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
-		//TriggerSaveLandmarkQuest ();
-  //  }
+    private void StartHunt() {
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => StartHunt ());
+			return;
+		}
+
+		_target.AddHistory(hunterName + " has started hunting prey in " + _target.landmarkName + "!");
+    }
 
     private void Hunt() {
         if(this.taskStatus != TASK_STATUS.IN_PROGRESS) {
             return;
         }
-        HUNT_ACTION chosenAct = huntActions.PickRandomElementGivenWeights();
+        HUNT_ACTION chosenAct = TaskManager.Instance.huntActions.PickRandomElementGivenWeights();
         switch (chosenAct) {
             case HUNT_ACTION.EAT:
                 EatCivilian();
@@ -88,16 +91,23 @@ public class HuntPrey : CharacterTask {
             default:
                 break;
         }
+		if(_daysLeft == 0){
+			End ();
+			return;
+		}
+		ReduceDaysLeft (1);
     }
 
     private void EatCivilian() {
         if(_target.civilians > 0) {
-            _target.ReduceCivilians(1);
+			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
+			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
+			_target.AdjustCivilians (chosenRace, -1);
+			_target.AddHistory (hunterName + " hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
+//          _target.ReduceCivilians(1);
             //GameDate nextDate = GameManager.Instance.Today();
             //nextDate.AddDays(1);
             //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
-        } else {
-            End();
         }
     }
 
@@ -111,10 +121,10 @@ public class HuntPrey : CharacterTask {
 	private void End(){
         //Messenger.RemoveListener("OnDayEnd", Hunt);
         //SetCanDoDailyAction(false);
-        if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
-			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-			settlement.CancelSaveALandmark (_target);
-		}
+//        if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+//			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
+//			settlement.CancelSaveALandmark (_target);
+//		}
 		EndTask(TASK_STATUS.SUCCESS);
 	}
 }

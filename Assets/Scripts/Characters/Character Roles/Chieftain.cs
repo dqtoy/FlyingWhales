@@ -32,6 +32,8 @@ public class Chieftain : CharacterRole {
 		_roleTasks.Add (new MoveTo (this._character));
 		_roleTasks.Add (new TakeQuest (this._character));
 		_roleTasks.Add (new RecruitFollowers (this._character, 5));
+
+		_defaultRoleTask = _roleTasks [0];
     }
 
 	#region Overrides

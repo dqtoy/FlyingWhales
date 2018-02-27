@@ -1225,6 +1225,9 @@ namespace ECS {
 			case CHARACTER_ROLE.TAMED_BEAST:
 				_role = new TamedBeast(this);
 				break;
+			case CHARACTER_ROLE.FLYING_BEAST:
+				_role = new FlyingBeast(this);
+				break;
             default:
 			    break;
 			}
@@ -1455,9 +1458,8 @@ namespace ECS {
 		internal void DetermineAction() {
             //Set Task of character to do nothing for now
 			if(_role != null){
-				CharacterTask doNothing = _role.GetRoleTask(TASK_TYPE.DO_NOTHING);
-				if(doNothing != null){
-					doNothing.OnChooseTask (this);
+				if(_role.defaultRoleTask != null){
+					_role.defaultRoleTask.OnChooseTask (this);
 				}
 			}
             return;
@@ -1777,7 +1779,11 @@ namespace ECS {
 					CreateNewAvatar();
 				}
 				_avatar.SetTarget(targetLocation, true);
-				_avatar.StartPath(pathfindingMode, () => doneAction());
+				if(doneAction == null){
+					_avatar.StartPath(pathfindingMode);
+				}else{
+					_avatar.StartPath(pathfindingMode, () => doneAction());
+				}
 			}
 		}
 		#endregion
@@ -1832,7 +1838,7 @@ namespace ECS {
 						return true;
 					}
 				}
-			}else if (task.taskType == TASK_TYPE.REST){
+			}else if (task.taskType == TASK_TYPE.REST || task.taskType == TASK_TYPE.HIBERNATE){
 				if(location.tileLocation.landmarkOnTile != null){
 					if(this.faction == null){
 						BaseLandmark home = this._home;
@@ -1866,6 +1872,26 @@ namespace ECS {
 					if(this.faction != null && location.tileLocation.landmarkOnTile is Settlement){
 						Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
 						if(settlement.owner.id == this.faction.id){
+							return true;
+						}
+					}
+				}
+			}else if(task.taskType == TASK_TYPE.HUNT_PREY || task.taskType == TASK_TYPE.RAZE){
+				if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.civilians > 0){
+					if(this.faction == null || location.tileLocation.landmarkOnTile.owner == null){
+						return true;
+					}else{
+						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
+							return true;
+						}
+					}
+				}
+			}else if(task.taskType == TASK_TYPE.PILLAGE){
+				if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.itemsInLandmark.Count > 0){
+					if(this.faction == null || location.tileLocation.landmarkOnTile.owner == null){
+						return true;
+					}else{
+						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
 							return true;
 						}
 					}

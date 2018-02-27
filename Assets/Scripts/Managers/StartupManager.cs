@@ -13,6 +13,7 @@ public class StartupManager : MonoBehaviour {
 		CharacterManager.Instance.ConstructTraitDictionary();
 		MaterialManager.Instance.Initialize ();
 		ProductionManager.Instance.Initialize ();
+		TaskManager.Instance.Initialize ();
 
 		this.mapGenerator.InitializeWorld ();
 	}
