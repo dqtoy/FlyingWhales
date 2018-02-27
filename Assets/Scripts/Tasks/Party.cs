@@ -17,7 +17,8 @@ public class Party: IEncounterable, ICombatInitializer {
     protected ECS.Character _partyLeader;
     protected List<ECS.Character> _partyMembers; //Contains all party members including the party leader
     //protected List<ECS.Character> _partyMembersOnTheWay; //Party members that just joined, but are on the way to the party leaders location
-	protected List<ECS.Character> _prisoners;
+	protected List<ECS.Character> _prisoners; //TODO: remove this, move to party leader
+	protected List<ECS.Character> _followers;
 
     protected CharacterTask _currentTask;
     protected CharacterAvatar _avatar;
@@ -60,7 +61,7 @@ public class Party: IEncounterable, ICombatInitializer {
         get { return _partyMembers; }
     }
     public List<ECS.Character> followers {
-        get { return _partyMembers.Where(x => x.isFollower).ToList(); }
+        get { return _followers; }
     }
     public CharacterTask currentTask {
         get { return _currentTask; }
@@ -111,8 +112,10 @@ public class Party: IEncounterable, ICombatInitializer {
         _partyMembers = new List<ECS.Character>();
         //_partyMembersOnTheWay = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character> ();
+		_followers = new List<ECS.Character> ();
 		_isDefeated = false;
         _civiliansByRace = new Dictionary<RACE, int>();
+
         Debug.Log(partyLeader.name + " has created " + _name);
 		partyLeader.specificLocation.AddCharacterToLocation (this, false);
         partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
@@ -144,6 +147,9 @@ public class Party: IEncounterable, ICombatInitializer {
         if (!_partyMembers.Contains(member)) {
             _partyMembers.Add(member);
             //CreateRelationshipsForNewMember(member);
+			if(member.id != _partyLeader.id){
+				_followers.Add (member);
+			}
             if(_avatar != null) {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
@@ -181,6 +187,7 @@ public class Party: IEncounterable, ICombatInitializer {
          */
     public virtual void RemovePartyMember(ECS.Character member, bool forDeath = false) {
         _partyMembers.Remove(member);
+		_followers.Remove (member);
         if(_avatar != null) {
             _avatar.RemoveCharacter(member);
         }

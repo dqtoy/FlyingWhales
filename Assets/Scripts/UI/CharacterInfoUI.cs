@@ -11,11 +11,13 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private UILabel generalInfoLbl;
 	[SerializeField] private UILabel statInfoLbl;
 	[SerializeField] private UILabel traitInfoLbl;
+	[SerializeField] private UILabel followersLbl;
 	[SerializeField] private UILabel equipmentInfoLbl;
 	[SerializeField] private UILabel inventoryInfoLbl;
 	[SerializeField] private UILabel relationshipsLbl;
 	[SerializeField] private UILabel historyLbl;
 
+	[SerializeField] private UIScrollView followersScrollView;
     [SerializeField] private UIScrollView equipmentScrollView;
 	[SerializeField] private UIScrollView inventoryScrollView;
     [SerializeField] private UIScrollView relationshipsScrollView;
@@ -59,6 +61,7 @@ public class CharacterInfoUI : UIMenu {
 		UpdateGeneralInfo();
 		UpdateStatInfo ();
 		UpdateTraitInfo	();
+		UpdateFollowersInfo ();
 		UpdateEquipmentInfo ();
 		UpdateInventoryInfo ();
 		UpdateRelationshipInfo ();
@@ -133,6 +136,23 @@ public class CharacterInfoUI : UIMenu {
 		}
 		traitInfoLbl.text = text;
 	}
+	private void UpdateFollowersInfo(){
+		string text = string.Empty;
+		if(currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.partyLeader.id == currentlyShowingCharacter.id){
+			for (int i = 0; i < currentlyShowingCharacter.party.followers.Count; i++) {
+				ECS.Character follower = currentlyShowingCharacter.party.followers [i];
+				if(i > 0){
+					text += "\n";
+				}
+				text += follower.urlName;
+			}
+		}else{
+			text += "NONE";
+		}
+		followersLbl.text = text;
+		followersScrollView.UpdatePosition ();
+	}
+
 	private void UpdateEquipmentInfo(){
 		string text = string.Empty;
 		if(currentlyShowingCharacter.equippedItems.Count > 0){

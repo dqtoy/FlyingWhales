@@ -254,7 +254,7 @@ public class CharacterAvatar : PooledObject{
             this.currLocation.tileLocation.landmarkOnTile.SetHiddenState(false);
         }
     }
-    private void RemoveCharactersFromLocation(ILocation location) {
+    protected void RemoveCharactersFromLocation(ILocation location) {
 		if(_characters[0].party == null){
 			for (int i = 0; i < _characters.Count; i++) {
 				ECS.Character currCharacter = _characters[i];
@@ -267,7 +267,7 @@ public class CharacterAvatar : PooledObject{
 		UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateSettlementInfo();
     }
-	private void AddCharactersToLocation(ILocation location, bool startCombatOnReachLocation = true) {
+	protected void AddCharactersToLocation(ILocation location, bool startCombatOnReachLocation = true) {
 		if(_characters[0].party == null){
 			for (int i = 0; i < _characters.Count; i++) {
 				ECS.Character currCharacter = _characters[i];

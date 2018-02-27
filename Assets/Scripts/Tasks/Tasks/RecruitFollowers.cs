@@ -33,11 +33,16 @@ public class RecruitFollowers : CharacterTask {
 					party = _assignedCharacter.CreateNewParty();
 				}
 				party.AddPartyMember(newFollower);
+//				_assignedCharacter.AddFollower(newFollower);
 			}
 			if ((_assignedCharacter.party != null && _assignedCharacter.party.isFull)) {
 				EndRecruitment();
 				return;
 			}
+//			if(_assignedCharacter.isFollowersFull){
+//				EndRecruitment();
+//				return;
+//			}
 		}else{
 			EndRecruitment();
 			return;

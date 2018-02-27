@@ -81,11 +81,11 @@ public class SettlementInfoClick : MonoBehaviour {
 			} else if (url.Contains("_party")) {
 				Party party = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.GetPartyAtLocationByLeaderID(idToUse);
 				if (party != null) {
-					UIManager.Instance.ShowPartyInfo (party);
+					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 				} else {
 					party = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location.GetPartyAtLocationByLeaderID(idToUse);
 					if (party != null) {
-						UIManager.Instance.ShowPartyInfo (party);
+						UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 					}
 				}
 			} else if(url.Contains("_prisoner")){

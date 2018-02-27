@@ -69,8 +69,23 @@ namespace ECS{
         internal void AddCharacter(SIDES side, ECS.Character character) {
             if (side == SIDES.A) {
                 this.charactersSideA.Add(character);
+				for (int i = 0; i < character.followers.Count; i++) {
+					this.charactersSideA.Add(character.followers[i]);
+					character.followers[i].SetSide (side);
+					character.followers[i].currentCombat = this;
+				}
+				this.characterSideACopy = this.charactersSideA.ToArray ();
+				sideAPrisoners = character.prisoners;
+
             } else {
                 this.charactersSideB.Add(character);
+				for (int i = 0; i < character.followers.Count; i++) {
+					this.charactersSideA.Add(character.followers[i]);
+					character.followers[i].SetSide (side);
+					character.followers[i].currentCombat = this;
+				}
+				this.characterSideBCopy = this.charactersSideB.ToArray ();
+				sideBPrisoners = character.prisoners;
             }
 			character.SetSide (side);
 			character.currentCombat = this;
