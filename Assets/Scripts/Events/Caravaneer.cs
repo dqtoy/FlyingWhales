@@ -21,14 +21,14 @@ public class Caravaneer : GameEvent {
 		this.name = "Caravaneer";
 		this.caravan = (Caravan)startedBy.assignedRole;
 		this.sourceCity = startedBy.city;
-		this.producedResource = this.sourceCity.region.tileWithSpecialResource.specialResourceType;
-		if(this.producedResource == RESOURCE_TYPE.MATERIAL){
-			if(this.sourceCity.kingdom.race != RACE.HUMANS && (this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
-				this.producedResource = RESOURCE_TYPE.NONE;
-			}else if(this.sourceCity.kingdom.race != RACE.ELVES && (this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
-				this.producedResource = RESOURCE_TYPE.NONE;
-			}
-		}
+		//this.producedResource = this.sourceCity.region.tileWithSpecialResource.specialResourceType;
+		//if(this.producedResource == RESOURCE_TYPE.MATERIAL){
+		//	if(this.sourceCity.kingdom.race != RACE.HUMANS && (this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
+		//		this.producedResource = RESOURCE_TYPE.NONE;
+		//	}else if(this.sourceCity.kingdom.race != RACE.ELVES && (this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || this.sourceCity.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
+		//		this.producedResource = RESOURCE_TYPE.NONE;
+		//	}
+		//}
 		this.path = new List<HexTile> ();
 		this.isReturning = false;
 		this.resourceAmount = 0;
@@ -158,17 +158,17 @@ public class Caravaneer : GameEvent {
 		for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
 			City city = this.sourceCity.kingdom.cities [i];
 			if(city.id != this.sourceCity.id){
-				if(city.region.tileWithSpecialResource.specialResourceType == resourceType){
-					if(resourceType == RESOURCE_TYPE.MATERIAL){
-						if(this.sourceCity.kingdom.race == RACE.HUMANS && (city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
-							return true;
-						}else if(this.sourceCity.kingdom.race == RACE.ELVES && (city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
-							return true;
-						}
-					}else{
-						return true;
-					}
-				}
+				//if(city.region.tileWithSpecialResource.specialResourceType == resourceType){
+				//	if(resourceType == RESOURCE_TYPE.MATERIAL){
+				//		if(this.sourceCity.kingdom.race == RACE.HUMANS && (city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
+				//			return true;
+				//		}else if(this.sourceCity.kingdom.race == RACE.ELVES && (city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
+				//			return true;
+				//		}
+				//	}else{
+				//		return true;
+				//	}
+				//}
 			}
 		}
 		if(this.sourceCity.kingdom.kingdomsInTradeDealWith.Count > 0){
@@ -177,17 +177,17 @@ public class Caravaneer : GameEvent {
 				for (int j = 0; j < tradeKingdoms.cities.Count; j++) {
 					City city = tradeKingdoms.cities [j];
 					if(city.id != this.sourceCity.id){
-						if(city.region.tileWithSpecialResource.specialResourceType == resourceType){
-							if(resourceType == RESOURCE_TYPE.MATERIAL){
-								if(this.sourceCity.kingdom.race == RACE.HUMANS && (city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
-									return true;
-								}else if(this.sourceCity.kingdom.race == RACE.ELVES && (city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
-									return true;
-								}
-							}else{
-								return true;
-							}
-						}
+						//if(city.region.tileWithSpecialResource.specialResourceType == resourceType){
+						//	if(resourceType == RESOURCE_TYPE.MATERIAL){
+						//		if(this.sourceCity.kingdom.race == RACE.HUMANS && (city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE)){
+						//			return true;
+						//		}else if(this.sourceCity.kingdom.race == RACE.ELVES && (city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY)){
+						//			return true;
+						//		}
+						//	}else{
+						//		return true;
+						//	}
+						//}
 					}
 				}
 			}

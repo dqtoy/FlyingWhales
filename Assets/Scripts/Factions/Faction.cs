@@ -171,6 +171,31 @@ public class Faction {
             _initialTechnologies.AddRange(FactionManager.Instance.initialRaceTechnologies[this.race]);
         }
     }
+    /*
+     Generate bonus tech for this faction.
+         */
+    public void GenerateBonusTech(FACTION_SIZE factionSize) {
+        int bonusTechAmt = 0;
+        if (this.race == RACE.HUMANS || this.race == RACE.ELVES) {
+            switch (factionSize) {
+                case FACTION_SIZE.SMALL:
+                    bonusTechAmt = 3;
+                    break;
+                case FACTION_SIZE.MEDIUM:
+                    bonusTechAmt = 5;
+                    break;
+                case FACTION_SIZE.LARGE:
+                    bonusTechAmt = 7;
+                    break;
+            }
+        }
+        List<TECHNOLOGY> choices = FactionManager.Instance.bonusRaceTechnologies[this.race].Where(x => !_initialTechnologies.Contains(x)).ToList();
+        for (int i = 0; i < bonusTechAmt; i++) {
+            TECHNOLOGY bonusTech = choices[Random.Range(0, choices.Count)];
+            _initialTechnologies.Add(bonusTech);
+            choices.Remove(bonusTech);
+        }
+    }
     #endregion
 
     #region Characters

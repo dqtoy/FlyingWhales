@@ -251,6 +251,42 @@ public class Settlement : BaseLandmark {
         //}
         //return false;
     }
+    /*
+     Does the settlement have the required technology
+     to produce a class?
+         */
+    public bool CanProduceClass(CHARACTER_CLASS charClass) {
+        if (_owner == null) {
+            return false;
+        }
+        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
+        //List<MATERIAL> trainingPreference = this._owner.productionPreferences[PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+        //for (int i = 0; i < trainingPreference.Count; i++) {
+        //    MATERIAL currMat = trainingPreference[i];
+        //    if (ProductionManager.Instance.trainingMaterials.Contains(currMat) && HasAccessToMaterial(currMat)) {
+        //        material = trainingPreference[i];
+        //    }
+        //}
+        //if (material == MATERIAL.NONE) {
+        //    return false; //this settlement has no access to materials for training.
+        //}
+        if (neededTech == TECHNOLOGY.NONE) {
+            return true;
+        } else {
+            return _technologies[neededTech];
+        }
+        //if (neededTech == TECHNOLOGY.NONE || _technologies[neededTech]) {
+        //    TrainingClass trainingClass = ProductionManager.Instance.trainingClassesLookup[charClass];
+        //    List<MATERIAL> trainingPreference = this._owner.productionPreferences[PRODUCTION_TYPE.TRAINING].prioritizedMaterials;
+        //    for (int i = 0; i < trainingPreference.Count; i++) {
+        //        if (ProductionManager.Instance.trainingMaterials.Contains(trainingPreference[i]) && trainingClass.production.resourceCost <= _materialsInventory[trainingPreference[i]].count) {
+        //            material = trainingPreference[i];
+        //            return true;
+        //        }
+        //    }
+        //}
+        //return false;
+    }
     public bool CanProduceRole(CHARACTER_ROLE roleType) {
         TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup[roleType];
         if (trainingRole.production.civilianCost <= civilians) {

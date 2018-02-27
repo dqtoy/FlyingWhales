@@ -27,8 +27,6 @@ public class GridMap : MonoBehaviour {
     [Header("Region Settings")]
     public int numOfRegions;
     public int refinementLevel;
-    public int numOfUniqueLandmarks;
-    public List<InitialMapResource> resourceSetup;
 	internal Dictionary<RESOURCE, int> resources = new Dictionary<RESOURCE, int>();
 
     [Space(10)]
@@ -350,106 +348,6 @@ public class GridMap : MonoBehaviour {
             if (currRegion.occupant != null) {
                 currRegion.CheckForDiscoveredKingdoms();
             }
-        }
-    }
-    #endregion
-
-    #region Landmark Generation
-    /*
-     Generate new landmarks (Lairs, Dungeons)
-         */
-    public void GenerateOtherLandmarks() {
-        List<HexTile> elligibleTiles = new List<HexTile>(hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad)); //Get tiles that aren't water and are not habitable
-        //Tiles that are within 2 tiles of a habitable tile, cannot be landmarks
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            List<HexTile> tilesToRemove = currRegion.centerOfMass.GetTilesInRange(2);
-            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-        }
-        Dictionary<LANDMARK_TYPE, int> createdLandmarksDict = new Dictionary<LANDMARK_TYPE, int>();
-        int numOfLandmarksToCreate = Mathf.FloorToInt(6 * (float)allRegions.Count); //Increase Landmarks to 6 times the number of regions
-        Debug.Log("Creating " + numOfLandmarksToCreate.ToString() + " landmarks..... ");
-        int createdLandmarks = 0;
-
-        while(createdLandmarks != numOfLandmarksToCreate) {
-            if(elligibleTiles.Count <= 0) {
-                Debug.Log("Only created " + createdLandmarks.ToString() + " landmarks");
-                return;
-            }
-            HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-            elligibleTiles.Remove(chosenTile);
-            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
-            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-            chosenTile.CreateRandomLandmark();
-
-            //Keep track of number of landmarks per type
-            if(chosenTile.landmarkOnTile != null) {
-                LANDMARK_TYPE createdLandmarkType = chosenTile.landmarkOnTile.specificLandmarkType;
-                if (createdLandmarksDict.ContainsKey(createdLandmarkType)) {
-                    createdLandmarksDict[createdLandmarkType]++;
-                } else {
-                    createdLandmarksDict.Add(createdLandmarkType, 1);
-                }
-                createdLandmarks++;
-            }
-            //if(createdRoad != null) {
-            //    Utilities.ListRemoveRange(elligibleTiles, createdRoad);
-            //}
-            
-        }
-        Debug.Log("Created " + createdLandmarks.ToString() + " landmarks");
-
-        foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in createdLandmarksDict) {
-            Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
-        }
-    }
-    #endregion
-
-    #region Material Generation
-    /*
-     Generate Materials
-         */
-    public void GenerateMaterials() {
-        List<HexTile> elligibleTiles = new List<HexTile>(hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad)); //Get tiles that aren't water and are not habitable
-        //Tiles that are within 2 tiles of a habitable tile, cannot have resources
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            List<HexTile> tilesToRemove = currRegion.centerOfMass.GetTilesInRange(2);
-            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-        }
-
-        WeightedDictionary<MATERIAL> materialWeights = Utilities.GetMaterialWeights();
-
-        Dictionary<MATERIAL, int> createdMaterials = new Dictionary<MATERIAL, int>();
-        int numOfMaterialsToPlace = Mathf.FloorToInt(6 * (float)allRegions.Count); //6 times the number of regions
-        Debug.Log("Creating " + numOfMaterialsToPlace.ToString() + " landmarks..... ");
-        int placedMaterials = 0;
-
-        while (placedMaterials != numOfMaterialsToPlace) {
-            if (elligibleTiles.Count <= 0) {
-                Debug.Log("Only created " + placedMaterials.ToString() + " landmarks");
-                return;
-            }
-            HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-            elligibleTiles.Remove(chosenTile);
-            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
-            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-
-            MATERIAL chosenMaterial = materialWeights.PickRandomElementGivenWeights();
-            chosenTile.SetMaterialOnTile(chosenMaterial);
-
-            //Keep track of number of materials per type
-            if (createdMaterials.ContainsKey(chosenMaterial)) {
-                createdMaterials[chosenMaterial]++;
-            } else {
-                createdMaterials.Add(chosenMaterial, 1);
-            }
-            placedMaterials++;
-        }
-        Debug.Log("Created " + placedMaterials.ToString() + " materials");
-
-        foreach (KeyValuePair<MATERIAL, int> kvp in createdMaterials) {
-            Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
         }
     }
     #endregion

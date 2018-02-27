@@ -36,6 +36,13 @@ public class MaterialManager : MonoBehaviour {
 			}
 		}
 	}
+    public Construction GetConstructionDataForMaterial(MATERIAL material) {
+        Materials materialData = GetMaterialData(material);
+        return ProductionManager.Instance.GetConstruction(materialData.structure.name);
+    }
+    public Materials GetMaterialData(MATERIAL material) {
+        return _materialsLookup[material];
+    }
     public bool CanMaterialBeUsedFor(MATERIAL material, PRODUCTION_TYPE productionType) {
         switch (productionType) {
             case PRODUCTION_TYPE.WEAPON:
@@ -49,5 +56,9 @@ public class MaterialManager : MonoBehaviour {
             default:
                 return false;
         }
+    }
+    public TECHNOLOGY GetNeededTechnologyForMaterialStructure(MATERIAL material) {
+        Construction constructionData = GetConstructionDataForMaterial(material);
+        return constructionData.technology;
     }
 }

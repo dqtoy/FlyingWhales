@@ -83,7 +83,6 @@ public class City {
 
 	private int _bonusStability;
 
-    [NonSerialized] private List<Guard> _activeGuards;
     private float _cityBounds;
 
 	private int[] populationIncreasePool;
@@ -280,7 +279,6 @@ public class City {
         this.populationIncreasePool = new int[] { 30, 32, 34, 36, 38, 40 };
         this._populationGrowth = populationIncreasePool[UnityEngine.Random.Range(0, populationIncreasePool.Length)];
         this._cityBT = null;
-        _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         this._blacklist = new List<City>();
     }
@@ -320,7 +318,6 @@ public class City {
 		this.populationIncreasePool = new int[]{ 30, 32, 34, 36, 38, 40 };
 		this._populationGrowth = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
 		this._cityBT = null;
-        _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 		this._blacklist = new List<City> ();
@@ -344,12 +341,12 @@ public class City {
 //        hexTile.CheckLairsInRange();
 		AdjustFoodCount(this.foodReserved);
         SetProductionGrowthPercentage(1f);
-        DailyGrowthResourceBenefits();
-        AddOneTimeResourceBenefits();
+        //DailyGrowthResourceBenefits();
+        //AddOneTimeResourceBenefits();
 		//this.caravaneer = EventCreator.Instance.CreateCaravaneerEvent (this);
-        if (GameManager.Instance.enableGameAgents) {
-            SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
-        }
+        //if (GameManager.Instance.enableGameAgents) {
+        //    SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
+        //}
     }
 
 	/*
@@ -786,8 +783,8 @@ public class City {
 
 	public void KillCity(){
         RemoveListeners();
-		RemoveOneTimeResourceBenefits();
-        KillActiveGuards();
+		//RemoveOneTimeResourceBenefits();
+  //      KillActiveGuards();
 
 		if (this.caravaneer != null) {
 			this.caravaneer.DoneEvent ();
@@ -858,8 +855,8 @@ public class City {
             kr.sharedRelationship.warfare.AdjustWeariness(this._kingdom, 5);//Each time I lose a city, War Weariness increases by 5
         }
 
-        RemoveOneTimeResourceBenefits();
-        KillActiveGuards();
+        //RemoveOneTimeResourceBenefits();
+        //KillActiveGuards();
 		if(this.caravaneer != null){
 			this.caravaneer.DoneEvent ();
 		}
@@ -1101,7 +1098,7 @@ public class City {
 	}
     internal void ChangeKingdom(Kingdom otherKingdom, List<Citizen> citizensToAdd) {
         _region.RemoveOccupant();
-        KillActiveGuards();
+        //KillActiveGuards();
 
 //		this._kingdom.AdjustPopulation (-this._population, false);
 
@@ -1210,49 +1207,49 @@ public class City {
 	//		break;
 	//	}
 	//}
-	private void DailyGrowthResourceBenefits(){
-		switch (this._region.specialResource){
-		case RESOURCE.DEER:
-			this._dailyGrowthResourceBenefits = 10;
-			break;
-		case RESOURCE.PIG:
-			this._dailyGrowthResourceBenefits = 15;
-			break;
-		case RESOURCE.BEHEMOTH:
-			this._dailyGrowthResourceBenefits = 20;
-			break;
-		default:
-			this._dailyGrowthResourceBenefits = 0;
-			break;
-		}
-	}
-	private void AddOneTimeResourceBenefits(){
-		switch (this._region.specialResource){
-		case RESOURCE.MANA_STONE:
-			SetProductionGrowthPercentage(2f);
-			for (int i = 0; i < this.kingdom.cities.Count; i++) {
-				if (this.kingdom.cities[i].id != this.id) {
-					this.kingdom.cities[i].SetProductionGrowthPercentage(1.25f);
-				}
-			}
-			break;
-		case RESOURCE.MITHRIL:
-			this.kingdom.SetTechProductionPercentage(2f);
-			break;
-		}
-	}
-	private void RemoveOneTimeResourceBenefits(){
-		switch (this._region.specialResource){
-		case RESOURCE.MANA_STONE:
-			for (int i = 0; i < this.kingdom.cities.Count; i++) {
-				this.kingdom.cities[i].SetProductionGrowthPercentage(1f);
-			}
-			break;
-		case RESOURCE.MITHRIL:
-			this.kingdom.SetTechProductionPercentage(1f);
-			break;
-		}
-	}
+	//private void DailyGrowthResourceBenefits(){
+	//	switch (this._region.specialResource){
+	//	case RESOURCE.DEER:
+	//		this._dailyGrowthResourceBenefits = 10;
+	//		break;
+	//	case RESOURCE.PIG:
+	//		this._dailyGrowthResourceBenefits = 15;
+	//		break;
+	//	case RESOURCE.BEHEMOTH:
+	//		this._dailyGrowthResourceBenefits = 20;
+	//		break;
+	//	default:
+	//		this._dailyGrowthResourceBenefits = 0;
+	//		break;
+	//	}
+	//}
+	//private void AddOneTimeResourceBenefits(){
+	//	switch (this._region.specialResource){
+	//	case RESOURCE.MANA_STONE:
+	//		SetProductionGrowthPercentage(2f);
+	//		for (int i = 0; i < this.kingdom.cities.Count; i++) {
+	//			if (this.kingdom.cities[i].id != this.id) {
+	//				this.kingdom.cities[i].SetProductionGrowthPercentage(1.25f);
+	//			}
+	//		}
+	//		break;
+	//	case RESOURCE.MITHRIL:
+	//		this.kingdom.SetTechProductionPercentage(2f);
+	//		break;
+	//	}
+	//}
+	//private void RemoveOneTimeResourceBenefits(){
+	//	switch (this._region.specialResource){
+	//	case RESOURCE.MANA_STONE:
+	//		for (int i = 0; i < this.kingdom.cities.Count; i++) {
+	//			this.kingdom.cities[i].SetProductionGrowthPercentage(1f);
+	//		}
+	//		break;
+	//	case RESOURCE.MITHRIL:
+	//		this.kingdom.SetTechProductionPercentage(1f);
+	//		break;
+	//	}
+	//}
 	internal void SetProductionGrowthPercentage(float amount){
 		this._productionGrowthPercentage = amount;
 	}
@@ -1276,43 +1273,43 @@ public class City {
 		return (int)((float)this._region.naturalResourceLevel [kingdom.race] * (1f + (0.1f * this._kingdom.techLevel)));
 	}
 
-    #region Agent Functions
-    internal void SpawnGuardsAtEndOfMonth() {
-        if (this.isDead) {
-            return;
-        }
-        int maxGuards = 1 + (cityLevel / 3);
-        if(_activeGuards.Count < maxGuards) {
-            //Spawn a new guard to patrol the city
-            _activeGuards.Add(SpawnPatrollingGuard());
-        }
-        GameDate nextSpawnDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        nextSpawnDate.AddMonths(1);
-        nextSpawnDate.SetDate(nextSpawnDate.month, GameManager.daysInMonth[nextSpawnDate.month], nextSpawnDate.year);
-        SchedulingManager.Instance.AddEntry(nextSpawnDate, () => SpawnGuardsAtEndOfMonth());
-    }
-    private Guard SpawnPatrollingGuard() {
-        Guard newGuard = new Guard(this);
-        AIBehaviour attackBehaviour = new AttackHostiles(newGuard);
-        AIBehaviour fleeBehaviour = new RunAwayFromHostile(newGuard);
-        AIBehaviour randomBehaviour = new PatrolCity(newGuard, this);
-        newGuard.SetAttackBehaviour(attackBehaviour);
-        newGuard.SetFleeBehaviour(fleeBehaviour);
-        newGuard.SetRandomBehaviour(randomBehaviour);
-        GameObject guardObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", this.hexTile.transform.position, Quaternion.identity, this.hexTile.transform);
-        guardObj.transform.localPosition = Vector3.zero;
-        AgentObject agentObj = guardObj.GetComponent<AgentObject>();
-        newGuard.SetAgentObj(agentObj);
-        agentObj.Initialize(newGuard, new int[] { _kingdom.kingdomTagIndex });
-        return newGuard;
-    }
-    private void KillActiveGuards() {
-        for (int i = 0; i < _activeGuards.Count; i++) {
-            _activeGuards[i].KillAgent();
-        }
-        _activeGuards.Clear();
-    }
-    #endregion
+    //#region Agent Functions
+    //internal void SpawnGuardsAtEndOfMonth() {
+    //    if (this.isDead) {
+    //        return;
+    //    }
+    //    int maxGuards = 1 + (cityLevel / 3);
+    //    if(_activeGuards.Count < maxGuards) {
+    //        //Spawn a new guard to patrol the city
+    //        _activeGuards.Add(SpawnPatrollingGuard());
+    //    }
+    //    GameDate nextSpawnDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+    //    nextSpawnDate.AddMonths(1);
+    //    nextSpawnDate.SetDate(nextSpawnDate.month, GameManager.daysInMonth[nextSpawnDate.month], nextSpawnDate.year);
+    //    SchedulingManager.Instance.AddEntry(nextSpawnDate, () => SpawnGuardsAtEndOfMonth());
+    //}
+    //private Guard SpawnPatrollingGuard() {
+    //    Guard newGuard = new Guard(this);
+    //    AIBehaviour attackBehaviour = new AttackHostiles(newGuard);
+    //    AIBehaviour fleeBehaviour = new RunAwayFromHostile(newGuard);
+    //    AIBehaviour randomBehaviour = new PatrolCity(newGuard, this);
+    //    newGuard.SetAttackBehaviour(attackBehaviour);
+    //    newGuard.SetFleeBehaviour(fleeBehaviour);
+    //    newGuard.SetRandomBehaviour(randomBehaviour);
+    //    GameObject guardObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", this.hexTile.transform.position, Quaternion.identity, this.hexTile.transform);
+    //    guardObj.transform.localPosition = Vector3.zero;
+    //    AgentObject agentObj = guardObj.GetComponent<AgentObject>();
+    //    newGuard.SetAgentObj(agentObj);
+    //    agentObj.Initialize(newGuard, new int[] { _kingdom.kingdomTagIndex });
+    //    return newGuard;
+    //}
+    //private void KillActiveGuards() {
+    //    for (int i = 0; i < _activeGuards.Count; i++) {
+    //        _activeGuards[i].KillAgent();
+    //    }
+    //    _activeGuards.Clear();
+    //}
+    //#endregion
 
 	#region Population
 	private void IncreasePopulationPerMonth(){

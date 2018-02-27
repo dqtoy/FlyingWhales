@@ -408,6 +408,12 @@ public class Utilities : MonoBehaviour {
         {BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
     };
 
+    //public static WeightedDictionary<LANDMARK_TYPE> GetDungeonlandmarkWeights() {
+    //    WeightedDictionary<LANDMARK_TYPE> dungeonLandmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
+    //    dungeonLandmarkWeights.AddElement(LANDMARK_TYPE.VAMPIRE_TOMB, 20);
+
+    //}
+
     public static WeightedDictionary<LANDMARK_TYPE> GetLandmarkWeights() {
         WeightedDictionary<LANDMARK_TYPE> landmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
         //MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
@@ -1449,52 +1455,6 @@ public class Utilities : MonoBehaviour {
             throw new Exception("THERE IS NO LANDMARK TYPE FOR MATERIAL " + material.ToString());
         }
     }
-    public static TECHNOLOGY GetNeededTechnologyForMaterial(MATERIAL material) {
-        switch (material) {
-            case MATERIAL.IRON:
-                return TECHNOLOGY.BASIC_MINING;
-            case MATERIAL.OAK:
-                return TECHNOLOGY.BASIC_WOODCUTTING;
-            case MATERIAL.COBALT:
-                return TECHNOLOGY.ADVANCED_MINING;
-            case MATERIAL.YEW:
-                return TECHNOLOGY.ADVANCED_WOODCUTTING;
-            case MATERIAL.MITHRIL:
-                return TECHNOLOGY.ADVANCED_MINING;
-            case MATERIAL.EBONY:
-                return TECHNOLOGY.ADVANCED_WOODCUTTING;
-            case MATERIAL.COTTON:
-                return TECHNOLOGY.ADVANCED_FARMING;
-            case MATERIAL.SILK:
-                return TECHNOLOGY.BASIC_FARMING;
-            case MATERIAL.DEERHIDE:
-                return TECHNOLOGY.ADVANCED_HUNTING;
-            case MATERIAL.GOATHIDE:
-                return TECHNOLOGY.BASIC_HUNTING;
-            case MATERIAL.CLAY:
-                return TECHNOLOGY.BASIC_QUARRYING;
-            case MATERIAL.LIMESTONE:
-                return TECHNOLOGY.BASIC_QUARRYING;
-            case MATERIAL.MARBLE:
-                return TECHNOLOGY.ADVANCED_QUARRYING;
-            case MATERIAL.GRANITE:
-                return TECHNOLOGY.ADVANCED_QUARRYING;
-            case MATERIAL.FLAX:
-                return TECHNOLOGY.ADVANCED_FARMING;
-            case MATERIAL.CORN:
-                return TECHNOLOGY.BASIC_FARMING;
-            case MATERIAL.RICE:
-                return TECHNOLOGY.ADVANCED_FARMING;
-            case MATERIAL.PIGMEAT:
-                return TECHNOLOGY.BASIC_FARMING;
-            case MATERIAL.COWMEAT:
-                return TECHNOLOGY.ADVANCED_FARMING;
-            case MATERIAL.BEHEMOTHHIDE:
-                return TECHNOLOGY.ADVANCED_HUNTING;
-            default:
-                throw new Exception(material.ToString() + " is not included in the switch case statement!");
-        }
-    }
     #endregion
 
     #region Landmarks
@@ -1521,12 +1481,11 @@ public class Utilities : MonoBehaviour {
             case LANDMARK_TYPE.COBALT:
             case LANDMARK_TYPE.MITHRIL:
                 return BASE_LANDMARK_TYPE.RESOURCE;
-            case LANDMARK_TYPE.DARK_CAVE:
-                return BASE_LANDMARK_TYPE.LAIR;
             case LANDMARK_TYPE.ANCIENT_RUIN:
-            case LANDMARK_TYPE.ABANDONED_DUNGEON:
-            case LANDMARK_TYPE.MYSTERIOUS_TOWER:
-            case LANDMARK_TYPE.SUMMONING_SHRINE:
+            case LANDMARK_TYPE.VAMPIRE_TOMB:
+            case LANDMARK_TYPE.ANCIENT_REACTOR:
+            case LANDMARK_TYPE.CAVE:
+            case LANDMARK_TYPE.WILDLANDS:
                 return BASE_LANDMARK_TYPE.DUNGEON;
             default:
                 return BASE_LANDMARK_TYPE.SETTLEMENT;
@@ -1605,7 +1564,7 @@ public class Utilities : MonoBehaviour {
                 return TECHNOLOGY.KNIGHT_CLASS;
             case CHARACTER_CLASS.BATTLEMAGE:
                 return TECHNOLOGY.BATTLEMAGE_CLASS;
-            case CHARACTER_CLASS.SENTRY:
+            case CHARACTER_CLASS.ARCANIST:
                 return TECHNOLOGY.ARCANIST_CLASS;
             case CHARACTER_CLASS.NIGHTBLADE:
                 return TECHNOLOGY.NIGHTBLADE_CLASS;
@@ -1683,5 +1642,13 @@ public class Utilities : MonoBehaviour {
             default:
                 return ITEM_TYPE.WEAPON;
         }
+    }
+
+    public static void LogDictionary<T, V>(Dictionary<T, V> dict) {
+        string log = string.Empty;
+        foreach (KeyValuePair<T, V> kvp in dict) {
+            log += kvp.Key.ToString() + " - " + kvp.Value.ToString();
+        }
+        Debug.Log("Dictionary: " + log);
     }
 }
