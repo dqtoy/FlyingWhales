@@ -16,8 +16,6 @@ public class StructureObject : PooledObject {
 
     private GameDate expiryDate;
 
-    [SerializeField] private AgentObject _agentObj;
-
     [ContextMenu("List Ruined Structures")]
     public void ListRuinedObjects() {
         for (int i = 0; i < ruinedParents.Length; i++) {
@@ -43,20 +41,20 @@ public class StructureObject : PooledObject {
         SetStructureState(structureState);
         SetStructureColor(structureColor);
 
-        if(_agentObj != null && GameManager.Instance.enableGameAgents) {
-            //Initialize Agent Object
-            CityAgent newCityAgent = new CityAgent(this);
-            AIBehaviour attackBehaviour = new AttackHostiles(newCityAgent);
-            newCityAgent.SetAttackBehaviour(attackBehaviour);
-            newCityAgent.SetAgentObj(_agentObj);
-            _agentObj.Initialize(newCityAgent, new int[] { 0 });
-            _agentObj.gameObject.SetActive(true);
-        } else {
-            if(_agentObj != null) {
-                _agentObj.gameObject.SetActive(false);
-            }
+        //if(_agentObj != null && GameManager.Instance.enableGameAgents) {
+        //    //Initialize Agent Object
+        //    CityAgent newCityAgent = new CityAgent(this);
+        //    AIBehaviour attackBehaviour = new AttackHostiles(newCityAgent);
+        //    newCityAgent.SetAttackBehaviour(attackBehaviour);
+        //    newCityAgent.SetAgentObj(_agentObj);
+        //    _agentObj.Initialize(newCityAgent, new int[] { 0 });
+        //    _agentObj.gameObject.SetActive(true);
+        //} else {
+        //    if(_agentObj != null) {
+        //        _agentObj.gameObject.SetActive(false);
+        //    }
             
-        }
+        //}
         
         gameObject.SetActive(true);
     }
@@ -78,10 +76,10 @@ public class StructureObject : PooledObject {
             for (int i = 0; i < ruinedParents.Length; i++) {
                 ruinedParents[i].SetActive(true);
             }
-            if (_agentObj != null && GameManager.Instance.enableGameAgents) {
-                _agentObj.gameObject.SetActive(false);
-                _agentObj.agent.BroadcastDeath();
-            }
+            //if (_agentObj != null && GameManager.Instance.enableGameAgents) {
+            //    _agentObj.gameObject.SetActive(false);
+            //    _agentObj.agent.BroadcastDeath();
+            //}
             //QueueForExpiry();
         }
     }
@@ -101,10 +99,10 @@ public class StructureObject : PooledObject {
 		if(this._hexTile.isHabitable){
 			this._hexTile.emptyCityGO.SetActive (true);
 		}
-        if (_agentObj != null && GameManager.Instance.enableGameAgents) {
-            _agentObj.gameObject.SetActive(false);
-            _agentObj.agent.BroadcastDeath();
-        }
+        //if (_agentObj != null && GameManager.Instance.enableGameAgents) {
+        //    _agentObj.gameObject.SetActive(false);
+        //    _agentObj.agent.BroadcastDeath();
+        //}
     }
 
     private void QueueForExpiry() {

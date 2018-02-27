@@ -13,6 +13,7 @@ public class Region {
     private List<Region> _adjacentRegions;
     private List<Region> _adjacentRegionsViaMajorRoad;
     private City _occupant;
+    private List<HexTile> _tilesWithMaterials; //The tiles inside the region that have materials
 
     private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
 
@@ -71,18 +72,18 @@ public class Region {
     internal City occupant {
         get { return _occupant; }
     }
-    internal RESOURCE specialResource {
-        get { return _specialResource; }
-    }
-    internal HexTile tileWithSpecialResource {
-        get { return _tileWithSpecialResource; }
-    }
-	internal HexTile tileWithSummoningShrine {
-		get { return this._tileWithSummoningShrine; }
-	}
-	internal HexTile tileWithHabitat {
-		get { return this._tileWithHabitat; }
-	}
+ //   internal RESOURCE specialResource {
+ //       get { return _specialResource; }
+ //   }
+ //   internal HexTile tileWithSpecialResource {
+ //       get { return _tileWithSpecialResource; }
+ //   }
+	//internal HexTile tileWithSummoningShrine {
+	//	get { return this._tileWithSummoningShrine; }
+	//}
+	//internal HexTile tileWithHabitat {
+	//	get { return this._tileWithHabitat; }
+	//}
     internal Dictionary<RACE, int> naturalResourceLevel {
         get { return _naturalResourceLevel; }
     }
@@ -113,6 +114,9 @@ public class Region {
     internal BaseLandmark mainLandmark {
         get { return _centerOfMass.landmarkOnTile; }
     }
+    internal List<HexTile> tilesWithMaterials {
+        get { return _tilesWithMaterials; }
+    }
     #endregion
 
     public Region(HexTile centerOfMass) {
@@ -125,6 +129,7 @@ public class Region {
         _connections = new List<object>();
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
+        _tilesWithMaterials = new List<HexTile>();
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
 		this.foodMultiplierCapacity = 2;
@@ -311,18 +316,18 @@ public class Region {
         City previousOccupant = _occupant;
         _occupant = null;
 
-		//Remove Resource City Estimation Capacity for Surplus / Deficit
-		if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
-			previousOccupant.kingdom.AdjustFoodCityCapacity (-this._tileWithSpecialResource.cityCapacity);
-		}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
-			if(this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
-				previousOccupant.kingdom.AdjustMaterialCityCapacityForHumans (-this._tileWithSpecialResource.cityCapacity);
-			}else if(this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY){
-				previousOccupant.kingdom.AdjustMaterialCityCapacityForElves (-this._tileWithSpecialResource.cityCapacity);
-			}
-		}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
-			previousOccupant.kingdom.AdjustOreCityCapacity (-this._tileWithSpecialResource.cityCapacity);
-		}
+		////Remove Resource City Estimation Capacity for Surplus / Deficit
+		//if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
+		//	previousOccupant.kingdom.AdjustFoodCityCapacity (-this._tileWithSpecialResource.cityCapacity);
+		//}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
+		//	if(this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
+		//		previousOccupant.kingdom.AdjustMaterialCityCapacityForHumans (-this._tileWithSpecialResource.cityCapacity);
+		//	}else if(this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY){
+		//		previousOccupant.kingdom.AdjustMaterialCityCapacityForElves (-this._tileWithSpecialResource.cityCapacity);
+		//	}
+		//}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
+		//	previousOccupant.kingdom.AdjustOreCityCapacity (-this._tileWithSpecialResource.cityCapacity);
+		//}
 
         //Check if this region has adjacent regions that has the same occupant as this one, if so set region as visible
         if (IsAdjacentToKingdom(previousOccupant.kingdom)) {
@@ -366,9 +371,9 @@ public class Region {
 
         ReColorBorderTiles(defaultBorderColor);
         
-        if (_specialResource != RESOURCE.NONE) {
-            _tileWithSpecialResource.Unoccupy();
-        }
+        //if (_specialResource != RESOURCE.NONE) {
+        //    _tileWithSpecialResource.Unoccupy();
+        //}
 		//StopProducing ();
     }
     private void SetAdjacentRegionsAsVisibleForOccupant() {
@@ -408,18 +413,6 @@ public class Region {
     internal void AddRegionBorderLineSprite(SpriteRenderer sprite) {
         if (!regionBorderLines.Contains(sprite)) {
             regionBorderLines.Add(sprite);
-        }
-    }
-    /*
-     * <summary>
-     * Create a structure on the tile with special resource.
-     * This is for visuals only, this does not increase the city's(occupant) level.
-     * </sumary>
-     * */
-    private void CreateStructureOnSpecialResourceTile() {
-        if(_specialResource != RESOURCE.NONE) {
-            tileWithSpecialResource
-                .CreateStructureOnTile(Utilities.GetStructureTypeForResource(_occupant.kingdom.race, _specialResource));
         }
     }
     #endregion
@@ -528,6 +521,17 @@ public class Region {
             }
         }
         return count;
+    }
+    #endregion
+
+    #region Materials
+    public void AddTileWithMaterial(HexTile tile) {
+        if (!_tilesWithMaterials.Contains(tile)) {
+            _tilesWithMaterials.Add(tile);
+        }
+    }
+    public void RemoveTileWithMaterial(HexTile tile) {
+        _tilesWithMaterials.Remove(tile);
     }
     #endregion
 

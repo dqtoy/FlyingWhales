@@ -22,10 +22,7 @@ public class FactionManager : MonoBehaviour {
     public Dictionary<RACE, List<TECHNOLOGY>> initialRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
         { RACE.HUMANS, new List<TECHNOLOGY>(){
 	            TECHNOLOGY.BASIC_FARMING,
-				TECHNOLOGY.BASIC_HUNTING,
 	            TECHNOLOGY.BASIC_MINING,
-				TECHNOLOGY.BASIC_QUARRYING,
-				TECHNOLOGY.BASIC_WOODCUTTING,
 	            TECHNOLOGY.SWORDSMAN_CLASS,
 	            TECHNOLOGY.SPEARMAN_CLASS,
 	            TECHNOLOGY.WILDLING_CLASS,
@@ -33,13 +30,11 @@ public class FactionManager : MonoBehaviour {
 	            TECHNOLOGY.SPEAR_MAKING,
 	            TECHNOLOGY.AXE_MAKING,
 	            TECHNOLOGY.CHEST_ARMOR_MAKING,
-	            TECHNOLOGY.HELMET_MAKING
+	            TECHNOLOGY.HELMET_MAKING,
+                TECHNOLOGY.HUMAN_LANGUAGE
         }},
         { RACE.ELVES, new List<TECHNOLOGY>(){
-				TECHNOLOGY.BASIC_FARMING,
 				TECHNOLOGY.BASIC_HUNTING,
-				TECHNOLOGY.BASIC_MINING,
-				TECHNOLOGY.BASIC_QUARRYING,
 				TECHNOLOGY.BASIC_WOODCUTTING,
 		        TECHNOLOGY.ARCHER_CLASS,
 		        TECHNOLOGY.ROGUE_CLASS,
@@ -48,9 +43,59 @@ public class FactionManager : MonoBehaviour {
 		        TECHNOLOGY.DAGGER_MAKING,
 		        TECHNOLOGY.STAFF_MAKING,
 		        TECHNOLOGY.LEGGINGS_MAKING,
-		        TECHNOLOGY.GLOVE_MAKING
+		        TECHNOLOGY.GLOVE_MAKING,
+                TECHNOLOGY.ELVEN_LANGUAGE
         }}
     };
+    public Dictionary<RACE, List<TECHNOLOGY>> bonusRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
+        { RACE.HUMANS, new List<TECHNOLOGY>(){
+                TECHNOLOGY.ARCHER_CLASS,
+                TECHNOLOGY.ROGUE_CLASS,
+                TECHNOLOGY.MAGE_CLASS,
+                TECHNOLOGY.BOW_MAKING,
+                TECHNOLOGY.DAGGER_MAKING,
+                TECHNOLOGY.STAFF_MAKING,
+                TECHNOLOGY.ADVANCED_FARMING,
+                TECHNOLOGY.ADVANCED_MINING,
+                TECHNOLOGY.BASIC_HUNTING,
+                TECHNOLOGY.BASIC_WOODCUTTING,
+                TECHNOLOGY.BASIC_QUARRYING,
+                TECHNOLOGY.GOBLIN_LANGUAGE,
+                TECHNOLOGY.ELVEN_LANGUAGE,
+                TECHNOLOGY.TROLL_LANGUAGE,
+                TECHNOLOGY.BATTLEMAGE_CLASS,
+                TECHNOLOGY.SCOUT_CLASS,
+                TECHNOLOGY.BARBARIAN_CLASS,
+                TECHNOLOGY.KNIGHT_CLASS,
+                TECHNOLOGY.NIGHTBLADE_CLASS
+        }},
+        { RACE.ELVES, new List<TECHNOLOGY>(){
+                TECHNOLOGY.SWORDSMAN_CLASS,
+                TECHNOLOGY.SPEARMAN_CLASS,
+                TECHNOLOGY.WILDLING_CLASS,
+                TECHNOLOGY.SWORD_MAKING,
+                TECHNOLOGY.SPEAR_MAKING,
+                TECHNOLOGY.AXE_MAKING,
+                TECHNOLOGY.ADVANCED_HUNTING,
+                TECHNOLOGY.ADVANCED_WOODCUTTING,
+                TECHNOLOGY.BASIC_FARMING,
+                TECHNOLOGY.BASIC_MINING,
+                TECHNOLOGY.BASIC_QUARRYING,
+                TECHNOLOGY.GOBLIN_LANGUAGE,
+                TECHNOLOGY.HUMAN_LANGUAGE,
+                TECHNOLOGY.TROLL_LANGUAGE,
+                TECHNOLOGY.RANGER_CLASS,
+                TECHNOLOGY.BATTLEMAGE_CLASS,
+                TECHNOLOGY.SCOUT_CLASS,
+                TECHNOLOGY.ARCANIST_CLASS,
+                TECHNOLOGY.NIGHTBLADE_CLASS
+        }}
+    };
+
+    [Space(10)]
+    [Header("Tribe Settings")]
+    [SerializeField]
+    private List<InitialTribeSetting> _initialTribes;
 
     [Space(10)]
     [Header("Visuals")]
@@ -86,40 +131,92 @@ public class FactionManager : MonoBehaviour {
     public void GenerateInititalFactions() {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
-        List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
-        List<Region> elligibleRegions = new List<Region>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.tilesInRegion.Where(x => x.materialOnTile != MATERIAL.NONE && MaterialManager.Instance.materialsLookup[x.materialOnTile].isEdible
-            && MaterialManager.Instance.materialsLookup[x.materialOnTile].structure.structureQuality == STRUCTURE_QUALITY.BASIC).Any()) {
-                elligibleRegions.Add(currRegion);
+        //List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
+        List<Region> elligibleRegions = new List<Region>(GridMap.Instance.allRegions);
+
+        InitialTribeSetting initialTribes = _initialTribes[Random.Range(0, _initialTribes.Count)]; //Choose a random tribe setup
+        Dictionary<FACTION_SIZE, int> tribeSetupDict = initialTribes.GetDictionary();
+        Utilities.LogDictionary(tribeSetupDict);
+
+        RACE[] races = new RACE[] { RACE.HUMANS, RACE.ELVES };
+
+        //loop through the initial tribe setup
+        foreach (KeyValuePair<FACTION_SIZE, int> kvp in tribeSetupDict) {
+            FACTION_SIZE currSize = kvp.Key;
+            int numOfTribes = kvp.Value;
+            for (int i = 0; i < numOfTribes; i++) {
+                RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
+                int numOfRegionsForCurrentFaction = GetInitialVillageCount(currSize);
+                Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
+                newFaction.GenerateBonusTech(currSize);
+                Region capitalRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
+                elligibleRegions.Remove(capitalRegion);
+                capitalRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
+                LandmarkManager.Instance.OccupyLandmark(capitalRegion, newFaction);
+                CreateInititalFactionCharacters(newFaction, capitalRegion.mainLandmark as Settlement);
+                CreateInitialResourceStructuresForFaction(newFaction, capitalRegion.mainLandmark as Settlement, capitalRegion);
+                List<Region> elligibleRegionsForFaction = new List<Region>();
+                elligibleRegionsForFaction.AddRange(capitalRegion.adjacentRegionsViaMajorRoad.Where(x => x.owner == null));
+                for (int j = 1; j < numOfRegionsForCurrentFaction; j++) { //start index at 1 since the new faction already has 1 initial village
+                    if (elligibleRegionsForFaction.Count <= 0) {
+                        throw new System.Exception("There are no more elligible regions for this faction!");
+                    }
+                    Region chosenRegion = elligibleRegionsForFaction[Random.Range(0, elligibleRegionsForFaction.Count)];
+                    chosenRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
+                    LandmarkManager.Instance.OccupyLandmark(chosenRegion, newFaction);
+                    CreateInititalFactionCharacters(newFaction, chosenRegion.mainLandmark as Settlement);
+                    CreateInitialResourceStructuresForFaction(newFaction, chosenRegion.mainLandmark as Settlement, chosenRegion);
+                    elligibleRegions.Remove(chosenRegion);
+                    elligibleRegionsForFaction.Remove(chosenRegion);
+                    elligibleRegionsForFaction.AddRange(chosenRegion.adjacentRegionsViaMajorRoad.Where(x => !elligibleRegionsForFaction.Contains(x) && x.owner == null));
+                }
             }
         }
-        for (int i = 0; i < inititalRaces.Length; i++) {
-            RACE inititalRace = inititalRaces[i];
-            Faction newFaction = CreateNewFaction(typeof(Tribe), inititalRace);
-            Region regionForFaction = null;
-            if (elligibleRegions.Count > 0) {
-                regionForFaction = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
-            } else if(allRegions.Count > 0) {
-                regionForFaction = allRegions[Random.Range(0, allRegions.Count)];
-            }
-            elligibleRegions.Remove(regionForFaction);
-            allRegions.Remove(regionForFaction);
-            Utilities.ListRemoveRange(elligibleRegions, regionForFaction.adjacentRegions);
-            Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
-			//CreateInitialResourcesForSettlement((Settlement)regionForFaction.mainLandmark, newFaction);
-            //regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
-            regionForFaction.centerOfMass.landmarkOnTile.AdjustCivilians(inititalRace, 100);
-            LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
-            CreateInititalFactionCharacters(newFaction);
-//            CreateInitialResourcesForSettlement(newFaction.settlements.First());
+
+//        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+//            Region currRegion = GridMap.Instance.allRegions[i];
+//            if (currRegion.tilesInRegion.Where(x => x.materialOnTile != MATERIAL.NONE && MaterialManager.Instance.materialsLookup[x.materialOnTile].isEdible
+//            && MaterialManager.Instance.materialsLookup[x.materialOnTile].structure.structureQuality == STRUCTURE_QUALITY.BASIC).Any()) {
+//                elligibleRegions.Add(currRegion);
+//            }
+//        }
+//        for (int i = 0; i < inititalRaces.Length; i++) {
+//            RACE inititalRace = inititalRaces[i];
+//            Faction newFaction = CreateNewFaction(typeof(Tribe), inititalRace);
+//            Region regionForFaction = null;
+//            if (elligibleRegions.Count > 0) {
+//                regionForFaction = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
+//            } else if(allRegions.Count > 0) {
+//                regionForFaction = allRegions[Random.Range(0, allRegions.Count)];
+//            }
+//            elligibleRegions.Remove(regionForFaction);
+//            allRegions.Remove(regionForFaction);
+//            Utilities.ListRemoveRange(elligibleRegions, regionForFaction.adjacentRegions);
+//            Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
+//			//CreateInitialResourcesForSettlement((Settlement)regionForFaction.mainLandmark, newFaction);
+//            //regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
+//            regionForFaction.centerOfMass.landmarkOnTile.AdjustCivilians(inititalRace, 100);
+//            LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
+//            CreateInititalFactionCharacters(newFaction);
+////            CreateInitialResourcesForSettlement(newFaction.settlements.First());
+//        }
+    }
+    private int GetInitialVillageCount(FACTION_SIZE size) {
+        switch (size) {
+            case FACTION_SIZE.SMALL:
+                return Random.Range(1, 3); //Small Tribe: 1 to 2 adjacent Villages
+            case FACTION_SIZE.MEDIUM:
+                return 3; //Medium Tribe: 3 adjacent Villages
+            case FACTION_SIZE.LARGE:
+                return Random.Range(4, 6); //Large Tribe: 4 to 5 adjacent Villages
+            default:
+                return 0;
         }
     }
     /*
      Initital tribes should have a chieftain and a village head.
          */
-    private void CreateInititalFactionCharacters(Faction faction) {
+    private void CreateInititalFactionCharacters(Faction faction, Settlement settlement) {
 		MATERIAL armorMaterialToUse = MATERIAL.NONE;
 		for (int i = 0; i < faction.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials.Count; i++) {
 			MATERIAL material = faction.productionPreferences [PRODUCTION_TYPE.ARMOR].prioritizedMaterials [i];
@@ -128,17 +225,26 @@ public class FactionManager : MonoBehaviour {
 				break;
 			}
 		}
-        Settlement baseSettlement = faction.settlements[0];
-		ECS.Character chieftain = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
-		EquipFullArmorSet (armorMaterialToUse, chieftain);
-        ECS.Character villageHead = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
-		EquipFullArmorSet (armorMaterialToUse, villageHead);
-		ECS.Character worker = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.WORKER, "Classless");
-		EquipFullArmorSet (armorMaterialToUse, worker);
+
+        int numOfCharacters = Random.Range(3, 6); //Generate 3 to 5 characters in each Village with civilians, limit class based on technologies known by its Faction.
+        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(settlement);
+        for (int i = 0; i < numOfCharacters; i++) {
+            CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            ECS.Character newChar = settlement.CreateNewCharacter(CHARACTER_ROLE.HERO, Utilities.NormalizeString(chosenClass.ToString()));
+            EquipFullArmorSet(armorMaterialToUse, newChar);
+        }
+
+  //      Settlement baseSettlement = faction.settlements[0];
+		//ECS.Character chieftain = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
+		//EquipFullArmorSet (armorMaterialToUse, chieftain);
+  //      ECS.Character villageHead = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
+		//EquipFullArmorSet (armorMaterialToUse, villageHead);
+		//ECS.Character worker = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.WORKER, "Classless");
+		//EquipFullArmorSet (armorMaterialToUse, worker);
 
 
-        faction.SetLeader(chieftain);
-        baseSettlement.SetHead(villageHead);
+  //      faction.SetLeader(chieftain);
+  //      baseSettlement.SetHead(villageHead);
 
         ////Create 2 adventurers
 		//ECS.Character adventurer1 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
@@ -168,6 +274,24 @@ public class FactionManager : MonoBehaviour {
         CreateRelationshipsForNewFaction(newFaction);
         UIManager.Instance.UpdateFactionSummary();
         return newFaction;
+    }
+    private void CreateInitialResourceStructuresForFaction(Faction faction, Settlement settlement, Region region) {
+        for (int i = 0; i < region.tilesWithMaterials.Count; i++) {
+            HexTile currTile = region.tilesWithMaterials[i];
+            if (currTile.HasStructure()) {
+                continue; //skip tiles that already have structures
+            }
+            //Does the settlement have the needed technology to build a structure on the current tile?
+            if (settlement.HasTechnology(MaterialManager.Instance.GetNeededTechnologyForMaterialStructure(currTile.materialOnTile))) {
+                //Based on known technologies of each Tribe, create Structures for the Resource Landmarks within their regions.
+                BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(currTile, Utilities.ConvertMaterialToLandmarkType(currTile.materialOnTile));
+                newLandmark.OccupyLandmark(faction);
+                newLandmark.AdjustCivilians(faction.race, Random.Range(5, 11)); //Each one should have between 5 to 10 civilians.
+                settlement.AddLandmarkAsOwned(newLandmark);
+                List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.location);
+                RoadManager.Instance.CreateRoad(road, ROAD_TYPE.MINOR);
+            }
+        }
     }
     ///*
     // factions have initial resources, that depends on the material preferences, 
@@ -199,7 +323,8 @@ public class FactionManager : MonoBehaviour {
                 return currSprite;
             }
         }
-        throw new System.Exception("There are no more emblems for kingdom: " + faction.name);
+        return _emblems[Random.Range(0, _emblems.Count)];
+        //throw new System.Exception("There are no more emblems for kingdom: " + faction.name);
     }
     internal Sprite GenerateFactionEmblemBG() {
         return _emblemBGs[Random.Range(0, _emblemBGs.Count)];

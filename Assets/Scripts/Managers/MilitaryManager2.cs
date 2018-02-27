@@ -307,17 +307,17 @@ public class MilitaryManager2 {
 		if(this._kingdom.king.HasTrait(TRAIT.IMPERIALIST)){
 			cityTotalWeight += 50;
 		}
-		if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.FOOD) < 0) {
-			cityTotalWeight += 100;
-		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.MATERIAL) < 0) {
-			if (this._kingdom.race == RACE.HUMANS && city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
-				cityTotalWeight += 100;
-			}else if (this._kingdom.race == RACE.ELVES && city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY){
-				cityTotalWeight += 100;
-			}
-		} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.ORE) < 0) {
-			cityTotalWeight += 100;
-		}
+		//if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.FOOD) < 0) {
+		//	cityTotalWeight += 100;
+		//} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.MATERIAL) < 0) {
+		//	if (this._kingdom.race == RACE.HUMANS && city.region.tileWithSpecialResource.specialResource == RESOURCE.SLATE || city.region.tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
+		//		cityTotalWeight += 100;
+		//	}else if (this._kingdom.race == RACE.ELVES && city.region.tileWithSpecialResource.specialResource == RESOURCE.OAK || city.region.tileWithSpecialResource.specialResource == RESOURCE.EBONY){
+		//		cityTotalWeight += 100;
+		//	}
+		//} else if (city.region.tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE && this._kingdom.GetSurplusDeficitOfResourceType(RESOURCE_TYPE.ORE) < 0) {
+		//	cityTotalWeight += 100;
+		//}
 
 		KingdomRelationship krSourceToTarget = this._kingdom.GetRelationshipWithKingdom (city.kingdom);
 		KingdomRelationship krTargetToSource = city.kingdom.GetRelationshipWithKingdom (this._kingdom);

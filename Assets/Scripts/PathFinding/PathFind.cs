@@ -46,35 +46,33 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
-                } 
-                //else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION) {
-                //    foreach (Node n in path.LastStep.LandmarkConnectionTiles) {
-                //        if (n.region.id != region1.id && n.region.id != region2.id) {
-                //            //path cannot pass through other regions
-                //            continue;
-                //        }
+                } else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION) {
+                    foreach (Node n in path.LastStep.NoWaterTiles) {
+                        if (n.region.id != region1.id && n.region.id != region2.id) {
+                            //path cannot pass through other regions
+                            continue;
+                        }
 
-                //        if (n.isHabitable && n.id != start.id && n.id != destination.id) {
-                //            continue;
-                //        }
-                //        if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
-                //            continue;
-                //        }
-                //        if (n.AllNeighbourRoadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR).Count() > 0 && n.id != start.id && n.id != destination.id) {
-                //            //current node has adjacent roads, check if it is a neighbour of start or destination
-                //            //if it is, allow the path
-                //            //else skip this node
-                //            if (!start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
-                //                continue;
-                //            }
-                //        }
+                        if (n.isHabitable && n.id != start.id && n.id != destination.id) {
+                            continue;
+                        }
+                        if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
+                            continue;
+                        }
+                        //if (n.AllNeighbourRoadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR).Count() > 0 && n.id != start.id && n.id != destination.id) {
+                        //    //current node has adjacent roads, check if it is a neighbour of start or destination
+                        //    //if it is, allow the path
+                        //    //else skip this node
+                        //    if (!start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
+                        //        continue;
+                        //    }
+                        //}
 
-                //        d = distance(path.LastStep, n);
-                //        newPath = path.AddStep(n, d);
-                //        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                //    }
-                //} 
-                else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
                     foreach (Node n in path.LastStep.MajorRoadTiles) {
                         if (n.tileTag != start.tileTag) {
                             continue;

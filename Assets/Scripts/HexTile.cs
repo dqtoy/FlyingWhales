@@ -149,7 +149,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
 	public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
     public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
-    public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
+    //public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkExternalConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> CombatTiles { get { return NoWaterTiles; }}
@@ -1716,10 +1716,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 text += " - " + ((Region)currConnection).centerOfMass.name;
             }
         }
-        text += "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
-        if(this.city.region.specialResource != RESOURCE.NONE) {
-            text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
-        }
+        //text += "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
+        //if(this.city.region.specialResource != RESOURCE.NONE) {
+        //    text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
+        //}
 		text += "\n [b]Food Count:[/b] " + this.city.foodCount.ToString () + "/" + this.city.foodCapacity + "(" + this.city.foodRequirement.ToString () + ")" +
 		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialCapacity + "(" + this.city.materialRequirement.ToString () + ")" +
 		"\n [b]Material Count For Humans:[/b] " + this.city.materialCountForHumans.ToString () + "/" + this.city.materialCapacity +
@@ -2174,6 +2174,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
         resource.transform.localPosition = Vector3.zero;
         resource.transform.localScale = Vector3.one;
+        region.AddTileWithMaterial(this);
     }
     #endregion
 }

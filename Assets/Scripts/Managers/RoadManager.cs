@@ -41,40 +41,40 @@ public class RoadManager : MonoBehaviour {
     }
 
 
-    internal void DrawConnection(HexTile fromTile, HexTile toTile, ROAD_TYPE roadType) {
-        Debug.Log("DRAW CONNECTION: " + fromTile.name + ", " + toTile.name);
-        Vector3 fromPos = fromTile.gameObject.transform.position;
-        Vector3 toPos = toTile.gameObject.transform.position;
-        Vector3 targetDir = toPos - fromPos;
+    //internal void DrawConnection(HexTile fromTile, HexTile toTile, ROAD_TYPE roadType) {
+    //    Debug.Log("DRAW CONNECTION: " + fromTile.name + ", " + toTile.name);
+    //    Vector3 fromPos = fromTile.gameObject.transform.position;
+    //    Vector3 toPos = toTile.gameObject.transform.position;
+    //    Vector3 targetDir = toPos - fromPos;
 
-        //float angle = Vector3.Angle (targetDir, fromTile.transform.forward);
-        float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;
-        Debug.Log("ANGLE: " + angle);
+    //    //float angle = Vector3.Angle (targetDir, fromTile.transform.forward);
+    //    float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;
+    //    Debug.Log("ANGLE: " + angle);
 
-        GameObject connectionGO = majorRoadGO;
-        if (roadType == ROAD_TYPE.MINOR) {
-            connectionGO = minorRoadGO;
-        }
-        GameObject goConnection = (GameObject)GameObject.Instantiate(connectionGO);
-        goConnection.transform.position = fromPos;
-        goConnection.transform.Rotate(new Vector3(0f, 0f, angle));
-        if (roadType == ROAD_TYPE.MAJOR) {
-            goConnection.transform.parent = majorRoadParent;
-        } else if (roadType == ROAD_TYPE.MINOR) {
-            goConnection.transform.parent = minorRoadParent;
-        }
+    //    GameObject connectionGO = majorRoadGO;
+    //    if (roadType == ROAD_TYPE.MINOR) {
+    //        connectionGO = minorRoadGO;
+    //    }
+    //    GameObject goConnection = (GameObject)GameObject.Instantiate(connectionGO);
+    //    goConnection.transform.position = fromPos;
+    //    goConnection.transform.Rotate(new Vector3(0f, 0f, angle));
+    //    if (roadType == ROAD_TYPE.MAJOR) {
+    //        goConnection.transform.parent = majorRoadParent;
+    //    } else if (roadType == ROAD_TYPE.MINOR) {
+    //        goConnection.transform.parent = minorRoadParent;
+    //    }
 
-        RoadConnection roadConnection = goConnection.GetComponent<RoadConnection>();
-        roadConnection.SetConnection(fromTile, toTile, roadType);
+    //    RoadConnection roadConnection = goConnection.GetComponent<RoadConnection>();
+    //    roadConnection.SetConnection(fromTile, toTile, roadType);
 
-        fromTile.connectedTiles.Add(toTile, roadConnection);
-        toTile.connectedTiles.Add(fromTile, roadConnection);
-        //		if(fromTile.city != null && toTile.city != null){
-        //			if(fromTile.city.kingdom.id == toTile.city.kingdom.id){
-        //				goConnection.GetComponent<CityConnection> ().SetColor (fromTile.city.kingdom.kingdomColor);
-        //			}
-        //		}
-    }
+    //    fromTile.connectedTiles.Add(toTile, roadConnection);
+    //    toTile.connectedTiles.Add(fromTile, roadConnection);
+    //    //		if(fromTile.city != null && toTile.city != null){
+    //    //			if(fromTile.city.kingdom.id == toTile.city.kingdom.id){
+    //    //				goConnection.GetComponent<CityConnection> ().SetColor (fromTile.city.kingdom.kingdomColor);
+    //    //			}
+    //    //		}
+    //}
     internal void DestroyConnection(HexTile fromTile, HexTile toTile) {
         RoadConnection roadConnection = fromTile.connectedTiles[toTile];
         GameObject.Destroy(roadConnection.gameObject);
@@ -403,7 +403,8 @@ public class RoadManager : MonoBehaviour {
                 currTile.SetTileAsRoad(true, roadType, roadGO);
                 if (currTile.roadType == ROAD_TYPE.MINOR) {
                     currTile.SetRoadColor(roadGO, Color.gray);
-                    currTile.SetRoadState(!GameManager.Instance.initiallyHideRoads);
+                    currTile.SetRoadState(true);
+                    //currTile.SetRoadState(!GameManager.Instance.initiallyHideRoads);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
                     currTile.SetRoadColor(roadGO, Color.white);
                     currTile.SetRoadState(true); //Major Roads should already be visible
