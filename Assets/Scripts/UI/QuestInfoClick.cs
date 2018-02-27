@@ -31,7 +31,7 @@ public class QuestInfoClick : MonoBehaviour {
 			} else if (url.Contains("_party")) {
 				Party party = UIManager.Instance.questInfoUI.currentlyShowingQuest.assignedParty;
 				if(party != null){
-					UIManager.Instance.ShowPartyInfo(party);
+					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 				}
 			}
         }

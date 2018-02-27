@@ -59,7 +59,7 @@ public class CharacterInfoClick : MonoBehaviour {
 			} else if (url.Contains("_party")) {
 				Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
 				if(party != null){
-					UIManager.Instance.ShowPartyInfo(party);
+					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 				}
 			}
         }

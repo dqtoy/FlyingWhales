@@ -29,7 +29,7 @@ public class HextileInfoClick : MonoBehaviour {
 				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
 				Party party = hextile.GetPartyAtLocationByLeaderID(idToUse);
 				if(party != null){
-					UIManager.Instance.ShowPartyInfo(party);
+					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 				}
 			}
         }

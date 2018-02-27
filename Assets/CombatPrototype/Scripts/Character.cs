@@ -15,6 +15,7 @@ namespace ECS {
         [System.NonSerialized] private List<Trait>	_traits;
         private List<TRAIT> _allTraits;
         private Dictionary<Character, Relationship> _relationships;
+		private const int MAX_FOLLOWERS = 4;
 
 		//Stats
 		[SerializeField] private int _currentHP;
@@ -60,6 +61,8 @@ namespace ECS {
 		private List<string> _history;
 		private int _combatHistoryID;
 		private List<ECS.Character> _prisoners;
+		private List<ECS.Character> _followers;
+		private ECS.Character _isFollowerOf;
 
         private Dictionary<RACE, int> _civiliansByRace;
 
@@ -141,7 +144,7 @@ namespace ECS {
         public ILocation specificLocation {
             get {
                 ILocation loc = null;
-                loc = (party == null ? _specificLocation : party.specificLocation);
+				loc = (party == null ? (_isFollowerOf == null ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
                 return loc;
             }
         }
@@ -238,6 +241,9 @@ namespace ECS {
 		internal List<ECS.Character> prisoners{
 			get { return this._prisoners; }
 		}
+		internal List<ECS.Character> followers{
+			get { return this._followers; }
+		}
 		internal object isPrisonerOf{
 			get { return this._isPrisonerOf; }
 		}
@@ -288,6 +294,12 @@ namespace ECS {
 				return _currentFunction; 
 			}
 		}
+		internal bool isFollowersFull{
+			get { return followers.Count >= MAX_FOLLOWERS; }
+		}
+		internal ECS.Character isFollowerOf{
+			get { return _isFollowerOf; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -306,6 +318,8 @@ namespace ECS {
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 			_history = new List<string> ();
+			_followers = new List<ECS.Character> ();
+			_isFollowerOf = null;
 
 			AllocateStatPoints (statAllocationBonus);
 
@@ -586,6 +600,9 @@ namespace ECS {
 				if (this._party != null) {
 					this._party.RemovePartyMember(this);
 				}
+				if (this._isFollowerOf != null) {
+					this._isFollowerOf.RemoveFollower(this);
+				}
 			}
 		}
 
@@ -624,6 +641,13 @@ namespace ECS {
                     this._party.RemovePartyMember(this, true);
 				}else{
 					this.specificLocation.RemoveCharacterFromLocation(this);
+				}
+
+				if(this._isFollowerOf != null){
+					this._isFollowerOf.RemoveFollower (this);
+					if(this.specificLocation != null){
+						this.specificLocation.RemoveCharacterFromLocation(this);
+					}
 				}
 
                 if (_avatar != null) {
@@ -2322,6 +2346,20 @@ namespace ECS {
 		public void AddExploredLandmark(BaseLandmark landmark){
 			if(!_exploredLandmarks.ContainsKey(landmark.id)){
 				_exploredLandmarks.Add (landmark.id, landmark);
+			}
+		}
+		#endregion
+
+		#region Followers
+		public void AddFollower(ECS.Character character){
+			if(!_followers.Contains(character)){
+				_followers.Add (character);
+				character._isFollowerOf = this;
+			}
+		}
+		public void RemoveFollower(ECS.Character character){
+			if(_followers.Remove(character)){
+				character._isFollowerOf = null;
 			}
 		}
 		#endregion
