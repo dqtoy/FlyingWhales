@@ -231,9 +231,9 @@ public class Settlement : BaseLandmark {
                 material = trainingPreference[i];
             }
         }
-        if (material == MATERIAL.NONE) {
-            return false; //this settlement has no access to materials for training.
-        }
+        //if (material == MATERIAL.NONE) {
+        //    return false; //this settlement has no access to materials for training.
+        //}
         if (neededTech == TECHNOLOGY.NONE) {
             return true;
         } else {
