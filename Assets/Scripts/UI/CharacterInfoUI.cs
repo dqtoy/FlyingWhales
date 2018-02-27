@@ -168,7 +168,7 @@ public class CharacterInfoUI : UIMenu {
 
 	private void UpdateInventoryInfo(){
 		string text = string.Empty;
-		if(currentlyShowingCharacter.inventory.Count > 0 || currentlyShowingCharacter.materialInventory.Sum(x => x.Value) > 0) {
+		if(currentlyShowingCharacter.inventory.Count > 0) {
 			for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
 				ECS.Item item = currentlyShowingCharacter.inventory [i];
 				if(i > 0){
@@ -176,11 +176,6 @@ public class CharacterInfoUI : UIMenu {
 				}
 				text += item.itemName;
 			}
-            foreach (KeyValuePair<MATERIAL, int> kvp in currentlyShowingCharacter.materialInventory) {
-                if(kvp.Value > 0) {
-                    text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
-                }
-            }
 		}else{
 			text += "NONE";
 		}

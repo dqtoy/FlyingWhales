@@ -7,7 +7,7 @@ public class Hibernate : CharacterTask {
     private RestAction restAction;
     private List<ECS.Character> _charactersToRest;
 
-    public Hibernate(TaskCreator createdBy) : base(createdBy, TASK_TYPE.HIBERNATE) {
+	public Hibernate(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.HIBERNATE, defaultDaysLeft) {
     }
 
     #region overrides
@@ -26,10 +26,6 @@ public class Hibernate : CharacterTask {
     }
     public override void PerformTask() {
         base.PerformTask();
-        _assignedCharacter.SetCurrentTask(this);
-		if (_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
-        }
         PerformHibernate();
     }
     //public override void PerformDailyAction() {

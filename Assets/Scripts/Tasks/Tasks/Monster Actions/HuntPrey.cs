@@ -10,8 +10,8 @@ public class HuntPrey : CharacterTask {
 
     private WeightedDictionary<HUNT_ACTION> huntActions;
 
-    public HuntPrey(TaskCreator createdBy, BaseLandmark target) 
-        : base(createdBy, TASK_TYPE.HUNT_PREY) {
+	public HuntPrey(TaskCreator createdBy, BaseLandmark target, int defaultDaysLeft = -1) 
+        : base(createdBy, TASK_TYPE.HUNT_PREY, defaultDaysLeft) {
         _target = target;
     }
 
@@ -27,10 +27,6 @@ public class HuntPrey : CharacterTask {
     }
     public override void PerformTask() {
         base.PerformTask();
-        _assignedCharacter.SetCurrentTask(this);
-		if (_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
-        }
         Hunt();
         //GoToTargetLocation();
         

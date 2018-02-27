@@ -13,8 +13,8 @@ public class JoinParty : CharacterTask {
     }
     #endregion
 
-    public JoinParty(TaskCreator createdBy, Party partyToJoin) 
-        : base(createdBy, TASK_TYPE.JOIN_PARTY) {
+	public JoinParty(TaskCreator createdBy, Party partyToJoin, int defaultDaysLeft = -1) 
+        : base(createdBy, TASK_TYPE.JOIN_PARTY, defaultDaysLeft) {
         _partyToJoin = partyToJoin;
     }
 

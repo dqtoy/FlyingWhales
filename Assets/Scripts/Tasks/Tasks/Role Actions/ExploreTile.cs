@@ -5,18 +5,14 @@ using System.Collections.Generic;
 public class ExploreTile : CharacterTask {
 
     private BaseLandmark _landmarkToExplore;
-	private ECS.Character _character;
 
     #region getters/setters
     public BaseLandmark landmarkToExplore {
         get { return _landmarkToExplore; }
     }
     #endregion
-    public ExploreTile(TaskCreator createdBy) : base(createdBy, TASK_TYPE.EXPLORE_TILE) {
-		_character = (ECS.Character)createdBy;
+	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.EXPLORE_TILE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
-		SetDefaultDaysLeft(5);
-		SetDaysLeft(5);
     }
 
 	private BaseLandmark GetLandmarkToExplore(){
@@ -31,22 +27,22 @@ public class ExploreTile : CharacterTask {
 		}else{
 			_landmarkToExplore = (BaseLandmark)_targetLocation;
 		}
+		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => StartExploration ());
 	}
 	public override void PerformTask (){
 		base.PerformTask ();
-		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => StartExploration ());
+		Explore ();
 	}
     #endregion
 
 	private void StartExploration(){
-		_character.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
-		Explore ();
-	}
-	private void Explore(){
-		if(_character.isInCombat){
-			_character.SetCurrentFunction (() => Explore ());
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => StartExploration ());
 			return;
 		}
+		_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
+	}
+	private void Explore(){
 		if(_isHalted){
 			return;
 		}
@@ -54,18 +50,17 @@ public class ExploreTile : CharacterTask {
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < 35){
 				ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
-				if(!_character.EquipItem(itemFound)){
-					_character.PickupItem (itemFound);
+				if(!_assignedCharacter.EquipItem(itemFound)){
+					_assignedCharacter.PickupItem (itemFound);
 				}
 				_landmarkToExplore.itemsInLandmark.Remove (itemFound);
 			}
 		}
-		if(_daysLeft != 0){
-			ScheduleExploration ();
-		}else{
+		if(_daysLeft == 0){
+			End ();
 			return;
 		}
-		_daysLeft--;
+		ReduceDaysLeft(1);
 	}
 	private void ScheduleExploration(){
 		GameDate newSched = GameManager.Instance.Today ();
@@ -73,6 +68,9 @@ public class ExploreTile : CharacterTask {
 		SchedulingManager.Instance.AddEntry (newSched, () => Explore ());
 	}
 
+	private void End(){
+		EndTask (TASK_STATUS.SUCCESS);
+	}
     #region Logs
     private void LogGoToLocation() {
         AddNewLog("The party travels to " + _landmarkToExplore.location.name);

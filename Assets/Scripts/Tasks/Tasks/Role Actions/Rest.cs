@@ -10,8 +10,8 @@ public class Rest : CharacterTask {
 
     private List<ECS.Character> _charactersToRest;
 
-    public Rest(TaskCreator createdBy) 
-        : base(createdBy, TASK_TYPE.REST) {
+	public Rest(TaskCreator createdBy, int defaultDaysLeft = -1) 
+        : base(createdBy, TASK_TYPE.REST, defaultDaysLeft) {
 		SetStance(STANCE.NEUTRAL);
     }
 
@@ -42,45 +42,22 @@ public class Rest : CharacterTask {
         for (int i = 0; i < _charactersToRest.Count; i++) {
             _charactersToRest[i].AddHistory("Taking a rest.");
         }
+		if(_targetLocation == null){
+			_targetLocation = GetTargetSettlement();
+		}
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
     }
     public override void PerformTask() {
 		base.PerformTask();
-		_assignedCharacter.SetCurrentTask(this);
-		if (_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
-        }
         PerformRest();
-        //if(_targetLocation == null){
-        //	_targetLocation = GetTargetSettlement();
-        //}
-        //_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => StartRest ());
     }
     public override void TaskSuccess() {
-        //SetCanDoDailyAction(false);
+		base.TaskSuccess ();
 		Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
-		_assignedCharacter.DetermineAction();
 	}
-    //public override void PerformDailyAction() {
-    //    if (_canDoDailyAction) {
-    //        base.PerformDailyAction();
-    //        PerformRest();
-    //    }
-    //}
     #endregion
 
-    //private void StartRest() {
-    //    //SetCanDoDailyAction(true);
-    //    restAction = new RestAction(this);
-    //    restAction.InititalizeAction(_assignedCharacter);
-    //    restAction.onTaskActionDone += TaskSuccess;
-    //    restAction.onTaskDoAction += restAction.Rest;
-    //}
-
-    //private void PerformRest() {
-    //    restAction.DoAction(_assignedCharacter);
-    //}
-
-    private void CheckIfCharactersAreFullyRested(List<ECS.Character> charactersToRest) {
+	private bool CheckIfCharactersAreFullyRested(List<ECS.Character> charactersToRest) {
         bool allCharactersRested = true;
         for (int i = 0; i < charactersToRest.Count; i++) {
             ECS.Character currCharacter = charactersToRest[i];
@@ -92,6 +69,7 @@ public class Rest : CharacterTask {
         if (allCharactersRested) {
             EndTask(TASK_STATUS.SUCCESS);
         }
+		return allCharactersRested;
     }
 
     public void PerformRest() {
@@ -99,6 +77,13 @@ public class Rest : CharacterTask {
             ECS.Character currCharacter = _charactersToRest[i];
             currCharacter.AdjustHP(currCharacter.raceSetting.restRegenAmount);
         }
-        CheckIfCharactersAreFullyRested(_charactersToRest);
+		if(!CheckIfCharactersAreFullyRested(_charactersToRest)){
+			if(_daysLeft == 0){
+				EndTask (TASK_STATUS.SUCCESS);
+				return;
+			}
+			ReduceDaysLeft(1);
+		}
+
     }
 }

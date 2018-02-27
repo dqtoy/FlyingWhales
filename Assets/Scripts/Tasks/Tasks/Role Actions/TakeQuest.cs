@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class TakeQuest : CharacterTask {
-    public TakeQuest(TaskCreator createdBy) : base(createdBy, TASK_TYPE.TAKE_QUEST) {}
+	public TakeQuest(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.TAKE_QUEST, defaultDaysLeft) {}
 
     #region overrides
     public override void PerformTask() {

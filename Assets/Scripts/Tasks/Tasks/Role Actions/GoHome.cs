@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GoHome : CharacterTask {
-    public GoHome(TaskCreator createdBy) : base(createdBy, TASK_TYPE.GO_HOME) {
+	public GoHome(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.GO_HOME, defaultDaysLeft) {
         //onQuestAccepted += StartQuestLine;
     }
 

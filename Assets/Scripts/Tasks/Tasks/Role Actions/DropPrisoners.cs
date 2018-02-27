@@ -8,8 +8,8 @@ public class DropPrisoners : CharacterTask {
 	private Region region;
 	private List<ECS.Character> _prisoners;
 
-	public DropPrisoners(TaskCreator createdBy) 
-		: base(createdBy, TASK_TYPE.DROP_PRISONERS) {
+	public DropPrisoners(TaskCreator createdBy, int defaultDaysLeft = -1) 
+		: base(createdBy, TASK_TYPE.DROP_PRISONERS, defaultDaysLeft) {
 	}
 
 	#region overrides
