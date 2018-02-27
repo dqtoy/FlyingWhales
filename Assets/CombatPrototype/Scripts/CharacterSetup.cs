@@ -9,6 +9,8 @@ namespace ECS {
 
 		public string characterClassName;
 		public string raceSettingName;
+		public CHARACTER_ROLE optionalRole;
+
 		public List<ItemAndType> preEquippedItems;
 
 

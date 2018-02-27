@@ -27,7 +27,7 @@ public class ExploreTile : CharacterTask {
 		}else{
 			_landmarkToExplore = (BaseLandmark)_targetLocation;
 		}
-		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP, () => StartExploration ());
+		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.NORMAL, () => StartExploration ());
 	}
 	public override void PerformTask (){
 		base.PerformTask ();

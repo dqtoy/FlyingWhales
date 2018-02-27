@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public class Hibernate : CharacterTask {
 
-    private RestAction restAction;
     private List<ECS.Character> _charactersToRest;
 
 	public Hibernate(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.HIBERNATE, defaultDaysLeft) {
+		SetStance (STANCE.NEUTRAL);
     }
 
     #region overrides
@@ -21,8 +21,19 @@ public class Hibernate : CharacterTask {
             _charactersToRest.Add(character);
         }
         for (int i = 0; i < _charactersToRest.Count; i++) {
-            _charactersToRest[i].AddHistory("Taking a rest.");
+            _charactersToRest[i].AddHistory("Hibernating.");
         }
+
+		if(_targetLocation == null){
+			if(character.home == null){
+				_targetLocation = character.lair;
+			}else{
+				_targetLocation = character.home;
+			}
+		}
+		if(_targetLocation != null){
+			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL, () => StartHibernation());
+		}
     }
     public override void PerformTask() {
         base.PerformTask();
@@ -39,12 +50,26 @@ public class Hibernate : CharacterTask {
     //    base.EndTask(taskResult);
     //}
     #endregion
-
+	private void StartHibernation(){
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => StartHibernation ());
+			return;
+		}
+		for (int i = 0; i < _charactersToRest.Count; i++) {
+			_charactersToRest[i].AddHistory("Hibernating.");
+		}
+		_assignedCharacter.DestroyAvatar ();
+	}
     public void PerformHibernate() {
         for (int i = 0; i < _charactersToRest.Count; i++) {
             ECS.Character currCharacter = _charactersToRest[i];
             currCharacter.AdjustHP(currCharacter.raceSetting.restRegenAmount);
         }
+		if(_daysLeft == 0){
+			EndTask (TASK_STATUS.SUCCESS);
+			return;
+		}
+		ReduceDaysLeft(1);
     }
 
     //private void GoToTargetLocation() {

@@ -302,6 +302,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return reducedCivilians;
     }
+	public void KillAllCivilians(){
+		RACE[] races = _civiliansByRace.Keys.ToArray ();
+		for (int i = 0; i < races.Length; i++) {
+			_civiliansByRace [races [i]] = 0;
+		}
+	}
     //public void AdjustPopulation(float adjustment) {
     //    _civilians += adjustment;
     //}

@@ -39,6 +39,7 @@ namespace ECS {
             
 			characterComponent.currRaceSelectedIndex = EditorGUILayout.Popup("Race Setup: ", characterComponent.currRaceSelectedIndex, characterComponent.raceChoices.ToArray());
 			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("ECS.Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
+			characterComponent.optionalRole = (CHARACTER_ROLE)EditorGUILayout.EnumPopup("Optional Role: ", characterComponent.optionalRole);
 
 //			SerializedProperty serializedProperty = serializedObject.FindProperty("preEquippedItems");
 //			EditorGUILayout.PropertyField(serializedProperty, true);
@@ -124,6 +125,7 @@ namespace ECS {
             newCharacter.fileName = characterComponent.fileName;
 			newCharacter.raceSettingName = characterComponent.raceSettingName;
 			newCharacter.characterClassName = characterComponent.characterClassName;
+			newCharacter.optionalRole = characterComponent.optionalRole;
 			newCharacter.preEquippedItems = characterComponent.preEquippedItems;
 
             return newCharacter;
