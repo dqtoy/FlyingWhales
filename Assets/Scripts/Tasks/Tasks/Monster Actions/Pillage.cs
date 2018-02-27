@@ -25,7 +25,7 @@ public class Pillage : CharacterTask {
 		if(_assignedCharacter.party != null){
 			pillagerName = _assignedCharacter.party.name;
 		}
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.NORMAL, () => StartPillage ());
+		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartPillage ());
 //        TriggerSaveLandmarkQuest();
     }
     public override void PerformTask() {

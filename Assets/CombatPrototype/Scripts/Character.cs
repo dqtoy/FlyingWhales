@@ -288,6 +288,9 @@ namespace ECS {
 				return _currentFunction; 
 			}
 		}
+        public bool isFactionless {
+            get { return faction == null; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -1932,6 +1935,33 @@ namespace ECS {
                 if (factionSettlements.Count > 0) {
                     factionSettlements.OrderBy(x => this.currLocation.GetDistanceTo(x.location)).ToList();
                     return factionSettlements[0];
+                }
+            }
+            return null;
+        }
+        public BaseLandmark GetNearestLandmarkWithoutHostiles() {
+            Region currRegionLocation = specificLocation.tileLocation.region;
+            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>();
+            elligibleLandmarks.Add(currRegionLocation.mainLandmark);
+            elligibleLandmarks.AddRange(currRegionLocation.landmarks);
+            if (specificLocation is BaseLandmark) {
+                elligibleLandmarks.Remove(specificLocation as BaseLandmark);
+            }
+            if (this.isFactionless) {
+
+            }
+
+            List<HexTile> nearestPath = null;
+            BaseLandmark nearestLandmark = null;
+            for (int i = 0; i < elligibleLandmarks.Count; i++) {
+                BaseLandmark currLandmark = elligibleLandmarks[i];
+                List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.location, PATHFINDING_MODE.USE_ROADS);
+                if(path != null) {
+                    if (nearestPath == null || path.Count < nearestPath.Count) {
+                        //check for hostiles
+                        nearestPath = path;
+                        nearestLandmark = currLandmark;
+                    }
                 }
             }
             return null;

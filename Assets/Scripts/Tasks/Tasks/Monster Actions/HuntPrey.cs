@@ -25,7 +25,7 @@ public class HuntPrey : CharacterTask {
 		if(_assignedCharacter.party != null){
 			hunterName = _assignedCharacter.party.name;
 		}
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.NORMAL, () => StartHunt ());
+		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartHunt ());
 
 //        TriggerSaveLandmarkQuest();
     }

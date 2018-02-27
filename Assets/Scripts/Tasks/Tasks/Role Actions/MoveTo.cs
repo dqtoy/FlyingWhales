@@ -26,7 +26,7 @@ public class MoveTo : CharacterTask {
 	public override void OnChooseTask (ECS.Character character){
 		base.OnChooseTask (character);
 		Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL);
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
 	}
     public override void PerformTask() {
 		base.PerformTask();

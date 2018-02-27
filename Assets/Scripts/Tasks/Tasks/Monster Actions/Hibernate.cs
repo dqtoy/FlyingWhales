@@ -32,7 +32,7 @@ public class Hibernate : CharacterTask {
 			}
 		}
 		if(_targetLocation != null){
-			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL, () => StartHibernation());
+			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHibernation());
 		}
     }
     public override void PerformTask() {

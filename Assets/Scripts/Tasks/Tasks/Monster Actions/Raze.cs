@@ -29,7 +29,7 @@ public class Raze : CharacterTask {
 			//TODO: Get target
 		}
 		_target = (BaseLandmark)_targetLocation;
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.NORMAL, () => StartRaze());
+		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartRaze());
 	}
 	public override void PerformTask() {
 		base.PerformTask();

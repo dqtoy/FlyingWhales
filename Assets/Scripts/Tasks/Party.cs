@@ -673,6 +673,9 @@ public class Party: IEncounterable, ICombatInitializer {
     }
     public virtual void ReturnCombatResults(ECS.CombatPrototype combat) {
         this.SetIsInCombat(false);
+        if (this.isDisbanded) {
+            return;
+        }
         if (this.isDefeated) {
             //this party was defeated
             if (partyMembers.Count > 0) {
@@ -682,11 +685,23 @@ public class Party: IEncounterable, ICombatInitializer {
                     //if he/she is dead, disband this party
                     DisbandParty();
                 } else {
-                    //if he/she is not dead, continue this party's current action, if any
+                    //the party leader is still alive
                     if (currentFunction != null) {
                         currentFunction();
                         SetCurrentFunction(null);
                     }
+
+                    ////check if he/she is not a prisoner
+                    //if (partyLeader.isPrisonerOf == null) {
+                    //    //if he/she is not dead and is not a prisoner, it means that this party chose to flee combat
+                    //    //when a party chooses to flee, it's current task will be considered as cancelled, and it will return
+                    //    //to it's nearest non hostile location, and determine it's next action there
+                    //    if (_currentTask != null) {
+                    //        _currentTask.EndTask(TASK_STATUS.CANCEL);
+                    //    }
+                    //    partyLeader.GoToNearestNonHostileSettlement(() => partyLeader.DetermineAction());
+                        
+                    //}
                 }
                 ////make them go back to the quest giver and have the quest cancelled.
                 //if (_currentTask != null && _currentTask is OldQuest.Quest) {
@@ -707,6 +722,7 @@ public class Party: IEncounterable, ICombatInitializer {
             //    _partyLeader.DetermineAction();
             //}
         }
+        SetIsDefeated(false);
     }
     //public void SetCivilians(int amount){
     //	_civilians = amount;
