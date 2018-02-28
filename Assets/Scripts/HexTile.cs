@@ -307,7 +307,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //    }
         //}
     }
-    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType, MATERIAL materialMadeOf) {
         this.hasLandmark = true;
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
@@ -326,7 +326,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 _landmarkOnTile = new ResourceLandmark(this, landmarkType);
                 break;
             case BASE_LANDMARK_TYPE.DUNGEON:
-                _landmarkOnTile = new DungeonLandmark(this, landmarkType);
+                _landmarkOnTile = new DungeonLandmark(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.LAIR:
                 _landmarkOnTile = new LairLandmark(this, landmarkType);
@@ -1141,7 +1141,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
      Does this tile have a structure on it?
          */
     public bool HasStructure() {
-        return structureObjOnTile != null || landmarkOnTile != null;
+        return structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
     }
     #endregion
 

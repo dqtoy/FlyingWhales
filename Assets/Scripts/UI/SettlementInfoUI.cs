@@ -58,6 +58,8 @@ public class SettlementInfoUI : UIMenu {
 		}
 		text += "[b]Location:[/b] " + currentlyShowingLandmark.location.urlName;
         text += "\n[b]Material:[/b] " + currentlyShowingLandmark.location.materialOnTile.ToString();
+        text += "\n[b]Made of Material:[/b] " + currentlyShowingLandmark.materialMadeOf.ToString();
+        text += "\n[b]Durability:[/b] " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
         text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
 		text += "\n[b]Is Occupied:[/b] " + currentlyShowingLandmark.isOccupied.ToString();
 		text += "\n[b]Is Hidden:[/b] " + currentlyShowingLandmark.isHidden.ToString();

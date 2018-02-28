@@ -2215,6 +2215,12 @@ namespace ECS {
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
+                BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
+                if (targetLocation == null) {
+                    throw new Exception(this.name + " could not find a non hostile location to run to!");
+                } else {
+                    GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => DetermineAction());
+                }
             } else{
                 //this character won the combat, continue his/her current action if any
                 if (currentFunction != null) {

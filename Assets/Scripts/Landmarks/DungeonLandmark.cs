@@ -6,7 +6,7 @@ public class DungeonLandmark : BaseLandmark {
 
 	private DungeonParty _dungeonParty;
 
-    public DungeonLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
+    public DungeonLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf) : base(location, specificLandmarkType, materialMadeOf) {
         _canBeOccupied = false;
     }
 
