@@ -23,6 +23,7 @@ public class Region {
     [System.Obsolete] private HexTile _tileWithSummoningShrine;
     [System.Obsolete] private HexTile _tileWithHabitat;
     private List<BaseLandmark> _landmarks; //This contains all the landmarks in the region, except for it's city
+	private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
 
     private Dictionary<RACE, int> _naturalResourceLevel;
     private int _cityLevelCap;
@@ -102,6 +103,9 @@ public class Region {
     internal List<BaseLandmark> landmarks {
         get { return _landmarks; }
     }
+	internal List<BaseLandmark> allLandmarks {
+		get { return _allLandmarks; }
+	}
     internal List<object> connections {
         get { return _connections; }
     }
@@ -129,6 +133,7 @@ public class Region {
         _connections = new List<object>();
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
+		_allLandmarks = new List<BaseLandmark> ();
         _tilesWithMaterials = new List<HexTile>();
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
@@ -539,6 +544,7 @@ public class Region {
     internal void AddLandmarkToRegion(BaseLandmark landmark) {
         if (!_landmarks.Contains(landmark)) {
             _landmarks.Add(landmark);
+			_allLandmarks.Add (landmark);
         }
     }
     #endregion

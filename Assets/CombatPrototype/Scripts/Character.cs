@@ -1901,8 +1901,8 @@ namespace ECS {
 					}
 				}
 			}else if(task.taskType == TASK_TYPE.HUNT_PREY || task.taskType == TASK_TYPE.RAZE){
-				if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.civilians > 0){
-					if(this.faction == null || location.tileLocation.landmarkOnTile.owner == null){
+				if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
+					if(this.faction == null){
 						return true;
 					}else{
 						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
@@ -1918,6 +1918,24 @@ namespace ECS {
 						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
 							return true;
 						}
+					}
+				}
+			}else if(task.taskType == TASK_TYPE.ATTACK){
+				if(location.tileLocation.landmarkOnTile != null){
+					if(this.faction == null || location.tileLocation.landmarkOnTile.owner == null){
+						return true;
+					}else{
+						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
+							return true;
+						}
+					}
+				}
+			}else if(task.taskType == TASK_TYPE.PATROL){
+				if(location.tileLocation.landmarkOnTile != null){
+					if(this.faction != null && location.tileLocation.landmarkOnTile.owner != null){
+						if(location.tileLocation.landmarkOnTile.owner.id == this.faction.id){
+							return true;
+						}					
 					}
 				}
 			}

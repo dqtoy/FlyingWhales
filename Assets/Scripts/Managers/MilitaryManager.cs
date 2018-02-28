@@ -79,27 +79,27 @@ public class MilitaryManager : TaskCreator {
 
         //Loop through each owned landmarks without active defend quest.
         //Defend weights
-        List<BaseLandmark> allOwnedLandmarks = _owner.GetAllOwnedLandmarks();
-        for (int i = 0; i < allOwnedLandmarks.Count; i++) {
-			BaseLandmark landmark = allOwnedLandmarks[i];
-			if(!IsAlreadyBeingDefended(landmark)){
-				int defendWeight = GetDefendWeight (landmark);
-				if(defendWeight > 0){
-					questDict.AddElement(new Defend(this, landmark), defendWeight);
-				}
-			}
-        }
+//        List<BaseLandmark> allOwnedLandmarks = _owner.GetAllOwnedLandmarks();
+//        for (int i = 0; i < allOwnedLandmarks.Count; i++) {
+//			BaseLandmark landmark = allOwnedLandmarks[i];
+//			if(!IsAlreadyBeingDefended(landmark)){
+//				int defendWeight = GetDefendWeight (landmark);
+//				if(defendWeight > 0){
+//					questDict.AddElement(new Defend(this, landmark), defendWeight);
+//				}
+//			}
+//        }
         
         //Attack weights
-		if(_owner.IsAtWar()){
-			List<BaseLandmark> landmarksToBeAttacked = _owner.GetAllPossibleLandmarksToAttack ();
-			for (int i = 0; i < landmarksToBeAttacked.Count; i++) {
-				int attackWeight = GetAttackWeight (landmarksToBeAttacked[i]);
-				if(attackWeight > 0){
-					questDict.AddElement(new Attack(this, landmarksToBeAttacked[i]), attackWeight);
-				}
-			}
-		}
+//		if(_owner.IsAtWar()){
+//			List<BaseLandmark> landmarksToBeAttacked = _owner.GetAllPossibleLandmarksToAttack ();
+//			for (int i = 0; i < landmarksToBeAttacked.Count; i++) {
+//				int attackWeight = GetAttackWeight (landmarksToBeAttacked[i]);
+//				if(attackWeight > 0){
+//					questDict.AddElement(new Attack(this, landmarksToBeAttacked[i]), attackWeight);
+//				}
+//			}
+//		}
         return questDict;
     }
 
@@ -260,25 +260,25 @@ public class MilitaryManager : TaskCreator {
     #endregion
 
 	private bool IsAlreadyBeingDefended(BaseLandmark landmark){
-		for (int i = 0; i < _activeQuests.Count; i++) {
-			if(_activeQuests[i].questType == QUEST_TYPE.DEFEND){
-				Defend defend = (Defend)_activeQuests [i];
-				if(defend.landmarkToDefend.id == landmark.id){
-					return true;
-				}
-			}
-		}
+//		for (int i = 0; i < _activeQuests.Count; i++) {
+//			if(_activeQuests[i].questType == QUEST_TYPE.DEFEND){
+//				Defend defend = (Defend)_activeQuests [i];
+//				if(defend.landmarkToDefend.id == landmark.id){
+//					return true;
+//				}
+//			}
+//		}
 		return false;
 	}
 	internal bool IsAlreadyBeingAttacked(BaseLandmark landmark){
-		for (int i = 0; i < _activeQuests.Count; i++) {
-			if(_activeQuests[i].questType == QUEST_TYPE.ATTACK){
-				Attack attack = (Attack)_activeQuests [i];
-				if(attack.landmarkToAttack.id == landmark.id){
-					return true;
-				}
-			}
-		}
+//		for (int i = 0; i < _activeQuests.Count; i++) {
+//			if(_activeQuests[i].questType == QUEST_TYPE.ATTACK){
+//				Attack attack = (Attack)_activeQuests [i];
+//				if(attack.landmarkToAttack.id == landmark.id){
+//					return true;
+//				}
+//			}
+//		}
 		return false;
 	}
 }

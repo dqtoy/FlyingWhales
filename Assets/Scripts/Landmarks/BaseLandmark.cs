@@ -190,6 +190,15 @@ public class BaseLandmark : ILocation, TaskCreator {
         DisableInititalTechnologies(_owner);
         _owner = null;
     }
+	public void ChangeOwner(Faction newOwner){
+		_owner = newOwner;
+		_isOccupied = true;
+		SetHiddenState(false);
+		SetExploredState(true);
+		_location.Occupy();
+		EnableInitialTechnologies(newOwner);
+		AddHistory ("Changed owner to " + newOwner.name + ".");
+	}
     #endregion
 
     #region Technologies
@@ -585,7 +594,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currGroup = _charactersAtLocation[i];
-            if (currGroup.currentTask is Defend) {
+			if (currGroup.currentTask is Patrol) {
                 groups.Add(currGroup);
             }
         }

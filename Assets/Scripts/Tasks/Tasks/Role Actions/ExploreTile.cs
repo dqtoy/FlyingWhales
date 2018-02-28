@@ -16,7 +16,23 @@ public class ExploreTile : CharacterTask {
     }
 
 	private BaseLandmark GetLandmarkToExplore(){
-		//TODO: Add weights for all landmark to explore and choose one
+		//TODO: Add weights for all landmark the can give the character an item that his current quest needs
+		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
+			if(landmark is DungeonLandmark){
+				if(_assignedCharacter.exploredLandmarks.ContainsKey(landmark.id)){
+					if(landmark.itemsInLandmark.Count > 0){
+						landmarkWeights.AddElement (landmark, 100);
+					}
+				}else{
+					landmarkWeights.AddElement (landmark, 100);
+				}
+			}
+		}
+		if(landmarkWeights.GetTotalOfWeights() > 0){
+			return landmarkWeights.PickRandomElementGivenWeights ();
+		}
 		return null;
 	}
     #region overrides
@@ -27,7 +43,7 @@ public class ExploreTile : CharacterTask {
 		}else{
 			_landmarkToExplore = (BaseLandmark)_targetLocation;
 		}
-		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.NORMAL, () => StartExploration ());
+		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
 	}
 	public override void PerformTask (){
 		base.PerformTask ();

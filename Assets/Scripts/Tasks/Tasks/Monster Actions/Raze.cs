@@ -26,10 +26,10 @@ public class Raze : CharacterTask {
 //			_razingCharacters.AddRange (character.party.partyMembers);
 //		}
 		if(_targetLocation == null){
-			//TODO: Get target
+			_targetLocation = GetTargetLandmark ();
 		}
 		_target = (BaseLandmark)_targetLocation;
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.NORMAL, () => StartRaze());
+		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartRaze());
 	}
 	public override void PerformTask() {
 		base.PerformTask();
@@ -40,6 +40,7 @@ public class Raze : CharacterTask {
 		ReduceDaysLeft(1);
 	}
 	#endregion
+
 	private void StartRaze(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartRaze ());
@@ -62,14 +63,34 @@ public class Raze : CharacterTask {
 		string result = razeResult.PickRandomElementGivenWeights ();
 		if(result == "success"){
 			_target.KillAllCivilians ();
+			_target.location.RuinStructureOnTile (false);
 			_target.AddHistory("All civilians were killed by " + _assignedCharacter.name + "!");
 			_assignedCharacter.AddHistory ("Razed " + _target.landmarkName + "!");
-			//TODO: Destroy structure?
+			//TODO: When structure in landmarks is destroyed, shall all characters in there die?
 		}else{
 			//TODO: Fail
 			_assignedCharacter.AddHistory ("Failed to raze " + _target.landmarkName + "!");
 		}
 		EndTask (TASK_STATUS.SUCCESS);
+	}
 
+	private BaseLandmark GetTargetLandmark() {
+		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
+			if(landmark.owner != null && landmark.civilians > 0){
+				if(_assignedCharacter.faction == null){
+					landmarkWeights.AddElement (landmark, 100);
+				}else{
+					if(_assignedCharacter.faction.id != landmark.owner.id){
+						landmarkWeights.AddElement (landmark, 100);
+					}
+				}
+			}
+		}
+		if(landmarkWeights.GetTotalOfWeights() > 0){
+			return landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
 }

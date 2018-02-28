@@ -16,7 +16,7 @@ public class UpgradeGear : CharacterTask {
 			_targetLocation = _assignedCharacter.GetNearestNonHostileSettlement();
 		}
 		_settlement = (Settlement)_targetLocation;
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL);
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
 	}
     public override void PerformTask() {
         base.PerformTask();

@@ -42,7 +42,7 @@ public class Rest : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetTargetSettlement();
 		}
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.NORMAL, () => StartRest());
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartRest());
     }
     public override void PerformTask() {
 		base.PerformTask();

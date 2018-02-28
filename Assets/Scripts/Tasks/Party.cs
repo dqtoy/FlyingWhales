@@ -257,6 +257,10 @@ public class Party: IEncounterable, ICombatInitializer {
      of the nearest settlement of it's faction.
          */
     public void DisbandParty() {
+		if(isInCombat){
+			SetCurrentFunction (() => DisbandParty ());
+			return;
+		}
 		if(_isDisbanded){
 			return;
 		}
@@ -304,6 +308,7 @@ public class Party: IEncounterable, ICombatInitializer {
             //will go back to the nearest settlement of their faction
             settlement.AdjustCivilians(currFollower.raceSetting.race, 1);
         }
+		this.specificLocation.RemoveCharacterFromLocation (this);
     }
 	//public void JustDisbandParty() {
 	//	if(isInCombat){

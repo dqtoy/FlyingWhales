@@ -335,16 +335,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 break;
         }
         if(_landmarkOnTile != null) {
-            if(landmarkType != LANDMARK_TYPE.CITY) {
-                if (landmarkGO != null) {
-                    _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
-                }
-                _region.AddLandmarkToRegion(_landmarkOnTile);
-            } else {
-                //Created landmark was a city
-                _landmarkOnTile.SetLandmarkObject(_emptyCityGO.GetComponent<LandmarkObject>());
-            }
-            
+			if (landmarkType != LANDMARK_TYPE.CITY) {
+				if (landmarkGO != null) {
+					_landmarkOnTile.SetLandmarkObject (landmarkGO.GetComponent<LandmarkObject> ());
+				}
+				_region.AddLandmarkToRegion (_landmarkOnTile);
+			} else {
+				//Created landmark was a city
+				_landmarkOnTile.SetLandmarkObject (_emptyCityGO.GetComponent<LandmarkObject> ());
+			}
         }
         return _landmarkOnTile;
     }
@@ -2073,7 +2072,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currGroup = _charactersAtLocation[i];
-            if (currGroup.currentTask is Defend) {
+            if (currGroup.currentTask is Patrol) {
                 groups.Add(currGroup);
             }
         }

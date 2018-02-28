@@ -27,11 +27,8 @@ public class Chieftain : CharacterRole {
 
 		_roleTasks.Add (new DoNothing (this._character));
 		_roleTasks.Add (new Rest (this._character));
-		_roleTasks.Add (new ExploreTile (this._character, 5));
-		_roleTasks.Add (new UpgradeGear (this._character));
 		_roleTasks.Add (new MoveTo (this._character));
-		_roleTasks.Add (new TakeQuest (this._character));
-		_roleTasks.Add (new RecruitFollowers (this._character, 5));
+		_roleTasks.Add (new Attack (this._character, 10));
 
 		_defaultRoleTask = _roleTasks [0];
     }

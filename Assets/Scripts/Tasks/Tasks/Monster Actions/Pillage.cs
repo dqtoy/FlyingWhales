@@ -18,14 +18,14 @@ public class Pillage : CharacterTask {
     public override void OnChooseTask(ECS.Character character) {
         base.OnChooseTask(character);
 		if(_targetLocation == null){
-			//TODO: get target location
+			_targetLocation = GetTargetLandmark ();
 		}
 		_target = (BaseLandmark)_targetLocation;
 		pillagerName = _assignedCharacter.name;
 		if(_assignedCharacter.party != null){
 			pillagerName = _assignedCharacter.party.name;
 		}
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.NORMAL, () => StartPillage ());
+		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartPillage ());
 //        TriggerSaveLandmarkQuest();
     }
     public override void PerformTask() {
@@ -127,5 +127,26 @@ public class Pillage : CharacterTask {
 //			settlement.CancelSaveALandmark (_target);
 //		}
 		EndTask(TASK_STATUS.SUCCESS);
+	}
+	private BaseLandmark GetTargetLandmark() {
+		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
+			if(landmark.owner != null && landmark.itemsInLandmark.Count > 0){
+				if(landmark is Settlement || landmark is ResourceLandmark){
+					if(_assignedCharacter.faction == null){
+						landmarkWeights.AddElement (landmark, 100);
+					}else{
+						if(_assignedCharacter.faction.id != landmark.owner.id){
+							landmarkWeights.AddElement (landmark, 100);
+						}
+					}
+				}
+			}
+		}
+		if(landmarkWeights.GetTotalOfWeights() > 0){
+			return landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
 }

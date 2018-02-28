@@ -59,6 +59,7 @@ public class LandmarkManager : MonoBehaviour {
      Generate new landmarks (Lairs, Dungeons)
          */
     public void GenerateOtherLandmarks() {
+		AddAllCenterOfMassToRegionLandmarksList ();
         GenerateDungeonLandmarks();
         GenerateSettlementLandmarks();
         //List<HexTile> elligibleTiles = new List<HexTile>(hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad)); //Get tiles that aren't water and are not habitable
@@ -105,6 +106,18 @@ public class LandmarkManager : MonoBehaviour {
         //    Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
         //}
     }
+	private void AddAllCenterOfMassToRegionLandmarksList(){
+		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+			Region region = GridMap.Instance.allRegions [i];
+			if(region.centerOfMass.landmarkOnTile != null){
+				if(region.allLandmarks.Count > 0){
+					region.allLandmarks.Insert (0, region.centerOfMass.landmarkOnTile);
+				}else{
+					region.AddLandmarkToRegion (region.centerOfMass.landmarkOnTile);
+				}
+			}
+		}
+	}
     private void GenerateDungeonLandmarks() {
         List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles
             .Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad && x.landmarkOnTile == null));
