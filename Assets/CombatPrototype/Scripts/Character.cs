@@ -1971,23 +1971,31 @@ namespace ECS {
             if (specificLocation is BaseLandmark) {
                 elligibleLandmarks.Remove(specificLocation as BaseLandmark);
             }
-            if (this.isFactionless) {
-
-            }
-
-            List<HexTile> nearestPath = null;
-            BaseLandmark nearestLandmark = null;
+            Dictionary<BaseLandmark, List<HexTile>> landmarksWithoutHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
+            Dictionary<BaseLandmark, List<HexTile>> landmarksWithHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
             for (int i = 0; i < elligibleLandmarks.Count; i++) {
                 BaseLandmark currLandmark = elligibleLandmarks[i];
                 List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.location, PATHFINDING_MODE.USE_ROADS);
                 if(path != null) {
-                    if (nearestPath == null || path.Count < nearestPath.Count) {
-                        //check for hostiles
-                        nearestPath = path;
-                        nearestLandmark = currLandmark;
+                    //check for hostiles
+                    if (!currLandmark.HasHostilitiesWith(this.faction)) {
+                        landmarksWithoutHostiles.Add(currLandmark, path);
+                    } else {
+                        landmarksWithHostiles.Add(currLandmark, path);
                     }
                 }
             }
+
+            if (landmarksWithoutHostiles.Count > 0) {
+                landmarksWithoutHostiles.OrderBy(x => x.Value.Count);
+                return landmarksWithoutHostiles.Keys.First();
+            } else {
+                if (landmarksWithHostiles.Count > 0) {
+                    landmarksWithHostiles.OrderBy(x => x.Value.Count);
+                    return landmarksWithHostiles.Keys.First();
+                }
+            }
+
             return null;
         }
         #endregion
