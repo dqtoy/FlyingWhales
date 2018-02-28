@@ -191,7 +191,7 @@ public class Region {
         _centerOfMass = newCenter;
         _centerOfMass.isHabitable = true;
 		_centerOfMass.emptyCityGO.SetActive (true);
-        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.CITY);
+        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.CITY, MATERIAL.NONE);
     }
     #endregion
 

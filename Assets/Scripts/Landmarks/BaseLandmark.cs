@@ -22,8 +22,10 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected int _reservedCivilians;
     protected List<ECS.Character> _charactersWithHomeOnLandmark;
     //protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
-	protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
+    //protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
+    protected MATERIAL _materialMadeOf; //What material is this landmark made of?
     protected Dictionary<RACE, int> _civiliansByRace;
+    protected int _currDurability;
 
     //TODO: Add list of items on landmark
     protected List<TECHNOLOGY> _technologiesOnLandmark;
@@ -119,9 +121,18 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public List<ECS.Item> itemsInLandmark {
 		get { return _itemsInLandmark; }
 	}
+    public int currDurability {
+        get { return _currDurability; }
+    }
+    public int totalDurability {
+        get { return GetTotalDurability(); }
+    }
+    public MATERIAL materialMadeOf {
+        get { return _materialMadeOf; }
+    }
     #endregion
 
-    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
+    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf = MATERIAL.NONE) {
         _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
@@ -139,6 +150,8 @@ public class BaseLandmark : ILocation, TaskCreator {
         _charactersAtLocation = new List<ICombatInitializer>();
 		_activeQuests = new List<OldQuest.Quest>();
 		_itemsInLandmark = new List<ECS.Item> ();
+        _materialMadeOf = materialMadeOf;
+        _currDurability = totalDurability;
         ConstructTechnologiesDictionary();
 		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
@@ -580,6 +593,46 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return false;
     }
+    public bool HasHostilitiesWith(Faction faction) {
+        if (faction == null) {
+            if(this.owner != null) {
+                return true; //the passed faction is null (factionless), if this landmark is owned, the factionless are considered as hostile
+            }
+        } else {
+            //the passed faction is not null, check if this landmark is owned
+            if(this.owner != null) {
+                //if this is owned, check if the 2 factions are not the same
+                if(faction.id != this.owner.id) {
+                    //if they are not the same, check if the relationship of the factions are hostile
+                    FactionRelationship rel = faction.GetRelationshipWith(this.owner);
+                    if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                        return true; //the passed faction is hostile with the owner of this landmark
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            ICombatInitializer currItem = _charactersAtLocation[i];
+            Faction factionOfItem = null;
+            if (currItem is ECS.Character) {
+                factionOfItem = (currItem as ECS.Character).faction;
+            } else if (currItem is Party) {
+                factionOfItem = (currItem as Party).faction;
+            }
+            if (factionOfItem == null) {
+                return true;
+            } else {
+                if (factionOfItem.id == faction.id) {
+                    continue; //skip this item, since it has the same faction as the other faction
+                }
+                FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
+                if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public List<ICombatInitializer> GetAttackingGroups() {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
@@ -692,6 +745,24 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Utilities
+    public int GetTotalDurability() {
+        int durabilityFromMaterial = 0;
+        int durabilityModifierFromLandmarkType = 0;
+
+        if(_materialMadeOf != MATERIAL.NONE) {
+            durabilityFromMaterial = MaterialManager.Instance.GetMaterialData(_materialMadeOf).sturdiness;
+        }
+
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+        if (landmarkData != null) {
+            durabilityModifierFromLandmarkType = landmarkData.durabilityModifier;
+        }
+
+        if(durabilityModifierFromLandmarkType == 0) {
+            return durabilityFromMaterial;
+        }
+        return durabilityFromMaterial * durabilityModifierFromLandmarkType;
+    }
     public void SetHiddenState(bool isHidden) {
         _isHidden = isHidden;
         if (landmarkObject != null) {

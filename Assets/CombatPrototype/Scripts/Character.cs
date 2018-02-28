@@ -294,6 +294,9 @@ namespace ECS {
 				return _currentFunction; 
 			}
 		}
+        public bool isFactionless {
+            get { return faction == null; }
+        }
 		internal bool isFollowersFull{
 			get { return followers.Count >= MAX_FOLLOWERS; }
 		}
@@ -1978,6 +1981,41 @@ namespace ECS {
             }
             return null;
         }
+        public BaseLandmark GetNearestLandmarkWithoutHostiles() {
+            Region currRegionLocation = specificLocation.tileLocation.region;
+            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>();
+            elligibleLandmarks.Add(currRegionLocation.mainLandmark);
+            elligibleLandmarks.AddRange(currRegionLocation.landmarks);
+            if (specificLocation is BaseLandmark) {
+                elligibleLandmarks.Remove(specificLocation as BaseLandmark);
+            }
+            Dictionary<BaseLandmark, List<HexTile>> landmarksWithoutHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
+            Dictionary<BaseLandmark, List<HexTile>> landmarksWithHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
+            for (int i = 0; i < elligibleLandmarks.Count; i++) {
+                BaseLandmark currLandmark = elligibleLandmarks[i];
+                List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.location, PATHFINDING_MODE.USE_ROADS);
+                if(path != null) {
+                    //check for hostiles
+                    if (!currLandmark.HasHostilitiesWith(this.faction)) {
+                        landmarksWithoutHostiles.Add(currLandmark, path);
+                    } else {
+                        landmarksWithHostiles.Add(currLandmark, path);
+                    }
+                }
+            }
+
+            if (landmarksWithoutHostiles.Count > 0) {
+                landmarksWithoutHostiles.OrderBy(x => x.Value.Count);
+                return landmarksWithoutHostiles.Keys.First();
+            } else {
+                if (landmarksWithHostiles.Count > 0) {
+                    landmarksWithHostiles.OrderBy(x => x.Value.Count);
+                    return landmarksWithHostiles.Keys.First();
+                }
+            }
+
+            return null;
+        }
         #endregion
 
         #region Relationships
@@ -2195,6 +2233,12 @@ namespace ECS {
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
+                BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
+                if (targetLocation == null) {
+                    throw new Exception(this.name + " could not find a non hostile location to run to!");
+                } else {
+                    GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => DetermineAction());
+                }
             } else{
                 //this character won the combat, continue his/her current action if any
                 if (currentFunction != null) {

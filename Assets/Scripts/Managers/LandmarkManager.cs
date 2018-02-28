@@ -22,9 +22,9 @@ public class LandmarkManager : MonoBehaviour {
     /*
      Create a new landmark on a specified tile.
      */
-    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType, MATERIAL materialMadeOf = MATERIAL.NONE) {
         BASE_LANDMARK_TYPE baseLandmarkType = Utilities.GetBaseLandmarkType(landmarkType);
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
+        BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType, materialMadeOf);
         if(baseLandmarkType == BASE_LANDMARK_TYPE.SETTLEMENT && landmarkType != LANDMARK_TYPE.CITY) {
             if(landmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
                 //Create a new faction to occupy the new settlement
@@ -149,7 +149,11 @@ public class LandmarkManager : MonoBehaviour {
                 if (data.isUnique) {
                     dungeonWeights.RemoveElement(chosenLandmarkType); //Since the chosen landmark type is unique, remove it from the choices.
                 }
-                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType);
+                MATERIAL chosenMaterial = MATERIAL.NONE;
+                if (data.possibleMaterials.Length > 0) {
+                    chosenMaterial = data.possibleMaterials[Random.Range(0, data.possibleMaterials.Length)];
+                }
+                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType, chosenMaterial);
                 RoadManager.Instance.CreateRoad(createdRoad, ROAD_TYPE.MINOR);
                 createdLandmarks++;
             }
@@ -190,11 +194,15 @@ public class LandmarkManager : MonoBehaviour {
                 List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
                 Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
                 LANDMARK_TYPE chosenLandmarkType = settlementWeights.PickRandomElementGivenWeights();
-                //LandmarkData data = GetLandmarkData(chosenLandmarkType);
-                //if (data.isUnique) {
-                //    settlementWeights.RemoveElement(chosenLandmarkType); //Since the chosen landmark type is unique, remove it from the choices.
-                //}
-                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType);
+                LandmarkData data = GetLandmarkData(chosenLandmarkType);
+                if (data.isUnique) {
+                    settlementWeights.RemoveElement(chosenLandmarkType); //Since the chosen landmark type is unique, remove it from the choices.
+                }
+                MATERIAL chosenMaterial = MATERIAL.NONE;
+                if (data.possibleMaterials.Length > 0) {
+                    chosenMaterial = data.possibleMaterials[Random.Range(0, data.possibleMaterials.Length)];
+                }
+                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType, chosenMaterial);
                 RoadManager.Instance.CreateRoad(createdRoad, ROAD_TYPE.MINOR);
                 createdLandmarks++;
             }
@@ -222,14 +230,14 @@ public class LandmarkManager : MonoBehaviour {
         }
         return settlementAppearanceWeights;
     }
-    private LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
+    public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
             if (currData.landmarkType == landmarkType) {
                 return currData;
             }
         }
-        throw new System.Exception(landmarkType.ToString() + " has no data!");
+        return null;
     }
     public List<HexTile> CreateRoadsForLandmarks(HexTile location) {
         List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();

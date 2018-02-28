@@ -307,7 +307,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //    }
         //}
     }
-    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType, MATERIAL materialMadeOf) {
         this.hasLandmark = true;
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
@@ -326,7 +326,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 _landmarkOnTile = new ResourceLandmark(this, landmarkType);
                 break;
             case BASE_LANDMARK_TYPE.DUNGEON:
-                _landmarkOnTile = new DungeonLandmark(this, landmarkType);
+                _landmarkOnTile = new DungeonLandmark(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.LAIR:
                 _landmarkOnTile = new LairLandmark(this, landmarkType);
@@ -1134,14 +1134,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             } else {
                 structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
             }
-
         }
     }
     /*
      Does this tile have a structure on it?
          */
     public bool HasStructure() {
-        return structureObjOnTile != null || landmarkOnTile != null;
+        return structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
     }
     #endregion
 
@@ -2053,6 +2052,32 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                     if (currItem.IsHostileWith(otherItem)) {
                         return true; //there are characters with hostilities
                     }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasHostilitiesWith(Faction faction) {
+        if(faction == null && _charactersAtLocation.Count > 0) {
+            return true; //the passed faction is null (factionless), if there are any characters on this tile
+        }
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            ICombatInitializer currItem = _charactersAtLocation[i];
+            Faction factionOfItem = null;
+            if (currItem is ECS.Character) {
+                factionOfItem = (currItem as ECS.Character).faction;
+            } else if(currItem is Party) {
+                factionOfItem = (currItem as Party).faction;
+            }
+            if(factionOfItem == null) {
+                return true;
+            } else {
+                if (factionOfItem.id == faction.id) {
+                    continue; //skip this item, since it has the same faction as the other faction
+                }
+                FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
+                if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                    return true;
                 }
             }
         }

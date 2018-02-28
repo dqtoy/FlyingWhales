@@ -124,13 +124,13 @@ namespace PathFind {
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP) {
-                    if(data == null) {
-                        throw new Exception("No faction data is provided for pathfinding!");
-                    }
+                    //if(data == null) {
+                    //    throw new Exception("No faction data is provided for pathfinding!");
+                    //}
                     Faction pathfinderFaction = (Faction)data;
                     foreach (Node n in path.LastStep.allNeighbourRoads) {
                         Faction tileFaction = n.region.owner;
-                        if(tileFaction == null || tileFaction.id == pathfinderFaction.id) {
+                        if(tileFaction == null || pathfinderFaction == null || tileFaction.id == pathfinderFaction.id) {
                             //the region the node is in, currently has no owner yet, allow passage
                             //or the region the node is in, is owned by the faction of the pathfinder
                             d = distance(path.LastStep, n);
