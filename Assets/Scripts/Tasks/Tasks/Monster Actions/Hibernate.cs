@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 public class Hibernate : CharacterTask {
 
@@ -39,6 +40,28 @@ public class Hibernate : CharacterTask {
         base.PerformTask();
         PerformHibernate();
     }
+	public override bool CanBeDone (Character character, ILocation location){
+		if(location.tileLocation.landmarkOnTile != null){
+			if(character.faction == null){
+				BaseLandmark home = character.home;
+				if(home == null){
+					home = character.lair;
+				}
+				if(home != null && location.tileLocation.landmarkOnTile.id == home.id){
+					return true;
+				}
+			}else{
+				if(location.tileLocation.landmarkOnTile is Settlement && location.tileLocation.landmarkOnTile.owner != null){
+					Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
+					if(settlement.owner.id == character.faction.id){
+						return true;
+					}
+				}
+			}
+		}
+		return base.CanBeDone (character, location);
+	}
+
     //public override void PerformDailyAction() {
     //    if (_canDoDailyAction) {
     //        base.PerformDailyAction();

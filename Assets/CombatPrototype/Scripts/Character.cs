@@ -281,9 +281,9 @@ namespace ECS {
 		public Dictionary<RACE, int> civiliansByRace{
 			get { return _civiliansByRace; }
 		}
-//        public Dictionary<MATERIAL, int> materialInventory {
-//            get { return _materialInventory; }
-//        }
+//      public Dictionary<MATERIAL, int> materialInventory {
+//          get { return _materialInventory; }
+//      }
 		public Dictionary<int, BaseLandmark> exploredLandmarks {
 			get { return _exploredLandmarks; }
 		}
@@ -355,9 +355,8 @@ namespace ECS {
             EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
 
-//            _maxHP = _baseMaxHP;
-//            _currentHP = maxHP;
-
+//          _maxHP = _baseMaxHP;
+//          _currentHP = maxHP;
 
             _activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
@@ -701,7 +700,6 @@ namespace ECS {
                 } else {
                     FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
                 }
-                    
             }
         }
 
@@ -1279,9 +1277,6 @@ namespace ECS {
 			case CHARACTER_ROLE.FLYING_BEAST:
 				_role = new FlyingBeast(this);
 				break;
-            case CHARACTER_ROLE.ANCIENT_VAMPIRE:
-                _role = new AncientVampire(this);
-                break;
             default:
 			    break;
 			}
@@ -1907,7 +1902,7 @@ namespace ECS {
 			if(_role != null){
 				for (int i = 0; i < _role.roleTasks.Count; i++) {
 					CharacterTask currentTask = _role.roleTasks [i];
-					if(CanTaskBeDone(currentTask, location)){
+					if(currentTask.CanBeDone(this, location)){
 						possibleTasks.Add (currentTask);
 					}
 				}
@@ -1915,7 +1910,7 @@ namespace ECS {
 			for (int i = 0; i < _tags.Count; i++) {
 				for (int j = 0; j < _tags[i].tagTasks.Count; j++) {
 					CharacterTask currentTask = _tags[i].tagTasks[j];
-					if(CanTaskBeDone(currentTask, location)){
+					if(currentTask.CanBeDone(this, location)){
 						possibleTasks.Add (currentTask);
 					}
 				}
@@ -1923,95 +1918,6 @@ namespace ECS {
 			//TODO: Tag and Quest Tasks
 
 			return possibleTasks;
-		}
-		private bool CanTaskBeDone(CharacterTask task, ILocation location){
-			if(task.taskType == TASK_TYPE.MOVE_TO){
-				return true;
-			}else if(task.taskType == TASK_TYPE.UPGRADE_GEAR){
-				if(location.tileLocation.landmarkOnTile != null && this.faction != null && location.tileLocation.landmarkOnTile is Settlement){
-					Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
-					if(settlement.owner != null && settlement.owner.id == this.faction.id){
-						return true;
-					}
-				}
-			}else if (task.taskType == TASK_TYPE.REST || task.taskType == TASK_TYPE.HIBERNATE){
-				if(location.tileLocation.landmarkOnTile != null){
-					if(this.faction == null){
-						BaseLandmark home = this._home;
-						if(home == null){
-							home = this._lair;
-						}
-						if(home != null && location.tileLocation.landmarkOnTile.id == home.id){
-							return true;
-						}
-					}else{
-						if(location.tileLocation.landmarkOnTile is Settlement && location.tileLocation.landmarkOnTile.owner != null){
-							Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
-							if(settlement.owner.id == this.faction.id){
-								return true;
-							}
-						}
-					}
-				}
-			}else if(task.taskType == TASK_TYPE.EXPLORE_TILE){
-				if(location.tileLocation.landmarkOnTile != null){
-					if(_exploredLandmarks.ContainsKey(location.tileLocation.landmarkOnTile.id)){
-						if(_exploredLandmarks[location.tileLocation.landmarkOnTile.id].itemsInLandmark.Count > 0){
-							return true;
-						}
-					}else{
-						return true;
-					}
-				}
-			}else if(task.taskType == TASK_TYPE.RECRUIT_FOLLOWERS){
-				if(currLocation != null && currLocation.id == location.tileLocation.id && location.tileLocation.landmarkOnTile != null){
-					if(this.faction != null && location.tileLocation.landmarkOnTile is Settlement){
-						Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
-						if(settlement.owner.id == this.faction.id){
-							return true;
-						}
-					}
-				}
-			}else if(task.taskType == TASK_TYPE.HUNT_PREY || task.taskType == TASK_TYPE.RAZE){
-				if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
-					if(this.faction == null){
-						return true;
-					}else{
-						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
-							return true;
-						}
-					}
-				}
-			}else if(task.taskType == TASK_TYPE.PILLAGE){
-				if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.itemsInLandmark.Count > 0){
-					if(this.faction == null || location.tileLocation.landmarkOnTile.owner == null){
-						return true;
-					}else{
-						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
-							return true;
-						}
-					}
-				}
-			}else if(task.taskType == TASK_TYPE.ATTACK){
-				if(location.tileLocation.landmarkOnTile != null){
-					if(this.faction == null || location.tileLocation.landmarkOnTile.owner == null){
-						return true;
-					}else{
-						if(location.tileLocation.landmarkOnTile.owner.id != this.faction.id){
-							return true;
-						}
-					}
-				}
-			}else if(task.taskType == TASK_TYPE.PATROL){
-				if(location.tileLocation.landmarkOnTile != null){
-					if(this.faction != null && location.tileLocation.landmarkOnTile.owner != null){
-						if(location.tileLocation.landmarkOnTile.owner.id == this.faction.id){
-							return true;
-						}					
-					}
-				}
-			}
-			return false;
 		}
         #endregion
 

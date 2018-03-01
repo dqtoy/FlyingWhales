@@ -32,6 +32,9 @@ public class MoveTo : CharacterTask {
 		base.PerformTask();
 		SuccessTask ();
     }
+	public override bool CanBeDone (ECS.Character character, ILocation location){
+		return true;
+	}
     #endregion
 
     private void SuccessTask() {

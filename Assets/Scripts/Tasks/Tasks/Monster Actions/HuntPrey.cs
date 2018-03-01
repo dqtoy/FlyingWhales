@@ -45,6 +45,19 @@ public class HuntPrey : CharacterTask {
         //Messenger.RemoveListener("OnDayEnd", Hunt);
         _assignedCharacter.DestroyAvatar();
     }
+	public override bool CanBeDone (Character character, ILocation location){
+		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
+			if(character.faction == null){
+				return true;
+			}else{
+				if(location.tileLocation.landmarkOnTile.owner.id != character.faction.id){
+					return true;
+				}
+			}
+		}
+		return base.CanBeDone (character, location);
+	}
+
     //public override void PerformDailyAction() {
     //    if (_canDoDailyAction) {
     //        base.PerformDailyAction();

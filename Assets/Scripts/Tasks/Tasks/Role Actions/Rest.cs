@@ -52,6 +52,27 @@ public class Rest : CharacterTask {
 		base.TaskSuccess ();
 		Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
 	}
+	public override bool CanBeDone (Character character, ILocation location){
+		if(location.tileLocation.landmarkOnTile != null){
+			if(character.faction == null){
+				BaseLandmark home = character.home;
+				if(home == null){
+					home = character.lair;
+				}
+				if(home != null && location.tileLocation.landmarkOnTile.id == home.id){
+					return true;
+				}
+			}else{
+				if(location.tileLocation.landmarkOnTile is Settlement && location.tileLocation.landmarkOnTile.owner != null){
+					Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
+					if(settlement.owner.id == character.faction.id){
+						return true;
+					}
+				}
+			}
+		}
+		return base.CanBeDone (character, location);
+	}
     #endregion
 
 	private void StartRest(){

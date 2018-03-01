@@ -34,6 +34,16 @@ public class Patrol : CharacterTask {
 		}
 		ReduceDaysLeft(1);
 	}
+	public override bool CanBeDone (ECS.Character character, ILocation location){
+		if(location.tileLocation.landmarkOnTile != null){
+			if(character.faction != null && location.tileLocation.landmarkOnTile.owner != null){
+				if(location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
+					return true;
+				}					
+			}
+		}
+		return base.CanBeDone (character, location);
+	}
 	#endregion
 
 	private void StartPatrol(){

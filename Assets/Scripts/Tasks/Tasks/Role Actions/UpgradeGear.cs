@@ -22,6 +22,16 @@ public class UpgradeGear : CharacterTask {
         base.PerformTask();
 		PurchaseEquipment ();
     }
+	public override bool CanBeDone (ECS.Character character, ILocation location){
+		if(location.tileLocation.landmarkOnTile != null && character.faction != null && location.tileLocation.landmarkOnTile is Settlement){
+			Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
+			if(settlement.owner != null && settlement.owner.id == character.faction.id){
+				return true;
+			}
+		}
+		return base.CanBeDone (character, location);
+	}
+
     //public override void TaskSuccess() {
     //    if (_assignedCharacter.faction == null) {
     //        _assignedCharacter.UnalignedDetermineAction();

@@ -12,6 +12,7 @@ public class PlayerActionsUI : MonoBehaviour {
 //	private UIWidget buttonsGridWidget;
 	private int defaultWidgetHeight;
 	private int characterTaskButtonHeight;
+	private int numOfShowingButtons;
 
 	void Awake(){
 //		buttonsGridWidget = buttonsGrid.GetComponent<UIWidget>();
@@ -31,6 +32,7 @@ public class PlayerActionsUI : MonoBehaviour {
 		if(character == null){
 			return;
 		}
+		numOfShowingButtons = 0;
 		List<CharacterTask> tasksAvailable = character.GetAllPossibleTasks (this.location);
 		if(tasksAvailable.Count > taskButtons.Count){
 			for (int i = 0; i < tasksAvailable.Count; i++) {
@@ -38,8 +40,10 @@ public class PlayerActionsUI : MonoBehaviour {
 					taskButtons [i].SetTask (tasksAvailable [i]);
 					taskButtons [i].SetLocation (this.location);
 					taskButtons [i].gameObject.SetActive (true);
+					numOfShowingButtons++;
 				}else{
 					CreateButton (tasksAvailable [i]);
+					numOfShowingButtons++;
 				}
 			}
 		}else{
@@ -48,6 +52,7 @@ public class PlayerActionsUI : MonoBehaviour {
 					taskButtons [i].SetTask (tasksAvailable [i]);
 					taskButtons [i].SetLocation (this.location);
 					taskButtons [i].gameObject.SetActive (true);
+					numOfShowingButtons++;
 				}else{
 					taskButtons [i].gameObject.SetActive (false);
 				}
@@ -70,9 +75,8 @@ public class PlayerActionsUI : MonoBehaviour {
 
 	[ContextMenu("Update Grid")]
 	public void UpdateGrid(){
-		int childCount = buttonsGrid.transform.childCount;
-		if(childCount > 0){
-			stretchableBG.height = childCount * characterTaskButtonHeight;
+		if(numOfShowingButtons > 0){
+			stretchableBG.height = numOfShowingButtons * characterTaskButtonHeight;
 		}else{
 			stretchableBG.height = defaultWidgetHeight;
 		}

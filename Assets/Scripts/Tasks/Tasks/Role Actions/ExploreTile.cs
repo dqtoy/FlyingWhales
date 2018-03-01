@@ -49,6 +49,18 @@ public class ExploreTile : CharacterTask {
 		base.PerformTask ();
 		Explore ();
 	}
+	public override bool CanBeDone (ECS.Character character, ILocation location){
+		if(location.tileLocation.landmarkOnTile != null){
+			if(character.exploredLandmarks.ContainsKey(location.tileLocation.landmarkOnTile.id)){
+				if(character.exploredLandmarks[location.tileLocation.landmarkOnTile.id].itemsInLandmark.Count > 0){
+					return true;
+				}
+			}else{
+				return true;
+			}
+		}
+		return base.CanBeDone (character, location);
+	}
     #endregion
 
 	private void StartExploration(){
