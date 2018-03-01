@@ -161,7 +161,11 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
 
 	#region Virtuals
-	protected virtual void Inititalize() {}
+	protected virtual void Inititalize() { }
+    /*
+     What should happen when a character searches this landmark
+         */
+    public virtual void SearchLandmark(ECS.Character character) { }
 	#endregion
 
     public void SetLandmarkObject(LandmarkObject obj) {
