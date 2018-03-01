@@ -55,7 +55,7 @@ public class Raze : CharacterTask {
 		successWeight += _assignedCharacter.strength;
 		successWeight += (_assignedCharacter.intelligence * 2);
 
-		//TODO: +4 to Fail per Durability of Landmark
+		failWeight += (_target.currDurability * 4);
 
 		razeResult.ChangeElement ("success", successWeight);
 		razeResult.ChangeElement ("fail", failWeight);
