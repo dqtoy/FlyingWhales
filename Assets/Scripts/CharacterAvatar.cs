@@ -76,6 +76,19 @@ public class CharacterAvatar : PooledObject{
     }
     #endregion
 
+	#region Monobehaviour
+	public void OnMouseDown(){
+		if (UIManager.Instance.IsMouseOnUI()){
+			return;
+		}
+		if(characters[0].party != null){
+			UIManager.Instance.ShowCharacterInfo (characters [0].party.partyLeader);
+		}else{
+			UIManager.Instance.ShowCharacterInfo (characters [0]);
+		}
+	}
+	#endregion
+
     #region ECS.Character Management
     public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {
