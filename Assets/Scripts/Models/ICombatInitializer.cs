@@ -11,6 +11,7 @@ public interface ICombatInitializer {
 	CharacterTask currentTask { get;}
 	bool isInCombat { get; }
 	Action currentFunction { get; }
+	ECS.Character mainCharacter { get; }
 
 	//bool InitializeCombat();
 	bool IsHostileWith (ICombatInitializer combatInitializer);

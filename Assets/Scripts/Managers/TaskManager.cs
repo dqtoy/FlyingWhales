@@ -9,6 +9,7 @@ public class TaskManager : MonoBehaviour {
 
 	private WeightedDictionary<PILLAGE_ACTION> _pillageActions;
 	private WeightedDictionary<HUNT_ACTION> _huntActions;
+	private WeightedDictionary<string> _vampiricEmbraceActions;
 
 	#region getters/setters
 	public WeightedDictionary<PILLAGE_ACTION> pillageActions{
@@ -16,6 +17,9 @@ public class TaskManager : MonoBehaviour {
 	}
 	public WeightedDictionary<HUNT_ACTION> huntActions{
 		get { return _huntActions; }
+	}
+	public WeightedDictionary<string> vampiricEmbraceActions{
+		get { return _vampiricEmbraceActions; }
 	}
 	#endregion
 	void Awake(){
@@ -37,5 +41,10 @@ public class TaskManager : MonoBehaviour {
 		_huntActions.AddElement(HUNT_ACTION.EAT, 15);
 		_huntActions.AddElement(HUNT_ACTION.END, 15);
 		_huntActions.AddElement(HUNT_ACTION.NOTHING, 70);
+
+		_vampiricEmbraceActions = new WeightedDictionary<string>();
+		_vampiricEmbraceActions.AddElement ("turn", 15);
+		_vampiricEmbraceActions.AddElement ("caught", 15);
+		_vampiricEmbraceActions.AddElement("nothing", 50);
 	}
 }

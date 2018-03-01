@@ -104,6 +104,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	public Action currentFunction{
 		get { return _currentFunction; }
 	}
+	public ECS.Character mainCharacter{
+		get { return this._partyLeader; }
+	}
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
@@ -207,7 +210,9 @@ public class Party: IEncounterable, ICombatInitializer {
         
         member.SetParty(null);
 		member.SetCurrentTask (null);
-
+		if(member.isFollower){
+			member.SetFollowerState (false);
+		}
 		if (_partyMembers.Count <= 0) {
             //JustDisbandParty ();
             DisbandParty();

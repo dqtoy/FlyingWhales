@@ -312,6 +312,9 @@ namespace ECS {
 		internal ECS.Character isFollowerOf{
 			get { return _isFollowerOf; }
 		}
+		public ECS.Character mainCharacter{
+			get { return this; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -1553,7 +1556,7 @@ namespace ECS {
 				SetCurrentFunction (() => DetermineAction ());
 				return;
 			}
-			if(_isFainted || _isPrisoner || _isDead){
+			if(_isFainted || _isPrisoner || _isDead || _isFollower){
 				return;
 			}
             if(_party != null) {
@@ -2395,11 +2398,13 @@ namespace ECS {
 			if(!_followers.Contains(character)){
 				_followers.Add (character);
 				character._isFollowerOf = this;
+				character.SetFollowerState (true);
 			}
 		}
 		public void RemoveFollower(ECS.Character character){
 			if(_followers.Remove(character)){
 				character._isFollowerOf = null;
+				character.SetFollowerState (false);
 			}
 		}
 		#endregion

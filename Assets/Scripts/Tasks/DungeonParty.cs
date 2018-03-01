@@ -13,8 +13,15 @@ public class DungeonParty : Party {
 	public override void AddPartyMember(ECS.Character member) {
 		if (!_partyMembers.Contains(member)) {
 			_partyMembers.Add(member);
+			if(member.id != _partyLeader.id){
+				_followers.Add (member);
+			}
+			if(_avatar != null) {
+				member.DestroyAvatar();
+				_avatar.AddNewCharacter(member);
+			}
 			member.SetParty(this);
-			this.specificLocation.RemoveCharacterFromLocation (member);
+			member.specificLocation.RemoveCharacterFromLocation (member);
 		}
 	}
 	/*
@@ -22,6 +29,7 @@ public class DungeonParty : Party {
          */
 	public override void RemovePartyMember(ECS.Character member, bool forDeath = false) {
 		_partyMembers.Remove(member);
+		_followers.Remove (member);
 		if(_avatar != null) {
 			_avatar.RemoveCharacter(member);
 		}
@@ -30,6 +38,9 @@ public class DungeonParty : Party {
 		}
 		member.SetParty(null);
 		member.SetCurrentTask (null);
+		if(member.isFollower){
+			member.SetFollowerState (false);
+		}
 		if (_partyMembers.Count <= 0) {
 			this.specificLocation.RemoveCharacterFromLocation(this);
 		}
