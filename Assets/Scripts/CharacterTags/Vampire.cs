@@ -7,5 +7,7 @@ public class Vampire : CharacterTag {
 		_statsModifierPercentage.intPercentage = 0.25f;
 		_statsModifierPercentage.strPercentage = 0.25f;
 		_statsModifierPercentage.agiPercentage = 0.25f;
+
+		_tagTasks.Add (new VampiricEmbrace (_character, 5));
 	}
 }
