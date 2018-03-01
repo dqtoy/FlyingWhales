@@ -320,16 +320,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
-                _landmarkOnTile = new Settlement(this, landmarkType);
+                _landmarkOnTile = new Settlement(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.RESOURCE:
-                _landmarkOnTile = new ResourceLandmark(this, landmarkType);
+                _landmarkOnTile = new ResourceLandmark(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.DUNGEON:
                 _landmarkOnTile = new DungeonLandmark(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.LAIR:
-                _landmarkOnTile = new LairLandmark(this, landmarkType);
+                _landmarkOnTile = new LairLandmark(this, landmarkType, materialMadeOf);
                 break;
             default:
                 break;
@@ -351,16 +351,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         _landmarkOnTile = null;
     }
 
-    internal void HideLandmarkObject() {
-        if(_landmarkOnTile != null && _landmarkOnTile.landmarkObject != null && GameManager.Instance.hideLandmarks) {
-            _landmarkOnTile.landmarkObject.gameObject.SetActive(false);
-        }
-    }
-    internal void ShowLandmarkObject() {
-        if (_landmarkOnTile != null && GameManager.Instance.hideLandmarks) {
-            _landmarkOnTile.landmarkObject.gameObject.SetActive(true);
-        }
-    }
+    //internal void HideLandmarkObject() {
+    //    if(_landmarkOnTile != null && _landmarkOnTile.landmarkObject != null && GameManager.Instance.hideLandmarks) {
+    //        _landmarkOnTile.landmarkObject.gameObject.SetActive(false);
+    //    }
+    //}
+    //internal void ShowLandmarkObject() {
+    //    if (_landmarkOnTile != null && GameManager.Instance.hideLandmarks) {
+    //        _landmarkOnTile.landmarkObject.gameObject.SetActive(true);
+    //    }
+    //}
     #endregion
 
     #region Resource
@@ -938,20 +938,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
 		this.centerPiece.SetActive(true);
 	}
-    internal void SetTileHighlightColor(Color color){
-        //color.a = 30f / 255f;
-        this._kingdomColorSprite.color = color;
-	}
+ //   internal void SetTileHighlightColor(Color color){
+ //       //color.a = 30f / 255f;
+ //       this._kingdomColorSprite.color = color;
+	//}
     internal void SetMinimapTileColor(Color color) {
         color.a = 255f / 255f;
         minimapHexSprite.color = color;
     }
-    internal void ShowTileHighlight(){
-		this._kingdomColorSprite.gameObject.SetActive(true);
-	}
-    internal void HideTileHighlight(){
-		this.kingdomColorSprite.gameObject.SetActive(false);
-	}
+ //   internal void ShowTileHighlight(){
+	//	this._kingdomColorSprite.gameObject.SetActive(true);
+	//}
+ //   internal void HideTileHighlight(){
+	//	this.kingdomColorSprite.gameObject.SetActive(false);
+	//}
     internal void ShowNamePlate() {
         if (_namePlateParent != null) {
             _namePlateParent.gameObject.SetActive(true);
@@ -1325,13 +1325,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 			return;
 		}
 		_hoverHighlightGO.SetActive(true);
-		if (_landmarkOnTile != null) {
-			if(_landmarkOnTile.owner != null) { //landmark is occupied
-				if (isHabitable) {
-					this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
-				}
-			}
-		} 
+		//if (_landmarkOnTile != null) {
+		//	if(_landmarkOnTile.owner != null) { //landmark is occupied
+		//		if (isHabitable) {
+		//			this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+		//		}
+		//	}
+		//} 
 		if(Input.GetMouseButtonDown(0)){
 			LeftClick ();
 		}else if(Input.GetMouseButtonDown(1)){
@@ -1343,11 +1343,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
 			return;
 		}
-		if (_landmarkOnTile != null && isHabitable) {
-			if (_landmarkOnTile.owner != null) {
-				this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
-			}
-		}
+		//if (_landmarkOnTile != null && isHabitable) {
+		//	if (_landmarkOnTile.owner != null) {
+		//		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
+		//	}
+		//}
 		HideSmallInfoWindow();
 	}
     private void LeftClick() {
@@ -1385,20 +1385,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
 
     #region For Testing
-    private void HighlightTilesInRegion() {
-        for (int i = 0; i < _region.tilesInRegion.Count; i++) {
-            HexTile currTileInRegion = _region.tilesInRegion[i];
-            currTileInRegion.SetTileHighlightColor(Color.gray);
-            currTileInRegion.ShowTileHighlight();
-        }
-    }
+    //private void HighlightTilesInRegion() {
+    //    for (int i = 0; i < _region.tilesInRegion.Count; i++) {
+    //        HexTile currTileInRegion = _region.tilesInRegion[i];
+    //        currTileInRegion.SetTileHighlightColor(Color.gray);
+    //        currTileInRegion.ShowTileHighlight();
+    //    }
+    //}
 
-    private void UnHighlightTilesInRegion() {
-        for (int i = 0; i < _region.tilesInRegion.Count; i++) {
-            HexTile currTileInRegion = _region.tilesInRegion[i];
-            currTileInRegion.HideTileHighlight();
-        }
-    }
+    //private void UnHighlightTilesInRegion() {
+    //    for (int i = 0; i < _region.tilesInRegion.Count; i++) {
+    //        HexTile currTileInRegion = _region.tilesInRegion[i];
+    //        currTileInRegion.HideTileHighlight();
+    //    }
+    //}
 
     [Space(10)]
     [Header("For Testing")]
@@ -1948,11 +1948,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	#region Combat
     public void ScheduleCombatCheck() {
         _hasScheduledCombatCheck = true;
-        Messenger.AddListener("OnDayEnd", CheckForCombat);
+        Messenger.AddListener("OnDayStart", CheckForCombat);
     }
     public void UnScheduleCombatCheck() {
         _hasScheduledCombatCheck = false;
-        Messenger.RemoveListener("OnDayEnd", CheckForCombat);
+        Messenger.RemoveListener("OnDayStart", CheckForCombat);
     }
     /*
      Check this location for encounters, start if any.

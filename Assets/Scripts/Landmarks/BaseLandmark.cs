@@ -14,7 +14,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<object> _connections;
     protected bool _canBeOccupied; //can the landmark be occupied?
     protected bool _isOccupied;
-    protected bool _isHidden; //is landmark hidden or discovered?
+    //protected bool _isHidden; //is landmark hidden or discovered?
     protected bool _isExplored; //has landmark been explored?
     protected string _landmarkName;
     protected Faction _owner;
@@ -71,9 +71,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public bool isOccupied {
         get { return _isOccupied; }
     }
-    public bool isHidden {
-        get { return _isHidden; }
-    }
+    //public bool isHidden {
+    //    get { return _isHidden; }
+    //}
     public bool isExplored {
         get { return _isExplored; }
     }
@@ -138,7 +138,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _location = location;
         _specificLandmarkType = specificLandmarkType;
         _connections = new List<object>();
-        _isHidden = true;
+        //_isHidden = true;
         _isExplored = false;
         _landmarkName = string.Empty; //TODO: Add name generation
         _owner = null; //landmark has no owner yet
@@ -190,7 +190,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     public virtual void OccupyLandmark(Faction faction) {
         _owner = faction;
         _isOccupied = true;
-        SetHiddenState(false);
         SetExploredState(true);
         _location.Occupy();
         EnableInitialTechnologies(faction);
@@ -208,8 +207,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public void ChangeOwner(Faction newOwner){
 		_owner = newOwner;
 		_isOccupied = true;
-		SetHiddenState(false);
-		SetExploredState(true);
 		_location.Occupy();
 		EnableInitialTechnologies(newOwner);
 		AddHistory ("Changed owner to " + newOwner.name + ".");
@@ -376,6 +373,25 @@ public class BaseLandmark : ILocation, TaskCreator {
         return newCharacter;
     }
     /*
+     Create a new character, given a role and class.
+     This will also subtract from the civilian population.
+         */
+    public ECS.Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className) {
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+        
+        newCharacter.SetHome(this);
+        AdjustCivilians(raceOfChar, -1);
+        if (owner != null) {
+            newCharacter.SetFaction(owner);
+            owner.AddNewCharacter(newCharacter);
+        }
+        AddCharacterToLocation(newCharacter, false);
+        AddCharacterHomeOnLandmark(newCharacter);
+        newCharacter.DetermineAction();
+        UIManager.Instance.UpdateFactionSummary();
+        return newCharacter;
+    }
+    /*
      Make a character consider this landmark as it's home.
          */
     public virtual void AddCharacterHomeOnLandmark(ECS.Character character) {
@@ -488,11 +504,11 @@ public class BaseLandmark : ILocation, TaskCreator {
     #region Combat
     public void ScheduleCombatCheck() {
         _hasScheduledCombatCheck = true;
-        Messenger.AddListener("OnDayEnd", CheckForCombat);
+        Messenger.AddListener("OnDayStart", CheckForCombat);
     }
     public void UnScheduleCombatCheck() {
         _hasScheduledCombatCheck = false;
-        Messenger.RemoveListener("OnDayEnd", CheckForCombat);
+        Messenger.RemoveListener("OnDayStart", CheckForCombat);
     }
     /*
      Check this location for encounters, start if any.
@@ -765,17 +781,11 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return durabilityFromMaterial * durabilityModifierFromLandmarkType;
     }
-    public void SetHiddenState(bool isHidden) {
-        _isHidden = isHidden;
-        if (landmarkObject != null) {
-            landmarkObject.UpdateLandmarkVisual();
-        }
-    }
     public void SetExploredState(bool isExplored) {
         _isExplored = isExplored;
-        if (landmarkObject != null) {
-            landmarkObject.UpdateLandmarkVisual();
-        }
+        //if (landmarkObject != null) {
+        //    landmarkObject.UpdateLandmarkVisual();
+        //}
     }
     internal bool IsBorder() {
         if (this.owner == null) {

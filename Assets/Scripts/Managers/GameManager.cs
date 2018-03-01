@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
 	public float progressionSpeed;
 	public bool isPaused = true;
     public bool enableGameAgents = true;
-    public bool hideLandmarks = true;
+    //public bool hideLandmarks = true;
     public bool initiallyHideRoads = false;
     public bool allowConsole = true;
 
@@ -56,6 +56,9 @@ public class GameManager : MonoBehaviour {
 
 	private void FixedUpdate(){
 		if (!isPaused) {
+            if (this.timeElapsed == 0f) {
+                this.DayStarted();
+            }
 			this.timeElapsed += Time.deltaTime * 1f;
 			if(this.timeElapsed >= this.progressionSpeed){
 				this.timeElapsed = 0f;
@@ -102,10 +105,14 @@ public class GameManager : MonoBehaviour {
 		this.progressionSpeed = speed;
 	}
 
+    public void DayStarted() {
+        Messenger.Broadcast("OnDayStart");
+    }
+
     /*
      * Function that triggers daily actions
      * */
-	public void DayEnded(){
+    public void DayEnded(){
         ////Messenger.Broadcast("CitizenTurnActions");
         //Messenger.Broadcast("CityEverydayActions");
 

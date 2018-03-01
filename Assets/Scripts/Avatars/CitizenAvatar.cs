@@ -117,7 +117,7 @@ public class CitizenAvatar : PooledObject {
 		}
 
         this.CheckForKingdomDiscovery();
-        this.RevealLandmarks();
+        //this.RevealLandmarks();
         //        this.UpdateFogOfWar();
         //        this.transform.SetParent(this.citizenRole.location.transform);
         //        this.transform.localPosition = Vector3.zero;
@@ -308,13 +308,13 @@ public class CitizenAvatar : PooledObject {
 		this.UpdateUI ();
     }
 
-    private void RevealLandmarks() {
-        if (GameManager.Instance.hideLandmarks) {
-            if (this.citizenRole.location.hasLandmark) {
-                this.citizenRole.location.ShowLandmarkObject();
-            }
-        }
-    }
+    //private void RevealLandmarks() {
+    //    if (GameManager.Instance.hideLandmarks) {
+    //        if (this.citizenRole.location.hasLandmark) {
+    //            this.citizenRole.location.ShowLandmarkObject();
+    //        }
+    //    }
+    //}
 
     private void HighlightPath() {
         this.pathToUnhighlight.Clear();
