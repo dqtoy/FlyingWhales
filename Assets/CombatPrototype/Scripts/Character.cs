@@ -1255,6 +1255,9 @@ namespace ECS {
 			case CHARACTER_ROLE.FLYING_BEAST:
 				_role = new FlyingBeast(this);
 				break;
+            case CHARACTER_ROLE.ANCIENT_VAMPIRE:
+                _role = new AncientVampire(this);
+                break;
             default:
 			    break;
 			}

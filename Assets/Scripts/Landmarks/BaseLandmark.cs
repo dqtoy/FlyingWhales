@@ -373,6 +373,25 @@ public class BaseLandmark : ILocation, TaskCreator {
         return newCharacter;
     }
     /*
+     Create a new character, given a role and class.
+     This will also subtract from the civilian population.
+         */
+    public ECS.Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className) {
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+        
+        newCharacter.SetHome(this);
+        AdjustCivilians(raceOfChar, -1);
+        if (owner != null) {
+            newCharacter.SetFaction(owner);
+            owner.AddNewCharacter(newCharacter);
+        }
+        AddCharacterToLocation(newCharacter, false);
+        AddCharacterHomeOnLandmark(newCharacter);
+        newCharacter.DetermineAction();
+        UIManager.Instance.UpdateFactionSummary();
+        return newCharacter;
+    }
+    /*
      Make a character consider this landmark as it's home.
          */
     public virtual void AddCharacterHomeOnLandmark(ECS.Character character) {

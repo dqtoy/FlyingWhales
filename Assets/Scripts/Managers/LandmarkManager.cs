@@ -224,7 +224,7 @@ public class LandmarkManager : MonoBehaviour {
         WeightedDictionary<LANDMARK_TYPE> settlementAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
-            if (currData.baseType == BASE_LANDMARK_TYPE.SETTLEMENT) {
+            if (currData.baseType == BASE_LANDMARK_TYPE.SETTLEMENT && currData.landmarkType != LANDMARK_TYPE.CITY) {
                 settlementAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
             }
         }
