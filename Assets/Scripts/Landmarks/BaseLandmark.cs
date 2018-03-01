@@ -485,11 +485,11 @@ public class BaseLandmark : ILocation, TaskCreator {
     #region Combat
     public void ScheduleCombatCheck() {
         _hasScheduledCombatCheck = true;
-        Messenger.AddListener("OnDayEnd", CheckForCombat);
+        Messenger.AddListener("OnDayStart", CheckForCombat);
     }
     public void UnScheduleCombatCheck() {
         _hasScheduledCombatCheck = false;
-        Messenger.RemoveListener("OnDayEnd", CheckForCombat);
+        Messenger.RemoveListener("OnDayStart", CheckForCombat);
     }
     /*
      Check this location for encounters, start if any.
