@@ -191,7 +191,8 @@ public class Region {
         _centerOfMass = newCenter;
         _centerOfMass.isHabitable = true;
 		_centerOfMass.emptyCityGO.SetActive (true);
-        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.CITY, MATERIAL.NONE);
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(LANDMARK_TYPE.CITY);
+        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.CITY, landmarkData.possibleMaterials[Random.Range(0, landmarkData.possibleMaterials.Length)]);
     }
     #endregion
 
@@ -411,8 +412,10 @@ public class Region {
         }
     }
     internal void ReColorBorderTiles(Color color) {
+        Color fullColor = color;
+        fullColor.a = 255f / 255f;
         for (int i = 0; i < regionBorderLines.Count; i++) {
-            regionBorderLines[i].color = color;
+            regionBorderLines[i].color = fullColor;
         }
     }
     internal void AddRegionBorderLineSprite(SpriteRenderer sprite) {

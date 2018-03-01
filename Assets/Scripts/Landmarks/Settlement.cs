@@ -37,7 +37,7 @@ public class Settlement : BaseLandmark {
     }
     #endregion
 
-    public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
+    public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf) : base(location, specificLandmarkType, materialMadeOf) {
         _canBeOccupied = true;
         _questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();

@@ -320,16 +320,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
-                _landmarkOnTile = new Settlement(this, landmarkType);
+                _landmarkOnTile = new Settlement(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.RESOURCE:
-                _landmarkOnTile = new ResourceLandmark(this, landmarkType);
+                _landmarkOnTile = new ResourceLandmark(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.DUNGEON:
                 _landmarkOnTile = new DungeonLandmark(this, landmarkType, materialMadeOf);
                 break;
             case BASE_LANDMARK_TYPE.LAIR:
-                _landmarkOnTile = new LairLandmark(this, landmarkType);
+                _landmarkOnTile = new LairLandmark(this, landmarkType, materialMadeOf);
                 break;
             default:
                 break;
