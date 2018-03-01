@@ -938,20 +938,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
 		this.centerPiece.SetActive(true);
 	}
-    internal void SetTileHighlightColor(Color color){
-        //color.a = 30f / 255f;
-        this._kingdomColorSprite.color = color;
-	}
+ //   internal void SetTileHighlightColor(Color color){
+ //       //color.a = 30f / 255f;
+ //       this._kingdomColorSprite.color = color;
+	//}
     internal void SetMinimapTileColor(Color color) {
         color.a = 255f / 255f;
         minimapHexSprite.color = color;
     }
-    internal void ShowTileHighlight(){
-		this._kingdomColorSprite.gameObject.SetActive(true);
-	}
-    internal void HideTileHighlight(){
-		this.kingdomColorSprite.gameObject.SetActive(false);
-	}
+ //   internal void ShowTileHighlight(){
+	//	this._kingdomColorSprite.gameObject.SetActive(true);
+	//}
+ //   internal void HideTileHighlight(){
+	//	this.kingdomColorSprite.gameObject.SetActive(false);
+	//}
     internal void ShowNamePlate() {
         if (_namePlateParent != null) {
             _namePlateParent.gameObject.SetActive(true);
@@ -1385,20 +1385,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
 
     #region For Testing
-    private void HighlightTilesInRegion() {
-        for (int i = 0; i < _region.tilesInRegion.Count; i++) {
-            HexTile currTileInRegion = _region.tilesInRegion[i];
-            currTileInRegion.SetTileHighlightColor(Color.gray);
-            currTileInRegion.ShowTileHighlight();
-        }
-    }
+    //private void HighlightTilesInRegion() {
+    //    for (int i = 0; i < _region.tilesInRegion.Count; i++) {
+    //        HexTile currTileInRegion = _region.tilesInRegion[i];
+    //        currTileInRegion.SetTileHighlightColor(Color.gray);
+    //        currTileInRegion.ShowTileHighlight();
+    //    }
+    //}
 
-    private void UnHighlightTilesInRegion() {
-        for (int i = 0; i < _region.tilesInRegion.Count; i++) {
-            HexTile currTileInRegion = _region.tilesInRegion[i];
-            currTileInRegion.HideTileHighlight();
-        }
-    }
+    //private void UnHighlightTilesInRegion() {
+    //    for (int i = 0; i < _region.tilesInRegion.Count; i++) {
+    //        HexTile currTileInRegion = _region.tilesInRegion[i];
+    //        currTileInRegion.HideTileHighlight();
+    //    }
+    //}
 
     [Space(10)]
     [Header("For Testing")]

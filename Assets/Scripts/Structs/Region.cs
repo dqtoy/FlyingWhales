@@ -399,14 +399,14 @@ public class Region {
         fullColor.a = 255f/255f;
         for (int i = 0; i < this.tilesInRegion.Count; i++) {
             HexTile currentTile = this.tilesInRegion[i];
-            currentTile.kingdomColorSprite.color = color;
-            currentTile.kingdomColorSprite.gameObject.SetActive(true);
+            //currentTile.kingdomColorSprite.color = color;
+            //currentTile.kingdomColorSprite.gameObject.SetActive(true);
             currentTile.SetMinimapTileColor(fullColor);
         }
         for (int i = 0; i < this.outerGridTilesInRegion.Count; i++) {
             HexTile currentTile = this.outerGridTilesInRegion[i];
-            currentTile.kingdomColorSprite.color = color;
-            currentTile.kingdomColorSprite.gameObject.SetActive(true);
+            //currentTile.kingdomColorSprite.color = color;
+            //currentTile.kingdomColorSprite.gameObject.SetActive(true);
             currentTile.SetMinimapTileColor(fullColor);
         }
     }
