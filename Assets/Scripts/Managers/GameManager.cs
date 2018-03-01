@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
 	public float progressionSpeed;
 	public bool isPaused = true;
     public bool enableGameAgents = true;
-    public bool hideLandmarks = true;
+    //public bool hideLandmarks = true;
     public bool initiallyHideRoads = false;
     public bool allowConsole = true;
 

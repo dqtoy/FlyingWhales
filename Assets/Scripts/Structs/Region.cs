@@ -410,7 +410,7 @@ public class Region {
             currentTile.SetMinimapTileColor(fullColor);
         }
     }
-    private void ReColorBorderTiles(Color color) {
+    internal void ReColorBorderTiles(Color color) {
         for (int i = 0; i < regionBorderLines.Count; i++) {
             regionBorderLines[i].color = color;
         }

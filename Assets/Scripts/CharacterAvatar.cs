@@ -249,11 +249,6 @@ public class CharacterAvatar : PooledObject{
     private void RevealRoads() {
         this.currLocation.tileLocation.SetRoadState(true);
     }
-    private void RevealLandmarks() {
-        if(this.currLocation.tileLocation.landmarkOnTile != null) {
-            this.currLocation.tileLocation.landmarkOnTile.SetHiddenState(false);
-        }
-    }
     protected void RemoveCharactersFromLocation(ILocation location) {
 		if(_characters[0].party == null){
 			for (int i = 0; i < _characters.Count; i++) {

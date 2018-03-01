@@ -21,23 +21,23 @@ public class LandmarkObject : MonoBehaviour {
 				landmarkLbl.text = Utilities.NormalizeString(landmark.specificLandmarkType.ToString());
 			}
         }
-        UpdateLandmarkVisual();
+        //UpdateLandmarkVisual();
     }
 
-    public void UpdateLandmarkVisual() {
-        if (_landmark.isHidden) {
-            Color color = Color.white;
-            color.a = 128f / 255f;
-            topSprite.color = color;
-            botSprite.color = color;
-        } else {
-            topSprite.color = Color.white;
-            botSprite.color = Color.white;
-        }
-        if(nameplateGO != null) {
-            nameplateGO.SetActive(!_landmark.isHidden);
-        }
+    //public void UpdateLandmarkVisual() {
+    //    if (_landmark.isHidden) {
+    //        Color color = Color.white;
+    //        color.a = 128f / 255f;
+    //        topSprite.color = color;
+    //        botSprite.color = color;
+    //    } else {
+    //        topSprite.color = Color.white;
+    //        botSprite.color = Color.white;
+    //    }
+    //    if(nameplateGO != null) {
+    //        nameplateGO.SetActive(!_landmark.isHidden);
+    //    }
 
-        exploredGO.SetActive(_landmark.isExplored); //Activate explored GO based on isExplored boolean
-    }
+    //    exploredGO.SetActive(_landmark.isExplored); //Activate explored GO based on isExplored boolean
+    //}
 }

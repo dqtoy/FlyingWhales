@@ -39,7 +39,6 @@ public class Settlement : BaseLandmark {
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
-        _isHidden = false;
         _questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
 		_materialWeights = new WeightedDictionary<MATERIAL>();
@@ -72,6 +71,7 @@ public class Settlement : BaseLandmark {
             //Create structures on location
             faction.AddSettlement(this);
             location.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
+            location.region.ReColorBorderTiles(faction.factionColor);
             location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             location.emptyCityGO.SetActive(false);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);

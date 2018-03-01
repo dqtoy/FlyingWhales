@@ -351,16 +351,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         _landmarkOnTile = null;
     }
 
-    internal void HideLandmarkObject() {
-        if(_landmarkOnTile != null && _landmarkOnTile.landmarkObject != null && GameManager.Instance.hideLandmarks) {
-            _landmarkOnTile.landmarkObject.gameObject.SetActive(false);
-        }
-    }
-    internal void ShowLandmarkObject() {
-        if (_landmarkOnTile != null && GameManager.Instance.hideLandmarks) {
-            _landmarkOnTile.landmarkObject.gameObject.SetActive(true);
-        }
-    }
+    //internal void HideLandmarkObject() {
+    //    if(_landmarkOnTile != null && _landmarkOnTile.landmarkObject != null && GameManager.Instance.hideLandmarks) {
+    //        _landmarkOnTile.landmarkObject.gameObject.SetActive(false);
+    //    }
+    //}
+    //internal void ShowLandmarkObject() {
+    //    if (_landmarkOnTile != null && GameManager.Instance.hideLandmarks) {
+    //        _landmarkOnTile.landmarkObject.gameObject.SetActive(true);
+    //    }
+    //}
     #endregion
 
     #region Resource
@@ -1325,13 +1325,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 			return;
 		}
 		_hoverHighlightGO.SetActive(true);
-		if (_landmarkOnTile != null) {
-			if(_landmarkOnTile.owner != null) { //landmark is occupied
-				if (isHabitable) {
-					this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
-				}
-			}
-		} 
+		//if (_landmarkOnTile != null) {
+		//	if(_landmarkOnTile.owner != null) { //landmark is occupied
+		//		if (isHabitable) {
+		//			this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+		//		}
+		//	}
+		//} 
 		if(Input.GetMouseButtonDown(0)){
 			LeftClick ();
 		}else if(Input.GetMouseButtonDown(1)){
@@ -1343,11 +1343,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
 			return;
 		}
-		if (_landmarkOnTile != null && isHabitable) {
-			if (_landmarkOnTile.owner != null) {
-				this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
-			}
-		}
+		//if (_landmarkOnTile != null && isHabitable) {
+		//	if (_landmarkOnTile.owner != null) {
+		//		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
+		//	}
+		//}
 		HideSmallInfoWindow();
 	}
     private void LeftClick() {
