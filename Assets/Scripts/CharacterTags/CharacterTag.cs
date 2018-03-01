@@ -7,6 +7,7 @@ public class CharacterTag {
 	protected string _tagName;
 	protected CHARACTER_TAG _tagType;
 	protected List<CharacterTask> _tagTasks;
+	protected StatsModifierPercentage _statsModifierPercentage;
 
 	#region getters/setters
 	public CHARACTER_TAG tagType {
@@ -18,9 +19,28 @@ public class CharacterTag {
 	public List<CharacterTask> tagTasks {
 		get { return _tagTasks; }
 	}
+	public StatsModifierPercentage statsModifierPercentage {
+		get { return _statsModifierPercentage; }
+	}
 	#endregion
 
-	public CharacterTag(ECS.Character character){
+	public CharacterTag(ECS.Character character, CHARACTER_TAG tagType){
 		_character = character;
+		_tagType = tagType;
+		_tagName = Utilities.NormalizeString (_tagType.ToString ());
+		_tagTasks = new List<CharacterTask> ();
+		_statsModifierPercentage = new StatsModifierPercentage ();
 	}
+
+	#region Virtuals
+	public virtual void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> tasks) {
+		for (int i = 0; i < _tagTasks.Count; i++) {
+			CharacterTask currTask = _tagTasks[i];
+			if(currTask.forPlayerOnly){
+				continue;
+			}
+			tasks.AddElement (currTask, currTask.GetTaskWeight(_character));
+		}
+	}
+	#endregion
 }

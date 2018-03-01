@@ -9,10 +9,7 @@ public class Trait{
     public string traitName;
     public TRAIT trait;
     public ActionWeight[] actionWeights;
-    public float bonusIntPercent;
-    public float bonusStrengthPercent;
-    public float bonusAgiPercent;
-    public float bonusHPPercent;
+	public StatsModifierPercentage statsModifierPercentage;
 
     [System.NonSerialized] protected Citizen ownerOfTrait;
     [System.NonSerialized] protected ECS.Character _ownerOfTrait;

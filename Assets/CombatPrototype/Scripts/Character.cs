@@ -14,6 +14,7 @@ namespace ECS {
         [System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
         [System.NonSerialized] private List<Trait>	_traits;
         private List<TRAIT> _allTraits;
+		private List<CharacterTag>	_tags;
         private Dictionary<Character, Relationship> _relationships;
 		private const int MAX_FOLLOWERS = 4;
 
@@ -29,6 +30,8 @@ namespace ECS {
 		private int _baseStrength;
 		private int _baseIntelligence;
 		private int _baseAgility;
+		private int _fixedMaxHP;
+		private StatsModifierPercentage _statsModifierPercentage;
 
 		//Skills
 		private List<Skill> _skills;
@@ -111,18 +114,12 @@ namespace ECS {
         internal List<Trait> traits {
             get { return _traits; }
         }
+		internal List<CharacterTag> tags {
+			get { return _tags; }
+		}
         internal Dictionary<Character, Relationship> relationships {
             get { return _relationships; }
         }
-		internal int currentHP{
-			get { return this._currentHP; }
-		}
-		internal int maxHP {
-			get { return this._maxHP + GetHPTraitModification(); }
-		}
-		internal int baseMaxHP {
-			get { return _baseMaxHP; }
-		}
 		internal CharacterClass characterClass{
 			get { return this._characterClass; }
 		}
@@ -188,22 +185,34 @@ namespace ECS {
 			get { return _activeQuests; }
 		}
 		internal int strength {
-			get { return _strength + _equippedItems.Sum(x => x.bonusStrength) + GetStrengthTraitModification(); }
+			get { return _strength + (int)((float)_strength * _statsModifierPercentage.strPercentage); }
 		}
 		internal int baseStrength {
 			get { return _baseStrength; }
 		}
 		internal int intelligence {
-			get { return _intelligence + _equippedItems.Sum(x => x.bonusIntelligence) + GetIntelligenceTraitModification(); }
+			get { return _intelligence + (int)((float)_intelligence * _statsModifierPercentage.intPercentage); }
 		}
 		internal int baseIntelligence {
 			get { return _baseIntelligence; }
 		}
 		internal int agility {
-			get { return _agility + _equippedItems.Sum(x => x.bonusAgility) + GetAgilityTraitModification(); }
+			get { return _agility + (int)((float)_agility * _statsModifierPercentage.agiPercentage); }
 		}
 		internal int baseAgility {
 			get { return _baseAgility; }
+		}
+		internal int currentHP{
+			get { return this._currentHP; }
+		}
+		internal int maxHP {
+			get { return this._maxHP; }
+		}
+		internal int baseMaxHP {
+			get { return _baseMaxHP; }
+		}
+		internal StatsModifierPercentage statsModifierPercentage {
+			get { return _statsModifierPercentage; }
 		}
 		internal int dodgeRate {
 			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
@@ -312,6 +321,7 @@ namespace ECS {
 			_gender = Utilities.GetRandomGender();
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _traits = new List<Trait> ();
+			_tags = new List<CharacterTag> ();
             _relationships = new Dictionary<Character, Relationship>();
 			_exploredLandmarks = new Dictionary<int, BaseLandmark> ();
 			_isDead = false;
@@ -323,6 +333,7 @@ namespace ECS {
 			_history = new List<string> ();
 			_followers = new List<ECS.Character> ();
 			_isFollowerOf = null;
+			_statsModifierPercentage = new StatsModifierPercentage ();
 
 			AllocateStatPoints (statAllocationBonus);
 
@@ -339,11 +350,14 @@ namespace ECS {
 			_skills.AddRange (GetBodyPartSkills ());
             _history = new List<string>();
 
+			AdjustMaxHP (_baseMaxHP);
+
             EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
 
-            _maxHP = _baseMaxHP;
-            _currentHP = maxHP;
+//            _maxHP = _baseMaxHP;
+//            _currentHP = maxHP;
+
 
             _activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
@@ -1203,16 +1217,26 @@ namespace ECS {
 
 		private void AddItemBonuses(Item item){
 			AdjustMaxHP (item.bonusMaxHP);
+			this._strength += item.bonusStrength;
+			this._intelligence += item.bonusIntelligence;
+			this._agility += item.bonusAgility;
 		}
 		private void RemoveItemBonuses(Item item){
 			AdjustMaxHP (-item.bonusMaxHP);
+			this._strength -= item.bonusStrength;
+			this._intelligence -= item.bonusIntelligence;
+			this._agility -= item.bonusAgility;
 		}
 		internal void AdjustMaxHP(int amount){
-			if(this.currentHP == this.maxHP){
-				this._maxHP += amount;
+			this._fixedMaxHP += amount;
+//			this._maxHP = this._maxHP + (int)((float)this._maxHP * _statsModifierPercentage.hpPercentage);
+			RecomputeMaxHP();
+		}
+		private void RecomputeMaxHP(){
+			int previousMaxHP = this._maxHP;
+			this._maxHP = this._fixedMaxHP + (int)((float)this._fixedMaxHP * _statsModifierPercentage.hpPercentage);
+			if(this._currentHP > this._maxHP || this._currentHP == previousMaxHP){
 				this._currentHP = this._maxHP;
-			}else{
-				this._maxHP += amount;
 			}
 		}
 
@@ -1353,11 +1377,20 @@ namespace ECS {
                 TRAIT currTrait = _allTraits[i];
                 Trait trait = CharacterManager.Instance.CreateNewTraitForCharacter(currTrait, this);
                 if (trait != null) {
-                    trait.AssignCharacter(this);
-                    _traits.Add(trait);
+					AddTrait (trait);
                 }
             }
         }
+		public void AddTrait(Trait trait){
+			trait.AssignCharacter(this);
+			_traits.Add(trait);
+			AddTraitBonuses (trait);
+		}
+		public void RemoveTrait(Trait trait){
+			trait.AssignCharacter(null);
+			_traits.Remove(trait);
+			RemoveTraitBonuses (trait);
+		}
         private TRAIT GenerateCharismaTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
@@ -1436,22 +1469,46 @@ namespace ECS {
 			}
 			return false;
 		}
-        private int GetIntelligenceTraitModification() {
-            int currIntelligence = _intelligence + _equippedItems.Sum(x => x.bonusIntelligence);
-            return (int)(currIntelligence * _traits.Sum(x => x.bonusIntPercent));
-        }
-        private int GetStrengthTraitModification() {
-            int currStrength = _strength + _equippedItems.Sum(x => x.bonusStrength);
-            return (int)(currStrength * _traits.Sum(x => x.bonusStrengthPercent));
-        }
-        private int GetAgilityTraitModification() {
-            int currAgi = _agility + _equippedItems.Sum(x => x.bonusAgility);
-            return (int)(currAgi * _traits.Sum(x => x.bonusAgiPercent));
-        }
-        private int GetHPTraitModification() {
-            return (int)(_maxHP * _traits.Sum(x => x.bonusHPPercent));
-        }
+		private void AddTraitBonuses(Trait trait){
+			_statsModifierPercentage.intPercentage += trait.statsModifierPercentage.intPercentage;
+			_statsModifierPercentage.strPercentage += trait.statsModifierPercentage.strPercentage;
+			_statsModifierPercentage.agiPercentage += trait.statsModifierPercentage.agiPercentage;
+			_statsModifierPercentage.hpPercentage += trait.statsModifierPercentage.hpPercentage;
+			RecomputeMaxHP ();
+		}
+		private void RemoveTraitBonuses(Trait trait){
+			_statsModifierPercentage.intPercentage -= trait.statsModifierPercentage.intPercentage;
+			_statsModifierPercentage.strPercentage -= trait.statsModifierPercentage.strPercentage;
+			_statsModifierPercentage.agiPercentage -= trait.statsModifierPercentage.agiPercentage;
+			_statsModifierPercentage.hpPercentage -= trait.statsModifierPercentage.hpPercentage;
+			RecomputeMaxHP ();
+		}
         #endregion
+
+		#region Character Tags
+		public void AddCharacterTag(CharacterTag tag){
+			_tags.Add(tag);
+			AddCharacterTagBonuses (tag);
+		}
+		public void RemoveCharacterTag(CharacterTag tag){
+			_tags.Remove(tag);
+			RemoveCharacterTagBonuses (tag);
+		}
+		private void AddCharacterTagBonuses(CharacterTag tag){
+			_statsModifierPercentage.intPercentage += tag.statsModifierPercentage.intPercentage;
+			_statsModifierPercentage.strPercentage += tag.statsModifierPercentage.strPercentage;
+			_statsModifierPercentage.agiPercentage += tag.statsModifierPercentage.agiPercentage;
+			_statsModifierPercentage.hpPercentage += tag.statsModifierPercentage.hpPercentage;
+			RecomputeMaxHP ();
+		}
+		private void RemoveCharacterTagBonuses(CharacterTag tag){
+			_statsModifierPercentage.intPercentage -= tag.statsModifierPercentage.intPercentage;
+			_statsModifierPercentage.strPercentage -= tag.statsModifierPercentage.strPercentage;
+			_statsModifierPercentage.agiPercentage -= tag.statsModifierPercentage.agiPercentage;
+			_statsModifierPercentage.hpPercentage -= tag.statsModifierPercentage.hpPercentage;
+			RecomputeMaxHP ();
+		}
+		#endregion
 
         #region Faction
         public void SetFaction(Faction faction) {
@@ -1518,7 +1575,9 @@ namespace ECS {
 			if(_role != null){
 				_role.AddTaskWeightsFromRole (actionWeights);
 			}
-			//TODO: Tag Tasks
+			for (int i = 0; i < _tags.Count; i++) {
+				_tags [i].AddTaskWeightsFromTags (actionWeights);
+			}
 			//TODO: Quest Tasks
 
 			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
@@ -1850,7 +1909,14 @@ namespace ECS {
 					}
 				}
 			}
-
+			for (int i = 0; i < _tags.Count; i++) {
+				for (int j = 0; j < _tags[i].tagTasks.Count; j++) {
+					CharacterTask currentTask = _tags[i].tagTasks[j];
+					if(CanTaskBeDone(currentTask, location)){
+						possibleTasks.Add (currentTask);
+					}
+				}
+			}
 			//TODO: Tag and Quest Tasks
 
 			return possibleTasks;

@@ -143,6 +143,7 @@ public class CharacterTask {
 	}
 
 	public virtual int GetTaskWeight(ECS.Character character){ return 0; }
+	public virtual bool CanBeDone(ECS.Character character, ILocation location) { return false; }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {
