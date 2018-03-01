@@ -26,6 +26,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected MATERIAL _materialMadeOf; //What material is this landmark made of?
     protected Dictionary<RACE, int> _civiliansByRace;
     protected int _currDurability;
+	protected int _totalDurability;
 
     //TODO: Add list of items on landmark
     protected List<TECHNOLOGY> _technologiesOnLandmark;
@@ -125,7 +126,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         get { return _currDurability; }
     }
     public int totalDurability {
-        get { return GetTotalDurability(); }
+		get { return _totalDurability; }
     }
     public MATERIAL materialMadeOf {
         get { return _materialMadeOf; }
@@ -151,7 +152,8 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_activeQuests = new List<OldQuest.Quest>();
 		_itemsInLandmark = new List<ECS.Item> ();
         _materialMadeOf = materialMadeOf;
-        _currDurability = totalDurability;
+		_totalDurability = GetTotalDurability ();
+		_currDurability = _totalDurability;
         ConstructTechnologiesDictionary();
 		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
@@ -919,165 +921,10 @@ public class BaseLandmark : ILocation, TaskCreator {
 	#endregion
 
 	#region Materials
-	//private void ConstructMaterialValues(){
-	//	_materialsInventory = new Dictionary<MATERIAL, MaterialValues>();
-	//	MATERIAL[] materials = Utilities.GetEnumValues<MATERIAL> ();
-	//	for (int i = 1; i < materials.Length; i++) {
-	//		_materialsInventory.Add (materials [i], new MaterialValues ());
-	//	}
-	//}
-	//protected void ConstructNeededMaterials(){
-	//	_neededMaterials = new Dictionary<PRODUCTION_TYPE, MATERIAL>();
-	//	PRODUCTION_TYPE[] production = Utilities.GetEnumValues<PRODUCTION_TYPE> ();
-	//	for (int i = 1; i < production.Length; i++) {
-	//		_neededMaterials.Add (production [i], MATERIAL.NONE);
-	//	}
-	//}
-	//internal virtual void AdjustMaterial(MATERIAL material, int amount){
-	//	_materialsInventory [material].count += amount;
- //       _materialsInventory[material].count = Mathf.Max(_materialsInventory[material].count, 0);
-	//}
-	//internal void SetMaterial(MATERIAL material, int amount){
-	//	_materialsInventory [material].count = amount;
-	//}
-	//internal void ReserveMaterial(MATERIAL material, int amount){
-	//	AdjustMaterial (material, -amount);
-	//	_materialsInventory [material].reserved += amount;
-	//	if(_materialsInventory [material].reserved < 0){
-	//		_materialsInventory [material].reserved = 0;
-	//	}
-	//}
-	//internal void ReduceReserveMaterial(MATERIAL material, int amount){
-	//	_materialsInventory [material].reserved -= amount;
-	//	if(_materialsInventory [material].reserved < 0){
-	//		_materialsInventory [material].reserved = 0;
-	//	}
-	//}
-	//internal int GetTotalFoodCount(){
-	//	int count = 0;
-	//	for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
-	//		MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
-	//		count += _materialsInventory [material].count;
-	//	}
-	//	return count;
-	//}
-	//internal Dictionary<MATERIAL, int> ReduceTotalFoodCount(int amount){
- //       Dictionary<MATERIAL, int> foodReduced = new Dictionary<MATERIAL, int>();
-	//	int totalAmount = amount;
-	//	for (int i = 0; i < MaterialManager.Instance.edibleMaterials.Count; i++) {
-	//		MATERIAL material = MaterialManager.Instance.edibleMaterials [i];
-	//		if(totalAmount > 0){
-	//			if(totalAmount > _materialsInventory [material].count){
- //                   foodReduced.Add(material, materialsInventory[material].count);
- //                   totalAmount -= _materialsInventory [material].count;
-	//				SetMaterial (material, 0);
- //               } else{
- //                   foodReduced.Add(material, totalAmount);
- //                   AdjustMaterial (material, -totalAmount);
-	//				break;
-	//			}
-	//		}else{
-	//			break;
-	//		}
-	//	}
- //       return foodReduced;
-
- //   }
-    //internal bool HasAvailableMaterial(MATERIAL material, int amount) {
-    //    if(_materialsInventory[material].count >= amount) {
-    //        return true;
-    //    }
-    //    return false;
-    //}
-    ///*
-    // Can this landmark afford to construct a structure?
-    //     */
-    //public bool CanAffordConstruction(Construction constructionData) {
-    //    if (GetTotalFoodCount() < constructionData.production.foodCost) {
-    //        return false; //this landmark does not have enough food to build the structure
-    //    }
-    //    if(civilians < constructionData.production.civilianCost) {
-    //        return false; //this landmark does not have enough civilians to build the structure
-    //    }
-    //    if(GetMaterialForConstruction(constructionData) == MATERIAL.NONE) {
-    //        return false; //the landmark does not have any materials that can build the structure
-    //    }
-    //    return true; //this landmark meets all the requirements
-    //}
-    //public MATERIAL GetMaterialForConstruction(Construction constructionData) {
-    //    List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
-    //    for (int i = 0; i < preferredMats.Count; i++) {
-    //        MATERIAL currMat = preferredMats[i];
-    //        if (ProductionManager.Instance.constructionMaterials.Contains(currMat)) {
-    //            if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
-    //                return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
-    //            }
-    //        }
-    //    }
-    //    return MATERIAL.NONE;
-    //}
-    ///*
-    // This will reduce this landmarks assets based on
-    // a given Production Cost and a material. This will return
-    // a list of food materials that was reduced. 
-    // NOTE: This will only reduce materials, not civilians
-    // civilian adjustment needs a separate call.
-    //     */
-    //public Dictionary<MATERIAL, int> ReduceAssets(Production productionCost, MATERIAL materialToUse) {
-    //    //AdjustPopulation(-productionCost.civilianCost);
-    //    AdjustMaterial(materialToUse, -productionCost.resourceCost);
-    //    return ReduceTotalFoodCount(productionCost.foodCost);
-    //}
-    ///*
-    // This will reduce a landmarks assets based on Construction Data,
-    // this will determine what material to use on it's own. This will return
-    // a list of food materials that was reduced.
-    // NOTE: This will only reduce materials, not civilians
-    // civilian adjustment needs a separate call.
-    //     */
-    //public Dictionary<MATERIAL, int> ReduceAssets(Construction constructionData) {
-    //    //AdjustPopulation(-constructionData.production.civilianCost);
-    //    MATERIAL matToUse = GetMaterialForConstruction(constructionData);
-    //    if(matToUse == MATERIAL.NONE) {
-    //        throw new System.Exception("There is no materials to build a " + constructionData.structure.name);
-    //    }
-    //    AdjustMaterial(matToUse, -constructionData.production.resourceCost);
-    //    return ReduceTotalFoodCount(constructionData.production.foodCost);
-    //}
-    //public bool HasMaterialsFor(PRODUCTION_TYPE prodType) {
-    //    foreach (KeyValuePair<MATERIAL, MaterialValues> kvp in _materialsInventory) {
-    //        MATERIAL currMat = kvp.Key;
-    //        MaterialValues matVal = kvp.Value;
-    //        if (matVal.count > 0) {
-    //            if(MaterialManager.Instance.CanMaterialBeUsedFor(currMat, prodType)) {
-    //                return true;
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public bool HasAccessTo(PRODUCTION_TYPE prodType) {
-    //    for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
-    //        HexTile currTile = location.region.tilesInRegion[i];
-    //        if (currTile.materialOnTile != MATERIAL.NONE) {
-    //            if (MaterialManager.Instance.CanMaterialBeUsedFor(currTile.materialOnTile, prodType)) {
-    //                return true;
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public bool HasAccessToFood() {
-    //    for (int i = 0; i < location.region.tilesInRegion.Count; i++) {
-    //        HexTile currTile = location.region.tilesInRegion[i];
-    //        if (currTile.materialOnTile != MATERIAL.NONE) {
-    //            if (MaterialManager.Instance.materialsLookup[currTile.materialOnTile].isEdible) {
-    //                return true;
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
+	public void AdjustDurability(int amount){
+		_currDurability += amount;
+		_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
+	}
     #endregion
 
     #region Quests
