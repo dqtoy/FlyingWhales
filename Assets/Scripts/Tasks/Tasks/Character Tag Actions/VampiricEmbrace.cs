@@ -14,27 +14,23 @@ public class VampiricEmbrace : CharacterTask {
 		: base(createdBy, TASK_TYPE.VAMPIRIC_EMBRACE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
 		characterWeights = new WeightedDictionary<ECS.Character> ();
+		_needsSpecificTarget = true;
+		_specificTargetClassification = "character";
+		_filters = new QuestFilter[] {
+			new MustNotHaveTags (CHARACTER_TAG.VAMPIRE),
+		};
 	}
 
 	#region overrides
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
 		if(_targetLocation == null){
-			_targetCharacter = GetTargetCharacter ();
 			_targetLocation = _targetCharacter.specificLocation;
-		}else{
-			if(_assignedCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _assignedCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
-				List<ICombatInitializer> characters = new List<ICombatInitializer> (_targetLandmark.charactersAtLocation);
-				characters.Remove (_assignedCharacter);
-				if(characters.Count > 0){
-					_targetCharacter = characters [UnityEngine.Random.Range (0, characters.Count)].mainCharacter;
-				}
-			}else{
-				if(_targetLandmark.charactersAtLocation.Count > 0){
-					_targetCharacter = _targetLandmark.charactersAtLocation [UnityEngine.Random.Range (0, _targetLandmark.charactersAtLocation.Count)].mainCharacter;
-				}
-			}
 		}
+		if(_specificTarget == null){
+			_specificTarget = GetTargetCharacter ();
+		}
+		_targetCharacter = (ECS.Character)_specificTarget;
 		_targetLandmark = (BaseLandmark)_targetLocation;
 
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace());
@@ -45,12 +41,11 @@ public class VampiricEmbrace : CharacterTask {
 	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){
-			int condition = 0;
-			if (character.specificLocation != null && character.specificLocation.tileLocation.landmarkOnTile.id == location.tileLocation.landmarkOnTile.id) {
-				condition = 1;
-			}
-			if(location.charactersAtLocation.Count > condition){
-				return true;
+			for (int j = 0; j < location.tileLocation.landmarkOnTile.charactersAtLocation.Count; j++) {
+				ECS.Character possibleCharacter = location.tileLocation.landmarkOnTile.charactersAtLocation[j].mainCharacter;
+				if(possibleCharacter.id != character.id && !possibleCharacter.HasTag(CHARACTER_TAG.VAMPIRE)){
+					return true;
+				}
 			}
 		}
 		return base.CanBeDone (character, location);
@@ -88,8 +83,10 @@ public class VampiricEmbrace : CharacterTask {
 			_targetCharacter.AddHistory (_assignedCharacter.name + " got caught trying to turn " + _targetCharacter.name + " into a vampire!");
 			_assignedCharacter.AddHistory ("Caught trying to turn " + _targetCharacter.name + " into a vampire!");
 			_targetLandmark.AddHistory (_assignedCharacter.name + " got caught trying to turn " + _targetCharacter.name + " into a vampire!");
-			Criminal criminalTag = new Criminal (_assignedCharacter);
-			_assignedCharacter.AddCharacterTag (criminalTag);
+			if(!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
+				Criminal criminalTag = new Criminal (_assignedCharacter);
+				_assignedCharacter.AddCharacterTag (criminalTag);
+			}
 			EndVampiricEmbrace ();
 			return;
 		}
@@ -110,7 +107,7 @@ public class VampiricEmbrace : CharacterTask {
 			BaseLandmark landmark = region.allLandmarks [i];
 			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
 				ECS.Character character = landmark.charactersAtLocation [j].mainCharacter;
-				if(character.id != _assignedCharacter.id){
+				if(character.id != _assignedCharacter.id && !character.HasTag(CHARACTER_TAG.VAMPIRE)){
 					characterWeights.AddElement (character, 5);
 				}
 			}

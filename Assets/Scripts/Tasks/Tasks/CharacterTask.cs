@@ -31,6 +31,10 @@ public class CharacterTask {
 	protected ILocation _targetLocation;
 	protected int _daysLeft;
 	protected int _defaultDaysLeft;
+	protected object _specificTarget;
+	protected bool _needsSpecificTarget;
+	protected string _specificTargetClassification;
+	protected QuestFilter[] _filters;
 
     #region getters/setters
     public TASK_TYPE taskType {
@@ -56,6 +60,18 @@ public class CharacterTask {
 	}
 	public ILocation targetLocation{
 		get { return _targetLocation; }
+	}
+	public object specificTarget{
+		get { return _specificTarget; }
+	}
+	public bool needsSpecificTarget{
+		get { return _needsSpecificTarget; }
+	}
+	public string specificTargetClassification{
+		get { return _specificTargetClassification; }
+	}
+	public QuestFilter[] filters{
+		get { return _filters; }
 	}
     #endregion
 
@@ -180,6 +196,9 @@ public class CharacterTask {
 	public void SetLocation(ILocation targetLocation){
 		_targetLocation = targetLocation;
 	}
+	public void SetSpecificTarget(object specificTarget){
+		_specificTarget = specificTarget;
+	}
 	public void SetIsHalted (bool state){
 		_isHalted = state;
 	}
@@ -193,6 +212,14 @@ public class CharacterTask {
 		if(_daysLeft > 0){
 			_daysLeft -= days;
 		}
+	}
+	public bool CanMeetRequirements(ECS.Character character){
+		for (int i = 0; i < _filters.Length; i++) {
+			if(!_filters[i].MeetsRequirements(character)){
+				return false;
+			}
+		}
+		return true;
 	}
     #endregion
 }

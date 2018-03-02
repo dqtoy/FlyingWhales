@@ -1512,6 +1512,14 @@ namespace ECS {
 			_statsModifierPercentage.hpPercentage -= tag.statsModifierPercentage.hpPercentage;
 			RecomputeMaxHP ();
 		}
+		public bool HasTag(CHARACTER_TAG tag) {
+			for (int i = 0; i < _tags.Count; i++) {
+				if(_tags[i].tagType == tag) {
+					return true;
+				}
+			}
+			return false;
+		}
 		#endregion
 
         #region Faction

@@ -28,20 +28,27 @@ public class CharacterTaskButton : MonoBehaviour {
 	private void ClickAction(){
 		ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
 		if(character == null){
-			return;
-		}
-		if(character.avatar != null && character.avatar.isMovingToHex){
-			character.avatar.SetQueuedAction (() => ClickAction ());
 			UIManager.Instance.HidePlayerActions ();
 			return;
 		}
-		if(character.currentTask != null){
-			character.currentTask.SetIsHalted (true);
+		if (!task.needsSpecificTarget) {
+			if (character.avatar != null && character.avatar.isMovingToHex) {
+				character.avatar.SetQueuedAction (() => ClickAction ());
+				UIManager.Instance.HidePlayerActions ();
+				return;
+			}
+			if (character.currentTask != null) {
+				character.currentTask.SetIsHalted (true);
+			}
 		}
 		task.ResetTask ();
 		task.SetLocation (this.location);
-		task.OnChooseTask (character);
+		if(!task.needsSpecificTarget){
+			task.OnChooseTask (character);
+			UIManager.Instance.HidePlayerActions ();
+		}else{
+			UIManager.Instance.playerActionsUI.ShowSpecificTargets (task);
+		}
 //		task.PerformTask ();
-		UIManager.Instance.HidePlayerActions ();
 	}
 }

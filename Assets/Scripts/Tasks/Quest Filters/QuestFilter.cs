@@ -51,6 +51,54 @@ public class MustHaveTraits : QuestFilter {
     #endregion
 }
 
+public class MustNotHaveTags : QuestFilter {
+
+	private List<CHARACTER_TAG> _tags;
+
+	public MustNotHaveTags(List<CHARACTER_TAG> tags) {
+		_tags = tags;
+	}
+	public MustNotHaveTags(CHARACTER_TAG tag) {
+		_tags = new List<CHARACTER_TAG>();
+		_tags.Add (tag);
+	}
+
+	#region overrides
+	public override bool MeetsRequirements(ECS.Character character) {
+		for (int i = 0; i < _tags.Count; i++) {
+			if (character.HasTag(_tags[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	#endregion
+}
+
+public class MustHaveTags : QuestFilter {
+
+	private List<CHARACTER_TAG> _tags;
+
+	public MustHaveTags(List<CHARACTER_TAG> tags) {
+		_tags = tags;
+	}
+	public MustHaveTags(CHARACTER_TAG tag) {
+		_tags = new List<CHARACTER_TAG>();
+		_tags.Add (tag);
+	}
+
+	#region overrides
+	public override bool MeetsRequirements(ECS.Character character) {
+		for (int i = 0; i < _tags.Count; i++) {
+			if (!character.HasTag(_tags[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	#endregion
+}
+
 //public class MustBeRole : QuestFilter {
 //
 //    private CHARACTER_ROLE _requiredRole;

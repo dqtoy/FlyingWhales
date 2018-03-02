@@ -3241,26 +3241,6 @@ public class UIManager : MonoBehaviour {
     [Header("Player Actions")]
     [SerializeField] internal PlayerActionsUI playerActionsUI;
 	public void ShowPlayerActions(ILocation location){
-//		var v3 = Input.mousePosition;
-//		v3.z = 10.0f;
-//		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-//		v3.y -= 0.15f;
-//
-//		//Bounds uiCameraBounds = uiCamera.GetComponent<Camera>().bound
-//
-//		if (v3.y <= 0f) {
-//			v3 = Input.mousePosition;
-//			v3.z = 10.0f;
-//			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-//			v3.y += 0.1f;
-//		}
-//		if (v3.x >= -13.8f) {
-//			v3 = Input.mousePosition;
-//			v3.z = 10.0f;
-//			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-//			v3.x -= 0.2f;
-//		}
-//		playerActionsUI.transform.position = v3;
 		playerActionsUI.transform.parent = location.tileLocation.UIParent;
 		playerActionsUI.transform.localPosition = Vector3.zero;
 		playerActionsUI.ShowPlayerActionsUI(location);

@@ -13,27 +13,23 @@ public class Hypnotize : CharacterTask {
 		: base(createdBy, TASK_TYPE.HYPNOTIZE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
 		characterWeights = new WeightedDictionary<ECS.Character> ();
+		_needsSpecificTarget = true;
+		_specificTargetClassification = "character";
+		_filters = new QuestFilter[] {
+			new MustNotHaveTags (CHARACTER_TAG.HYPNOTIZED),
+		};
 	}
 
 	#region overrides
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
 		if(_targetLocation == null){
-			_targetCharacter = GetTargetCharacter ();
 			_targetLocation = _targetCharacter.specificLocation;
-		}else{
-			if(_assignedCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _assignedCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
-				List<ICombatInitializer> characters = new List<ICombatInitializer> (_targetLandmark.charactersAtLocation);
-				characters.Remove (_assignedCharacter);
-				if(characters.Count > 0){
-					_targetCharacter = characters [UnityEngine.Random.Range (0, characters.Count)].mainCharacter;
-				}
-			}else{
-				if(_targetLandmark.charactersAtLocation.Count > 0){
-					_targetCharacter = _targetLandmark.charactersAtLocation [UnityEngine.Random.Range (0, _targetLandmark.charactersAtLocation.Count)].mainCharacter;
-				}
-			}
 		}
+		if(_specificTarget == null){
+			_specificTarget = GetTargetCharacter ();
+		}
+		_targetCharacter = (ECS.Character)_specificTarget;
 		_targetLandmark = (BaseLandmark)_targetLocation;
 
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHypnotize());
@@ -45,12 +41,11 @@ public class Hypnotize : CharacterTask {
 	public override bool CanBeDone (Character character, ILocation location){
 		if(character.party == null || (!character.party.isFull && !character.party.isDisbanded)){
 			if(location.tileLocation.landmarkOnTile != null){
-				int condition = 0;
-				if (character.specificLocation != null && character.specificLocation.tileLocation.landmarkOnTile.id == location.tileLocation.landmarkOnTile.id) {
-					condition = 1;
-				}
-				if(location.charactersAtLocation.Count > condition){
-					return true;
+				for (int j = 0; j < location.tileLocation.landmarkOnTile.charactersAtLocation.Count; j++) {
+					ECS.Character possibleCharacter = location.tileLocation.landmarkOnTile.charactersAtLocation[j].mainCharacter;
+					if(possibleCharacter.id != character.id && !possibleCharacter.HasTag(CHARACTER_TAG.HYPNOTIZED)){
+						return true;
+					}
 				}
 			}
 		}
