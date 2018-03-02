@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Attack : CharacterTask {
 
 	private BaseLandmark _landmarkToAttack;
+	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	#region getters/setters
 	public BaseLandmark landmarkToAttack {
@@ -15,6 +16,7 @@ public class Attack : CharacterTask {
 	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.ATTACK, defaultDaysLeft) {
 		SetStance(STANCE.COMBAT);
+		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 	}
 		
 	#region overrides
@@ -119,7 +121,7 @@ public class Attack : CharacterTask {
 		EndTask (TASK_STATUS.SUCCESS);
 	}
 	private BaseLandmark GetTargetLandmark() {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
 			if(landmark is DungeonLandmark){

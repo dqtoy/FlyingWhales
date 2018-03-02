@@ -8,10 +8,12 @@ public class VampiricEmbrace : CharacterTask {
 
 	private ECS.Character _targetCharacter;
 	private BaseLandmark _targetLandmark;
+	private WeightedDictionary<ECS.Character> characterWeights;
 
 	public VampiricEmbrace(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.VAMPIRIC_EMBRACE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
+		characterWeights = new WeightedDictionary<ECS.Character> ();
 	}
 
 	#region overrides
@@ -19,20 +21,24 @@ public class VampiricEmbrace : CharacterTask {
 		base.OnChooseTask(character);
 		//Get the characters that will rest
 		if(_targetLocation == null){
+			_targetCharacter = GetTargetCharacter ();
+			_targetLocation = _targetCharacter.specificLocation;
 //			_targetLocation = GetTargetSettlement();
+		}else{
+			if(_assignedCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _assignedCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
+				List<ICombatInitializer> characters = new List<ICombatInitializer> (_targetLandmark.charactersAtLocation);
+				characters.Remove (_assignedCharacter);
+				if(characters.Count > 0){
+					_targetCharacter = characters [UnityEngine.Random.Range (0, characters.Count)].mainCharacter;
+				}
+			}else{
+				if(_targetLandmark.charactersAtLocation.Count > 0){
+					_targetCharacter = _targetLandmark.charactersAtLocation [UnityEngine.Random.Range (0, _targetLandmark.charactersAtLocation.Count)].mainCharacter;
+				}
+			}
 		}
 		_targetLandmark = (BaseLandmark)_targetLocation;
-		if(_assignedCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _assignedCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
-			List<ICombatInitializer> characters = new List<ICombatInitializer> (_targetLandmark.charactersAtLocation);
-			characters.Remove (_assignedCharacter);
-			if(characters.Count > 0){
-				_targetCharacter = characters [UnityEngine.Random.Range (0, characters.Count)].mainCharacter;
-			}
-		}else{
-			if(_targetLandmark.charactersAtLocation.Count > 0){
-				_targetCharacter = _targetLandmark.charactersAtLocation [UnityEngine.Random.Range (0, _targetLandmark.charactersAtLocation.Count)].mainCharacter;
-			}
-		}
+
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace());
 	}
 	public override void PerformTask() {
@@ -112,5 +118,23 @@ public class VampiricEmbrace : CharacterTask {
 		_targetCharacter.SetFollowerState (true);
 
 		//TODO: What happens if the target character already has a party, is it going to be disbanded? what happens to the followers then?
+	}
+
+	private ECS.Character GetTargetCharacter(){
+		characterWeights.Clear ();
+		Region region = _assignedCharacter.specificLocation.tileLocation.region;
+		for (int i = 0; i < region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = region.allLandmarks [i];
+			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
+				ECS.Character character = landmark.charactersAtLocation [j].mainCharacter;
+				if(character.id != _assignedCharacter.id){
+					characterWeights.AddElement (character, 5);
+				}
+			}
+		}
+		if(characterWeights.GetTotalOfWeights() > 0){
+			return characterWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
 }

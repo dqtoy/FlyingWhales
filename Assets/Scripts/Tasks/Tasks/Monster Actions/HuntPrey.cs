@@ -6,12 +6,14 @@ using ECS;
 public class HuntPrey : CharacterTask {
 
     private BaseLandmark _target;
+	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	private string hunterName;
 
 	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1) 
         : base(createdBy, TASK_TYPE.HUNT_PREY, defaultDaysLeft) {
 		SetStance (STANCE.COMBAT);
+		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
     }
 
     #region overrides
@@ -142,7 +144,7 @@ public class HuntPrey : CharacterTask {
 	}
 
 	private BaseLandmark GetTargetLandmark() {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
 			if(landmark.owner != null && landmark.civilians > 0){

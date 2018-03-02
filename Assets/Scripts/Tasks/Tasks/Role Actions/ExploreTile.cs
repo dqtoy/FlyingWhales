@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ExploreTile : CharacterTask {
 
     private BaseLandmark _landmarkToExplore;
+	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
     #region getters/setters
     public BaseLandmark landmarkToExplore {
@@ -13,11 +14,12 @@ public class ExploreTile : CharacterTask {
     #endregion
 	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.EXPLORE_TILE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
+		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
     }
 
-	private BaseLandmark GetLandmarkToExplore(){
+	private BaseLandmark GetTargetLandmark(){
 		//TODO: Add weights for all landmark the can give the character an item that his current quest needs
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
 			if(landmark is DungeonLandmark){
@@ -39,7 +41,7 @@ public class ExploreTile : CharacterTask {
 	public override void OnChooseTask (ECS.Character character){
 		base.OnChooseTask (character);
 		if(_targetLocation == null){
-			_landmarkToExplore = GetLandmarkToExplore();
+			_landmarkToExplore = GetTargetLandmark();
 		}else{
 			_landmarkToExplore = (BaseLandmark)_targetLocation;
 		}

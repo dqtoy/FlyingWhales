@@ -9,10 +9,12 @@ public class Raze : CharacterTask {
 
 	private WeightedDictionary<string> razeResult;
 	private BaseLandmark _target;
+	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	public Raze(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.RAZE, defaultDaysLeft) {
 		SetStance (STANCE.COMBAT);
 		razeResult = new WeightedDictionary<string> ();
+		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 //		_razingCharacters = new List<Character> ();
 	}
 
@@ -88,7 +90,7 @@ public class Raze : CharacterTask {
 	}
 
 	private BaseLandmark GetTargetLandmark() {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
 			if(landmark.owner != null && landmark.civilians > 0){

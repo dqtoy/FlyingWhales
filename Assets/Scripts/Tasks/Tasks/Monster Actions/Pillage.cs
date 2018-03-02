@@ -6,12 +6,14 @@ using ECS;
 
 public class Pillage : CharacterTask {
     private BaseLandmark _target;
+	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	private string pillagerName;
 
 	public Pillage(TaskCreator createdBy, int defaultDaysLeft = -1) 
         : base(createdBy, TASK_TYPE.PILLAGE, defaultDaysLeft) {
 		SetStance (STANCE.COMBAT);
+		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
     }
 
     #region overrides
@@ -143,7 +145,7 @@ public class Pillage : CharacterTask {
 		EndTask(TASK_STATUS.SUCCESS);
 	}
 	private BaseLandmark GetTargetLandmark() {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
 			if(landmark.owner != null && landmark.itemsInLandmark.Count > 0){

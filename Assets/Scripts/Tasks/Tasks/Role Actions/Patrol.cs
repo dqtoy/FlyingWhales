@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Patrol : CharacterTask {
 
 	private BaseLandmark _landmarkToPatrol;
+	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	#region getters/setters
 	public BaseLandmark landmarkToPatrol {
@@ -15,6 +16,7 @@ public class Patrol : CharacterTask {
 	public Patrol(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.PATROL, defaultDaysLeft) {
 		SetStance(STANCE.COMBAT);
+		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 	}
 
 	#region overrides
@@ -58,7 +60,7 @@ public class Patrol : CharacterTask {
 		EndTask (TASK_STATUS.SUCCESS);
 	}
 	private BaseLandmark GetTargetLandmark() {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
 			if(landmark is Settlement || landmark is ResourceLandmark){
