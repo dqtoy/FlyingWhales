@@ -10,6 +10,9 @@ public class CharacterTag {
 	protected StatsModifierPercentage _statsModifierPercentage;
 
 	#region getters/setters
+	public string tagName {
+		get { return _tagName; }
+	}
 	public CHARACTER_TAG tagType {
 		get { return _tagType; }
 	}
@@ -36,7 +39,7 @@ public class CharacterTag {
 	public virtual void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> tasks) {
 		for (int i = 0; i < _tagTasks.Count; i++) {
 			CharacterTask currTask = _tagTasks[i];
-			if(currTask.forPlayerOnly){
+			if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
 				continue;
 			}
 			tasks.AddElement (currTask, currTask.GetTaskWeight(_character));

@@ -21,9 +21,6 @@ public class Hibernate : CharacterTask {
         } else {
             _charactersToRest.Add(character);
         }
-        for (int i = 0; i < _charactersToRest.Count; i++) {
-            _charactersToRest[i].AddHistory("Hibernating.");
-        }
 
 		if(_targetLocation == null){
 			if(character.home == null){

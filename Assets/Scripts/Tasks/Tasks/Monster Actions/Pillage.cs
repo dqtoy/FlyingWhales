@@ -83,6 +83,7 @@ public class Pillage : CharacterTask {
 		}
 
 		_target.AddHistory(pillagerName + " has started pillaging " + _target.landmarkName + "!");
+		_assignedCharacter.AddHistory("Started pillaging " + _target.landmarkName + "!");
     }
 
     private void DoPillage() {
@@ -126,6 +127,8 @@ public class Pillage : CharacterTask {
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);
 			_target.AddHistory (pillagerName + " killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
+			_assignedCharacter.AddHistory ("Killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
+
 		}
 	}
 	private void TriggerSaveLandmarkQuest(){

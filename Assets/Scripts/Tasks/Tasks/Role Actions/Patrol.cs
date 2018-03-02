@@ -54,6 +54,8 @@ public class Patrol : CharacterTask {
 			return;
 		}
 		_landmarkToPatrol.AddHistory (_assignedCharacter.name + " has started patrolling around " + _landmarkToPatrol.landmarkName + "!");
+		_assignedCharacter.AddHistory ("Started patrolling around " + _landmarkToPatrol.landmarkName + "!");
+
 		_assignedCharacter.DestroyAvatar ();
 	}
 	private void EndPatrol(){

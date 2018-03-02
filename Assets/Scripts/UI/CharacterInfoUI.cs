@@ -121,7 +121,7 @@ public class CharacterInfoUI : UIMenu {
 	}
 	private void UpdateTraitInfo(){
 		string text = string.Empty;
-		text += "[b]TRAITS[/b]";
+		text += "[b]TRAITS AND TAGS[/b]";
 		if(currentlyShowingCharacter.traits.Count > 0){
 			text += "\n";
 			for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
@@ -130,6 +130,16 @@ public class CharacterInfoUI : UIMenu {
 					text += ", ";
 				}
 				text += Utilities.NormalizeString(trait.trait.ToString());
+			}
+			if(currentlyShowingCharacter.traits.Count > 0){
+				text += ", ";
+			}
+			for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
+				CharacterTag tag = currentlyShowingCharacter.tags [i];
+				if(i > 0){
+					text += ", ";
+				}
+				text += tag.tagName;
 			}
 		}else{
 			text += "\nNONE";

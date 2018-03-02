@@ -44,7 +44,7 @@ public class CharacterRole {
     public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
 		for (int i = 0; i < _roleTasks.Count; i++) {
 			CharacterTask currTask = _roleTasks[i];
-			if(currTask.forPlayerOnly){
+			if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
 				continue;
 			}
 			tasks.AddElement (currTask, currTask.GetTaskWeight(_character));

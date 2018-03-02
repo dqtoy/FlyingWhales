@@ -61,6 +61,7 @@ public class Raze : CharacterTask {
 			return;
 		}
 		_target.AddHistory(_assignedCharacter.name + " has started razing " + _target.landmarkName + "!");
+		_target.AddHistory("Started razing " + _target.landmarkName + "!");
 	}
 	private void EndRaze(){
 		int successWeight = 0;

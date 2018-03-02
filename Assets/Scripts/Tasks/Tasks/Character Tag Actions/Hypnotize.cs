@@ -1,17 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using ECS;
 
-public class VampiricEmbrace : CharacterTask {
+public class Hypnotize : CharacterTask {
 
 	private ECS.Character _targetCharacter;
 	private BaseLandmark _targetLandmark;
 	private WeightedDictionary<ECS.Character> characterWeights;
 
-	public VampiricEmbrace(TaskCreator createdBy, int defaultDaysLeft = -1) 
-		: base(createdBy, TASK_TYPE.VAMPIRIC_EMBRACE, defaultDaysLeft) {
+	public Hypnotize(TaskCreator createdBy, int defaultDaysLeft = -1) 
+		: base(createdBy, TASK_TYPE.HYPNOTIZE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
 		characterWeights = new WeightedDictionary<ECS.Character> ();
 	}
@@ -37,72 +36,85 @@ public class VampiricEmbrace : CharacterTask {
 		}
 		_targetLandmark = (BaseLandmark)_targetLocation;
 
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace());
+		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHypnotize());
 	}
 	public override void PerformTask() {
 		base.PerformTask();
-		PerformVampiricEmbrace();
+		PerformHypnotize();
 	}
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null){
-			int condition = 0;
-			if (character.specificLocation != null && character.specificLocation.tileLocation.landmarkOnTile.id == location.tileLocation.landmarkOnTile.id) {
-				condition = 1;
-			}
-			if(location.charactersAtLocation.Count > condition){
-				return true;
+		if(character.party == null || (!character.party.isFull && !character.party.isDisbanded)){
+			if(location.tileLocation.landmarkOnTile != null){
+				int condition = 0;
+				if (character.specificLocation != null && character.specificLocation.tileLocation.landmarkOnTile.id == location.tileLocation.landmarkOnTile.id) {
+					condition = 1;
+				}
+				if(location.charactersAtLocation.Count > condition){
+					return true;
+				}
 			}
 		}
 		return base.CanBeDone (character, location);
 	}
+	public override bool AreConditionsMet (Character character){
+		if (character.party == null || (!character.party.isFull && !character.party.isDisbanded)) {
+			return true;
+		}
+		return false;
+	}
 	#endregion
 
-	private void StartVampiricEmbrace(){
+	private void StartHypnotize(){
 		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartVampiricEmbrace ());
+			_assignedCharacter.SetCurrentFunction (() => StartHypnotize ());
 			return;
 		}
 		_assignedCharacter.DestroyAvatar ();
 
 		if(_targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
-			string startLog = _assignedCharacter.name + " wants to turn " + _targetCharacter.name + " into a vampire!";
+			string startLog = _assignedCharacter.name + " wants to hypnotize " + _targetCharacter.name + " into submission!";
 			_targetLandmark.AddHistory (startLog);
 			_targetCharacter.AddHistory (startLog);
 			_assignedCharacter.AddHistory (startLog);
 		}else{
-			EndVampiricEmbrace ();
+			EndHypnotize ();
 		}
 	}
 
-	public void PerformVampiricEmbrace() {
-		string chosenAction = TaskManager.Instance.vampiricEmbraceActions.PickRandomElementGivenWeights ();
-		if(chosenAction == "turn"){
-			_targetCharacter.AddHistory ("Turned into vampire by " + _assignedCharacter.name + "!");
-			_assignedCharacter.AddHistory ("Turned " + _targetCharacter.name + " into a vampire!");
-			_targetLandmark.AddHistory (_assignedCharacter.name + " turned " + _targetCharacter.name + " into a vampire!");
-			Vampire vampireTag = new Vampire (_targetCharacter);
-			_targetCharacter.AddCharacterTag (vampireTag);
-			EndVampiricEmbrace ();
-			return;
-		}else if(chosenAction == "caught"){
-			_targetCharacter.AddHistory (_assignedCharacter.name + " got caught trying to turn " + _targetCharacter.name + " into a vampire!");
-			_assignedCharacter.AddHistory ("Caught trying to turn " + _targetCharacter.name + " into a vampire!");
-			_targetLandmark.AddHistory (_assignedCharacter.name + " got caught trying to turn " + _targetCharacter.name + " into a vampire!");
-			Criminal criminalTag = new Criminal (_assignedCharacter);
-			_assignedCharacter.AddCharacterTag (criminalTag);
-			EndVampiricEmbrace ();
+	public void PerformHypnotize() {
+		string chosenAction = TaskManager.Instance.hypnotizeActions.PickRandomElementGivenWeights ();
+		if(chosenAction == "hypnotize"){
+			_targetCharacter.AddHistory ("Hypnotized by " + _assignedCharacter.name + "!");
+			_assignedCharacter.AddHistory ("Hypnotized " + _targetCharacter.name + "!");
+			_targetLandmark.AddHistory (_assignedCharacter.name + " hypnotized " + _targetCharacter.name + "!");
+			Hypnotized hypnotizedTag = new Hypnotized (_targetCharacter);
+			_targetCharacter.AddCharacterTag (hypnotizedTag);
+			MakeTargetCharacterAVampireFollower ();
+			EndHypnotize ();
 			return;
 		}
 		if(_daysLeft == 0){
-			EndVampiricEmbrace ();
+			EndHypnotize ();
 			return;
 		}
 		ReduceDaysLeft(1);
 	}
-	private void EndVampiricEmbrace(){
-		EndTask (TASK_STATUS.SUCCESS);
+
+	private void MakeTargetCharacterAVampireFollower(){
+		if(_assignedCharacter.party == null){
+			Party party = _assignedCharacter.CreateNewParty ();
+			party.AddPartyMember (_targetCharacter);
+		}else{
+			_assignedCharacter.party.AddPartyMember (_targetCharacter);
+		}
+		_targetCharacter.SetFollowerState (true);
+
+		//TODO: What happens if the target character already has a party, is it going to be disbanded? what happens to the followers then?
 	}
 
+	private void EndHypnotize(){
+		EndTask (TASK_STATUS.SUCCESS);
+	}
 	private ECS.Character GetTargetCharacter(){
 		characterWeights.Clear ();
 		Region region = _assignedCharacter.specificLocation.tileLocation.region;

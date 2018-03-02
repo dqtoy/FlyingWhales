@@ -84,6 +84,7 @@ public class HuntPrey : CharacterTask {
 		}
 
 		_target.AddHistory(hunterName + " has started hunting prey in " + _target.landmarkName + "!");
+		_assignedCharacter.AddHistory("Started hunting prey in " + _target.landmarkName + "!");
     }
 
     private void Hunt() {
@@ -119,6 +120,8 @@ public class HuntPrey : CharacterTask {
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);
 			_target.AddHistory (hunterName + " hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
+			_assignedCharacter.AddHistory ("Hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
+
 //          _target.ReduceCivilians(1);
             //GameDate nextDate = GameManager.Instance.Today();
             //nextDate.AddDays(1);

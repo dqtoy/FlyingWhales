@@ -1134,6 +1134,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             } else {
                 structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
             }
+			if(landmarkOnTile != null){
+				landmarkOnTile.AddHistory ("Landmark structure destroyed!");
+			}
         }
     }
     /*
