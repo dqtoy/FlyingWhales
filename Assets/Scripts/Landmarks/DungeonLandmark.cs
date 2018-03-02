@@ -25,10 +25,9 @@ public class DungeonLandmark : BaseLandmark {
 			if (chance < dungeonEncounterChances.encounterLootChance) {
 				LandmarkItemsSpawn ();
 			}
-        } 
-        //else if (specificLandmarkType == LANDMARK_TYPE.VAMPIRE_TOMB) {
-        //    SpawnAncientVampire();
-        //}
+        } else if (specificLandmarkType == LANDMARK_TYPE.VAMPIRE_TOMB) {
+            SpawnAncientVampire();
+        }
     }
     #endregion
 
@@ -87,6 +86,7 @@ public class DungeonLandmark : BaseLandmark {
     #region Vampire Tomb
     private void SpawnAncientVampire() {
         ECS.Character mingonArcanistVampire = CreateNewCharacter(RACE.MINGONS, CHARACTER_ROLE.ANCIENT_VAMPIRE, "Arcanist");
+        mingonArcanistVampire.AddCharacterTag(new Vampire(mingonArcanistVampire));
     }
     #endregion
 }

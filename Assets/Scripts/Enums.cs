@@ -952,6 +952,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	RAZE,
 	ATTACK,
 	PATROL,
+    HUNT_CHARACTER,
 	VAMPIRIC_EMBRACE,
 	DRINK_BLOOD,
 	HYPNOTIZE,
