@@ -641,7 +641,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             } else if (currItem is Party) {
                 factionOfItem = (currItem as Party).faction;
             }
-            if (factionOfItem == null) {
+            if (factionOfItem == null || faction == null) {
                 return true;
             } else {
                 if (factionOfItem.id == faction.id) {

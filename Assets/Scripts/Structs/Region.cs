@@ -121,6 +121,9 @@ public class Region {
     internal List<HexTile> tilesWithMaterials {
         get { return _tilesWithMaterials; }
     }
+    internal List<ECS.Character> charactersInRegion {
+        get { return GetCharactersInRegion(); }
+    }
     #endregion
 
     public Region(HexTile centerOfMass) {
@@ -678,19 +681,33 @@ public class Region {
 		this._corpseMoundTiles.Remove (hexTile);
 	}
 
-	//internal void StartProducing(){
-	//	Messenger.AddListener("OnDayEnd", ProduceResource);
-	//}
-	//internal void StopProducing(){
-	//	Messenger.RemoveListener("OnDayEnd", ProduceResource);
-	//}
-	//private void ProduceResource(){
-	//	if(!isOtherDay){
-	//		isOtherDay = true;
-	//		return;
-	//	}else{
-	//		isOtherDay = false;
-	//	}
-	//	this._tileWithSpecialResource.ProduceResource();
-	//}
+    #region Utilities
+    private List<ECS.Character> GetCharactersInRegion() {
+        List<ECS.Character> characters = new List<ECS.Character>();
+        for (int i = 0; i < tilesInRegion.Count; i++) {
+            HexTile currTile = tilesInRegion[i];
+            characters.AddRange(currTile.charactersAtLocation.Select(x => x.mainCharacter));
+            if (currTile.landmarkOnTile != null) {
+                characters.AddRange(currTile.landmarkOnTile.charactersAtLocation.Select(x => x.mainCharacter));
+            }
+        }
+        return characters;
+    }
+    #endregion
+
+    //internal void StartProducing(){
+    //	Messenger.AddListener("OnDayEnd", ProduceResource);
+    //}
+    //internal void StopProducing(){
+    //	Messenger.RemoveListener("OnDayEnd", ProduceResource);
+    //}
+    //private void ProduceResource(){
+    //	if(!isOtherDay){
+    //		isOtherDay = true;
+    //		return;
+    //	}else{
+    //		isOtherDay = false;
+    //	}
+    //	this._tileWithSpecialResource.ProduceResource();
+    //}
 }

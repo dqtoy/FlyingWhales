@@ -444,5 +444,20 @@ public class CharacterManager : MonoBehaviour {
 
 		SchedulePrisonerConversion ();
 	}
-	#endregion
+    #endregion
+
+    #region Utilities
+    public List<ECS.Character> GetCharacters(Region region, CharacterFilter filter) {
+        List<ECS.Character> filteredCharacters = new List<ECS.Character>();
+        for (int i = 0; i < region.charactersInRegion.Count; i++) {
+            ECS.Character currCharacter = region.charactersInRegion[i];
+            if (filter.MeetsRequirements(currCharacter)) {
+                if (!filteredCharacters.Contains(currCharacter)) {
+                    filteredCharacters.Add(currCharacter);
+                }
+            }
+        }
+        return filteredCharacters;
+    }
+    #endregion
 }

@@ -61,7 +61,12 @@ public class CharacterInfoClick : MonoBehaviour {
 				if(party != null){
 					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 				}
-			}
+			} else if (url.Contains("_character")) {
+                ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.GetFollowerByID(idToUse);
+                if (character != null) {
+                    UIManager.Instance.ShowCharacterInfo(character);
+                }
+            }
         }
 	}
 	void OnHover(bool isOver){

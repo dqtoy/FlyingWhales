@@ -21,6 +21,7 @@ public interface ILocation {
     List<ICombatInitializer> GetAttackingGroups();
     List<ICombatInitializer> GetPatrollingGroups();
     List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null);
+    void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2);
     //void StartCombatAtLocation();
     //bool CombatAtLocation();
     //ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer);

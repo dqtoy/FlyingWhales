@@ -686,6 +686,9 @@ namespace ECS {
 			if(this._role == null){
 				return;
 			}
+            if (this.faction == null) {
+                return;
+            }
             Faction ownerOfCurrLocation = this.currLocation.region.owner;
             if (ownerOfCurrLocation.id != this.faction.id) {
                 if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
@@ -1936,6 +1939,17 @@ namespace ECS {
         #endregion
 
         #region Utilities
+        public Character GetFollowerByID(int id) {
+            if (party != null) {
+                for (int i = 0; i < party.partyMembers.Count; i++) {
+                    Character currChar = party.partyMembers[i];
+                    if (currChar.id == id) {
+                        return currChar;
+                    }
+                }
+            }
+            return null;
+        }
         public void SetFollowerState(bool state) {
             _isFollower = state;
         }
@@ -1986,9 +2000,13 @@ namespace ECS {
                 if(path != null) {
                     //check for hostiles
                     if (!currLandmark.HasHostilitiesWith(this.faction)) {
-                        landmarksWithoutHostiles.Add(currLandmark, path);
+                        if (landmarksWithoutHostiles.ContainsKey(currLandmark)) {
+                            landmarksWithoutHostiles.Add(currLandmark, path);
+                        }
                     } else {
-                        landmarksWithHostiles.Add(currLandmark, path);
+                        if (landmarksWithHostiles.ContainsKey(currLandmark)) {
+                            landmarksWithHostiles.Add(currLandmark, path);
+                        }
                     }
                 }
             }
@@ -2222,11 +2240,13 @@ namespace ECS {
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
-                BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
-                if (targetLocation == null) {
-                    throw new Exception(this.name + " could not find a non hostile location to run to!");
-                } else {
-                    GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => DetermineAction());
+                if (!this.isDead) {
+                    BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
+                    if (targetLocation == null) {
+                        throw new Exception(this.name + " could not find a non hostile location to run to!");
+                    } else {
+                        GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => DetermineAction());
+                    }
                 }
             } else{
                 //this character won the combat, continue his/her current action if any
