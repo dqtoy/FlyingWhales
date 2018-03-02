@@ -272,6 +272,9 @@ public class Party: IEncounterable, ICombatInitializer {
         _isDisbanded = true;
         Debug.Log("Disbanded " + this.name);
         PartyManager.Instance.RemoveParty(this);
+        if (!partyLeader.isDead) {
+            RemovePartyMember(partyLeader);
+        }
 		//if (_currentTask != null) {
 		//	if (!_currentTask.isDone) {
 		//		_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel OldQuest.Quest if party is currently on a quest
@@ -313,6 +316,7 @@ public class Party: IEncounterable, ICombatInitializer {
             //will go back to the nearest settlement of their faction
             settlement.AdjustCivilians(currFollower.raceSetting.race, 1);
         }
+
 		this.specificLocation.RemoveCharacterFromLocation (this);
     }
 	//public void JustDisbandParty() {
