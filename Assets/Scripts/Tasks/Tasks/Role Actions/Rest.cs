@@ -14,21 +14,7 @@ public class Rest : CharacterTask {
         : base(createdBy, TASK_TYPE.REST, defaultDaysLeft) {
 		SetStance(STANCE.NEUTRAL);
     }
-
-    private Settlement GetTargetSettlement() {
-        ECS.Character character = (ECS.Character)_createdBy;
-		if (character.faction != null) {
-			List<Settlement> factionSettlements = character.faction.settlements.OrderBy (x => Vector2.Distance (character.currLocation.transform.position, x.location.transform.position)).ToList ();
-			for (int i = 0; i < factionSettlements.Count; i++) {
-				Settlement currSettlement = factionSettlements [i];
-				if (PathGenerator.Instance.GetPath (character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
-					return currSettlement;
-				}
-			}
-		}
-        return null;
-    }
-
+		
     #region overrides
     public override void OnChooseTask(ECS.Character character) {
         base.OnChooseTask(character);
@@ -40,7 +26,7 @@ public class Rest : CharacterTask {
             _charactersToRest.Add(character);
         }
 		if(_targetLocation == null){
-			_targetLocation = GetTargetSettlement();
+			_targetLocation = GetTargetLandmark(character);
 		}
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartRest());
     }
@@ -64,14 +50,29 @@ public class Rest : CharacterTask {
 				}
 			}else{
 				if(location.tileLocation.landmarkOnTile is Settlement && location.tileLocation.landmarkOnTile.owner != null){
-					Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
-					if(settlement.owner.id == character.faction.id){
+					if(location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
 						return true;
 					}
 				}
 			}
 		}
 		return base.CanBeDone (character, location);
+	}
+	public override bool AreConditionsMet (Character character){
+		if(character.faction == null){
+			BaseLandmark home = character.home;
+			if(home == null){
+				home = character.lair;
+			}
+			if(home != null){
+				return true;
+			}
+		}else{
+			if(character.faction.settlements.Count > 0){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
 	}
     #endregion
 
@@ -112,6 +113,25 @@ public class Rest : CharacterTask {
 			}
 			ReduceDaysLeft(1);
 		}
-
     }
+
+	private BaseLandmark GetTargetLandmark(Character character) {
+		if (character.faction != null) {
+			List<Settlement> factionSettlements = character.faction.settlements.OrderBy (x => Vector2.Distance (character.currLocation.transform.position, x.location.transform.position)).ToList ();
+			for (int i = 0; i < factionSettlements.Count; i++) {
+				Settlement currSettlement = factionSettlements [i];
+				if (PathGenerator.Instance.GetPath (character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
+					return currSettlement;
+				}
+			}
+		}else{
+			BaseLandmark home = character.home;
+			if(home == null){
+				home = character.lair;
+			}
+			return home;
+		}
+		return null;
+	}
+
 }

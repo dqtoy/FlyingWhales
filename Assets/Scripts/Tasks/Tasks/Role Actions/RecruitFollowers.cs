@@ -10,24 +10,34 @@ public class RecruitFollowers : CharacterTask {
     private string createKey = "Create";
     private string noCreateKey = "No Create";
 
+	private BaseLandmark _targetLandmark;
+
 	public RecruitFollowers(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.RECRUIT_FOLLOWERS, defaultDaysLeft) {
         SetStance(STANCE.NEUTRAL); //Recruit Followers is a Neutral Stance action.
     }
 
     #region overrides
+	public override void OnChooseTask (Character character){
+		base.OnChooseTask (character);
+		if(_targetLocation == null){
+			_targetLocation = GetTargetLandmark (character);
+		}
+		if(_targetLandmark != null){
+			_targetLandmark = (BaseLandmark)_targetLocation;
+		}
+	}
     public override void PerformTask() {
         base.PerformTask();
-        if (_assignedCharacter.specificLocation is HexTile) {
-            throw new System.Exception(_assignedCharacter.name + " is at a hextile rather than a landmark!");
-        }
-        BaseLandmark location = _assignedCharacter.specificLocation as BaseLandmark;
-		if(location.civilians > 0) {
-			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(location); 
+//		if (_targetLandmark is HexTile) {
+//            throw new System.Exception(_assignedCharacter.name + " is at a hextile rather than a landmark!");
+//      }
+		if(_targetLandmark != null && _targetLandmark.civilians > 0) {
+			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(_targetLandmark); 
 
 			string chosenAction = recruitActions.PickRandomElementGivenWeights();
 			if (chosenAction.Equals(createKey)) {
 				//Create Follower For character
-				ECS.Character newFollower = location.CreateNewFollower();
+				ECS.Character newFollower = _targetLandmark.CreateNewFollower();
 				Party party = _assignedCharacter.party;
 				if(party == null) {
 					party = _assignedCharacter.CreateNewParty();
@@ -64,6 +74,12 @@ public class RecruitFollowers : CharacterTask {
 		}
 		return base.CanBeDone (character, location);
 	}
+	public override bool AreConditionsMet (Character character){
+		if(GetTargetLandmark(character) != null){
+			return true;
+		}
+		return base.AreConditionsMet (character);
+	}
     #endregion
 
     private void EndRecruitment() {
@@ -98,4 +114,11 @@ public class RecruitFollowers : CharacterTask {
 
         return recruitActions;
     }
+
+	private BaseLandmark GetTargetLandmark(Character character){
+		if(character.specificLocation != null && character.specificLocation.tileLocation.landmarkOnTile != null && character.specificLocation.tileLocation.landmarkOnTile is Settlement){
+			return character.specificLocation.tileLocation.landmarkOnTile;
+		}
+		return null;
+	}
 }

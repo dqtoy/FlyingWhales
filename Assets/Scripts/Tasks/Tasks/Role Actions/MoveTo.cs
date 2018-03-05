@@ -35,6 +35,9 @@ public class MoveTo : CharacterTask {
 	public override bool CanBeDone (ECS.Character character, ILocation location){
 		return true;
 	}
+	public override bool AreConditionsMet (ECS.Character character){
+		return true;
+	}
     #endregion
 
     private void SuccessTask() {

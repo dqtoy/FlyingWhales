@@ -7,12 +7,10 @@ public class Hypnotize : CharacterTask {
 
 	private ECS.Character _targetCharacter;
 	private BaseLandmark _targetLandmark;
-	private WeightedDictionary<ECS.Character> characterWeights;
 
 	public Hypnotize(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.HYPNOTIZE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
-		characterWeights = new WeightedDictionary<ECS.Character> ();
 		_needsSpecificTarget = true;
 		_specificTargetClassification = "character";
 		_filters = new QuestFilter[] {
@@ -43,7 +41,7 @@ public class Hypnotize : CharacterTask {
 			if(location.tileLocation.landmarkOnTile != null){
 				for (int j = 0; j < location.tileLocation.landmarkOnTile.charactersAtLocation.Count; j++) {
 					ECS.Character possibleCharacter = location.tileLocation.landmarkOnTile.charactersAtLocation[j].mainCharacter;
-					if(possibleCharacter.id != character.id && !possibleCharacter.HasTag(CHARACTER_TAG.HYPNOTIZED)){
+					if(possibleCharacter.id != character.id && CanMeetRequirements(possibleCharacter)){
 						return true;
 					}
 				}
@@ -55,7 +53,13 @@ public class Hypnotize : CharacterTask {
 		if (character.party == null || (!character.party.isFull && !character.party.isDisbanded)) {
 			return true;
 		}
-		return false;
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
 	}
 	#endregion
 
@@ -111,19 +115,19 @@ public class Hypnotize : CharacterTask {
 		EndTask (TASK_STATUS.SUCCESS);
 	}
 	private ECS.Character GetTargetCharacter(){
-		characterWeights.Clear ();
+		_characterWeights.Clear ();
 		Region region = _assignedCharacter.specificLocation.tileLocation.region;
 		for (int i = 0; i < region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = region.allLandmarks [i];
 			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
 				ECS.Character character = landmark.charactersAtLocation [j].mainCharacter;
-				if(character.id != _assignedCharacter.id){
-					characterWeights.AddElement (character, 5);
+				if(character.id != _assignedCharacter.id && CanMeetRequirements(character)){
+					_characterWeights.AddElement (character, 5);
 				}
 			}
 		}
-		if(characterWeights.GetTotalOfWeights() > 0){
-			return characterWeights.PickRandomElementGivenWeights ();
+		if(_characterWeights.GetTotalOfWeights() > 0){
+			return _characterWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}

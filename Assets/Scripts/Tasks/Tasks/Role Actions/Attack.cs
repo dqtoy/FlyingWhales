@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 public class Attack : CharacterTask {
 
 	private BaseLandmark _landmarkToAttack;
-	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	#region getters/setters
 	public BaseLandmark landmarkToAttack {
@@ -16,7 +16,6 @@ public class Attack : CharacterTask {
 	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.ATTACK, defaultDaysLeft) {
 		SetStance(STANCE.COMBAT);
-		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 	}
 		
 	#region overrides
@@ -42,17 +41,34 @@ public class Attack : CharacterTask {
 		}
 		ReduceDaysLeft(1);
 	}
-	public override bool CanBeDone (ECS.Character character, ILocation location){
+	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){
-			if(character.faction == null || location.tileLocation.landmarkOnTile.owner == null){
+			if(location.tileLocation.landmarkOnTile is DungeonLandmark){
 				return true;
-			}else{
-				if(location.tileLocation.landmarkOnTile.owner.id != character.faction.id){
-					return true;
+			}else if(location.tileLocation.landmarkOnTile is Settlement || location.tileLocation.landmarkOnTile is ResourceLandmark){
+				if(location.tileLocation.landmarkOnTile.owner != null){
+					if(character.faction == null){
+						return true;
+					}else if(location.tileLocation.landmarkOnTile.owner.id != character.faction.id){
+						FactionRelationship facRel = character.faction.GetRelationshipWith (location.tileLocation.landmarkOnTile.owner);
+						if(facRel != null && facRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+							return true;
+						}
+					}
 				}
 			}
 		}
 		return base.CanBeDone (character, location);
+	}
+	public override bool AreConditionsMet (Character character){
+		//TODO: Add all hostile settlements
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
 	}
 	#endregion
 
@@ -123,24 +139,27 @@ public class Attack : CharacterTask {
 		EndTask (TASK_STATUS.SUCCESS);
 	}
 	private BaseLandmark GetTargetLandmark() {
-		landmarkWeights.Clear ();
+		_landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(landmark is DungeonLandmark){
-				landmarkWeights.AddElement (landmark, 100);
-			}else{
-				if(landmark is Settlement || landmark is ResourceLandmark){
-					if(landmark.owner != null){
-						FactionRelationship facRel = _assignedCharacter.faction.GetRelationshipWith (landmark.owner);
-						if(facRel != null && facRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-							landmarkWeights.AddElement (landmark, 100);
-						}
-					}
-				}
+			if(CanBeDone(_assignedCharacter, landmark)){
+				_landmarkWeights.AddElement (landmark, 100);
 			}
+//			if(landmark is DungeonLandmark){
+//				_landmarkWeights.AddElement (landmark, 100);
+//			}else{
+//				if(landmark is Settlement || landmark is ResourceLandmark){
+//					if(landmark.owner != null){
+//						FactionRelationship facRel = _assignedCharacter.faction.GetRelationshipWith (landmark.owner);
+//						if(facRel != null && facRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+//							_landmarkWeights.AddElement (landmark, 100);
+//						}
+//					}
+//				}
+//			}
 		}
-		if(landmarkWeights.GetTotalOfWeights() > 0){
-			return landmarkWeights.PickRandomElementGivenWeights ();
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}

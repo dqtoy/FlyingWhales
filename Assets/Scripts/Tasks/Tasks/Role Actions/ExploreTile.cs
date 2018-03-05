@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 public class ExploreTile : CharacterTask {
 
     private BaseLandmark _landmarkToExplore;
-	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
     #region getters/setters
     public BaseLandmark landmarkToExplore {
@@ -14,29 +14,8 @@ public class ExploreTile : CharacterTask {
     #endregion
 	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.EXPLORE_TILE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
-		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
     }
-
-	private BaseLandmark GetTargetLandmark(){
-		//TODO: Add weights for all landmark the can give the character an item that his current quest needs
-		landmarkWeights.Clear ();
-		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(landmark is DungeonLandmark){
-				if(_assignedCharacter.exploredLandmarks.ContainsKey(landmark.id)){
-					if(landmark.itemsInLandmark.Count > 0){
-						landmarkWeights.AddElement (landmark, 100);
-					}
-				}else{
-					landmarkWeights.AddElement (landmark, 100);
-				}
-			}
-		}
-		if(landmarkWeights.GetTotalOfWeights() > 0){
-			return landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
-	}
+		
     #region overrides
 	public override void OnChooseTask (ECS.Character character){
 		base.OnChooseTask (character);
@@ -52,7 +31,7 @@ public class ExploreTile : CharacterTask {
 		Explore ();
 	}
 	public override bool CanBeDone (ECS.Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null){
+		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile is DungeonLandmark){
 			if(character.exploredLandmarks.ContainsKey(location.tileLocation.landmarkOnTile.id)){
 				if(character.exploredLandmarks[location.tileLocation.landmarkOnTile.id].itemsInLandmark.Count > 0){
 					return true;
@@ -62,6 +41,15 @@ public class ExploreTile : CharacterTask {
 			}
 		}
 		return base.CanBeDone (character, location);
+	}
+	public override bool AreConditionsMet (Character character){
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
 	}
     #endregion
 
@@ -101,6 +89,31 @@ public class ExploreTile : CharacterTask {
 	private void End(){
 		EndTask (TASK_STATUS.SUCCESS);
 	}
+
+	private BaseLandmark GetTargetLandmark(){
+		//TODO: Add weights for all landmark the can give the character an item that his current quest needs
+		_landmarkWeights.Clear ();
+		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
+			if (CanBeDone (_assignedCharacter, landmark)){
+				_landmarkWeights.AddElement (landmark, 100);
+			}
+//			if(landmark is DungeonLandmark){
+//				if(_assignedCharacter.exploredLandmarks.ContainsKey(landmark.id)){
+//					if(landmark.itemsInLandmark.Count > 0){
+//						_landmarkWeights.AddElement (landmark, 100);
+//					}
+//				}else{
+//					_landmarkWeights.AddElement (landmark, 100);
+//				}
+//			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
+	}
+
     #region Logs
     private void LogGoToLocation() {
         AddNewLog("The party travels to " + _landmarkToExplore.location.name);

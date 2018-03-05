@@ -6,14 +6,12 @@ using ECS;
 public class HuntPrey : CharacterTask {
 
     private BaseLandmark _target;
-	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	private string hunterName;
 
 	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1) 
         : base(createdBy, TASK_TYPE.HUNT_PREY, defaultDaysLeft) {
 		SetStance (STANCE.COMBAT);
-		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
     }
 
     #region overrides
@@ -59,7 +57,15 @@ public class HuntPrey : CharacterTask {
 		}
 		return base.CanBeDone (character, location);
 	}
-
+	public override bool AreConditionsMet (Character character){
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
+	}
     //public override void PerformDailyAction() {
     //    if (_canDoDailyAction) {
     //        base.PerformDailyAction();
@@ -147,21 +153,22 @@ public class HuntPrey : CharacterTask {
 	}
 
 	private BaseLandmark GetTargetLandmark() {
-		landmarkWeights.Clear ();
+		_landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(landmark.owner != null && landmark.civilians > 0){
-				if(_assignedCharacter.faction == null){
-					landmarkWeights.AddElement (landmark, 100);
-				}else{
-					if(_assignedCharacter.faction.id != landmark.owner.id){
-						landmarkWeights.AddElement (landmark, 100);
-					}
-				}
+			if(CanBeDone(_assignedCharacter, landmark)){
+				_landmarkWeights.AddElement (landmark, 100);
+//				if(_assignedCharacter.faction == null){
+//					_landmarkWeights.AddElement (landmark, 100);
+//				}else{
+//					if(_assignedCharacter.faction.id != landmark.owner.id){
+//						_landmarkWeights.AddElement (landmark, 100);
+//					}
+//				}
 			}
 		}
-		if(landmarkWeights.GetTotalOfWeights() > 0){
-			return landmarkWeights.PickRandomElementGivenWeights ();
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}

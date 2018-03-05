@@ -36,6 +36,10 @@ public class CharacterTask {
 	protected string _specificTargetClassification;
 	protected QuestFilter[] _filters;
 
+	protected WeightedDictionary<BaseLandmark> _landmarkWeights;
+	protected WeightedDictionary<ECS.Character> _characterWeights;
+
+
     #region getters/setters
     public TASK_TYPE taskType {
         get { return _taskType; }
@@ -73,12 +77,21 @@ public class CharacterTask {
 	public QuestFilter[] filters{
 		get { return _filters; }
 	}
+	public WeightedDictionary<BaseLandmark> landmarkWeights{
+		get { return _landmarkWeights; }
+	}
+	public WeightedDictionary<ECS.Character> characterWeights{
+		get { return _characterWeights; }
+	}
+
     #endregion
 
 	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1) {
         _createdBy = createdBy;
         _taskType = taskType;
         _taskLogs = new List<string>();
+		_landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		_characterWeights = new WeightedDictionary<ECS.Character> ();
 		_forPlayerOnly = false;
 		SetIsHalted (false);
 		_isDone = false;
@@ -160,7 +173,7 @@ public class CharacterTask {
 
 	public virtual int GetTaskWeight(ECS.Character character){ return 0; }
 	public virtual bool CanBeDone(ECS.Character character, ILocation location) { return false; }
-	public virtual bool AreConditionsMet(ECS.Character character) { return true; }
+	public virtual bool AreConditionsMet(ECS.Character character) { return false; }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {
@@ -213,9 +226,9 @@ public class CharacterTask {
 			_daysLeft -= days;
 		}
 	}
-	public bool CanMeetRequirements(ECS.Character character){
+	public bool CanMeetRequirements(ECS.Character targetCharacter){
 		for (int i = 0; i < _filters.Length; i++) {
-			if(!_filters[i].MeetsRequirements(character)){
+			if(!_filters[i].MeetsRequirements(targetCharacter)){
 				return false;
 			}
 		}

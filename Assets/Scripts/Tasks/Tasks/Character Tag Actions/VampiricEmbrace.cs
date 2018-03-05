@@ -8,12 +8,10 @@ public class VampiricEmbrace : CharacterTask {
 
 	private ECS.Character _targetCharacter;
 	private BaseLandmark _targetLandmark;
-	private WeightedDictionary<ECS.Character> characterWeights;
 
 	public VampiricEmbrace(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.VAMPIRIC_EMBRACE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
-		characterWeights = new WeightedDictionary<ECS.Character> ();
 		_needsSpecificTarget = true;
 		_specificTargetClassification = "character";
 		_filters = new QuestFilter[] {
@@ -24,13 +22,15 @@ public class VampiricEmbrace : CharacterTask {
 	#region overrides
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
-		if(_targetLocation == null){
-			_targetLocation = _targetCharacter.specificLocation;
-		}
 		if(_specificTarget == null){
 			_specificTarget = GetTargetCharacter ();
 		}
 		_targetCharacter = (ECS.Character)_specificTarget;
+
+		if(_targetLocation == null){
+			_targetLocation = _targetCharacter.specificLocation;
+		}
+
 		_targetLandmark = (BaseLandmark)_targetLocation;
 
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace());
@@ -43,12 +43,21 @@ public class VampiricEmbrace : CharacterTask {
 		if(location.tileLocation.landmarkOnTile != null){
 			for (int j = 0; j < location.tileLocation.landmarkOnTile.charactersAtLocation.Count; j++) {
 				ECS.Character possibleCharacter = location.tileLocation.landmarkOnTile.charactersAtLocation[j].mainCharacter;
-				if(possibleCharacter.id != character.id && !possibleCharacter.HasTag(CHARACTER_TAG.VAMPIRE)){
+				if(possibleCharacter.id != character.id && CanMeetRequirements(possibleCharacter)){
 					return true;
 				}
 			}
 		}
 		return base.CanBeDone (character, location);
+	}
+	public override bool AreConditionsMet (Character character){
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
 	}
 	#endregion
 
@@ -101,19 +110,19 @@ public class VampiricEmbrace : CharacterTask {
 	}
 
 	private ECS.Character GetTargetCharacter(){
-		characterWeights.Clear ();
+		_characterWeights.Clear ();
 		Region region = _assignedCharacter.specificLocation.tileLocation.region;
 		for (int i = 0; i < region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = region.allLandmarks [i];
 			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
 				ECS.Character character = landmark.charactersAtLocation [j].mainCharacter;
-				if(character.id != _assignedCharacter.id && !character.HasTag(CHARACTER_TAG.VAMPIRE)){
-					characterWeights.AddElement (character, 5);
+				if(character.id != _assignedCharacter.id && CanMeetRequirements(character)){
+					_characterWeights.AddElement (character, 5);
 				}
 			}
 		}
-		if(characterWeights.GetTotalOfWeights() > 0){
-			return characterWeights.PickRandomElementGivenWeights ();
+		if(_characterWeights.GetTotalOfWeights() > 0){
+			return _characterWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}

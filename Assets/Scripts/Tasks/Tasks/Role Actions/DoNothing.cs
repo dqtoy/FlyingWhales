@@ -33,6 +33,9 @@ public class DoNothing : CharacterTask {
 		}
 		ReduceDaysLeft(1);
     }
+	public override bool AreConditionsMet (Character character){
+		return true;
+	}
     //public override void AcceptQuest(ECS.Character partyLeader) {
     //    _isAccepted = true;
     //    partyLeader.SetCurrentTask(this);

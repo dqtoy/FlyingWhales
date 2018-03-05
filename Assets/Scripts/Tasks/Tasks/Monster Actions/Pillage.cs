@@ -6,14 +6,12 @@ using ECS;
 
 public class Pillage : CharacterTask {
     private BaseLandmark _target;
-	private WeightedDictionary<BaseLandmark> landmarkWeights;
 
 	private string pillagerName;
 
 	public Pillage(TaskCreator createdBy, int defaultDaysLeft = -1) 
         : base(createdBy, TASK_TYPE.PILLAGE, defaultDaysLeft) {
 		SetStance (STANCE.COMBAT);
-		landmarkWeights = new WeightedDictionary<BaseLandmark> ();
     }
 
     #region overrides
@@ -57,17 +55,27 @@ public class Pillage : CharacterTask {
 
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.itemsInLandmark.Count > 0){
-			if(character.faction == null || location.tileLocation.landmarkOnTile.owner == null){
-				return true;
-			}else{
-				if(location.tileLocation.landmarkOnTile.owner.id != character.faction.id){
+			if (location.tileLocation.landmarkOnTile is Settlement || location.tileLocation.landmarkOnTile is ResourceLandmark) {
+				if (character.faction == null || location.tileLocation.landmarkOnTile.owner == null) {
 					return true;
+				} else {
+					if (location.tileLocation.landmarkOnTile.owner.id != character.faction.id) {
+						return true;
+					}
 				}
 			}
 		}
 		return base.CanBeDone (character, location);
 	}
-
+	public override bool AreConditionsMet (Character character){
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
+	}
     //public override void PerformDailyAction() {
     //    if (_canDoDailyAction) {
     //        base.PerformDailyAction();
@@ -148,23 +156,22 @@ public class Pillage : CharacterTask {
 		EndTask(TASK_STATUS.SUCCESS);
 	}
 	private BaseLandmark GetTargetLandmark() {
-		landmarkWeights.Clear ();
+		_landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(landmark.owner != null && landmark.itemsInLandmark.Count > 0){
-				if(landmark is Settlement || landmark is ResourceLandmark){
-					if(_assignedCharacter.faction == null){
-						landmarkWeights.AddElement (landmark, 100);
-					}else{
-						if(_assignedCharacter.faction.id != landmark.owner.id){
-							landmarkWeights.AddElement (landmark, 100);
-						}
-					}
-				}
+			if(CanBeDone(_assignedCharacter, landmark)){
+				_landmarkWeights.AddElement (landmark, 100);
+//				if(_assignedCharacter.faction == null || landmark.owner == null){
+//					_landmarkWeights.AddElement (landmark, 100);
+//				}else{
+//					if(_assignedCharacter.faction.id != landmark.owner.id){
+//						_landmarkWeights.AddElement (landmark, 100);
+//					}
+//				}
 			}
 		}
-		if(landmarkWeights.GetTotalOfWeights() > 0){
-			return landmarkWeights.PickRandomElementGivenWeights ();
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}

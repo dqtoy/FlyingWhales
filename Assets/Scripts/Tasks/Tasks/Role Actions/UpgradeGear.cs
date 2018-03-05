@@ -13,10 +13,14 @@ public class UpgradeGear : CharacterTask {
 	public override void OnChooseTask (ECS.Character character){
 		base.OnChooseTask (character);
 		if(_targetLocation == null){
-			_targetLocation = _assignedCharacter.GetNearestNonHostileSettlement();
+			_targetLocation = _assignedCharacter.GetNearestSettlementFromFaction();
 		}
-		_settlement = (Settlement)_targetLocation;
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
+		if(_targetLocation != null){
+			_settlement = (Settlement)_targetLocation;
+			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
+		}else{
+			EndTask (TASK_STATUS.SUCCESS);
+		}
 	}
     public override void PerformTask() {
         base.PerformTask();
@@ -31,7 +35,12 @@ public class UpgradeGear : CharacterTask {
 		}
 		return base.CanBeDone (character, location);
 	}
-
+	public override bool AreConditionsMet (ECS.Character character){
+		if(character.faction != null && character.faction.settlements.Count > 0){
+			return true;
+		}
+		return base.AreConditionsMet (character);
+	}
     //public override void TaskSuccess() {
     //    if (_assignedCharacter.faction == null) {
     //        _assignedCharacter.UnalignedDetermineAction();

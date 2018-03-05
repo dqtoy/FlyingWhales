@@ -41,6 +41,15 @@ public class DrinkBlood : CharacterTask {
 		}
 		return base.CanBeDone (character, location);
 	}
+	public override bool AreConditionsMet (Character character){
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				return true;
+			}
+		}
+		return base.AreConditionsMet (character);
+	}
 	#endregion
 
 	private void StartDrinkingBlood() {
@@ -111,15 +120,15 @@ public class DrinkBlood : CharacterTask {
 	}
 
 	private BaseLandmark GetTargetLandmark() {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark> ();
+		_landmarkWeights.Clear ();
 		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(landmark.owner != null && landmark.civilians > 0){
-				landmarkWeights.AddElement (landmark, 100);
+			if(CanBeDone(_assignedCharacter, landmark)){
+				_landmarkWeights.AddElement (landmark, 100);
 			}
 		}
-		if(landmarkWeights.GetTotalOfWeights() > 0){
-			return landmarkWeights.PickRandomElementGivenWeights ();
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}
