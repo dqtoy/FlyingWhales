@@ -488,8 +488,14 @@ public class CharacterManager : MonoBehaviour {
             TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)armorType);
             if (village.HasTechnology(neededTech)) {
                 string armorName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
-                ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
-                character.EquipItem(item);
+                int armorQuantityToCreate = 1;
+                if (armorType == ARMOR_TYPE.BOOT || armorType == ARMOR_TYPE.BRACER) {
+                    armorQuantityToCreate = 2; //Create a pair of boots or bracer
+                }
+                for (int i = 0; i < armorQuantityToCreate; i++) {
+                    ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
+                    character.EquipItem(item);
+                }
             }
         }
     }
