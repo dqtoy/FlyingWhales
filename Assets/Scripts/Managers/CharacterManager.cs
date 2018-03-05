@@ -477,5 +477,33 @@ public class CharacterManager : MonoBehaviour {
         //}
         //return filteredCharacters;
     }
+    public void EquipCharacterWithBestGear(Settlement village, ECS.Character character) {
+        MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
+        MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
+        EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
+        EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
+    }
+    private void EquipCharacterWithBestAvailableArmor(ECS.Character character, MATERIAL material, Settlement village) {
+        foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
+            TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)armorType);
+            if (village.HasTechnology(neededTech)) {
+                string armorName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
+                ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
+                character.EquipItem(item);
+            }
+        }
+    }
+    private void EquipCharacterWithBestAvailableWeapon(ECS.Character character, MATERIAL material, Settlement village) {
+        for (int i = 0; i < character.characterClass.allowedWeaponTypes.Count; i++) {
+            WEAPON_TYPE weaponType = character.characterClass.allowedWeaponTypes[i];
+            TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)weaponType);
+            if (village.HasTechnology(neededTech)) {
+                string weaponName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(weaponType.ToString());
+                ECS.Item item = ItemManager.Instance.CreateNewItemInstance(weaponName);
+                character.EquipItem(item);
+                break;
+            }
+        }
+    }
     #endregion
 }

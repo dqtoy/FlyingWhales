@@ -349,14 +349,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Characters
-    public ECS.Character CreateNewFollower() {
-        MATERIAL material = MATERIAL.NONE;
-        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
-        CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.NONE, Utilities.NormalizeString(chosenClass.ToString()));
-        newFollower.SetFollowerState(true);
-        return newFollower;
-    }
     /*
      Create a new character, given a role and class.
      This will also subtract from the civilian population.

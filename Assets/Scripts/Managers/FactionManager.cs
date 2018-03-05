@@ -188,56 +188,21 @@ public class FactionManager : MonoBehaviour {
     }
     private void CreateChieftainForFaction(Faction faction) {
         Settlement randomSettlement = faction.settlements[Random.Range(0, faction.settlements.Count)];
-        MATERIAL armorMaterialToUse = MATERIAL.NONE;
-        for (int i = 0; i < faction.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials.Count; i++) {
-            MATERIAL material = faction.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials[i];
-            if (ProductionManager.Instance.armorMaterials.Contains(material)) {
-                armorMaterialToUse = material;
-                break;
-            }
-        }
         ECS.Character chieftain = randomSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
-        //EquipFullArmorSet(armorMaterialToUse, chieftain);
+        CharacterManager.Instance.EquipCharacterWithBestGear(randomSettlement, chieftain);
         faction.SetLeader(chieftain);
     }
     /*
      Initital tribes should have a chieftain and a village head.
          */
     private void CreateInititalFactionCharacters(Faction faction, Settlement settlement) {
-		MATERIAL armorMaterialToUse = MATERIAL.NONE;
-		for (int i = 0; i < faction.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials.Count; i++) {
-			MATERIAL material = faction.productionPreferences [PRODUCTION_TYPE.ARMOR].prioritizedMaterials [i];
-			if(ProductionManager.Instance.armorMaterials.Contains(material)){
-				armorMaterialToUse = material;
-				break;
-			}
-		}
-
         int numOfCharacters = Random.Range(3, 6); //Generate 3 to 5 characters in each Village with civilians, limit class based on technologies known by its Faction.
         WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(settlement);
         for (int i = 0; i < numOfCharacters; i++) {
             CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
             ECS.Character newChar = settlement.CreateNewCharacter(CHARACTER_ROLE.HERO, Utilities.NormalizeString(chosenClass.ToString()));
-            EquipFullArmorSet(armorMaterialToUse, newChar);
+            CharacterManager.Instance.EquipCharacterWithBestGear(settlement, newChar);
         }
-
-  //      Settlement baseSettlement = faction.settlements[0];
-		//ECS.Character chieftain = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
-		//EquipFullArmorSet (armorMaterialToUse, chieftain);
-  //      ECS.Character villageHead = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.VILLAGE_HEAD, "Swordsman");
-		//EquipFullArmorSet (armorMaterialToUse, villageHead);
-		//ECS.Character worker = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.WORKER, "Classless");
-		//EquipFullArmorSet (armorMaterialToUse, worker);
-
-
-  //      faction.SetLeader(chieftain);
-  //      baseSettlement.SetHead(villageHead);
-
-        ////Create 2 adventurers
-		//ECS.Character adventurer1 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
-		//EquipFullArmorSet (armorMaterialToUse, adventurer1);
-		//ECS.Character adventurer2 = baseSettlement.CreateNewCharacter(CHARACTER_ROLE.ADVENTURER, "Swordsman");
-		//EquipFullArmorSet (armorMaterialToUse, adventurer2);
     }
 	private void EquipFullArmorSet(MATERIAL materialToUse, ECS.Character character){
 		if(materialToUse == MATERIAL.NONE){
@@ -245,7 +210,7 @@ public class FactionManager : MonoBehaviour {
 		}
 		foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
 			string armorName = Utilities.NormalizeString(materialToUse.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
-			ECS.Item item = ItemManager.Instance.CreateNewItemInstance (armorName);
+			ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
 			character.EquipItem (item);
 		}
 	}
@@ -280,19 +245,6 @@ public class FactionManager : MonoBehaviour {
             }
         }
     }
-    ///*
-    // factions have initial resources, that depends on the material preferences, 
-    // the initial settlement will have 200 of each preferred material. NOTE: This stacks
-    //     */
-    //private void CreateInitialResourcesForSettlement(Settlement initialSettlement, Faction owner) {
-    //    PRODUCTION_TYPE[] productionTypes = Utilities.GetEnumValues<PRODUCTION_TYPE>();
-    //    for (int i = 0; i < productionTypes.Length; i++) {
-    //        PRODUCTION_TYPE currProdType = productionTypes[i];
-    //        MATERIAL prefMat = owner.GetHighestElligibleMaterialPriority(currProdType);
-    //        initialSettlement.AdjustMaterial(prefMat, 200);
-    //    }
-    //    initialSettlement.AdjustMaterial(MATERIAL.CORN, 200);
-    //}
     #endregion
 
     #region Emblem

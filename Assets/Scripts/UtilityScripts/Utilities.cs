@@ -1581,6 +1581,34 @@ public class Utilities : MonoBehaviour {
             ARMOR_TYPE.BOOT,
             ARMOR_TYPE.BRACER
     };
+    public static TECHNOLOGY GetTechnologyForEquipment(EQUIPMENT_TYPE equipmentType) {
+        switch (equipmentType) {
+            case EQUIPMENT_TYPE.SWORD:
+                return TECHNOLOGY.SWORD_MAKING;
+            case EQUIPMENT_TYPE.DAGGER:
+                return TECHNOLOGY.DAGGER_MAKING;
+            case EQUIPMENT_TYPE.SPEAR:
+                return TECHNOLOGY.SPEAR_MAKING;
+            case EQUIPMENT_TYPE.BOW:
+                return TECHNOLOGY.BOW_MAKING;
+            case EQUIPMENT_TYPE.STAFF:
+                return TECHNOLOGY.STAFF_MAKING;
+            case EQUIPMENT_TYPE.AXE:
+                return TECHNOLOGY.AXE_MAKING;
+            case EQUIPMENT_TYPE.SHIRT:
+                return TECHNOLOGY.CHEST_ARMOR_MAKING;
+            case EQUIPMENT_TYPE.BRACER:
+                return TECHNOLOGY.GLOVE_MAKING;
+            case EQUIPMENT_TYPE.HELMET:
+                return TECHNOLOGY.HELMET_MAKING;
+            case EQUIPMENT_TYPE.LEGGINGS:
+                return TECHNOLOGY.LEGGINGS_MAKING;
+            case EQUIPMENT_TYPE.BOOT:
+                return TECHNOLOGY.BOOT_MAKING;
+            default:
+                throw new Exception("There is no technology for " + equipmentType.ToString());
+        }
+    }
     #endregion
 
     public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;

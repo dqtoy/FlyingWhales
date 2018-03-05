@@ -17,10 +17,11 @@ public class RecruitFollowers : CharacterTask {
     #region overrides
     public override void PerformTask() {
         base.PerformTask();
-        if (_assignedCharacter.specificLocation is HexTile) {
-            throw new System.Exception(_assignedCharacter.name + " is at a hextile rather than a landmark!");
+        if (!(_assignedCharacter.specificLocation is Settlement)) {
+            throw new System.Exception(_assignedCharacter.name + " is not at a settlement!");
         }
-        BaseLandmark location = _assignedCharacter.specificLocation as BaseLandmark;
+
+        Settlement location = _assignedCharacter.specificLocation as Settlement;
 		if(location.civilians > 0) {
 			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(location); 
 
