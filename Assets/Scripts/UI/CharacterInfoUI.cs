@@ -86,6 +86,12 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+        text += "\nCurrent Action: ";
+        if (currentlyShowingCharacter.currentTask != null) {
+            text += currentlyShowingCharacter.currentTask.taskType.ToString();
+        } else {
+            text += "NONE";
+        }
         text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
 		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
