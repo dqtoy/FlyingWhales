@@ -170,36 +170,9 @@ public class FactionManager : MonoBehaviour {
                     elligibleRegionsForFaction.Remove(chosenRegion);
                     elligibleRegionsForFaction.AddRange(chosenRegion.adjacentRegionsViaMajorRoad.Where(x => !elligibleRegionsForFaction.Contains(x) && x.owner == null));
                 }
+                CreateChieftainForFaction(newFaction);
             }
         }
-
-//        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-//            Region currRegion = GridMap.Instance.allRegions[i];
-//            if (currRegion.tilesInRegion.Where(x => x.materialOnTile != MATERIAL.NONE && MaterialManager.Instance.materialsLookup[x.materialOnTile].isEdible
-//            && MaterialManager.Instance.materialsLookup[x.materialOnTile].structure.structureQuality == STRUCTURE_QUALITY.BASIC).Any()) {
-//                elligibleRegions.Add(currRegion);
-//            }
-//        }
-//        for (int i = 0; i < inititalRaces.Length; i++) {
-//            RACE inititalRace = inititalRaces[i];
-//            Faction newFaction = CreateNewFaction(typeof(Tribe), inititalRace);
-//            Region regionForFaction = null;
-//            if (elligibleRegions.Count > 0) {
-//                regionForFaction = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
-//            } else if(allRegions.Count > 0) {
-//                regionForFaction = allRegions[Random.Range(0, allRegions.Count)];
-//            }
-//            elligibleRegions.Remove(regionForFaction);
-//            allRegions.Remove(regionForFaction);
-//            Utilities.ListRemoveRange(elligibleRegions, regionForFaction.adjacentRegions);
-//            Utilities.ListRemoveRange(allRegions, regionForFaction.adjacentRegions);
-//			//CreateInitialResourcesForSettlement((Settlement)regionForFaction.mainLandmark, newFaction);
-//            //regionForFaction.centerOfMass.landmarkOnTile.AdjustPopulation(100); //Capital Cities that spawn at world generation starts with 100 Population each.
-//            regionForFaction.centerOfMass.landmarkOnTile.AdjustCivilians(inititalRace, 100);
-//            LandmarkManager.Instance.OccupyLandmark(regionForFaction, newFaction);
-//            CreateInititalFactionCharacters(newFaction);
-////            CreateInitialResourcesForSettlement(newFaction.settlements.First());
-//        }
     }
     private int GetInitialVillageCount(FACTION_SIZE size) {
         switch (size) {
@@ -212,6 +185,20 @@ public class FactionManager : MonoBehaviour {
             default:
                 return 0;
         }
+    }
+    private void CreateChieftainForFaction(Faction faction) {
+        Settlement randomSettlement = faction.settlements[Random.Range(0, faction.settlements.Count)];
+        MATERIAL armorMaterialToUse = MATERIAL.NONE;
+        for (int i = 0; i < faction.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials.Count; i++) {
+            MATERIAL material = faction.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials[i];
+            if (ProductionManager.Instance.armorMaterials.Contains(material)) {
+                armorMaterialToUse = material;
+                break;
+            }
+        }
+        ECS.Character chieftain = randomSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
+        //EquipFullArmorSet(armorMaterialToUse, chieftain);
+        faction.SetLeader(chieftain);
     }
     /*
      Initital tribes should have a chieftain and a village head.
