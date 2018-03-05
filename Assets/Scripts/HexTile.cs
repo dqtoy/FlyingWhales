@@ -1933,11 +1933,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		return false;
 	}
 
-	internal void DestroyConnections(){
-		while(this.connectedTiles.Count > 0){
-			RoadManager.Instance.DestroyConnection (this, this.connectedTiles.Keys.ElementAt(0));
-		}
-	}
+	//internal void DestroyConnections(){
+	//	while(this.connectedTiles.Count > 0){
+	//		RoadManager.Instance.DestroyConnection (this, this.connectedTiles.Keys.ElementAt(0));
+	//	}
+	//}
 
 	internal int GetNumOfConnectedCenterOfMass(){
 		int count = 0;

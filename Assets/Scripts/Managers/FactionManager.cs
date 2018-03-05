@@ -146,33 +146,45 @@ public class FactionManager : MonoBehaviour {
             int numOfTribes = kvp.Value;
             for (int i = 0; i < numOfTribes; i++) {
                 RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
-                int numOfRegionsForCurrentFaction = GetInitialVillageCount(currSize);
-                Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
-                newFaction.GenerateBonusTech(currSize);
-                Region capitalRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
-                elligibleRegions.Remove(capitalRegion);
-                capitalRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
-                LandmarkManager.Instance.OccupyLandmark(capitalRegion, newFaction);
-                CreateInititalFactionCharacters(newFaction, capitalRegion.mainLandmark as Settlement);
-                CreateInitialResourceStructuresForFaction(newFaction, capitalRegion.mainLandmark as Settlement, capitalRegion);
-                List<Region> elligibleRegionsForFaction = new List<Region>();
-                elligibleRegionsForFaction.AddRange(capitalRegion.adjacentRegionsViaMajorRoad.Where(x => x.owner == null));
-                for (int j = 1; j < numOfRegionsForCurrentFaction; j++) { //start index at 1 since the new faction already has 1 initial village
-                    if (elligibleRegionsForFaction.Count <= 0) {
-                        throw new System.Exception("There are no more elligible regions for this faction!");
-                    }
-                    Region chosenRegion = elligibleRegionsForFaction[Random.Range(0, elligibleRegionsForFaction.Count)];
-                    chosenRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
-                    LandmarkManager.Instance.OccupyLandmark(chosenRegion, newFaction);
-                    CreateInititalFactionCharacters(newFaction, chosenRegion.mainLandmark as Settlement);
-                    CreateInitialResourceStructuresForFaction(newFaction, chosenRegion.mainLandmark as Settlement, chosenRegion);
-                    elligibleRegions.Remove(chosenRegion);
-                    elligibleRegionsForFaction.Remove(chosenRegion);
-                    elligibleRegionsForFaction.AddRange(chosenRegion.adjacentRegionsViaMajorRoad.Where(x => !elligibleRegionsForFaction.Contains(x) && x.owner == null));
-                }
-                CreateChieftainForFaction(newFaction);
+                CreateInitialFaction(currSize, elligibleRegions, chosenRace);
             }
         }
+    }
+    private void CreateInitialFaction(FACTION_SIZE size, List<Region> elligibleRegions, RACE chosenRace) {
+        int numOfRegionsForCurrentFaction = GetInitialVillageCount(size);
+        Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
+        newFaction.GenerateBonusTech(size);
+        for (int j = 0; j < numOfRegionsForCurrentFaction; j++) {
+            Region chosenRegion = null;
+            if (j == 0) {
+                chosenRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
+            } else {
+                List<Region> elligibleRegionsForFaction = GetElligibleRegionsForFaction(newFaction);
+                if (elligibleRegionsForFaction.Count <= 0) {
+                    throw new System.Exception("There are no more elligible regions for this faction!");
+                }
+                chosenRegion = elligibleRegionsForFaction[Random.Range(0, elligibleRegionsForFaction.Count)];
+            }
+            chosenRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
+            LandmarkManager.Instance.OccupyLandmark(chosenRegion, newFaction);
+            CreateInititalFactionCharacters(newFaction, chosenRegion.mainLandmark as Settlement);
+            CreateInitialResourceStructuresForFaction(newFaction, chosenRegion.mainLandmark as Settlement, chosenRegion);
+            elligibleRegions.Remove(chosenRegion);
+        }
+        CreateChieftainForFaction(newFaction);
+    }
+    private List<Region> GetElligibleRegionsForFaction(Faction faction) {
+        List<Region> elligibleRegions = new List<Region>();
+        for (int i = 0; i < faction.settlements.Count; i++) {
+            Region regionOfSettlement = faction.settlements[i].location.region;
+            for (int j = 0; j < regionOfSettlement.adjacentRegions.Count; j++) {
+                Region adjacentRegion = regionOfSettlement.adjacentRegions[j];
+                if (adjacentRegion.owner == null && !elligibleRegions.Contains(adjacentRegion)) {
+                    elligibleRegions.Add(adjacentRegion);
+                }
+            }
+        }
+        return elligibleRegions;
     }
     private int GetInitialVillageCount(FACTION_SIZE size) {
         switch (size) {

@@ -38,6 +38,7 @@ public class MapGenerator : MonoBehaviour {
         }
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
+
         if (!RoadManager.Instance.GenerateRegionRoads()) {
             //reset
             Debug.LogWarning("Road generation ran into a problem, reloading scene...");
@@ -49,8 +50,12 @@ public class MapGenerator : MonoBehaviour {
 
         LandmarkManager.Instance.GenerateOtherLandmarks();
         LandmarkManager.Instance.GenerateMaterials();
-  
+
+        
+        
         FactionManager.Instance.GenerateInititalFactions();
+        
+
         //KingdomManager.Instance.GenerateInitialKingdoms();
         //GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
 

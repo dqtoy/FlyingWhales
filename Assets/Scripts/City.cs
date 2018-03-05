@@ -798,7 +798,7 @@ public class City {
 		this.isPaired = false;
 
         region.RemoveOccupant();
-		this.hexTile.DestroyConnections ();
+		//this.hexTile.DestroyConnections ();
 
         //Destroy owned settlements
         for (int i = 0; i < ownedTiles.Count; i++) {

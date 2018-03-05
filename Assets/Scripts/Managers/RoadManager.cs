@@ -75,87 +75,87 @@ public class RoadManager : MonoBehaviour {
     //    //			}
     //    //		}
     //}
-    internal void DestroyConnection(HexTile fromTile, HexTile toTile) {
-        RoadConnection roadConnection = fromTile.connectedTiles[toTile];
-        GameObject.Destroy(roadConnection.gameObject);
-        fromTile.connectedTiles.Remove(toTile);
-        toTile.connectedTiles.Remove(fromTile);
-    }
+    //internal void DestroyConnection(HexTile fromTile, HexTile toTile) {
+    //    RoadConnection roadConnection = fromTile.connectedTiles[toTile];
+    //    GameObject.Destroy(roadConnection.gameObject);
+    //    fromTile.connectedTiles.Remove(toTile);
+    //    toTile.connectedTiles.Remove(fromTile);
+    //}
 
-    internal bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2) {
+    //internal bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2) {
 
-        Vector3 lineVec3 = linePoint2 - linePoint1;
-        Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
-        Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
+    //    Vector3 lineVec3 = linePoint2 - linePoint1;
+    //    Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
+    //    Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
 
-        float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
+    //    float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
 
-        //is coplanar, and not parrallel
-        if (Mathf.Abs(planarFactor) < 0.0001f && crossVec1and2.sqrMagnitude > 0.0001f) {
-            float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
-            intersection = linePoint1 + (lineVec1 * s);
-            return true;
-        } else {
-            intersection = Vector3.zero;
-            return false;
-        }
-    }
+    //    //is coplanar, and not parrallel
+    //    if (Mathf.Abs(planarFactor) < 0.0001f && crossVec1and2.sqrMagnitude > 0.0001f) {
+    //        float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
+    //        intersection = linePoint1 + (lineVec1 * s);
+    //        return true;
+    //    } else {
+    //        intersection = Vector3.zero;
+    //        return false;
+    //    }
+    //}
 
-    internal Vector3 GetIntersection(Vector3 firstPoint1, Vector3 firstPoint2, Vector3 secondPoint1, Vector3 secondPoint2) {
-        float A1 = firstPoint2.y - firstPoint1.y;
-        float B1 = firstPoint1.x - firstPoint2.x;
-        float C1 = A1 * firstPoint1.x + B1 * firstPoint1.y;
+    //internal Vector3 GetIntersection(Vector3 firstPoint1, Vector3 firstPoint2, Vector3 secondPoint1, Vector3 secondPoint2) {
+    //    float A1 = firstPoint2.y - firstPoint1.y;
+    //    float B1 = firstPoint1.x - firstPoint2.x;
+    //    float C1 = A1 * firstPoint1.x + B1 * firstPoint1.y;
 
-        float A2 = secondPoint2.y - secondPoint1.y;
-        float B2 = secondPoint1.x - secondPoint2.x;
-        float C2 = A2 * secondPoint1.x + B2 * secondPoint1.y;
+    //    float A2 = secondPoint2.y - secondPoint1.y;
+    //    float B2 = secondPoint1.x - secondPoint2.x;
+    //    float C2 = A2 * secondPoint1.x + B2 * secondPoint1.y;
 
-        float det = A1 * B2 - A2 * B1;
+    //    float det = A1 * B2 - A2 * B1;
 
-        float x = (B2 * C1 - B1 * C2) / det;
-        float y = (A1 * C2 - A2 * C1) / det;
+    //    float x = (B2 * C1 - B1 * C2) / det;
+    //    float y = (A1 * C2 - A2 * C1) / det;
 
-        return new Vector3(x, y, 0f);
-    }
+    //    return new Vector3(x, y, 0f);
+    //}
 
-    internal bool IsIntersectingWith(HexTile fromTile, HexTile toTile, ROAD_TYPE roadType) {
-        Vector3 fromPos = fromTile.gameObject.transform.position;
-        Vector3 toPos = toTile.gameObject.transform.position;
-        Vector3 targetDir = toPos - fromPos;
-        //		Ray2D ray = new Ray2D (fromPos, targetDir);
-        float distance = Vector3.Distance(fromTile.transform.position, toTile.transform.position);
-        RaycastHit2D hit = Physics2D.Raycast(fromPos, targetDir, distance);
-        if (hit) {
-            //			Debug.LogError ("HIT: " + hit.collider.name);
-            string tagName = "All";
-            if (roadType == ROAD_TYPE.MAJOR) {
-                tagName = "MajorRoad";
-            } else if (roadType == ROAD_TYPE.MINOR) {
-                tagName = "MinorRoad";
-            }
-            //			if(hit.collider.tag == "Hextile" && hit.collider.name == toTile.name){
-            //				return false;
-            //			}
-            if (tagName == "All") {
-                if (hit.collider.tag == "MajorRoad" || hit.collider.tag == "MinorRoad") {
-                    RoadConnection roadConnection = hit.collider.transform.parent.gameObject.GetComponent<RoadConnection>();
-                    //					Vector3 intersectionPoint = Vector3.zero;
-                    Vector3 intersectionPoint = RoadManager.Instance.GetIntersection(fromPos, toPos, roadConnection.fromTile.transform.position, roadConnection.toTile.transform.position);
-                    Debug.LogError(fromTile.name + " and " + toTile.name + " - " + roadConnection.fromTile.name + " and " + roadConnection.toTile.name + " HAS INTERSECTED AT POINT: " + intersectionPoint.ToString());
+    //internal bool IsIntersectingWith(HexTile fromTile, HexTile toTile, ROAD_TYPE roadType) {
+    //    Vector3 fromPos = fromTile.gameObject.transform.position;
+    //    Vector3 toPos = toTile.gameObject.transform.position;
+    //    Vector3 targetDir = toPos - fromPos;
+    //    //		Ray2D ray = new Ray2D (fromPos, targetDir);
+    //    float distance = Vector3.Distance(fromTile.transform.position, toTile.transform.position);
+    //    RaycastHit2D hit = Physics2D.Raycast(fromPos, targetDir, distance);
+    //    if (hit) {
+    //        //			Debug.LogError ("HIT: " + hit.collider.name);
+    //        string tagName = "All";
+    //        if (roadType == ROAD_TYPE.MAJOR) {
+    //            tagName = "MajorRoad";
+    //        } else if (roadType == ROAD_TYPE.MINOR) {
+    //            tagName = "MinorRoad";
+    //        }
+    //        //			if(hit.collider.tag == "Hextile" && hit.collider.name == toTile.name){
+    //        //				return false;
+    //        //			}
+    //        if (tagName == "All") {
+    //            if (hit.collider.tag == "MajorRoad" || hit.collider.tag == "MinorRoad") {
+    //                RoadConnection roadConnection = hit.collider.transform.parent.gameObject.GetComponent<RoadConnection>();
+    //                //					Vector3 intersectionPoint = Vector3.zero;
+    //                Vector3 intersectionPoint = RoadManager.Instance.GetIntersection(fromPos, toPos, roadConnection.fromTile.transform.position, roadConnection.toTile.transform.position);
+    //                Debug.LogError(fromTile.name + " and " + toTile.name + " - " + roadConnection.fromTile.name + " and " + roadConnection.toTile.name + " HAS INTERSECTED AT POINT: " + intersectionPoint.ToString());
 
-                    return true;
-                }
-            } else {
-                if (hit.collider.tag == tagName) {
-                    RoadConnection roadConnection = hit.collider.transform.parent.gameObject.GetComponent<RoadConnection>();
-                    Vector3 intersectionPoint = RoadManager.Instance.GetIntersection(fromPos, toPos, roadConnection.fromTile.transform.position, roadConnection.toTile.transform.position);
-                    Debug.LogError(fromTile.name + " and " + toTile.name + " - " + roadConnection.fromTile.name + " and " + roadConnection.toTile.name + " HAS INTERSECTED AT POINT: " + intersectionPoint.ToString());
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    //                return true;
+    //            }
+    //        } else {
+    //            if (hit.collider.tag == tagName) {
+    //                RoadConnection roadConnection = hit.collider.transform.parent.gameObject.GetComponent<RoadConnection>();
+    //                Vector3 intersectionPoint = RoadManager.Instance.GetIntersection(fromPos, toPos, roadConnection.fromTile.transform.position, roadConnection.toTile.transform.position);
+    //                Debug.LogError(fromTile.name + " and " + toTile.name + " - " + roadConnection.fromTile.name + " and " + roadConnection.toTile.name + " HAS INTERSECTED AT POINT: " + intersectionPoint.ToString());
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
 
     /*
      * <summary>
@@ -175,7 +175,7 @@ public class RoadManager : MonoBehaviour {
         regionIslandDict.Add(activeRegion, islandNum);
         for (int i = 0; i < unconnectedRegions.Count; i++) {
             Region currRegion = unconnectedRegions[i];
-            if(currRegion.id != activeRegion.id) {
+            if (currRegion.id != activeRegion.id) {
                 regionIslandDict.Add(currRegion, -1);
             }
         }
@@ -213,7 +213,7 @@ public class RoadManager : MonoBehaviour {
                         int previousIslandOfOtherRegion = regionIslandDict[otherRegion]; //Get island id of other region, -1 means it is not part of an island yet
 
 
-                        if(previousIslandOfOtherRegion == -1) {
+                        if (previousIslandOfOtherRegion == -1) {
                             //other region is not part of an island yet, add it to the active regions' island
                             regionIslandDict[otherRegion] = islandOfActiveRegion;
                             islands[islandOfActiveRegion].Add(otherRegion);
@@ -231,7 +231,7 @@ public class RoadManager : MonoBehaviour {
                             }
                         }
 
-                        if(otherRegion.connections.Count >= 2) {
+                        if (otherRegion.connections.Count >= 2) {
                             //if the active region has connected to another region that already has 2 or more connections, 
                             //randomize another active region
                             activeRegion = null;
@@ -282,6 +282,41 @@ public class RoadManager : MonoBehaviour {
         Debug.Log("Regions with 4 connections: " + GridMap.Instance.allRegions.Where(x => x.connections.Count == 4).Count().ToString());
         return true;
     }
+
+    //internal bool GenerateRegionRoads() {
+    //    //connect same faction villages with each other
+    //    for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
+    //        Tribe currTribe = FactionManager.Instance.allTribes[i];
+    //        List<Region> ownedRegions = currTribe.settlements.Select(x => x.location.region).ToList();
+    //        List<Region> unconnectedRegions = new List<Region>(ownedRegions);
+    //        while (unconnectedRegions.Count != 0) {
+    //            Region activeRegion = unconnectedRegions[Random.Range(0, unconnectedRegions.Count)];
+    //            List<Region> elligibleRegionsForConnection = new List<Region>(activeRegion.adjacentRegions.Where(x => ownedRegions.Contains(x)));
+    //            //bool hasConnected = false;
+    //            //Order elligible regions by least num of connections
+    //            elligibleRegionsForConnection.OrderBy(x => x.connections.Count).ToList();
+    //            for (int j = 0; j < elligibleRegionsForConnection.Count; j++) {
+    //                Region otherRegion = elligibleRegionsForConnection[j];
+    //                //Check if other region has reached maximum number of city connections (3)
+    //                //and active region is not already connected to other region
+    //                if (otherRegion.connections.Count < maxCityConnections && !activeRegion.connections.Contains(otherRegion)) {
+    //                    //Check if active region has a path towards other region, use rules
+    //                    List<HexTile> pathToOtherRegion = PathGenerator.Instance.GetPath(activeRegion.centerOfMass, otherRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
+    //                    if (pathToOtherRegion != null) {
+    //                        //hasConnected = true;
+    //                        unconnectedRegions.Remove(activeRegion);
+    //                        unconnectedRegions.Remove(otherRegion);
+    //                        ConnectRegions(activeRegion, otherRegion);
+    //                        CreateRoad(pathToOtherRegion, ROAD_TYPE.MAJOR);
+    //                        break;
+    //                    }
+    //                }
+
+    //            }
+    //        }
+    //    }
+    //    return true;
+    //}
 
     private void ConnectRegionToAdjacentRegion(Region region) {
         for (int i = 0; i < region.adjacentRegions.Count; i++) {
