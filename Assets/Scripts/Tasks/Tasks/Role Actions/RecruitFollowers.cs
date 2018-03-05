@@ -28,16 +28,14 @@ public class RecruitFollowers : CharacterTask {
 	}
     public override void PerformTask() {
         base.PerformTask();
-//		if (_targetLandmark is HexTile) {
-//            throw new System.Exception(_assignedCharacter.name + " is at a hextile rather than a landmark!");
-//      }
-		if(_targetLandmark != null && _targetLandmark.civilians > 0) {
-			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(_targetLandmark); 
 
+		if(_targetLandmark != null && _targetLandmark.civilians > 0 && _targetLandmark is Settlement) {
+			Settlement settlement = (Settlement)_targetLandmark;
+			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(_targetLandmark); 
 			string chosenAction = recruitActions.PickRandomElementGivenWeights();
 			if (chosenAction.Equals(createKey)) {
 				//Create Follower For character
-				ECS.Character newFollower = _targetLandmark.CreateNewFollower();
+				ECS.Character newFollower = settlement.CreateNewFollower();
 				Party party = _assignedCharacter.party;
 				if(party == null) {
 					party = _assignedCharacter.CreateNewParty();

@@ -87,6 +87,32 @@ public class DungeonLandmark : BaseLandmark {
     private void SpawnAncientVampire() {
         ECS.Character mingonArcanistVampire = CreateNewCharacter(RACE.MINGONS, CHARACTER_ROLE.ANCIENT_VAMPIRE, "Arcanist");
         mingonArcanistVampire.AddCharacterTag(new Vampire(mingonArcanistVampire));
+        EquipGearForVampire(mingonArcanistVampire);
+    }
+    private void EquipGearForVampire(ECS.Character vampire) {
+        //Weapon
+        ECS.Item weapon = ItemManager.Instance.CreateNewItemInstance("Mithril Staff");
+        vampire.EquipItem(weapon);
+
+        //Armor
+        ECS.Item boot = ItemManager.Instance.CreateNewItemInstance("Mithril Boot");
+        ECS.Item boot2 = ItemManager.Instance.CreateNewItemInstance("Mithril Boot");
+        vampire.EquipItem(boot);
+        vampire.EquipItem(boot2);
+
+        ECS.Item bracer = ItemManager.Instance.CreateNewItemInstance("Mithril Bracer");
+        ECS.Item bracer2 = ItemManager.Instance.CreateNewItemInstance("Mithril Bracer");
+        vampire.EquipItem(bracer);
+        vampire.EquipItem(bracer2);
+
+        ECS.Item helmet = ItemManager.Instance.CreateNewItemInstance("Mithril Helmet");
+        vampire.EquipItem(helmet);
+
+        ECS.Item leggings = ItemManager.Instance.CreateNewItemInstance("Mithril Leggings");
+        vampire.EquipItem(leggings);
+
+        ECS.Item shirt = ItemManager.Instance.CreateNewItemInstance("Mithril Shirt");
+        vampire.EquipItem(shirt);
     }
     #endregion
 }

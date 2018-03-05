@@ -1327,7 +1327,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
 			return;
 		}
-		_hoverHighlightGO.SetActive(true);
+        if (this.landmarkOnTile != null) {
+            _hoverHighlightGO.SetActive(true);
+        }
 		//if (_landmarkOnTile != null) {
 		//	if(_landmarkOnTile.owner != null) { //landmark is occupied
 		//		if (isHabitable) {
@@ -1359,9 +1361,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
 		if(this.landmarkOnTile != null){
 			UIManager.Instance.ShowSettlementInfo (this.landmarkOnTile);
-		}else{
-			UIManager.Instance.ShowHexTileInfo (this);
 		}
+  //      else{
+		//	UIManager.Instance.ShowHexTileInfo (this);
+		//}
 		UIManager.Instance.HidePlayerActions ();
     }
 	private void RightClick(){

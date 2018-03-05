@@ -91,6 +91,15 @@ public class Settlement : BaseLandmark {
     #endregion
 
     #region Characters
+    public ECS.Character CreateNewFollower() {
+        MATERIAL material = MATERIAL.NONE;
+        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
+        CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.NONE, Utilities.NormalizeString(chosenClass.ToString()));
+        newFollower.SetFollowerState(true);
+        CharacterManager.Instance.EquipCharacterWithBestGear(this, newFollower);
+        return newFollower;
+    }
     protected void TrainCharacterInSettlement(){
 		bool canTrainCharacter = false;
 		MATERIAL materialToUse = MATERIAL.NONE;
@@ -569,16 +578,30 @@ public class Settlement : BaseLandmark {
         }
         return false;
     }
-    public MATERIAL GetMaterialForConstruction() {
-        List<MATERIAL> preferredMats = _owner.productionPreferences[PRODUCTION_TYPE.CONSTRUCTION].prioritizedMaterials;
+    public MATERIAL GetMaterialFor(PRODUCTION_TYPE productionType) {
+        List<MATERIAL> preferredMats = _owner.productionPreferences[productionType].prioritizedMaterials;
+        List<MATERIAL> materialReference;
+        switch (productionType) {
+            case PRODUCTION_TYPE.WEAPON:
+                materialReference = ProductionManager.Instance.weaponMaterials;
+                break;
+            case PRODUCTION_TYPE.ARMOR:
+                materialReference = ProductionManager.Instance.armorMaterials;
+                break;
+            case PRODUCTION_TYPE.CONSTRUCTION:
+                materialReference = ProductionManager.Instance.constructionMaterials;
+                break;
+            case PRODUCTION_TYPE.TRAINING:
+                materialReference = ProductionManager.Instance.trainingMaterials;
+                break;
+            default:
+                throw new System.Exception("No material reference for " + productionType.ToString());
+        }
         for (int i = 0; i < preferredMats.Count; i++) {
             MATERIAL currMat = preferredMats[i];
-            if (ProductionManager.Instance.constructionMaterials.Contains(currMat)) {
-                if (HasAccessToMaterial(currMat)) {
+            if (materialReference.Contains(currMat)) {
+                //if (HasAccessToMaterial(currMat)) { //Do not check if the settlement has access to the material for now
                     return currMat;
-                }
-                //if (HasAvailableMaterial(currMat, constructionData.production.resourceCost)) {
-                //    return currMat; //Check if this landmark has a resource with the required amount, that can build the structure
                 //}
             }
         }
