@@ -447,17 +447,35 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    public List<ECS.Character> GetCharacters(Region region, CharacterFilter filter) {
-        List<ECS.Character> filteredCharacters = new List<ECS.Character>();
+    public List<ECS.Character> GetCharacters(Region region, CharacterTask task) {
+        List<ECS.Character> characters = new List<ECS.Character>();
         for (int i = 0; i < region.charactersInRegion.Count; i++) {
-            ECS.Character currCharacter = region.charactersInRegion[i];
-            if (filter.MeetsRequirements(currCharacter)) {
-                if (!filteredCharacters.Contains(currCharacter)) {
-                    filteredCharacters.Add(currCharacter);
-                }
+            ECS.Character character = region.charactersInRegion[i].mainCharacter;
+            if (task.CanMeetRequirements(character)) {
+                characters.Add(character);
             }
         }
-        return filteredCharacters;
+        return characters;
+    }
+    public List<ECS.Character> GetCharacters(ILocation location, CharacterTask task) {
+        List<ECS.Character> characters = new List<ECS.Character>();
+        for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+            ECS.Character character = location.charactersAtLocation[i].mainCharacter;
+            if (task.CanMeetRequirements(character)) {
+                characters.Add(character);
+            }
+        }
+        return characters;
+        //List<ECS.Character> filteredCharacters = new List<ECS.Character>();
+        //for (int i = 0; i < region.charactersInRegion.Count; i++) {
+        //    ECS.Character currCharacter = region.charactersInRegion[i];
+        //    if (filter.MeetsRequirements(currCharacter)) {
+        //        if (!filteredCharacters.Contains(currCharacter)) {
+        //            filteredCharacters.Add(currCharacter);
+        //        }
+        //    }
+        //}
+        //return filteredCharacters;
     }
     #endregion
 }

@@ -2241,6 +2241,19 @@ namespace ECS {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
                 if (!this.isDead) {
+                    if (this.specificLocation is BaseLandmark && this.faction != null) {
+                        BaseLandmark landmarkLocation = this.specificLocation as BaseLandmark;
+                        if (landmarkLocation.owner != null) {
+                            if (landmarkLocation.owner.id == this.faction.id) {
+                                return; //the character is already at a landmark that is owned by it's faction
+                            } else {
+                                FactionRelationship rel = landmarkLocation.owner.GetRelationshipWith(this.faction);
+                                if (rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                                    return; //the character is already at a landmark that is owned by a faction that it is not hostile towards
+                                }
+                            }
+                        }
+                    }
                     BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
                     if (targetLocation == null) {
                         throw new Exception(this.name + " could not find a non hostile location to run to!");

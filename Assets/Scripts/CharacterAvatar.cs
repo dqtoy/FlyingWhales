@@ -163,7 +163,7 @@ public class CharacterAvatar : PooledObject{
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
-                    RemoveCharactersFromLocation(this.currLocation);
+                    RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
                     this.MakeCitizenMove(this.currLocation.tileLocation, this.path[0]);
                 }
             }

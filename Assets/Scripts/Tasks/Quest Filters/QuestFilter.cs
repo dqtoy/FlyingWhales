@@ -119,15 +119,19 @@ public class MustHaveTags : QuestFilter {
 
 public class MustBeClass : QuestFilter {
 
-	private string _requiredClass;
+	private List<CHARACTER_CLASS> _allowedClasses;
 
-	public MustBeClass(string requiredClass) {
-        _requiredClass = requiredClass;
+	public MustBeClass(CHARACTER_CLASS requiredClass) {
+        _allowedClasses = new List<CHARACTER_CLASS>();
+        _allowedClasses.Add(requiredClass);
     }
-
+    public MustBeClass(List<CHARACTER_CLASS> requiredClasses) {
+        _allowedClasses = requiredClasses;
+    }
     #region overrides
     public override bool MeetsRequirements(ECS.Character character) {
-         return character.characterClass.className == _requiredClass;
+        //TODO change enum parsing if possible
+        return _allowedClasses.Contains((CHARACTER_CLASS)System.Enum.Parse(typeof(CHARACTER_CLASS), character.characterClass.className, true));
     }
     #endregion
 }
