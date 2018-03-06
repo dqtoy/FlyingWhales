@@ -166,20 +166,19 @@ public class RoadManager : MonoBehaviour {
         float startTime = Time.time;
 
         List<Region> unconnectedRegions = new List<Region>(GridMap.Instance.allRegions);
-        Region activeRegion = unconnectedRegions[Random.Range(0, unconnectedRegions.Count)]; ;
 
         int islandNum = 0;
         Dictionary<Region, int> regionIslandDict = new Dictionary<Region, int>();
         Dictionary<int, List<Region>> islands = new Dictionary<int, List<Region>>();
 
-        regionIslandDict.Add(activeRegion, islandNum);
         for (int i = 0; i < unconnectedRegions.Count; i++) {
             Region currRegion = unconnectedRegions[i];
-            if (currRegion.id != activeRegion.id) {
-                regionIslandDict.Add(currRegion, -1);
-            }
+            regionIslandDict.Add(currRegion, -1);
         }
-        islands.Add(islandNum, new List<Region>() { activeRegion });
+
+        GenerateFactionVillageRoads(ref islandNum, regionIslandDict, islands, unconnectedRegions);
+
+        Region activeRegion = null;
 
         while (unconnectedRegions.Count > 0) {
             //Choose a random region to start, the region must not have any connections yet
@@ -191,12 +190,13 @@ public class RoadManager : MonoBehaviour {
             }
 
             bool hasConnected = false;
+            List<Region> elligibleRegionsToConnectTo = new List<Region>();
             //Order adjacent regions by least num of connections
-            List<Region> adjacentRegions = activeRegion.adjacentRegions.OrderBy(x => x.connections.Count).ToList();
+            elligibleRegionsToConnectTo.AddRange(activeRegion.adjacentRegions.Where(x => !elligibleRegionsToConnectTo.Contains(x)).OrderBy(x => x.connections.Count));
 
             //connect active region to any adjacent region, use rules
-            for (int i = 0; i < adjacentRegions.Count; i++) {
-                Region otherRegion = adjacentRegions[i];
+            for (int i = 0; i < elligibleRegionsToConnectTo.Count; i++) {
+                Region otherRegion = elligibleRegionsToConnectTo[i];
                 //Check if other region has reached maximum number of city connections (3)
                 //and active region is not already connected to other region
                 if (otherRegion.connections.Count < maxCityConnections && !activeRegion.connections.Contains(otherRegion)) {
@@ -211,7 +211,6 @@ public class RoadManager : MonoBehaviour {
 
                         int islandOfActiveRegion = regionIslandDict[activeRegion];//island ID of active region
                         int previousIslandOfOtherRegion = regionIslandDict[otherRegion]; //Get island id of other region, -1 means it is not part of an island yet
-
 
                         if (previousIslandOfOtherRegion == -1) {
                             //other region is not part of an island yet, add it to the active regions' island
@@ -231,7 +230,7 @@ public class RoadManager : MonoBehaviour {
                             }
                         }
 
-                        if (otherRegion.connections.Count >= 2) {
+                        if (otherRegion.connections.Count >= 2 || otherRegion.owner != null) {
                             //if the active region has connected to another region that already has 2 or more connections, 
                             //randomize another active region
                             activeRegion = null;
@@ -248,6 +247,17 @@ public class RoadManager : MonoBehaviour {
                 unconnectedRegions.Remove(activeRegion);
                 activeRegion = null;
             }
+        }
+
+        List<int> islandsToRemove = new List<int>();
+        foreach (KeyValuePair<int, List<Region>> kvp in islands) {
+            if (kvp.Value.Count == 0) {
+                islandsToRemove.Add(kvp.Key);
+            }
+        }
+        for (int i = 0; i < islandsToRemove.Count; i++) {
+            int currIslandToRemove = islandsToRemove[i];
+            islands.Remove(currIslandToRemove);
         }
 
         //Connect Islands to each other
@@ -283,40 +293,72 @@ public class RoadManager : MonoBehaviour {
         return true;
     }
 
-    //internal bool GenerateRegionRoads() {
-    //    //connect same faction villages with each other
-    //    for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
-    //        Tribe currTribe = FactionManager.Instance.allTribes[i];
-    //        List<Region> ownedRegions = currTribe.settlements.Select(x => x.location.region).ToList();
-    //        List<Region> unconnectedRegions = new List<Region>(ownedRegions);
-    //        while (unconnectedRegions.Count != 0) {
-    //            Region activeRegion = unconnectedRegions[Random.Range(0, unconnectedRegions.Count)];
-    //            List<Region> elligibleRegionsForConnection = new List<Region>(activeRegion.adjacentRegions.Where(x => ownedRegions.Contains(x)));
-    //            //bool hasConnected = false;
-    //            //Order elligible regions by least num of connections
-    //            elligibleRegionsForConnection.OrderBy(x => x.connections.Count).ToList();
-    //            for (int j = 0; j < elligibleRegionsForConnection.Count; j++) {
-    //                Region otherRegion = elligibleRegionsForConnection[j];
-    //                //Check if other region has reached maximum number of city connections (3)
-    //                //and active region is not already connected to other region
-    //                if (otherRegion.connections.Count < maxCityConnections && !activeRegion.connections.Contains(otherRegion)) {
-    //                    //Check if active region has a path towards other region, use rules
-    //                    List<HexTile> pathToOtherRegion = PathGenerator.Instance.GetPath(activeRegion.centerOfMass, otherRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
-    //                    if (pathToOtherRegion != null) {
-    //                        //hasConnected = true;
-    //                        unconnectedRegions.Remove(activeRegion);
-    //                        unconnectedRegions.Remove(otherRegion);
-    //                        ConnectRegions(activeRegion, otherRegion);
-    //                        CreateRoad(pathToOtherRegion, ROAD_TYPE.MAJOR);
-    //                        break;
-    //                    }
-    //                }
+    private void GenerateFactionVillageRoads(ref int islandNum, Dictionary<Region, int> regionIslandDict, Dictionary<int, List<Region>> islands, List<Region> unconnectedRegions) {
+        //connect all faction villages with each other
+        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
+            Tribe currTribe = FactionManager.Instance.allTribes[i];
+            List<Region> ownedRegions = currTribe.settlements.Select(x => x.location.region).ToList();
+            if (ownedRegions.Count > 1) {
+                for (int j = 0; j < ownedRegions.Count; j++) {
+                    Region currOwnedRegion = ownedRegions[j];
+                    //the current region is not yet connected with any region from it's own faction
+                    if (!IsRegionConnectedToSameFactionRegion(currOwnedRegion)) {
+                        List<Region> elligibleRegions = currOwnedRegion.adjacentRegions.Where(x => x.owner != null && x.owner.id == currTribe.id).ToList();
+                        elligibleRegions.OrderBy(x => x.centerOfMass.GetDistanceTo(currOwnedRegion.centerOfMass));
+                        for (int k = 0; k < elligibleRegions.Count; k++) {
+                            Region possibleRegionToConnectTo = elligibleRegions[k];
+                            List<HexTile> pathToOtherRegion = PathGenerator.Instance.GetPath(currOwnedRegion.centerOfMass, possibleRegionToConnectTo.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
+                            if (pathToOtherRegion != null) {
+                                unconnectedRegions.Remove(currOwnedRegion);
+                                unconnectedRegions.Remove(possibleRegionToConnectTo);
+                                ConnectRegions(currOwnedRegion, possibleRegionToConnectTo);
+                                CreateRoad(pathToOtherRegion, ROAD_TYPE.MAJOR);
 
-    //            }
-    //        }
-    //    }
-    //    return true;
-    //}
+                                regionIslandDict[currOwnedRegion] = islandNum;
+                                islands.Add(islandNum, new List<Region>() { currOwnedRegion });
+
+                                int islandOfCurrOwnedRegion = regionIslandDict[currOwnedRegion];//island ID of active region
+                                int previousIslandOfOtherRegion = regionIslandDict[possibleRegionToConnectTo]; //Get island id of other region, -1 means it is not part of an island yet
+
+                                if (previousIslandOfOtherRegion == -1) {
+                                    //other region is not part of an island yet, add it to the active regions' island
+                                    regionIslandDict[possibleRegionToConnectTo] = islandOfCurrOwnedRegion;
+                                    islands[islandOfCurrOwnedRegion].Add(possibleRegionToConnectTo);
+                                } else {
+                                    if (islandOfCurrOwnedRegion != previousIslandOfOtherRegion) {
+                                        List<Region> regionsInPreviousIsland = islands[previousIslandOfOtherRegion];
+                                        for (int l = 0; l < regionsInPreviousIsland.Count; l++) {
+                                            Region regionToTransfer = regionsInPreviousIsland[l];
+                                            if (!islands[islandOfCurrOwnedRegion].Contains(regionToTransfer)) {
+                                                islands[islandOfCurrOwnedRegion].Add(regionToTransfer);
+                                            }
+                                            regionIslandDict[regionToTransfer] = islandOfCurrOwnedRegion;
+                                        }
+                                        islands.Remove(previousIslandOfOtherRegion);
+                                    }
+                                }
+                                islandNum++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    private bool IsRegionConnectedToSameFactionRegion(Region region) {
+        if (region.owner == null) {
+            return true;
+        } else {
+            List<Region> connections = region.connections.Where(x => x is Region).Select(x => x as Region).ToList();
+            if (connections.Where(x => x.owner != null && x.owner.id == region.owner.id).Any()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void ConnectRegionToAdjacentRegion(Region region) {
         for (int i = 0; i < region.adjacentRegions.Count; i++) {
@@ -348,12 +390,14 @@ public class RoadManager : MonoBehaviour {
                 for (int k = 0; k < regionsInOtherIsland.Count; k++) {
                     Region otherIslandRegion = regionsInOtherIsland[k];
                     //Check if both regions are adjacent and still has a slot for connection
-                    if (currMainIslandRegion.connections.Count < maxCityConnections && otherIslandRegion.connections.Count < maxCityConnections
-                        && currMainIslandRegion.adjacentRegions.Contains(otherIslandRegion)) {
+                    //if (currMainIslandRegion.connections.Count < maxCityConnections && otherIslandRegion.connections.Count < maxCityConnections
+                    //    && currMainIslandRegion.adjacentRegions.Contains(otherIslandRegion)) {
+                    if (currMainIslandRegion.adjacentRegions.Contains(otherIslandRegion)) {
                         //Check if the 2 regions have a path towards each other, using the rules
                         List<HexTile> pathToOtherRegion = PathGenerator.Instance
                             .GetPath(currMainIslandRegion.centerOfMass, otherIslandRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
                         if (pathToOtherRegion != null) {
+                            regionsInMainIsland.AddRange(islands[otherIslandKey]);
                             islands[otherIslandKey].Clear();
                             hasFoundConnection = true;
                             ConnectRegions(currMainIslandRegion, otherIslandRegion);
