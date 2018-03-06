@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class PlayerActionsUI : MonoBehaviour {
 	public GameObject characterTaskButtonGO;
 	public GameObject specificCharacterTaskButtonGO;
+	public GameObject bottomSpriteGO;
 
 	public GameObject specificTargetsGO;
 	public UIGrid buttonsGrid;
@@ -35,6 +36,28 @@ public class PlayerActionsUI : MonoBehaviour {
 	}
 	public void HidePlayerActionsUI(){
 		this.gameObject.SetActive (false);
+	}
+	public void Reposition(){
+		Vector3 newPosX = location.tileLocation.transform.position;
+		Vector3 screenPosX = Camera.main.WorldToScreenPoint (newPosX);
+		if(screenPosX.x < 120f){
+			screenPosX.x = 120f;
+			newPosX = Camera.main.ScreenToWorldPoint (screenPosX);
+		}else if(screenPosX.x > 1390f){
+			screenPosX.x = 1390f;
+			newPosX = Camera.main.ScreenToWorldPoint (screenPosX);
+		}
+//		gameObject.transform.position = newPosX;
+
+//		Vector3 newPosY = bottomSpriteGO.transform.position;
+		Vector3 screenPosY = Camera.main.WorldToScreenPoint (bottomSpriteGO.transform.position);
+		if(screenPosY.y < 5f){
+			double additionalPosY = System.Math.Round((double)((((float)(stretchableBG.height - characterTaskButtonHeight)) / 4f) * 0.1f), 1);
+			newPosX.y += (1f + (float)additionalPosY);
+//			gameObject.transform.position = new Vector3 (newPosX.x, newPosY.y, newPosX.z);
+		}
+		gameObject.transform.position = newPosX;
+
 	}
 
 	private void OnShow(){
@@ -163,4 +186,16 @@ public class PlayerActionsUI : MonoBehaviour {
 			specificStretchableBG.height = defaultWidgetHeight;
 		}
 	}
+
+	#region For Testing
+	[ContextMenu("Show Screen Pos")]
+	public void ScreenPos(){
+		Debug.Log (Camera.main.WorldToScreenPoint (gameObject.transform.position));
+	}
+	[ContextMenu("Show Bottom Screen Pos")]
+	public void BotScreenPos(){
+		Debug.Log (bottomSpriteGO.transform.position);
+		Debug.Log (Camera.main.WorldToScreenPoint (bottomSpriteGO.transform.position));
+	}
+	#endregion
 }
