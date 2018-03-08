@@ -15,11 +15,11 @@ public class Quest {
     protected int _id;
     protected TaskCreator _createdBy;
     protected QUEST_TYPE _questType;
-    protected bool _isAccepted;
 
-    protected ECS.Character _assignedCharacter;
-    protected int _currentPhase; //The index of the task the quest is currently on
-    protected List<CharacterTask> _tasks; //The list of tasks that the character has to do to progress through the quest
+    protected List<ECS.Character> _acceptedCharacters;
+    //protected int _currentPhase; //The index of the task the quest is currently on
+    protected List<QuestPhase> _phases;
+    //protected List<CharacterTask> _tasks; //The list of tasks that the character has to do to progress through the quest
 
     #region getters/setters
     public int id {
@@ -37,30 +37,30 @@ public class Quest {
 
     #region virtuals
     /*
+     Can a character accept this quest
+         */
+    public virtual bool CanAcceptQuest(ECS.Character character) {
+        return false;
+    }
+    /*
      Return the weight that a character will accept this quest
          */
     public virtual int GetAcceptQuestWeight() {
         return 0;
     }
     public virtual void AcceptQuest(ECS.Character accepter) {
-        _isAccepted = true;
         accepter.SetCurrentQuest(this);
+        _acceptedCharacters.Add(accepter);
     }
     public virtual void QuestTaskDone(TASK_ACTION_RESULT result) {
         if (result == TASK_ACTION_RESULT.SUCCESS) {
-            AdvancePhase();
+            //AdvancePhase();
         }
     }
     #endregion
 
-    public CharacterTask GetCurrentTaskOfQuest() {
-        return _tasks[_currentPhase];
-    }
-    private void AdvancePhase() {
-        _currentPhase += 1;
-    }
-    private void ReversePhase() {
-        _currentPhase -= 1;
+    public void OnFinishPhase(QuestPhase finishedPhase) {
+
     }
 }
 

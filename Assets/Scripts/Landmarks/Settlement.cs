@@ -14,7 +14,6 @@ public class Settlement : BaseLandmark {
     private ECS.Character _headOfSettlement;
 	private List<BaseLandmark> _ownedLandmarks;
 
-    private List<Quest> _questBoard;
 	private WeightedDictionary<MATERIAL> _materialWeights;
 
     private const int CHARACTER_LIMIT = 10;
@@ -23,9 +22,9 @@ public class Settlement : BaseLandmark {
     private float _currentPopulationProduction;
 
     #region getters/setters
-    public List<Quest> questBoard {
-        get { return _questBoard; }
-    }
+    //public List<Quest> questBoard {
+    //    get { return _questBoard; }
+    //}
     public List<BaseLandmark> ownedLandmarks {
         get { return _ownedLandmarks; }
     }
@@ -39,7 +38,7 @@ public class Settlement : BaseLandmark {
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf) : base(location, specificLandmarkType, materialMadeOf) {
         _canBeOccupied = true;
-        _questBoard = new List<Quest>();
+        //_questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
 		_materialWeights = new WeightedDictionary<MATERIAL>();
         _producingPopulationFor = RACE.NONE;
@@ -381,184 +380,177 @@ public class Settlement : BaseLandmark {
     }
     #endregion
 
-    #region Quests
-    internal void AddQuestToBoard(Quest quest) {
-        _questBoard.Add(quest);
-        //quest.OnQuestPosted(); //Call On OldQuest.Quest Posted after quest is posted
-    }
-    internal void RemoveQuestFromBoard(Quest quest) {
-        _questBoard.Remove(quest);
-    }
-	internal Quest GetQuestByID(int id){
-		for (int i = 0; i < _questBoard.Count; i++) {
-			if(_questBoard[i].id == id){
-				return _questBoard [i];
-			}
-		}
-		return null;
-	}
-    internal List<Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
-        List<Quest> quests = new List<Quest>();
-        for (int i = 0; i < _questBoard.Count; i++) {
-            Quest currQuest = _questBoard[i];
-            if(currQuest.questType == questType) {
-                quests.Add(currQuest);
-            }
-        }
-        return quests;
-    }
-	internal int GetNumberOfQuestsOnBoardByType(QUEST_TYPE questType){
-		int count = 0;
-		for (int i = 0; i < _questBoard.Count; i++) {
-			Quest currQuest = _questBoard[i];
-			if(currQuest.questType == questType) {
-				count++;
-			}
-		}
-		return count;
-	}
-	//private void ScheduleUpdateAvailableMaterialsToGet(){
-	//	GameDate newSched = GameManager.Instance.Today();
-	//	newSched.AddMonths (1);
-	//	newSched.SetDay (GameManager.daysInMonth [newSched.month] - 1);
-	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateAvailableMaterialsToGet ());
-	//}
-	//private void ScheduleUpdateNeededMaterials(){
-	//	GameDate newSched = GameManager.Instance.Today();
-	//	newSched.AddMonths (1);
-	//	newSched.SetDay (GameManager.daysInMonth [newSched.month]);
-	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateNeededMaterials ());
-	//}
-	private void ScheduleMonthlyQuests(){
-		GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-		dueDate.AddMonths (1);
-		SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
-	}
-	//private void UpdateAvailableMaterialsToGet(){
-	//	foreach (MATERIAL material in _materialsInventory.Keys) {
-	//		_materialsInventory [material].availableExcessOfOtherSettlements = (this._owner.settlements.Sum (x => x.materialsInventory [material].excess)) - _materialsInventory[material].excess;
-	//		_materialsInventory [material].availableExcessOfResourceLandmarks = this._ownedLandmarks.Sum (x => x.materialsInventory [material].excess);
-	//		_materialsInventory [material].capacity = 0;
-	//		_materialsInventory [material].isNeeded = false;
-	//	}
-	//	ScheduleUpdateAvailableMaterialsToGet ();
-	//}
-	//private void UpdateNeededMaterials(){
-	//	int count = this._owner.productionPreferences [PRODUCTION_TYPE.WEAPON].prioritizedMaterials.Count;
-	//	List<PRODUCTION_TYPE> productionTypes = this._owner.productionPreferences.Keys.ToList ();
-	//	for (int i = 0; i < count; i++) {
-	//		for (int j = 0; j < productionTypes.Count; j++) {
-	//			MATERIAL material = this._owner.productionPreferences [productionTypes[j]].prioritizedMaterials [i];
-	//			if((_materialsInventory[material].availableExcessOfOtherSettlements + _materialsInventory [material].availableExcessOfResourceLandmarks) > 0){
-	//				_materialsInventory [material].capacity += 200;
-	//				_materialsInventory [material].isNeeded = true;
-	//				productionTypes.RemoveAt (j);
-	//				j--;
-	//			}
-	//		}
-	//		if(productionTypes.Count <= 0){
-	//			break;
-	//		}
-	//	}
-	//	ScheduleUpdateNeededMaterials ();
-	//}
-	//private MATERIAL GetObtainMaterialTarget(){
-	//	_materialWeights.Clear ();
-	//	foreach (MATERIAL material in _materialsInventory.Keys) {
-	//		if (_materialsInventory [material].isNeeded) {
-	//			if (_materialsInventory [material].availableExcessOfOtherSettlements > 0 || materialsInventory [material].availableExcessOfResourceLandmarks > 0) {
-	//				if (_materialsInventory [material].count < _materialsInventory [material].capacity) {
-	//					_materialWeights.AddElement (material, 200);
-	//				} else {
-	//					_materialWeights.AddElement (material, 30);
-	//				}
-	//			}
-	//		}else{
-	//			if(_materialsInventory [material].availableExcessOfResourceLandmarks > 0){
-	//				_materialWeights.AddElement (material, 60);
-	//			}
-	//		}
-	//	}
-	//	if(_materialWeights.Count > 0){
-	//		return _materialWeights.PickRandomElementGivenWeights ();
-	//	}
-	//	return MATERIAL.NONE;
-	//}
-	private MATERIAL RepickObtainMaterialTarget(){
-		if(_materialWeights.Count > 0){
-			return _materialWeights.PickRandomElementGivenWeights ();
-		}
-		return MATERIAL.NONE;
-	}
-	private void GenerateMonthlyQuests() {
-//		WeightedDictionary<OldQuest.Quest> questDictionary = new WeightedDictionary<OldQuest.Quest>();
-//		questDictionary.LogDictionaryValues("OldQuest.Quest Creation Weights: ");
-//		if(questDictionary.GetTotalOfWeights() > 0) {
-//			OldQuest.Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
-//			AddNewQuest(chosenQuestToCreate);
+//    #region Quests
+//    internal void AddQuestToBoard(Quest quest) {
+//        _questBoard.Add(quest);
+//        //quest.OnQuestPosted(); //Call On OldQuest.Quest Posted after quest is posted
+//    }
+//    internal void RemoveQuestFromBoard(Quest quest) {
+//        _questBoard.Remove(quest);
+//    }
+	
+//    internal List<Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
+//        List<Quest> quests = new List<Quest>();
+//        for (int i = 0; i < _questBoard.Count; i++) {
+//            Quest currQuest = _questBoard[i];
+//            if(currQuest.questType == questType) {
+//                quests.Add(currQuest);
+//            }
+//        }
+//        return quests;
+//    }
+//	internal int GetNumberOfQuestsOnBoardByType(QUEST_TYPE questType){
+//		int count = 0;
+//		for (int i = 0; i < _questBoard.Count; i++) {
+//			Quest currQuest = _questBoard[i];
+//			if(currQuest.questType == questType) {
+//				count++;
+//			}
 //		}
-		CreateQuest(QUEST_TYPE.OBTAIN_MATERIAL);
-		ScheduleMonthlyQuests();
-	}
-	private void CreateQuest(QUEST_TYPE questType){
-		int noOfQuestsOnBoard = GetNumberOfQuestsOnBoardByType (questType);
-		int maxNoOfQuests = GetMaxQuests (questType);
-		//if(questType == QUEST_TYPE.OBTAIN_MATERIAL){
-		//	if(noOfQuestsOnBoard < maxNoOfQuests){
-  //              MATERIAL material = GetObtainMaterialTarget();
-  //              MATERIAL previousMaterial = MATERIAL.NONE;
-		//		for (int i = 0; i < 2; i++) {
-		//			if(material != MATERIAL.NONE && material != previousMaterial && !AlreadyHasQuestOfType(QUEST_TYPE.OBTAIN_MATERIAL, material)){
-		//				previousMaterial = material;
-		//				BaseLandmark target = GetTargetObtainMaterial (material);
-		//				if(target != null){
-		//					ObtainMaterial obtainMaterialQuest = new ObtainMaterial (this, material, target);
-		//					obtainMaterialQuest.SetSettlement (this);
-		//					AddNewQuest (obtainMaterialQuest);
-		//					if((noOfQuestsOnBoard + 1) < maxNoOfQuests){
-		//						material = RepickObtainMaterialTarget ();
-		//					}else{
-		//						break;
-		//					}
-		//				}else{
-		//					if(i == 0){
-		//						material = RepickObtainMaterialTarget ();
-		//					}
-		//				}
-		//			}else{
-		//				break;
-		//			}
-		//		}
-		//	}
-		//}
-	}
-	private int GetMaxQuests(QUEST_TYPE questType){
-		if (questType == QUEST_TYPE.OBTAIN_MATERIAL) {
-			return 3;
-		}
-		return 0;
-	}
-    //private BaseLandmark GetTargetObtainMaterial(MATERIAL materialToObtain){
-    //	WeightedDictionary<BaseLandmark> targetWeights = new WeightedDictionary<BaseLandmark> ();
-    //	for (int i = 0; i < this.owner.settlements.Count; i++) {
-    //		if(this.id == this.owner.settlements[i].id){
-    //			for (int j = 0; j < this.ownedLandmarks.Count; j++) {
-    //				if(this.ownedLandmarks[j].materialsInventory[materialToObtain].excess > 0){
-    //					targetWeights.AddElement (this.ownedLandmarks [j], this.ownedLandmarks [j].materialsInventory [materialToObtain].excess);
-    //				}
-    //			}
-    //		}else{
-    //			if(this.owner.settlements[i].materialsInventory[materialToObtain].excess > 0){
-    //				targetWeights.AddElement (this.owner.settlements[i], this.owner.settlements[i].materialsInventory [materialToObtain].excess);
-    //			}
-    //		}
-    //	}
-    //	if(targetWeights.Count > 0){
-    //		return targetWeights.PickRandomElementGivenWeights ();
-    //	}
-    //	return null;
-    //}
-    #endregion
+//		return count;
+//	}
+//	//private void ScheduleUpdateAvailableMaterialsToGet(){
+//	//	GameDate newSched = GameManager.Instance.Today();
+//	//	newSched.AddMonths (1);
+//	//	newSched.SetDay (GameManager.daysInMonth [newSched.month] - 1);
+//	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateAvailableMaterialsToGet ());
+//	//}
+//	//private void ScheduleUpdateNeededMaterials(){
+//	//	GameDate newSched = GameManager.Instance.Today();
+//	//	newSched.AddMonths (1);
+//	//	newSched.SetDay (GameManager.daysInMonth [newSched.month]);
+//	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateNeededMaterials ());
+//	//}
+//	private void ScheduleMonthlyQuests(){
+//		GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+//		dueDate.AddMonths (1);
+//		SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+//	}
+//	//private void UpdateAvailableMaterialsToGet(){
+//	//	foreach (MATERIAL material in _materialsInventory.Keys) {
+//	//		_materialsInventory [material].availableExcessOfOtherSettlements = (this._owner.settlements.Sum (x => x.materialsInventory [material].excess)) - _materialsInventory[material].excess;
+//	//		_materialsInventory [material].availableExcessOfResourceLandmarks = this._ownedLandmarks.Sum (x => x.materialsInventory [material].excess);
+//	//		_materialsInventory [material].capacity = 0;
+//	//		_materialsInventory [material].isNeeded = false;
+//	//	}
+//	//	ScheduleUpdateAvailableMaterialsToGet ();
+//	//}
+//	//private void UpdateNeededMaterials(){
+//	//	int count = this._owner.productionPreferences [PRODUCTION_TYPE.WEAPON].prioritizedMaterials.Count;
+//	//	List<PRODUCTION_TYPE> productionTypes = this._owner.productionPreferences.Keys.ToList ();
+//	//	for (int i = 0; i < count; i++) {
+//	//		for (int j = 0; j < productionTypes.Count; j++) {
+//	//			MATERIAL material = this._owner.productionPreferences [productionTypes[j]].prioritizedMaterials [i];
+//	//			if((_materialsInventory[material].availableExcessOfOtherSettlements + _materialsInventory [material].availableExcessOfResourceLandmarks) > 0){
+//	//				_materialsInventory [material].capacity += 200;
+//	//				_materialsInventory [material].isNeeded = true;
+//	//				productionTypes.RemoveAt (j);
+//	//				j--;
+//	//			}
+//	//		}
+//	//		if(productionTypes.Count <= 0){
+//	//			break;
+//	//		}
+//	//	}
+//	//	ScheduleUpdateNeededMaterials ();
+//	//}
+//	//private MATERIAL GetObtainMaterialTarget(){
+//	//	_materialWeights.Clear ();
+//	//	foreach (MATERIAL material in _materialsInventory.Keys) {
+//	//		if (_materialsInventory [material].isNeeded) {
+//	//			if (_materialsInventory [material].availableExcessOfOtherSettlements > 0 || materialsInventory [material].availableExcessOfResourceLandmarks > 0) {
+//	//				if (_materialsInventory [material].count < _materialsInventory [material].capacity) {
+//	//					_materialWeights.AddElement (material, 200);
+//	//				} else {
+//	//					_materialWeights.AddElement (material, 30);
+//	//				}
+//	//			}
+//	//		}else{
+//	//			if(_materialsInventory [material].availableExcessOfResourceLandmarks > 0){
+//	//				_materialWeights.AddElement (material, 60);
+//	//			}
+//	//		}
+//	//	}
+//	//	if(_materialWeights.Count > 0){
+//	//		return _materialWeights.PickRandomElementGivenWeights ();
+//	//	}
+//	//	return MATERIAL.NONE;
+//	//}
+//	private MATERIAL RepickObtainMaterialTarget(){
+//		if(_materialWeights.Count > 0){
+//			return _materialWeights.PickRandomElementGivenWeights ();
+//		}
+//		return MATERIAL.NONE;
+//	}
+//	private void GenerateMonthlyQuests() {
+////		WeightedDictionary<OldQuest.Quest> questDictionary = new WeightedDictionary<OldQuest.Quest>();
+////		questDictionary.LogDictionaryValues("OldQuest.Quest Creation Weights: ");
+////		if(questDictionary.GetTotalOfWeights() > 0) {
+////			OldQuest.Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
+////			AddNewQuest(chosenQuestToCreate);
+////		}
+//		CreateQuest(QUEST_TYPE.OBTAIN_MATERIAL);
+//		ScheduleMonthlyQuests();
+//	}
+//	private void CreateQuest(QUEST_TYPE questType){
+//		int noOfQuestsOnBoard = GetNumberOfQuestsOnBoardByType (questType);
+//		int maxNoOfQuests = GetMaxQuests (questType);
+//		//if(questType == QUEST_TYPE.OBTAIN_MATERIAL){
+//		//	if(noOfQuestsOnBoard < maxNoOfQuests){
+//  //              MATERIAL material = GetObtainMaterialTarget();
+//  //              MATERIAL previousMaterial = MATERIAL.NONE;
+//		//		for (int i = 0; i < 2; i++) {
+//		//			if(material != MATERIAL.NONE && material != previousMaterial && !AlreadyHasQuestOfType(QUEST_TYPE.OBTAIN_MATERIAL, material)){
+//		//				previousMaterial = material;
+//		//				BaseLandmark target = GetTargetObtainMaterial (material);
+//		//				if(target != null){
+//		//					ObtainMaterial obtainMaterialQuest = new ObtainMaterial (this, material, target);
+//		//					obtainMaterialQuest.SetSettlement (this);
+//		//					AddNewQuest (obtainMaterialQuest);
+//		//					if((noOfQuestsOnBoard + 1) < maxNoOfQuests){
+//		//						material = RepickObtainMaterialTarget ();
+//		//					}else{
+//		//						break;
+//		//					}
+//		//				}else{
+//		//					if(i == 0){
+//		//						material = RepickObtainMaterialTarget ();
+//		//					}
+//		//				}
+//		//			}else{
+//		//				break;
+//		//			}
+//		//		}
+//		//	}
+//		//}
+//	}
+//	private int GetMaxQuests(QUEST_TYPE questType){
+//		if (questType == QUEST_TYPE.OBTAIN_MATERIAL) {
+//			return 3;
+//		}
+//		return 0;
+//	}
+//    //private BaseLandmark GetTargetObtainMaterial(MATERIAL materialToObtain){
+//    //	WeightedDictionary<BaseLandmark> targetWeights = new WeightedDictionary<BaseLandmark> ();
+//    //	for (int i = 0; i < this.owner.settlements.Count; i++) {
+//    //		if(this.id == this.owner.settlements[i].id){
+//    //			for (int j = 0; j < this.ownedLandmarks.Count; j++) {
+//    //				if(this.ownedLandmarks[j].materialsInventory[materialToObtain].excess > 0){
+//    //					targetWeights.AddElement (this.ownedLandmarks [j], this.ownedLandmarks [j].materialsInventory [materialToObtain].excess);
+//    //				}
+//    //			}
+//    //		}else{
+//    //			if(this.owner.settlements[i].materialsInventory[materialToObtain].excess > 0){
+//    //				targetWeights.AddElement (this.owner.settlements[i], this.owner.settlements[i].materialsInventory [materialToObtain].excess);
+//    //			}
+//    //		}
+//    //	}
+//    //	if(targetWeights.Count > 0){
+//    //		return targetWeights.PickRandomElementGivenWeights ();
+//    //	}
+//    //	return null;
+//    //}
+//    #endregion
 
     #region Materials
     /*
@@ -675,8 +667,8 @@ public class Settlement : BaseLandmark {
 		saveLandmarkQuest.SetSettlement (this);
 		AddNewQuest (saveLandmarkQuest);
 	}
-	internal void CancelSaveALandmark(BaseLandmark landmarkToSave){
-		for (int i = 0; i < _questBoard.Count; i++) {
+	//internal void CancelSaveALandmark(BaseLandmark landmarkToSave){
+		//for (int i = 0; i < _questBoard.Count; i++) {
 			//if(_questBoard[i].questType == QUEST_TYPE.SAVE_LANDMARK){
 			//	SaveLandmark saveLandmark = (SaveLandmark)_questBoard [i];
 			//	if(saveLandmark.target.id == landmarkToSave.id){
@@ -689,7 +681,7 @@ public class Settlement : BaseLandmark {
 			//		break;
 			//	}
 			//}
-		}
-	}
+		//}
+	//}
 	#endregion
 }

@@ -34,10 +34,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         return newLandmark;
     }
-    public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
-        LandmarkData data = GetLandmarkData(landmarkType);
-        return data.baseType;
-    }
     /*
      Occupy a specified landmark.
          */
@@ -138,6 +134,9 @@ public class LandmarkManager : MonoBehaviour {
         Debug.Log("Creating " + initialSettlementLandmarks.ToString() + " settlement landmarks..... ");
         int createdLandmarks = 0;
         WeightedDictionary<LANDMARK_TYPE> settlementWeights = GetSettlementLandmarkAppearanceWeights();
+        if (settlementWeights.GetTotalOfWeights() <= 0) {
+            return; //there are no settlement weights
+        }
         while (createdLandmarks != initialSettlementLandmarks) {
             if (elligibleTiles.Count <= 0) {
                 Debug.LogWarning("Only created " + createdLandmarks.ToString() + " settlement landmarks");
@@ -171,7 +170,7 @@ public class LandmarkManager : MonoBehaviour {
         WeightedDictionary<LANDMARK_TYPE> dungeonAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
-            if(currData.baseType == BASE_LANDMARK_TYPE.DUNGEON) {
+            if(Utilities.GetBaseLandmarkType(currData.landmarkType) == BASE_LANDMARK_TYPE.DUNGEON) {
                 dungeonAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
             }
         }
@@ -181,7 +180,7 @@ public class LandmarkManager : MonoBehaviour {
         WeightedDictionary<LANDMARK_TYPE> settlementAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
-            if (currData.baseType == BASE_LANDMARK_TYPE.SETTLEMENT && currData.landmarkType != LANDMARK_TYPE.CITY) {
+            if (Utilities.GetBaseLandmarkType(currData.landmarkType) == BASE_LANDMARK_TYPE.SETTLEMENT && currData.landmarkType != LANDMARK_TYPE.CITY) {
                 settlementAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
             }
         }

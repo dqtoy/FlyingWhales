@@ -4,7 +4,6 @@ using System.Collections;
 [System.Serializable]
 public class LandmarkData {
     public LANDMARK_TYPE landmarkType;
-    public BASE_LANDMARK_TYPE baseType;
     public int durabilityModifier;
     public int appearanceWeight;
     public bool isUnique;
