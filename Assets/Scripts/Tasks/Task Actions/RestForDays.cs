@@ -9,8 +9,8 @@ public class RestForDays : TaskAction {
     }
 
     #region overrides
-    public override void InititalizeAction(int days) {
-        base.InititalizeAction(days);
+    public override void InitializeAction(int days) {
+        base.InitializeAction(days);
         restDays = days;
     }
     public override void ActionDone(TASK_ACTION_RESULT result) {

@@ -69,7 +69,7 @@ namespace ECS{
             for (int i = 0; i < character.bodyParts.Count; i++) {
                 BodyPart currBodyPart = character.bodyParts[i];
                 bodyPartsInfoLbl.text += "\n";
-				bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.bodyPart.ToString());
+				bodyPartsInfoLbl.text += Utilities.NormalizeString(currBodyPart.name);
 				if (currBodyPart.attributes.Count > 0) {
 					bodyPartsInfoLbl.text += "[";
 					for (int j = 0; j < currBodyPart.attributes.Count; j++) {
@@ -87,7 +87,7 @@ namespace ECS{
 							bodyPartsInfoLbl.text += ", ";
 						}
 						bodyPartsInfoLbl.text += "{";
-						bodyPartsInfoLbl.text += Utilities.NormalizeString(otherBodyPart.bodyPart.ToString());
+						bodyPartsInfoLbl.text += Utilities.NormalizeString(otherBodyPart.name);
 						if( otherBodyPart.attributes.Count > 0){
 							bodyPartsInfoLbl.text += "[";
 							for (int k = 0; k < otherBodyPart.attributes.Count; k++) {
@@ -115,7 +115,7 @@ namespace ECS{
 				itemsInfoLbl.text += "Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
-                    itemsInfoLbl.text += ", Body part: " + armor.bodyPartAttached.bodyPart.ToString();
+                    itemsInfoLbl.text += ", Body part: " + armor.bodyPartAttached.name;
                     for (int j = 0; j < armor.attributes.Count; j++) {
                         itemsInfoLbl.text += armor.attributes[j].ToString();
                         if(j + 1 < armor.attributes.Count) {
@@ -126,7 +126,7 @@ namespace ECS{
                     Weapon weapon = (Weapon)currItem;
 					itemsInfoLbl.text += ", Body part:";
 					for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
-						itemsInfoLbl.text += " " + weapon.bodyPartsAttached[j].bodyPart.ToString();
+						itemsInfoLbl.text += " " + weapon.bodyPartsAttached[j].name;
 					}
                     itemsInfoLbl.text += ", Weapon Power: " + weapon.weaponPower.ToString();
                     for (int j = 0; j < weapon.attributes.Count; j++) {

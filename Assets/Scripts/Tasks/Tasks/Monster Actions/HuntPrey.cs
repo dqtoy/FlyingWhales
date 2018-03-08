@@ -76,7 +76,7 @@ public class HuntPrey : CharacterTask {
 
     //private void GoToTargetLocation() {
     //    GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-    //    goToLocation.InititalizeAction(_target);
+    //    goToLocation.InitializeAction(_target);
     //    goToLocation.SetPathfindingMode(PATHFINDING_MODE.NORMAL);
     //    goToLocation.onTaskActionDone += StartHunt;
     //    goToLocation.onTaskDoAction += goToLocation.Generic;

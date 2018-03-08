@@ -22,7 +22,7 @@ public class CharacterAvatar : PooledObject{
 	protected List<HexTile> path;
 
 	protected bool _hasArrived = false;
-    private bool _isInititalized = false;
+    private bool _isInitialized = false;
     private bool _isMovementPaused = false;
     private bool _isTravelling = false;
 	private bool _isMovingToHex = false;
@@ -49,7 +49,7 @@ public class CharacterAvatar : PooledObject{
         AddNewCharacter(character);
         _currLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
-        _isInititalized = true;
+        _isInitialized = true;
     }
     internal virtual void Init(Party party) {
         this.smoothMovement.avatarGO = this.gameObject;
@@ -59,7 +59,7 @@ public class CharacterAvatar : PooledObject{
         }
 		_currLocation = party.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
-        _isInititalized = true;
+        _isInitialized = true;
     }
 
     #region For Testing
@@ -133,12 +133,12 @@ public class CharacterAvatar : PooledObject{
         }
     }
     internal virtual void ReceivePath(List<HexTile> path) {
-        if (!_isInititalized) {
+        if (!_isInitialized) {
             return;
         }
         if (path != null && path.Count > 0) {
             if (this.currLocation.tileLocation == null) {
-                throw new Exception("Curr location of avatar is null! Is Inititalized: " + _isInititalized.ToString());
+                throw new Exception("Curr location of avatar is null! Is Initialized: " + _isInitialized.ToString());
             }
 			if(this.currLocation.tileLocation.landmarkOnTile != null){
 				if(_characters[0].party != null){
@@ -303,7 +303,7 @@ public class CharacterAvatar : PooledObject{
         targetLocation = null;
         path = null;
         _hasArrived = false;
-        _isInititalized = false;
+        _isInitialized = false;
     }
     #endregion
 }

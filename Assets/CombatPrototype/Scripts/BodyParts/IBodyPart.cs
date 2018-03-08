@@ -40,7 +40,7 @@ namespace ECS{
         }
 
 		[SerializeField] internal string name;
-		[SerializeField] internal BODY_PART bodyPart;
+//		[SerializeField] internal BODY_PART bodyPart;
 		[SerializeField] internal IMPORTANCE importance;
 		[SerializeField] internal List<BodyAttribute> attributes;
 		internal List<STATUS_EFFECT> statusEffects = new List<STATUS_EFFECT>();

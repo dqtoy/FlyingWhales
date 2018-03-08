@@ -43,7 +43,7 @@ public class DropPrisoners : CharacterTask {
 
 	private void GoToTile(){
 		GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-		goToLocation.InititalizeAction(region.centerOfMass);
+		goToLocation.InitializeAction(region.centerOfMass);
 		goToLocation.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
 		goToLocation.onTaskActionDone += Drop;
 		goToLocation.onTaskDoAction += goToLocation.Generic;

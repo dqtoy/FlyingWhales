@@ -11,8 +11,8 @@ public class DungeonLandmark : BaseLandmark {
     }
 
     #region Encounterables
-    protected override void Inititalize() {
-        base.Inititalize();
+    protected override void Initialize() {
+        base.Initialize();
 		DungeonEncounterChances dungeonEncounterChances = LandmarkManager.Instance.GetDungeonEncounterChances (specificLandmarkType);
         if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
 			_landmarkName = RandomNameGenerator.Instance.GetAncientRuinName ();

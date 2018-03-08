@@ -15,7 +15,7 @@ namespace ECS {
 				armorTypeComponent = (ArmorTypeComponent)target;
 			}
 			armorTypeComponent.armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup ("Armor Type: ", armorTypeComponent.armorType);
-			armorTypeComponent.armorBodyType = (BODY_PART)EditorGUILayout.EnumPopup ("Armor Body Type: ", armorTypeComponent.armorBodyType);
+			armorTypeComponent.armorBodyType = EditorGUILayout.TextField ("Armor Body Type: ", armorTypeComponent.armorBodyType);
 
 //			SerializedProperty armorMaterial = serializedObject.FindProperty("armorMaterials");
 //			EditorGUILayout.PropertyField(armorMaterial, true);

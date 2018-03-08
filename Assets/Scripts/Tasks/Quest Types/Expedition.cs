@@ -83,7 +83,7 @@ public class Expedition : OldQuest.Quest {
         _target = GetTargetHexTile();
         AddNewLog(_assignedParty.name + " goes to " + _target.locationName);
         GoToLocation goToTarget = new GoToLocation(this); //Go to the target tile
-        goToTarget.InititalizeAction(_target);
+        goToTarget.InitializeAction(_target);
         goToTarget.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
         goToTarget.onTaskDoAction += goToTarget.Generic;
         goToTarget.onTaskActionDone += StartResourceGathering;

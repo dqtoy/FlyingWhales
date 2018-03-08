@@ -91,7 +91,7 @@ namespace ECS {
 
         private void ShowArmorFields() {
 			itemComponent.armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup("Armor Type: ", itemComponent.armorType);
-			itemComponent.armorBodyType = (BODY_PART)EditorGUILayout.EnumPopup("Body Armor Type: ", itemComponent.armorBodyType);
+			itemComponent.armorBodyType = EditorGUILayout.TextField("Body Armor Type: ", itemComponent.armorBodyType);
 			itemComponent.armorMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.armorMaterial);
 			itemComponent.armorQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.armorQuality);
 			itemComponent.baseDamageMitigation = EditorGUILayout.FloatField("Base Damage Mitigation: ", itemComponent.baseDamageMitigation);

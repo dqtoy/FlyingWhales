@@ -12,8 +12,8 @@ public class Collect : TaskAction {
 	public Collect(OldQuest.Quest quest): base (quest){}
 
 	#region overrides
-	public override void InititalizeAction(Dictionary<RACE, int> civilians) {
-		base.InititalizeAction(civilians);
+	public override void InitializeAction(Dictionary<RACE, int> civilians) {
+		base.InitializeAction(civilians);
 		_civilians = civilians;
 	}
 	#endregion

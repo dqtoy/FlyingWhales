@@ -1503,21 +1503,21 @@ public class Utilities : MonoBehaviour {
     #region Combat Prototype
     public static ECS.IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(ECS.Armor armor) {
         switch (armor.armorBodyType) {
-            case BODY_PART.HEAD:
+            case "Head":
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
-            case BODY_PART.TORSO:
+            case "Torso":
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
-            case BODY_PART.TAIL:
+            case "Tail":
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
-            case BODY_PART.ARM:
+            case "Arm":
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
-            case BODY_PART.HAND:
+            case "Hand":
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
-            case BODY_PART.LEG:
+            case "Leg":
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
-			case BODY_PART.HIP:
+			case "Hip":
 				return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HIP_ARMOR;
-            case BODY_PART.FEET:
+            case "Feet":
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
             default:
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;

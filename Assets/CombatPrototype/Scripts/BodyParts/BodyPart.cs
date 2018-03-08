@@ -39,7 +39,7 @@ namespace ECS{
         #region Utilities
         internal BodyPart CreateNewCopy() {
             BodyPart newBodyPart = new BodyPart();
-            newBodyPart.bodyPart = this.bodyPart;
+//            newBodyPart.bodyPart = this.bodyPart;
 			newBodyPart.name = this.name;
             newBodyPart.importance = this.importance;
             newBodyPart.attributes = new List<BodyAttribute>();

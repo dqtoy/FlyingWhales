@@ -36,7 +36,7 @@ public class JoinParty : CharacterTask {
   //      _partyToJoin.AddPartyMemberAsOnTheWay((ECS.Character)_createdBy);
 
   //      GoToLocation goToLocation = new GoToLocation(this);
-  //      goToLocation.InititalizeAction(partyToJoin.partyLeader.currLocation);
+  //      goToLocation.InitializeAction(partyToJoin.partyLeader.currLocation);
 		//goToLocation.onTaskActionDone += SuccessQuest;
   //      goToLocation.onTaskDoAction += goToLocation.Generic;
 
@@ -64,7 +64,7 @@ public class JoinParty : CharacterTask {
     //    //_partyToJoin.AddPartyMemberAsOnTheWay(_assignedCharacter);
 
     //    GoToLocation goToLocation = new GoToLocation(this);
-    //    goToLocation.InititalizeAction(partyToJoin.specificLocation);
+    //    goToLocation.InitializeAction(partyToJoin.specificLocation);
     //    goToLocation.onTaskActionDone += SuccessTask;
     //    goToLocation.onTaskDoAction += goToLocation.Generic;
 

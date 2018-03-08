@@ -12,8 +12,8 @@ public class RoamRegion : TaskAction {
     }
 
     #region overrides
-    public override void InititalizeAction(Region target) {
-        base.InititalizeAction(target);
+    public override void InitializeAction(Region target) {
+        base.InitializeAction(target);
         _regionToRoam = target;
     }
     #endregion

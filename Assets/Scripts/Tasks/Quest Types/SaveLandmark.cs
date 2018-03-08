@@ -24,14 +24,14 @@ public class SaveLandmark : OldQuest.Quest {
 		base.ConstructQuestLine();
 
 		GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
-		goToLandmark.InititalizeAction(_target);
+		goToLandmark.InitializeAction(_target);
 		goToLandmark.SetPathfindingMode(PATHFINDING_MODE.NORMAL);
 		goToLandmark.onTaskDoAction += goToLandmark.Generic;
 		goToLandmark.onTaskActionDone += SaveTheLandmark;
 
 
 		GoToLocation goBackToQuestPoster = new GoToLocation(this); //Go to the picked region
-		goBackToQuestPoster.InititalizeAction(_postedAt);
+		goBackToQuestPoster.InitializeAction(_postedAt);
 		goBackToQuestPoster.SetPathfindingMode(PATHFINDING_MODE.NORMAL);
 		goBackToQuestPoster.onTaskDoAction += goToLandmark.Generic;
 		goBackToQuestPoster.onTaskActionDone += SuccessQuest;
