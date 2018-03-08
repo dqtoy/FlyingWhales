@@ -770,7 +770,8 @@ public enum LANDMARK_TYPE {
     CAVE,
     WILDLANDS,
     CITY,
-    HUT
+    HUT,
+	CRATER,
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,

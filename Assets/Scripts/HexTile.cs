@@ -332,6 +332,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 _landmarkOnTile = new LairLandmark(this, landmarkType, materialMadeOf);
                 break;
             default:
+			_landmarkOnTile = new BaseLandmark(this, landmarkType, materialMadeOf);
                 break;
         }
         if(_landmarkOnTile != null) {
