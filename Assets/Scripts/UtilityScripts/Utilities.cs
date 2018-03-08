@@ -1489,7 +1489,8 @@ public class Utilities : MonoBehaviour {
                 return BASE_LANDMARK_TYPE.DUNGEON;
 			case LANDMARK_TYPE.CITY:
 			case LANDMARK_TYPE.GOBLIN_CAMP:
-				return BASE_LANDMARK_TYPE.SETTLEMENT;
+            case LANDMARK_TYPE.HUT:
+                return BASE_LANDMARK_TYPE.SETTLEMENT;
             default:
                 return BASE_LANDMARK_TYPE.NONE;
         }

@@ -484,7 +484,7 @@ public class Kingdom{
 			// this.NewRandomCrimeDate (true);
 			// Determine what type of Kingdom this will be upon initialization.
 			this._kingdomTypeData = null;
-			SetKingdomType(StoryTellingManager.Instance.GetRandomKingdomTypeForKingdom());
+			//SetKingdomType(StoryTellingManager.Instance.GetRandomKingdomTypeForKingdom());
 
 			this.basicResource = Utilities.GetBasicResourceForRace(race);
 
