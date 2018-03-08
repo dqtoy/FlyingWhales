@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace ECS{
 	public class ArmorTypeComponent : MonoBehaviour {
 		public ARMOR_TYPE armorType;
-		public BODY_PART armorBodyType;
+		public string armorBodyType;
 //		public List<MATERIAL> armorMaterials;
     }
 }

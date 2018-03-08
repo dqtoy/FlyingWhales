@@ -26,11 +26,11 @@ public class TaskAction {
     }
 
     #region virtuals
-    public virtual void InititalizeAction(ILocation target) { }
-    public virtual void InititalizeAction(Region target) { }
-    public virtual void InititalizeAction(ECS.Character target) { }
-    public virtual void InititalizeAction(int value) { }
-    public virtual void InititalizeAction(Dictionary<RACE, int> civilians) { }
+    public virtual void InitializeAction(ILocation target) { }
+    public virtual void InitializeAction(Region target) { }
+    public virtual void InitializeAction(ECS.Character target) { }
+    public virtual void InitializeAction(int value) { }
+    public virtual void InitializeAction(Dictionary<RACE, int> civilians) { }
 
     public virtual void DoAction(ECS.Character partyLeader) {
 		if(partyLeader.isInCombat){

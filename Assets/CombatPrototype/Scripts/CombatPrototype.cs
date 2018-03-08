@@ -801,7 +801,7 @@ namespace ECS{
 
 						//If body part is essential, instant death to the character
 						if (chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
-							CheckBodyPart (chosenBodyPart.bodyPart, targetCharacter);
+							CheckBodyPart (chosenBodyPart.name, targetCharacter);
 						}
 					}
 				}else if(attackSkill.attackType == ATTACK_TYPE.MAGIC){
@@ -895,16 +895,16 @@ namespace ECS{
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death
-		private void CheckBodyPart(BODY_PART bodyPart, ECS.Character character){
+		private void CheckBodyPart(string bodyPart, ECS.Character character){
 			for (int i = 0; i < character.bodyParts.Count; i++) {
 				BodyPart characterBodyPart = character.bodyParts [i];
-				if(characterBodyPart.bodyPart == bodyPart && !characterBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
+				if(characterBodyPart.name == bodyPart && !characterBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
 					return;
 				}
 
 				for (int j = 0; j < characterBodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = characterBodyPart.secondaryBodyParts [j];
-					if(secondaryBodyPart.bodyPart == bodyPart && !secondaryBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
+					if(secondaryBodyPart.name == bodyPart && !secondaryBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
 						return;
 					}
 				}

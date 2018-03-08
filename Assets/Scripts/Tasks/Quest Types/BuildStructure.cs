@@ -39,12 +39,12 @@ public class BuildStructure : OldQuest.Quest {
         base.ConstructQuestLine();
 
         Collect collect = new Collect(this);
-        collect.InititalizeAction(_civiliansBrought);
+        collect.InitializeAction(_civiliansBrought);
         collect.onTaskActionDone += this.PerformNextQuestAction;
         collect.onTaskDoAction += collect.BuildStructure;
 
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the target tile
-        goToLandmark.InititalizeAction(_target);
+        goToLandmark.InitializeAction(_target);
         goToLandmark.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
         goToLandmark.onTaskDoAction += goToLandmark.Generic;
         goToLandmark.onTaskActionDone += WaitForDays;

@@ -21,8 +21,8 @@ public class GoToLocation : TaskAction {
     public GoToLocation(CharacterTask task) : base(task) {}
 
     #region overrides
-    public override void InititalizeAction(ILocation target) {
-        base.InititalizeAction(target);
+    public override void InitializeAction(ILocation target) {
+        base.InitializeAction(target);
         targetLocation = target;
     }
     #endregion

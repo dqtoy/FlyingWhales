@@ -56,7 +56,7 @@ namespace ECS{
 
 		//Armor Fields
 		public ARMOR_TYPE armorType;
-		public BODY_PART armorBodyType;
+		public string armorBodyType;
 		public MATERIAL armorMaterial;
 		public QUALITY armorQuality;
 		public float baseDamageMitigation;

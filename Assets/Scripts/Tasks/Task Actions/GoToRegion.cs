@@ -9,7 +9,7 @@ public class GoToRegion : TaskAction {
     }
 
     #region overrides
-    public override void InititalizeAction(Region target) {
+    public override void InitializeAction(Region target) {
         _target = target;
     }
     #endregion

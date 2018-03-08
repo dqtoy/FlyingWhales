@@ -435,17 +435,17 @@ namespace ECS {
 			return false;
 		}
 
-		internal bool HasBodyPart(BODY_PART bodyPartType){
+		internal bool HasBodyPart(string bodyPartType){
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
 
-				if(bodyPart.bodyPart == bodyPartType){
+				if(bodyPart.name == bodyPartType){
 					return true;
 				}
 
 				for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
 					SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
-					if(secondaryBodyPart.bodyPart == bodyPartType){
+					if(secondaryBodyPart.name == bodyPartType){
 						return true;
 					}
 				}
@@ -962,7 +962,7 @@ namespace ECS {
 			if(armor.owner == null){
 				OwnItem (armor);
 			}
-			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.bodyPart.ToString());
+			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.name);
             if(CombatPrototypeUI.Instance != null) {
                 CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
             }
@@ -1136,7 +1136,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
-								CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.bodyPart.ToString ().ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+								CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;

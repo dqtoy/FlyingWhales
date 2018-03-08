@@ -39,18 +39,18 @@ public class ObtainMaterial : OldQuest.Quest {
 		base.ConstructQuestLine();
 
 		GoToLocation goToLandmark = new GoToLocation(this); //Go to the picked region
-		goToLandmark.InititalizeAction(_target);
+		goToLandmark.InitializeAction(_target);
         goToLandmark.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
 		goToLandmark.onTaskDoAction += goToLandmark.Generic;
 		goToLandmark.onTaskActionDone += PerformNextQuestAction;
 
 		Collect collect = new Collect(this);
-		collect.InititalizeAction(_materialToCollect);
+		collect.InitializeAction(_materialToCollect);
 		collect.onTaskActionDone += this.PerformNextQuestAction;
 		collect.onTaskDoAction += collect.ObtainMaterial;
 
 		GoToLocation goBackToSettlement = new GoToLocation(this); //Go to the picked region
-		goBackToSettlement.InititalizeAction(_postedAt);
+		goBackToSettlement.InitializeAction(_postedAt);
         goBackToSettlement.SetPathfindingMode(PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP);
         goBackToSettlement.onTaskDoAction += goBackToSettlement.Generic;
 		goBackToSettlement.onTaskActionDone += TransferMaterialToSettlement;

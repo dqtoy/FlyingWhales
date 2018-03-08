@@ -157,11 +157,15 @@ public class BaseLandmark : ILocation, TaskCreator {
         ConstructTechnologiesDictionary();
 		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
-        Inititalize();
+        Initialize();
     }
 
 	#region Virtuals
-	protected virtual void Inititalize() { }
+	protected virtual void Initialize() { 
+		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
+			
+		}
+	}
     /*
      What should happen when a character searches this landmark
          */
@@ -996,4 +1000,10 @@ public class BaseLandmark : ILocation, TaskCreator {
 		return false;
 	}
     #endregion
+
+	#region Crater
+	private void InitializeCrater(){
+		
+	}
+	#endregion
 }

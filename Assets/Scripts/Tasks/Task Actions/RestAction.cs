@@ -10,8 +10,8 @@ public class RestAction : TaskAction {
     public RestAction(CharacterTask task) : base(task) {}
 
     #region overrides
-    public override void InititalizeAction(ECS.Character target) {
-        base.InititalizeAction(target);
+    public override void InitializeAction(ECS.Character target) {
+        base.InitializeAction(target);
         charactersToRest = new List<ECS.Character>();
         if (target.party != null) {
             charactersToRest.AddRange(target.party.partyMembers);

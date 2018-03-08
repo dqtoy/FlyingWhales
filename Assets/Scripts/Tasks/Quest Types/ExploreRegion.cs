@@ -28,13 +28,13 @@ public class ExploreRegion : OldQuest.Quest {
         //PickRegionToExplore(); //pick a region to explore
 
         GoToLocation goToRegionAction = new GoToLocation(this); //Go to the picked region
-        goToRegionAction.InititalizeAction(_regionToExplore.centerOfMass);
+        goToRegionAction.InitializeAction(_regionToExplore.centerOfMass);
         goToRegionAction.onTaskActionDone += this.PerformNextQuestAction;
         goToRegionAction.onTaskActionDone += EndQuestAfterDays; //After 30 days of exploring, the OldQuest.Quest ends in SUCCESS.
         goToRegionAction.onTaskDoAction += goToRegionAction.Generic;
 
         RoamRegion roamRegionAction = new RoamRegion(this);
-        roamRegionAction.InititalizeAction(_regionToExplore);
+        roamRegionAction.InitializeAction(_regionToExplore);
         roamRegionAction.onTaskActionDone += RepeatCurrentAction;
         roamRegionAction.onTaskDoAction += roamRegionAction.ExploreRegion;
 
