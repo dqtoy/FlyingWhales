@@ -1520,6 +1520,9 @@ namespace ECS {
 			case CHARACTER_TAG.LOST_HEIR:
 				charTag = new LostHeir (this);
 				break;
+            case CHARACTER_TAG.SUCCESSOR:
+                charTag = new Successor(this);
+                break;
 			}
 			if(charTag != null){
 				AddCharacterTag (charTag);

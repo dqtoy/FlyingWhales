@@ -395,4 +395,18 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
+
+    public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
+        List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if (currLandmark.specificLandmarkType == landmarkType) {
+                    allLandmarksOfType.Add(currLandmark);
+                }
+            }
+        }
+        return allLandmarksOfType;
+    }
 }

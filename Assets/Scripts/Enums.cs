@@ -736,7 +736,7 @@ public enum ROAD_TYPE{
 	ALL,
 }
 public enum BASE_LANDMARK_TYPE {
-	NONE,
+    NONE,
     SETTLEMENT,
     RESOURCE,
     DUNGEON,
@@ -771,6 +771,7 @@ public enum LANDMARK_TYPE {
     CAVE,
     WILDLANDS,
     CITY,
+    HUT,
 	CRATER,
 }
 public enum WEIGHTED_ACTION_REQS {
@@ -1146,6 +1147,7 @@ public enum CHARACTER_TAG{
 	TYRANNICAL,
 	WARMONGER,
 	LOST_HEIR,
+    SUCCESSOR
 }
 
 public enum PRODUCTION_TYPE{
@@ -1164,5 +1166,9 @@ public enum STANCE {
     COMBAT,
     NEUTRAL,
     STEALTHY
+}
+
+public enum STORYLINE {
+    LOST_HEIR
 }
 

@@ -80,6 +80,7 @@ public class MapGenerator : MonoBehaviour {
         //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
         GameManager.Instance.StartProgression();
+        StorylineManager.Instance.GenerateStoryLines();
 		CharacterManager.Instance.SchedulePrisonerConversion ();
         //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
         CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().location.gameObject);
