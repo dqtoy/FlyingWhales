@@ -105,8 +105,7 @@ public class DrinkBlood : CharacterTask {
 		_assignedCharacter.AddHistory ("Caught trying to kill and drink blood of a civilian!");
 		_target.AddHistory (_assignedCharacter.name + " caught trying to kill and drink blood of a civilian!");
 		if(!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
-			Criminal criminalTag = new Criminal (_assignedCharacter);
-			_assignedCharacter.AddCharacterTag (criminalTag);
+			_assignedCharacter.AssignTag (CHARACTER_TAG.CRIMINAL);
 		}
 	}
 	private void End(){

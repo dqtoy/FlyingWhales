@@ -339,6 +339,8 @@ namespace ECS {
 			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData();
 
+			GenerateRaceTags ();
+
 			AllocateStatPoints (statAllocationBonus);
 
             GenerateTraits();
@@ -1494,9 +1496,44 @@ namespace ECS {
         #endregion
 
 		#region Character Tags
+		public void AssignTag(CHARACTER_TAG tag) {
+			CharacterTag charTag = null;
+			switch (tag) {
+			case CHARACTER_TAG.ANCIENT_KNOWLEDGE:
+				charTag = new AncientKnowledge (this);
+				break;
+			case CHARACTER_TAG.CRIMINAL:
+				charTag = new Criminal (this);
+				break;
+			case CHARACTER_TAG.HYPNOTIZED:
+				charTag = new Hypnotized (this);
+				break;
+			case CHARACTER_TAG.SAPIENT:
+				charTag = new Sapient (this);
+				break;
+			case CHARACTER_TAG.TERMINALLY_ILL:
+				charTag = new TerminallyIll (this);
+				break;
+			case CHARACTER_TAG.VAMPIRE:
+				charTag = new Vampire (this);
+				break;
+			case CHARACTER_TAG.LOST_HEIR:
+				charTag = new LostHeir (this);
+				break;
+			}
+			if(charTag != null){
+				AddCharacterTag (charTag);
+			}
+		}
+		private void GenerateRaceTags(){
+			for (int i = 0; i < _raceSetting.tags.Count; i++) {
+				AssignTag (_raceSetting.tags [i]);
+			}
+		}
 		public void AddCharacterTag(CharacterTag tag){
 			_tags.Add(tag);
 			AddCharacterTagBonuses (tag);
+			tag.Initialize ();
 		}
 		public void RemoveCharacterTag(CharacterTag tag){
 			_tags.Remove(tag);

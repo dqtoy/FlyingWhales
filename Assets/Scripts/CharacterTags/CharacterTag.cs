@@ -36,6 +36,7 @@ public class CharacterTag {
 	}
 
 	#region Virtuals
+	public virtual void Initialize(){}
 	public virtual void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> tasks) {
 		for (int i = 0; i < _tagTasks.Count; i++) {
 			CharacterTask currTask = _tagTasks[i];

@@ -75,17 +75,19 @@ public class ItemManager : MonoBehaviour {
                 string dataAsJson = File.ReadAllText(currFilePath);
                 switch (currItemType) {
 				case ITEM_TYPE.WEAPON:
-						ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
-						allItems.Add (newWeapon.itemName, newWeapon);
-						allWeapons.Add (newWeapon.itemName, newWeapon);
-                        break;
-                    case ITEM_TYPE.ARMOR:
-                        ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
-                        allItems.Add(newArmor.itemName, newArmor);
-						allArmors.Add (newArmor.itemName, newArmor);
-                        break;
-                    default:
-                        break;
+					ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
+					allItems.Add (newWeapon.itemName, newWeapon);
+					allWeapons.Add (newWeapon.itemName, newWeapon);
+                    break;
+                case ITEM_TYPE.ARMOR:
+                    ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
+                    allItems.Add(newArmor.itemName, newArmor);
+					allArmors.Add (newArmor.itemName, newArmor);
+                    break;
+                default:
+					ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
+					allItems.Add(newItem.itemName, newItem);
+                    break;
                 }
             }
         }

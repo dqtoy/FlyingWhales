@@ -3241,9 +3241,9 @@ public class UIManager : MonoBehaviour {
     [Header("Player Actions")]
     [SerializeField] internal PlayerActionsUI playerActionsUI;
 	public void ShowPlayerActions(ILocation location){
-		playerActionsUI.transform.parent = location.tileLocation.UIParent;
-		playerActionsUI.transform.localPosition = Vector3.zero;
+//		playerActionsUI.transform.parent = location.tileLocation.UIParent;
 		playerActionsUI.ShowPlayerActionsUI(location);
+		playerActionsUI.Reposition ();
 	}
 	public void HidePlayerActions() {
 		playerActionsUI.HidePlayerActionsUI();
