@@ -735,6 +735,7 @@ public enum ROAD_TYPE{
 	ALL,
 }
 public enum BASE_LANDMARK_TYPE {
+	NONE,
     SETTLEMENT,
     RESOURCE,
     DUNGEON,
@@ -769,6 +770,7 @@ public enum LANDMARK_TYPE {
     CAVE,
     WILDLANDS,
     CITY,
+	CRATER,
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,
