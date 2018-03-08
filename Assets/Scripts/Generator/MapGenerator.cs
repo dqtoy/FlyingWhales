@@ -39,22 +39,26 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
 
+        UIManager.Instance.InitializeUI();
+
+        if (!FactionManager.Instance.GenerateInititalFactions()) {
+            //reset
+            Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
+            Messenger.Cleanup();
+            ReloadScene();
+            return;
+        }
+
         if (!RoadManager.Instance.GenerateRegionRoads()) {
             //reset
             Debug.LogWarning("Road generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
             return;
-        }
-        UIManager.Instance.InitializeUI();
-
+        }        
         LandmarkManager.Instance.GenerateOtherLandmarks();
         LandmarkManager.Instance.GenerateMaterials();
 
-        
-        
-        FactionManager.Instance.GenerateInititalFactions();
-        
 
         //KingdomManager.Instance.GenerateInitialKingdoms();
         //GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();

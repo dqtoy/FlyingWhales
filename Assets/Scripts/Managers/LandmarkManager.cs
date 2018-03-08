@@ -62,49 +62,6 @@ public class LandmarkManager : MonoBehaviour {
 		AddAllCenterOfMassToRegionLandmarksList ();
         GenerateDungeonLandmarks();
         GenerateSettlementLandmarks();
-        //List<HexTile> elligibleTiles = new List<HexTile>(hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad)); //Get tiles that aren't water and are not habitable
-        ////Tiles that are within 2 tiles of a habitable tile, cannot be landmarks
-        //for (int i = 0; i < allRegions.Count; i++) {
-        //    Region currRegion = allRegions[i];
-        //    List<HexTile> tilesToRemove = currRegion.centerOfMass.GetTilesInRange(2);
-        //    Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-        //}
-        //Dictionary<LANDMARK_TYPE, int> createdLandmarksDict = new Dictionary<LANDMARK_TYPE, int>();
-        //int numOfLandmarksToCreate = Mathf.FloorToInt(6 * (float)allRegions.Count); //Increase Landmarks to 6 times the number of regions
-        //Debug.Log("Creating " + numOfLandmarksToCreate.ToString() + " landmarks..... ");
-        //int createdLandmarks = 0;
-
-        //while (createdLandmarks != numOfLandmarksToCreate) {
-        //    if (elligibleTiles.Count <= 0) {
-        //        Debug.Log("Only created " + createdLandmarks.ToString() + " landmarks");
-        //        return;
-        //    }
-        //    HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-        //    elligibleTiles.Remove(chosenTile);
-        //    List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
-        //    Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-        //    chosenTile.CreateRandomLandmark();
-
-        //    //Keep track of number of landmarks per type
-        //    if (chosenTile.landmarkOnTile != null) {
-        //        LANDMARK_TYPE createdLandmarkType = chosenTile.landmarkOnTile.specificLandmarkType;
-        //        if (createdLandmarksDict.ContainsKey(createdLandmarkType)) {
-        //            createdLandmarksDict[createdLandmarkType]++;
-        //        } else {
-        //            createdLandmarksDict.Add(createdLandmarkType, 1);
-        //        }
-        //        createdLandmarks++;
-        //    }
-        //    //if(createdRoad != null) {
-        //    //    Utilities.ListRemoveRange(elligibleTiles, createdRoad);
-        //    //}
-
-        //}
-        //Debug.Log("Created " + createdLandmarks.ToString() + " landmarks");
-
-        //foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in createdLandmarksDict) {
-        //    Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
-        //}
     }
 	private void AddAllCenterOfMassToRegionLandmarksList(){
 		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
