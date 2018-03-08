@@ -86,8 +86,7 @@ public class Hypnotize : CharacterTask {
 			_targetCharacter.AddHistory ("Hypnotized by " + _assignedCharacter.name + "!");
 			_assignedCharacter.AddHistory ("Hypnotized " + _targetCharacter.name + "!");
 			_targetLandmark.AddHistory (_assignedCharacter.name + " hypnotized " + _targetCharacter.name + "!");
-			Hypnotized hypnotizedTag = new Hypnotized (_targetCharacter);
-			_targetCharacter.AddCharacterTag (hypnotizedTag);
+			_targetCharacter.AssignTag (CHARACTER_TAG.HYPNOTIZED);
 			MakeTargetCharacterAVampireFollower ();
 			EndHypnotize ();
 			return;

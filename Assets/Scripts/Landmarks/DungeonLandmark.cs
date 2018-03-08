@@ -86,7 +86,7 @@ public class DungeonLandmark : BaseLandmark {
     #region Vampire Tomb
     private void SpawnAncientVampire() {
         ECS.Character mingonArcanistVampire = CreateNewCharacter(RACE.MINGONS, CHARACTER_ROLE.ANCIENT_VAMPIRE, "Arcanist");
-        mingonArcanistVampire.AddCharacterTag(new Vampire(mingonArcanistVampire));
+        mingonArcanistVampire.AssignTag(CHARACTER_TAG.VAMPIRE);
         EquipGearForVampire(mingonArcanistVampire);
     }
     private void EquipGearForVampire(ECS.Character vampire) {

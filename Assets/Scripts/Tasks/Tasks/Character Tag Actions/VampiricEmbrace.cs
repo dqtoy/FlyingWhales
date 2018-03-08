@@ -84,8 +84,7 @@ public class VampiricEmbrace : CharacterTask {
 			_targetCharacter.AddHistory ("Turned into vampire by " + _assignedCharacter.name + "!");
 			_assignedCharacter.AddHistory ("Turned " + _targetCharacter.name + " into a vampire!");
 			_targetLandmark.AddHistory (_assignedCharacter.name + " turned " + _targetCharacter.name + " into a vampire!");
-			Vampire vampireTag = new Vampire (_targetCharacter);
-			_targetCharacter.AddCharacterTag (vampireTag);
+			_targetCharacter.AssignTag (CHARACTER_TAG.VAMPIRE);
 			EndVampiricEmbrace ();
 			return;
 		}else if(chosenAction == "caught"){
@@ -93,8 +92,7 @@ public class VampiricEmbrace : CharacterTask {
 			_assignedCharacter.AddHistory ("Caught trying to turn " + _targetCharacter.name + " into a vampire!");
 			_targetLandmark.AddHistory (_assignedCharacter.name + " got caught trying to turn " + _targetCharacter.name + " into a vampire!");
 			if(!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
-				Criminal criminalTag = new Criminal (_assignedCharacter);
-				_assignedCharacter.AddCharacterTag (criminalTag);
+				_assignedCharacter.AssignTag (CHARACTER_TAG.CRIMINAL);
 			}
 			EndVampiricEmbrace ();
 			return;

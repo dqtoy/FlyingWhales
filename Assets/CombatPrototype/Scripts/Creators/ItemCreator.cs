@@ -131,7 +131,9 @@ namespace ECS {
 				SaveWeapon(path);
 			} else if (itemComponent.itemType == ITEM_TYPE.ARMOR) {
                 SaveArmor(path);
-            }
+			} else{
+				Save (path);
+			}
 
             //Re-import the file to update the reference in the editor
             UnityEditor.AssetDatabase.ImportAsset(path);
@@ -185,6 +187,11 @@ namespace ECS {
 			armor.attributes = itemComponent.armorAttributes;
 
 			SaveJson(armor, path);
+		}
+		private void Save(string path){
+			Item item = new Item ();
+			SetCommonData (item);
+			SaveJson(item, path);
 		}
 		private void SaveJson(Item item, string path) {
 			string jsonString = JsonUtility.ToJson(item);
