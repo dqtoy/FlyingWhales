@@ -1487,8 +1487,11 @@ public class Utilities : MonoBehaviour {
             case LANDMARK_TYPE.CAVE:
             case LANDMARK_TYPE.WILDLANDS:
                 return BASE_LANDMARK_TYPE.DUNGEON;
+			case LANDMARK_TYPE.CITY:
+			case LANDMARK_TYPE.GOBLIN_CAMP:
+				return BASE_LANDMARK_TYPE.SETTLEMENT;
             default:
-                return BASE_LANDMARK_TYPE.SETTLEMENT;
+                return BASE_LANDMARK_TYPE.NONE;
         }
     }
     #endregion
