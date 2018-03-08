@@ -19,10 +19,10 @@ public class TakeQuest : CharacterTask {
 
         WeightedDictionary<Quest> questWeights = new WeightedDictionary<Quest>();
         Quest chosenQuest = null;
-        for (int i = 0; i < currSettlement.questBoard.Count; i++) {
-            Quest currQuest = currSettlement.questBoard[i];
-            questWeights.AddElement(currQuest, 100);
-        }
+        //for (int i = 0; i < currSettlement.questBoard.Count; i++) {
+        //    Quest currQuest = currSettlement.questBoard[i];
+        //    questWeights.AddElement(currQuest, 100);
+        //}
         
         if (questWeights.GetTotalOfWeights() > 0) {
             chosenQuest = questWeights.PickRandomElementGivenWeights();
@@ -42,9 +42,9 @@ public class TakeQuest : CharacterTask {
         if (character.specificLocation is Settlement) {
             Settlement settlement = character.specificLocation as Settlement;
             //Take Quest - 400 (0 if no quest available in the current settlement)
-            if (settlement.questBoard.Count > 0) {
-                return 400;
-            }
+            //if (settlement.questBoard.Count > 0) {
+            //    return 400;
+            //}
         }
         return 0;
     }

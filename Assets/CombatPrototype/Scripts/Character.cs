@@ -41,7 +41,7 @@ namespace ECS {
 		private CharacterRole _role;
 		private Faction _faction;
 		private Party _party;
-        private Quest _currentQuest;
+        private QuestData _questData;
 		private CharacterTask _currentTask;
         private ILocation _specificLocation;
 		private CharacterAvatar _avatar;
@@ -337,6 +337,7 @@ namespace ECS {
 			_followers = new List<ECS.Character> ();
 			_isFollowerOf = null;
 			_statsModifierPercentage = new StatsModifierPercentage ();
+            _questData = new QuestData();
 
 			AllocateStatPoints (statAllocationBonus);
 
@@ -1891,7 +1892,8 @@ namespace ECS {
 
 		#region Task Management
         public void SetCurrentQuest(Quest currentQuest) {
-            _currentQuest = currentQuest;
+            _questData.SetActiveQuest(currentQuest);
+            _questData.SetQuestPhase(0);
         }
 		public void AddNewQuest(OldQuest.Quest quest) {
 			if (!_activeQuests.Contains(quest)) {
