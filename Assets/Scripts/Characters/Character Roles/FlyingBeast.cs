@@ -19,7 +19,7 @@ public class FlyingBeast : CharacterRole {
 		_roleTasks.Add (new Pillage (this._character));
 		_roleTasks.Add (new Raze (this._character, 5));
 
-		_defaultRoleTask = _roleTasks [2];
+		_defaultRoleTask = _roleTasks [3];
 	}
 }
 

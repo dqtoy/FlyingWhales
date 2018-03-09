@@ -10,6 +10,6 @@ public class AncientVampire : CharacterRole {
         _roleTasks.Add(new DoNothing(this._character));
         _roleTasks.Add(new Hibernate(this._character));
         _roleTasks.Add(new HuntMagicUser(this._character));
-        _defaultRoleTask = _roleTasks[1];
+        _defaultRoleTask = _roleTasks[2];
     }
 }

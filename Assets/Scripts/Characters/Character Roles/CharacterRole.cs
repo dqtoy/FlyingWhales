@@ -38,6 +38,7 @@ public class CharacterRole {
 		_character = character;
         _allowedQuestTypes = new List<QUEST_TYPE>();
 		_roleTasks = new List<CharacterTask> ();
+		_roleTasks.Add (new RecruitFollowers (this._character, 5));
 	}
 		
     #region Action Weights
