@@ -1327,6 +1327,12 @@ namespace ECS {
             case CHARACTER_ROLE.ANCIENT_VAMPIRE:
                 _role = new AncientVampire(this);
                 break;
+			case CHARACTER_ROLE.CRATER_BEAST:
+				_role = new CraterBeast(this);
+				break;
+			case CHARACTER_ROLE.SLYX:
+				_role = new Slyx(this);
+				break;
             default:
 			    break;
 			}
@@ -1567,6 +1573,15 @@ namespace ECS {
 			case CHARACTER_TAG.WARMONGER:
 				charTag = new Warmonger(this);
 				break;
+			case CHARACTER_TAG.MILD_PSYTOXIN:
+				charTag = new MildPsytoxin(this);
+				break;
+			case CHARACTER_TAG.MODERATE_PSYTOXIN:
+				charTag = new ModeratePsytoxin(this);
+				break;
+			case CHARACTER_TAG.SEVERE_PSYTOXIN:
+				charTag = new SeverePsytoxin(this);
+				break;
 			}
 			if(charTag != null){
 				AddCharacterTag (charTag);
@@ -1606,6 +1621,27 @@ namespace ECS {
 					return true;
 				}
 			}
+			return false;
+		}
+		public bool HasTag(CHARACTER_TAG[] tags, bool mustBeAll) {
+			if(mustBeAll){
+				int count = 0;
+				for (int i = 0; i < _tags.Count; i++) {
+					if(tags.Contains(_tags[i].tagType)) {
+						count++;
+					}
+				}
+				if(count == tags.Length){
+					return true;
+				}
+			}else{
+				for (int i = 0; i < _tags.Count; i++) {
+					if(tags.Contains(_tags[i].tagType)) {
+						return true;
+					}
+				}
+			}
+
 			return false;
 		}
 		#endregion
@@ -1675,10 +1711,13 @@ namespace ECS {
 			if(_role != null){
 				_role.AddTaskWeightsFromRole (actionWeights);
 			}
-			for (int i = 0; i < _tags.Count; i++) {
-				_tags [i].AddTaskWeightsFromTags (actionWeights);
+
+			if(_role != null && !_role.cancelsAllOtherTasks){
+				for (int i = 0; i < _tags.Count; i++) {
+					_tags [i].AddTaskWeightsFromTags (actionWeights);
+				}
+				//TODO: Quest Tasks
 			}
-			//TODO: Quest Tasks
 
 			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
 			chosenTask.ResetTask ();

@@ -302,41 +302,86 @@ namespace ECS{
 		private ECS.Character GetTargetCharacter(ECS.Character sourceCharacter, Skill skill){
 			List<ECS.Character> possibleTargets = new List<ECS.Character>();
 			if (skill is AttackSkill) {
-				if (sourceCharacter.currentSide == SIDES.A) {
-					for (int i = 0; i < this.charactersSideB.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideB [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				List<ECS.Character> oppositeTargets = this.charactersSideB;
+				if(sourceCharacter.currentSide == SIDES.B){
+					oppositeTargets = this.charactersSideA;
+				}
+
+				int chance = UnityEngine.Random.Range (0, 100);
+				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+					if(chance < 10){
+						if(sourceCharacter.currentSide == SIDES.A){
+							oppositeTargets = this.charactersSideA;
+						}else{
+							oppositeTargets = this.charactersSideB;
 						}
 					}
-				} else {
-					for (int i = 0; i < this.charactersSideA.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideA [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+					if(chance < 20){
+						if(sourceCharacter.currentSide == SIDES.A){
+							oppositeTargets = this.charactersSideA;
+						}else{
+							oppositeTargets = this.charactersSideB;
 						}
+					}
+				}
+
+				for (int i = 0; i < oppositeTargets.Count; i++) {
+					ECS.Character targetCharacter = oppositeTargets [i];
+					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+					if (skill.range >= rowDistance) {
+						possibleTargets.Add (targetCharacter);
 					}
 				}
 			} else if (skill is HealSkill) {
-				if (sourceCharacter.currentSide == SIDES.A) {
-					for (int i = 0; i < this.charactersSideA.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideA [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				List<ECS.Character> sameTargets = this.charactersSideB;
+				if(sourceCharacter.currentSide == SIDES.A){
+					sameTargets = this.charactersSideA;
+				}
+
+				int chance = UnityEngine.Random.Range (0, 100);
+				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+					if(chance < 10){
+						if(sourceCharacter.currentSide == SIDES.B){
+							sameTargets = this.charactersSideA;
+						}else{
+							sameTargets = this.charactersSideB;
 						}
 					}
-				} else {
-					for (int i = 0; i < this.charactersSideB.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideB [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+					if(chance < 20){
+						if(sourceCharacter.currentSide == SIDES.B){
+							sameTargets = this.charactersSideA;
+						}else{
+							sameTargets = this.charactersSideB;
 						}
 					}
 				}
+
+				for (int i = 0; i < sameTargets.Count; i++) {
+					ECS.Character targetCharacter = sameTargets [i];
+					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+					if (skill.range >= rowDistance) {
+						possibleTargets.Add (targetCharacter);
+					}
+				}
+//				if (sourceCharacter.currentSide == SIDES.A) {
+//					for (int i = 0; i < this.charactersSideA.Count; i++) {
+//						ECS.Character targetCharacter = this.charactersSideA [i];
+//						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+//						if (skill.range >= rowDistance) {
+//							possibleTargets.Add (targetCharacter);
+//						}
+//					}
+//				} else {
+//					for (int i = 0; i < this.charactersSideB.Count; i++) {
+//						ECS.Character targetCharacter = this.charactersSideB [i];
+//						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+//						if (skill.range >= rowDistance) {
+//							possibleTargets.Add (targetCharacter);
+//						}
+//					}
+//				}
 			}else{
 				possibleTargets.Add (sourceCharacter);
 			}

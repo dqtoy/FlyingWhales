@@ -1003,7 +1003,37 @@ public class BaseLandmark : ILocation, TaskCreator {
 
 	#region Crater
 	private void InitializeCrater(){
-		
+		ECS.CharacterSetup charSetup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup("Dehkbrug");
+		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charSetup.optionalRole, charSetup);
+		newCharacter.SetCharacterColor (Color.red);
+
+		newCharacter.SetHome(this);
+		this.AddCharacterToLocation(newCharacter, false);
+		newCharacter.DetermineAction();
+
+		EmitPsytoxin ();
+	}
+	private void EmitPsytoxin(){
+		Region currRegion = this.tileLocation.region;
+		for (int i = 0; i < currRegion.adjacentRegions.Count; i++) {
+			Region adjacentRegion = currRegion.adjacentRegions [i];
+			for (int j = 0; j < adjacentRegion.allLandmarks.Count; j++) {
+				if(adjacentRegion.allLandmarks[j].charactersAtLocation.Count > 0){
+					for (int k = 0; k < adjacentRegion.allLandmarks[j].charactersAtLocation.Count; k++) {
+						ICombatInitializer combatInitializer = adjacentRegion.allLandmarks [j].charactersAtLocation [k];
+						if(combatInitializer is Party){
+							Party party = (Party)combatInitializer;
+							for (int l = 0; l < party.partyMembers.Count; l++) {
+								party.partyMembers [l].AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
+							}
+						}else if(combatInitializer is ECS.Character){
+							ECS.Character character = (ECS.Character)combatInitializer;
+							character.AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
+						}
+					}
+				}
+			}
+		}
 	}
 	#endregion
 }

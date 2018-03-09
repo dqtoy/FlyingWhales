@@ -82,6 +82,9 @@ public class GameManager : MonoBehaviour {
     public GameDate EndOfTheMonth() {
         return new GameDate(this.month, daysInMonth[this.month], this.year);
     }
+	public GameDate FirstDayOfTheMonth() {
+		return new GameDate(this.month, 1, this.year);
+	}
 
 	public void TogglePause(){
 		this.isPaused = !this.isPaused;

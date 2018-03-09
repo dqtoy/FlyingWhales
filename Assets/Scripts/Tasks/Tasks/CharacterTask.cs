@@ -28,6 +28,7 @@ public class CharacterTask {
 
     //protected bool _canDoDailyAction = false;
 	protected bool _forPlayerOnly;
+	protected bool _forGameOnly;
 	protected ILocation _targetLocation;
 	protected int _daysLeft;
 	protected int _defaultDaysLeft;
@@ -62,6 +63,9 @@ public class CharacterTask {
 	public bool forPlayerOnly{
 		get { return _forPlayerOnly; }
 	}
+	public bool forGameOnly{
+		get { return _forGameOnly; }
+	}
 	public ILocation targetLocation{
 		get { return _targetLocation; }
 	}
@@ -93,6 +97,7 @@ public class CharacterTask {
 		_landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 		_characterWeights = new WeightedDictionary<ECS.Character> ();
 		_forPlayerOnly = false;
+		_forGameOnly = false;
 		SetIsHalted (false);
 		_isDone = false;
 		SetDefaultDaysLeft (defaultDaysLeft);
