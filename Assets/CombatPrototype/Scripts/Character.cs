@@ -693,7 +693,7 @@ namespace ECS {
                 return;
             }
             Faction ownerOfCurrLocation = this.currLocation.region.owner;
-            if (ownerOfCurrLocation.id != this.faction.id) {
+			if (ownerOfCurrLocation != null && ownerOfCurrLocation.id != this.faction.id) {
                 if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
                     OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
                     if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
