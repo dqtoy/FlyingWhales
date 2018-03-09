@@ -161,11 +161,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
 
 	#region Virtuals
-	protected virtual void Initialize() { 
-		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
-			
-		}
-	}
+	protected virtual void Initialize() {}
     /*
      What should happen when a character searches this landmark
          */
@@ -895,6 +891,10 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return 0;
     }
+	internal void ChangeLandmarkType(LANDMARK_TYPE newLandmarkType){
+		_specificLandmarkType = newLandmarkType;
+		Initialize ();
+	}
     #endregion
 
     #region Prisoner

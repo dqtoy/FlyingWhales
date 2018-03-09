@@ -884,7 +884,8 @@ public enum CHARACTER_ROLE {
 	TAMED_BEAST,
 	FLYING_BEAST,
 	BANDIT,
-    ANCIENT_VAMPIRE
+    ANCIENT_VAMPIRE,
+	CRATER_BEAST,
 }
 public enum CHARACTER_CLASS {
     NONE,
@@ -1045,7 +1046,8 @@ public enum ATTACK_TYPE {
     CRUSH,
     PIERCE,
     SLASH,
-    MAGIC
+    MAGIC,
+	STATUS
 }
 public enum DEFEND_TYPE {
     DODGE,
@@ -1060,7 +1062,8 @@ public enum STATUS_EFFECT {
     POISONED,
     STUNNED,
     BLEEDING,
-    BURNING
+    BURNING,
+	CONFUSED,
 }
 public enum CHARACTER_ATTRIBUTES {
     STRENGTH,

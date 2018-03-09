@@ -37,6 +37,8 @@ namespace ECS{
             NONE,
 			CAN_EQUIP_HIP_ARMOR,
 			NONDECAPITATABLE,
+			CAN_CONFUSE,
+			CAN_SLAM,
         }
 
 		[SerializeField] internal string name;
