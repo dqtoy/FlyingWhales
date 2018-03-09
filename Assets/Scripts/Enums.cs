@@ -937,6 +937,8 @@ public enum QUEST_TYPE { //This is a list of actions a character can choose to a
 	OBTAIN_MATERIAL,
     EXPEDITION,
 	SAVE_LANDMARK,
+
+    FIND_LOST_HEIR
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
@@ -960,6 +962,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	VAMPIRIC_EMBRACE,
 	DRINK_BLOOD,
 	HYPNOTIZE,
+    SEARCH,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
