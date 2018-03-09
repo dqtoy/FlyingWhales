@@ -76,6 +76,7 @@ namespace ECS {
 			WeaponType weaponType = new WeaponType ();
 			weaponType.weaponType = weaponTypeComponent.weaponType;
 			weaponType.powerModifier = weaponTypeComponent.powerModifier;
+			weaponType.damageRange = weaponTypeComponent.damageRange;
 			weaponType.equipRequirements = weaponTypeComponent.equipRequirements;
 //			weaponType.weaponMaterials = weaponTypeComponent.weaponMaterials;
 			for (int i = 0; i < weaponTypeComponent.skills.Count; i++) {
