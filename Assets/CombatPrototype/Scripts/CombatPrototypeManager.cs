@@ -10,7 +10,7 @@ namespace ECS {
 
         public CharacterSetup[] baseCharacters;
 		public Color[] characterColors;
-		public AttributeSkill[] attributeSkills;
+//		public AttributeSkill[] attributeSkills;
 		public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>> ();
 
 		private List<Color> unusedColors = new List<Color>();
@@ -23,7 +23,7 @@ namespace ECS {
 		internal void Initialize(){
 			ConstructBaseCharacters();
 			ConstructCharacterColors ();
-			ConstructAttributeSkills ();
+//			ConstructAttributeSkills ();
 			NewCombat ();
 		}
         private void ConstructBaseCharacters() {
@@ -69,18 +69,18 @@ namespace ECS {
 			}
 		}
 
-		private void ConstructAttributeSkills(){
-			string path = "Assets/CombatPrototype/Data/AttributeSkills/";
-			string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
-			attributeSkills = new AttributeSkill[attributeSkillsJson.Length];
-			for (int i = 0; i < attributeSkillsJson.Length; i++) {
-				string file = attributeSkillsJson[i];
-				string dataAsJson = System.IO.File.ReadAllText(file);
-				AttributeSkill attSkill = JsonUtility.FromJson<AttributeSkill>(dataAsJson);
-				attSkill.ConstructAttributeSkillsList ();
-				attributeSkills[i] = attSkill;
-			}
-		}
+//		private void ConstructAttributeSkills(){
+//			string path = "Assets/CombatPrototype/Data/AttributeSkills/";
+//			string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
+//			attributeSkills = new AttributeSkill[attributeSkillsJson.Length];
+//			for (int i = 0; i < attributeSkillsJson.Length; i++) {
+//				string file = attributeSkillsJson[i];
+//				string dataAsJson = System.IO.File.ReadAllText(file);
+//				AttributeSkill attSkill = JsonUtility.FromJson<AttributeSkill>(dataAsJson);
+//				attSkill.ConstructAttributeSkillsList ();
+//				attributeSkills[i] = attSkill;
+//			}
+//		}
 		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
 			for (int i = 0; i < this.baseCharacters.Length; i++) {
                 CharacterSetup currBase = this.baseCharacters[i];

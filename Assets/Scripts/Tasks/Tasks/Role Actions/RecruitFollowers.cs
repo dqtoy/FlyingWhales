@@ -3,6 +3,7 @@
  */
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using ECS;
 
 public class RecruitFollowers : CharacterTask {
@@ -22,8 +23,11 @@ public class RecruitFollowers : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetTargetLandmark (character);
 		}
-		if(_targetLandmark != null){
+		if(_targetLocation != null){
 			_targetLandmark = (BaseLandmark)_targetLocation;
+			_assignedCharacter.GoToLocation (_targetLandmark, PATHFINDING_MODE.USE_ROADS);
+		}else{
+			EndRecruitment ();
 		}
 	}
     public override void PerformTask() {
@@ -62,19 +66,21 @@ public class RecruitFollowers : CharacterTask {
 		ReduceDaysLeft (1);
     }
 	public override bool CanBeDone (Character character, ILocation location){
-		if(character.specificLocation != null && character.specificLocation.tileLocation.id == location.tileLocation.id && location.tileLocation.landmarkOnTile != null){
-			if(character.faction != null && location.tileLocation.landmarkOnTile is Settlement){
-				Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
-				if(settlement.owner.id == character.faction.id){
-					return true;
-				}
+		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0 && character.faction != null){
+			if(location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
+				return true;
 			}
 		}
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		if(GetTargetLandmark(character) != null){
-			return true;
+		if(character.faction != null){
+			List<BaseLandmark> ownedLandmarks = character.faction.GetAllOwnedLandmarks ();
+			for (int i = 0; i < ownedLandmarks.Count; i++) {
+				if (ownedLandmarks [i].civilians > 0) {
+					return true;
+				}
+			}
 		}
 		return base.AreConditionsMet (character);
 	}
@@ -114,8 +120,16 @@ public class RecruitFollowers : CharacterTask {
     }
 
 	private BaseLandmark GetTargetLandmark(Character character){
-		if(character.specificLocation != null && character.specificLocation.tileLocation.landmarkOnTile != null && character.specificLocation.tileLocation.landmarkOnTile is Settlement){
-			return character.specificLocation.tileLocation.landmarkOnTile;
+		_landmarkWeights.Clear ();
+		List<BaseLandmark> ownedLandmarks = character.faction.GetAllOwnedLandmarks ();
+		for (int i = 0; i < ownedLandmarks.Count; i++) {
+			BaseLandmark landmark = ownedLandmarks[i];
+			if(landmark.civilians > 0){
+				_landmarkWeights.AddElement (landmark, 5);
+			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}

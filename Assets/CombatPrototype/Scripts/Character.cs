@@ -15,6 +15,7 @@ namespace ECS {
         [System.NonSerialized] private List<Trait>	_traits;
         private List<TRAIT> _allTraits;
 		private List<CharacterTag>	_tags;
+		internal List<STATUS_EFFECT> statusEffects;
         private Dictionary<Character, Relationship> _relationships;
 		private const int MAX_FOLLOWERS = 4;
 
@@ -333,6 +334,7 @@ namespace ECS {
 			_tags = new List<CharacterTag> ();
             _relationships = new Dictionary<Character, Relationship>();
 			_exploredLandmarks = new Dictionary<int, BaseLandmark> ();
+			statusEffects = new List<STATUS_EFFECT>();
 			_isDead = false;
 			_isFainted = false;
 			_isPrisoner = false;
@@ -486,12 +488,12 @@ namespace ECS {
 						continue;
 					}
 				}else if (skill is FleeSkill){
-					skill.isEnabled = false;
-					continue;
-//					if(this.currentHP >= (this.maxHP / 2)){
-//						skill.isEnabled = false;
-//						continue;
-//					}
+//					skill.isEnabled = false;
+//					continue;
+					if(this.currentHP >= (this.maxHP / 2)){
+						skill.isEnabled = false;
+						continue;
+					}
 				}
 			}
 
@@ -699,7 +701,7 @@ namespace ECS {
                 return;
             }
             Faction ownerOfCurrLocation = this.currLocation.region.owner;
-            if (ownerOfCurrLocation.id != this.faction.id) {
+			if (ownerOfCurrLocation != null && ownerOfCurrLocation.id != this.faction.id) {
                 if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
                     OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
                     if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
@@ -1142,7 +1144,25 @@ namespace ECS {
         }
         #endregion
 
+		#region Status Effects
+		internal void AddStatusEffect(STATUS_EFFECT statusEffect){
+			this.statusEffects.Add (statusEffect);
+		}
+
+		internal void RemoveStatusEffect(STATUS_EFFECT statusEffect){
+			this.statusEffects.Remove (statusEffect);
+		}
+
         internal void CureStatusEffects(){
+			for (int i = 0; i < statusEffects.Count; i++) {
+				STATUS_EFFECT statusEffect = statusEffects [i];
+				int chance = Utilities.rng.Next (0, 100);
+				if (chance < 15) {
+					CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+					RemoveStatusEffect (statusEffect);
+					i--;
+				}
+			}
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
 				if(bodyPart.statusEffects.Count > 0){
@@ -1163,6 +1183,9 @@ namespace ECS {
 		}
 
         internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
+			if (statusEffects.Contains(statusEffect)) {
+				return true;
+			}
             for (int i = 0; i < this._bodyParts.Count; i++) {
                 BodyPart bodyPart = this._bodyParts[i];
                 if (bodyPart.statusEffects.Contains(statusEffect)) {
@@ -1171,6 +1194,8 @@ namespace ECS {
             }
             return false;
         }
+		#endregion
+
 		#region Skills
 		private List<Skill> GetGeneralSkills(){
 			List<Skill> generalSkills = new List<Skill> ();
@@ -1210,20 +1235,33 @@ namespace ECS {
 		}
 		private List<Skill> GetBodyPartSkills(){
 			List<Skill> allBodyPartSkills = new List<Skill>();
-			for (int i = 0; i < CombatPrototypeManager.Instance.attributeSkills.Length; i++) {
+			foreach (string skillName in SkillManager.Instance.bodyPartSkills.Keys) {
 				bool requirementsPassed = true;
-				for (int j = 0; j < CombatPrototypeManager.Instance.attributeSkills[i].requirements.Length; j++) {
-					if(!HasAttribute(CombatPrototypeManager.Instance.attributeSkills[i].requirements[j].attributeRequired, CombatPrototypeManager.Instance.attributeSkills[i].requirements[j].itemQuantity)){
+				ECS.Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
+				for (int j = 0; j < skill.skillRequirements.Length; j++) {
+					if(!HasAttribute(skill.skillRequirements[j].attributeRequired, skill.skillRequirements[j].itemQuantity)){
 						requirementsPassed = false;
 						break;
 					}
 				}
 				if(requirementsPassed){
-					for (int j = 0; j < CombatPrototypeManager.Instance.attributeSkills[i].skills.Count; j++) {
-						allBodyPartSkills.Add (CombatPrototypeManager.Instance.attributeSkills [i].skills [j].CreateNewCopy());
-					}
+					allBodyPartSkills.Add (skill.CreateNewCopy ());
 				}
 			}
+//			for (int i = 0; i < SkillManager.Instance.allSkills.Count; i++) {
+//				bool requirementsPassed = true;
+//				for (int j = 0; j < SkillManager.Instance.attributeSkills[i].requirements.Length; j++) {
+//					if(!HasAttribute(SkillManager.Instance.attributeSkills[i].requirements[j].attributeRequired, SkillManager.Instance.attributeSkills[i].requirements[j].itemQuantity)){
+//						requirementsPassed = false;
+//						break;
+//					}
+//				}
+//				if(requirementsPassed){
+//					for (int j = 0; j < SkillManager.Instance.attributeSkills[i].skills.Count; j++) {
+//						allBodyPartSkills.Add (SkillManager.Instance.attributeSkills [i].skills [j].CreateNewCopy());
+//					}
+//				}
+//			}
 			return allBodyPartSkills;
 		}
 		#endregion
@@ -1304,6 +1342,12 @@ namespace ECS {
             case CHARACTER_ROLE.ANCIENT_VAMPIRE:
                 _role = new AncientVampire(this);
                 break;
+			case CHARACTER_ROLE.CRATER_BEAST:
+				_role = new CraterBeast(this);
+				break;
+			case CHARACTER_ROLE.SLYX:
+				_role = new Slyx(this);
+				break;
             default:
 			    break;
 			}
@@ -1538,6 +1582,21 @@ namespace ECS {
             case CHARACTER_TAG.SUCCESSOR:
                 charTag = new Successor(this);
                 break;
+			case CHARACTER_TAG.TYRANNICAL:
+				charTag = new Tyrannical(this);
+				break;
+			case CHARACTER_TAG.WARMONGER:
+				charTag = new Warmonger(this);
+				break;
+			case CHARACTER_TAG.MILD_PSYTOXIN:
+				charTag = new MildPsytoxin(this);
+				break;
+			case CHARACTER_TAG.MODERATE_PSYTOXIN:
+				charTag = new ModeratePsytoxin(this);
+				break;
+			case CHARACTER_TAG.SEVERE_PSYTOXIN:
+				charTag = new SeverePsytoxin(this);
+				break;
 			}
 			if(charTag != null){
 				AddCharacterTag (charTag);
@@ -1577,6 +1636,27 @@ namespace ECS {
 					return true;
 				}
 			}
+			return false;
+		}
+		public bool HasTag(CHARACTER_TAG[] tags, bool mustBeAll) {
+			if(mustBeAll){
+				int count = 0;
+				for (int i = 0; i < _tags.Count; i++) {
+					if(tags.Contains(_tags[i].tagType)) {
+						count++;
+					}
+				}
+				if(count == tags.Length){
+					return true;
+				}
+			}else{
+				for (int i = 0; i < _tags.Count; i++) {
+					if(tags.Contains(_tags[i].tagType)) {
+						return true;
+					}
+				}
+			}
+
 			return false;
 		}
 		#endregion
@@ -1646,10 +1726,13 @@ namespace ECS {
 			if(_role != null){
 				_role.AddTaskWeightsFromRole (actionWeights);
 			}
-			for (int i = 0; i < _tags.Count; i++) {
-				_tags [i].AddTaskWeightsFromTags (actionWeights);
+
+			if(_role != null && !_role.cancelsAllOtherTasks){
+				for (int i = 0; i < _tags.Count; i++) {
+					_tags [i].AddTaskWeightsFromTags (actionWeights);
+				}
+				//TODO: Quest Tasks
 			}
-			//TODO: Quest Tasks
 
 			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
 			chosenTask.ResetTask ();

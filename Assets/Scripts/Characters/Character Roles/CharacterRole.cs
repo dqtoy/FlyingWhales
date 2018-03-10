@@ -16,6 +16,7 @@ public class CharacterRole {
     protected List<QUEST_TYPE> _allowedQuestTypes;
 	protected List<CharacterTask> _roleTasks;
 	protected CharacterTask _defaultRoleTask;
+	protected bool _cancelsAllOtherTasks;
 
     #region getters/setters
     public CHARACTER_ROLE roleType {
@@ -36,12 +37,17 @@ public class CharacterRole {
 	public CharacterTask defaultRoleTask {
 		get { return _defaultRoleTask; }
 	}
+	public bool cancelsAllOtherTasks {
+		get { return _cancelsAllOtherTasks; }
+	}
     #endregion
 
 	public CharacterRole(ECS.Character character){
 		_character = character;
+		_cancelsAllOtherTasks = false;
         _allowedQuestTypes = new List<QUEST_TYPE>();
 		_roleTasks = new List<CharacterTask> ();
+		_roleTasks.Add (new RecruitFollowers (this._character, 5));
         _allowedQuestAlignments = new List<QUEST_ALIGNMENT>();
     }
 		

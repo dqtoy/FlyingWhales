@@ -1490,6 +1490,7 @@ public class Utilities : MonoBehaviour {
 			case LANDMARK_TYPE.CITY:
 			case LANDMARK_TYPE.GOBLIN_CAMP:
             case LANDMARK_TYPE.HUT:
+			case LANDMARK_TYPE.CRATER:
                 return BASE_LANDMARK_TYPE.SETTLEMENT;
             default:
                 return BASE_LANDMARK_TYPE.NONE;

@@ -302,41 +302,86 @@ namespace ECS{
 		private ECS.Character GetTargetCharacter(ECS.Character sourceCharacter, Skill skill){
 			List<ECS.Character> possibleTargets = new List<ECS.Character>();
 			if (skill is AttackSkill) {
-				if (sourceCharacter.currentSide == SIDES.A) {
-					for (int i = 0; i < this.charactersSideB.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideB [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				List<ECS.Character> oppositeTargets = this.charactersSideB;
+				if(sourceCharacter.currentSide == SIDES.B){
+					oppositeTargets = this.charactersSideA;
+				}
+
+				int chance = UnityEngine.Random.Range (0, 100);
+				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+					if(chance < 10){
+						if(sourceCharacter.currentSide == SIDES.A){
+							oppositeTargets = this.charactersSideA;
+						}else{
+							oppositeTargets = this.charactersSideB;
 						}
 					}
-				} else {
-					for (int i = 0; i < this.charactersSideA.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideA [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+					if(chance < 20){
+						if(sourceCharacter.currentSide == SIDES.A){
+							oppositeTargets = this.charactersSideA;
+						}else{
+							oppositeTargets = this.charactersSideB;
 						}
+					}
+				}
+
+				for (int i = 0; i < oppositeTargets.Count; i++) {
+					ECS.Character targetCharacter = oppositeTargets [i];
+					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+					if (skill.range >= rowDistance) {
+						possibleTargets.Add (targetCharacter);
 					}
 				}
 			} else if (skill is HealSkill) {
-				if (sourceCharacter.currentSide == SIDES.A) {
-					for (int i = 0; i < this.charactersSideA.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideA [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				List<ECS.Character> sameTargets = this.charactersSideB;
+				if(sourceCharacter.currentSide == SIDES.A){
+					sameTargets = this.charactersSideA;
+				}
+
+				int chance = UnityEngine.Random.Range (0, 100);
+				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+					if(chance < 10){
+						if(sourceCharacter.currentSide == SIDES.B){
+							sameTargets = this.charactersSideA;
+						}else{
+							sameTargets = this.charactersSideB;
 						}
 					}
-				} else {
-					for (int i = 0; i < this.charactersSideB.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideB [i];
-						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-						if (skill.range >= rowDistance) {
-							possibleTargets.Add (targetCharacter);
+				}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+					if(chance < 20){
+						if(sourceCharacter.currentSide == SIDES.B){
+							sameTargets = this.charactersSideA;
+						}else{
+							sameTargets = this.charactersSideB;
 						}
 					}
 				}
+
+				for (int i = 0; i < sameTargets.Count; i++) {
+					ECS.Character targetCharacter = sameTargets [i];
+					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+					if (skill.range >= rowDistance) {
+						possibleTargets.Add (targetCharacter);
+					}
+				}
+//				if (sourceCharacter.currentSide == SIDES.A) {
+//					for (int i = 0; i < this.charactersSideA.Count; i++) {
+//						ECS.Character targetCharacter = this.charactersSideA [i];
+//						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+//						if (skill.range >= rowDistance) {
+//							possibleTargets.Add (targetCharacter);
+//						}
+//					}
+//				} else {
+//					for (int i = 0; i < this.charactersSideB.Count; i++) {
+//						ECS.Character targetCharacter = this.charactersSideB [i];
+//						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+//						if (skill.range >= rowDistance) {
+//							possibleTargets.Add (targetCharacter);
+//						}
+//					}
+//				}
 			}else{
 				possibleTargets.Add (sourceCharacter);
 			}
@@ -560,7 +605,10 @@ namespace ECS{
 		}
 
 		//Get DEFEND_TYPE for the attack skill, if DEFEND_TYPE is NONE, then target character has not defend successfully, therefore, the target character will be damaged
-		private DEFEND_TYPE CanTargetCharacterDefend(ECS.Character targetCharacter){
+		private DEFEND_TYPE CanTargetCharacterDefend(ECS.Character sourceCharacter, ECS.Character targetCharacter){
+			if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
+				return DEFEND_TYPE.NONE;
+			}
 			int dodgeChance = Utilities.rng.Next (0, 100);
 			if(dodgeChance < targetCharacter.dodgeRate){
 				return DEFEND_TYPE.DODGE;
@@ -591,7 +639,7 @@ namespace ECS{
 		#region Attack Skill
 		private void AttackSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			AttackSkill attackSkill = (AttackSkill)skill;
-			DEFEND_TYPE defendType = CanTargetCharacterDefend (targetCharacter);
+			DEFEND_TYPE defendType = CanTargetCharacterDefend (sourceCharacter, targetCharacter);
 			if(defendType == DEFEND_TYPE.NONE){
 				//Successfully hits the target character
 				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter, attackSkill.weapon);
@@ -611,62 +659,82 @@ namespace ECS{
 		//Hits the target with an attack skill
 		private void HitTargetCharacter(AttackSkill attackSkill, ECS.Character sourceCharacter, ECS.Character targetCharacter, Weapon weapon = null){
 			//Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
-			string log = string.Empty;
-			float weaponPower = 0f;
-			BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
-			if (chosenBodyPart == null) {
-				Debug.LogError ("NO MORE BODY PARTS!");
-				return;
+			if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
+				targetCharacter = sourceCharacter;
+				string log = sourceCharacter.coloredUrlName + " is so confused that " + (sourceCharacter.gender == GENDER.MALE ? "he" : "she") + " targeted " 
+					+ (sourceCharacter.gender == GENDER.MALE ? "himself" : "herself");
+				AddCombatLog (log , sourceCharacter.currentSide);
 			}
-			Armor armor = chosenBodyPart.GetArmor ();
-			log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
+			if(attackSkill.attackType != ATTACK_TYPE.STATUS){
+				string log = string.Empty;
+				float weaponPower = 0f;
+				BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
+				if (chosenBodyPart == null) {
+					Debug.LogError ("NO MORE BODY PARTS!");
+					return;
+				}
+				Armor armor = chosenBodyPart.GetArmor ();
+				log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
-			int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
+				int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
 
-            if(weapon != null) {
-				weaponPower = weapon.weaponPower;
-//				if(Utilities.GetMaterialCategory(weapon.material) == MATERIAL_CATEGORY.WOOD && (weapon.weaponType == WEAPON_TYPE.BOW || weapon.weaponType == WEAPON_TYPE.STAFF)){
-//					weaponPower *= 2f;
-//				}
-				//reduce weapon durability by durability cost of skill
-				weapon.AdjustDurability(-attackSkill.durabilityCost);
-				log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
+				if(weapon != null) {
+					weaponPower = weapon.weaponPower;
+					//				if(Utilities.GetMaterialCategory(weapon.material) == MATERIAL_CATEGORY.WOOD && (weapon.weaponType == WEAPON_TYPE.BOW || weapon.weaponType == WEAPON_TYPE.STAFF)){
+					//					weaponPower *= 2f;
+					//				}
+					//reduce weapon durability by durability cost of skill
+					weapon.AdjustDurability(-attackSkill.durabilityCost);
+					log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
 
-				int damageRange = (int)((float)damage * weapon.damageRange);
-				int minDamageRange = damage - damageRange;
-				int maxDamageRange = damage + damageRange;
-				damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
-			}else{
-				log += ".";
-			}
-
-			if(armor != null){
-				if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
-					int damageNullChance = Utilities.rng.Next (0, 100);
-					if(damageNullChance < armor.damageNullificationChance){
-						log += " The attack was fully absorbed by the " + armor.itemName + ".";
-						return;
-					}
-					damage -= (int)((float)damage * (armor.baseDamageMitigation / 100f));
+					int damageRange = (int)((float)damage * (weapon.damageRange / 100f));
+					int minDamageRange = damage - damageRange;
+					int maxDamageRange = damage + damageRange;
+					damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
 				}else{
-					damage -= (int)((float)damage * ((armor.baseDamageMitigation / 2f) / 100f));
+					log += ".";
 				}
-				if(armor.ineffectiveAttackTypes.Contains(attackSkill.attackType)){
-					damage -= (int)((float)damage * 0.2f);
+
+				if(armor != null){
+					if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
+						int damageNullChance = Utilities.rng.Next (0, 100);
+						if(damageNullChance < armor.damageNullificationChance){
+							log += " The attack was fully absorbed by the " + armor.itemName + ".";
+							return;
+						}
+						damage -= (int)((float)damage * (armor.baseDamageMitigation / 100f));
+					}else{
+						damage -= (int)((float)damage * ((armor.baseDamageMitigation / 2f) / 100f));
+					}
+					if(armor.ineffectiveAttackTypes.Contains(attackSkill.attackType)){
+						damage -= (int)((float)damage * 0.2f);
+					}
+					if(armor.effectiveAttackTypes.Contains(attackSkill.attackType)){
+						damage += (int)((float)damage * 0.2f);
+					}
+					armor.AdjustDurability (-attackSkill.durabilityDamage);
 				}
-				if(armor.effectiveAttackTypes.Contains(attackSkill.attackType)){
-					damage += (int)((float)damage * 0.2f);
+				log += "(" + damage.ToString () + ")";
+
+				DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
+
+				AddCombatLog (log, sourceCharacter.currentSide);
+
+				targetCharacter.AdjustHP (-damage);
+			}else{
+				string log = sourceCharacter.coloredUrlName + " used " + attackSkill.skillName.ToLower () + " on " + targetCharacter.coloredUrlName + ".";
+				int chance = Utilities.rng.Next (0, 100);
+				if (attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0) {
+					for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
+						int value = attackSkill.statusEffectRates [i].ratePercentage;
+						if(chance < value){
+							targetCharacter.AddStatusEffect (attackSkill.statusEffectRates [i].statusEffect);
+							log += StatusEffectLog (sourceCharacter, targetCharacter, attackSkill.statusEffectRates [i].statusEffect);
+						}
+					}
 				}
-				armor.AdjustDurability (-attackSkill.durabilityDamage);
+				AddCombatLog (log, sourceCharacter.currentSide);
 			}
-			log += "(" + damage.ToString () + ")";
-
-			DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
-
-			AddCombatLog (log, sourceCharacter.currentSide);
-
-			targetCharacter.AdjustHP (-damage);
-
         }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
@@ -821,6 +889,19 @@ namespace ECS{
         }
 
 
+		private string StatusEffectLog(ECS.Character sourceCharacter, ECS.Character targetCharacter, STATUS_EFFECT statusEffect){
+			string log = string.Empty;
+			if(statusEffect == STATUS_EFFECT.CONFUSED){
+				string[] possibleLogs = new string[] {
+					targetCharacter.coloredUrlName + "'s mind got corrupted!",
+					targetCharacter.coloredUrlName + " started hallucinating!",
+					targetCharacter.coloredUrlName + " started curling in pain and screaming 'Get out of my head!'."
+				};
+
+				log = possibleLogs[Utilities.rng.Next(0, possibleLogs.Length)];
+			}
+			return log;
+		}
 		//Returns a random body part of a character
 		private BodyPart GetRandomBodyPart(ECS.Character character){
 			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();

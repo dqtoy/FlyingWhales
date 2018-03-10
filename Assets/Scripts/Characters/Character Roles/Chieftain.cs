@@ -30,7 +30,7 @@ public class Chieftain : CharacterRole {
 		_roleTasks.Add (new MoveTo (this._character));
 		_roleTasks.Add (new Attack (this._character, 10));
 
-		_defaultRoleTask = _roleTasks [0];
+		_defaultRoleTask = _roleTasks [1];
     }
 
 	#region Overrides

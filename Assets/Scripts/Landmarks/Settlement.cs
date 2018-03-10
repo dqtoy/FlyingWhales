@@ -46,6 +46,12 @@ public class Settlement : BaseLandmark {
     }
 
     #region Ownership
+	protected override void Initialize (){
+		base.Initialize ();
+		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
+
+		}
+	}
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
 //		foreach (MATERIAL material in _materialsInventory.Keys) {
@@ -610,6 +616,9 @@ public class Settlement : BaseLandmark {
     public void RemoveLandmarkAsOwned(BaseLandmark landmark) {
         _ownedLandmarks.Remove(landmark);
     }
+	private void InitializeCrater(){
+		
+	}
     #endregion
 
     #region Items
