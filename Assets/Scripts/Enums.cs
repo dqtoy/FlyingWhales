@@ -1175,3 +1175,10 @@ public enum STORYLINE {
     LOST_HEIR
 }
 
+public enum QUEST_ALIGNMENT {
+    LAWFUL,
+    UNLAWFUL,
+    HEROIC,
+    VILLAINOUS
+}
+

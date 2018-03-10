@@ -13,34 +13,62 @@ using ECS;
 public class Quest {
 
     protected int _id;
+    protected bool _isDone;
     protected TaskCreator _createdBy;
     protected QUEST_TYPE _questType;
 
+    protected List<QUEST_ALIGNMENT> _alignment;
     protected List<ECS.Character> _acceptedCharacters;
-    //protected int _currentPhase; //The index of the task the quest is currently on
     protected List<QuestPhase> _phases;
-    //protected List<CharacterTask> _tasks; //The list of tasks that the character has to do to progress through the quest
 
     #region getters/setters
     public int id {
         get { return _id; }
     }
+    public string questName {
+        get { return GetQuestName(); }
+    }
     public QUEST_TYPE questType {
         get { return _questType; }
+    }
+    public List<QuestPhase> phases {
+        get { return _phases; }
+    }
+    public List<ECS.Character> acceptedCharacters {
+        get { return _acceptedCharacters; }
     }
     #endregion
 
     public Quest(TaskCreator createdBy, QUEST_TYPE questType) {
         _createdBy = createdBy;
         _questType = questType;
+        _alignment = new List<QUEST_ALIGNMENT>();
+        _acceptedCharacters = new List<Character>();
+        _phases = new List<QuestPhase>();
     }
 
     #region virtuals
+    protected virtual string GetQuestName() {
+        return Utilities.NormalizeString(_questType.ToString());
+    }
     /*
-     Can a character accept this quest
+     Can a character accept this quest? 
+     This is determined by checking this quest's alignment, and verifying
+     whether a character's role allows that alignment.
          */
     public virtual bool CanAcceptQuest(ECS.Character character) {
-        return false;
+        if(character.role == null) {
+            return false; //if the character doesn't have a role, it cannot accept quests
+        } else { 
+            for (int i = 0; i < _alignment.Count; i++) {
+                QUEST_ALIGNMENT currAlignment = _alignment[i];
+                if (!character.role.allowedQuestAlignments.Contains(currAlignment)) {
+                    //the character does not allow an alignment that this quest requires, it cannot do this quest!
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     /*
      Return the weight that a character will accept this quest
@@ -56,6 +84,41 @@ public class Quest {
         if (result == TASK_ACTION_RESULT.SUCCESS) {
             //AdvancePhase();
         }
+    }
+    public virtual void EndQuest(TASK_STATUS result) {
+        if (!_isDone) {
+            switch (result) {
+                case TASK_STATUS.SUCCESS:
+                    QuestSuccess();
+                    break;
+                case TASK_STATUS.FAIL:
+                    QuestFail();
+                    break;
+                case TASK_STATUS.CANCEL:
+                    QuestCancel();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    protected virtual void QuestSuccess() {
+        _isDone = true;
+        QuestManager.Instance.RemoveQuestFromAvailableQuests(this);
+        //Set quest of those that accepted this quest to null, make sure that their current quest is still this one
+        for (int i = 0; i < _acceptedCharacters.Count; i++) {
+            ECS.Character currCharacter = _acceptedCharacters[i];
+            if (currCharacter.currentQuest.id != this.id) {
+                throw new Exception(currCharacter.name + "'s quest is no longer set to this quest!");
+            }
+            currCharacter.SetCurrentQuest(null);
+        }
+    }
+    protected virtual void QuestFail() {
+        
+    }
+    protected virtual void QuestCancel() {
+        
     }
     #endregion
 

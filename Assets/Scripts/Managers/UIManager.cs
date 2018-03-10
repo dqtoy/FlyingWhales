@@ -278,7 +278,8 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject worldInfoFactionBtn;
     [SerializeField] private GameObject worldInfoAllianceBtn;
     [SerializeField] private GameObject worldInfoWarsBtn;
-    
+    [SerializeField] private GameObject worldInfoQuestsBtn;
+
     [Space(10)]
     [Header("World History Menu")]
     [SerializeField] private WorldHistoryUI worldHistoryUI;
@@ -3226,6 +3227,7 @@ public class UIManager : MonoBehaviour {
         factionSummaryUI.ShowFactionSummary();
         HideAllianceSummary();
         HideWarSummary();
+        HideQuestsSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoFactionBtn.transform);
     }
     public void HideFactionsSummary() {
@@ -3383,6 +3385,7 @@ public class UIManager : MonoBehaviour {
         consoleUI.HideConsole();
     }
     #endregion
+
 	#region Combat History Logs
 	[SerializeField] internal CombatLogsUI combatLogUI;
 	public void ShowCombatLog(ECS.CombatPrototype combat) {
@@ -3392,5 +3395,41 @@ public class UIManager : MonoBehaviour {
 		combatLogUI.ShowCombatLogs(combat);
 		combatLogUI.UpdateCombatLogs();
 	}
-	#endregion
+    #endregion
+
+    #region Quests Summary
+    [Space(10)]
+    [Header("Quests Summary")]
+    [SerializeField] private UILabel questsSummaryLbl;
+    [SerializeField] private GameObject questsSummaryGO;
+    public void ShowQuestsSummary() {
+        HideFactionsSummary();
+        HideAllianceSummary();
+        HideWarSummary();
+        SetWorldInfoMenuItemAsSelected(worldInfoQuestsBtn.transform);
+        questsSummaryGO.SetActive(true);
+        UpdateQuestsSummary();
+    }
+    public void HideQuestsSummary() {
+        questsSummaryGO.SetActive(false);
+    }
+    public void UpdateQuestsSummary() {
+        string questSummary = string.Empty;
+        questSummary += "[b]Available Quests: [/b]";
+        for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
+            Quest currentQuest = QuestManager.Instance.availableQuests[i];
+            questSummary += "\n" + currentQuest.questName;
+            questSummary += "\n   Characters on Quest: ";
+            if (currentQuest.acceptedCharacters.Count > 0) {
+                for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
+                    ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
+                    questSummary += "\n     " + currCharacter.name;
+                }
+            } else {
+                questSummary += "NONE";
+            }
+        }
+        questsSummaryLbl.text = questSummary;
+    }
+    #endregion
 }

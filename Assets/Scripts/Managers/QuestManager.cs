@@ -6,7 +6,7 @@ public class QuestManager : MonoBehaviour {
 
     public static QuestManager Instance = null;
 
-    public List<Quest> availableQuests;
+    public List<Quest> availableQuests = new List<Quest>();
 
     private void Awake() {
         Instance = this;

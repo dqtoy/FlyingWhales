@@ -63,8 +63,13 @@ public class StorylineManager : MonoBehaviour {
             ECS.Character lostHeir = chosenHut.CreateNewCharacter(chosenChieftain.raceSetting.race, CHARACTER_ROLE.NONE, "Swordsman");
             lostHeir.AssignTag(CHARACTER_TAG.LOST_HEIR); //and add a lost heir tag and an heirloom necklace item to him. That character should not belong to any faction.
             log += "\nAssigned lost heir to " + lostHeir.name + " at " + chosenHut.location.name;
+
+            //Create find lost heir quest
+            FindLostHeir findLostHeirQuest = new FindLostHeir(chosenChieftain);
+            QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
         }
 
         Debug.Log(log);
+        
     }
 }

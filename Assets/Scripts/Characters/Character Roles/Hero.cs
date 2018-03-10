@@ -24,6 +24,12 @@ public class Hero : CharacterRole {
 			QUEST_TYPE.SAVE_LANDMARK,
         };
 
+        _allowedQuestAlignments = new List<QUEST_ALIGNMENT>() {
+            QUEST_ALIGNMENT.HEROIC,
+            QUEST_ALIGNMENT.LAWFUL,
+            QUEST_ALIGNMENT.UNLAWFUL
+        };
+
 		_roleTasks.Add (new DoNothing (this._character));
 		_roleTasks.Add (new Rest (this._character));
 		_roleTasks.Add (new ExploreTile (this._character, 5));
@@ -34,60 +40,7 @@ public class Hero : CharacterRole {
 		_roleTasks.Add (new Attack (this._character, 10));
 		_roleTasks.Add (new Patrol (this._character, 10));
 
-		_defaultRoleTask = _roleTasks [0];
-//		_roleTasks.Add (new Rest (this._character));
+        _defaultRoleTask = _roleTasks [0];
     }
 
-	#region Overrides
-//    internal override WeightedDictionary<CharacterTask> GetActionWeights() {
-//        WeightedDictionary<CharacterTask> actionWeights = base.GetActionWeights();
-//        Region currRegionOfCharacter = _character.currLocation.region;
-//
-//        if (_character.currLocation.landmarkOnTile is Settlement) {
-//            Settlement currSettlement = (Settlement)_character.currLocation.landmarkOnTile;
-//            //Move to nearest non-hostile Village - 500 if in a hostile Settlement (0 otherwise) (NOTE: this action allows the character to move through hostile regions)
-//            if (currSettlement.owner.IsHostileWith(_character.faction)) {
-//                actionWeights.AddElement(new MoveTo(_character, _character.GetNearestNonHostileSettlement(), PATHFINDING_MODE.USE_ROADS), 500);
-//            }
-//        }
-//
-//        for (int i = 0; i < currRegionOfCharacter.adjacentRegionsViaMajorRoad.Count; i++) {
-//            Region adjRegion = currRegionOfCharacter.adjacentRegionsViaMajorRoad[i];
-//            Faction regionOwner = adjRegion.owner;
-//            if (regionOwner != null) {
-//                if (!regionOwner.IsHostileWith(_character.faction)) {
-//                    //Move to an adjacent non-hostile Village
-//                    Settlement adjSettlement = (Settlement)adjRegion.centerOfMass.landmarkOnTile;
-//                    MoveTo moveToNonHostile = new MoveTo(_character, adjSettlement, PATHFINDING_MODE.USE_ROADS);
-//                    actionWeights.AddElement(moveToNonHostile, GetMoveToNonAdjacentVillageWeight(adjSettlement));
-//                }
-//            }
-//        }
-//        
-//        return actionWeights;
-//    }
-//
-//    internal override int GetExpandWeight(Expand expandQuest) {
-//		int weight = 0;
-//		List<HexTile> pathToTarget = PathGenerator.Instance.GetPath(_character.currLocation, expandQuest.targetUnoccupiedTile, PATHFINDING_MODE.MAJOR_ROADS);
-//		if(pathToTarget != null) {
-//			weight += 200 - (5 * pathToTarget.Count); //200 - (15 per tile distance) if not in a party
-//		}
-//		if(weight < 0){
-//			weight = 0;
-//		}
-//		return weight;
-//	}
-//    internal override int GetExploreTileWeight(ExploreTile exploreTile) {
-//        int weight = 0;
-//        weight += 100;
-//        return weight;
-//    }
-//    internal override int GetExpeditionWeight(Expedition expedition) {
-//        return 100;
-//    }
-//	internal override int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
-//		return 200;
-//	}
-	#endregion
 }

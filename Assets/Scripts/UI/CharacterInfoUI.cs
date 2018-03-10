@@ -92,6 +92,12 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+        text += "\nCurrent Quest: ";
+        if (currentlyShowingCharacter.currentQuest != null) {
+            text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";
+        } else {
+            text += "NONE";
+        }
         text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
 		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");

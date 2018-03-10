@@ -99,7 +99,8 @@ public class PlayerActionsUI : MonoBehaviour {
 	}
 
 	public void ShowSpecificTargets(CharacterTask task){
-		specificNumOfShowingButtons = 0;
+        ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+        specificNumOfShowingButtons = 0;
 		if(task.specificTargetClassification == "character"){
 			List<ECS.Character> characters = CharacterTargets (task);
 			if(characters.Count > 0){
@@ -131,10 +132,42 @@ public class PlayerActionsUI : MonoBehaviour {
 				specificButtonsGrid.Reposition ();
 				UpdateSpecificGrid();
 			}
-		}else if(task.specificTargetClassification == "item"){
+		} else if(task.specificTargetClassification == "item"){
 			//TODO: Item Targets
-		}
-	}
+		} else if (task.specificTargetClassification == "quest") {
+            //TODO: Quest Targets
+            List<Quest> availableQuests = QuestManager.Instance.GetAvailableQuestsForCharacter(character);
+            if (availableQuests.Count > 0) {
+                if (availableQuests.Count > specificTaskButtons.Count) {
+                    for (int i = 0; i < availableQuests.Count; i++) {
+                        if (i < specificTaskButtons.Count) {
+                            specificTaskButtons[i].SetTask(task);
+                            specificTaskButtons[i].SetTarget(availableQuests[i]);
+                            specificTaskButtons[i].gameObject.SetActive(true);
+                            specificNumOfShowingButtons++;
+                        } else {
+                            CreateSpecificButton(task, availableQuests[i]);
+                            specificNumOfShowingButtons++;
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < specificTaskButtons.Count; i++) {
+                        if (i < availableQuests.Count) {
+                            specificTaskButtons[i].SetTask(task);
+                            specificTaskButtons[i].SetTarget(availableQuests[i]);
+                            specificTaskButtons[i].gameObject.SetActive(true);
+                            specificNumOfShowingButtons++;
+                        } else {
+                            specificTaskButtons[i].gameObject.SetActive(false);
+                        }
+                    }
+                }
+                specificTargetsGO.SetActive(true);
+                specificButtonsGrid.Reposition();
+                UpdateSpecificGrid();
+            }
+        }
+    }
 
 	private List<ECS.Character> CharacterTargets(CharacterTask task){
 		List<ECS.Character> characters = new List<ECS.Character> ();
@@ -147,8 +180,8 @@ public class PlayerActionsUI : MonoBehaviour {
 		}
 		return characters;
 	}
-		
-	private void CreateButton(CharacterTask task){
+
+    private void CreateButton(CharacterTask task){
 		GameObject characterTaskButton = (GameObject)GameObject.Instantiate (characterTaskButtonGO, buttonsGrid.transform);
 		characterTaskButton.transform.localScale = Vector3.one;
 		characterTaskButton.transform.localPosition = Vector3.zero;

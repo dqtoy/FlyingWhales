@@ -135,7 +135,13 @@ namespace ECS {
 		internal Party party {
 			get { return _party; }
 		}
-		public CharacterTask currentTask {
+        public Quest currentQuest {
+            get { return _questData.activeQuest; }
+        }
+        public QuestPhase currentQuestPhase {
+            get { return _questData.GetQuestPhase(); }
+        }
+        public CharacterTask currentTask {
 			get { return _currentTask; }
 		}
         public ILocation specificLocation {
@@ -1125,6 +1131,15 @@ namespace ECS {
             neededEquipment.AddRange(GetMissingArmorTypes());
             return neededEquipment;
         }
+        internal bool HasItem(string itemName) {
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Equals(itemName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         internal void CureStatusEffects(){
@@ -1934,6 +1949,7 @@ namespace ECS {
         public void SetCurrentQuest(Quest currentQuest) {
             _questData.SetActiveQuest(currentQuest);
             _questData.SetQuestPhase(0);
+            UIManager.Instance.UpdateCharacterInfo();
         }
 		public void AddNewQuest(OldQuest.Quest quest) {
 			if (!_activeQuests.Contains(quest)) {
@@ -1958,6 +1974,7 @@ namespace ECS {
 		}
 		public List<CharacterTask> GetAllPossibleTasks(ILocation location){
 			List<CharacterTask> possibleTasks = new List<CharacterTask> ();
+            //Role Tasks
 			if(_role != null){
 				for (int i = 0; i < _role.roleTasks.Count; i++) {
 					CharacterTask currentTask = _role.roleTasks [i];
@@ -1966,6 +1983,7 @@ namespace ECS {
 					}
 				}
 			}
+            //Tag tasks
 			for (int i = 0; i < _tags.Count; i++) {
 				for (int j = 0; j < _tags[i].tagTasks.Count; j++) {
 					CharacterTask currentTask = _tags[i].tagTasks[j];
@@ -1974,7 +1992,15 @@ namespace ECS {
 					}
 				}
 			}
-			//TODO: Tag and Quest Tasks
+            //Quest Tasks
+            if (currentQuest != null) {
+                for (int i = 0; i < currentQuestPhase.tasks.Count; i++) {
+                    CharacterTask currentTask = currentQuestPhase.tasks[i];
+                    if (currentTask.CanBeDone(this, location)) {
+                        possibleTasks.Add(currentTask);
+                    }
+                }
+            }
 
 			return possibleTasks;
 		}
