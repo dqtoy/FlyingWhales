@@ -22,33 +22,17 @@ public class QuestPhase {
         _tasks = new List<CharacterTask>();
     }
 
-    #region virtuals
-    /*
-     What should happen when a character starts this phase
-         */
-    public virtual void OnPhaseStart(ECS.Character character) {
-
-    }
-    protected virtual string GetPhaseName() {
+    protected string GetPhaseName() {
         if (!string.IsNullOrEmpty(_phaseName)) {
             return _phaseName;
         }
         return "Phase " + _sourceQuest.phases.IndexOf(this).ToString();
     }
-    public virtual void OnCompleteTask() { }
-    public virtual void OnPhaseComplete() { }
-    /*
-     Add tasks from this phase to a characters action weights
-         */
-    public virtual void AddTasksToWeightedDictionary(WeightedDictionary<CharacterTask> actionWeights) { }
-    #endregion
-
     public void AddTask(CharacterTask task) {
         if (!_tasks.Contains(task)) {
             _tasks.Add(task);
         }
     }
-
     private List<CharacterTask> GetTasks() {
         List<CharacterTask> tasks = new List<CharacterTask>();
         for (int i = 0; i < _tasks.Count; i++) {

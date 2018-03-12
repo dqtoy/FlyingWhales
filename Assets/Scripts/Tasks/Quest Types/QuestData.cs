@@ -27,18 +27,15 @@ public class QuestData {
         _activeQuest = quest;
         SetQuestPhase(0);
     }
-
     public void SetQuestPhase(int phase) {
         _currentPhase = phase;
         if (_activeQuest != null) {
             _tasks = new List<CharacterTask>(GetQuestPhase().tasks);
         }
     }
-
     public void AdvanceToNextPhase() {
         SetQuestPhase(_currentPhase + 1);
     }
-
     public QuestPhase GetQuestPhase() {
         return _activeQuest.phases[_currentPhase];
     }
@@ -68,6 +65,15 @@ public class QuestData {
         } else {
             //there are no more phases, end the quest
             EndQuest(TASK_STATUS.SUCCESS);
+        }
+    }
+
+    public void AddQuestTasksToWeightedDictionary(WeightedDictionary<CharacterTask> actionWeights) {
+        for (int i = 0; i < _tasks.Count; i++) {
+            CharacterTask currTask = _tasks[i];
+            if (!currTask.isDone) {
+                actionWeights.AddElement(currTask, currTask.GetTaskWeight(_owner));
+            }
         }
     }
 }

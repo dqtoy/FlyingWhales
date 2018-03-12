@@ -148,8 +148,6 @@ public class CharacterTask {
 			return;
 		}
         _taskStatus = taskResult;
-        _isDone = true;
-
         switch (taskResult) {
             case TASK_STATUS.SUCCESS:
                 TaskSuccess();
@@ -165,6 +163,7 @@ public class CharacterTask {
         }
     }
     public virtual void TaskSuccess() {
+        _isDone = true;
         if (_parentQuest != null) {
             _assignedCharacter.questData.OnTaskSuccess(this);
         }

@@ -1744,12 +1744,14 @@ namespace ECS {
 			if(_role != null){
 				_role.AddTaskWeightsFromRole (actionWeights);
 			}
-
+            if (currentQuest != null) {
+                //Quest Tasks
+                _questData.AddQuestTasksToWeightedDictionary(actionWeights);
+            }
 			if(_role != null && !_role.cancelsAllOtherTasks){
 				for (int i = 0; i < _tags.Count; i++) {
 					_tags [i].AddTaskWeightsFromTags (actionWeights);
 				}
-				//TODO: Quest Tasks
 			}
 
 			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
