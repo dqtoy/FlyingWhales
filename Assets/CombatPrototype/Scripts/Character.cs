@@ -698,6 +698,7 @@ namespace ECS {
                 //				}
                 onCharacterDeath();
                 onCharacterDeath = null;
+                Debug.Log(this.name + " died!");
             }
 		}
         private void CheckForInternationalIncident() {
