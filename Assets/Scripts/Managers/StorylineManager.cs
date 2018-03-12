@@ -68,6 +68,7 @@ public class StorylineManager : MonoBehaviour {
             //Create find lost heir quest
             FindLostHeir findLostHeirQuest = new FindLostHeir(chosenChieftain, chosenChieftain, chosenSuccessor, lostHeir);
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
+            chosenChieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
         }
 
         Debug.Log(log);

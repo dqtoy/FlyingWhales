@@ -30,5 +30,9 @@ public class FindLostHeir : Quest {
         _falseHeir.RemoveCharacterTag(CHARACTER_TAG.SUCCESSOR);
         Successor successorTag = _lostHeir.AssignTag(CHARACTER_TAG.SUCCESSOR) as Successor;
         successorTag.SetCharacterToSucceed(_chieftain);
+        if (_lostHeir.isFactionless) {
+            //if the lost heir is factionless set his/her faction to the faction of the cheiftain
+            _lostHeir.SetFaction(_chieftain.faction);
+        }
     }
 }

@@ -47,13 +47,16 @@ public class Report : CharacterTask {
 
     private void FindLostHeirReport() {
         _assignedCharacter.DestroyAvatar();
-        if (_assignedCharacter.specificLocation.charactersAtLocation.Contains(_reportTo)) {
-            //End the find lost heir quest
-            //_assignedCharacter.questData.EndQuest(TASK_STATUS.SUCCESS);
-            EndTask(TASK_STATUS.SUCCESS);
-        } else {
-            //go to the location of the character this character is supposed to report to
-            _assignedCharacter.GoToLocation(_reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _onReachLocationAction);
+        if (_taskStatus == TASK_STATUS.IN_PROGRESS) {
+            if (_assignedCharacter.specificLocation.charactersAtLocation.Contains(_reportTo)) {
+                //End the find lost heir quest
+                //_assignedCharacter.questData.EndQuest(TASK_STATUS.SUCCESS);
+                EndTask(TASK_STATUS.SUCCESS);
+            } else {
+                //go to the location of the character this character is supposed to report to
+                _assignedCharacter.GoToLocation(_reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _onReachLocationAction);
+            }
         }
+        
     }
 }

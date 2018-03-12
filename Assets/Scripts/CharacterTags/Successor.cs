@@ -12,13 +12,13 @@ public class Successor : CharacterTag {
     #region overrides
     public override void OnRemoveTag() {
         base.OnRemoveTag();
-        _characterToSucceed.onCharacterDeath -= TriggerSuccession;
+        _characterToSucceed.RemoveActionOnDeath(TriggerSuccession);
     }
     #endregion
 
     public void SetCharacterToSucceed(ECS.Character characterToSucceed) {
         _characterToSucceed = characterToSucceed;
-        _characterToSucceed.onCharacterDeath += TriggerSuccession;
+        _characterToSucceed.AddActionOnDeath(TriggerSuccession);
     }
     /*
      Make this character succeed the current leader if the current leader dies.

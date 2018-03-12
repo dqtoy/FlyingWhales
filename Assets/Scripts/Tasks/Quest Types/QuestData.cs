@@ -25,12 +25,20 @@ public class QuestData {
 
     public void SetActiveQuest(Quest quest) {
         _activeQuest = quest;
+        if (quest == null) {
+            //quest is being set to null, it means the quest is no longer available or the character chose to leave the quest
+            if (_owner.currentTask != null && tasks.Contains(_owner.currentTask)) {
+                _owner.currentTask.EndTask(TASK_STATUS.CANCEL); //cancel the characters current task if it comes from the list of tasks granted by his/her active quest
+            }
+        }
         SetQuestPhase(0);
     }
     public void SetQuestPhase(int phase) {
         _currentPhase = phase;
         if (_activeQuest != null) {
             _tasks = new List<CharacterTask>(GetQuestPhase().tasks);
+        } else {
+            _tasks.Clear();
         }
     }
     public void AdvanceToNextPhase() {

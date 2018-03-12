@@ -108,6 +108,24 @@ public class Quest {
     protected virtual void QuestSuccess(ECS.Character endedBy) {
         _isDone = true;
         QuestManager.Instance.RemoveQuestFromAvailableQuests(this);
+        UnregisterAcceptedCharacters();
+        endedBy.DetermineAction();
+    }
+    protected virtual void QuestFail(ECS.Character endedBy) {
+        
+    }
+    protected virtual void QuestCancel(ECS.Character endedBy) {
+        _isDone = true;
+        QuestManager.Instance.RemoveQuestFromAvailableQuests(this);
+        UnregisterAcceptedCharacters();
+    }
+    #endregion
+
+    public void ForceCancelQuest() {
+        EndQuest(TASK_STATUS.CANCEL, null);
+    }
+
+    private void UnregisterAcceptedCharacters() {
         //Set quest of those that accepted this quest to null, make sure that their current quest is still this one
         for (int i = 0; i < _acceptedCharacters.Count; i++) {
             ECS.Character currCharacter = _acceptedCharacters[i];
@@ -116,15 +134,7 @@ public class Quest {
             }
             currCharacter.SetCurrentQuest(null);
         }
-        endedBy.DetermineAction();
     }
-    protected virtual void QuestFail(ECS.Character endedBy) {
-        
-    }
-    protected virtual void QuestCancel(ECS.Character endedBy) {
-        
-    }
-    #endregion
 }
 
 namespace OldQuest{

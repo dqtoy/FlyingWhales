@@ -701,6 +701,12 @@ namespace ECS {
                 Debug.Log(this.name + " died!");
             }
 		}
+        internal void AddActionOnDeath(OnCharacterDeath onDeathAction) {
+            onCharacterDeath += onDeathAction;
+        }
+        internal void RemoveActionOnDeath(OnCharacterDeath onDeathAction) {
+            onCharacterDeath -= onDeathAction;
+        }
         private void CheckForInternationalIncident() {
             //a non-Adventurer character from a tribe dies while in a region owned by another tribe
 			if(this._role == null){
