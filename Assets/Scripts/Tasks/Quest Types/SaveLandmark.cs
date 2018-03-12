@@ -14,7 +14,7 @@ public class SaveLandmark : OldQuest.Quest {
 
 	public SaveLandmark(TaskCreator createdBy, BaseLandmark target) : base(createdBy, QUEST_TYPE.SAVE_LANDMARK) {
 		_target = target;
-		_questFilters = new List<QuestFilter>() {
+		_questFilters = new List<TaskFilter>() {
 			new MustBeFaction((createdBy as BaseLandmark).owner)
 		};
 	}

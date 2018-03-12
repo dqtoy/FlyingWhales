@@ -23,7 +23,7 @@ public class ObtainMaterial : OldQuest.Quest {
 	public ObtainMaterial(TaskCreator createdBy, MATERIAL materialToObtain, BaseLandmark target) : base(createdBy, QUEST_TYPE.OBTAIN_MATERIAL) {
 		_materialToObtain = materialToObtain;
 		_target = target;
-		_questFilters = new List<QuestFilter>() {
+		_questFilters = new List<TaskFilter>() {
 			new MustBeFaction((createdBy as BaseLandmark).owner)
 		};
 	}

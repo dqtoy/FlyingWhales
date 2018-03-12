@@ -12,7 +12,7 @@ public class ExploreRegion : OldQuest.Quest {
     }
     #endregion
     public ExploreRegion(TaskCreator createdBy, Region regionToExplore) : base(createdBy, QUEST_TYPE.EXPLORE_REGION) {
-        _questFilters = new List<QuestFilter>() {
+        _questFilters = new List<TaskFilter>() {
 //            new MustBeRole(CHARACTER_ROLE.CHIEFTAIN)
         };
         _regionToExplore = regionToExplore;

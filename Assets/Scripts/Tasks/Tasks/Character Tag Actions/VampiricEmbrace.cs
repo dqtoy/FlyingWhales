@@ -14,7 +14,7 @@ public class VampiricEmbrace : CharacterTask {
 		SetStance(STANCE.STEALTHY);
 		_needsSpecificTarget = true;
 		_specificTargetClassification = "character";
-		_filters = new QuestFilter[] {
+		_filters = new TaskFilter[] {
 			new MustNotHaveTags (CHARACTER_TAG.VAMPIRE),
 		};
 	}

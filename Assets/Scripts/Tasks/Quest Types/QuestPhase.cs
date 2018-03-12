@@ -53,7 +53,7 @@ public class QuestPhase {
         List<CharacterTask> tasks = new List<CharacterTask>();
         for (int i = 0; i < _tasks.Count; i++) {
             CharacterTask currTaskToCopy = _tasks[i];
-            tasks.Add(ObjectCopier.Clone(currTaskToCopy));
+            tasks.Add(currTaskToCopy.CloneTask());
         }
         return tasks;
     }

@@ -44,7 +44,8 @@ public class StorylineManager : MonoBehaviour {
 
         List<ECS.Character> possibleSuccessors = chosenChieftain.faction.characters.Where(x => x.id != chosenChieftain.id).ToList();
         ECS.Character chosenSuccessor = possibleSuccessors[Random.Range(0, possibleSuccessors.Count)]; //Randomly select one of the other characters of his Tribe
-        chosenSuccessor.AssignTag(CHARACTER_TAG.SUCCESSOR); //and a successor tag to him
+        Successor successorTag = chosenSuccessor.AssignTag(CHARACTER_TAG.SUCCESSOR) as Successor; //and a successor tag to him
+        successorTag.SetCharacterToSucceed(chosenChieftain);
         log += "\nChosen successor is " + chosenSuccessor.name + " of " + chosenSuccessor.faction.name;
 
         //Also add either a tyrannical or warmonger tag to the successor
@@ -65,7 +66,7 @@ public class StorylineManager : MonoBehaviour {
             log += "\nAssigned lost heir to " + lostHeir.name + " at " + chosenHut.location.name;
 
             //Create find lost heir quest
-            FindLostHeir findLostHeirQuest = new FindLostHeir(chosenChieftain);
+            FindLostHeir findLostHeirQuest = new FindLostHeir(chosenChieftain, chosenChieftain, chosenSuccessor, lostHeir);
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
         }
 

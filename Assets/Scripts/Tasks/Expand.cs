@@ -21,7 +21,7 @@ public class Expand : OldQuest.Quest {
 	#endregion
 
 	public Expand(TaskCreator createdBy, HexTile targetUnoccupiedTile, HexTile originTile, MATERIAL materialToUse) : base(createdBy, QUEST_TYPE.EXPAND) {
-		_questFilters = new List<QuestFilter>() {
+		_questFilters = new List<TaskFilter>() {
 			new MustBeFaction(new List<Faction>(){((InternalQuestManager)createdBy).owner}),
 //			new MustBeRole(CHARACTER_ROLE.COLONIST),
 		};

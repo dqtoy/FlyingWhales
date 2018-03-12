@@ -21,7 +21,7 @@ public class BuildStructure : OldQuest.Quest {
         _target = target;
         _materialToUse = materialToUse;
         _constructionData = constructionData;
-        _questFilters = new List<QuestFilter>() {
+        _questFilters = new List<TaskFilter>() {
             new MustBeFaction((createdBy as InternalQuestManager).owner)
         };
     }

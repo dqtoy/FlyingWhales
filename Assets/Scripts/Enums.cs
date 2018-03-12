@@ -965,6 +965,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	DRINK_BLOOD,
 	HYPNOTIZE,
     SEARCH,
+    REPORT,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
@@ -1182,10 +1183,12 @@ public enum STORYLINE {
     LOST_HEIR
 }
 
-public enum QUEST_ALIGNMENT {
+public enum ACTION_ALIGNMENT {
     LAWFUL,
     UNLAWFUL,
     HEROIC,
-    VILLAINOUS
+    VILLAINOUS,
+    PEACEFUL,
+    HOSTILE
 }
 

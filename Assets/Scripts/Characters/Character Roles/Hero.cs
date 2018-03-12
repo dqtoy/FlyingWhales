@@ -24,10 +24,10 @@ public class Hero : CharacterRole {
 			QUEST_TYPE.SAVE_LANDMARK,
         };
 
-        _allowedQuestAlignments = new List<QUEST_ALIGNMENT>() {
-            QUEST_ALIGNMENT.HEROIC,
-            QUEST_ALIGNMENT.LAWFUL,
-            QUEST_ALIGNMENT.UNLAWFUL
+        _allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
+            ACTION_ALIGNMENT.HEROIC,
+            ACTION_ALIGNMENT.LAWFUL,
+            ACTION_ALIGNMENT.UNLAWFUL
         };
 
 		_roleTasks.Add (new DoNothing (this._character));

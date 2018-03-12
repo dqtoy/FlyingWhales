@@ -17,7 +17,7 @@ public class Quest {
     protected TaskCreator _createdBy;
     protected QUEST_TYPE _questType;
 
-    protected List<QUEST_ALIGNMENT> _alignment;
+    protected List<ACTION_ALIGNMENT> _alignment;
     protected List<ECS.Character> _acceptedCharacters;
     protected List<QuestPhase> _phases;
 
@@ -42,7 +42,7 @@ public class Quest {
     public Quest(TaskCreator createdBy, QUEST_TYPE questType) {
         _createdBy = createdBy;
         _questType = questType;
-        _alignment = new List<QUEST_ALIGNMENT>();
+        _alignment = new List<ACTION_ALIGNMENT>();
         _acceptedCharacters = new List<Character>();
         _phases = new List<QuestPhase>();
     }
@@ -57,11 +57,14 @@ public class Quest {
      whether a character's role allows that alignment.
          */
     public virtual bool CanAcceptQuest(ECS.Character character) {
+        if (_acceptedCharacters.Contains(character)) {
+            return false; //the character has already accepted this quest!
+        }
         if(character.role == null) {
             return false; //if the character doesn't have a role, it cannot accept quests
         } else { 
             for (int i = 0; i < _alignment.Count; i++) {
-                QUEST_ALIGNMENT currAlignment = _alignment[i];
+                ACTION_ALIGNMENT currAlignment = _alignment[i];
                 if (!character.role.allowedQuestAlignments.Contains(currAlignment)) {
                     //the character does not allow an alignment that this quest requires, it cannot do this quest!
                     return false;
@@ -85,24 +88,24 @@ public class Quest {
             //AdvancePhase();
         }
     }
-    public virtual void EndQuest(TASK_STATUS result) {
+    public virtual void EndQuest(TASK_STATUS result, ECS.Character endedBy) {
         if (!_isDone) {
             switch (result) {
                 case TASK_STATUS.SUCCESS:
-                    QuestSuccess();
+                    QuestSuccess(endedBy);
                     break;
                 case TASK_STATUS.FAIL:
-                    QuestFail();
+                    QuestFail(endedBy);
                     break;
                 case TASK_STATUS.CANCEL:
-                    QuestCancel();
+                    QuestCancel(endedBy);
                     break;
                 default:
                     break;
             }
         }
     }
-    protected virtual void QuestSuccess() {
+    protected virtual void QuestSuccess(ECS.Character endedBy) {
         _isDone = true;
         QuestManager.Instance.RemoveQuestFromAvailableQuests(this);
         //Set quest of those that accepted this quest to null, make sure that their current quest is still this one
@@ -113,18 +116,15 @@ public class Quest {
             }
             currCharacter.SetCurrentQuest(null);
         }
+        endedBy.DetermineAction();
     }
-    protected virtual void QuestFail() {
+    protected virtual void QuestFail(ECS.Character endedBy) {
         
     }
-    protected virtual void QuestCancel() {
+    protected virtual void QuestCancel(ECS.Character endedBy) {
         
     }
     #endregion
-
-    public void OnFinishPhase(QuestPhase finishedPhase) {
-
-    }
 }
 
 namespace OldQuest{
@@ -140,7 +140,7 @@ namespace OldQuest{
         protected bool _isAccepted;
         protected bool _isWaiting;
         protected Party _assignedParty;
-        protected List<QuestFilter> _questFilters;
+        protected List<TaskFilter> _questFilters;
         protected TaskAction _currentAction;
         protected int _activeDuration;
 
@@ -195,7 +195,7 @@ namespace OldQuest{
             _questType = questType;
             //_daysBeforeDeadline = daysBeforeDeadline;
             _activeDuration = 0;
-            _questFilters = new List<QuestFilter>();
+            _questFilters = new List<TaskFilter>();
             _taskLogs = new List<string>();
             //if(daysBeforeDeadline != -1) {
             //    ScheduleDeadline();
@@ -340,7 +340,7 @@ namespace OldQuest{
                 return false;
             }
             for (int i = 0; i < _questFilters.Count; i++) {
-                QuestFilter currFilter = _questFilters[i];
+                TaskFilter currFilter = _questFilters[i];
                 if (!currFilter.MeetsRequirements(character)) {
                     return false;
                 }

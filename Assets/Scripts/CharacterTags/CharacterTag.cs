@@ -46,5 +46,9 @@ public class CharacterTag {
 			tasks.AddElement (currTask, currTask.GetTaskWeight(_character));
 		}
 	}
+    /*
+     What should happen when a tag is removed
+         */
+    public virtual void OnRemoveTag() {}
 	#endregion
 }
