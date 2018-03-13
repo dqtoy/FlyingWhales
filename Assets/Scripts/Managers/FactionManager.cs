@@ -173,13 +173,24 @@ public class FactionManager : MonoBehaviour {
             }
             chosenRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
             LandmarkManager.Instance.OccupyLandmark(chosenRegion, newFaction);
-            CreateInititalFactionCharacters(newFaction, chosenRegion.mainLandmark as Settlement);
+            //CreateInititalFactionCharacters(newFaction, chosenRegion.mainLandmark as Settlement);
             CreateInitialResourceStructuresForFaction(newFaction, chosenRegion.mainLandmark as Settlement, chosenRegion);
             elligibleRegions.Remove(chosenRegion);
         }
-        CreateChieftainForFaction(newFaction);
+        //CreateChieftainForFaction(newFaction);
         return true;
     }
+    public void GenerateFactionCharacters() {
+        for (int i = 0; i < allTribes.Count; i++) {
+            Tribe currTribe = allTribes[i];
+            CreateChieftainForFaction(currTribe);
+            for (int j = 0; j < currTribe.settlements.Count; j++) {
+                Settlement currSettlement = currTribe.settlements[j];
+                CreateInititalFactionCharacters(currTribe, currSettlement);
+            }
+        }
+    }
+
     private List<Region> GetElligibleRegionsForFaction(Faction faction) {
         List<Region> elligibleRegions = new List<Region>();
         for (int i = 0; i < faction.settlements.Count; i++) {

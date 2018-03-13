@@ -80,7 +80,7 @@ public class QuestData {
         for (int i = 0; i < _tasks.Count; i++) {
             CharacterTask currTask = _tasks[i];
             if (!currTask.isDone) {
-                actionWeights.AddElement(currTask, currTask.GetTaskWeight(_owner));
+                actionWeights.AddElement(currTask, currTask.GetSelectionWeight(_owner));
             }
         }
     }

@@ -88,13 +88,12 @@ public class CharacterTask {
     public List<ACTION_ALIGNMENT> alignments {
         get { return _alignments; }
     }
-	public WeightedDictionary<BaseLandmark> landmarkWeights{
-		get { return _landmarkWeights; }
-	}
-	public WeightedDictionary<ECS.Character> characterWeights{
-		get { return _characterWeights; }
-	}
-
+	//public WeightedDictionary<BaseLandmark> landmarkWeights{
+	//	get { return _landmarkWeights; }
+	//}
+	//public WeightedDictionary<ECS.Character> characterWeights{
+	//	get { return _characterWeights; }
+	//}
     #endregion
 
 	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1, Quest parentQuest = null) {
@@ -175,8 +174,6 @@ public class CharacterTask {
     public virtual void TaskFail() {
 		_assignedCharacter.DetermineAction();
 	}
-    //public virtual void PerformDailyAction() { }
-
 	public virtual void ResetTask(){
 		_assignedCharacter = null;
 		_targetLocation = null;
@@ -186,14 +183,21 @@ public class CharacterTask {
 		_taskLogs.Clear ();
 		_daysLeft = _defaultDaysLeft;
 	}
-
-	public virtual int GetTaskWeight(ECS.Character character){ return 0; }
+    /*
+     This will return the weight (how likely) that this task will be performed
+         */
+	public virtual int GetSelectionWeight(ECS.Character character){ return 0; }
 	public virtual bool CanBeDone(ECS.Character character, ILocation location) { return false; }
+    /*
+     Can the character currently do this action?/Should it be included in the characters selection weights?
+         */
 	public virtual bool AreConditionsMet(ECS.Character character) { return false; }
     public virtual CharacterTask CloneTask() {
         CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _defaultDaysLeft);
         return clonedTask;
     }
+    protected virtual WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) { return new WeightedDictionary<BaseLandmark>(); }
+    protected virtual WeightedDictionary<ECS.Character> GetCharacterTargetWeights(ECS.Character character) { return new WeightedDictionary<ECS.Character>(); }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

@@ -74,9 +74,39 @@ public class Rest : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
+    public override int GetSelectionWeight(Character character) {
+        int weight = base.GetSelectionWeight(character);
+        weight += 100 + (50 * (100 - character.remainingHPPercent)); //100 + (50 x (100 - RemainingHP%))
+        return weight;
+    }
+    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
+        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+        Region regionOfChar = character.specificLocation.tileLocation.region;
+        Faction factionOfChar = character.faction;
+        for (int i = 0; i < regionOfChar.allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = regionOfChar.allLandmarks[i];
+            Faction ownerOfLandmark = currLandmark.owner;
+            int weight = 20; //Each landmark in the region: 20
+            if (currLandmark is Settlement) {
+                weight += 100; //If landmark is a settlement: +100
+            }
+            if (ownerOfLandmark != null && factionOfChar != null) {
+                if (ownerOfLandmark.GetRelationshipWith(factionOfChar).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                    weight += 300; //If landmark is owned by a non-hostile faction: +300
+                }
+            }
+            if (!currLandmark.HasHostilitiesWith(character)) {
+                weight += 100;//If landmark does not have any hostile characters: +100
+            }
+            if (weight > 0) {
+                landmarkWeights.AddElement(currLandmark, weight);
+            }
+        }
+        return landmarkWeights;
+    }
     #endregion
 
-	private void StartRest(){
+    private void StartRest(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartRest ());
 			return;

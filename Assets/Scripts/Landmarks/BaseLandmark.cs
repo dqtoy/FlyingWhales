@@ -157,11 +157,11 @@ public class BaseLandmark : ILocation, TaskCreator {
         ConstructTechnologiesDictionary();
 		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
-        Initialize();
+        //Initialize();
     }
 
-	#region Virtuals
-	protected virtual void Initialize() {}
+    #region Virtuals
+    public virtual void Initialize() {}
     /*
      What should happen when a character searches this landmark
          */
@@ -602,6 +602,29 @@ public class BaseLandmark : ILocation, TaskCreator {
                     if (currItem.IsHostileWith(otherItem)) {
                         return true; //there are characters with hostilities
                     }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasHostilitiesWith(ECS.Character character) {
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            ICombatInitializer currItem = _charactersAtLocation[i];
+            Faction factionOfItem = null;
+            if (currItem is ECS.Character) {
+                factionOfItem = (currItem as ECS.Character).faction;
+            } else if (currItem is Party) {
+                factionOfItem = (currItem as Party).faction;
+            }
+            if (factionOfItem == null || character.faction == null) {
+                return true;
+            } else {
+                if (factionOfItem.id == character.faction.id) {
+                    continue; //skip this item, since it has the same faction as the other faction
+                }
+                FactionRelationship rel = character.faction.GetRelationshipWith(factionOfItem);
+                if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                    return true;
                 }
             }
         }

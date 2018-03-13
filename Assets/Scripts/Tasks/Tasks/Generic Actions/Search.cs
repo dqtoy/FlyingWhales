@@ -46,7 +46,7 @@ public class Search : CharacterTask {
         }
         ReduceDaysLeft(1);
     }
-    public override int GetTaskWeight(ECS.Character character) {
+    public override int GetSelectionWeight(ECS.Character character) {
         if (_parentQuest is FindLostHeir) {
             return 80;
         }

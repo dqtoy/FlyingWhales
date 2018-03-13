@@ -43,7 +43,7 @@ public class CharacterTag {
 			if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
 				continue;
 			}
-			tasks.AddElement (currTask, currTask.GetTaskWeight(_character));
+			tasks.AddElement (currTask, currTask.GetSelectionWeight(_character));
 		}
 	}
     /*

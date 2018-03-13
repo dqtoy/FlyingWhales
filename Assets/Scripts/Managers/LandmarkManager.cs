@@ -59,6 +59,15 @@ public class LandmarkManager : MonoBehaviour {
         GenerateDungeonLandmarks();
         GenerateSettlementLandmarks();
     }
+    public void InitializeLandmarks() {
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.allLandmarks[j];
+                currLandmark.Initialize();
+            }
+        }
+    }
 	private void AddAllCenterOfMassToRegionLandmarksList(){
 		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
 			Region region = GridMap.Instance.allRegions [i];

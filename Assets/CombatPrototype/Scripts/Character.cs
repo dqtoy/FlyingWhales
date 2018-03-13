@@ -251,6 +251,9 @@ namespace ECS {
 		internal float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
         }
+        internal int remainingHPPercent {
+            get { return (int)(remainingHP * 100); }
+        }
 		internal List<string> history{
 			get { return this._history; }
 		}
@@ -1366,6 +1369,9 @@ namespace ECS {
             default:
 			    break;
 			}
+            if (_role != null) {
+                _role.OnAssignRole();
+            }
 		}
 		public void ChangeRole(){
 			//TODO: Things to do when a character changes role
@@ -1717,12 +1723,12 @@ namespace ECS {
              */
 		internal void DetermineAction() {
             //Set Task of character to do nothing for now
-			if(_role != null){
-				if(_role.defaultRoleTask != null){
-					_role.defaultRoleTask.OnChooseTask (this);
-				}
-			}
-            return;
+			//if(_role != null){
+			//	if(_role.defaultRoleTask != null){
+			//		_role.defaultRoleTask.OnChooseTask (this);
+			//	}
+			//}
+   //         return;
 
 			if(isInCombat){
 				SetCurrentFunction (() => DetermineAction ());
@@ -1760,10 +1766,13 @@ namespace ECS {
 					_tags [i].AddTaskWeightsFromTags (actionWeights);
 				}
 			}
-
-			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
-			chosenTask.ResetTask ();
-			chosenTask.OnChooseTask (this);
+            if (actionWeights.GetTotalOfWeights() > 0) {
+                CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
+                chosenTask.ResetTask();
+                chosenTask.OnChooseTask(this);
+            } else {
+                actionWeights.LogDictionaryValues(this.raceSetting.race.ToString() + " weights!");
+            }
 //			chosenTask.PerformTask ();
 
 //			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
@@ -1779,7 +1788,6 @@ namespace ECS {
 //            } else {
 //                throw new Exception(this.name + " could not decide action because weights are zero!");
 //            }
-
 		}
         /*
          Set a task that this character will accept next

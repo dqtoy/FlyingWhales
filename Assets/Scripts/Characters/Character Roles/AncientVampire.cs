@@ -12,4 +12,11 @@ public class AncientVampire : CharacterRole {
         _roleTasks.Add(new HuntMagicUser(this._character));
         _defaultRoleTask = _roleTasks[2];
     }
+
+    #region overrides
+    public override void OnAssignRole() {
+        base.OnAssignRole();
+        _character.SetTaskToDoNext(_defaultRoleTask); //Set ancient vampire to be initially hibernating
+    }
+    #endregion
 }

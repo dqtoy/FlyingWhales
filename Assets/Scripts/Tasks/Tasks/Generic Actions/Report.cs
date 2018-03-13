@@ -46,7 +46,6 @@ public class Report : CharacterTask {
     #endregion
 
     private void FindLostHeirReport() {
-        _assignedCharacter.DestroyAvatar();
         if (_taskStatus == TASK_STATUS.IN_PROGRESS) {
             if (_assignedCharacter.specificLocation.charactersAtLocation.Contains(_reportTo)) {
                 //End the find lost heir quest

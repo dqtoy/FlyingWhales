@@ -11,7 +11,7 @@ public class DungeonLandmark : BaseLandmark {
     }
 
     #region Encounterables
-    protected override void Initialize() {
+    public override void Initialize() {
         base.Initialize();
 		DungeonEncounterChances dungeonEncounterChances = LandmarkManager.Instance.GetDungeonEncounterChances (specificLandmarkType);
         if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
