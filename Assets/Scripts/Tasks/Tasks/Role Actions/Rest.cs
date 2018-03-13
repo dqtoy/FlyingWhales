@@ -18,6 +18,9 @@ public class Rest : CharacterTask {
     #region overrides
     public override void OnChooseTask(ECS.Character character) {
         base.OnChooseTask(character);
+		if(_assignedCharacter == null){
+			return;
+		}
         //Get the characters that will rest
         _charactersToRest = new List<ECS.Character>();
         if (character.party != null) {

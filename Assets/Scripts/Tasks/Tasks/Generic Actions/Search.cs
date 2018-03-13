@@ -15,7 +15,10 @@ public class Search : CharacterTask {
     #region overrides
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
-        character.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
+		if(_assignedCharacter == null){
+			return;
+		}
+        _assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
     }
     public override void PerformTask() {
         base.PerformTask();

@@ -22,6 +22,9 @@ public class VampiricEmbrace : CharacterTask {
 	#region overrides
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
+		if(_assignedCharacter == null){
+			return;
+		}
 		if(_specificTarget == null){
 			_specificTarget = GetTargetCharacter ();
 		}
