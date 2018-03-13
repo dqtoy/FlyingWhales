@@ -12,7 +12,7 @@ public class HuntMagicUser : CharacterTask {
         SetStance(STANCE.STEALTHY);
         _specificTargetClassification = "character";
         _needsSpecificTarget = true;
-        _filters = new QuestFilter[] {
+        _filters = new TaskFilter[] {
             new MustBeClass(new List<CHARACTER_CLASS>(){ CHARACTER_CLASS.ARCANIST, CHARACTER_CLASS.MAGE, CHARACTER_CLASS.BATTLEMAGE,}),
         };
     }

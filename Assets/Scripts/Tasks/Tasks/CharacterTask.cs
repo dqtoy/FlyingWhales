@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class CharacterTask {
 
     public delegate void OnTaskInfoChanged();
@@ -35,7 +36,10 @@ public class CharacterTask {
 	protected object _specificTarget;
 	protected bool _needsSpecificTarget;
 	protected string _specificTargetClassification;
-	protected QuestFilter[] _filters;
+	protected TaskFilter[] _filters;
+
+    protected Quest _parentQuest;
+    protected List<ACTION_ALIGNMENT> _alignments;
 
 	protected WeightedDictionary<BaseLandmark> _landmarkWeights;
 	protected WeightedDictionary<ECS.Character> _characterWeights;
@@ -78,9 +82,12 @@ public class CharacterTask {
 	public string specificTargetClassification{
 		get { return _specificTargetClassification; }
 	}
-	public QuestFilter[] filters{
+	public TaskFilter[] filters{
 		get { return _filters; }
 	}
+    public List<ACTION_ALIGNMENT> alignments {
+        get { return _alignments; }
+    }
 	public WeightedDictionary<BaseLandmark> landmarkWeights{
 		get { return _landmarkWeights; }
 	}
@@ -90,7 +97,7 @@ public class CharacterTask {
 
     #endregion
 
-	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1) {
+	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1, Quest parentQuest = null) {
         _createdBy = createdBy;
         _taskType = taskType;
         _taskLogs = new List<string>();
@@ -100,6 +107,8 @@ public class CharacterTask {
 		_forGameOnly = false;
 		SetIsHalted (false);
 		_isDone = false;
+        _parentQuest = parentQuest;
+        _alignments = new List<ACTION_ALIGNMENT>();
 		SetDefaultDaysLeft (defaultDaysLeft);
 		SetDaysLeft (defaultDaysLeft);
     }
@@ -139,8 +148,6 @@ public class CharacterTask {
 			return;
 		}
         _taskStatus = taskResult;
-        _isDone = true;
-
         switch (taskResult) {
             case TASK_STATUS.SUCCESS:
                 TaskSuccess();
@@ -156,6 +163,10 @@ public class CharacterTask {
         }
     }
     public virtual void TaskSuccess() {
+        _isDone = true;
+        if (_parentQuest != null) {
+            _assignedCharacter.questData.OnTaskSuccess(this);
+        }
 		_assignedCharacter.DetermineAction();
 	}
     public virtual void TaskCancel() {
@@ -179,6 +190,10 @@ public class CharacterTask {
 	public virtual int GetTaskWeight(ECS.Character character){ return 0; }
 	public virtual bool CanBeDone(ECS.Character character, ILocation location) { return false; }
 	public virtual bool AreConditionsMet(ECS.Character character) { return false; }
+    public virtual CharacterTask CloneTask() {
+        CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _defaultDaysLeft);
+        return clonedTask;
+    }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

@@ -12,6 +12,7 @@ public class CharacterRole {
     protected CHARACTER_ROLE _roleType;
     protected List<ROAD_TYPE> _allowedRoadTypes; //states what roads this role can use.
     protected bool _canPassHiddenRoads; //can the character use roads that haven't been discovered yet?
+    protected List<ACTION_ALIGNMENT> _allowedQuestAlignments;
     protected List<QUEST_TYPE> _allowedQuestTypes;
 	protected List<CharacterTask> _roleTasks;
 	protected CharacterTask _defaultRoleTask;
@@ -24,6 +25,9 @@ public class CharacterRole {
 	public ECS.Character character{
 		get { return _character; }
 	}
+    public List<ACTION_ALIGNMENT> allowedQuestAlignments {
+        get { return _allowedQuestAlignments; }
+    }
     public List<QUEST_TYPE> allowedQuestTypes {
         get { return _allowedQuestTypes; }
     }
@@ -44,7 +48,8 @@ public class CharacterRole {
         _allowedQuestTypes = new List<QUEST_TYPE>();
 		_roleTasks = new List<CharacterTask> ();
 		_roleTasks.Add (new RecruitFollowers (this._character, 5));
-	}
+        _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
+    }
 		
     #region Action Weights
     public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
@@ -278,18 +283,6 @@ public class CharacterRole {
 //	internal virtual int GetSaveLandmarkWeight(ObtainMaterial obtainMaterial) {
 //		return 0;
 //	}
-    #endregion
-
-    #region Utilities
-    /*
-     Check if this role can accept a quest.
-         */
-    public bool CanAcceptQuest(OldQuest.Quest quest) {
-        if (_allowedQuestTypes.Contains(quest.questType)) {
-            return true;
-        }
-        return false;
-    }
     #endregion
 
 	#region Role Tasks

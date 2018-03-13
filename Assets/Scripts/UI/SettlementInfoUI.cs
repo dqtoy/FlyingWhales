@@ -115,7 +115,14 @@ public class SettlementInfoUI : UIMenu {
 						} else {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";
 						}
-					}
+                        for (int j = 0; j < currChar.currentTask.alignments.Count; j++) {
+                            ACTION_ALIGNMENT currAlignment = currChar.currentTask.alignments[j];
+                            text += currAlignment.ToString();
+                            if (j + 1 < currChar.currentTask.alignments.Count) {
+                                text += ", ";
+                            }
+                        }
+                    }
 				} else if (currObject is Party) {
 					Party currParty = (Party)currObject;
 					text += "\n" + currParty.urlName + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");

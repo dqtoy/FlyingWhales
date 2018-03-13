@@ -20,8 +20,10 @@ public class SpecificCharacterTaskButton : MonoBehaviour {
 			text = ((ECS.Character)this.target).name;
 		}else if(this.target is ECS.Item){
 			text = ((ECS.Item)this.target).itemName;
-		}
-		btnLabel.text = text;
+		} else if (this.target is Quest) {
+            text = ((Quest)this.target).questName;
+        }
+        btnLabel.text = text;
 	}
 
 	void OnClick(){

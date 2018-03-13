@@ -44,7 +44,8 @@ public class StorylineManager : MonoBehaviour {
 
         List<ECS.Character> possibleSuccessors = chosenChieftain.faction.characters.Where(x => x.id != chosenChieftain.id).ToList();
         ECS.Character chosenSuccessor = possibleSuccessors[Random.Range(0, possibleSuccessors.Count)]; //Randomly select one of the other characters of his Tribe
-        chosenSuccessor.AssignTag(CHARACTER_TAG.SUCCESSOR); //and a successor tag to him
+        Successor successorTag = chosenSuccessor.AssignTag(CHARACTER_TAG.SUCCESSOR) as Successor; //and a successor tag to him
+        successorTag.SetCharacterToSucceed(chosenChieftain);
         log += "\nChosen successor is " + chosenSuccessor.name + " of " + chosenSuccessor.faction.name;
 
         //Also add either a tyrannical or warmonger tag to the successor
@@ -63,8 +64,14 @@ public class StorylineManager : MonoBehaviour {
             ECS.Character lostHeir = chosenHut.CreateNewCharacter(chosenChieftain.raceSetting.race, CHARACTER_ROLE.NONE, "Swordsman");
             lostHeir.AssignTag(CHARACTER_TAG.LOST_HEIR); //and add a lost heir tag and an heirloom necklace item to him. That character should not belong to any faction.
             log += "\nAssigned lost heir to " + lostHeir.name + " at " + chosenHut.location.name;
+
+            //Create find lost heir quest
+            FindLostHeir findLostHeirQuest = new FindLostHeir(chosenChieftain, chosenChieftain, chosenSuccessor, lostHeir);
+            QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
+            chosenChieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
         }
 
         Debug.Log(log);
+        
     }
 }

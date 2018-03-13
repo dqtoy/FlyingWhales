@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class QuestFilter {
+public class TaskFilter {
 
     #region virtuals
     public virtual bool MeetsRequirements(ECS.Character character) {
@@ -11,7 +11,7 @@ public class QuestFilter {
     #endregion
 }
 
-public class MustNotHaveTraits : QuestFilter {
+public class MustNotHaveTraits : TaskFilter {
 
     private List<TRAIT> _traits;
 
@@ -31,7 +31,7 @@ public class MustNotHaveTraits : QuestFilter {
     #endregion
 }
 
-public class MustHaveTraits : QuestFilter {
+public class MustHaveTraits : TaskFilter {
 
     private List<TRAIT> _requiredTraits;
 
@@ -51,7 +51,7 @@ public class MustHaveTraits : QuestFilter {
     #endregion
 }
 
-public class MustNotHaveTags : QuestFilter {
+public class MustNotHaveTags : TaskFilter {
 
 	private List<CHARACTER_TAG> _tags;
 
@@ -75,7 +75,7 @@ public class MustNotHaveTags : QuestFilter {
 	#endregion
 }
 
-public class MustHaveTags : QuestFilter {
+public class MustHaveTags : TaskFilter {
 
 	private List<CHARACTER_TAG> _tags;
 
@@ -117,7 +117,7 @@ public class MustHaveTags : QuestFilter {
 //    #endregion
 //}
 
-public class MustBeClass : QuestFilter {
+public class MustBeClass : TaskFilter {
 
 	private List<CHARACTER_CLASS> _allowedClasses;
 
@@ -136,11 +136,11 @@ public class MustBeClass : QuestFilter {
     #endregion
 }
 
-public class MustHaveSkills : QuestFilter {
+public class MustHaveSkills : TaskFilter {
     //TODO: Create MustHaveSkill OldQuest.Quest Filter on Merge of Combat Prototype 
 }
 
-public class MustBeFaction : QuestFilter {
+public class MustBeFaction : TaskFilter {
 
     private List<Faction> _allowedFactions;
 
@@ -164,7 +164,7 @@ public class MustBeFaction : QuestFilter {
     #endregion
 }
 
-public class MustNotBeFaction : QuestFilter {
+public class MustNotBeFaction : TaskFilter {
 
     private List<Faction> _bannedFactions;
 
@@ -180,6 +180,25 @@ public class MustNotBeFaction : QuestFilter {
             }
         }
         return true;
+    }
+    #endregion
+}
+
+public class MustBeCharacter : TaskFilter {
+
+    private List<ECS.Character> _allowedCharacters;
+
+    public MustBeCharacter(List<ECS.Character> allowedCharacters) {
+        _allowedCharacters = allowedCharacters;
+    }
+    public MustBeCharacter(ECS.Character allowedCharacter) {
+        _allowedCharacters = new List<ECS.Character>();
+        _allowedCharacters.Add(allowedCharacter);
+    }
+
+    #region overrides
+    public override bool MeetsRequirements(ECS.Character character) {
+        return _allowedCharacters.Contains(character);
     }
     #endregion
 }

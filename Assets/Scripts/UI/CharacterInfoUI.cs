@@ -88,7 +88,20 @@ public class CharacterInfoUI : UIMenu {
         }
         text += "\nCurrent Action: ";
         if (currentlyShowingCharacter.currentTask != null) {
-            text += currentlyShowingCharacter.currentTask.taskType.ToString();
+            text += currentlyShowingCharacter.currentTask.taskType.ToString() + " ";
+            for (int i = 0; i < currentlyShowingCharacter.currentTask.alignments.Count; i++) {
+                ACTION_ALIGNMENT currAlignment = currentlyShowingCharacter.currentTask.alignments[i];
+                text += currAlignment.ToString();
+                if (i + 1 < currentlyShowingCharacter.currentTask.alignments.Count) {
+                    text += ", ";
+                }
+            }
+        } else {
+            text += "NONE";
+        }
+        text += "\nCurrent Quest: ";
+        if (currentlyShowingCharacter.currentQuest != null) {
+            text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";
         } else {
             text += "NONE";
         }

@@ -8,6 +8,9 @@ using System;
 namespace ECS {
 	[System.Serializable]
 	public class Character : TaskCreator, ICombatInitializer {
+        public delegate void OnCharacterDeath();
+        public OnCharacterDeath onCharacterDeath;
+
 		[SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
@@ -136,7 +139,16 @@ namespace ECS {
 		internal Party party {
 			get { return _party; }
 		}
-		public CharacterTask currentTask {
+        public QuestData questData {
+            get { return _questData; }
+        }
+        public Quest currentQuest {
+            get { return _questData.activeQuest; }
+        }
+        public QuestPhase currentQuestPhase {
+            get { return _questData.GetQuestPhase(); }
+        }
+        public CharacterTask currentTask {
 			get { return _currentTask; }
 		}
         public ILocation specificLocation {
@@ -339,7 +351,7 @@ namespace ECS {
 			_followers = new List<ECS.Character> ();
 			_isFollowerOf = null;
 			_statsModifierPercentage = new StatsModifierPercentage ();
-            _questData = new QuestData();
+            _questData = new QuestData(this);
 
 			GenerateRaceTags ();
 
@@ -681,11 +693,20 @@ namespace ECS {
                 if (_isPrisoner){
 					PrisonerDeath ();
 				}
-//				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
-//					Messenger.Broadcast ("CharacterDeath", this);
-//				}
+                //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+                //					Messenger.Broadcast ("CharacterDeath", this);
+                //				}
+                onCharacterDeath();
+                onCharacterDeath = null;
+                Debug.Log(this.name + " died!");
             }
 		}
+        internal void AddActionOnDeath(OnCharacterDeath onDeathAction) {
+            onCharacterDeath += onDeathAction;
+        }
+        internal void RemoveActionOnDeath(OnCharacterDeath onDeathAction) {
+            onCharacterDeath -= onDeathAction;
+        }
         private void CheckForInternationalIncident() {
             //a non-Adventurer character from a tribe dies while in a region owned by another tribe
 			if(this._role == null){
@@ -1127,6 +1148,15 @@ namespace ECS {
             neededEquipment.AddRange(GetMissingArmorTypes());
             return neededEquipment;
         }
+        internal bool HasItem(string itemName) {
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Equals(itemName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
 		#region Status Effects
@@ -1540,7 +1570,7 @@ namespace ECS {
         #endregion
 
 		#region Character Tags
-		public void AssignTag(CHARACTER_TAG tag) {
+		public CharacterTag AssignTag(CHARACTER_TAG tag) {
 			CharacterTag charTag = null;
 			switch (tag) {
 			case CHARACTER_TAG.ANCIENT_KNOWLEDGE:
@@ -1586,6 +1616,7 @@ namespace ECS {
 			if(charTag != null){
 				AddCharacterTag (charTag);
 			}
+            return charTag;
 		}
 		private void GenerateRaceTags(){
 			for (int i = 0; i < _raceSetting.tags.Count; i++) {
@@ -1599,9 +1630,18 @@ namespace ECS {
 		}
 		public void RemoveCharacterTag(CharacterTag tag){
 			_tags.Remove(tag);
+            tag.OnRemoveTag();
 			RemoveCharacterTagBonuses (tag);
 		}
-		private void AddCharacterTagBonuses(CharacterTag tag){
+        public void RemoveCharacterTag(CHARACTER_TAG tag) {
+            for (int i = 0; i < _tags.Count; i++) {
+                CharacterTag currTag = _tags[i];
+                if (currTag.tagType == tag) {
+                    RemoveCharacterTag(currTag);
+                }
+            }
+        }
+        private void AddCharacterTagBonuses(CharacterTag tag){
 			_statsModifierPercentage.intPercentage += tag.statsModifierPercentage.intPercentage;
 			_statsModifierPercentage.strPercentage += tag.statsModifierPercentage.strPercentage;
 			_statsModifierPercentage.agiPercentage += tag.statsModifierPercentage.agiPercentage;
@@ -1711,12 +1751,14 @@ namespace ECS {
 			if(_role != null){
 				_role.AddTaskWeightsFromRole (actionWeights);
 			}
-
+            if (currentQuest != null) {
+                //Quest Tasks
+                _questData.AddQuestTasksToWeightedDictionary(actionWeights);
+            }
 			if(_role != null && !_role.cancelsAllOtherTasks){
 				for (int i = 0; i < _tags.Count; i++) {
 					_tags [i].AddTaskWeightsFromTags (actionWeights);
 				}
-				//TODO: Quest Tasks
 			}
 
 			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
@@ -2016,7 +2058,7 @@ namespace ECS {
 		#region Task Management
         public void SetCurrentQuest(Quest currentQuest) {
             _questData.SetActiveQuest(currentQuest);
-            _questData.SetQuestPhase(0);
+            UIManager.Instance.UpdateCharacterInfo();
         }
 		public void AddNewQuest(OldQuest.Quest quest) {
 			if (!_activeQuests.Contains(quest)) {
@@ -2041,6 +2083,7 @@ namespace ECS {
 		}
 		public List<CharacterTask> GetAllPossibleTasks(ILocation location){
 			List<CharacterTask> possibleTasks = new List<CharacterTask> ();
+            //Role Tasks
 			if(_role != null){
 				for (int i = 0; i < _role.roleTasks.Count; i++) {
 					CharacterTask currentTask = _role.roleTasks [i];
@@ -2049,6 +2092,7 @@ namespace ECS {
 					}
 				}
 			}
+            //Tag tasks
 			for (int i = 0; i < _tags.Count; i++) {
 				for (int j = 0; j < _tags[i].tagTasks.Count; j++) {
 					CharacterTask currentTask = _tags[i].tagTasks[j];
@@ -2057,13 +2101,24 @@ namespace ECS {
 					}
 				}
 			}
-			//TODO: Tag and Quest Tasks
+            //Quest Tasks
+            if (currentQuest != null) {
+                for (int i = 0; i < _questData.tasks.Count; i++) {
+                    CharacterTask currentTask = _questData.tasks[i];
+                    if (!currentTask.isDone && currentTask.CanBeDone(this, location)) {
+                        possibleTasks.Add(currentTask);
+                    }
+                }
+            }
 
 			return possibleTasks;
 		}
         #endregion
 
         #region Utilities
+		public void SetName(string newName){
+			_name = newName;
+		}
         public Character GetFollowerByID(int id) {
             if (party != null) {
                 for (int i = 0; i < party.partyMembers.Count; i++) {

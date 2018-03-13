@@ -696,6 +696,7 @@ public class Settlement : BaseLandmark {
 		ECS.CharacterSetup charSetup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup("Dehkbrug");
 		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charSetup.optionalRole, charSetup);
 		newCharacter.SetCharacterColor (Color.red);
+		newCharacter.SetName ("Nihvram");
 
 		newCharacter.SetHome(this);
 		this.AddCharacterToLocation(newCharacter, false);
