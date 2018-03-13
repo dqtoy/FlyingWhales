@@ -59,7 +59,7 @@ public class DoNothing : CharacterTask {
                     }
                     if (currLandmark == character.specificLocation) {
                         if (currLandmark.owner.id == character.faction.id || factionOfCharacter.GetRelationshipWith(ownerOfLandmark).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                            weight += 500; //If current location is owned by a non-hostile faction: +500
+                            weight += 1000; //If current location is owned by a non-hostile faction: +500
                         }
                     }
                 }
@@ -68,7 +68,7 @@ public class DoNothing : CharacterTask {
                 if (currLandmark.owner == null) {
                     weight += 300; //If character is unaligned, each landmark not owned by any faction: +300
                     if (currLandmark == character.specificLocation) {
-                        weight += 500; //If character is unaligned and current location is not owned by any faction: +500
+                        weight += 1000; //If character is unaligned and current location is not owned by any faction: +500
                     }
                 }
             }
