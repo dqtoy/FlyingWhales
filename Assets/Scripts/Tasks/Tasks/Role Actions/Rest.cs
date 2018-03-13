@@ -29,8 +29,9 @@ public class Rest : CharacterTask {
             _charactersToRest.Add(character);
         }
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark(character);
-		}
+            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
+            _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+        }
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartRest());
     }
     public override void PerformTask() {
@@ -148,23 +149,23 @@ public class Rest : CharacterTask {
 		}
     }
 
-	private BaseLandmark GetTargetLandmark(Character character) {
-		if (character.faction != null) {
-			List<Settlement> factionSettlements = character.faction.settlements.OrderBy (x => Vector2.Distance (character.currLocation.transform.position, x.location.transform.position)).ToList ();
-			for (int i = 0; i < factionSettlements.Count; i++) {
-				Settlement currSettlement = factionSettlements [i];
-				if (PathGenerator.Instance.GetPath (character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
-					return currSettlement;
-				}
-			}
-		}else{
-			BaseLandmark home = character.home;
-			if(home == null){
-				home = character.lair;
-			}
-			return home;
-		}
-		return null;
-	}
+	//private BaseLandmark GetTargetLandmark(Character character) {
+	//	if (character.faction != null) {
+	//		List<Settlement> factionSettlements = character.faction.settlements.OrderBy (x => Vector2.Distance (character.currLocation.transform.position, x.location.transform.position)).ToList ();
+	//		for (int i = 0; i < factionSettlements.Count; i++) {
+	//			Settlement currSettlement = factionSettlements [i];
+	//			if (PathGenerator.Instance.GetPath (character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
+	//				return currSettlement;
+	//			}
+	//		}
+	//	}else{
+	//		BaseLandmark home = character.home;
+	//		if(home == null){
+	//			home = character.lair;
+	//		}
+	//		return home;
+	//	}
+	//	return null;
+	//}
 
 }
