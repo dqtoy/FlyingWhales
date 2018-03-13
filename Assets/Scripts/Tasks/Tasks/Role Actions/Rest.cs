@@ -95,7 +95,7 @@ public class Rest : CharacterTask {
                 weight += 100; //If landmark is a settlement: +100
             }
             if (ownerOfLandmark != null && factionOfChar != null) {
-                if (ownerOfLandmark.GetRelationshipWith(factionOfChar).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                if (ownerOfLandmark.id == factionOfChar.id || ownerOfLandmark.GetRelationshipWith(factionOfChar).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
                     weight += 300; //If landmark is owned by a non-hostile faction: +300
                 }
             }
