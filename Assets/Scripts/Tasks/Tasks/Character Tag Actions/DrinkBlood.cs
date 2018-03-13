@@ -15,6 +15,9 @@ public class DrinkBlood : CharacterTask {
 	#region overrides
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
+		if(_assignedCharacter == null){
+			return;
+		}
 		if(_targetLocation == null){
 			_targetLocation = GetTargetLandmark ();
 		}

@@ -2124,6 +2124,9 @@ namespace ECS {
         #endregion
 
         #region Utilities
+		public void SetName(string newName){
+			_name = newName;
+		}
         public Character GetFollowerByID(int id) {
             if (party != null) {
                 for (int i = 0; i < party.partyMembers.Count; i++) {

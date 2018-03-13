@@ -38,6 +38,9 @@ public class HuntMagicUser : CharacterTask {
     #region overrides
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
+		if(_assignedCharacter == null){
+			return;
+		}
         if (_specificTarget == null) {
             _specificTarget = GetTargetCharacter(character);
         }

@@ -307,7 +307,7 @@ namespace ECS{
 					oppositeTargets = this.charactersSideA;
 				}
 
-				int chance = UnityEngine.Random.Range (0, 100);
+				int chance = Utilities.rng.Next(0, 100);
 				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 					if(chance < 10){
 						if(sourceCharacter.currentSide == SIDES.A){
@@ -339,7 +339,7 @@ namespace ECS{
 					sameTargets = this.charactersSideA;
 				}
 
-				int chance = UnityEngine.Random.Range (0, 100);
+				int chance = Utilities.rng.Next (0, 100);
 				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 					if(chance < 10){
 						if(sourceCharacter.currentSide == SIDES.B){

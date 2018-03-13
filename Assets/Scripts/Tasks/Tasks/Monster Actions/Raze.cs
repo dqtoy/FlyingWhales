@@ -19,6 +19,9 @@ public class Raze : CharacterTask {
 	#region overrides
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
+		if(_assignedCharacter == null){
+			return;
+		}
 //		_razingCharacters.Clear ();
 //		if(character.party == null){
 //			_razingCharacters.Add (character);

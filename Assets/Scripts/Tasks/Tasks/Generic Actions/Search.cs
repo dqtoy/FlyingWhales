@@ -34,7 +34,10 @@ public class Search : CharacterTask {
     }
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
-        character.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => character.DestroyAvatar());
+		if(_assignedCharacter == null){
+			return;
+		}
+		_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => _assignedCharacter.DestroyAvatar());
     }
     public override void PerformTask() {
         base.PerformTask();
