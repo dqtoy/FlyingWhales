@@ -55,8 +55,11 @@ public class DoNothing : CharacterTask {
                         FactionRelationship rel = factionOfCharacter.GetRelationshipWith(ownerOfLandmark);
                         if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
                             weight -= 50; //Each landmark in the current region owned by hostile faction: -100
-                        } else {
-                            weight += 500;//If current location is owned by a non-hostile faction: +500
+                        }
+                    }
+                    if (currLandmark == character.specificLocation) {
+                        if (currLandmark.owner.id == character.faction.id || factionOfCharacter.GetRelationshipWith(ownerOfLandmark).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                            weight += 500; //If current location is owned by a non-hostile faction: +500
                         }
                     }
                 }
