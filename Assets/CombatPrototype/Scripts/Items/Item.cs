@@ -41,6 +41,9 @@ namespace ECS{
 				return itemName;
 			}
 		}
+        public bool isObtainable { //Should this item only be interacted with or obtained?
+            get { return (itemType != ITEM_TYPE.ITEM ? true : false); }
+        }
 
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;

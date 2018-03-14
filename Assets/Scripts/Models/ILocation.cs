@@ -18,6 +18,7 @@ public interface ILocation {
     void CheckPatrollingGroupsCombat();
     bool HasHostilities();
     bool HasHostilitiesWith(Faction faction);
+    bool HasHostilitiesWith(ECS.Character character);
     List<ICombatInitializer> GetAttackingGroups();
     List<ICombatInitializer> GetPatrollingGroups();
     List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null);

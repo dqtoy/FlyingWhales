@@ -10,9 +10,9 @@ public class GoHome : CharacterTask {
 	public override void PerformTask() {
         base.PerformTask();
 		_assignedCharacter.SetCurrentTask(this);
-		if (_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
-		}
+		//if (_assignedCharacter.party != null) {
+		//	_assignedCharacter.party.SetCurrentTask(this);
+		//}
 
         GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
 		if(_assignedCharacter.faction == null) {

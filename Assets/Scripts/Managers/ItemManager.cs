@@ -8,6 +8,11 @@ public class ItemManager : MonoBehaviour {
 
     public static ItemManager Instance = null;
 
+    public static List<string> lootChestNames = new List<string> {
+        "Tier 1 Armor Chest",
+        "Tier 1 Weapon Chest"
+    };
+
     private Dictionary<string, ECS.Item> allItems;
 	private Dictionary<string, ECS.Weapon> allWeapons;
 	private Dictionary<string, ECS.Armor> allArmors;
@@ -299,4 +304,11 @@ public class ItemManager : MonoBehaviour {
 		}
 		return null;
 	}
+
+    public bool IsLootChestName(string itemName) {
+        if (lootChestNames.Contains(itemName)) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -59,7 +59,6 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.GenerateOtherLandmarks();
         LandmarkManager.Instance.GenerateMaterials();
 
-
         //KingdomManager.Instance.GenerateInitialKingdoms();
         //GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
 
@@ -80,6 +79,8 @@ public class MapGenerator : MonoBehaviour {
         //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
         GameManager.Instance.StartProgression();
+        LandmarkManager.Instance.InitializeLandmarks();
+        FactionManager.Instance.GenerateFactionCharacters();
         StorylineManager.Instance.GenerateStoryLines();
 		CharacterManager.Instance.SchedulePrisonerConversion ();
         //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);

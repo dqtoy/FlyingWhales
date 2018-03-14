@@ -23,15 +23,17 @@ public class RecruitFollowers : CharacterTask {
 		if(_assignedCharacter == null){
 			return;
 		}
-		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark (character);
-		}
-		if(_targetLocation != null){
-			_targetLandmark = (BaseLandmark)_targetLocation;
-			_assignedCharacter.GoToLocation (_targetLandmark, PATHFINDING_MODE.USE_ROADS);
-		}else{
-			EndRecruitment ();
-		}
+        _targetLocation = character.specificLocation;
+        _targetLandmark = character.specificLocation as BaseLandmark;
+		//if(_targetLocation == null){
+		//	_targetLocation = GetTargetLandmark (character);
+		//}
+		//if(_targetLocation != null){
+		//	_targetLandmark = (BaseLandmark)_targetLocation;
+		//	_assignedCharacter.GoToLocation (_targetLandmark, PATHFINDING_MODE.USE_ROADS);
+		//}else{
+		//	EndRecruitment ();
+		//}
 	}
     public override void PerformTask() {
         base.PerformTask();
@@ -77,16 +79,27 @@ public class RecruitFollowers : CharacterTask {
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		if(character.faction != null){
-			List<BaseLandmark> ownedLandmarks = character.faction.GetAllOwnedLandmarks ();
-			for (int i = 0; i < ownedLandmarks.Count; i++) {
-				if (ownedLandmarks [i].civilians > 0) {
-					return true;
-				}
-			}
-		}
-		return base.AreConditionsMet (character);
+        //If in a location with non-hostile civilians
+        if (!character.specificLocation.HasHostilitiesWith(character.faction)) {
+            return true;
+        }
+        //if(character.faction != null){
+        //	List<BaseLandmark> ownedLandmarks = character.faction.GetAllOwnedLandmarks ();
+        //	for (int i = 0; i < ownedLandmarks.Count; i++) {
+        //		if (ownedLandmarks [i].civilians > 0) {
+        //			return true;
+        //		}
+        //	}
+        //}
+        return base.AreConditionsMet (character);
 	}
+    public override int GetSelectionWeight(Character character) {
+        int weight = base.GetSelectionWeight(character);
+        if (!character.isFollowersFull) {
+            weight += 60 * character.missingFollowers; //+60 for every missing Follower
+        }
+        return weight;
+    }
     #endregion
 
     private void EndRecruitment() {

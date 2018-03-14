@@ -46,7 +46,7 @@ public class Settlement : BaseLandmark {
     }
 
     #region Ownership
-	protected override void Initialize (){
+    public override void Initialize (){
 		base.Initialize ();
 		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
 			InitializeCrater ();

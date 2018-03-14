@@ -2064,6 +2064,29 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return false;
     }
+    public bool HasHostilitiesWith(ECS.Character character) {
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            ICombatInitializer currItem = _charactersAtLocation[i];
+            Faction factionOfItem = null;
+            if (currItem is ECS.Character) {
+                factionOfItem = (currItem as ECS.Character).faction;
+            } else if (currItem is Party) {
+                factionOfItem = (currItem as Party).faction;
+            }
+            if (factionOfItem == null || character.faction == null) {
+                return true;
+            } else {
+                if (factionOfItem.id == character.faction.id) {
+                    continue; //skip this item, since it has the same faction as the other faction
+                }
+                FactionRelationship rel = character.faction.GetRelationshipWith(factionOfItem);
+                if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool HasHostilitiesWith(Faction faction) {
         if(faction == null && _charactersAtLocation.Count > 0) {
             return true; //the passed faction is null (factionless), if there are any characters on this tile

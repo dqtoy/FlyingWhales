@@ -17,17 +17,25 @@ public class PathfindingThreadPool : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
-	}
+        this.isRunning = true;
+
+        functionsToBeRunInThread = new Queue<PathFindingThread>();
+        functionsToBeResolved = new Queue<PathFindingThread>();
+
+        newThread = new Thread(RunThread);
+        newThread.IsBackground = true;
+        newThread.Start();
+    }
 
 	void Start () {
-		this.isRunning = true;
+		//this.isRunning = true;
 
-		functionsToBeRunInThread = new Queue<PathFindingThread> ();
-		functionsToBeResolved = new Queue<PathFindingThread> ();
+		//functionsToBeRunInThread = new Queue<PathFindingThread> ();
+		//functionsToBeResolved = new Queue<PathFindingThread> ();
 
-		newThread = new Thread( RunThread );
-		newThread.IsBackground = true;
-		newThread.Start ();
+		//newThread = new Thread( RunThread );
+		//newThread.IsBackground = true;
+		//newThread.Start ();
 	}
 	
 	void Update () {

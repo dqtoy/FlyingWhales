@@ -74,4 +74,43 @@ public class StorylineManager : MonoBehaviour {
         Debug.Log(log);
         
     }
+
+    #region Item Triggers
+    /*
+     Trigger specific events when an item is interacted with
+         */
+    public void OnInteractWith(string itemName, BaseLandmark location, ECS.Character interacter) {
+        //TODO: Add storyline triggers when a character interacts with a specific item
+        switch (itemName) {
+            case "Vampire Coffin":
+                AwakenAncientVampire(location, interacter);
+                break;
+            default:
+                break;
+        }
+    }
+    #endregion
+
+    #region Ancient Vampire
+    private void AwakenAncientVampire(BaseLandmark location, ECS.Character interacter) {
+        //Get the ancient vampire at the location
+        ECS.Character ancientVampire = null;
+        for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+            ECS.Character currCharacter = location.charactersAtLocation[i].mainCharacter;
+            if (currCharacter.role.roleType == CHARACTER_ROLE.ANCIENT_VAMPIRE) {
+                ancientVampire = currCharacter;
+                break;
+            }
+        }
+        if (ancientVampire == null) {
+            throw new System.Exception("There is no ancient vampire at " + location.tileLocation.name);
+        }
+        if (ancientVampire.currentTask.taskType != TASK_TYPE.HIBERNATE) {
+            throw new System.Exception("Vampire is not hibernating!");
+        }
+        //end the hibernation of the ancient vampire
+        ancientVampire.currentTask.EndTask(TASK_STATUS.SUCCESS);
+        location.AddHistory(interacter.name + " has awakaned ancient vampire " + ancientVampire.name + " from hibernation!");
+    }
+    #endregion
 }

@@ -8,23 +8,19 @@ public class DoNothing : CharacterTask {
     private Action endAction;
     private GameDate endDate;
 
-	public DoNothing(TaskCreator createdBy, int defaultDaysLeft = -1) 
+	public DoNothing(TaskCreator createdBy, int defaultDaysLeft = 10) 
         : base(createdBy, TASK_TYPE.DO_NOTHING, defaultDaysLeft) {
     }
-//    private void EndQuestAfterDays() {
-//        GameDate dueDate = GameManager.Instance.Today();
-//		if(_daysLeft == 0){
-//			dueDate.AddDays(UnityEngine.Random.Range(4, 9));
-//		}else{
-//			dueDate.AddDays(_daysLeft);
-//		}
-//        endDate = dueDate;
-//        endAction = () => EndTask(TASK_STATUS.SUCCESS);
-//        SchedulingManager.Instance.AddEntry(dueDate, () => endAction());
-//        //ScheduleTaskEnd(Random.Range(4, 9), TASK_RESULT.SUCCESS); //Do Nothing should only last for a random number of days between 4 days to 8 days
-//    }
 
     #region overrides
+    public override void OnChooseTask(Character character) {
+        base.OnChooseTask(character);
+        if (_targetLocation == null) {
+            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
+            _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+        }
+        character.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
+    }
     public override void PerformTask() {
         base.PerformTask();
 		if(_daysLeft == 0){
@@ -36,29 +32,54 @@ public class DoNothing : CharacterTask {
 	public override bool AreConditionsMet (Character character){
 		return true;
 	}
-    //public override void AcceptQuest(ECS.Character partyLeader) {
-    //    _isAccepted = true;
-    //    partyLeader.SetCurrentTask(this);
-    //    if(partyLeader.party != null) {
-    //        partyLeader.party.SetCurrentTask(this);
-    //    }
-    //    this.SetWaitingStatus(false);
-    //    if (onQuestAccepted != null) {
-    //        onQuestAccepted();
-    //    }
-    //}
-    //internal override void EndQuest(TASK_RESULT result) {
-    //    if (!_isDone) {
-    //        _questResult = result;
-    //        _isDone = true;
-    //        _createdBy.RemoveQuest(this);
-    //        ((ECS.Character)_createdBy).DetermineAction();
-    //    }
-    //}
-    //internal override void QuestCancel() {
-    //    _isDone = true;
-    //    _createdBy.RemoveQuest(this);
-    //    _questResult = TASK_RESULT.SUCCESS;
-    //}
+    public override int GetSelectionWeight(Character character) {
+        return 400;
+    }
+    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) {
+        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+        Region regionOfCharacter = character.specificLocation.tileLocation.region;
+        Faction factionOfCharacter = character.faction;
+        for (int i = 0; i < regionOfCharacter.allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = regionOfCharacter.allLandmarks[i];
+            Faction ownerOfLandmark = currLandmark.owner;
+            int weight = 20; //Each landmark in the current region gets a base weight of 20
+            if (character.faction != null) {
+                if (currLandmark.owner != null) {
+                    if (currLandmark.owner.id == character.faction.id) {
+                        weight += 100; //Each landmark in the current region owned by the same faction as the character: +100
+                        if (currLandmark is Settlement) {
+                            weight += 200; //Each settlement-type landmark in the current region owned by the same faction as the character: +200
+                        }
+                    } else {
+                        //currLandmark is owned by another faction
+                        FactionRelationship rel = factionOfCharacter.GetRelationshipWith(ownerOfLandmark);
+                        if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                            weight -= 50; //Each landmark in the current region owned by hostile faction: -100
+                        }
+                    }
+                    if (currLandmark == character.specificLocation) {
+                        if (currLandmark.owner.id == character.faction.id || factionOfCharacter.GetRelationshipWith(ownerOfLandmark).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                            weight += 1000; //If current location is owned by a non-hostile faction: +500
+                        }
+                    }
+                }
+            } else {
+                //character is factionless
+                if (currLandmark.owner == null) {
+                    weight += 300; //If character is unaligned, each landmark not owned by any faction: +300
+                    if (currLandmark == character.specificLocation) {
+                        weight += 1000; //If character is unaligned and current location is not owned by any faction: +500
+                    }
+                }
+            }
+            if (currLandmark.HasHostilitiesWith(character)) {
+                weight -= 50; //Each landmark in the current region with hostile characters: -50
+            }
+            if (weight > 0) {
+                landmarkWeights.AddElement(currLandmark, weight);
+            }
+        }
+        return landmarkWeights;
+    }
     #endregion
 }

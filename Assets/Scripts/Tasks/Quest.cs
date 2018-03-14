@@ -25,6 +25,9 @@ public class Quest {
     public int id {
         get { return _id; }
     }
+    public TaskCreator createdBy {
+        get { return _createdBy; }
+    }
     public string questName {
         get { return GetQuestName(); }
     }
@@ -284,7 +287,7 @@ namespace OldQuest{
             }
             //RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
             GiveRewards();
-            _assignedParty.OnQuestEnd();
+            //_assignedParty.OnQuestEnd();
         }
         protected virtual void QuestFail() {
             _isAccepted = false;
@@ -295,7 +298,7 @@ namespace OldQuest{
             if (_currentAction != null) {
                 _currentAction.ActionDone(TASK_ACTION_RESULT.FAIL);
             }
-            _assignedParty.OnQuestEnd();
+            //_assignedParty.OnQuestEnd();
             //RetaskParty(_assignedParty.OnReachNonHostileSettlementAfterQuest);
         }
         protected virtual void QuestCancel() {
@@ -304,7 +307,7 @@ namespace OldQuest{
                 _currentAction.ActionDone(TASK_ACTION_RESULT.CANCEL);
             }
             //RetaskParty(_assignedParty.partyLeader.OnReachNonHostileSettlementAfterQuest);
-            _assignedParty.OnQuestEnd();
+            //_assignedParty.OnQuestEnd();
             ResetQuestValues();
         }
         //Some variables in a specific quest must be reset so if other party will get the quest it will not have any values
@@ -465,7 +468,7 @@ namespace OldQuest{
              */
         internal void AssignPartyToQuest(Party party) {
             _assignedParty = party;
-            _assignedParty.SetCurrentTask(this);
+            //_assignedParty.SetCurrentTask(this);
             AddNewLog("Party " + party.name + " is now assigned to this quest.");
             if (_assignedParty.partyLeader.avatar == null) {
                 _assignedParty.partyLeader.CreateNewAvatar();//Characters that have accepted a OldQuest.Quest should have icon already even if they are still forming party in the city

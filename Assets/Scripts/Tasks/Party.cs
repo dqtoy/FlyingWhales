@@ -20,7 +20,7 @@ public class Party: IEncounterable, ICombatInitializer {
 	protected List<ECS.Character> _prisoners; //TODO: remove this, move to party leader
 	protected List<ECS.Character> _followers;
 
-    protected CharacterTask _currentTask;
+    //protected CharacterTask _currentTask;
     protected CharacterAvatar _avatar;
 
     protected ILocation _specificLocation;
@@ -64,7 +64,7 @@ public class Party: IEncounterable, ICombatInitializer {
         get { return _followers; }
     }
     public CharacterTask currentTask {
-        get { return _currentTask; }
+        get { return _partyLeader.currentTask; }
 	}
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
@@ -165,25 +165,25 @@ public class Party: IEncounterable, ICombatInitializer {
             }
             member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
-            member.SetCurrentTask(_currentTask);
 
             if (IsCharacterLeaderOfParty(member)) {
                 member.AddHistory("Created party: " + this._name + ".");
             } else {
+                member.SetCurrentTask(currentTask);
                 member.AddHistory("Joined party: " + this._name + ".");
                 member.SetFollowerState(true);
                 Debug.Log(member.name + " has joined the party of " + partyLeader.name);
-                if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-                    ((OldQuest.Quest)_currentTask).AddNewLog(member.name + " has joined the party of " + partyLeader.name);
-                }
+                //if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+                //    ((OldQuest.Quest)_currentTask).AddNewLog(member.name + " has joined the party of " + partyLeader.name);
+                //}
             }
         }
-        if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-            OldQuest.Quest currQuest = (OldQuest.Quest)_currentTask;
-            if (currQuest.onTaskInfoChanged != null) {
-                currQuest.onTaskInfoChanged();
-            }
-        }
+        //if(_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+        //    OldQuest.Quest currQuest = (OldQuest.Quest)_currentTask;
+        //    if (currQuest.onTaskInfoChanged != null) {
+        //        currQuest.onTaskInfoChanged();
+        //    }
+        //}
     }
     //public void AddPartyMemberAsOnTheWay(ECS.Character member) {
     //    _partyMembersOnTheWay.Add(member);
@@ -209,9 +209,9 @@ public class Party: IEncounterable, ICombatInitializer {
 			member.AddHistory ("Left party: " + this._name + ".");
 			this.specificLocation.AddCharacterToLocation(member, false);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
-            if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-                ((OldQuest.Quest)currentTask).AddNewLog(member.name + " has left the party");
-            }
+            //if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
+            //    ((OldQuest.Quest)currentTask).AddNewLog(member.name + " has left the party");
+            //}
 		}
         
         member.SetParty(null);
@@ -286,7 +286,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		//		_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel OldQuest.Quest if party is currently on a quest
 		//	}
 		//}
-		SetCurrentTask (null);
+		//SetCurrentTask (null);
 
         //if this party has any prisoners
         for (int i = 0; i < _prisoners.Count; i++) {
@@ -417,51 +417,51 @@ public class Party: IEncounterable, ICombatInitializer {
    //     }
 
    // }
-    public WeightedDictionary<PARTY_ACTION> GetPartyActionWeightsForCharacter(ECS.Character member) {
-        WeightedDictionary<PARTY_ACTION> partyActionWeights = new WeightedDictionary<PARTY_ACTION>();
-        int stayWeight = 50; //Default value for Stay is 50
-        int leaveWeight = 50; //Default value for Leave is 50
-        if(_currentTask.taskStatus == TASK_STATUS.SUCCESS) {
-            stayWeight += 100; //If OldQuest.Quest is a success, add 100 to Stay
-        } else  if(_currentTask.taskStatus == TASK_STATUS.FAIL) {
-            leaveWeight += 100; //If OldQuest.Quest is a failure, add 100 to Leave
-        }
-        if (member.HasStatusEffect(STATUS_EFFECT.INJURED)) {
-            //If character is injured, add 100 to Leave
-            leaveWeight += 100;
-        }
+    //public WeightedDictionary<PARTY_ACTION> GetPartyActionWeightsForCharacter(ECS.Character member) {
+    //    WeightedDictionary<PARTY_ACTION> partyActionWeights = new WeightedDictionary<PARTY_ACTION>();
+    //    int stayWeight = 50; //Default value for Stay is 50
+    //    int leaveWeight = 50; //Default value for Leave is 50
+    //    if(_currentTask.taskStatus == TASK_STATUS.SUCCESS) {
+    //        stayWeight += 100; //If OldQuest.Quest is a success, add 100 to Stay
+    //    } else  if(_currentTask.taskStatus == TASK_STATUS.FAIL) {
+    //        leaveWeight += 100; //If OldQuest.Quest is a failure, add 100 to Leave
+    //    }
+    //    if (member.HasStatusEffect(STATUS_EFFECT.INJURED)) {
+    //        //If character is injured, add 100 to Leave
+    //        leaveWeight += 100;
+    //    }
         
-        float memberMissingHP = (member.remainingHP * 100) - 100;
-        if(memberMissingHP >= 1) {
-            leaveWeight += 5 * (int)memberMissingHP; //Add 5 to Leave for every 1% HP below 100%
-        }
-        partyActionWeights.AddElement(PARTY_ACTION.STAY, stayWeight);
-        partyActionWeights.AddElement(PARTY_ACTION.LEAVE, leaveWeight);
-        return partyActionWeights;
-    }
+    //    float memberMissingHP = (member.remainingHP * 100) - 100;
+    //    if(memberMissingHP >= 1) {
+    //        leaveWeight += 5 * (int)memberMissingHP; //Add 5 to Leave for every 1% HP below 100%
+    //    }
+    //    partyActionWeights.AddElement(PARTY_ACTION.STAY, stayWeight);
+    //    partyActionWeights.AddElement(PARTY_ACTION.LEAVE, leaveWeight);
+    //    return partyActionWeights;
+    //}
     #endregion
 
     #region Quest
-    /*
-     Set the current task the party is on.
-     This will also set the current task of all
-     the characters in the party.
-         */
-    public void SetCurrentTask(CharacterTask task) {
-        _currentTask = task;
-        for (int i = 0; i < _partyMembers.Count; i++) {
-            ECS.Character currMember = _partyMembers[i];
-            currMember.SetCurrentTask(task);
-        }
-        if(task == null) {
-            Debug.Log("Set current quest of " + name + " to nothing");
-        } else {
-            if(task.taskType == TASK_TYPE.QUEST) {
-                Debug.Log("Set current quest of " + name + " to " + ((OldQuest.Quest)task).questType.ToString());
-            }
-        }
+    ///*
+    // Set the current task the party is on.
+    // This will also set the current task of all
+    // the characters in the party.
+    //     */
+    //public void SetCurrentTask(CharacterTask task) {
+    //    _currentTask = task;
+    //    for (int i = 0; i < _partyMembers.Count; i++) {
+    //        ECS.Character currMember = _partyMembers[i];
+    //        currMember.SetCurrentTask(task);
+    //    }
+    //    if(task == null) {
+    //        Debug.Log("Set current quest of " + name + " to nothing");
+    //    } else {
+    //        if(task.taskType == TASK_TYPE.QUEST) {
+    //            Debug.Log("Set current quest of " + name + " to " + ((OldQuest.Quest)task).questType.ToString());
+    //        }
+    //    }
         
-    }
+    //}
     ///*
     // Make the party leader decide the next action for the party.
     //     */
@@ -560,24 +560,24 @@ public class Party: IEncounterable, ICombatInitializer {
 			_avatar.StartPath(pathMode, () => currentQuest.TurnInQuest(taskResult));
 		}
     }
-    /*
-     This is the default action to be done when a 
-     party returns to the quest giver settlement after a quest.
-         */
-    internal void OnQuestEnd() {
-        AdjustRelationshipBasedOnQuestResult(currentTask.taskStatus);
-        FactionManager.Instance.RemoveQuest((OldQuest.Quest)currentTask);
-        if (_partyLeader.isDead) {
-            //party leader is already dead!
-            SetCurrentTask(null);
-            DisbandParty();
-        } else {
-            //CheckLeavePartyAfterQuest();
-            _partyLeader.DestroyAvatar();
-            _partyLeader.DetermineAction();
-        }
-        //_currLocation.AddCharacterOnTile(this);
-    }
+    ///*
+    // This is the default action to be done when a 
+    // party returns to the quest giver settlement after a quest.
+    //     */
+    //internal void OnQuestEnd() {
+    //    AdjustRelationshipBasedOnQuestResult(currentTask.taskStatus);
+    //    FactionManager.Instance.RemoveQuest((OldQuest.Quest)currentTask);
+    //    if (_partyLeader.isDead) {
+    //        //party leader is already dead!
+    //        SetCurrentTask(null);
+    //        DisbandParty();
+    //    } else {
+    //        //CheckLeavePartyAfterQuest();
+    //        _partyLeader.DestroyAvatar();
+    //        _partyLeader.DetermineAction();
+    //    }
+    //    //_currLocation.AddCharacterOnTile(this);
+    //}
     public bool CanJoinParty(ECS.Character candidate) {
         if(isFull || !_isOpen) {
             return false; //cannot join party because it is already full or party is not open
@@ -723,8 +723,8 @@ public class Party: IEncounterable, ICombatInitializer {
                         //if he/she is not dead and is not a prisoner, it means that this party chose to flee combat
                         //when a party chooses to flee, it's current task will be considered as cancelled, and it will return
                         //to it's nearest non hostile location, and determine it's next action there
-                        if (_currentTask != null) {
-                            _currentTask.EndTask(TASK_STATUS.CANCEL);
+                        if (currentTask != null) {
+                            currentTask.EndTask(TASK_STATUS.CANCEL);
                         }
                         BaseLandmark targetLocation = partyLeader.GetNearestLandmarkWithoutHostiles();
                         if(targetLocation == null) {

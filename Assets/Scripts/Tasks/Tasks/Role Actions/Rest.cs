@@ -29,8 +29,9 @@ public class Rest : CharacterTask {
             _charactersToRest.Add(character);
         }
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark(character);
-		}
+            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
+            _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+        }
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartRest());
     }
     public override void PerformTask() {
@@ -77,9 +78,39 @@ public class Rest : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
+    public override int GetSelectionWeight(Character character) {
+        int weight = base.GetSelectionWeight(character);
+        weight += 100 + (50 * (100 - character.remainingHPPercent)); //100 + (50 x (100 - RemainingHP%))
+        return weight;
+    }
+    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
+        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+        Region regionOfChar = character.specificLocation.tileLocation.region;
+        Faction factionOfChar = character.faction;
+        for (int i = 0; i < regionOfChar.allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = regionOfChar.allLandmarks[i];
+            Faction ownerOfLandmark = currLandmark.owner;
+            int weight = 20; //Each landmark in the region: 20
+            if (currLandmark is Settlement) {
+                weight += 100; //If landmark is a settlement: +100
+            }
+            if (ownerOfLandmark != null && factionOfChar != null) {
+                if (ownerOfLandmark.id == factionOfChar.id || ownerOfLandmark.GetRelationshipWith(factionOfChar).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                    weight += 300; //If landmark is owned by a non-hostile faction: +300
+                }
+            }
+            if (!currLandmark.HasHostilitiesWith(character)) {
+                weight += 100;//If landmark does not have any hostile characters: +100
+            }
+            if (weight > 0) {
+                landmarkWeights.AddElement(currLandmark, weight);
+            }
+        }
+        return landmarkWeights;
+    }
     #endregion
 
-	private void StartRest(){
+    private void StartRest(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartRest ());
 			return;
@@ -118,23 +149,23 @@ public class Rest : CharacterTask {
 		}
     }
 
-	private BaseLandmark GetTargetLandmark(Character character) {
-		if (character.faction != null) {
-			List<Settlement> factionSettlements = character.faction.settlements.OrderBy (x => Vector2.Distance (character.currLocation.transform.position, x.location.transform.position)).ToList ();
-			for (int i = 0; i < factionSettlements.Count; i++) {
-				Settlement currSettlement = factionSettlements [i];
-				if (PathGenerator.Instance.GetPath (character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
-					return currSettlement;
-				}
-			}
-		}else{
-			BaseLandmark home = character.home;
-			if(home == null){
-				home = character.lair;
-			}
-			return home;
-		}
-		return null;
-	}
+	//private BaseLandmark GetTargetLandmark(Character character) {
+	//	if (character.faction != null) {
+	//		List<Settlement> factionSettlements = character.faction.settlements.OrderBy (x => Vector2.Distance (character.currLocation.transform.position, x.location.transform.position)).ToList ();
+	//		for (int i = 0; i < factionSettlements.Count; i++) {
+	//			Settlement currSettlement = factionSettlements [i];
+	//			if (PathGenerator.Instance.GetPath (character.currLocation, currSettlement.location, PATHFINDING_MODE.USE_ROADS) != null) {
+	//				return currSettlement;
+	//			}
+	//		}
+	//	}else{
+	//		BaseLandmark home = character.home;
+	//		if(home == null){
+	//			home = character.lair;
+	//		}
+	//		return home;
+	//	}
+	//	return null;
+	//}
 
 }

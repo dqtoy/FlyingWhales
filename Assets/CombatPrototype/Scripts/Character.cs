@@ -89,7 +89,7 @@ namespace ECS {
         private CharacterTask nextTaskToDo;
 
 //        private Dictionary<MATERIAL, int> _materialInventory;
-		private Dictionary<int, BaseLandmark> _exploredLandmarks;
+		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
 
 		#region getters / setters
         internal string firstName {
@@ -252,6 +252,9 @@ namespace ECS {
 		internal float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
         }
+        internal int remainingHPPercent {
+            get { return (int)(remainingHP * 100); }
+        }
 		internal List<string> history{
 			get { return this._history; }
 		}
@@ -298,7 +301,7 @@ namespace ECS {
 //      public Dictionary<MATERIAL, int> materialInventory {
 //          get { return _materialInventory; }
 //      }
-		public Dictionary<int, BaseLandmark> exploredLandmarks {
+		public List<BaseLandmark> exploredLandmarks {
 			get { return _exploredLandmarks; }
 		}
 		public bool isInCombat{
@@ -323,6 +326,9 @@ namespace ECS {
 		internal bool isFollowersFull{
 			get { return followers.Count >= MAX_FOLLOWERS; }
 		}
+        public int missingFollowers {
+            get { return MAX_FOLLOWERS - followers.Count; }
+        }
 		internal ECS.Character isFollowerOf{
 			get { return _isFollowerOf; }
 		}
@@ -346,7 +352,7 @@ namespace ECS {
             _traits = new List<Trait> ();
 			_tags = new List<CharacterTag> ();
             _relationships = new Dictionary<Character, Relationship>();
-			_exploredLandmarks = new Dictionary<int, BaseLandmark> ();
+			_exploredLandmarks = new List<BaseLandmark> ();
 			statusEffects = new List<STATUS_EFFECT>();
 			_isDead = false;
 			_isFainted = false;
@@ -679,7 +685,7 @@ namespace ECS {
 					this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
 				}
 
-                CheckForInternationalIncident();
+                //CheckForInternationalIncident();
 
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
@@ -1400,6 +1406,9 @@ namespace ECS {
             default:
 			    break;
 			}
+            if (_role != null) {
+                _role.OnAssignRole();
+            }
 		}
 		public void ChangeRole(){
 			//TODO: Things to do when a character changes role
@@ -1765,12 +1774,12 @@ namespace ECS {
              */
 		internal void DetermineAction() {
             //Set Task of character to do nothing for now
-			if(_role != null){
-				if(_role.defaultRoleTask != null){
-					_role.defaultRoleTask.OnChooseTask (this);
-				}
-			}
-            return;
+			//if(_role != null){
+			//	if(_role.defaultRoleTask != null){
+			//		_role.defaultRoleTask.OnChooseTask (this);
+			//	}
+			//}
+   //         return;
 
 			if(isInCombat){
 				SetCurrentFunction (() => DetermineAction ());
@@ -1809,10 +1818,13 @@ namespace ECS {
 					_questData.AddQuestTasksToWeightedDictionary(actionWeights);
 				}
 			}
-
-			CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights ();
-			chosenTask.ResetTask ();
-			chosenTask.OnChooseTask (this);
+            if (actionWeights.GetTotalOfWeights() > 0) {
+                CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
+                chosenTask.ResetTask();
+                chosenTask.OnChooseTask(this);
+            } else {
+                actionWeights.LogDictionaryValues(this.raceSetting.race.ToString() + " weights!");
+            }
 //			chosenTask.PerformTask ();
 
 //			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
@@ -1828,7 +1840,6 @@ namespace ECS {
 //            } else {
 //                throw new Exception(this.name + " could not decide action because weights are zero!");
 //            }
-
 		}
         /*
          Set a task that this character will accept next
@@ -2260,6 +2271,16 @@ namespace ECS {
 
             return null;
         }
+        public bool HasRelevanceToQuest(BaseLandmark landmark) {
+            if (currentQuest != null) {
+                for (int i = 0; i < questData.tasks.Count; i++) {
+                    if (questData.tasks[i].targetLocation == landmark) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Relationships
@@ -2652,10 +2673,15 @@ namespace ECS {
 
 		#region Landmarks
 		public void AddExploredLandmark(BaseLandmark landmark){
-			if(!_exploredLandmarks.ContainsKey(landmark.id)){
-				_exploredLandmarks.Add (landmark.id, landmark);
-			}
+			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
+            //schedule removal of landmark after 6 months
+            GameDate expiration = GameManager.Instance.Today();
+            expiration.AddMonths(6);
+            SchedulingManager.Instance.AddEntry(expiration, () => RemoveLandmarkAsExplored(landmark));
 		}
+        private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
+            _exploredLandmarks.Remove(landmark);
+        }
 		#endregion
 
 		#region Followers
