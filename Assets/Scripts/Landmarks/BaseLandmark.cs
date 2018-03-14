@@ -1023,4 +1023,49 @@ public class BaseLandmark : ILocation, TaskCreator {
 		return false;
 	}
     #endregion
+
+    #region Items
+    /*
+     What should happen when this landmark is explored?
+         */
+    public virtual void ExploreLandmark(ECS.Character explorer) {
+        //default behaviour is a random item will be given to the explorer based on the landmarks item weights
+        ECS.Item generatedItem = GenerateRandomItem();
+        if (generatedItem != null) {
+            if (generatedItem.isObtainable) {
+                explorer.PickupItem(generatedItem);
+            } else {
+                //item should only be interacted with
+                AddHistory(explorer.name + " interacted with a " + generatedItem.itemName + "!");
+                StorylineManager.Instance.OnInteractWith(generatedItem.itemName, this, explorer);
+                LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
+                data.RemoveItemFromWeights(generatedItem.itemName);
+            }
+        }
+    }
+    /*
+     Generate a random item, given the data of this landmark type
+         */
+    public ECS.Item GenerateRandomItem() {
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
+        WeightedDictionary<string> itemWeights = data.itemWeights;
+        if (itemWeights.GetTotalOfWeights() > 0) {
+            string chosenItem = itemWeights.PickRandomElementGivenWeights();
+            if (ItemManager.Instance.IsLootChestName(chosenItem)) {
+                //chosen item is a loot crate, generate a random item
+                string[] words = chosenItem.Split(' ');
+                int tier = System.Int32.Parse(words[1]);
+                if (chosenItem.Contains("Armor")) {
+                    return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
+                }else if (chosenItem.Contains("Weapon")) {
+                    return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
+                }
+            } else {
+                return ItemManager.Instance.CreateNewItemInstance(chosenItem);
+            }
+            
+        }
+        return null;
+    }
+    #endregion
 }

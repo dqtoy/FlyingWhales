@@ -88,7 +88,7 @@ namespace ECS {
         private CharacterTask nextTaskToDo;
 
 //        private Dictionary<MATERIAL, int> _materialInventory;
-		private Dictionary<int, BaseLandmark> _exploredLandmarks;
+		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
 
 		#region getters / setters
         internal string firstName {
@@ -300,7 +300,7 @@ namespace ECS {
 //      public Dictionary<MATERIAL, int> materialInventory {
 //          get { return _materialInventory; }
 //      }
-		public Dictionary<int, BaseLandmark> exploredLandmarks {
+		public List<BaseLandmark> exploredLandmarks {
 			get { return _exploredLandmarks; }
 		}
 		public bool isInCombat{
@@ -342,7 +342,7 @@ namespace ECS {
             _traits = new List<Trait> ();
 			_tags = new List<CharacterTag> ();
             _relationships = new Dictionary<Character, Relationship>();
-			_exploredLandmarks = new Dictionary<int, BaseLandmark> ();
+			_exploredLandmarks = new List<BaseLandmark> ();
 			statusEffects = new List<STATUS_EFFECT>();
 			_isDead = false;
 			_isFainted = false;
@@ -2214,6 +2214,16 @@ namespace ECS {
 
             return null;
         }
+        public bool HasRelevanceToQuest(BaseLandmark landmark) {
+            if (currentQuest != null) {
+                for (int i = 0; i < questData.tasks.Count; i++) {
+                    if (questData.tasks[i].targetLocation == landmark) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Relationships
@@ -2606,10 +2616,15 @@ namespace ECS {
 
 		#region Landmarks
 		public void AddExploredLandmark(BaseLandmark landmark){
-			if(!_exploredLandmarks.ContainsKey(landmark.id)){
-				_exploredLandmarks.Add (landmark.id, landmark);
-			}
+			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
+            //schedule removal of landmark after 6 months
+            GameDate expiration = GameManager.Instance.Today();
+            expiration.AddMonths(6);
+            SchedulingManager.Instance.AddEntry(expiration, () => RemoveLandmarkAsExplored(landmark));
 		}
+        private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
+            _exploredLandmarks.Remove(landmark);
+        }
 		#endregion
 
 		#region Followers

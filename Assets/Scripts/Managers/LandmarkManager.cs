@@ -8,7 +8,7 @@ public class LandmarkManager : MonoBehaviour {
     public static LandmarkManager Instance = null;
 
     public List<CharacterProductionWeight> characterProductionWeights;
-	public DungeonEncounterChances[] dungeonEncounterChances;
+	//public DungeonEncounterChances[] dungeonEncounterChances;
     public int initialResourceLandmarks;
     public int initialDungeonLandmarks;
     public int initialSettlementLandmarks;
@@ -364,14 +364,14 @@ public class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    public DungeonEncounterChances GetDungeonEncounterChances(LANDMARK_TYPE dungeonType){
-		for (int i = 0; i < dungeonEncounterChances.Length; i++) {
-			if(dungeonType == dungeonEncounterChances[i].dungeonType){
-				return dungeonEncounterChances [i];
-			}
-		}
-		return new DungeonEncounterChances ();
-	}
+ //   public DungeonEncounterChances GetDungeonEncounterChances(LANDMARK_TYPE dungeonType){
+	//	for (int i = 0; i < dungeonEncounterChances.Length; i++) {
+	//		if(dungeonType == dungeonEncounterChances[i].dungeonType){
+	//			return dungeonEncounterChances [i];
+	//		}
+	//	}
+	//	return new DungeonEncounterChances ();
+	//}
 
     public BaseLandmark GetLandmarkByID(int id) {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {

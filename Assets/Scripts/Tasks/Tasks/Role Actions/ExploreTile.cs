@@ -23,10 +23,12 @@ public class ExploreTile : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-			_landmarkToExplore = GetTargetLandmark();
-		}else{
-			_landmarkToExplore = (BaseLandmark)_targetLocation;
+            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
+			_targetLocation = landmarkWeights.PickRandomElementGivenWeights();
 		}
+
+		_landmarkToExplore = (BaseLandmark)_targetLocation;
+		
 		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
 	}
 	public override void PerformTask (){
@@ -35,28 +37,72 @@ public class ExploreTile : CharacterTask {
 	}
 	public override bool CanBeDone (ECS.Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile is DungeonLandmark){
-			if(character.exploredLandmarks.ContainsKey(location.tileLocation.landmarkOnTile.id)){
-				if(character.exploredLandmarks[location.tileLocation.landmarkOnTile.id].itemsInLandmark.Count > 0){
-					return true;
-				}
-			}else{
-				return true;
-			}
-		}
+            return true;
+            //if(!character.exploredLandmarks.Contains(location.tileLocation.landmarkOnTile)){
+            //if(location.tileLocation.landmarkOnTile.itemsInLandmark.Count > 0){
+            //	return true;
+            //}
+            //}
+            //         else{
+            //	return true;
+            //}
+        }
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(character, landmark)){
-				return true;
-			}
-		}
+        List<Region> regionsToCheck = new List<Region>();
+        Region characterRegion = character.specificLocation.tileLocation.region;
+        regionsToCheck.Add(characterRegion);
+        regionsToCheck.AddRange(characterRegion.adjacentRegionsViaMajorRoad);
+        //Check If there are Dungeon Landmarks in current or adjacent regions
+        for (int i = 0; i < regionsToCheck.Count; i++) {
+            Region currRegion = regionsToCheck[i];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                if(currRegion.landmarks[j] is DungeonLandmark) {
+                    return true;
+                }
+            }
+        }
+		//for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+		//	BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			//if(CanBeDone(character, landmark)){
+			//	return true;
+			//}
+		//}
 		return base.AreConditionsMet (character);
 	}
+    public override int GetSelectionWeight(Character character) {
+        return 40; //If there are Dungeon Landmarks in current or adjacent regions: 40. Check AreConditionsMet() for requirements.
+    }
+    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
+        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+        List<Region> regionsToCheck = new List<Region>();
+        Region characterRegion = character.specificLocation.tileLocation.region;
+        regionsToCheck.Add(characterRegion);
+        regionsToCheck.AddRange(characterRegion.adjacentRegionsViaMajorRoad);
+        for (int i = 0; i < regionsToCheck.Count; i++) {
+            Region currRegion = regionsToCheck[i];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if (currLandmark is DungeonLandmark) {
+                    int weight = 50; //Each Dungeon Landmark in current and adjacent regions: 50
+                    if (character.exploredLandmarks.Contains(currLandmark)) {
+                        weight -= 40; //If Dungeon Landmark has been Explored by this character within the past 6 months: -40
+                    }
+                    if (character.HasRelevanceToQuest(currLandmark)) {
+                        weight += 300; //If Dungeon Landmark has relevance with character's current quest: +300
+                    }
+                    if (weight > 0) {
+                        landmarkWeights.AddElement(currLandmark, weight);
+                    }
+                }
+            }
+        }
+        return landmarkWeights;
+    }
     #endregion
 
-	private void StartExploration(){
+    private void StartExploration(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartExploration ());
 			return;
@@ -67,18 +113,20 @@ public class ExploreTile : CharacterTask {
 		if(_isHalted){
 			return;
 		}
-		if( _landmarkToExplore.itemsInLandmark.Count > 0){
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 35){
-				ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
-				if(!_assignedCharacter.EquipItem(itemFound)){
-					_assignedCharacter.PickupItem (itemFound);
-				}
-				_landmarkToExplore.itemsInLandmark.Remove (itemFound);
-			}
-		}
+        _landmarkToExplore.ExploreLandmark(_assignedCharacter);
+		//if( _landmarkToExplore.itemsInLandmark.Count > 0){
+		//	int chance = UnityEngine.Random.Range (0, 100);
+		//	if(chance < 35){
+		//		ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
+		//		if(!_assignedCharacter.EquipItem(itemFound)){
+		//			_assignedCharacter.PickupItem (itemFound);
+		//		}
+		//		_landmarkToExplore.itemsInLandmark.Remove (itemFound);
+		//	}
+		//}
 		if(_daysLeft == 0){
-			End ();
+            _assignedCharacter.AddExploredLandmark(_landmarkToExplore); //After the 5 days is over, the character will record that he has already explored that Landmark.
+            End ();
 			return;
 		}
 		ReduceDaysLeft(1);
@@ -93,29 +141,29 @@ public class ExploreTile : CharacterTask {
 		EndTask (TASK_STATUS.SUCCESS);
 	}
 
-	private BaseLandmark GetTargetLandmark(){
-		//TODO: Add weights for all landmark the can give the character an item that his current quest needs
-		_landmarkWeights.Clear ();
-		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if (CanBeDone (_assignedCharacter, landmark)){
-				_landmarkWeights.AddElement (landmark, 100);
-			}
-//			if(landmark is DungeonLandmark){
-//				if(_assignedCharacter.exploredLandmarks.ContainsKey(landmark.id)){
-//					if(landmark.itemsInLandmark.Count > 0){
-//						_landmarkWeights.AddElement (landmark, 100);
-//					}
-//				}else{
-//					_landmarkWeights.AddElement (landmark, 100);
-//				}
+//	private BaseLandmark GetTargetLandmark(){
+//		//TODO: Add weights for all landmark the can give the character an item that his current quest needs
+//		_landmarkWeights.Clear ();
+//		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+//			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
+//			if (CanBeDone (_assignedCharacter, landmark)){
+//				_landmarkWeights.AddElement (landmark, 100);
 //			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
-	}
+////			if(landmark is DungeonLandmark){
+////				if(_assignedCharacter.exploredLandmarks.ContainsKey(landmark.id)){
+////					if(landmark.itemsInLandmark.Count > 0){
+////						_landmarkWeights.AddElement (landmark, 100);
+////					}
+////				}else{
+////					_landmarkWeights.AddElement (landmark, 100);
+////				}
+////			}
+//		}
+//		if(_landmarkWeights.GetTotalOfWeights() > 0){
+//			return _landmarkWeights.PickRandomElementGivenWeights ();
+//		}
+//		return null;
+//	}
 
     #region Logs
     private void LogGoToLocation() {
