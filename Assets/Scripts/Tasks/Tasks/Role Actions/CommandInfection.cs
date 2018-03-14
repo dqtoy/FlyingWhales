@@ -73,7 +73,7 @@ public class CommandInfection : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-	public override int GetTaskWeight (Character character){
+	public override int GetSelectionWeight (Character character){
 		return 100;
 	}
 	#endregion

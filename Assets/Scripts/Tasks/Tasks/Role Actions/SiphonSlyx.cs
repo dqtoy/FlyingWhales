@@ -46,7 +46,7 @@ public class SiphonSlyx : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-	public override int GetTaskWeight (Character character){
+	public override int GetSelectionWeight (Character character){
 		int weight = (100 - ((100 * character.currentHP) / character.maxHP)) * 50;
 		return weight;
 	}

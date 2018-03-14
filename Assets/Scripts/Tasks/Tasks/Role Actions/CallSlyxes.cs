@@ -44,7 +44,7 @@ public class CallSlyxes : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-	public override int GetTaskWeight (Character character){
+	public override int GetSelectionWeight (Character character){
 		CraterBeast beast = (CraterBeast)character.role;
 		return beast.numOfSlyxesCanBeCalled * 50;
 	}
