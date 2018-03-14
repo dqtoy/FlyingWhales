@@ -228,7 +228,7 @@ public class Region {
                     }
                     if (!_adjacentRegions.Contains(currNeighbour.region)) {
                         if(currNeighbour.region == null) {
-                            throw new System.Exception("REGION IS NULL!");
+                            throw new System.Exception("REGION IS NULL! " + currNeighbour.name);
                         } else {
                             _adjacentRegions.Add(currNeighbour.region);
                         }

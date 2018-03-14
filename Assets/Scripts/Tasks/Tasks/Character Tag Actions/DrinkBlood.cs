@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using ECS;
+using System.Collections.Generic;
 
 public class DrinkBlood : CharacterTask {
 
@@ -19,7 +20,8 @@ public class DrinkBlood : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark ();
+            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
+			_targetLocation = landmarkWeights.PickRandomElementGivenWeights();
 		}
 		_target = (BaseLandmark)_targetLocation;
 
@@ -45,17 +47,57 @@ public class DrinkBlood : CharacterTask {
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(character, landmark)){
-				return true;
-			}
-		}
-		return base.AreConditionsMet (character);
+        //check if there are any landmarks in region and adjacent regions that have civilians
+        List<Region> regionsToCheck = new List<Region>();
+        regionsToCheck.Add(character.specificLocation.tileLocation.region);
+        regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegions);
+        for (int i = 0; i < regionsToCheck.Count; i++) {
+            Region currRegion = regionsToCheck[i];
+            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.allLandmarks[j];
+                if (currLandmark.civilians > 0) {
+                    return true;
+                }
+            }
+        }
+        //      for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+        //	BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+        //	if(CanBeDone(character, landmark)){
+        //		return true;
+        //	}
+        //}
+        return base.AreConditionsMet (character);
 	}
-	#endregion
+    public override int GetSelectionWeight(Character character) {
+        return 25;
+    }
+    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
+        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+        List<Region> regionsToCheck = new List<Region>();
+        regionsToCheck.Add(character.specificLocation.tileLocation.region);
+        regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegions);
+        for (int i = 0; i < regionsToCheck.Count; i++) {
+            Region currRegion = regionsToCheck[i];
+            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.allLandmarks[j];
+                if (currLandmark.civilians > 0) {
+                    int weight = 100;//All landmarks with civilians in current and adjacent regions: 100
+                    if (currLandmark.owner != null && currLandmark.owner == character.faction) {
+                        weight += 100;//Landmark owned by a different faction: +100
+                    }
+                    if (currLandmark.HasHostilitiesWith(character)) {
+                        weight -= 50;
+                    }
+                    landmarkWeights.AddElement(currLandmark, weight);
+                }
+            }
+        }
+        
+        return landmarkWeights;
+    }
+    #endregion
 
-	private void StartDrinkingBlood() {
+    private void StartDrinkingBlood() {
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartDrinkingBlood ());
 			return;
