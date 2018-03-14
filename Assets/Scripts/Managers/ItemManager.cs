@@ -305,8 +305,8 @@ public class ItemManager : MonoBehaviour {
 		return null;
 	}
 
-    public bool IsLootChestName(string itemName) {
-        if (lootChestNames.Contains(itemName)) {
+    public bool IsLootChest(ECS.Item item) {
+        if (lootChestNames.Contains(item.itemName)) {
             return true;
         }
         return false;

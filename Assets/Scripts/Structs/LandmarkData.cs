@@ -26,7 +26,7 @@ public class LandmarkData {
     private WeightedDictionary<string> GetItemWeights() {
         WeightedDictionary<string> itemWeights = new WeightedDictionary<string>();
         for (int i = 0; i < itemData.Length; i++) {
-            itemWeights.AddElement(itemData[i].itemName, itemData[i].weight);
+            itemWeights.AddElement(itemData[i].itemName, itemData[i].exploreWeight);
         }
         return itemWeights;
     }
