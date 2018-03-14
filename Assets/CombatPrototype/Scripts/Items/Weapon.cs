@@ -76,6 +76,7 @@ namespace ECS{
             copy.material = material;
             copy.quality = quality;
             copy.weaponPower = weaponPower;
+			copy.damageRange = damageRange;
             copy.attributes = new List<IBodyPart.ATTRIBUTE>(attributes);
             copy.equipRequirements = new List<IBodyPart.ATTRIBUTE>(equipRequirements);
             copy.bodyPartsAttached = new List<IBodyPart>(bodyPartsAttached);

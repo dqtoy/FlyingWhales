@@ -41,7 +41,7 @@ public class MapGenerator : MonoBehaviour {
 
         UIManager.Instance.InitializeUI();
 
-        if (!FactionManager.Instance.GenerateInititalFactions()) {
+        if (!FactionManager.Instance.GenerateInitialFactions()) {
             //reset
             Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
             Messenger.Cleanup();

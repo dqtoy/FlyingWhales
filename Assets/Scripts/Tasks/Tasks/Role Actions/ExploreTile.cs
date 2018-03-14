@@ -74,7 +74,7 @@ public class ExploreTile : CharacterTask {
 				if(!_assignedCharacter.EquipItem(itemFound)){
 					_assignedCharacter.PickupItem (itemFound);
 				}
-				_landmarkToExplore.itemsInLandmark.Remove (itemFound);
+				_landmarkToExplore.RemoveItemInLandmark(itemFound);
 			}
 		}
 		if(_daysLeft == 0){

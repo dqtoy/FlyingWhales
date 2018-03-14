@@ -124,6 +124,9 @@ public class Region {
     internal List<ECS.Character> charactersInRegion {
         get { return GetCharactersInRegion(); }
     }
+	internal int numOfCharactersInLandmarks{
+		get { return _allLandmarks.Sum (x => x.charactersAtLocation.Sum (y => y.numOfCharacters)); }
+	}
     #endregion
 
     public Region(HexTile centerOfMass) {

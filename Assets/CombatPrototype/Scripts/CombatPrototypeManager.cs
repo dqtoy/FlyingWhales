@@ -139,8 +139,10 @@ namespace ECS {
 
 			if(combat.faintedCharacters.Count > 0){
 				WeightedDictionary<string> prisonWeights = new WeightedDictionary<string>();
-				int prisonerWeight = 50;
-				prisonWeights.AddElement ("prison", prisonerWeight);
+				if(!winningCharacters[0].doesNotTakePrisoners){
+					int prisonerWeight = 50;
+					prisonWeights.AddElement ("prison", prisonerWeight);
+				}
 				prisonWeights.AddElement ("leave", leaveToDieWeight);
 				string pickedWeight = prisonWeights.PickRandomElementGivenWeights ();
 

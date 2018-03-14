@@ -12,6 +12,7 @@ public interface ICombatInitializer {
 	bool isInCombat { get; }
 	Action currentFunction { get; }
 	ECS.Character mainCharacter { get; }
+	int numOfCharacters { get; }
 
 	//bool InitializeCombat();
 	bool IsHostileWith (ICombatInitializer combatInitializer);

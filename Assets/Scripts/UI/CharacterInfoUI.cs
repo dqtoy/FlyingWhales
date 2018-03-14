@@ -148,7 +148,7 @@ public class CharacterInfoUI : UIMenu {
 				if(i > 0){
 					text += ", ";
 				}
-				text += Utilities.NormalizeString(trait.trait.ToString());
+				text += trait.traitName;
 			}
 			if(currentlyShowingCharacter.traits.Count > 0){
 				text += ", ";

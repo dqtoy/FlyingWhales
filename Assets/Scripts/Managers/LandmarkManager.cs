@@ -32,6 +32,7 @@ public class LandmarkManager : MonoBehaviour {
                 newLandmark.OccupyLandmark(newFaction);
             }
         }
+		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
     /*
@@ -63,10 +64,11 @@ public class LandmarkManager : MonoBehaviour {
 		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
 			Region region = GridMap.Instance.allRegions [i];
 			if(region.centerOfMass.landmarkOnTile != null){
+//				region.AddLandmarkToRegion (region.centerOfMass.landmarkOnTile);
 				if(region.allLandmarks.Count > 0){
 					region.allLandmarks.Insert (0, region.centerOfMass.landmarkOnTile);
 				}else{
-					region.AddLandmarkToRegion (region.centerOfMass.landmarkOnTile);
+					region.allLandmarks.Add (region.centerOfMass.landmarkOnTile);
 				}
 			}
 		}
@@ -216,6 +218,17 @@ public class LandmarkManager : MonoBehaviour {
         }
         return nearestPath;
     }
+
+	private void AddInitialLandmarkItems(BaseLandmark landmark){
+		List<ECS.Item> items = new List<ECS.Item> ();
+		switch(landmark.specificLandmarkType){
+		case LANDMARK_TYPE.CAVE:
+			ECS.Item neuroctus = ItemManager.Instance.CreateNewItemInstance ("Neuroctus");
+			items.Add (neuroctus);
+			break;
+		}
+		landmark.AddItemsInLandmark (items);
+	}
     #endregion
 
     #region ECS.Character Production

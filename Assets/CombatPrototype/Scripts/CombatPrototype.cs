@@ -856,7 +856,7 @@ namespace ECS{
 										allWeaponDropped += item.itemName;
 										targetCharacter.ThrowItem (item);
 										if(targetCharacter.currLocation != null && targetCharacter.currLocation.landmarkOnTile != null){
-											targetCharacter.currLocation.landmarkOnTile.itemsInLandmark.Add (item);
+											targetCharacter.currLocation.landmarkOnTile.AddItemInLandmark(item);
 										}
 										break;
 									}

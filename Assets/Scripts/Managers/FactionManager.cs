@@ -128,7 +128,7 @@ public class FactionManager : MonoBehaviour {
      Generate the initital factions,
      races are specified in the inspector (inititalRaces)
      */
-    public bool GenerateInititalFactions() {
+    public bool GenerateInitialFactions() {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         //List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
@@ -220,6 +220,15 @@ public class FactionManager : MonoBehaviour {
         for (int i = 0; i < numOfCharacters; i++) {
             CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
             ECS.Character newChar = settlement.CreateNewCharacter(CHARACTER_ROLE.HERO, Utilities.NormalizeString(chosenClass.ToString()));
+			int ritualistChance = UnityEngine.Random.Range (0, 100);
+			if(ritualistChance < 20){
+				newChar.AssignTag (CHARACTER_TAG.RITUALIST);
+			}else{
+				int herbalistChance = UnityEngine.Random.Range (0, 100);
+				if(herbalistChance < 20){
+					newChar.AssignTag (CHARACTER_TAG.HERBALIST);
+				}
+			}
             CharacterManager.Instance.EquipCharacterWithBestGear(settlement, newChar);
         }
     }

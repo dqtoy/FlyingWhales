@@ -8,6 +8,7 @@ public class CharacterTag {
 	protected CHARACTER_TAG _tagType;
 	protected List<CharacterTask> _tagTasks;
 	protected StatsModifierPercentage _statsModifierPercentage;
+	protected bool _isRemoved;
 
 	#region getters/setters
 	public string tagName {
@@ -25,14 +26,18 @@ public class CharacterTag {
 	public StatsModifierPercentage statsModifierPercentage {
 		get { return _statsModifierPercentage; }
 	}
+	public bool isRemoved {
+		get { return _isRemoved; }
+	}
 	#endregion
 
 	public CharacterTag(ECS.Character character, CHARACTER_TAG tagType){
 		_character = character;
 		_tagType = tagType;
-		_tagName = Utilities.NormalizeString (_tagType.ToString ());
+		_tagName = Utilities.NormalizeStringUpperCaseFirstLetters (_tagType.ToString ());
 		_tagTasks = new List<CharacterTask> ();
 		_statsModifierPercentage = new StatsModifierPercentage ();
+		_isRemoved = false;
 	}
 
 	#region Virtuals
@@ -49,6 +54,8 @@ public class CharacterTag {
     /*
      What should happen when a tag is removed
          */
-    public virtual void OnRemoveTag() {}
+    public virtual void OnRemoveTag() {
+		_isRemoved = true;
+	}
 	#endregion
 }

@@ -107,6 +107,12 @@ public class Party: IEncounterable, ICombatInitializer {
 	public ECS.Character mainCharacter{
 		get { return this._partyLeader; }
 	}
+	public int numOfCharacters{
+		get { return _partyMembers.Count; }
+	}
+	public bool doesNotTakePrisoners{
+		get { return _partyLeader.doesNotTakePrisoners; }
+	}
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {

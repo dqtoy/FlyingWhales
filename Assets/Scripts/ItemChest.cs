@@ -49,10 +49,11 @@ public class ItemChest : IEncounterable {
 					continue;
 				}
 			}		
-			encounteredBy.PickupItem (itemInChest);
-			Debug.Log(encounteredBy.name + " obtains " + itemInChest.nameWithQuality + " from the chest.");
 
-			if(encounteredBy.EquipItem (itemInChest)){
+			if(!encounteredBy.EquipItem (itemInChest)){
+				encounteredBy.PickupItem (itemInChest);
+				Debug.Log(encounteredBy.name + " obtains " + itemInChest.nameWithQuality + " from the chest.");
+			}else{
 				Debug.Log(encounteredBy.name + " equips the " + itemInChest.nameWithQuality + ".");
 			}
 			_itemsInChest.RemoveAt (i);
@@ -120,13 +121,13 @@ public class ItemChest : IEncounterable {
 			}
 			if(_allNeed.Count > 0){
 				ECS.Character chosenCharacter = _allNeed [UnityEngine.Random.Range (0, _allNeed.Count)];
-				chosenCharacter.PickupItem (itemInChest);
 
-				string obtainLog = chosenCharacter.name + " obtains " + itemInChest.nameWithQuality + " from the chest.";
-				encounterLogs.Add(obtainLog);
-				Debug.Log(obtainLog);
-
-				if(chosenCharacter.EquipItem (itemInChest)){
+				if(!chosenCharacter.EquipItem (itemInChest)){
+					chosenCharacter.PickupItem (itemInChest);
+					string obtainLog = chosenCharacter.name + " obtains " + itemInChest.nameWithQuality + " from the chest.";
+					encounterLogs.Add(obtainLog);
+					Debug.Log(obtainLog);
+				}else{
 					string equipLog = chosenCharacter.name + " equips the " + itemInChest.nameWithQuality + ".";
 					encounterLogs.Add(equipLog);
 					Debug.Log(equipLog);
@@ -136,13 +137,13 @@ public class ItemChest : IEncounterable {
 			}else{
 				if(_allGreed.Count > 0){
 					ECS.Character chosenCharacter = _allGreed [UnityEngine.Random.Range (0, _allGreed.Count)];
-					chosenCharacter.PickupItem (itemInChest);
 
-					string obtainLog = chosenCharacter.name + " obtains " + itemInChest.nameWithQuality + " from the chest.";
-					encounterLogs.Add(obtainLog);
-					Debug.Log(obtainLog);
-
-					if(chosenCharacter.EquipItem (itemInChest)){
+					if(!chosenCharacter.EquipItem (itemInChest)){
+						chosenCharacter.PickupItem (itemInChest);
+						string obtainLog = chosenCharacter.name + " obtains " + itemInChest.nameWithQuality + " from the chest.";
+						encounterLogs.Add(obtainLog);
+						Debug.Log(obtainLog);
+					}else{
 						string equipLog = chosenCharacter.name + " equips the " + itemInChest.nameWithQuality + ".";
 						encounterLogs.Add(equipLog);
 						Debug.Log(equipLog);

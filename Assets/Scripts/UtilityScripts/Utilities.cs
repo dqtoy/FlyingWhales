@@ -1105,6 +1105,15 @@ public class Utilities : MonoBehaviour {
         }
         return normalizedString;
     }
+	public static string NormalizeStringUpperCaseFirstLetters(string s) {
+		s = s.ToLower();
+		string[] words = s.Split('_');
+		string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
+		for (int i = 1; i < words.Length; i++) {
+			normalizedString += " " + Utilities.FirstLetterToUpperCase(words[i]);
+		}
+		return normalizedString;
+	}
 
     public static bool IsCurrentDayMultipleOf(int multiple) {
         if ((GameManager.Instance.days % multiple) == 0) {
@@ -1486,6 +1495,7 @@ public class Utilities : MonoBehaviour {
             case LANDMARK_TYPE.ANCIENT_REACTOR:
             case LANDMARK_TYPE.CAVE:
             case LANDMARK_TYPE.WILDLANDS:
+			case LANDMARK_TYPE.RITUAL_STONES:
                 return BASE_LANDMARK_TYPE.DUNGEON;
 			case LANDMARK_TYPE.CITY:
 			case LANDMARK_TYPE.GOBLIN_CAMP:

@@ -128,7 +128,7 @@ public class Pillage : CharacterTask {
 			if(!_assignedCharacter.EquipItem(chosenItem)){
 				_assignedCharacter.PickupItem (chosenItem);
 			}
-			_target.itemsInLandmark.Remove (chosenItem);
+			_target.RemoveItemInLandmark (chosenItem);
 		}
 	}
 	private void CivilianDies(){

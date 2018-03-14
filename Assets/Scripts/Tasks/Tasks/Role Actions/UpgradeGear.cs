@@ -77,8 +77,9 @@ public class UpgradeGear : CharacterTask {
                 EQUIPMENT_TYPE equipmentToAskFor = neededEquipment[j];
                 ECS.Item createdItem = _settlement.ProduceItemForCharacter(equipmentToAskFor, currChar);
                 if (createdItem != null) {
-                    currChar.PickupItem(createdItem); //put item in inventory
-                    currChar.EquipItem(createdItem); //if the character can equip the item, equip it, otherwise, keep in inventory
+					if(!currChar.EquipItem(createdItem)){ //if the character can equip the item, equip it, otherwise, keep in inventory
+						currChar.PickupItem(createdItem); //put item in inventory
+					}
 					currChar.AddHistory("Bought a " + createdItem.itemName + " from " + _settlement.landmarkName);
                     Debug.Log(currChar.name + " bought a " + createdItem.itemName + " from " + _settlement.landmarkName);
                 }

@@ -773,6 +773,7 @@ public enum LANDMARK_TYPE {
     CITY,
     HUT,
 	CRATER,
+	RITUAL_STONES,
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,
@@ -887,6 +888,7 @@ public enum CHARACTER_ROLE {
     ANCIENT_VAMPIRE,
 	CRATER_BEAST,
 	SLYX,
+	VILLAIN,
 }
 public enum CHARACTER_CLASS {
     NONE,
@@ -966,6 +968,10 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	HYPNOTIZE,
     SEARCH,
     REPORT,
+	CALL_SLYXES,
+	SIPHON_SLYX,
+	COMMAND_INFECTION,
+	DO_RITUAL,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
@@ -1077,6 +1083,7 @@ public enum ITEM_TYPE{
 	WEAPON,
 	ARMOR,
 	ITEM,
+	PLANT,
 }
 
 public enum EQUIPMENT_TYPE {
@@ -1159,6 +1166,8 @@ public enum CHARACTER_TAG{
 	MILD_PSYTOXIN,
 	MODERATE_PSYTOXIN,
 	SEVERE_PSYTOXIN,
+	HERBALIST,
+	RITUALIST,
 }
 
 public enum PRODUCTION_TYPE{

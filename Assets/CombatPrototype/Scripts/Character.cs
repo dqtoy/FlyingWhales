@@ -70,6 +70,7 @@ namespace ECS {
 		private List<ECS.Character> _prisoners;
 		private List<ECS.Character> _followers;
 		private ECS.Character _isFollowerOf;
+		private bool _doesNotTakePrisoners;
 
         private Dictionary<RACE, int> _civiliansByRace;
 
@@ -328,6 +329,12 @@ namespace ECS {
 		public ECS.Character mainCharacter{
 			get { return this; }
 		}
+		public int numOfCharacters{
+			get { return 1; }
+		}
+		internal bool doesNotTakePrisoners{
+			get { return (_party == null ? _doesNotTakePrisoners : _party.doesNotTakePrisoners); }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -345,6 +352,7 @@ namespace ECS {
 			_isFainted = false;
 			_isPrisoner = false;
 			_isDefeated = false;
+			_doesNotTakePrisoners = false;
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 			_history = new List<string> ();
@@ -693,10 +701,15 @@ namespace ECS {
                 if (_isPrisoner){
 					PrisonerDeath ();
 				}
-                //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
-                //					Messenger.Broadcast ("CharacterDeath", this);
-                //				}
-                onCharacterDeath();
+				if(_role != null){
+					_role.DeathRole ();
+				}
+//				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+//					Messenger.Broadcast ("CharacterDeath", this);
+//				}
+				if(onCharacterDeath != null){
+					onCharacterDeath();
+				}
                 onCharacterDeath = null;
                 Debug.Log(this.name + " died!");
             }
@@ -808,11 +821,16 @@ namespace ECS {
 		#region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
-			this._inventory.Add (item);
-			if(item.owner == null){
-				OwnItem (item);
+			Item newItem = item;
+			if(item.isUnlimited){
+				newItem = item.CreateNewCopy ();
+				newItem.isUnlimited = false;
 			}
-			AddHistory ("Obtained " + item.itemName + ".");
+			this._inventory.Add (newItem);
+			if(newItem.owner == null){
+				OwnItem (newItem);
+			}
+			AddHistory ("Obtained " + newItem.itemName + ".");
 		}
 
 		internal void ThrowItem(Item item){
@@ -922,16 +940,21 @@ namespace ECS {
 					return false;
 				}
 			}
-			AddEquippedItem(weapon);
-			weapon.ResetDurability();
-//			weapon.SetOwner(this);
-			if(weapon.owner == null){
-				OwnItem (weapon);
+			Weapon newWeapon = weapon;
+			if(weapon.isUnlimited){
+				newWeapon = (Weapon)weapon.CreateNewCopy ();
+				newWeapon.isUnlimited = false;
 			}
-			_equippedWeaponPower += weapon.weaponPower;
+			AddEquippedItem(newWeapon);
+			newWeapon.ResetDurability();
+//			weapon.SetOwner(this);
+			if(newWeapon.owner == null){
+				OwnItem (newWeapon);
+			}
+			_equippedWeaponPower += newWeapon.weaponPower;
 
-			for (int i = 0; i < weapon.skills.Count; i++) {
-				this._skills.Add (weapon.skills [i]);
+			for (int i = 0; i < newWeapon.skills.Count; i++) {
+				this._skills.Add (newWeapon.skills [i]);
 			}
 
 			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
@@ -977,15 +1000,20 @@ namespace ECS {
 			if(bodyPartToEquip == null){
 				return false;
 			}
-			bodyPartToEquip.AttachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
-			//			armor.bodyPartAttached = bodyPart;
-			AddEquippedItem(armor);
-			armor.ResetDurability();
-//			armor.SetOwner(this);
-			if(armor.owner == null){
-				OwnItem (armor);
+			Armor newArmor = armor;
+			if(armor.isUnlimited){
+				newArmor = (Armor)armor.CreateNewCopy ();
+				newArmor.isUnlimited = false;
 			}
-			Debug.Log(this.name + " equipped " + armor.itemName + " to " + bodyPartToEquip.name);
+			bodyPartToEquip.AttachItem(newArmor, Utilities.GetNeededAttributeForArmor(newArmor));
+			//			armor.bodyPartAttached = bodyPart;
+			AddEquippedItem(newArmor);
+			newArmor.ResetDurability();
+//			armor.SetOwner(this);
+			if(newArmor.owner == null){
+				OwnItem (newArmor);
+			}
+			Debug.Log(this.name + " equipped " + newArmor.itemName + " to " + bodyPartToEquip.name);
             if(CombatPrototypeUI.Instance != null) {
                 CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
             }
@@ -1326,6 +1354,9 @@ namespace ECS {
 
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
+			if(_role != null){
+				_role.ChangedRole ();
+			}
 			switch (role) {
 			case CHARACTER_ROLE.CHIEFTAIN:
 				_role = new Chieftain(this);
@@ -1362,6 +1393,9 @@ namespace ECS {
 				break;
 			case CHARACTER_ROLE.SLYX:
 				_role = new Slyx(this);
+				break;
+			case CHARACTER_ROLE.VILLAIN:
+				_role = new Villain(this);
 				break;
             default:
 			    break;
@@ -1612,6 +1646,12 @@ namespace ECS {
 			case CHARACTER_TAG.SEVERE_PSYTOXIN:
 				charTag = new SeverePsytoxin(this);
 				break;
+			case CHARACTER_TAG.RITUALIST:
+				charTag = new Ritualist(this);
+				break;
+			case CHARACTER_TAG.HERBALIST:
+				charTag = new Herbalist(this);
+				break;
 			}
 			if(charTag != null){
 				AddCharacterTag (charTag);
@@ -1684,6 +1724,14 @@ namespace ECS {
 
 			return false;
 		}
+		public CharacterTag GetTag(CHARACTER_TAG tag){
+			for (int i = 0; i < _tags.Count; i++) {
+				if(_tags[i].tagType == tag) {
+					return _tags[i];
+				}
+			}
+			return null;
+		}
 		#endregion
 
         #region Faction
@@ -1751,13 +1799,14 @@ namespace ECS {
 			if(_role != null){
 				_role.AddTaskWeightsFromRole (actionWeights);
 			}
-            if (currentQuest != null) {
-                //Quest Tasks
-                _questData.AddQuestTasksToWeightedDictionary(actionWeights);
-            }
-			if(_role != null && !_role.cancelsAllOtherTasks){
+
+			if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {				
 				for (int i = 0; i < _tags.Count; i++) {
 					_tags [i].AddTaskWeightsFromTags (actionWeights);
+				}
+				if (currentQuest != null) {
+					//Quest Tasks
+					_questData.AddQuestTasksToWeightedDictionary(actionWeights);
 				}
 			}
 
@@ -2093,23 +2142,25 @@ namespace ECS {
 				}
 			}
             //Tag tasks
-			for (int i = 0; i < _tags.Count; i++) {
-				for (int j = 0; j < _tags[i].tagTasks.Count; j++) {
-					CharacterTask currentTask = _tags[i].tagTasks[j];
-					if(currentTask.CanBeDone(this, location)){
-						possibleTasks.Add (currentTask);
+			if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {
+				for (int i = 0; i < _tags.Count; i++) {
+					for (int j = 0; j < _tags [i].tagTasks.Count; j++) {
+						CharacterTask currentTask = _tags [i].tagTasks [j];
+						if (currentTask.CanBeDone (this, location)) {
+							possibleTasks.Add (currentTask);
+						}
+					}
+				}
+				//Quest Tasks
+				if (currentQuest != null) {
+					for (int i = 0; i < _questData.tasks.Count; i++) {
+						CharacterTask currentTask = _questData.tasks [i];
+						if (!currentTask.isDone && currentTask.CanBeDone (this, location)) {
+							possibleTasks.Add (currentTask);
+						}
 					}
 				}
 			}
-            //Quest Tasks
-            if (currentQuest != null) {
-                for (int i = 0; i < _questData.tasks.Count; i++) {
-                    CharacterTask currentTask = _questData.tasks[i];
-                    if (!currentTask.isDone && currentTask.CanBeDone(this, location)) {
-                        possibleTasks.Add(currentTask);
-                    }
-                }
-            }
 
 			return possibleTasks;
 		}
@@ -2139,6 +2190,9 @@ namespace ECS {
         public void SetLair(BaseLandmark newLair) {
             this._lair = newLair;
         }
+		public void SetDoesNotTakePrisoners(bool state) {
+			this._doesNotTakePrisoners = state;
+		}
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
         }

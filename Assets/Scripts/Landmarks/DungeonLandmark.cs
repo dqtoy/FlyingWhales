@@ -68,7 +68,7 @@ public class DungeonLandmark : BaseLandmark {
 			} else if (item.itemType == ITEM_TYPE.WEAPON) {
 				((ECS.Weapon)item).SetQuality(equipmentQuality);
 			}
-			_itemsInLandmark.Add(item);
+			AddItemInLandmark(item);
 		}
 	}
 	private QUALITY GetEquipmentQuality(){

@@ -17,6 +17,7 @@ public class CharacterRole {
 	protected List<CharacterTask> _roleTasks;
 	protected CharacterTask _defaultRoleTask;
 	protected bool _cancelsAllOtherTasks;
+	protected bool _isRemoved;
 
     #region getters/setters
     public CHARACTER_ROLE roleType {
@@ -40,17 +41,31 @@ public class CharacterRole {
 	public bool cancelsAllOtherTasks {
 		get { return _cancelsAllOtherTasks; }
 	}
+	public bool isRemoved {
+		get { return _isRemoved; }
+	}
     #endregion
 
 	public CharacterRole(ECS.Character character){
 		_character = character;
 		_cancelsAllOtherTasks = false;
+		_isRemoved = false;
         _allowedQuestTypes = new List<QUEST_TYPE>();
 		_roleTasks = new List<CharacterTask> ();
 		_roleTasks.Add (new RecruitFollowers (this._character, 5));
         _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
     }
-		
+
+
+	#region Virtuals
+	public virtual void DeathRole(){
+		_isRemoved = true;
+	}
+	public virtual void ChangedRole(){
+		_isRemoved = true;
+	}
+	#endregion
+
     #region Action Weights
     public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
 		for (int i = 0; i < _roleTasks.Count; i++) {

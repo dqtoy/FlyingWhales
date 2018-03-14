@@ -34,14 +34,19 @@ namespace ECS{
 			Materials material = JsonUtility.FromJson<Materials> (System.IO.File.ReadAllText (materialPath));
 
 			Weapon weapon = new Weapon ();
-			weapon.weaponType = weaponType.weaponType;
+			//Material
 			weapon.material = materialType;
-			weapon.quality = QUALITY.NORMAL;
 			weapon.weaponPower = ((float)material.weaponData.power * ((weaponType.powerModifier / 100f) + 1f));
-			weapon.damageRange = weaponType.damageRange;
 			weapon.durability = material.weaponData.durability;
 			weapon.cost = material.weaponData.cost;
+
+			//Weapon
+			weapon.weaponType = weaponType.weaponType;
+			weapon.quality = QUALITY.NORMAL;
+			weapon.damageRange = weaponType.damageRange;
 			weapon.equipRequirements = new List<IBodyPart.ATTRIBUTE> (weaponType.equipRequirements);
+
+			//Generic
 			weapon.itemType = ITEM_TYPE.WEAPON;
 			weapon.itemName = Utilities.NormalizeString (weapon.material.ToString ()) + " " + Utilities.NormalizeString (weapon.weaponType.ToString ());
 			weapon.description = weapon.itemName;

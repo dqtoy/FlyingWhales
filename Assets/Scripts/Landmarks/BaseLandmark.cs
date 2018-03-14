@@ -1000,4 +1000,18 @@ public class BaseLandmark : ILocation, TaskCreator {
 		return false;
 	}
     #endregion
+
+	#region Items
+	public void AddItemInLandmark(ECS.Item item){
+		_itemsInLandmark.Add (item);
+	}
+	public void AddItemsInLandmark(List<ECS.Item> item){
+		_itemsInLandmark.AddRange (item);
+	}
+	public void RemoveItemInLandmark(ECS.Item item){
+		if(!item.isUnlimited){
+			_itemsInLandmark.Remove (item);
+		}
+	}
+	#endregion
 }
