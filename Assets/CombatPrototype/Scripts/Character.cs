@@ -325,6 +325,9 @@ namespace ECS {
 		internal bool isFollowersFull{
 			get { return followers.Count >= MAX_FOLLOWERS; }
 		}
+        public int missingFollowers {
+            get { return MAX_FOLLOWERS - followers.Count; }
+        }
 		internal ECS.Character isFollowerOf{
 			get { return _isFollowerOf; }
 		}
@@ -674,7 +677,7 @@ namespace ECS {
 					this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
 				}
 
-                CheckForInternationalIncident();
+                //CheckForInternationalIncident();
 
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);

@@ -18,7 +18,7 @@ public class DropPrisoners : CharacterTask {
 		_assignedCharacter.SetCurrentTask(this);
 		HexTile currLocation = null;
 		if(_assignedCharacter.party != null) {
-			_assignedCharacter.party.SetCurrentTask(this);
+			//_assignedCharacter.party.SetCurrentTask(this);
 			region = _assignedCharacter.party.currLocation.region;
 			_prisoners = _assignedCharacter.party.prisoners;
 			currLocation = _assignedCharacter.party.currLocation;

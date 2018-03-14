@@ -121,9 +121,9 @@ public class CharacterTask {
         _taskStatus = TASK_STATUS.IN_PROGRESS;
         _assignedCharacter = character;
         character.SetCurrentTask(this);
-		if (character.party != null) {
-			character.party.SetCurrentTask(this);
-		}
+		//if (character.party != null) {
+		//	character.party.SetCurrentTask(this);
+		//}
     }
     /*
      Override this to make the character do something when
