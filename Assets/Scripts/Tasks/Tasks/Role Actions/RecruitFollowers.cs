@@ -80,9 +80,13 @@ public class RecruitFollowers : CharacterTask {
 	}
 	public override bool AreConditionsMet (Character character){
         //If in a location with non-hostile civilians
-        if (!character.specificLocation.HasHostilitiesWith(character.faction)) {
-            return true;
+        if (character.specificLocation is BaseLandmark) {
+            BaseLandmark characterLocation = character.specificLocation as BaseLandmark;
+            if (characterLocation.civilians > 0 && !characterLocation.HasHostilitiesWith(character.faction)) {
+                return true;
+            }
         }
+        
         //if(character.faction != null){
         //	List<BaseLandmark> ownedLandmarks = character.faction.GetAllOwnedLandmarks ();
         //	for (int i = 0; i < ownedLandmarks.Count; i++) {
