@@ -25,6 +25,9 @@ public class Quest {
     public int id {
         get { return _id; }
     }
+    public TaskCreator createdBy {
+        get { return _createdBy; }
+    }
     public string questName {
         get { return GetQuestName(); }
     }
