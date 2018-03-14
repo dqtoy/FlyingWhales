@@ -41,9 +41,7 @@ public class TakeQuest : CharacterTask {
         return base.AreConditionsMet(character);
     }
     public override int GetSelectionWeight(Character character) {
-        int weight = base.GetSelectionWeight(character);
-        weight += 40;
-        return weight;
+        return 40;
     }
     private WeightedDictionary<Quest> GetQuestsDictionary(ECS.Character character) {
         WeightedDictionary<Quest> questsDictionary = new WeightedDictionary<Quest>();

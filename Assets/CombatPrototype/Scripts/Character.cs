@@ -1818,6 +1818,7 @@ namespace ECS {
 					_questData.AddQuestTasksToWeightedDictionary(actionWeights);
 				}
 			}
+
             if (actionWeights.GetTotalOfWeights() > 0) {
                 CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
                 chosenTask.ResetTask();
@@ -2095,6 +2096,12 @@ namespace ECS {
             DetermineAction();
         }
 		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
+            if (currLocation == null) {
+                throw new Exception("Curr location is null!");
+            }
+            if (targetLocation == null) {
+                throw new Exception("target location is null!");
+            }
 			if (currLocation.id == targetLocation.tileLocation.id) {
 				//action doer is already at the target location
 				if(doneAction != null){

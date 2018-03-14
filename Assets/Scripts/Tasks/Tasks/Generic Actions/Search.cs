@@ -27,17 +27,34 @@ public class Search : CharacterTask {
         return clonedTask;
     }
     public override bool CanBeDone(Character character, ILocation location) {
-        //if (location.charactersAtLocation.Count > 0) {
-            return true;
-        //}
-        //return base.CanBeDone(character, location);
+        return true;
     }
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
 		if(_assignedCharacter == null){
 			return;
 		}
+        if (_targetLocation == null) {
+            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
+            if (landmarkWeights.GetTotalOfWeights() > 0) {
+                _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+            } else {
+                EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
+                return;
+            }
+        }
 		_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => _assignedCharacter.DestroyAvatar());
+    }
+    public override bool AreConditionsMet(Character character) {
+        //check if there are any landmarks in region with characters
+        Region regionLocation = character.specificLocation.tileLocation.region;
+        for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+            if(currLandmark.charactersAtLocation.Count > 0) {
+                return true;
+            }
+        }
+        return base.AreConditionsMet(character);
     }
     public override void PerformTask() {
         base.PerformTask();
