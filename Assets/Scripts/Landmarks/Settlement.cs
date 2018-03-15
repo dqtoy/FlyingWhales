@@ -702,9 +702,7 @@ public class Settlement : BaseLandmark {
 		this.AddCharacterToLocation(newCharacter, false);
 		newCharacter.DetermineAction();
 
-		ECS.Item meteorite = ItemManager.Instance.CreateNewItemInstance ("Meteorite");
-		AddItemInLandmark (meteorite);
-
+		SpawnItemInLandmark ("Meteorite", 100, true);
 		EmitPsytoxin ();
 	}
 	private void EmitPsytoxin(){
