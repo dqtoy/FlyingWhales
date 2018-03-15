@@ -631,7 +631,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return false;
     }
-    public bool HasHostilitiesWith(Faction faction) {
+    public bool HasHostilitiesWith(Faction faction, bool withFactionOnly = false) {
         if (faction == null) {
             if(this.owner != null) {
                 return true; //the passed faction is null (factionless), if this landmark is owned, the factionless are considered as hostile
@@ -649,23 +649,25 @@ public class BaseLandmark : ILocation, TaskCreator {
                 }
             }
         }
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
-            Faction factionOfItem = null;
-            if (currItem is ECS.Character) {
-                factionOfItem = (currItem as ECS.Character).faction;
-            } else if (currItem is Party) {
-                factionOfItem = (currItem as Party).faction;
-            }
-            if (factionOfItem == null || faction == null) {
-                return true;
-            } else {
-                if (factionOfItem.id == faction.id) {
-                    continue; //skip this item, since it has the same faction as the other faction
+        if (!withFactionOnly) {
+            for (int i = 0; i < _charactersAtLocation.Count; i++) {
+                ICombatInitializer currItem = _charactersAtLocation[i];
+                Faction factionOfItem = null;
+                if (currItem is ECS.Character) {
+                    factionOfItem = (currItem as ECS.Character).faction;
+                } else if (currItem is Party) {
+                    factionOfItem = (currItem as Party).faction;
                 }
-                FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
-                if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                if (factionOfItem == null || faction == null) {
                     return true;
+                } else {
+                    if (factionOfItem.id == faction.id) {
+                        continue; //skip this item, since it has the same faction as the other faction
+                    }
+                    FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
+                    if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                        return true;
+                    }
                 }
             }
         }
