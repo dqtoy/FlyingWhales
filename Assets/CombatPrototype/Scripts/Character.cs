@@ -339,7 +339,10 @@ namespace ECS {
 			get { return 1; }
 		}
 		internal bool doesNotTakePrisoners{
-			get { return (_party == null ? _doesNotTakePrisoners : _party.doesNotTakePrisoners); }
+			get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
+		}
+		internal bool characterDoesNotTakePrisoners{
+			get { return _doesNotTakePrisoners; }
 		}
         #endregion
 
