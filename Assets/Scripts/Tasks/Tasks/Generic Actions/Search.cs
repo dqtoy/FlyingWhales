@@ -17,7 +17,10 @@ public class Search : CharacterTask {
             if((searchingFor as string).Equals("Heirloom Necklace")) {
                 _searchAction = () => SearchForHeirloomNecklace();
                 _alignments.Add(ACTION_ALIGNMENT.LAWFUL);
-            }
+			}else if((searchingFor as string).Equals("Book of Inimical Incantations")) {
+				_searchAction = () => SearchForHeirloomNecklace();
+				_alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
+			}
         }
     }
 
@@ -38,9 +41,6 @@ public class Search : CharacterTask {
             WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
             if (landmarkWeights.GetTotalOfWeights() > 0) {
                 _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
-                if ((_searchingFor as string).Equals("Heirloom Necklace")) {
-                    character.AddHistory(character.name + " decides to look for the heirloom necklace at " + _targetLocation.locationName + "(" + _targetLocation.tileLocation.name + ")");
-                }
             } else {
                 EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
                 return;
@@ -75,9 +75,28 @@ public class Search : CharacterTask {
     public override int GetSelectionWeight(ECS.Character character) {
         if (_parentQuest is FindLostHeir) {
             return 80;
-        }
+		}else if (_parentQuest is TheDarkRitual) {
+			return 80;
+		}
         return 0;
     }
+	public override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) {
+		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark>();
+		Region regionLocation = character.specificLocation.tileLocation.region;
+		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+			int weight = 0;
+			weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
+			if (currLandmark.HasHostilitiesWith(character.faction)) {
+				weight -= 50;//If landmark has hostile characters: -50
+			}
+			//If this character has already Searched in the landmark within the past 6 months: -60
+			if (weight > 0) {
+				landmarkWeights.AddElement(currLandmark, weight);
+			}
+		}
+		return landmarkWeights;
+	}
     #endregion
 
     #region Find Lost Heir
@@ -90,28 +109,29 @@ public class Search : CharacterTask {
             if (currCharacter.HasItem(_searchingFor as string)) {
                 //Each day while he is in Search State, if the character with the Heirloom Necklace is in the location then he would successfully perform the action and end the Search State.
                 EndTask(TASK_STATUS.SUCCESS);
+				break;
                 //_assignedCharacter.questData.AdvanceToNextPhase();
             }
         }
     }
-    private WeightedDictionary<BaseLandmark> GetLandmarkWeights(ECS.Character character) {
-        WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark>();
-        Region regionLocation = character.specificLocation.tileLocation.region;
-        for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = regionLocation.allLandmarks[i];
-            int weight = 0;
-            weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
-            if (currLandmark.HasHostilitiesWith(character.faction)) {
-                weight -= 50;//If landmark has hostile characters: -50
-            }
-            //If this character has already Searched in the landmark within the past 6 months: -60
-            if (weight > 0) {
-                landmarkWeights.AddElement(currLandmark, weight);
-            }
-        }
-        return landmarkWeights;
-    }
     #endregion
 
+	#region Inimical Incantations
+	private void SearchForInimicalIncantationsBook() {
+		BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
+		_targetLandmark.AddHistory(_assignedCharacter.name + " is searching for a Book of Inimical Incantations!");
 
+		for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
+			ECS.Item item = _targetLandmark.itemsInLandmark[i];
+			if (item.itemName == (string)_searchingFor) {
+				_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
+				_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
+				_assignedCharacter.PickupItem (item);
+				_targetLandmark.RemoveItemInLandmark (item);
+				EndTask(TASK_STATUS.SUCCESS);
+				break;
+			}
+		}
+	}
+	#endregion
 }
