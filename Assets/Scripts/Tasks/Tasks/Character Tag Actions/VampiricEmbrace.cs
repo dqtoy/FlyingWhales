@@ -12,6 +12,7 @@ public class VampiricEmbrace : CharacterTask {
 	public VampiricEmbrace(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.VAMPIRIC_EMBRACE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
+        _alignments.Add(ACTION_ALIGNMENT.UNLAWFUL);
 		_needsSpecificTarget = true;
 		_specificTargetClassification = "character";
 		_filters = new TaskFilter[] {
@@ -26,7 +27,13 @@ public class VampiricEmbrace : CharacterTask {
 			return;
 		}
 		if(_specificTarget == null){
-			_specificTarget = GetTargetCharacter ();
+            WeightedDictionary<ECS.Character> characterWeights = GetCharacterTargetWeights(character);
+            if (characterWeights.GetTotalOfWeights() > 0) {
+                _specificTarget = GetTargetCharacter();
+            } else {
+                EndTask(TASK_STATUS.FAIL);
+                return;
+            }
 		}
 		_targetCharacter = (ECS.Character)_specificTarget;
 
@@ -62,9 +69,46 @@ public class VampiricEmbrace : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-	#endregion
+    public override int GetSelectionWeight(Character character) {
+        return 5;
+    }
+    protected override WeightedDictionary<Character> GetCharacterTargetWeights(Character character) {
+        WeightedDictionary<Character> characterWeights = base.GetCharacterTargetWeights(character);
+        List<Region> regionsToCheck = new List<Region>();
+        Region regionOfCharacter = character.specificLocation.tileLocation.region;
+        regionsToCheck.Add(regionOfCharacter);
+        regionsToCheck.AddRange(regionOfCharacter.adjacentRegionsViaMajorRoad);
+        for (int i = 0; i < regionsToCheck.Count; i++) {
+            Region currRegion = regionsToCheck[i];
+            for (int j = 0; j < currRegion.charactersInRegion.Count; j++) {
+                ECS.Character currChar = character.specificLocation.tileLocation.region.charactersInRegion[j];
+                if (currChar.id != character.id) {
+                    int weight = 0;
+                    if (!currChar.HasTag(CHARACTER_TAG.VAMPIRE)) {
+                        if (currChar.HasTag(CHARACTER_TAG.SAPIENT)) {
+                            if (currRegion.id != regionOfCharacter.id) {
+                                weight += 20; //Non Vampire Sapient Characters in adjacent regions: 20
+                            } else {
+                                weight += 50; //Non Vampire Sapient Characters in the current region: 50
+                            }
+                            
+                        } else {
+                            if (currRegion.id == regionOfCharacter.id) {
+                                weight += 5; //Non Vampire Non Sapient Characters in the current region: 5
+                            }
+                        }
+                    }
+                    if (weight > 0) {
+                        characterWeights.AddElement(currChar, weight);
+                    }
+                }
+            }
+        }
+        return characterWeights;
+    }
+    #endregion
 
-	private void StartVampiricEmbrace(){
+    private void StartVampiricEmbrace(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartVampiricEmbrace ());
 			return;

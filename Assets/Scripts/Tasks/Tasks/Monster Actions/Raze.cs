@@ -12,6 +12,8 @@ public class Raze : CharacterTask {
 
 	public Raze(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.RAZE, defaultDaysLeft) {
 		SetStance (STANCE.COMBAT);
+        _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
+        _alignments.Add(ACTION_ALIGNMENT.UNLAWFUL);
 		razeResult = new WeightedDictionary<string> ();
 //		_razingCharacters = new List<Character> ();
 	}
@@ -29,7 +31,14 @@ public class Raze : CharacterTask {
 //			_razingCharacters.AddRange (character.party.partyMembers);
 //		}
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark ();
+            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
+            if (landmarkWeights.GetTotalOfWeights() > 0) {
+                _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+            } else {
+                EndTask(TASK_STATUS.FAIL);
+                return;
+            }
+			
 		}
 		_target = (BaseLandmark)_targetLocation;
 		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartRaze());
@@ -47,8 +56,8 @@ public class Raze : CharacterTask {
 			if(character.faction == null){
 				return true;
 			}else{
-				if(location.tileLocation.landmarkOnTile.owner.id != character.faction.id){
-					return true;
+                if (location.HasHostilitiesWith(character.faction)) {
+                    return true;
 				}
 			}
 		}
@@ -63,9 +72,30 @@ public class Raze : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-	#endregion
+    public override int GetSelectionWeight(Character character) {
+        return 20;
+    }
+    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
+        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+        Region regionOfChar = character.specificLocation.tileLocation.region;
+        for (int i = 0; i < regionOfChar.allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = regionOfChar.allLandmarks[i];
+            int weight = 0;
+            if (currLandmark.HasHostilitiesWith(character.faction)) {
+                weight += 100; //Landmark is owned by a hostile faction: 100
+            }
+            if (currLandmark.civilians > 0) {
+                weight += 30; //Landmark has civilians: +30
+            }
+            if (weight > 0) {
+                landmarkWeights.AddElement(currLandmark, weight);
+            }
+        }
+        return landmarkWeights;
+    }
+    #endregion
 
-	private void StartRaze(){
+    private void StartRaze(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartRaze ());
 			return;
