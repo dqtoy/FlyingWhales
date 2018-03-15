@@ -26,14 +26,14 @@ public class HuntMagicUser : CharacterTask {
         }
         return null;
     }
-    private ECS.Character GetTargetCharacter(ECS.Character hunter, ILocation location) {
-        List<ECS.Character> possibleTargets = CharacterManager.Instance.GetCharacters(location, this);
-        possibleTargets.Remove(hunter);
-        if (possibleTargets.Count > 0) {
-            return possibleTargets[Random.Range(0, possibleTargets.Count)];
-        }
-        return null;
-    }
+    //private ECS.Character GetTargetCharacter(ECS.Character hunter, ILocation location) {
+    //    List<ECS.Character> possibleTargets = CharacterManager.Instance.GetCharacters(location, this);
+    //    possibleTargets.Remove(hunter);
+    //    if (possibleTargets.Count > 0) {
+    //        return possibleTargets[Random.Range(0, possibleTargets.Count)];
+    //    }
+    //    return null;
+    //}
 
     #region overrides
     public override void OnChooseTask(Character character) {
@@ -67,7 +67,7 @@ public class HuntMagicUser : CharacterTask {
                 }
             }
         } else {
-            EndTask(TASK_STATUS.SUCCESS);
+            EndTask(TASK_STATUS.FAIL);
         }
     }
     public override bool CanBeDone(Character character, ILocation location) {
@@ -83,6 +83,40 @@ public class HuntMagicUser : CharacterTask {
         //    return true;
         //}
         return base.CanBeDone(character, location);
+    }
+    public override bool AreConditionsMet(Character character) {
+        //If there are any magic users in the region (Characters that use staves, or belong to the mage/battlemage class)
+        for (int i = 0; i < character.specificLocation.tileLocation.region.charactersInRegion.Count; i++) {
+            ECS.Character currChar = character.specificLocation.tileLocation.region.charactersInRegion[i];
+            if (currChar.id != character.id) {
+                if (CanMeetRequirements(currChar)) {
+                    return true;
+                }
+            }
+        }
+        return base.AreConditionsMet(character);
+    }
+    public override int GetSelectionWeight(Character character) {
+        return 100;
+    }
+    protected override WeightedDictionary<Character> GetCharacterTargetWeights(Character character) {
+        WeightedDictionary<Character> characterWeights = base.GetCharacterTargetWeights(character);
+        for (int i = 0; i < character.specificLocation.tileLocation.region.charactersInRegion.Count; i++) {
+            ECS.Character currChar = character.specificLocation.tileLocation.region.charactersInRegion[i];
+            if (currChar.id != character.id) {
+                if (CanMeetRequirements(currChar)) {
+                    int weight = 20; //Each magic user in region has base weight: 20
+                    if (currChar.remainingHPPercent < 50) {
+                        weight += 100; //If the magic user has less than 50% hp: +100
+                    }
+                    if (currChar.isFollower) {
+                        weight += 200; //If the magic user is a follower: +200
+                    }
+                    characterWeights.AddElement(currChar, weight);
+                }
+            }
+        }
+        return characterWeights;
     }
     #endregion
 

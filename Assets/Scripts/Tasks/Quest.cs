@@ -85,6 +85,7 @@ public class Quest {
     public virtual void AcceptQuest(ECS.Character accepter) {
         accepter.SetCurrentQuest(this);
         _acceptedCharacters.Add(accepter);
+        UIManager.Instance.UpdateQuestsSummary();
     }
     public virtual void QuestTaskDone(TASK_ACTION_RESULT result) {
         if (result == TASK_ACTION_RESULT.SUCCESS) {
@@ -107,6 +108,7 @@ public class Quest {
                     break;
             }
         }
+        UIManager.Instance.UpdateQuestsSummary();
     }
     protected virtual void QuestSuccess(ECS.Character endedBy) {
         _isDone = true;

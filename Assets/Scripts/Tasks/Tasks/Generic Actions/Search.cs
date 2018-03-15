@@ -94,7 +94,7 @@ public class Search : CharacterTask {
             }
         }
     }
-    private WeightedDictionary<BaseLandmark> GetLandmarkWeights(ECS.Character character) {
+    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) {
         WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark>();
         Region regionLocation = character.specificLocation.tileLocation.region;
         for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
