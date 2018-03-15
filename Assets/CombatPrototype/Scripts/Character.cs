@@ -327,7 +327,7 @@ namespace ECS {
 			get { return followers.Count >= MAX_FOLLOWERS; }
 		}
         public int missingFollowers {
-            get { return MAX_FOLLOWERS - followers.Count; }
+            get { return Mathf.Max(0, MAX_FOLLOWERS - followers.Count); }
         }
 		internal ECS.Character isFollowerOf{
 			get { return _isFollowerOf; }

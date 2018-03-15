@@ -11,7 +11,9 @@ public class Hypnotize : CharacterTask {
 	public Hypnotize(TaskCreator createdBy, int defaultDaysLeft = -1) 
 		: base(createdBy, TASK_TYPE.HYPNOTIZE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
-		_needsSpecificTarget = true;
+        _alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
+        _alignments.Add(ACTION_ALIGNMENT.UNLAWFUL);
+        _needsSpecificTarget = true;
 		_specificTargetClassification = "character";
 		_filters = new TaskFilter[] {
 			new MustNotHaveTags (CHARACTER_TAG.HYPNOTIZED),
@@ -64,9 +66,24 @@ public class Hypnotize : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-	#endregion
+    public override int GetSelectionWeight(Character character) {
+        return 5 * character.missingFollowers;//+5 for every missing Follower
+    }
+    protected override WeightedDictionary<Character> GetCharacterTargetWeights(Character character) {
+        WeightedDictionary<Character> characterWeights = base.GetCharacterTargetWeights(character);
+        for (int i = 0; i < character.specificLocation.tileLocation.region.charactersInRegion.Count; i++) {
+            ECS.Character currCharacter = character.specificLocation.tileLocation.region.charactersInRegion[i];
+            if (currCharacter.id != character.id) {
+                if (CanMeetRequirements(currCharacter)) {
+                    characterWeights.AddElement(currCharacter, 50);//Each character in the same region: 50
+                }
+            }
+        }
+        return characterWeights;
+    }
+    #endregion
 
-	private void StartHypnotize(){
+    private void StartHypnotize(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartHypnotize ());
 			return;
