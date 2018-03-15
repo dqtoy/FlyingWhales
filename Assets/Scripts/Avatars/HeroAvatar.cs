@@ -16,7 +16,7 @@ public class HeroAvatar : CharacterAvatar {
             }
         }
         if (this.path.Count > 0) {
-			RemoveCharactersFromLocation(this.currLocation);
+			//RemoveCharactersFromLocation(this.currLocation);
             this.MakeCitizenMove(this.currLocation.tileLocation, this.path[0]);
         }
 

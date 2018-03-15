@@ -26,13 +26,15 @@ public class Hypnotize : CharacterTask {
 		if(_assignedCharacter == null){
 			return;
 		}
-		if(_targetLocation == null){
+        if (_specificTarget == null) {
+            WeightedDictionary<ECS.Character> characterWeights = GetCharacterTargetWeights(character);
+            _specificTarget = characterWeights.PickRandomElementGivenWeights();
+        }
+        _targetCharacter = (ECS.Character)_specificTarget;
+
+        if (_targetLocation == null){
 			_targetLocation = _targetCharacter.specificLocation;
 		}
-		if(_specificTarget == null){
-			_specificTarget = GetTargetCharacter ();
-		}
-		_targetCharacter = (ECS.Character)_specificTarget;
 		_targetLandmark = (BaseLandmark)_targetLocation;
 
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHypnotize());

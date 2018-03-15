@@ -1952,14 +1952,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 		return count;
 	}
 
-	#region Combat
+    #region Combat
     public void ScheduleCombatCheck() {
-        _hasScheduledCombatCheck = true;
-        Messenger.AddListener("OnDayStart", CheckForCombat);
+        //_hasScheduledCombatCheck = true;
+        //Messenger.AddListener("OnDayStart", CheckForCombat);
     }
     public void UnScheduleCombatCheck() {
-        _hasScheduledCombatCheck = false;
-        Messenger.RemoveListener("OnDayStart", CheckForCombat);
+        //_hasScheduledCombatCheck = false;
+        //Messenger.RemoveListener("OnDayStart", CheckForCombat);
     }
     /*
      Check this location for encounters, start if any.
