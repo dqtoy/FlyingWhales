@@ -46,6 +46,9 @@ public class VampiricEmbrace : CharacterTask {
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace());
 	}
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 		PerformVampiricEmbrace();
 	}

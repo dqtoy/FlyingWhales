@@ -24,6 +24,9 @@ public class StorylineManager : MonoBehaviour {
                     case STORYLINE.LOST_HEIR:
                         TriggerLostHeir();
                         break;
+					case STORYLINE.INIMICAL_INCANTATIONS:
+						TriggerInimicalIncantations();
+						break;
                     default:
                         break;
                 }
@@ -31,6 +34,7 @@ public class StorylineManager : MonoBehaviour {
         }
     }
 
+	#region Lost Heir
     private void TriggerLostHeir() {
         string log = "Lost Heir Trigger Logs: ";
         List<ECS.Character> allChieftains = new List<ECS.Character>();
@@ -74,6 +78,44 @@ public class StorylineManager : MonoBehaviour {
         Debug.Log(log);
         
     }
+	#endregion
+
+	#region Inimical Incantations
+	private void TriggerInimicalIncantations(){
+		//Spawn Neuroctus Plant in Caves and Get All Ancient Ruins
+		List<DungeonLandmark> ancientRuins = new List<DungeonLandmark>();
+		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+			Region region = GridMap.Instance.allRegions [i];
+			for (int j = 0; j < region.landmarks.Count; j++) {
+				BaseLandmark landmark = region.landmarks [j];
+				if(landmark is DungeonLandmark){
+					if(landmark.specificLandmarkType == LANDMARK_TYPE.CAVE){
+						landmark.SpawnItemInLandmark ("Neuroctus", 80, true);
+					}else if(landmark.specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN){
+						ancientRuins.Add ((DungeonLandmark)landmark);
+					}
+				}
+			}
+		}
+
+		//Spawn 3 Books of Inimical Incantations in 3 Random Ancient Ruins
+		if(ancientRuins.Count > 0){
+			for (int i = 0; i < 3; i++) {
+				int index = UnityEngine.Random.Range (0, ancientRuins.Count);
+				DungeonLandmark chosenAncientRuin = ancientRuins [index];
+				chosenAncientRuin.SpawnItemInLandmark ("Book of Inimical Incantations", 95, false);
+				ancientRuins.RemoveAt (index);
+				if(ancientRuins.Count <= 0){
+					break;
+				}
+			}
+		}
+
+		//Create Dark Ritual Quest
+		TheDarkRitual theDarkRitual = new TheDarkRitual(QuestManager.Instance);
+		QuestManager.Instance.AddQuestToAvailableQuests(theDarkRitual);
+	}
+	#endregion
 
     #region Item Triggers
     /*

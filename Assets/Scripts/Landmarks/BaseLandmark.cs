@@ -1082,10 +1082,8 @@ public class BaseLandmark : ILocation, TaskCreator {
         WeightedDictionary<ECS.Item> itemWeights = GetExploreItemWeights();
         if (itemWeights.GetTotalOfWeights() > 0) {
             ECS.Item chosenItem = itemWeights.PickRandomElementGivenWeights();
-            if (!chosenItem.isUnlimited) {
-                //Remove item form weights if it is not unlimited
-                RemoveItemInLandmark(chosenItem);
-            }
+			//Remove item form weights if it is not unlimited
+			RemoveItemInLandmark(chosenItem);
             if (ItemManager.Instance.IsLootChest(chosenItem)) {
                 //chosen item is a loot crate, generate a random item
                 string[] words = chosenItem.itemName.Split(' ');

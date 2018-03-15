@@ -38,6 +38,9 @@ public class MoveTo : CharacterTask {
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
 	}
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 		SuccessTask ();
     }

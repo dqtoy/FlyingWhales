@@ -20,6 +20,9 @@ public class JoinParty : CharacterTask {
 
     #region overrides
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
         base.PerformTask();
 		_assignedCharacter.SetCurrentTask(this);
 		_partyToJoin.AddPartyMember(_assignedCharacter);

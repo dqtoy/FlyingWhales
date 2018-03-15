@@ -364,6 +364,9 @@ namespace OldQuest{
 
         #region overrides
         public override void PerformTask() {
+			if(!CanPerformTask()){
+				return;
+			}
             base.PerformTask();
             AcceptQuest(_assignedCharacter);
         }

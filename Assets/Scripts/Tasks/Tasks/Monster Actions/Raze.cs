@@ -44,6 +44,9 @@ public class Raze : CharacterTask {
 		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartRaze());
 	}
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 		if(_daysLeft == 0){
 			EndRaze ();

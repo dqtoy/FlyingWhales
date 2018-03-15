@@ -33,6 +33,9 @@ public class HuntPrey : CharacterTask {
 //        TriggerSaveLandmarkQuest();
     }
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
         base.PerformTask();
         Hunt();
         //GoToTargetLocation();

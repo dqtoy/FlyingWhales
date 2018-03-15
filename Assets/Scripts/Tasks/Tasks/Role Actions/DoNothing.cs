@@ -22,6 +22,9 @@ public class DoNothing : CharacterTask {
         character.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
     }
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
         base.PerformTask();
 		if(_daysLeft == 0){
 			EndTask (TASK_STATUS.SUCCESS);

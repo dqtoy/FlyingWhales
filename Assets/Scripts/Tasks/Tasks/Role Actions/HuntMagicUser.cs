@@ -53,6 +53,9 @@ public class HuntMagicUser : CharacterTask {
         }
     }
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
         base.PerformTask();
         if(_targetCharacter != null) {
             if (_assignedCharacter.specificLocation.charactersAtLocation.Contains(_targetCharacter) && !_targetCharacter.isInCombat) {

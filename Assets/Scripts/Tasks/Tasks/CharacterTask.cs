@@ -134,10 +134,13 @@ public class CharacterTask {
 //			_assignedCharacter.SetCurrentFunction (() => PerformTask ());
 //			return;
 //		}
-		if(_isHalted || _isDone){
-			return;
-		}
     }
+	public virtual bool CanPerformTask(){
+		if(_isHalted || _isDone){
+			return false;
+		}
+		return true;
+	}
     public virtual void EndTask(TASK_STATUS taskResult) {
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => EndTask (taskResult));

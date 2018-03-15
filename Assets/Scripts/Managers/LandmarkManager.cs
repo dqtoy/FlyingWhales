@@ -32,7 +32,7 @@ public class LandmarkManager : MonoBehaviour {
                 newLandmark.OccupyLandmark(newFaction);
             }
         }
-		AddInitialLandmarkItems (newLandmark);
+//		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
     /*

@@ -14,6 +14,9 @@ public class DropPrisoners : CharacterTask {
 
 	#region overrides
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 		_assignedCharacter.SetCurrentTask(this);
 		HexTile currLocation = null;

@@ -64,6 +64,9 @@ public class TakeQuest : CharacterTask {
         return questsDictionary;
     }
     //  public override void PerformTask() {
+//			if(!CanPerformTask()){
+//				return;
+//			}
     //      base.PerformTask();
     //_assignedCharacter.SetCurrentTask(this);
     //if (_assignedCharacter.party != null) {

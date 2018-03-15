@@ -57,6 +57,9 @@ public class Search : CharacterTask {
         return base.AreConditionsMet(character);
     }
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
         base.PerformTask();
         _searchAction();
         if (_daysLeft == 0) {

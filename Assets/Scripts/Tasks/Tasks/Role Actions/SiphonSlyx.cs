@@ -19,6 +19,9 @@ public class SiphonSlyx : CharacterTask {
 		craterBeast = (CraterBeast)_assignedCharacter.role;
 	}
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 
 		if(_daysLeft == 0){

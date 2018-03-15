@@ -32,7 +32,9 @@ public class ExploreTile : CharacterTask {
 		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
 	}
 	public override void PerformTask (){
-		base.PerformTask ();
+		if(!CanPerformTask()){
+			return;
+		}
 		Explore ();
 	}
 	public override bool CanBeDone (ECS.Character character, ILocation location){
@@ -110,9 +112,6 @@ public class ExploreTile : CharacterTask {
 		_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
 	}
 	private void Explore(){
-		if(_isHalted){
-			return;
-		}
         _landmarkToExplore.ExploreLandmark(_assignedCharacter);
 		//if( _landmarkToExplore.itemsInLandmark.Count > 0){
 		//	int chance = UnityEngine.Random.Range (0, 100);
@@ -130,11 +129,6 @@ public class ExploreTile : CharacterTask {
 			return;
 		}
 		ReduceDaysLeft(1);
-	}
-	private void ScheduleExploration(){
-		GameDate newSched = GameManager.Instance.Today ();
-		newSched.AddDays (1);
-		SchedulingManager.Instance.AddEntry (newSched, () => Explore ());
 	}
 
 	private void End(){
