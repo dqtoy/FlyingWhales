@@ -327,7 +327,7 @@ namespace ECS {
 			get { return followers.Count >= MAX_FOLLOWERS; }
 		}
         public int missingFollowers {
-            get { return MAX_FOLLOWERS - followers.Count; }
+            get { return Mathf.Max(0, MAX_FOLLOWERS - followers.Count); }
         }
 		internal ECS.Character isFollowerOf{
 			get { return _isFollowerOf; }
@@ -2247,9 +2247,9 @@ namespace ECS {
         }
         public BaseLandmark GetNearestLandmarkWithoutHostiles() {
             Region currRegionLocation = specificLocation.tileLocation.region;
-            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>();
-            elligibleLandmarks.Add(currRegionLocation.mainLandmark);
-            elligibleLandmarks.AddRange(currRegionLocation.landmarks);
+            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.allLandmarks);
+            //elligibleLandmarks.Add(currRegionLocation.mainLandmark);
+            //elligibleLandmarks.AddRange(currRegionLocation.landmarks);
             if (specificLocation is BaseLandmark) {
                 elligibleLandmarks.Remove(specificLocation as BaseLandmark);
             }
