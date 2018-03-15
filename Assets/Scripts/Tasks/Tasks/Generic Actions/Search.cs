@@ -38,6 +38,9 @@ public class Search : CharacterTask {
             WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
             if (landmarkWeights.GetTotalOfWeights() > 0) {
                 _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+                if ((_searchingFor as string).Equals("Heirloom Necklace")) {
+                    character.AddHistory(character.name + " decides to look for the heirloom necklace at " + _targetLocation.locationName + "(" + _targetLocation.tileLocation.name + ")");
+                }
             } else {
                 EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
                 return;
