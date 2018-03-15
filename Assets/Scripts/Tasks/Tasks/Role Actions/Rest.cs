@@ -35,6 +35,9 @@ public class Rest : CharacterTask {
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartRest());
     }
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
         PerformRest();
     }

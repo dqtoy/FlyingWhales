@@ -26,6 +26,9 @@ public class UpgradeGear : CharacterTask {
 		}
 	}
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
         base.PerformTask();
 		PurchaseEquipment ();
     }

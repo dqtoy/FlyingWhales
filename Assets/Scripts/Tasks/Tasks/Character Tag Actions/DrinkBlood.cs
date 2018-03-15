@@ -29,6 +29,9 @@ public class DrinkBlood : CharacterTask {
 	}
 
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 		Drink();
 	}

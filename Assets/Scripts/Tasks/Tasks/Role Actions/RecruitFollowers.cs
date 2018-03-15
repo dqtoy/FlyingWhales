@@ -36,6 +36,9 @@ public class RecruitFollowers : CharacterTask {
 		//}
 	}
     public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
         base.PerformTask();
 
 		if(_targetLandmark != null && _targetLandmark.civilians > 0 && _targetLandmark is Settlement) {

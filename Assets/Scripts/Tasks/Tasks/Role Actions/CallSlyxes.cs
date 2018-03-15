@@ -19,6 +19,9 @@ public class CallSlyxes : CharacterTask {
 		craterBeast = (CraterBeast)_assignedCharacter.role;
 	}
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 
 		craterBeast.CallAllSlyxes ();

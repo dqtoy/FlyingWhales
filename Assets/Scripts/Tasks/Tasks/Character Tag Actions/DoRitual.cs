@@ -6,8 +6,7 @@ using ECS;
 public class DoRitual : CharacterTask {
 	private BaseLandmark _ritualStones;
 
-	public DoRitual(TaskCreator createdBy, int defaultDaysLeft = -1) 
-		: base(createdBy, TASK_TYPE.DO_RITUAL, defaultDaysLeft) {
+	public DoRitual(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null) : base(createdBy, TASK_TYPE.DO_RITUAL, defaultDaysLeft, parentQuest) {
 		SetStance(STANCE.STEALTHY);
 	}
 
@@ -26,6 +25,9 @@ public class DoRitual : CharacterTask {
 	}
 
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 		Ritual();
 	}

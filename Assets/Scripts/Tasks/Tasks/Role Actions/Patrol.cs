@@ -31,6 +31,9 @@ public class Patrol : CharacterTask {
 		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartPatrol());
 	}
 	public override void PerformTask() {
+		if(!CanPerformTask()){
+			return;
+		}
 		base.PerformTask();
 		if(_daysLeft == 0){
 			EndPatrol ();

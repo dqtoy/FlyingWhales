@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class QuestManager : MonoBehaviour {
+public class QuestManager : MonoBehaviour, TaskCreator {
 
     public static QuestManager Instance = null;
 
@@ -11,6 +11,12 @@ public class QuestManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
     }
+
+	#region getters/setters
+	public List<OldQuest.Quest> activeQuests { 
+		get { return null; } //TODO: To be removed eventually
+	}
+	#endregion
 
     #region Quest Management
     public void AddQuestToAvailableQuests(Quest quest) {
@@ -31,6 +37,9 @@ public class QuestManager : MonoBehaviour {
         }
         return questsForCharacter;
     }
+
+	public void AddNewQuest(OldQuest.Quest quest){}
+	public void RemoveQuest(OldQuest.Quest quest){}
     #endregion
 
 }
