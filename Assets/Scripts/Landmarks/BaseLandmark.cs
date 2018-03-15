@@ -1105,12 +1105,14 @@ public class BaseLandmark : ILocation, TaskCreator {
 
 	public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
 		ECS.Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
-
+		item.exploreWeight = exploreWeight;
+		item.isUnlimited = isUnlimited;
 		AddItemInLandmark (item);
 	}
 	public void SpawnItemInLandmark(ECS.Item item, int exploreWeight, bool isUnlimited){
 		ECS.Item newItem = item.CreateNewCopy();
-
+		newItem.exploreWeight = exploreWeight;
+		newItem.isUnlimited = isUnlimited;
 		AddItemInLandmark (newItem);
 	}
     #endregion

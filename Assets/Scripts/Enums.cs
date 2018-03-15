@@ -943,7 +943,8 @@ public enum QUEST_TYPE { //This is a list of actions a character can choose to a
     EXPEDITION,
 	SAVE_LANDMARK,
 
-    FIND_LOST_HEIR
+    FIND_LOST_HEIR,
+	THE_DARK_RITUAL,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
@@ -1190,7 +1191,8 @@ public enum STANCE {
 }
 
 public enum STORYLINE {
-    LOST_HEIR
+    LOST_HEIR,
+	INIMICAL_INCANTATIONS,
 }
 
 public enum ACTION_ALIGNMENT {
