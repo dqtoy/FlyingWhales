@@ -1078,5 +1078,16 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return null;
     }
+
+	public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
+		ECS.Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
+
+		AddItemInLandmark (item);
+	}
+	public void SpawnItemInLandmark(ECS.Item item, int exploreWeight, bool isUnlimited){
+		ECS.Item newItem = item.CreateNewCopy();
+
+		AddItemInLandmark (newItem);
+	}
     #endregion
 }
