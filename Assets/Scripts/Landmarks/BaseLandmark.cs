@@ -157,6 +157,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         ConstructTechnologiesDictionary();
 		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
+        SpawnInitialLandmarkItems();
         //Initialize();
     }
 
@@ -1025,6 +1026,16 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Items
+    private void SpawnInitialLandmarkItems() {
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
+        for (int i = 0; i < data.itemData.Length; i++) {
+            LandmarkItemData currItemData = data.itemData[i];
+            ECS.Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
+            createdItem.SetExploreWeight(currItemData.exploreWeight);
+            createdItem.SetIsUnlimited(currItemData.isUnlimited);
+            AddItemInLandmark(createdItem);
+        }
+    }
 	public void AddItemInLandmark(ECS.Item item){
 		_itemsInLandmark.Add (item);
 	}
@@ -1036,6 +1047,14 @@ public class BaseLandmark : ILocation, TaskCreator {
 			_itemsInLandmark.Remove (item);
 		}
 	}
+    private WeightedDictionary<ECS.Item> GetExploreItemWeights() {
+        WeightedDictionary<ECS.Item> itemWeights = new WeightedDictionary<ECS.Item>();
+        for (int i = 0; i < _itemsInLandmark.Count; i++) {
+            ECS.Item currItem = _itemsInLandmark[i];
+            itemWeights.AddElement(currItem, currItem.exploreWeight);
+        }
+        return itemWeights;
+    }
     /*
      What should happen when this landmark is explored?
          */
@@ -1044,13 +1063,13 @@ public class BaseLandmark : ILocation, TaskCreator {
         ECS.Item generatedItem = GenerateRandomItem();
         if (generatedItem != null) {
             if (generatedItem.isObtainable) {
-                explorer.PickupItem(generatedItem);
+                if (!explorer.EquipItem(generatedItem)) {
+                    explorer.PickupItem(generatedItem);
+                }
             } else {
                 //item should only be interacted with
                 AddHistory(explorer.name + " interacted with a " + generatedItem.itemName + "!");
                 StorylineManager.Instance.OnInteractWith(generatedItem.itemName, this, explorer);
-                LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
-                data.RemoveItemFromWeights(generatedItem.itemName);
             }
         }
     }
@@ -1058,21 +1077,24 @@ public class BaseLandmark : ILocation, TaskCreator {
      Generate a random item, given the data of this landmark type
          */
     public ECS.Item GenerateRandomItem() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
-        WeightedDictionary<string> itemWeights = data.itemWeights;
+        WeightedDictionary<ECS.Item> itemWeights = GetExploreItemWeights();
         if (itemWeights.GetTotalOfWeights() > 0) {
-            string chosenItem = itemWeights.PickRandomElementGivenWeights();
-            if (ItemManager.Instance.IsLootChestName(chosenItem)) {
+            ECS.Item chosenItem = itemWeights.PickRandomElementGivenWeights();
+            if (!chosenItem.isUnlimited) {
+                //Remove item form weights if it is not unlimited
+                RemoveItemInLandmark(chosenItem);
+            }
+            if (ItemManager.Instance.IsLootChest(chosenItem)) {
                 //chosen item is a loot crate, generate a random item
-                string[] words = chosenItem.Split(' ');
+                string[] words = chosenItem.itemName.Split(' ');
                 int tier = System.Int32.Parse(words[1]);
-                if (chosenItem.Contains("Armor")) {
+                if (chosenItem.itemName.Contains("Armor")) {
                     return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
-                }else if (chosenItem.Contains("Weapon")) {
+                }else if (chosenItem.itemName.Contains("Weapon")) {
                     return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
                 }
             } else {
-                return ItemManager.Instance.CreateNewItemInstance(chosenItem);
+                return chosenItem;
             }
             
         }

@@ -17,7 +17,9 @@ namespace ECS{
 		public int bonusBlockRate;
 		public int durability;
 		public int cost;
-		public bool isUnlimited;
+        public int exploreWeight;
+        public int collectWeight;
+        public bool isUnlimited;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
 		//Weapon Fields

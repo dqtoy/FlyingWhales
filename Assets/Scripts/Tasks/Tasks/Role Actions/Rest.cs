@@ -40,7 +40,7 @@ public class Rest : CharacterTask {
     }
     public override void TaskSuccess() {
 		base.TaskSuccess ();
-		Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
+		//Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
 	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){

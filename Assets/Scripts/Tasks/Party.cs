@@ -172,7 +172,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 member.SetCurrentTask(currentTask);
                 member.AddHistory("Joined party: " + this._name + ".");
                 member.SetFollowerState(true);
-                Debug.Log(member.name + " has joined the party of " + partyLeader.name);
+                //Debug.Log(member.name + " has joined the party of " + partyLeader.name);
                 //if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
                 //    ((OldQuest.Quest)_currentTask).AddNewLog(member.name + " has joined the party of " + partyLeader.name);
                 //}

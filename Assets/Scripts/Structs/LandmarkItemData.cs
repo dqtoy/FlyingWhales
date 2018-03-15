@@ -8,7 +8,7 @@ using System;
 [System.Serializable]
 public class LandmarkItemData{
     public string itemName;
-    public int weight;
+    public int exploreWeight;
     public bool isUnlimited; //Can this item be obtained at a landmark unlimited times?
     [SerializeField] private int itemIndex; //For custom editor
 }
@@ -45,7 +45,7 @@ public class LandmarkItemDataDrawer : PropertyDrawer {
         property.FindPropertyRelative("itemName").stringValue = choices[property.FindPropertyRelative("itemIndex").intValue];
         // Draw fields - passs GUIContent.none to each so they are drawn without labels
         //EditorGUI.PropertyField(itemNameRect, itemNameProp, GUIContent.none);
-        EditorGUI.PropertyField(weightRect, property.FindPropertyRelative("weight"), GUIContent.none);
+        EditorGUI.PropertyField(weightRect, property.FindPropertyRelative("exploreWeight"), GUIContent.none);
         EditorGUI.PropertyField(isUnlimitedRect, property.FindPropertyRelative("isUnlimited"), GUIContent.none);
 
         // Set indent back to what it was

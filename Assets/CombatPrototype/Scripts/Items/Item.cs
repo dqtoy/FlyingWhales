@@ -18,6 +18,8 @@ namespace ECS{
 		public int durability;
         public int currDurability;
 		public int cost;
+        public int exploreWeight;
+        public int collectWeight;
 		public bool isUnlimited;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
@@ -53,18 +55,25 @@ namespace ECS{
 				_owner.UnequipItem(this);
             }
         }
-
         public void ResetDurability() {
             currDurability = durability;
         }
-
         public void SetOwner(ECS.Character owner) {
             _owner = owner;
         }
-
 		public void SetEquipped(bool state){
 			this._isEquipped = state;
 		}
+
+        public void SetExploreWeight(int weight) {
+            exploreWeight = weight;
+        }
+        public void SetCollectWeight(int weight) {
+            collectWeight = weight;
+        }
+        public void SetIsUnlimited(bool state) {
+            isUnlimited = state;
+        }
 
         #region virtuals
         public virtual Item CreateNewCopy() {
