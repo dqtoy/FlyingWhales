@@ -40,10 +40,14 @@ public class Party: IEncounterable, ICombatInitializer {
 		get { return _name; }
     }
     public string name {
-        get { return _name; }
+        get {
+            if (_partyLeader.role != null) {
+                return Utilities.NormalizeString(_partyLeader.role.roleType.ToString()) + " " + _name;
+            }
+            return _name; }
     }
 	public string urlName {
-		get { return "[url=" + _partyLeader.id.ToString() + "_party]" + _name + "[/url]"; }
+		get { return "[url=" + _partyLeader.id.ToString() + "_party]" + name + "[/url]"; }
 	}
     public bool isFull {
         get { return partyMembers.Count >= MAX_PARTY_MEMBERS; }
