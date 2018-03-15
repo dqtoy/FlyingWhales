@@ -268,7 +268,13 @@ public class CharacterInfoUI : UIMenu {
 		historyScrollView.UpdatePosition();
 	}
 	public void CenterCameraOnCharacter() {
-        CameraMove.Instance.CenterCameraOn(currentlyShowingCharacter.currLocation.gameObject);
+        GameObject centerOn = null;
+        if (currentlyShowingCharacter.avatar != null) {
+            centerOn = currentlyShowingCharacter.avatar.gameObject;
+        } else {
+            centerOn = currentlyShowingCharacter.currLocation.gameObject;
+        }
+        CameraMove.Instance.CenterCameraOn(centerOn);
     }
 
 	#region Overrides

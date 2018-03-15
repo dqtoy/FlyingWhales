@@ -1422,7 +1422,7 @@ namespace ECS {
 //			AssignRole(role);
 			if(_raceSetting.tags.Contains(CHARACTER_TAG.SAPIENT)){
 				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.WORKER;
-				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionaryNoRestrictions(this._faction, (Settlement)this._home);
+				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
 				if (characterRoleProductionDictionary.GetTotalOfWeights () > 0) {
 					roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights ();
 				}

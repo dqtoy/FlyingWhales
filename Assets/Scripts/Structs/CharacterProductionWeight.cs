@@ -6,5 +6,5 @@ using System.Collections.Generic;
 public struct CharacterProductionWeight {
     public CHARACTER_ROLE role;
     public int weight;
-    public List<CharacterProductionCap> productionCaps;
+    //public List<CharacterProductionCap> productionCaps;
 }

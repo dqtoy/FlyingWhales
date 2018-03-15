@@ -228,9 +228,11 @@ public class FactionManager : MonoBehaviour {
     private void CreateInititalFactionCharacters(Faction faction, Settlement settlement) {
         int numOfCharacters = Random.Range(3, 6); //Generate 3 to 5 characters in each Village with civilians, limit class based on technologies known by its Faction.
         WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(settlement);
+        WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
         for (int i = 0; i < numOfCharacters; i++) {
             CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-            ECS.Character newChar = settlement.CreateNewCharacter(CHARACTER_ROLE.HERO, Utilities.NormalizeString(chosenClass.ToString()));
+            CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+            ECS.Character newChar = settlement.CreateNewCharacter(chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
 			int ritualistChance = UnityEngine.Random.Range (0, 100);
 			if(ritualistChance < 20){
 				newChar.AssignTag (CHARACTER_TAG.RITUALIST);
