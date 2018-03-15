@@ -3423,7 +3423,7 @@ public class UIManager : MonoBehaviour {
             if (currentQuest.acceptedCharacters.Count > 0) {
                 for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
                     ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
-                    questSummary += "\n     " + currCharacter.name;
+                    questSummary += "\n     " + currCharacter.name + " (" + currCharacter.currentQuestPhase.phaseName + ")";
                 }
             } else {
                 questSummary += "NONE";

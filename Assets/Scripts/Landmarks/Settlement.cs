@@ -100,7 +100,7 @@ public class Settlement : BaseLandmark {
         MATERIAL material = MATERIAL.NONE;
         WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
         CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.NONE, Utilities.NormalizeString(chosenClass.ToString()));
+        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.FOLLOWER, Utilities.NormalizeString(chosenClass.ToString()));
         newFollower.SetFollowerState(true);
         CharacterManager.Instance.EquipCharacterWithBestGear(this, newFollower);
         return newFollower;

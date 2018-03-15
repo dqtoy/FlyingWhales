@@ -125,7 +125,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		_isDefeated = false;
         _civiliansByRace = new Dictionary<RACE, int>();
 
-        Debug.Log(partyLeader.name + " has created " + _name);
+        //Debug.Log(partyLeader.name + " has created " + _name);
 		partyLeader.specificLocation.AddCharacterToLocation (this, false);
         partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
 

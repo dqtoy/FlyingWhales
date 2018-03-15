@@ -1019,7 +1019,7 @@ namespace ECS {
 			if(newArmor.owner == null){
 				OwnItem (newArmor);
 			}
-			Debug.Log(this.name + " equipped " + newArmor.itemName + " to " + bodyPartToEquip.name);
+			//Debug.Log(this.name + " equipped " + newArmor.itemName + " to " + bodyPartToEquip.name);
             if(CombatPrototypeUI.Instance != null) {
                 CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
             }
@@ -1403,6 +1403,9 @@ namespace ECS {
 			case CHARACTER_ROLE.VILLAIN:
 				_role = new Villain(this);
 				break;
+            case CHARACTER_ROLE.FOLLOWER:
+                _role = new Follower(this);
+                break;
             default:
 			    break;
 			}
