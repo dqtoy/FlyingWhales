@@ -111,7 +111,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		get { return _partyMembers.Count; }
 	}
 	public bool doesNotTakePrisoners{
-		get { return _partyLeader.doesNotTakePrisoners; }
+		get { return _partyLeader.characterDoesNotTakePrisoners; }
 	}
     #endregion
 
