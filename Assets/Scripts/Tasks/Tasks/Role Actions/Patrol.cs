@@ -84,6 +84,9 @@ public class Patrol : CharacterTask {
 		}
 		return null;
 	}
+	public override int GetSelectionWeight (Character character){
+		return 20;
+	}
 	#endregion
 
 	private void StartPatrol(){

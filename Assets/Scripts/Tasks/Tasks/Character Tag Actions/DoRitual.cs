@@ -63,6 +63,9 @@ public class DoRitual : CharacterTask {
 		}
 		return null;
 	}
+	public override int GetSelectionWeight(ECS.Character character){ 
+		return 75; 
+	}
 	#endregion
 
 	private void StartRitual() {
@@ -92,7 +95,7 @@ public class DoRitual : CharacterTask {
 		List<Region> targetRegions = new List<Region> ();
 		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
 			Region currRegion = GridMap.Instance.allRegions [i];
-			if(currRegion.centerOfMass.landmarkOnTile != null && currRegion.centerOfMass.landmarkOnTile.owner != null){
+			if(currRegion.centerOfMass.landmarkOnTile != null && currRegion.centerOfMass.landmarkOnTile.owner != null && currRegion.centerOfMass.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CRATER){
 				targetRegions.Add (currRegion);
 			}
 		}
