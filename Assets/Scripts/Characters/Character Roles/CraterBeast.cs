@@ -19,7 +19,7 @@ public class CraterBeast : CharacterRole {
 //		_roleTasks.Add (new DoNothing (this._character));
 		_roleTasks.Clear();
 		_roleTasks.Add (new Patrol (this._character));
-		_roleTasks.Add (new CallSlyxes (this._character, 0));
+//		_roleTasks.Add (new CallSlyxes (this._character, 0));
 		_roleTasks.Add (new SiphonSlyx (this._character, 5));
 		_roleTasks.Add (new CommandInfection (this._character, 0));
 

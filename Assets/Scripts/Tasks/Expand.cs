@@ -44,10 +44,10 @@ public class Expand : OldQuest.Quest {
     }
     protected override void ConstructQuestLine() {
 		base.ConstructQuestLine();
-        Collect collect = new Collect(this);
-        collect.InitializeAction(_civiliansBrought);
-        collect.onTaskActionDone += this.PerformNextQuestAction;
-        collect.onTaskDoAction += collect.Expand;
+//		Old.Collect collect = new Old.Collect(this);
+//        collect.InitializeAction(_civiliansBrought);
+//        collect.onTaskActionDone += this.PerformNextQuestAction;
+//        collect.onTaskDoAction += collect.Expand;
 
         GoToLocation goToExpandLocationAction = new GoToLocation(this); //Go to the picked region
 		goToExpandLocationAction.InitializeAction(_targetUnoccupiedTile);
@@ -55,7 +55,7 @@ public class Expand : OldQuest.Quest {
 		goToExpandLocationAction.onTaskActionDone += SuccessExpansion;
 
         //Enqueue all actions
-        _questLine.Enqueue(collect);
+//        _questLine.Enqueue(collect);
         _questLine.Enqueue(goToExpandLocationAction);
 	}
 

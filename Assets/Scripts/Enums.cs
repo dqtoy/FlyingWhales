@@ -974,6 +974,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	SIPHON_SLYX,
 	COMMAND_INFECTION,
 	DO_RITUAL,
+	COLLECT,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

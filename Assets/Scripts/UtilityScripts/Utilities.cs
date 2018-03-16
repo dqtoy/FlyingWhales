@@ -1694,4 +1694,16 @@ public class Utilities : MonoBehaviour {
         }
         Debug.Log("Dictionary: " + log);
     }
+
+	#region Character Tags
+	public static int GetTagWorldGenChance(CHARACTER_TAG tag){
+		switch(tag){
+		case CHARACTER_TAG.HERBALIST:
+		case CHARACTER_TAG.RITUALIST:
+			return 20;
+		default:
+			return 0;
+		}
+	}
+	#endregion
 }

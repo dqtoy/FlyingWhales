@@ -146,7 +146,7 @@ public class CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => EndTask (taskResult));
 			return;
 		}
-		if(_isHalted){
+		if(_isHalted || _isDone){
 			return;
 		}
         _taskStatus = taskResult;
@@ -249,8 +249,10 @@ public class CharacterTask {
 		_daysLeft = days;
 	}
 	public void ReduceDaysLeft(int days){
-		if(_daysLeft > 0){
-			_daysLeft -= days;
+		if (!_isHalted && !_isDone) {
+			if (_daysLeft > 0) {
+				_daysLeft -= days;
+			}
 		}
 	}
 	public bool CanMeetRequirements(ECS.Character targetCharacter){

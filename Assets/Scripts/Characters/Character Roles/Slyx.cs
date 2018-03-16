@@ -7,34 +7,43 @@ public class Slyx : CharacterRole {
 	public Slyx(ECS.Character character): base (character) {
 		_roleType = CHARACTER_ROLE.SLYX;
 		_cancelsAllOtherTasks = true;
+		_character.SetCannotBeTakenAsPrisoner (true);
 		_roleTasks.Clear ();
+
+		_roleTasks.Add (new Patrol (this._character));
+
+		_defaultRoleTask = _roleTasks [0];
 
 		if(Messenger.eventTable.ContainsKey("SlyxTransform")){
 			Messenger.Broadcast ("SlyxTransform");
 		}
 
-		Messenger.AddListener<ILocation> ("CallSlyx", CallThisSlyx);
+//		Messenger.AddListener<ILocation> ("CallSlyx", CallThisSlyx);
+		CallThisSlyx(LandmarkManager.Instance.craterLandmark);
 	}
 
 	#region Overrides
 	public override void DeathRole (){
 		base.DeathRole ();
-		if(Messenger.eventTable.ContainsKey("CallSlyx")){
-			Messenger.RemoveListener<ILocation> ("CallSlyx", CallThisSlyx);
-		}
-		InfectPsytoxinToAllCharactersInLandmark ();
+		_character.SetCannotBeTakenAsPrisoner (false);
+		_character.RemoveCharacterTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
+//		if(Messenger.eventTable.ContainsKey("CallSlyx")){
+//			Messenger.RemoveListener<ILocation> ("CallSlyx", CallThisSlyx);
+//		}
+//		InfectPsytoxinToAllCharactersInLandmark ();
 	}
 	public override void ChangedRole (){
 		base.ChangedRole ();
-		if(Messenger.eventTable.ContainsKey("CallSlyx")){
-			Messenger.RemoveListener<ILocation> ("CallSlyx", CallThisSlyx);
-		}
+		_character.SetCannotBeTakenAsPrisoner (false);
+//		if(Messenger.eventTable.ContainsKey("CallSlyx")){
+//			Messenger.RemoveListener<ILocation> ("CallSlyx", CallThisSlyx);
+//		}
 	}
 	#endregion
 
 	private void CallThisSlyx(ILocation location){
-		_character.GoToLocation (location, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => _character.DestroyAvatar());
-		Messenger.RemoveListener<ILocation> ("CallSlyx", CallThisSlyx);
+		_character.GoToLocation (location, PATHFINDING_MODE.USE_ROADS, () => _character.DestroyAvatar());
+//		Messenger.RemoveListener<ILocation> ("CallSlyx", CallThisSlyx);
 	}
 
 	private void InfectPsytoxinToAllCharactersInLandmark(){
@@ -63,7 +72,7 @@ public class Slyx : CharacterRole {
 	}
 	private void InfectPsytoxin(ECS.Character character){
 		ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)character.GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
-		if(modPsytoxin != null){
+		if(modPsytoxin = null){
 			modPsytoxin.TriggerWorsenCase ();
 		}else{
 			MildPsytoxin mildPsytoxin = (MildPsytoxin)character.GetTag (CHARACTER_TAG.MILD_PSYTOXIN);

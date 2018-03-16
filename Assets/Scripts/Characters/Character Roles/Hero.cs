@@ -27,7 +27,8 @@ public class Hero : CharacterRole {
         _allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
             ACTION_ALIGNMENT.HEROIC,
             ACTION_ALIGNMENT.LAWFUL,
-            ACTION_ALIGNMENT.UNLAWFUL
+            ACTION_ALIGNMENT.UNLAWFUL,
+			ACTION_ALIGNMENT.PEACEFUL,
         };
 
 		_roleTasks.Add (new DoNothing (this._character));

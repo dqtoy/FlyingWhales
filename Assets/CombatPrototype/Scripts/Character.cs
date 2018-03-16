@@ -71,6 +71,7 @@ namespace ECS {
 		private List<ECS.Character> _followers;
 		private ECS.Character _isFollowerOf;
 		private bool _doesNotTakePrisoners;
+		private bool _cannotBeTakenAsPrisoner;
 
         private Dictionary<RACE, int> _civiliansByRace;
 
@@ -344,6 +345,9 @@ namespace ECS {
 		internal bool characterDoesNotTakePrisoners{
 			get { return _doesNotTakePrisoners; }
 		}
+		internal bool cannotBeTakenAsPrisoner{
+			get { return _cannotBeTakenAsPrisoner; }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -362,6 +366,7 @@ namespace ECS {
 			_isPrisoner = false;
 			_isDefeated = false;
 			_doesNotTakePrisoners = false;
+			_cannotBeTakenAsPrisoner = false;
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 			_history = new List<string> ();
@@ -712,6 +717,9 @@ namespace ECS {
 				}
 				if(_role != null){
 					_role.DeathRole ();
+				}
+				while(_tags.Count > 0){
+					RemoveCharacterTag (_tags [0]);
 				}
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
@@ -1186,6 +1194,12 @@ namespace ECS {
             return neededEquipment;
         }
         internal bool HasItem(string itemName) {
+			for (int i = 0; i < _equippedItems.Count; i++) {
+				Item currItem = _equippedItems[i];
+				if (currItem.itemName.Equals(itemName)) {
+					return true;
+				}
+			}
             for (int i = 0; i < _inventory.Count; i++) {
                 Item currItem = _inventory[i];
                 if (currItem.itemName.Equals(itemName)) {
@@ -1194,6 +1208,24 @@ namespace ECS {
             }
             return false;
         }
+		internal ECS.Item GetItemInInventory(string itemName){
+			for (int i = 0; i < _inventory.Count; i++) {
+				Item currItem = _inventory[i];
+				if (currItem.itemName.Equals(itemName)) {
+					return currItem;
+				}
+			}
+			return null;
+		}
+		internal ECS.Item GetItemInEquipped(string itemName){
+			for (int i = 0; i < _equippedItems.Count; i++) {
+				Item currItem = _equippedItems[i];
+				if (currItem.itemName.Equals(itemName)) {
+					return currItem;
+				}
+			}
+			return null;
+		}
         #endregion
 
 		#region Status Effects
@@ -1683,18 +1715,22 @@ namespace ECS {
 			AddCharacterTagBonuses (tag);
 			tag.Initialize ();
 		}
-		public void RemoveCharacterTag(CharacterTag tag){
-			_tags.Remove(tag);
-            tag.OnRemoveTag();
-			RemoveCharacterTagBonuses (tag);
+		public bool RemoveCharacterTag(CharacterTag tag){
+			if(_tags.Remove(tag)){
+				tag.OnRemoveTag();
+				RemoveCharacterTagBonuses (tag);
+				return true;
+			}
+			return false;
 		}
-        public void RemoveCharacterTag(CHARACTER_TAG tag) {
+		public bool RemoveCharacterTag(CHARACTER_TAG tag) {
             for (int i = 0; i < _tags.Count; i++) {
                 CharacterTag currTag = _tags[i];
                 if (currTag.tagType == tag) {
-                    RemoveCharacterTag(currTag);
+                    return RemoveCharacterTag(currTag);
                 }
             }
+			return false;
         }
         private void AddCharacterTagBonuses(CharacterTag tag){
 			_statsModifierPercentage.intPercentage += tag.statsModifierPercentage.intPercentage;
@@ -1710,39 +1746,108 @@ namespace ECS {
 			_statsModifierPercentage.hpPercentage -= tag.statsModifierPercentage.hpPercentage;
 			RecomputeMaxHP ();
 		}
-		public bool HasTag(CHARACTER_TAG tag) {
-			for (int i = 0; i < _tags.Count; i++) {
-				if(_tags[i].tagType == tag) {
-					return true;
-				}
-			}
-			return false;
-		}
-		public bool HasTag(CHARACTER_TAG[] tags, bool mustBeAll) {
-			if(mustBeAll){
-				int count = 0;
+		public bool HasTag(CHARACTER_TAG tag, bool includeParty = false) {
+			if(!includeParty){
 				for (int i = 0; i < _tags.Count; i++) {
-					if(tags.Contains(_tags[i].tagType)) {
-						count++;
+					if(_tags[i].tagType == tag) {
+						return true;
 					}
 				}
-				if(count == tags.Length){
-					return true;
-				}
 			}else{
-				for (int i = 0; i < _tags.Count; i++) {
-					if(tags.Contains(_tags[i].tagType)) {
-						return true;
+				if(party != null){
+					for (int i = 0; i < party.partyMembers.Count; i++) {
+						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
+							if(party.partyMembers[i].tags[j].tagType == tag) {
+								return true;
+							}
+						}
+					}
+				}else{
+					for (int i = 0; i < _tags.Count; i++) {
+						if(_tags[i].tagType == tag) {
+							return true;
+						}
 					}
 				}
 			}
 
 			return false;
 		}
-		public CharacterTag GetTag(CHARACTER_TAG tag){
-			for (int i = 0; i < _tags.Count; i++) {
-				if(_tags[i].tagType == tag) {
-					return _tags[i];
+		public bool HasTag(string tag, bool includeParty = false) {
+			if(!includeParty){
+				for (int i = 0; i < _tags.Count; i++) {
+					if(_tags[i].tagName == tag) {
+						return true;
+					}
+				}
+			}else{
+				if(party != null){
+					for (int i = 0; i < party.partyMembers.Count; i++) {
+						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
+							if(party.partyMembers[i].tags[j].tagName == tag) {
+								return true;
+							}
+						}
+					}
+				}else{
+					for (int i = 0; i < _tags.Count; i++) {
+						if(_tags[i].tagName == tag) {
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+		public CharacterTag GetTag(CHARACTER_TAG tag, bool includeParty = false){
+			if(!includeParty){
+				for (int i = 0; i < _tags.Count; i++) {
+					if(_tags[i].tagType == tag) {
+						return _tags[i];
+					}
+				}
+			}else{
+				if(party != null){
+					for (int i = 0; i < party.partyMembers.Count; i++) {
+						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
+							if(party.partyMembers[i].tags[j].tagType == tag) {
+								return party.partyMembers[i].tags[j];
+							}
+						}
+					}
+				}else{
+					for (int i = 0; i < _tags.Count; i++) {
+						if(_tags[i].tagType == tag) {
+							return _tags[i];
+						}
+					}
+				}
+			}
+			return null;
+		}
+		public CharacterTag GetTag(string tag, bool includeParty = false){
+			if(!includeParty){
+				for (int i = 0; i < _tags.Count; i++) {
+					if(_tags[i].tagName == tag) {
+						return _tags[i];
+					}
+				}
+			}else{
+				if(party != null){
+					for (int i = 0; i < party.partyMembers.Count; i++) {
+						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
+							if(party.partyMembers[i].tags[j].tagName == tag) {
+								return party.partyMembers[i].tags[j];
+							}
+						}
+					}
+				}else{
+					for (int i = 0; i < _tags.Count; i++) {
+						if(_tags[i].tagName == tag) {
+							return _tags[i];
+						}
+					}
 				}
 			}
 			return null;
@@ -2216,6 +2321,9 @@ namespace ECS {
         }
 		public void SetDoesNotTakePrisoners(bool state) {
 			this._doesNotTakePrisoners = state;
+		}
+		public void SetCannotBeTakenAsPrisoner(bool state) {
+			this._cannotBeTakenAsPrisoner = state;
 		}
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
