@@ -21,14 +21,18 @@ public class Pillage : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark ();
+			_targetLocation = GetLandmarkTarget (character);
 		}
-		_target = (BaseLandmark)_targetLocation;
-		pillagerName = _assignedCharacter.name;
-		if(_assignedCharacter.party != null){
-			pillagerName = _assignedCharacter.party.name;
+		if(_targetLocation != null){
+			_target = (BaseLandmark)_targetLocation;
+			pillagerName = _assignedCharacter.name;
+			if(_assignedCharacter.party != null){
+				pillagerName = _assignedCharacter.party.name;
+			}
+			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartPillage ());
+		}else{
+			EndTask (TASK_STATUS.FAIL);
 		}
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartPillage ());
 //        TriggerSaveLandmarkQuest();
     }
     public override void PerformTask() {
@@ -88,6 +92,27 @@ public class Pillage : CharacterTask {
     //        DoPillage();
     //    }
     //}
+
+	protected override BaseLandmark GetLandmarkTarget (Character character){
+		base.GetLandmarkTarget (character);
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				_landmarkWeights.AddElement (landmark, 100);
+//				if(_assignedCharacter.faction == null || landmark.owner == null){
+//					_landmarkWeights.AddElement (landmark, 100);
+//				}else{
+//					if(_assignedCharacter.faction.id != landmark.owner.id){
+//						_landmarkWeights.AddElement (landmark, 100);
+//					}
+//				}
+			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
+	}
     #endregion
 
     private void StartPillage() {
@@ -160,25 +185,5 @@ public class Pillage : CharacterTask {
 //			settlement.CancelSaveALandmark (_target);
 //		}
 		EndTask(TASK_STATUS.SUCCESS);
-	}
-	private BaseLandmark GetTargetLandmark() {
-		_landmarkWeights.Clear ();
-		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(_assignedCharacter, landmark)){
-				_landmarkWeights.AddElement (landmark, 100);
-//				if(_assignedCharacter.faction == null || landmark.owner == null){
-//					_landmarkWeights.AddElement (landmark, 100);
-//				}else{
-//					if(_assignedCharacter.faction.id != landmark.owner.id){
-//						_landmarkWeights.AddElement (landmark, 100);
-//					}
-//				}
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
 	}
 }

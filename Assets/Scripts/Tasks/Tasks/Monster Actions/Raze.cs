@@ -31,17 +31,14 @@ public class Raze : CharacterTask {
 //			_razingCharacters.AddRange (character.party.partyMembers);
 //		}
 		if(_targetLocation == null){
-            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-            if (landmarkWeights.GetTotalOfWeights() > 0) {
-                _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
-            } else {
-                EndTask(TASK_STATUS.FAIL);
-                return;
-            }
-			
+			_targetLocation = GetLandmarkTarget(character);
 		}
-		_target = (BaseLandmark)_targetLocation;
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartRaze());
+		if (_targetLocation != null) {
+			_target = (BaseLandmark)_targetLocation;
+			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartRaze());
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
 	}
 	public override void PerformTask() {
 		if(!CanPerformTask()){
@@ -78,8 +75,8 @@ public class Raze : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 20;
     }
-    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
-        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+    protected override BaseLandmark GetLandmarkTarget(Character character) {
+        base.GetLandmarkTarget(character);
         Region regionOfChar = character.specificLocation.tileLocation.region;
         for (int i = 0; i < regionOfChar.allLandmarks.Count; i++) {
             BaseLandmark currLandmark = regionOfChar.allLandmarks[i];
@@ -91,10 +88,13 @@ public class Raze : CharacterTask {
                 weight += 30; //Landmark has civilians: +30
             }
             if (weight > 0) {
-                landmarkWeights.AddElement(currLandmark, weight);
+                _landmarkWeights.AddElement(currLandmark, weight);
             }
         }
-        return landmarkWeights;
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+        return null;
     }
     #endregion
 
@@ -131,26 +131,5 @@ public class Raze : CharacterTask {
 			_target.AddHistory(_assignedCharacter.name + " failed to raze " + _target.landmarkName + "!");
 		}
 		EndTask (TASK_STATUS.SUCCESS);
-	}
-
-	private BaseLandmark GetTargetLandmark() {
-		_landmarkWeights.Clear ();
-		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(_assignedCharacter, landmark)){
-				_landmarkWeights.AddElement (landmark, 100);
-//				if(_assignedCharacter.faction == null){
-//					_landmarkWeights.AddElement (landmark, 100);
-//				}else{
-//					if(_assignedCharacter.faction.id != landmark.owner.id){
-//						_landmarkWeights.AddElement (landmark, 100);
-//					}
-//				}
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
 	}
 }

@@ -2013,74 +2013,16 @@ namespace ECS {
         #endregion
 
         #region Tags
-        /*
-         Add tag specific actions to action weights
-             */
-//        private void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> actionWeights) {
-//            for (int i = 0; i < _raceSetting.tags.Count; i++) {
-//                CHARACTER_TAG currTag = _raceSetting.tags[i];
-//                switch (currTag) {
-//                    case CHARACTER_TAG.PREDATOR:
-//                        AddHuntPreyWeights(actionWeights);
-//                        break;
-//                    case CHARACTER_TAG.HIBERNATES:
-//                        AddHibernateWeights(actionWeights);
-//                        break;
-//                    case CHARACTER_TAG.PILLAGER:
-//                        AddPillageWeights(actionWeights);
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-//        }
-//        private void AddHuntPreyWeights(WeightedDictionary<CharacterTask> actionWeights) {
-//            Region mainRegion = currLocation.region;
-//            List<Region> elligibleRegions = new List<Region>(mainRegion.adjacentRegionsViaMajorRoad);
-//            elligibleRegions.Add(mainRegion);
-//            for (int i = 0; i < elligibleRegions.Count; i++) {
-//                Region currRegion = elligibleRegions[i];
-//                List<BaseLandmark> allLandmarksInRegion = new List<BaseLandmark>(currRegion.landmarks);
-//                allLandmarksInRegion.Add(currRegion.mainLandmark);
-//                for (int j = 0; j < allLandmarksInRegion.Count; j++) {
-//                    BaseLandmark currLandmark = allLandmarksInRegion[j];
-//                    int weight = 0;
-//                    if (currLandmark.civilians > 0) {
-//                        weight += 5 * currLandmark.civilians; //+5 Weight per Civilian in that landmark
-//                        weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
-//                        if (weight > 0) {
-//                            actionWeights.AddElement(new HuntPrey(this, currLandmark), weight);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        private void AddHibernateWeights(WeightedDictionary<CharacterTask> actionWeights) {
-//            if (lair != null) {
-//                actionWeights.AddElement(new Hibernate(this), 5); //Hibernate - 5, 0 if the monster does not have a Lair
-//            }
-//        }
-//        private void AddPillageWeights(WeightedDictionary<CharacterTask> actionWeights) {
-//            Region mainRegion = currLocation.region;
-//            List<Region> elligibleRegions = new List<Region>(mainRegion.adjacentRegionsViaMajorRoad);
-//            elligibleRegions.Add(mainRegion);
-//            for (int i = 0; i < elligibleRegions.Count; i++) {
-//                Region currRegion = elligibleRegions[i];
-//                List<BaseLandmark> allLandmarksInRegion = new List<BaseLandmark>(currRegion.landmarks);
-//                allLandmarksInRegion.Add(currRegion.mainLandmark);
-//                for (int j = 0; j < allLandmarksInRegion.Count; j++) {
-//                    BaseLandmark currLandmark = allLandmarksInRegion[j];
-//                    int weight = 0;
-//                    //int totalMaterials = currLandmark.materialsInventory.Sum(x => x.Value.count);
-//                    //weight += totalMaterials / 20; //+1 Weight per 20 resource in the landmark (regardless of value).
-//                    weight -= 40 * currLandmark.charactersAtLocation.Count;//-40 Weight per character in that landmark.
-//                    if (weight > 0) {
-//                        actionWeights.AddElement(new Pillage(this, currLandmark), weight);
-//                    }
-//                }
-//
-//            }
-//        }
+		public void AssignInitialTags(){
+			int tagChance = UnityEngine.Random.Range (0, 100);
+			CHARACTER_TAG[] initialTags = (CHARACTER_TAG[])System.Enum.GetValues (typeof(CHARACTER_TAG));
+			for (int j = 0; j < initialTags.Length; j++) {
+				CHARACTER_TAG tag = initialTags [j];
+				if(tagChance < Utilities.GetTagWorldGenChance(tag)){
+					AssignTag (tag);
+				}
+			}
+		}
         #endregion
 
         #region HP

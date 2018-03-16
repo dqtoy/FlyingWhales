@@ -16,10 +16,13 @@ public class DoNothing : CharacterTask {
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
         if (_targetLocation == null) {
-            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-            _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+            _targetLocation = GetLandmarkTarget(character);
         }
-        character.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
+		if (_targetLocation != null) {
+			character.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
     }
     public override void PerformTask() {
 		if(!CanPerformTask()){
@@ -38,8 +41,8 @@ public class DoNothing : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 200;
     }
-    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) {
-        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+    protected override BaseLandmark GetLandmarkTarget(ECS.Character character) {
+        base.GetLandmarkTarget(character);
         Region regionOfCharacter = character.specificLocation.tileLocation.region;
         Faction factionOfCharacter = character.faction;
         for (int i = 0; i < regionOfCharacter.allLandmarks.Count; i++) {
@@ -79,10 +82,14 @@ public class DoNothing : CharacterTask {
                 weight -= 50; //Each landmark in the current region with hostile characters: -50
             }
             if (weight > 0) {
-                landmarkWeights.AddElement(currLandmark, weight);
+                _landmarkWeights.AddElement(currLandmark, weight);
             }
         }
-        return landmarkWeights;
+
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
     }
     #endregion
 }

@@ -23,13 +23,15 @@ public class ExploreTile : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-			_targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+            _targetLocation = GetLandmarkTarget(character);
 		}
 
-		_landmarkToExplore = (BaseLandmark)_targetLocation;
-		
-		_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
+		if (_targetLocation != null) {
+			_landmarkToExplore = (BaseLandmark)_targetLocation;
+			_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
 	}
 	public override void PerformTask (){
 		if(!CanPerformTask()){
@@ -76,8 +78,8 @@ public class ExploreTile : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 40; //If there are Dungeon Landmarks in current or adjacent regions: 40. Check AreConditionsMet() for requirements.
     }
-    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
-        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+    protected override BaseLandmark GetLandmarkTarget(Character character) {
+        base.GetLandmarkTarget(character);
         List<Region> regionsToCheck = new List<Region>();
         Region characterRegion = character.specificLocation.tileLocation.region;
         regionsToCheck.Add(characterRegion);
@@ -95,12 +97,15 @@ public class ExploreTile : CharacterTask {
                         weight += 300; //If Dungeon Landmark has relevance with character's current quest: +300
                     }
                     if (weight > 0) {
-                        landmarkWeights.AddElement(currLandmark, weight);
+                        _landmarkWeights.AddElement(currLandmark, weight);
                     }
                 }
             }
         }
-        return landmarkWeights;
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
     }
     #endregion
 
@@ -134,30 +139,6 @@ public class ExploreTile : CharacterTask {
 	private void End(){
 		EndTask (TASK_STATUS.SUCCESS);
 	}
-
-//	private BaseLandmark GetTargetLandmark(){
-//		//TODO: Add weights for all landmark the can give the character an item that his current quest needs
-//		_landmarkWeights.Clear ();
-//		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-//			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-//			if (CanBeDone (_assignedCharacter, landmark)){
-//				_landmarkWeights.AddElement (landmark, 100);
-//			}
-////			if(landmark is DungeonLandmark){
-////				if(_assignedCharacter.exploredLandmarks.ContainsKey(landmark.id)){
-////					if(landmark.itemsInLandmark.Count > 0){
-////						_landmarkWeights.AddElement (landmark, 100);
-////					}
-////				}else{
-////					_landmarkWeights.AddElement (landmark, 100);
-////				}
-////			}
-//		}
-//		if(_landmarkWeights.GetTotalOfWeights() > 0){
-//			return _landmarkWeights.PickRandomElementGivenWeights ();
-//		}
-//		return null;
-//	}
 
     #region Logs
     private void LogGoToLocation() {

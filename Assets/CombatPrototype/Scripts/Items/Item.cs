@@ -98,6 +98,8 @@ namespace ECS{
             item.durability = durability;
             item.currDurability = currDurability;
 			item.cost = cost;
+			item.exploreWeight = exploreWeight;
+			item.collectChance = collectChance;
 			item.isUnlimited = isUnlimited;
             item.statusEffectResistances = new List<StatusEffectRate>(statusEffectResistances);
         }

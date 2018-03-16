@@ -21,19 +21,23 @@ public class CommandInfection : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark ();
+			_targetLocation = GetLandmarkTarget (character);
 		}
-		for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
-			if(character.specificLocation.charactersAtLocation[i] is ECS.Character){
-				ECS.Character currCharacter = (ECS.Character) character.specificLocation.charactersAtLocation[i];
-				if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
-					_chosenSlyx = currCharacter;
-					break;
+		if(_targetLocation != null){
+			for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+				if(character.specificLocation.charactersAtLocation[i] is ECS.Character){
+					ECS.Character currCharacter = (ECS.Character) character.specificLocation.charactersAtLocation[i];
+					if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
+						_chosenSlyx = currCharacter;
+						break;
+					}
 				}
 			}
+			_targetLandmark = (BaseLandmark)_targetLocation;
+			craterBeast = (CraterBeast)_assignedCharacter.role;
+		}else{
+			EndTask(TASK_STATUS.FAIL);
 		}
-		_targetLandmark = (BaseLandmark)_targetLocation;
-		craterBeast = (CraterBeast)_assignedCharacter.role;
 	}
 	public override void PerformTask() {
 		if(!CanPerformTask()){
@@ -78,6 +82,44 @@ public class CommandInfection : CharacterTask {
 	}
 	public override int GetSelectionWeight (Character character){
 		return 100;
+	}
+	protected override BaseLandmark GetLandmarkTarget (Character character){
+		base.GetLandmarkTarget (character);
+		_regionWeights.Clear ();
+		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+			Region region = GridMap.Instance.allRegions [i];
+			if(region.id != character.specificLocation.tileLocation.region.id){
+				int numOfCharacters = region.numOfCharactersInLandmarks;
+				if(numOfCharacters > 0){
+					_regionWeights.AddElement (region, (numOfCharacters * 5));
+				}
+			}
+		}
+		if(_regionWeights.Count > 0){
+			Region pickedRegion = _regionWeights.PickRandomElementGivenWeights ();
+			for (int i = 0; i < pickedRegion.allLandmarks.Count; i++) {
+				BaseLandmark landmark = pickedRegion.allLandmarks [i];
+				if(landmark.charactersAtLocation.Count > 0){
+					int landmarkWeight = 0;
+					for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
+						if(landmark.charactersAtLocation[j] is Party){
+							Party party = (Party)landmark.charactersAtLocation [j];
+							for (int k = 0; k < party.partyMembers.Count; k++) {
+								landmarkWeight += CharacterWeight (party.partyMembers [k]);
+							}
+						}else if(landmark.charactersAtLocation[j] is Character){
+							Character currCharacter = (Character)landmark.charactersAtLocation [j];
+							landmarkWeight += CharacterWeight (currCharacter);
+						}
+					}
+					_landmarkWeights.AddElement (landmark, landmarkWeight);
+				}
+			}
+			if(_landmarkWeights.Count > 0){
+				return _landmarkWeights.PickRandomElementGivenWeights ();
+			}
+		}
+		return null;
 	}
 	#endregion
 
@@ -129,42 +171,6 @@ public class CommandInfection : CharacterTask {
 				}
 			}
 		}
-	}
-	private BaseLandmark GetTargetLandmark(){
-		_landmarkWeights.Clear ();
-		_regionWeights.Clear ();
-		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-			Region region = GridMap.Instance.allRegions [i];
-			int numOfCharacters = region.numOfCharactersInLandmarks;
-			if(numOfCharacters > 0){
-				_regionWeights.AddElement (region, (numOfCharacters * 5));
-			}
-		}
-		if(_regionWeights.Count > 0){
-			Region pickedRegion = _regionWeights.PickRandomElementGivenWeights ();
-			for (int i = 0; i < pickedRegion.allLandmarks.Count; i++) {
-				BaseLandmark landmark = pickedRegion.allLandmarks [i];
-				if(landmark.charactersAtLocation.Count > 0){
-					int landmarkWeight = 0;
-					for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
-						if(landmark.charactersAtLocation[j] is Party){
-							Party party = (Party)landmark.charactersAtLocation [j];
-							for (int k = 0; k < party.partyMembers.Count; k++) {
-								landmarkWeight += CharacterWeight (party.partyMembers [k]);
-							}
-						}else if(landmark.charactersAtLocation[j] is Character){
-							Character character = (Character)landmark.charactersAtLocation [j];
-							landmarkWeight += CharacterWeight (character);
-						}
-					}
-					_landmarkWeights.AddElement (landmark, landmarkWeight);
-				}
-			}
-			if(_landmarkWeights.Count > 0){
-				return _landmarkWeights.PickRandomElementGivenWeights ();
-			}
-		}
-		return null;
 	}
 
 	private int CharacterWeight(Character character){

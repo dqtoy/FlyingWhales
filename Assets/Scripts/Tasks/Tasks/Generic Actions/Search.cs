@@ -56,14 +56,12 @@ public class Search : CharacterTask {
 			return;
 		}
         if (_targetLocation == null) {
-            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-            if (landmarkWeights.GetTotalOfWeights() > 0) {
-                _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
-            } else {
-                EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
-                return;
-            }
+            _targetLocation = GetLandmarkTarget(character);
         }
+		if (_targetLocation == null) {
+			EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
+			return;
+		}
 		_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => StartSearch());
     }
     public override bool AreConditionsMet(Character character) {
@@ -94,12 +92,12 @@ public class Search : CharacterTask {
         if (_parentQuest is FindLostHeir) {
             return 80;
 		}else if (_parentQuest is TheDarkRitual) {
-			return 80;
+			return 150;
 		}
         return 0;
     }
-	protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark>();
+	protected override BaseLandmark GetLandmarkTarget(ECS.Character character) {
+		base.GetLandmarkTarget(character);
 		Region regionLocation = character.specificLocation.tileLocation.region;
 		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
 			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
@@ -110,10 +108,13 @@ public class Search : CharacterTask {
 			}
 			//If this character has already Searched in the landmark within the past 6 months: -60
 			if (weight > 0) {
-				landmarkWeights.AddElement(currLandmark, weight);
+				_landmarkWeights.AddElement(currLandmark, weight);
 			}
 		}
-		return landmarkWeights;
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
     #endregion
 

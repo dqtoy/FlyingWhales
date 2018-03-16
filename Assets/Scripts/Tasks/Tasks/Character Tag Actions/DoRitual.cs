@@ -17,11 +17,14 @@ public class DoRitual : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark ();
+			_targetLocation = GetLandmarkTarget (character);
 		}
-		_ritualStones = (BaseLandmark)_targetLocation;
-
-		_assignedCharacter.GoToLocation (_ritualStones, PATHFINDING_MODE.USE_ROADS, () => StartRitual ());
+		if(_targetLocation != null){
+			_ritualStones = (BaseLandmark)_targetLocation;
+			_assignedCharacter.GoToLocation (_ritualStones, PATHFINDING_MODE.USE_ROADS, () => StartRitual ());
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
 	}
 
 	public override void PerformTask() {
@@ -46,6 +49,19 @@ public class DoRitual : CharacterTask {
 			}
 		}
 		return base.AreConditionsMet (character);
+	}
+	protected override BaseLandmark GetLandmarkTarget (Character character){
+		base.GetLandmarkTarget (character);
+		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+			if(CanBeDone(character, landmark)){
+				_landmarkWeights.AddElement (landmark, 5);
+			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
 	#endregion
 
@@ -123,19 +139,5 @@ public class DoRitual : CharacterTask {
 		DoMeteorStrike ();
 
 		EndTask(TASK_STATUS.SUCCESS);
-	}
-
-	private BaseLandmark GetTargetLandmark() {
-		_landmarkWeights.Clear ();
-		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(_assignedCharacter, landmark)){
-				_landmarkWeights.AddElement (landmark, 5);
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
 	}
 }

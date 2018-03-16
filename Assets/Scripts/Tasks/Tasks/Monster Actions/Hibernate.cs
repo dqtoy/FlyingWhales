@@ -26,10 +26,12 @@ public class Hibernate : CharacterTask {
         }
 
 		if(_targetLocation == null){
-			_targetLocation = GetTargetLandmark ();
+			_targetLocation = GetLandmarkTarget (character);
 		}
 		if(_targetLocation != null){
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHibernation());
+		}else{
+			EndTask (TASK_STATUS.FAIL);
 		}
     }
     public override void PerformTask() {
@@ -81,6 +83,18 @@ public class Hibernate : CharacterTask {
     //    SetCanDoDailyAction(false);
     //    base.EndTask(taskResult);
     //}
+
+	protected override BaseLandmark GetLandmarkTarget (Character character){
+//		base.GetLandmarkTarget (character);
+		BaseLandmark home = character.home;
+		if(home == null){
+			home = character.lair;
+		}
+		if(home != null){
+			return home;
+		}
+		return null;
+	}
     #endregion
 	private void StartHibernation(){
 		if(_assignedCharacter.isInCombat){
@@ -103,17 +117,6 @@ public class Hibernate : CharacterTask {
 		}
 		ReduceDaysLeft(1);
     }
-
-	private BaseLandmark GetTargetLandmark() {
-		BaseLandmark home = _assignedCharacter.home;
-		if(home == null){
-			home = _assignedCharacter.lair;
-		}
-		if(home != null){
-			return home;
-		}
-		return null;
-	}
     //private void GoToTargetLocation() {
     //    // The monster will move towards its Lair and then rest there indefinitely
     //    GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
