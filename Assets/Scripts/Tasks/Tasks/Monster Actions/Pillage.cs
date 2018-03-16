@@ -23,7 +23,7 @@ public class Pillage : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget (character);
 		}
-		if(_targetLocation != null){
+		if(_targetLocation != null && _targetLocation is BaseLandmark){
 			_target = (BaseLandmark)_targetLocation;
 			pillagerName = _assignedCharacter.name;
 			if(_assignedCharacter.party != null){

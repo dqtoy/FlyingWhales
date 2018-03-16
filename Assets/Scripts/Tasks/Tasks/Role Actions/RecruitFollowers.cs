@@ -26,7 +26,7 @@ public class RecruitFollowers : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget(character);
 		}
-		if(_targetLocation != null){
+		if(_targetLocation != null && _targetLocation is BaseLandmark){
 			_targetLandmark = (BaseLandmark)_targetLocation;
 		}else{
 			EndTask (TASK_STATUS.FAIL);

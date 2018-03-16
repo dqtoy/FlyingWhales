@@ -160,22 +160,23 @@ public class Search : CharacterTask {
 
 	#region Search for Landmark Items
 	private void SearchForItemInLandmark() {
-		BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-
-		for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
-			ECS.Item item = _targetLandmark.itemsInLandmark[i];
-			if (item.itemName == (string)_searchingFor) {
-				int chance = UnityEngine.Random.Range (0, 100);
-				if(chance < item.collectChance){
-					_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
-					_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
-					_assignedCharacter.PickupItem (item);
-					_targetLandmark.RemoveItemInLandmark (item);
-					if(_afterFindingAction != null){
-						_afterFindingAction ();
+		if (_targetLocation is BaseLandmark) {
+			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
+			for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
+				ECS.Item item = _targetLandmark.itemsInLandmark [i];
+				if (item.itemName == (string)_searchingFor) {
+					int chance = UnityEngine.Random.Range (0, 100);
+					if (chance < item.collectChance) {
+						_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
+						_targetLandmark.AddHistory (_assignedCharacter.name + " found a " + (string)_searchingFor + "!");
+						_assignedCharacter.PickupItem (item);
+						_targetLandmark.RemoveItemInLandmark (item);
+						if (_afterFindingAction != null) {
+							_afterFindingAction ();
+						}
+						EndTask (TASK_STATUS.SUCCESS);
+						break;
 					}
-					EndTask(TASK_STATUS.SUCCESS);
-					break;
 				}
 			}
 		}
@@ -203,16 +204,17 @@ public class Search : CharacterTask {
 
 	#region Search for a Tag
 	private void SearchForATag(string tag){
-		BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-
-		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
-			if (currCharacter.HasTag(tag, true)) {
-				if(_afterFindingAction != null){
-					_afterFindingAction ();
+		if (_targetLocation is BaseLandmark) {
+			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
+			for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
+				ECS.Character currCharacter = _targetLandmark.charactersAtLocation [i].mainCharacter;
+				if (currCharacter.HasTag (tag, true)) {
+					if (_afterFindingAction != null) {
+						_afterFindingAction ();
+					}
+					EndTask (TASK_STATUS.SUCCESS);
+					break;
 				}
-				EndTask(TASK_STATUS.SUCCESS);
-				break;
 			}
 		}
 	}

@@ -23,7 +23,7 @@ public class CommandInfection : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget (character);
 		}
-		if(_targetLocation != null){
+		if(_targetLocation != null && _targetLocation is BaseLandmark){
 			for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
 				if(character.specificLocation.charactersAtLocation[i] is ECS.Character){
 					ECS.Character currCharacter = (ECS.Character) character.specificLocation.charactersAtLocation[i];

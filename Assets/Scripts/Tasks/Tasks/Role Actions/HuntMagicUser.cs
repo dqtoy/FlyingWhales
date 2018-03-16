@@ -44,13 +44,19 @@ public class HuntMagicUser : CharacterTask {
         if (_specificTarget == null) {
             _specificTarget = GetTargetCharacter(character);
         }
-        _targetCharacter = (ECS.Character)_specificTarget;
-        if (_targetLocation == null) {
-            _targetLocation = _targetCharacter.specificLocation;
-        }
-        if (_targetCharacter != null) {
-            _assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
-        }
+		if(_specificTarget != null && _specificTarget is ECS.Character){
+			_targetCharacter = (ECS.Character)_specificTarget;
+			if (_targetLocation == null) {
+				_targetLocation = _targetCharacter.specificLocation;
+			}
+			if (_targetLocation != null) {
+				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
+			}else{
+				EndTask (TASK_STATUS.FAIL);
+			}
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
     }
     public override void PerformTask() {
 		if(!CanPerformTask()){

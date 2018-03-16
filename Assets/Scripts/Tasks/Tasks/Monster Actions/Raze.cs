@@ -33,7 +33,7 @@ public class Raze : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget(character);
 		}
-		if (_targetLocation != null) {
+		if (_targetLocation != null && _targetLocation is BaseLandmark) {
 			_target = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartRaze());
 		}else{

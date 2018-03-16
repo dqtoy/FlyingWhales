@@ -493,24 +493,26 @@ public class FactionManager : MonoBehaviour {
 
         //Character Death
         if(incidentType == INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH) {
-            CHARACTER_ROLE diedRole = ((ECS.Character)data).role.roleType;
-            switch (diedRole) {
-                case CHARACTER_ROLE.CHIEFTAIN:
-                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 150); //- Chieftain: Add 150 Weight to Declare War
-                    break;
-                case CHARACTER_ROLE.WARLORD:
-                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 20); //-Warlord: Add 20 Weight to Declare War
-                    break;
-                case CHARACTER_ROLE.HERO:
-                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 20); //-Hero: Add 20 Weight to Declare War
-                    break;
-                case CHARACTER_ROLE.VILLAGE_HEAD:
-                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 50); //-Village Head: Add 50 Weight to Declare War
-                    break;
-                default:
-                    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 10); //-Others: Add 10 Weight to Declare War
-                    break;
-            }
+			if(data is ECS.Character){
+				CHARACTER_ROLE diedRole = ((ECS.Character)data).role.roleType;
+				switch (diedRole) {
+				case CHARACTER_ROLE.CHIEFTAIN:
+					actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 150); //- Chieftain: Add 150 Weight to Declare War
+					break;
+				case CHARACTER_ROLE.WARLORD:
+					actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 20); //-Warlord: Add 20 Weight to Declare War
+					break;
+				case CHARACTER_ROLE.HERO:
+					actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 20); //-Hero: Add 20 Weight to Declare War
+					break;
+				case CHARACTER_ROLE.VILLAGE_HEAD:
+					actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 50); //-Village Head: Add 50 Weight to Declare War
+					break;
+				default:
+					actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 10); //-Others: Add 10 Weight to Declare War
+					break;
+				}
+			}
         }
         //Negative OldQuest.Quest
         else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
@@ -567,22 +569,26 @@ public class FactionManager : MonoBehaviour {
         rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HOSTILE); //Set relationship with each other as hostile
         rel.SetWarStatus(true);
         if (reason == INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH) {
-            Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_character_death");
-            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
-            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
-            ECS.Character character = (ECS.Character)data;
-            declareWarLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            declareWarLog.AddToFillers(character.currLocation.region.centerOfMass.landmarkOnTile, character.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
-            UIManager.Instance.ShowNotification(declareWarLog);
+			if(data is ECS.Character){
+				Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_character_death");
+				declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
+				declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
+				ECS.Character character = (ECS.Character)data;
+				declareWarLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				declareWarLog.AddToFillers(character.currLocation.region.centerOfMass.landmarkOnTile, character.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
+				UIManager.Instance.ShowNotification(declareWarLog);
+			}
         } else {
-            Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_quest");
-            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
-            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
-            OldQuest.Quest quest = (OldQuest.Quest)data;
-            declareWarLog.AddToFillers(quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            declareWarLog.AddToFillers(quest, quest.questName, LOG_IDENTIFIER.OTHER);
-            declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
-            UIManager.Instance.ShowNotification(declareWarLog);
+			if (data is OldQuest.Quest) {
+				Log declareWarLog = new Log (GameManager.Instance.Today (), "General", "Faction", "declare_war_quest");
+				declareWarLog.AddToFillers (faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
+				declareWarLog.AddToFillers (faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
+				OldQuest.Quest quest = (OldQuest.Quest)data;
+				declareWarLog.AddToFillers (quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				declareWarLog.AddToFillers (quest, quest.questName, LOG_IDENTIFIER.OTHER);
+				declareWarLog.AddToFillers (quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
+				UIManager.Instance.ShowNotification (declareWarLog);
+			}
         }
         
 
