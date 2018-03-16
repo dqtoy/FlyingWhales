@@ -1035,12 +1035,39 @@ public class BaseLandmark : ILocation, TaskCreator {
         for (int i = 0; i < data.itemData.Length; i++) {
             LandmarkItemData currItemData = data.itemData[i];
             ECS.Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
+            if (ItemManager.Instance.IsLootChest(createdItem)) {
+                //chosen item is a loot crate, generate a random item
+                string[] words = createdItem.itemName.Split(' ');
+                int tier = System.Int32.Parse(words[1]);
+                if (createdItem.itemName.Contains("Armor")) {
+                    createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
+                } else if (createdItem.itemName.Contains("Weapon")) {
+                    createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
+                }
+            }
+            QUALITY equipmentQuality = GetEquipmentQuality();
+            if (createdItem.itemType == ITEM_TYPE.ARMOR) {
+                ((ECS.Armor)createdItem).SetQuality(equipmentQuality);
+            } else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
+                ((ECS.Weapon)createdItem).SetQuality(equipmentQuality);
+            }
             createdItem.SetExploreWeight(currItemData.exploreWeight);
             createdItem.SetIsUnlimited(currItemData.isUnlimited);
             AddItemInLandmark(createdItem);
         }
     }
-	public void AddItemInLandmark(ECS.Item item){
+    private QUALITY GetEquipmentQuality() {
+        int crudeChance = 30;
+        int exceptionalChance = crudeChance + 20;
+        int chance = UnityEngine.Random.Range(0, 100);
+        if (chance < crudeChance) {
+            return QUALITY.CRUDE;
+        } else if (chance >= crudeChance && chance < exceptionalChance) {
+            return QUALITY.EXCEPTIONAL;
+        }
+        return QUALITY.NORMAL;
+    }
+    public void AddItemInLandmark(ECS.Item item){
 		_itemsInLandmark.Add (item);
 	}
 	public void AddItemsInLandmark(List<ECS.Item> item){
