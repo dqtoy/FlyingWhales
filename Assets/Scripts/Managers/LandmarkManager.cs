@@ -248,44 +248,32 @@ public class LandmarkManager : MonoBehaviour {
      Get the character role weights for a faction.
      This will not include roles that the faction has already reached the cap of.
          */
-    public WeightedDictionary<CHARACTER_ROLE> GetCharacterRoleProductionDictionary(Faction faction, Settlement settlement) {
+    public WeightedDictionary<CHARACTER_ROLE> GetCharacterRoleProductionDictionary() {
         WeightedDictionary<CHARACTER_ROLE> characterWeights = new WeightedDictionary<CHARACTER_ROLE>();
         for (int i = 0; i < characterProductionWeights.Count; i++) {
             CharacterProductionWeight currWeight = characterProductionWeights[i];
-			if(settlement.CanProduceRole(currWeight.role)){
-				bool shouldIncludeWeight = true;
-				for (int j = 0; j < currWeight.productionCaps.Count; j++) {
-					CharacterProductionCap currCap = currWeight.productionCaps[j];
-					if(currCap.IsCapReached(currWeight.role, faction, settlement)) {
-						shouldIncludeWeight = false; //The current faction has already reached the cap for the current role, do not add to weights.
-						break;
-					}
-				}
-				if (shouldIncludeWeight) {
-					characterWeights.AddElement(currWeight.role, currWeight.weight);
-				}
-			}
+			characterWeights.AddElement(currWeight.role, currWeight.weight);
         }
         return characterWeights;
     }
-	public WeightedDictionary<CHARACTER_ROLE> GetCharacterRoleProductionDictionaryNoRestrictions(Faction faction, Settlement settlement) {
-		WeightedDictionary<CHARACTER_ROLE> characterWeights = new WeightedDictionary<CHARACTER_ROLE>();
-		for (int i = 0; i < characterProductionWeights.Count; i++) {
-			CharacterProductionWeight currWeight = characterProductionWeights[i];
-			bool shouldIncludeWeight = true;
-			for (int j = 0; j < currWeight.productionCaps.Count; j++) {
-				CharacterProductionCap currCap = currWeight.productionCaps[j];
-				if(currCap.IsCapReached(currWeight.role, faction, settlement)) {
-					shouldIncludeWeight = false; //The current faction has already reached the cap for the current role, do not add to weights.
-					break;
-				}
-			}
-			if (shouldIncludeWeight) {
-				characterWeights.AddElement(currWeight.role, currWeight.weight);
-			}
-		}
-		return characterWeights;
-	}
+	//public WeightedDictionary<CHARACTER_ROLE> GetCharacterRoleProductionDictionaryNoRestrictions(Faction faction, Settlement settlement) {
+	//	WeightedDictionary<CHARACTER_ROLE> characterWeights = new WeightedDictionary<CHARACTER_ROLE>();
+	//	for (int i = 0; i < characterProductionWeights.Count; i++) {
+	//		CharacterProductionWeight currWeight = characterProductionWeights[i];
+	//		//bool shouldIncludeWeight = true;
+	//		//for (int j = 0; j < currWeight.productionCaps.Count; j++) {
+	//		//	CharacterProductionCap currCap = currWeight.productionCaps[j];
+	//		//	if(currCap.IsCapReached(currWeight.role, faction, settlement)) {
+	//		//		shouldIncludeWeight = false; //The current faction has already reached the cap for the current role, do not add to weights.
+	//		//		break;
+	//		//	}
+	//		//}
+	//		//if (shouldIncludeWeight) {
+	//			characterWeights.AddElement(currWeight.role, currWeight.weight);
+	//		//}
+	//	}
+	//	return characterWeights;
+	//}
     /*
      Get the character class weights for a settlement.
      This will eliminate any character classes that the settlement cannot

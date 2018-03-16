@@ -118,130 +118,130 @@ public class Settlement : BaseLandmark {
         CharacterManager.Instance.EquipCharacterWithBestGear(this, newFollower);
         return newFollower;
     }
-    protected void TrainCharacterInSettlement(){
-		bool canTrainCharacter = false;
-		MATERIAL materialToUse = MATERIAL.NONE;
-		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
-			//Check first if the settlement has enough civilians to create a new character
-			//and that it has not exceeded the max number of characters that consider this settlement as home
-			WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
-			if (characterRoleProductionDictionary.Count > 0 && characterRoleProductionDictionary.GetTotalOfWeights() > 0) {
-				roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-				if(roleToCreate != CHARACTER_ROLE.NONE){
-					if (Utilities.IsRoleClassless (roleToCreate)) {
-						classToCreate = CHARACTER_CLASS.NONE;
-						if(CanProduceClass(classToCreate, ref materialToUse)){
-							canTrainCharacter = true;
-						}
-					} else {
-						WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary (this, ref materialToUse);
-						if (characterClassProductionDictionary.Count > 0 && characterClassProductionDictionary.GetTotalOfWeights () > 0) {
-							classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights ();
-							canTrainCharacter = true;
-						}else{
-							classToCreate = CHARACTER_CLASS.NONE;
-						}
-					}
-				}
-			} else {
-				roleToCreate = CHARACTER_ROLE.NONE;
-				classToCreate = CHARACTER_CLASS.NONE;
-			}
-		} else {
-			roleToCreate = CHARACTER_ROLE.NONE;
-			classToCreate = CHARACTER_CLASS.NONE;
-		}
-		if (canTrainCharacter && materialToUse != MATERIAL.NONE) {
-//			if(TrainNewCharacter (roleToCreate, classToCreate, materialToUse)){
-//				return;
+//    protected void TrainCharacterInSettlement(){
+//		bool canTrainCharacter = false;
+//		MATERIAL materialToUse = MATERIAL.NONE;
+//		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
+//			//Check first if the settlement has enough civilians to create a new character
+//			//and that it has not exceeded the max number of characters that consider this settlement as home
+//			WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
+//			if (characterRoleProductionDictionary.Count > 0 && characterRoleProductionDictionary.GetTotalOfWeights() > 0) {
+//				roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+//				if(roleToCreate != CHARACTER_ROLE.NONE){
+//					if (Utilities.IsRoleClassless (roleToCreate)) {
+//						classToCreate = CHARACTER_CLASS.NONE;
+//						if(CanProduceClass(classToCreate, ref materialToUse)){
+//							canTrainCharacter = true;
+//						}
+//					} else {
+//						WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary (this, ref materialToUse);
+//						if (characterClassProductionDictionary.Count > 0 && characterClassProductionDictionary.GetTotalOfWeights () > 0) {
+//							classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights ();
+//							canTrainCharacter = true;
+//						}else{
+//							classToCreate = CHARACTER_CLASS.NONE;
+//						}
+//					}
+//				}
+//			} else {
+//				roleToCreate = CHARACTER_ROLE.NONE;
+//				classToCreate = CHARACTER_CLASS.NONE;
 //			}
-			TrainNewCharacter (roleToCreate, classToCreate, materialToUse);
-			return;
-		}
-		ScheduleTrainCharacter ();
-	}
-	private void ScheduleTrainCharacter(){
-		GameDate dueDate = new GameDate(GameManager.Instance.month, 2, GameManager.Instance.year);
-		dueDate.AddMonths (1);
-		SchedulingManager.Instance.AddEntry(dueDate, () => TrainCharacterInSettlement());
-	}
-    /*
-     At the start of the month, the settlement will
-     decide what character class and role to create.
-         */
-    protected void DecideCharacterToCreate() {
-		if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
-            //Check first if the settlement has enough civilians to create a new character
-            //and that it has not exceeded the max number of characters that consider this settlement as home
-			MATERIAL material = MATERIAL.NONE;
-            WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
-			WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
-            if (characterRoleProductionDictionary.GetTotalOfWeights() > 0 && characterClassProductionDictionary.GetTotalOfWeights() > 0) {
-                roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-				if(Utilities.IsRoleClassless(roleToCreate)){
-					classToCreate = CHARACTER_CLASS.NONE;
-				}else{
-					classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights();
-				}
-            } else {
-                roleToCreate = CHARACTER_ROLE.NONE;
-                classToCreate = CHARACTER_CLASS.NONE;
-            }
-        } else {
-            roleToCreate = CHARACTER_ROLE.NONE;
-            classToCreate = CHARACTER_CLASS.NONE;
-        }
+//		} else {
+//			roleToCreate = CHARACTER_ROLE.NONE;
+//			classToCreate = CHARACTER_CLASS.NONE;
+//		}
+//		if (canTrainCharacter && materialToUse != MATERIAL.NONE) {
+////			if(TrainNewCharacter (roleToCreate, classToCreate, materialToUse)){
+////				return;
+////			}
+//			TrainNewCharacter (roleToCreate, classToCreate, materialToUse);
+//			return;
+//		}
+//		ScheduleTrainCharacter ();
+//	}
+//	private void ScheduleTrainCharacter(){
+//		GameDate dueDate = new GameDate(GameManager.Instance.month, 2, GameManager.Instance.year);
+//		dueDate.AddMonths (1);
+//		SchedulingManager.Instance.AddEntry(dueDate, () => TrainCharacterInSettlement());
+//	}
+  //  /*
+  //   At the start of the month, the settlement will
+  //   decide what character class and role to create.
+  //       */
+  //  protected void DecideCharacterToCreate() {
+		//if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) {
+  //          //Check first if the settlement has enough civilians to create a new character
+  //          //and that it has not exceeded the max number of characters that consider this settlement as home
+		//	MATERIAL material = MATERIAL.NONE;
+  //          WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary(this.owner, this);
+		//	WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
+  //          if (characterRoleProductionDictionary.GetTotalOfWeights() > 0 && characterClassProductionDictionary.GetTotalOfWeights() > 0) {
+  //              roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+		//		if(Utilities.IsRoleClassless(roleToCreate)){
+		//			classToCreate = CHARACTER_CLASS.NONE;
+		//		}else{
+		//			classToCreate = characterClassProductionDictionary.PickRandomElementGivenWeights();
+		//		}
+  //          } else {
+  //              roleToCreate = CHARACTER_ROLE.NONE;
+  //              classToCreate = CHARACTER_CLASS.NONE;
+  //          }
+  //      } else {
+  //          roleToCreate = CHARACTER_ROLE.NONE;
+  //          classToCreate = CHARACTER_CLASS.NONE;
+  //      }
 
-        GameDate createCharacterDate = new GameDate(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year);
-        SchedulingManager.Instance.AddEntry(createCharacterDate.month, createCharacterDate.day, createCharacterDate.year, () => CreateScheduledCharacter());
-    }
-    /*
-     At the end of the month, the settlement will create a
-     character given the attributes it decided at the start of the month.
-         */
-    protected void CreateScheduledCharacter() {
-        if(roleToCreate != CHARACTER_ROLE.NONE) {
-            if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) { 
-                //Check first if the settlement has enough civilians to create a new character
-                //and that it has not exceeded the max number of characters that consider this settlement as home
-				CreateNewCharacter(roleToCreate, Utilities.NormalizeString(classToCreate.ToString()));
-            }
-        }
-        GameDate decideCharacterDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        decideCharacterDate.AddDays(1);
-        SchedulingManager.Instance.AddEntry(decideCharacterDate.month, decideCharacterDate.day, decideCharacterDate.year, () => DecideCharacterToCreate());
-    }
-	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType, MATERIAL materialUsed, RACE raceOfChar){
-        AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + (classType != CHARACTER_CLASS.NONE ? Utilities.NormalizeString (classType.ToString ()) : "Classless") + ".");
-		int trainingStatBonus = MaterialManager.Instance.materialsLookup [materialUsed].trainingStatBonus;
-		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(roleType, Utilities.NormalizeString(classType.ToString()), raceOfChar, trainingStatBonus);
-		newCharacter.SetFaction(_owner);
-		newCharacter.SetHome (this);
-		this.owner.AddNewCharacter(newCharacter);
-		this.AddCharacterToLocation(newCharacter, false);
-		this.AddCharacterHomeOnLandmark(newCharacter);
-		newCharacter.DetermineAction();
-		UIManager.Instance.UpdateFactionSummary();
-		TrainCharacterInSettlement ();
-		return newCharacter;
-	}
+  //      GameDate createCharacterDate = new GameDate(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year);
+  //      SchedulingManager.Instance.AddEntry(createCharacterDate.month, createCharacterDate.day, createCharacterDate.year, () => CreateScheduledCharacter());
+  //  }
+  //  /*
+  //   At the end of the month, the settlement will create a
+  //   character given the attributes it decided at the start of the month.
+  //       */
+  //  protected void CreateScheduledCharacter() {
+  //      if(roleToCreate != CHARACTER_ROLE.NONE) {
+  //          if (civilians >= 1 && _charactersWithHomeOnLandmark.Count < CHARACTER_LIMIT) { 
+  //              //Check first if the settlement has enough civilians to create a new character
+  //              //and that it has not exceeded the max number of characters that consider this settlement as home
+		//		CreateNewCharacter(roleToCreate, Utilities.NormalizeString(classToCreate.ToString()));
+  //          }
+  //      }
+  //      GameDate decideCharacterDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+  //      decideCharacterDate.AddDays(1);
+  //      SchedulingManager.Instance.AddEntry(decideCharacterDate.month, decideCharacterDate.day, decideCharacterDate.year, () => DecideCharacterToCreate());
+  //  }
+//	public ECS.Character TrainCharacter(CHARACTER_ROLE roleType, CHARACTER_CLASS classType, MATERIAL materialUsed, RACE raceOfChar){
+//        AddHistory ("Completed training for a " + Utilities.NormalizeString (roleType.ToString ()) + " " + (classType != CHARACTER_CLASS.NONE ? Utilities.NormalizeString (classType.ToString ()) : "Classless") + ".");
+//		int trainingStatBonus = MaterialManager.Instance.materialsLookup [materialUsed].trainingStatBonus;
+//		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(roleType, Utilities.NormalizeString(classType.ToString()), raceOfChar, trainingStatBonus);
+//		newCharacter.SetFaction(_owner);
+//		newCharacter.SetHome (this);
+//		this.owner.AddNewCharacter(newCharacter);
+//		this.AddCharacterToLocation(newCharacter, false);
+//		this.AddCharacterHomeOnLandmark(newCharacter);
+//		newCharacter.DetermineAction();
+//		UIManager.Instance.UpdateFactionSummary();
+//		TrainCharacterInSettlement ();
+//		return newCharacter;
+//	}
 
-	public void TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass, MATERIAL materialToUse){
-		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
-		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
-        RACE raceForChar = GetRaceBasedOnProportion();
+//	public void TrainNewCharacter(CHARACTER_ROLE charRole, CHARACTER_CLASS charClass, MATERIAL materialToUse){
+//		TrainingRole trainingRole = ProductionManager.Instance.GetTrainingRole(charRole);
+//		TrainingClass trainingClass = ProductionManager.Instance.GetTrainingClass(charClass);
+//        RACE raceForChar = GetRaceBasedOnProportion();
 
-        //ReduceTotalFoodCount (trainingRole.production.foodCost);
-        //AdjustPopulation(-trainingRole.production.civilianCost);
-        AdjustCivilians(raceForChar, -trainingRole.production.civilianCost);
-        //AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
+//        //ReduceTotalFoodCount (trainingRole.production.foodCost);
+//        //AdjustPopulation(-trainingRole.production.civilianCost);
+//        AdjustCivilians(raceForChar, -trainingRole.production.civilianCost);
+//        //AdjustMaterial (materialToUse, -trainingClass.production.resourceCost);
 
-		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
-		GameDate trainCharacterDate = GameManager.Instance.Today ();
-		trainCharacterDate.AddDays (trainingRole.production.duration + trainingClass.production.duration);
-		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, raceForChar));
-//		return false;
-	}
+//		AddHistory ("Started training a " + Utilities.NormalizeString (charRole.ToString ()) + " " + ((charClass !=	CHARACTER_CLASS.NONE) ? Utilities.NormalizeString (charClass.ToString ()) : "Classless") + ".");
+//		GameDate trainCharacterDate = GameManager.Instance.Today ();
+//		trainCharacterDate.AddDays (trainingRole.production.duration + trainingClass.production.duration);
+//		SchedulingManager.Instance.AddEntry (trainCharacterDate, () => TrainCharacter (charRole, charClass, materialToUse, raceForChar));
+////		return false;
+//	}
     /*
      Does the settlement have the required technology
      to produce a class?
@@ -749,7 +749,7 @@ public class Settlement : BaseLandmark {
 		_numOfPsytoxinated += amount;
 		if(_numOfPsytoxinated <= 0){
 			_numOfPsytoxinated = 0;
-			DestroyLandmark ();
+			DestroyLandmark (false);
 		}
 	}
 	private void DestroyCrater(){

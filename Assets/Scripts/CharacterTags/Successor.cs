@@ -12,12 +12,14 @@ public class Successor : CharacterTag {
     #region overrides
     public override void OnRemoveTag() {
         base.OnRemoveTag();
+        (_characterToSucceed.faction as Tribe).SetSuccessor(null);
         _characterToSucceed.RemoveActionOnDeath(TriggerSuccession);
     }
     #endregion
 
     public void SetCharacterToSucceed(ECS.Character characterToSucceed) {
         _characterToSucceed = characterToSucceed;
+        (_character.faction as Tribe).SetSuccessor(_character);
         _characterToSucceed.AddActionOnDeath(TriggerSuccession);
     }
     /*

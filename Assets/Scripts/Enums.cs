@@ -975,6 +975,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	COMMAND_INFECTION,
 	DO_RITUAL,
 	COLLECT,
+    PROCLAIM_SUCCESSOR
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

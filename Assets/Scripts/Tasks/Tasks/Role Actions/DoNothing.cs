@@ -36,7 +36,7 @@ public class DoNothing : CharacterTask {
 		return true;
 	}
     public override int GetSelectionWeight(Character character) {
-        return 400;
+        return 200;
     }
     protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) {
         WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);

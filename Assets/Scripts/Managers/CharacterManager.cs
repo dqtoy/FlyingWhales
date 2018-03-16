@@ -171,7 +171,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, int statAllocationBonus = 0) {
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, int statAllocationBonus = 0, Faction faction = null) {
 		if(className == "None"){
 			className = "Classless";
 		}
@@ -181,6 +181,9 @@ public class CharacterManager : MonoBehaviour {
             return null;
         }
 		ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
+        if (faction != null) {
+            newCharacter.SetFaction(faction);
+        }
         if(charRole != CHARACTER_ROLE.NONE) {
             newCharacter.AssignRole(charRole);
         }

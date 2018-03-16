@@ -72,7 +72,7 @@ public class Slyx : CharacterRole {
 	}
 	private void InfectPsytoxin(ECS.Character character){
 		ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)character.GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
-		if(modPsytoxin = null){
+		if(modPsytoxin == null){
 			modPsytoxin.TriggerWorsenCase ();
 		}else{
 			MildPsytoxin mildPsytoxin = (MildPsytoxin)character.GetTag (CHARACTER_TAG.MILD_PSYTOXIN);

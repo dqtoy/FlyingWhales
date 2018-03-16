@@ -163,7 +163,7 @@ public class CharacterAvatar : PooledObject{
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
-                    RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
+                    //RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
                     this.MakeCitizenMove(this.currLocation.tileLocation, this.path[0]);
                 }
             }
@@ -180,8 +180,8 @@ public class CharacterAvatar : PooledObject{
     internal virtual void OnMoveFinished() {
 		_isMovingToHex = false;
         if (this.path.Count > 0) {
-			//RemoveCharactersFromLocation(this.currLocation);
-			AddCharactersToLocation(this.path[0]);
+            RemoveCharactersFromLocation(this.currLocation);
+            AddCharactersToLocation(this.path[0]);
 
             _currLocation = this.path[0];
             this.path.RemoveAt(0);

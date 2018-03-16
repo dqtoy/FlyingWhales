@@ -43,6 +43,7 @@ public class QuestData {
     }
     public void AdvanceToNextPhase() {
         SetQuestPhase(_currentPhase + 1);
+        UIManager.Instance.UpdateQuestsSummary();
     }
     public QuestPhase GetQuestPhase() {
         return _activeQuest.phases[_currentPhase];
