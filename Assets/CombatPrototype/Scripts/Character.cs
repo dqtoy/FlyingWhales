@@ -156,7 +156,7 @@ namespace ECS {
         public ILocation specificLocation {
             get {
                 ILocation loc = null;
-				loc = (party == null ? (_isFollowerOf == null ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
+				loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
                 return loc;
             }
         }

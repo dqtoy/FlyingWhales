@@ -39,7 +39,7 @@ public class DungeonParty : Party {
 		member.SetParty(null);
 		member.SetCurrentTask (null);
 		if(member.isFollower){
-			member.SetFollowerState (false);
+			member.isFollowerOf.RemoveFollower (member);
 		}
 		if (_partyMembers.Count <= 0) {
 			this.specificLocation.RemoveCharacterFromLocation(this);

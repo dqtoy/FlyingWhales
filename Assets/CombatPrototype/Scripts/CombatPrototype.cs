@@ -729,7 +729,7 @@ namespace ECS{
 						int value = attackSkill.statusEffectRates [i].ratePercentage;
 						if(chance < value){
 							targetCharacter.AddStatusEffect (attackSkill.statusEffectRates [i].statusEffect);
-							log += StatusEffectLog (sourceCharacter, targetCharacter, attackSkill.statusEffectRates [i].statusEffect);
+							log += " " + StatusEffectLog (sourceCharacter, targetCharacter, attackSkill.statusEffectRates [i].statusEffect);
 						}
 					}
 				}

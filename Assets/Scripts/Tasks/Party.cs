@@ -221,7 +221,7 @@ public class Party: IEncounterable, ICombatInitializer {
         member.SetParty(null);
 		member.SetCurrentTask (null);
 		if(member.isFollower){
-			member.SetFollowerState (false);
+			member.isFollowerOf.RemoveFollower (member);
 		}
 		if (_partyMembers.Count <= 0) {
             //JustDisbandParty ();
