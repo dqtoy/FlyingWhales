@@ -31,11 +31,14 @@ public class MoveTo : CharacterTask {
 			return;
 		}
         if (_targetLocation == null) {
-            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-            _targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+            _targetLocation = GetLandmarkTarget(character);
         }
-		//Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
+		if (_targetLocation != null) {
+			//Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
+			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
 	}
     public override void PerformTask() {
 		if(!CanPerformTask()){
@@ -53,8 +56,8 @@ public class MoveTo : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 30;
     }
-    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
-        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+    protected override BaseLandmark GetLandmarkTarget(Character character) {
+        base.GetLandmarkTarget(character);
         Region regionOfChar = character.specificLocation.tileLocation.region;
         for (int i = 0; i < regionOfChar.adjacentRegionsViaMajorRoad.Count; i++) {
             Region adjacentRegion = regionOfChar.adjacentRegions[i];
@@ -70,10 +73,13 @@ public class MoveTo : CharacterTask {
                 weight -= 20; //If Adjacent Settlement is unoccupied: -20
             }
             if (weight > 0) {
-                landmarkWeights.AddElement(adjacentRegion.mainLandmark, weight);
+                _landmarkWeights.AddElement(adjacentRegion.mainLandmark, weight);
             }
         }
-        return landmarkWeights;
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
     }
     #endregion
 

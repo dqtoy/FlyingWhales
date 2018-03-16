@@ -20,12 +20,14 @@ public class DrinkBlood : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-			_targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+			_targetLocation = GetLandmarkTarget(character);
 		}
-		_target = (BaseLandmark)_targetLocation;
-
-		_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartDrinkingBlood ());
+		if(_targetLocation != null){
+			_target = (BaseLandmark)_targetLocation;
+			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartDrinkingBlood ());
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
 	}
 
 	public override void PerformTask() {
@@ -74,8 +76,8 @@ public class DrinkBlood : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 25;
     }
-    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
-        WeightedDictionary<BaseLandmark> landmarkWeights = base.GetLandmarkTargetWeights(character);
+    protected override BaseLandmark GetLandmarkTarget(Character character) {
+       	base.GetLandmarkTarget(character);
         List<Region> regionsToCheck = new List<Region>();
         regionsToCheck.Add(character.specificLocation.tileLocation.region);
         regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegions);
@@ -91,12 +93,14 @@ public class DrinkBlood : CharacterTask {
                     if (currLandmark.HasHostilitiesWith(character)) {
                         weight -= 50;
                     }
-                    landmarkWeights.AddElement(currLandmark, weight);
+                    _landmarkWeights.AddElement(currLandmark, weight);
                 }
             }
         }
-        
-        return landmarkWeights;
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+        return null;
     }
     #endregion
 
@@ -164,19 +168,5 @@ public class DrinkBlood : CharacterTask {
 		//			settlement.CancelSaveALandmark (_target);
 		//		}
 		EndTask(TASK_STATUS.SUCCESS);
-	}
-
-	private BaseLandmark GetTargetLandmark() {
-		_landmarkWeights.Clear ();
-		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(_assignedCharacter, landmark)){
-				_landmarkWeights.AddElement (landmark, 100);
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
 	}
 }

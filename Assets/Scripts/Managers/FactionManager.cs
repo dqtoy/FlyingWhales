@@ -233,17 +233,8 @@ public class FactionManager : MonoBehaviour {
             CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
 			CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
 			ECS.Character newChar = settlement.CreateNewCharacter(chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
-
-
 			//Initial Character tags
-			int tagChance = UnityEngine.Random.Range (0, 100);
-			CHARACTER_TAG[] tags = (CHARACTER_TAG[])System.Enum.GetValues (typeof(CHARACTER_TAG));
-			for (int j = 0; j < tags.Length; j++) {
-				CHARACTER_TAG tag = tags [j];
-				if(tagChance < Utilities.GetTagWorldGenChance(tag)){
-					newChar.AssignTag (tag);
-				}
-			}
+			newChar.AssignInitialTags();
             CharacterManager.Instance.EquipCharacterWithBestGear(settlement, newChar);
         }
     }

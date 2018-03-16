@@ -115,6 +115,7 @@ public class Settlement : BaseLandmark {
         CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
         ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.FOLLOWER, Utilities.NormalizeString(chosenClass.ToString()));
         newFollower.SetFollowerState(true);
+		newFollower.AssignInitialTags ();
         CharacterManager.Instance.EquipCharacterWithBestGear(this, newFollower);
         return newFollower;
     }

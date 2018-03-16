@@ -10,7 +10,7 @@ public class TheDarkRitual : Quest {
 			ACTION_ALIGNMENT.VILLAINOUS,
 		};
 
-		QuestPhase phase1 = new QuestPhase(this, "Search for an Inimical Incantation Book");
+		QuestPhase phase1 = new QuestPhase(this, "Search for a Book of Inimical Incantations");
 		phase1.AddTask(new Search(createdBy, 5, "Book of Inimical Incantations", null, this));
 
 		QuestPhase phase2 = new QuestPhase(this, "Perform Ritual");

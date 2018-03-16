@@ -37,15 +37,13 @@ public class Collect : CharacterTask {
 			return;
 		}
 		if (_targetLocation == null) {
-			WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-			if (landmarkWeights.GetTotalOfWeights() > 0) {
-				_targetLocation = landmarkWeights.PickRandomElementGivenWeights();
-			} else {
-				EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
-				return;
-			}
+			_targetLocation = GetLandmarkTarget(character);
 		}
-		_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartCollect());
+		if (_targetLocation != null) {
+			_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartCollect());
+		}else{
+			EndTask(TASK_STATUS.FAIL);
+		}
 	}
 	public override bool AreConditionsMet(Character character) {
 		//check if there are any landmarks in region with characters
@@ -77,8 +75,8 @@ public class Collect : CharacterTask {
 		}
 		return 0;
 	}
-	protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) {
-		WeightedDictionary<BaseLandmark> landmarkWeights = new WeightedDictionary<BaseLandmark>();
+	protected override BaseLandmark GetLandmarkTarget(ECS.Character character) {
+		base.GetLandmarkTarget(character);
 		Region regionLocation = character.specificLocation.tileLocation.region;
 		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
 			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
@@ -90,11 +88,14 @@ public class Collect : CharacterTask {
 				}
 				//If this character has already Searched in the landmark within the past 6 months: -60
 				if (weight > 0) {
-					landmarkWeights.AddElement(currLandmark, weight);
+					_landmarkWeights.AddElement(currLandmark, weight);
 				}
 			}
 		}
-		return landmarkWeights;
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
 	#endregion
 

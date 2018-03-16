@@ -199,7 +199,10 @@ public class CharacterTask {
         CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _defaultDaysLeft);
         return clonedTask;
     }
-    protected virtual WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(ECS.Character character) { return new WeightedDictionary<BaseLandmark>(); }
+    protected virtual BaseLandmark GetLandmarkTarget(ECS.Character character) {
+		_landmarkWeights.Clear ();
+		return null; 
+	}
     protected virtual WeightedDictionary<ECS.Character> GetCharacterTargetWeights(ECS.Character character) { return new WeightedDictionary<ECS.Character>(); }
     #endregion
 

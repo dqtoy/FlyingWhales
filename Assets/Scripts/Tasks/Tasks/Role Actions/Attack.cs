@@ -27,11 +27,14 @@ public class Attack : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-            WeightedDictionary<BaseLandmark> landmarkWeights = GetLandmarkTargetWeights(character);
-			_targetLocation = landmarkWeights.PickRandomElementGivenWeights();
+			_targetLocation = GetLandmarkTarget(character);
 		}
-		_landmarkToAttack = (BaseLandmark)_targetLocation;
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartAttack());
+		if(_targetLocation != null){
+			_landmarkToAttack = (BaseLandmark)_targetLocation;
+			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartAttack());
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
 	}
 	public override void PerformTask() {
 		if(!CanPerformTask()){
@@ -90,8 +93,8 @@ public class Attack : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 40;
     }
-    protected override WeightedDictionary<BaseLandmark> GetLandmarkTargetWeights(Character character) {
-        WeightedDictionary<BaseLandmark> landmarkWeights =  base.GetLandmarkTargetWeights(character);
+    protected override BaseLandmark GetLandmarkTarget(Character character) {
+        base.GetLandmarkTarget(character);
         List<Region> regionsToCheck = new List<Region>();
         Region regionOfChar = character.specificLocation.tileLocation.region;
         regionsToCheck.Add(regionOfChar);
@@ -112,13 +115,16 @@ public class Attack : CharacterTask {
                         }
                     }
                     if (weight > 0) {
-                        landmarkWeights.AddElement(landmark, weight);
+                        _landmarkWeights.AddElement(landmark, weight);
                     }
                 }
                 
             }
         }
-        return landmarkWeights;
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
     }
     #endregion
 
@@ -189,31 +195,6 @@ public class Attack : CharacterTask {
 	}
 	private void EndAttack(){
 		EndTask (TASK_STATUS.SUCCESS);
-	}
-	private BaseLandmark GetTargetLandmark() {
-		_landmarkWeights.Clear ();
-		for (int i = 0; i < _assignedCharacter.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = _assignedCharacter.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(_assignedCharacter, landmark)){
-				_landmarkWeights.AddElement (landmark, 100);
-			}
-//			if(landmark is DungeonLandmark){
-//				_landmarkWeights.AddElement (landmark, 100);
-//			}else{
-//				if(landmark is Settlement || landmark is ResourceLandmark){
-//					if(landmark.owner != null){
-//						FactionRelationship facRel = _assignedCharacter.faction.GetRelationshipWith (landmark.owner);
-//						if(facRel != null && facRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-//							_landmarkWeights.AddElement (landmark, 100);
-//						}
-//					}
-//				}
-//			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
 	}
 
 	public void SetCanChangeOwnership(bool state){

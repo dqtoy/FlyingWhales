@@ -23,8 +23,14 @@ public class RecruitFollowers : CharacterTask {
 		if(_assignedCharacter == null){
 			return;
 		}
-        _targetLocation = character.specificLocation;
-        _targetLandmark = character.specificLocation as BaseLandmark;
+		if(_targetLocation == null){
+			_targetLocation = GetLandmarkTarget(character);
+		}
+		if(_targetLocation != null){
+			_targetLandmark = (BaseLandmark)_targetLocation;
+		}else{
+			EndTask (TASK_STATUS.FAIL);
+		}
 		//if(_targetLocation == null){
 		//	_targetLocation = GetTargetLandmark (character);
 		//}
@@ -74,20 +80,19 @@ public class RecruitFollowers : CharacterTask {
 		ReduceDaysLeft (1);
     }
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0 && character.faction != null){
-			if(location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
-				return true;
+		if(character.specificLocation != null && character.specificLocation == location){
+			if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0 && character.faction != null){
+				if(!location.HasHostilitiesWith(character.faction)){
+					return true;
+				}
 			}
 		}
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
         //If in a location with non-hostile civilians
-        if (character.specificLocation is BaseLandmark) {
-            BaseLandmark characterLocation = character.specificLocation as BaseLandmark;
-            if (characterLocation.civilians > 0 && !characterLocation.HasHostilitiesWith(character.faction)) {
-                return true;
-            }
+		if (CanBeDone(character, character.specificLocation)) {
+			return true;
         }
         
         //if(character.faction != null){
@@ -107,6 +112,13 @@ public class RecruitFollowers : CharacterTask {
         }
         return weight;
     }
+	protected override BaseLandmark GetLandmarkTarget (Character character){
+//		base.GetLandmarkTarget (character);
+		if(character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+			return (BaseLandmark)character.specificLocation;
+		}
+		return null;
+	}
     #endregion
 
     private void EndRecruitment() {
@@ -141,19 +153,4 @@ public class RecruitFollowers : CharacterTask {
 
         return recruitActions;
     }
-
-	private BaseLandmark GetTargetLandmark(Character character){
-		_landmarkWeights.Clear ();
-		List<BaseLandmark> ownedLandmarks = character.faction.GetAllOwnedLandmarks ();
-		for (int i = 0; i < ownedLandmarks.Count; i++) {
-			BaseLandmark landmark = ownedLandmarks[i];
-			if(landmark.civilians > 0){
-				_landmarkWeights.AddElement (landmark, 5);
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
-	}
 }
