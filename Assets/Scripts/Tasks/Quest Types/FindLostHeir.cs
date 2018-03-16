@@ -14,6 +14,9 @@ public class FindLostHeir : Quest {
         _chieftain = chieftain;
         _falseHeir = falseHeir;
         _lostHeir = lostHeir;
+        _filters = new TaskFilter[] {
+            new MustBeFaction((createdBy as ECS.Character).faction)
+        };
 
         QuestPhase phase1 = new QuestPhase(this, "Search for Heirloom Necklace");
         phase1.AddTask(new Search(createdBy, 5, "Heirloom Necklace", null, this));

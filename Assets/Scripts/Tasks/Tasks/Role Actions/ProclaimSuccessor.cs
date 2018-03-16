@@ -22,7 +22,11 @@ public class ProclaimSuccessor : CharacterTask {
         }
 
         ECS.Character successor = _specificTarget as ECS.Character;
-        successor.AssignTag(CHARACTER_TAG.SUCCESSOR);
+        if (successor.HasTag(CHARACTER_TAG.SUCCESSOR)) {
+            throw new System.Exception(character.name + " is already a successor!");
+        }
+        Successor tag = successor.AssignTag(CHARACTER_TAG.SUCCESSOR) as Successor;
+        tag.SetCharacterToSucceed(character);
         character.AddHistory(character.name + " proclaimed his successor to be " + successor.name);
         successor.AddHistory(successor.name + " was procalaimed to be the successor of " + character.name);
 
