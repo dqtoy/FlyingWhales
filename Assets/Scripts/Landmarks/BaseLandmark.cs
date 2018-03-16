@@ -356,16 +356,18 @@ public class BaseLandmark : ILocation, TaskCreator {
          */
     public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
         RACE raceOfChar = GetRaceBasedOnProportion();
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
         //        newCharacter.AssignRole(charRole);
-        newCharacter.SetFaction(_owner);
+        //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
         AdjustCivilians(raceOfChar, -1);
         //this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter, false);
         this.AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.DetermineAction();
+        if (charRole != CHARACTER_ROLE.FOLLOWER) {
+            newCharacter.DetermineAction();
+        }
         UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }

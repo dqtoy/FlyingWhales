@@ -183,11 +183,11 @@ public class FactionManager : MonoBehaviour {
     public void GenerateFactionCharacters() {
         for (int i = 0; i < allTribes.Count; i++) {
             Tribe currTribe = allTribes[i];
-            CreateChieftainForFaction(currTribe);
             for (int j = 0; j < currTribe.settlements.Count; j++) {
                 Settlement currSettlement = currTribe.settlements[j];
                 CreateInititalFactionCharacters(currTribe, currSettlement);
             }
+            CreateChieftainForFaction(currTribe);
         }
     }
 
