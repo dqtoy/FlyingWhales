@@ -8,6 +8,8 @@ public class Search : CharacterTask {
 
     private Action _searchAction;
 	private Action _afterFindingAction;
+	private delegate BaseLandmark GetTargetLandmark(Character character);
+	private event GetTargetLandmark onGetTargetLandmarkAction;
 
     private object _searchingFor;
 	private string startSearchLog;
@@ -16,6 +18,7 @@ public class Search : CharacterTask {
         SetStance(STANCE.NEUTRAL);
         _targetLocation = targetLocation;
         _searchingFor = searchingFor;
+		onGetTargetLandmarkAction = GetLandmarkForCharacterSearching;
         if (searchingFor is string) {
             if((searchingFor as string).Equals("Heirloom Necklace")) {
                 _searchAction = () => SearchForHeirloomNecklace();
@@ -24,11 +27,13 @@ public class Search : CharacterTask {
 			}else if((searchingFor as string).Equals("Book of Inimical Incantations")) {
 				SetStance(STANCE.COMBAT);
 				_searchAction = () => SearchForItemInLandmark();
+				onGetTargetLandmarkAction = GetLandmarkForLandmarkItemsSearching;
 				_alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
 				startSearchLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Neuroctus")) {
 				SetStance(STANCE.COMBAT);
 				_searchAction = () => SearchForItemInLandmark();
+				onGetTargetLandmarkAction = GetLandmarkForLandmarkItemsSearching;
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
 				startSearchLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Psytoxin Herbalist")) {
@@ -98,21 +103,8 @@ public class Search : CharacterTask {
     }
 	protected override BaseLandmark GetLandmarkTarget(ECS.Character character) {
 		base.GetLandmarkTarget(character);
-		Region regionLocation = character.specificLocation.tileLocation.region;
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
-			int weight = 0;
-			weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
-			if (currLandmark.HasHostilitiesWith(character.faction)) {
-				weight -= 50;//If landmark has hostile characters: -50
-			}
-			//If this character has already Searched in the landmark within the past 6 months: -60
-			if (weight > 0) {
-				_landmarkWeights.AddElement(currLandmark, weight);
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
+		if(onGetTargetLandmarkAction != null){
+			return onGetTargetLandmarkAction (character);
 		}
 		return null;
 	}
@@ -145,6 +137,25 @@ public class Search : CharacterTask {
             }
         }
     }
+	private BaseLandmark GetLandmarkForCharacterSearching(Character character){
+		Region regionLocation = character.specificLocation.tileLocation.region;
+		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+			int weight = 0;
+			weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
+			if (currLandmark.HasHostilitiesWith(character.faction)) {
+				weight -= 50;//If landmark has hostile characters: -50
+			}
+			//If this character has already Searched in the landmark within the past 6 months: -60
+			if (weight > 0) {
+				_landmarkWeights.AddElement(currLandmark, weight);
+			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
+	}
     #endregion
 
 	#region Search for Landmark Items
@@ -168,6 +179,25 @@ public class Search : CharacterTask {
 				}
 			}
 		}
+	}
+	private BaseLandmark GetLandmarkForLandmarkItemsSearching(Character character){
+		Region regionLocation = character.specificLocation.tileLocation.region;
+		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+			int weight = 0;
+			weight += currLandmark.itemsInLandmark.Count * 20;//For each item in a landmark in the current region: +20
+			if (currLandmark.HasHostilitiesWith(character.faction)) {
+				weight -= 50;//If landmark has hostile characters: -50
+			}
+			//If this character has already Searched in the landmark within the past 6 months: -60
+			if (weight > 0) {
+				_landmarkWeights.AddElement(currLandmark, weight);
+			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
 	#endregion
 

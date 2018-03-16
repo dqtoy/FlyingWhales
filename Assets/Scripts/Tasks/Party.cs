@@ -550,7 +550,7 @@ public class Party: IEncounterable, ICombatInitializer {
             _partyLeader.CreateNewAvatar();
         }
         if(currentQuest.postedAt == null) {
-            throw new Exception("Posted at of quest " + currentQuest.questType.ToString() + " is null!");
+            throw new Exception("Posted at of quest " + currentQuest.questName + " is null!");
         }
 		if(_avatar.currLocation.tileLocation.id == currentQuest.postedAt.location.id){
 			currentQuest.TurnInQuest (taskResult);

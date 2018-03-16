@@ -99,6 +99,7 @@ public class CharacterTask {
 	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1, Quest parentQuest = null) {
         _createdBy = createdBy;
         _taskType = taskType;
+		_taskName = Utilities.NormalizeStringUpperCaseFirstLetters (_taskType.ToString ());
         _taskLogs = new List<string>();
 		_landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 		_characterWeights = new WeightedDictionary<ECS.Character> ();

@@ -31,7 +31,7 @@ public class QuestInfoUI : UIMenu {
         }
         string text = string.Empty;
 		text += "[b]OldQuest.Quest ID:[/b] " + currentlyShowingQuest.id.ToString();
-		text += "\n[b]OldQuest.Quest Type:[/b] " + currentlyShowingQuest.questType.ToString();
+		text += "\n[b]OldQuest.Quest Type:[/b] " + currentlyShowingQuest.questName;
 		text += "\n[b]Done:[/b] " + currentlyShowingQuest.isDone.ToString();
 		text += "\n[b]Is Waiting:[/b] " + currentlyShowingQuest.isWaiting.ToString();
 		text += "\n[b]Is Expired:[/b] " + currentlyShowingQuest.isExpired.ToString();

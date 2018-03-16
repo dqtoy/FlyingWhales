@@ -580,7 +580,7 @@ public class FactionManager : MonoBehaviour {
             declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
             OldQuest.Quest quest = (OldQuest.Quest)data;
             declareWarLog.AddToFillers(quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            declareWarLog.AddToFillers(quest, Utilities.NormalizeString(quest.questType.ToString()), LOG_IDENTIFIER.OTHER);
+            declareWarLog.AddToFillers(quest, quest.questName, LOG_IDENTIFIER.OTHER);
             declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
             UIManager.Instance.ShowNotification(declareWarLog);
         }
