@@ -52,6 +52,10 @@ public class Patrol : CharacterTask {
 					if (location.tileLocation.landmarkOnTile.owner.id == character.faction.id) {
 						return true;
 					}					
+				}else{
+					if(character.home != null && character.home.id == location.tileLocation.landmarkOnTile.id){
+						return true;
+					}
 				}
 			}
 		}

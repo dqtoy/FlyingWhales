@@ -723,6 +723,8 @@ public class Settlement : BaseLandmark {
 
 		SpawnItemInLandmark ("Meteorite");
 		EmitPsytoxin ();
+		PsytoxinCure psytoxinCure = new PsytoxinCure (QuestManager.Instance, this);
+		QuestManager.Instance.AddQuestToAvailableQuests(psytoxinCure);
 	}
 	private void EmitPsytoxin(){
 		Region currRegion = this.tileLocation.region;

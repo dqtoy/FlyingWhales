@@ -19,6 +19,7 @@ public class Slyx : CharacterRole {
 		}
 
 //		Messenger.AddListener<ILocation> ("CallSlyx", CallThisSlyx);
+		_character.SetHome (LandmarkManager.Instance.craterLandmark);
 		CallThisSlyx(LandmarkManager.Instance.craterLandmark);
 	}
 
