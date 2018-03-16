@@ -11,6 +11,10 @@ public class DoRitual : CharacterTask {
 	}
 
 	#region overrides
+	public override CharacterTask CloneTask (){
+		DoRitual clonedTask = new DoRitual(_createdBy, _defaultDaysLeft, _parentQuest);
+		return clonedTask;
+	}
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
 		if(_assignedCharacter == null){
