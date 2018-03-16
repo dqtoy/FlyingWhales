@@ -41,21 +41,21 @@ public class RecruitFollowers : CharacterTask {
 		}
         base.PerformTask();
 
-		if(_targetLandmark != null && _targetLandmark.civilians > 0 && _targetLandmark is Settlement) {
+		if(_targetLandmark != null && _targetLandmark.civilians > 0 && _targetLandmark is Settlement && !_assignedCharacter.isFollowersFull) {
 			Settlement settlement = (Settlement)_targetLandmark;
 			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(_targetLandmark); 
 			string chosenAction = recruitActions.PickRandomElementGivenWeights();
 			if (chosenAction.Equals(createKey)) {
 				//Create Follower For character
 				ECS.Character newFollower = settlement.CreateNewFollower();
-				Party party = _assignedCharacter.party;
-				if(party == null) {
-					party = _assignedCharacter.CreateNewParty();
-				}
-				party.AddPartyMember(newFollower);
-//				_assignedCharacter.AddFollower(newFollower);
-			}
-			if ((_assignedCharacter.party != null && _assignedCharacter.party.isFull)) {
+                Party party = _assignedCharacter.party;
+                if (party == null) {
+                    party = _assignedCharacter.CreateNewParty();
+                }
+                party.AddPartyMember(newFollower);
+                _assignedCharacter.AddFollower(newFollower);
+            }
+			if (_assignedCharacter.isFollowersFull) {
 				EndRecruitment();
 				return;
 			}
