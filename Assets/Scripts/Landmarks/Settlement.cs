@@ -21,6 +21,9 @@ public class Settlement : BaseLandmark {
     private RACE _producingPopulationFor;
     private float _currentPopulationProduction;
 
+	//Crater
+	private int _numOfPsytoxinated;
+
     #region getters/setters
     //public List<Quest> questBoard {
     //    get { return _questBoard; }
@@ -34,6 +37,9 @@ public class Settlement : BaseLandmark {
     public List<MATERIAL> availableMaterials {
         get { return _ownedLandmarks.Where(x => x is ResourceLandmark && x.civilians >= x.GetMinimumCivilianRequirement()).Select(x => (x as ResourceLandmark).materialOnLandmark).ToList(); }
     }
+	public int numOfPsytoxinated {
+		get { return _numOfPsytoxinated; }
+	}
     #endregion
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf) : base(location, specificLandmarkType, materialMadeOf) {
@@ -45,11 +51,18 @@ public class Settlement : BaseLandmark {
 //		ConstructNeededMaterials ();
     }
 
-    #region Ownership
+    #region Overrides
     public override void Initialize (){
 		base.Initialize ();
 		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
 			InitializeCrater ();
+		}
+	}
+	public override void DestroyLandmark (bool putRuinStructure){
+		base.DestroyLandmark (putRuinStructure);
+		tileLocation.RuinStructureOnTile (!putRuinStructure);
+		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
+			DestroyCrater ();
 		}
 	}
     public override void OccupyLandmark(Faction faction) {
@@ -693,6 +706,11 @@ public class Settlement : BaseLandmark {
 
 	#region Crater
 	private void InitializeCrater(){
+		_numOfPsytoxinated = 0;
+		LandmarkManager.Instance.craterLandmark = this;
+		Messenger.AddListener ("Psytoxinated", ListenPsytoxinated);
+		Messenger.AddListener ("Unpsytoxinated", ListenUnpsytoxinated);
+
 		ECS.CharacterSetup charSetup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup("Dehkbrug");
 		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charSetup.optionalRole, charSetup);
 		newCharacter.SetCharacterColor (Color.red);
@@ -702,7 +720,7 @@ public class Settlement : BaseLandmark {
 		this.AddCharacterToLocation(newCharacter, false);
 		newCharacter.DetermineAction();
 
-		SpawnItemInLandmark ("Meteorite", 100, true);
+		SpawnItemInLandmark ("Meteorite");
 		EmitPsytoxin ();
 	}
 	private void EmitPsytoxin(){
@@ -726,6 +744,26 @@ public class Settlement : BaseLandmark {
 				}
 			}
 		}
+	}
+	public void AdjustNumOfPsytoxinated(int amount){
+		_numOfPsytoxinated += amount;
+		if(_numOfPsytoxinated <= 0){
+			_numOfPsytoxinated = 0;
+			DestroyLandmark (false);
+		}
+	}
+	private void DestroyCrater(){
+		Messenger.RemoveListener ("Psytoxinated", ListenPsytoxinated);
+		Messenger.RemoveListener ("Unpsytoxinated", ListenUnpsytoxinated);
+		LandmarkManager.Instance.craterLandmark = null;
+		ChangeLandmarkType (LANDMARK_TYPE.CITY);
+		Initialize ();
+	}
+	private void ListenPsytoxinated(){
+		AdjustNumOfPsytoxinated (1);
+	}
+	private void ListenUnpsytoxinated(){
+		AdjustNumOfPsytoxinated (-1);
 	}
 	#endregion
 }

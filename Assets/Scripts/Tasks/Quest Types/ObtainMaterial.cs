@@ -44,10 +44,10 @@ public class ObtainMaterial : OldQuest.Quest {
 		goToLandmark.onTaskDoAction += goToLandmark.Generic;
 		goToLandmark.onTaskActionDone += PerformNextQuestAction;
 
-		Collect collect = new Collect(this);
-		collect.InitializeAction(_materialToCollect);
-		collect.onTaskActionDone += this.PerformNextQuestAction;
-		collect.onTaskDoAction += collect.ObtainMaterial;
+//		Old.Collect collect = new Old.Collect(this);
+//		collect.InitializeAction(_materialToCollect);
+//		collect.onTaskActionDone += this.PerformNextQuestAction;
+//		collect.onTaskDoAction += collect.ObtainMaterial;
 
 		GoToLocation goBackToSettlement = new GoToLocation(this); //Go to the picked region
 		goBackToSettlement.InitializeAction(_postedAt);
@@ -56,7 +56,7 @@ public class ObtainMaterial : OldQuest.Quest {
 		goBackToSettlement.onTaskActionDone += TransferMaterialToSettlement;
 
 		_questLine.Enqueue(goToLandmark);
-		_questLine.Enqueue(collect);
+//		_questLine.Enqueue(collect);
 		_questLine.Enqueue(goBackToSettlement);
 	}
 	#endregion

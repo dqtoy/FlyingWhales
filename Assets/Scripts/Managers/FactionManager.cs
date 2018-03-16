@@ -231,15 +231,17 @@ public class FactionManager : MonoBehaviour {
         WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
         for (int i = 0; i < numOfCharacters; i++) {
             CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-            CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-            ECS.Character newChar = settlement.CreateNewCharacter(chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
-			int ritualistChance = UnityEngine.Random.Range (0, 100);
-			if(ritualistChance < 20){
-				newChar.AssignTag (CHARACTER_TAG.RITUALIST);
-			}else{
-				int herbalistChance = UnityEngine.Random.Range (0, 100);
-				if(herbalistChance < 20){
-					newChar.AssignTag (CHARACTER_TAG.HERBALIST);
+			CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+			ECS.Character newChar = settlement.CreateNewCharacter(chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
+
+
+			//Initial Character tags
+			int tagChance = UnityEngine.Random.Range (0, 100);
+			CHARACTER_TAG[] tags = (CHARACTER_TAG[])System.Enum.GetValues (typeof(CHARACTER_TAG));
+			for (int j = 0; j < tags.Length; j++) {
+				CHARACTER_TAG tag = tags [j];
+				if(tagChance < Utilities.GetTagWorldGenChance(tag)){
+					newChar.AssignTag (tag);
 				}
 			}
             CharacterManager.Instance.EquipCharacterWithBestGear(settlement, newChar);

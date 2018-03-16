@@ -118,12 +118,16 @@ public class VampiricEmbrace : CharacterTask {
 		}
 		_assignedCharacter.DestroyAvatar ();
 
-		if(_targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
+		if(_targetCharacter.specificLocation != null && _targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
 			string startLog = _assignedCharacter.name + " wants to turn " + _targetCharacter.name + " into a vampire!";
 			_targetLandmark.AddHistory (startLog);
 			_targetCharacter.AddHistory (startLog);
 			_assignedCharacter.AddHistory (startLog);
 		}else{
+			string startLog = _targetCharacter.name + " is no longer in the landmark!";
+			_targetLandmark.AddHistory (startLog);
+			_targetCharacter.AddHistory (startLog);
+			_assignedCharacter.AddHistory (startLog);
 			EndVampiricEmbrace ();
 		}
 	}

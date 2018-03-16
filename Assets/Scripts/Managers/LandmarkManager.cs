@@ -15,6 +15,9 @@ public class LandmarkManager : MonoBehaviour {
 
     public List<LandmarkData> landmarkData;
 
+	//Crater
+	public BaseLandmark craterLandmark;
+
     private void Awake() {
         Instance = this;
     }

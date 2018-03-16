@@ -39,6 +39,7 @@ public class PlayerActionsUI : MonoBehaviour {
 		this.gameObject.SetActive (false);
 	}
 	public void Reposition(){
+		gameObject.transform.position = Vector3.zero;
 		Vector3 newPosX = location.tileLocation.transform.position;
 		Vector3 screenPosX = Camera.main.WorldToScreenPoint (newPosX);
 		if(screenPosX.x < 120f){
@@ -48,7 +49,7 @@ public class PlayerActionsUI : MonoBehaviour {
 			screenPosX.x = 1390f;
 			newPosX = Camera.main.ScreenToWorldPoint (screenPosX);
 		}
-//		gameObject.transform.position = newPosX;
+		gameObject.transform.position = newPosX;
 
 //		Vector3 newPosY = bottomSpriteGO.transform.position;
 		Vector3 screenPosY = Camera.main.WorldToScreenPoint (bottomSpriteGO.transform.position);

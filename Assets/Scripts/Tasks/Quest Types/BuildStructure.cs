@@ -38,10 +38,10 @@ public class BuildStructure : OldQuest.Quest {
     protected override void ConstructQuestLine() {
         base.ConstructQuestLine();
 
-        Collect collect = new Collect(this);
-        collect.InitializeAction(_civiliansBrought);
-        collect.onTaskActionDone += this.PerformNextQuestAction;
-        collect.onTaskDoAction += collect.BuildStructure;
+//		Old.Collect collect = new Old.Collect(this);
+//        collect.InitializeAction(_civiliansBrought);
+//        collect.onTaskActionDone += this.PerformNextQuestAction;
+//        collect.onTaskDoAction += collect.BuildStructure;
 
         GoToLocation goToLandmark = new GoToLocation(this); //Go to the target tile
         goToLandmark.InitializeAction(_target);
@@ -49,7 +49,7 @@ public class BuildStructure : OldQuest.Quest {
         goToLandmark.onTaskDoAction += goToLandmark.Generic;
         goToLandmark.onTaskActionDone += WaitForDays;
 
-        _questLine.Enqueue(collect);
+//        _questLine.Enqueue(collect);
         _questLine.Enqueue(goToLandmark);
     }
     #endregion

@@ -90,7 +90,7 @@ public class StorylineManager : MonoBehaviour {
 				BaseLandmark landmark = region.landmarks [j];
 				if(landmark is DungeonLandmark){
 					if(landmark.specificLandmarkType == LANDMARK_TYPE.CAVE){
-						landmark.SpawnItemInLandmark ("Neuroctus", 80, true);
+						landmark.SpawnItemInLandmark ("Neuroctus");
 					}else if(landmark.specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN){
 						ancientRuins.Add ((DungeonLandmark)landmark);
 					}
@@ -103,7 +103,7 @@ public class StorylineManager : MonoBehaviour {
 			for (int i = 0; i < 3; i++) {
 				int index = UnityEngine.Random.Range (0, ancientRuins.Count);
 				DungeonLandmark chosenAncientRuin = ancientRuins [index];
-				chosenAncientRuin.SpawnItemInLandmark ("Book of Inimical Incantations", 95, false);
+				chosenAncientRuin.SpawnItemInLandmark ("Book of Inimical Incantations");
 				ancientRuins.RemoveAt (index);
 				if(ancientRuins.Count <= 0){
 					break;

@@ -6,6 +6,7 @@ using ECS;
 public class Attack : CharacterTask {
 
 	private BaseLandmark _landmarkToAttack;
+	private bool _canChangeOwnership;
 
 	#region getters/setters
 	public BaseLandmark landmarkToAttack {
@@ -13,10 +14,10 @@ public class Attack : CharacterTask {
 	}
 	#endregion
 
-	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1) 
-		: base(createdBy, TASK_TYPE.ATTACK, defaultDaysLeft) {
+	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null) : base(createdBy, TASK_TYPE.ATTACK, defaultDaysLeft, parentQuest) {
 		SetStance(STANCE.COMBAT);
         _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
+		_canChangeOwnership = true;
 	}
 		
 	#region overrides
@@ -180,8 +181,10 @@ public class Attack : CharacterTask {
 		}
 	}
 	private void ChangeLandmarkOwnership(){
-		if(_landmarkToAttack is Settlement || _landmarkToAttack is ResourceLandmark){
-			_landmarkToAttack.ChangeOwner (_assignedCharacter.faction);
+		if(_canChangeOwnership){
+			if(_landmarkToAttack is Settlement || _landmarkToAttack is ResourceLandmark){
+				_landmarkToAttack.ChangeOwner (_assignedCharacter.faction);
+			}
 		}
 	}
 	private void EndAttack(){
@@ -211,5 +214,9 @@ public class Attack : CharacterTask {
 			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
+	}
+
+	public void SetCanChangeOwnership(bool state){
+		_canChangeOwnership = state;
 	}
 }

@@ -158,11 +158,12 @@ public class BaseLandmark : ILocation, TaskCreator {
 		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
         SpawnInitialLandmarkItems();
-        //Initialize();
+//        Initialize();
     }
 
     #region Virtuals
     public virtual void Initialize() {}
+	public virtual void DestroyLandmark(bool putRuinStructure){}
     /*
      What should happen when a character searches this landmark
          */
@@ -1141,6 +1142,22 @@ public class BaseLandmark : ILocation, TaskCreator {
 		newItem.exploreWeight = exploreWeight;
 		newItem.isUnlimited = isUnlimited;
 		AddItemInLandmark (newItem);
+	}
+	public void SpawnItemInLandmark(string itemName){
+		ECS.Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
+		AddItemInLandmark (item);
+	}
+	public void SpawnItemInLandmark(ECS.Item item){
+		ECS.Item newItem = item.CreateNewCopy();
+		AddItemInLandmark (newItem);
+	}
+	public bool HasItem(string itemName){
+		for (int i = 0; i < _itemsInLandmark.Count; i++) {
+			if (_itemsInLandmark [i].itemName == itemName) {
+				return true;
+			}
+		}
+		return false;
 	}
     #endregion
 }

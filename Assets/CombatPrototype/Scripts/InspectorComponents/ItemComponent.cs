@@ -18,7 +18,7 @@ namespace ECS{
 		public int durability;
 		public int cost;
         public int exploreWeight;
-        public int collectWeight;
+        public int collectChance;
         public bool isUnlimited;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 

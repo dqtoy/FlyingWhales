@@ -23,7 +23,7 @@ public class TheDarkRitual : Quest {
 	#region Overrides
 	public override bool CanAcceptQuest (Character character){
 		if(base.CanAcceptQuest (character)){
-			if(character.HasTag(CHARACTER_TAG.RITUALIST)){
+			if(character.HasTag(CHARACTER_TAG.RITUALIST, true)){
 				return true;
 			}
 		}

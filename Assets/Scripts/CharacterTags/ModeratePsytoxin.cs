@@ -11,7 +11,16 @@ public class ModeratePsytoxin : CharacterTag {
 	#region Overrides
 	public override void Initialize (){
 		base.Initialize ();
+		if(Messenger.eventTable.ContainsKey("Psytoxinated")){
+			Messenger.Broadcast ("Psytoxinated");
+		}
 		ScheduleAggravateCheck ();
+	}
+	public override void OnRemoveTag (){
+		base.OnRemoveTag ();
+		if (Messenger.eventTable.ContainsKey ("Unpsytoxinated")) {
+			Messenger.Broadcast ("Unpsytoxinated");
+		}
 	}
 	#endregion
 

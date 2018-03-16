@@ -150,16 +150,24 @@ namespace ECS {
 					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
                         ECS.Character currFaintedChar = combat.faintedCharacters[i];
                         if (currFaintedChar.currentSide != combat.winningSide){
-                            currFaintedChar.Faint ();
-                            //if the currFaintedChar has a party, and it is not yet disbanded
-                            if (currFaintedChar.party != null && !currFaintedChar.party.isDisbanded) {
-                                //Check if he/she is the party leader
-                                if (currFaintedChar.party.IsCharacterLeaderOfParty(currFaintedChar)) {
-                                    //if he/she is, disband the party
-                                    currFaintedChar.party.DisbandParty();
-                                }
-                            }
-							winningCharacters[0].AddPrisoner(currFaintedChar);
+							if(!currFaintedChar.cannotBeTakenAsPrisoner){
+								currFaintedChar.Faint ();
+								//if the currFaintedChar has a party, and it is not yet disbanded
+								if (currFaintedChar.party != null && !currFaintedChar.party.isDisbanded) {
+									//Check if he/she is the party leader
+									if (currFaintedChar.party.IsCharacterLeaderOfParty(currFaintedChar)) {
+										//if he/she is, disband the party
+										currFaintedChar.party.DisbandParty();
+									}
+								}
+								winningCharacters[0].AddPrisoner(currFaintedChar);
+							}else{
+								if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+									BaseLandmark landmark = combat.location as BaseLandmark;
+									landmark.AddHistory (currFaintedChar.name + " is left to die.");
+								}
+								currFaintedChar.Death();
+							}
 						}else{
                             currFaintedChar.SetHP(1);
 						}
@@ -168,8 +176,8 @@ namespace ECS {
 					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
                         ECS.Character currFaintedChar = combat.faintedCharacters[i];
                         if (currFaintedChar.currentSide != combat.winningSide){
-							if(currFaintedChar.specificLocation != null && currFaintedChar.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-								BaseLandmark landmark = currFaintedChar.specificLocation as BaseLandmark;
+							if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+								BaseLandmark landmark = combat.location as BaseLandmark;
 								landmark.AddHistory (currFaintedChar.name + " is left to die.");
 							}
                             currFaintedChar.Death();

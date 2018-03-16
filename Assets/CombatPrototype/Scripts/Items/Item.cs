@@ -19,7 +19,7 @@ namespace ECS{
         public int currDurability;
 		public int cost;
         public int exploreWeight;
-        public int collectWeight;
+        public int collectChance;
 		public bool isUnlimited;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
@@ -68,8 +68,8 @@ namespace ECS{
         public void SetExploreWeight(int weight) {
             exploreWeight = weight;
         }
-        public void SetCollectWeight(int weight) {
-            collectWeight = weight;
+        public void SetcollectChance(int weight) {
+            collectChance = weight;
         }
         public void SetIsUnlimited(bool state) {
             isUnlimited = state;

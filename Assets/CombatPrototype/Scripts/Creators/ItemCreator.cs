@@ -38,7 +38,7 @@ namespace ECS {
 			itemComponent.durability = EditorGUILayout.IntField("Durability :", itemComponent.durability);
 			itemComponent.cost = EditorGUILayout.IntField("Cost :", itemComponent.cost);
             itemComponent.exploreWeight = EditorGUILayout.IntField("Explore Weight :", itemComponent.exploreWeight);
-            itemComponent.collectWeight = EditorGUILayout.IntField("Collect Weight :", itemComponent.collectWeight);
+            itemComponent.collectChance = EditorGUILayout.IntField("Collect Chance :", itemComponent.collectChance);
             itemComponent.isUnlimited = EditorGUILayout.Toggle("Is Unlimited :", itemComponent.isUnlimited);
 
 			SerializedProperty statusEffectResistance = serializedObject.FindProperty("statusEffectResistances");
@@ -156,6 +156,8 @@ namespace ECS {
 			newItem.bonusBlockRate = itemComponent.bonusBlockRate;
 			newItem.durability = itemComponent.durability;
 			newItem.cost = itemComponent.cost;
+			newItem.exploreWeight = itemComponent.exploreWeight;
+			newItem.collectChance = itemComponent.collectChance;
 			newItem.isUnlimited = itemComponent.isUnlimited;
         }
         private void SaveWeapon(string path) {
