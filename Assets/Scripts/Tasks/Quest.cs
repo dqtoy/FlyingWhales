@@ -20,6 +20,7 @@ public class Quest {
     protected List<ACTION_ALIGNMENT> _alignment;
     protected List<ECS.Character> _acceptedCharacters;
     protected List<QuestPhase> _phases;
+    protected TaskFilter[] _filters;
 
     #region getters/setters
     public int id {
@@ -70,6 +71,14 @@ public class Quest {
                 ACTION_ALIGNMENT currAlignment = _alignment[i];
                 if (!character.role.allowedQuestAlignments.Contains(currAlignment)) {
                     //the character does not allow an alignment that this quest requires, it cannot do this quest!
+                    return false;
+                }
+            }
+        }
+        //check filters
+        if (_filters != null) {
+            for (int i = 0; i < _filters.Length; i++) {
+                if (!_filters[i].MeetsRequirements(character)) {
                     return false;
                 }
             }
