@@ -9,9 +9,8 @@ public class Pillage : CharacterTask {
 
 	private string pillagerName;
 
-	public Pillage(TaskCreator createdBy, int defaultDaysLeft = -1) 
-        : base(createdBy, TASK_TYPE.PILLAGE, defaultDaysLeft) {
-		SetStance (STANCE.COMBAT);
+	public Pillage(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
+        : base(createdBy, TASK_TYPE.PILLAGE, stance, defaultDaysLeft) {
     }
 
     #region overrides

@@ -44,6 +44,8 @@ public class CharacterTask {
 	protected WeightedDictionary<BaseLandmark> _landmarkWeights;
 	protected WeightedDictionary<ECS.Character> _characterWeights;
 
+	protected State _currentState;
+
     //protected string _actionString; //this is used for logs
 
     #region getters/setters
@@ -89,6 +91,9 @@ public class CharacterTask {
     public List<ACTION_ALIGNMENT> alignments {
         get { return _alignments; }
     }
+	public State currentState {
+		get { return _currentState; }
+	}
 	//public WeightedDictionary<BaseLandmark> landmarkWeights{
 	//	get { return _landmarkWeights; }
 	//}
@@ -100,13 +105,14 @@ public class CharacterTask {
     //}
     #endregion
 
-	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1, Quest parentQuest = null) {
+	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, STANCE stance, int defaultDaysLeft = -1, Quest parentQuest = null) {
         _createdBy = createdBy;
         _taskType = taskType;
 		_taskName = Utilities.NormalizeStringUpperCaseFirstLetters (_taskType.ToString ());
         _taskLogs = new List<string>();
 		_landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 		_characterWeights = new WeightedDictionary<ECS.Character> ();
+		_currentState = null;
 		_forPlayerOnly = false;
 		_forGameOnly = false;
 		SetIsHalted (false);
@@ -115,6 +121,7 @@ public class CharacterTask {
         _alignments = new List<ACTION_ALIGNMENT>();
 		SetDefaultDaysLeft (defaultDaysLeft);
 		SetDaysLeft (defaultDaysLeft);
+		SetStance(stance);
     }
 
     #region virtual
@@ -201,7 +208,7 @@ public class CharacterTask {
          */
 	public virtual bool AreConditionsMet(ECS.Character character) { return false; }
     public virtual CharacterTask CloneTask() {
-        CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _defaultDaysLeft);
+        CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _stance, _defaultDaysLeft);
         return clonedTask;
     }
     protected virtual BaseLandmark GetLandmarkTarget(ECS.Character character) {

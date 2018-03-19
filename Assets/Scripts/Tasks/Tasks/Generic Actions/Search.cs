@@ -14,8 +14,7 @@ public class Search : CharacterTask {
     private object _searchingFor;
 	private string searchingForLog;
 
-    public Search(TaskCreator createdBy, int defaultDaysLeft, object searchingFor, ILocation targetLocation, Quest parentQuest = null) : base(createdBy, TASK_TYPE.SEARCH, defaultDaysLeft, parentQuest) {
-        SetStance(STANCE.NEUTRAL);
+	public Search(TaskCreator createdBy, int defaultDaysLeft, object searchingFor, ILocation targetLocation, Quest parentQuest = null, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.SEARCH, stance, defaultDaysLeft, parentQuest) {
         _targetLocation = targetLocation;
         _searchingFor = searchingFor;
 		onGetTargetLandmarkAction = GetLandmarkForCharacterSearching;

@@ -8,8 +8,7 @@ public class Report : CharacterTask {
     private ECS.Character _reportTo;
     private Action _onReachLocationAction;
 
-    public Report(TaskCreator createdBy, ECS.Character reportTo, Quest parentQuest = null) : base(createdBy, TASK_TYPE.REPORT, -1, parentQuest) {
-        SetStance(STANCE.NEUTRAL);
+	public Report(TaskCreator createdBy, ECS.Character reportTo, Quest parentQuest = null, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.REPORT, stance, -1, parentQuest) {
         _reportTo = reportTo;
         _specificTargetClassification = "character";
         _parentQuest = parentQuest;

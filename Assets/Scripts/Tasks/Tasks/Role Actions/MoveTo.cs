@@ -18,10 +18,9 @@ public class MoveTo : CharacterTask {
     }
     #endregion
 
-	public MoveTo(TaskCreator createdBy, int defaultDaysLeft = -1) 
-        : base(createdBy, TASK_TYPE.MOVE_TO, defaultDaysLeft) {
+	public MoveTo(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) 
+        : base(createdBy, TASK_TYPE.MOVE_TO, stance, defaultDaysLeft) {
 		//_forPlayerOnly = true;
-		SetStance(STANCE.NEUTRAL);
         //_actionString = "to visit";
     }
 

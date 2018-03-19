@@ -9,9 +9,8 @@ public class HuntPrey : CharacterTask {
 
 	private string hunterName;
 
-	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1) 
-        : base(createdBy, TASK_TYPE.HUNT_PREY, defaultDaysLeft) {
-		SetStance (STANCE.COMBAT);
+	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
+        : base(createdBy, TASK_TYPE.HUNT_PREY, stance, defaultDaysLeft) {
     }
 
     #region overrides

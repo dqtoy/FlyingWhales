@@ -1207,3 +1207,14 @@ public enum ACTION_ALIGNMENT {
     HOSTILE
 }
 
+public enum STATE{
+	NONE,
+	SEARCH,
+	MOVE,
+	EXPLORE,
+	PATROL,
+	ATTACK,
+	REST,
+	HIBERNATE,
+}
+

@@ -229,7 +229,7 @@ namespace OldQuest{
          Create a new quest object.
          NOTE: Set daysBeforeDeadline to -1 if quest cannot expire.
              */
-        public Quest(TaskCreator createdBy, QUEST_TYPE questType) : base(createdBy, TASK_TYPE.QUEST) {
+		public Quest(TaskCreator createdBy, QUEST_TYPE questType, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.QUEST, stance) {
             _id = Utilities.SetID(this);
             _questType = questType;
 			_questName = Utilities.NormalizeStringUpperCaseFirstLetters (_questType.ToString ());

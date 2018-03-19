@@ -6,8 +6,7 @@ using ECS;
 public class CallSlyxes : CharacterTask {
 	private CraterBeast craterBeast;
 
-	public CallSlyxes(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.CALL_SLYXES, defaultDaysLeft) {
-		SetStance(STANCE.NEUTRAL);
+	public CallSlyxes(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.CALL_SLYXES, stance, defaultDaysLeft) {
 	}
 
 	#region overrides

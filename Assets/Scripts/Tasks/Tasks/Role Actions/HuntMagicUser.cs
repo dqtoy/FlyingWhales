@@ -8,8 +8,7 @@ public class HuntMagicUser : CharacterTask {
     private ECS.Character _targetCharacter;
     private BaseLandmark _targetLandmark;
 
-    public HuntMagicUser(TaskCreator createdBy) : base(createdBy, TASK_TYPE.HUNT_MAGIC_USER) {
-        SetStance(STANCE.STEALTHY);
+	public HuntMagicUser(TaskCreator createdBy, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.HUNT_MAGIC_USER, stance) {
         _specificTargetClassification = "character";
         _needsSpecificTarget = true;
         _filters = new TaskFilter[] {

@@ -13,8 +13,7 @@ public class RecruitFollowers : CharacterTask {
 
 	private BaseLandmark _targetLandmark;
 
-	public RecruitFollowers(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.RECRUIT_FOLLOWERS, defaultDaysLeft) {
-        SetStance(STANCE.NEUTRAL); //Recruit Followers is a Neutral Stance action.
+	public RecruitFollowers(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.RECRUIT_FOLLOWERS, stance, defaultDaysLeft) {
     }
 
     #region overrides

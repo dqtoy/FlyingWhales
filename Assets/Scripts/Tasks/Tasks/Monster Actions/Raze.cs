@@ -10,8 +10,7 @@ public class Raze : CharacterTask {
 	private WeightedDictionary<string> razeResult;
 	private BaseLandmark _target;
 
-	public Raze(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.RAZE, defaultDaysLeft) {
-		SetStance (STANCE.COMBAT);
+	public Raze(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) : base(createdBy, TASK_TYPE.RAZE, stance, defaultDaysLeft) {
         _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
         _alignments.Add(ACTION_ALIGNMENT.UNLAWFUL);
 		razeResult = new WeightedDictionary<string> ();

@@ -7,8 +7,7 @@ public class Hibernate : CharacterTask {
 
     private List<ECS.Character> _charactersToRest;
 
-	public Hibernate(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.HIBERNATE, defaultDaysLeft) {
-		SetStance (STANCE.NEUTRAL);
+	public Hibernate(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.HIBERNATE, stance, defaultDaysLeft) {
     }
 
     #region overrides

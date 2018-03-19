@@ -3,7 +3,7 @@ using System.Collections;
 using ECS;
 
 public class TakeQuest : CharacterTask {
-	public TakeQuest(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.TAKE_QUEST, defaultDaysLeft) {
+	public TakeQuest(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.TAKE_QUEST, stance, defaultDaysLeft) {
         _needsSpecificTarget = true;
         _specificTargetClassification = "quest";
     }

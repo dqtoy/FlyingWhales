@@ -6,8 +6,8 @@ using ECS;
 public class DoRitual : CharacterTask {
 	private BaseLandmark _ritualStones;
 
-	public DoRitual(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null) : base(createdBy, TASK_TYPE.DO_RITUAL, defaultDaysLeft, parentQuest) {
-		SetStance(STANCE.STEALTHY);
+	public DoRitual(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.DO_RITUAL, stance, defaultDaysLeft, parentQuest) {
+
 	}
 
 	#region overrides
