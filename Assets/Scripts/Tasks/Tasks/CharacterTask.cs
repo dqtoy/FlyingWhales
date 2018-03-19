@@ -44,6 +44,8 @@ public class CharacterTask {
 	protected WeightedDictionary<BaseLandmark> _landmarkWeights;
 	protected WeightedDictionary<ECS.Character> _characterWeights;
 
+	protected State _currentState;
+
     //protected string _actionString; //this is used for logs
 
     #region getters/setters
@@ -89,6 +91,9 @@ public class CharacterTask {
     public List<ACTION_ALIGNMENT> alignments {
         get { return _alignments; }
     }
+	public State currentState {
+		get { return _currentState; }
+	}
 	//public WeightedDictionary<BaseLandmark> landmarkWeights{
 	//	get { return _landmarkWeights; }
 	//}
@@ -107,6 +112,7 @@ public class CharacterTask {
         _taskLogs = new List<string>();
 		_landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 		_characterWeights = new WeightedDictionary<ECS.Character> ();
+		_currentState = null;
 		_forPlayerOnly = false;
 		_forGameOnly = false;
 		SetIsHalted (false);
