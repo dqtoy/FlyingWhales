@@ -691,6 +691,15 @@ namespace ECS {
 				if(specificLocation is BaseLandmark){
 					(specificLocation as BaseLandmark).AddHistory (this.name + " died.");
 				}
+
+				//Drop all Items
+				while (_equippedItems.Count > 0) {
+					ThrowItem (_equippedItems [0]);
+				}
+				while (_inventory.Count > 0) {
+					ThrowItem (_inventory [0]);
+				}
+
 				if(_home != null){
                     //Remove character home on landmark
 					_home.RemoveCharacterHomeOnLandmark (this);
@@ -735,6 +744,10 @@ namespace ECS {
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
+
+
+
+
 				if(onCharacterDeath != null){
 					onCharacterDeath();
 				}
