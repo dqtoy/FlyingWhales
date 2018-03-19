@@ -12,7 +12,7 @@ public class ColonistAvatar : CharacterAvatar {
 			_characters [0].currentTask.EndTask (TASK_STATUS.CANCEL);
 		}else{
 			if (this.path.Count > 0) {
-				this.MakeCitizenMove(this.currLocation.tileLocation, this.path[0]);
+				this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
 			}
 		}
 

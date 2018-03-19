@@ -270,7 +270,7 @@ public class CharacterInfoUI : UIMenu {
 	public void CenterCameraOnCharacter() {
         GameObject centerOn = null;
         if (currentlyShowingCharacter.avatar != null) {
-            centerOn = currentlyShowingCharacter.avatar.currLocation.tileLocation.gameObject;
+			centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
         } else {
             centerOn = currentlyShowingCharacter.currLocation.gameObject;
         }

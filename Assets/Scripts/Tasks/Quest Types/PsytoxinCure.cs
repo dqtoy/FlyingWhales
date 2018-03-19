@@ -7,10 +7,11 @@ public class PsytoxinCure : Quest {
 	//TODO: Go back to phase when an item has been stolen or dropped
 	private BaseLandmark _craterLandmark;
 
-	public PsytoxinCure(TaskCreator createdBy, BaseLandmark crater) : base(createdBy, QUEST_TYPE.THE_DARK_RITUAL) {
+	public PsytoxinCure(TaskCreator createdBy, BaseLandmark crater) : base(createdBy, QUEST_TYPE.PSYTOXIN_CURE) {
 		_alignment = new List<ACTION_ALIGNMENT>() {
 			ACTION_ALIGNMENT.PEACEFUL,
 		};
+
 		_craterLandmark = crater;
 
 		QuestPhase phase1 = new QuestPhase(this, "Collect Meteorite");
@@ -28,6 +29,13 @@ public class PsytoxinCure : Quest {
 	}
 
 	#region Overrides
-
+	public override bool CanAcceptQuest (Character character){
+		if(base.CanAcceptQuest (character)){
+			if(character.HasTag(CHARACTER_TAG.MILD_PSYTOXIN) || character.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN) || character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
+				return true;
+			}
+		}
+		return false;
+	}
 	#endregion
 }

@@ -722,7 +722,10 @@ public class Settlement : BaseLandmark {
 		newCharacter.DetermineAction();
 
 		SpawnItemInLandmark ("Meteorite");
-		EmitPsytoxin ();
+//		EmitPsytoxin ();
+		if(Messenger.eventTable.ContainsKey("RegionPsytoxin")){
+			Messenger.Broadcast<List<Region>> ("RegionPsytoxin", this.tileLocation.region.adjacentRegions);
+		}
 		PsytoxinCure psytoxinCure = new PsytoxinCure (QuestManager.Instance, this);
 		QuestManager.Instance.AddQuestToAvailableQuests(psytoxinCure);
 	}

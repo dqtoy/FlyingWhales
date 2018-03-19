@@ -157,6 +157,9 @@ public class CommandInfection : CharacterTask {
 		_targetLandmark.AddHistory ("A Slyx has self-destructed emitting a large amount of psytoxin from its body!");
 	}
 	private void InfectPsytoxin(ECS.Character character){
+		if(character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
+			return;	
+		}
 		ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)character.GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
 		if(modPsytoxin != null){
 			modPsytoxin.TriggerWorsenCase ();

@@ -114,19 +114,22 @@ public class DoRitual : CharacterTask {
 			if(currLandmark.civilians > 0){
 				currLandmark.KillAllCivilians ();
 			}
-			if(currLandmark.charactersAtLocation.Count > 0){
-				while(currLandmark.charactersAtLocation.Count > 0) {
-					if(currLandmark.charactersAtLocation[0] is Party){
-						Party party = (Party)currLandmark.charactersAtLocation [0];
-						while(party.partyMembers.Count > 0){
-							party.partyMembers [0].Death ();
-						}
-					}else if(currLandmark.charactersAtLocation[0] is ECS.Character){
-						ECS.Character character = (ECS.Character)currLandmark.charactersAtLocation [0];
-						character.Death ();
-					}
-				}
-			}
+//			if(currLandmark.charactersAtLocation.Count > 0){
+//				while(currLandmark.charactersAtLocation.Count > 0) {
+//					if(currLandmark.charactersAtLocation[0] is Party){
+//						Party party = (Party)currLandmark.charactersAtLocation [0];
+//						while(party.partyMembers.Count > 0){
+//							party.partyMembers [0].Death ();
+//						}
+//					}else if(currLandmark.charactersAtLocation[0] is ECS.Character){
+//						ECS.Character character = (ECS.Character)currLandmark.charactersAtLocation [0];
+//						character.Death ();
+//					}
+//				}
+//			}
+		}
+		if(Messenger.eventTable.ContainsKey("RegionDeath")){
+			Messenger.Broadcast<Region> ("RegionDeath", chosenRegion);
 		}
 
 		//Step 3 - Initialize Crater

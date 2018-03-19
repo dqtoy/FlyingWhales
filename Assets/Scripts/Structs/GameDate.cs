@@ -58,4 +58,8 @@ public struct GameDate {
 	public void SetDay(int day){
 		this.day = day;
 	}
+
+	public string ToStringDate(){
+		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year;
+	}
 }

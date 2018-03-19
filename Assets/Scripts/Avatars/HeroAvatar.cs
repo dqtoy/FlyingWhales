@@ -4,9 +4,16 @@ using System.Collections;
 public class HeroAvatar : CharacterAvatar {
 
 	internal override void NewMove() {
-		if(_characters[0].isInCombat){
-			_characters[0].SetCurrentFunction (() => NewMove ());
-			return;
+		if(_characters[0].party != null){
+			if(_characters[0].party.isInCombat){
+				_characters[0].party.SetCurrentFunction (() => NewMove ());
+				return;
+			}
+		}else{
+			if(_characters[0].isInCombat){
+				_characters[0].SetCurrentFunction (() => NewMove ());
+				return;
+			}
 		}
         CharacterTask currTask = _characters[0].currentTask;
         if (currTask is Expand) {
@@ -17,7 +24,7 @@ public class HeroAvatar : CharacterAvatar {
         }
         if (this.path.Count > 0) {
 			//RemoveCharactersFromLocation(this.currLocation);
-            this.MakeCitizenMove(this.currLocation.tileLocation, this.path[0]);
+			this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
         }
 
 	}

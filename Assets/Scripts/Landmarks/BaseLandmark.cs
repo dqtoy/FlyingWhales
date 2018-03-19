@@ -140,7 +140,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _connections = new List<object>();
         //_isHidden = true;
         _isExplored = false;
-        _landmarkName = string.Empty; //TODO: Add name generation
+		_landmarkName = Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()); //TODO: Add name generation
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
         _charactersWithHomeOnLandmark = new List<ECS.Character>();

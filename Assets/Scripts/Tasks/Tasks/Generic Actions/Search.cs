@@ -225,8 +225,8 @@ public class Search : CharacterTask {
 		ECS.Item meteorite = _assignedCharacter.GetItemInInventory ("Meteorite");
 		ECS.Item neuroctus = _assignedCharacter.GetItemInInventory ("Neuroctus");
 		if(meteorite != null && neuroctus != null){
-			_assignedCharacter.ThrowItem (meteorite);
-			_assignedCharacter.ThrowItem (neuroctus);
+			_assignedCharacter.ThrowItem (meteorite, false);
+			_assignedCharacter.ThrowItem (neuroctus, false);
 			if(!_assignedCharacter.RemoveCharacterTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 				if(!_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.MODERATE_PSYTOXIN)){
 					_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
