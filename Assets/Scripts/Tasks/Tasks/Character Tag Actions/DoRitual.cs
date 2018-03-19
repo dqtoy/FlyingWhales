@@ -141,9 +141,12 @@ public class DoRitual : CharacterTask {
 		settlement.tileLocation.RuinStructureOnTile (false);
 		settlement.ChangeLandmarkType (LANDMARK_TYPE.CRATER);
 
-		//_ritualStones.AddHistory ("A meteor crashed in " + landmark.landmarkName + " killing everything in the region!");
-		//landmark.AddHistory ("A meteor crashed!");
-	}
+        Log meteorCrashLog = new Log(GameManager.Instance.Today(), "Quests", "MeteorStrike", "meteor_crash");
+        meteorCrashLog.AddToFillers(landmark, landmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+
+        _ritualStones.AddHistory(meteorCrashLog);
+        landmark.AddHistory(meteorCrashLog);
+    }
 	private void End(){
 		//TODO: Change this to get a random ritual
 //		if(_assignedCharacter.role != null && _assignedCharacter.role.roleType == CHARACTER_ROLE.VILLAIN){

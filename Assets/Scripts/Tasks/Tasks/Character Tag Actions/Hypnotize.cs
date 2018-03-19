@@ -104,11 +104,13 @@ public class Hypnotize : CharacterTask {
 		_assignedCharacter.DestroyAvatar ();
 
 		if(_targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
-			string startLog = _assignedCharacter.name + " wants to hypnotize " + _targetCharacter.name + " into submission!";
-			//_targetLandmark.AddHistory (startLog);
-			//_targetCharacter.AddHistory (startLog);
-			//_assignedCharacter.AddHistory (startLog);
-		}else{
+            Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hypnotize", "start");
+            startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            startLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            _targetLandmark.AddHistory(startLog);
+            _targetCharacter.AddHistory(startLog);
+            _assignedCharacter.AddHistory(startLog);
+        } else {
 			EndHypnotize ();
 		}
 	}
@@ -116,10 +118,10 @@ public class Hypnotize : CharacterTask {
 	public void PerformHypnotize() {
 		string chosenAction = TaskManager.Instance.hypnotizeActions.PickRandomElementGivenWeights ();
 		if(chosenAction == "hypnotize"){
-			//_targetCharacter.AddHistory ("Hypnotized by " + _assignedCharacter.name + "!");
-			//_assignedCharacter.AddHistory ("Hypnotized " + _targetCharacter.name + "!");
-			//_targetLandmark.AddHistory (_assignedCharacter.name + " hypnotized " + _targetCharacter.name + "!");
-			_targetCharacter.AssignTag (CHARACTER_TAG.HYPNOTIZED);
+            Log hypnotizeLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hypnotize", "hypnotize");
+            hypnotizeLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            hypnotizeLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            _targetCharacter.AssignTag (CHARACTER_TAG.HYPNOTIZED);
 			MakeTargetCharacterAVampireFollower ();
 			EndHypnotize ();
 			return;

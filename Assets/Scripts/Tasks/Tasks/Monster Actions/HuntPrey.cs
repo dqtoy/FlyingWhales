@@ -156,10 +156,13 @@ public class HuntPrey : CharacterTask {
 			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);
-			//_target.AddHistory (hunterName + " hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
-			//_assignedCharacter.AddHistory ("Hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
+            Log eatLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "HuntPrey", "eat_civilian");
+            eatLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            eatLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);
+            _target.AddHistory(eatLog);
+            _assignedCharacter.AddHistory(eatLog);
 
-//          _target.ReduceCivilians(1);
+            //          _target.ReduceCivilians(1);
             //GameDate nextDate = GameManager.Instance.Today();
             //nextDate.AddDays(1);
             //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());

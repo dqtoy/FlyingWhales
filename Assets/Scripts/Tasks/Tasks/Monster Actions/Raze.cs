@@ -127,10 +127,14 @@ public class Raze : CharacterTask {
 		if(result == "success"){
 			_target.KillAllCivilians ();
 			_target.location.RuinStructureOnTile (false);
-			//_target.AddHistory(_assignedCharacter.name + " razed " + _target.landmarkName + "! All civilians were killed!");
-			//_assignedCharacter.AddHistory ("Razed " + _target.landmarkName + "! All civilians were killed!");
-			//TODO: When structure in landmarks is destroyed, shall all characters in there die?
-		}else{
+            Log successLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Raze", "success");
+            successLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            successLog.AddToFillers(_target, _target.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+
+            _target.AddHistory(successLog);
+            _assignedCharacter.AddHistory(successLog);
+            //TODO: When structure in landmarks is destroyed, shall all characters in there die?
+        } else{
 			//TODO: Fail
 			//_assignedCharacter.AddHistory ("Failed to raze " + _target.landmarkName + "!");
 			//_target.AddHistory(_assignedCharacter.name + " failed to raze " + _target.landmarkName + "!");

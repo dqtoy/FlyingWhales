@@ -692,7 +692,6 @@ namespace ECS {
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
                     (specificLocation as BaseLandmark).AddHistory(deathLog);
-					//(specificLocation as BaseLandmark).AddHistory (this.name + " died.");
 				}
 
 				//Drop all Items
@@ -878,7 +877,6 @@ namespace ECS {
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
-            //AddHistory ("Obtained " + newItem.itemName + ".");
         }
 
 		internal void ThrowItem(Item item, bool addInLandmark = true){
@@ -956,10 +954,6 @@ namespace ECS {
                 equipLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
                 AddHistory(equipLog);
             }
-
-            //			if(hasEquipped){
-            //				AddHistory ("Equipped " + item.itemName + ".");
-            //			}
             return hasEquipped;
 		}
 
@@ -976,7 +970,6 @@ namespace ECS {
 		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
 		internal bool UnownItem(Item item){
 			if(item.owner.id == this._id){
-				//AddHistory ("Unowned " + item.nameWithQuality + ".");
 				item.SetOwner (null);
 				return true;
 			}
@@ -985,13 +978,11 @@ namespace ECS {
 
 		//Own an Item
 		internal void OwnItem(Item item){
-			//AddHistory ("Owned " + item.nameWithQuality + ".");
 			item.SetOwner (this);
 		}
 
 		//Transfer item ownership
 		internal void TransferItemOwnership(Item item, Character newOwner){
-			//AddHistory ("Transfered " + item.nameWithQuality + " ownership to " + newOwner.name + ".");
 			newOwner.OwnItem (item);
 		}
 
@@ -2546,8 +2537,18 @@ namespace ECS {
 				}else if(_isPrisonerOf is BaseLandmark){
 					wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				}
-				//AddHistory ("Became a prisoner of " + wardenName + ".");
-				Unfaint ();
+                Log becomePrisonerLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_prisoner");
+                becomePrisonerLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                becomePrisonerLog.AddToFillers(_isPrisonerOf, wardenName, LOG_IDENTIFIER.TARGET_CHARACTER);
+                AddHistory(becomePrisonerLog);
+
+                if (_isPrisonerOf is ECS.Character) {
+                    ((ECS.Character)_isPrisonerOf).AddHistory(becomePrisonerLog);
+                } else if (_isPrisonerOf is BaseLandmark) {
+                    ((BaseLandmark)_isPrisonerOf).AddHistory(becomePrisonerLog);
+                }
+
+                Unfaint ();
 			}
 		}
 		internal void AddPrisoner(ECS.Character character){

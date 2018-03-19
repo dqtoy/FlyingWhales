@@ -146,19 +146,25 @@ public class DrinkBlood : CharacterTask {
 			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);
-			//_target.AddHistory (_assignedCharacter.name + " hunted, killed, and drank the blood of a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
-			//_assignedCharacter.AddHistory ("Hunted, killed, and drank the blood of a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
+            Log killLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "kill");
+            killLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            killLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);
+            _target.AddHistory(killLog);
+            _assignedCharacter.AddHistory(killLog);
 
-			//          _target.ReduceCivilians(1);
-			//GameDate nextDate = GameManager.Instance.Today();
-			//nextDate.AddDays(1);
-			//SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
-		}
+            //          _target.ReduceCivilians(1);
+            //GameDate nextDate = GameManager.Instance.Today();
+            //nextDate.AddDays(1);
+            //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
+        }
 	}
 	private void Caught(){
-		//_assignedCharacter.AddHistory ("Caught trying to kill and drink blood of a civilian!");
-		//_target.AddHistory (_assignedCharacter.name + " caught trying to kill and drink blood of a civilian!");
-		if(!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
+        Log caughtLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "caught");
+        caughtLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        _assignedCharacter.AddHistory(caughtLog);
+        _target.AddHistory(caughtLog);
+
+        if (!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
 			_assignedCharacter.AssignTag (CHARACTER_TAG.CRIMINAL);
 		}
 	}

@@ -197,7 +197,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         SetExploredState(true);
         _location.Occupy();
         EnableInitialTechnologies(faction);
-		//AddHistory ("Occupied by " + _owner.name + ".");
     }
     public virtual void UnoccupyLandmark() {
         if(_owner == null) {
@@ -213,7 +212,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_isOccupied = true;
 		_location.Occupy();
 		EnableInitialTechnologies(newOwner);
-		//AddHistory ("Changed owner to " + newOwner.name + ".");
 	}
     #endregion
 

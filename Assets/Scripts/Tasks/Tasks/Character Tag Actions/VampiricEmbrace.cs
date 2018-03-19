@@ -126,15 +126,13 @@ public class VampiricEmbrace : CharacterTask {
 		_assignedCharacter.DestroyAvatar ();
 
 		if(_targetCharacter.specificLocation != null && _targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
-			string startLog = _assignedCharacter.name + " wants to turn " + _targetCharacter.name + " into a vampire!";
-			//_targetLandmark.AddHistory (startLog);
-			//_targetCharacter.AddHistory (startLog);
-			//_assignedCharacter.AddHistory (startLog);
-		}else{
-			string startLog = _targetCharacter.name + " is no longer in the landmark!";
-			//_targetLandmark.AddHistory (startLog);
-			//_targetCharacter.AddHistory (startLog);
-			//_assignedCharacter.AddHistory (startLog);
+            Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "VampiricEmbrace", "start");
+            startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            startLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            _targetLandmark.AddHistory(startLog);
+            _targetCharacter.AddHistory(startLog);
+            _assignedCharacter.AddHistory(startLog);
+        } else {
 			EndVampiricEmbrace ();
 		}
 	}
@@ -142,17 +140,23 @@ public class VampiricEmbrace : CharacterTask {
 	public void PerformVampiricEmbrace() {
 		string chosenAction = TaskManager.Instance.vampiricEmbraceActions.PickRandomElementGivenWeights ();
 		if(chosenAction == "turn"){
-			//_targetCharacter.AddHistory ("Turned into vampire by " + _assignedCharacter.name + "!");
-			//_assignedCharacter.AddHistory ("Turned " + _targetCharacter.name + " into a vampire!");
-			//_targetLandmark.AddHistory (_assignedCharacter.name + " turned " + _targetCharacter.name + " into a vampire!");
-			_targetCharacter.AssignTag (CHARACTER_TAG.VAMPIRE);
+            Log turnLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "VampiricEmbrace", "turn_success");
+            turnLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            turnLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            _targetCharacter.AddHistory(turnLog);
+            _assignedCharacter.AddHistory(turnLog);
+            _targetLandmark.AddHistory(turnLog);
+            _targetCharacter.AssignTag (CHARACTER_TAG.VAMPIRE);
 			EndVampiricEmbrace ();
 			return;
 		}else if(chosenAction == "caught"){
-			//_targetCharacter.AddHistory (_assignedCharacter.name + " got caught trying to turn " + _targetCharacter.name + " into a vampire!");
-			//_assignedCharacter.AddHistory ("Caught trying to turn " + _targetCharacter.name + " into a vampire!");
-			//_targetLandmark.AddHistory (_assignedCharacter.name + " got caught trying to turn " + _targetCharacter.name + " into a vampire!");
-			if(!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
+            Log caughtLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "VampiricEmbrace", "caught");
+            caughtLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            caughtLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            _targetCharacter.AddHistory(caughtLog);
+            _assignedCharacter.AddHistory(caughtLog);
+            _targetLandmark.AddHistory(caughtLog);
+            if (!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
 				_assignedCharacter.AssignTag (CHARACTER_TAG.CRIMINAL);
 			}
 			EndVampiricEmbrace ();

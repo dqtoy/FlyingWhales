@@ -235,16 +235,22 @@ public class Search : CharacterTask {
 		if(meteorite != null && neuroctus != null){
 			_assignedCharacter.ThrowItem (meteorite, false);
 			_assignedCharacter.ThrowItem (neuroctus, false);
+            string psytoxinLevel = string.Empty;
 			if(!_assignedCharacter.RemoveCharacterTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 				if(!_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.MODERATE_PSYTOXIN)){
 					_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
-					//_assignedCharacter.AddHistory ("Severe Psytoxin cured!");
+                    //_assignedCharacter.AddHistory ("Severe Psytoxin cured!");
+                    psytoxinLevel = "Severe";
 				}else{
-					//_assignedCharacter.AddHistory ("Moderate Psytoxin cured!");
+                    //_assignedCharacter.AddHistory ("Moderate Psytoxin cured!");
+                    psytoxinLevel = "Moderate";
 				}
 			}else{
-				//_assignedCharacter.AddHistory ("Mild Psytoxin cured!");
+                //_assignedCharacter.AddHistory ("Mild Psytoxin cured!");
+                psytoxinLevel = "Mild";
 			}
+            Log cureLog = new Log(GameManager.Instance.Today(), "CharacterTags", "Psytoxin", "cured");
+            cureLog.AddToFillers(null, psytoxinLevel, LOG_IDENTIFIER.OTHER);
 		}
 	}
     #endregion
