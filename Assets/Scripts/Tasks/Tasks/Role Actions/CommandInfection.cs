@@ -23,7 +23,7 @@ public class CommandInfection : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget (character);
 		}
-		if(_targetLocation != null){
+		if(_targetLocation != null && _targetLocation is BaseLandmark){
 			for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
 				if(character.specificLocation.charactersAtLocation[i] is ECS.Character){
 					ECS.Character currCharacter = (ECS.Character) character.specificLocation.charactersAtLocation[i];
@@ -157,6 +157,9 @@ public class CommandInfection : CharacterTask {
 		//_targetLandmark.AddHistory ("A Slyx has self-destructed emitting a large amount of psytoxin from its body!");
 	}
 	private void InfectPsytoxin(ECS.Character character){
+		if(character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
+			return;	
+		}
 		ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)character.GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
 		if(modPsytoxin != null){
 			modPsytoxin.TriggerWorsenCase ();

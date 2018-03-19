@@ -8,6 +8,8 @@ public class Search : CharacterTask {
 
     private Action _searchAction;
 	private Action _afterFindingAction;
+	private delegate BaseLandmark GetTargetLandmark(Character character);
+	private event GetTargetLandmark onGetTargetLandmarkAction;
 
     private object _searchingFor;
 	private string searchingForLog;
@@ -16,6 +18,7 @@ public class Search : CharacterTask {
         SetStance(STANCE.NEUTRAL);
         _targetLocation = targetLocation;
         _searchingFor = searchingFor;
+		onGetTargetLandmarkAction = GetLandmarkForCharacterSearching;
         Log log = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", (string)_searchingFor); //Add Fillers as necesssary per item seaching for
 
         if (searchingFor is string) {
@@ -26,11 +29,13 @@ public class Search : CharacterTask {
 			}else if((searchingFor as string).Equals("Book of Inimical Incantations")) {
 				SetStance(STANCE.COMBAT);
 				_searchAction = () => SearchForItemInLandmark();
+				onGetTargetLandmarkAction = GetLandmarkForLandmarkItemsSearching;
 				_alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
 				//searchingForLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Neuroctus")) {
 				SetStance(STANCE.COMBAT);
 				_searchAction = () => SearchForItemInLandmark();
+				onGetTargetLandmarkAction = GetLandmarkForLandmarkItemsSearching;
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
 				//searchingForLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Psytoxin Herbalist")) {
@@ -102,21 +107,8 @@ public class Search : CharacterTask {
     }
 	protected override BaseLandmark GetLandmarkTarget(ECS.Character character) {
 		base.GetLandmarkTarget(character);
-		Region regionLocation = character.specificLocation.tileLocation.region;
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
-			int weight = 0;
-			weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
-			if (currLandmark.HasHostilitiesWith(character.faction)) {
-				weight -= 50;//If landmark has hostile characters: -50
-			}
-			//If this character has already Searched in the landmark within the past 6 months: -60
-			if (weight > 0) {
-				_landmarkWeights.AddElement(currLandmark, weight);
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
+		if(onGetTargetLandmarkAction != null){
+			return onGetTargetLandmarkAction (character);
 		}
 		return null;
 	}
@@ -153,44 +145,84 @@ public class Search : CharacterTask {
             }
         }
     }
+	private BaseLandmark GetLandmarkForCharacterSearching(Character character){
+		Region regionLocation = character.specificLocation.tileLocation.region;
+		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+			int weight = 0;
+			weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
+			if (currLandmark.HasHostilitiesWith(character.faction)) {
+				weight -= 50;//If landmark has hostile characters: -50
+			}
+			//If this character has already Searched in the landmark within the past 6 months: -60
+			if (weight > 0) {
+				_landmarkWeights.AddElement(currLandmark, weight);
+			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
+	}
     #endregion
 
 	#region Search for Landmark Items
 	private void SearchForItemInLandmark() {
-		BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-
-		for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
-			ECS.Item item = _targetLandmark.itemsInLandmark[i];
-			if (item.itemName == (string)_searchingFor) {
-				int chance = UnityEngine.Random.Range (0, 100);
-				if(chance < item.collectChance){
+		if (_targetLocation is BaseLandmark) {
+			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
+			for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
+				ECS.Item item = _targetLandmark.itemsInLandmark [i];
+				if (item.itemName == (string)_searchingFor) {
+					int chance = UnityEngine.Random.Range (0, 100);
+					if (chance < item.collectChance) {
 					//_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
 					//_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
-					_assignedCharacter.PickupItem (item);
-					_targetLandmark.RemoveItemInLandmark (item);
-					if(_afterFindingAction != null){
-						_afterFindingAction ();
+						_assignedCharacter.PickupItem (item);
+						_targetLandmark.RemoveItemInLandmark (item);
+						if (_afterFindingAction != null) {
+							_afterFindingAction ();
+						}
+						EndTask (TASK_STATUS.SUCCESS);
+						break;
 					}
-					EndTask(TASK_STATUS.SUCCESS);
-					break;
 				}
 			}
 		}
+	}
+	private BaseLandmark GetLandmarkForLandmarkItemsSearching(Character character){
+		Region regionLocation = character.specificLocation.tileLocation.region;
+		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+			int weight = 0;
+			weight += currLandmark.itemsInLandmark.Count * 20;//For each item in a landmark in the current region: +20
+			if (currLandmark.HasHostilitiesWith(character.faction)) {
+				weight -= 50;//If landmark has hostile characters: -50
+			}
+			//If this character has already Searched in the landmark within the past 6 months: -60
+			if (weight > 0) {
+				_landmarkWeights.AddElement(currLandmark, weight);
+			}
+		}
+		if(_landmarkWeights.GetTotalOfWeights() > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
+		}
+		return null;
 	}
 	#endregion
 
 	#region Search for a Tag
 	private void SearchForATag(string tag){
-		BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-
-		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
-			if (currCharacter.HasTag(tag, true)) {
-				if(_afterFindingAction != null){
-					_afterFindingAction ();
+		if (_targetLocation is BaseLandmark) {
+			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
+			for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
+				ECS.Character currCharacter = _targetLandmark.charactersAtLocation [i].mainCharacter;
+				if (currCharacter.HasTag (tag, true)) {
+					if (_afterFindingAction != null) {
+						_afterFindingAction ();
+					}
+					EndTask (TASK_STATUS.SUCCESS);
+					break;
 				}
-				EndTask(TASK_STATUS.SUCCESS);
-				break;
 			}
 		}
 	}
@@ -201,8 +233,8 @@ public class Search : CharacterTask {
 		ECS.Item meteorite = _assignedCharacter.GetItemInInventory ("Meteorite");
 		ECS.Item neuroctus = _assignedCharacter.GetItemInInventory ("Neuroctus");
 		if(meteorite != null && neuroctus != null){
-			_assignedCharacter.ThrowItem (meteorite);
-			_assignedCharacter.ThrowItem (neuroctus);
+			_assignedCharacter.ThrowItem (meteorite, false);
+			_assignedCharacter.ThrowItem (neuroctus, false);
 			if(!_assignedCharacter.RemoveCharacterTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 				if(!_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.MODERATE_PSYTOXIN)){
 					_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.SEVERE_PSYTOXIN);

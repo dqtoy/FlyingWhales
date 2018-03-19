@@ -24,6 +24,7 @@ public class Party: IEncounterable, ICombatInitializer {
     protected CharacterAvatar _avatar;
 
     protected ILocation _specificLocation;
+	protected Region _currentRegion;
 
 	protected bool _isDefeated;
     protected Dictionary<RACE, int> _civiliansByRace;
@@ -124,6 +125,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	public bool doesNotTakePrisoners{
 		get { return _partyLeader.characterDoesNotTakePrisoners; }
 	}
+	public Region currentRegion{
+		get { return _currentRegion; }
+	}
     #endregion
 
     public Party(ECS.Character partyLeader, bool mustBeAddedToPartyList = true) {
@@ -152,6 +156,9 @@ public class Party: IEncounterable, ICombatInitializer {
 	}
     public void SetSpecificLocation(ILocation specificLocation) {
         _specificLocation = specificLocation;
+		if (_specificLocation != null) {
+			_currentRegion = _specificLocation.tileLocation.region;
+		}
     }
 	public void SetIsDefeated(bool state){
 		_isDefeated = state;
@@ -225,7 +232,7 @@ public class Party: IEncounterable, ICombatInitializer {
         member.SetParty(null);
 		member.SetCurrentTask (null);
 		if(member.isFollower){
-			member.SetFollowerState (false);
+			member.isFollowerOf.RemoveFollower (member);
 		}
 		if (_partyMembers.Count <= 0) {
             //JustDisbandParty ();
@@ -554,9 +561,9 @@ public class Party: IEncounterable, ICombatInitializer {
             _partyLeader.CreateNewAvatar();
         }
         if(currentQuest.postedAt == null) {
-            throw new Exception("Posted at of quest " + currentQuest.questType.ToString() + " is null!");
+            throw new Exception("Posted at of quest " + currentQuest.questName + " is null!");
         }
-		if(_avatar.currLocation.tileLocation.id == currentQuest.postedAt.location.id){
+		if(_avatar.specificLocation.tileLocation.id == currentQuest.postedAt.location.id){
 			currentQuest.TurnInQuest (taskResult);
 		}else{
 			PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;

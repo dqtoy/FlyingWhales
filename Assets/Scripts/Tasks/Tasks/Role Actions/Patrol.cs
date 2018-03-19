@@ -27,7 +27,7 @@ public class Patrol : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget(character);
 		}
-		if (_targetLocation != null) {
+		if (_targetLocation != null && _targetLocation is BaseLandmark) {
 			_landmarkToPatrol = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartPatrol ());
 		}else{
@@ -52,6 +52,10 @@ public class Patrol : CharacterTask {
 					if (location.tileLocation.landmarkOnTile.owner.id == character.faction.id) {
 						return true;
 					}					
+				}else{
+					if(character.home != null && character.home.id == location.tileLocation.landmarkOnTile.id){
+						return true;
+					}
 				}
 			}
 		}
@@ -83,6 +87,9 @@ public class Patrol : CharacterTask {
 			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
+	}
+	public override int GetSelectionWeight (Character character){
+		return 20;
 	}
 	#endregion
 

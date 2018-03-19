@@ -82,6 +82,21 @@ public class StorylineManager : MonoBehaviour {
 
 	#region Inimical Incantations
 	private void TriggerInimicalIncantations(){
+		//Check if there is a Ritual Stone in the World
+		bool hasRitualStone = false;
+		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+			Region region = GridMap.Instance.allRegions [i];
+			for (int j = 0; j < region.landmarks.Count; j++) {
+				BaseLandmark landmark = region.landmarks [j];
+				if(landmark.specificLandmarkType == LANDMARK_TYPE.RITUAL_STONES){
+					hasRitualStone = true;
+				}
+			}
+		}
+		if(!hasRitualStone){
+			return;
+		}
+
 		//Spawn Neuroctus Plant in Caves and Get All Ancient Ruins
 		List<DungeonLandmark> ancientRuins = new List<DungeonLandmark>();
 		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {

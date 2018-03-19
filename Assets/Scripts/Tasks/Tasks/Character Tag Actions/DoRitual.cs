@@ -11,6 +11,10 @@ public class DoRitual : CharacterTask {
 	}
 
 	#region overrides
+	public override CharacterTask CloneTask (){
+		DoRitual clonedTask = new DoRitual(_createdBy, _defaultDaysLeft, _parentQuest);
+		return clonedTask;
+	}
 	public override void OnChooseTask(ECS.Character character) {
 		base.OnChooseTask(character);
 		if(_assignedCharacter == null){
@@ -19,7 +23,7 @@ public class DoRitual : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget (character);
 		}
-		if(_targetLocation != null){
+		if(_targetLocation != null && _targetLocation is BaseLandmark){
 			_ritualStones = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_ritualStones, PATHFINDING_MODE.USE_ROADS, () => StartRitual ());
 		}else{
@@ -63,6 +67,9 @@ public class DoRitual : CharacterTask {
 		}
 		return null;
 	}
+	public override int GetSelectionWeight(ECS.Character character){ 
+		return 75; 
+	}
 	#endregion
 
 	private void StartRitual() {
@@ -95,7 +102,7 @@ public class DoRitual : CharacterTask {
 		List<Region> targetRegions = new List<Region> ();
 		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
 			Region currRegion = GridMap.Instance.allRegions [i];
-			if(currRegion.centerOfMass.landmarkOnTile != null && currRegion.centerOfMass.landmarkOnTile.owner != null){
+			if(currRegion.centerOfMass.landmarkOnTile != null && currRegion.centerOfMass.landmarkOnTile.owner != null && currRegion.centerOfMass.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CRATER){
 				targetRegions.Add (currRegion);
 			}
 		}
@@ -110,19 +117,22 @@ public class DoRitual : CharacterTask {
 			if(currLandmark.civilians > 0){
 				currLandmark.KillAllCivilians ();
 			}
-			if(currLandmark.charactersAtLocation.Count > 0){
-				while(currLandmark.charactersAtLocation.Count > 0) {
-					if(currLandmark.charactersAtLocation[0] is Party){
-						Party party = (Party)currLandmark.charactersAtLocation [0];
-						while(party.partyMembers.Count > 0){
-							party.partyMembers [0].Death ();
-						}
-					}else if(currLandmark.charactersAtLocation[0] is ECS.Character){
-						ECS.Character character = (ECS.Character)currLandmark.charactersAtLocation [0];
-						character.Death ();
-					}
-				}
-			}
+//			if(currLandmark.charactersAtLocation.Count > 0){
+//				while(currLandmark.charactersAtLocation.Count > 0) {
+//					if(currLandmark.charactersAtLocation[0] is Party){
+//						Party party = (Party)currLandmark.charactersAtLocation [0];
+//						while(party.partyMembers.Count > 0){
+//							party.partyMembers [0].Death ();
+//						}
+//					}else if(currLandmark.charactersAtLocation[0] is ECS.Character){
+//						ECS.Character character = (ECS.Character)currLandmark.charactersAtLocation [0];
+//						character.Death ();
+//					}
+//				}
+//			}
+		}
+		if(Messenger.eventTable.ContainsKey("RegionDeath")){
+			Messenger.Broadcast<Region> ("RegionDeath", chosenRegion);
 		}
 
 		//Step 3 - Initialize Crater

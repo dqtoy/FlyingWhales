@@ -29,7 +29,7 @@ public class Attack : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget(character);
 		}
-		if(_targetLocation != null){
+		if(_targetLocation != null && _targetLocation is BaseLandmark){
 			_landmarkToAttack = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartAttack());
 		}else{

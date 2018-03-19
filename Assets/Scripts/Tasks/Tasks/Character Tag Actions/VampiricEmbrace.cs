@@ -35,15 +35,22 @@ public class VampiricEmbrace : CharacterTask {
                 return;
             }
 		}
-		_targetCharacter = (ECS.Character)_specificTarget;
+		if(_specificTarget is ECS.Character){
+			_targetCharacter = (ECS.Character)_specificTarget;
+			if(_targetLocation == null){
+				_targetLocation = _targetCharacter.specificLocation;
+			}
 
-		if(_targetLocation == null){
-			_targetLocation = _targetCharacter.specificLocation;
+			if (_targetLocation != null && _targetLocation is BaseLandmark) {
+				_targetLandmark = (BaseLandmark)_targetLocation;
+				_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace ());
+			}else{
+				EndTask (TASK_STATUS.FAIL);
+			}
+		}else{
+			EndTask (TASK_STATUS.FAIL);
 		}
 
-		_targetLandmark = (BaseLandmark)_targetLocation;
-
-		_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace());
 	}
 	public override void PerformTask() {
 		if(!CanPerformTask()){

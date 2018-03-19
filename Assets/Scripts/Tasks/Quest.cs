@@ -16,6 +16,7 @@ public class Quest {
     protected bool _isDone;
     protected TaskCreator _createdBy;
     protected QUEST_TYPE _questType;
+	protected string _questName;
 
     protected List<ACTION_ALIGNMENT> _alignment;
     protected List<ECS.Character> _acceptedCharacters;
@@ -30,7 +31,7 @@ public class Quest {
         get { return _createdBy; }
     }
     public string questName {
-        get { return GetQuestName(); }
+        get { return _questName; }
     }
     public QUEST_TYPE questType {
         get { return _questType; }
@@ -46,6 +47,7 @@ public class Quest {
     public Quest(TaskCreator createdBy, QUEST_TYPE questType) {
         _createdBy = createdBy;
         _questType = questType;
+		_questName = Utilities.NormalizeStringUpperCaseFirstLetters (_questType.ToString ());
         _alignment = new List<ACTION_ALIGNMENT>();
         _acceptedCharacters = new List<Character>();
         _phases = new List<QuestPhase>();
@@ -53,7 +55,7 @@ public class Quest {
 
     #region virtuals
     protected virtual string GetQuestName() {
-        return Utilities.NormalizeString(_questType.ToString());
+        return _questName;
     }
     /*
      Can a character accept this quest? 
@@ -168,6 +170,7 @@ namespace OldQuest{
 
         protected int _id;
         protected QUEST_TYPE _questType;
+		protected string _questName;
         //protected int _daysBeforeDeadline;
         protected bool _isExpired;
         protected bool _isAccepted;
@@ -186,8 +189,11 @@ namespace OldQuest{
             get { return _id; }
         }
         public string urlName {
-            get { return "[url=" + this._id.ToString() + "_quest]" + _questType.ToString() + "[/url]"; }
+			get { return "[url=" + this._id.ToString() + "_quest]" + _questName + "[/url]"; }
         }
+		public string questName {
+			get { return _questName; }
+		}
         public TaskCreator createdBy {
             get { return _createdBy; }
         }
@@ -226,6 +232,7 @@ namespace OldQuest{
         public Quest(TaskCreator createdBy, QUEST_TYPE questType) : base(createdBy, TASK_TYPE.QUEST) {
             _id = Utilities.SetID(this);
             _questType = questType;
+			_questName = Utilities.NormalizeStringUpperCaseFirstLetters (_questType.ToString ());
             //_daysBeforeDeadline = daysBeforeDeadline;
             _activeDuration = 0;
             _questFilters = new List<TaskFilter>();

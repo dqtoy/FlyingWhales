@@ -200,7 +200,7 @@ public class ConsoleMenu : UIMenu {
             }
             
 
-            AddSuccessMessage(character.name + " has accepted quest " + quest.questType.ToString());
+            AddSuccessMessage(character.name + " has accepted quest " + quest.questName);
         } else {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /force_accept_quest");
@@ -221,7 +221,7 @@ public class ConsoleMenu : UIMenu {
             OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
             quest.GoBackToQuestGiver(TASK_STATUS.CANCEL);
 
-            AddSuccessMessage(quest.questType.ToString() + " quest posted at " + quest.postedAt.location.name + " was cancelled.");
+            AddSuccessMessage(quest.questName + " quest posted at " + quest.postedAt.location.name + " was cancelled.");
         } else {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /cancel_quest");

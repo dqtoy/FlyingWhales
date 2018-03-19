@@ -119,40 +119,42 @@ public class Collect : CharacterTask {
 	private void CollectItem(){
 		int collectedAmount = 0;
 		int chance = 0;
-		BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-		for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
-			ECS.Item item = _targetLandmark.itemsInLandmark [i];
-			if(item.itemName == _itemNameToCollect){
-				if(item.isUnlimited){
-					int alreadyCollected = _quantityAlreadyCollected;
-					for (int j = alreadyCollected; j < _quantityToCollect; j++) {
+		if (_targetLocation is BaseLandmark) {
+			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
+			for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
+				ECS.Item item = _targetLandmark.itemsInLandmark [i];
+				if (item.itemName == _itemNameToCollect) {
+					if (item.isUnlimited) {
+						int alreadyCollected = _quantityAlreadyCollected;
+						for (int j = alreadyCollected; j < _quantityToCollect; j++) {
+							chance = UnityEngine.Random.Range (0, 100);
+							if (chance < item.collectChance) {
+								_assignedCharacter.PickupItem (item);
+								_targetLandmark.RemoveItemInLandmark (item);
+								_quantityAlreadyCollected++;
+								collectedAmount++;
+							}
+						}
+					} else {
 						chance = UnityEngine.Random.Range (0, 100);
-						if(chance < item.collectChance){
+						if (chance < item.collectChance) {
 							_assignedCharacter.PickupItem (item);
 							_targetLandmark.RemoveItemInLandmark (item);
 							_quantityAlreadyCollected++;
 							collectedAmount++;
 						}
 					}
-				}else{
-					chance = UnityEngine.Random.Range (0, 100);
-					if (chance < item.collectChance) {
-						_assignedCharacter.PickupItem (item);
-						_targetLandmark.RemoveItemInLandmark (item);
-						_quantityAlreadyCollected++;
-						collectedAmount++;
-					}
 				}
 			}
-		}
 
 		//_assignedCharacter.AddHistory ("Collected " + collectedAmount + " " + _itemNameToCollect + " in " + _targetLandmark.landmarkName + ".");
 		//_targetLandmark.AddHistory (_assignedCharacter.name + " collected " + collectedAmount + " " + _itemNameToCollect + ".");
 
-		if(_quantityAlreadyCollected >= _quantityToCollect){
-			EndTask (TASK_STATUS.SUCCESS);
-		}else{
-			EndTask (TASK_STATUS.FAIL);
+			if (_quantityAlreadyCollected >= _quantityToCollect) {
+				EndTask (TASK_STATUS.SUCCESS);
+			} else {
+				EndTask (TASK_STATUS.FAIL);
+			}
 		}
 	}
 

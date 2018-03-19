@@ -48,6 +48,7 @@ namespace ECS {
         private QuestData _questData;
 		private CharacterTask _currentTask;
         private ILocation _specificLocation;
+		private Region _currentRegion;
 		private CharacterAvatar _avatar;
 
 		[SerializeField] private List<BodyPart> _bodyParts;
@@ -156,12 +157,15 @@ namespace ECS {
         public ILocation specificLocation {
             get {
                 ILocation loc = null;
-				loc = (party == null ? (_isFollowerOf == null ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
+				loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
                 return loc;
             }
         }
-		internal HexTile currLocation{
+		public HexTile currLocation{
 			get { return (this.specificLocation != null ? this.specificLocation.tileLocation : null); }
+		}
+		public Region currentRegion{
+			get { return (_party == null ? _currentRegion : _party.currentRegion); }
 		}
 		public CharacterAvatar avatar{
 			get { return _avatar; }
@@ -403,6 +407,10 @@ namespace ECS {
 			currentCombat = null;
 			combatHistory = new Dictionary<int, CombatPrototype> ();
 			_combatHistoryID = 0;
+
+			Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
+			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
+
             //ConstructMaterialInventory();
 		}
 
@@ -674,6 +682,9 @@ namespace ECS {
 		internal void Death(){
 			if(!_isDead){
 				_isDead = true;
+				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
+				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
+
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
 				if(specificLocation is BaseLandmark){
@@ -857,11 +868,20 @@ namespace ECS {
             //AddHistory ("Obtained " + newItem.itemName + ".");
         }
 
-		internal void ThrowItem(Item item){
+		internal void ThrowItem(Item item, bool addInLandmark = true){
 			if(item.isEquipped){
 				UnequipItem (item);
 			}
 			this._inventory.Remove (item);
+			item.exploreWeight = 15;
+			if(addInLandmark){
+				ILocation location = specificLocation;
+				if(location != null && location is BaseLandmark){
+					BaseLandmark landmark = (BaseLandmark)location;
+					landmark.AddItemInLandmark(item);
+				}
+			}
+
 		}
 
 		//If character set up has pre equipped items, equip it here evey time a character is made
@@ -1760,6 +1780,57 @@ namespace ECS {
 			_statsModifierPercentage.hpPercentage -= tag.statsModifierPercentage.hpPercentage;
 			RecomputeMaxHP ();
 		}
+		public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false, bool includeParty = false){
+			if(!includeParty){
+				return DoesHaveTags (this, tagsToHave, mustHaveAll);
+			}else{
+				if(party != null){
+					List<CHARACTER_TAG> tagsToHaveCopy = tagsToHave.ToList ();
+					for (int i = 0; i < party.partyMembers.Count; i++) {
+						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
+							for (int k = 0; k < tagsToHaveCopy.Count; k++) {
+								if(party.partyMembers[i].tags[j].tagType == tagsToHaveCopy[k]) {
+									tagsToHaveCopy.RemoveAt (k);
+									break;
+								}
+							}
+							if(tagsToHaveCopy.Count <= 0){
+								return true;
+							}
+						}
+					}
+				}else{
+					return DoesHaveTags (this, tagsToHave, mustHaveAll);
+				}
+			}
+			return false;
+		}
+		private bool DoesHaveTags(Character currCharacter, CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
+			if(mustHaveAll){
+				int tagsCount = 0;
+				for (int i = 0; i < currCharacter.tags.Count; i++) {
+					for (int j = 0; j < tagsToHave.Length; j++) {
+						if(tagsToHave[j] == currCharacter.tags[i].tagType){
+							tagsCount++;
+							break;
+						}
+					}
+					if(tagsCount >= tagsToHave.Length){
+						return true;
+					}
+				}
+			}else{
+				for (int i = 0; i < currCharacter.tags.Count; i++) {
+					for (int j = 0; j < tagsToHave.Length; j++) {
+						if(tagsToHave[j] == currCharacter.tags[i].tagType){
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
 		public bool HasTag(CHARACTER_TAG tag, bool includeParty = false) {
 			if(!includeParty){
 				for (int i = 0; i < _tags.Count; i++) {
@@ -1890,6 +1961,9 @@ namespace ECS {
 		#region Location
         public void SetSpecificLocation(ILocation specificLocation) {
             _specificLocation = specificLocation;
+			if(_specificLocation != null){
+				_currentRegion = _specificLocation.tileLocation.region;
+			}
         }
 		#endregion
 
@@ -2024,6 +2098,7 @@ namespace ECS {
 //            AddTaskWeightsFromQuest(taskWeights);
 //            return taskWeights;
 //        }
+
         #endregion
 
         #region Tags
@@ -2361,6 +2436,13 @@ namespace ECS {
         public void CenterOnCharacter() {
             CameraMove.Instance.CenterCameraOn(this.currLocation.gameObject);
         }
+
+		//Death of this character if he/she is in the region specified
+		private void RegionDeath(Region region){
+			if(currentRegion.id == region.id){
+				Death ();
+			}
+		}
         #endregion
 
         #region Relationships
@@ -2807,6 +2889,33 @@ namespace ECS {
 			if(_followers.Remove(character)){
 				character._isFollowerOf = null;
 				character.SetFollowerState (false);
+			}
+		}
+		#endregion
+
+		#region Psytoxin
+		private void RegionPsytoxin(List<Region> regions){
+			for (int i = 0; i < regions.Count; i++) {
+				if(currentRegion.id == regions[i].id){
+					InfectedByPsytoxin ();
+					break;
+				}
+			}
+		}
+		private void InfectedByPsytoxin(){
+			if(HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
+				return;	
+			}
+			ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
+			if(modPsytoxin != null){
+				modPsytoxin.TriggerWorsenCase ();
+			}else{
+				MildPsytoxin mildPsytoxin = (MildPsytoxin)GetTag (CHARACTER_TAG.MILD_PSYTOXIN);
+				if(mildPsytoxin != null){
+					mildPsytoxin.TriggerWorsenCase ();
+				}else{
+					AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
+				}
 			}
 		}
 		#endregion

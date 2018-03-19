@@ -202,7 +202,7 @@ namespace ECS {
                     //if they did, keep the current character in the party
                     if (!combat.fledCharacters.Contains(currFleeCharacter.party.partyLeader)) {
                         //if they did not, remove the current character from the party and add him/her as a civilian in the nearest settlement of his/her faction
-                        currFleeCharacter.party.RemovePartyMember(currFleeCharacter);
+                        currFleeCharacter.party.RemovePartyMember(currFleeCharacter, true);
                         Settlement nearestSettlement = currFleeCharacter.GetNearestSettlementFromFaction();
                         nearestSettlement.AdjustCivilians(currFleeCharacter.raceSetting.race, 1);
                     }

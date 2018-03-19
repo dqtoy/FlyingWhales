@@ -729,7 +729,7 @@ namespace ECS{
 						int value = attackSkill.statusEffectRates [i].ratePercentage;
 						if(chance < value){
 							targetCharacter.AddStatusEffect (attackSkill.statusEffectRates [i].statusEffect);
-							log += StatusEffectLog (sourceCharacter, targetCharacter, attackSkill.statusEffectRates [i].statusEffect);
+							log += " " + StatusEffectLog (sourceCharacter, targetCharacter, attackSkill.statusEffectRates [i].statusEffect);
 						}
 					}
 				}
@@ -855,9 +855,6 @@ namespace ECS{
 										}
 										allWeaponDropped += item.itemName;
 										targetCharacter.ThrowItem (item);
-										if(targetCharacter.currLocation != null && targetCharacter.currLocation.landmarkOnTile != null){
-											targetCharacter.currLocation.landmarkOnTile.AddItemInLandmark(item);
-										}
 										break;
 									}
 								}
