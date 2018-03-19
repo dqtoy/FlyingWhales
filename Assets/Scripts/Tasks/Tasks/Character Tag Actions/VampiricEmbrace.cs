@@ -9,9 +9,8 @@ public class VampiricEmbrace : CharacterTask {
 	private ECS.Character _targetCharacter;
 	private BaseLandmark _targetLandmark;
 
-	public VampiricEmbrace(TaskCreator createdBy, int defaultDaysLeft = -1) 
-		: base(createdBy, TASK_TYPE.VAMPIRIC_EMBRACE, defaultDaysLeft) {
-		SetStance(STANCE.STEALTHY);
+	public VampiricEmbrace(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) 
+		: base(createdBy, TASK_TYPE.VAMPIRIC_EMBRACE, stance, defaultDaysLeft) {
         _alignments.Add(ACTION_ALIGNMENT.UNLAWFUL);
 		_needsSpecificTarget = true;
 		_specificTargetClassification = "character";

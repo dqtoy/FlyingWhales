@@ -12,8 +12,7 @@ public class ExploreTile : CharacterTask {
         get { return _landmarkToExplore; }
     }
     #endregion
-	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.EXPLORE_TILE, defaultDaysLeft) {
-		SetStance(STANCE.STEALTHY);
+	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.EXPLORE_TILE, stance, defaultDaysLeft) {
         //_actionString = "to explore";
     }
 		

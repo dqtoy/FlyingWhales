@@ -6,8 +6,7 @@ public class UpgradeGear : CharacterTask {
 
     private Settlement _settlement;
 
-	public UpgradeGear(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.UPGRADE_GEAR, defaultDaysLeft) {
-		SetStance(STANCE.NEUTRAL);
+	public UpgradeGear(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.UPGRADE_GEAR, stance, defaultDaysLeft) {
     }
     #region overrides
 	public override void OnChooseTask (ECS.Character character){

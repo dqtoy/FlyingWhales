@@ -6,8 +6,7 @@ using ECS;
 public class SiphonSlyx : CharacterTask {
 	private CraterBeast craterBeast;
 
-	public SiphonSlyx(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.SIPHON_SLYX, defaultDaysLeft) {
-		SetStance(STANCE.NEUTRAL);
+	public SiphonSlyx(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.SIPHON_SLYX, stance, defaultDaysLeft) {
 	}
 
 	#region overrides

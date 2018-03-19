@@ -14,8 +14,7 @@ public class Attack : CharacterTask {
 	}
 	#endregion
 
-	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null) : base(createdBy, TASK_TYPE.ATTACK, defaultDaysLeft, parentQuest) {
-		SetStance(STANCE.COMBAT);
+	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.COMBAT) : base(createdBy, TASK_TYPE.ATTACK, stance, defaultDaysLeft, parentQuest) {
         _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
 		_canChangeOwnership = true;
 	}

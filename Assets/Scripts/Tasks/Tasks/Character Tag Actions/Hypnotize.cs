@@ -8,9 +8,8 @@ public class Hypnotize : CharacterTask {
 	private ECS.Character _targetCharacter;
 	private BaseLandmark _targetLandmark;
 
-	public Hypnotize(TaskCreator createdBy, int defaultDaysLeft = -1) 
-		: base(createdBy, TASK_TYPE.HYPNOTIZE, defaultDaysLeft) {
-		SetStance(STANCE.STEALTHY);
+	public Hypnotize(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) 
+		: base(createdBy, TASK_TYPE.HYPNOTIZE, stance, defaultDaysLeft) {
         _alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
         _alignments.Add(ACTION_ALIGNMENT.UNLAWFUL);
         _needsSpecificTarget = true;

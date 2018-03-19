@@ -10,9 +10,8 @@ public class Rest : CharacterTask {
 
     private List<ECS.Character> _charactersToRest;
 
-	public Rest(TaskCreator createdBy, int defaultDaysLeft = -1) 
-        : base(createdBy, TASK_TYPE.REST, defaultDaysLeft) {
-		SetStance(STANCE.NEUTRAL);
+	public Rest(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) 
+        : base(createdBy, TASK_TYPE.REST, stance, defaultDaysLeft) {
     }
 		
     #region overrides

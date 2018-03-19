@@ -3,8 +3,7 @@ using System.Collections;
 using ECS;
 
 public class ProclaimSuccessor : CharacterTask {
-    public ProclaimSuccessor(TaskCreator createdBy) : base(createdBy, TASK_TYPE.PROCLAIM_SUCCESSOR) {
-        SetStance(STANCE.NEUTRAL);
+	public ProclaimSuccessor(TaskCreator createdBy, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.PROCLAIM_SUCCESSOR, stance) {
         _needsSpecificTarget = true;
         _specificTargetClassification = "character";
         _filters = new TaskFilter[] {

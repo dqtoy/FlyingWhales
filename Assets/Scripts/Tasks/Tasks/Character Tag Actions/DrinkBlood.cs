@@ -8,9 +8,8 @@ public class DrinkBlood : CharacterTask {
 
 	private BaseLandmark _target;
 
-	public DrinkBlood(TaskCreator createdBy, int defaultDaysLeft = -1) 
-		: base(createdBy, TASK_TYPE.DRINK_BLOOD, defaultDaysLeft) {
-		SetStance (STANCE.STEALTHY);
+	public DrinkBlood(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) 
+		: base(createdBy, TASK_TYPE.DRINK_BLOOD, stance, defaultDaysLeft) {
 	}
 
 	#region overrides

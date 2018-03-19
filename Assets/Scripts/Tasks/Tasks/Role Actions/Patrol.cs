@@ -13,9 +13,8 @@ public class Patrol : CharacterTask {
 	}
 	#endregion
 
-	public Patrol(TaskCreator createdBy, int defaultDaysLeft = -1) 
-		: base(createdBy, TASK_TYPE.PATROL, defaultDaysLeft) {
-		SetStance(STANCE.COMBAT);
+	public Patrol(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
+		: base(createdBy, TASK_TYPE.PATROL, stance, defaultDaysLeft) {
 	}
 
 	#region overrides

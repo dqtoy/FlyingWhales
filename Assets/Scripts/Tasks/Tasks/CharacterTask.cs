@@ -100,7 +100,7 @@ public class CharacterTask {
     //}
     #endregion
 
-	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1, Quest parentQuest = null) {
+	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, STANCE stance, int defaultDaysLeft = -1, Quest parentQuest = null) {
         _createdBy = createdBy;
         _taskType = taskType;
 		_taskName = Utilities.NormalizeStringUpperCaseFirstLetters (_taskType.ToString ());
@@ -115,6 +115,7 @@ public class CharacterTask {
         _alignments = new List<ACTION_ALIGNMENT>();
 		SetDefaultDaysLeft (defaultDaysLeft);
 		SetDaysLeft (defaultDaysLeft);
+		SetStance(stance);
     }
 
     #region virtual
@@ -201,7 +202,7 @@ public class CharacterTask {
          */
 	public virtual bool AreConditionsMet(ECS.Character character) { return false; }
     public virtual CharacterTask CloneTask() {
-        CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _defaultDaysLeft);
+        CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _stance, _defaultDaysLeft);
         return clonedTask;
     }
     protected virtual BaseLandmark GetLandmarkTarget(ECS.Character character) {

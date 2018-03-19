@@ -9,8 +9,7 @@ public class CommandInfection : CharacterTask {
 	private Character _chosenSlyx;
 	private WeightedDictionary<Region> _regionWeights;
 
-	public CommandInfection(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.COMMAND_INFECTION, defaultDaysLeft) {
-		SetStance(STANCE.STEALTHY);
+	public CommandInfection(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.COMMAND_INFECTION, stance, defaultDaysLeft) {
 		_regionWeights = new WeightedDictionary<Region> ();
 	}
 

@@ -11,8 +11,7 @@ public class Collect : CharacterTask {
 
     private string itemToCollectLog;
 
-	public Collect(TaskCreator createdBy, string itemName, int quantity, ILocation targetLocation, int defaultDaysLeft = -1, Quest parentQuest = null) : base(createdBy, TASK_TYPE.COLLECT, defaultDaysLeft, parentQuest) {
-		SetStance(STANCE.COMBAT);
+	public Collect(TaskCreator createdBy, string itemName, int quantity, ILocation targetLocation, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.COMBAT) : base(createdBy, TASK_TYPE.COLLECT, stance, defaultDaysLeft, parentQuest) {
 		_targetLocation = targetLocation;
 		_itemNameToCollect = itemName;
 		_quantityToCollect = quantity;
