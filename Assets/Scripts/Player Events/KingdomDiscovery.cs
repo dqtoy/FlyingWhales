@@ -16,13 +16,13 @@ public class KingdomDiscovery : GameEvent {
 //		this.affectedKingdoms.Add (this.discoveredKingdom);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "KingdomDiscovery", "event_title");
-		newLogTitle.AddToFillers (this.discovererKingdom, this.discovererKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLogTitle.AddToFillers (this.discoveredKingdom, this.discoveredKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLogTitle.AddToFillers (this.discovererKingdom, this.discovererKingdom.name, LOG_IDENTIFIER.FACTION_1);
+		newLogTitle.AddToFillers (this.discoveredKingdom, this.discoveredKingdom.name, LOG_IDENTIFIER.FACTION_2);
 
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "KingdomDiscovery", "start");
-		newLog.AddToFillers (this.discovererKingdom, this.discovererKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (this.discoveredKingdom, this.discoveredKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this.discovererKingdom, this.discovererKingdom.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (this.discoveredKingdom, this.discoveredKingdom.name, LOG_IDENTIFIER.FACTION_2);
 
         //		this.PlayerEventIsCreated ();
         //EventIsCreated(this.discovererKingdom, true);

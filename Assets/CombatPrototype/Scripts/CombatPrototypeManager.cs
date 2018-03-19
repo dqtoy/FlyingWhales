@@ -164,7 +164,7 @@ namespace ECS {
 							}else{
 								if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 									BaseLandmark landmark = combat.location as BaseLandmark;
-									landmark.AddHistory (currFaintedChar.name + " is left to die.");
+									//landmark.AddHistory (currFaintedChar.name + " is left to die.");
 								}
 								currFaintedChar.Death();
 							}
@@ -178,7 +178,7 @@ namespace ECS {
                         if (currFaintedChar.currentSide != combat.winningSide){
 							if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 								BaseLandmark landmark = combat.location as BaseLandmark;
-								landmark.AddHistory (currFaintedChar.name + " is left to die.");
+								//landmark.AddHistory (currFaintedChar.name + " is left to die.");
 							}
                             currFaintedChar.Death();
 						}else{

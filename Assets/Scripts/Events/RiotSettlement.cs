@@ -24,9 +24,9 @@ public class RiotSettlement : GameEvent {
         sourceKingdom.ChangeStability(50);
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "RiotSettlement", "riot_settlement_start");
-        newLog.AddToFillers(randomCity, randomCity.name, LOG_IDENTIFIER.CITY_1);
-        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(governor, governor.name, LOG_IDENTIFIER.GOVERNOR_1);
+        newLog.AddToFillers(randomCity, randomCity.name, LOG_IDENTIFIER.LANDMARK_1);
+        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
+        //newLog.AddToFillers(governor, governor.name, LOG_IDENTIFIER.GOVERNOR_1);
 
         UIManager.Instance.ShowNotification(newLog);
 

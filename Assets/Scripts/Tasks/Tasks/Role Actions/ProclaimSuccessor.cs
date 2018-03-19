@@ -27,8 +27,11 @@ public class ProclaimSuccessor : CharacterTask {
         }
         Successor tag = successor.AssignTag(CHARACTER_TAG.SUCCESSOR) as Successor;
         tag.SetCharacterToSucceed(character);
-        character.AddHistory(character.name + " proclaimed his successor to be " + successor.name);
-        successor.AddHistory(successor.name + " was procalaimed to be the successor of " + character.name);
+        Log proclaimLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "ProclaimSuccessor", "proclaim");
+        proclaimLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        proclaimLog.AddToFillers(successor, successor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        _assignedCharacter.AddHistory(proclaimLog);
+        successor.AddHistory(proclaimLog);
 
         EndTask(TASK_STATUS.SUCCESS);
     }

@@ -27,13 +27,11 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected Dictionary<RACE, int> _civiliansByRace;
     protected int _currDurability;
 	protected int _totalDurability;
-
-    //TODO: Add list of items on landmark
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
     protected LandmarkObject _landmarkObject;
 	protected List<ECS.Character> _prisoners; //list of prisoners on landmark
-    protected List<string> _history;
+    protected List<Log> _history;
 	protected int _combatHistoryID;
 	protected Dictionary<int, ECS.CombatPrototype> _combatHistory;
     protected List<ICombatInitializer> _charactersAtLocation;
@@ -101,7 +99,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
 	}
-	public List<string> history{
+	public List<Log> history{
 		get { return this._history; }
 	}
 	public Dictionary<int, ECS.CombatPrototype> combatHistory {
@@ -140,12 +138,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         _connections = new List<object>();
         //_isHidden = true;
         _isExplored = false;
-        _landmarkName = string.Empty; //TODO: Add name generation
+        _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
         _charactersWithHomeOnLandmark = new List<ECS.Character>();
 		_prisoners = new List<ECS.Character>();
-		_history = new List<string>();
+		_history = new List<Log>();
 		_combatHistory = new Dictionary<int, ECS.CombatPrototype>();
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
@@ -199,7 +197,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         SetExploredState(true);
         _location.Occupy();
         EnableInitialTechnologies(faction);
-		AddHistory ("Occupied by " + _owner.name + ".");
+		//AddHistory ("Occupied by " + _owner.name + ".");
     }
     public virtual void UnoccupyLandmark() {
         if(_owner == null) {
@@ -215,7 +213,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_isOccupied = true;
 		_location.Occupy();
 		EnableInitialTechnologies(newOwner);
-		AddHistory ("Changed owner to " + newOwner.name + ".");
+		//AddHistory ("Changed owner to " + newOwner.name + ".");
 	}
     #endregion
 
@@ -718,16 +716,29 @@ public class BaseLandmark : ILocation, TaskCreator {
         ECS.CombatPrototype combat = new ECS.CombatPrototype(combatant1, combatant2, this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
+        string combatant1Name = string.Empty;
+        string combatant2Name = string.Empty;
         if (combatant1 is Party) {
+            combatant1Name = (combatant1 as Party).name;
             combat.AddCharacters(ECS.SIDES.A, (combatant1 as Party).partyMembers);
         } else {
+            combatant1Name = (combatant1 as ECS.Character).name;
             combat.AddCharacter(ECS.SIDES.A, combatant1 as ECS.Character);
         }
         if (combatant2 is Party) {
+            combatant2Name = (combatant2 as Party).name;
             combat.AddCharacters(ECS.SIDES.B, (combatant2 as Party).partyMembers);
         } else {
+            combatant2Name = (combatant2 as ECS.Character).name;
             combat.AddCharacter(ECS.SIDES.B, combatant2 as ECS.Character);
         }
+        Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
+        combatLog.AddToFillers(combatant1, combatant1Name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        combatLog.AddToFillers(combatant2, combatant2Name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        AddHistory(combatLog);
+        combatant1.mainCharacter.AddHistory(combatLog);
+        combatant2.mainCharacter.AddHistory(combatLog);
+
         //this.specificLocation.SetCurrentCombat(combat);
         CombatThreadPool.Instance.AddToThreadPool(combat);
     }
@@ -924,6 +935,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_specificLandmarkType = newLandmarkType;
 		Initialize ();
 	}
+    public void CenterOnLandmark() {
+        CameraMove.Instance.CenterCameraOn(this.location.gameObject);
+    }
     #endregion
 
     #region Prisoner
@@ -937,30 +951,36 @@ public class BaseLandmark : ILocation, TaskCreator {
 	#endregion
 
 	#region History
-	internal void AddHistory(string text, object obj = null){
-		GameDate today = GameManager.Instance.Today ();
-		string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
-		if(obj != null){
-			if(obj is ECS.CombatPrototype){
-				ECS.CombatPrototype combat = (ECS.CombatPrototype)obj;
-				if(this.combatHistory.Count > 20){
-					this.combatHistory.Remove (0);
-				}
-				_combatHistoryID += 1;
-				combatHistory.Add (_combatHistoryID, combat);
-				string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
-				text = combatText;
-			}
-		}
-		this._history.Insert (0, date + " " + text);
-		if(this._history.Count > 20){
-			this._history.RemoveAt (this._history.Count - 1);
-		}
-	}
-	#endregion
+    internal void AddHistory(Log log) {
+        _history.Add(log);
+        if (this._history.Count > 20) {
+            this._history.RemoveAt(this._history.Count - 1);
+        }
+    }
+    //internal void AddHistory(string text, object obj = null) {
+    //    GameDate today = GameManager.Instance.Today();
+    //    string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
+    //    if (obj != null) {
+    //        if (obj is ECS.CombatPrototype) {
+    //            ECS.CombatPrototype combat = (ECS.CombatPrototype)obj;
+    //            if (this.combatHistory.Count > 20) {
+    //                this.combatHistory.Remove(0);
+    //            }
+    //            _combatHistoryID += 1;
+    //            combatHistory.Add(_combatHistoryID, combat);
+    //            string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
+    //            text = combatText;
+    //        }
+    //    }
+    //    this._history.Insert(0, date + " " + text);
+    //    if (this._history.Count > 20) {
+    //        this._history.RemoveAt(this._history.Count - 1);
+    //    }
+    //}
+    #endregion
 
-	#region Materials
-	public void AdjustDurability(int amount){
+    #region Materials
+    public void AdjustDurability(int amount){
 		_currDurability += amount;
 		_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
 	}
@@ -1045,15 +1065,17 @@ public class BaseLandmark : ILocation, TaskCreator {
                 } else if (createdItem.itemName.Contains("Weapon")) {
                     createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
                 }
-            }
-            QUALITY equipmentQuality = GetEquipmentQuality();
-            if (createdItem.itemType == ITEM_TYPE.ARMOR) {
-                ((ECS.Armor)createdItem).SetQuality(equipmentQuality);
-            } else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
-                ((ECS.Weapon)createdItem).SetQuality(equipmentQuality);
+                QUALITY equipmentQuality = GetEquipmentQuality();
+                if (createdItem.itemType == ITEM_TYPE.ARMOR) {
+                    ((ECS.Armor)createdItem).SetQuality(equipmentQuality);
+                } else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
+                    ((ECS.Weapon)createdItem).SetQuality(equipmentQuality);
+                }
+            } else {
+                //only set as unlimited if not from loot chest, since gear from loot chests are not unlimited
+                createdItem.SetIsUnlimited(currItemData.isUnlimited);
             }
             createdItem.SetExploreWeight(currItemData.exploreWeight);
-            createdItem.SetIsUnlimited(currItemData.isUnlimited);
             AddItemInLandmark(createdItem);
         }
     }
@@ -1100,9 +1122,15 @@ public class BaseLandmark : ILocation, TaskCreator {
                 }
             } else {
                 //item should only be interacted with
-                AddHistory(explorer.name + " interacted with a " + generatedItem.itemName + "!");
                 StorylineManager.Instance.OnInteractWith(generatedItem.itemName, this, explorer);
+                Log interactLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "interact_item");
+                interactLog.AddToFillers(explorer, explorer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                interactLog.AddToFillers(null, generatedItem.interactString, LOG_IDENTIFIER.OTHER);
+                interactLog.AddToFillers(null, generatedItem.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+                AddHistory(interactLog);
+                explorer.AddHistory(interactLog);
             }
+
         }
     }
     /*
@@ -1114,19 +1142,20 @@ public class BaseLandmark : ILocation, TaskCreator {
             ECS.Item chosenItem = itemWeights.PickRandomElementGivenWeights();
 			//Remove item form weights if it is not unlimited
 			RemoveItemInLandmark(chosenItem);
-            if (ItemManager.Instance.IsLootChest(chosenItem)) {
-                //chosen item is a loot crate, generate a random item
-                string[] words = chosenItem.itemName.Split(' ');
-                int tier = System.Int32.Parse(words[1]);
-                if (chosenItem.itemName.Contains("Armor")) {
-                    return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
-                }else if (chosenItem.itemName.Contains("Weapon")) {
-                    return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
-                }
-            } else {
-                return chosenItem;
-            }
-            
+            return chosenItem;
+            //if (ItemManager.Instance.IsLootChest(chosenItem)) {
+            //    //chosen item is a loot crate, generate a random item
+            //    string[] words = chosenItem.itemName.Split(' ');
+            //    int tier = System.Int32.Parse(words[1]);
+            //    if (chosenItem.itemName.Contains("Armor")) {
+            //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
+            //    }else if (chosenItem.itemName.Contains("Weapon")) {
+            //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
+            //    }
+            //} else {
+
+            //}
+
         }
         return null;
     }

@@ -16,32 +16,41 @@ public class EventLabel : MonoBehaviour {
                 lf = logItem.GetComponent<EventLogItem>().thisLog.fillers[indexToUse];
             }else if(logItem.GetComponent<NotificationItem>() != null) {
                 lf = logItem.GetComponent<NotificationItem>().thisLog.fillers[indexToUse];
+            } else if (logItem.GetComponent<LogHistoryItem>() != null) {
+                lf = logItem.GetComponent<LogHistoryItem>().thisLog.fillers[indexToUse];
             }
 
-			if (lf.obj != null) {
-				if (lf.obj is City) {
-                    //UIManager.Instance.ShowCityInfo ((City)lf.obj);
-                    City currCity = (City)lf.obj;
-                    if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
-                        CameraMove.Instance.CenterCameraOn(currCity.hexTile.gameObject);
-                    }
-                    //UIManager.Instance.SetKingdomAsSelected(((City)lf.obj).kingdom);
-				} else if (lf.obj is Citizen) {
-					UIManager.Instance.ShowCitizenInfo ((Citizen)lf.obj);
-				} else if (lf.obj is Kingdom) {
-                    Kingdom currKingdom = (Kingdom)lf.obj;
-                    for (int i = 0; i < currKingdom.cities.Count; i++) {
-                        City currCity = currKingdom.cities[i];
-                        if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
-                            CameraMove.Instance.CenterCameraOn(currKingdom.capitalCity.hexTile.gameObject);
-                            break;
-                        }
-                    }
-                    //UIManager.Instance.SetKingdomAsSelected ();
-				} else if (lf.obj is GameEvent) {
-					UIManager.Instance.ShowEventLogs (lf.obj);
-				}
-			}
+            if (lf.obj != null) {
+                if (lf.obj is ECS.Character) {
+                    UIManager.Instance.ShowCharacterInfo(lf.obj as ECS.Character);
+                } else if (lf.obj is Party) {
+                    UIManager.Instance.ShowPartyInfo(lf.obj as Party);
+                } else if (lf.obj is BaseLandmark) {
+                    UIManager.Instance.ShowSettlementInfo(lf.obj as BaseLandmark);
+                }
+                //if (lf.obj is City) {
+                //                //UIManager.Instance.ShowCityInfo ((City)lf.obj);
+                //                City currCity = (City)lf.obj;
+                //                if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
+                //                    CameraMove.Instance.CenterCameraOn(currCity.hexTile.gameObject);
+                //                }
+                //                //UIManager.Instance.SetKingdomAsSelected(((City)lf.obj).kingdom);
+                //} else if (lf.obj is Citizen) {
+                //	UIManager.Instance.ShowCitizenInfo ((Citizen)lf.obj);
+                //} else if (lf.obj is Kingdom) {
+                //                Kingdom currKingdom = (Kingdom)lf.obj;
+                //                for (int i = 0; i < currKingdom.cities.Count; i++) {
+                //                    City currCity = currKingdom.cities[i];
+                //                    if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
+                //                        CameraMove.Instance.CenterCameraOn(currKingdom.capitalCity.hexTile.gameObject);
+                //                        break;
+                //                    }
+                //                }
+                //                //UIManager.Instance.SetKingdomAsSelected ();
+                //} else if (lf.obj is GameEvent) {
+                //	UIManager.Instance.ShowEventLogs (lf.obj);
+                //}
+            }
 		}
 	}
 }

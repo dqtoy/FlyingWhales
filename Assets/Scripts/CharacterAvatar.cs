@@ -12,8 +12,10 @@ public class CharacterAvatar : PooledObject{
 
 	[SerializeField] protected SmoothMovement smoothMovement;
 	[SerializeField] protected DIRECTION direction;
+    [SerializeField] protected GameObject _avatarHighlight;
 
 	protected List<ECS.Character> _characters;
+    protected ECS.Character _mainCharacter;
 
 	protected ILocation _currLocation;
     protected ILocation targetLocation;
@@ -47,6 +49,7 @@ public class CharacterAvatar : PooledObject{
         this.smoothMovement.avatarGO = this.gameObject;
         _characters = new List<ECS.Character>();
         AddNewCharacter(character);
+        _mainCharacter = character;
         _currLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
@@ -57,6 +60,7 @@ public class CharacterAvatar : PooledObject{
         for (int i = 0; i < party.partyMembers.Count; i++) {
             AddNewCharacter(party.partyMembers[i]);
         }
+        _mainCharacter = party.partyLeader;
 		_currLocation = party.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
@@ -94,6 +98,9 @@ public class CharacterAvatar : PooledObject{
         if (!_characters.Contains(character)) {
             _characters.Add(character);
             character.SetAvatar(this);
+            if (UIManager.Instance.characterInfoUI.IsCharacterInfoShowing(character)) {
+                this.SetHighlightState(true);
+            }
         }
     }
     public void RemoveCharacter(ECS.Character character) {
@@ -140,15 +147,25 @@ public class CharacterAvatar : PooledObject{
             if (this.currLocation.tileLocation == null) {
                 throw new Exception("Curr location of avatar is null! Is Initialized: " + _isInitialized.ToString());
             }
+
 			if(this.currLocation.tileLocation.landmarkOnTile != null){
-				if(_characters[0].party != null){
-					this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " left.");
-				}else{
-					for (int i = 0; i < _characters.Count; i++) {
-						this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [i].name + " left.");
-					}
+                Log leftLog = null;
+                if (_mainCharacter.party != null){
+                    leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location_party");
+                    leftLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
+                    leftLog.AddToFillers(this.currLocation.tileLocation.landmarkOnTile, this.currLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                    leftLog.AddToFillers(null, _mainCharacter.currentTask.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
+                } else{
+                    leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
+                    leftLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    leftLog.AddToFillers(this.currLocation.tileLocation.landmarkOnTile, this.currLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                    leftLog.AddToFillers(null, _mainCharacter.currentTask.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
 				}
-			}
+                this.currLocation.tileLocation.landmarkOnTile.AddHistory(leftLog);
+                _mainCharacter.AddHistory(leftLog);
+            }
 
             this.path = path;
             _isTravelling = true;
@@ -196,24 +213,42 @@ public class CharacterAvatar : PooledObject{
                 _isTravelling = false;
                 AddCharactersToLocation(targetLocation, _startCombatOnReachLocation);
                 _currLocation = targetLocation; //set location as the target location, in case the target location is a landmark
-                if (this.currLocation.tileLocation.landmarkOnTile != null){
-					string historyText = "Visited landmark ";
-					if (this.currLocation.tileLocation.landmarkOnTile is Settlement) {
-						historyText = "Arrived at settlement ";
-					}
-						
-					if(_characters[0].party != null){
-						this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
-						for (int i = 0; i < _characters.Count; i++) {
-							_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
-						}
-					}else{
-						for (int i = 0; i < _characters.Count; i++) {
-							_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
-							this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
-						}
-					}
-				}
+                if (this.currLocation.tileLocation.landmarkOnTile != null) {
+                    Log arriveLog = null;
+                    if (_mainCharacter.party != null) {
+                        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location_party");
+                        arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
+                        arriveLog.AddToFillers(this.currLocation.tileLocation.landmarkOnTile, this.currLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                        arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    } else {
+                        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+                        arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        arriveLog.AddToFillers(this.currLocation.tileLocation.landmarkOnTile, this.currLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                        arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    }
+                    this.currLocation.tileLocation.landmarkOnTile.AddHistory(arriveLog);
+                    for (int i = 0; i < _characters.Count; i++) {
+                        _characters[i].AddHistory(arriveLog);
+                    }
+                }
+                //            if (this.currLocation.tileLocation.landmarkOnTile != null){
+                //	string historyText = "Visited landmark ";
+                //	if (this.currLocation.tileLocation.landmarkOnTile is Settlement) {
+                //		historyText = "Arrived at settlement ";
+                //	}
+
+                //	if(_characters[0].party != null){
+                //		this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
+                //		for (int i = 0; i < _characters.Count; i++) {
+                //			_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
+                //		}
+                //	}else{
+                //		for (int i = 0; i < _characters.Count; i++) {
+                //			_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
+                //			this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
+                //		}
+                //	}
+                //}
                 SetHasArrivedState(true);
                 if(onPathFinished != null) {
                     onPathFinished();
@@ -292,6 +327,9 @@ public class CharacterAvatar : PooledObject{
 	public void SetQueuedAction(Action action){
 		queuedAction = action;
 	}
+    public void SetHighlightState(bool state) {
+        _avatarHighlight.SetActive(state);
+    }
     #endregion
 
     #region overrides
@@ -305,6 +343,7 @@ public class CharacterAvatar : PooledObject{
         path = null;
         _hasArrived = false;
         _isInitialized = false;
+        SetHighlightState(false);
     }
     #endregion
 }

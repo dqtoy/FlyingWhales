@@ -849,8 +849,8 @@ public class City {
 		KingdomRelationship kr = conqueror.GetRelationshipWithKingdom (this._kingdom);
 		if(kr.sharedRelationship.warfare != null){
 			Log newLog = kr.sharedRelationship.warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
-			newLog.AddToFillers (conqueror, conqueror.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
+			newLog.AddToFillers (conqueror, conqueror.name, LOG_IDENTIFIER.FACTION_1);
+			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.LANDMARK_2);
 			kr.sharedRelationship.warfare.ShowUINotification (newLog, new HashSet<Kingdom>() { conqueror, this.kingdom });
             kr.sharedRelationship.warfare.AdjustWeariness(this._kingdom, 5);//Each time I lose a city, War Weariness increases by 5
         }

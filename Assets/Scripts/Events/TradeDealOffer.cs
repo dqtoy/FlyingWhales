@@ -31,8 +31,8 @@ public class TradeDealOffer : GameEvent {
         offeredToKingdom.AddRejectedOffer(offeringKingdom, WEIGHTED_ACTION.TRADE_DEAL);
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TradeDeal", "trade_deal_reject");
-        newLog.AddToFillers(this.offeredToKingdom, this.offeredToKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(this.offeringKingdom, this.offeringKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(this.offeredToKingdom, this.offeredToKingdom.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(this.offeringKingdom, this.offeringKingdom.name, LOG_IDENTIFIER.FACTION_2);
         UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { this.offeredToKingdom, this.offeringKingdom });
         DoneEvent();
     }
@@ -42,8 +42,8 @@ public class TradeDealOffer : GameEvent {
         KingdomManager.Instance.CreateTradeDeal(offeringKingdom, offeredToKingdom);
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TradeDeal", "trade_deal_accept");
-        newLog.AddToFillers(this.offeredToKingdom, this.offeredToKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(this.offeringKingdom, this.offeringKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(this.offeredToKingdom, this.offeredToKingdom.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(this.offeringKingdom, this.offeringKingdom.name, LOG_IDENTIFIER.FACTION_2);
         UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { this.offeredToKingdom, this.offeringKingdom });
         DoneEvent();
     }

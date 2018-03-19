@@ -22,6 +22,7 @@ public class MoveTo : CharacterTask {
         : base(createdBy, TASK_TYPE.MOVE_TO, defaultDaysLeft) {
 		//_forPlayerOnly = true;
 		SetStance(STANCE.NEUTRAL);
+        //_actionString = "to visit";
     }
 
     #region overrides

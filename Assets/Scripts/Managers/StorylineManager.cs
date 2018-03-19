@@ -152,7 +152,12 @@ public class StorylineManager : MonoBehaviour {
         }
         //end the hibernation of the ancient vampire
         ancientVampire.currentTask.EndTask(TASK_STATUS.SUCCESS);
-        location.AddHistory(interacter.name + " has awakaned ancient vampire " + ancientVampire.name + " from hibernation!");
+        Log awakenLog = new Log(GameManager.Instance.Today(), "Quests", "AncientVampire", "awaken");
+        awakenLog.AddToFillers(interacter, interacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        awakenLog.AddToFillers(ancientVampire, ancientVampire.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        interacter.AddHistory(awakenLog);
+        ancientVampire.AddHistory(awakenLog);
+        location.AddHistory(awakenLog);
     }
     #endregion
 }

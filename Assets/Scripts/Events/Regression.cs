@@ -20,7 +20,7 @@ public class Regression : GameEvent {
         sourceKingdom.ChangeStability(50);
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Regression", "regression_start");
-        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
 
         UIManager.Instance.ShowNotification(newLog);
 

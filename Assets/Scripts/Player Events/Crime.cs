@@ -44,11 +44,11 @@ public class Crime : GameEvent {
 		OtherKingsReactions ();
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "Crime", "start");
-		newLog.AddToFillers (null, crimeDetails, LOG_IDENTIFIER.CRIME_DETAILS);
+		//newLog.AddToFillers (null, crimeDetails, LOG_IDENTIFIER.CRIME_DETAILS);
 
 		Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "Crime", "punishment");
-		newLog2.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
-		newLog2.AddToFillers (null, punishmentDetails, LOG_IDENTIFIER.CRIME_PUNISHMENT);
+		newLog2.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+		//newLog2.AddToFillers (null, punishmentDetails, LOG_IDENTIFIER.CRIME_PUNISHMENT);
 
 
 	}

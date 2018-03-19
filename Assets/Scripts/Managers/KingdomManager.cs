@@ -402,9 +402,9 @@ public class KingdomManager : MonoBehaviour {
 			newAlliance.AddKingdomInAlliance(secondKingdom);
 			AddAlliancePool (newAlliance);
 			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
-			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-            newLog.AddToFillers(null, newAlliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.FACTION_1);
+			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.FACTION_2);
+            //newLog.AddToFillers(null, newAlliance.name, LOG_IDENTIFIER.PARTY_NAME);
 			newLog.AddAllInvolvedObjects (newAlliance.kingdomsInvolved.ToArray ());
 			UIManager.Instance.ShowNotification (newLog);
 			return true;

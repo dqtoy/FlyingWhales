@@ -365,6 +365,11 @@ public class RandomNameGenerator : MonoBehaviour {
 		return incidentAdjective[UnityEngine.Random.Range(0, incidentAdjective.Length)] + " " + incidentNoun[UnityEngine.Random.Range(0, incidentNoun.Length)] + " " + incidentType[UnityEngine.Random.Range(0, incidentType.Length)];
 
 	}
+    public string GetLandmarkName(LANDMARK_TYPE landmarkType) {
+        //TODO: Add name generation per specific landmark type
+        return GetAncientRuinName();
+    }
+
 	public string GetAncientRuinName(){
 		if(ancientRuinNames.Count <= 0) {
 			ancientRuinNames = generatedAncientRuinNames.AllRaw(6).ToList();

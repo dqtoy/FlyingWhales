@@ -60,6 +60,11 @@ public class RecruitFollowers : CharacterTask {
                 }
                 party.AddPartyMember(newFollower);
                 _assignedCharacter.AddFollower(newFollower);
+                Log recruitFollowerLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "RecruitFollowers", "recruit");
+                recruitFollowerLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                recruitFollowerLog.AddToFillers(newFollower, newFollower.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                _targetLandmark.AddHistory(recruitFollowerLog);
+                _assignedCharacter.AddHistory(recruitFollowerLog);
             }
 			if (_assignedCharacter.isFollowersFull) {
 				EndRecruitment();

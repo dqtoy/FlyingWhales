@@ -90,9 +90,9 @@ public class Lair {
 		//kingdom.AdjustStability (stabilityGain);
 
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerIntervention", "MonsterLair", "destroy");
-		newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.LAIR_NAME);
-		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.LANDMARK_1);
+		//newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.LAIR_NAME);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.FACTION_1);
 		newLog.AddToFillers (null, stabilityGain.ToString(), LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification (newLog);
 	}

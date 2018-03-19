@@ -25,7 +25,7 @@ public class Plague : GameEvent {
 
         Log newLog = CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_start");
         newLog.AddToFillers(null, _plagueName, LOG_IDENTIFIER.OTHER);
-        newLog.AddToFillers(_infectedKingdom, _infectedKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(_infectedKingdom, _infectedKingdom.name, LOG_IDENTIFIER.FACTION_1);
 
         UIManager.Instance.ShowNotification(newLog);
     }
@@ -48,7 +48,7 @@ public class Plague : GameEvent {
 
     private void CurePlague() {
         Log newLog = CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_end");
-        newLog.AddToFillers(_infectedKingdom, _infectedKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(_infectedKingdom, _infectedKingdom.name, LOG_IDENTIFIER.FACTION_1);
         newLog.AddToFillers(null, _plagueName, LOG_IDENTIFIER.OTHER);
 
         UIManager.Instance.ShowNotification(newLog);

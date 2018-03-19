@@ -94,6 +94,7 @@ public class Quest {
     public virtual void AcceptQuest(ECS.Character accepter) {
         accepter.SetCurrentQuest(this);
         _acceptedCharacters.Add(accepter);
+        LogQuestAccept(accepter);
         UIManager.Instance.UpdateQuestsSummary();
     }
     public virtual void QuestTaskDone(TASK_ACTION_RESULT result) {
@@ -138,7 +139,6 @@ public class Quest {
     public void ForceCancelQuest() {
         EndQuest(TASK_STATUS.CANCEL, null);
     }
-
     private void UnregisterAcceptedCharacters() {
         //Set quest of those that accepted this quest to null, make sure that their current quest is still this one
         for (int i = 0; i < _acceptedCharacters.Count; i++) {
@@ -147,6 +147,15 @@ public class Quest {
                 throw new Exception(currCharacter.name + "'s quest is no longer set to this quest!");
             }
             currCharacter.SetCurrentQuest(null);
+        }
+    }
+    private void LogQuestAccept(ECS.Character acceptedBy) {
+        Log acceptQuestLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "accept_quest");
+        acceptQuestLog.AddToFillers(acceptedBy, acceptedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        acceptQuestLog.AddToFillers(null, GetQuestName(), LOG_IDENTIFIER.QUEST_NAME);
+        acceptedBy.AddHistory(acceptQuestLog);
+        if (acceptedBy.specificLocation is BaseLandmark) {
+            (acceptedBy.specificLocation as BaseLandmark).AddHistory(acceptQuestLog);
         }
     }
 }
@@ -471,10 +480,6 @@ namespace OldQuest{
             Party newParty = new Party(partyLeader);
             AssignPartyToQuest(newParty);
 
-            if (newParty.specificLocation is BaseLandmark) {
-                BaseLandmark landmark = (BaseLandmark)newParty.specificLocation;
-                landmark.AddHistory(partyLeader.name + " created " + newParty.name + ".");
-            }
             return newParty;
         }
         /*

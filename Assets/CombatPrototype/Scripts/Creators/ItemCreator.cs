@@ -40,6 +40,7 @@ namespace ECS {
             itemComponent.exploreWeight = EditorGUILayout.IntField("Explore Weight :", itemComponent.exploreWeight);
             itemComponent.collectChance = EditorGUILayout.IntField("Collect Chance :", itemComponent.collectChance);
             itemComponent.isUnlimited = EditorGUILayout.Toggle("Is Unlimited :", itemComponent.isUnlimited);
+            itemComponent.interactString = EditorGUILayout.TextField("Interaction text: ", itemComponent.interactString);
 
 			SerializedProperty statusEffectResistance = serializedObject.FindProperty("statusEffectResistances");
 			EditorGUILayout.PropertyField(statusEffectResistance, true);
@@ -159,6 +160,7 @@ namespace ECS {
 			newItem.exploreWeight = itemComponent.exploreWeight;
 			newItem.collectChance = itemComponent.collectChance;
 			newItem.isUnlimited = itemComponent.isUnlimited;
+            newItem.interactString = itemComponent.interactString;
         }
         private void SaveWeapon(string path) {
 			Weapon weapon = new Weapon();

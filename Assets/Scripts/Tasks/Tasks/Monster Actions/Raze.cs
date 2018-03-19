@@ -103,9 +103,14 @@ public class Raze : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartRaze ());
 			return;
 		}
-		_target.AddHistory(_assignedCharacter.name + " has started razing " + _target.landmarkName + "!");
-		_target.AddHistory("Started razing " + _target.landmarkName + "!");
-	}
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Raze", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startLog.AddToFillers(_target, _target.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        _target.AddHistory(startLog);
+        _assignedCharacter.AddHistory(startLog);
+        //_target.AddHistory(_assignedCharacter.name + " has started razing " + _target.landmarkName + "!");
+        //_target.AddHistory("Started razing " + _target.landmarkName + "!");
+    }
 	private void EndRaze(){
 		int successWeight = 0;
 		int failWeight = 0;
@@ -122,13 +127,13 @@ public class Raze : CharacterTask {
 		if(result == "success"){
 			_target.KillAllCivilians ();
 			_target.location.RuinStructureOnTile (false);
-			_target.AddHistory(_assignedCharacter.name + " razed " + _target.landmarkName + "! All civilians were killed!");
-			_assignedCharacter.AddHistory ("Razed " + _target.landmarkName + "! All civilians were killed!");
+			//_target.AddHistory(_assignedCharacter.name + " razed " + _target.landmarkName + "! All civilians were killed!");
+			//_assignedCharacter.AddHistory ("Razed " + _target.landmarkName + "! All civilians were killed!");
 			//TODO: When structure in landmarks is destroyed, shall all characters in there die?
 		}else{
 			//TODO: Fail
-			_assignedCharacter.AddHistory ("Failed to raze " + _target.landmarkName + "!");
-			_target.AddHistory(_assignedCharacter.name + " failed to raze " + _target.landmarkName + "!");
+			//_assignedCharacter.AddHistory ("Failed to raze " + _target.landmarkName + "!");
+			//_target.AddHistory(_assignedCharacter.name + " failed to raze " + _target.landmarkName + "!");
 		}
 		EndTask (TASK_STATUS.SUCCESS);
 	}

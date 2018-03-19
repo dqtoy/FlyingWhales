@@ -154,7 +154,7 @@ public class CommandInfection : CharacterTask {
 			}
 		}
 		_chosenSlyx.Death ();
-		_targetLandmark.AddHistory ("A Slyx has self-destructed emitting a large amount of psytoxin from its body!");
+		//_targetLandmark.AddHistory ("A Slyx has self-destructed emitting a large amount of psytoxin from its body!");
 	}
 	private void InfectPsytoxin(ECS.Character character){
 		ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)character.GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);

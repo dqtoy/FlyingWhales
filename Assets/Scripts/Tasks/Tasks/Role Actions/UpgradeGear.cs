@@ -83,7 +83,7 @@ public class UpgradeGear : CharacterTask {
 					if(!currChar.EquipItem(createdItem)){ //if the character can equip the item, equip it, otherwise, keep in inventory
 						currChar.PickupItem(createdItem); //put item in inventory
 					}
-					currChar.AddHistory("Bought a " + createdItem.itemName + " from " + _settlement.landmarkName);
+					//currChar.AddHistory("Bought a " + createdItem.itemName + " from " + _settlement.landmarkName);
                     Debug.Log(currChar.name + " bought a " + createdItem.itemName + " from " + _settlement.landmarkName);
                 }
             }

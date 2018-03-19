@@ -121,8 +121,10 @@ public class Pillage : CharacterTask {
 			return;
 		}
 
-		_target.AddHistory(pillagerName + " has started pillaging " + _target.landmarkName + "!");
-		_assignedCharacter.AddHistory("Started pillaging " + _target.landmarkName + "!");
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Pillage", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        _target.AddHistory(startLog);
+        _assignedCharacter.AddHistory(startLog);
     }
 
     private void DoPillage() {
@@ -165,8 +167,8 @@ public class Pillage : CharacterTask {
 			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);
-			_target.AddHistory (pillagerName + " killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
-			_assignedCharacter.AddHistory ("Killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
+			//_target.AddHistory (pillagerName + " killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
+			//_assignedCharacter.AddHistory ("Killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
 
 		}
 	}

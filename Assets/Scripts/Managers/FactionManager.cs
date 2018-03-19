@@ -568,20 +568,20 @@ public class FactionManager : MonoBehaviour {
         rel.SetWarStatus(true);
         if (reason == INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH) {
             Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_character_death");
-            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
-            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
+            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1);
+            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2);
             ECS.Character character = (ECS.Character)data;
             declareWarLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            declareWarLog.AddToFillers(character.currLocation.region.centerOfMass.landmarkOnTile, character.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
+            declareWarLog.AddToFillers(character.currLocation.region.centerOfMass.landmarkOnTile, character.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             UIManager.Instance.ShowNotification(declareWarLog);
         } else {
             Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_quest");
-            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.KINGDOM_1);
-            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.KINGDOM_2);
+            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1);
+            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2);
             OldQuest.Quest quest = (OldQuest.Quest)data;
             declareWarLog.AddToFillers(quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             declareWarLog.AddToFillers(quest, Utilities.NormalizeString(quest.questType.ToString()), LOG_IDENTIFIER.OTHER);
-            declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.CITY_1);
+            declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             UIManager.Instance.ShowNotification(declareWarLog);
         }
         
@@ -662,14 +662,14 @@ public class FactionManager : MonoBehaviour {
     }
     private void ShowJoinWarLog(Faction faction, Faction enemy) {
         Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_help_friend");
-        declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.KINGDOM_1);
-        declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.KINGDOM_2);
+        declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+        declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.FACTION_2);
         UIManager.Instance.ShowNotification(declareWarLog);
     }
     private void ShowBetrayalLog(Faction faction, Faction enemy) {
         Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_betrayal");
-        declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.KINGDOM_1);
-        declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.KINGDOM_2);
+        declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+        declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.FACTION_2);
         UIManager.Instance.ShowNotification(declareWarLog);
     }
     private WeightedDictionary<ALLY_WAR_REACTION> GetAllyWarReaction(Faction faction, Faction friend, Faction enemy) {

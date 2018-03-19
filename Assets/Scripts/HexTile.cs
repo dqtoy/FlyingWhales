@@ -1136,7 +1136,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
             }
 			if(landmarkOnTile != null){
-				landmarkOnTile.AddHistory ("Landmark structure destroyed!");
+				//landmarkOnTile.AddHistory ("Landmark structure destroyed!");
 			}
         }
     }

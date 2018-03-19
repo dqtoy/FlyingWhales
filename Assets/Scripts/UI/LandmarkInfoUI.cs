@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class SettlementInfoUI : UIMenu {
+public class LandmarkInfoUI : UIMenu {
+
+    private const int MAX_HISTORY_LOGS = 20;
 
     [Space(10)]
     [Header("Content")]
@@ -14,7 +16,17 @@ public class SettlementInfoUI : UIMenu {
 	[SerializeField] private GameObject exploreBtnGO;
     [SerializeField] private GameObject buildStructureBtnGO;
     [SerializeField] private UIScrollView infoScrollView;
-	[SerializeField] private UIScrollView historyScrollView;
+	
+
+    [Space(10)]
+    [Header("Logs")]
+    [SerializeField] private GameObject logHistoryPrefab;
+    [SerializeField] private UITable logHistoryTable;
+    [SerializeField] private UIScrollView historyScrollView;
+    [SerializeField] private Color evenLogColor;
+    [SerializeField] private Color oddLogColor;
+
+    private LogHistoryItem[] logHistoryItems;
 
     internal BaseLandmark currentlyShowingLandmark {
         get { return _data as BaseLandmark; }
@@ -22,13 +34,23 @@ public class SettlementInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener("UpdateUI", UpdateSettlementInfo);
-        tweenPos.AddOnFinished(() => UpdateSettlementInfo());
+        Messenger.AddListener("UpdateUI", UpdateLandmarkInfo);
+        tweenPos.AddOnFinished(() => UpdateLandmarkInfo());
+
+        logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
+        //populate history logs table
+        for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, logHistoryTable.transform);
+            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
+            newLogItem.transform.localScale = Vector3.one;
+            newLogItem.SetActive(true);
+        }
     }
 
     public override void OpenMenu() {
         base.OpenMenu();
-        UpdateSettlementInfo();
+        historyScrollView.ResetPosition();
+        UpdateLandmarkInfo();
     }
 
     public override void ShowMenu() {
@@ -37,18 +59,18 @@ public class SettlementInfoUI : UIMenu {
     }
     public override void HideMenu() {
         base.HideMenu();
-		HidePlayerActions();
+		//HidePlayerActions();
     }
     public override void SetData(object data) {
         base.SetData(data);
         UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).location);
-        ShowPlayerActions();
+        //ShowPlayerActions();
         if (isShowing) {
-            UpdateSettlementInfo();
+            UpdateLandmarkInfo();
         }
     }
 
-    public void UpdateSettlementInfo() {
+    public void UpdateLandmarkInfo() {
         if(currentlyShowingLandmark == null) {
             return;
         }
@@ -125,7 +147,7 @@ public class SettlementInfoUI : UIMenu {
                     }
 				} else if (currObject is Party) {
 					Party currParty = (Party)currObject;
-					text += "\n" + currParty.urlName + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
+					text += "\n" + currParty.urlNameWithRole + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
 				}
 			}
 		} else {
@@ -201,76 +223,55 @@ public class SettlementInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
-		//if(currentlyShowingLandmark is Settlement && currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.CITY && currentlyShowingLandmark.owner != null){
-		//	text += "\n[b]Parties: [/b] ";
-		//	if (PartyManager.Instance.allParties.Count > 0) {
-		//		for (int i = 0; i < PartyManager.Instance.allParties.Count; i++) {
-		//			Party currParty = PartyManager.Instance.allParties[i];
-		//			text += "\n" + currParty.urlName + " O: " + currParty.isOpen + " F: " + currParty.isFull;
-		//			if(currParty.currentTask != null) {
-  //                      if (currParty.currentTask.taskType == TASK_TYPE.QUEST) {
-  //                          OldQuest.Quest currQuest = (OldQuest.Quest)currParty.currentTask;
-  //                          text += " (" + currQuest.urlName + ")";
-  //                          if (currQuest.isDone) {
-  //                              text += "(Done)";
-  //                          } else {
-  //                              if (currParty.isOpen || currQuest.isWaiting) {
-  //                                  text += "(Forming Party)";
-  //                              } else {
-  //                                  text += "(In Progress)";
-  //                                  if (currQuest.currentAction != null) {
-  //                                      text += "(" + currQuest.currentAction.GetType().ToString() + ")";
-  //                                  }
-  //                              }
-  //                          }
-  //                      } else {
-  //                          text += " (" + currParty.currentTask.taskType.ToString() + ")";
-  //                          if (currParty.currentTask.isDone) {
-  //                              text += "(Done)";
-  //                          } else {
-  //                              text += "(In Progress)";
-  //                          }
-  //                      }
-		//			}
-		//			text += "\n     Leader: " + currParty.partyLeader.urlName;
-  //                  if(currParty.partyMembers.Count > 2) {
-  //                      text += "\n          Members:";
-  //                  }
-		//			for (int j = 0; j < currParty.partyMembers.Count; j++) {
-		//				ECS.Character currMember = currParty.partyMembers[j];
-		//				if(currMember.id != currParty.partyLeader.id) {
-		//					text += "\n          " + currMember.urlName;
-		//				}
-		//			}
-  //                  text += "\n";
-		//		}
-		//	} else {
-		//		text += "NONE";
-		//	}
-		//}
        
         settlementInfoLbl.text = text;
         infoScrollView.UpdatePosition();
 
 		UpdateHistoryInfo ();
     }
-	private void UpdateHistoryInfo(){
-		string text = string.Empty;
-		if (currentlyShowingLandmark.history.Count > 0) {
-			for (int i = 0; i < currentlyShowingLandmark.history.Count; i++) {
-				if(i > 0){
-					text += "\n";
-				}
-				text += currentlyShowingLandmark.history[i];
-			}
-		} else {
-			text += "NONE";
-		}
 
-		settlementHistoryInfoLbl.text = text;
-		historyScrollView.UpdatePosition();
-	}
-	public void OnClickCloseBtn(){
+    #region Log History
+    private void UpdateHistoryInfo() {
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            Log currLog = currentlyShowingLandmark.history.ElementAtOrDefault(i);
+            if (currLog != null) {
+                currItem.SetLog(currLog);
+                currItem.gameObject.SetActive(true);
+                
+                if (Utilities.IsEven(i)) {
+                    currItem.SetLogColor(evenLogColor);
+                } else {
+                    currItem.SetLogColor(oddLogColor);
+                }
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+        if (this.gameObject.activeInHierarchy) {
+            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+        }
+        
+        //historyScrollView.UpdatePosition();
+        //string text = string.Empty;
+        //if (currentlyShowingLandmark.history.Count > 0) {
+        //    for (int i = 0; i < currentlyShowingLandmark.history.Count; i++) {
+        //        Log currentLog = currentlyShowingLandmark.history[i];
+        //        if (i > 0) {
+        //            text += "\n";
+        //        }
+        //        text += Utilities.LogReplacer(currentLog);
+        //    }
+        //} else {
+        //    text += "NONE";
+        //}
+
+        //settlementHistoryInfoLbl.text = text;
+        //historyScrollView.UpdatePosition();
+    }
+    #endregion
+
+    public void OnClickCloseBtn(){
 //		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
 		HideMenu ();
 	}
@@ -284,46 +285,42 @@ public class SettlementInfoUI : UIMenu {
             .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingLandmark);
         exploreBtnGO.SetActive(false);
     }
-    //public void OnClickBuildStructureBtn() {
-    //    currentlyShowingLandmark.location.region.centerOfMass
-    //        .landmarkOnTile.owner.internalQuestManager.CreateBuildStructureQuest(currentlyShowingLandmark);
-    //    buildStructureBtnGO.SetActive(false);
-    //}
-    private void ShowPlayerActions(){
-		expandBtnGO.SetActive (CanExpand());
-//		exploreBtnGO.SetActive (CanExploreTile ());
-		exploreBtnGO.SetActive (false);
-        //buildStructureBtnGO.SetActive(CanBuildStructure());
-    }
-	private void HidePlayerActions(){
-		expandBtnGO.SetActive (false);
-		exploreBtnGO.SetActive (false);
-	}
-	private bool CanExpand(){
-		if(isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark is Settlement){
-			Settlement settlement = (Settlement)currentlyShowingLandmark;
-			if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
-                Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
-                if (settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)) {
-                    return true;
-                }
-                //            if (settlement.CanAffordConstruction(constructionData) && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
-                //	return true;
-                //}
-            }
-		}
-		return false;
-	}
 
-	private bool CanExploreTile(){
-		if(isShowing && currentlyShowingLandmark != null && !currentlyShowingLandmark.isExplored
-			&& currentlyShowingLandmark.owner == null && currentlyShowingLandmark.location.region.centerOfMass.isOccupied 
-            && !currentlyShowingLandmark.location.region.centerOfMass
-            .landmarkOnTile.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currentlyShowingLandmark)) {
-			return true;
-		}
-		return false;
-	}
+//    private void ShowPlayerActions(){
+//		expandBtnGO.SetActive (CanExpand());
+////		exploreBtnGO.SetActive (CanExploreTile ());
+//		exploreBtnGO.SetActive (false);
+//        //buildStructureBtnGO.SetActive(CanBuildStructure());
+//    }
+	//private void HidePlayerActions(){
+	//	expandBtnGO.SetActive (false);
+	//	exploreBtnGO.SetActive (false);
+	//}
+	//private bool CanExpand(){
+	//	if(isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark is Settlement){
+	//		Settlement settlement = (Settlement)currentlyShowingLandmark;
+	//		if(settlement.owner != null && settlement.owner.factionType == FACTION_TYPE.MAJOR){
+ //               Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
+ //               if (settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)) {
+ //                   return true;
+ //               }
+ //               //            if (settlement.CanAffordConstruction(constructionData) && settlement.HasAdjacentUnoccupiedTile() && !settlement.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, settlement)){
+ //               //	return true;
+ //               //}
+ //           }
+	//	}
+	//	return false;
+	//}
+
+	//private bool CanExploreTile(){
+	//	if(isShowing && currentlyShowingLandmark != null && !currentlyShowingLandmark.isExplored
+	//		&& currentlyShowingLandmark.owner == null && currentlyShowingLandmark.location.region.centerOfMass.isOccupied 
+ //           && !currentlyShowingLandmark.location.region.centerOfMass
+ //           .landmarkOnTile.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPLORE_TILE, currentlyShowingLandmark)) {
+	//		return true;
+	//	}
+	//	return false;
+	//}
 
     //private bool CanBuildStructure() {
     //    if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.location.region.owner != null 
@@ -339,4 +336,8 @@ public class SettlementInfoUI : UIMenu {
     //    }
     //    return false;
     //}
+
+    public void CenterOnLandmark() {
+        currentlyShowingLandmark.CenterOnLandmark();
+    }
 }

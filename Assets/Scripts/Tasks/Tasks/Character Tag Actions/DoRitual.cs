@@ -71,9 +71,12 @@ public class DoRitual : CharacterTask {
 			return;
 		}
 		_assignedCharacter.DestroyAvatar ();
-		_ritualStones.AddHistory(_assignedCharacter.name + " started to do a ritual!");
-		_assignedCharacter.AddHistory ("Started to do a ritual!");
-	}
+
+        Log startRitualLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DoRitual", "start_do_ritual");
+        startRitualLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        _ritualStones.AddHistory(startRitualLog);
+        _assignedCharacter.AddHistory(startRitualLog);
+    }
 
 	private void Ritual() {
 		if(this.taskStatus != TASK_STATUS.IN_PROGRESS) {
@@ -128,8 +131,8 @@ public class DoRitual : CharacterTask {
 		settlement.tileLocation.RuinStructureOnTile (false);
 		settlement.ChangeLandmarkType (LANDMARK_TYPE.CRATER);
 
-		_ritualStones.AddHistory ("A meteor crashed in " + landmark.landmarkName + " killing everything in the region!");
-		landmark.AddHistory ("A meteor crashed!");
+		//_ritualStones.AddHistory ("A meteor crashed in " + landmark.landmarkName + " killing everything in the region!");
+		//landmark.AddHistory ("A meteor crashed!");
 	}
 	private void End(){
 		//TODO: Change this to get a random ritual

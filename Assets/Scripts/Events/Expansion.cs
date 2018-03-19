@@ -25,12 +25,12 @@ public class Expansion : GameEvent {
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
-		newLogTitle.AddToFillers (null, startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLogTitle.AddToFillers (null, startedBy.city.kingdom.name, LOG_IDENTIFIER.FACTION_1);
 
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "start");
 		newLog.AddToFillers (startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-		newLog.AddToFillers (startedBy.city, startedBy.city.name, LOG_IDENTIFIER.CITY_1);
+		newLog.AddToFillers (startedBy.city, startedBy.city.name, LOG_IDENTIFIER.LANDMARK_1);
 
         //if(UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
         //    UIManager.Instance.ShowNotification(newLog);
@@ -62,8 +62,8 @@ public class Expansion : GameEvent {
 
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
-            newLog.AddToFillers(this.startedByKingdom, this.startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-            newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.CITY_1);
+            newLog.AddToFillers(this.startedByKingdom, this.startedByKingdom.name, LOG_IDENTIFIER.FACTION_1);
+            newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.LANDMARK_1);
             //if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
 			UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { startedByKingdom }, false);
             //}

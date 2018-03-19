@@ -575,14 +575,14 @@ public class Utilities : MonoBehaviour {
 		string pronouns = Utilities.GetPronoun(strIdentifier.Last (), wordToBeReplaced.Last());
 
 		LOG_IDENTIFIER logIdentifier = LOG_IDENTIFIER.ACTIVE_CHARACTER;
-		if(strIdentifier.Contains("KING_1")){
-			logIdentifier = LOG_IDENTIFIER.KING_1;
-		}else if(strIdentifier.Contains("KING_2")){
-			logIdentifier = LOG_IDENTIFIER.KING_2;
+		if(strIdentifier.Contains("FACTION_LEADER_1")){
+			logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_1;
+		}else if(strIdentifier.Contains("FACTION_LEADER_2")){
+			logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_2;
 		}else if(strIdentifier.Contains("TARGET_CHARACTER")){
 			logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
-		}else if(strIdentifier.Contains("KING_3")){
-			logIdentifier = LOG_IDENTIFIER.KING_3;
+		}else if(strIdentifier.Contains("FACTION_LEADER_3")){
+			logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
 		}
 		for(int i = 0; i < objectLog.Count; i++){
 			if(objectLog[i].identifier == logIdentifier){
@@ -602,13 +602,13 @@ public class Utilities : MonoBehaviour {
 		if(wordToBeReplaced.EndsWith("@")){
 			for(int i = 0; i < objectLog.Count; i++){
 				if(objectLog[i].identifier == identifier){
-					if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
-						if(objectLog [i].obj is Kingdom){
-							Kingdom kingdom = (Kingdom)objectLog [i].obj;
-							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-							objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
-						}
-					}
+					//if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
+					//	if(objectLog [i].obj is Kingdom){
+					//		Kingdom kingdom = (Kingdom)objectLog [i].obj;
+					//		Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
+					//		objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
+					//	}
+					//}
 					wordToReplace = "[url=" + i.ToString() + "][b]" + objectLog[i].value + "[/b][/url]";
 					break;
 				}
@@ -616,13 +616,13 @@ public class Utilities : MonoBehaviour {
 		}else if(wordToBeReplaced.EndsWith("%")){
 			for(int i = 0; i < objectLog.Count; i++){
 				if(objectLog[i].identifier == identifier){
-					if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
-						if(objectLog [i].obj is Kingdom){
-							Kingdom kingdom = (Kingdom)objectLog [i].obj;
-							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-							objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
-						}
-					}
+					//if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
+					//	if(objectLog [i].obj is Kingdom){
+					//		Kingdom kingdom = (Kingdom)objectLog [i].obj;
+					//		Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
+					//		objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
+					//	}
+					//}
 					wordToReplace = objectLog[i].value;
 					break;
 				}
@@ -726,60 +726,59 @@ public class Utilities : MonoBehaviour {
 	}
 	public static Dictionary<string, LOG_IDENTIFIER> logIdentifiers = new Dictionary<string, LOG_IDENTIFIER> () {
 		{"00", LOG_IDENTIFIER.ACTIVE_CHARACTER},
-		{"01", LOG_IDENTIFIER.KINGDOM_1},
-		{"02", LOG_IDENTIFIER.KING_1},
-		{"03", LOG_IDENTIFIER.KING_1_SPOUSE},
-		{"04", LOG_IDENTIFIER.CITY_1},
-		{"05", LOG_IDENTIFIER.GOVERNOR_1},
-		{"06", LOG_IDENTIFIER.RANDOM_CITY_1},
-		{"07", LOG_IDENTIFIER.RANDOM_GOVERNOR_1},
+		{"01", LOG_IDENTIFIER.FACTION_1},
+		{"02", LOG_IDENTIFIER.FACTION_LEADER_1},
+		{"04", LOG_IDENTIFIER.LANDMARK_1},
+        {"05", LOG_IDENTIFIER.PARTY_1},
+		//{"06", LOG_IDENTIFIER.RANDOM_CITY_1},
+		//{"07", LOG_IDENTIFIER.RANDOM_GOVERNOR_1},
 		{"10", LOG_IDENTIFIER.TARGET_CHARACTER},
-		{"11", LOG_IDENTIFIER.KINGDOM_2},
-		{"12", LOG_IDENTIFIER.KING_2},
-		{"13", LOG_IDENTIFIER.KING_2_SPOUSE},
-		{"14", LOG_IDENTIFIER.CITY_2},
-		{"15", LOG_IDENTIFIER.GOVERNOR_2},
-		{"16", LOG_IDENTIFIER.RANDOM_CITY_2},
-		{"17", LOG_IDENTIFIER.RANDOM_GOVERNOR_2},
+		{"11", LOG_IDENTIFIER.FACTION_2},
+		{"12", LOG_IDENTIFIER.FACTION_LEADER_2},
+		//{"13", LOG_IDENTIFIER.KING_2_SPOUSE},
+		{"14", LOG_IDENTIFIER.LANDMARK_2},
+        {"15", LOG_IDENTIFIER.PARTY_2},
+		//{"16", LOG_IDENTIFIER.RANDOM_CITY_2},
+		//{"17", LOG_IDENTIFIER.RANDOM_GOVERNOR_2},
 		{"20", LOG_IDENTIFIER.CHARACTER_3},
-		{"21", LOG_IDENTIFIER.KINGDOM_3},
-		{"22", LOG_IDENTIFIER.KING_3},
-		{"23", LOG_IDENTIFIER.KING_3_SPOUSE},
-		{"24", LOG_IDENTIFIER.CITY_3},
-		{"25", LOG_IDENTIFIER.GOVERNOR_3},
-		{"26", LOG_IDENTIFIER.RANDOM_CITY_3},
-		{"27", LOG_IDENTIFIER.RANDOM_GOVERNOR_3},
-		{"81", LOG_IDENTIFIER.TRIGGER_REASON},
-		{"82", LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME},
+		{"21", LOG_IDENTIFIER.FACTION_3},
+		{"22", LOG_IDENTIFIER.FACTION_LEADER_3},
+		//{"23", LOG_IDENTIFIER.KING_3_SPOUSE},
+		{"24", LOG_IDENTIFIER.LANDMARK_3},
+        {"25", LOG_IDENTIFIER.PARTY_3},
+		//{"26", LOG_IDENTIFIER.RANDOM_CITY_3},
+		//{"27", LOG_IDENTIFIER.RANDOM_GOVERNOR_3},
+		{"81", LOG_IDENTIFIER.ACTION_DESCRIPTION},
+        {"82", LOG_IDENTIFIER.QUEST_NAME},
 		{"83", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_S},
 		{"84", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_O},
 		{"85", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_P},
 		{"86", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_R},
-		{"87", LOG_IDENTIFIER.KING_1_PRONOUN_S},
-		{"88", LOG_IDENTIFIER.KING_1_PRONOUN_O},
-		{"89", LOG_IDENTIFIER.KING_1_PRONOUN_P},
-		{"90", LOG_IDENTIFIER.KING_1_PRONOUN_R},
-		{"91", LOG_IDENTIFIER.KING_2_PRONOUN_S},
-		{"92", LOG_IDENTIFIER.KING_2_PRONOUN_O},
-		{"93", LOG_IDENTIFIER.KING_2_PRONOUN_P},
-		{"94", LOG_IDENTIFIER.KING_2_PRONOUN_R},
+		{"87", LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_S},
+		{"88", LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_O},
+		{"89", LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_P},
+		{"90", LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_R},
+		{"91", LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_S},
+		{"92", LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_O},
+		{"93", LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_P},
+		{"94", LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_R},
 		{"95", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_S},
 		{"96", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_O},
 		{"97", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_P},
 		{"98", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_R},
-		{"99", LOG_IDENTIFIER.SECESSION_CITIES},
-		{"100", LOG_IDENTIFIER.GAME_EVENT},
+		//{"99", LOG_IDENTIFIER.SECESSION_CITIES},
+		{"100", LOG_IDENTIFIER.TASK},
 		{"101", LOG_IDENTIFIER.DATE},
-		{"102", LOG_IDENTIFIER.KING_3_PRONOUN_S},
-		{"103", LOG_IDENTIFIER.KING_3_PRONOUN_O},
-		{"104", LOG_IDENTIFIER.KING_3_PRONOUN_P},
-		{"105", LOG_IDENTIFIER.KING_3_PRONOUN_R},
+		{"102", LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_S},
+		{"103", LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_O},
+		{"104", LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_P},
+		{"105", LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_R},
 		{"106", LOG_IDENTIFIER.OTHER},
-		{"107", LOG_IDENTIFIER.CRIME_DETAILS},
-		{"108", LOG_IDENTIFIER.CRIME_PUNISHMENT},
-		{"109", LOG_IDENTIFIER.LAIR_NAME},
-		{"110", LOG_IDENTIFIER.WAR_NAME},
-		{"111", LOG_IDENTIFIER.ALLIANCE_NAME},
+        {"107", LOG_IDENTIFIER.ITEM_1},
+        {"108", LOG_IDENTIFIER.ITEM_2},
+        {"109", LOG_IDENTIFIER.ITEM_3},
+		//{"110", LOG_IDENTIFIER.WAR_NAME},
+		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
@@ -799,25 +798,39 @@ public class Utilities : MonoBehaviour {
 //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
 		string[] pronouns = word.Split ('/');
 
-		if(genderSubject is Citizen){
-			GENDER gender = ((Citizen)genderSubject).gender;
-			if(gender == GENDER.MALE){
-				if(pronouns.Length > 0){
-					if(!string.IsNullOrEmpty(pronouns[0])){
-						return pronouns [0];
-					}
-				}
-			}else{
-				if (pronouns.Length > 1) {
-					if (!string.IsNullOrEmpty (pronouns [0])) {
-						return pronouns [1];
-					}
-				}
-			}
-
-
-		}
-		return string.Empty;
+        //if(genderSubject is Citizen){
+        //	GENDER gender = ((Citizen)genderSubject).gender;
+        //	if(gender == GENDER.MALE){
+        //		if(pronouns.Length > 0){
+        //			if(!string.IsNullOrEmpty(pronouns[0])){
+        //				return pronouns [0];
+        //			}
+        //		}
+        //	}else{
+        //		if (pronouns.Length > 1) {
+        //			if (!string.IsNullOrEmpty (pronouns [0])) {
+        //				return pronouns [1];
+        //			}
+        //		}
+        //	}
+        //}
+        if (genderSubject is ECS.Character) {
+            GENDER gender = ((ECS.Character)genderSubject).gender;
+            if (gender == GENDER.MALE) {
+                if (pronouns.Length > 0) {
+                    if (!string.IsNullOrEmpty(pronouns[0])) {
+                        return pronouns[0];
+                    }
+                }
+            } else {
+                if (pronouns.Length > 1) {
+                    if (!string.IsNullOrEmpty(pronouns[0])) {
+                        return pronouns[1];
+                    }
+                }
+            }
+        }
+        return string.Empty;
 	}
 //	public static string PronounReplacer(string word, object genderSubject){
 //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
@@ -1706,4 +1719,8 @@ public class Utilities : MonoBehaviour {
 		}
 	}
 	#endregion
+
+    public static bool IsEven(int num) {
+        return num % 2 == 0;
+    }
 }

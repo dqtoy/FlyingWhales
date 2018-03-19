@@ -78,40 +78,40 @@ public class InternationalIncident : GameEvent {
 
     internal void ShowSuccessLog() {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_success");
-        newLog.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
-        newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-        newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+        newLog.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+        newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.FACTION_2);
+        newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.FACTION_3);
         newLog.AddToFillers(null, this.incidentName, LOG_IDENTIFIER.OTHER);
         UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
     }
     internal void ShowCriticalFailLog(Kingdom otherKingdom) {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_critical_fail");
-        newLog.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
-        newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+        newLog.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+        newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.FACTION_2);
+		newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.FACTION_3);
 		UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, otherKingdom });
     }
     internal void ShowCaughtLog() {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_caught");
-        newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(this.startedBy.city.kingdom, this.startedBy.city.kingdom.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.FACTION_2);
         newLog.AddToFillers(null, this.incidentName, LOG_IDENTIFIER.OTHER);
         UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
     }
 	internal void ShowRandomLog() {
 		Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_random");
-		newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers(this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers(this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		newLog.AddToFillers(null, this.incidentName, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom> { this.startedBy.city.kingdom, _sourceKingdom, _targetKingdom });
 	}
 
     private void StartIncident(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start");
-		newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification (newLog);
 	}
@@ -254,8 +254,8 @@ public class InternationalIncident : GameEvent {
 				//Fail Resolve Peacefully
 				//chosenKingdom.AdjustStability(-3);
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_resolve_peacefully");
-				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
-				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.FACTION_1);
 				newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
 				UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom> { _sourceKingdom, _targetKingdom });
 			}
@@ -268,8 +268,8 @@ public class InternationalIncident : GameEvent {
 				//Fail Increase Tension
 				//chosenKingdom.AdjustStability(3);
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "fail_war");
-				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.KING_1);
-				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLog.AddToFillers (chosenKingdom.king, chosenKingdom.king.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+				newLog.AddToFillers (chosenKingdom, chosenKingdom.name, LOG_IDENTIFIER.FACTION_1);
 				newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
 				UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom> { _sourceKingdom, _targetKingdom });
 			}
@@ -279,8 +279,8 @@ public class InternationalIncident : GameEvent {
 	private void ResolvePeacefully(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "resolve_peacefully");
 		newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
-		newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom> { _sourceKingdom, _targetKingdom });
 		this.DoneEvent();
 	}
@@ -298,9 +298,9 @@ public class InternationalIncident : GameEvent {
 			if(newWar != null){
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "war");
 				newLog.AddToFillers (null, this.incidentName, LOG_IDENTIFIER.OTHER);
-				newLog.AddToFillers (null, newWar.name, LOG_IDENTIFIER.WAR_NAME);
-				newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-				newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+				//newLog.AddToFillers (null, newWar.name, LOG_IDENTIFIER.WAR_NAME);
+				newLog.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
+				newLog.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 				UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom> { _sourceKingdom, _targetKingdom });
 			}
 		}else{

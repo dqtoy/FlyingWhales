@@ -40,15 +40,22 @@ public class Party: IEncounterable, ICombatInitializer {
 		get { return _name; }
     }
     public string name {
+        get { return _name; }
+    }
+    public string nameWithRole {
         get {
             if (_partyLeader.role != null) {
                 return Utilities.NormalizeString(_partyLeader.role.roleType.ToString()) + " " + _name;
             }
-            return _name; }
+            return _name;
+        }
     }
-	public string urlName {
+    public string urlName {
 		get { return "[url=" + _partyLeader.id.ToString() + "_party]" + name + "[/url]"; }
 	}
+    public string urlNameWithRole {
+        get { return "[url=" + _partyLeader.id.ToString() + "_party]" + nameWithRole + "[/url]"; }
+    }
     public bool isFull {
         get { return partyMembers.Count >= MAX_PARTY_MEMBERS; }
     }
@@ -170,11 +177,8 @@ public class Party: IEncounterable, ICombatInitializer {
             member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
 
-            if (IsCharacterLeaderOfParty(member)) {
-                member.AddHistory("Created party: " + this._name + ".");
-            } else {
+            if (!IsCharacterLeaderOfParty(member)) {
                 member.SetCurrentTask(currentTask);
-                member.AddHistory("Joined party: " + this._name + ".");
                 member.SetFollowerState(true);
                 //Debug.Log(member.name + " has joined the party of " + partyLeader.name);
                 //if (_currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
@@ -210,7 +214,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		//}
 
         if (!forDeath) { //If the member was removed from party, but did not die
-			member.AddHistory ("Left party: " + this._name + ".");
+			//member.AddHistory ("Left party: " + this._name + ".");
 			this.specificLocation.AddCharacterToLocation(member, false);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             //if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {

@@ -133,8 +133,8 @@ public class Attack : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartAttack ());
 			return;
 		}
-		_landmarkToAttack.AddHistory (_assignedCharacter.name + " has started attacking " + _landmarkToAttack.landmarkName + "!");
-		_assignedCharacter.AddHistory ("Started attacking " + _landmarkToAttack.landmarkName + "!");
+		//_landmarkToAttack.AddHistory (_assignedCharacter.name + " has started attacking " + _landmarkToAttack.landmarkName + "!");
+		//_assignedCharacter.AddHistory ("Started attacking " + _landmarkToAttack.landmarkName + "!");
 
 		_assignedCharacter.DestroyAvatar ();
 	}

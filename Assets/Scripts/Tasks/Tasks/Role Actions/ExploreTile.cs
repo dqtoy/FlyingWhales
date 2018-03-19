@@ -14,6 +14,7 @@ public class ExploreTile : CharacterTask {
     #endregion
 	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1) : base(createdBy, TASK_TYPE.EXPLORE_TILE, defaultDaysLeft) {
 		SetStance(STANCE.STEALTHY);
+        //_actionString = "to explore";
     }
 		
     #region overrides
@@ -114,7 +115,7 @@ public class ExploreTile : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartExploration ());
 			return;
 		}
-		_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
+		//_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
 	}
 	private void Explore(){
         _landmarkToExplore.ExploreLandmark(_assignedCharacter);

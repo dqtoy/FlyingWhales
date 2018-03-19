@@ -109,8 +109,8 @@ public class Battle {
 			this._isKingdomsAtWar = true;
 			this._kr.ChangeWarStatus(true, this._warfare);
 			Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
-			newLog.AddToFillers (this._kingdom1, this._kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (this._kingdom2, this._kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+			newLog.AddToFillers (this._kingdom1, this._kingdom1.name, LOG_IDENTIFIER.FACTION_1);
+			newLog.AddToFillers (this._kingdom2, this._kingdom2.name, LOG_IDENTIFIER.FACTION_2);
 			this._warfare.ShowUINotification (newLog);
 		}
 	}
@@ -326,8 +326,8 @@ public class Battle {
                 kingdomsToShowNotif.Add(attacker.kingdom);
                 kingdomsToShowNotif.Add(defender.kingdom);
                 Log newLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "successful_defense");
-				newLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
-				newLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_2);
+				newLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.LANDMARK_1);
+				newLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.LANDMARK_2);
 				this._warfare.ShowUINotification(newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 
                 //When failing in attacking an enemy city, Stability is reduced by 5.

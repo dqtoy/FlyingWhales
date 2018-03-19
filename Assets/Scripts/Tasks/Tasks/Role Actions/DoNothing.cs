@@ -10,6 +10,7 @@ public class DoNothing : CharacterTask {
 
 	public DoNothing(TaskCreator createdBy, int defaultDaysLeft = 10) 
         : base(createdBy, TASK_TYPE.DO_NOTHING, defaultDaysLeft) {
+        //_actionString = "to dilly dally at";
     }
 
     #region overrides

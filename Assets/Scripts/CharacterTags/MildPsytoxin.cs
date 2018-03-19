@@ -43,7 +43,7 @@ public class MildPsytoxin : CharacterTag {
 		}
 	}
 	private void WorsenCase(){
-		_character.AddHistory ("Psytoxin has worsen! It is now moderate!");
+		//_character.AddHistory ("Psytoxin has worsen! It is now moderate!");
 		_character.AssignTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
 		_character.RemoveCharacterTag (this);
 	}

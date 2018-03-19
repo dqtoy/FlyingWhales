@@ -20,7 +20,7 @@ public class Riot : GameEvent {
         sourceKingdom.ChangeStability(50);
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "riot_start");
-        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
         newLog.AddToFillers(null, weaponLoss.ToString(), LOG_IDENTIFIER.OTHER);
 //        newLog.AddToFillers(null, armorLoss.ToString(), LOG_IDENTIFIER.WAR_NAME); //TODO: Change this to another identifier once a more appropriate one is available
 

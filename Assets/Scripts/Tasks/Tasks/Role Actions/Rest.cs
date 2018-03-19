@@ -124,9 +124,6 @@ public class Rest : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartRest ());
 			return;
 		}
-		for (int i = 0; i < _charactersToRest.Count; i++) {
-			_charactersToRest[i].AddHistory("Taking a rest.");
-		}
 		_assignedCharacter.DestroyAvatar ();
 	}
 	private bool CheckIfCharactersAreFullyRested(List<ECS.Character> charactersToRest) {

@@ -256,9 +256,9 @@ namespace ECS{
             }
             Debug.Log("Side A : \n" + sideAChars);
             Debug.Log("Side B : \n" + sideBChars);
-            if (location != null && location is BaseLandmark){
-				(location as BaseLandmark).AddHistory ("A combat took place!", this);
-			}
+   //         if (location != null && location is BaseLandmark){
+			//	(location as BaseLandmark).AddHistory ("A combat took place!", this);
+			//}
 			isDone = true;
         }
 

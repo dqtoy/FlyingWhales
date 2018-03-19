@@ -44,6 +44,7 @@ public class CharacterTask {
 	protected WeightedDictionary<BaseLandmark> _landmarkWeights;
 	protected WeightedDictionary<ECS.Character> _characterWeights;
 
+    //protected string _actionString; //this is used for logs
 
     #region getters/setters
     public TASK_TYPE taskType {
@@ -94,6 +95,9 @@ public class CharacterTask {
 	//public WeightedDictionary<ECS.Character> characterWeights{
 	//	get { return _characterWeights; }
 	//}
+    //public string actionString {
+    //    get { return _actionString; }
+    //}
     #endregion
 
 	public CharacterTask(TaskCreator createdBy, TASK_TYPE taskType, int defaultDaysLeft = -1, Quest parentQuest = null) {
@@ -229,6 +233,12 @@ public class CharacterTask {
         if (onTaskLogsChange != null) {
             onTaskLogsChange();
         }
+    }
+    public virtual string GetArriveActionString() {
+        return LocalizationManager.Instance.GetLocalizedValue("CharacterTasks", this.GetType().ToString(), "arrive_action");
+    }
+    public virtual string GetLeaveActionString() {
+        return LocalizationManager.Instance.GetLocalizedValue("CharacterTasks", this.GetType().ToString(), "leave_action");
     }
     #endregion
 

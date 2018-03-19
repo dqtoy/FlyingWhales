@@ -462,7 +462,7 @@ public class Citizen {
             //Show king death notification
             Log deathLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Citizen", "king_death");
             deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            deathLog.AddToFillers(kingdomOfCitizen, kingdomOfCitizen.name, LOG_IDENTIFIER.KINGDOM_1);
+            deathLog.AddToFillers(kingdomOfCitizen, kingdomOfCitizen.name, LOG_IDENTIFIER.FACTION_1);
             deathLog.AddToFillers(kingdomOfCitizen.king, kingdomOfCitizen.king.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             UIManager.Instance.ShowNotification(deathLog);
         }
@@ -1028,8 +1028,8 @@ public class Citizen {
 
         Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "rebellion");
         newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(newKingdom, newKingdom.name, LOG_IDENTIFIER.FACTION_2);
         UIManager.Instance.ShowNotification(newLog);
 
         KingdomRelationship kr = newKingdom.GetRelationshipWithKingdom(sourceKingdom);

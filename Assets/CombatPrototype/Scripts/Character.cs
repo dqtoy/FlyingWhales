@@ -65,7 +65,7 @@ namespace ECS {
 		private List<OldQuest.Quest> _activeQuests;
 		private BaseLandmark _home;
         private BaseLandmark _lair;
-		private List<string> _history;
+		private List<Log> _history;
 		private int _combatHistoryID;
 		private List<ECS.Character> _prisoners;
 		private List<ECS.Character> _followers;
@@ -256,7 +256,7 @@ namespace ECS {
         internal int remainingHPPercent {
             get { return (int)(remainingHP * 100); }
         }
-		internal List<string> history{
+		internal List<Log> history{
 			get { return this._history; }
 		}
 		internal float characterPower{
@@ -369,7 +369,7 @@ namespace ECS {
 			_cannotBeTakenAsPrisoner = false;
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
-			_history = new List<string> ();
+			_history = new List<Log> ();
 			_followers = new List<ECS.Character> ();
 			_isFollowerOf = null;
 			_statsModifierPercentage = new StatsModifierPercentage ();
@@ -390,7 +390,6 @@ namespace ECS {
 			_inventory = new List<Item> ();
 			_skills = GetGeneralSkills();
 			_skills.AddRange (GetBodyPartSkills ());
-            _history = new List<string>();
 
 			AdjustMaxHP (_baseMaxHP);
 
@@ -678,7 +677,11 @@ namespace ECS {
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
 				if(specificLocation is BaseLandmark){
-					(specificLocation as BaseLandmark).AddHistory (this.name + " died.");
+                    Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
+                    deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    AddHistory(deathLog);
+                    (specificLocation as BaseLandmark).AddHistory(deathLog);
+					//(specificLocation as BaseLandmark).AddHistory (this.name + " died.");
 				}
 				if(_home != null){
                     //Remove character home on landmark
@@ -847,8 +850,12 @@ namespace ECS {
 			if(newItem.owner == null){
 				OwnItem (newItem);
 			}
-			AddHistory ("Obtained " + newItem.itemName + ".");
-		}
+            Log obtainLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "obtain_item");
+            obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+            AddHistory(obtainLog);
+            //AddHistory ("Obtained " + newItem.itemName + ".");
+        }
 
 		internal void ThrowItem(Item item){
 			if(item.isEquipped){
@@ -910,10 +917,17 @@ namespace ECS {
 				Armor armor = (Armor)item;
 				hasEquipped = TryEquipArmor(armor);
 			}
-//			if(hasEquipped){
-//				AddHistory ("Equipped " + item.itemName + ".");
-//			}
-			return hasEquipped;
+            if (hasEquipped) {
+                Log equipLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "equip_item");
+                equipLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                equipLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+                AddHistory(equipLog);
+            }
+
+            //			if(hasEquipped){
+            //				AddHistory ("Equipped " + item.itemName + ".");
+            //			}
+            return hasEquipped;
 		}
 
 		//Unequips an item of a character, whether it's a weapon, armor, etc.
@@ -929,7 +943,7 @@ namespace ECS {
 		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
 		internal bool UnownItem(Item item){
 			if(item.owner.id == this._id){
-				AddHistory ("Unowned " + item.nameWithQuality + ".");
+				//AddHistory ("Unowned " + item.nameWithQuality + ".");
 				item.SetOwner (null);
 				return true;
 			}
@@ -938,13 +952,13 @@ namespace ECS {
 
 		//Own an Item
 		internal void OwnItem(Item item){
-			AddHistory ("Owned " + item.nameWithQuality + ".");
+			//AddHistory ("Owned " + item.nameWithQuality + ".");
 			item.SetOwner (this);
 		}
 
 		//Transfer item ownership
 		internal void TransferItemOwnership(Item item, Character newOwner){
-			AddHistory ("Transfered " + item.nameWithQuality + " ownership to " + newOwner.name + ".");
+			//AddHistory ("Transfered " + item.nameWithQuality + " ownership to " + newOwner.name + ".");
 			newOwner.OwnItem (item);
 		}
 
@@ -2344,6 +2358,9 @@ namespace ECS {
             }
             return false;
         }
+        public void CenterOnCharacter() {
+            CameraMove.Instance.CenterCameraOn(this.currLocation.gameObject);
+        }
         #endregion
 
         #region Relationships
@@ -2367,31 +2384,59 @@ namespace ECS {
         }
         #endregion
 
-		#region History
-		internal void AddHistory(string text, object obj = null){
-			GameDate today = GameManager.Instance.Today ();
-			string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
-			if(obj != null){
-				if(obj is CombatPrototype){
-					CombatPrototype combat = (CombatPrototype)obj;
-					if(this.combatHistory.Count > 20){
-						this.combatHistory.Remove (0);
-					}
-					_combatHistoryID += 1;
-					combatHistory.Add (_combatHistoryID, combat);
-					string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
-					text = combatText;
-				}
-			}
-			this._history.Insert (0, date + " " + text);
-			if(this._history.Count > 20){
-				this._history.RemoveAt (this._history.Count - 1);
-			}
-		}
-		#endregion
+        #region History
+        internal void AddHistory(Log log) {
+            ////check if character already has log
+            //for (int i = 0; i < _history.Count; i++) {
+            //    Log currLog = _history[i];
+            //    if (currLog.key == log.key) {
+            //        bool areIdentical = true;
+            //        for (int j = 0; j < currLog.fillers.Count; j++) {
+            //            object currFiller = currLog.fillers[j];
+            //            object fillerFromLog = log.fillers.ElementAtOrDefault(j);
+            //            if (fillerFromLog != currFiller) {
+            //                areIdentical = false;
+            //            }
+            //        }
+            //        if (areIdentical) {
+            //            throw new Exception("IDENTICAL LOGS!");
+            //        }
+            //    }
+            //}
 
-		#region Prisoner
-		internal void SetPrisoner(bool state, object prisonerOf){
+            _history.Add(log);
+            if (this._history.Count > 20) {
+                this._history.RemoveAt(this._history.Count - 1);
+            }
+            //add logs to followers as well
+            for (int i = 0; i < followers.Count; i++) {
+                followers[i].AddHistory(log);
+            }
+        }
+        //internal void AddHistory(string text, object obj = null){
+        //	GameDate today = GameManager.Instance.Today ();
+        //	string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
+        //	if(obj != null){
+        //		if(obj is CombatPrototype){
+        //			CombatPrototype combat = (CombatPrototype)obj;
+        //			if(this.combatHistory.Count > 20){
+        //				this.combatHistory.Remove (0);
+        //			}
+        //			_combatHistoryID += 1;
+        //			combatHistory.Add (_combatHistoryID, combat);
+        //			string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
+        //			text = combatText;
+        //		}
+        //	}
+        //	this._history.Insert (0, date + " " + text);
+        //	if(this._history.Count > 20){
+        //		this._history.RemoveAt (this._history.Count - 1);
+        //	}
+        //}
+        #endregion
+
+        #region Prisoner
+        internal void SetPrisoner(bool state, object prisonerOf){
 			_isPrisoner = state;
 			_isPrisonerOf = prisonerOf;
 			if(state){
@@ -2406,7 +2451,7 @@ namespace ECS {
 				}else if(_isPrisonerOf is BaseLandmark){
 					wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				}
-				AddHistory ("Became a prisoner of " + wardenName + ".");
+				//AddHistory ("Became a prisoner of " + wardenName + ".");
 				Unfaint ();
 			}
 		}
@@ -2443,10 +2488,13 @@ namespace ECS {
 
             SetPrisoner(false, null);
 
-            AddHistory("Released from the prison of " + wardenName + ".");
+            Log releasePrisonerLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "release_prisoner");
+            releasePrisonerLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+            AddHistory(releasePrisonerLog);
             if (this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 BaseLandmark landmark = (BaseLandmark)this.specificLocation;
-                landmark.AddHistory("Prisoner " + this.name + " is released.");
+                landmark.AddHistory(releasePrisonerLog);
             }
 
             //When this character is released from imprisonment
@@ -2502,8 +2550,8 @@ namespace ECS {
 			prison.AddCharacterHomeOnLandmark(this);
 			ChangeRole ();
 			prison.owner.AddNewCharacter(this);
-			AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
-			prison.AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
+			//AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
+			//prison.AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
 		}
 		#endregion
 

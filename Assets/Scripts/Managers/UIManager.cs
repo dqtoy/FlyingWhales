@@ -3070,7 +3070,7 @@ public class UIManager : MonoBehaviour {
     #region Settlement Info
     [Space(10)]
     [Header("Settlement Info")]
-    [SerializeField] internal SettlementInfoUI settlementInfoUI;
+    [SerializeField] internal LandmarkInfoUI settlementInfoUI;
     public void ShowSettlementInfo(BaseLandmark landmark) {
 		if(factionInfoUI.isShowing){
 			factionInfoUI.HideMenu ();
@@ -3089,11 +3089,12 @@ public class UIManager : MonoBehaviour {
 		}
         settlementInfoUI.SetData(landmark);
         settlementInfoUI.OpenMenu();
+        landmark.CenterOnLandmark();
 //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateSettlementInfo() {
 		if(settlementInfoUI.isShowing){
-			settlementInfoUI.UpdateSettlementInfo();
+			settlementInfoUI.UpdateLandmarkInfo();
 		}
     }
     #endregion
@@ -3151,6 +3152,7 @@ public class UIManager : MonoBehaviour {
 		}
         characterInfoUI.SetData(character);
         characterInfoUI.OpenMenu();
+        character.CenterOnCharacter();
 //		playerActionsUI.ShowPlayerActionsUI ();
 	}
 	public void UpdateCharacterInfo() {

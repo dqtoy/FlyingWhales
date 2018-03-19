@@ -23,12 +23,12 @@ public class PlayerInterventionManager : MonoBehaviour {
 			if(lair != null){
 				if(chosenTile.region.occupant != null){
 					Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerIntervention", "MonsterLair", "spawn_with_city");
-					newLog.AddToFillers (lair, lair.name, LOG_IDENTIFIER.LAIR_NAME);
-					newLog.AddToFillers (chosenTile.region.occupant, chosenTile.region.occupant.name, LOG_IDENTIFIER.CITY_1);
+					//newLog.AddToFillers (lair, lair.name, LOG_IDENTIFIER.LAIR_NAME);
+					newLog.AddToFillers (chosenTile.region.occupant, chosenTile.region.occupant.name, LOG_IDENTIFIER.LANDMARK_1);
 					UIManager.Instance.ShowNotification (newLog);
 				}else{
 					Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerIntervention", "MonsterLair", "spawn_without_city");
-					newLog.AddToFillers (lair, lair.name, LOG_IDENTIFIER.LAIR_NAME);
+					//newLog.AddToFillers (lair, lair.name, LOG_IDENTIFIER.LAIR_NAME);
 					UIManager.Instance.ShowNotification (newLog);
 				}
 			}

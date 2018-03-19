@@ -10,36 +10,40 @@ public class Search : CharacterTask {
 	private Action _afterFindingAction;
 
     private object _searchingFor;
-	private string startSearchLog;
+	private string searchingForLog;
 
     public Search(TaskCreator createdBy, int defaultDaysLeft, object searchingFor, ILocation targetLocation, Quest parentQuest = null) : base(createdBy, TASK_TYPE.SEARCH, defaultDaysLeft, parentQuest) {
         SetStance(STANCE.NEUTRAL);
         _targetLocation = targetLocation;
         _searchingFor = searchingFor;
+        Log log = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", (string)_searchingFor); //Add Fillers as necesssary per item seaching for
+
         if (searchingFor is string) {
             if((searchingFor as string).Equals("Heirloom Necklace")) {
                 _searchAction = () => SearchForHeirloomNecklace();
                 _alignments.Add(ACTION_ALIGNMENT.LAWFUL);
-				startSearchLog = "the owner of the " + (string)_searchingFor;
+				//searchingForLog = "the owner of the " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Book of Inimical Incantations")) {
 				SetStance(STANCE.COMBAT);
 				_searchAction = () => SearchForItemInLandmark();
 				_alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
-				startSearchLog = "a " + (string)_searchingFor;
+				//searchingForLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Neuroctus")) {
 				SetStance(STANCE.COMBAT);
 				_searchAction = () => SearchForItemInLandmark();
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
-				startSearchLog = "a " + (string)_searchingFor;
+				//searchingForLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Psytoxin Herbalist")) {
 				string[] splitted = ((string)_searchingFor).Split (' ');
 				SetStance(STANCE.COMBAT);
 				_searchAction = () => SearchForATag(splitted[1]);
 				_afterFindingAction = () => CurePsytoxin ();
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
-				startSearchLog = "an " + splitted[1] + " to cure the " + splitted[0];
+				//searchingForLog = "an " + splitted[1] + " to cure the " + splitted[0];
 			}
+            searchingForLog = Utilities.LogReplacer(log);
         }
+        
     }
 
     #region overrides
@@ -118,17 +122,21 @@ public class Search : CharacterTask {
 	}
     #endregion
 
-
 	private void StartSearch(){
 		if(_assignedCharacter.isInCombat){
 			_assignedCharacter.SetCurrentFunction (() => StartSearch ());
 			return;
 		}
 		_assignedCharacter.DestroyAvatar ();
-		if(_targetLocation is BaseLandmark){
-			(targetLocation as BaseLandmark).AddHistory(_assignedCharacter.name + " started searching for " + startSearchLog + "!");
-		}
-	}
+        Log startSearchLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", "start_search");
+        startSearchLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startSearchLog.AddToFillers(null, searchingForLog, LOG_IDENTIFIER.OTHER);
+
+        if (_targetLocation is BaseLandmark) {
+            (targetLocation as BaseLandmark).AddHistory(startSearchLog);
+        }
+        _assignedCharacter.AddHistory(startSearchLog);
+    }
 
     #region Find Lost Heir
     private void SearchForHeirloomNecklace() {
@@ -156,8 +164,8 @@ public class Search : CharacterTask {
 			if (item.itemName == (string)_searchingFor) {
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < item.collectChance){
-					_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
-					_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
+					//_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
+					//_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
 					_assignedCharacter.PickupItem (item);
 					_targetLandmark.RemoveItemInLandmark (item);
 					if(_afterFindingAction != null){
@@ -198,14 +206,27 @@ public class Search : CharacterTask {
 			if(!_assignedCharacter.RemoveCharacterTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 				if(!_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.MODERATE_PSYTOXIN)){
 					_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
-					_assignedCharacter.AddHistory ("Severe Psytoxin cured!");
+					//_assignedCharacter.AddHistory ("Severe Psytoxin cured!");
 				}else{
-					_assignedCharacter.AddHistory ("Moderate Psytoxin cured!");
+					//_assignedCharacter.AddHistory ("Moderate Psytoxin cured!");
 				}
 			}else{
-				_assignedCharacter.AddHistory ("Mild Psytoxin cured!");
+				//_assignedCharacter.AddHistory ("Mild Psytoxin cured!");
 			}
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Logs
+    public override string GetArriveActionString() {
+        Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", "arrive_action");
+        arriveLog.AddToFillers(null, searchingForLog, LOG_IDENTIFIER.OTHER);
+        return Utilities.LogReplacer(arriveLog);
+    }
+    public override string GetLeaveActionString() {
+        Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", "leave_action");
+        arriveLog.AddToFillers(null, searchingForLog, LOG_IDENTIFIER.OTHER);
+        return Utilities.LogReplacer(arriveLog);
+    }
+    #endregion
 }

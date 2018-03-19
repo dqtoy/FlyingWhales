@@ -59,7 +59,7 @@ public class DungeonParty : Party {
 			ECS.CombatPrototype combat = (ECS.CombatPrototype)result;
 			encounteredByParty.currentTask.AddNewLogs(combat.resultsLog);
 			for (int i = 0; i < encounteredByParty.partyMembers.Count; i++) {
-				encounteredByParty.partyMembers [i].AddHistory ("Encountered " + this._name + ".", combat);
+				//encounteredByParty.partyMembers [i].AddHistory ("Encountered " + this._name + ".", combat);
 			}
 			if(combat.charactersSideA.Count > 0) {
 				((OldQuest.Quest)encounteredByParty.currentTask).Result (true);

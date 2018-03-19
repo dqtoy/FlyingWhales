@@ -101,10 +101,13 @@ public class Hibernate : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartHibernation ());
 			return;
 		}
-		for (int i = 0; i < _charactersToRest.Count; i++) {
-			_charactersToRest[i].AddHistory("Hibernating.");
-		}
-		_assignedCharacter.DestroyAvatar ();
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hibernate", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        _assignedCharacter.AddHistory(startLog);
+        if (_assignedCharacter.specificLocation is BaseLandmark) {
+            (_assignedCharacter.specificLocation as BaseLandmark).AddHistory(startLog);
+        }
+        _assignedCharacter.DestroyAvatar ();
 	}
     public void PerformHibernate() {
         for (int i = 0; i < _charactersToRest.Count; i++) {

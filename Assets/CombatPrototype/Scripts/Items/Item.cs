@@ -21,6 +21,7 @@ namespace ECS{
         public int exploreWeight;
         public int collectChance;
 		public bool isUnlimited;
+        public string interactString;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
         protected ECS.Character _owner;
@@ -101,6 +102,7 @@ namespace ECS{
 			item.exploreWeight = exploreWeight;
 			item.collectChance = collectChance;
 			item.isUnlimited = isUnlimited;
+            item.interactString = interactString;
             item.statusEffectResistances = new List<StatusEffectRate>(statusEffectResistances);
         }
     }

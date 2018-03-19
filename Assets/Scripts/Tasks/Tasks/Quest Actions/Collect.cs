@@ -9,13 +9,19 @@ public class Collect : CharacterTask {
 	private int _quantityToCollect;
 	private int _quantityAlreadyCollected;
 
+    private string itemToCollectLog;
+
 	public Collect(TaskCreator createdBy, string itemName, int quantity, ILocation targetLocation, int defaultDaysLeft = -1, Quest parentQuest = null) : base(createdBy, TASK_TYPE.COLLECT, defaultDaysLeft, parentQuest) {
 		SetStance(STANCE.COMBAT);
 		_targetLocation = targetLocation;
 		_itemNameToCollect = itemName;
 		_quantityToCollect = quantity;
 		_quantityAlreadyCollected = 0;
-	}
+
+        Log log = new Log(GameManager.Instance.Today(), "CharacterTasks", "Collect", itemName); //Add Fillers as necesssary per item seaching for
+
+        itemToCollectLog = Utilities.LogReplacer(log);
+    }
 
 	#region overrides
 	public override CharacterTask CloneTask() {
@@ -105,9 +111,9 @@ public class Collect : CharacterTask {
 			return;
 		}
 		_assignedCharacter.DestroyAvatar ();
-		if(_targetLocation is BaseLandmark){
-			(targetLocation as BaseLandmark).AddHistory(_assignedCharacter.name + " started searching for " + _itemNameToCollect + " to collect!");
-		}
+		//if(_targetLocation is BaseLandmark){
+		//	(targetLocation as BaseLandmark).AddHistory(_assignedCharacter.name + " started searching for " + _itemNameToCollect + " to collect!");
+		//}
 	}
 
 	private void CollectItem(){
@@ -140,8 +146,8 @@ public class Collect : CharacterTask {
 			}
 		}
 
-		_assignedCharacter.AddHistory ("Collected " + collectedAmount + " " + _itemNameToCollect + " in " + _targetLandmark.landmarkName + ".");
-		_targetLandmark.AddHistory (_assignedCharacter.name + " collected " + collectedAmount + " " + _itemNameToCollect + ".");
+		//_assignedCharacter.AddHistory ("Collected " + collectedAmount + " " + _itemNameToCollect + " in " + _targetLandmark.landmarkName + ".");
+		//_targetLandmark.AddHistory (_assignedCharacter.name + " collected " + collectedAmount + " " + _itemNameToCollect + ".");
 
 		if(_quantityAlreadyCollected >= _quantityToCollect){
 			EndTask (TASK_STATUS.SUCCESS);
@@ -149,4 +155,17 @@ public class Collect : CharacterTask {
 			EndTask (TASK_STATUS.FAIL);
 		}
 	}
+
+    #region Logs
+    public override string GetArriveActionString() {
+        Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Collect", "arrive_action");
+        arriveLog.AddToFillers(null, itemToCollectLog, LOG_IDENTIFIER.OTHER);
+        return Utilities.LogReplacer(arriveLog);
+    }
+    public override string GetLeaveActionString() {
+        Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Collect", "leave_action");
+        arriveLog.AddToFillers(null, itemToCollectLog, LOG_IDENTIFIER.OTHER);
+        return Utilities.LogReplacer(arriveLog);
+    }
+    #endregion
 }

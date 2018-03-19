@@ -118,9 +118,10 @@ public class HuntPrey : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartHunt ());
 			return;
 		}
-
-		_target.AddHistory(hunterName + " has started hunting prey in " + _target.landmarkName + "!");
-		_assignedCharacter.AddHistory("Started hunting prey in " + _target.landmarkName + "!");
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "HuntPrey", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        _target.AddHistory(startLog);
+        _assignedCharacter.AddHistory(startLog);
     }
 
     private void Hunt() {
@@ -155,8 +156,8 @@ public class HuntPrey : CharacterTask {
 			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);
-			_target.AddHistory (hunterName + " hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
-			_assignedCharacter.AddHistory ("Hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
+			//_target.AddHistory (hunterName + " hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
+			//_assignedCharacter.AddHistory ("Hunted and killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian!");
 
 //          _target.ReduceCivilians(1);
             //GameDate nextDate = GameManager.Instance.Today();

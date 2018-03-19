@@ -5,6 +5,8 @@ using System.Linq;
 
 public class CharacterInfoUI : UIMenu {
 
+    private const int MAX_HISTORY_LOGS = 20;
+
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
@@ -21,7 +23,17 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private UIScrollView equipmentScrollView;
 	[SerializeField] private UIScrollView inventoryScrollView;
     [SerializeField] private UIScrollView relationshipsScrollView;
-	[SerializeField] private UIScrollView historyScrollView;
+
+    [Space(10)]
+    [Header("Logs")]
+    [SerializeField]
+    private GameObject logHistoryPrefab;
+    [SerializeField] private UITable logHistoryTable;
+    [SerializeField] private UIScrollView historyScrollView;
+    [SerializeField] private Color evenLogColor;
+    [SerializeField] private Color oddLogColor;
+
+    private LogHistoryItem[] logHistoryItems;
 
 	private ECS.Character _activeCharacter;
 
@@ -36,19 +48,37 @@ public class CharacterInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
+        logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
+        //populate history logs table
+        for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, logHistoryTable.transform);
+            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
+            newLogItem.transform.localScale = Vector3.one;
+            newLogItem.SetActive(true);
+        }
     }
 
 	public override void ShowMenu (){
 		base.ShowMenu ();
-		_activeCharacter = (ECS.Character)_data;
+        _activeCharacter = (ECS.Character)_data;
 	}
     public override void OpenMenu() {
         base.OpenMenu();
+        historyScrollView.ResetPosition();
         UpdateCharacterInfo();
     }
 
     public override void SetData(object data) {
+        if (_data != null) {
+            ECS.Character previousCharacter = _data as ECS.Character;
+            if (previousCharacter.avatar != null) {
+                previousCharacter.avatar.SetHighlightState(false);
+            }
+        }
         base.SetData(data);
+        if (currentlyShowingCharacter.avatar != null) {
+            currentlyShowingCharacter.avatar.SetHighlightState(true);
+        }
         if (isShowing) {
             UpdateCharacterInfo();
         }
@@ -252,21 +282,40 @@ public class CharacterInfoUI : UIMenu {
 		relationshipsScrollView.UpdatePosition();
 	}
 	private void UpdateHistoryInfo(){
-		string text = string.Empty;
-		if (currentlyShowingCharacter.history.Count > 0) {
-			for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
-				if(i > 0){
-					text += "\n";
-				}
-				text += currentlyShowingCharacter.history[i];
-			}
-		} else {
-			text += "NONE";
-		}
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
+            if (currLog != null) {
+                currItem.SetLog(currLog);
+                currItem.gameObject.SetActive(true);
 
-		historyLbl.text = text;
-		historyScrollView.UpdatePosition();
-	}
+                if (Utilities.IsEven(i)) {
+                    currItem.SetLogColor(evenLogColor);
+                } else {
+                    currItem.SetLogColor(oddLogColor);
+                }
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+        if (this.gameObject.activeInHierarchy) {
+            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+        }
+        //string text = string.Empty;
+        //if (currentlyShowingCharacter.history.Count > 0) {
+        //	for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
+        //		if(i > 0){
+        //			text += "\n";
+        //		}
+        //		text += currentlyShowingCharacter.history[i];
+        //	}
+        //} else {
+        //	text += "NONE";
+        //}
+
+        //historyLbl.text = text;
+        //historyScrollView.UpdatePosition();
+    }
 	public void CenterCameraOnCharacter() {
         GameObject centerOn = null;
         if (currentlyShowingCharacter.avatar != null) {
@@ -277,8 +326,15 @@ public class CharacterInfoUI : UIMenu {
         CameraMove.Instance.CenterCameraOn(centerOn);
     }
 
+    public bool IsCharacterInfoShowing(ECS.Character character) {
+        return (isShowing && currentlyShowingCharacter == character);
+    }
+
 	#region Overrides
 	public override void HideMenu (){
+        if (currentlyShowingCharacter.avatar != null) {
+            currentlyShowingCharacter.avatar.SetHighlightState(false);
+        }
 		_activeCharacter = null;
 		base.HideMenu ();
 	}

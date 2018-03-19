@@ -18,9 +18,6 @@ public class RestAction : TaskAction {
         } else {
             charactersToRest.Add(target);
         }
-        for (int i = 0; i < charactersToRest.Count; i++) {
-            charactersToRest[i].AddHistory("Taking a rest.");
-        }
     }
     public override void ActionDone(TASK_ACTION_RESULT result) {
         Messenger.RemoveListener("OnDayEnd", Rest);

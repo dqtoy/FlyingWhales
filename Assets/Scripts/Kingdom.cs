@@ -861,7 +861,7 @@ public class Kingdom{
         } else {
             yearsLasted = age.ToString() + " years";
         }
-        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.FACTION_1);
         newLog.AddToFillers(null, yearsLasted, LOG_IDENTIFIER.OTHER);
         UIManager.Instance.ShowNotification(newLog);
 
@@ -1327,8 +1327,8 @@ public class Kingdom{
     }
     internal void LeaveTradeDealWith(Kingdom otherKingdom) {
         Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TradeDeal", "trade_deal_leave");
-        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.FACTION_2);
         UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { this, otherKingdom });
         RemoveTradeDealWith(otherKingdom);
         otherKingdom.RemoveTradeDealWith(this);
@@ -2373,8 +2373,8 @@ public class Kingdom{
 					fortifyFileName = "fortify_under_attack";
 				}
 				Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", fortifyFileName);
-                fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-                fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+                fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.FACTION_1);
+                fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.FACTION_2);
                 UIManager.Instance.ShowNotification(fortifyLog, new HashSet<Kingdom>() { this }, false);
             }
 		}
@@ -2865,8 +2865,8 @@ public class Kingdom{
 			this.AdjustStability(-5);
 			if(!doNotShowLog){
 				Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
-				newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-                newLog.AddToFillers(null, leftAlliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+				newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+                //newLog.AddToFillers(null, leftAlliance.name, LOG_IDENTIFIER.PARTY_NAME);
 				newLog.AddAllInvolvedObjects (objects);
 				UIManager.Instance.ShowNotification (newLog);
 			}
@@ -2914,8 +2914,8 @@ public class Kingdom{
         }
         kingdomsToShowNotif.Add(allyKingdom);
         Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "transfer_weapons_armors");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		newLog.AddToFillers (null, amount, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
@@ -2929,9 +2929,9 @@ public class Kingdom{
             }
         }
         Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "join_war");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
-		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		//newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowRefuseAndLeaveAllianceLog(AlliancePool alliance, Warfare warfare){
@@ -2941,9 +2941,9 @@ public class Kingdom{
         kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.B));
         kingdomsToShowNotif.AddRange(alliance.kingdomsInvolved);
         Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "refuse_and_leave_alliance");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
-		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		//newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		//newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.PARTY_NAME);
 		newLog.AddAllInvolvedObjects (alliance.kingdomsInvolved.ToArray ());
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
@@ -2954,8 +2954,8 @@ public class Kingdom{
         kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.A));
         kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.B));
         Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "do_nothing_war");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		//newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowBetrayalWarLog(Warfare warfare, Kingdom kingdom){
@@ -2969,9 +2969,9 @@ public class Kingdom{
             }
         }
         Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_war");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
-		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		//newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.FACTION_2);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowBetrayalLog(AlliancePool alliance, Kingdom kingdom){
@@ -2980,9 +2980,9 @@ public class Kingdom{
 		kingdomsToShowNotif.AddRange(alliance.kingdomsInvolved);
 
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_war");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
-		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		//newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.PARTY_NAME);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.FACTION_2);
 		newLog.AddAllInvolvedObjects (alliance.kingdomsInvolved.ToArray ());
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
@@ -3003,10 +3003,10 @@ public class Kingdom{
             }
         }
         Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_provide");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		//newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.PARTY_NAME);
 		newLog.AddToFillers (null, logAmount, LOG_IDENTIFIER.OTHER);
-		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.FACTION_2);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 
@@ -3218,46 +3218,46 @@ public class Kingdom{
 	}
 	private void ShowSuccessSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_SUCCESS");
-		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) { //subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS || 
 			newLog.AddToFillers (null, weaponsArmorsDestroyed.ToString(), LOG_IDENTIFIER.OTHER);
 		}else if (subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE) {
 			newLog.AddToFillers (null, plagueName.ToString(), LOG_IDENTIFIER.OTHER);
 		}else if (subterfuge == SUBTERFUGE_ACTIONS.FLATTER) {
-			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.FACTION_LEADER_2);
 		}
 		UIManager.Instance.ShowNotification (newLog);
 	}
 	private void ShowFailSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_FAIL");
-		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		if (subterfuge == SUBTERFUGE_ACTIONS.FLATTER) {
-			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.FACTION_LEADER_2);
 		}
 		UIManager.Instance.ShowNotification (newLog);
 	}
 	private void ShowCriticalFailSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_CRITICAL");
-		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) { //subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS ||
 			newLog.AddToFillers (null, weaponsArmorsDestroyed.ToString(), LOG_IDENTIFIER.OTHER);
 		}else if (subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE) {
 			newLog.AddToFillers (null, plagueName.ToString(), LOG_IDENTIFIER.OTHER);
 		}else if (subterfuge == SUBTERFUGE_ACTIONS.FLATTER) {
-			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.FACTION_LEADER_2);
 		}
 		UIManager.Instance.ShowNotification (newLog);
 	}
 	private void ShowCaughtSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, string incidentName){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", "caught");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.FACTION_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
 		newLog.AddToFillers (null, incidentName, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification (newLog);
 	}
@@ -3761,10 +3761,10 @@ public class Kingdom{
     }
     private void ShowInternationalIncidentFailLog(Kingdom targetKingdom, Kingdom otherKingdom) {
         Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "InternationalIncident", "start_fail");
-        newLog.AddToFillers(this.king, this.king.name, LOG_IDENTIFIER.KING_1);
-        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-        newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-        newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+        newLog.AddToFillers(this.king, this.king.name, LOG_IDENTIFIER.FACTION_LEADER_1);
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.FACTION_1);
+        newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.FACTION_2);
+        newLog.AddToFillers(otherKingdom, otherKingdom.name, LOG_IDENTIFIER.FACTION_3);
         UIManager.Instance.ShowNotification(newLog);
     }
     internal void AddRejectedOffer(Kingdom rejectedBy, WEIGHTED_ACTION actionType) {

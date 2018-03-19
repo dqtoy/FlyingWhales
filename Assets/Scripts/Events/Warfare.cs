@@ -442,8 +442,8 @@ public class Warfare {
 			kr.ChangeRecentWar (true);
 			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
-			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.FACTION_1);
+			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.FACTION_2);
 			ShowUINotification (newLog);
 			if(Messenger.eventTable.ContainsKey("PeaceDeclared")){
 				Messenger.Broadcast<Kingdom, Kingdom> ("PeaceDeclared", kingdom1, kingdom2);
@@ -649,8 +649,8 @@ public class Warfare {
 
 			kr.ChangeWarStatus(true, this);
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
-			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.FACTION_1);
+			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.FACTION_2);
 			this.ShowUINotification (newLog);
 
 
