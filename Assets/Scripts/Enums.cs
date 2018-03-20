@@ -1226,5 +1226,7 @@ public enum STATE{
 	HUNT,
 	PILLAGE,
 	RAZE,
+	RECRUIT,
+	PURCHASE,
 }
 

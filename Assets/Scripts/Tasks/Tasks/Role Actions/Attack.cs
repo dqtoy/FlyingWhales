@@ -12,11 +12,19 @@ public class Attack : CharacterTask {
 	public BaseLandmark landmarkToAttack {
 		get { return _landmarkToAttack; }
 	}
+	public bool canChangeOwnership {
+		get { return _canChangeOwnership; }
+	}
 	#endregion
 
 	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.COMBAT) : base(createdBy, TASK_TYPE.ATTACK, stance, defaultDaysLeft, parentQuest) {
         _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
 		_canChangeOwnership = true;
+
+		_states = new Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.ATTACK, new AttackState (this) }
+		};
 	}
 		
 	#region overrides
@@ -29,6 +37,7 @@ public class Attack : CharacterTask {
 			_targetLocation = GetLandmarkTarget(character);
 		}
 		if(_targetLocation != null && _targetLocation is BaseLandmark){
+			ChangeStateTo (STATE.MOVE);
 			_landmarkToAttack = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartAttack());
 		}else{
@@ -39,15 +48,15 @@ public class Attack : CharacterTask {
 		if(!CanPerformTask()){
 			return;
 		}
-		base.PerformTask();
 		if(!AreThereStillHostileInLandmark()){
-			KillCivilians ();
-			ChangeLandmarkOwnership ();
-			EndAttack ();
+			if(_currentState != null){
+				_currentState.PerformStateAction ();
+			}
+			EndTaskSuccess ();
 			return;
 		}
 		if(_daysLeft == 0){
-			EndAttack ();
+			EndTaskSuccess ();
 			return;
 		}
 		ReduceDaysLeft(1);
@@ -55,20 +64,6 @@ public class Attack : CharacterTask {
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){
             return location.HasHostilitiesWith(character); //If there are unowned landmarks with hostile unaligned characters or owned by hostile faction within current region or adjacent region
-			//if(location.tileLocation.landmarkOnTile is DungeonLandmark){
-			//	return true;
-			//}else if(location.tileLocation.landmarkOnTile is Settlement || location.tileLocation.landmarkOnTile is ResourceLandmark){
-			//	if(location.tileLocation.landmarkOnTile.owner != null){
-			//		if(character.faction == null){
-			//			return true;
-			//		}else if(location.tileLocation.landmarkOnTile.owner.id != character.faction.id){
-			//			FactionRelationship facRel = character.faction.GetRelationshipWith (location.tileLocation.landmarkOnTile.owner);
-			//			if(facRel != null && facRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-			//				return true;
-			//			}
-			//		}
-			//	}
-			//}
 		}
 		return base.CanBeDone (character, location);
 	}
@@ -139,6 +134,8 @@ public class Attack : CharacterTask {
         _assignedCharacter.AddHistory(startLog);
 
         _assignedCharacter.DestroyAvatar ();
+
+		ChangeStateTo (STATE.ATTACK);
 	}
 
 	private bool AreThereStillHostileInLandmark(){
@@ -195,10 +192,6 @@ public class Attack : CharacterTask {
 			}
 		}
 	}
-	private void EndAttack(){
-		EndTask (TASK_STATUS.SUCCESS);
-	}
-
 	public void SetCanChangeOwnership(bool state){
 		_canChangeOwnership = state;
 	}

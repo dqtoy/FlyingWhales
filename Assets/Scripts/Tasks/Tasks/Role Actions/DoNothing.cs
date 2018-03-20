@@ -11,6 +11,10 @@ public class DoNothing : CharacterTask {
 	public DoNothing(TaskCreator createdBy, int defaultDaysLeft = 10, STANCE stance = STANCE.NEUTRAL) 
         : base(createdBy, TASK_TYPE.DO_NOTHING, stance, defaultDaysLeft) {
         //_actionString = "to dilly dally at";
+		_states = new System.Collections.Generic.Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.DO_NOTHING, new DoNothingState (this) }
+		};
     }
 
     #region overrides
@@ -20,21 +24,11 @@ public class DoNothing : CharacterTask {
             _targetLocation = GetLandmarkTarget(character);
         }
 		if (_targetLocation != null) {
-			character.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
+			ChangeStateTo (STATE.MOVE);
+			character.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => StartDoingNothing());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-    }
-    public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-        base.PerformTask();
-		if(_daysLeft == 0){
-			EndTask (TASK_STATUS.SUCCESS);
-			return;
-		}
-		ReduceDaysLeft(1);
     }
 	public override bool AreConditionsMet (Character character){
 		return true;
@@ -93,4 +87,8 @@ public class DoNothing : CharacterTask {
 		return null;
     }
     #endregion
+
+	private void StartDoingNothing(){
+		ChangeStateTo (STATE.DO_NOTHING);
+	}
 }

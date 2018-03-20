@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using ECS;
 
 public class RecruitFollowers : CharacterTask {
-
-    private string createKey = "Create";
-    private string noCreateKey = "No Create";
-
 	private BaseLandmark _targetLandmark;
 
 	public RecruitFollowers(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.RECRUIT_FOLLOWERS, stance, defaultDaysLeft) {
+		_states = new Dictionary<STATE, State> {
+			{ STATE.RECRUIT, new RecruitState (this, "Followers") }
+		};
     }
 
     #region overrides
@@ -26,6 +25,7 @@ public class RecruitFollowers : CharacterTask {
 			_targetLocation = GetLandmarkTarget(character);
 		}
 		if(_targetLocation != null && _targetLocation is BaseLandmark){
+			ChangeStateTo (STATE.RECRUIT);
 			_targetLandmark = (BaseLandmark)_targetLocation;
 		}else{
 			EndTask (TASK_STATUS.FAIL);
@@ -40,49 +40,23 @@ public class RecruitFollowers : CharacterTask {
 		//	EndRecruitment ();
 		//}
 	}
-    public override void PerformTask() {
+	public override void PerformTask() { //Everyday action of the task
 		if(!CanPerformTask()){
 			return;
 		}
-        base.PerformTask();
-
-		if(_targetLandmark != null && _targetLandmark.civilians > 0 && _targetLandmark is Settlement && !_assignedCharacter.isFollowersFull) {
-			Settlement settlement = (Settlement)_targetLandmark;
-			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(_targetLandmark); 
-			string chosenAction = recruitActions.PickRandomElementGivenWeights();
-			if (chosenAction.Equals(createKey)) {
-				//Create Follower For character
-				ECS.Character newFollower = settlement.CreateNewFollower();
-                Party party = _assignedCharacter.party;
-                if (party == null) {
-                    party = _assignedCharacter.CreateNewParty();
-                }
-                party.AddPartyMember(newFollower);
-                _assignedCharacter.AddFollower(newFollower);
-                Log recruitFollowerLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "RecruitFollowers", "recruit");
-                recruitFollowerLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                recruitFollowerLog.AddToFillers(newFollower, newFollower.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                _targetLandmark.AddHistory(recruitFollowerLog);
-                _assignedCharacter.AddHistory(recruitFollowerLog);
-            }
-			if (_assignedCharacter.isFollowersFull) {
-				EndRecruitment();
-				return;
-			}
-//			if(_assignedCharacter.isFollowersFull){
-//				EndRecruitment();
-//				return;
-//			}
-		}else{
-			EndRecruitment();
+		if(_currentState != null){
+			_currentState.PerformStateAction ();
+		}
+		if (_targetLandmark == null || _targetLandmark.civilians <= 0 || _assignedCharacter.isFollowersFull) {
+			EndTaskSuccess ();
 			return;
 		}
 		if(_daysLeft == 0){
-			EndRecruitment();
+			EndTaskSuccess ();
 			return;
 		}
-		ReduceDaysLeft (1);
-    }
+		ReduceDaysLeft(1);
+	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(character.specificLocation != null && character.specificLocation == location){
 			if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0 && character.faction != null){
@@ -124,37 +98,4 @@ public class RecruitFollowers : CharacterTask {
 		return null;
 	}
     #endregion
-
-    private void EndRecruitment() {
-        //End Rucruit Followers stance, and determine next action.
-        EndTask(TASK_STATUS.SUCCESS);
-    }
-
-    private WeightedDictionary<string> GetRecruitmentDictionary(BaseLandmark location) {
-        int createWeight = 100; //100 Base Weight to Create New Follower
-        int noCreateWeight = 200; //200 Base Weight to Not Create New Follower
-        WeightedDictionary<string> recruitActions = new WeightedDictionary<string>();
-
-        
-        int minimumCivilianReq = location.GetMinimumCivilianRequirement();
-        if (location.civilians <= minimumCivilianReq) {
-            createWeight -= 300; //-300 Weight to Create New Follower if civilian count is equal or less than Minimum Cap
-            createWeight = Mathf.Max(0, createWeight);
-        } else {
-            createWeight += 5 * (location.civilians - minimumCivilianReq); //+5 Weight to Create New Follower for each civilian over Minimum Cap
-        }
-        if (_assignedCharacter.HasTrait(TRAIT.CHARISMATIC)) {
-            createWeight += 50; //+50 Weight to Create New Follower if character is Charismatic
-        }
-        if (location.owner != null && _assignedCharacter.faction != null && location.owner.id == _assignedCharacter.faction.id) {
-            createWeight += 50; //+50 Weight to Create New Follower if character is same faction as landmark
-        }
-        if (_assignedCharacter.HasTrait(TRAIT.REPULSIVE)) {
-            noCreateWeight += 50; //+50 Weight to Not Create New Follower if character is Repulsive
-        }
-        recruitActions.AddElement(createKey, createWeight);
-        recruitActions.AddElement(noCreateKey, noCreateWeight);
-
-        return recruitActions;
-    }
 }
