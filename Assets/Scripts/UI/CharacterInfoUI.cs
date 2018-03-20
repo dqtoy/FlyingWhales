@@ -129,6 +129,14 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+		text += "\nCurrent State: ";
+		if (currentlyShowingCharacter.currentTask != null) {
+			if(currentlyShowingCharacter.currentTask.currentState != null){
+				text += currentlyShowingCharacter.currentTask.currentState.stateName;
+			}
+		} else {
+			text += "NONE";
+		}
         text += "\nCurrent Quest: ";
         if (currentlyShowingCharacter.currentQuest != null) {
             text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";

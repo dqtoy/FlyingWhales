@@ -14,6 +14,10 @@ public class ExploreTile : CharacterTask {
     #endregion
 	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.EXPLORE_TILE, stance, defaultDaysLeft) {
         //_actionString = "to explore";
+		_states = new Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.EXPLORE, new ExploreState (this) },
+		};
     }
 		
     #region overrides
@@ -27,18 +31,19 @@ public class ExploreTile : CharacterTask {
 		}
 
 		if (_targetLocation != null && _targetLocation is BaseLandmark) {
+			ChangeStateTo (STATE.MOVE);
 			_landmarkToExplore = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
 	}
-	public override void PerformTask (){
-		if(!CanPerformTask()){
-			return;
-		}
-		Explore ();
-	}
+//	public override void PerformTask (){
+//		if(!CanPerformTask()){
+//			return;
+//		}
+//		Explore ();
+//	}
 	public override bool CanBeDone (ECS.Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile is DungeonLandmark){
             return true;
@@ -107,6 +112,10 @@ public class ExploreTile : CharacterTask {
 		}
 		return null;
     }
+	public override void EndTaskSuccess (){
+		_assignedCharacter.AddExploredLandmark(_landmarkToExplore); //After the 5 days is over, the character will record that he has already explored that Landmark.
+		base.EndTaskSuccess ();
+	}
     #endregion
 
     private void StartExploration(){
@@ -114,31 +123,33 @@ public class ExploreTile : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartExploration ());
 			return;
 		}
+		_assignedCharacter.DestroyAvatar ();
+		ChangeStateTo (STATE.EXPLORE);
 		//_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
 	}
-	private void Explore(){
-        _landmarkToExplore.ExploreLandmark(_assignedCharacter);
-		//if( _landmarkToExplore.itemsInLandmark.Count > 0){
-		//	int chance = UnityEngine.Random.Range (0, 100);
-		//	if(chance < 35){
-		//		ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
-		//		if(!_assignedCharacter.EquipItem(itemFound)){
-		//			_assignedCharacter.PickupItem (itemFound);
-		//		}
-		//		_landmarkToExplore.RemoveItemInLandmark (itemFound);
-		//	}
-		//}
-		if(_daysLeft == 0){
-            _assignedCharacter.AddExploredLandmark(_landmarkToExplore); //After the 5 days is over, the character will record that he has already explored that Landmark.
-            End ();
-			return;
-		}
-		ReduceDaysLeft(1);
-	}
-
-	private void End(){
-		EndTask (TASK_STATUS.SUCCESS);
-	}
+//	private void Explore(){
+//        _landmarkToExplore.ExploreLandmark(_assignedCharacter);
+//		//if( _landmarkToExplore.itemsInLandmark.Count > 0){
+//		//	int chance = UnityEngine.Random.Range (0, 100);
+//		//	if(chance < 35){
+//		//		ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
+//		//		if(!_assignedCharacter.EquipItem(itemFound)){
+//		//			_assignedCharacter.PickupItem (itemFound);
+//		//		}
+//		//		_landmarkToExplore.RemoveItemInLandmark (itemFound);
+//		//	}
+//		//}
+//		if(_daysLeft == 0){
+//            _assignedCharacter.AddExploredLandmark(_landmarkToExplore); //After the 5 days is over, the character will record that he has already explored that Landmark.
+//            End ();
+//			return;
+//		}
+//		ReduceDaysLeft(1);
+//	}
+//
+//	private void End(){
+//		EndTask (TASK_STATUS.SUCCESS);
+//	}
 
     #region Logs
     private void LogGoToLocation() {
