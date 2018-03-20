@@ -10,29 +10,15 @@ public class ProclaimSuccessor : CharacterTask {
             new MustNotHaveTags(CHARACTER_TAG.SUCCESSOR),
             new MustBeFaction((createdBy as ECS.Character).faction)
         };
+        _states = new System.Collections.Generic.Dictionary<STATE, State>() {
+            { STATE.PROCLAIM_SUCCESSOR, new ProclaimSuccessorState(this) }
+        };
     }
 
     #region overrides
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
-        if (_specificTarget == null) {
-            WeightedDictionary<ECS.Character> characterWeights = GetCharacterTargetWeights(character);
-            _specificTarget = characterWeights.PickRandomElementGivenWeights();
-        }
-
-        ECS.Character successor = _specificTarget as ECS.Character;
-        if (successor.HasTag(CHARACTER_TAG.SUCCESSOR)) {
-            throw new System.Exception(character.name + " is already a successor!");
-        }
-        Successor tag = successor.AssignTag(CHARACTER_TAG.SUCCESSOR) as Successor;
-        tag.SetCharacterToSucceed(character);
-        Log proclaimLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "ProclaimSuccessor", "proclaim");
-        proclaimLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        proclaimLog.AddToFillers(successor, successor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        _assignedCharacter.AddHistory(proclaimLog);
-        successor.AddHistory(proclaimLog);
-
-        EndTask(TASK_STATUS.SUCCESS);
+        ChangeStateTo(STATE.PROCLAIM_SUCCESSOR);
     }
     public override bool CanBeDone(Character character, ILocation location) {
         if (character.faction != null && character.faction is Tribe) { //If character is part of a faction and there are no Successor tag for any character of the faction
@@ -62,16 +48,6 @@ public class ProclaimSuccessor : CharacterTask {
     }
     public override int GetSelectionWeight(Character character) {
         return 20;
-    }
-    protected override WeightedDictionary<Character> GetCharacterTargetWeights(Character character) {
-        WeightedDictionary<Character> characterWeights = base.GetCharacterTargetWeights(character);
-        for (int i = 0; i < character.faction.characters.Count; i++) {
-            ECS.Character currCharacter = character.faction.characters[i];
-            if (currCharacter.id != character.id) {
-                characterWeights.AddElement(currCharacter, 1); //Each character of the same faction: +1 Weight
-            }
-        }
-        return characterWeights;
     }
     #endregion
 }
