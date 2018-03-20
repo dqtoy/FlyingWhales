@@ -13,7 +13,6 @@ public class ExploreTile : CharacterTask {
     }
     #endregion
 	public ExploreTile(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.EXPLORE_TILE, stance, defaultDaysLeft) {
-        //_actionString = "to explore";
 		_states = new Dictionary<STATE, State> {
 			{ STATE.MOVE, new MoveState (this) },
 			{ STATE.EXPLORE, new ExploreState (this) },
@@ -38,23 +37,9 @@ public class ExploreTile : CharacterTask {
 			EndTask (TASK_STATUS.FAIL);
 		}
 	}
-//	public override void PerformTask (){
-//		if(!CanPerformTask()){
-//			return;
-//		}
-//		Explore ();
-//	}
 	public override bool CanBeDone (ECS.Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile is DungeonLandmark){
             return true;
-            //if(!character.exploredLandmarks.Contains(location.tileLocation.landmarkOnTile)){
-            //if(location.tileLocation.landmarkOnTile.itemsInLandmark.Count > 0){
-            //	return true;
-            //}
-            //}
-            //         else{
-            //	return true;
-            //}
         }
 		return base.CanBeDone (character, location);
 	}
@@ -67,17 +52,11 @@ public class ExploreTile : CharacterTask {
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                if(currRegion.landmarks[j] is DungeonLandmark) {
+                if (currRegion.landmarks[j] is DungeonLandmark) {
                     return true;
                 }
             }
         }
-		//for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-		//	BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
-			//if(CanBeDone(character, landmark)){
-			//	return true;
-			//}
-		//}
 		return base.AreConditionsMet (character);
 	}
     public override int GetSelectionWeight(Character character) {

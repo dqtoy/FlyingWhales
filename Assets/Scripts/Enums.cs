@@ -1216,5 +1216,6 @@ public enum STATE{
 	ATTACK,
 	REST,
 	HIBERNATE,
+    HUNT_MAGIC_USER
 }
 

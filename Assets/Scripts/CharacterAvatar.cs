@@ -232,17 +232,28 @@ public class CharacterAvatar : PooledObject{
 				_specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
                 if (this.specificLocation is BaseLandmark) {
                     Log arriveLog = null;
-                    if (_mainCharacter.party != null) {
-                        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location_party");
-                        arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
+                    if (_mainCharacter.currentTask is MoveTo) {
+                        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "visit_location");
+                        if (_mainCharacter.party != null) {
+                            arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        } else {
+                            arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        }
                         arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                        arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                     } else {
-                        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-                        arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                        arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                        if (_mainCharacter.party != null) {
+                            arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location_party");
+                            arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
+                            arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                            arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                        } else {
+                            arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+                            arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                            arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                        }
                     }
+                    
                     this.specificLocation.tileLocation.landmarkOnTile.AddHistory(arriveLog);
                     _mainCharacter.AddHistory(arriveLog);
                 }

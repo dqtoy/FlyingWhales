@@ -555,12 +555,12 @@ public class Utilities : MonoBehaviour {
 					replacedWord = Utilities.CustomPronounReplacer (words[i], log.fillers);
 				}
 				if(!string.IsNullOrEmpty(replacedWord)){
-					words [i] = replacedWord;
+					words[i] = replacedWord;
 				}
 			}
 			newText = string.Empty;
 			for (int i = 0; i < words.Length; i++) {
-				newText += words [i];
+				newText += words[i];
 			}
 			newText = newText.Trim (' ');
 		}
