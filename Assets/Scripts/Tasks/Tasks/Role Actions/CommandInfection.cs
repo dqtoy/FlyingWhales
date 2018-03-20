@@ -17,7 +17,6 @@ public class CommandInfection : CharacterTask {
 	public CommandInfection(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.COMMAND_INFECTION, stance, defaultDaysLeft) {
 		_regionWeights = new WeightedDictionary<Region> ();
 		_states = new Dictionary<STATE, State>{
-			{STATE.DO_NOTHING, new DoNothingState(this)},
 			{STATE.COMMAND_INFECTION, new CommandInfectionState(this)}
 		};
 	}
@@ -43,13 +42,13 @@ public class CommandInfection : CharacterTask {
 			}
 			_targetLandmark = (BaseLandmark)_targetLocation;
 			craterBeast = (CraterBeast)_assignedCharacter.role;
-			ChangeStateTo (STATE.DO_NOTHING);
+			ChangeStateTo (STATE.COMMAND_INFECTION, true);
 		}else{
 			EndTask(TASK_STATUS.FAIL);
 		}
 	}
 	public override void EndTaskSuccess (){
-		ChangeStateTo (STATE.COMMAND_INFECTION);
+		_currentState.SetIsHalted (false);
 		_currentState.PerformStateAction ();
 		base.EndTaskSuccess ();
 	}

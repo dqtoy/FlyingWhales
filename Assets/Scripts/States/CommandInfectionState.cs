@@ -16,9 +16,10 @@ public class CommandInfectionState : State {
 			_commandedCharacter = ((CommandInfection)_parentTask).chosenSlyx;
 		}
 	}
-	public override void PerformStateAction (){
-		base.PerformStateAction ();
+	public override bool PerformStateAction (){
+		if(!base.PerformStateAction ()){ return false; }
 		CommandSlyxToInfectLandmark ();
+		return true;
 	}
 	protected override void ResetState (){
 		base.ResetState ();

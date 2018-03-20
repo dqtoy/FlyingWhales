@@ -12,11 +12,12 @@ public class InfectState : State {
 	}
 
 	#region Overrides
-	public override void PerformStateAction (){
-		base.PerformStateAction ();
+	public override bool PerformStateAction (){
+		if(!base.PerformStateAction ()){ return false; }
 		if(_infectAction != null){
 			_infectAction ();
 		}
+		return true;
 	}
 	#endregion
 

@@ -6,8 +6,17 @@ using ECS;
 public class DoRitual : CharacterTask {
 	private BaseLandmark _ritualStones;
 
-	public DoRitual(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.DO_RITUAL, stance, defaultDaysLeft, parentQuest) {
+	#region getters/setters
+	public BaseLandmark ritualStones{
+		get { return _ritualStones; }
+	}
+	#endregion
 
+	public DoRitual(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.DO_RITUAL, stance, defaultDaysLeft, parentQuest) {
+		_states = new Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.RITUAL, new RitualState (this) }
+		};
 	}
 
 	#region overrides
@@ -24,19 +33,12 @@ public class DoRitual : CharacterTask {
 			_targetLocation = GetLandmarkTarget (character);
 		}
 		if(_targetLocation != null && _targetLocation is BaseLandmark){
+			ChangeStateTo (STATE.MOVE);
 			_ritualStones = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_ritualStones, PATHFINDING_MODE.USE_ROADS, () => StartRitual ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-	}
-
-	public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-		base.PerformTask();
-		Ritual();
 	}
 
 	public override bool CanBeDone (Character character, ILocation location){
@@ -70,6 +72,11 @@ public class DoRitual : CharacterTask {
 	public override int GetSelectionWeight(ECS.Character character){ 
 		return 75; 
 	}
+	public override void EndTaskSuccess (){
+		_currentState.SetIsHalted (true);
+		_currentState.PerformStateAction ();
+		base.EndTaskSuccess ();
+	}
 	#endregion
 
 	private void StartRitual() {
@@ -83,77 +90,7 @@ public class DoRitual : CharacterTask {
         startRitualLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         _ritualStones.AddHistory(startRitualLog);
         _assignedCharacter.AddHistory(startRitualLog);
+
+		ChangeStateTo (STATE.RITUAL, true);
     }
-
-	private void Ritual() {
-		if(this.taskStatus != TASK_STATUS.IN_PROGRESS) {
-			return;
-		}
-			
-		if(_daysLeft == 0){
-			End ();
-			return;
-		}
-		ReduceDaysLeft (1);
-	}
-
-	private void DoMeteorStrike(){
-		//Step 1 - Choose region
-		List<Region> targetRegions = new List<Region> ();
-		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-			Region currRegion = GridMap.Instance.allRegions [i];
-			if(currRegion.centerOfMass.landmarkOnTile != null && currRegion.centerOfMass.landmarkOnTile.owner != null && currRegion.centerOfMass.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CRATER){
-				targetRegions.Add (currRegion);
-			}
-		}
-		if(targetRegions.Count <= 0){
-			return;
-		}
-		Region chosenRegion = targetRegions[UnityEngine.Random.Range(0, targetRegions.Count)];
-
-		//Step 2 - Destroy All Life in Region
-		for (int i = 0; i < chosenRegion.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = chosenRegion.allLandmarks [i];
-			if(currLandmark.civilians > 0){
-				currLandmark.KillAllCivilians ();
-			}
-//			if(currLandmark.charactersAtLocation.Count > 0){
-//				while(currLandmark.charactersAtLocation.Count > 0) {
-//					if(currLandmark.charactersAtLocation[0] is Party){
-//						Party party = (Party)currLandmark.charactersAtLocation [0];
-//						while(party.partyMembers.Count > 0){
-//							party.partyMembers [0].Death ();
-//						}
-//					}else if(currLandmark.charactersAtLocation[0] is ECS.Character){
-//						ECS.Character character = (ECS.Character)currLandmark.charactersAtLocation [0];
-//						character.Death ();
-//					}
-//				}
-//			}
-		}
-		if(Messenger.eventTable.ContainsKey("RegionDeath")){
-			Messenger.Broadcast<Region> ("RegionDeath", chosenRegion);
-		}
-
-		//Step 3 - Initialize Crater
-		BaseLandmark landmark = chosenRegion.centerOfMass.landmarkOnTile;
-		Settlement settlement = (Settlement)landmark;
-		settlement.tileLocation.RuinStructureOnTile (false);
-		settlement.ChangeLandmarkType (LANDMARK_TYPE.CRATER);
-
-        Log meteorCrashLog = new Log(GameManager.Instance.Today(), "Quests", "MeteorStrike", "meteor_crash");
-        meteorCrashLog.AddToFillers(landmark, landmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-
-        _ritualStones.AddHistory(meteorCrashLog);
-        landmark.AddHistory(meteorCrashLog);
-    }
-	private void End(){
-		//TODO: Change this to get a random ritual
-//		if(_assignedCharacter.role != null && _assignedCharacter.role.roleType == CHARACTER_ROLE.VILLAIN){
-//			DoMeteorStrike ();
-//		}
-		DoMeteorStrike ();
-
-		EndTask(TASK_STATUS.SUCCESS);
-	}
 }

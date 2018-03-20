@@ -8,9 +8,10 @@ public class SiphonState : State {
 	}
 
 	#region Overrides
-	public override void PerformStateAction (){
-		base.PerformStateAction ();
+	public override bool PerformStateAction (){
+		if(!base.PerformStateAction ()){ return false; }
 		SiphonLife ();
+		return true;
 	}
 	#endregion
 

@@ -302,11 +302,12 @@ public class CharacterTask {
     #endregion
 
 	#region States
-	public void ChangeStateTo(STATE state){
+	public void ChangeStateTo(STATE state, bool isHalted = false){
 		if(_states.ContainsKey(state)){
 			State newCurrentState = _states [state];
 			newCurrentState.OnChooseState (_assignedCharacter);
 			_currentState = newCurrentState;
+			SetIsHalted (isHalted);
 		}
 	}
 	#endregion
