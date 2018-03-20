@@ -2,12 +2,11 @@
 using System.Collections;
 using ECS;
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public class Search : CharacterTask {
 
-    private Action _searchAction;
-	private Action _afterFindingAction;
 	private delegate BaseLandmark GetTargetLandmark(Character character);
 	private event GetTargetLandmark onGetTargetLandmarkAction;
 
@@ -19,35 +18,29 @@ public class Search : CharacterTask {
         _searchingFor = searchingFor;
 		onGetTargetLandmarkAction = GetLandmarkForCharacterSearching;
         Log log = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", (string)_searchingFor); //Add Fillers as necesssary per item seaching for
-
         if (searchingFor is string) {
             if((searchingFor as string).Equals("Heirloom Necklace")) {
-                _searchAction = () => SearchForHeirloomNecklace();
                 _alignments.Add(ACTION_ALIGNMENT.LAWFUL);
-				//searchingForLog = "the owner of the " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Book of Inimical Incantations")) {
 				SetStance(STANCE.COMBAT);
-				_searchAction = () => SearchForItemInLandmark();
 				onGetTargetLandmarkAction = GetLandmarkForLandmarkItemsSearching;
 				_alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
-				//searchingForLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Neuroctus")) {
 				SetStance(STANCE.COMBAT);
-				_searchAction = () => SearchForItemInLandmark();
 				onGetTargetLandmarkAction = GetLandmarkForLandmarkItemsSearching;
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
-				//searchingForLog = "a " + (string)_searchingFor;
 			}else if((searchingFor as string).Equals("Psytoxin Herbalist")) {
 				string[] splitted = ((string)_searchingFor).Split (' ');
 				SetStance(STANCE.COMBAT);
-				_searchAction = () => SearchForATag(splitted[1]);
-				_afterFindingAction = () => CurePsytoxin ();
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
-				//searchingForLog = "an " + splitted[1] + " to cure the " + splitted[0];
 			}
             searchingForLog = Utilities.LogReplacer(log);
         }
-        
+
+        _states = new Dictionary<STATE, State>() {
+            { STATE.MOVE, new MoveState(this)},
+            { STATE.SEARCH, new SearchState(this, searchingFor) }
+        };
     }
 
     #region overrides
@@ -70,6 +63,7 @@ public class Search : CharacterTask {
 			EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
 			return;
 		}
+        ChangeStateTo(STATE.MOVE);
 		_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => StartSearch());
     }
     public override bool AreConditionsMet(Character character) {
@@ -84,13 +78,13 @@ public class Search : CharacterTask {
         return base.AreConditionsMet(character);
     }
     public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-        base.PerformTask();
-        _searchAction();
+        if(!CanPerformTask()){
+            return;
+        }
+        if (_currentState != null) {
+            _currentState.PerformStateAction();
+        }
         if (_daysLeft == 0) {
-            //EndRecruitment();
             EndTask(TASK_STATUS.FAIL);
             return;
         }
@@ -118,7 +112,8 @@ public class Search : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartSearch ());
 			return;
 		}
-		_assignedCharacter.DestroyAvatar ();
+        ChangeStateTo(STATE.SEARCH);
+        _assignedCharacter.DestroyAvatar ();
         Log startSearchLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", "start_search");
         startSearchLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startSearchLog.AddToFillers(null, searchingForLog, LOG_IDENTIFIER.OTHER);
@@ -130,20 +125,6 @@ public class Search : CharacterTask {
     }
 
     #region Find Lost Heir
-    private void SearchForHeirloomNecklace() {
-        for (int i = 0; i < targetLocation.charactersAtLocation.Count; i++) {
-            ECS.Character currCharacter = targetLocation.charactersAtLocation[i].mainCharacter;
-            if (currCharacter.HasItem(_searchingFor as string)) {
-				//Each day while he is in Search State, if the character with the Heirloom Necklace is in the location then he would successfully perform the action and end the Search State.
-				if(_afterFindingAction != null){
-					_afterFindingAction ();
-				}
-                EndTask(TASK_STATUS.SUCCESS);
-				break;
-                //_assignedCharacter.questData.AdvanceToNextPhase();
-            }
-        }
-    }
 	private BaseLandmark GetLandmarkForCharacterSearching(Character character){
 		Region regionLocation = character.specificLocation.tileLocation.region;
 		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
@@ -166,28 +147,6 @@ public class Search : CharacterTask {
     #endregion
 
 	#region Search for Landmark Items
-	private void SearchForItemInLandmark() {
-		if (_targetLocation is BaseLandmark) {
-			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-			for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
-				ECS.Item item = _targetLandmark.itemsInLandmark [i];
-				if (item.itemName == (string)_searchingFor) {
-					int chance = UnityEngine.Random.Range (0, 100);
-					if (chance < item.collectChance) {
-					//_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
-					//_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
-						_assignedCharacter.PickupItem (item);
-						_targetLandmark.RemoveItemInLandmark (item);
-						if (_afterFindingAction != null) {
-							_afterFindingAction ();
-						}
-						EndTask (TASK_STATUS.SUCCESS);
-						break;
-					}
-				}
-			}
-		}
-	}
 	private BaseLandmark GetLandmarkForLandmarkItemsSearching(Character character){
 		Region regionLocation = character.specificLocation.tileLocation.region;
 		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
@@ -208,48 +167,6 @@ public class Search : CharacterTask {
 		return null;
 	}
 	#endregion
-
-	#region Search for a Tag
-	private void SearchForATag(string tag){
-		if (_targetLocation is BaseLandmark) {
-			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-			for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-				ECS.Character currCharacter = _targetLandmark.charactersAtLocation [i].mainCharacter;
-				if (currCharacter.HasTag (tag, true)) {
-					if (_afterFindingAction != null) {
-						_afterFindingAction ();
-					}
-					EndTask (TASK_STATUS.SUCCESS);
-					break;
-				}
-			}
-		}
-	}
-	#endregion
-
-	#region Psytoxin Herbalist
-	private void CurePsytoxin(){
-		ECS.Item meteorite = _assignedCharacter.GetItemInInventory ("Meteorite");
-		ECS.Item neuroctus = _assignedCharacter.GetItemInInventory ("Neuroctus");
-		if(meteorite != null && neuroctus != null){
-			_assignedCharacter.ThrowItem (meteorite, false);
-			_assignedCharacter.ThrowItem (neuroctus, false);
-            string psytoxinLevel = string.Empty;
-			if(!_assignedCharacter.RemoveCharacterTag(CHARACTER_TAG.MILD_PSYTOXIN)){
-				if(!_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.MODERATE_PSYTOXIN)){
-					_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
-                    psytoxinLevel = "Severe";
-				}else{
-                    psytoxinLevel = "Moderate";
-				}
-			}else{
-                psytoxinLevel = "Mild";
-			}
-            Log cureLog = new Log(GameManager.Instance.Today(), "CharacterTags", "Psytoxin", "cured");
-            cureLog.AddToFillers(null, psytoxinLevel, LOG_IDENTIFIER.OTHER);
-		}
-	}
-    #endregion
 
     #region Logs
     public override string GetArriveActionString() {
