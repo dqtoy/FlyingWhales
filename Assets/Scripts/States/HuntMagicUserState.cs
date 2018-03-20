@@ -8,9 +8,10 @@ public class HuntMagicUserState : State {
     }
 
     #region overrides
-    public override void PerformStateAction() {
-        base.PerformStateAction();
+    public override bool PerformStateAction() {
+        if (!base.PerformStateAction()) { return false; }
         InitiateCombat();
+        return true;
     }
     #endregion
 
