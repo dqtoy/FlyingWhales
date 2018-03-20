@@ -45,6 +45,7 @@ public class CharacterTask {
 	protected WeightedDictionary<ECS.Character> _characterWeights;
 
 	protected State _currentState;
+	protected Dictionary<STATE, State> _states;
 
     //protected string _actionString; //this is used for logs
 
@@ -112,6 +113,7 @@ public class CharacterTask {
         _taskLogs = new List<string>();
 		_landmarkWeights = new WeightedDictionary<BaseLandmark> ();
 		_characterWeights = new WeightedDictionary<ECS.Character> ();
+		_states = new Dictionary<STATE, State> ();
 		_currentState = null;
 		_forPlayerOnly = false;
 		_forGameOnly = false;
@@ -142,16 +144,29 @@ public class CharacterTask {
      he/she chooses to perform this task.
          */
     public virtual void PerformTask() { //Everyday action of the task
-//		if(_assignedCharacter.isInCombat){
-//			_assignedCharacter.SetCurrentFunction (() => PerformTask ());
-//			return;
-//		}
+		if(!CanPerformTask()){
+			return;
+		}
+		if(_currentState != null){
+			_currentState.PerformStateAction ();
+		}
+		if(_daysLeft == 0){
+	        EndTaskSuccess ();
+			return;
+		}
+		ReduceDaysLeft(1);
     }
 	public virtual bool CanPerformTask(){
 		if(_isHalted || _isDone){
 			return false;
 		}
 		return true;
+	}
+	public virtual void EndTaskSuccess(){
+		EndTask (TASK_STATUS.SUCCESS);
+	}
+	public virtual void EndTaskFail(){
+		EndTask (TASK_STATUS.FAIL);
 	}
     public virtual void EndTask(TASK_STATUS taskResult) {
 		if(_assignedCharacter.isInCombat){
@@ -285,4 +300,14 @@ public class CharacterTask {
 		return true;
 	}
     #endregion
+
+	#region States
+	public void ChangeStateTo(STATE state){
+		if(_states.ContainsKey(state)){
+			State newCurrentState = _states [state];
+			newCurrentState.OnChooseState (_assignedCharacter);
+			_currentState = newCurrentState;
+		}
+	}
+	#endregion
 }
