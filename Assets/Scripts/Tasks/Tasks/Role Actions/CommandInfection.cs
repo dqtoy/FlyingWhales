@@ -9,8 +9,17 @@ public class CommandInfection : CharacterTask {
 	private Character _chosenSlyx;
 	private WeightedDictionary<Region> _regionWeights;
 
+	#region getters/setters
+	public Character chosenSlyx{
+		get { return _chosenSlyx; }
+	}
+	#endregion
 	public CommandInfection(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) : base(createdBy, TASK_TYPE.COMMAND_INFECTION, stance, defaultDaysLeft) {
 		_regionWeights = new WeightedDictionary<Region> ();
+		_states = new Dictionary<STATE, State>{
+			{STATE.DO_NOTHING, new DoNothingState(this)},
+			{STATE.COMMAND_INFECTION, new CommandInfectionState(this)}
+		};
 	}
 
 	#region overrides
@@ -34,23 +43,15 @@ public class CommandInfection : CharacterTask {
 			}
 			_targetLandmark = (BaseLandmark)_targetLocation;
 			craterBeast = (CraterBeast)_assignedCharacter.role;
+			ChangeStateTo (STATE.DO_NOTHING);
 		}else{
 			EndTask(TASK_STATUS.FAIL);
 		}
 	}
-	public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-		base.PerformTask();
-
-		CommandSlyxToInfectLandmark ();
-
-		if(_daysLeft == 0){
-			EndCommand();
-			return;
-		}
-		ReduceDaysLeft (1);
+	public override void EndTaskSuccess (){
+		ChangeStateTo (STATE.COMMAND_INFECTION);
+		_currentState.PerformStateAction ();
+		base.EndTaskSuccess ();
 	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
@@ -122,60 +123,6 @@ public class CommandInfection : CharacterTask {
 	}
 	#endregion
 
-	private void CommandSlyxToInfectLandmark(){
-		_chosenSlyx.GoToLocation (_targetLandmark, PATHFINDING_MODE.USE_ROADS, () => InfectLandmark ());
-	}
-
-	private void InfectLandmark(){
-		if(_chosenSlyx.isInCombat){
-			_chosenSlyx.SetCurrentFunction (() => InfectLandmark ());
-		}
-		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			if(_targetLandmark.charactersAtLocation[i] is Party){
-				Party party = (Party)_targetLandmark.charactersAtLocation [i];
-				for (int j = 0; j < party.partyMembers.Count; j++) {
-					ECS.Character character = party.partyMembers [j];
-					if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-						if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
-							continue;
-						}
-						InfectPsytoxin (character);
-					}
-				}
-			}else if(_targetLandmark.charactersAtLocation[i] is ECS.Character){
-				ECS.Character character = (ECS.Character) _targetLandmark.charactersAtLocation[i];
-				if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-					if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
-						continue;
-					}
-					InfectPsytoxin (character);
-				}
-			}
-		}
-		_chosenSlyx.Death ();
-        Log destructLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "CommandInfection", "self_destruct");
-        _targetLandmark.AddHistory(destructLog);
-    }
-	private void InfectPsytoxin(ECS.Character character){
-		if(character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-			return;	
-		}
-		ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)character.GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
-		if(modPsytoxin != null){
-			modPsytoxin.TriggerWorsenCase ();
-		}else{
-			MildPsytoxin mildPsytoxin = (MildPsytoxin)character.GetTag (CHARACTER_TAG.MILD_PSYTOXIN);
-			if(mildPsytoxin != null){
-				mildPsytoxin.TriggerWorsenCase ();
-			}else{
-				int chance = Utilities.rng.Next (0, 100);
-				if(chance < 80){
-					character.AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);	
-				}
-			}
-		}
-	}
-
 	private int CharacterWeight(Character character){
 		if(character.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 			return 3;
@@ -185,10 +132,5 @@ public class CommandInfection : CharacterTask {
 			return -2;
 		}
 		return 5;
-	}
-
-
-	private void EndCommand() {
-		EndTask(TASK_STATUS.SUCCESS);
 	}
 }
