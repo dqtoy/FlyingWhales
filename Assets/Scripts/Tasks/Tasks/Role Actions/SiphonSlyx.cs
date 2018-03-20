@@ -7,6 +7,9 @@ public class SiphonSlyx : CharacterTask {
 	private CraterBeast craterBeast;
 
 	public SiphonSlyx(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.SIPHON_SLYX, stance, defaultDaysLeft) {
+		_states = new Dictionary<STATE, State> {
+			{ STATE.SIPHON, new SiphonState (this) }
+		};
 	}
 
 	#region overrides
@@ -16,18 +19,7 @@ public class SiphonSlyx : CharacterTask {
 			return;
 		}
 		craterBeast = (CraterBeast)_assignedCharacter.role;
-	}
-	public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-		base.PerformTask();
-
-		if(_daysLeft == 0){
-			EndSiphon();
-			return;
-		}
-		ReduceDaysLeft (1);
+		StartSiphon ();
 	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(character.currentHP < character.maxHP && location == character.specificLocation){
@@ -54,31 +46,14 @@ public class SiphonSlyx : CharacterTask {
 	}
 	#endregion
 
-	private void SiphonLife(){
-		for (int i = 0; i < _assignedCharacter.specificLocation.charactersAtLocation.Count; i++) {
-			if(_assignedCharacter.specificLocation.charactersAtLocation[i] is ECS.Character){
-				ECS.Character currCharacter = (ECS.Character) _assignedCharacter.specificLocation.charactersAtLocation[i];
-				if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
-                    Log siphonLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "SiphonSlyx", "siphon");
-                    siphonLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    siphonLog.AddToFillers(currCharacter.currentHP, currCharacter.currentHP.ToString(), LOG_IDENTIFIER.OTHER);
-                    siphonLog.AddToFillers(currCharacter, currCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    _assignedCharacter.AddHistory(siphonLog);
-                    currCharacter.AddHistory(siphonLog);
-                    _assignedCharacter.AdjustHP (currCharacter.currentHP);
-					currCharacter.Death ();
-					i--;
-					if(_assignedCharacter.currentHP >= _assignedCharacter.maxHP){
-						break;
-					}
-				}
-			}
+	private void StartSiphon(){
+		if(_assignedCharacter.isInCombat){
+			_assignedCharacter.SetCurrentFunction (() => StartSiphon ());
+			return;
 		}
-	}
 
-	private void EndSiphon() {
-		SiphonLife ();
-		EndTask(TASK_STATUS.SUCCESS);
+		ChangeStateTo (STATE.SIPHON);
+//		_assignedCharacter.AddHistory ("Started siphoning life from slyxes!");
+//		LandmarkManager.Instance.craterLandmark.AddHistory (_assignedCharacter.name + " started siphoning life from slyxes!");
 	}
-
 }

@@ -976,7 +976,8 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	COMMAND_INFECTION,
 	DO_RITUAL,
 	COLLECT,
-    PROCLAIM_SUCCESSOR
+    PROCLAIM_SUCCESSOR,
+	INFECT_PSYTOXIN,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
@@ -1209,6 +1210,7 @@ public enum ACTION_ALIGNMENT {
 
 public enum STATE{
 	NONE,
+	DO_NOTHING,
 	SEARCH,
 	MOVE,
 	EXPLORE,
@@ -1217,5 +1219,9 @@ public enum STATE{
 	REST,
 	HIBERNATE,
     HUNT_MAGIC_USER
+	SIPHON,
+	COMMAND_INFECTION,
+	INFECT,
+	RITUAL,
 }
 
