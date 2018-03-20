@@ -5,9 +5,19 @@ using ECS;
 
 public class Hibernate : CharacterTask {
 
-    private List<ECS.Character> _charactersToRest;
+    private List<Character> _charactersToRest;
+
+	#region getters/setters
+	public List<Character> charactersToRest{
+		get { return _charactersToRest; }
+	}
+	#endregion
 
 	public Hibernate(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.HIBERNATE, stance, defaultDaysLeft) {
+		_states = new Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.REST, new RestState (this) },
+		};
     }
 
     #region overrides
@@ -28,17 +38,11 @@ public class Hibernate : CharacterTask {
 			_targetLocation = GetLandmarkTarget (character);
 		}
 		if(_targetLocation != null){
+			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHibernation());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-    }
-    public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-        base.PerformTask();
-        PerformHibernate();
     }
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){
@@ -107,18 +111,8 @@ public class Hibernate : CharacterTask {
             (_assignedCharacter.specificLocation as BaseLandmark).AddHistory(startLog);
         }
         _assignedCharacter.DestroyAvatar ();
+		ChangeStateTo (STATE.REST);
 	}
-    public void PerformHibernate() {
-        for (int i = 0; i < _charactersToRest.Count; i++) {
-            ECS.Character currCharacter = _charactersToRest[i];
-            currCharacter.AdjustHP(currCharacter.raceSetting.restRegenAmount);
-        }
-		if(_daysLeft == 0){
-			EndTask (TASK_STATUS.SUCCESS);
-			return;
-		}
-		ReduceDaysLeft(1);
-    }
     //private void GoToTargetLocation() {
     //    // The monster will move towards its Lair and then rest there indefinitely
     //    GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement

@@ -10,8 +10,18 @@ public class Rest : CharacterTask {
 
     private List<ECS.Character> _charactersToRest;
 
+	#region getters/setters
+	public List<Character> charactersToRest{
+		get { return _charactersToRest; }
+	}
+	#endregion
+
 	public Rest(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) 
         : base(createdBy, TASK_TYPE.REST, stance, defaultDaysLeft) {
+		_states = new Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.REST, new RestState (this) },
+		};
     }
 		
     #region overrides
@@ -31,6 +41,7 @@ public class Rest : CharacterTask {
             _targetLocation = GetLandmarkTarget(character);
         }
 		if (_targetLocation != null) {
+			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartRest ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
@@ -40,8 +51,16 @@ public class Rest : CharacterTask {
 		if(!CanPerformTask()){
 			return;
 		}
-		base.PerformTask();
-        PerformRest();
+		if(_currentState != null){
+			_currentState.PerformStateAction ();
+		}
+		if(!CheckIfCharactersAreFullyRested(_charactersToRest)){
+			if(_daysLeft == 0){
+				EndTaskSuccess ();
+				return;
+			}
+			ReduceDaysLeft(1);
+		}
     }
     public override void TaskSuccess() {
 		base.TaskSuccess ();
@@ -124,6 +143,7 @@ public class Rest : CharacterTask {
 			return;
 		}
 		_assignedCharacter.DestroyAvatar ();
+		ChangeStateTo (STATE.REST);
 	}
 	private bool CheckIfCharactersAreFullyRested(List<ECS.Character> charactersToRest) {
         bool allCharactersRested = true;
@@ -138,19 +158,5 @@ public class Rest : CharacterTask {
             EndTask(TASK_STATUS.SUCCESS);
         }
 		return allCharactersRested;
-    }
-
-    public void PerformRest() {
-        for (int i = 0; i < _charactersToRest.Count; i++) {
-            ECS.Character currCharacter = _charactersToRest[i];
-            currCharacter.AdjustHP(currCharacter.raceSetting.restRegenAmount);
-        }
-		if(!CheckIfCharactersAreFullyRested(_charactersToRest)){
-			if(_daysLeft == 0){
-				EndTask (TASK_STATUS.SUCCESS);
-				return;
-			}
-			ReduceDaysLeft(1);
-		}
     }
 }

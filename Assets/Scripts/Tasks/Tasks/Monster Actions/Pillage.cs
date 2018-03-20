@@ -11,6 +11,11 @@ public class Pillage : CharacterTask {
 
 	public Pillage(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
         : base(createdBy, TASK_TYPE.PILLAGE, stance, defaultDaysLeft) {
+
+		_states = new System.Collections.Generic.Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.PILLAGE, new PillageState (this) }
+		};
     }
 
     #region overrides
@@ -28,20 +33,11 @@ public class Pillage : CharacterTask {
 			if(_assignedCharacter.party != null){
 				pillagerName = _assignedCharacter.party.name;
 			}
+			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartPillage ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-//        TriggerSaveLandmarkQuest();
-    }
-    public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-        base.PerformTask();
-        //GoToTargetLocation();
-        DoPillage();
-        
     }
     public override void TaskCancel() {
         base.TaskCancel();
@@ -124,70 +120,7 @@ public class Pillage : CharacterTask {
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         _target.AddHistory(startLog);
         _assignedCharacter.AddHistory(startLog);
+
+		ChangeStateTo (STATE.PILLAGE);
     }
-
-    private void DoPillage() {
-        if (this.taskStatus != TASK_STATUS.IN_PROGRESS) {
-            return;
-        }
-        PILLAGE_ACTION chosenAct = TaskManager.Instance.pillageActions.PickRandomElementGivenWeights();
-        switch (chosenAct) {
-			case PILLAGE_ACTION.OBTAIN_ITEM:
-				ObtainItem ();
-                break;
-            case PILLAGE_ACTION.END:
-                End();
-                break;
-			case PILLAGE_ACTION.CIVILIAN_DIES:
-				CivilianDies();
-				break;
-            case PILLAGE_ACTION.NOTHING:
-            default:
-                break;
-        }
-		if(_daysLeft == 0){
-			End ();
-			return;
-		}
-		ReduceDaysLeft (1);
-    }
-	private void ObtainItem(){
-		if(_target.itemsInLandmark.Count > 0){
-			Item chosenItem = _target.itemsInLandmark [UnityEngine.Random.Range (0, _target.itemsInLandmark.Count)];
-			if(!_assignedCharacter.EquipItem(chosenItem)){
-				_assignedCharacter.PickupItem (chosenItem);
-			}
-			_target.RemoveItemInLandmark (chosenItem);
-		}
-	}
-	private void CivilianDies(){
-//		int civilians = _target.civilians;
-		if(_target.civilians > 0){
-			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
-			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
-			_target.AdjustCivilians (chosenRace, -1);
-            Log civilianDeathLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Pillage", "civilian_death");
-            civilianDeathLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            civilianDeathLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);
-            _target.AddHistory(civilianDeathLog);
-            _assignedCharacter.AddHistory(civilianDeathLog);
-
-        }
-	}
-	private void TriggerSaveLandmarkQuest(){
-		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied && !_target.location.region.centerOfMass.landmarkOnTile.AlreadyHasQuestOfType(QUEST_TYPE.SAVE_LANDMARK, _target)){
-			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-			settlement.SaveALandmark (_target);
-		}
-	}
-
-	private void End(){
-        //Messenger.RemoveListener("OnDayEnd", DoPillage);
-        //SetCanDoDailyAction(false);
-//        if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
-//			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-//			settlement.CancelSaveALandmark (_target);
-//		}
-		EndTask(TASK_STATUS.SUCCESS);
-	}
 }
