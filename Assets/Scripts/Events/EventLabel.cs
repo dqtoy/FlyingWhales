@@ -24,7 +24,7 @@ public class EventLabel : MonoBehaviour {
                 if (lf.obj is ECS.Character) {
                     UIManager.Instance.ShowCharacterInfo(lf.obj as ECS.Character);
                 } else if (lf.obj is Party) {
-                    UIManager.Instance.ShowPartyInfo(lf.obj as Party);
+                    UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
                 } else if (lf.obj is BaseLandmark) {
                     UIManager.Instance.ShowSettlementInfo(lf.obj as BaseLandmark);
                 }

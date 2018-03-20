@@ -2492,7 +2492,7 @@ namespace ECS {
 
             _history.Add(log);
             if (this._history.Count > 20) {
-                this._history.RemoveAt(this._history.Count - 1);
+                this._history.RemoveAt(0);
             }
             //add logs to followers as well
             for (int i = 0; i < followers.Count; i++) {

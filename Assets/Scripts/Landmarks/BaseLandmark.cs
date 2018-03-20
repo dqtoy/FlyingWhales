@@ -952,7 +952,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     internal void AddHistory(Log log) {
         _history.Add(log);
         if (this._history.Count > 20) {
-            this._history.RemoveAt(this._history.Count - 1);
+            this._history.RemoveAt(0);
         }
     }
     //internal void AddHistory(string text, object obj = null) {

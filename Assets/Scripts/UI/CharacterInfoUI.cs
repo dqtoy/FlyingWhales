@@ -52,6 +52,7 @@ public class CharacterInfoUI : UIMenu {
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
             GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, logHistoryTable.transform);
+            newLogItem.name = "-1";
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);

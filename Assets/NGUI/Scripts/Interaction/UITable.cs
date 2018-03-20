@@ -129,7 +129,7 @@ public class UITable : UIWidgetContainer
             else if (sorting == Sorting.Horizontal) list.Sort(UIGrid.SortHorizontal);
 			else if (sorting == Sorting.Vertical) list.Sort(UIGrid.SortVertical);
             else if (sorting == Sorting.Numeric) list.Sort(UIGrid.SortNumeric);
-            else if (sorting == Sorting.Numeric) list.Sort(UIGrid.SortNumericReverse);
+            else if (sorting == Sorting.Numeric_Reverse) list.Sort(UIGrid.SortNumericReverse);
             else if (onCustomSort != null) list.Sort(onCustomSort);
 			else Sort(list);
 		}
