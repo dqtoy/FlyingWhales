@@ -59,8 +59,13 @@ public class SiphonSlyx : CharacterTask {
 			if(_assignedCharacter.specificLocation.charactersAtLocation[i] is ECS.Character){
 				ECS.Character currCharacter = (ECS.Character) _assignedCharacter.specificLocation.charactersAtLocation[i];
 				if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
-					//_assignedCharacter.AddHistory ("Siphoned " + currCharacter.currentHP + " HP from " + currCharacter.name + "!");
-					_assignedCharacter.AdjustHP (currCharacter.currentHP);
+                    Log siphonLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "SiphonSlyx", "siphon");
+                    siphonLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    siphonLog.AddToFillers(currCharacter.currentHP, currCharacter.currentHP.ToString(), LOG_IDENTIFIER.OTHER);
+                    siphonLog.AddToFillers(currCharacter, currCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    _assignedCharacter.AddHistory(siphonLog);
+                    currCharacter.AddHistory(siphonLog);
+                    _assignedCharacter.AdjustHP (currCharacter.currentHP);
 					currCharacter.Death ();
 					i--;
 					if(_assignedCharacter.currentHP >= _assignedCharacter.maxHP){

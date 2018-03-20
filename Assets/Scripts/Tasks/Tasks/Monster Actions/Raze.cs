@@ -134,10 +134,13 @@ public class Raze : CharacterTask {
             _assignedCharacter.AddHistory(successLog);
             //TODO: When structure in landmarks is destroyed, shall all characters in there die?
         } else{
-			//TODO: Fail
-			//_assignedCharacter.AddHistory ("Failed to raze " + _target.landmarkName + "!");
-			//_target.AddHistory(_assignedCharacter.name + " failed to raze " + _target.landmarkName + "!");
-		}
+            //TODO: Fail
+            Log failLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Raze", "fail");
+            failLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            failLog.AddToFillers(_target, _target.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            _assignedCharacter.AddHistory(failLog);
+            _target.AddHistory(failLog);
+        }
 		EndTask (TASK_STATUS.SUCCESS);
 	}
 }

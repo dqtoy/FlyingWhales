@@ -114,8 +114,12 @@ public class ExploreTile : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartExploration ());
 			return;
 		}
-		//_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
-	}
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "ExploreTile", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startLog.AddToFillers(_landmarkToExplore, _landmarkToExplore.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        _landmarkToExplore.AddHistory(startLog);
+        _assignedCharacter.AddHistory(startLog);
+    }
 	private void Explore(){
         _landmarkToExplore.ExploreLandmark(_assignedCharacter);
 		//if( _landmarkToExplore.itemsInLandmark.Count > 0){

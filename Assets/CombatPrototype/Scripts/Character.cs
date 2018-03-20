@@ -2646,8 +2646,6 @@ namespace ECS {
 			prison.AddCharacterHomeOnLandmark(this);
 			ChangeRole ();
 			prison.owner.AddNewCharacter(this);
-			//AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
-			//prison.AddHistory (this.name + " joined " + faction.name + " as " + this.role.roleType.ToString () + ".");
 		}
 		#endregion
 

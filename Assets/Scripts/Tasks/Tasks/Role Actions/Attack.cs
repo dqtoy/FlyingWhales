@@ -132,10 +132,13 @@ public class Attack : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartAttack ());
 			return;
 		}
-		//_landmarkToAttack.AddHistory (_assignedCharacter.name + " has started attacking " + _landmarkToAttack.landmarkName + "!");
-		//_assignedCharacter.AddHistory ("Started attacking " + _landmarkToAttack.landmarkName + "!");
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Attack", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startLog.AddToFillers(_landmarkToAttack, _landmarkToAttack.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        _landmarkToAttack.AddHistory(startLog);
+        _assignedCharacter.AddHistory(startLog);
 
-		_assignedCharacter.DestroyAvatar ();
+        _assignedCharacter.DestroyAvatar ();
 	}
 
 	private bool AreThereStillHostileInLandmark(){

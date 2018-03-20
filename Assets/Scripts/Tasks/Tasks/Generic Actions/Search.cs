@@ -238,14 +238,11 @@ public class Search : CharacterTask {
 			if(!_assignedCharacter.RemoveCharacterTag(CHARACTER_TAG.MILD_PSYTOXIN)){
 				if(!_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.MODERATE_PSYTOXIN)){
 					_assignedCharacter.RemoveCharacterTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
-                    //_assignedCharacter.AddHistory ("Severe Psytoxin cured!");
                     psytoxinLevel = "Severe";
 				}else{
-                    //_assignedCharacter.AddHistory ("Moderate Psytoxin cured!");
                     psytoxinLevel = "Moderate";
 				}
 			}else{
-                //_assignedCharacter.AddHistory ("Mild Psytoxin cured!");
                 psytoxinLevel = "Mild";
 			}
             Log cureLog = new Log(GameManager.Instance.Today(), "CharacterTags", "Psytoxin", "cured");
