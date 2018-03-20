@@ -2,13 +2,19 @@
 using System.Collections;
 using ECS;
 using System;
+using System.Collections.Generic;
 
 public class Report : CharacterTask {
 
     private ECS.Character _reportTo;
-    private Action _onReachLocationAction;
 
-	public Report(TaskCreator createdBy, ECS.Character reportTo, Quest parentQuest = null, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.REPORT, stance, -1, parentQuest) {
+    #region getters/setters
+    public ECS.Character reportTo {
+        get { return _reportTo; }
+    }
+    #endregion
+
+    public Report(TaskCreator createdBy, ECS.Character reportTo, Quest parentQuest = null, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.REPORT, stance, -1, parentQuest) {
         _reportTo = reportTo;
         _specificTargetClassification = "character";
         _parentQuest = parentQuest;
@@ -17,7 +23,10 @@ public class Report : CharacterTask {
         };
         if (parentQuest != null) {
             if (parentQuest is FindLostHeir) {
-                _onReachLocationAction = () => FindLostHeirReport();
+                _states = new Dictionary<STATE, State>() {
+                    { STATE.MOVE, new MoveState(this) },
+                    { STATE.REPORT, new ReportState(this) }
+                };
             }
         }
     }
@@ -35,7 +44,8 @@ public class Report : CharacterTask {
     }
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
-        character.GoToLocation(_reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _onReachLocationAction);
+        ChangeStateTo(STATE.MOVE);
+        character.GoToLocation(_reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => ChangeStateTo(STATE.REPORT));
     }
     public override void TaskSuccess() {
         base.TaskSuccess();
@@ -43,18 +53,4 @@ public class Report : CharacterTask {
         (_parentQuest as FindLostHeir).OnLostHeirFound();
     }
     #endregion
-
-    private void FindLostHeirReport() {
-        if (_taskStatus == TASK_STATUS.IN_PROGRESS) {
-            if (_assignedCharacter.specificLocation.charactersAtLocation.Contains(_reportTo)) {
-                //End the find lost heir quest
-                //_assignedCharacter.questData.EndQuest(TASK_STATUS.SUCCESS);
-                EndTask(TASK_STATUS.SUCCESS);
-            } else {
-                //go to the location of the character this character is supposed to report to
-                _assignedCharacter.GoToLocation(_reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _onReachLocationAction);
-            }
-        }
-        
-    }
 }
