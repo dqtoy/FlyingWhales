@@ -22,6 +22,10 @@ public class MoveTo : CharacterTask {
         : base(createdBy, TASK_TYPE.MOVE_TO, stance, defaultDaysLeft) {
 		//_forPlayerOnly = true;
         //_actionString = "to visit";
+
+		_states = new System.Collections.Generic.Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) }
+		};
     }
 
     #region overrides
@@ -35,6 +39,7 @@ public class MoveTo : CharacterTask {
         }
 		if (_targetLocation != null) {
 			//Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
+			ChangeStateTo(STATE.MOVE);
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
 		}else{
 			EndTask (TASK_STATUS.FAIL);

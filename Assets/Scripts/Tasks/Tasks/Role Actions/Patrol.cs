@@ -15,6 +15,11 @@ public class Patrol : CharacterTask {
 
 	public Patrol(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
 		: base(createdBy, TASK_TYPE.PATROL, stance, defaultDaysLeft) {
+
+		_states = new Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.PATROL, new PatrolState (this) }
+		};
 	}
 
 	#region overrides
@@ -27,22 +32,12 @@ public class Patrol : CharacterTask {
 			_targetLocation = GetLandmarkTarget(character);
 		}
 		if (_targetLocation != null && _targetLocation is BaseLandmark) {
+			ChangeStateTo (STATE.MOVE);
 			_landmarkToPatrol = (BaseLandmark)_targetLocation;
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartPatrol ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-	}
-	public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-		base.PerformTask();
-		if(_daysLeft == 0){
-			EndPatrol ();
-			return;
-		}
-		ReduceDaysLeft(1);
 	}
 	public override bool CanBeDone (ECS.Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){
@@ -104,8 +99,7 @@ public class Patrol : CharacterTask {
         _assignedCharacter.AddHistory(startLog);
         
         _assignedCharacter.DestroyAvatar ();
-	}
-	private void EndPatrol(){
-		EndTask (TASK_STATUS.SUCCESS);
+
+		ChangeStateTo (STATE.PATROL);
 	}
 }
