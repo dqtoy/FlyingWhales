@@ -17,6 +17,10 @@ public class Hypnotize : CharacterTask {
 		_filters = new TaskFilter[] {
 			new MustNotHaveTags (CHARACTER_TAG.HYPNOTIZED),
 		};
+        _states = new Dictionary<STATE, State>() {
+            {STATE.MOVE, new MoveState(this) },
+            {STATE.HYPNOTIZE, new HypnotizeState(this) }
+        };
 	}
 
 	#region overrides
@@ -26,10 +30,7 @@ public class Hypnotize : CharacterTask {
 			return;
 		}
         if (_specificTarget == null) {
-            WeightedDictionary<ECS.Character> characterWeights = GetCharacterTargetWeights(character);
-			if(characterWeights.GetTotalOfWeights() > 0){
-				_specificTarget = characterWeights.PickRandomElementGivenWeights();
-			}
+			_specificTarget = GetCharacterTarget(character);
         }
 		if(_specificTarget != null){
 			_targetCharacter = (ECS.Character)_specificTarget;
@@ -37,6 +38,7 @@ public class Hypnotize : CharacterTask {
 				_targetLocation = _targetCharacter.specificLocation;
 			}
 			if(_targetLocation != null && _targetLocation is BaseLandmark){
+                ChangeStateTo(STATE.MOVE);
 				_targetLandmark = (BaseLandmark)_targetLocation;
 				_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHypnotize());
 			}else{
@@ -45,13 +47,6 @@ public class Hypnotize : CharacterTask {
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-	}
-	public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-		base.PerformTask();
-		PerformHypnotize();
 	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(character.party == null || (!character.party.isFull && !character.party.isDisbanded)){
@@ -81,17 +76,17 @@ public class Hypnotize : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 5 * character.missingFollowers;//+5 for every missing Follower
     }
-    protected override WeightedDictionary<Character> GetCharacterTargetWeights(Character character) {
-        WeightedDictionary<Character> characterWeights = base.GetCharacterTargetWeights(character);
+    protected override ECS.Character GetCharacterTarget(ECS.Character character) {
+        base.GetCharacterTarget(character);
         for (int i = 0; i < character.specificLocation.tileLocation.region.charactersInRegion.Count; i++) {
             ECS.Character currCharacter = character.specificLocation.tileLocation.region.charactersInRegion[i];
             if (currCharacter.id != character.id) {
                 if (CanMeetRequirements(currCharacter)) {
-                    characterWeights.AddElement(currCharacter, 50);//Each character in the same region: 50
+                    _characterWeights.AddElement(currCharacter, 50);//Each character in the same region: 50
                 }
             }
         }
-        return characterWeights;
+        return _characterWeights.PickRandomElementGivenWeights();
     }
     #endregion
 
@@ -101,8 +96,8 @@ public class Hypnotize : CharacterTask {
 			return;
 		}
 		_assignedCharacter.DestroyAvatar ();
-
 		if(_targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
+            ChangeStateTo(STATE.HYPNOTIZE);
             Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hypnotize", "start");
             startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             startLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -110,58 +105,7 @@ public class Hypnotize : CharacterTask {
             _targetCharacter.AddHistory(startLog);
             _assignedCharacter.AddHistory(startLog);
         } else {
-			EndHypnotize ();
-		}
-	}
-
-	public void PerformHypnotize() {
-		string chosenAction = TaskManager.Instance.hypnotizeActions.PickRandomElementGivenWeights ();
-		if(chosenAction == "hypnotize"){
-            Log hypnotizeLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hypnotize", "hypnotize");
-            hypnotizeLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            hypnotizeLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            _targetCharacter.AssignTag (CHARACTER_TAG.HYPNOTIZED);
-			MakeTargetCharacterAVampireFollower ();
-			EndHypnotize ();
-			return;
-		}
-		if(_daysLeft == 0){
-			EndHypnotize ();
-			return;
-		}
-		ReduceDaysLeft(1);
-	}
-
-	private void MakeTargetCharacterAVampireFollower(){
-		if(_assignedCharacter.party == null){
-			Party party = _assignedCharacter.CreateNewParty ();
-			party.AddPartyMember (_targetCharacter);
-		}else{
-			_assignedCharacter.party.AddPartyMember (_targetCharacter);
-		}
-		_targetCharacter.SetFollowerState (true);
-
-		//TODO: What happens if the target character already has a party, is it going to be disbanded? what happens to the followers then?
-	}
-
-	private void EndHypnotize(){
-		EndTask (TASK_STATUS.SUCCESS);
-	}
-	private ECS.Character GetTargetCharacter(){
-		_characterWeights.Clear ();
-		Region region = _assignedCharacter.specificLocation.tileLocation.region;
-		for (int i = 0; i < region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = region.allLandmarks [i];
-			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
-				ECS.Character character = landmark.charactersAtLocation [j].mainCharacter;
-				if(character.id != _assignedCharacter.id && CanMeetRequirements(character)){
-					_characterWeights.AddElement (character, 5);
-				}
-			}
-		}
-		if(_characterWeights.GetTotalOfWeights() > 0){
-			return _characterWeights.PickRandomElementGivenWeights ();
-		}
-		return null;
+            EndTask(TASK_STATUS.FAIL);
+        }
 	}
 }

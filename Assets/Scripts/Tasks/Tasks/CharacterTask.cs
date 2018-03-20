@@ -89,6 +89,9 @@ public class CharacterTask {
     public List<ACTION_ALIGNMENT> alignments {
         get { return _alignments; }
     }
+    public Quest parentQuest {
+        get { return _parentQuest; }
+    }
 	public State currentState {
 		get { return _currentState; }
 	}

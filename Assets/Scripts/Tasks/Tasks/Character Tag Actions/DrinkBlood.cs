@@ -6,10 +6,12 @@ using System.Collections.Generic;
 
 public class DrinkBlood : CharacterTask {
 
-	private BaseLandmark _target;
-
 	public DrinkBlood(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.STEALTHY) 
 		: base(createdBy, TASK_TYPE.DRINK_BLOOD, stance, defaultDaysLeft) {
+        _states = new Dictionary<STATE, State>() {
+            { STATE.MOVE, new MoveState(this) },
+            { STATE.DRINK_BLOOD, new DrinkBloodState(this) }
+        };
 	}
 
 	#region overrides
@@ -22,19 +24,11 @@ public class DrinkBlood : CharacterTask {
 			_targetLocation = GetLandmarkTarget(character);
 		}
 		if(_targetLocation != null && _targetLocation is BaseLandmark){
-			_target = (BaseLandmark)_targetLocation;
-			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartDrinkingBlood ());
+            ChangeStateTo(STATE.MOVE);
+			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartDrinkingBlood());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-	}
-
-	public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-		base.PerformTask();
-		Drink();
 	}
 	public override void TaskCancel() {
 		base.TaskCancel();
@@ -64,12 +58,6 @@ public class DrinkBlood : CharacterTask {
                 }
             }
         }
-        //      for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-        //	BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
-        //	if(CanBeDone(character, landmark)){
-        //		return true;
-        //	}
-        //}
         return base.AreConditionsMet (character);
 	}
     public override int GetSelectionWeight(Character character) {
@@ -108,72 +96,10 @@ public class DrinkBlood : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartDrinkingBlood ());
 			return;
 		}
-
+        ChangeStateTo(STATE.DRINK_BLOOD);
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        _target.AddHistory(startLog);
+        (_targetLocation as BaseLandmark).AddHistory(startLog);
         _assignedCharacter.AddHistory(startLog);
     }
-
-	private void Drink() {
-		if(this.taskStatus != TASK_STATUS.IN_PROGRESS) {
-			return;
-		}
-		string chosenAct = TaskManager.Instance.drinkBloodActions.PickRandomElementGivenWeights();
-		switch (chosenAct) {
-		case "drink":
-			KillCivilianAndDrinkBlood ();
-			End ();
-			return;
-		case "caught":
-			Caught ();
-			End ();
-			return;
-		case "nothing":
-		default:
-			break;
-		}
-		if(_daysLeft == 0){
-			End ();
-			return;
-		}
-		ReduceDaysLeft (1);
-	}
-
-	private void KillCivilianAndDrinkBlood() {
-		if(_target.civilians > 0) {
-			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
-			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
-			_target.AdjustCivilians (chosenRace, -1);
-            Log killLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "kill");
-            killLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            killLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);
-            _target.AddHistory(killLog);
-            _assignedCharacter.AddHistory(killLog);
-
-            //          _target.ReduceCivilians(1);
-            //GameDate nextDate = GameManager.Instance.Today();
-            //nextDate.AddDays(1);
-            //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
-        }
-	}
-	private void Caught(){
-        Log caughtLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "caught");
-        caughtLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        _assignedCharacter.AddHistory(caughtLog);
-        _target.AddHistory(caughtLog);
-
-        if (!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)){
-			_assignedCharacter.AssignTag (CHARACTER_TAG.CRIMINAL);
-		}
-	}
-	private void End(){
-		//Messenger.RemoveListener("OnDayEnd", Hunt);
-		//SetCanDoDailyAction(false);
-		//        if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
-		//			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-		//			settlement.CancelSaveALandmark (_target);
-		//		}
-		EndTask(TASK_STATUS.SUCCESS);
-	}
 }
