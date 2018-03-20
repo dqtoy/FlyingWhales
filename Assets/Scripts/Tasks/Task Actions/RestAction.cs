@@ -25,19 +25,6 @@ public class RestAction : TaskAction {
     }
     #endregion
 
-  //  public void StartDailyRegeneration() {
-  //      charactersToRest = new List<ECS.Character>();
-  //      if (actionDoer.party != null) {
-  //          charactersToRest.AddRange(actionDoer.party.partyMembers);
-  //      } else {
-  //          charactersToRest.Add(actionDoer);
-  //      }
-		//for (int i = 0; i < charactersToRest.Count; i++) {
-		//	charactersToRest [i].AddHistory ("Taking a rest.");
-		//}
-  //      Messenger.AddListener("OnDayEnd", Rest);
-  //  }
-
     public void RestIndefinitely() {
         for (int i = 0; i < charactersToRest.Count; i++) {
             ECS.Character currCharacter = charactersToRest[i];

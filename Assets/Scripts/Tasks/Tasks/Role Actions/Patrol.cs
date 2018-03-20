@@ -97,10 +97,13 @@ public class Patrol : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartPatrol ());
 			return;
 		}
-		//_landmarkToPatrol.AddHistory (_assignedCharacter.name + " has started patrolling around " + _landmarkToPatrol.landmarkName + "!");
-		//_assignedCharacter.AddHistory ("Started patrolling around " + _landmarkToPatrol.landmarkName + "!");
-
-		_assignedCharacter.DestroyAvatar ();
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Patrol", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startLog.AddToFillers(_landmarkToPatrol, _landmarkToPatrol.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        _landmarkToPatrol.AddHistory(startLog);
+        _assignedCharacter.AddHistory(startLog);
+        
+        _assignedCharacter.DestroyAvatar ();
 	}
 	private void EndPatrol(){
 		EndTask (TASK_STATUS.SUCCESS);

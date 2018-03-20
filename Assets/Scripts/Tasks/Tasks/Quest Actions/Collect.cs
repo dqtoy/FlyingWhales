@@ -110,10 +110,15 @@ public class Collect : CharacterTask {
 			return;
 		}
 		_assignedCharacter.DestroyAvatar ();
-		//if(_targetLocation is BaseLandmark){
-		//	(targetLocation as BaseLandmark).AddHistory(_assignedCharacter.name + " started searching for " + _itemNameToCollect + " to collect!");
-		//}
-	}
+        Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Collect", "start");
+        startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startLog.AddToFillers(null, itemToCollectLog, LOG_IDENTIFIER.ITEM_1);
+
+        _assignedCharacter.AddHistory(startLog);
+        if (_targetLocation is BaseLandmark) {
+            (targetLocation as BaseLandmark).AddHistory(startLog);
+        }
+    }
 
 	private void CollectItem(){
 		int collectedAmount = 0;

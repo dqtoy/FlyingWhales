@@ -245,28 +245,7 @@ public class CharacterAvatar : PooledObject{
                     }
                     this.specificLocation.tileLocation.landmarkOnTile.AddHistory(arriveLog);
                     _mainCharacter.AddHistory(arriveLog);
-                    //for (int i = 0; i < _characters.Count; i++) {
-                    //    _characters[i].AddHistory(arriveLog);
-                    //}
                 }
-                //            if (this.currLocation.tileLocation.landmarkOnTile != null){
-                //	string historyText = "Visited landmark ";
-                //	if (this.currLocation.tileLocation.landmarkOnTile is Settlement) {
-                //		historyText = "Arrived at settlement ";
-                //	}
-
-                //	if(_characters[0].party != null){
-                //		this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [0].party.name + " visited.");
-                //		for (int i = 0; i < _characters.Count; i++) {
-                //			_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
-                //		}
-                //	}else{
-                //		for (int i = 0; i < _characters.Count; i++) {
-                //			_characters [i].AddHistory (historyText + this.currLocation.tileLocation.landmarkOnTile.landmarkName + ".");
-                //			this.currLocation.tileLocation.landmarkOnTile.AddHistory (_characters [i].name + " visited.");
-                //		}
-                //	}
-                //}
                 SetHasArrivedState(true);
                 if(onPathFinished != null) {
                     onPathFinished();

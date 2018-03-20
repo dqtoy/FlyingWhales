@@ -43,8 +43,11 @@ public class ModeratePsytoxin : CharacterTag {
 		}
 	}
 	private void WorsenCase(){
-		//_character.AddHistory ("Psytoxin has worsen! It is now severe!");
-		_character.AssignTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
+        Log worsenLog = new Log(GameManager.Instance.Today(), "CharacterTags", "Psytoxin", "worsen_psytoxin");
+        worsenLog.AddToFillers(_character, _character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        worsenLog.AddToFillers(null, "severe", LOG_IDENTIFIER.OTHER);
+        _character.AddHistory(worsenLog);
+        _character.AssignTag (CHARACTER_TAG.SEVERE_PSYTOXIN);
 		_character.RemoveCharacterTag (this);
 	}
 

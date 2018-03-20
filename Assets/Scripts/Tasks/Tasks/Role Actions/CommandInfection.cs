@@ -153,8 +153,9 @@ public class CommandInfection : CharacterTask {
 			}
 		}
 		_chosenSlyx.Death ();
-		//_targetLandmark.AddHistory ("A Slyx has self-destructed emitting a large amount of psytoxin from its body!");
-	}
+        Log destructLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "CommandInfection", "self_destruct");
+        _targetLandmark.AddHistory(destructLog);
+    }
 	private void InfectPsytoxin(ECS.Character character){
 		if(character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
 			return;	

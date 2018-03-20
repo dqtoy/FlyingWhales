@@ -166,10 +166,13 @@ public class Pillage : CharacterTask {
 			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
 			_target.AdjustCivilians (chosenRace, -1);
-			//_target.AddHistory (pillagerName + " killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
-			//_assignedCharacter.AddHistory ("Killed a/an " + Utilities.GetNormalizedSingularRace(chosenRace).ToLower() + " civilian while pillaging!");
+            Log civilianDeathLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Pillage", "civilian_death");
+            civilianDeathLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            civilianDeathLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);
+            _target.AddHistory(civilianDeathLog);
+            _assignedCharacter.AddHistory(civilianDeathLog);
 
-		}
+        }
 	}
 	private void TriggerSaveLandmarkQuest(){
 		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied && !_target.location.region.centerOfMass.landmarkOnTile.AlreadyHasQuestOfType(QUEST_TYPE.SAVE_LANDMARK, _target)){

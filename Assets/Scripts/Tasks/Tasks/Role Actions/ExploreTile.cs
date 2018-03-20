@@ -125,31 +125,13 @@ public class ExploreTile : CharacterTask {
 		}
 		_assignedCharacter.DestroyAvatar ();
 		ChangeStateTo (STATE.EXPLORE);
+		Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "ExploreTile", "start");
+		startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		startLog.AddToFillers(_landmarkToExplore, _landmarkToExplore.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+		_landmarkToExplore.AddHistory(startLog);
+		_assignedCharacter.AddHistory(startLog);
 		//_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
 	}
-//	private void Explore(){
-//        _landmarkToExplore.ExploreLandmark(_assignedCharacter);
-//		//if( _landmarkToExplore.itemsInLandmark.Count > 0){
-//		//	int chance = UnityEngine.Random.Range (0, 100);
-//		//	if(chance < 35){
-//		//		ECS.Item itemFound = _landmarkToExplore.itemsInLandmark [UnityEngine.Random.Range (0, _landmarkToExplore.itemsInLandmark.Count)];
-//		//		if(!_assignedCharacter.EquipItem(itemFound)){
-//		//			_assignedCharacter.PickupItem (itemFound);
-//		//		}
-//		//		_landmarkToExplore.RemoveItemInLandmark (itemFound);
-//		//	}
-//		//}
-//		if(_daysLeft == 0){
-//            _assignedCharacter.AddExploredLandmark(_landmarkToExplore); //After the 5 days is over, the character will record that he has already explored that Landmark.
-//            End ();
-//			return;
-//		}
-//		ReduceDaysLeft(1);
-//	}
-//
-//	private void End(){
-//		EndTask (TASK_STATUS.SUCCESS);
-//	}
 
     #region Logs
     private void LogGoToLocation() {
