@@ -27,7 +27,6 @@ public class CharacterTask {
 
     protected STANCE _stance;
 
-    //protected bool _canDoDailyAction = false;
 	protected bool _forPlayerOnly;
 	protected bool _forGameOnly;
 	protected ILocation _targetLocation;
@@ -46,8 +45,6 @@ public class CharacterTask {
 
 	protected State _currentState;
 	protected Dictionary<STATE, State> _states;
-
-    //protected string _actionString; //this is used for logs
 
     #region getters/setters
     public TASK_TYPE taskType {
@@ -230,6 +227,10 @@ public class CharacterTask {
 		_landmarkWeights.Clear ();
 		return null; 
 	}
+    protected virtual ECS.Character GetCharacterTarget(ECS.Character character) {
+        _characterWeights.Clear();
+        return null;
+    }
     protected virtual WeightedDictionary<ECS.Character> GetCharacterTargetWeights(ECS.Character character) { return new WeightedDictionary<ECS.Character>(); }
     #endregion
 
@@ -238,9 +239,6 @@ public class CharacterTask {
         dueDate.AddDays(days);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndTask(result));
     }
-    //protected void SetCanDoDailyAction(bool state) {
-    //    _canDoDailyAction = state;
-    //}
 
     #region Logs
     internal void AddNewLog(string log) {
@@ -310,5 +308,11 @@ public class CharacterTask {
 			SetIsHalted (isHalted);
 		}
 	}
+    public State GetState(STATE state) {
+        if (_states.ContainsKey(state)) {
+            return _states[state];
+        }
+        return null;
+    }
 	#endregion
 }

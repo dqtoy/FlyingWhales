@@ -14,25 +14,11 @@ public class HuntMagicUser : CharacterTask {
         _filters = new TaskFilter[] {
             new MustBeClass(new List<CHARACTER_CLASS>(){ CHARACTER_CLASS.ARCANIST, CHARACTER_CLASS.MAGE, CHARACTER_CLASS.BATTLEMAGE,}),
         };
+        _states = new Dictionary<STATE, State> {
+            {STATE.MOVE, new MoveState(this)},
+            {STATE.HUNT_MAGIC_USER, new HuntMagicUserState(this)}
+        };
     }
-
-    private ECS.Character GetTargetCharacter(ECS.Character hunter) {
-        Region regionOfHunter = hunter.specificLocation.tileLocation.region;
-        List<ECS.Character> possibleTargets = CharacterManager.Instance.GetCharacters(regionOfHunter, this);
-        possibleTargets.Remove(hunter);
-        if (possibleTargets.Count > 0) {
-            return possibleTargets[Random.Range(0, possibleTargets.Count)];
-        }
-        return null;
-    }
-    //private ECS.Character GetTargetCharacter(ECS.Character hunter, ILocation location) {
-    //    List<ECS.Character> possibleTargets = CharacterManager.Instance.GetCharacters(location, this);
-    //    possibleTargets.Remove(hunter);
-    //    if (possibleTargets.Count > 0) {
-    //        return possibleTargets[Random.Range(0, possibleTargets.Count)];
-    //    }
-    //    return null;
-    //}
 
     #region overrides
     public override void OnChooseTask(Character character) {
@@ -41,7 +27,7 @@ public class HuntMagicUser : CharacterTask {
 			return;
 		}
         if (_specificTarget == null) {
-            _specificTarget = GetTargetCharacter(character);
+            _specificTarget = GetCharacterTarget(character);
         }
 		if(_specificTarget != null && _specificTarget is ECS.Character){
 			_targetCharacter = (ECS.Character)_specificTarget;
@@ -49,31 +35,14 @@ public class HuntMagicUser : CharacterTask {
 				_targetLocation = _targetCharacter.specificLocation;
 			}
 			if (_targetLocation != null) {
-				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP);
+                ChangeStateTo(STATE.MOVE);
+				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => ChangeStateTo(STATE.HUNT_MAGIC_USER));
 			}else{
 				EndTask (TASK_STATUS.FAIL);
 			}
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-    }
-    public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-        base.PerformTask();
-        if(_targetCharacter != null) {
-            if (_assignedCharacter.specificLocation.charactersAtLocation.Contains(_targetCharacter) && !_targetCharacter.isInCombat) {
-                //target is at location
-                InitiateCombat();
-            } else {
-                if (_targetCharacter.isDead) {
-                    EndTask(TASK_STATUS.SUCCESS);
-                }
-            }
-        } else {
-            EndTask(TASK_STATUS.FAIL);
-        }
     }
     public override bool CanBeDone(Character character, ILocation location) {
         if(location.tileLocation.landmarkOnTile != null) {
@@ -84,9 +53,6 @@ public class HuntMagicUser : CharacterTask {
                 }
             }
         }
-        //if (GetTargetCharacter(character, location) != null) {
-        //    return true;
-        //}
         return base.CanBeDone(character, location);
     }
     public override bool AreConditionsMet(Character character) {
@@ -104,8 +70,8 @@ public class HuntMagicUser : CharacterTask {
     public override int GetSelectionWeight(Character character) {
         return 100;
     }
-    protected override WeightedDictionary<Character> GetCharacterTargetWeights(Character character) {
-        WeightedDictionary<Character> characterWeights = base.GetCharacterTargetWeights(character);
+    protected override Character GetCharacterTarget(Character character) {
+        base.GetCharacterTarget(character);
         for (int i = 0; i < character.specificLocation.tileLocation.region.charactersInRegion.Count; i++) {
             ECS.Character currChar = character.specificLocation.tileLocation.region.charactersInRegion[i];
             if (currChar.id != character.id) {
@@ -117,16 +83,11 @@ public class HuntMagicUser : CharacterTask {
                     if (currChar.isFollower) {
                         weight += 200; //If the magic user is a follower: +200
                     }
-                    characterWeights.AddElement(currChar, weight);
+                    _characterWeights.AddElement(currChar, weight);
                 }
             }
         }
-        return characterWeights;
+        return _characterWeights.PickRandomElementGivenWeights();
     }
     #endregion
-
-    private void InitiateCombat() {
-        _assignedCharacter.specificLocation.StartCombatBetween(_assignedCharacter, _targetCharacter);
-    }
-
 }

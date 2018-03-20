@@ -50,19 +50,6 @@ public class ExploreState : State {
 			//Remove item form weights if it is not unlimited
 			_targetLandmark.RemoveItemInLandmark(chosenItem);
 			return chosenItem;
-			//if (ItemManager.Instance.IsLootChest(chosenItem)) {
-			//    //chosen item is a loot crate, generate a random item
-			//    string[] words = chosenItem.itemName.Split(' ');
-			//    int tier = System.Int32.Parse(words[1]);
-			//    if (chosenItem.itemName.Contains("Armor")) {
-			//        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
-			//    }else if (chosenItem.itemName.Contains("Weapon")) {
-			//        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
-			//    }
-			//} else {
-
-			//}
-
 		}
 		return null;
 	}
