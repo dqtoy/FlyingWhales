@@ -11,6 +11,10 @@ public class HuntPrey : CharacterTask {
 
 	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
         : base(createdBy, TASK_TYPE.HUNT_PREY, stance, defaultDaysLeft) {
+		_states = new System.Collections.Generic.Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.HUNT, new HuntState (this) }
+		};
     }
 
     #region overrides
@@ -28,29 +32,18 @@ public class HuntPrey : CharacterTask {
 			if(_assignedCharacter.party != null){
 				hunterName = _assignedCharacter.party.name;
 			}
+			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartHunt ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
-//        TriggerSaveLandmarkQuest();
-    }
-    public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-        base.PerformTask();
-        Hunt();
-        //GoToTargetLocation();
-        
     }
     public override void TaskCancel() {
         base.TaskCancel();
-        //Messenger.RemoveListener("OnDayEnd", Hunt);
         _assignedCharacter.DestroyAvatar();
     }
     public override void TaskFail() {
         base.TaskFail();
-        //Messenger.RemoveListener("OnDayEnd", Hunt);
         _assignedCharacter.DestroyAvatar();
     }
 	public override bool CanBeDone (Character character, ILocation location){
@@ -74,12 +67,6 @@ public class HuntPrey : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-    //public override void PerformDailyAction() {
-    //    if (_canDoDailyAction) {
-    //        base.PerformDailyAction();
-    //        Hunt();
-    //    }
-    //}
 
 	protected override BaseLandmark GetLandmarkTarget (Character character){
 		base.GetLandmarkTarget (character);
@@ -87,13 +74,6 @@ public class HuntPrey : CharacterTask {
 			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
 			if(CanBeDone(character, landmark)){
 				_landmarkWeights.AddElement (landmark, 100);
-//				if(_assignedCharacter.faction == null){
-//					_landmarkWeights.AddElement (landmark, 100);
-//				}else{
-//					if(_assignedCharacter.faction.id != landmark.owner.id){
-//						_landmarkWeights.AddElement (landmark, 100);
-//					}
-//				}
 			}
 		}
 		if(_landmarkWeights.GetTotalOfWeights() > 0){
@@ -102,15 +82,6 @@ public class HuntPrey : CharacterTask {
 		return null;
 	}
     #endregion
-
-    //private void GoToTargetLocation() {
-    //    GoToLocation goToLocation = new GoToLocation(this); //Make character go to chosen settlement
-    //    goToLocation.InitializeAction(_target);
-    //    goToLocation.SetPathfindingMode(PATHFINDING_MODE.NORMAL);
-    //    goToLocation.onTaskActionDone += StartHunt;
-    //    goToLocation.onTaskDoAction += goToLocation.Generic;
-    //    goToLocation.DoAction(_assignedCharacter);
-    //}
 
     private void StartHunt() {
 		if(_assignedCharacter.isInCombat){
@@ -121,67 +92,7 @@ public class HuntPrey : CharacterTask {
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         _target.AddHistory(startLog);
         _assignedCharacter.AddHistory(startLog);
+
+		ChangeStateTo (STATE.HUNT);
     }
-
-    private void Hunt() {
-        if(this.taskStatus != TASK_STATUS.IN_PROGRESS) {
-            return;
-        }
-        HUNT_ACTION chosenAct = TaskManager.Instance.huntActions.PickRandomElementGivenWeights();
-        switch (chosenAct) {
-            case HUNT_ACTION.EAT:
-                EatCivilian();
-                break;
-            case HUNT_ACTION.END:
-				End();
-                break;
-            case HUNT_ACTION.NOTHING:
-                //GameDate nextDate = GameManager.Instance.Today();
-                //nextDate.AddDays(1);
-                //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
-                break;
-            default:
-                break;
-        }
-		if(_daysLeft == 0){
-			End ();
-			return;
-		}
-		ReduceDaysLeft (1);
-    }
-
-    private void EatCivilian() {
-        if(_target.civilians > 0) {
-			RACE[] races = _target.civiliansByRace.Keys.Where(x => _target.civiliansByRace[x] > 0).ToArray();
-			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
-			_target.AdjustCivilians (chosenRace, -1);
-            Log eatLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "HuntPrey", "eat_civilian");
-            eatLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            eatLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);
-            _target.AddHistory(eatLog);
-            _assignedCharacter.AddHistory(eatLog);
-
-            //          _target.ReduceCivilians(1);
-            //GameDate nextDate = GameManager.Instance.Today();
-            //nextDate.AddDays(1);
-            //SchedulingManager.Instance.AddEntry(nextDate, () => Hunt());
-        }
-    }
-
-	private void TriggerSaveLandmarkQuest(){
-		if(_target.location.region.centerOfMass.landmarkOnTile.isOccupied && !_target.location.region.centerOfMass.landmarkOnTile.AlreadyHasQuestOfType(QUEST_TYPE.SAVE_LANDMARK, _target)){
-			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-			settlement.SaveALandmark (_target);
-		}
-	}
-
-	private void End(){
-        //Messenger.RemoveListener("OnDayEnd", Hunt);
-        //SetCanDoDailyAction(false);
-//        if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
-//			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-//			settlement.CancelSaveALandmark (_target);
-//		}
-		EndTask(TASK_STATUS.SUCCESS);
-	}
 }
