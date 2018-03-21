@@ -141,7 +141,7 @@ public class Party: IEncounterable, ICombatInitializer {
         _civiliansByRace = new Dictionary<RACE, int>();
 
         //Debug.Log(partyLeader.name + " has created " + _name);
-		partyLeader.specificLocation.AddCharacterToLocation (this, false);
+		partyLeader.specificLocation.AddCharacterToLocation (this);
         partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader, false);
 
         AddPartyMember(_partyLeader);
@@ -221,7 +221,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		//}
 
         if (!forDeath) { //If the member was removed from party, but did not die
-			this.specificLocation.AddCharacterToLocation(member, false);
+			this.specificLocation.AddCharacterToLocation(member);
             Debug.Log(member.name + " has left the party of " + partyLeader.name);
             //if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
             //    ((OldQuest.Quest)currentTask).AddNewLog(member.name + " has left the party");

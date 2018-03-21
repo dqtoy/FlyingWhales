@@ -2295,7 +2295,7 @@ namespace ECS {
 					//Instantiate a new character avatar
 					CreateNewAvatar();
 				}
-				_avatar.SetTarget(targetLocation, true);
+				_avatar.SetTarget(targetLocation);
 				if(doneAction == null){
 					_avatar.StartPath(pathfindingMode);
 				}else{
@@ -2680,7 +2680,7 @@ namespace ECS {
 			Faction newFaction = prison.owner;
 			SetFaction (newFaction);
 			SetHome (prison);
-			prison.AddCharacterToLocation(this, false);
+			prison.AddCharacterToLocation(this);
 			prison.AddCharacterHomeOnLandmark(this);
 			ChangeRole ();
 			prison.owner.AddNewCharacter(this);

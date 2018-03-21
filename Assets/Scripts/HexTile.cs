@@ -1851,7 +1851,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     }
 
 	#region Characters
-	public void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true) {
+	public void AddCharacterToLocation(ICombatInitializer character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
 			if(character is Character){
@@ -1864,9 +1864,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
-            //if(startCombat){
-            //	StartCombatAtLocation ();
-            //}
         }
 	}
 	public void RemoveCharacterFromLocation(ICombatInitializer character, bool forLeaving = true) {
