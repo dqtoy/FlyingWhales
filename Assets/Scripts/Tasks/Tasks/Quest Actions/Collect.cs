@@ -24,7 +24,7 @@ public class Collect : CharacterTask {
 
 	#region overrides
 	public override CharacterTask CloneTask() {
-		Collect clonedTask = new Collect(_createdBy, _itemNameToCollect, _quantityToCollect, _targetLocation, _defaultDaysLeft, _parentQuest);
+		Collect clonedTask = new Collect(_createdBy, _itemNameToCollect, _quantityToCollect, _targetLocation, _defaultDaysLeft, _parentQuest, _stance);
 		return clonedTask;
 	}
 	public override bool CanBeDone(Character character, ILocation location) {

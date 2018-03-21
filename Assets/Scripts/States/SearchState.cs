@@ -17,10 +17,13 @@ public class SearchState : State {
                 _searchAction = () => SearchForItemInLandmark();
             } else if ((searchingFor as string).Equals("Neuroctus")) {
                 _searchAction = () => SearchForItemInLandmark();
-            } else if ((searchingFor as string).Equals("Psytoxin Herbalist")) {
-                string[] splitted = ((string)searchingFor).Split(' ');
-                _searchAction = () => SearchForATag(splitted[1]);
-                _afterFindingAction = () => CurePsytoxin();
+            } else if ((searchingFor as string).Equals("Herbalist")) {
+				_searchAction = () => SearchForATag();
+				if(_parentTask.parentQuest != null){
+					if(_parentTask.parentQuest is PsytoxinCure){
+						_afterFindingAction = () => CurePsytoxin();
+					}
+				}
             }
         }
     }
@@ -39,9 +42,12 @@ public class SearchState : State {
 
     #region Search for Item in Character
     private void SearchForItemInCharacter() {
-        for (int i = 0; i < parentTask.targetLocation.charactersAtLocation.Count; i++) {
-            ECS.Character currCharacter = parentTask.targetLocation.charactersAtLocation[i].mainCharacter;
-            if (currCharacter.HasItem(searchingFor as string)) {
+		bool hasBeenFound = false;
+		string itemName = (string)searchingFor;
+        for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
+			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
+			if (currCharacter.HasItem(itemName)) {
+				hasBeenFound = true;
                 //Each day while he is in Search State, if the character with the Heirloom Necklace is in the location then he would successfully perform the action and end the Search State.
                 if (_afterFindingAction != null) {
                     _afterFindingAction();
@@ -51,50 +57,53 @@ public class SearchState : State {
                 //_assignedCharacter.questData.AdvanceToNextPhase();
             }
         }
+		if(!hasBeenFound){
+			CheckTraces (itemName, "item");
+		}
     }
     #endregion
+
+	#region Search for a Tag
+	private void SearchForATag() {
+		bool hasBeenFound = false;
+		string tagName = (string)searchingFor;
+		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
+			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
+			if (currCharacter.HasTag(tagName, true)) {
+				hasBeenFound = true;
+				if (_afterFindingAction != null) {
+					_afterFindingAction();
+				}
+				parentTask.EndTask(TASK_STATUS.SUCCESS);
+				break;
+			}
+		}
+		if(!hasBeenFound){
+			CheckTraces (tagName, "tag");
+		}
+	}
+	#endregion
 
     #region Search for Landmark Items
     private void SearchForItemInLandmark() {
-        if (parentTask.targetLocation is BaseLandmark) {
-            BaseLandmark _targetLandmark = (BaseLandmark)parentTask.targetLocation;
-            for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
-                ECS.Item item = _targetLandmark.itemsInLandmark[i];
-                if (item.itemName == (string)searchingFor) {
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    if (chance < item.collectChance) {
-                        //_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
-                        //_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
-                        _assignedCharacter.PickupItem(item);
-                        _targetLandmark.RemoveItemInLandmark(item);
-                        if (_afterFindingAction != null) {
-                            _afterFindingAction();
-                        }
-                        parentTask.EndTask(TASK_STATUS.SUCCESS);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    #endregion
-
-    #region Search for a Tag
-    private void SearchForATag(string tag) {
-        if (parentTask.targetLocation is BaseLandmark) {
-            BaseLandmark _targetLandmark = (BaseLandmark)parentTask.targetLocation;
-            for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-                ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
-                if (currCharacter.HasTag(tag, true)) {
-                    if (_afterFindingAction != null) {
-                        _afterFindingAction();
-                    }
-                    parentTask.EndTask(TASK_STATUS.SUCCESS);
-                    break;
-                }
-            }
-
-        }
+		string itemName = (string)searchingFor;
+		for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
+			ECS.Item item = _targetLandmark.itemsInLandmark[i];
+			if (item.itemName == itemName) {
+				int chance = UnityEngine.Random.Range(0, 100);
+				if (chance < item.collectChance) {
+					//_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
+					//_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
+					_assignedCharacter.PickupItem(item);
+					_targetLandmark.RemoveItemInLandmark(item);
+					if (_afterFindingAction != null) {
+						_afterFindingAction();
+					}
+					parentTask.EndTask(TASK_STATUS.SUCCESS);
+					break;
+				}
+			}
+		}
     }
     #endregion
 
@@ -121,4 +130,26 @@ public class SearchState : State {
         }
     }
     #endregion
+
+	#region Traces
+	private void CheckTraces(string strSearchingFor, string identifier, bool includeParty = false){
+		if (identifier == "tag") {
+			for (int i = 0; i < _targetLandmark.characterTraces.Count; i++) {
+				ECS.Character currCharacter = _targetLandmark.characterTraces [i];
+				if (currCharacter.HasTag (strSearchingFor, includeParty)) {
+					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
+					break;
+				}
+			}
+		} else if (identifier == "item") {
+			for (int i = 0; i < _targetLandmark.characterTraces.Count; i++) {
+				ECS.Character currCharacter = _targetLandmark.characterTraces [i];
+				if (currCharacter.HasItem (strSearchingFor)) {
+					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
+					break;
+				}
+			}
+		}
+	}
+	#endregion
 }

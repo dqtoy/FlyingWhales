@@ -30,6 +30,6 @@ public interface ILocation {
     int CharactersCount(bool includeHostile = false);
     void ContinueDailyActions();
 
-    ECS.Character GetCharacterAtLocationByID (int id);
+	ECS.Character GetCharacterAtLocationByID (int id, bool includeTraces = false);
 	Party GetPartyAtLocationByLeaderID (int id);
 }

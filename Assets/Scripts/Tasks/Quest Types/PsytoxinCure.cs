@@ -21,7 +21,7 @@ public class PsytoxinCure : Quest {
 		phase2.AddTask(new Search(createdBy, 5, "Neuroctus", null, this));
 
 		QuestPhase phase3 = new QuestPhase(this, "Search for an Herbalist");
-		phase3.AddTask(new Search(createdBy, 5, "Psytoxin Herbalist", null, this));
+		phase3.AddTask(new Search(createdBy, 5, "Herbalist", null, this));
 
 		_phases.Add(phase1);
 		_phases.Add(phase2);

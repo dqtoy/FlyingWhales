@@ -2925,6 +2925,14 @@ namespace ECS {
 				_traceInfo.Add (character, new List<string> (){ identifier });
 			}
 		}
+		public Character GetCharacterFromTraceInfo(string info){
+			foreach (Character character in _traceInfo.Keys) {
+				if(_traceInfo[character].Contains(info)){
+					return character;
+				}
+			}
+			return null;
+		}
 		#endregion
     }
 }

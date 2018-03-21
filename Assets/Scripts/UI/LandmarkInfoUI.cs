@@ -188,6 +188,16 @@ public class LandmarkInfoUI : UIMenu {
 			text += "NONE";
 		}
 
+		text += "\n[b]Traces:[/b] ";
+		if(currentlyShowingLandmark.characterTraces.Count > 0){
+			for (int i = 0; i < currentlyShowingLandmark.characterTraces.Count; i++) {
+				ECS.Character trace = currentlyShowingLandmark.characterTraces [i];
+				text += "\n" + trace.urlName;
+			}
+		} else {
+			text += "NONE";
+		}
+
         if (currentlyShowingLandmark is Settlement) {
             Settlement currSettlement = currentlyShowingLandmark as Settlement;
             text += "\n[b]Materials: [/b] ";

@@ -16,7 +16,7 @@ public class HextileInfoClick : MonoBehaviour {
 				}
 			} else if(url.Contains("_character")){
 				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
-				ECS.Character character = hextile.GetCharacterAtLocationByID(idToUse);
+				ECS.Character character = hextile.GetCharacterAtLocationByID(idToUse, true);
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
 				}
