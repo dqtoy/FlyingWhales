@@ -80,6 +80,11 @@ public class ExploreTile : CharacterTask {
                     if (character.HasRelevanceToQuest(currLandmark)) {
                         weight += 300; //If Dungeon Landmark has relevance with character's current quest: +300
                     }
+                    if (!character.isFactionless) {
+                        if (!character.faction.landmarkInfo.Contains(currLandmark)) {
+                            weight += 300; //If character is part of a Faction and Dungeon Landmark is not yet part of Faction Landmark Information: +300
+                        }
+                    }
                     if (weight > 0) {
                         _landmarkWeights.AddElement(currLandmark, weight);
                     }

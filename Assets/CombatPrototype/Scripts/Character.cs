@@ -2659,14 +2659,23 @@ namespace ECS {
 			SetPrisoner (false, null);
 		}
 		public void ConvertToFaction(){
+            Faction previousFaction = this.faction;
 			BaseLandmark prison = (BaseLandmark)_isPrisonerOf;
-			Faction faction = prison.owner;
-			SetFaction (faction);
+			Faction newFaction = prison.owner;
+			SetFaction (newFaction);
 			SetHome (prison);
 			prison.AddCharacterToLocation(this, false);
 			prison.AddCharacterHomeOnLandmark(this);
 			ChangeRole ();
 			prison.owner.AddNewCharacter(this);
+
+            // when a character from another Faction switches to another Faction, Landmark Information will also be transferred to his new Faction.
+            if (previousFaction != null) {
+                for (int i = 0; i < previousFaction.landmarkInfo.Count; i++) {
+                    BaseLandmark currLandmark = previousFaction.landmarkInfo[i];
+                    newFaction.AddLandmarkInfo(currLandmark);
+                }
+            }
 		}
 		#endregion
 

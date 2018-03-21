@@ -26,6 +26,7 @@ public class Faction {
 	protected MilitaryManager _militaryManager;
 	protected int _warmongering;
 	protected Dictionary<PRODUCTION_TYPE, MaterialPreference> _productionPreferences;
+    protected List<BaseLandmark> _landmarkInfo;
 
     #region getters/setters
 	public int id {
@@ -91,6 +92,9 @@ public class Faction {
 	public Dictionary<PRODUCTION_TYPE, MaterialPreference> productionPreferences {
 		get { return _productionPreferences; }
 	}
+    public List<BaseLandmark> landmarkInfo {
+        get { return _landmarkInfo; }
+    }
     #endregion
 
     public Faction(RACE race, FACTION_TYPE factionType) {
@@ -110,6 +114,7 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
 		_militaryManager = new MilitaryManager (this);
 		_warmongering = 0;
+        _landmarkInfo = new List<BaseLandmark>();
 		MaterialPreferences ();
     }
 
@@ -428,6 +433,14 @@ public class Faction {
             ownedLandmarks.AddRange(currSettlement.ownedLandmarks);
         }
         return ownedLandmarks;
+    }
+    public void AddLandmarkInfo(BaseLandmark landmark) {
+        if (!_landmarkInfo.Contains(landmark)) {
+            _landmarkInfo.Add(landmark);
+        }
+    }
+    public void RemoveLandmarkInfo(BaseLandmark landmark) {
+        _landmarkInfo.Remove(landmark);
     }
     #endregion
 }
