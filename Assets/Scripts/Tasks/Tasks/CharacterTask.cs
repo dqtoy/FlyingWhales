@@ -303,6 +303,12 @@ public class CharacterTask {
 		}
 		return true;
 	}
+	public void SetForGameOnly(bool state){
+		_forGameOnly = state;
+	}
+	public void SetForPlayerOnly(bool state){
+		_forPlayerOnly = state;
+	}
     #endregion
 
 	#region States
