@@ -27,6 +27,7 @@ public class ConsoleMenu : UIMenu {
             {"/quest_cancel", CancelQuest},
             {"/adjust_gold", AdjustGold},
             {"/lfli", LogFactionLandmarkInfo},
+            {"/log_actions", LogCharacterActions }
             //{"/adjust_resources", AdjustResources}
         };
     }
@@ -272,6 +273,35 @@ public class ConsoleMenu : UIMenu {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /adjust_gold");
         }
+    }
+    private void LogCharacterActions(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string characterParameterString = parameters[1];
+        int characterID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = FactionManager.Instance.GetCharacterByID(characterID);
+        }
+
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string text = character.name + "'s Actions: ";
+        string detailedText = character.name + "'s Actions: ";
+        foreach (KeyValuePair<CharacterTask, string> kvp in character.previousActions) {
+            text += "\n" + kvp.Key.taskType.ToString();
+            detailedText += "\n" + kvp.Key.taskType.ToString() + " Stack: " + kvp.Value;
+        }
+        Debug.Log(detailedText);
+        AddSuccessMessage(text);
     }
     #endregion
 

@@ -132,6 +132,9 @@ public class CharacterTask {
 			character.SetCurrentFunction (() => OnChooseTask (character));
 			return;
 		}
+        //TODO: Remove This after testing
+        character.previousActions.Add(this, StackTraceUtility.ExtractStackTrace());
+
         _taskStatus = TASK_STATUS.IN_PROGRESS;
         _assignedCharacter = character;
         character.SetCurrentTask(this);

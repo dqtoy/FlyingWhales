@@ -95,6 +95,8 @@ namespace ECS {
 
 		private Dictionary<Character, List<string>> _traceInfo;
 
+        public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
+
 		#region getters / setters
 		public string firstName {
             get { return name.Split(' ')[0]; }
