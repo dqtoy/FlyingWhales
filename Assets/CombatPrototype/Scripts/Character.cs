@@ -726,13 +726,13 @@ namespace ECS {
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
 				}else{
-					this.specificLocation.RemoveCharacterFromLocation(this);
+					this.specificLocation.RemoveCharacterFromLocation(this,false);
 				}
 
 				if(this._isFollowerOf != null){
 					this._isFollowerOf.RemoveFollower (this);
 					if(this.specificLocation != null){
-						this.specificLocation.RemoveCharacterFromLocation(this);
+						this.specificLocation.RemoveCharacterFromLocation(this, false);
 					}
 				}
                 if (_avatar != null) {
@@ -2548,7 +2548,7 @@ namespace ECS {
 			_isPrisonerOf = prisonerOf;
 			if(state){
 				if(this.specificLocation != null){
-					this.specificLocation.RemoveCharacterFromLocation (this);
+					this.specificLocation.RemoveCharacterFromLocation (this, false);
 				}
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){
@@ -2733,7 +2733,7 @@ namespace ECS {
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
-                if (!this.isDead) {
+                if (!isDead && !isPrisoner) {
                     BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
                     if (targetLocation == null) {
                         throw new Exception(this.name + " could not find a non hostile location to run to!");
@@ -2884,8 +2884,8 @@ namespace ECS {
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = GetLeaveTraceChance ();
 				if(chance < value){
-					landmark.AddTrace (this);
-				}
+                    landmark.AddTrace(this);
+                }
 			}
 		}
 		private int GetLeaveTraceChance(){

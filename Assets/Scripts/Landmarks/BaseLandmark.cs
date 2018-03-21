@@ -461,7 +461,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             //}
         }
     }
-    public void RemoveCharacterFromLocation(ICombatInitializer character) {
+    public void RemoveCharacterFromLocation(ICombatInitializer character, bool forLeaving = true) {
         _charactersAtLocation.Remove(character);
         if (character is ECS.Character) {
             ECS.Character currChar = character as ECS.Character;
@@ -472,6 +472,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         if (_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();
+        }
+        if (forLeaving) {
+            CheckForItemDrop(character);
         }
     }
 	public int CharactersCount(bool includeHostile = false) {
@@ -494,6 +497,13 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
         return count;
+    }
+    /*
+     Characters may sometimes drop something from their inventory when they leave a Landmark. 
+     The chance to drop something is 3%. A random item in the inventory will be dropped. Log it.
+         */
+    private void CheckForItemDrop(ICombatInitializer character) {
+
     }
     #endregion
 

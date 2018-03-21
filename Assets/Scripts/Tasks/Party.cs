@@ -142,7 +142,7 @@ public class Party: IEncounterable, ICombatInitializer {
 
         //Debug.Log(partyLeader.name + " has created " + _name);
 		partyLeader.specificLocation.AddCharacterToLocation (this, false);
-        partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
+        partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader, false);
 
         AddPartyMember(_partyLeader);
         //ConstructMaterialInventory();
@@ -181,7 +181,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
-            member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
+            member.specificLocation.RemoveCharacterFromLocation(member, false);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
 
             if (!IsCharacterLeaderOfParty(member)) {
@@ -337,122 +337,14 @@ public class Party: IEncounterable, ICombatInitializer {
             settlement.AdjustCivilians(currFollower.raceSetting.race, 1);
         }
 
-		this.specificLocation.RemoveCharacterFromLocation (this);
+		this.specificLocation.RemoveCharacterFromLocation (this, false);
     }
-	//public void JustDisbandParty() {
-	//	if(isInCombat){
-	//		SetCurrentFunction (() => JustDisbandParty ());
-	//		return;
-	//	}
-	//	if(_isDisbanded){
-	//		return;
-	//	}
-	//	_isDisbanded = true;
- //       Debug.Log("Just Disbanded " + this.name);
- //       PartyManager.Instance.RemoveParty(this);
- //       if (_currentTask != null) {
-	//		if (!_currentTask.isDone) {
-	//			_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel OldQuest.Quest if party is currently on a quest
- //           }
- //       }
- //       SetCurrentTask (null);
-
-	//	if(_partyLeader.isDead){
-	//		while(_prisoners.Count > 0){
- //               ECS.Character currPrisoner = _prisoners[0];
-	//			currPrisoner.SetSpecificLocation(specificLocation);
- //               currPrisoner.Death ();
-	//		}
-	//	}else{
-	//		while(_prisoners.Count > 0){
-	//			_prisoners [0].TransferPrisoner (_partyLeader);
-	//		}
-	//	}
-
-	//	_partyLeader.AdjustCivilians (_civiliansByRace);
-
-	//	while(_partyMembers.Count > 0) {
-	//		ECS.Character currMember = _partyMembers[0];
-	//		currMember.SetParty(null);
-	//		RemovePartyMember(currMember);
-	//		currMember.DetermineAction();
-	//	}
-	//	this.specificLocation.RemoveCharacterFromLocation (this);
-	//}
-    public bool AreAllPartyMembersPresent() {
-        bool isPartyComplete = true;
-        for (int i = 0; i < _partyMembers.Count; i++) {
-            ECS.Character currMember = _partyMembers[i];
-			if (currMember.currLocation.id != this.currLocation.id) {
-                isPartyComplete = false;
-                break;
-			}else{
-				if(currMember.specificLocation.locIdentifier != currMember.specificLocation.locIdentifier){
-					isPartyComplete = false;
-					break;
-				}
-			}
-        }
-        //if(_partyMembersOnTheWay.Count > 0) {
-        //    isPartyComplete = false;
-        //}
-        return isPartyComplete;
-    }
+    
     public void SetOpenStatus(bool isOpen) {
         _isOpen = isOpen;
         //Do Nothing adventurers within the same city will be informed whenever a new character is registering for a Party. They will have first choice to join the party.
 
     }
-   // public void InviteCharactersOnLocation(CHARACTER_ROLE role, ILocation location) {
-   //     for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-			//if(this.isOpen && !this.isFull && location.charactersAtLocation[i] is ECS.Character) {
-			//	ECS.Character currCharacter = (ECS.Character)location.charactersAtLocation[i];
-   //             Faction factionOfCurrCharacter = currCharacter.faction;
-			//	if(factionOfCurrCharacter == null){
-			//		//Unaligned characters are hostile by default
-			//		continue;
-			//	}
-   //             if(factionOfCurrCharacter.id != _partyLeader.faction.id) {
-   //                 //the curr character is not of the same faction with the party leader
-   //                 if(FactionManager.Instance.GetRelationshipBetween(factionOfCurrCharacter, _partyLeader.faction).relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-   //                     //the curr character cannot join this party, because the faction of the party leader is in hostile relations with his/her faction
-   //                     continue;
-   //                 }
-   //             }
-   //             if (currCharacter.role.roleType == role) {
-   //                 if (currCharacter.currentTask is DoNothing && currCharacter.party == null) {
-   //                     JoinParty joinPartyTask = new JoinParty(currCharacter, this);
-   //                     currCharacter.SetTaskToDoNext(joinPartyTask); //Set the characters next task to join party before ending it's current task
-   //                     currCharacter.currentTask.EndTask(TASK_STATUS.CANCEL);
-   //                     //currCharacter.JoinParty(this);
-   //                 }
-   //             }
-   //         }
-   //     }
-
-   // }
-    //public WeightedDictionary<PARTY_ACTION> GetPartyActionWeightsForCharacter(ECS.Character member) {
-    //    WeightedDictionary<PARTY_ACTION> partyActionWeights = new WeightedDictionary<PARTY_ACTION>();
-    //    int stayWeight = 50; //Default value for Stay is 50
-    //    int leaveWeight = 50; //Default value for Leave is 50
-    //    if(_currentTask.taskStatus == TASK_STATUS.SUCCESS) {
-    //        stayWeight += 100; //If OldQuest.Quest is a success, add 100 to Stay
-    //    } else  if(_currentTask.taskStatus == TASK_STATUS.FAIL) {
-    //        leaveWeight += 100; //If OldQuest.Quest is a failure, add 100 to Leave
-    //    }
-    //    if (member.HasStatusEffect(STATUS_EFFECT.INJURED)) {
-    //        //If character is injured, add 100 to Leave
-    //        leaveWeight += 100;
-    //    }
-        
-    //    float memberMissingHP = (member.remainingHP * 100) - 100;
-    //    if(memberMissingHP >= 1) {
-    //        leaveWeight += 5 * (int)memberMissingHP; //Add 5 to Leave for every 1% HP below 100%
-    //    }
-    //    partyActionWeights.AddElement(PARTY_ACTION.STAY, stayWeight);
-    //    partyActionWeights.AddElement(PARTY_ACTION.LEAVE, leaveWeight);
-    //    return partyActionWeights;
-    //}
     #endregion
 
     #region Quest
@@ -748,10 +640,6 @@ public class Party: IEncounterable, ICombatInitializer {
                         }
                     }
                 }
-                ////make them go back to the quest giver and have the quest cancelled.
-                //if (_currentTask != null && _currentTask is OldQuest.Quest) {
-                //    (_currentTask as OldQuest.Quest).GoBackToQuestGiver(TASK_STATUS.CANCEL);
-                //}
             } else {
                 //The party was defeated in combat, and no one survived, Disband this party.
                 //JustDisbandParty();
@@ -763,9 +651,6 @@ public class Party: IEncounterable, ICombatInitializer {
                 currentFunction();
                 SetCurrentFunction(null);
             } 
-            //else {
-            //    _partyLeader.DetermineAction();
-            //}
         }
         SetIsDefeated(false);
     }
@@ -829,72 +714,6 @@ public class Party: IEncounterable, ICombatInitializer {
             }
         }
     }
-    #endregion
-
-    #region Materials
-    //private void ConstructMaterialInventory() {
-    //    _materialInventory = new Dictionary<MATERIAL, int>();
-    //    MATERIAL[] allMaterials = Utilities.GetEnumValues<MATERIAL>();
-    //    for (int i = 0; i < allMaterials.Length; i++) {
-    //        MATERIAL currMat = allMaterials[i];
-    //        if (currMat != MATERIAL.NONE) {
-    //            _materialInventory.Add(currMat, 0);
-    //        }
-    //    }
-    //}
-    //public void AdjustMaterial(MATERIAL material, int amount) {
-    //    int newAmount = _materialInventory[material] + amount;
-    //    newAmount = Mathf.Max(0, newAmount);
-    //    _materialInventory[material] = newAmount;
-    //}
-    ///*
-    // Transfer materials from this party to
-    // a character.
-    //    */
-    //public void TransferMaterials(ECS.Character transferTo, MATERIAL material, int amount) {
-    //    AdjustMaterial(material, -amount);
-    //    transferTo.AdjustMaterial(material, amount);
-    //}
-    ///*
-    // Transfer materials from this party
-    // to another party
-    //     */
-    //public void TransferMaterials(Party party, MATERIAL material, int amount) {
-    //    AdjustMaterial(material, -amount);
-    //    party.AdjustMaterial(material, amount);
-    //}
-    ///*
-    //Transfer materials from this party
-    //to a landmark
-    //    */
-    //public void TransferMaterials(BaseLandmark landmark, MATERIAL material, int amount) {
-    //    AdjustMaterial(material, -amount);
-    //    landmark.AdjustMaterial(material, amount);
-    //}
-    ///*
-    // Transfer ALL materials from this party to
-    // a character.
-    //     */
-    //public void TransferMaterials(ECS.Character transferTo) {
-    //    foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
-    //        MATERIAL currMat = kvp.Key;
-    //        int amount = kvp.Value;
-    //        AdjustMaterial(currMat, -amount);
-    //        transferTo.AdjustMaterial(currMat, amount);
-    //    }
-    //}
-    ///*
-    // Transfer ALL materials from this party
-    // to another party
-    //     */
-    //public void TransferMaterials(Party otherParty) {
-    //    foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
-    //        MATERIAL currMat = kvp.Key;
-    //        int amount = kvp.Value;
-    //        AdjustMaterial(currMat, -amount);
-    //        otherParty.AdjustMaterial(currMat, amount);
-    //    }
-    //}
     #endregion
 
     #region Combat Handlers

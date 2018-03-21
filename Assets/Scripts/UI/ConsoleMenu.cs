@@ -26,6 +26,7 @@ public class ConsoleMenu : UIMenu {
             {"/kill",  KillCharacter},
             {"/quest_cancel", CancelQuest},
             {"/adjust_gold", AdjustGold},
+            {"/lfli", LogFactionLandmarkInfo},
             //{"/adjust_resources", AdjustResources}
         };
     }
@@ -321,6 +322,42 @@ public class ConsoleMenu : UIMenu {
     //        AddErrorMessage("There was an error in the command format of /adjust_resources");
     //    }
     //}
+    #endregion
+
+    #region Faction
+    private void LogFactionLandmarkInfo(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /lfli");
+            return;
+        }
+        string factionParameterString = parameters[1];
+        int factionID;
+
+        bool isFactionParameterNumeric = int.TryParse(factionParameterString, out factionID);
+        Faction faction = null;
+        if (isFactionParameterNumeric) {
+            faction = FactionManager.Instance.GetFactionBasedOnID(factionID);
+            if (faction == null) {
+                AddErrorMessage("There was no faction with id " + factionID);
+                return;
+            }
+        } else {
+           faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
+            if (faction == null) {
+                AddErrorMessage("There was no faction with name " + factionParameterString);
+                return;
+            }
+        }
+
+        string text = faction.name + "'s Landmark Info: ";
+        for (int i = 0; i < faction.landmarkInfo.Count; i++) {
+            BaseLandmark currLandmark = faction.landmarkInfo[i];
+            text += "\n" + currLandmark.landmarkName + " (" + currLandmark.location.name + ") ";
+        }
+        
+        AddSuccessMessage(text);
+    }
     #endregion
 
 
