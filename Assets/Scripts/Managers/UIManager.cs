@@ -3409,8 +3409,8 @@ public class UIManager : MonoBehaviour {
         HideAllianceSummary();
         HideWarSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoQuestsBtn.transform);
-        questsSummaryGO.SetActive(true);
-        UpdateQuestsSummary();
+		questsSummaryGO.SetActive(true);
+		UpdateQuestsSummary();
     }
     public void HideQuestsSummary() {
         questsSummaryGO.SetActive(false);
@@ -3432,6 +3432,7 @@ public class UIManager : MonoBehaviour {
             }
         }
         questsSummaryLbl.text = questSummary;
+		questsSummaryLbl.ResizeCollider ();
     }
     #endregion
 }

@@ -29,8 +29,7 @@ public class Search : CharacterTask {
 				SetStance(STANCE.COMBAT);
 				onGetTargetLandmarkAction = GetLandmarkForLandmarkItemsSearching;
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
-			}else if((searchingFor as string).Equals("Psytoxin Herbalist")) {
-				string[] splitted = ((string)_searchingFor).Split (' ');
+			}else if((searchingFor as string).Equals("Herbalist")) {
 				SetStance(STANCE.COMBAT);
 				_alignments.Add(ACTION_ALIGNMENT.PEACEFUL);
 			}
@@ -128,12 +127,19 @@ public class Search : CharacterTask {
     #region Find Lost Heir
 	private BaseLandmark GetLandmarkForCharacterSearching(Character character){
 		Region regionLocation = character.specificLocation.tileLocation.region;
+		Character characterLookingFor = null;
+		if(_searchingFor is string){
+			characterLookingFor = _assignedCharacter.GetCharacterFromTraceInfo((string)_searchingFor);
+		}
 		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
 			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
 			int weight = 0;
 			weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
 			if (currLandmark.HasHostilitiesWith(character.faction)) {
 				weight -= 50;//If landmark has hostile characters: -50
+			}
+			if(characterLookingFor != null && currLandmark.GetCharacterAtLocationByID(characterLookingFor.id) != null){
+				weight += 600; //If assigned character has a trace info of character he is looking for, and is in this landmark
 			}
 			//If this character has already Searched in the landmark within the past 6 months: -60
 			if (weight > 0) {

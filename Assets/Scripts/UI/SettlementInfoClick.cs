@@ -58,11 +58,11 @@ public class SettlementInfoClick : MonoBehaviour {
 				}
 			} else if(url.Contains("_character")){
 				BaseLandmark landmark = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark;
-				ECS.Character character = landmark.GetCharacterAtLocationByID(idToUse);
+				ECS.Character character = landmark.GetCharacterAtLocationByID(idToUse, true);
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
 				}else{
-					character = landmark.location.GetCharacterAtLocationByID(idToUse);
+					character = landmark.location.GetCharacterAtLocationByID(idToUse, true);
 					if(character != null){
 						UIManager.Instance.ShowCharacterInfo(character);
 					}

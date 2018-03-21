@@ -5,6 +5,7 @@ using PathFind;
 using System.Linq;
 using Panda;
 using Pathfinding;
+using ECS;
 
 public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     [Header("General Tile Details")]
@@ -1592,8 +1593,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             ICombatInitializer currObj = _charactersAtLocation[i];
             if (currObj is Party) {
                 text += "\n" + ((Party)currObj).name;
-            } else if (currObj is ECS.Character) {
-                text += "\n" + ((ECS.Character)currObj).name;
+            } else if (currObj is Character) {
+                text += "\n" + ((Character)currObj).name;
             }
         }
     }
@@ -1606,8 +1607,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 ICombatInitializer currObj = _landmarkOnTile.charactersAtLocation[i];
                 if (currObj is Party) {
                     text += "\n" + ((Party)currObj).name;
-                } else if (currObj is ECS.Character) {
-                    text += "\n" + ((ECS.Character)currObj).name;
+                } else if (currObj is Character) {
+                    text += "\n" + ((Character)currObj).name;
                 }
             }
         } else {
@@ -1620,8 +1621,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 ICombatInitializer currObj = _charactersAtLocation[i];
                 if (currObj is Party) {
                     text += "\n" + ((Party)currObj).name;
-                } else if (currObj is ECS.Character) {
-                    text += "\n" + ((ECS.Character)currObj).name;
+                } else if (currObj is Character) {
+                    text += "\n" + ((Character)currObj).name;
                 }
             }
         } else {
@@ -1646,7 +1647,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         ////            text += "\n[b]Characters: [/b] ";
         ////            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
         ////                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
-        ////                    ECS.Character currChar = landmarkOnTile.charactersOnLandmark[i];
+        ////                    Character currChar = landmarkOnTile.charactersOnLandmark[i];
         ////                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
         ////                    if (currChar.currentQuest != null) {
         ////                        text += " " + currChar.currentQuest.questType.ToString();
@@ -1656,7 +1657,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         ////                text += "NONE";
         ////            }
 
-        //            text += "\n[b]ECS.Character Caps: [/b] ";
+        //            text += "\n[b]Character Caps: [/b] ";
         //            for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
         //                CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
         //                bool isCapReached = false;
@@ -1712,7 +1713,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]Tile:[/b] " + this.name + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
-        "\n [b]King ECS.Character Type:[/b] " + this.city.kingdom.king.characterType.characterTypeName +
+        "\n [b]King Character Type:[/b] " + this.city.kingdom.king.characterType.characterTypeName +
         "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
         for (int i = 0; i < this.region.connections.Count; i++) {
             object currConnection = this.region.connections[i];
@@ -1853,8 +1854,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	public void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
-			if(character is ECS.Character){
-                ECS.Character currChar = character as ECS.Character;
+			if(character is Character){
+                Character currChar = character as Character;
                 currChar.SetSpecificLocation(this);
 			}else if(character is Party){
                 Party currParty = character as Party;
@@ -1870,8 +1871,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
 	public void RemoveCharacterFromLocation(ICombatInitializer character) {
 		_charactersAtLocation.Remove(character);
-		if(character is ECS.Character){
-            ECS.Character currChar = character as ECS.Character;
+		if(character is Character){
+            Character currChar = character as Character;
             currChar.SetSpecificLocation(null);
         } else if(character is Party){
             Party currParty = character as Party;
@@ -1881,11 +1882,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             UnScheduleCombatCheck();
         }
 	}
-	public ECS.Character GetCharacterAtLocationByID(int id){
+	public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is ECS.Character){
-				if(((ECS.Character)_charactersAtLocation[i]).id == id){
-					return (ECS.Character)_charactersAtLocation [i];
+			if(_charactersAtLocation[i]	is Character){
+				if(((Character)_charactersAtLocation[i]).id == id){
+					return (Character)_charactersAtLocation [i];
+				}
+			}else if(_charactersAtLocation[i] is Party){
+				Party party = (Party)_charactersAtLocation [i];
+				for (int j = 0; j < party.partyMembers.Count; j++) {
+					if(party.partyMembers[j].id == id){
+						return party.partyMembers [j];
+					}
 				}
 			}
 		}
@@ -2064,12 +2072,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return false;
     }
-    public bool HasHostilitiesWith(ECS.Character character) {
+    public bool HasHostilitiesWith(Character character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currItem = _charactersAtLocation[i];
             Faction factionOfItem = null;
-            if (currItem is ECS.Character) {
-                factionOfItem = (currItem as ECS.Character).faction;
+            if (currItem is Character) {
+                factionOfItem = (currItem as Character).faction;
             } else if (currItem is Party) {
                 factionOfItem = (currItem as Party).faction;
             }
@@ -2095,8 +2103,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
                 ICombatInitializer currItem = _charactersAtLocation[i];
                 Faction factionOfItem = null;
-                if (currItem is ECS.Character) {
-                    factionOfItem = (currItem as ECS.Character).faction;
+                if (currItem is Character) {
+                    factionOfItem = (currItem as Character).faction;
                 } else if (currItem is Party) {
                     factionOfItem = (currItem as Party).faction;
                 }
@@ -2155,18 +2163,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         return groups;
     }
     public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
-        ECS.CombatPrototype combat = new ECS.CombatPrototype(combatant1, combatant2, this);
+        CombatPrototype combat = new CombatPrototype(combatant1, combatant2, this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
         if (combatant1 is Party) {
-            combat.AddCharacters(ECS.SIDES.A, (combatant1 as Party).partyMembers);
+            combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
         } else {
-            combat.AddCharacter(ECS.SIDES.A, combatant1 as ECS.Character);
+            combat.AddCharacter(SIDES.A, combatant1 as Character);
         }
         if (combatant2 is Party) {
-            combat.AddCharacters(ECS.SIDES.B, (combatant2 as Party).partyMembers);
+            combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
         } else {
-            combat.AddCharacter(ECS.SIDES.B, combatant2 as ECS.Character);
+            combat.AddCharacter(SIDES.B, combatant2 as Character);
         }
         //this.specificLocation.SetCurrentCombat(combat);
         CombatThreadPool.Instance.AddToThreadPool(combat);
@@ -2220,7 +2228,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	//	}
 	//	return null;
 	//}
- //   public void SetCurrentCombat(ECS.CombatPrototype combat) {
+ //   public void SetCurrentCombat(CombatPrototype combat) {
 	//	_currentCombat = combat;
 	//}
     #endregion

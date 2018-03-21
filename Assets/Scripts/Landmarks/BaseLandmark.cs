@@ -404,11 +404,25 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void RemoveCharacterHomeOnLandmark(Character character) {
         _charactersWithHomeOnLandmark.Remove(character);
     }
-	public Character GetCharacterAtLocationByID(int id){
+	public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
 			if(_charactersAtLocation[i]	is Character){
 				if(((Character)_charactersAtLocation[i]).id == id){
 					return (Character)_charactersAtLocation [i];
+				}
+			}else if(_charactersAtLocation[i] is Party){
+				Party party = (Party)_charactersAtLocation [i];
+				for (int j = 0; j < party.partyMembers.Count; j++) {
+					if(party.partyMembers[j].id == id){
+						return party.partyMembers [j];
+					}
+				}
+			}
+		}
+		if(includeTraces){
+			for (int i = 0; i < _characterTraces.Count; i++) {
+				if(_characterTraces[i].id == id){
+					return _characterTraces [i];
 				}
 			}
 		}
