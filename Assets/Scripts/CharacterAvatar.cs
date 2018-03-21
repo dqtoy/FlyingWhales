@@ -179,6 +179,7 @@ public class CharacterAvatar : PooledObject{
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
+					CharacterHasLeftTile ();
                     //RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
 					this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
                 }
@@ -194,9 +195,6 @@ public class CharacterAvatar : PooledObject{
      saved path.
          */
     internal virtual void OnMoveFinished() {
-//		if(!_isInitialized){
-//			return;
-//		}
 		_isMovingToHex = false;
 		if(this.path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
@@ -335,7 +333,20 @@ public class CharacterAvatar : PooledObject{
     public void SetHighlightState(bool state) {
         _avatarHighlight.SetActive(state);
     }
+	private void CharacterHasLeftTile(){
+		LeaveCharacterTrace ();
+	}
     #endregion
+
+	#region Traces
+	private void LeaveCharacterTrace(){
+		if(_characters[0].party == null){
+			_characters [0].LeaveTraceOnLandmark ();
+		}else{
+			_characters [0].party.partyLeader.LeaveTraceOnLandmark ();
+		}
+	}
+	#endregion
 
     #region overrides
     public override void Reset() {
