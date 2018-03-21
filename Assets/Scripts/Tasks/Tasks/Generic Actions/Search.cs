@@ -112,7 +112,6 @@ public class Search : CharacterTask {
 			_assignedCharacter.SetCurrentFunction (() => StartSearch ());
 			return;
 		}
-        ChangeStateTo(STATE.SEARCH);
         _assignedCharacter.DestroyAvatar ();
         Log startSearchLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", "start_search");
         startSearchLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -122,6 +121,8 @@ public class Search : CharacterTask {
             (targetLocation as BaseLandmark).AddHistory(startSearchLog);
         }
         _assignedCharacter.AddHistory(startSearchLog);
+
+		ChangeStateTo(STATE.SEARCH);
     }
 
     #region Find Lost Heir
