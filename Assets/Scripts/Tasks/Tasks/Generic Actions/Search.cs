@@ -44,7 +44,7 @@ public class Search : CharacterTask {
 
     #region overrides
     public override CharacterTask CloneTask() {
-        Search clonedTask = new Search(_createdBy, _defaultDaysLeft, _searchingFor, _targetLocation, _parentQuest);
+		Search clonedTask = new Search(_createdBy, _defaultDaysLeft, _searchingFor, _targetLocation, _parentQuest, _stance);
         return clonedTask;
     }
     public override bool CanBeDone(Character character, ILocation location) {
@@ -138,8 +138,11 @@ public class Search : CharacterTask {
 			if (currLandmark.HasHostilitiesWith(character.faction)) {
 				weight -= 50;//If landmark has hostile characters: -50
 			}
-			if(characterLookingFor != null && currLandmark.GetCharacterAtLocationByID(characterLookingFor.id) != null){
-				weight += 600; //If assigned character has a trace info of character he is looking for, and is in this landmark
+			if(characterLookingFor != null && characterLookingFor.specificLocation != null && characterLookingFor.specificLocation is BaseLandmark){
+				BaseLandmark landmark = (BaseLandmark)characterLookingFor.specificLocation;
+				if(landmark.id == currLandmark.id){
+					weight += 600; //If assigned character has a trace info of character he is looking for, and is in this landmark
+				}
 			}
 			//If this character has already Searched in the landmark within the past 6 months: -60
 			if (weight > 0) {

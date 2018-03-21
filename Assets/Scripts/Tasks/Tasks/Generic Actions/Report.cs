@@ -33,7 +33,7 @@ public class Report : CharacterTask {
 
     #region overrides
     public override CharacterTask CloneTask() {
-        Report clonedTask = new Report(_createdBy, _reportTo, _parentQuest);
+		Report clonedTask = new Report(_createdBy, _reportTo, _parentQuest, _stance);
         return clonedTask;
     }
     public override bool CanBeDone(Character character, ILocation location) {

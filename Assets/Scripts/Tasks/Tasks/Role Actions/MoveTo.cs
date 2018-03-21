@@ -18,8 +18,8 @@ public class MoveTo : CharacterTask {
     }
     #endregion
 
-	public MoveTo(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) 
-        : base(createdBy, TASK_TYPE.MOVE_TO, stance, defaultDaysLeft) {
+	public MoveTo(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.NEUTRAL) 
+        : base(createdBy, TASK_TYPE.MOVE_TO, stance, defaultDaysLeft, parentQuest) {
 		//_forPlayerOnly = true;
         //_actionString = "to visit";
 
@@ -29,6 +29,10 @@ public class MoveTo : CharacterTask {
     }
 
     #region overrides
+	public override CharacterTask CloneTask (){
+		MoveTo clonedTask = new MoveTo(_createdBy, _defaultDaysLeft, _parentQuest, _stance);
+		return clonedTask;
+	}
 	public override void OnChooseTask (ECS.Character character){
 		base.OnChooseTask (character);
 		if(_assignedCharacter == null){
@@ -59,6 +63,17 @@ public class MoveTo : CharacterTask {
 		return true;
 	}
     public override int GetSelectionWeight(Character character) {
+		if(_parentQuest != null && _parentQuest is FindLostHeir){
+			Character characterLookingFor = character.GetCharacterFromTraceInfo ("Heirloom Necklace");
+			if(characterLookingFor != null){
+				for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
+					if(character.currentRegion.adjacentRegionsViaMajorRoad[i].id == characterLookingFor.currentRegion.id){
+						return 50;
+					}
+				}
+			}
+			return 0;
+		}
         return 30;
     }
     protected override BaseLandmark GetLandmarkTarget(Character character) {
@@ -77,6 +92,14 @@ public class MoveTo : CharacterTask {
             } else {
                 weight -= 20; //If Adjacent Settlement is unoccupied: -20
             }
+
+			if (_parentQuest != null && _parentQuest is FindLostHeir) {
+				Character characterLookingFor = character.GetCharacterFromTraceInfo ("Heirloom Necklace");
+				if (characterLookingFor != null && characterLookingFor.currentRegion.id == adjacentRegion.id) {
+					weight += 100;
+				}
+			}
+
             if (weight > 0) {
                 _landmarkWeights.AddElement(adjacentRegion.mainLandmark, weight);
             }
