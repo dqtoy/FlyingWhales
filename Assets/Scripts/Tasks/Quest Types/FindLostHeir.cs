@@ -15,7 +15,8 @@ public class FindLostHeir : Quest {
         _falseHeir = falseHeir;
         _lostHeir = lostHeir;
         _filters = new TaskFilter[] {
-            new MustBeFaction((createdBy as ECS.Character).faction)
+            new MustBeFaction((createdBy as ECS.Character).faction),
+            new MustNotBeCharacter(falseHeir)
         };
 
         QuestPhase phase1 = new QuestPhase(this, "Search for Heirloom Necklace");

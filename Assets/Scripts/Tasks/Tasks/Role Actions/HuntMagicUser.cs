@@ -87,7 +87,10 @@ public class HuntMagicUser : CharacterTask {
                 }
             }
         }
-        return _characterWeights.PickRandomElementGivenWeights();
+        if (_characterWeights.GetTotalOfWeights() > 0) {
+            return _characterWeights.PickRandomElementGivenWeights();
+        }
+        return null;
     }
     #endregion
 }

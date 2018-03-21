@@ -889,7 +889,8 @@ public enum CHARACTER_ROLE {
 	CRATER_BEAST,
 	SLYX,
 	VILLAIN,
-    FOLLOWER
+    FOLLOWER,
+    HERMIT,
 }
 public enum CHARACTER_CLASS {
     NONE,
