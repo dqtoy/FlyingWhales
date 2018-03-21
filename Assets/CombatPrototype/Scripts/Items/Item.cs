@@ -22,13 +22,15 @@ namespace ECS{
         public int collectChance;
 		public bool isUnlimited;
         public string interactString;
-		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
+        public bool _isObtainable;
+        public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
         protected ECS.Character _owner;
 
 		private bool _isEquipped;
+        
 
-		public bool isEquipped{
+        public bool isEquipped{
 			get { return _isEquipped; }
 		}
 		public ECS.Character owner{
@@ -44,9 +46,10 @@ namespace ECS{
 				return itemName;
 			}
 		}
-        public bool isObtainable { //Should this item only be interacted with or obtained?
-            get { return (itemType != ITEM_TYPE.ITEM ? true : false); }
+        public bool isObtainable {
+            get { return (itemType != ITEM_TYPE.ITEM ? true : _isObtainable); }
         }
+
 
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;
@@ -102,6 +105,7 @@ namespace ECS{
 			item.exploreWeight = exploreWeight;
 			item.collectChance = collectChance;
 			item.isUnlimited = isUnlimited;
+            item._isObtainable = isObtainable;
             item.interactString = interactString;
             item.statusEffectResistances = new List<StatusEffectRate>(statusEffectResistances);
         }

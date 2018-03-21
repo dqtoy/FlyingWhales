@@ -20,6 +20,7 @@ namespace ECS{
         public int exploreWeight;
         public int collectChance;
         public bool isUnlimited;
+        public bool isObtainable;
         public string interactString;
 		public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
