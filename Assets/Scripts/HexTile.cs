@@ -1869,7 +1869,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             //}
         }
 	}
-	public void RemoveCharacterFromLocation(ICombatInitializer character) {
+	public void RemoveCharacterFromLocation(ICombatInitializer character, bool forLeaving = true) {
 		_charactersAtLocation.Remove(character);
 		if(character is Character){
             Character currChar = character as Character;

@@ -726,13 +726,13 @@ namespace ECS {
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
 				}else{
-					this.specificLocation.RemoveCharacterFromLocation(this);
+					this.specificLocation.RemoveCharacterFromLocation(this,false);
 				}
 
 				if(this._isFollowerOf != null){
 					this._isFollowerOf.RemoveFollower (this);
 					if(this.specificLocation != null){
-						this.specificLocation.RemoveCharacterFromLocation(this);
+						this.specificLocation.RemoveCharacterFromLocation(this, false);
 					}
 				}
                 if (_avatar != null) {
@@ -896,8 +896,21 @@ namespace ECS {
 
 		}
 
-		//If character set up has pre equipped items, equip it here evey time a character is made
-		internal void EquipPreEquippedItems(CharacterSetup charSetup){
+        internal void DropItem(Item item) {
+            if (item.isEquipped) {
+                UnequipItem(item);
+            }
+            this._inventory.Remove(item);
+            item.exploreWeight = 15;
+            ILocation location = specificLocation;
+            if (location != null && location is BaseLandmark) {
+                BaseLandmark landmark = (BaseLandmark)location;
+                landmark.AddItemInLandmark(item);
+            }
+        }
+
+        //If character set up has pre equipped items, equip it here evey time a character is made
+        internal void EquipPreEquippedItems(CharacterSetup charSetup){
 			if(charSetup.preEquippedItems.Count > 0){
 				for (int i = 0; i < charSetup.preEquippedItems.Count; i++) {
 					EquipItem (charSetup.preEquippedItems [i].itemType, charSetup.preEquippedItems [i].itemName);
@@ -2548,7 +2561,7 @@ namespace ECS {
 			_isPrisonerOf = prisonerOf;
 			if(state){
 				if(this.specificLocation != null){
-					this.specificLocation.RemoveCharacterFromLocation (this);
+					this.specificLocation.RemoveCharacterFromLocation (this, false);
 				}
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){
@@ -2733,7 +2746,7 @@ namespace ECS {
 				if(_currentTask != null && faction != null) {
 					_currentTask.EndTask(TASK_STATUS.CANCEL);
 				}
-                if (!this.isDead) {
+                if (!isDead && !isPrisoner) {
                     BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
                     if (targetLocation == null) {
                         throw new Exception(this.name + " could not find a non hostile location to run to!");
@@ -2884,8 +2897,8 @@ namespace ECS {
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = GetLeaveTraceChance ();
 				if(chance < value){
-					landmark.AddTrace (this);
-				}
+                    landmark.AddTrace(this);
+                }
 			}
 		}
 		private int GetLeaveTraceChance(){
