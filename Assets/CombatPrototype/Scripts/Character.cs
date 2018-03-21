@@ -897,16 +897,19 @@ namespace ECS {
 		}
 
         internal void DropItem(Item item) {
-            if (item.isEquipped) {
-                UnequipItem(item);
-            }
-            this._inventory.Remove(item);
-            item.exploreWeight = 15;
+            ThrowItem(item);
             ILocation location = specificLocation;
             if (location != null && location is BaseLandmark) {
                 BaseLandmark landmark = (BaseLandmark)location;
                 landmark.AddItemInLandmark(item);
+                Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
+                dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
+                dropLog.AddToFillers(this, location.locationName, LOG_IDENTIFIER.LANDMARK_1);
+                AddHistory(dropLog);
+                (location as BaseLandmark).AddHistory(dropLog);
             }
+
         }
 
         //If character set up has pre equipped items, equip it here evey time a character is made
@@ -2351,8 +2354,8 @@ namespace ECS {
 				}
 				//Quest Tasks
 				if (currentQuest != null) {
-					for (int i = 0; i < _questData.tasks.Count; i++) {
-						CharacterTask currentTask = _questData.tasks [i];
+					for (int i = 0; i < _questData.allTasks.Count; i++) {
+						CharacterTask currentTask = _questData.allTasks [i];
 						if (!currentTask.isDone && currentTask.CanBeDone (this, location)) {
 							possibleTasks.Add (currentTask);
 						}
@@ -2463,8 +2466,8 @@ namespace ECS {
         }
         public bool HasRelevanceToQuest(BaseLandmark landmark) {
             if (currentQuest != null) {
-                for (int i = 0; i < questData.tasks.Count; i++) {
-                    if (questData.tasks[i].targetLocation == landmark) {
+                for (int i = 0; i < questData.allTasks.Count; i++) {
+                    if (questData.allTasks[i].targetLocation == landmark) {
                         return true;
                     }
                 }

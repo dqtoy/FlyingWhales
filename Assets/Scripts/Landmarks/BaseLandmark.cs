@@ -529,12 +529,6 @@ public class BaseLandmark : ILocation, TaskCreator {
                 Item chosenItem = itemPool.Keys.ElementAt(Random.Range(0, itemPool.Count));
                 Character owner = itemPool[chosenItem];
                 owner.DropItem(chosenItem);
-                Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
-                dropLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                dropLog.AddToFillers(null, chosenItem.itemName, LOG_IDENTIFIER.ITEM_1);
-                dropLog.AddToFillers(this, this.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                AddHistory(dropLog);
-                owner.AddHistory(dropLog);
             }
         }
     }
