@@ -509,7 +509,34 @@ public class BaseLandmark : ILocation, TaskCreator {
      The chance to drop something is 3%. A random item in the inventory will be dropped. Log it.
          */
     private void CheckForItemDrop(ICombatInitializer character) {
+        if (Random.Range(0, 100) < 3) {
+            Dictionary<Item, Character> itemPool = new Dictionary<Item, Character>();
+            List<Character> charactersToCheck = new List<Character>();
+            if (character is Character) {
+                charactersToCheck.Add(character as Character);
+            } else if (character is Party) {
+                charactersToCheck.AddRange((character as Party).partyMembers);
+            }
+            for (int i = 0; i < charactersToCheck.Count; i++) {
+                ECS.Character currCharacter = charactersToCheck[i];
+                for (int j = 0; j < currCharacter.inventory.Count; j++) {
+                    itemPool.Add(currCharacter.inventory[j], currCharacter);
+                }
+            }
 
+            //Drop a random item from the pool
+            if (itemPool.Count > 0) {
+                Item chosenItem = itemPool.Keys.ElementAt(Random.Range(0, itemPool.Count));
+                Character owner = itemPool[chosenItem];
+                owner.DropItem(chosenItem);
+                Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
+                dropLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                dropLog.AddToFillers(null, chosenItem.itemName, LOG_IDENTIFIER.ITEM_1);
+                dropLog.AddToFillers(this, this.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                AddHistory(dropLog);
+                owner.AddHistory(dropLog);
+            }
+        }
     }
     #endregion
 

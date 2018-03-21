@@ -896,8 +896,21 @@ namespace ECS {
 
 		}
 
-		//If character set up has pre equipped items, equip it here evey time a character is made
-		internal void EquipPreEquippedItems(CharacterSetup charSetup){
+        internal void DropItem(Item item) {
+            if (item.isEquipped) {
+                UnequipItem(item);
+            }
+            this._inventory.Remove(item);
+            item.exploreWeight = 15;
+            ILocation location = specificLocation;
+            if (location != null && location is BaseLandmark) {
+                BaseLandmark landmark = (BaseLandmark)location;
+                landmark.AddItemInLandmark(item);
+            }
+        }
+
+        //If character set up has pre equipped items, equip it here evey time a character is made
+        internal void EquipPreEquippedItems(CharacterSetup charSetup){
 			if(charSetup.preEquippedItems.Count > 0){
 				for (int i = 0; i < charSetup.preEquippedItems.Count; i++) {
 					EquipItem (charSetup.preEquippedItems [i].itemType, charSetup.preEquippedItems [i].itemName);
