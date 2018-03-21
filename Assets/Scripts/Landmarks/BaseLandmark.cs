@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ECS;
 
 public class BaseLandmark : ILocation, TaskCreator {
     protected int _id;
@@ -20,7 +21,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
 	protected int _reservedCivilians;
-    protected List<ECS.Character> _charactersWithHomeOnLandmark;
+    protected List<Character> _charactersWithHomeOnLandmark;
     //protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
     //protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
     protected MATERIAL _materialMadeOf; //What material is this landmark made of?
@@ -30,14 +31,15 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
     protected LandmarkObject _landmarkObject;
-	protected List<ECS.Character> _prisoners; //list of prisoners on landmark
+	protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
 	protected int _combatHistoryID;
-	protected Dictionary<int, ECS.CombatPrototype> _combatHistory;
+	protected Dictionary<int, CombatPrototype> _combatHistory;
     protected List<ICombatInitializer> _charactersAtLocation;
-    protected ECS.CombatPrototype _currentCombat;
+    protected CombatPrototype _currentCombat;
 	protected List<OldQuest.Quest> _activeQuests;
-	protected List<ECS.Item> _itemsInLandmark;
+	protected List<Item> _itemsInLandmark;
+	protected List<Character> _characterTraces; //Lasts for 60 days
 
     private bool _hasScheduledCombatCheck = false;
 
@@ -96,13 +98,13 @@ public class BaseLandmark : ILocation, TaskCreator {
     public LandmarkObject landmarkObject {
         get { return _landmarkObject; }
     }
-	public List<ECS.Character> prisoners {
+	public List<Character> prisoners {
 		get { return _prisoners; }
 	}
 	public List<Log> history{
 		get { return this._history; }
 	}
-	public Dictionary<int, ECS.CombatPrototype> combatHistory {
+	public Dictionary<int, CombatPrototype> combatHistory {
 		get { return _combatHistory; }
 	}
     public List<ICombatInitializer> charactersAtLocation {
@@ -117,7 +119,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public LOCATION_IDENTIFIER locIdentifier{
 		get { return LOCATION_IDENTIFIER.LANDMARK; }
 	}
-	public List<ECS.Item> itemsInLandmark {
+	public List<Item> itemsInLandmark {
 		get { return _itemsInLandmark; }
 	}
     public int currDurability {
@@ -129,6 +131,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public MATERIAL materialMadeOf {
         get { return _materialMadeOf; }
     }
+	public List<Character> characterTraces {
+		get { return _characterTraces; }
+	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf = MATERIAL.NONE) {
@@ -141,14 +146,15 @@ public class BaseLandmark : ILocation, TaskCreator {
         _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
-        _charactersWithHomeOnLandmark = new List<ECS.Character>();
-		_prisoners = new List<ECS.Character>();
+        _charactersWithHomeOnLandmark = new List<Character>();
+		_prisoners = new List<Character>();
 		_history = new List<Log>();
-		_combatHistory = new Dictionary<int, ECS.CombatPrototype>();
+		_combatHistory = new Dictionary<int, CombatPrototype>();
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
 		_activeQuests = new List<OldQuest.Quest>();
-		_itemsInLandmark = new List<ECS.Item> ();
+		_itemsInLandmark = new List<Item> ();
+		_characterTraces = new List<Character> ();
         _materialMadeOf = materialMadeOf;
 		_totalDurability = GetTotalDurability ();
 		_currDurability = _totalDurability;
@@ -165,7 +171,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     /*
      What should happen when a character searches this landmark
          */
-    public virtual void SearchLandmark(ECS.Character character) { }
+    public virtual void SearchLandmark(Character character) { }
 	#endregion
 
     public void SetLandmarkObject(LandmarkObject obj) {
@@ -351,9 +357,9 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
+    public Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
         RACE raceOfChar = GetRaceBasedOnProportion();
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
         //        newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
@@ -372,8 +378,8 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public ECS.Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className) {
-        ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+    public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className) {
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
         
         newCharacter.SetHome(this);
         AdjustCivilians(raceOfChar, -1);
@@ -390,19 +396,19 @@ public class BaseLandmark : ILocation, TaskCreator {
     /*
      Make a character consider this landmark as it's home.
          */
-    public virtual void AddCharacterHomeOnLandmark(ECS.Character character) {
+    public virtual void AddCharacterHomeOnLandmark(Character character) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
         }
     }
-    public void RemoveCharacterHomeOnLandmark(ECS.Character character) {
+    public void RemoveCharacterHomeOnLandmark(Character character) {
         _charactersWithHomeOnLandmark.Remove(character);
     }
-	public ECS.Character GetCharacterAtLocationByID(int id){
+	public Character GetCharacterAtLocationByID(int id){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is ECS.Character){
-				if(((ECS.Character)_charactersAtLocation[i]).id == id){
-					return (ECS.Character)_charactersAtLocation [i];
+			if(_charactersAtLocation[i]	is Character){
+				if(((Character)_charactersAtLocation[i]).id == id){
+					return (Character)_charactersAtLocation [i];
 				}
 			}
 		}
@@ -418,7 +424,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
-	public ECS.Character GetPrisonerByID(int id){
+	public Character GetPrisonerByID(int id){
 		for (int i = 0; i < _prisoners.Count; i++) {
 			if (_prisoners [i].id == id){
 				return _prisoners [i];
@@ -444,8 +450,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true) {
         if (!_charactersAtLocation.Contains(character)) {
             _charactersAtLocation.Add(character);
-            if (character is ECS.Character) {
-                ECS.Character currChar = character as ECS.Character;
+            if (character is Character) {
+                Character currChar = character as Character;
                 this.location.RemoveCharacterFromLocation(currChar);
                 currChar.SetSpecificLocation(this);
             } else if (character is Party) {
@@ -463,8 +469,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public void RemoveCharacterFromLocation(ICombatInitializer character, bool forLeaving = true) {
         _charactersAtLocation.Remove(character);
-        if (character is ECS.Character) {
-            ECS.Character currChar = character as ECS.Character;
+        if (character is Character) {
+            Character currChar = character as Character;
             currChar.SetSpecificLocation(this.location); //make the characters location, the hex tile that this landmark is on, meaning that the character exited the structure
         } else if (character is Party) {
             Party currParty = character as Party;
@@ -617,12 +623,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return false;
     }
-    public bool HasHostilitiesWith(ECS.Character character) {
+    public bool HasHostilitiesWith(Character character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currItem = _charactersAtLocation[i];
             Faction factionOfItem = null;
-            if (currItem is ECS.Character) {
-                factionOfItem = (currItem as ECS.Character).faction;
+            if (currItem is Character) {
+                factionOfItem = (currItem as Character).faction;
             } else if (currItem is Party) {
                 factionOfItem = (currItem as Party).faction;
             }
@@ -662,8 +668,8 @@ public class BaseLandmark : ILocation, TaskCreator {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
                 ICombatInitializer currItem = _charactersAtLocation[i];
                 Faction factionOfItem = null;
-                if (currItem is ECS.Character) {
-                    factionOfItem = (currItem as ECS.Character).faction;
+                if (currItem is Character) {
+                    factionOfItem = (currItem as Character).faction;
                 } else if (currItem is Party) {
                     factionOfItem = (currItem as Party).faction;
                 }
@@ -721,24 +727,24 @@ public class BaseLandmark : ILocation, TaskCreator {
         return groups;
     }
     public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
-        ECS.CombatPrototype combat = new ECS.CombatPrototype(combatant1, combatant2, this);
+        CombatPrototype combat = new CombatPrototype(combatant1, combatant2, this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
         string combatant1Name = string.Empty;
         string combatant2Name = string.Empty;
         if (combatant1 is Party) {
             combatant1Name = (combatant1 as Party).name;
-            combat.AddCharacters(ECS.SIDES.A, (combatant1 as Party).partyMembers);
+            combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
         } else {
-            combatant1Name = (combatant1 as ECS.Character).name;
-            combat.AddCharacter(ECS.SIDES.A, combatant1 as ECS.Character);
+            combatant1Name = (combatant1 as Character).name;
+            combat.AddCharacter(SIDES.A, combatant1 as Character);
         }
         if (combatant2 is Party) {
             combatant2Name = (combatant2 as Party).name;
-            combat.AddCharacters(ECS.SIDES.B, (combatant2 as Party).partyMembers);
+            combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
         } else {
-            combatant2Name = (combatant2 as ECS.Character).name;
-            combat.AddCharacter(ECS.SIDES.B, combatant2 as ECS.Character);
+            combatant2Name = (combatant2 as Character).name;
+            combat.AddCharacter(SIDES.B, combatant2 as Character);
         }
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
         combatLog.AddToFillers(combatant1, combatant1Name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -801,7 +807,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     //    }
     //    return null;
     //}
-    //public void SetCurrentCombat(ECS.CombatPrototype combat) {
+    //public void SetCurrentCombat(CombatPrototype combat) {
     //    _currentCombat = combat;
     //}
     #endregion
@@ -883,8 +889,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     internal bool HasWarlord() {
         for (int i = 0; i < this._location.charactersAtLocation.Count; i++) {
-            if (this._location.charactersAtLocation[i] is ECS.Character) {
-                if (((ECS.Character)this._location.charactersAtLocation[i]).role.roleType == CHARACTER_ROLE.WARLORD) {
+            if (this._location.charactersAtLocation[i] is Character) {
+                if (((Character)this._location.charactersAtLocation[i]).role.roleType == CHARACTER_ROLE.WARLORD) {
                     return true;
                 }
             } else if (this._location.charactersAtLocation[i] is Party) {
@@ -949,11 +955,11 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Prisoner
-    internal void AddPrisoner(ECS.Character character){
+    internal void AddPrisoner(Character character){
 		character.SetPrisoner (true, this);
 		_prisoners.Add (character);
 	}
-	internal void RemovePrisoner(ECS.Character character){
+	internal void RemovePrisoner(Character character){
 		_prisoners.Remove (character);
 	}
 	#endregion
@@ -969,8 +975,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     //    GameDate today = GameManager.Instance.Today();
     //    string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
     //    if (obj != null) {
-    //        if (obj is ECS.CombatPrototype) {
-    //            ECS.CombatPrototype combat = (ECS.CombatPrototype)obj;
+    //        if (obj is CombatPrototype) {
+    //            CombatPrototype combat = (CombatPrototype)obj;
     //            if (this.combatHistory.Count > 20) {
     //                this.combatHistory.Remove(0);
     //            }
@@ -1063,7 +1069,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
         for (int i = 0; i < data.itemData.Length; i++) {
             LandmarkItemData currItemData = data.itemData[i];
-            ECS.Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
+            Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
             if (ItemManager.Instance.IsLootChest(createdItem)) {
                 //chosen item is a loot crate, generate a random item
                 string[] words = createdItem.itemName.Split(' ');
@@ -1075,9 +1081,9 @@ public class BaseLandmark : ILocation, TaskCreator {
                 }
                 QUALITY equipmentQuality = GetEquipmentQuality();
                 if (createdItem.itemType == ITEM_TYPE.ARMOR) {
-                    ((ECS.Armor)createdItem).SetQuality(equipmentQuality);
+                    ((Armor)createdItem).SetQuality(equipmentQuality);
                 } else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
-                    ((ECS.Weapon)createdItem).SetQuality(equipmentQuality);
+                    ((Weapon)createdItem).SetQuality(equipmentQuality);
                 }
             } else {
                 //only set as unlimited if not from loot chest, since gear from loot chests are not unlimited
@@ -1098,21 +1104,21 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return QUALITY.NORMAL;
     }
-    public void AddItemInLandmark(ECS.Item item){
+    public void AddItemInLandmark(Item item){
 		_itemsInLandmark.Add (item);
 	}
-	public void AddItemsInLandmark(List<ECS.Item> item){
+	public void AddItemsInLandmark(List<Item> item){
 		_itemsInLandmark.AddRange (item);
 	}
-	public void RemoveItemInLandmark(ECS.Item item){
+	public void RemoveItemInLandmark(Item item){
 		if(!item.isUnlimited){
 			_itemsInLandmark.Remove (item);
 		}
 	}
-    private WeightedDictionary<ECS.Item> GetExploreItemWeights() {
-        WeightedDictionary<ECS.Item> itemWeights = new WeightedDictionary<ECS.Item>();
+    private WeightedDictionary<Item> GetExploreItemWeights() {
+        WeightedDictionary<Item> itemWeights = new WeightedDictionary<Item>();
         for (int i = 0; i < _itemsInLandmark.Count; i++) {
-            ECS.Item currItem = _itemsInLandmark[i];
+            Item currItem = _itemsInLandmark[i];
             itemWeights.AddElement(currItem, currItem.exploreWeight);
         }
         return itemWeights;
@@ -1120,9 +1126,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     /*
      What should happen when this landmark is explored?
          */
-    public virtual void ExploreLandmark(ECS.Character explorer) {
+    public virtual void ExploreLandmark(Character explorer) {
         //default behaviour is a random item will be given to the explorer based on the landmarks item weights
-        ECS.Item generatedItem = GenerateRandomItem();
+        Item generatedItem = GenerateRandomItem();
         if (generatedItem != null) {
             if (generatedItem.isObtainable) {
                 if (!explorer.EquipItem(generatedItem)) {
@@ -1144,10 +1150,10 @@ public class BaseLandmark : ILocation, TaskCreator {
     /*
      Generate a random item, given the data of this landmark type
          */
-    public ECS.Item GenerateRandomItem() {
-        WeightedDictionary<ECS.Item> itemWeights = GetExploreItemWeights();
+    public Item GenerateRandomItem() {
+        WeightedDictionary<Item> itemWeights = GetExploreItemWeights();
         if (itemWeights.GetTotalOfWeights() > 0) {
-            ECS.Item chosenItem = itemWeights.PickRandomElementGivenWeights();
+            Item chosenItem = itemWeights.PickRandomElementGivenWeights();
 			//Remove item form weights if it is not unlimited
 			RemoveItemInLandmark(chosenItem);
             return chosenItem;
@@ -1169,23 +1175,23 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
 
 	public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
-		ECS.Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
+		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
 		item.exploreWeight = exploreWeight;
 		item.isUnlimited = isUnlimited;
 		AddItemInLandmark (item);
 	}
-	public void SpawnItemInLandmark(ECS.Item item, int exploreWeight, bool isUnlimited){
-		ECS.Item newItem = item.CreateNewCopy();
+	public void SpawnItemInLandmark(Item item, int exploreWeight, bool isUnlimited){
+		Item newItem = item.CreateNewCopy();
 		newItem.exploreWeight = exploreWeight;
 		newItem.isUnlimited = isUnlimited;
 		AddItemInLandmark (newItem);
 	}
 	public void SpawnItemInLandmark(string itemName){
-		ECS.Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
+		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
 		AddItemInLandmark (item);
 	}
-	public void SpawnItemInLandmark(ECS.Item item){
-		ECS.Item newItem = item.CreateNewCopy();
+	public void SpawnItemInLandmark(Item item){
+		Item newItem = item.CreateNewCopy();
 		AddItemInLandmark (newItem);
 	}
 	public bool HasItem(string itemName){
@@ -1197,4 +1203,21 @@ public class BaseLandmark : ILocation, TaskCreator {
 		return false;
 	}
     #endregion
+
+	#region Traces
+	public void AddTrace(Character character){
+		if(!_characterTraces.Contains(character)){
+			_characterTraces.Add (character);
+			ScheduleTraceExpiration (character);
+		}
+	}
+	public void RemoveTrace(Character character){
+		_characterTraces.Remove (character);
+	}
+	private void ScheduleTraceExpiration(Character character){
+		GameDate expDate = GameManager.Instance.Today ();
+		expDate.AddDays (60);
+		SchedulingManager.Instance.AddEntry (expDate, () => RemoveTrace (character));
+	}
+	#endregion
 }

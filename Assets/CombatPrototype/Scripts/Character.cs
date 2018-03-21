@@ -68,9 +68,9 @@ namespace ECS {
         private BaseLandmark _lair;
 		private List<Log> _history;
 		private int _combatHistoryID;
-		private List<ECS.Character> _prisoners;
-		private List<ECS.Character> _followers;
-		private ECS.Character _isFollowerOf;
+		private List<Character> _prisoners;
+		private List<Character> _followers;
+		private Character _isFollowerOf;
 		private bool _doesNotTakePrisoners;
 		private bool _cannotBeTakenAsPrisoner;
 
@@ -93,7 +93,7 @@ namespace ECS {
 //        private Dictionary<MATERIAL, int> _materialInventory;
 		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
 
-		private Dictionary<Character, List<object>> _traceInfo;
+		private Dictionary<Character, List<string>> _traceInfo;
 
 		#region getters / setters
 		public string firstName {
@@ -271,10 +271,10 @@ namespace ECS {
 		public float equippedWeaponPower{
 			get { return _equippedWeaponPower; }
 		}
-		public List<ECS.Character> prisoners{
+		public List<Character> prisoners{
 			get { return this._prisoners; }
 		}
-		public List<ECS.Character> followers{
+		public List<Character> followers{
 			get { return this._followers; }
 		}
 		public object isPrisonerOf{
@@ -336,10 +336,10 @@ namespace ECS {
         public int missingFollowers {
             get { return Mathf.Max(0, MAX_FOLLOWERS - followers.Count); }
         }
-		public ECS.Character isFollowerOf{
+		public Character isFollowerOf{
 			get { return _isFollowerOf; }
 		}
-		public ECS.Character mainCharacter{
+		public Character mainCharacter{
 			get { return this; }
 		}
 		public int numOfCharacters{
@@ -354,7 +354,7 @@ namespace ECS {
 		public bool cannotBeTakenAsPrisoner{
 			get { return _cannotBeTakenAsPrisoner; }
 		}
-		public Dictionary<Character, List<object>> traceInfo{
+		public Dictionary<Character, List<string>> traceInfo{
 			get { return _traceInfo; }
 		}
         #endregion
@@ -376,11 +376,11 @@ namespace ECS {
 			_isDefeated = false;
 			_doesNotTakePrisoners = false;
 			_cannotBeTakenAsPrisoner = false;
-			_traceInfo = new Dictionary<Character, List<object>> ();
+			_traceInfo = new Dictionary<Character, List<string>> ();
 			_isPrisonerOf = null;
-			_prisoners = new List<ECS.Character> ();
+			_prisoners = new List<Character> ();
 			_history = new List<Log> ();
-			_followers = new List<ECS.Character> ();
+			_followers = new List<Character> ();
 			_isFollowerOf = null;
 			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData(this);
@@ -555,7 +555,7 @@ namespace ECS {
 							bool hasEnemyOnLeft = false;
 							if(combat.charactersSideA.Contains(this)){
 								for (int j = 0; j < combat.charactersSideB.Count; j++) {
-									ECS.Character enemy = combat.charactersSideB [j];
+									Character enemy = combat.charactersSideB [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -563,7 +563,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < combat.charactersSideA.Count; j++) {
-									ECS.Character enemy = combat.charactersSideA [j];
+									Character enemy = combat.charactersSideA [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -582,7 +582,7 @@ namespace ECS {
 							bool hasEnemyOnRight = false;
 							if(combat.charactersSideA.Contains(this)){
 								for (int j = 0; j < combat.charactersSideB.Count; j++) {
-									ECS.Character enemy = combat.charactersSideB [j];
+									Character enemy = combat.charactersSideB [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -590,7 +590,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < combat.charactersSideA.Count; j++) {
-									ECS.Character enemy = combat.charactersSideA [j];
+									Character enemy = combat.charactersSideA [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -684,7 +684,7 @@ namespace ECS {
 			}
 		}
 
-		//ECS.Character's death
+		//Character's death
 		internal void Death(){
 			if(!_isDead){
 				_isDead = true;
@@ -1247,7 +1247,7 @@ namespace ECS {
             }
             return false;
         }
-		internal ECS.Item GetItemInInventory(string itemName){
+		internal Item GetItemInInventory(string itemName){
 			for (int i = 0; i < _inventory.Count; i++) {
 				Item currItem = _inventory[i];
 				if (currItem.itemName.Equals(itemName)) {
@@ -1256,7 +1256,7 @@ namespace ECS {
 			}
 			return null;
 		}
-		internal ECS.Item GetItemInEquipped(string itemName){
+		internal Item GetItemInEquipped(string itemName){
 			for (int i = 0; i < _equippedItems.Count; i++) {
 				Item currItem = _equippedItems[i];
 				if (currItem.itemName.Equals(itemName)) {
@@ -1265,7 +1265,7 @@ namespace ECS {
 			}
 			return null;
 		}
-		public ECS.Item GetItemInAll(string itemName){
+		public Item GetItemInAll(string itemName){
 			if(_equippedItems.Count > 0){
 				for (int i = 0; i < _equippedItems.Count; i++) {
 					if(_equippedItems[i].itemName == itemName){
@@ -1377,7 +1377,7 @@ namespace ECS {
 			List<Skill> allBodyPartSkills = new List<Skill>();
 			foreach (string skillName in SkillManager.Instance.bodyPartSkills.Keys) {
 				bool requirementsPassed = true;
-				ECS.Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
+				Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
 				for (int j = 0; j < skill.skillRequirements.Length; j++) {
 					if(!HasAttribute(skill.skillRequirements[j].attributeRequired, skill.skillRequirements[j].itemQuantity)){
 						requirementsPassed = false;
@@ -2483,7 +2483,7 @@ namespace ECS {
                 _relationships.Remove(relWith);
             }
         }
-        public Relationship GetRelationshipWith(ECS.Character character) {
+        public Relationship GetRelationshipWith(Character character) {
             if (_relationships.ContainsKey(character)) {
                 return _relationships[character];
             }
@@ -2553,8 +2553,8 @@ namespace ECS {
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){
 					wardenName = ((Party)_isPrisonerOf).name;
-				}else if(_isPrisonerOf is ECS.Character){
-					wardenName = ((ECS.Character)_isPrisonerOf).name;
+				}else if(_isPrisonerOf is Character){
+					wardenName = ((Character)_isPrisonerOf).name;
 				}else if(_isPrisonerOf is BaseLandmark){
 					wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				}
@@ -2563,8 +2563,8 @@ namespace ECS {
                 becomePrisonerLog.AddToFillers(_isPrisonerOf, wardenName, LOG_IDENTIFIER.TARGET_CHARACTER);
                 AddHistory(becomePrisonerLog);
 
-                if (_isPrisonerOf is ECS.Character) {
-                    ((ECS.Character)_isPrisonerOf).AddHistory(becomePrisonerLog);
+                if (_isPrisonerOf is Character) {
+                    ((Character)_isPrisonerOf).AddHistory(becomePrisonerLog);
                 } else if (_isPrisonerOf is BaseLandmark) {
                     ((BaseLandmark)_isPrisonerOf).AddHistory(becomePrisonerLog);
                 }
@@ -2572,7 +2572,7 @@ namespace ECS {
                 Unfaint ();
 			}
 		}
-		internal void AddPrisoner(ECS.Character character){
+		internal void AddPrisoner(Character character){
 			if (this._party != null) {
 				this._party.AddPrisoner(character);
 			}else{
@@ -2580,7 +2580,7 @@ namespace ECS {
 				_prisoners.Add (character);
 			}
 		}
-		internal void RemovePrisoner(ECS.Character character){
+		internal void RemovePrisoner(Character character){
 			_prisoners.Remove (character);
 		}
 		internal void ReleasePrisoner(){
@@ -2591,8 +2591,8 @@ namespace ECS {
                 wardenName = prisonerOf.name;
                 prisonerOf.RemovePrisoner(this);
                 location = prisonerOf.specificLocation;
-            } else if (_isPrisonerOf is ECS.Character) {
-                ECS.Character prisonerOf = _isPrisonerOf as ECS.Character;
+            } else if (_isPrisonerOf is Character) {
+                Character prisonerOf = _isPrisonerOf as Character;
                 wardenName = prisonerOf.name;
                 prisonerOf.RemovePrisoner(this);
                 location = prisonerOf.specificLocation;
@@ -2633,8 +2633,8 @@ namespace ECS {
 			//Remove from previous prison
 			if(_isPrisonerOf is Party){
 				((Party)_isPrisonerOf).RemovePrisoner (this);
-			}else if(_isPrisonerOf is ECS.Character){
-				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is Character){
+				((Character)_isPrisonerOf).RemovePrisoner (this);
 			}else if(_isPrisonerOf is BaseLandmark){
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
 			}
@@ -2642,8 +2642,8 @@ namespace ECS {
 			//Add prisoner to new prison
 			if(newPrisonerOf is Party){
 				((Party)newPrisonerOf).AddPrisoner (this);
-			}else if(newPrisonerOf is ECS.Character){
-				((ECS.Character)newPrisonerOf).AddPrisoner (this);
+			}else if(newPrisonerOf is Character){
+				((Character)newPrisonerOf).AddPrisoner (this);
 			}else if(newPrisonerOf is BaseLandmark){
 				((BaseLandmark)newPrisonerOf).AddPrisoner (this);
 			}
@@ -2651,8 +2651,8 @@ namespace ECS {
 		private void PrisonerDeath(){
 			if(_isPrisonerOf is Party){
 				((Party)_isPrisonerOf).RemovePrisoner (this);
-			}else if(_isPrisonerOf is ECS.Character){
-				((ECS.Character)_isPrisonerOf).RemovePrisoner (this);
+			}else if(_isPrisonerOf is Character){
+				((Character)_isPrisonerOf).RemovePrisoner (this);
 			}else if(_isPrisonerOf is BaseLandmark){
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
 			}
@@ -2685,12 +2685,12 @@ namespace ECS {
 		//		//Start Combat with hostile or unaligned
 		//		ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
 		//		if(enemy != null){
-		//			ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
-		//			combat.AddCharacters (ECS.SIDES.A, new List<ECS.Character>(){this});
+		//			CombatPrototype combat = new CombatPrototype (this, enemy, this.specificLocation);
+		//			combat.AddCharacters (SIDES.A, new List<Character>(){this});
 		//			if(enemy is Party){
-		//				combat.AddCharacters (ECS.SIDES.B, ((Party)enemy).partyMembers);
+		//				combat.AddCharacters (SIDES.B, ((Party)enemy).partyMembers);
 		//			}else{
-		//				combat.AddCharacters (ECS.SIDES.B, new List<ECS.Character>(){((ECS.Character)enemy)});
+		//				combat.AddCharacters (SIDES.B, new List<Character>(){((Character)enemy)});
 		//			}
 		//			this.specificLocation.SetCurrentCombat (combat);
 		//			CombatThreadPool.Instance.AddToThreadPool (combat);
@@ -2707,8 +2707,8 @@ namespace ECS {
             }
             //Check here if the combatInitializer is hostile with this character, if yes, return true
             Faction factionOfEnemy = null;
-            if(combatInitializer is ECS.Character) {
-                factionOfEnemy = (combatInitializer as ECS.Character).faction;
+            if(combatInitializer is Character) {
+                factionOfEnemy = (combatInitializer as Character).faction;
             }else if(combatInitializer is Party) {
                 factionOfEnemy = (combatInitializer as Party).faction;
             }
@@ -2726,7 +2726,7 @@ namespace ECS {
             }
 			
 		}
-		public void ReturnCombatResults(ECS.CombatPrototype combat){
+		public void ReturnCombatResults(CombatPrototype combat){
             this.SetIsInCombat(false);
 			if (this.isDefeated) {
 				//this character was defeated
@@ -2834,14 +2834,14 @@ namespace ECS {
 		#endregion
 
 		#region Followers
-		public void AddFollower(ECS.Character character){
+		public void AddFollower(Character character){
 			if(!_followers.Contains(character)){
 				_followers.Add (character);
 				character._isFollowerOf = this;
 				character.SetFollowerState (true);
 			}
 		}
-		public void RemoveFollower(ECS.Character character){
+		public void RemoveFollower(Character character){
 			if(_followers.Remove(character)){
 				character._isFollowerOf = null;
 				character.SetFollowerState (false);
@@ -2899,6 +2899,15 @@ namespace ECS {
 				return 25;
 			}
 			return 0;
+		}
+		public void AddTraceInfo(Character character, string identifier){
+			if(_traceInfo.ContainsKey(character)){
+				if(!_traceInfo [character].Contains(identifier)){
+					_traceInfo [character].Add (identifier);
+				}
+			}else{
+				_traceInfo.Add (character, new List<string> (){ identifier });
+			}
 		}
 		#endregion
     }

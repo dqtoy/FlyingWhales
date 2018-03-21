@@ -92,7 +92,7 @@ public class ItemChest : IEncounterable {
 					if(!currMember.characterClass.allowedWeaponTypes.Contains(weapon.weaponType)){
 						continue;
 					}
-					ECS.Item currentWeapon = currMember.GetEquippedItemByName (weapon.itemName);
+					ECS.Item currentWeapon = currMember.GetItemInEquipped (weapon.itemName);
 					if(currentWeapon == null){//does not have item
 						_allNeed.Add(currMember);
 					}else{
@@ -107,7 +107,7 @@ public class ItemChest : IEncounterable {
 					if(!currMember.HasBodyPart(armor.armorBodyType)){
 						continue;
 					}
-					ECS.Item currentArmor = currMember.GetEquippedItemByName (armor.itemName);
+					ECS.Item currentArmor = currMember.GetItemInEquipped (armor.itemName);
 					if(currentArmor == null){//does not have item
 						_allNeed.Add(currMember);
 					}else{

@@ -12,7 +12,7 @@ public class SearchState : State {
         this.searchingFor = searchingFor;
         if (searchingFor is string) {
             if ((searchingFor as string).Equals("Heirloom Necklace")) {
-                _searchAction = () => SearchForHeirloomNecklace();
+				_searchAction = () => SearchForItemInCharacter();
             } else if ((searchingFor as string).Equals("Book of Inimical Incantations")) {
                 _searchAction = () => SearchForItemInLandmark();
             } else if ((searchingFor as string).Equals("Neuroctus")) {
@@ -37,8 +37,8 @@ public class SearchState : State {
     }
     #endregion
 
-    #region Find Lost Heir
-    private void SearchForHeirloomNecklace() {
+    #region Search for Item in Character
+    private void SearchForItemInCharacter() {
         for (int i = 0; i < parentTask.targetLocation.charactersAtLocation.Count; i++) {
             ECS.Character currCharacter = parentTask.targetLocation.charactersAtLocation[i].mainCharacter;
             if (currCharacter.HasItem(searchingFor as string)) {
@@ -93,6 +93,7 @@ public class SearchState : State {
                     break;
                 }
             }
+
         }
     }
     #endregion
