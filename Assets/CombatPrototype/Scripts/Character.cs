@@ -735,7 +735,6 @@ namespace ECS {
 						this.specificLocation.RemoveCharacterFromLocation(this);
 					}
 				}
-
                 if (_avatar != null) {
                     _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
                 }
@@ -752,10 +751,6 @@ namespace ECS {
 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
 //					Messenger.Broadcast ("CharacterDeath", this);
 //				}
-
-
-
-
 				if(onCharacterDeath != null){
 					onCharacterDeath();
 				}
@@ -1501,6 +1496,9 @@ namespace ECS {
 				break;
             case CHARACTER_ROLE.FOLLOWER:
                 _role = new Follower(this);
+                break;
+            case CHARACTER_ROLE.HERMIT:
+                _role = new Hermit(this);
                 break;
             default:
 			    break;

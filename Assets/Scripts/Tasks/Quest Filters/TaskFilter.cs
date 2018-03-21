@@ -202,3 +202,22 @@ public class MustBeCharacter : TaskFilter {
     }
     #endregion
 }
+
+public class MustNotBeCharacter : TaskFilter {
+
+    private List<ECS.Character> _bannedCharacters;
+
+    public MustNotBeCharacter(List<ECS.Character> bannedCharacetrs) {
+        _bannedCharacters = bannedCharacetrs;
+    }
+    public MustNotBeCharacter(ECS.Character bannedCharacter) {
+        _bannedCharacters = new List<ECS.Character>();
+        _bannedCharacters.Add(bannedCharacter);
+    }
+
+    #region overrides
+    public override bool MeetsRequirements(ECS.Character character) {
+        return !_bannedCharacters.Contains(character);
+    }
+    #endregion
+}

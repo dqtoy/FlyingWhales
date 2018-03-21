@@ -221,6 +221,9 @@ public class CharacterAvatar : PooledObject{
                 _isTravelling = false;
                 AddCharactersToLocation(targetLocation, _startCombatOnReachLocation);
 				_specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
+                if (_mainCharacter.currentTask == null) {
+                    throw new Exception(_mainCharacter.name + "'s task is null!");
+                }
                 if (this.specificLocation is BaseLandmark) {
                     Log arriveLog = null;
                     if (_mainCharacter.currentTask is MoveTo) {
@@ -244,7 +247,6 @@ public class CharacterAvatar : PooledObject{
                             arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                         }
                     }
-                    
                     this.specificLocation.tileLocation.landmarkOnTile.AddHistory(arriveLog);
                     _mainCharacter.AddHistory(arriveLog);
                 }
