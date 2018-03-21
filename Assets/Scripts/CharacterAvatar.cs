@@ -19,7 +19,6 @@ public class CharacterAvatar : PooledObject{
 
 	protected ILocation _specificLocation;
     protected ILocation targetLocation;
-    protected bool _startCombatOnReachLocation;
 
 	protected List<HexTile> path;
 
@@ -113,9 +112,8 @@ public class CharacterAvatar : PooledObject{
     #endregion
 
     #region Pathfinding
-    internal void SetTarget(ILocation target, bool startCombatOnReachLocation = false) {
+    internal void SetTarget(ILocation target) {
         targetLocation = target;
-        _startCombatOnReachLocation = startCombatOnReachLocation;
     }
     internal void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null) {
         if (smoothMovement.isMoving) {
@@ -219,7 +217,7 @@ public class CharacterAvatar : PooledObject{
 		if (this.specificLocation.tileLocation == targetLocation.tileLocation) {
             if (!this._hasArrived) {
                 _isTravelling = false;
-                AddCharactersToLocation(targetLocation, _startCombatOnReachLocation);
+                AddCharactersToLocation(targetLocation);
 				_specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
                 if (_mainCharacter.currentTask == null) {
                     throw new Exception(_mainCharacter.name + "'s task is null!");
@@ -313,15 +311,15 @@ public class CharacterAvatar : PooledObject{
 		UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateSettlementInfo();
     }
-	protected void AddCharactersToLocation(ILocation location, bool startCombatOnReachLocation = true) {
+	protected void AddCharactersToLocation(ILocation location) {
 		if(_characters[0].party == null){
-			location.AddCharacterToLocation(_characters[0], startCombatOnReachLocation);
+			location.AddCharacterToLocation(_characters[0]);
 //			for (int i = 0; i < _characters.Count; i++) {
 //				ECS.Character currCharacter = _characters[i];
 //				location.AddCharacterToLocation(currCharacter, startCombatOnReachLocation);
 //			}
 		}else{
-			location.AddCharacterToLocation(_characters[0].party, startCombatOnReachLocation);
+			location.AddCharacterToLocation(_characters[0].party);
 		}
 
 		UIManager.Instance.UpdateHexTileInfo();

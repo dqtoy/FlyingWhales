@@ -8,7 +8,7 @@ public interface ILocation {
     string locationName { get; }
     List<ICombatInitializer> charactersAtLocation { get; }
 
-    void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true);
+    void AddCharacterToLocation(ICombatInitializer character);
 	void RemoveCharacterFromLocation(ICombatInitializer character, bool forLeaving = true);
 
     void ScheduleCombatCheck();

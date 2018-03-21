@@ -367,7 +367,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         AdjustCivilians(raceOfChar, -1);
         //this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterToLocation(newCharacter, false);
+        this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         if (charRole != CHARACTER_ROLE.FOLLOWER) {
             newCharacter.DetermineAction();
@@ -388,7 +388,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             newCharacter.SetFaction(owner);
             owner.AddNewCharacter(newCharacter);
         }
-        AddCharacterToLocation(newCharacter, false);
+        AddCharacterToLocation(newCharacter);
         AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.DetermineAction();
         UIManager.Instance.UpdateFactionSummary();
@@ -462,7 +462,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Location
-    public void AddCharacterToLocation(ICombatInitializer character, bool startCombat = true) {
+    public void AddCharacterToLocation(ICombatInitializer character) {
         if (!_charactersAtLocation.Contains(character)) {
             _charactersAtLocation.Add(character);
             if (character is Character) {
@@ -477,9 +477,6 @@ public class BaseLandmark : ILocation, TaskCreator {
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
-            //if (startCombat) {
-            //    StartCombatAtLocation();
-            //}
         }
     }
     public void RemoveCharacterFromLocation(ICombatInitializer character, bool forLeaving = true) {

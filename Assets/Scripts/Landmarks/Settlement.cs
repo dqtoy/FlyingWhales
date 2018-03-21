@@ -594,7 +594,7 @@ public class Settlement : BaseLandmark {
 		newCharacter.SetName ("Nihvram");
 
 		newCharacter.SetHome(this);
-		this.AddCharacterToLocation(newCharacter, false);
+		this.AddCharacterToLocation(newCharacter);
 		newCharacter.DetermineAction();
 
 		SpawnItemInLandmark ("Meteorite");

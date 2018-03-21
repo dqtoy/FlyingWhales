@@ -27,7 +27,7 @@ public class EncounterParty : MonoBehaviour {
                 if (newCharacter.raceSetting.tags.Contains(CHARACTER_TAG.NESTING)) {
                     newCharacter.SetLair(originLandmark);
                 }
-				originLandmark.AddCharacterToLocation(newCharacter, false);
+				originLandmark.AddCharacterToLocation(newCharacter);
 			}
 			characters.Add (newCharacter);
 		}

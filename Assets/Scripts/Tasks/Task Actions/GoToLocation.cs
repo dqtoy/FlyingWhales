@@ -45,7 +45,7 @@ public class GoToLocation : TaskAction {
                 //Instantiate a new character avatar
                 actionDoer.CreateNewAvatar();
             }
-            actionDoer.avatar.SetTarget(targetLocation, true);
+            actionDoer.avatar.SetTarget(targetLocation);
             actionDoer.avatar.StartPath(_pathfindingMode, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
         }
     }
