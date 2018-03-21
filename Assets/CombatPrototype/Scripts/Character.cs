@@ -2337,7 +2337,7 @@ namespace ECS {
 			if(_role != null){
 				for (int i = 0; i < _role.roleTasks.Count; i++) {
 					CharacterTask currentTask = _role.roleTasks [i];
-					if(currentTask.CanBeDone(this, location)){
+					if(!currentTask.forGameOnly && currentTask.CanBeDone(this, location)){
 						possibleTasks.Add (currentTask);
 					}
 				}
@@ -2347,7 +2347,7 @@ namespace ECS {
 				for (int i = 0; i < _tags.Count; i++) {
 					for (int j = 0; j < _tags [i].tagTasks.Count; j++) {
 						CharacterTask currentTask = _tags [i].tagTasks [j];
-						if (currentTask.CanBeDone (this, location)) {
+						if (!currentTask.forGameOnly && currentTask.CanBeDone (this, location)) {
 							possibleTasks.Add (currentTask);
 						}
 					}
@@ -2356,7 +2356,7 @@ namespace ECS {
 				if (currentQuest != null) {
 					for (int i = 0; i < _questData.allTasks.Count; i++) {
 						CharacterTask currentTask = _questData.allTasks [i];
-						if (!currentTask.isDone && currentTask.CanBeDone (this, location)) {
+						if (!currentTask.forGameOnly && !currentTask.isDone && currentTask.CanBeDone (this, location)) {
 							possibleTasks.Add (currentTask);
 						}
 					}
