@@ -52,5 +52,8 @@ public class Report : CharacterTask {
         //remove the successor tag from the wrong successor then transfer it to the lost heir
         (_parentQuest as FindLostHeir).OnLostHeirFound();
     }
+    public override int GetSelectionWeight(Character character) {
+        return 100;
+    }
     #endregion
 }
