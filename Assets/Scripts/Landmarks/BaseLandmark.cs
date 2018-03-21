@@ -144,6 +144,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         //_isHidden = true;
         _isExplored = false;
         _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
+//		_landmarkName = _specificLandmarkType.ToString ();
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
         _charactersWithHomeOnLandmark = new List<Character>();
