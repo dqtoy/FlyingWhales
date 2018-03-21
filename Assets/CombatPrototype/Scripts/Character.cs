@@ -93,53 +93,55 @@ namespace ECS {
 //        private Dictionary<MATERIAL, int> _materialInventory;
 		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
 
+		private Dictionary<Character, List<object>> _traceInfo;
+
 		#region getters / setters
-        internal string firstName {
+		public string firstName {
             get { return name.Split(' ')[0]; }
         }
-		internal string name{
+		public string name{
 			get { return this._name; }
 		}
-		internal string coloredName{
+		public string coloredName{
 			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
 		}
-		internal string urlName{
+		public string urlName{
 			get { return "[url=" + this._id.ToString() + "_character]" + this._name + "[/url]"; }
 		}
-		internal string coloredUrlName{
+		public string coloredUrlName{
 			get { return "[url=" + this._id.ToString() + "_character]" + "[" + this._characterColorCode + "]" + this._name + "[-]" + "[/url]"; }
 		}
-		internal string prisonerName{
+		public string prisonerName{
 			get { return "[url=" + this._id.ToString() + "_prisoner]" + this._name + "[/url]"; }
 		}
-        internal int id {
+		public int id {
             get { return _id; }
         }
-		internal GENDER gender{
+		public GENDER gender{
 			get { return _gender; }
 		}
-        internal List<Trait> traits {
+		public List<Trait> traits {
             get { return _traits; }
         }
-		internal List<CharacterTag> tags {
+		public List<CharacterTag> tags {
 			get { return _tags; }
 		}
-        internal Dictionary<Character, Relationship> relationships {
+		public Dictionary<Character, Relationship> relationships {
             get { return _relationships; }
         }
-		internal CharacterClass characterClass{
+		public CharacterClass characterClass{
 			get { return this._characterClass; }
 		}
-		internal RaceSetting raceSetting {
+		public RaceSetting raceSetting {
 			get { return _raceSetting; }
 		}
-		internal CharacterRole role {
+		public CharacterRole role {
 			get { return _role; }
 		}
 		public Faction faction {
 			get { return _faction; }
 		}
-		internal Party party {
+		public Party party {
 			get { return _party; }
 		}
         public QuestData questData {
@@ -170,118 +172,118 @@ namespace ECS {
 		public CharacterAvatar avatar{
 			get { return _avatar; }
 		}
-		internal List<BodyPart> bodyParts{
+		public List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
 		}
-		internal List<Item> equippedItems {
+		public List<Item> equippedItems {
 			get { return this._equippedItems; }
 		}
-		internal List<Item> inventory{
+		public List<Item> inventory{
 			get { return this._inventory; }
 		}
-		internal List<Skill> skills{
+		public List<Skill> skills{
 			get { return this._skills; }
 		}
-		internal int currentRow{
+		public int currentRow{
 			get { return this._currentRow; }
 		}
-		internal SIDES currentSide{
+		public SIDES currentSide{
 			get { return this._currentSide; }
 		}
-		internal bool isDead{
+		public bool isDead{
 			get { return this._isDead; }
 		}
-		internal bool isFainted{
+		public bool isFainted{
 			get { return this._isFainted; }
 		}
-		internal bool isPrisoner{
+		public bool isPrisoner{
 			get { return this._isPrisoner; }
 		}
-        internal bool isFollower {
+		public bool isFollower {
             get { return _isFollower; }
         }
 		public List<OldQuest.Quest> activeQuests {
 			get { return _activeQuests; }
 		}
-		internal int strength {
+		public int strength {
 			get { return _strength + (int)((float)_strength * _statsModifierPercentage.strPercentage); }
 		}
-		internal int baseStrength {
+		public int baseStrength {
 			get { return _baseStrength; }
 		}
-		internal int intelligence {
+		public int intelligence {
 			get { return _intelligence + (int)((float)_intelligence * _statsModifierPercentage.intPercentage); }
 		}
-		internal int baseIntelligence {
+		public int baseIntelligence {
 			get { return _baseIntelligence; }
 		}
-		internal int agility {
+		public int agility {
 			get { return _agility + (int)((float)_agility * _statsModifierPercentage.agiPercentage); }
 		}
-		internal int baseAgility {
+		public int baseAgility {
 			get { return _baseAgility; }
 		}
-		internal int currentHP{
+		public int currentHP{
 			get { return this._currentHP; }
 		}
-		internal int maxHP {
+		public int maxHP {
 			get { return this._maxHP; }
 		}
-		internal int baseMaxHP {
+		public int baseMaxHP {
 			get { return _baseMaxHP; }
 		}
-		internal StatsModifierPercentage statsModifierPercentage {
+		public StatsModifierPercentage statsModifierPercentage {
 			get { return _statsModifierPercentage; }
 		}
-		internal int dodgeRate {
+		public int dodgeRate {
 			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
 		}
-		internal int parryRate {
+		public int parryRate {
 			get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
 		}
-		internal int blockRate {
+		public int blockRate {
 			get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
 		}
-		internal Color characterColor {
+		public Color characterColor {
 			get { return _characterColor; }
 		}
-		internal string characterColorCode {
+		public string characterColorCode {
 			get { return _characterColorCode; }
 		}
-        internal BaseLandmark home {
+		public BaseLandmark home {
             get { return _home; }
         }
-        internal BaseLandmark lair {
+		public BaseLandmark lair {
             get { return _lair; }
         }
-		internal float remainingHP { //Percentage of remaining HP this character has
+		public float remainingHP { //Percentage of remaining HP this character has
             get { return (float)currentHP / (float)maxHP; }
         }
-        internal int remainingHPPercent {
+		public int remainingHPPercent {
             get { return (int)(remainingHP * 100); }
         }
-		internal List<Log> history{
+		public List<Log> history{
 			get { return this._history; }
 		}
-		internal float characterPower{
+		public float characterPower{
 			get { return (float)_currentHP + (float)((_strength + _intelligence + _agility) * 2) + _equippedWeaponPower;}
 		}
-		internal float equippedWeaponPower{
+		public float equippedWeaponPower{
 			get { return _equippedWeaponPower; }
 		}
-		internal List<ECS.Character> prisoners{
+		public List<ECS.Character> prisoners{
 			get { return this._prisoners; }
 		}
-		internal List<ECS.Character> followers{
+		public List<ECS.Character> followers{
 			get { return this._followers; }
 		}
-		internal object isPrisonerOf{
+		public object isPrisonerOf{
 			get { return this._isPrisonerOf; }
 		}
-        internal int gold {
+		public int gold {
             get { return _gold; }
         }
-        internal int prestige {
+		public int prestige {
             get { return _prestige; }
 		}
 		public bool isDefeated {
@@ -334,7 +336,7 @@ namespace ECS {
         public int missingFollowers {
             get { return Mathf.Max(0, MAX_FOLLOWERS - followers.Count); }
         }
-		internal ECS.Character isFollowerOf{
+		public ECS.Character isFollowerOf{
 			get { return _isFollowerOf; }
 		}
 		public ECS.Character mainCharacter{
@@ -343,14 +345,17 @@ namespace ECS {
 		public int numOfCharacters{
 			get { return 1; }
 		}
-		internal bool doesNotTakePrisoners{
+		public bool doesNotTakePrisoners{
 			get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
 		}
-		internal bool characterDoesNotTakePrisoners{
+		public bool characterDoesNotTakePrisoners{
 			get { return _doesNotTakePrisoners; }
 		}
-		internal bool cannotBeTakenAsPrisoner{
+		public bool cannotBeTakenAsPrisoner{
 			get { return _cannotBeTakenAsPrisoner; }
+		}
+		public Dictionary<Character, List<object>> traceInfo{
+			get { return _traceInfo; }
 		}
         #endregion
 
@@ -371,6 +376,7 @@ namespace ECS {
 			_isDefeated = false;
 			_doesNotTakePrisoners = false;
 			_cannotBeTakenAsPrisoner = false;
+			_traceInfo = new Dictionary<Character, List<object>> ();
 			_isPrisonerOf = null;
 			_prisoners = new List<ECS.Character> ();
 			_history = new List<Log> ();
@@ -1260,6 +1266,23 @@ namespace ECS {
 				Item currItem = _equippedItems[i];
 				if (currItem.itemName.Equals(itemName)) {
 					return currItem;
+				}
+			}
+			return null;
+		}
+		public ECS.Item GetItemInAll(string itemName){
+			if(_equippedItems.Count > 0){
+				for (int i = 0; i < _equippedItems.Count; i++) {
+					if(_equippedItems[i].itemName == itemName){
+						return _equippedItems [i];
+					}
+				}
+			}
+			if(_inventory.Count > 0){
+				for (int i = 0; i < _inventory.Count; i++) {
+					if(_inventory[i].itemName == itemName){
+						return _inventory [i];
+					}
 				}
 			}
 			return null;
@@ -2777,92 +2800,6 @@ namespace ECS {
         }
         #endregion
 
-        #region Materials
-        //private void ConstructMaterialInventory() {
-        //    _materialInventory = new Dictionary<MATERIAL, int>();
-        //    MATERIAL[] allMaterials = Utilities.GetEnumValues<MATERIAL>();
-        //    for (int i = 0; i < allMaterials.Length; i++) {
-        //        MATERIAL currMat = allMaterials[i];
-        //        if(currMat != MATERIAL.NONE) {
-        //            _materialInventory.Add(currMat, 0);
-        //        }
-        //    }
-        //}
-        //public void AdjustMaterial(MATERIAL material, int amount) {
-        //    int newAmount = _materialInventory[material] + amount;
-        //    newAmount = Mathf.Max(0, newAmount);
-        //    _materialInventory[material] = newAmount;
-        //}
-        ///*
-        // Transfer materials from this character to
-        // another character.
-        //     */
-        //public void TransferMaterials(ECS.Character transferTo, MATERIAL material, int amount) {
-        //    AdjustMaterial(material, -amount);
-        //    transferTo.AdjustMaterial(material, amount);
-        //}
-        ///*
-        // Transfer materials from this character
-        // to a party
-        //     */
-        //public void TransferMaterials(Party party, MATERIAL material, int amount) {
-        //    AdjustMaterial(material, -amount);
-        //    party.AdjustMaterial(material, amount);
-        //}
-        ///*
-        // Transfer ALL materials from this character to
-        // another character.
-        //     */
-        //public void TransferMaterials(ECS.Character transferTo) {
-        //    foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
-        //        MATERIAL currMat = kvp.Key;
-        //        int amount = kvp.Value;
-        //        AdjustMaterial(currMat, -amount);
-        //        transferTo.AdjustMaterial(currMat, amount);
-        //    }
-        //}
-        ///*
-        // Transfer ALL materials from this character
-        // to a party
-        //     */
-        //public void TransferMaterials(Party party) {
-        //    foreach (KeyValuePair<MATERIAL, int> kvp in _materialInventory) {
-        //        MATERIAL currMat = kvp.Key;
-        //        int amount = kvp.Value;
-        //        AdjustMaterial(currMat, -amount);
-        //        party.AdjustMaterial(currMat, amount);
-        //    }
-        //}
-
-		public ECS.Item GetItemByName(string itemName){
-			if(_equippedItems.Count > 0){
-				for (int i = 0; i < _equippedItems.Count; i++) {
-					if(_equippedItems[i].itemName == itemName){
-						return _equippedItems [i];
-					}
-				}
-			}
-			if(_inventory.Count > 0){
-				for (int i = 0; i < _inventory.Count; i++) {
-					if(_inventory[i].itemName == itemName){
-						return _inventory [i];
-					}
-				}
-			}
-			return null;
-		}
-		public ECS.Item GetEquippedItemByName(string itemName){
-			if(_equippedItems.Count > 0){
-				for (int i = 0; i < _equippedItems.Count; i++) {
-					if(_equippedItems[i].itemName == itemName){
-						return _equippedItems [i];
-					}
-				}
-			}
-			return null;
-		}
-        #endregion
-
 		#region Combat Handlers
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
@@ -2929,6 +2866,32 @@ namespace ECS {
 					AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
 				}
 			}
+		}
+		#endregion
+
+		#region Traces
+		public void LeaveTraceOnLandmark(){
+			ILocation location = specificLocation;
+			if(location != null && location is BaseLandmark){
+				BaseLandmark landmark = (BaseLandmark)location;
+				int chance = UnityEngine.Random.Range (0, 100);
+				int value = GetLeaveTraceChance ();
+				if(chance < value){
+					landmark.AddTrace (this);
+				}
+			}
+		}
+		private int GetLeaveTraceChance(){
+			STANCE stance = GetCurrentStance ();
+			switch(stance){
+			case STANCE.COMBAT:
+				return 100;
+			case STANCE.NEUTRAL:
+				return 50;
+			case STANCE.STEALTHY:
+				return 25;
+			}
+			return 0;
 		}
 		#endregion
     }
