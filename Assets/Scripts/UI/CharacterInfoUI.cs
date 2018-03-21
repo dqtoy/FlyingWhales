@@ -62,7 +62,8 @@ public class CharacterInfoUI : UIMenu {
 	public override void ShowMenu (){
 		base.ShowMenu ();
         _activeCharacter = (ECS.Character)_data;
-	}
+        historyScrollView.ResetPosition();
+    }
     public override void OpenMenu() {
         base.OpenMenu();
         historyScrollView.ResetPosition();
@@ -80,6 +81,7 @@ public class CharacterInfoUI : UIMenu {
         if (currentlyShowingCharacter.avatar != null) {
             currentlyShowingCharacter.avatar.SetHighlightState(true);
         }
+        historyScrollView.ResetPosition();
         if (isShowing) {
             UpdateCharacterInfo();
         }

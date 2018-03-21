@@ -38,6 +38,11 @@ public class ExploreState : State {
 				_assignedCharacter.AddHistory(interactLog);
 			}
 		}
+
+        //if the character has a faction, add landmark info to it's faction
+        if (!_assignedCharacter.isFactionless) {
+            _assignedCharacter.faction.AddLandmarkInfo(parentTask.targetLocation as BaseLandmark);
+        }
 	}
 
 	/*
