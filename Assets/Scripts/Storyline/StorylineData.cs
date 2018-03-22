@@ -63,4 +63,14 @@ public class StorylineData {
     }
     #endregion
 
+    #region Logs
+    /*
+     This is a convenience function, so the developer doesn't have to input a log date, 
+     category and file everytime they create a log.
+         */
+    protected virtual Log CreateLogForStoryline(string key) {
+        return null;
+    }
+    #endregion
+
 }

@@ -42,7 +42,7 @@ public class DungeonParty : Party {
 			member.isFollowerOf.RemoveFollower (member);
 		}
 		if (_partyMembers.Count <= 0) {
-			this.specificLocation.RemoveCharacterFromLocation(this, false);
+			this.specificLocation.RemoveCharacterFromLocation(this);
 		}
 	}
 

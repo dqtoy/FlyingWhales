@@ -17,6 +17,7 @@ public class StorylineManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+        activeStorylines = new List<StorylineData>();
     }
 
     public void GenerateStoryLines() {

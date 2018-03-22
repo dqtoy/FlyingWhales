@@ -177,7 +177,7 @@ public class CharacterAvatar : PooledObject{
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
-					CharacterHasLeftTile ();
+					CharacterHasLeftTile();
                     //RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
 					this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
                 }
@@ -332,7 +332,8 @@ public class CharacterAvatar : PooledObject{
         _avatarHighlight.SetActive(state);
     }
 	private void CharacterHasLeftTile(){
-		LeaveCharacterTrace ();
+		LeaveCharacterTrace();
+        CheckForItemDrop();
 	}
     #endregion
 
@@ -344,7 +345,17 @@ public class CharacterAvatar : PooledObject{
 			_characters [0].party.partyLeader.LeaveTraceOnLandmark ();
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Items
+    private void CheckForItemDrop() {
+        if (_characters[0].party == null) {
+            _characters[0].CheckForItemDrop();
+        } else {
+            _characters[0].party.partyLeader.CheckForItemDrop();
+        }
+    }
+    #endregion
 
     #region overrides
     public override void Reset() {
