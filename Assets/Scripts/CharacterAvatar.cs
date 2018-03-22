@@ -177,14 +177,14 @@ public class CharacterAvatar : PooledObject{
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
-					CharacterHasLeftTile ();
-                    //RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
 					this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
+                    //RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
                 }
             }
         }
     }
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
+		CharacterHasLeftTile ();
 		_isMovingToHex = true;
         this.smoothMovement.Move(targetTile.transform.position, this.direction);
     }

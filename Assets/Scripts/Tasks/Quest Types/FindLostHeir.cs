@@ -21,7 +21,10 @@ public class FindLostHeir : Quest {
 
         QuestPhase phase1 = new QuestPhase(this, "Search for Heirloom Necklace");
         phase1.AddTask(new Search(createdBy, 5, "Heirloom Necklace", null, this));
-		phase1.AddTask(new MoveTo(createdBy, -1, this), false);
+
+		MoveTo moveTo = new MoveTo (createdBy, -1, this);
+		moveTo.SetForGameOnly (true);
+		phase1.AddTask(moveTo, false);
 
         QuestPhase phase2 = new QuestPhase(this, "Report back to chieftain");
         phase2.AddTask(new Report(createdBy, createdBy as ECS.Character, this));

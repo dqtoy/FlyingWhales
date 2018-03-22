@@ -27,13 +27,17 @@ public class HypnotizeState : State {
     }
 
     private void MakeTargetCharacterAVampireFollower() {
+		ECS.Character target = (ECS.Character)_parentTask.specificTarget;
+		if(target.party != null){
+			target.party.DisbandParty ();
+		}
         if (_assignedCharacter.party == null) {
             Party party = _assignedCharacter.CreateNewParty();
-            party.AddPartyMember(parentTask.specificTarget as ECS.Character);
+			party.AddPartyMember(target);
         } else {
-            _assignedCharacter.party.AddPartyMember(parentTask.specificTarget as ECS.Character);
+			_assignedCharacter.party.AddPartyMember(target);
         }
-        (parentTask.specificTarget as ECS.Character).SetFollowerState(true);
+		target.SetFollowerState(true);
 
         //TODO: What happens if the target character already has a party, is it going to be disbanded? what happens to the followers then?
     }

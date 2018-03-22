@@ -22,6 +22,8 @@ public class DoRitual : CharacterTask {
 	#region overrides
 	public override CharacterTask CloneTask (){
 		DoRitual clonedTask = new DoRitual(_createdBy, _defaultDaysLeft, _parentQuest, _stance);
+		SetForGameOnly (_forGameOnly);
+		SetForPlayerOnly (_forPlayerOnly);
 		return clonedTask;
 	}
 	public override void OnChooseTask(ECS.Character character) {

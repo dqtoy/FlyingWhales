@@ -133,7 +133,9 @@ public class CharacterTask {
 			return;
 		}
         //TODO: Remove This after testing
-        character.previousActions.Add(this, StackTraceUtility.ExtractStackTrace());
+		if(!character.previousActions.ContainsKey(this)){
+			character.previousActions.Add(this, StackTraceUtility.ExtractStackTrace());
+		}
 
         _taskStatus = TASK_STATUS.IN_PROGRESS;
         _assignedCharacter = character;
@@ -227,6 +229,8 @@ public class CharacterTask {
 	public virtual bool AreConditionsMet(ECS.Character character) { return false; }
     public virtual CharacterTask CloneTask() {
 		CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _stance, _defaultDaysLeft, _parentQuest);
+		SetForGameOnly (_forGameOnly);
+		SetForPlayerOnly (_forPlayerOnly);
         return clonedTask;
     }
     protected virtual BaseLandmark GetLandmarkTarget(ECS.Character character) {
