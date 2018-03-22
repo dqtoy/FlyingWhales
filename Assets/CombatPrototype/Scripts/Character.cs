@@ -386,7 +386,7 @@ namespace ECS {
 			_isFollowerOf = null;
 			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData(this);
-            previousActions = new Dictionary<CharacterTask, string>();
+			previousActions = new Dictionary<CharacterTask, string> ();
 
 			GenerateRaceTags ();
 

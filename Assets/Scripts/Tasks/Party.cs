@@ -234,6 +234,13 @@ public class Party: IEncounterable, ICombatInitializer {
 		member.SetCurrentTask (null);
 		if(member.isFollower){
 			member.isFollowerOf.RemoveFollower (member);
+			Settlement settlement = member.GetNearestSettlementFromFaction();
+			if (settlement == null) {
+				//TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
+				throw new Exception(member.name + " cannot find a settlement from his/her faction!");
+			}
+			//will go back to the nearest settlement of their faction
+			settlement.AdjustCivilians(member.raceSetting.race, 1);
 		}
 		if (_partyMembers.Count <= 0) {
             //JustDisbandParty ();
@@ -328,16 +335,20 @@ public class Party: IEncounterable, ICombatInitializer {
 		//_partyLeader.AdjustCivilians (_civiliansByRace);
 
         //all the remaining followers of the party
-        for (int i = 0; i < followers.Count; i++) {
-            ECS.Character currFollower = followers[i];
-            Settlement settlement = currFollower.GetNearestSettlementFromFaction();
-            if (settlement == null) {
-                //TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
-                throw new Exception(currFollower.name + " cannot find a settlement from his/her faction!");
-            }
-            //will go back to the nearest settlement of their faction
-            settlement.AdjustCivilians(currFollower.raceSetting.race, 1);
-        }
+//        for (int i = 0; i < followers.Count; i++) {
+//            ECS.Character currFollower = followers[i];
+//            Settlement settlement = currFollower.GetNearestSettlementFromFaction();
+//            if (settlement == null) {
+//                //TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
+//                throw new Exception(currFollower.name + " cannot find a settlement from his/her faction!");
+//            }
+//            //will go back to the nearest settlement of their faction
+//            settlement.AdjustCivilians(currFollower.raceSetting.race, 1);
+//        }
+
+		while(_partyMembers.Count > 0){
+			RemovePartyMember (_partyMembers [0]);
+		}
 
 		this.specificLocation.RemoveCharacterFromLocation (this);
     }

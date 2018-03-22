@@ -7,7 +7,6 @@ public class Collect : CharacterTask {
 
 	private string _itemNameToCollect;
 	private int _quantityToCollect;
-	private int _quantityAlreadyCollected;
 
     private string itemToCollectLog;
 
@@ -15,16 +14,22 @@ public class Collect : CharacterTask {
 		_targetLocation = targetLocation;
 		_itemNameToCollect = itemName;
 		_quantityToCollect = quantity;
-		_quantityAlreadyCollected = 0;
 
         Log log = new Log(GameManager.Instance.Today(), "CharacterTasks", "Collect", itemName); //Add Fillers as necesssary per item seaching for
 
         itemToCollectLog = Utilities.LogReplacer(log);
+
+		_states = new Dictionary<STATE, State> {
+			{ STATE.MOVE, new MoveState (this) },
+			{ STATE.COLLECT, new CollectState (this, _itemNameToCollect, _quantityToCollect) }
+		};
     }
 
 	#region overrides
 	public override CharacterTask CloneTask() {
 		Collect clonedTask = new Collect(_createdBy, _itemNameToCollect, _quantityToCollect, _targetLocation, _defaultDaysLeft, _parentQuest, _stance);
+		SetForGameOnly (_forGameOnly);
+		SetForPlayerOnly (_forPlayerOnly);
 		return clonedTask;
 	}
 	public override bool CanBeDone(Character character, ILocation location) {
@@ -45,6 +50,7 @@ public class Collect : CharacterTask {
 			_targetLocation = GetLandmarkTarget(character);
 		}
 		if (_targetLocation != null) {
+			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartCollect());
 		}else{
 			EndTask(TASK_STATUS.FAIL);
@@ -65,11 +71,11 @@ public class Collect : CharacterTask {
 		if(!CanPerformTask()){
 			return;
 		}
-		base.PerformTask();
-		CollectItem();
-		if (_daysLeft == 0) {
-			//EndRecruitment();
-			EndTask(TASK_STATUS.FAIL);
+		if(_currentState != null){
+			_currentState.PerformStateAction ();
+		}
+		if(_daysLeft == 0){
+			EndTaskFail ();
 			return;
 		}
 		ReduceDaysLeft(1);
@@ -118,49 +124,8 @@ public class Collect : CharacterTask {
         if (_targetLocation is BaseLandmark) {
             (targetLocation as BaseLandmark).AddHistory(startLog);
         }
+		ChangeStateTo (STATE.COLLECT);
     }
-
-	private void CollectItem(){
-		int collectedAmount = 0;
-		int chance = 0;
-		if (_targetLocation is BaseLandmark) {
-			BaseLandmark _targetLandmark = (BaseLandmark)_targetLocation;
-			for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
-				ECS.Item item = _targetLandmark.itemsInLandmark [i];
-				if (item.itemName == _itemNameToCollect) {
-					if (item.isUnlimited) {
-						int alreadyCollected = _quantityAlreadyCollected;
-						for (int j = alreadyCollected; j < _quantityToCollect; j++) {
-							chance = UnityEngine.Random.Range (0, 100);
-							if (chance < item.collectChance) {
-								_assignedCharacter.PickupItem (item);
-								_targetLandmark.RemoveItemInLandmark (item);
-								_quantityAlreadyCollected++;
-								collectedAmount++;
-							}
-						}
-					} else {
-						chance = UnityEngine.Random.Range (0, 100);
-						if (chance < item.collectChance) {
-							_assignedCharacter.PickupItem (item);
-							_targetLandmark.RemoveItemInLandmark (item);
-							_quantityAlreadyCollected++;
-							collectedAmount++;
-						}
-					}
-				}
-			}
-
-		//_assignedCharacter.AddHistory ("Collected " + collectedAmount + " " + _itemNameToCollect + " in " + _targetLandmark.landmarkName + ".");
-		//_targetLandmark.AddHistory (_assignedCharacter.name + " collected " + collectedAmount + " " + _itemNameToCollect + ".");
-
-			if (_quantityAlreadyCollected >= _quantityToCollect) {
-				EndTask (TASK_STATUS.SUCCESS);
-			} else {
-				EndTask (TASK_STATUS.FAIL);
-			}
-		}
-	}
 
     #region Logs
     public override string GetArriveActionString() {

@@ -34,6 +34,8 @@ public class Report : CharacterTask {
     #region overrides
     public override CharacterTask CloneTask() {
 		Report clonedTask = new Report(_createdBy, _reportTo, _parentQuest, _stance);
+		SetForGameOnly (_forGameOnly);
+		SetForPlayerOnly (_forPlayerOnly);
         return clonedTask;
     }
     public override bool CanBeDone(Character character, ILocation location) {

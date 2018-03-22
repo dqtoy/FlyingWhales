@@ -229,6 +229,8 @@ public class CharacterTask {
 	public virtual bool AreConditionsMet(ECS.Character character) { return false; }
     public virtual CharacterTask CloneTask() {
 		CharacterTask clonedTask = new CharacterTask(_createdBy, _taskType, _stance, _defaultDaysLeft, _parentQuest);
+		SetForGameOnly (_forGameOnly);
+		SetForPlayerOnly (_forPlayerOnly);
         return clonedTask;
     }
     protected virtual BaseLandmark GetLandmarkTarget(ECS.Character character) {
