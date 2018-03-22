@@ -231,7 +231,8 @@ public class Party: IEncounterable, ICombatInitializer {
         member.SetParty(null);
 		member.SetCurrentTask (null);
 		if(member.isFollower){
-			member.isFollowerOf.RemoveFollower (member);
+			member.SetFollowerState (false);
+//			member.isFollowerOf.RemoveFollower (member);
 			Settlement settlement = member.GetNearestSettlementFromFaction();
 			if (settlement == null) {
 				//TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.

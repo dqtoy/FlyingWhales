@@ -104,7 +104,7 @@ public class PlayerActionsUI : MonoBehaviour {
         ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
         specificNumOfShowingButtons = 0;
 		if(task.specificTargetClassification == "character"){
-			List<ECS.Character> characters = CharacterTargets (task);
+			List<ECS.Character> characters = CharacterTargets (character, task);
 			if(characters.Count > 0){
 				if(characters.Count > specificTaskButtons.Count){
 					for (int i = 0; i < characters.Count; i++) {
@@ -171,11 +171,14 @@ public class PlayerActionsUI : MonoBehaviour {
         }
     }
 
-	private List<ECS.Character> CharacterTargets(CharacterTask task){
+	private List<ECS.Character> CharacterTargets(ECS.Character assignedCharacter, CharacterTask task){
 		List<ECS.Character> characters = new List<ECS.Character> ();
 		BaseLandmark landmark = (BaseLandmark)this.location;
 		for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
 			ECS.Character character = landmark.charactersAtLocation [i].mainCharacter;
+			if(!task.canTargetSelf && character.id == assignedCharacter.id){
+				continue;
+			}
 			if(task.CanMeetRequirements(character)){
 				characters.Add (character);
 			}

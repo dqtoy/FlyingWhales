@@ -674,8 +674,11 @@ namespace ECS {
 				if (this._party != null) {
 					this._party.RemovePartyMember(this);
 				}
-				if (this._isFollowerOf != null) {
-					this._isFollowerOf.RemoveFollower(this);
+//				if (this._isFollowerOf != null) {
+//					this._isFollowerOf.RemoveFollower(this);
+//				}
+				if (_isFollower) {
+					SetFollowerState (false);
 				}
 			}
 		}
@@ -732,11 +735,14 @@ namespace ECS {
 					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
 
-				if(this._isFollowerOf != null){
-					this._isFollowerOf.RemoveFollower (this);
-					if(this.specificLocation != null){
-						this.specificLocation.RemoveCharacterFromLocation(this);
-					}
+//				if(this._isFollowerOf != null){
+//					this._isFollowerOf.RemoveFollower (this);
+//					if(this.specificLocation != null){
+//						this.specificLocation.RemoveCharacterFromLocation(this);
+//					}
+//				}
+				if(_isFollower){
+					SetFollowerState (false);
 				}
                 if (_avatar != null) {
                     _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
@@ -919,8 +925,11 @@ namespace ECS {
                 if (UnityEngine.Random.Range(0, 100) < 3) {
                     Dictionary<Item, Character> itemPool = new Dictionary<Item, Character>();
                     List<Character> charactersToCheck = new List<Character>();
-                    charactersToCheck.Add(this);
-                    charactersToCheck.AddRange(this.followers);
+					if(_party == null){
+						charactersToCheck.Add(this);
+					}else{
+						charactersToCheck.AddRange(_party.partyMembers);
+					}
                     for (int i = 0; i < charactersToCheck.Count; i++) {
                         ECS.Character currCharacter = charactersToCheck[i];
                         for (int j = 0; j < currCharacter.inventory.Count; j++) {
@@ -2946,9 +2955,11 @@ namespace ECS {
 			if(_traceInfo.ContainsKey(character)){
 				if(!_traceInfo [character].Contains(identifier)){
 					_traceInfo [character].Add (identifier);
+					Debug.Log ("ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
 				}
 			}else{
 				_traceInfo.Add (character, new List<string> (){ identifier });
+				Debug.Log ("ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
 			}
 		}
 		public Character GetCharacterFromTraceInfo(string info){

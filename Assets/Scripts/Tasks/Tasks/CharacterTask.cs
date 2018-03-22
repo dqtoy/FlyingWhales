@@ -46,6 +46,8 @@ public class CharacterTask {
 	protected State _currentState;
 	protected Dictionary<STATE, State> _states;
 
+	protected bool _canTargetSelf;
+
     #region getters/setters
     public TASK_TYPE taskType {
         get { return _taskType; }
@@ -95,6 +97,9 @@ public class CharacterTask {
 	public State currentState {
 		get { return _currentState; }
 	}
+	public bool canTargetSelf {
+		get { return _canTargetSelf; }
+	}
 	//public WeightedDictionary<BaseLandmark> landmarkWeights{
 	//	get { return _landmarkWeights; }
 	//}
@@ -119,6 +124,7 @@ public class CharacterTask {
 		_forGameOnly = false;
 		SetIsHalted (false);
 		_isDone = false;
+		_canTargetSelf = false;
         _parentQuest = parentQuest;
         _alignments = new List<ACTION_ALIGNMENT>();
 		SetDefaultDaysLeft (defaultDaysLeft);

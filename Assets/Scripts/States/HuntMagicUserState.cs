@@ -17,7 +17,16 @@ public class HuntMagicUserState : State {
 
     private void InitiateCombat() {
         if (!_assignedCharacter.isInCombat) {
-            _assignedCharacter.specificLocation.StartCombatBetween(_assignedCharacter, _parentTask.specificTarget as ECS.Character);
+			ECS.Character targetCharacter = _parentTask.specificTarget as ECS.Character;
+			ICombatInitializer source = _assignedCharacter;
+			ICombatInitializer target = targetCharacter;
+			if(_assignedCharacter.party != null){
+				source = _assignedCharacter.party;
+			}
+			if(targetCharacter.party != null){
+				target = targetCharacter.party;
+			}
+			_assignedCharacter.specificLocation.StartCombatBetween(source, target);
         }
     }
 }

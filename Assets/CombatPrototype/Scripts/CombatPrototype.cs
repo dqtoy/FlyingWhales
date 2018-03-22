@@ -68,27 +68,50 @@ namespace ECS{
         //Add a character to a side
         internal void AddCharacter(SIDES side, ECS.Character character) {
             if (side == SIDES.A) {
-                this.charactersSideA.Add(character);
-				for (int i = 0; i < character.followers.Count; i++) {
-					this.charactersSideA.Add(character.followers[i]);
-					character.followers[i].SetSide (side);
-					character.followers[i].currentCombat = this;
+				if(character.party == null){
+					this.charactersSideA.Add(character);
+					sideAPrisoners = character.prisoners;
+				}else{
+					this.charactersSideA.AddRange(character.party.partyMembers);
+					sideAPrisoners = character.party.prisoners;
 				}
+
+				for (int i = 0; i < this.charactersSideA.Count; i++) {
+					this.charactersSideA [i].SetSide (side);
+					this.charactersSideA [i].currentCombat = this;
+				}
+//                this.charactersSideA.Add(character);
+//				for (int i = 0; i < character.followers.Count; i++) {
+//					this.charactersSideA.Add(character.followers[i]);
+//					character.followers[i].SetSide (side);
+//					character.followers[i].currentCombat = this;
+//				}
 				this.characterSideACopy = this.charactersSideA.ToArray ();
-				sideAPrisoners = character.prisoners;
 
             } else {
-                this.charactersSideB.Add(character);
-				for (int i = 0; i < character.followers.Count; i++) {
-					this.charactersSideA.Add(character.followers[i]);
-					character.followers[i].SetSide (side);
-					character.followers[i].currentCombat = this;
+				if(character.party == null){
+					this.charactersSideB.Add(character);
+					sideBPrisoners = character.prisoners;
+				}else{
+					this.charactersSideB.AddRange(character.party.partyMembers);
+					sideBPrisoners = character.party.prisoners;
 				}
+
+				for (int i = 0; i < this.charactersSideB.Count; i++) {
+					this.charactersSideB [i].SetSide (side);
+					this.charactersSideB [i].currentCombat = this;
+				}
+
+//                this.charactersSideB.Add(character);
+//				for (int i = 0; i < character.followers.Count; i++) {
+//					this.charactersSideA.Add(character.followers[i]);
+//					character.followers[i].SetSide (side);
+//					character.followers[i].currentCombat = this;
+//				}
 				this.characterSideBCopy = this.charactersSideB.ToArray ();
-				sideBPrisoners = character.prisoners;
             }
-			character.SetSide (side);
-			character.currentCombat = this;
+//			character.SetSide (side);
+//			character.currentCombat = this;
 			if(CombatPrototypeUI.Instance != null){
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
 			}

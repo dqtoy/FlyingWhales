@@ -36,7 +36,7 @@ public class RecruitState : State {
 					party = _assignedCharacter.CreateNewParty();
 				}
 				party.AddPartyMember(newFollower);
-				_assignedCharacter.AddFollower(newFollower);
+//				_assignedCharacter.AddFollower(newFollower);
 				Log recruitFollowerLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "RecruitFollowers", "recruit");
 				recruitFollowerLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 				recruitFollowerLog.AddToFillers(newFollower, newFollower.name, LOG_IDENTIFIER.TARGET_CHARACTER);
