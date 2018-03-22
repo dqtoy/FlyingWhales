@@ -9,7 +9,7 @@ public interface ILocation {
     List<ICombatInitializer> charactersAtLocation { get; }
 
     void AddCharacterToLocation(ICombatInitializer character);
-	void RemoveCharacterFromLocation(ICombatInitializer character, bool forLeaving = true);
+	void RemoveCharacterFromLocation(ICombatInitializer character);
 
     void ScheduleCombatCheck();
     void UnScheduleCombatCheck();

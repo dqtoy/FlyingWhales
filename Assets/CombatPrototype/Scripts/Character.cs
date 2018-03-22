@@ -729,13 +729,13 @@ namespace ECS {
                 if (this._party != null) {
                     this._party.RemovePartyMember(this, true);
 				}else{
-					this.specificLocation.RemoveCharacterFromLocation(this,false);
+					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
 
 				if(this._isFollowerOf != null){
 					this._isFollowerOf.RemoveFollower (this);
 					if(this.specificLocation != null){
-						this.specificLocation.RemoveCharacterFromLocation(this, false);
+						this.specificLocation.RemoveCharacterFromLocation(this);
 					}
 				}
                 if (_avatar != null) {
@@ -913,6 +913,29 @@ namespace ECS {
                 (location as BaseLandmark).AddHistory(dropLog);
             }
 
+        }
+        internal void CheckForItemDrop() {
+            if (specificLocation != null && specificLocation is BaseLandmark) {
+                if (UnityEngine.Random.Range(0, 100) < 3) {
+                    Dictionary<Item, Character> itemPool = new Dictionary<Item, Character>();
+                    List<Character> charactersToCheck = new List<Character>();
+                    charactersToCheck.Add(this);
+                    charactersToCheck.AddRange(this.followers);
+                    for (int i = 0; i < charactersToCheck.Count; i++) {
+                        ECS.Character currCharacter = charactersToCheck[i];
+                        for (int j = 0; j < currCharacter.inventory.Count; j++) {
+                            itemPool.Add(currCharacter.inventory[j], currCharacter);
+                        }
+                    }
+
+                    //Drop a random item from the pool
+                    if (itemPool.Count > 0) {
+                        Item chosenItem = itemPool.Keys.ElementAt(UnityEngine.Random.Range(0, itemPool.Count));
+                        Character owner = itemPool[chosenItem];
+                        owner.DropItem(chosenItem);
+                    }
+                }
+            }
         }
 
         //If character set up has pre equipped items, equip it here evey time a character is made
@@ -2567,7 +2590,7 @@ namespace ECS {
 			_isPrisonerOf = prisonerOf;
 			if(state){
 				if(this.specificLocation != null){
-					this.specificLocation.RemoveCharacterFromLocation (this, false);
+					this.specificLocation.RemoveCharacterFromLocation (this);
 				}
 				string wardenName = string.Empty;
 				if(_isPrisonerOf is Party){

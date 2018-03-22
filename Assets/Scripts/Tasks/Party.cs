@@ -142,7 +142,7 @@ public class Party: IEncounterable, ICombatInitializer {
 
         //Debug.Log(partyLeader.name + " has created " + _name);
 		partyLeader.specificLocation.AddCharacterToLocation (this);
-        partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader, false);
+        partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
 
         AddPartyMember(_partyLeader);
         //ConstructMaterialInventory();
@@ -181,7 +181,7 @@ public class Party: IEncounterable, ICombatInitializer {
                 member.DestroyAvatar();
                 _avatar.AddNewCharacter(member);
             }
-            member.specificLocation.RemoveCharacterFromLocation(member, false);//Remove member from specific location, since it is already included in the party
+            member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
 
             if (!IsCharacterLeaderOfParty(member)) {
@@ -348,7 +348,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			RemovePartyMember (_partyMembers [0]);
 		}
 
-		this.specificLocation.RemoveCharacterFromLocation (this, false);
+		this.specificLocation.RemoveCharacterFromLocation (this);
     }
     
     public void SetOpenStatus(bool isOpen) {
