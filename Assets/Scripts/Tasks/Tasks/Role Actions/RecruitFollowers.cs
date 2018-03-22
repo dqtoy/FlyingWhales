@@ -47,7 +47,7 @@ public class RecruitFollowers : CharacterTask {
 		if(_currentState != null){
 			_currentState.PerformStateAction ();
 		}
-		if (_targetLandmark == null || _targetLandmark.civilians <= 0 || _assignedCharacter.isFollowersFull) {
+		if (_targetLandmark == null || _targetLandmark.civilians <= 0 || (_assignedCharacter.party != null && _assignedCharacter.party.isFull)) {
 			EndTaskSuccess ();
 			return;
 		}

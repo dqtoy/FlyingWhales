@@ -24,7 +24,7 @@ public class RecruitState : State {
 	#endregion
 
 	private void RecruitFollowers(){
-		if(_targetLandmark.civilians > 0 && !_assignedCharacter.isFollowersFull) {
+		if(_targetLandmark.civilians > 0 && (_assignedCharacter.party == null || !_assignedCharacter.party.isFull)) {
 			Settlement settlement = (Settlement)_targetLandmark;
 			WeightedDictionary<string> recruitActions = GetRecruitmentDictionary(_targetLandmark); 
 			string chosenAction = recruitActions.PickRandomElementGivenWeights();
