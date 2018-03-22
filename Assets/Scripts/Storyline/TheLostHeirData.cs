@@ -9,8 +9,8 @@ public class TheLostHeirData : StorylineData {
     }
 
     #region overrides
-    public override void SetupStoryline() {
-        base.SetupStoryline();
+    public override void InitialStorylineSetup() {
+        base.InitialStorylineSetup();
 
         List<ECS.Character> allChieftains = new List<ECS.Character>();
         for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {

@@ -1879,7 +1879,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             UnScheduleCombatCheck();
         }
 	}
-	public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
+    public void ReplaceCharacterAtLocation(ICombatInitializer characterToReplace, ICombatInitializer characterToAdd) {
+        if (_charactersAtLocation.Contains(characterToReplace)) {
+            int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
+            _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
+            _charactersAtLocation.Remove(characterToReplace);
+            if (characterToAdd is Character) {
+                Character currChar = characterToAdd as Character;
+                currChar.SetSpecificLocation(this);
+            } else if (characterToAdd is Party) {
+                Party currParty = characterToAdd as Party;
+                currParty.SetSpecificLocation(this);
+            }
+            if (!_hasScheduledCombatCheck) {
+                ScheduleCombatCheck();
+            }
+        }
+    }
+    public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
 			if(_charactersAtLocation[i]	is Character){
 				if(((Character)_charactersAtLocation[i]).id == id){
