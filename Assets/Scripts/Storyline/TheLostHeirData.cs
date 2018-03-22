@@ -70,6 +70,8 @@ public class TheLostHeirData : StorylineData {
             FindLostHeir findLostHeirQuest = new FindLostHeir(chosenChieftain, chosenChieftain, chosenSuccessor, lostHeir);
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
             chosenChieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
+
+			Debug.Log("LOST HEIR LOCATION: " + chosenHut.landmarkName + " - " + chosenHut.tileLocation.tileName);
         }
     }
     #endregion

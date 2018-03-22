@@ -2955,11 +2955,11 @@ namespace ECS {
 			if(_traceInfo.ContainsKey(character)){
 				if(!_traceInfo [character].Contains(identifier)){
 					_traceInfo [character].Add (identifier);
-					Debug.Log ("ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
+					Debug.Log (this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
 				}
 			}else{
 				_traceInfo.Add (character, new List<string> (){ identifier });
-				Debug.Log ("ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
+				Debug.Log (this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
 			}
 		}
 		public Character GetCharacterFromTraceInfo(string info){

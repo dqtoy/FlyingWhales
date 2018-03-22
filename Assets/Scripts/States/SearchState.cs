@@ -134,16 +134,14 @@ public class SearchState : State {
 	#region Traces
 	private void CheckTraces(string strSearchingFor, string identifier, bool includeParty = false){
 		if (identifier == "tag") {
-			for (int i = 0; i < _targetLandmark.characterTraces.Count; i++) {
-				ECS.Character currCharacter = _targetLandmark.characterTraces [i];
+			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasTag (strSearchingFor, includeParty)) {
 					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
 					break;
 				}
 			}
 		} else if (identifier == "item") {
-			for (int i = 0; i < _targetLandmark.characterTraces.Count; i++) {
-				ECS.Character currCharacter = _targetLandmark.characterTraces [i];
+			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasItem (strSearchingFor)) {
 					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
 					break;

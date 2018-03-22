@@ -39,7 +39,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected CombatPrototype _currentCombat;
 	protected List<OldQuest.Quest> _activeQuests;
 	protected List<Item> _itemsInLandmark;
-	protected List<Character> _characterTraces; //Lasts for 60 days
+	protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
 
     private bool _hasScheduledCombatCheck = false;
 
@@ -131,7 +131,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public MATERIAL materialMadeOf {
         get { return _materialMadeOf; }
     }
-	public List<Character> characterTraces {
+	public Dictionary<Character, GameDate> characterTraces {
 		get { return _characterTraces; }
 	}
     #endregion
@@ -155,7 +155,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _charactersAtLocation = new List<ICombatInitializer>();
 		_activeQuests = new List<OldQuest.Quest>();
 		_itemsInLandmark = new List<Item> ();
-		_characterTraces = new List<Character> ();
+		_characterTraces = new Dictionary<Character, GameDate> ();
         _materialMadeOf = materialMadeOf;
 		_totalDurability = GetTotalDurability ();
 		_currDurability = _totalDurability;
@@ -421,10 +421,10 @@ public class BaseLandmark : ILocation, TaskCreator {
 			}
 		}
 		if(includeTraces){
-			for (int i = 0; i < _characterTraces.Count; i++) {
-				if(_characterTraces[i].id == id){
-					return _characterTraces [i];
-				}
+			foreach (Character character in _characterTraces.Keys) {
+				if(character.id == id){
+					return character;
+				}	
 			}
 		}
 		return null;
@@ -1227,18 +1227,22 @@ public class BaseLandmark : ILocation, TaskCreator {
 
 	#region Traces
 	public void AddTrace(Character character){
-		if(!_characterTraces.Contains(character)){
-			_characterTraces.Add (character);
-			ScheduleTraceExpiration (character);
-		}
-	}
-	public void RemoveTrace(Character character){
-		_characterTraces.Remove (character);
-	}
-	private void ScheduleTraceExpiration(Character character){
 		GameDate expDate = GameManager.Instance.Today ();
 		expDate.AddDays (60);
+		if(!_characterTraces.ContainsKey(character)){
+			_characterTraces.Add (character, expDate);
+		}else{
+			SchedulingManager.Instance.RemoveSpecificEntry (_characterTraces[character], () => RemoveTrace (character));
+			_characterTraces [character] = expDate;
+		}
 		SchedulingManager.Instance.AddEntry (expDate, () => RemoveTrace (character));
+	}
+	public void RemoveTrace(Character character){
+		if(_characterTraces.ContainsKey(character)){
+			if(GameManager.Instance.Today().IsSameDate(_characterTraces[character])){
+				_characterTraces.Remove (character);
+			}
+		}
 	}
 	#endregion
 }
