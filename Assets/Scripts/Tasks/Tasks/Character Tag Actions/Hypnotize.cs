@@ -78,15 +78,18 @@ public class Hypnotize : CharacterTask {
     }
     protected override ECS.Character GetCharacterTarget(ECS.Character character) {
         base.GetCharacterTarget(character);
-        for (int i = 0; i < character.specificLocation.tileLocation.region.charactersInRegion.Count; i++) {
-            ECS.Character currCharacter = character.specificLocation.tileLocation.region.charactersInRegion[i];
-            if (currCharacter.id != character.id) {
-                if (CanMeetRequirements(currCharacter)) {
-                    _characterWeights.AddElement(currCharacter, 50);//Each character in the same region: 50
-                }
-            }
-        }
-        return _characterWeights.PickRandomElementGivenWeights();
+		for (int i = 0; i < character.specificLocation.tileLocation.region.charactersInRegion.Count; i++) {
+			ECS.Character currCharacter = character.specificLocation.tileLocation.region.charactersInRegion[i];
+			if (currCharacter.id != character.id) {
+				if (CanMeetRequirements(currCharacter)) {
+					_characterWeights.AddElement(currCharacter, 50);//Each character in the same region: 50
+				}
+			}
+		}
+		if(_characterWeights.GetTotalOfWeights() > 0){
+			return _characterWeights.PickRandomElementGivenWeights ();
+		}
+        return null;
     }
     #endregion
 
