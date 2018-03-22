@@ -48,7 +48,7 @@ public class HuntMagicUser : CharacterTask {
         if(location.tileLocation.landmarkOnTile != null) {
             for (int i = 0; i < location.tileLocation.landmarkOnTile.charactersAtLocation.Count; i++) {
                 ECS.Character currChar = location.tileLocation.landmarkOnTile.charactersAtLocation[i].mainCharacter;
-                if (CanMeetRequirements(currChar)) {
+				if (currChar.id != character.id && CanMeetRequirements(currChar)) {
                     return true;
                 }
             }
