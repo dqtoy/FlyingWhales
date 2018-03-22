@@ -1136,6 +1136,15 @@ public class BaseLandmark : ILocation, TaskCreator {
 			_itemsInLandmark.Remove (item);
 		}
 	}
+    public void RemoveItemInLandmark(string itemName) {
+        for (int i = 0; i < itemsInLandmark.Count; i++) {
+            ECS.Item currItem = itemsInLandmark[i];
+            if (currItem.itemName.Equals(itemName)) {
+                RemoveItemInLandmark(currItem);
+                break;
+            }
+        }
+    }
     private WeightedDictionary<Item> GetExploreItemWeights() {
         WeightedDictionary<Item> itemWeights = new WeightedDictionary<Item>();
         for (int i = 0; i < _itemsInLandmark.Count; i++) {
@@ -1144,56 +1153,56 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return itemWeights;
     }
-    /*
-     What should happen when this landmark is explored?
-         */
-    public virtual void ExploreLandmark(Character explorer) {
-        //default behaviour is a random item will be given to the explorer based on the landmarks item weights
-        Item generatedItem = GenerateRandomItem();
-        if (generatedItem != null) {
-            if (generatedItem.isObtainable) {
-                if (!explorer.EquipItem(generatedItem)) {
-                    explorer.PickupItem(generatedItem);
-                }
-            } else {
-                //item should only be interacted with
-                StorylineManager.Instance.OnInteractWith(generatedItem.itemName, this, explorer);
-                Log interactLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "interact_item");
-                interactLog.AddToFillers(explorer, explorer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                interactLog.AddToFillers(null, generatedItem.interactString, LOG_IDENTIFIER.OTHER);
-                interactLog.AddToFillers(null, generatedItem.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
-                AddHistory(interactLog);
-                explorer.AddHistory(interactLog);
-            }
+    ///*
+    // What should happen when this landmark is explored?
+    //     */
+    //public virtual void ExploreLandmark(Character explorer) {
+    //    //default behaviour is a random item will be given to the explorer based on the landmarks item weights
+    //    Item generatedItem = GenerateRandomItem();
+    //    if (generatedItem != null) {
+    //        if (generatedItem.isObtainable) {
+    //            if (!explorer.EquipItem(generatedItem)) {
+    //                explorer.PickupItem(generatedItem);
+    //            }
+    //        } else {
+    //            //item should only be interacted with
+    //            StorylineManager.Instance.OnInteractWith(generatedItem, this, explorer);
+    //            Log interactLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "interact_item");
+    //            interactLog.AddToFillers(explorer, explorer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //            interactLog.AddToFillers(null, generatedItem.interactString, LOG_IDENTIFIER.OTHER);
+    //            interactLog.AddToFillers(null, generatedItem.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+    //            AddHistory(interactLog);
+    //            explorer.AddHistory(interactLog);
+    //        }
 
-        }
-    }
-    /*
-     Generate a random item, given the data of this landmark type
-         */
-    public Item GenerateRandomItem() {
-        WeightedDictionary<Item> itemWeights = GetExploreItemWeights();
-        if (itemWeights.GetTotalOfWeights() > 0) {
-            Item chosenItem = itemWeights.PickRandomElementGivenWeights();
-			//Remove item form weights if it is not unlimited
-			RemoveItemInLandmark(chosenItem);
-            return chosenItem;
-            //if (ItemManager.Instance.IsLootChest(chosenItem)) {
-            //    //chosen item is a loot crate, generate a random item
-            //    string[] words = chosenItem.itemName.Split(' ');
-            //    int tier = System.Int32.Parse(words[1]);
-            //    if (chosenItem.itemName.Contains("Armor")) {
-            //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
-            //    }else if (chosenItem.itemName.Contains("Weapon")) {
-            //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
-            //    }
-            //} else {
+    //    }
+    //}
+   // /*
+   //  Generate a random item, given the data of this landmark type
+   //      */
+   // public Item GenerateRandomItem() {
+   //     WeightedDictionary<Item> itemWeights = GetExploreItemWeights();
+   //     if (itemWeights.GetTotalOfWeights() > 0) {
+   //         Item chosenItem = itemWeights.PickRandomElementGivenWeights();
+			////Remove item form weights if it is not unlimited
+			//RemoveItemInLandmark(chosenItem);
+   //         return chosenItem;
+   //         //if (ItemManager.Instance.IsLootChest(chosenItem)) {
+   //         //    //chosen item is a loot crate, generate a random item
+   //         //    string[] words = chosenItem.itemName.Split(' ');
+   //         //    int tier = System.Int32.Parse(words[1]);
+   //         //    if (chosenItem.itemName.Contains("Armor")) {
+   //         //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
+   //         //    }else if (chosenItem.itemName.Contains("Weapon")) {
+   //         //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
+   //         //    }
+   //         //} else {
 
-            //}
+   //         //}
 
-        }
-        return null;
-    }
+   //     }
+   //     return null;
+   // }
 
 	public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
 		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
