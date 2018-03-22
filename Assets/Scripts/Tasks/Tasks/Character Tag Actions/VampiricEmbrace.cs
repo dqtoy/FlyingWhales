@@ -86,7 +86,7 @@ public class VampiricEmbrace : CharacterTask {
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.charactersInRegion.Count; j++) {
-                ECS.Character currChar = character.specificLocation.tileLocation.region.charactersInRegion[j];
+				ECS.Character currChar = currRegion.charactersInRegion[j];
                 if (currChar.id != character.id) {
                     int weight = 0;
                     if (!currChar.HasTag(CHARACTER_TAG.VAMPIRE)) {
