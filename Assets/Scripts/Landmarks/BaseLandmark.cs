@@ -492,7 +492,26 @@ public class BaseLandmark : ILocation, TaskCreator {
             UnScheduleCombatCheck();
         }
     }
-	public int CharactersCount(bool includeHostile = false) {
+    public void ReplaceCharacterAtLocation(ICombatInitializer characterToReplace, ICombatInitializer characterToAdd) {
+        if (_charactersAtLocation.Contains(characterToReplace)) {
+            int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
+            _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
+            _charactersAtLocation.Remove(characterToReplace);
+            if (characterToAdd is Character) {
+                Character currChar = characterToAdd as Character;
+                this.location.RemoveCharacterFromLocation(currChar);
+                currChar.SetSpecificLocation(this);
+            } else if (characterToAdd is Party) {
+                Party currParty = characterToAdd as Party;
+                this.location.RemoveCharacterFromLocation(currParty);
+                currParty.SetSpecificLocation(this);
+            }
+            if (!_hasScheduledCombatCheck) {
+                ScheduleCombatCheck();
+            }
+        }
+    }
+    public int CharactersCount(bool includeHostile = false) {
         int count = 0;
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
 			if (includeHostile && this._owner != null) {

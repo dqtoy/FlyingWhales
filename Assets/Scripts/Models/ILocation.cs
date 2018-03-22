@@ -10,6 +10,7 @@ public interface ILocation {
 
     void AddCharacterToLocation(ICombatInitializer character);
 	void RemoveCharacterFromLocation(ICombatInitializer character);
+    void ReplaceCharacterAtLocation(ICombatInitializer characterToReplace, ICombatInitializer characterToAdd);
 
     void ScheduleCombatCheck();
     void UnScheduleCombatCheck();

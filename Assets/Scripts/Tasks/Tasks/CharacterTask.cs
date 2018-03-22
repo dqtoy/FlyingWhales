@@ -133,7 +133,9 @@ public class CharacterTask {
 			return;
 		}
         //TODO: Remove This after testing
-        character.previousActions.Add(this, StackTraceUtility.ExtractStackTrace());
+        if (!character.previousActions.ContainsKey(this)) {
+            character.previousActions.Add(this, StackTraceUtility.ExtractStackTrace());
+        }
 
         _taskStatus = TASK_STATUS.IN_PROGRESS;
         _assignedCharacter = character;

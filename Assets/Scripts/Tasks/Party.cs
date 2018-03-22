@@ -141,8 +141,10 @@ public class Party: IEncounterable, ICombatInitializer {
         _civiliansByRace = new Dictionary<RACE, int>();
 
         //Debug.Log(partyLeader.name + " has created " + _name);
-		partyLeader.specificLocation.AddCharacterToLocation (this);
-        partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
+        partyLeader.specificLocation.ReplaceCharacterAtLocation(partyLeader, this);
+
+        //partyLeader.specificLocation.AddCharacterToLocation (this);
+        //partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
 
         AddPartyMember(_partyLeader);
         //ConstructMaterialInventory();

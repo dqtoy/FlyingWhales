@@ -3036,31 +3036,31 @@ public class UIManager : MonoBehaviour {
     //    kingdomSummaryGO.SetActive(false);
     //}
 
-    public void ShowAllianceSummary() {
-        //HideKingdomSummary();
-        HideFactionsSummary();
-        HideWarSummary();
-        warAllianceState = "alliance";
-        goAlliance.SetActive(true);
-        UpdateAllianceSummary();
-        SetWorldInfoMenuItemAsSelected(worldInfoAllianceBtn.transform);
-    }
-    public void HideAllianceSummary() {
-        goAlliance.SetActive(false);
-    }
+    //public void ShowAllianceSummary() {
+    //    //HideKingdomSummary();
+    //    HideFactionsSummary();
+    //    HideWarSummary();
+    //    warAllianceState = "alliance";
+    //    goAlliance.SetActive(true);
+    //    UpdateAllianceSummary();
+    //    SetWorldInfoMenuItemAsSelected(worldInfoAllianceBtn.transform);
+    //}
+    //public void HideAllianceSummary() {
+    //    goAlliance.SetActive(false);
+    //}
 
-    public void ShowWarSummary() {
-        //HideKingdomSummary();
-        HideFactionsSummary();
-        HideAllianceSummary();
-        warAllianceState = "warfare";
-        goAlliance.SetActive(true);
-        UpdateAllianceSummary();
-        SetWorldInfoMenuItemAsSelected(worldInfoWarsBtn.transform);
-    }
-    public void HideWarSummary() {
-        goAlliance.SetActive(false);
-    }
+    //public void ShowWarSummary() {
+    //    //HideKingdomSummary();
+    //    HideFactionsSummary();
+    //    HideAllianceSummary();
+    //    warAllianceState = "warfare";
+    //    goAlliance.SetActive(true);
+    //    UpdateAllianceSummary();
+    //    SetWorldInfoMenuItemAsSelected(worldInfoWarsBtn.transform);
+    //}
+    //public void HideWarSummary() {
+    //    goAlliance.SetActive(false);
+    //}
     private void SetWorldInfoMenuItemAsSelected(Transform worldInfoMenuItem) {
         worldInfoSelectedGO.transform.parent = worldInfoMenuItem;
         worldInfoSelectedGO.transform.localPosition = Vector3.zero;
@@ -3227,8 +3227,8 @@ public class UIManager : MonoBehaviour {
     #region Faction Summary
     public void ShowFactionsSummary() {
         factionSummaryUI.ShowFactionSummary();
-        HideAllianceSummary();
-        HideWarSummary();
+        //HideAllianceSummary();
+        //HideWarSummary();
         HideQuestsSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoFactionBtn.transform);
     }
@@ -3406,8 +3406,8 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject questsSummaryGO;
     public void ShowQuestsSummary() {
         HideFactionsSummary();
-        HideAllianceSummary();
-        HideWarSummary();
+        //HideAllianceSummary();
+        //HideWarSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoQuestsBtn.transform);
 		questsSummaryGO.SetActive(true);
 		UpdateQuestsSummary();
