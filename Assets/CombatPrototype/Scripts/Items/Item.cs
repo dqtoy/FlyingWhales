@@ -50,6 +50,10 @@ namespace ECS{
             get { return (itemType != ITEM_TYPE.ITEM ? true : _isObtainable); }
         }
 
+        public int id;
+        public Item() {
+            id = Utilities.SetID(this);
+        }
 
         public void AdjustDurability(int adjustment) {
             currDurability += adjustment;

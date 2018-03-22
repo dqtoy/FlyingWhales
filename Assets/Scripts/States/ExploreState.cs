@@ -24,11 +24,12 @@ public class ExploreState : State {
 		ECS.Item generatedItem = GenerateRandomItem();
 		if (generatedItem != null) {
 			if (generatedItem.isObtainable) {
-				if (!_assignedCharacter.EquipItem(generatedItem)) {
-					_assignedCharacter.PickupItem(generatedItem);
-				}
                 //Remove item form weights if it is not unlimited
                 _targetLandmark.RemoveItemInLandmark(generatedItem);
+
+                if (!_assignedCharacter.EquipItem(generatedItem)) {
+					_assignedCharacter.PickupItem(generatedItem);
+				}
             } else {
                 //item should only be interacted with
                 Log interactLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "interact_item");

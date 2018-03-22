@@ -882,6 +882,9 @@ namespace ECS {
 				newItem = item.CreateNewCopy ();
 				newItem.isUnlimited = false;
 			}
+            if (_inventory.Contains(newItem)) {
+                throw new Exception(this.name + " already has an instance of " + newItem.itemName);
+            }
 			this._inventory.Add (newItem);
 			if(newItem.owner == null){
 				OwnItem (newItem);
@@ -1140,7 +1143,10 @@ namespace ECS {
 			AddItemBonuses (newItem);
 		}
 		internal void RemoveEquippedItem(Item newItem){
-			this._inventory.Add (newItem);
+            if (_inventory.Contains(newItem)) {
+                throw new Exception(this.name + " already has an instance of " + newItem.itemName);
+            }
+            this._inventory.Add (newItem);
 			this._equippedItems.Remove (newItem);
 			newItem.SetEquipped (false);
 			RemoveItemBonuses (newItem);

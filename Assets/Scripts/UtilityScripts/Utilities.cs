@@ -26,6 +26,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastFactionID = 0;
     public static int lastCharacterID = 0;
     public static int lastQuestID = 0;
+    public static int lastItemID = 0;
     public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
 
@@ -87,6 +88,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is OldQuest.Quest) {
             lastQuestID += 1;
             return lastQuestID;
+        } else if (obj is ECS.Item) {
+            lastItemID += 1;
+            return lastItemID;
         }
         return 0;
 	}
