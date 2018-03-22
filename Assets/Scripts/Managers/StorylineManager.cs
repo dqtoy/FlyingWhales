@@ -145,11 +145,11 @@ public class StorylineManager : MonoBehaviour {
     /*
      Trigger specific events when an item is interacted with
          */
-    public void OnInteractWith(string itemName, BaseLandmark location, ECS.Character interacter) {
+    public void OnInteractWith(ECS.Item item, BaseLandmark location, ECS.Character interacter) {
         //TODO: Add storyline triggers when a character interacts with a specific item
-        switch (itemName) {
+        switch (item.itemName) {
             case "Vampire Coffin":
-                AwakenAncientVampire(location, interacter);
+                AwakenAncientVampire(item, location, interacter);
                 break;
             default:
                 break;
@@ -158,7 +158,7 @@ public class StorylineManager : MonoBehaviour {
     #endregion
 
     #region Ancient Vampire
-    private void AwakenAncientVampire(BaseLandmark location, ECS.Character interacter) {
+    private void AwakenAncientVampire(ECS.Item item, BaseLandmark location, ECS.Character interacter) {
         //Get the ancient vampire at the location
         ECS.Character ancientVampire = null;
         for (int i = 0; i < location.charactersAtLocation.Count; i++) {
@@ -174,14 +174,19 @@ public class StorylineManager : MonoBehaviour {
         if (ancientVampire.currentTask.taskType != TASK_TYPE.HIBERNATE) {
             throw new System.Exception("Vampire is not hibernating!");
         }
+
+        AncientVampireAwakened(location, ancientVampire);
+
         //end the hibernation of the ancient vampire
         ancientVampire.currentTask.EndTask(TASK_STATUS.SUCCESS);
+    }
+    public void AncientVampireAwakened(BaseLandmark location, ECS.Character ancientVampire) {
+        location.RemoveItemInLandmark("Vampire Coffin");
         Log awakenLog = new Log(GameManager.Instance.Today(), "Quests", "AncientVampire", "awaken");
-        awakenLog.AddToFillers(interacter, interacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        awakenLog.AddToFillers(ancientVampire, ancientVampire.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        interacter.AddHistory(awakenLog);
+        awakenLog.AddToFillers(ancientVampire, ancientVampire.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         ancientVampire.AddHistory(awakenLog);
         location.AddHistory(awakenLog);
+        (ancientVampire.role as AncientVampire).OnAwakened();
     }
     #endregion
 }

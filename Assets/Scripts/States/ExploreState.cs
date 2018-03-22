@@ -27,15 +27,18 @@ public class ExploreState : State {
 				if (!_assignedCharacter.EquipItem(generatedItem)) {
 					_assignedCharacter.PickupItem(generatedItem);
 				}
-			} else {
-				//item should only be interacted with
-				StorylineManager.Instance.OnInteractWith(generatedItem.itemName, _targetLandmark, _assignedCharacter);
-				Log interactLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "interact_item");
-				interactLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-				interactLog.AddToFillers(null, generatedItem.interactString, LOG_IDENTIFIER.OTHER);
-				interactLog.AddToFillers(null, generatedItem.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
-				_targetLandmark.AddHistory(interactLog);
-				_assignedCharacter.AddHistory(interactLog);
+                //Remove item form weights if it is not unlimited
+                _targetLandmark.RemoveItemInLandmark(generatedItem);
+            } else {
+                //item should only be interacted with
+                Log interactLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "interact_item");
+                interactLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                interactLog.AddToFillers(null, generatedItem.interactString, LOG_IDENTIFIER.OTHER);
+                interactLog.AddToFillers(null, generatedItem.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+                _targetLandmark.AddHistory(interactLog);
+                _assignedCharacter.AddHistory(interactLog);
+                
+                StorylineManager.Instance.OnInteractWith(generatedItem, _targetLandmark, _assignedCharacter);
 			}
 		}
 
@@ -52,8 +55,6 @@ public class ExploreState : State {
 		WeightedDictionary<ECS.Item> itemWeights = GetExploreItemWeights();
 		if (itemWeights.GetTotalOfWeights() > 0) {
 			ECS.Item chosenItem = itemWeights.PickRandomElementGivenWeights();
-			//Remove item form weights if it is not unlimited
-			_targetLandmark.RemoveItemInLandmark(chosenItem);
 			return chosenItem;
 		}
 		return null;

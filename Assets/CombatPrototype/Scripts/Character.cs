@@ -11,7 +11,10 @@ namespace ECS {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
-		[SerializeField] private string _name;
+        public delegate void OnTaskChanged();
+        private OnTaskChanged onTaskChanged; //What should happen if a character chooses to change it's task
+
+        [SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
         [System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
@@ -2345,9 +2348,23 @@ namespace ECS {
 			_activeQuests.Remove(quest);
 		}
 		public void SetCurrentTask(CharacterTask currentTask) {
-			_currentTask = currentTask;
-		}
-		public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
+            if (_currentTask == null || _currentTask != currentTask) {
+                if (onTaskChanged != null) {
+                    onTaskChanged();
+                }
+            }
+            _currentTask = currentTask;
+        }
+        public void AddActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
+            onTaskChanged += onTaskChangeAction;
+        }
+        public void RemoveActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
+            onTaskChanged -= onTaskChangeAction;
+        }
+        public void ResetOnTaskChangedActions() {
+            onTaskChanged = null;
+        }
+        public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
 			List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
 			for (int i = 0; i < _activeQuests.Count; i++) {
 				OldQuest.Quest currQuest = _activeQuests[i];

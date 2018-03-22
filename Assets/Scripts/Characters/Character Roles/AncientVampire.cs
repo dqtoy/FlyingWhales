@@ -19,7 +19,20 @@ public class AncientVampire : CharacterRole {
     #region overrides
     public override void OnAssignRole() {
         base.OnAssignRole();
-        _character.SetTaskToDoNext(_defaultRoleTask); //Set ancient vampire to be initially hibernating
+        character.SetTaskToDoNext(_defaultRoleTask); //Set ancient vampire to be initially hibernating
+        character.AddActionOnTaskChanged(AddAwakenSelf);
     }
     #endregion
+
+    private void AddAwakenSelf() {
+        character.RemoveActionOnTaskChanged(AddAwakenSelf);
+        character.AddActionOnTaskChanged(AwakenSelf);
+    }
+
+    public void OnAwakened() {
+        character.RemoveActionOnTaskChanged(AwakenSelf);
+    }
+    private void AwakenSelf() {
+        StorylineManager.Instance.AncientVampireAwakened(character.specificLocation as BaseLandmark, character);
+    }
 }
