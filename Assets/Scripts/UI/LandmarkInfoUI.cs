@@ -190,9 +190,8 @@ public class LandmarkInfoUI : UIMenu {
 
 		text += "\n[b]Traces:[/b] ";
 		if(currentlyShowingLandmark.characterTraces.Count > 0){
-			for (int i = 0; i < currentlyShowingLandmark.characterTraces.Count; i++) {
-				ECS.Character trace = currentlyShowingLandmark.characterTraces [i];
-				text += "\n" + trace.urlName;
+			foreach (ECS.Character character in currentlyShowingLandmark.characterTraces.Keys) {
+				text += "\n" + character.urlName + ", " + currentlyShowingLandmark.characterTraces[character].ToStringDate();
 			}
 		} else {
 			text += "NONE";

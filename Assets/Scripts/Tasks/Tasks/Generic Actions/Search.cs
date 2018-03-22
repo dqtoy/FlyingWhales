@@ -45,8 +45,8 @@ public class Search : CharacterTask {
     #region overrides
     public override CharacterTask CloneTask() {
 		Search clonedTask = new Search(_createdBy, _defaultDaysLeft, _searchingFor, _targetLocation, _parentQuest, _stance);
-		SetForGameOnly (_forGameOnly);
-		SetForPlayerOnly (_forPlayerOnly);
+		clonedTask.SetForGameOnly (_forGameOnly);
+		clonedTask.SetForPlayerOnly (_forPlayerOnly);
         return clonedTask;
     }
     public override bool CanBeDone(Character character, ILocation location) {

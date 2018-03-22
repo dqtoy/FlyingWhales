@@ -28,8 +28,8 @@ public class Collect : CharacterTask {
 	#region overrides
 	public override CharacterTask CloneTask() {
 		Collect clonedTask = new Collect(_createdBy, _itemNameToCollect, _quantityToCollect, _targetLocation, _defaultDaysLeft, _parentQuest, _stance);
-		SetForGameOnly (_forGameOnly);
-		SetForPlayerOnly (_forPlayerOnly);
+		clonedTask.SetForGameOnly (_forGameOnly);
+		clonedTask.SetForPlayerOnly (_forPlayerOnly);
 		return clonedTask;
 	}
 	public override bool CanBeDone(Character character, ILocation location) {

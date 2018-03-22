@@ -109,10 +109,10 @@ public class VampiricEmbrace : CharacterTask {
                 }
             }
         }
-        if (_characterWeights.GetTotalOfWeights() > 0) {
-            return _characterWeights.PickRandomElementGivenWeights();
-        }
-        return null;
+		if(_characterWeights.GetTotalOfWeights() > 0){
+			return _characterWeights.PickRandomElementGivenWeights();
+		}
+		return null;
     }
     #endregion
 
