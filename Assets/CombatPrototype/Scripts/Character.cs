@@ -916,7 +916,6 @@ namespace ECS {
             ILocation location = specificLocation;
             if (location != null && location is BaseLandmark) {
                 BaseLandmark landmark = (BaseLandmark)location;
-                landmark.AddItemInLandmark(item);
                 Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
                 dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
