@@ -82,7 +82,7 @@ public class MoveTo : CharacterTask {
         base.GetLandmarkTarget(character);
         Region regionOfChar = character.specificLocation.tileLocation.region;
         for (int i = 0; i < regionOfChar.adjacentRegionsViaMajorRoad.Count; i++) {
-            Region adjacentRegion = regionOfChar.adjacentRegions[i];
+			Region adjacentRegion = regionOfChar.adjacentRegionsViaMajorRoad[i];
             int weight = 50 +  (50 * adjacentRegion.adjacentRegionsViaMajorRoad.Where(x => x.id != regionOfChar.id).Count()); //Each Adjacent Settlement: 50 + (50 x NoAdjacentSettlements)
             if (adjacentRegion.mainLandmark.HasHostilitiesWith(character.faction, true)) {
                 weight -= 50; //If Adjacent Settlement is hostile: -30
