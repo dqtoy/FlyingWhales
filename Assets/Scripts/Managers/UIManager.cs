@@ -276,9 +276,10 @@ public class UIManager : MonoBehaviour {
     [Header("World Info Menu")]
     [SerializeField] private GameObject worldInfoSelectedGO;
     [SerializeField] private GameObject worldInfoFactionBtn;
-    [SerializeField] private GameObject worldInfoAllianceBtn;
-    [SerializeField] private GameObject worldInfoWarsBtn;
+    //[SerializeField] private GameObject worldInfoAllianceBtn;
+    //[SerializeField] private GameObject worldInfoWarsBtn;
     [SerializeField] private GameObject worldInfoQuestsBtn;
+    [SerializeField] private GameObject worldInfoStorylinesBtn;
 
     [Space(10)]
     [Header("World History Menu")]
@@ -3227,8 +3228,7 @@ public class UIManager : MonoBehaviour {
     #region Faction Summary
     public void ShowFactionsSummary() {
         factionSummaryUI.ShowFactionSummary();
-        //HideAllianceSummary();
-        //HideWarSummary();
+        HideStorylinesSummary();
         HideQuestsSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoFactionBtn.transform);
     }
@@ -3406,8 +3406,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject questsSummaryGO;
     public void ShowQuestsSummary() {
         HideFactionsSummary();
-        //HideAllianceSummary();
-        //HideWarSummary();
+        HideStorylinesSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoQuestsBtn.transform);
 		questsSummaryGO.SetActive(true);
 		UpdateQuestsSummary();
@@ -3433,6 +3432,23 @@ public class UIManager : MonoBehaviour {
         }
         questsSummaryLbl.text = questSummary;
 		questsSummaryLbl.ResizeCollider ();
+    }
+    #endregion
+
+    #region Storylines Summary
+    [Space(10)]
+    [Header("Storylines Summary")]
+    [SerializeField] private GameObject storylinesSummaryGO;
+    [SerializeField] private StorylinesSummaryMenu storylinesSummaryMenu;
+    public void ShowStorylinesSummary() {
+        HideFactionsSummary();
+        HideQuestsSummary();
+        SetWorldInfoMenuItemAsSelected(worldInfoStorylinesBtn.transform);
+        storylinesSummaryMenu.ShowMenu();
+        //UpdateQuestsSummary();
+    }
+    public void HideStorylinesSummary() {
+        storylinesSummaryMenu.HideMenu();
     }
     #endregion
 }
