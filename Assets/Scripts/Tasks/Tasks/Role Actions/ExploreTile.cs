@@ -37,7 +37,26 @@ public class ExploreTile : CharacterTask {
 			EndTask (TASK_STATUS.FAIL);
 		}
 	}
-	public override bool CanBeDone (ECS.Character character, ILocation location){
+    public override void PerformTask() { //Everyday action of the task
+        if (!CanPerformTask()) {
+            return;
+        }
+        if (_currentState != null) {
+            if (_currentState.stateType == STATE.EXPLORE) {
+                if (Random.Range(0, 100) < 18) {
+                    _currentState.PerformStateAction();
+                }
+            } else {
+                _currentState.PerformStateAction();
+            }
+        }
+        if (_daysLeft == 0) {
+            EndTaskSuccess();
+            return;
+        }
+        ReduceDaysLeft(1);
+    }
+    public override bool CanBeDone (ECS.Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile is DungeonLandmark){
             return true;
         }
