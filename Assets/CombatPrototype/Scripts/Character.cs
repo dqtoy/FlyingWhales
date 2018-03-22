@@ -2670,6 +2670,7 @@ namespace ECS {
                 prisonerOf.RemovePrisoner(this);
                 location = prisonerOf;
             }
+			this._specificLocation = location;
 
             SetPrisoner(false, null);
 
