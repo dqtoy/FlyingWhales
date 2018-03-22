@@ -733,7 +733,10 @@ namespace ECS {
                 //CheckForInternationalIncident();
 
                 if (this._party != null) {
-                    this._party.RemovePartyMember(this, true);
+					this._party.RemovePartyMember(this, true);
+					if(this._party.partyLeader.id == this._id){
+						this._party.DisbandParty ();
+					}
 				}else{
 					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
