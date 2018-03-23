@@ -10,7 +10,7 @@ public class GoToLocation : TaskAction {
     public HexTile targetTile {
         get {
             if (targetLocation is BaseLandmark) {
-                return (targetLocation as BaseLandmark).location;
+				return (targetLocation as BaseLandmark).tileLocation;
             } else {
                 return (targetLocation as HexTile);
             }

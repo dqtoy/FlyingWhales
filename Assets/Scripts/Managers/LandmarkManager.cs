@@ -140,7 +140,7 @@ public class LandmarkManager : MonoBehaviour {
             //Tiles that are within 2 tiles of a landmark tile, cannot be landmarks
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
-                tilesToRemove = currLandmark.location.GetTilesInRange(2);
+				tilesToRemove = currLandmark.tileLocation.GetTilesInRange(2);
                 Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
             }
         }
@@ -216,8 +216,8 @@ public class LandmarkManager : MonoBehaviour {
         elligibleTilesToConnectTo.Add(location.region.centerOfMass);
         for (int i = 0; i < location.region.landmarks.Count; i++) {
             BaseLandmark currLandmark = location.region.landmarks[i];
-            if (currLandmark.location.id != location.id) {
-                elligibleTilesToConnectTo.Add(currLandmark.location);
+			if (currLandmark.tileLocation.id != location.id) {
+				elligibleTilesToConnectTo.Add(currLandmark.tileLocation);
             }
         }
         List<HexTile> nearestPath = null;
@@ -286,7 +286,7 @@ public class LandmarkManager : MonoBehaviour {
         if(landmark is Settlement) {
             settlement = landmark as Settlement;
         } else {
-            settlement = landmark.location.region.mainLandmark as Settlement;
+			settlement = landmark.tileLocation.region.mainLandmark as Settlement;
         }
         for (int i = 1; i < allClasses.Length; i++) {
             CHARACTER_CLASS charClass = allClasses[i];
@@ -308,7 +308,7 @@ public class LandmarkManager : MonoBehaviour {
         if (landmark is Settlement) {
             settlement = landmark as Settlement;
         } else {
-            settlement = landmark.location.region.mainLandmark as Settlement;
+			settlement = landmark.tileLocation.region.mainLandmark as Settlement;
         }
         for (int i = 1; i < allClasses.Length; i++) {
             CHARACTER_CLASS charClass = allClasses[i];

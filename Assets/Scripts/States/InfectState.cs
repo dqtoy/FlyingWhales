@@ -22,9 +22,9 @@ public class InfectState : State {
 	#endregion
 
 	private void InfectPsytoxinToLandmark(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => InfectPsytoxinToLandmark ());
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => InfectPsytoxinToLandmark ());
+//		}
 		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
 			if(_targetLandmark.charactersAtLocation[i] is Party){
 				Party party = (Party)_targetLandmark.charactersAtLocation [i];

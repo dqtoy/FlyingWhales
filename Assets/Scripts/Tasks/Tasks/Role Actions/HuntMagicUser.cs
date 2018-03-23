@@ -16,7 +16,7 @@ public class HuntMagicUser : CharacterTask {
         };
         _states = new Dictionary<STATE, State> {
             {STATE.MOVE, new MoveState(this)},
-            {STATE.HUNT_MAGIC_USER, new HuntMagicUserState(this)}
+            {STATE.ATTACK, new AttackState(this, null)}
         };
     }
 
@@ -36,7 +36,7 @@ public class HuntMagicUser : CharacterTask {
 			}
 			if (_targetLocation != null) {
                 ChangeStateTo(STATE.MOVE);
-				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => ChangeStateTo(STATE.HUNT_MAGIC_USER));
+				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => ChangeStateTo(STATE.ATTACK));
 			}else{
 				EndTask (TASK_STATUS.FAIL);
 			}

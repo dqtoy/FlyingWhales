@@ -140,11 +140,10 @@ public class CharacterAvatar : PooledObject{
             return;
         }
         if (path != null && path.Count > 0) {
-			if (this.specificLocation.tileLocation == null) {
-                throw new Exception("Curr location of avatar is null! Is Initialized: " + _isInitialized.ToString());
-            }
+//			if (this.specificLocation.tileLocation == null) {
+//                throw new Exception("Curr location of avatar is null! Is Initialized: " + _isInitialized.ToString());
+//            }
 			if(this.specificLocation.tileLocation.landmarkOnTile != null){
-
                 Log leftLog = null;
                 if (_mainCharacter.party != null){
                     leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location_party");
@@ -169,10 +168,10 @@ public class CharacterAvatar : PooledObject{
         }
     }
     internal virtual void NewMove() {
-		if(_characters[0].isInCombat){
-			_characters[0].SetCurrentFunction (() => NewMove ());
-			return;
-		}
+//		if(_characters[0].isInCombat){
+//			_characters[0].SetCurrentFunction (() => NewMove ());
+//			return;
+//		}
 
         if (this.targetLocation != null) {
             if (this.path != null) {
@@ -214,7 +213,7 @@ public class CharacterAvatar : PooledObject{
         HasArrivedAtTargetLocation();
     }
     internal virtual void HasArrivedAtTargetLocation() {
-		if (this.specificLocation.tileLocation == targetLocation.tileLocation) {
+		if (this.specificLocation.tileLocation.id == targetLocation.tileLocation.id) {
             if (!this._hasArrived) {
                 _isTravelling = false;
                 AddCharactersToLocation(targetLocation);
@@ -257,7 +256,9 @@ public class CharacterAvatar : PooledObject{
 				queuedAction ();
 				queuedAction = null;
 			}
-            _characters[0].DestroyAvatar(); //Destroy this avatar once it reaches it's destination
+			if(_characters.Count > 0){
+				_characters[0].DestroyAvatar(); //Destroy this avatar once it reaches it's destination
+			}
 		}else{
 			if(queuedAction != null){
 				queuedAction ();
@@ -288,12 +289,15 @@ public class CharacterAvatar : PooledObject{
      using this avatar to null, then return this object back to the pool.
          */
     public void DestroyObject() {
-        for (int i = 0; i < _characters.Count; i++) {
-            ECS.Character currCharacter = _characters[i];
-            currCharacter.SetAvatar(null);
-        }
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
+	public void InstantDestroyAvatar(){
+		for (int i = 0; i < _characters.Count; i++) {
+			_characters [i].SetAvatar (null);
+		}
+		_characters.Clear ();
+		DestroyObject ();
+	}
     private void RevealRoads() {
 		this.specificLocation.tileLocation.SetRoadState(true);
     }

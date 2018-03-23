@@ -18,6 +18,9 @@ public class QuestData {
     public List<CharacterTask> tasks {
         get { return _tasks; }
     }
+	public int currentPhase {
+		get { return _currentPhase; }
+	}
     #endregion
 
     public QuestData(ECS.Character owner) {
@@ -59,7 +62,7 @@ public class QuestData {
     public QuestPhase GetQuestPhase() {
         return _activeQuest.phases[_currentPhase];
     }
-    private void EndQuest(TASK_STATUS taskStatus) {
+    public void EndQuest(TASK_STATUS taskStatus) {
         _activeQuest.EndQuest(taskStatus, _owner);
     }
     //private List<CharacterTask> GetAllTasks() {

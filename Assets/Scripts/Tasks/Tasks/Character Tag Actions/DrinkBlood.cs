@@ -92,10 +92,10 @@ public class DrinkBlood : CharacterTask {
     #endregion
 
     private void StartDrinkingBlood() {
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartDrinkingBlood ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartDrinkingBlood ());
+//			return;
+//		}
         ChangeStateTo(STATE.DRINK_BLOOD);
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

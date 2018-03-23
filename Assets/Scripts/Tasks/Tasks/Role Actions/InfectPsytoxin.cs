@@ -26,10 +26,10 @@ public class InfectPsytoxin : CharacterTask {
 	#endregion
 
 	private void StartInfection(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartInfection ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartInfection ());
+//			return;
+//		}
 		ChangeStateTo (STATE.INFECT);
 	}
 }

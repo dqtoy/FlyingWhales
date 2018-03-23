@@ -35,6 +35,5 @@ public class GoHome : CharacterTask {
 
 	private void SuccessTask(){
 		EndTask (TASK_STATUS.SUCCESS);
-        _assignedCharacter.DestroyAvatar();
     }
 }

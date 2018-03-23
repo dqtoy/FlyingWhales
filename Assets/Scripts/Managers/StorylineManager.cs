@@ -170,7 +170,7 @@ public class StorylineManager : MonoBehaviour {
             }
         }
         if (ancientVampire == null) {
-            throw new System.Exception("There is no ancient vampire at " + location.tileLocation.name);
+            throw new System.Exception("There is no ancient vampire at " + location.locationName);
         }
         if (ancientVampire.currentTask.taskType != TASK_TYPE.HIBERNATE) {
             throw new System.Exception("Vampire is not hibernating!");

@@ -64,7 +64,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     public override void SetData(object data) {
         base.SetData(data);
-        UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).location);
+		UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).tileLocation);
         //ShowPlayerActions();
         if (isShowing) {
             UpdateLandmarkInfo();
@@ -79,9 +79,9 @@ public class LandmarkInfoUI : UIMenu {
 		if (currentlyShowingLandmark.landmarkName != string.Empty) {
 			text += "[b]Name:[/b] " + currentlyShowingLandmark.landmarkName + "\n";
 		}
-		text += "[b]Location:[/b] " + currentlyShowingLandmark.location.urlName;
+		text += "[b]Location:[/b] " + currentlyShowingLandmark.tileLocation.urlName;
         text += "\n[b]Landmark Type:[/b] " + Utilities.NormalizeString(currentlyShowingLandmark.specificLandmarkType.ToString());
-        text += "\n[b]Material:[/b] " + currentlyShowingLandmark.location.materialOnTile.ToString();
+		text += "\n[b]Material:[/b] " + currentlyShowingLandmark.tileLocation.materialOnTile.ToString();
         text += "\n[b]Made of Material:[/b] " + currentlyShowingLandmark.materialMadeOf.ToString();
         text += "\n[b]Durability:[/b] " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
         text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
@@ -92,7 +92,7 @@ public class LandmarkInfoUI : UIMenu {
             text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
             text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
             text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.civilians.ToString() + "[/url]";
-            text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.location.region.populationGrowth).ToString();
+			text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
 
             if (currentlyShowingLandmark is Settlement) {
       //          text += "\n[b]Quest Board: [/b] ";
@@ -155,9 +155,9 @@ public class LandmarkInfoUI : UIMenu {
 			text += "NONE";
 		}
         text += "\n[b]Characters At Tile: [/b] ";
-        if (currentlyShowingLandmark.location.charactersAtLocation.Count > 0) {
-            for (int i = 0; i < currentlyShowingLandmark.location.charactersAtLocation.Count; i++) {
-                object currObject = currentlyShowingLandmark.location.charactersAtLocation[i];
+		if (currentlyShowingLandmark.tileLocation.charactersAtLocation.Count > 0) {
+			for (int i = 0; i < currentlyShowingLandmark.tileLocation.charactersAtLocation.Count; i++) {
+				object currObject = currentlyShowingLandmark.tileLocation.charactersAtLocation[i];
                 if (currObject is ECS.Character) {
                     ECS.Character currChar = (ECS.Character)currObject;
                     text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
@@ -291,7 +291,7 @@ public class LandmarkInfoUI : UIMenu {
 		expandBtnGO.SetActive (false);
 	}
 	public void OnClickExploreRegionBtn(){
-		currentlyShowingLandmark.location.region.centerOfMass
+		currentlyShowingLandmark.tileLocation.region.centerOfMass
             .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingLandmark);
         exploreBtnGO.SetActive(false);
     }

@@ -41,7 +41,7 @@ public class UpgradeGear : CharacterTask {
     }
 	public override bool CanBeDone (ECS.Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && character.faction != null && location.tileLocation.landmarkOnTile is Settlement){
-			Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
+			if(location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
 			if(settlement.owner != null && !settlement.HasHostilitiesWith(character)){
 				return true;
 			}

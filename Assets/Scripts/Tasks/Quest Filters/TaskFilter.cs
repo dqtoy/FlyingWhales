@@ -221,3 +221,21 @@ public class MustNotBeCharacter : TaskFilter {
     }
     #endregion
 }
+
+public class MustHaveItem : TaskFilter {
+
+	private string _itemName;
+
+	public MustHaveItem(string itemName) {
+		_itemName = itemName;
+	}
+
+	#region overrides
+	public override bool MeetsRequirements(ECS.Character character) {
+		if(character.GetItemInAll(_itemName) != null) {
+			return true;
+		}
+		return false;
+	}
+	#endregion
+}

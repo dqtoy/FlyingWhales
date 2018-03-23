@@ -31,7 +31,7 @@ public class RazeState : State {
 		string result = razeResult.PickRandomElementGivenWeights ();
 		if(result == "success"){
 			_targetLandmark.KillAllCivilians ();
-			_targetLandmark.location.RuinStructureOnTile (false);
+			_targetLandmark.tileLocation.RuinStructureOnTile (false);
 			Log successLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Raze", "success");
 			successLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			successLog.AddToFillers(_targetLandmark, _targetLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);

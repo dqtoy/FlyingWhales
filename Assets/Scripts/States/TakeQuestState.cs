@@ -11,11 +11,16 @@ public class TakeQuestState : State {
         if (parentTask.specificTarget == null) {
             //Get target quest based on weights
             WeightedDictionary<Quest> questWeights = GetQuestsDictionary(_assignedCharacter);
-            questWeights.PickRandomElementGivenWeights().AcceptQuest(_assignedCharacter);
+			if(questWeights.Count > 0){
+				questWeights.PickRandomElementGivenWeights().AcceptQuest(_assignedCharacter);
+			}else{
+				parentTask.EndTaskFail();
+				return false;
+			}
         } else {
             (parentTask.specificTarget as Quest).AcceptQuest(_assignedCharacter);
         }
-        parentTask.EndTask(TASK_STATUS.SUCCESS);
+		parentTask.EndTaskSuccess();
         return true;
     }
     #endregion

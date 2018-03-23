@@ -299,8 +299,8 @@ public class Faction {
 		List<BaseLandmark> allPossibleLandmarksToAttack = new List<BaseLandmark> ();
 		for (int i = 0; i < _settlements.Count; i++) {
 			BaseLandmark settlement = _settlements[i];
-			for (int j = 0; j < settlement.location.region.landmarks.Count; j++) {
-				BaseLandmark regionLandmark = settlement.location.region.landmarks [j];
+			for (int j = 0; j < settlement.tileLocation.region.landmarks.Count; j++) {
+				BaseLandmark regionLandmark = settlement.tileLocation.region.landmarks [j];
 				if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
 					FactionRelationship factionRel = GetRelationshipWith(regionLandmark.owner);
 					if (factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
@@ -310,9 +310,9 @@ public class Faction {
 					}
 				}
 			}
-			for (int j = 0; j < settlement.location.region.connections.Count; j++) {
-				if(settlement.location.region.connections[j] is Region){
-					Region adjacentRegion = (Region)settlement.location.region.connections [j];
+			for (int j = 0; j < settlement.tileLocation.region.connections.Count; j++) {
+				if(settlement.tileLocation.region.connections[j] is Region){
+					Region adjacentRegion = settlement.tileLocation.region.connections [j] as Region;
 					if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
 						FactionRelationship factionRel = GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
 						if (factionRel != null && factionRel.isAtWar) {
@@ -380,7 +380,7 @@ public class Faction {
         int count = 0;
         for (int i = 0; i < settlements.Count; i++) {
             Settlement currSettlement = settlements[i];
-            Region regionOfSettlement = currSettlement.location.region;
+			Region regionOfSettlement = currSettlement.tileLocation.region;
             if(exceptRegion != null) {
                 if(regionOfSettlement.id == exceptRegion.id) {
                     //Skip this region

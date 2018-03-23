@@ -138,11 +138,10 @@ public class Rest : CharacterTask {
     #endregion
 
     private void StartRest(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartRest ());
-			return;
-		}
-		_assignedCharacter.DestroyAvatar ();
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartRest ());
+//			return;
+//		}
 		ChangeStateTo (STATE.REST);
 	}
 	private bool CheckIfCharactersAreFullyRested(List<ECS.Character> charactersToRest) {

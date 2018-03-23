@@ -21,7 +21,7 @@ public class TerminallyIll : CharacterTag {
 
 	private void DeathCheck(){
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 1){
+		if(chance < 2){
 			_character.Death ();
 		}else{
 			ScheduleDeathCheck ();

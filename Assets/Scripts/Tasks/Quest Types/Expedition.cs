@@ -20,7 +20,7 @@ public class Expedition : OldQuest.Quest {
 
     private HexTile GetTargetHexTile() {
         WeightedDictionary<HexTile> tileWeights = new WeightedDictionary<HexTile>();
-        List<HexTile> tilesInRange = _postedAt.location.GetTilesInRange(40); //Limit to within 250 tiles around the settlement
+		List<HexTile> tilesInRange = _postedAt.tileLocation.GetTilesInRange(40); //Limit to within 250 tiles around the settlement
         PRODUCTION_TYPE prodTypeToUse;
         if (_productionType.Equals("FOOD")) {
             prodTypeToUse = PRODUCTION_TYPE.TRAINING;
@@ -42,7 +42,7 @@ public class Expedition : OldQuest.Quest {
                     }
                 }
                 int weightForTile = 500;
-                List<HexTile> path = PathGenerator.Instance.GetPath(_postedAt.location, currTile, PATHFINDING_MODE.NORMAL);
+				List<HexTile> path = PathGenerator.Instance.GetPath(_postedAt.tileLocation, currTile, PATHFINDING_MODE.NORMAL);
                 if(path != null) {
                     weightForTile -= 2 * path.Count; //-2 weight for every tile distance away from settlement
                     Faction regionOwner = currTile.region.owner;

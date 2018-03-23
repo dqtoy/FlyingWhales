@@ -26,7 +26,7 @@ public class ResourceLandmark : BaseLandmark {
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
         //Create structures on location
-        location.CreateStructureOnTile(faction, _materialData.structure.structureType);
+		tileLocation.CreateStructureOnTile(faction, _materialData.structure.structureType);
         //StartResourceProduction();
     }
     //public override void UnoccupyLandmark() {

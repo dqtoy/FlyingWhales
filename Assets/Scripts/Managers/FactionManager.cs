@@ -194,7 +194,7 @@ public class FactionManager : MonoBehaviour {
     private List<Region> GetElligibleRegionsForFaction(Faction faction) {
         List<Region> elligibleRegions = new List<Region>();
         for (int i = 0; i < faction.settlements.Count; i++) {
-            Region regionOfSettlement = faction.settlements[i].location.region;
+			Region regionOfSettlement = faction.settlements[i].tileLocation.region;
             for (int j = 0; j < regionOfSettlement.adjacentRegions.Count; j++) {
                 Region adjacentRegion = regionOfSettlement.adjacentRegions[j];
                 if (adjacentRegion.owner == null && !elligibleRegions.Contains(adjacentRegion)) {
@@ -275,7 +275,7 @@ public class FactionManager : MonoBehaviour {
                 newLandmark.OccupyLandmark(faction);
                 newLandmark.AdjustCivilians(faction.race, Random.Range(5, 11)); //Each one should have between 5 to 10 civilians.
                 settlement.AddLandmarkAsOwned(newLandmark);
-                List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.location);
+				List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.tileLocation);
                 RoadManager.Instance.CreateRoad(road, ROAD_TYPE.MINOR);
             }
         }

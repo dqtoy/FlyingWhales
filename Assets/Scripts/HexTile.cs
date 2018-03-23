@@ -1568,7 +1568,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             if (currConnection is Region) {
                 text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
             } else {
-                text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
+				text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).tileLocation.name;
             }
         }
         UIManager.Instance.ShowSmallInfo(text);
@@ -2142,7 +2142,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currGroup = _charactersAtLocation[i];
-            if (currGroup.currentTask is Attack) {
+            if (currGroup.currentTask is Invade) {
                 groups.Add(currGroup);
             }
         }

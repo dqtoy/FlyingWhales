@@ -109,11 +109,10 @@ public class Search : CharacterTask {
     #endregion
 
 	private void StartSearch(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartSearch ());
-			return;
-		}
-        _assignedCharacter.DestroyAvatar ();
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartSearch ());
+//			return;
+//		}
         Log startSearchLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Search", "start_search");
         startSearchLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startSearchLog.AddToFillers(null, searchingForLog, LOG_IDENTIFIER.OTHER);

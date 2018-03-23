@@ -129,7 +129,9 @@ public class Quest {
         _isDone = true;
         QuestManager.Instance.RemoveQuestFromAvailableQuests(this);
         UnregisterAcceptedCharacters();
-        endedBy.DetermineAction();
+		if(endedBy != null){
+			endedBy.DetermineAction();
+		}
     }
     protected virtual void QuestFail(ECS.Character endedBy) {
         
@@ -501,7 +503,7 @@ namespace OldQuest{
             AddNewLog("Party " + party.name + " is now assigned to this quest.");
             if (_assignedParty.partyLeader.avatar == null) {
                 _assignedParty.partyLeader.CreateNewAvatar();//Characters that have accepted a OldQuest.Quest should have icon already even if they are still forming party in the city
-                _assignedParty.SetAvatar(_assignedParty.partyLeader.avatar);
+//                _assignedParty.SetAvatar(_assignedParty.partyLeader.avatar);
             }
             if (_assignedParty.isFull) {
                 //Party is already full, Start the quest

@@ -94,12 +94,11 @@ public class Hypnotize : CharacterTask {
     #endregion
 
     private void StartHypnotize(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartHypnotize ());
-			return;
-		}
-		_assignedCharacter.DestroyAvatar ();
-		if(_targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartHypnotize ());
+//			return;
+//		}
+		if(_targetCharacter.specificLocation == _targetLandmark){
             ChangeStateTo(STATE.HYPNOTIZE);
             Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hypnotize", "start");
             startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -56,9 +56,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public string urlName {
 		get { return "[url=" + this._id.ToString() + "_landmark]" + _landmarkName + "[/url]"; }
 	}
-    public HexTile location {
-        get { return _location; }
-    }
     public LANDMARK_TYPE specificLandmarkType {
         get { return _specificLandmarkType; }
     }
@@ -467,11 +464,11 @@ public class BaseLandmark : ILocation, TaskCreator {
             _charactersAtLocation.Add(character);
             if (character is Character) {
                 Character currChar = character as Character;
-                this.location.RemoveCharacterFromLocation(currChar);
+				this.tileLocation.RemoveCharacterFromLocation(currChar);
                 currChar.SetSpecificLocation(this);
             } else if (character is Party) {
                 Party currParty = character as Party;
-                this.location.RemoveCharacterFromLocation(currParty);
+				this.tileLocation.RemoveCharacterFromLocation(currParty);
                 currParty.SetSpecificLocation(this);
             }
             if (!_hasScheduledCombatCheck) {
@@ -483,10 +480,10 @@ public class BaseLandmark : ILocation, TaskCreator {
         _charactersAtLocation.Remove(character);
         if (character is Character) {
             Character currChar = character as Character;
-            currChar.SetSpecificLocation(this.location); //make the characters location, the hex tile that this landmark is on, meaning that the character exited the structure
+			currChar.SetSpecificLocation(this.tileLocation); //make the characters location, the hex tile that this landmark is on, meaning that the character exited the structure
         } else if (character is Party) {
             Party currParty = character as Party;
-            currParty.SetSpecificLocation(this.location);//make the party's location, the hex tile that this landmark is on, meaning that the party exited the structure
+			currParty.SetSpecificLocation(this.tileLocation);//make the party's location, the hex tile that this landmark is on, meaning that the party exited the structure
         }
         if (_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();
@@ -499,11 +496,11 @@ public class BaseLandmark : ILocation, TaskCreator {
             _charactersAtLocation.Remove(characterToReplace);
             if (characterToAdd is Character) {
                 Character currChar = characterToAdd as Character;
-                this.location.RemoveCharacterFromLocation(currChar);
+				this.tileLocation.RemoveCharacterFromLocation(currChar);
                 currChar.SetSpecificLocation(this);
             } else if (characterToAdd is Party) {
                 Party currParty = characterToAdd as Party;
-                this.location.RemoveCharacterFromLocation(currParty);
+				this.tileLocation.RemoveCharacterFromLocation(currParty);
                 currParty.SetSpecificLocation(this);
             }
             if (!_hasScheduledCombatCheck) {
@@ -713,7 +710,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currGroup = _charactersAtLocation[i];
-            if (currGroup.currentTask is Attack) {
+            if (currGroup.currentTask is Invade) {
                 groups.Add(currGroup);
             }
         }
@@ -862,9 +859,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (this.owner == null) {
             return false;
         }
-        for (int i = 0; i < this.location.region.connections.Count; i++) {
-            if (this.location.region.connections[i] is Region) {
-                Region adjacentRegion = (Region)this.location.region.connections[i];
+		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
+			if (this.tileLocation.region.connections[i] is Region) {
+				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
                 if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
                     return true;
                 }
@@ -876,9 +873,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (this.owner == null || (this.owner != null && !(this.owner is Tribe))) {
             return false;
         }
-        for (int i = 0; i < this.location.region.connections.Count; i++) {
-            if (this.location.region.connections[i] is Region) {
-                Region adjacentRegion = (Region)this.location.region.connections[i];
+		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
+			if (this.tileLocation.region.connections[i] is Region) {
+				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
                 if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && this.owner is Tribe && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
                     FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
                     if (factionRel != null && factionRel.isAtWar) {
@@ -893,9 +890,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (this.owner == null) {
             return false;
         }
-        for (int i = 0; i < this.location.region.connections.Count; i++) {
-            if (this.location.region.connections[i] is Region) {
-                Region adjacentRegion = (Region)this.location.region.connections[i];
+		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
+			if (this.tileLocation.region.connections[i] is Region) {
+				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
                 if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
                     FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
                     if (factionRel != null && factionRel.isAtWar) {
@@ -971,7 +968,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		Initialize ();
 	}
     public void CenterOnLandmark() {
-        CameraMove.Instance.CenterCameraOn(this.location.gameObject);
+		CameraMove.Instance.CenterCameraOn(this.tileLocation.gameObject);
     }
     #endregion
 
@@ -1063,7 +1060,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 						}
 					}else if(identifier is BaseLandmark){
 						BaseLandmark landmark = (BaseLandmark)identifier;
-						if(((Expand)currQuest).originTile.id == landmark.location.id){
+						if(((Expand)currQuest).originTile.id == landmark.tileLocation.id){
 							return true;
 						}
 					}

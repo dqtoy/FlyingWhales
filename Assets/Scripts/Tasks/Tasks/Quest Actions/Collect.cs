@@ -111,11 +111,10 @@ public class Collect : CharacterTask {
 	#endregion
 
 	private void StartCollect(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartCollect ());
-			return;
-		}
-		_assignedCharacter.DestroyAvatar ();
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartCollect ());
+//			return;
+//		}
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Collect", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startLog.AddToFillers(null, itemToCollectLog, LOG_IDENTIFIER.ITEM_1);

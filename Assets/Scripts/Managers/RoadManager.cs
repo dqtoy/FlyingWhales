@@ -297,7 +297,7 @@ public class RoadManager : MonoBehaviour {
         //connect all faction villages with each other
         for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
             Tribe currTribe = FactionManager.Instance.allTribes[i];
-            List<Region> ownedRegions = currTribe.settlements.Select(x => x.location.region).ToList();
+			List<Region> ownedRegions = currTribe.settlements.Select(x => x.tileLocation.region).ToList();
             if (ownedRegions.Count > 1) {
                 for (int j = 0; j < ownedRegions.Count; j++) {
                     Region currOwnedRegion = ownedRegions[j];
@@ -633,8 +633,8 @@ public class RoadManager : MonoBehaviour {
             }
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.location.elevationType != ELEVATION.PLAIN) {
-                    currLandmark.location.SetElevation(ELEVATION.PLAIN);
+				if (currLandmark.tileLocation.elevationType != ELEVATION.PLAIN) {
+					currLandmark.tileLocation.SetElevation(ELEVATION.PLAIN);
                 }
             }
         }
