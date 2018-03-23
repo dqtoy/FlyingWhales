@@ -59,7 +59,8 @@ public class RecruitFollowers : CharacterTask {
 	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(character.specificLocation != null && character.specificLocation == location){
-			if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0 && character.faction != null){
+            BaseLandmark landmarkOnTile = location.tileLocation.landmarkOnTile;
+            if (landmarkOnTile != null && landmarkOnTile.owner != null && landmarkOnTile.civilians > 0 && character.faction != null){
 				if(!location.HasHostilitiesWith(character.faction)){
 					return true;
 				}
@@ -85,9 +86,7 @@ public class RecruitFollowers : CharacterTask {
 	}
     public override int GetSelectionWeight(Character character) {
         int weight = base.GetSelectionWeight(character);
-        if (!character.isFollowersFull) {
-            weight += 60 * character.missingFollowers; //+60 for every missing Follower
-        }
+        weight += 60 * character.missingFollowers; //+60 for every missing Follower
         return weight;
     }
 	protected override BaseLandmark GetLandmarkTarget (Character character){

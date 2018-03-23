@@ -22,7 +22,7 @@ public class StorylineElement : MonoBehaviour {
         }
         EventDelegate.Set(elementEventTrigger.onClick, OnClickElement);
         EventDelegate.Set(elementEventTrigger.onHoverOver, ShowInfo);
-        EventDelegate.Set(elementEventTrigger.onHoverOut, UIManager.Instance.HideSmallInfo);
+        EventDelegate.Set(elementEventTrigger.onHoverOut, UIManager.Instance.storylinesSummaryMenu.HideElementInfo);
     }
 
     private void ShowInfo() {
@@ -31,7 +31,7 @@ public class StorylineElement : MonoBehaviour {
             Log currLog = logs[i];
             text += Utilities.LogReplacer(currLog) + " ";
         }
-        UIManager.Instance.ShowSmallInfo(text);
+        UIManager.Instance.storylinesSummaryMenu.ShowElementInfo(text);
     }
     
     private void OnClickElement() {

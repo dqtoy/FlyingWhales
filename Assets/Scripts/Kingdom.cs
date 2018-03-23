@@ -489,7 +489,7 @@ public class Kingdom{
 			this.basicResource = Utilities.GetBasicResourceForRace(race);
 
 			Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
-            Messenger.AddListener("OnDayEnd", AttemptToExpand);
+            Messenger.AddListener(Signals.DAY_END, AttemptToExpand);
             Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
             //SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
@@ -845,7 +845,7 @@ public class Kingdom{
         KingdomManager.Instance.RemoveEmblemAsUsed(_emblem);
         ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
-        Messenger.RemoveListener("OnDayEnd", AttemptToExpand);
+        Messenger.RemoveListener(Signals.DAY_END, AttemptToExpand);
         Messenger.RemoveListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
         Messenger.Broadcast<Kingdom>("OnKingdomDied", this);

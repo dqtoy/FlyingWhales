@@ -110,6 +110,9 @@ public class Settlement : BaseLandmark {
 
     #region Characters
     public ECS.Character CreateNewFollower() {
+        if (this.civilians <= 0) {
+            throw new System.Exception(this.landmarkName + " no longer has any more civilians for creating a follower!");
+        }
         MATERIAL material = MATERIAL.NONE;
         WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this, ref material);
         CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();

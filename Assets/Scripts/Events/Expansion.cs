@@ -103,7 +103,7 @@ public class Expansion : GameEvent {
 		this.hexTileToExpandTo.isTargeted = false;
         //expander.citizen.Death(DEATH_REASONS.NONE);
         this.expander.DestroyGO();
-        //		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+        //		Messenger.RemoveListener(Signals.DAY_END, this.PerformAction);
     }
     internal override void CancelEvent (){
 		base.CancelEvent ();

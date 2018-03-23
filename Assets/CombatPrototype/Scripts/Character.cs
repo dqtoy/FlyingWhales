@@ -733,10 +733,10 @@ namespace ECS {
                 //CheckForInternationalIncident();
 
                 if (this._party != null) {
-					this._party.RemovePartyMember(this, true);
-					if(this._party.partyLeader.id == this._id){
-						this._party.DisbandParty ();
-					}
+                    this._party.RemovePartyMember(this, true);
+                    if (this._party.partyLeader.id == this._id) {
+                        this._party.DisbandParty();
+                    }
 				}else{
 					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
@@ -770,6 +770,7 @@ namespace ECS {
 					onCharacterDeath();
 				}
                 onCharacterDeath = null;
+                Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
                 Debug.Log(this.name + " died!");
             }
 		}
@@ -896,6 +897,9 @@ namespace ECS {
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
+
+            Messenger.Broadcast(Signals.OBTAIN_ITEM, this, newItem);
+            newItem.OnItemPutInInventory(this);
         }
 
 		internal void ThrowItem(Item item, bool addInLandmark = true){
@@ -1309,7 +1313,7 @@ namespace ECS {
             }
             return false;
         }
-		internal Item GetItemInInventory(string itemName){
+        internal Item GetItemInInventory(string itemName){
 			for (int i = 0; i < _inventory.Count; i++) {
 				Item currItem = _inventory[i];
 				if (currItem.itemName.Equals(itemName)) {
@@ -2202,18 +2206,6 @@ namespace ECS {
         #endregion
 
         #region HP
-        int regenAmount;
-		public void StartRegeneration(int amount) {
-			regenAmount = amount;
-			Messenger.AddListener("OnDayEnd", RegenerateHealth);
-		}
-		public void StopRegeneration() {
-			regenAmount = 0;
-			Messenger.RemoveListener("OnDayEnd", RegenerateHealth);
-		}
-		public void RegenerateHealth() {
-			AdjustHP(regenAmount);
-		}
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
@@ -2414,8 +2406,8 @@ namespace ECS {
 				}
 				//Quest Tasks
 				if (currentQuest != null) {
-					for (int i = 0; i < _questData.allTasks.Count; i++) {
-						CharacterTask currentTask = _questData.allTasks [i];
+					for (int i = 0; i < _questData.tasks.Count; i++) {
+						CharacterTask currentTask = _questData.tasks [i];
 						if (!currentTask.forGameOnly && !currentTask.isDone && currentTask.CanBeDone (this, location)) {
 							possibleTasks.Add (currentTask);
 						}
@@ -2526,8 +2518,8 @@ namespace ECS {
         }
         public bool HasRelevanceToQuest(BaseLandmark landmark) {
             if (currentQuest != null) {
-                for (int i = 0; i < questData.allTasks.Count; i++) {
-                    if (questData.allTasks[i].targetLocation == landmark) {
+                for (int i = 0; i < questData.tasks.Count; i++) {
+                    if (questData.tasks[i].targetLocation == landmark) {
                         return true;
                     }
                 }

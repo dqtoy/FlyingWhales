@@ -20,7 +20,7 @@ public class RestAction : TaskAction {
         }
     }
     public override void ActionDone(TASK_ACTION_RESULT result) {
-        Messenger.RemoveListener("OnDayEnd", Rest);
+        Messenger.RemoveListener(Signals.DAY_END, Rest);
         base.ActionDone(result);
     }
     #endregion

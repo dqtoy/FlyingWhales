@@ -30,7 +30,7 @@ public class HandOfFate : MonoBehaviour {
 	}
 
     private void Start() {
-        Messenger.AddListener("OnDayEnd", this.GetComponent<PandaBehaviour>().Tick);
+        Messenger.AddListener(Signals.DAY_END, this.GetComponent<PandaBehaviour>().Tick);
     }
 
     [Task]

@@ -68,7 +68,7 @@ public class StructureObject : PooledObject {
             for (int i = 0; i < ruinedParents.Length; i++) {
                 ruinedParents[i].SetActive(false);
             }
-            //Messenger.RemoveListener("OnDayEnd", CheckForExpiry);
+            //Messenger.RemoveListener(Signals.DAY_END, CheckForExpiry);
         } else {
             for (int i = 0; i < normalParents.Length; i++) {
                 normalParents[i].SetActive(false);
@@ -108,7 +108,7 @@ public class StructureObject : PooledObject {
     private void QueueForExpiry() {
         expiryDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 180);
         //SchedulingManager.Instance.AddEntry(expiryDate.month, expiryDate.day, expiryDate.year, () => DestroyStructure());
-        Messenger.AddListener("OnDayEnd", CheckForExpiry);
+        Messenger.AddListener(Signals.DAY_END, CheckForExpiry);
     }
 
     private void CheckForExpiry() {
@@ -120,7 +120,7 @@ public class StructureObject : PooledObject {
     #region overrides
     public override void Reset() {
         base.Reset();
-        Messenger.RemoveListener("OnDayEnd", CheckForExpiry);
+        Messenger.RemoveListener(Signals.DAY_END, CheckForExpiry);
     }
     #endregion
 }

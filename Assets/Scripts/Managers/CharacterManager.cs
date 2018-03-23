@@ -53,8 +53,8 @@ public class CharacterManager : MonoBehaviour {
         Instance = this;
         //allCitizens = new HashSet<Citizen>();
         //citizenBirthdays = new Dictionary<MONTH, Dictionary<int, HashSet<Citizen>>>();
-        //Messenger.AddListener("OnDayEnd", AgeCitizens);
-        //Messenger.AddListener("OnDayEnd", CheckForDeath);
+        //Messenger.AddListener(Signals.DAY_END, AgeCitizens);
+        //Messenger.AddListener(Signals.DAY_END, CheckForDeath);
     }
 
     //internal void RegisterCitizen(Citizen citizen) {

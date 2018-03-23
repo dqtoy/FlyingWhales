@@ -949,7 +949,7 @@ public class City {
 	}
 
     internal void RemoveListeners() {
-		Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+		Messenger.RemoveListener(Signals.DAY_END, this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
     }
 		
 	internal Citizen CreateNewAgent(ROLE role, HexTile targetLocation, HexTile sourceLocation = null){

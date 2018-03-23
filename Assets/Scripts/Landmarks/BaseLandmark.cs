@@ -1130,6 +1130,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             throw new System.Exception(this.landmarkName + " already has an instance of " + item.itemName);
         }
 		_itemsInLandmark.Add (item);
+        item.OnItemPlacedOnLandmark(this);
 	}
 	public void AddItemsInLandmark(List<Item> item){
 		_itemsInLandmark.AddRange (item);

@@ -55,6 +55,14 @@ public class StorylineData {
             _relevantItems[obj].Add(log);
         }
     }
+    public void ReplaceItemLog(object obj, Log log, int indexToReplace) {
+        if (_relevantItems.ContainsKey(obj)) {
+            _relevantItems[obj].Insert(indexToReplace, log);
+            if (_relevantItems[obj].Count < indexToReplace + 1) {
+                _relevantItems[obj].RemoveAt(indexToReplace + 1);
+            }
+        }
+    }
     #endregion
 
     #region Relevant Quests

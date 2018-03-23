@@ -97,7 +97,7 @@ public class Expedition : OldQuest.Quest {
     #endregion
 
     private void StartResourceGathering() {
-        Messenger.AddListener("OnDayEnd", GatherResource);
+        Messenger.AddListener(Signals.DAY_END, GatherResource);
     }
 
     private void GatherResource() {
@@ -108,7 +108,7 @@ public class Expedition : OldQuest.Quest {
     }
 
     private void StopGathering() {
-        Messenger.RemoveListener("OnDayEnd", GatherResource);
+        Messenger.RemoveListener(Signals.DAY_END, GatherResource);
         //_assignedParty.AdjustMaterial(_target.materialOnTile, _gatheredAmt); //take the gathered resources, and give it to the party
         AddNewLog(_assignedParty.name + " succcessfully gathers " + _gatheredAmt.ToString() + " " + Utilities.NormalizeString(_target.materialOnTile.ToString()) + " from " + _target.locationName);
         GoBackToQuestGiver(TASK_STATUS.SUCCESS);
