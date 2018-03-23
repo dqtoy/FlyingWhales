@@ -122,23 +122,22 @@ public class ExploreTile : CharacterTask {
     #endregion
 
     private void StartExploration(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartExploration ());
-			return;
-		}
-		_assignedCharacter.DestroyAvatar ();
-		ChangeStateTo (STATE.EXPLORE);
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartExploration ());
+//			return;
+//		}
 		Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "ExploreTile", "start");
 		startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		startLog.AddToFillers(_landmarkToExplore, _landmarkToExplore.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
 		_landmarkToExplore.AddHistory(startLog);
 		_assignedCharacter.AddHistory(startLog);
+		ChangeStateTo (STATE.EXPLORE);
 		//_assignedCharacter.AddHistory ("Started exploring " + _landmarkToExplore.landmarkName);
 	}
 
     #region Logs
     private void LogGoToLocation() {
-        AddNewLog("The party travels to " + _landmarkToExplore.location.name);
+		AddNewLog("The party travels to " + _landmarkToExplore.tileLocation.name);
     }
     #endregion
 }

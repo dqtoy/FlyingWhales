@@ -62,14 +62,14 @@ public class SettlementInfoClick : MonoBehaviour {
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
 				}else{
-					character = landmark.location.GetCharacterAtLocationByID(idToUse, true);
+					character = landmark.tileLocation.GetCharacterAtLocationByID(idToUse, true);
 					if(character != null){
 						UIManager.Instance.ShowCharacterInfo(character);
 					}
 				}
 			} else if(url.Contains("_hextile")){
-				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location.id == idToUse){
-					UIManager.Instance.ShowHexTileInfo (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location);
+				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null && UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.tileLocation.id == idToUse){
+					UIManager.Instance.ShowHexTileInfo (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.tileLocation);
 				}
             } else if (url.Contains("_quest")) {
 				if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark is Settlement){
@@ -83,7 +83,7 @@ public class SettlementInfoClick : MonoBehaviour {
 				if (party != null) {
 					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 				} else {
-					party = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.location.GetPartyAtLocationByLeaderID(idToUse);
+					party = UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.tileLocation.GetPartyAtLocationByLeaderID(idToUse);
 					if (party != null) {
 						UIManager.Instance.ShowCharacterInfo(party.partyLeader);
 					}

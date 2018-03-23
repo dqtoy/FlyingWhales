@@ -529,7 +529,7 @@ public class Region {
             if(currLandmark is ResourceLandmark) {
                 ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
                 //check if the landmark has the material specified, and already has a structure built on it.
-                if (resourceLandmark.materialOnLandmark == material && resourceLandmark.location.HasStructure()) {
+				if (resourceLandmark.materialOnLandmark == material && resourceLandmark.tileLocation.HasStructure()) {
                     count++;
                 }
             }
@@ -661,8 +661,8 @@ public class Region {
         if (!_connections.Contains(otherObject)) {
             _connections.Add(otherObject);
             if (otherObject is Settlement) {
-                if (!_adjacentRegionsViaMajorRoad.Contains(otherObject.location.region)) {
-                    _adjacentRegionsViaMajorRoad.Add(otherObject.location.region);
+				if (!_adjacentRegionsViaMajorRoad.Contains(otherObject.tileLocation.region)) {
+					_adjacentRegionsViaMajorRoad.Add(otherObject.tileLocation.region);
                 }
             }
         }

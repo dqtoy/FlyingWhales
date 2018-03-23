@@ -733,9 +733,10 @@ namespace ECS {
                 //CheckForInternationalIncident();
 
                 if (this._party != null) {
-					this._party.RemovePartyMember(this, true);
-					if(this._party.partyLeader.id == this._id){
-						this._party.DisbandParty ();
+					Party party = this._party;
+					party.RemovePartyMember(this, true);
+					if(party.partyLeader.id == this._id){
+						party.DisbandParty ();
 					}
 				}else{
 					this.specificLocation.RemoveCharacterFromLocation(this);
@@ -2052,6 +2053,14 @@ namespace ECS {
 				_currentRegion = _specificLocation.tileLocation.region;
 			}
         }
+		public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter){
+			for (int i = 0; i < _currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
+				if(targetCharacter.currentRegion.id == _currentRegion.adjacentRegionsViaMajorRoad[i].id){
+					return true;
+				}
+			}
+			return false;
+		}
 		#endregion
 
 		#region Quests
@@ -2067,10 +2076,10 @@ namespace ECS {
 			//}
    //         return;
 
-			if(isInCombat){
-				SetCurrentFunction (() => DetermineAction ());
-				return;
-			}
+//			if(isInCombat){
+//				SetCurrentFunction (() => DetermineAction ());
+//				return;
+//			}
 			if(_isFainted || _isPrisoner || _isDead || _isFollower){
 				return;
 			}
@@ -2274,15 +2283,14 @@ namespace ECS {
 		}
 		public void DestroyAvatar() {
 			if(_avatar != null) {
-				_avatar.DestroyObject();
-                SetAvatar(null);
+				_avatar.InstantDestroyAvatar();
             }
         }
         public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
-			if(isInCombat){
-				SetCurrentFunction (() => GoToNearestNonHostileSettlement (() => onReachSettlement()));
-				return;
-			}
+//			if(isInCombat){
+//				SetCurrentFunction (() => GoToNearestNonHostileSettlement (() => onReachSettlement()));
+//				return;
+//			}
             //check first if the character is already at a non hostile settlement
             if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
                 && this.currLocation.landmarkOnTile.owner != null) {
@@ -2305,11 +2313,11 @@ namespace ECS {
                     allSettlements.AddRange(currTribe.settlements);
                 }
             }
-            allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.location.transform.position)).ToList();
+            allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.tileLocation.transform.position)).ToList();
             if(_avatar == null) {
                 CreateNewAvatar();
             }
-            _avatar.SetTarget(allSettlements[0].location);
+			_avatar.SetTarget(allSettlements[0].tileLocation);
             _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
         }
         /*
@@ -2325,13 +2333,13 @@ namespace ECS {
             DetermineAction();
         }
 		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
-            if (currLocation == null) {
-                throw new Exception("Curr location is null!");
+            if (specificLocation == null) {
+                throw new Exception("Specific location is null!");
             }
             if (targetLocation == null) {
                 throw new Exception("target location is null!");
             }
-			if (currLocation.id == targetLocation.tileLocation.id) {
+			if (specificLocation == targetLocation) {
 				//action doer is already at the target location
 				if(doneAction != null){
 					doneAction ();
@@ -2469,7 +2477,7 @@ namespace ECS {
 				nonHostileFactions.ForEach(x => settlements.AddRange(x.settlements));
 				settlements.AddRange(_faction.settlements); //Add the settlements of the faction that this character belongs to
 
-				settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.location));
+				settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.tileLocation));
 
 				return settlements.First();
 			}
@@ -2479,7 +2487,7 @@ namespace ECS {
             if(this.faction != null) {
                 List<Settlement> factionSettlements = new List<Settlement>(faction.settlements);
                 if (factionSettlements.Count > 0) {
-                    factionSettlements.OrderBy(x => this.currLocation.GetDistanceTo(x.location)).ToList();
+					factionSettlements.OrderBy(x => this.currLocation.GetDistanceTo(x.tileLocation)).ToList();
                     return factionSettlements[0];
                 }
             }
@@ -2497,7 +2505,7 @@ namespace ECS {
             Dictionary<BaseLandmark, List<HexTile>> landmarksWithHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
             for (int i = 0; i < elligibleLandmarks.Count; i++) {
                 BaseLandmark currLandmark = elligibleLandmarks[i];
-                List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.location, PATHFINDING_MODE.USE_ROADS);
+				List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.tileLocation, PATHFINDING_MODE.USE_ROADS);
                 if(path != null) {
                     //check for hostiles
                     if (!currLandmark.HasHostilitiesWith(this.faction)) {

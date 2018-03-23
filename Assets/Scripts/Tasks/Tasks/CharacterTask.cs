@@ -134,10 +134,10 @@ public class CharacterTask {
 
     #region virtual
     public virtual void OnChooseTask(ECS.Character character) {
-		if(character.isInCombat){
-			character.SetCurrentFunction (() => OnChooseTask (character));
-			return;
-		}
+//		if(character.isInCombat){
+//			character.SetCurrentFunction (() => OnChooseTask (character));
+//			return;
+//		}
         //TODO: Remove This after testing
         if (!character.previousActions.ContainsKey(this)) {
             character.previousActions.Add(this, StackTraceUtility.ExtractStackTrace());
@@ -181,10 +181,10 @@ public class CharacterTask {
 		EndTask (TASK_STATUS.FAIL);
 	}
     public virtual void EndTask(TASK_STATUS taskResult) {
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => EndTask (taskResult));
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => EndTask (taskResult));
+//			return;
+//		}
 		if(_isHalted || _isDone){
 			return;
 		}

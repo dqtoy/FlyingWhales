@@ -111,10 +111,10 @@ public class Pillage : CharacterTask {
     #endregion
 
     private void StartPillage() {
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartPillage ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartPillage ());
+//			return;
+//		}
 
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Pillage", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

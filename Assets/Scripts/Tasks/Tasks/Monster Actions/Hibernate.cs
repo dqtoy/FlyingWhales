@@ -100,17 +100,16 @@ public class Hibernate : CharacterTask {
 	}
     #endregion
 	private void StartHibernation(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartHibernation ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartHibernation ());
+//			return;
+//		}
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hibernate", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         _assignedCharacter.AddHistory(startLog);
         if (_assignedCharacter.specificLocation is BaseLandmark) {
             (_assignedCharacter.specificLocation as BaseLandmark).AddHistory(startLog);
         }
-        _assignedCharacter.DestroyAvatar ();
 		ChangeStateTo (STATE.REST);
 	}
     //private void GoToTargetLocation() {

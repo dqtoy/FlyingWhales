@@ -93,10 +93,10 @@ public class Raze : CharacterTask {
     #endregion
 
     private void StartRaze(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartRaze ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartRaze ());
+//			return;
+//		}
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Raze", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startLog.AddToFillers(_target, _target.landmarkName, LOG_IDENTIFIER.LANDMARK_1);

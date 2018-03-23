@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ECS;
 
-public class Attack : CharacterTask {
+public class Invade : CharacterTask {
 
 	private BaseLandmark _landmarkToAttack;
 	private bool _canChangeOwnership;
@@ -17,13 +17,13 @@ public class Attack : CharacterTask {
 	}
 	#endregion
 
-	public Attack(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.COMBAT) : base(createdBy, TASK_TYPE.ATTACK, stance, defaultDaysLeft, parentQuest) {
+	public Invade(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.COMBAT) : base(createdBy, TASK_TYPE.INVADE, stance, defaultDaysLeft, parentQuest) {
         _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
 		_canChangeOwnership = true;
 
 		_states = new Dictionary<STATE, State> {
 			{ STATE.MOVE, new MoveState (this) },
-			{ STATE.ATTACK, new AttackState (this) }
+			{ STATE.INVADE, new InvadeState (this) }
 		};
 	}
 		
@@ -62,7 +62,7 @@ public class Attack : CharacterTask {
 		ReduceDaysLeft(1);
 	}
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null){
+		if(location is BaseLandmark){
             return location.HasHostilitiesWith(character); //If there are unowned landmarks with hostile unaligned characters or owned by hostile faction within current region or adjacent region
 		}
 		return base.CanBeDone (character, location);
@@ -123,19 +123,17 @@ public class Attack : CharacterTask {
     #endregion
 
     private void StartAttack(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartAttack ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartAttack ());
+//			return;
+//		}
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Attack", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startLog.AddToFillers(_landmarkToAttack, _landmarkToAttack.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
         _landmarkToAttack.AddHistory(startLog);
         _assignedCharacter.AddHistory(startLog);
 
-        _assignedCharacter.DestroyAvatar ();
-
-		ChangeStateTo (STATE.ATTACK);
+		ChangeStateTo (STATE.INVADE);
 	}
 
 	private bool AreThereStillHostileInLandmark(){

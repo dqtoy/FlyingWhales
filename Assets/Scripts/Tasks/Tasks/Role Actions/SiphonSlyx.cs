@@ -47,10 +47,10 @@ public class SiphonSlyx : CharacterTask {
 	#endregion
 
 	private void StartSiphon(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartSiphon ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartSiphon ());
+//			return;
+//		}
 
 		ChangeStateTo (STATE.SIPHON);
 //		_assignedCharacter.AddHistory ("Started siphoning life from slyxes!");

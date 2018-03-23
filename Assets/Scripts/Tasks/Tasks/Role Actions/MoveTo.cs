@@ -10,7 +10,7 @@ public class MoveTo : CharacterTask {
     public HexTile targetTile {
         get {
             if (_targetLocation is BaseLandmark) {
-                return (_targetLocation as BaseLandmark).location;
+				return (_targetLocation as BaseLandmark).tileLocation;
             } else {
                 return (_targetLocation as HexTile);
             }
@@ -115,7 +115,6 @@ public class MoveTo : CharacterTask {
 
     private void SuccessTask() {
         EndTask(TASK_STATUS.SUCCESS);
-        _assignedCharacter.DestroyAvatar();
 		DoNothing doNothing = new DoNothing (_assignedCharacter);
 		//doNothing.SetDaysLeft (3);
 		doNothing.OnChooseTask (_assignedCharacter);

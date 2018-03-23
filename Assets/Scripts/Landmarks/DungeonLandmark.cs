@@ -90,7 +90,7 @@ public class DungeonLandmark : BaseLandmark {
         ECS.Character mingonArcanistVampire = CreateNewCharacter(RACE.MINGONS, CHARACTER_ROLE.ANCIENT_VAMPIRE, "Arcanist");
         mingonArcanistVampire.AssignTag(CHARACTER_TAG.VAMPIRE);
         EquipGearForVampire(mingonArcanistVampire);
-        Debug.Log("Ancient vampire is at : " + location.name);
+		Debug.Log("Ancient vampire is at : " + tileLocation.name);
     }
     private void EquipGearForVampire(ECS.Character vampire) {
         //Weapon

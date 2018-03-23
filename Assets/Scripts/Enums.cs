@@ -979,6 +979,8 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	COLLECT,
     PROCLAIM_SUCCESSOR,
 	INFECT_PSYTOXIN,
+	INVADE,
+	ROB,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
@@ -1236,5 +1238,6 @@ public enum STATE{
     TAKE_QUEST,
     PROCLAIM_SUCCESSOR,
 	COLLECT,
+	INVADE,
 }
 

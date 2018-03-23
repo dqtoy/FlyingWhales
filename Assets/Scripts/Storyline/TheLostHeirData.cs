@@ -71,7 +71,7 @@ public class TheLostHeirData : StorylineData {
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
             chosenChieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
 
-			Debug.Log("LOST HEIR LOCATION: " + chosenHut.landmarkName + " - " + chosenHut.tileLocation.tileName);
+			Debug.Log("LOST HEIR LOCATION: " + chosenHut.landmarkName);
         }
     }
     #endregion

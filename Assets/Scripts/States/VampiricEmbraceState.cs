@@ -15,6 +15,10 @@ public class VampiricEmbraceState : State {
 
     private void PerformVampiricEmbrace() {
         ECS.Character targetCharacter = parentTask.specificTarget as ECS.Character;
+		if(_targetLandmark != targetCharacter.specificLocation){
+			Debug.LogError ("Can't perform vampiric embrace, locations are different: " + _targetLandmark.landmarkName + " and " + targetCharacter.specificLocation.locationName);
+			return;
+		}
         string chosenAction = TaskManager.Instance.vampiricEmbraceActions.PickRandomElementGivenWeights();
         if (chosenAction == "turn") {
             Log turnLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "VampiricEmbrace", "turn_success");

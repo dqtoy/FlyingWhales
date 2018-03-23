@@ -214,8 +214,8 @@ public class Party: IEncounterable, ICombatInitializer {
     public virtual void RemovePartyMember(ECS.Character member, bool forDeath = false) {
         _partyMembers.Remove(member);
 		_followers.Remove (member);
-        if(_avatar != null) {
-            _avatar.RemoveCharacter(member);
+        if(member.avatar != null) {
+			member.avatar.RemoveCharacter(member);
         }
 		////If party is unaligned, change party leader immediately if party leader died
 		//if(faction == null && member.id == _partyLeader.id && _partyMembers.Count > 0){
@@ -243,7 +243,7 @@ public class Party: IEncounterable, ICombatInitializer {
 			//will go back to the nearest settlement of their faction
 			settlement.AdjustCivilians(member.raceSetting.race, 1);
 		}
-		if (_partyMembers.Count <= 0) {
+		if (_partyMembers.Count <= 0 || member.id == _partyLeader.id) {
             //JustDisbandParty ();
             DisbandParty();
         }
@@ -468,7 +468,7 @@ public class Party: IEncounterable, ICombatInitializer {
         if(currentQuest.postedAt == null) {
             throw new Exception("Posted at of quest " + currentQuest.questName + " is null!");
         }
-		if(_avatar.specificLocation.tileLocation.id == currentQuest.postedAt.location.id){
+		if(_avatar.specificLocation.tileLocation.id == currentQuest.postedAt.tileLocation.id){
 			currentQuest.TurnInQuest (taskResult);
 		}else{
 			PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;

@@ -29,12 +29,9 @@ public class TakeQuest : CharacterTask {
     }
     public override bool AreConditionsMet(Character character) {
         //check if the character can accept any quests
-        for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
-            Quest currQuest = QuestManager.Instance.availableQuests[i];
-            if (currQuest.CanAcceptQuest(character)) {
-                return true;
-            }
-        }
+		if(CanBeDone(character, character.specificLocation)){
+			return true;
+		}
         return base.AreConditionsMet(character);
     }
     public override int GetSelectionWeight(Character character) {

@@ -45,6 +45,6 @@ public class FactionSummaryEntry : MonoBehaviour {
     }
 
     public void CenterOnFaction() {
-        CameraMove.Instance.CenterCameraOn(_faction.settlements[0].location.gameObject);
+		CameraMove.Instance.CenterCameraOn(_faction.settlements[0].tileLocation.gameObject);
     }
 }

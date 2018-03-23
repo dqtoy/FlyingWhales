@@ -82,12 +82,10 @@ public class DoRitual : CharacterTask {
 	#endregion
 
 	private void StartRitual() {
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartRitual ());
-			return;
-		}
-		_assignedCharacter.DestroyAvatar ();
-
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartRitual ());
+//			return;
+//		}
         Log startRitualLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DoRitual", "start_do_ritual");
         startRitualLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         _ritualStones.AddHistory(startRitualLog);

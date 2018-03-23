@@ -223,7 +223,7 @@ public class ConsoleMenu : UIMenu {
             OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
             quest.GoBackToQuestGiver(TASK_STATUS.CANCEL);
 
-            AddSuccessMessage(quest.questName + " quest posted at " + quest.postedAt.location.name + " was cancelled.");
+			AddSuccessMessage(quest.questName + " quest posted at " + quest.postedAt.tileLocation.name + " was cancelled.");
         } else {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /cancel_quest");
@@ -383,7 +383,7 @@ public class ConsoleMenu : UIMenu {
         string text = faction.name + "'s Landmark Info: ";
         for (int i = 0; i < faction.landmarkInfo.Count; i++) {
             BaseLandmark currLandmark = faction.landmarkInfo[i];
-            text += "\n" + currLandmark.landmarkName + " (" + currLandmark.location.name + ") ";
+			text += "\n" + currLandmark.landmarkName + " (" + currLandmark.tileLocation.name + ") ";
         }
         
         AddSuccessMessage(text);

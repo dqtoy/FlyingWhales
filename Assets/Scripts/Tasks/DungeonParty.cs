@@ -30,8 +30,8 @@ public class DungeonParty : Party {
 	public override void RemovePartyMember(ECS.Character member, bool forDeath = false) {
 		_partyMembers.Remove(member);
 		_followers.Remove (member);
-		if(_avatar != null) {
-			_avatar.RemoveCharacter(member);
+		if(member.avatar != null) {
+			member.avatar.RemoveCharacter(member);
 		}
 		if(!forDeath){
 			member.specificLocation.AddCharacterToLocation(member);

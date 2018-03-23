@@ -84,10 +84,10 @@ public class HuntPrey : CharacterTask {
     #endregion
 
     private void StartHunt() {
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartHunt ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartHunt ());
+//			return;
+//		}
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "HuntPrey", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         _target.AddHistory(startLog);

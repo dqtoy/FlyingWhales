@@ -85,13 +85,13 @@ public class Settlement : BaseLandmark {
 //				_materialsInventory [material].capacity = 200;
 //			}
 //		}
-        if (location.isHabitable) {
+		if (tileLocation.isHabitable) {
             //Create structures on location
             faction.AddSettlement(this);
-            location.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
-            location.region.ReColorBorderTiles(faction.factionColor);
-            location.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
-            location.emptyCityGO.SetActive(false);
+			tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
+			tileLocation.region.ReColorBorderTiles(faction.factionColor);
+			tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
+			tileLocation.emptyCityGO.SetActive(false);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
             _producingPopulationFor = GetRaceBasedOnProportion();
         }
@@ -262,7 +262,7 @@ public class Settlement : BaseLandmark {
      Increase population of this settlement every end of the month.
          */
     private void IncreasePopulationPerMonth() {
-        float populationGrowth = this.totalPopulation * this.location.region.populationGrowth;
+		float populationGrowth = this.totalPopulation * this.tileLocation.region.populationGrowth;
         _currentPopulationProduction += populationGrowth;
         if (_currentPopulationProduction >= 1f) {
             float excess = _currentPopulationProduction - 1f;

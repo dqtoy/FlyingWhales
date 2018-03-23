@@ -78,7 +78,7 @@ public class InternalQuestManager : TaskCreator {
         //Loop through each Region that the Faction has a Settlement in.
         for (int i = 0; i < _owner.settlements.Count; i++) {
             Settlement currSettlement = _owner.settlements[i];
-            Region regionOfSettlement = currSettlement.location.region;
+			Region regionOfSettlement = currSettlement.tileLocation.region;
 
             //AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
 //            AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
@@ -201,7 +201,7 @@ public class InternalQuestManager : TaskCreator {
             //Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
             MATERIAL matForConstruction = settlement.GetMaterialFor(PRODUCTION_TYPE.CONSTRUCTION);
             if(matForConstruction != MATERIAL.NONE) {
-                Expand expand = new Expand(this, unoccupiedTile, originLandmark.location, matForConstruction);
+				Expand expand = new Expand(this, unoccupiedTile, originLandmark.tileLocation, matForConstruction);
                 expand.SetSettlement((Settlement)originLandmark);
                 AddNewQuest(expand);
             }
@@ -214,8 +214,8 @@ public class InternalQuestManager : TaskCreator {
     }
     internal void CreateBuildStructureQuest(BaseLandmark landmarkToExplore) {
         Construction constructionData = ProductionManager.Instance.GetConstruction((landmarkToExplore as ResourceLandmark).materialData.structure.name);
-        Settlement settlement = (Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile;
-        BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore.location, settlement.GetMaterialFor(PRODUCTION_TYPE.CONSTRUCTION), constructionData);
+		Settlement settlement = (Settlement)landmarkToExplore.tileLocation.region.centerOfMass.landmarkOnTile;
+		BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore.tileLocation, settlement.GetMaterialFor(PRODUCTION_TYPE.CONSTRUCTION), constructionData);
         buildStructure.SetSettlement(settlement);
         AddNewQuest(buildStructure);
     }
@@ -263,7 +263,7 @@ public class InternalQuestManager : TaskCreator {
 						}
 					}else if(identifier is BaseLandmark){
 						BaseLandmark landmark = (BaseLandmark)identifier;
-						if(((Expand)currQuest).originTile.id == landmark.location.id){
+						if(((Expand)currQuest).originTile.id == landmark.tileLocation.id){
 							return true;
 						}
 					}

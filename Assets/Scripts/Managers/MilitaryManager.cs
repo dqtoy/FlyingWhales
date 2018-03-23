@@ -143,7 +143,7 @@ public class MilitaryManager : TaskCreator {
 					}
 				}else{
 					weight += 20;
-					if(HasDiscoveredMinorFaction(landmark.location.region)){
+					if(HasDiscoveredMinorFaction(landmark.tileLocation.region)){
 						weight += 30;
 					}
 					if(_owner.leader != null && _owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
@@ -152,7 +152,7 @@ public class MilitaryManager : TaskCreator {
 				}
 			}else{
 				weight += 10;
-				if(HasDiscoveredMinorFaction(landmark.location.region)){
+				if(HasDiscoveredMinorFaction(landmark.tileLocation.region)){
 					weight += 20;
 				}
 				if(_owner.leader != null && owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){
@@ -161,7 +161,7 @@ public class MilitaryManager : TaskCreator {
 			}
 		}else{
 			weight += 5;
-			if(HasDiscoveredMinorFaction(landmark.location.region)){
+			if(HasDiscoveredMinorFaction(landmark.tileLocation.region)){
 				weight += 10;
 			}
 			if(_owner.leader != null && _owner.leader.HasTrait(TRAIT.SMART) && IsLandmarkTargeted(landmark)){

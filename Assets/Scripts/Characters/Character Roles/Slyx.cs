@@ -43,7 +43,7 @@ public class Slyx : CharacterRole {
 	#endregion
 
 	private void CallThisSlyx(ILocation location){
-		_character.GoToLocation (location, PATHFINDING_MODE.USE_ROADS, () => _character.DestroyAvatar());
+		_character.GoToLocation (location, PATHFINDING_MODE.USE_ROADS);
 //		Messenger.RemoveListener<ILocation> ("CallSlyx", CallThisSlyx);
 	}
 

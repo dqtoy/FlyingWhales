@@ -88,18 +88,16 @@ public class Patrol : CharacterTask {
 	#endregion
 
 	private void StartPatrol(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartPatrol ());
-			return;
-		}
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartPatrol ());
+//			return;
+//		}
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Patrol", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startLog.AddToFillers(_landmarkToPatrol, _landmarkToPatrol.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
         _landmarkToPatrol.AddHistory(startLog);
         _assignedCharacter.AddHistory(startLog);
         
-        _assignedCharacter.DestroyAvatar ();
-
 		ChangeStateTo (STATE.PATROL);
 	}
 }

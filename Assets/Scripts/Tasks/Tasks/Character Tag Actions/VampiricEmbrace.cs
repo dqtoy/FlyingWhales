@@ -117,13 +117,11 @@ public class VampiricEmbrace : CharacterTask {
     #endregion
 
     private void StartVampiricEmbrace(){
-		if(_assignedCharacter.isInCombat){
-			_assignedCharacter.SetCurrentFunction (() => StartVampiricEmbrace ());
-			return;
-		}
-		_assignedCharacter.DestroyAvatar ();
-
-		if(_targetCharacter.specificLocation != null && _targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _targetCharacter.specificLocation.tileLocation.id == _targetLandmark.location.id){
+//		if(_assignedCharacter.isInCombat){
+//			_assignedCharacter.SetCurrentFunction (() => StartVampiricEmbrace ());
+//			return;
+//		}
+		if(_targetCharacter.specificLocation == _targetLandmark){
             ChangeStateTo(STATE.VAMPIRIC_EMBRACE);
             Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "VampiricEmbrace", "start");
             startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
