@@ -16,7 +16,7 @@ public class QuestInfoClick : MonoBehaviour {
                 }
             } else if (url.Contains("_landmark")) {
                 if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home.id == idToUse) {
-                    UIManager.Instance.ShowSettlementInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
+                    UIManager.Instance.ShowLandmarkInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
                 }
             } else if (url.Contains("_character")) {
                 ECS.Character character = FactionManager.Instance.GetCharacterByID(idToUse);

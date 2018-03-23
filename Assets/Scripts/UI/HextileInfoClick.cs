@@ -12,7 +12,7 @@ public class HextileInfoClick : MonoBehaviour {
 			if(url.Contains("_landmark")){
 				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
 				if(hextile != null && hextile.landmarkOnTile != null && hextile.landmarkOnTile.id == idToUse){
-					UIManager.Instance.ShowSettlementInfo (hextile.landmarkOnTile);
+					UIManager.Instance.ShowLandmarkInfo (hextile.landmarkOnTile);
 				}
 			} else if(url.Contains("_character")){
 				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;

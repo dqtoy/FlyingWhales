@@ -1362,7 +1362,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             return;
         }
 		if(this.landmarkOnTile != null){
-			UIManager.Instance.ShowSettlementInfo (this.landmarkOnTile);
+			UIManager.Instance.ShowLandmarkInfo (this.landmarkOnTile);
 		}
   //      else{
 		//	UIManager.Instance.ShowHexTileInfo (this);

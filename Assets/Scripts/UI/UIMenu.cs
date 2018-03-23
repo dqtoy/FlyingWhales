@@ -19,7 +19,9 @@ public class UIMenu : MonoBehaviour {
     }
     public virtual void ShowMenu() {
         isShowing = true;
-        goBackBtn.gameObject.SetActive(CanGoBack());
+        if(goBackBtn != null) {
+            goBackBtn.gameObject.SetActive(CanGoBack());
+        }
         this.gameObject.SetActive(true);
     }
     public virtual void HideMenu() {
