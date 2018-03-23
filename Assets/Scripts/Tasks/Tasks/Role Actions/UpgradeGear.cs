@@ -39,15 +39,17 @@ public class UpgradeGear : CharacterTask {
 		}
 		EndTaskSuccess ();
     }
-	public override bool CanBeDone (ECS.Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null && character.faction != null && location.tileLocation.landmarkOnTile is Settlement){
-			if(location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
-			if(settlement.owner != null && !settlement.HasHostilitiesWith(character)){
-				return true;
-			}
-		}
-		return base.CanBeDone (character, location);
-	}
+    public override bool CanBeDone(ECS.Character character, ILocation location) {
+        if (location.tileLocation.landmarkOnTile != null && character.faction != null && location.tileLocation.landmarkOnTile is Settlement) {
+            Settlement settlement = location.tileLocation.landmarkOnTile as Settlement;
+            if (settlement.owner != null && settlement.owner.id == character.faction.id) {
+                if (settlement.owner != null && !settlement.HasHostilitiesWith(character)) {
+                    return true;
+                }
+            }
+        }
+        return base.CanBeDone(character, location);
+    }
 	public override bool AreConditionsMet (ECS.Character character){
         //if(character.faction != null && character.faction.settlements.Count > 0){
         //	return true;
