@@ -309,7 +309,7 @@ public class CharacterAvatar : PooledObject{
 		}
         
 		UIManager.Instance.UpdateHexTileInfo();
-        UIManager.Instance.UpdateSettlementInfo();
+        UIManager.Instance.UpdateLandmarkInfo();
     }
 	protected void AddCharactersToLocation(ILocation location) {
 		if(_characters[0].party == null){
@@ -323,7 +323,7 @@ public class CharacterAvatar : PooledObject{
 		}
 
 		UIManager.Instance.UpdateHexTileInfo();
-        UIManager.Instance.UpdateSettlementInfo();
+        UIManager.Instance.UpdateLandmarkInfo();
     }
 	public void SetQueuedAction(Action action){
 		queuedAction = action;

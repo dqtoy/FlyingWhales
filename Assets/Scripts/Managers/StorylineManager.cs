@@ -41,6 +41,7 @@ public class StorylineManager : MonoBehaviour {
                 createdData.InitialStorylineSetup();
             }
         }
+        UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
     }
 
 	#region Lost Heir

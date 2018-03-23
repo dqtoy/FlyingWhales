@@ -6,18 +6,28 @@ using ECS;
 public class StorylineData {
 
     private STORYLINE _storyline;
+    protected Log _storylineDescription;
 
-    private Dictionary<Character, List<Log>> _relevantCharacters;
-    private Dictionary<Item, List<Log>> _relevantItems;
-    private Dictionary<Quest, List<Log>> _relevantQuests;
-    private Dictionary<BaseLandmark, List<Log>> _relevantLandmarks;
+    protected Dictionary<object, List<Log>> _relevantItems;
+    protected List<Quest> _relevantQuests;
+
+    #region getters/setters
+    public Log storylineDescription {
+        get { return _storylineDescription; }
+    }
+    public Dictionary<object, List<Log>> relevantItems {
+        get { return _relevantItems; }
+    }
+    public List<Quest> relevantQuests {
+        get { return _relevantQuests; }
+    }
+
+    #endregion
 
     public StorylineData(STORYLINE storyline) {
         _storyline = storyline;
-        _relevantCharacters = new Dictionary<Character, List<Log>>();
-        _relevantItems = new Dictionary<Item, List<Log>>();
-        _relevantQuests = new Dictionary<Quest, List<Log>>();
-        _relevantLandmarks = new Dictionary<BaseLandmark, List<Log>>();
+        _relevantItems = new Dictionary<object, List<Log>>();
+        _relevantQuests = new List<Quest>();
     }
 
     #region virtuals
@@ -31,35 +41,31 @@ public class StorylineData {
     public virtual void SetupStoryline() { }
     #endregion
 
-    #region Relevant Characters
-    public void AddRelevantCharacter(Character character, Log initialDescription = null) {
-        if (!_relevantCharacters.ContainsKey(character)) {
-            _relevantCharacters.Add(character, new List<Log>());
+    #region Relevant Items
+    public void AddRelevantItem(object obj, Log initialDescription = null) {
+        if (!_relevantItems.ContainsKey(obj)) {
+            _relevantItems.Add(obj, new List<Log>());
         }
         if (initialDescription != null) {
-            AddCharacterLog(character, initialDescription);
+            AddItemLog(obj, initialDescription);
         }
     }
-    public void AddCharacterLog(Character character, Log log) {
-        if (_relevantCharacters.ContainsKey(character)) {
-            _relevantCharacters[character].Add(log);
+    public void AddItemLog(object obj, Log log) {
+        if (_relevantItems.ContainsKey(obj)) {
+            _relevantItems[obj].Add(log);
         }
     }
     #endregion
 
-    #region Relevant Items
-    public void AddRelevantItem(Item item, Log initialDescription = null) {
-        if (!_relevantItems.ContainsKey(item)) {
-            _relevantItems.Add(item, new List<Log>());
-        }
-        if (initialDescription != null) {
-            AddItemLog(item, initialDescription);
+    #region Relevant Quests
+    public void AddRelevantQuest(Quest quest) {
+        if (!_relevantQuests.Contains(quest)) {
+            _relevantQuests.Add(quest);
         }
     }
-    public void AddItemLog(Item item, Log log) {
-        if (_relevantItems.ContainsKey(item)) {
-            _relevantItems[item].Add(log);
-        }
+    public void RemoveRelevantQuest(Quest quest) {
+        _relevantQuests.Remove(quest);
+        
     }
     #endregion
 

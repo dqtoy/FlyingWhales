@@ -5,7 +5,7 @@ using System.Linq;
 
 public class TheLostHeirData : StorylineData {
     public TheLostHeirData() : base(STORYLINE.LOST_HEIR) {
-
+        
     }
 
     #region overrides
@@ -19,11 +19,11 @@ public class TheLostHeirData : StorylineData {
         }
         ECS.Character chosenChieftain = allChieftains[Random.Range(0, allChieftains.Count)]; //Randomly select one of the Chieftains
         chosenChieftain.AssignTag(CHARACTER_TAG.TERMINALLY_ILL);//add a Terminally-Ill tag to him
-        AddRelevantCharacter(chosenChieftain, CreateLogForStoryline("chieftain_title"));
+        AddRelevantItem(chosenChieftain, CreateLogForStoryline("chieftain_title"));
 
         Log chieftainDescription = CreateLogForStoryline("chieftain_description");
         chieftainDescription.AddToFillers(chosenChieftain, chosenChieftain.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        AddCharacterLog(chosenChieftain, chieftainDescription);
+        AddRelevantItem(chosenChieftain, chieftainDescription);
 
         List<ECS.Character> possibleSuccessors = chosenChieftain.faction.characters.Where(x => x.id != chosenChieftain.id).ToList();
         ECS.Character chosenSuccessor = possibleSuccessors[Random.Range(0, possibleSuccessors.Count)]; //Randomly select one of the other characters of his Tribe
@@ -36,17 +36,17 @@ public class TheLostHeirData : StorylineData {
         }
         chosenSuccessor.AssignTag(chosenTag);
 
-        AddRelevantCharacter(chosenSuccessor, CreateLogForStoryline("successor_title"));
+        AddRelevantItem(chosenSuccessor, CreateLogForStoryline("successor_title"));
 
         Log successorDescription = CreateLogForStoryline("successor_description_1");
         successorDescription.AddToFillers(chosenSuccessor, chosenSuccessor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         successorDescription.AddToFillers(chosenChieftain, chosenChieftain.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        AddCharacterLog(chosenSuccessor, successorDescription);
+        AddRelevantItem(chosenSuccessor, successorDescription);
 
         Log successorDescription2 = CreateLogForStoryline("successor_description_2");
         successorDescription2.AddToFillers(chosenSuccessor, chosenSuccessor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         successorDescription2.AddToFillers(null, Utilities.NormalizeString(chosenTag.ToString()), LOG_IDENTIFIER.OTHER);
-        AddCharacterLog(chosenSuccessor, successorDescription2);
+        AddRelevantItem(chosenSuccessor, successorDescription2);
 
         //If there is at least 1 Hut landmark in the world, generate a character in one of those Huts
         List<BaseLandmark> huts = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.HUT);
@@ -55,12 +55,12 @@ public class TheLostHeirData : StorylineData {
             ECS.Character lostHeir = chosenHut.CreateNewCharacter(chosenChieftain.raceSetting.race, CHARACTER_ROLE.HERMIT, "Swordsman");
             lostHeir.AssignTag(CHARACTER_TAG.LOST_HEIR); //and add a lost heir tag and an heirloom necklace item to him. That character should not belong to any faction.
 
-            AddRelevantCharacter(lostHeir, CreateLogForStoryline("lost_heir_title"));
+            AddRelevantItem(lostHeir, CreateLogForStoryline("lost_heir_title"));
 
             Log lostHeirDescription = CreateLogForStoryline("lost_heir_description");
             lostHeirDescription.AddToFillers(lostHeir, lostHeir.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             lostHeirDescription.AddToFillers(chosenChieftain, chosenChieftain.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            AddCharacterLog(lostHeir, lostHeirDescription);
+            AddRelevantItem(lostHeir, lostHeirDescription);
 
             ECS.Item heirloomNecklace = ItemManager.Instance.CreateNewItemInstance("Heirloom Necklace");
             lostHeir.PickupItem(heirloomNecklace);
@@ -71,7 +71,13 @@ public class TheLostHeirData : StorylineData {
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
             chosenChieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
 
+            AddRelevantQuest(findLostHeirQuest);
+
 			Debug.Log("LOST HEIR LOCATION: " + chosenHut.landmarkName + " - " + chosenHut.tileLocation.tileName);
+
+            _storylineDescription = CreateLogForStoryline("description");
+            _storylineDescription.AddToFillers(chosenChieftain, chosenChieftain.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            _storylineDescription.AddToFillers(null, Utilities.NormalizeString(chosenTag.ToString()), LOG_IDENTIFIER.OTHER);
         }
     }
     #endregion

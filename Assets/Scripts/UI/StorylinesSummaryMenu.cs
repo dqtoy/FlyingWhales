@@ -17,7 +17,6 @@ public class StorylinesSummaryMenu : UIMenu {
             storylineItem.SetStoryline(currStoryline);
             storylinesTable.Reposition();
         }
-        
     }
 
 }

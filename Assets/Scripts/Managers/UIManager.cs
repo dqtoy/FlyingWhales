@@ -3072,7 +3072,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Settlement Info")]
     [SerializeField] internal LandmarkInfoUI settlementInfoUI;
-    public void ShowSettlementInfo(BaseLandmark landmark) {
+    public void ShowLandmarkInfo(BaseLandmark landmark) {
 		if(factionInfoUI.isShowing){
 			factionInfoUI.HideMenu ();
 		}
@@ -3093,7 +3093,7 @@ public class UIManager : MonoBehaviour {
         landmark.CenterOnLandmark();
 //		playerActionsUI.ShowPlayerActionsUI ();
     }
-    public void UpdateSettlementInfo() {
+    public void UpdateLandmarkInfo() {
 		if(settlementInfoUI.isShowing){
 			settlementInfoUI.UpdateLandmarkInfo();
 		}
@@ -3439,7 +3439,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Storylines Summary")]
     [SerializeField] private GameObject storylinesSummaryGO;
-    [SerializeField] private StorylinesSummaryMenu storylinesSummaryMenu;
+    public StorylinesSummaryMenu storylinesSummaryMenu;
     public void ShowStorylinesSummary() {
         HideFactionsSummary();
         HideQuestsSummary();
