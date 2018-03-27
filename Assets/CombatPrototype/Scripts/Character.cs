@@ -1834,6 +1834,9 @@ namespace ECS {
             case CHARACTER_TAG.HIBERNATES:
                 charTag = new Hibernates(this);
                 break;
+            case CHARACTER_TAG.PREDATOR:
+                charTag = new Predator(this);
+                break;
             }
 			if(charTag != null){
 				AddCharacterTag (charTag);
