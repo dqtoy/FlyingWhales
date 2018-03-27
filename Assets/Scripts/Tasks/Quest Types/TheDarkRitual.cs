@@ -17,7 +17,7 @@ public class TheDarkRitual : Quest {
 
 		QuestPhase phase2 = new QuestPhase(this, "Perform Ritual");
 		phase2.AddTask(new DoRitual(createdBy, 5, this));
-        phase1.AddPhaseRequirement(new MustFinishAllPhaseTasks());
+        phase2.AddPhaseRequirement(new MustFinishAllPhaseTasks());
 
         _phases.Add(phase1);
 		_phases.Add(phase2);
