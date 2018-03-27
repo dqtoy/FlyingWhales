@@ -279,23 +279,23 @@ public class LandmarkManager : MonoBehaviour {
      This will eliminate any character classes that the settlement cannot
      produce due to a lack of technologies.
          */
-	public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark, ref MATERIAL material) {
-        WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
-        CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
-        Settlement settlement = null;
-        if(landmark is Settlement) {
-            settlement = landmark as Settlement;
-        } else {
-			settlement = landmark.tileLocation.region.mainLandmark as Settlement;
-        }
-        for (int i = 1; i < allClasses.Length; i++) {
-            CHARACTER_CLASS charClass = allClasses[i];
-			if (settlement.CanProduceClass(charClass, ref material)) { //Does the settlement have the required technologies to produce this class
-                classes.AddElement(charClass, 200);
-            }
-        }
-        return classes;
-    }
+	//public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark, ref MATERIAL material) {
+ //       WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
+ //       CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
+ //       Settlement settlement = null;
+ //       if(landmark is Settlement) {
+ //           settlement = landmark as Settlement;
+ //       } else {
+	//		settlement = landmark.tileLocation.region.mainLandmark as Settlement;
+ //       }
+ //       for (int i = 1; i < allClasses.Length; i++) {
+ //           CHARACTER_CLASS charClass = allClasses[i];
+	//		if (settlement.CanProduceClass(charClass, ref material)) { //Does the settlement have the required technologies to produce this class
+ //               classes.AddElement(charClass, 200);
+ //           }
+ //       }
+ //       return classes;
+ //   }
     /*
      Get the character class weights for a settlement.
      This will eliminate any character classes that the settlement cannot
@@ -304,15 +304,15 @@ public class LandmarkManager : MonoBehaviour {
     public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark) {
         WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
         CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
-        Settlement settlement = null;
-        if (landmark is Settlement) {
-            settlement = landmark as Settlement;
-        } else {
-			settlement = landmark.tileLocation.region.mainLandmark as Settlement;
-        }
+   //     Settlement settlement = null;
+   //     if (landmark is Settlement) {
+   //         settlement = landmark as Settlement;
+   //     } else {
+			//settlement = landmark.tileLocation.region.mainLandmark as Settlement;
+   //     }
         for (int i = 1; i < allClasses.Length; i++) {
             CHARACTER_CLASS charClass = allClasses[i];
-            if (settlement.CanProduceClass(charClass)) { //Does the settlement have the required technologies to produce this class
+            if (landmark.CanProduceClass(charClass)) { //Does the settlement have the required technologies to produce this class
                 classes.AddElement(charClass, 200);
             }
         }
@@ -368,31 +368,31 @@ public class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
- //   public DungeonEncounterChances GetDungeonEncounterChances(LANDMARK_TYPE dungeonType){
-	//	for (int i = 0; i < dungeonEncounterChances.Length; i++) {
-	//		if(dungeonType == dungeonEncounterChances[i].dungeonType){
-	//			return dungeonEncounterChances [i];
-	//		}
-	//	}
-	//	return new DungeonEncounterChances ();
-	//}
+    //   public DungeonEncounterChances GetDungeonEncounterChances(LANDMARK_TYPE dungeonType){
+    //	for (int i = 0; i < dungeonEncounterChances.Length; i++) {
+    //		if(dungeonType == dungeonEncounterChances[i].dungeonType){
+    //			return dungeonEncounterChances [i];
+    //		}
+    //	}
+    //	return new DungeonEncounterChances ();
+    //}
 
+    #region Utilities
     public BaseLandmark GetLandmarkByID(int id) {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if(currRegion.mainLandmark.id == id) {
+            if (currRegion.mainLandmark.id == id) {
                 return currRegion.mainLandmark;
             }
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
-                if(currLandmark.id == id) {
+                if (currLandmark.id == id) {
                     return currLandmark;
                 }
             }
         }
         return null;
     }
-
     public BaseLandmark GetLandmarkByName(string name) {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
@@ -408,13 +408,12 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-
     public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
         List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
+            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.allLandmarks[j];
                 if (currLandmark.specificLandmarkType == landmarkType) {
                     allLandmarksOfType.Add(currLandmark);
                 }
@@ -422,4 +421,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarksOfType;
     }
+    #endregion
+
 }

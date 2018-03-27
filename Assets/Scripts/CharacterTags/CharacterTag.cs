@@ -58,4 +58,14 @@ public class CharacterTag {
 		_isRemoved = true;
 	}
 	#endregion
+
+    public CharacterTask GetTask(TASK_TYPE taskType) {
+        for (int i = 0; i < _tagTasks.Count; i++) {
+            CharacterTask currTask = _tagTasks[i];
+            if (currTask.taskType == taskType) {
+                return currTask;
+            }
+        }
+        return null;
+    }
 }

@@ -190,7 +190,6 @@ public class FactionManager : MonoBehaviour {
             CreateChieftainForFaction(currTribe);
         }
     }
-
     private List<Region> GetElligibleRegionsForFaction(Faction faction) {
         List<Region> elligibleRegions = new List<Region>();
         for (int i = 0; i < faction.settlements.Count; i++) {
@@ -278,6 +277,45 @@ public class FactionManager : MonoBehaviour {
 				List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.tileLocation);
                 RoadManager.Instance.CreateRoad(road, ROAD_TYPE.MINOR);
             }
+        }
+    }
+    public void GenerateMonsters() {
+        List<BaseLandmark> goblinCamps = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.GOBLIN_CAMP);
+        List<BaseLandmark> caves = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.CAVE);
+        //List<BaseLandmark> caves = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.CAVE);
+        //For each Goblin Camp landmark, there is a 25% chance to create a goblin bandit
+        for (int i = 0; i < goblinCamps.Count; i++) {
+            BaseLandmark currGoblinCamp = goblinCamps[i];
+            if (Random.Range(0, 100) < 25) {
+                WeightedDictionary<CHARACTER_CLASS> classProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(currGoblinCamp);
+                currGoblinCamp.CreateNewCharacter(RACE.GOBLIN, CHARACTER_ROLE.BANDIT,
+                    Utilities.NormalizeString(classProductionDictionary.PickRandomElementGivenWeights().ToString()), false);
+                Debug.Log("Created a goblin bandit at " + currGoblinCamp.landmarkName + "(" + currGoblinCamp.tileLocation.name + ")");
+            }
+        }
+        if (Random.Range(0, 100) < 50) {
+            List<BaseLandmark> choices = new List<BaseLandmark>(caves);
+            choices.AddRange(LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.ANCIENT_RUIN));
+            BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
+            //50% chance to spawn a dragons beast in Hibernate state in a random Cave or Ancient Ruin.
+            ECS.Character dragon = chosenLandmark.CreateNewCharacter(RACE.DRAGON, CHARACTER_ROLE.BEAST, "Classless", false, false);
+            dragon.SetTaskToDoNext(dragon.GetTag(CHARACTER_TAG.HIBERNATES).GetTask(TASK_TYPE.HIBERNATE));
+            dragon.DetermineAction();
+            Debug.Log("Created a dragon at " + chosenLandmark.landmarkName + "(" + chosenLandmark.tileLocation.name + ")");
+        }
+
+        for (int i = 0; i < caves.Count; i++) {
+            BaseLandmark currCave = caves[i];
+            //For each unoccupied Cave in a region with an occupied Settlement, 25% chance to spawn a bandit, the race should match the region's occupant race.
+            if (currCave.tileLocation.region.mainLandmark.isOccupied && currCave.charactersAtLocation.Count == 0) {
+                if (Random.Range(0, 100) < 25) {
+                    WeightedDictionary<CHARACTER_CLASS> classProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(currCave.tileLocation.region.mainLandmark);
+                    ECS.Character bandit = currCave.CreateNewCharacter(currCave.tileLocation.region.mainLandmark.owner.race, CHARACTER_ROLE.BANDIT, 
+                        Utilities.NormalizeString(classProductionDictionary.PickRandomElementGivenWeights().ToString()), false);
+                    Debug.Log("Created a bandit " + bandit.characterClass.className + " at " + currCave.landmarkName + "(" + currCave.tileLocation.name + ")");
+                }
+            }
+
         }
     }
     #endregion

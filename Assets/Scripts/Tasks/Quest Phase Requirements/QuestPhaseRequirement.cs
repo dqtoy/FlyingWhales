@@ -54,6 +54,7 @@ public class MustHaveItems : QuestPhaseRequirement {
                     return;
                 }
             }
+            Debug.Log(owner.name + " has met requirements!");
             //the character has all needed items, requirement has been met
             _isRequirementMet = true;
             character.questData.CheckPhaseAdvancement();

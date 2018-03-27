@@ -395,7 +395,7 @@ namespace ECS {
 
 			AllocateStatPoints (statAllocationBonus);
 
-            GenerateTraits();
+            //GenerateTraits();
 
 			_strength = _baseStrength;
 			_agility = _baseAgility;
@@ -898,6 +898,9 @@ namespace ECS {
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
+            if (specificLocation is BaseLandmark) {
+                (specificLocation as BaseLandmark).AddHistory(obtainLog);
+            }
 
             Messenger.Broadcast(Signals.OBTAIN_ITEM, this, newItem);
             newItem.OnItemPutInInventory(this);
@@ -1522,53 +1525,56 @@ namespace ECS {
 				_role.ChangedRole ();
 			}
 			switch (role) {
-			case CHARACTER_ROLE.CHIEFTAIN:
-				_role = new Chieftain(this);
-				break;
-			case CHARACTER_ROLE.VILLAGE_HEAD:
-				_role = new VillageHead(this);
-				break;
-			case CHARACTER_ROLE.WARLORD:
-				_role = new Warlord(this);
-				break;
-			case CHARACTER_ROLE.HERO:
-				_role = new Hero(this);
-				break;
-			//case CHARACTER_ROLE.ADVENTURER:
-			//	_role = new Adventurer(this);
-			//	break;
-			case CHARACTER_ROLE.COLONIST:
-				_role = new Colonist(this);
-				break;
-            case CHARACTER_ROLE.WORKER:
-                _role = new Worker(this);
-                break;
-			case CHARACTER_ROLE.TAMED_BEAST:
-				_role = new TamedBeast(this);
-				break;
-			case CHARACTER_ROLE.FLYING_BEAST:
-				_role = new FlyingBeast(this);
-				break;
-            case CHARACTER_ROLE.ANCIENT_VAMPIRE:
-                _role = new AncientVampire(this);
-                break;
-			case CHARACTER_ROLE.CRATER_BEAST:
-				_role = new CraterBeast(this);
-				break;
-			case CHARACTER_ROLE.SLYX:
-				_role = new Slyx(this);
-				break;
-			case CHARACTER_ROLE.VILLAIN:
-				_role = new Villain(this);
-				break;
-            case CHARACTER_ROLE.FOLLOWER:
-                _role = new Follower(this);
-                break;
-            case CHARACTER_ROLE.HERMIT:
-                _role = new Hermit(this);
-                break;
-            default:
-			    break;
+		        case CHARACTER_ROLE.CHIEFTAIN:
+			        _role = new Chieftain(this);
+			        break;
+		        case CHARACTER_ROLE.VILLAGE_HEAD:
+			        _role = new VillageHead(this);
+			        break;
+		        case CHARACTER_ROLE.WARLORD:
+			        _role = new Warlord(this);
+			        break;
+		        case CHARACTER_ROLE.HERO:
+			        _role = new Hero(this);
+			        break;
+		        //case CHARACTER_ROLE.ADVENTURER:
+		        //	_role = new Adventurer(this);
+		        //	break;
+		        case CHARACTER_ROLE.COLONIST:
+			        _role = new Colonist(this);
+			        break;
+                case CHARACTER_ROLE.WORKER:
+                    _role = new Worker(this);
+                    break;
+		        case CHARACTER_ROLE.TAMED_BEAST:
+			        _role = new TamedBeast(this);
+			        break;
+                case CHARACTER_ROLE.ANCIENT_VAMPIRE:
+                    _role = new AncientVampire(this);
+                    break;
+		        case CHARACTER_ROLE.CRATER_BEAST:
+			        _role = new CraterBeast(this);
+			        break;
+		        case CHARACTER_ROLE.SLYX:
+			        _role = new Slyx(this);
+			        break;
+		        case CHARACTER_ROLE.VILLAIN:
+			        _role = new Villain(this);
+			        break;
+                case CHARACTER_ROLE.FOLLOWER:
+                    _role = new Follower(this);
+                    break;
+                case CHARACTER_ROLE.HERMIT:
+                    _role = new Hermit(this);
+                    break;
+                case CHARACTER_ROLE.BANDIT:
+                    _role = new Bandit(this);
+                    break;
+                case CHARACTER_ROLE.BEAST:
+                    _role = new Beast(this);
+                    break;
+                default:
+		            break;
 			}
             if (_role != null) {
                 _role.OnAssignRole();
@@ -1825,7 +1831,10 @@ namespace ECS {
 			case CHARACTER_TAG.HERBALIST:
 				charTag = new Herbalist(this);
 				break;
-			}
+            case CHARACTER_TAG.HIBERNATES:
+                charTag = new Hibernates(this);
+                break;
+            }
 			if(charTag != null){
 				AddCharacterTag (charTag);
 			}

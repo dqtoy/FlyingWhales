@@ -355,18 +355,20 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public Character CreateNewCharacter(CHARACTER_ROLE charRole, string className) {
+    public Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, bool reduceCivilians = true, bool determineAction = true) {
         RACE raceOfChar = GetRaceBasedOnProportion();
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
         //        newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
-        AdjustCivilians(raceOfChar, -1);
+        if (reduceCivilians) {
+            AdjustCivilians(raceOfChar, -1);
+        }
         //this.AdjustPopulation(-1); //Adjust population by -1
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
-        if (charRole != CHARACTER_ROLE.FOLLOWER) {
+        if (charRole != CHARACTER_ROLE.FOLLOWER && determineAction) {
             newCharacter.DetermineAction();
         }
         UIManager.Instance.UpdateFactionSummary();
@@ -376,18 +378,22 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className) {
+    public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool reduceCivilians = true, bool determineAction = true) {
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
         
         newCharacter.SetHome(this);
-        AdjustCivilians(raceOfChar, -1);
+        if (reduceCivilians) {
+            AdjustCivilians(raceOfChar, -1);
+        }
         if (owner != null) {
             newCharacter.SetFaction(owner);
             owner.AddNewCharacter(newCharacter);
         }
         AddCharacterToLocation(newCharacter);
         AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.DetermineAction();
+        if (determineAction) {
+            newCharacter.DetermineAction();
+        }
         UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
@@ -444,6 +450,21 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
+    /*
+     Does the settlement have the required technology
+     to produce a class?
+         */
+    public bool CanProduceClass(CHARACTER_CLASS charClass) {
+        if (_owner == null) {
+            return false;
+        }
+        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
+        if (neededTech == TECHNOLOGY.NONE) {
+            return true;
+        } else {
+            return _technologies[neededTech];
+        }
+    }
     #endregion
 
     #region Party
