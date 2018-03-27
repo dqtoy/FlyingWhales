@@ -12,12 +12,14 @@ public class TheDarkRitual : Quest {
 
 		QuestPhase phase1 = new QuestPhase(this, "Search for a Book of Inimical Incantations");
 		phase1.AddTask(new Search(createdBy, 5, "Book of Inimical Incantations", null, this));
-		phase1.AddTask(new Rob(createdBy, "Book of Inimical Incantations", this), false);
+		phase1.AddTask(new Rob(createdBy, "Book of Inimical Incantations", this));
+        phase1.AddPhaseRequirement(new MustHaveItems("Book of Inimical Incantations"));
 
 		QuestPhase phase2 = new QuestPhase(this, "Perform Ritual");
 		phase2.AddTask(new DoRitual(createdBy, 5, this));
+        phase2.AddPhaseRequirement(new MustFinishAllPhaseTasks());
 
-		_phases.Add(phase1);
+        _phases.Add(phase1);
 		_phases.Add(phase2);
 	}
 

@@ -100,6 +100,9 @@ public class CharacterTask {
 	public bool canTargetSelf {
 		get { return _canTargetSelf; }
 	}
+    public ECS.Character assignedCharacter {
+        get { return _assignedCharacter; }
+    }
 	//public WeightedDictionary<BaseLandmark> landmarkWeights{
 	//	get { return _landmarkWeights; }
 	//}
@@ -205,9 +208,7 @@ public class CharacterTask {
     }
     public virtual void TaskSuccess() {
         _isDone = true;
-        if (_parentQuest != null) {
-            _assignedCharacter.questData.OnTaskSuccess(this);
-        }
+        Messenger.Broadcast(Signals.TASK_SUCCESS, _assignedCharacter, this);
 		_assignedCharacter.DetermineAction();
 	}
     public virtual void TaskCancel() {

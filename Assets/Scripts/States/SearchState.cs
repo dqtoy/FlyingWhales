@@ -75,7 +75,9 @@ public class SearchState : State {
         }
 		if(!hasBeenFound){
 			CheckTraces (itemName, "item");
-		}
+        } else {
+            Messenger.Broadcast(Signals.FOUND_ITEM, itemName);
+        }
     }
     #endregion
 
@@ -97,7 +99,7 @@ public class SearchState : State {
 		if(!hasBeenFound){
 			CheckTraces (tagName, "tag");
 		}
-	}
+    }
 	#endregion
 
     #region Search for Landmark Items

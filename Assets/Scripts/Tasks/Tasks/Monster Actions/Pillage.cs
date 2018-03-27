@@ -41,7 +41,7 @@ public class Pillage : CharacterTask {
     }
     public override void TaskCancel() {
         base.TaskCancel();
-        //Messenger.RemoveListener("OnDayEnd", DoPillage);
+        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
         _assignedCharacter.DestroyAvatar();
 //		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 //			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
@@ -50,7 +50,7 @@ public class Pillage : CharacterTask {
     }
     public override void TaskFail() {
         base.TaskFail();
-        //Messenger.RemoveListener("OnDayEnd", DoPillage);
+        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
         _assignedCharacter.DestroyAvatar();
 //		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 //			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;

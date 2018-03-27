@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 public class UpgradeGear : CharacterTask {
 
@@ -19,7 +20,7 @@ public class UpgradeGear : CharacterTask {
 			return;
 		}
 		if(_targetLocation == null){
-			_targetLocation = _assignedCharacter.GetNearestSettlementFromFaction();
+            _targetLocation = GetLandmarkTarget(character);
 		}
 		if(_targetLocation != null){
 			ChangeStateTo (STATE.MOVE);
@@ -38,20 +39,53 @@ public class UpgradeGear : CharacterTask {
 		}
 		EndTaskSuccess ();
     }
-	public override bool CanBeDone (ECS.Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null && character.faction != null && location.tileLocation.landmarkOnTile is Settlement){
-			if(location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
-				return true;
-			}
-		}
-		return base.CanBeDone (character, location);
-	}
+    public override bool CanBeDone(ECS.Character character, ILocation location) {
+        if (location.tileLocation.landmarkOnTile != null && character.faction != null && location.tileLocation.landmarkOnTile is Settlement) {
+            Settlement settlement = location.tileLocation.landmarkOnTile as Settlement;
+            if (settlement.owner != null && settlement.owner.id == character.faction.id) {
+                if (settlement.owner != null && !settlement.HasHostilitiesWith(character)) {
+                    return true;
+                }
+            }
+        }
+        return base.CanBeDone(character, location);
+    }
 	public override bool AreConditionsMet (ECS.Character character){
-		if(character.faction != null && character.faction.settlements.Count > 0){
-			return true;
-		}
-		return base.AreConditionsMet (character);
+        //if(character.faction != null && character.faction.settlements.Count > 0){
+        //	return true;
+        //}
+        List<Region> regionsToCheck = new List<Region>();
+        regionsToCheck.Add(character.currentRegion);
+        regionsToCheck.AddRange(character.currentRegion.adjacentRegionsViaMajorRoad);
+        for (int i = 0; i < regionsToCheck.Count; i++) {
+            Region currRegion = regionsToCheck[i];
+            //Non Hostile Settlement in current region and adjacent regions: 100
+            if (currRegion.mainLandmark.HasHostilitiesWith(character)) {
+                return true;
+            }
+        }
+        return base.AreConditionsMet (character);
 	}
+    public override int GetSelectionWeight(Character character) {
+        return 20;
+    }
+    protected override BaseLandmark GetLandmarkTarget(Character character) {
+        base.GetLandmarkTarget(character);
+        List<Region> regionsToCheck = new List<Region>();
+        regionsToCheck.Add(character.currentRegion);
+        regionsToCheck.AddRange(character.currentRegion.adjacentRegionsViaMajorRoad);
+        for (int i = 0; i < regionsToCheck.Count; i++) {
+            Region currRegion = regionsToCheck[i];
+            //Non Hostile Settlement in current region and adjacent regions: 100
+            if (currRegion.mainLandmark.HasHostilitiesWith(character)) {
+                _landmarkWeights.AddElement(currRegion.mainLandmark, 100);
+            }
+        }
+        if (_landmarkWeights.GetTotalOfWeights() > 0) {
+            return _landmarkWeights.PickRandomElementGivenWeights();
+        }
+        return null;
+    }
     //public override void TaskSuccess() {
     //    if (_assignedCharacter.faction == null) {
     //        _assignedCharacter.UnalignedDetermineAction();
@@ -61,7 +95,7 @@ public class UpgradeGear : CharacterTask {
     //}
     #endregion
 
-	private void StartPurchase(){
+    private void StartPurchase(){
 		ChangeStateTo (STATE.PURCHASE);
 	}
 }

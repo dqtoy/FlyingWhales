@@ -46,8 +46,14 @@ public class PurchaseState : State {
 						if(!currChar.EquipItem(createdItem)){ //if the character can equip the item, equip it, otherwise, keep in inventory
 							currChar.PickupItem(createdItem); //put item in inventory
 						}
-						//currChar.AddHistory("Bought a " + createdItem.itemName + " from " + _settlement.landmarkName);
-						Debug.Log(currChar.name + " bought a " + createdItem.itemName + " from " + settlement.landmarkName);
+                        //Log boughtLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "UpgradeGear", "bought");
+                        //boughtLog.AddToFillers(currChar, currChar.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        //boughtLog.AddToFillers(createdItem, createdItem.itemName, LOG_IDENTIFIER.ITEM_1);
+                        //boughtLog.AddToFillers(settlement, settlement.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                        //currChar.AddHistory(boughtLog);
+                        //settlement.AddHistory(boughtLog);
+                        //currChar.AddHistory("Bought a " + createdItem.itemName + " from " + _settlement.landmarkName);
+                        Debug.Log(currChar.name + " bought a " + createdItem.itemName + " from " + settlement.landmarkName);
 					}
 				}
 			}

@@ -28,6 +28,9 @@ public class Quest {
     public int id {
         get { return _id; }
     }
+    public bool isDone {
+        get { return _isDone; }
+    }
     public TaskCreator createdBy {
         get { return _createdBy; }
     }

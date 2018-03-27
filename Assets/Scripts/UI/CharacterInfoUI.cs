@@ -182,7 +182,7 @@ public class CharacterInfoUI : UIMenu {
 	private void UpdateTraitInfo(){
 		string text = string.Empty;
 		text += "[b]TRAITS AND TAGS[/b]";
-		if(currentlyShowingCharacter.traits.Count > 0){
+		if(currentlyShowingCharacter.traits.Count > 0 || currentlyShowingCharacter.tags.Count > 0){
 			text += "\n";
 			for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
 				Trait trait = currentlyShowingCharacter.traits [i];

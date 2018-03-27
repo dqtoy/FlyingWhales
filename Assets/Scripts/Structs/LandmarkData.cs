@@ -9,6 +9,7 @@ public class LandmarkData {
     public bool isUnique;
     public MATERIAL[] possibleMaterials; //Possible materials that this landmark can be made of (this affects the landmarks durability)
     public LandmarkItemData[] itemData;
+    public Sprite landmarkObjectSprite;
 
     private WeightedDictionary<string> _itemWeights;
 

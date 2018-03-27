@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class QuestPhase {
     private Quest _sourceQuest;
-    private List<CharacterTask> _importantTasks; //tasks in this phase that NEEDS to be completed before proceeding to the next phase
-    private List<CharacterTask> _unimportantTasks; //tasks in this phase that are just for helping the quest doer to achieve his/her goal (i.e. tasks that are not required to be done.)
+    private List<CharacterTask> _tasks; //tasks in this phase that NEEDS to be completed before proceeding to the next phase
+    private List<QuestPhaseRequirement> _phaseRequirements;
 
     private string _phaseName;
 
@@ -13,19 +13,16 @@ public class QuestPhase {
     public string phaseName {
         get { return GetPhaseName(); }
     }
-    public List<CharacterTask> importantTasks {
-        get { return GetImportantTasks(); }
-    }
-    public List<CharacterTask> untimportantTasks {
-        get { return GetUnimportantTasks(); }
+    public List<CharacterTask> tasks {
+        get { return _tasks; }
     }
     #endregion
 
     public QuestPhase(Quest sourceQuest, string phaseName = "") {
         _sourceQuest = sourceQuest;
         _phaseName = phaseName;
-        _importantTasks = new List<CharacterTask>();
-        _unimportantTasks = new List<CharacterTask>();
+        _tasks = new List<CharacterTask>();
+        _phaseRequirements = new List<QuestPhaseRequirement>();
     }
 
     protected string GetPhaseName() {
@@ -34,31 +31,22 @@ public class QuestPhase {
         }
         return "Phase " + _sourceQuest.phases.IndexOf(this).ToString();
     }
-    public void AddTask(CharacterTask task, bool isImportant = true) {
-        if (isImportant) {
-            if (!_importantTasks.Contains(task)) {
-                _importantTasks.Add(task);
-            }
-        } else {
-            if (!_unimportantTasks.Contains(task)) {
-                _unimportantTasks.Add(task);
-            }
+    /*
+     This is called when a character reaches this phase
+         */
+    public void OnPhaseActive(ECS.Character character) {
+        //add all requirements to the characters quest data
+        for (int i = 0; i < _phaseRequirements.Count; i++) {
+            QuestPhaseRequirement currRequirement = _phaseRequirements[i];
+            character.questData.AddPhaseRequirement(currRequirement.Clone() as QuestPhaseRequirement);
         }
     }
-    private List<CharacterTask> GetImportantTasks() {
-        List<CharacterTask> importantTasks = new List<CharacterTask>();
-        for (int i = 0; i < _importantTasks.Count; i++) {
-            CharacterTask currTaskToCopy = _importantTasks[i];
-            importantTasks.Add(currTaskToCopy.CloneTask());
+    public void AddTask(CharacterTask task) {
+        if (!_tasks.Contains(task)) {
+            _tasks.Add(task);
         }
-        return importantTasks;
     }
-    private List<CharacterTask> GetUnimportantTasks() {
-        List<CharacterTask> unimportantTasks = new List<CharacterTask>();
-        for (int i = 0; i < _unimportantTasks.Count; i++) {
-            CharacterTask currTaskToCopy = _unimportantTasks[i];
-            unimportantTasks.Add(currTaskToCopy.CloneTask());
-        }
-        return unimportantTasks;
+    public void AddPhaseRequirement(QuestPhaseRequirement requirement) {
+        _phaseRequirements.Add(requirement);
     }
 }

@@ -58,4 +58,17 @@ public class Report : CharacterTask {
         return 100;
     }
     #endregion
+
+    #region Logs
+    public override string GetArriveActionString() {
+        Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterTasks", this.GetType().ToString(), "arrive_action");
+        arriveLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        return Utilities.LogReplacer(arriveLog);
+    }
+    public override string GetLeaveActionString() {
+        Log leaveLog = new Log(GameManager.Instance.Today(), "CharacterTasks", this.GetType().ToString(), "leave_action");
+        leaveLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        return Utilities.LogReplacer(leaveLog);
+    }
+    #endregion
 }

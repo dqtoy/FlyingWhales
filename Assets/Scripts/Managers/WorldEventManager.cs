@@ -22,7 +22,7 @@ public class WorldEventManager : MonoBehaviour {
 
     void Start() {
         ResetCurrentInterveneEvent();
-//        Messenger.AddListener("OnDayEnd", this.TickActions);
+//        Messenger.AddListener(Signals.DAY_END, this.TickActions);
     }
     #endregion
 

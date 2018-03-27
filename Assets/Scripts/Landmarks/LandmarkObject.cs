@@ -10,6 +10,7 @@ public class LandmarkObject : MonoBehaviour {
     [SerializeField] private SpriteRenderer topSprite;
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;
+    [SerializeField] private SpriteRenderer iconSprite;
 
     public void SetLandmark(BaseLandmark landmark) {
         _landmark = landmark;
@@ -20,6 +21,15 @@ public class LandmarkObject : MonoBehaviour {
 			}else{
 				landmarkLbl.text = Utilities.NormalizeString(landmark.specificLandmarkType.ToString());
 			}
+        }
+        if (_landmark.specificLandmarkType != LANDMARK_TYPE.CITY) {
+            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_landmark.specificLandmarkType);
+            if (data.landmarkObjectSprite != null) {
+                iconSprite.sprite = data.landmarkObjectSprite;
+                iconSprite.gameObject.SetActive(true);
+            } else {
+                iconSprite.gameObject.SetActive(false);
+            }
         }
         //UpdateLandmarkVisual();
     }

@@ -83,6 +83,13 @@ namespace ECS{
             isUnlimited = state;
         }
 
+        public void OnItemPlacedOnLandmark(BaseLandmark landmark) {
+            Messenger.Broadcast(Signals.ITEM_PLACED_LANDMARK, this, landmark);
+        }
+        public void OnItemPutInInventory(ECS.Character character) {
+            Messenger.Broadcast(Signals.ITEM_PLACED_INVENTORY, this, character);
+        }
+
         #region virtuals
         public virtual Item CreateNewCopy() {
             Item copy = new Item();

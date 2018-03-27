@@ -368,7 +368,7 @@ public class UIManager : MonoBehaviour {
     }
 
 	void Start(){
-        //Messenger.AddListener("OnDayEnd", CheckForKingdomExpire);
+        //Messenger.AddListener(Signals.DAY_END, CheckForKingdomExpire);
         Messenger.AddListener("UpdateUI", UpdateUI);
         //EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
         //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);

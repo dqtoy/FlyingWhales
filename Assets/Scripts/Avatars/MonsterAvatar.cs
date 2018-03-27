@@ -181,12 +181,12 @@ public class MonsterAvatar : PooledObject {
 
 	internal void AddBehaviourTree(){
         //BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
-        Messenger.AddListener("OnDayEnd", this.pandaBehaviour.Tick);
+        Messenger.AddListener(Signals.DAY_END, this.pandaBehaviour.Tick);
     }
 
 	internal void RemoveBehaviourTree(){
         //BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
-        Messenger.RemoveListener("OnDayEnd", this.pandaBehaviour.Tick);
+        Messenger.RemoveListener(Signals.DAY_END, this.pandaBehaviour.Tick);
     }
 
 

@@ -5,6 +5,8 @@ public class StorylinesSummaryMenu : UIMenu {
 
     [SerializeField] private UIScrollView storylinesScrollview;
     [SerializeField] private UITable storylinesTable;
+    [SerializeField] private GameObject storylineInfoGO;
+    [SerializeField] private UILabel storylineInfoLbl;
 
     [SerializeField] private GameObject storylineItemPrefab;
 
@@ -17,6 +19,19 @@ public class StorylinesSummaryMenu : UIMenu {
             storylineItem.SetStoryline(currStoryline);
             storylinesTable.Reposition();
         }
+    }
+
+    public void ShowElementInfo(string info) {
+        storylineInfoGO.SetActive(true);
+        storylineInfoLbl.text = info;
+        var v3 = Input.mousePosition;
+        v3.z = 10.0f;
+        v3 = UIManager.Instance.uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+        storylineInfoGO.transform.position = new Vector3(storylineInfoGO.transform.position.x, v3.y, v3.z);
+    }
+
+    public void HideElementInfo() {
+        storylineInfoGO.SetActive(false);
     }
 
 }

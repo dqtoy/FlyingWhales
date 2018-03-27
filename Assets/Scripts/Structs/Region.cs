@@ -699,10 +699,10 @@ public class Region {
     #endregion
 
     //internal void StartProducing(){
-    //	Messenger.AddListener("OnDayEnd", ProduceResource);
+    //	Messenger.AddListener(Signals.DAY_END, ProduceResource);
     //}
     //internal void StopProducing(){
-    //	Messenger.RemoveListener("OnDayEnd", ProduceResource);
+    //	Messenger.RemoveListener(Signals.DAY_END, ProduceResource);
     //}
     //private void ProduceResource(){
     //	if(!isOtherDay){

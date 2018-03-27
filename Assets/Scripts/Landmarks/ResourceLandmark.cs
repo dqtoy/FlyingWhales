@@ -37,10 +37,10 @@ public class ResourceLandmark : BaseLandmark {
 
     #region Resources
     //private void StartResourceProduction() {
-    //    Messenger.AddListener("OnDayEnd", ProduceResources);
+    //    Messenger.AddListener(Signals.DAY_END, ProduceResources);
     //}
     //private void StopResourceProduction() {
-    //    Messenger.RemoveListener("OnDayEnd", ProduceResources);
+    //    Messenger.RemoveListener(Signals.DAY_END, ProduceResources);
     //}
     ///*
     //A Resource can produce between 0 to 2 amount per day per citizen 

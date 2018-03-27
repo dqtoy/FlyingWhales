@@ -8,15 +8,15 @@ public class QuestData {
     private int _currentPhase;
     private ECS.Character _owner;
 
-    private List<CharacterTask> _importantTasks;
-    private List<CharacterTask> _unimportantTasks;
+    private List<CharacterTask> _tasks;
+    private List<QuestPhaseRequirement> _advancementRequirements;
 
     #region getters/setters
     public Quest activeQuest {
         get { return _activeQuest; }
     }
-    public List<CharacterTask> allTasks {
-        get { return GetAllTasks(); }
+    public List<CharacterTask> tasks {
+        get { return _tasks; }
     }
 	public int currentPhase {
 		get { return _currentPhase; }
@@ -25,13 +25,14 @@ public class QuestData {
 
     public QuestData(ECS.Character owner) {
         _owner = owner;
+        _advancementRequirements = new List<QuestPhaseRequirement>();
     }
 
     public void SetActiveQuest(Quest quest) {
         _activeQuest = quest;
         if (quest == null) {
             //quest is being set to null, it means the quest is no longer available or the character chose to leave the quest
-            if (_owner.currentTask != null && allTasks.Contains(_owner.currentTask)) {
+            if (_owner.currentTask != null && tasks.Contains(_owner.currentTask)) {
                 _owner.currentTask.EndTask(TASK_STATUS.CANCEL); //cancel the characters current task if it comes from the list of tasks granted by his/her active quest
             }
         }
@@ -40,15 +41,22 @@ public class QuestData {
     public void SetQuestPhase(int phase) {
         _currentPhase = phase;
         if (_activeQuest != null) {
-            _importantTasks = new List<CharacterTask>(GetQuestPhase().importantTasks);
-            _unimportantTasks = new List<CharacterTask>(GetQuestPhase().untimportantTasks);
+            QuestPhase questPhase = GetQuestPhase();
+            _tasks = new List<CharacterTask>(questPhase.tasks);
+            _advancementRequirements.Clear();
+            questPhase.OnPhaseActive(_owner);
         } else {
-            _importantTasks.Clear();
-            _unimportantTasks.Clear();
+            _tasks.Clear();
         }
     }
     public void AdvanceToNextPhase() {
-        SetQuestPhase(_currentPhase + 1);
+        if (_activeQuest.phases.Count > _currentPhase + 1) {
+            //there is still a next phase, advance to the next phase
+            SetQuestPhase(_currentPhase + 1);
+        } else {
+            //there are no more phases, end the quest
+            EndQuest(TASK_STATUS.SUCCESS);
+        }
         UIManager.Instance.UpdateQuestsSummary();
     }
     public QuestPhase GetQuestPhase() {
@@ -57,51 +65,64 @@ public class QuestData {
     public void EndQuest(TASK_STATUS taskStatus) {
         _activeQuest.EndQuest(taskStatus, _owner);
     }
-    private List<CharacterTask> GetAllTasks() {
-        List<CharacterTask> allTasks = new List<CharacterTask>();
-        allTasks.AddRange(_importantTasks);
-        allTasks.AddRange(_unimportantTasks);
-        return allTasks;
-    }
-    /*
-     What to do when a task succeeds?
-         */
-    public void OnTaskSuccess(CharacterTask succeededTask) {
-        if (!_importantTasks.Contains(succeededTask) && !_unimportantTasks.Contains(succeededTask)) {
-            throw new System.Exception(_owner.name + " does not have a task " + succeededTask.taskType.ToString() + " in his task list!");
-        }
+    //private List<CharacterTask> GetAllTasks() {
+    //    List<CharacterTask> allTasks = new List<CharacterTask>();
+    //    allTasks.AddRange(_tasks);
+    //    return allTasks;
+    //}
+    ///*
+    // What to do when a task succeeds?
+    //     */
+    //public void OnTaskSuccess(CharacterTask succeededTask) {
+    //    if (!_importantTasks.Contains(succeededTask) && !_unimportantTasks.Contains(succeededTask)) {
+    //        throw new System.Exception(_owner.name + " does not have a task " + succeededTask.taskType.ToString() + " in his task list!");
+    //    }
 
-        if (_unimportantTasks.Contains(succeededTask)) {
-            //succeeded task is unimportant to the progress of the quest
-            succeededTask.ResetTask();
-        } else {
-            //succeeded task is important to the progress of the quest, check if the character has done all the important tasks.
+    //    if (_unimportantTasks.Contains(succeededTask)) {
+    //        //succeeded task is unimportant to the progress of the quest
+    //        succeededTask.ResetTask();
+    //    } else {
+    //        //succeeded task is important to the progress of the quest, check if the character has done all the important tasks.
 
-            //check if all the tasks in the important tasks list are done
-            for (int i = 0; i < _importantTasks.Count; i++) {
-                CharacterTask currTask = _importantTasks[i];
-                if (!currTask.isDone) {
-                    return; //there is still a pending task
-                }
-            }
+    //        //check if all the tasks in the important tasks list are done
+    //        for (int i = 0; i < _importantTasks.Count; i++) {
+    //            CharacterTask currTask = _importantTasks[i];
+    //            if (!currTask.isDone) {
+    //                return; //there is still a pending task
+    //            }
+    //        }
 
-            //All tasks are done, check if there is still a next phase
-            if (_activeQuest.phases.Count > _currentPhase + 1) {
-                //there is still a next phase, advance to the next phase
-                AdvanceToNextPhase();
-            } else {
-                //there are no more phases, end the quest
-                EndQuest(TASK_STATUS.SUCCESS);
-            }
-        }
-    }
+    //        //All tasks are done, check if there is still a next phase
+    //        if (_activeQuest.phases.Count > _currentPhase + 1) {
+    //            //there is still a next phase, advance to the next phase
+    //            AdvanceToNextPhase();
+    //        } else {
+    //            //there are no more phases, end the quest
+    //            EndQuest(TASK_STATUS.SUCCESS);
+    //        }
+    //    }
+    //}
 
     public void AddQuestTasksToWeightedDictionary(WeightedDictionary<CharacterTask> actionWeights) {
-        for (int i = 0; i < _importantTasks.Count; i++) {
-            CharacterTask currTask = _importantTasks[i];
+        for (int i = 0; i < _tasks.Count; i++) {
+            CharacterTask currTask = _tasks[i];
             if (!currTask.isDone) {
                 actionWeights.AddElement(currTask, currTask.GetSelectionWeight(_owner));
             }
         }
+    }
+
+    public void AddPhaseRequirement(QuestPhaseRequirement requirement) {
+        _advancementRequirements.Add(requirement);
+        requirement.ActivateRequirement(_owner);
+    }
+    public void CheckPhaseAdvancement() {
+        for (int i = 0; i < _advancementRequirements.Count; i++) {
+            QuestPhaseRequirement currRequirement = _advancementRequirements[i];
+            if (!currRequirement.isRequirementMet) {
+                return; //there is a requirement that has not yet been met
+            }
+        }
+        AdvanceToNextPhase(); //all requirements have been met, advance to next phase
     }
 }
