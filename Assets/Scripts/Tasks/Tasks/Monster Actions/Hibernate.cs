@@ -6,6 +6,7 @@ using ECS;
 public class Hibernate : CharacterTask {
 
     private List<Character> _charactersToRest;
+	private BaseLandmark _targetLandmark;
 
 	#region getters/setters
 	public List<Character> charactersToRest{
@@ -35,46 +36,24 @@ public class Hibernate : CharacterTask {
         }
 
 		if(_targetLocation == null){
-			_targetLocation = GetLandmarkTarget (character);
+			_targetLandmark = GetLandmarkTarget (character);
+			_targetLocation = _targetLandmark;
 		}
-		if(_targetLocation != null){
+		if(_targetLandmark != null){
 			ChangeStateTo (STATE.MOVE);
-			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartHibernation());
+			_assignedCharacter.GoToLocation (_targetLandmark, PATHFINDING_MODE.USE_ROADS, () => StartHibernation());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
     }
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){
-			BaseLandmark home = character.home;
-			if(home == null){
-				home = character.lair;
-			}
-			if(home != null && location.tileLocation.landmarkOnTile.id == home.id){
-				return true;
-			}
-//			if(character.faction == null){
-//				
-//			}else{
-//				if(location.tileLocation.landmarkOnTile is Settlement && location.tileLocation.landmarkOnTile.owner != null){
-//					Settlement settlement = (Settlement)location.tileLocation.landmarkOnTile;
-//					if(settlement.owner.id == character.faction.id){
-//						return true;
-//					}
-//				}
-//			}
+			return true;
 		}
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		BaseLandmark home = character.home;
-		if(home == null){
-			home = character.lair;
-		}
-		if(home != null){
-			return true;
-		}
-		return base.AreConditionsMet (character);
+		return true;
 	}
     //public override void PerformDailyAction() {
     //    if (_canDoDailyAction) {
@@ -88,13 +67,41 @@ public class Hibernate : CharacterTask {
     //}
 
 	protected override BaseLandmark GetLandmarkTarget (Character character){
-//		base.GetLandmarkTarget (character);
-		BaseLandmark home = character.home;
-		if(home == null){
-			home = character.lair;
+		base.GetLandmarkTarget (character);
+		int weight = 0;
+		for (int i = 0; i < character.currentRegion.allLandmarks.Count; i++) {
+			BaseLandmark landmark = character.currentRegion.allLandmarks [i];
+			weight = 5;
+			if(!landmark.HasHostilitiesWith(character)){
+				weight += 100;
+			}
+			if(landmark.charactersAtLocation.Count <= 0){
+				weight += 200;
+			}
+			if(landmark.id == character.home.id){
+				weight += 400;
+			}
+			_landmarkWeights.AddElement (landmark, weight);
 		}
-		if(home != null){
-			return home;
+		for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
+			Region adjacentRegion = character.currentRegion.adjacentRegionsViaMajorRoad [i];
+			for (int j = 0; j < adjacentRegion.allLandmarks.Count; j++) {
+				BaseLandmark landmark = character.currentRegion.allLandmarks [i];
+				weight = 5;
+				if(!landmark.HasHostilitiesWith(character)){
+					weight += 100;
+				}
+				if(landmark.charactersAtLocation.Count <= 0){
+					weight += 200;
+				}
+				if(landmark.id == character.home.id){
+					weight += 400;
+				}
+				_landmarkWeights.AddElement (landmark, weight);
+			}
+		}
+		if(_landmarkWeights.Count > 0){
+			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;
 	}
@@ -107,9 +114,9 @@ public class Hibernate : CharacterTask {
         Log startLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hibernate", "start");
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         _assignedCharacter.AddHistory(startLog);
-        if (_assignedCharacter.specificLocation is BaseLandmark) {
-            (_assignedCharacter.specificLocation as BaseLandmark).AddHistory(startLog);
-        }
+		_targetLandmark.AddHistory(startLog);
+
+		_assignedCharacter.SetHome (_targetLandmark);
 		ChangeStateTo (STATE.REST);
 	}
     //private void GoToTargetLocation() {

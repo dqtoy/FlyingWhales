@@ -28,7 +28,7 @@ public class EliminateLostHeir : Quest {
 
 		MoveTo moveTo = new MoveTo (createdBy, -1, this);
 		moveTo.SetForGameOnly (true);
-		phase2.AddTask(moveTo, false);
+		phase2.AddTask(moveTo);
 
 		QuestPhase phase3 = new QuestPhase(this, "Report to the Successor");
 		phase3.AddTask (new Report (createdBy, _falseHeir, this));

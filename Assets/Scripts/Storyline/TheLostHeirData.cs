@@ -8,6 +8,7 @@ public class TheLostHeirData : StorylineData {
     private ECS.Character chieftain, falseHeir, lostHeir;
     private ECS.Item heirloomNecklace;
     private Quest findLostHeirQuest;
+	private EliminateLostHeir eliminateLostHeirQuest;
 
     public TheLostHeirData() : base(STORYLINE.LOST_HEIR) {
         
@@ -81,9 +82,9 @@ public class TheLostHeirData : StorylineData {
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
             //chieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
 
-			EliminateLostHeir eliminateLostHeirQuest = new EliminateLostHeir(chosenChieftain, chosenChieftain, chosenSuccessor, lostHeir);
+			eliminateLostHeirQuest = new EliminateLostHeir(chieftain, chieftain, falseHeir, lostHeir);
 			QuestManager.Instance.AddQuestToAvailableQuests(eliminateLostHeirQuest);
-			chosenChieftain.AddActionOnDeath(eliminateLostHeirQuest.ForceCancelQuest);
+//			chosenChieftain.AddActionOnDeath(eliminateLostHeirQuest.ForceCancelQuest);
 
 
             AddRelevantQuest(findLostHeirQuest);
@@ -126,6 +127,9 @@ public class TheLostHeirData : StorylineData {
             if (!findLostHeirQuest.isDone) {
                 findLostHeirQuest.ForceCancelQuest();
             }
+			if(!eliminateLostHeirQuest.isDone){
+				eliminateLostHeirQuest.ForceCancelQuest ();
+			}
 
             Log chieftainDeath = CreateLogForStoryline("chieftain_died");
             chieftainDeath.AddToFillers(chieftain, chieftain.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
