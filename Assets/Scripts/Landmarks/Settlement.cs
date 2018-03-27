@@ -56,8 +56,12 @@ public class Settlement : BaseLandmark {
 		base.Initialize ();
 		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
 			InitializeCrater ();
-		}
-	}
+		} else if (_specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+            //When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
+            AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
+            GenerateGoblinCampTechnologies();
+        }
+    }
 	public override void DestroyLandmark (bool putRuinStructure){
 		base.DestroyLandmark (putRuinStructure);
 		tileLocation.RuinStructureOnTile (!putRuinStructure);
@@ -67,24 +71,6 @@ public class Settlement : BaseLandmark {
 	}
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
-//		foreach (MATERIAL material in _materialsInventory.Keys) {
-//			if(faction.GetHighestMaterialPriority(PRODUCTION_TYPE.WEAPON) == material){
-//				_materialsInventory [material].capacity += 200;
-//			}
-//			if(faction.GetHighestMaterialPriority(PRODUCTION_TYPE.ARMOR) == material){
-//				_materialsInventory [material].capacity += 200;
-//			}
-//			if(faction.GetHighestMaterialPriority(PRODUCTION_TYPE.CONSTRUCTION) == material){
-//				_materialsInventory [material].capacity += 200;
-//			}
-//			if(faction.GetHighestMaterialPriority(PRODUCTION_TYPE.TRAINING) == material){
-//				_materialsInventory [material].capacity += 200;
-//			}
-//
-//			if(_materialsInventory [material].capacity == 0){
-//				_materialsInventory [material].capacity = 200;
-//			}
-//		}
 		if (tileLocation.isHabitable) {
             //Create structures on location
             faction.AddSettlement(this);
@@ -95,11 +81,7 @@ public class Settlement : BaseLandmark {
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
             _producingPopulationFor = GetRaceBasedOnProportion();
         }
-		//Start OldQuest.Quest Creation
-		//ScheduleUpdateAvailableMaterialsToGet ();
-		//ScheduleUpdateNeededMaterials ();
-		//ScheduleMonthlyQuests ();
-		//TrainCharacterInSettlement(); //Start Character Creation Process
+        
         IncreasePopulationPerMonth(); //Start Population Increase Process
     }
     public override void UnoccupyLandmark() {
@@ -650,5 +632,91 @@ public class Settlement : BaseLandmark {
 	private void ListenUnpsytoxinated(){
 		AdjustNumOfPsytoxinated (-1);
 	}
-	#endregion
+    #endregion
+
+    #region Goblin Camp
+    private Dictionary<int, List<TECHNOLOGY>> classTechnologyChoices = new Dictionary<int, List<TECHNOLOGY>>() {
+            {0, new List<TECHNOLOGY>(){
+                TECHNOLOGY.ARCHER_CLASS,
+                TECHNOLOGY.BOW_MAKING,
+                TECHNOLOGY.WILDLING_CLASS,
+                TECHNOLOGY.AXE_MAKING,
+                TECHNOLOGY.ROGUE_CLASS,
+                TECHNOLOGY.DAGGER_MAKING,
+                TECHNOLOGY.GOBLIN_LANGUAGE }
+            },
+            {1, new List<TECHNOLOGY>(){
+                TECHNOLOGY.SWORDSMAN_CLASS,
+                TECHNOLOGY.SWORD_MAKING,
+                TECHNOLOGY.MAGE_CLASS,
+                TECHNOLOGY.STAFF_MAKING,
+                TECHNOLOGY.WILDLING_CLASS,
+                TECHNOLOGY.AXE_MAKING,
+                TECHNOLOGY.GOBLIN_LANGUAGE }
+            },
+            {2, new List<TECHNOLOGY>(){
+                TECHNOLOGY.ARCHER_CLASS,
+                TECHNOLOGY.BOW_MAKING,
+                TECHNOLOGY.SWORDSMAN_CLASS,
+                TECHNOLOGY.SWORD_MAKING,
+                TECHNOLOGY.SPEARMAN_CLASS,
+                TECHNOLOGY.AXE_MAKING,
+                TECHNOLOGY.GOBLIN_LANGUAGE }
+            },
+            {3, new List<TECHNOLOGY>(){
+                TECHNOLOGY.SPEARMAN_CLASS,
+                TECHNOLOGY.SPEAR_MAKING,
+                TECHNOLOGY.ROGUE_CLASS,
+                TECHNOLOGY.DAGGER_MAKING,
+                TECHNOLOGY.MAGE_CLASS,
+                TECHNOLOGY.STAFF_MAKING,
+                TECHNOLOGY.GOBLIN_LANGUAGE }
+            }
+        };
+    private List<TECHNOLOGY> commonPoolTech = new List<TECHNOLOGY>() {
+        TECHNOLOGY.CHEST_ARMOR_MAKING,
+        TECHNOLOGY.LEGGINGS_MAKING,
+        TECHNOLOGY.HELMET_MAKING,
+        TECHNOLOGY.GLOVE_MAKING,
+        TECHNOLOGY.BOOT_MAKING,
+        TECHNOLOGY.BASIC_FARMING,
+        TECHNOLOGY.BASIC_HUNTING,
+        TECHNOLOGY.BASIC_MINING,
+        TECHNOLOGY.BASIC_WOODCUTTING,
+        TECHNOLOGY.BASIC_QUARRYING,
+        TECHNOLOGY.ELVEN_LANGUAGE,
+        TECHNOLOGY.HUMAN_LANGUAGE,
+        TECHNOLOGY.TROLL_LANGUAGE
+    };
+    private List<TECHNOLOGY> rarePoolTech = new List<TECHNOLOGY>() {
+        TECHNOLOGY.ADVANCED_FARMING,
+        TECHNOLOGY.ADVANCED_HUNTING,
+        TECHNOLOGY.ADVANCED_MINING,
+        TECHNOLOGY.ADVANCED_WOODCUTTING,
+        TECHNOLOGY.ADVANCED_QUARRYING,
+        TECHNOLOGY.RANGER_CLASS,
+        TECHNOLOGY.BATTLEMAGE_CLASS,
+        TECHNOLOGY.SCOUT_CLASS,
+        TECHNOLOGY.BARBARIAN_CLASS,
+        TECHNOLOGY.KNIGHT_CLASS,
+        TECHNOLOGY.ARCANIST_CLASS,
+        TECHNOLOGY.NIGHTBLADE_CLASS
+    };
+    private void GenerateGoblinCampTechnologies() {
+        List<TECHNOLOGY> generatedTech = new List<TECHNOLOGY>();
+        generatedTech.AddRange(classTechnologyChoices[Random.Range(0, 4)]); //Class technologies select from the sets
+        //Common Pool Tech (randomly select 4)
+        for (int i = 0; i < 4; i++) {
+            TECHNOLOGY chosenCommonTech = commonPoolTech[Random.Range(0, commonPoolTech.Count)];
+            generatedTech.Add(chosenCommonTech);
+            commonPoolTech.Remove(chosenCommonTech);
+        }
+        //Rare Pool Tech (randomly select 1)
+        generatedTech.Add(rarePoolTech[Random.Range(0, rarePoolTech.Count)]);
+        for (int i = 0; i < generatedTech.Count; i++) {
+            TECHNOLOGY currTech = generatedTech[i];
+            _technologies[currTech] = true;
+        }
+    }
+    #endregion
 }
