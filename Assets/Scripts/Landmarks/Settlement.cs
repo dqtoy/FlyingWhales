@@ -81,8 +81,6 @@ public class Settlement : BaseLandmark {
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
             _producingPopulationFor = GetRaceBasedOnProportion();
         }
-        
-        IncreasePopulationPerMonth(); //Start Population Increase Process
     }
     public override void UnoccupyLandmark() {
         base.UnoccupyLandmark();
