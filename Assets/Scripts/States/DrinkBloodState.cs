@@ -53,8 +53,6 @@ public class DrinkBloodState : State {
         _assignedCharacter.AddHistory(caughtLog);
         (parentTask.targetLocation as BaseLandmark).AddHistory(caughtLog);
 
-        if (!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)) {
-            _assignedCharacter.AssignTag(CHARACTER_TAG.CRIMINAL);
-        }
+		_assignedCharacter.AssignTag(CHARACTER_TAG.CRIMINAL);
     }
 }

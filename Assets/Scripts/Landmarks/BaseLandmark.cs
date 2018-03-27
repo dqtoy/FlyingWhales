@@ -1237,7 +1237,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	#region Traces
 	public void AddTrace(Character character){
 		GameDate expDate = GameManager.Instance.Today ();
-		expDate.AddDays (60);
+		expDate.AddDays (90);
 		if(!_characterTraces.ContainsKey(character)){
 			_characterTraces.Add (character, expDate);
 		}else{

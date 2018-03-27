@@ -97,6 +97,8 @@ public class PlayerActionsUI : MonoBehaviour {
 			this.gameObject.SetActive (true);
 			buttonsGrid.Reposition ();
 			UpdateGrid();
+		}else{
+			this.gameObject.SetActive (false);
 		}
 	}
 

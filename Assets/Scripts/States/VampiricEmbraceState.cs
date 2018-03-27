@@ -36,9 +36,7 @@ public class VampiricEmbraceState : State {
             targetCharacter.AddHistory(caughtLog);
             _assignedCharacter.AddHistory(caughtLog);
             _targetLandmark.AddHistory(caughtLog);
-            if (!_assignedCharacter.HasTag(CHARACTER_TAG.CRIMINAL)) {
-                _assignedCharacter.AssignTag(CHARACTER_TAG.CRIMINAL);
-            }
+            _assignedCharacter.AssignTag(CHARACTER_TAG.CRIMINAL);
             parentTask.EndTask(TASK_STATUS.FAIL);
         }
     }

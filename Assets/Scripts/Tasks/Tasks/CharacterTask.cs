@@ -328,7 +328,7 @@ public class CharacterTask {
 			State newCurrentState = _states [state];
 			newCurrentState.OnChooseState (_assignedCharacter);
 			_currentState = newCurrentState;
-			SetIsHalted (isHalted);
+			newCurrentState.SetIsHalted (isHalted);
 		}
 	}
     public State GetState(STATE state) {

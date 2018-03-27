@@ -81,7 +81,7 @@ public class Collect : CharacterTask {
 		ReduceDaysLeft(1);
 	}
 	public override int GetSelectionWeight(ECS.Character character) {
-		if (_parentQuest is FindLostHeir) {
+		if (_parentQuest is TheDarkRitual) {
 			return 80;
 		}
 		return 0;

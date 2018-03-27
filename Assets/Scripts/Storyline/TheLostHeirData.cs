@@ -71,7 +71,13 @@ public class TheLostHeirData : StorylineData {
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
             chosenChieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
 
+			EliminateLostHeir eliminateLostHeirQuest = new EliminateLostHeir(chosenChieftain, chosenChieftain, chosenSuccessor, lostHeir);
+			QuestManager.Instance.AddQuestToAvailableQuests(eliminateLostHeirQuest);
+			chosenChieftain.AddActionOnDeath(eliminateLostHeirQuest.ForceCancelQuest);
+
+
             AddRelevantQuest(findLostHeirQuest);
+			AddRelevantQuest(eliminateLostHeirQuest);
 
 			Debug.Log("LOST HEIR LOCATION: " + chosenHut.landmarkName + " - " + chosenHut.tileLocation.tileName);
 

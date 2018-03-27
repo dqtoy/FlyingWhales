@@ -65,16 +65,18 @@ public class MoveTo : CharacterTask {
 		return true;
 	}
     public override int GetSelectionWeight(Character character) {
-		if(_parentQuest != null && _parentQuest is FindLostHeir){
-			Character characterLookingFor = character.GetCharacterFromTraceInfo ("Heirloom Necklace");
-			if(characterLookingFor != null){
-				for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
-					if(character.currentRegion.adjacentRegionsViaMajorRoad[i].id == characterLookingFor.currentRegion.id){
-						return 50;
+		if(_parentQuest != null){
+			if(_parentQuest is FindLostHeir || _parentQuest is EliminateLostHeir){
+				Character characterLookingFor = character.GetCharacterFromTraceInfo ("Heirloom Necklace");
+				if(characterLookingFor != null){
+					for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
+						if(character.currentRegion.adjacentRegionsViaMajorRoad[i].id == characterLookingFor.currentRegion.id){
+							return 50;
+						}
 					}
 				}
+				return 0;
 			}
-			return 0;
 		}
         return 30;
     }
@@ -95,7 +97,7 @@ public class MoveTo : CharacterTask {
                 weight -= 20; //If Adjacent Settlement is unoccupied: -20
             }
 
-			if (_parentQuest != null && _parentQuest is FindLostHeir) {
+			if (_parentQuest != null && (_parentQuest is FindLostHeir || _parentQuest is EliminateLostHeir)) {
 				Character characterLookingFor = character.GetCharacterFromTraceInfo ("Heirloom Necklace");
 				if (characterLookingFor != null && characterLookingFor.currentRegion.id == adjacentRegion.id) {
 					weight += 100;
