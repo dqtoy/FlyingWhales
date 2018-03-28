@@ -100,7 +100,8 @@ public class Hibernate : CharacterTask {
 				_landmarkWeights.AddElement (landmark, weight);
 			}
 		}
-		if(_landmarkWeights.Count > 0){
+        LogTargetWeights(_landmarkWeights);
+        if (_landmarkWeights.Count > 0){
 			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;

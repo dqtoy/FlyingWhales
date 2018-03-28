@@ -66,7 +66,8 @@ public class DoRitual : CharacterTask {
 				_landmarkWeights.AddElement (landmark, 5);
 			}
 		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
+        LogTargetWeights(_landmarkWeights);
+        if (_landmarkWeights.GetTotalOfWeights() > 0){
 			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;

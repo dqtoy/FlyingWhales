@@ -81,6 +81,7 @@ public class UpgradeGear : CharacterTask {
                 _landmarkWeights.AddElement(currRegion.mainLandmark, 100);
             }
         }
+        LogTargetWeights(_landmarkWeights);
         if (_landmarkWeights.GetTotalOfWeights() > 0) {
             return _landmarkWeights.PickRandomElementGivenWeights();
         }

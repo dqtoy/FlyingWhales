@@ -61,6 +61,7 @@ public class Prowl : CharacterTask {
                 _landmarkWeights.AddElement(currLandmark, weight);
             }
         }
+        LogTargetWeights(_landmarkWeights);
         if (_landmarkWeights.GetTotalOfWeights() > 0) {
             return _landmarkWeights.PickRandomElementGivenWeights();
         }

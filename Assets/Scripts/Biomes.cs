@@ -194,12 +194,12 @@ public class Biomes : MonoBehaviour {
             case BIOMES.WOODLAND:
                 centerSpriteToUse = woodlandTrees[Random.Range(0, woodlandTrees.Length)];
                 tile.SetCenterSprite(centerSpriteToUse);
-                Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
+                //Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
                 break;
             case BIOMES.FOREST:
                 centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
                 tile.SetCenterSprite(centerSpriteToUse);
-                Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
+                //Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
                 break;
         }
         if (biomeDetailToUse != null) {

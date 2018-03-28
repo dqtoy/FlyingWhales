@@ -265,6 +265,11 @@ public class CharacterTask {
     }
 
     #region Logs
+    protected void LogTargetWeights<T>(WeightedDictionary<T> weights) {
+        if (UIManager.Instance.characterInfoUI.activeCharacter != null && _assignedCharacter.id == UIManager.Instance.characterInfoUI.activeCharacter.id) {
+            weights.LogDictionaryValues(_assignedCharacter.name + "'s " + this.taskType.ToString() + " weights ");
+        }
+    }
     internal void AddNewLog(string log) {
         _taskLogs.Add(log);
         if (onTaskLogsChange != null) {

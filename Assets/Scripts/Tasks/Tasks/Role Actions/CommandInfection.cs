@@ -114,7 +114,8 @@ public class CommandInfection : CharacterTask {
 					_landmarkWeights.AddElement (landmark, landmarkWeight);
 				}
 			}
-			if(_landmarkWeights.Count > 0){
+            LogTargetWeights(_landmarkWeights);
+            if (_landmarkWeights.Count > 0){
 				return _landmarkWeights.PickRandomElementGivenWeights ();
 			}
 		}

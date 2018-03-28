@@ -1293,6 +1293,10 @@ public class Utilities : MonoBehaviour {
                 actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
             } else if(key is AlliancePool) {
                 actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
+            } else if (key is ECS.Character) {
+                actionWeightsSummary += "\n" + (key as ECS.Character).name + " - " + kvp.Value.ToString();
+            } else if (key is BaseLandmark) {
+                actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
             } else {
                 actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
             }
