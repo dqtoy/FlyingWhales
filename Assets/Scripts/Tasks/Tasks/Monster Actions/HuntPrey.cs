@@ -11,7 +11,9 @@ public class HuntPrey : CharacterTask {
 
 	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
         : base(createdBy, TASK_TYPE.HUNT_PREY, stance, defaultDaysLeft) {
-		_states = new System.Collections.Generic.Dictionary<STATE, State> {
+        _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
+        _alignments.Add(ACTION_ALIGNMENT.UNLAWFUL);
+        _states = new System.Collections.Generic.Dictionary<STATE, State> {
 			{ STATE.MOVE, new MoveState (this) },
 			{ STATE.HUNT, new HuntState (this) }
 		};
@@ -47,14 +49,18 @@ public class HuntPrey : CharacterTask {
         _assignedCharacter.DestroyAvatar();
     }
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
-			if(character.faction == null){
-				return true;
-			}else{
-				if(location.tileLocation.landmarkOnTile.owner.id != character.faction.id){
-					return true;
-				}
-			}
+		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.civilians > 0){
+            if (location.tileLocation.landmarkOnTile.owner == null) {
+                return true;
+            } else {
+                if (character.faction == null) {
+                    return true;
+                } else {
+                    if (location.tileLocation.landmarkOnTile.owner.id != character.faction.id) {
+                        return true;
+                    }
+                }
+            }
 		}
 		return base.CanBeDone (character, location);
 	}
@@ -67,13 +73,15 @@ public class HuntPrey : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-
-	protected override BaseLandmark GetLandmarkTarget (Character character){
+    public override int GetSelectionWeight(Character character) {
+        return 15;
+    }
+    protected override BaseLandmark GetLandmarkTarget (Character character){
 		base.GetLandmarkTarget (character);
 		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
 			if(CanBeDone(character, landmark)){
-				_landmarkWeights.AddElement (landmark, 100);
+				_landmarkWeights.AddElement (landmark, 50);
 			}
 		}
 		if(_landmarkWeights.GetTotalOfWeights() > 0){
