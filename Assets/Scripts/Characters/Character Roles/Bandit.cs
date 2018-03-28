@@ -13,5 +13,6 @@ public class Bandit : CharacterRole {
         _roleTasks.Add(new UpgradeGear(this._character));
         _roleTasks.Add(new Pillage(this._character));
         _roleTasks.Add(new DoNothing(this._character));
+		_roleTasks.Add(new Steal(this._character, 5));
     }
 }

@@ -255,6 +255,7 @@ public class CharacterAvatar : PooledObject{
 			if(queuedAction != null){
 				queuedAction ();
 				queuedAction = null;
+				return;
 			}
 			if(_characters.Count > 0){
 				_characters[0].DestroyAvatar(); //Destroy this avatar once it reaches it's destination

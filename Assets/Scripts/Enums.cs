@@ -1246,5 +1246,6 @@ public enum STATE{
 	COLLECT,
 	INVADE,
     PROWL,
+	STEAL,
 }
 

@@ -12,6 +12,9 @@ public class TaskManager : MonoBehaviour {
 	private WeightedDictionary<string> _vampiricEmbraceActions;
 	private WeightedDictionary<string> _drinkBloodActions;
 	private WeightedDictionary<string> _hypnotizeActions;
+	private WeightedDictionary<string> _stealActions;
+	private WeightedDictionary<string> _stealAttemptActions;
+
 
 	#region getters/setters
 	public WeightedDictionary<PILLAGE_ACTION> pillageActions{
@@ -29,6 +32,13 @@ public class TaskManager : MonoBehaviour {
 	public WeightedDictionary<string> hypnotizeActions{
 		get { return _hypnotizeActions; }
 	}
+	public WeightedDictionary<string> stealActions{
+		get { return _stealActions; }
+	}
+	public WeightedDictionary<string> stealAttemptActions{
+		get { return _stealAttemptActions; }
+	}
+
 	#endregion
 	void Awake(){
 		Instance = this;
@@ -63,5 +73,15 @@ public class TaskManager : MonoBehaviour {
 		_hypnotizeActions = new WeightedDictionary<string>();
 		_hypnotizeActions.AddElement ("hypnotize", 15);
 		_hypnotizeActions.AddElement("nothing", 50);
+
+		_stealActions = new WeightedDictionary<string>();
+		_stealActions.AddElement ("steal", 10);
+		_stealActions.AddElement("nothing", 30);
+
+		_stealAttemptActions = new WeightedDictionary<string>();
+		_stealAttemptActions.AddElement ("success not caught", 20);
+		_stealAttemptActions.AddElement ("success caught", 5);
+		_stealAttemptActions.AddElement ("failed not caught", 10);
+		_stealAttemptActions.AddElement ("failed caught", 5);
 	}
 }

@@ -13,7 +13,7 @@ public class CommandInfectionState : State {
 	public override void OnChooseState (Character character){
 		base.OnChooseState (character);
 		if(_parentTask is CommandInfection){
-			_commandedCharacter = ((CommandInfection)_parentTask).chosenSlyx;
+			_commandedCharacter = (_parentTask as CommandInfection).chosenSlyx;
 		}
 	}
 	public override bool PerformStateAction (){
