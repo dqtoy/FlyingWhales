@@ -20,6 +20,7 @@ public class Rob : CharacterTask {
 			{STATE.ATTACK, new AttackState(this, () => RobItem())}
 		};
 		_forGameOnly = true;
+		SetCombatPriority (30);
 	}
 
 	#region overrides

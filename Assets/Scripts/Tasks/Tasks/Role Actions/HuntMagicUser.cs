@@ -18,6 +18,7 @@ public class HuntMagicUser : CharacterTask {
             {STATE.MOVE, new MoveState(this)},
             {STATE.ATTACK, new AttackState(this, null)}
         };
+		SetCombatPriority (30);
     }
 
     #region overrides

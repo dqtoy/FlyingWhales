@@ -28,6 +28,7 @@ public class Attack : CharacterTask {
 			{ STATE.MOVE, new MoveState (this) },
 			{ STATE.ATTACK, new AttackState (this, () => WonAttack()) }
 		};
+		SetCombatPriority (30);
 	}
 
 	#region overrides
