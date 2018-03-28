@@ -948,6 +948,7 @@ public enum QUEST_TYPE { //This is a list of actions a character can choose to a
 	THE_DARK_RITUAL,
 	PSYTOXIN_CURE,
 	ELIMINATE_LOST_HEIR,
+	HUNT,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
@@ -1178,6 +1179,7 @@ public enum CHARACTER_TAG{
 	SEVERE_PSYTOXIN,
 	HERBALIST,
 	RITUALIST,
+	HUNTED,
 }
 
 public enum PRODUCTION_TYPE{

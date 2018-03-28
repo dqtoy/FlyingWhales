@@ -307,9 +307,12 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
-    public void AdjustCivilians(RACE race, int amount) {
+    public void AdjustCivilians(RACE race, int amount, Character culprit = null) {
         _civiliansByRace[race] += amount;
         _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
+		if(culprit != null){
+			QuestManager.Instance.CreateHuntQuest (culprit);
+		}
     }
     public void AdjustCivilians(Dictionary<RACE, int> civilians) {
         foreach (KeyValuePair<RACE, int> kvp in civilians) {

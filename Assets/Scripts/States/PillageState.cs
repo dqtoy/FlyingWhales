@@ -49,7 +49,7 @@ public class PillageState : State {
 		if(_targetLandmark.civilians > 0){
 			RACE[] races = _targetLandmark.civiliansByRace.Keys.Where(x => _targetLandmark.civiliansByRace[x] > 0).ToArray();
 			RACE chosenRace = races [UnityEngine.Random.Range (0, races.Length)];
-			_targetLandmark.AdjustCivilians (chosenRace, -1);
+			_targetLandmark.AdjustCivilians (chosenRace, -1, _assignedCharacter);
 			Log civilianDeathLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Pillage", "civilian_death");
 			civilianDeathLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			civilianDeathLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);

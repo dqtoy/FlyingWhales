@@ -19,7 +19,7 @@ public class EliminateLostHeir : Quest {
 			new MustBeFaction((createdBy as Character).faction),
 			new MustNotBeCharacter(falseHeir)
 		};
-
+			
 		QuestPhase phase1 = new QuestPhase(this, "Search for Heirloom Necklace");
 		phase1.AddTask(new Search(createdBy, 5, "Heirloom Necklace", null, this));
 
@@ -36,5 +36,7 @@ public class EliminateLostHeir : Quest {
 		_phases.Add(phase1);
 		_phases.Add(phase2);
 		_phases.Add(phase3);
+
+		_lostHeir.AddActionOnDeath (ForceCancelQuest);
 	}
 }
