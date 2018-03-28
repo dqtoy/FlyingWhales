@@ -5,15 +5,15 @@ public class CharacterTaskButton : MonoBehaviour {
 
 	public CharacterTask task;
 	public UILabel btnLabel;
-	private ILocation location;
+//	private ILocation location;
 
 	public void SetTask (CharacterTask task){
 		this.task = task;
 		ChangeButtonText ();
 	}
-	public void SetLocation(ILocation location){
-		this.location = location;
-	}
+//	public void SetLocation(ILocation location){
+//		this.location = location;
+//	}
 
 	private void ChangeButtonText(){
 		btnLabel.text = Utilities.NormalizeString (task.taskType.ToString ());
@@ -41,15 +41,16 @@ public class CharacterTaskButton : MonoBehaviour {
 				character.currentTask.SetIsHalted (true);
 			}
 		}
-		task.ResetTask ();
-		task.SetLocation (this.location);
+
 		if(!task.needsSpecificTarget){
             Log overrideLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "action_override");
             overrideLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideLog.AddToFillers(null, task.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-            overrideLog.AddToFillers(this.location, this.location.locationName, LOG_IDENTIFIER.LANDMARK_1);
+			overrideLog.AddToFillers(PlayerActionsUI.Instance.location, PlayerActionsUI.Instance.location.locationName, LOG_IDENTIFIER.LANDMARK_1);
             character.AddHistory(overrideLog);
 
+			task.ResetTask ();
+			task.SetLocation (PlayerActionsUI.Instance.location);
             task.OnChooseTask (character);
 			UIManager.Instance.HidePlayerActions ();
 		}else{

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class PlayerActionsUI : MonoBehaviour {
+	public static PlayerActionsUI Instance;
+
 	public GameObject characterTaskButtonGO;
 	public GameObject specificCharacterTaskButtonGO;
 	public GameObject bottomSpriteGO;
@@ -15,7 +17,7 @@ public class PlayerActionsUI : MonoBehaviour {
 	public UIGrid specificButtonsGrid;
 	public UI2DSprite specificStretchableBG;
 
-	private ILocation location;
+	public ILocation location;
 	private List<CharacterTaskButton> taskButtons = new List<CharacterTaskButton>();
 	private List<SpecificCharacterTaskButton> specificTaskButtons = new List<SpecificCharacterTaskButton>();
 
@@ -27,6 +29,7 @@ public class PlayerActionsUI : MonoBehaviour {
 
 	void Awake(){
 //		buttonsGridWidget = buttonsGrid.GetComponent<UIWidget>();
+		Instance = this;
 		characterTaskButtonHeight = characterTaskButtonGO.GetComponent<UI2DSprite>().height;
 		defaultWidgetHeight = buttonsGrid.GetComponent<UIWidget>().height;
 	}
@@ -74,7 +77,7 @@ public class PlayerActionsUI : MonoBehaviour {
 				for (int i = 0; i < tasksAvailable.Count; i++) {
 					if(i < taskButtons.Count){
 						taskButtons [i].SetTask (tasksAvailable [i]);
-						taskButtons [i].SetLocation (this.location);
+//						taskButtons [i].SetLocation (this.location);
 						taskButtons [i].gameObject.SetActive (true);
 						numOfShowingButtons++;
 					}else{
@@ -86,7 +89,7 @@ public class PlayerActionsUI : MonoBehaviour {
 				for (int i = 0; i < taskButtons.Count; i++) {
 					if(i < tasksAvailable.Count){
 						taskButtons [i].SetTask (tasksAvailable [i]);
-						taskButtons [i].SetLocation (this.location);
+//						taskButtons [i].SetLocation (this.location);
 						taskButtons [i].gameObject.SetActive (true);
 						numOfShowingButtons++;
 					}else{
@@ -195,7 +198,7 @@ public class PlayerActionsUI : MonoBehaviour {
 
 		CharacterTaskButton taskButton = characterTaskButton.GetComponent<CharacterTaskButton> ();
 		taskButton.SetTask (task);
-		taskButton.SetLocation (this.location);
+//		taskButton.SetLocation (this.location);
 		taskButtons.Add (taskButton);
 	}
 
