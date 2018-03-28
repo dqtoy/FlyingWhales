@@ -44,7 +44,13 @@ public class CharacterTaskButton : MonoBehaviour {
 		task.ResetTask ();
 		task.SetLocation (this.location);
 		if(!task.needsSpecificTarget){
-			task.OnChooseTask (character);
+            Log overrideLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "action_override");
+            overrideLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            overrideLog.AddToFillers(null, task.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+            overrideLog.AddToFillers(this.location, this.location.locationName, LOG_IDENTIFIER.LANDMARK_1);
+            character.AddHistory(overrideLog);
+
+            task.OnChooseTask (character);
 			UIManager.Instance.HidePlayerActions ();
 		}else{
 			UIManager.Instance.playerActionsUI.ShowSpecificTargets (task);

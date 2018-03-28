@@ -3419,15 +3419,17 @@ public class UIManager : MonoBehaviour {
         questSummary += "[b]Available Quests: [/b]";
         for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
             Quest currentQuest = QuestManager.Instance.availableQuests[i];
-            questSummary += "\n" + currentQuest.questName;
-            questSummary += "\n   Characters on Quest: ";
-            if (currentQuest.acceptedCharacters.Count > 0) {
-                for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
-                    ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
-                    questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
+            if (!currentQuest.isDone) {
+                questSummary += "\n" + currentQuest.questName;
+                questSummary += "\n   Characters on Quest: ";
+                if (currentQuest.acceptedCharacters.Count > 0) {
+                    for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
+                        ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
+                        questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
+                    }
+                } else {
+                    questSummary += "NONE";
                 }
-            } else {
-                questSummary += "NONE";
             }
         }
         questsSummaryLbl.text = questSummary;

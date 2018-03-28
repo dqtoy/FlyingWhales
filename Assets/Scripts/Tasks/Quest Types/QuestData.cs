@@ -51,9 +51,11 @@ public class QuestData {
     }
     public void AdvanceToNextPhase() {
         if (_activeQuest.phases.Count > _currentPhase + 1) {
+            Debug.Log("Setting " + _owner.name + "'s quest phase to " + (_currentPhase + 1).ToString());
             //there is still a next phase, advance to the next phase
             SetQuestPhase(_currentPhase + 1);
         } else {
+            Debug.Log("All phases have been finished! Quest: " + activeQuest.questName + " has ended!");
             //there are no more phases, end the quest
             EndQuest(TASK_STATUS.SUCCESS);
         }
@@ -123,6 +125,7 @@ public class QuestData {
                 return; //there is a requirement that has not yet been met
             }
         }
+        Debug.Log("All requirements for " + _owner.name + "'s quest (" + activeQuest.questName + "). Quest phase: " + GetQuestPhase().phaseName);
         AdvanceToNextPhase(); //all requirements have been met, advance to next phase
     }
 }

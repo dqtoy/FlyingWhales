@@ -11,8 +11,9 @@ public class Pillage : CharacterTask {
 
 	public Pillage(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
         : base(createdBy, TASK_TYPE.PILLAGE, stance, defaultDaysLeft) {
-
-		_states = new System.Collections.Generic.Dictionary<STATE, State> {
+        _alignments.Add(ACTION_ALIGNMENT.HOSTILE);
+        _alignments.Add(ACTION_ALIGNMENT.VILLAINOUS);
+        _states = new System.Collections.Generic.Dictionary<STATE, State> {
 			{ STATE.MOVE, new MoveState (this) },
 			{ STATE.PILLAGE, new PillageState (this) }
 		};
@@ -81,29 +82,35 @@ public class Pillage : CharacterTask {
 		}
 		return base.AreConditionsMet (character);
 	}
-    //public override void PerformDailyAction() {
-    //    if (_canDoDailyAction) {
-    //        base.PerformDailyAction();
-    //        DoPillage();
-    //    }
-    //}
-
-	protected override BaseLandmark GetLandmarkTarget (Character character){
+    public override int GetSelectionWeight(Character character) {
+        return 25;
+    }
+    protected override BaseLandmark GetLandmarkTarget (Character character){
 		base.GetLandmarkTarget (character);
 		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
 			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
-			if(CanBeDone(character, landmark)){
-				_landmarkWeights.AddElement (landmark, 100);
-//				if(_assignedCharacter.faction == null || landmark.owner == null){
-//					_landmarkWeights.AddElement (landmark, 100);
-//				}else{
-//					if(_assignedCharacter.faction.id != landmark.owner.id){
-//						_landmarkWeights.AddElement (landmark, 100);
-//					}
-//				}
-			}
-		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
+            int weight = 0;
+            if ((landmark.owner == null || (character.faction == null || landmark.owner.id != character.faction.id))) {
+                if (landmark is ResourceLandmark) {
+                    weight += 80; //Resource Gathering Landmark not owned by my faction: +80
+                } else if (landmark is Settlement) {
+                    weight += 50; //Settlement Landmark not owned by my faction: +50
+                }
+            }
+            for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
+                ECS.Character currChar = landmark.charactersAtLocation[j].mainCharacter;
+                if (currChar.id != character.id) {
+                    if (currChar.IsHostileWith(character)) {
+                        weight -= 10; //For each Hostile characters in the landmark: -10
+                    }
+                }
+            }
+            if (weight > 0) {
+                _landmarkWeights.AddElement(landmark, weight);
+            }
+            
+        }
+        if (_landmarkWeights.GetTotalOfWeights() > 0){
 			return _landmarkWeights.PickRandomElementGivenWeights ();
 		}
 		return null;

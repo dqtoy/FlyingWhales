@@ -893,7 +893,7 @@ public enum CHARACTER_ROLE {
     BEAST,
 }
 public enum CHARACTER_CLASS {
-    NONE,
+    CLASSLESS,
     ARCHER,
     SPEARMAN,
     SWORDSMAN,

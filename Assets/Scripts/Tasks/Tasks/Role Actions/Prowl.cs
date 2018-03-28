@@ -5,7 +5,7 @@ using ECS;
 public class Prowl : CharacterTask {
     public Prowl(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.COMBAT) 
         : base(createdBy, TASK_TYPE.PROWL, stance, defaultDaysLeft, parentQuest) {
-
+        SetCombatPriority(5);
         _states = new System.Collections.Generic.Dictionary<STATE, State> {
             { STATE.MOVE, new MoveState (this) },
             { STATE.PROWL, new ProwlState (this) }

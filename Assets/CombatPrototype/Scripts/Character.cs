@@ -2145,26 +2145,15 @@ namespace ECS {
 
             if (actionWeights.GetTotalOfWeights() > 0) {
                 CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
+                if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
+                    LogActionWeights(actionWeights, chosenTask);
+                }
                 chosenTask.ResetTask();
                 chosenTask.OnChooseTask(this);
             } else {
-                actionWeights.LogDictionaryValues(this.raceSetting.race.ToString() + " weights!");
+                actionWeights.LogDictionaryValues(this.name + " action weights!");
+                throw new Exception(this.role.roleType.ToString() + " " + this.name + " could not determine an action!");
             }
-//			chosenTask.PerformTask ();
-
-//			WeightedDictionary<CharacterTask> actionWeights = _role.GetActionWeights();
-//            AddActionWeightsFromTags(actionWeights); //Add weights from tags
-//            if (actionWeights.GetTotalOfWeights () > 0) {
-//				CharacterTask chosenAction = actionWeights.PickRandomElementGivenWeights();
-//                if (chosenAction.taskType == TASK_TYPE.QUEST) {
-//                    Debug.Log(this.name + " decides to " + ((OldQuest.Quest)chosenAction).questType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
-//                } else {
-//                    Debug.Log(this.name + " decides to " + chosenAction.taskType.ToString() + " on " + Utilities.GetDateString(GameManager.Instance.Today()));
-//                }
-//                chosenAction.PerformTask(this);
-//            } else {
-//                throw new Exception(this.name + " could not decide action because weights are zero!");
-//            }
 		}
         /*
          Set a task that this character will accept next
@@ -2172,58 +2161,10 @@ namespace ECS {
         internal void SetTaskToDoNext(CharacterTask taskToDo) {
             nextTaskToDo = taskToDo;
         }
-//        private WeightedDictionary<CharacterTask> GetUnalignedActionWeights() {
-//            WeightedDictionary<CharacterTask> actionWeights = new WeightedDictionary<CharacterTask>();
-//
-//            Rest restTask = new Rest(this);
-//            actionWeights.AddElement(restTask, GetUnalignedRestWeight());
-//
-//            if(_lair != null) {
-//                GoHome goHomeTask = new GoHome(this);
-//                actionWeights.AddElement(goHomeTask, GetUnalignedGoHomeWeight());
-//            }
-//
-//            DoNothing doNothingTask = new DoNothing(this);
-//            actionWeights.AddElement(doNothingTask, GetUnalignedDoNothingWeight());
-//
-//            return actionWeights;
-//        }
-//        
-//        private int GetUnalignedRestWeight() {
-//            if (currentHP < maxHP) {
-//                int percentMissing = (int)(100f - (remainingHP * 100));
-//                if (percentMissing >= 50) {
-//                    return 100; //+100 if HP is below 50%
-//                } else {
-//                    return 5 * percentMissing; //5 Weight per % of HP below max HP, 
-//                }
-//            }
-//            return 0;
-//        }
-//        private int GetUnalignedDoNothingWeight() {
-//            return 300;
-//        }
-//        private int GetUnalignedGoHomeWeight() {
-//            return 50;
-//        }
-//
-//        private void AddTaskWeightsFromQuest(WeightedDictionary<CharacterTask> tasks) {
-//            if (_currentQuest != null) {
-//                CharacterTask currentTaskForQuest = _currentQuest.GetCurrentTaskOfQuest();
-//                tasks.AddElement(currentTaskForQuest, currentTaskForQuest.GetTaskWeight(this));
-//            }
-//        }
-//
-//        private WeightedDictionary<CharacterTask> GetTaskWeights() {
-//            WeightedDictionary<CharacterTask> taskWeights = new WeightedDictionary<CharacterTask>();
-//            if (_role != null) {
-//                _role.AddTaskWeightsFromRole(taskWeights);
-//            }
-//            AddTaskWeightsFromTags(taskWeights);
-//            AddTaskWeightsFromQuest(taskWeights);
-//            return taskWeights;
-//        }
-
+        private void LogActionWeights(WeightedDictionary<CharacterTask> actionWeights, CharacterTask chosenTask) {
+            actionWeights.LogDictionaryValues(this.name + " action weights!");
+            Debug.Log(this.name + "'s chosen task is " + chosenTask.taskType.ToString());
+        }
         #endregion
 
         #region Tags
