@@ -48,6 +48,8 @@ public class CharacterTask {
 
 	protected bool _canTargetSelf;
 
+	protected int _combatPriority; //combat initiations will be sorted based on this priority
+
     #region getters/setters
     public TASK_TYPE taskType {
         get { return _taskType; }
@@ -103,6 +105,9 @@ public class CharacterTask {
     public ECS.Character assignedCharacter {
         get { return _assignedCharacter; }
     }
+	public int combatPriority{
+		get { return _combatPriority; }
+	}
 	//public WeightedDictionary<BaseLandmark> landmarkWeights{
 	//	get { return _landmarkWeights; }
 	//}
@@ -133,6 +138,7 @@ public class CharacterTask {
 		SetDefaultDaysLeft (defaultDaysLeft);
 		SetDaysLeft (defaultDaysLeft);
 		SetStance(stance);
+		SetCombatPriority (-1);
     }
 
     #region virtual
@@ -320,6 +326,9 @@ public class CharacterTask {
 	}
 	public void SetForPlayerOnly(bool state){
 		_forPlayerOnly = state;
+	}
+	public void SetCombatPriority(int amount){
+		_combatPriority = amount;
 	}
     #endregion
 

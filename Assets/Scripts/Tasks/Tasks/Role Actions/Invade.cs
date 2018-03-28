@@ -25,6 +25,8 @@ public class Invade : CharacterTask {
 			{ STATE.MOVE, new MoveState (this) },
 			{ STATE.INVADE, new InvadeState (this) }
 		};
+
+		SetCombatPriority (10);
 	}
 		
 	#region overrides

@@ -39,7 +39,7 @@ public class DrinkBloodState : State {
         if (targetLocation.civilians > 0) {
             RACE[] races = targetLocation.civiliansByRace.Keys.Where(x => targetLocation.civiliansByRace[x] > 0).ToArray();
             RACE chosenRace = races[UnityEngine.Random.Range(0, races.Length)];
-            targetLocation.AdjustCivilians(chosenRace, -1);
+            targetLocation.AdjustCivilians(chosenRace, -1, _assignedCharacter);
             Log killLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "kill");
             killLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             killLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);

@@ -130,8 +130,8 @@ public class Quest {
                 default:
                     break;
             }
+			UIManager.Instance.UpdateQuestsSummary();
         }
-        UIManager.Instance.UpdateQuestsSummary();
     }
     protected virtual void QuestSuccess(ECS.Character endedBy) {
         _isDone = true;

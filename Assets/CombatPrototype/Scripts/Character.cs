@@ -11,6 +11,9 @@ namespace ECS {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
+		public delegate void OnImprisonCharacter();
+		public OnImprisonCharacter onImprisonCharacter;
+
         public delegate void OnTaskChanged();
         private OnTaskChanged onTaskChanged; //What should happen if a character chooses to change it's task
 
@@ -1840,6 +1843,9 @@ namespace ECS {
             case CHARACTER_TAG.PREDATOR:
                 charTag = new Predator(this);
                 break;
+			case CHARACTER_TAG.HUNTED:
+				charTag = new Hunted(this);
+				break;
             }
 			if(charTag != null){
 				AddCharacterTag (charTag);
@@ -2661,7 +2667,17 @@ namespace ECS {
                 }
 
                 Unfaint ();
+
+				if(onImprisonCharacter != null){
+					onImprisonCharacter ();
+				}
 			}
+		}
+		internal void AddActionOnImprison(OnImprisonCharacter onImprisonAction) {
+			onImprisonCharacter += onImprisonAction;
+		}
+		internal void RemoveActionOnImprison(OnImprisonCharacter onImprisonAction) {
+			onImprisonCharacter -= onImprisonAction;
 		}
 		internal void AddPrisoner(Character character){
 			if (this._party != null) {

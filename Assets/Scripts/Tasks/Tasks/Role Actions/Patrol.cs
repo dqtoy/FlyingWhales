@@ -20,6 +20,7 @@ public class Patrol : CharacterTask {
 			{ STATE.MOVE, new MoveState (this) },
 			{ STATE.PATROL, new PatrolState (this) }
 		};
+		SetCombatPriority (5);
 	}
 
 	#region overrides
