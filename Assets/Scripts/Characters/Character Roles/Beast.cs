@@ -9,5 +9,6 @@ public class Beast : CharacterRole {
         _roleTasks.Add(new Rest(this._character));
         _roleTasks.Add(new MoveToBeast(this._character));
         _roleTasks.Add(new DoNothing(this._character));
+        _roleTasks.Add(new Prowl(this._character));
     }
 }

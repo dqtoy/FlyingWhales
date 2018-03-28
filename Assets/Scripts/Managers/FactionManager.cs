@@ -299,7 +299,9 @@ public class FactionManager : MonoBehaviour {
             BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
             //50% chance to spawn a dragons beast in Hibernate state in a random Cave or Ancient Ruin.
             ECS.Character dragon = chosenLandmark.CreateNewCharacter(RACE.DRAGON, CHARACTER_ROLE.BEAST, "Classless", false, false);
-            dragon.SetTaskToDoNext(dragon.GetTag(CHARACTER_TAG.HIBERNATES).GetTask(TASK_TYPE.HIBERNATE));
+            CharacterTask hibernateTask = dragon.GetTag(CHARACTER_TAG.HIBERNATES).GetTask(TASK_TYPE.HIBERNATE);
+            hibernateTask.SetLocation(chosenLandmark);
+            dragon.SetTaskToDoNext(hibernateTask);
             dragon.DetermineAction();
             Debug.Log("Created a dragon at " + chosenLandmark.landmarkName + "(" + chosenLandmark.tileLocation.name + ")");
         }
