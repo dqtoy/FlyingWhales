@@ -1784,6 +1784,9 @@ namespace ECS {
 
 		#region Character Tags
 		public CharacterTag AssignTag(CHARACTER_TAG tag) {
+			if(HasTag(tag)){
+				return null;
+			}
 			CharacterTag charTag = null;
 			switch (tag) {
 			case CHARACTER_TAG.ANCIENT_KNOWLEDGE:

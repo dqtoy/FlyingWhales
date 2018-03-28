@@ -4,9 +4,11 @@ using System;
 
 public class AttackState : State {
 	Action _wonInCombatAction;
+	ECS.Character _targetCharacter;
 
 	public AttackState(CharacterTask parentTask, Action wonInCombatAction) : base(parentTask, STATE.ATTACK) {
 		_wonInCombatAction = wonInCombatAction;
+		_targetCharacter = _parentTask.specificTarget as ECS.Character;
     }
 
     #region overrides
@@ -18,15 +20,14 @@ public class AttackState : State {
     #endregion
 
     private void InitiateCombat() {
-        if (!_assignedCharacter.isInCombat) {
-			ECS.Character targetCharacter = _parentTask.specificTarget as ECS.Character;
+        if (!_assignedCharacter.isInCombat && !_targetCharacter.isInCombat) {
 			ICombatInitializer source = _assignedCharacter;
-			ICombatInitializer target = targetCharacter;
+			ICombatInitializer target = _targetCharacter;
 			if(_assignedCharacter.party != null){
 				source = _assignedCharacter.party;
 			}
-			if(targetCharacter.party != null){
-				target = targetCharacter.party;
+			if(_targetCharacter.party != null){
+				target = _targetCharacter.party;
 			}
 			_assignedCharacter.specificLocation.StartCombatBetween(source, target);
 			if(_wonInCombatAction != null){

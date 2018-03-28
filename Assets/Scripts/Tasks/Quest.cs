@@ -22,6 +22,7 @@ public class Quest {
     protected List<ECS.Character> _acceptedCharacters;
     protected List<QuestPhase> _phases;
     protected TaskFilter[] _filters;
+	protected int _maxRegistration;
 
     #region getters/setters
     public int id {
@@ -45,6 +46,9 @@ public class Quest {
     public List<ECS.Character> acceptedCharacters {
         get { return _acceptedCharacters; }
     }
+	public int maxRegistration {
+		get { return _maxRegistration; }
+	}
     #endregion
 
     public Quest(TaskCreator createdBy, QUEST_TYPE questType) {
@@ -54,6 +58,7 @@ public class Quest {
         _alignment = new List<ACTION_ALIGNMENT>();
         _acceptedCharacters = new List<Character>();
         _phases = new List<QuestPhase>();
+		SetMaxRegistration (3);
     }
 
     #region virtuals
@@ -66,6 +71,9 @@ public class Quest {
      whether a character's role allows that alignment.
          */
     public virtual bool CanAcceptQuest(ECS.Character character) {
+		if(_acceptedCharacters.Count >= _maxRegistration){
+			return false;
+		}
         if (_acceptedCharacters.Contains(character)) {
             return false; //the character has already accepted this quest!
         }
@@ -165,6 +173,12 @@ public class Quest {
             (acceptedBy.specificLocation as BaseLandmark).AddHistory(acceptQuestLog);
         }
     }
+
+	#region Utilities
+	public void SetMaxRegistration(int amount){
+		_maxRegistration = amount;
+	}
+	#endregion
 }
 
 namespace OldQuest{
@@ -550,7 +564,7 @@ namespace OldQuest{
         }
         #endregion
 
-        #region Utilities
+        #region OldQuest.Utilities
         public void SetSettlement(Settlement postedAt) {
             _postedAt = postedAt;
         }

@@ -6,29 +6,33 @@ public class SearchState : State {
 
     private object searchingFor;
     private Action _afterFindingAction;
+	private Action _afterFindingTraceAction;
     private Action _searchAction;
 
     public SearchState(CharacterTask parentTask, object searchingFor) : base(parentTask, STATE.SEARCH) {
         this.searchingFor = searchingFor;
         if (searchingFor is string) {
             if ((searchingFor as string).Equals("Heirloom Necklace")) {
-				_searchAction = () => SearchForItemInCharacter();
+				SetSearchAction(() => SearchForItemInCharacter());
+				if(_parentTask.parentQuest != null && _parentTask.parentQuest is EliminateLostHeir){
+					SetAfterFindingTraceAction (() => _parentTask.EndTaskSuccess ());
+				}
             } else if ((searchingFor as string).Equals("Book of Inimical Incantations")) {
-                _searchAction = () => SearchForItemInLandmark();
+				SetSearchAction(() => SearchForItemInLandmark());
             } else if ((searchingFor as string).Equals("Neuroctus")) {
-                _searchAction = () => SearchForItemInLandmark();
+				SetSearchAction(() => SearchForItemInLandmark());
             } else if ((searchingFor as string).Equals("Herbalist")) {
-				_searchAction = () => SearchForATag();
+				SetSearchAction(() => SearchForATag());
 				if(_parentTask.parentQuest != null){
 					if(_parentTask.parentQuest is PsytoxinCure){
-						_afterFindingAction = () => CurePsytoxin();
+						SetAfterFindingAction(() => CurePsytoxin());
 					}
 				}
             }
         }
     }
 
-    #region overrides
+    #region Overrides
     public override bool PerformStateAction() {
         if (!base.PerformStateAction()) { return false; }
         if (_searchAction != null) {
@@ -39,6 +43,18 @@ public class SearchState : State {
         return true;
     }
     #endregion
+
+	#region Utilities
+	public void SetAfterFindingAction(Action action){
+		_afterFindingAction = action;
+	}
+	public void SetAfterFindingTraceAction(Action action){
+		_afterFindingTraceAction = action;
+	}
+	public void SetSearchAction(Action action){
+		_searchAction = action;
+	}	
+	#endregion
 
     #region Search for Item in Character
     private void SearchForItemInCharacter() {
@@ -88,7 +104,7 @@ public class SearchState : State {
 
     #region Search for Landmark Items
     private void SearchForItemInLandmark() {
-		string itemName = (string)searchingFor;
+		string itemName = searchingFor as string;
 		for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
 			ECS.Item item = _targetLandmark.itemsInLandmark[i];
 			if (item.itemName == itemName) {
@@ -139,6 +155,9 @@ public class SearchState : State {
 			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasTag (strSearchingFor, includeParty)) {
 					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
+					if(_afterFindingTraceAction != null){
+						_afterFindingTraceAction ();
+					}
 					break;
 				}
 			}
@@ -146,6 +165,9 @@ public class SearchState : State {
 			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasItem (strSearchingFor)) {
 					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
+					if(_afterFindingTraceAction != null){
+						_afterFindingTraceAction ();
+					}
 					break;
 				}
 			}

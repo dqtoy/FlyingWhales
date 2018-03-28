@@ -75,7 +75,7 @@ public class DoRitual : CharacterTask {
 		return 75; 
 	}
 	public override void EndTaskSuccess (){
-		_currentState.SetIsHalted (true);
+		_currentState.SetIsHalted (false);
 		_currentState.PerformStateAction ();
 		base.EndTaskSuccess ();
 	}

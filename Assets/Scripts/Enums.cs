@@ -947,6 +947,7 @@ public enum QUEST_TYPE { //This is a list of actions a character can choose to a
     FIND_LOST_HEIR,
 	THE_DARK_RITUAL,
 	PSYTOXIN_CURE,
+	ELIMINATE_LOST_HEIR,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,

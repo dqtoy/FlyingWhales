@@ -8,6 +8,7 @@ public class Rob : CharacterTask {
 	private Character _targetCharacter;
 
 	public Rob(TaskCreator createdBy, string itemNameToRob, Quest parentQuest = null, STANCE stance = STANCE.COMBAT) : base(createdBy, TASK_TYPE.ROB, stance, -1, parentQuest) {
+		_alignments.Add (ACTION_ALIGNMENT.UNLAWFUL);
 		_specificTargetClassification = "character";
 		_needsSpecificTarget = true;
 		_itemNameToRob = itemNameToRob;
@@ -68,7 +69,7 @@ public class Rob : CharacterTask {
 		return base.AreConditionsMet(character);
 	}
 	public override int GetSelectionWeight(Character character) {
-		return 500;
+		return 500; //160
 	}
 	protected override Character GetCharacterTarget(Character character) {
 		base.GetCharacterTarget(character);
@@ -77,7 +78,7 @@ public class Rob : CharacterTask {
 				if(targetCharacter.currentRegion.id == character.currentRegion.id){
 					_characterWeights.AddElement (targetCharacter, 200);
 				}else if (character.IsCharacterInAdjacentRegionOfThis(targetCharacter)){
-					_characterWeights.AddElement (targetCharacter, 50);
+					_characterWeights.AddElement (targetCharacter, 80);
 				}
 			}
 		}
@@ -107,6 +108,7 @@ public class Rob : CharacterTask {
 		}
 	}
 	private void RobItem(){
+		_assignedCharacter.AssignTag (CHARACTER_TAG.CRIMINAL);
 		if(_assignedCharacter.specificLocation is BaseLandmark){
 			BaseLandmark landmark = (BaseLandmark)_assignedCharacter.specificLocation;
 			bool hasRobbedSuccessfully = false;
