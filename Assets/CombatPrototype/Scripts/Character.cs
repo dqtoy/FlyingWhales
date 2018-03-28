@@ -933,7 +933,7 @@ namespace ECS {
                 Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
                 dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
-                dropLog.AddToFillers(this, location.locationName, LOG_IDENTIFIER.LANDMARK_1);
+                dropLog.AddToFillers(location, location.locationName, LOG_IDENTIFIER.LANDMARK_1);
                 AddHistory(dropLog);
                 (location as BaseLandmark).AddHistory(dropLog);
             }

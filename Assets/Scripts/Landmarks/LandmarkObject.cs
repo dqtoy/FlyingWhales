@@ -34,6 +34,11 @@ public class LandmarkObject : MonoBehaviour {
         //UpdateLandmarkVisual();
     }
 
+    public void SetBGState(bool state) {
+        topSprite.enabled = state;
+        botSprite.enabled = state;
+    }
+
     //public void UpdateLandmarkVisual() {
     //    if (_landmark.isHidden) {
     //        Color color = Color.white;

@@ -333,7 +333,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 _landmarkOnTile = new LairLandmark(this, landmarkType, materialMadeOf);
                 break;
             default:
-			_landmarkOnTile = new BaseLandmark(this, landmarkType, materialMadeOf);
+			    _landmarkOnTile = new BaseLandmark(this, landmarkType, materialMadeOf);
                 break;
         }
         if(_landmarkOnTile != null) {
@@ -1070,6 +1070,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
         if(structureType == STRUCTURE_TYPE.CITY) {
             structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
+            _landmarkOnTile.landmarkObject.SetBGState(false);
         }
 
         structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);

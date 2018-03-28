@@ -76,9 +76,9 @@ public class Settlement : BaseLandmark {
             faction.AddSettlement(this);
 			tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
 			tileLocation.region.ReColorBorderTiles(faction.factionColor);
-			tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
-			tileLocation.emptyCityGO.SetActive(false);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
+            tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
+			//tileLocation.emptyCityGO.SetActive(false);
             _producingPopulationFor = GetRaceBasedOnProportion();
         }
     }
