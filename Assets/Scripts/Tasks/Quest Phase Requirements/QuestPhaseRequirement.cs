@@ -54,7 +54,7 @@ public class MustHaveItems : QuestPhaseRequirement {
                     return;
                 }
             }
-            Debug.Log(owner.name + " has met requirements!");
+            Debug.Log(owner.name + " has met requirements!: " + this.GetType().ToString());
             //the character has all needed items, requirement has been met
             _isRequirementMet = true;
             character.questData.CheckPhaseAdvancement();
@@ -81,6 +81,7 @@ public class MustFindItem : QuestPhaseRequirement {
             if (!item.itemName.Equals(neededItem)) {
                 return; //character did not find the right item
             }
+            Debug.Log(owner.name + " has met requirements!: " + this.GetType().ToString());
             //the character found the needed item
             _isRequirementMet = true;
             character.questData.CheckPhaseAdvancement();
