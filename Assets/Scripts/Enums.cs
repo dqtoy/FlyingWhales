@@ -983,6 +983,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	INVADE,
 	ROB,
     MOVE_TO_BEAST,
+    PROWL,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
@@ -1241,5 +1242,6 @@ public enum STATE{
     PROCLAIM_SUCCESSOR,
 	COLLECT,
 	INVADE,
+    PROWL,
 }
 
