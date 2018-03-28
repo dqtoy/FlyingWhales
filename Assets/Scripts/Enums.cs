@@ -983,6 +983,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	INFECT_PSYTOXIN,
 	INVADE,
 	ROB,
+    MOVE_TO_BEAST,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

@@ -26,9 +26,9 @@ public class DungeonLandmark : BaseLandmark {
 		//		LandmarkItemsSpawn ();
 		//	}
   //      } else 
-        if (specificLandmarkType == LANDMARK_TYPE.VAMPIRE_TOMB) {
-            SpawnAncientVampire();
-        }
+        //if (specificLandmarkType == LANDMARK_TYPE.VAMPIRE_TOMB) {
+        //    SpawnAncientVampire();
+        //}
     }
     #endregion
 
@@ -86,11 +86,12 @@ public class DungeonLandmark : BaseLandmark {
 	}
 
     #region Vampire Tomb
-    private void SpawnAncientVampire() {
+    public ECS.Character SpawnAncientVampire() {
         ECS.Character mingonArcanistVampire = CreateNewCharacter(RACE.MINGONS, CHARACTER_ROLE.ANCIENT_VAMPIRE, "Arcanist");
         mingonArcanistVampire.AssignTag(CHARACTER_TAG.VAMPIRE);
         EquipGearForVampire(mingonArcanistVampire);
 		Debug.Log("Ancient vampire is at : " + tileLocation.name);
+        return mingonArcanistVampire;
     }
     private void EquipGearForVampire(ECS.Character vampire) {
         //Weapon

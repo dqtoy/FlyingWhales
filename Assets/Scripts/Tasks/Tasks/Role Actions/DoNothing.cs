@@ -34,7 +34,7 @@ public class DoNothing : CharacterTask {
 		return true;
 	}
     public override int GetSelectionWeight(Character character) {
-        return 200;
+        return 400;
     }
     protected override BaseLandmark GetLandmarkTarget(ECS.Character character) {
         base.GetLandmarkTarget(character);
@@ -60,7 +60,7 @@ public class DoNothing : CharacterTask {
                     }
                     if (currLandmark == character.specificLocation) {
                         if (currLandmark.owner.id == character.faction.id || factionOfCharacter.GetRelationshipWith(ownerOfLandmark).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                            weight += 1000; //If current location is owned by a non-hostile faction: +500
+                            weight += 1000; //If current location is owned by a non-hostile faction: +1000
                         }
                     }
                 }
@@ -69,7 +69,7 @@ public class DoNothing : CharacterTask {
                 if (currLandmark.owner == null) {
                     weight += 300; //If character is unaligned, each landmark not owned by any faction: +300
                     if (currLandmark == character.specificLocation) {
-                        weight += 1000; //If character is unaligned and current location is not owned by any faction: +500
+                        weight += 1000; //If character is unaligned and current location is not owned by any faction: +1000
                     }
                 }
             }

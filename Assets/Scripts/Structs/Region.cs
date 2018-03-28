@@ -556,6 +556,26 @@ public class Region {
 			_allLandmarks.Add (landmark);
         }
     }
+    public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
+        List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            if (currLandmark.specificLandmarkType == landmarkType) {
+                landmarksOfType.Add(currLandmark);
+            }
+        }
+        return landmarksOfType;
+    }
+    public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
+        List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            if (Utilities.GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
+                landmarksOfType.Add(currLandmark);
+            }
+        }
+        return landmarksOfType;
+    }
     #endregion
 
     #region Kingdom Discovery Functions

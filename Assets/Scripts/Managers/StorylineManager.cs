@@ -160,26 +160,28 @@ public class StorylineManager : MonoBehaviour {
 
     #region Ancient Vampire
     private void AwakenAncientVampire(ECS.Item item, BaseLandmark location, ECS.Character interacter) {
-        //Get the ancient vampire at the location
-        ECS.Character ancientVampire = null;
-        for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-            ECS.Character currCharacter = location.charactersAtLocation[i].mainCharacter;
-            if (currCharacter.role.roleType == CHARACTER_ROLE.ANCIENT_VAMPIRE) {
-                ancientVampire = currCharacter;
-                break;
-            }
-        }
-        if (ancientVampire == null) {
-            throw new System.Exception("There is no ancient vampire at " + location.locationName);
-        }
-        if (ancientVampire.currentTask.taskType != TASK_TYPE.HIBERNATE) {
-            throw new System.Exception("Vampire is not hibernating!");
-        }
-
+        ECS.Character ancientVampire = (location as DungeonLandmark).SpawnAncientVampire();
         AncientVampireAwakened(location, ancientVampire);
+        ////Get the ancient vampire at the location
+        //ECS.Character ancientVampire = null;
+        //for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+        //    ECS.Character currCharacter = location.charactersAtLocation[i].mainCharacter;
+        //    if (currCharacter.role.roleType == CHARACTER_ROLE.ANCIENT_VAMPIRE) {
+        //        ancientVampire = currCharacter;
+        //        break;
+        //    }
+        //}
+        //if (ancientVampire == null) {
+        //    throw new System.Exception("There is no ancient vampire at " + location.locationName);
+        //}
+        //if (ancientVampire.currentTask.taskType != TASK_TYPE.HIBERNATE) {
+        //    throw new System.Exception("Vampire is not hibernating!");
+        //}
 
-        //end the hibernation of the ancient vampire
-        ancientVampire.currentTask.EndTask(TASK_STATUS.SUCCESS);
+        //AncientVampireAwakened(location, ancientVampire);
+
+        ////end the hibernation of the ancient vampire
+        //ancientVampire.currentTask.EndTask(TASK_STATUS.SUCCESS);
     }
     public void AncientVampireAwakened(BaseLandmark location, ECS.Character ancientVampire) {
         location.RemoveItemInLandmark("Vampire Coffin");
@@ -187,7 +189,7 @@ public class StorylineManager : MonoBehaviour {
         awakenLog.AddToFillers(ancientVampire, ancientVampire.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         ancientVampire.AddHistory(awakenLog);
         location.AddHistory(awakenLog);
-        (ancientVampire.role as AncientVampire).OnAwakened();
+        //(ancientVampire.role as AncientVampire).OnAwakened();
     }
     #endregion
 }
