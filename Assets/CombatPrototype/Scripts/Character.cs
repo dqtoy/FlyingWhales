@@ -894,6 +894,7 @@ namespace ECS {
                 throw new Exception(this.name + " already has an instance of " + newItem.itemName);
             }
 			this._inventory.Add (newItem);
+			newItem.SetPossessor (this);
 			if(newItem.owner == null){
 				OwnItem (newItem);
 			}
@@ -913,6 +914,7 @@ namespace ECS {
 			if(item.isEquipped){
 				UnequipItem (item);
 			}
+			item.SetPossessor (null);
 			this._inventory.Remove (item);
 			item.exploreWeight = 15;
 			if(addInLandmark){
@@ -1072,6 +1074,7 @@ namespace ECS {
 				newWeapon.isUnlimited = false;
 			}
 			AddEquippedItem(newWeapon);
+			newWeapon.SetPossessor (this);
 			newWeapon.ResetDurability();
 //			weapon.SetOwner(this);
 			if(newWeapon.owner == null){
@@ -1134,6 +1137,7 @@ namespace ECS {
 			bodyPartToEquip.AttachItem(newArmor, Utilities.GetNeededAttributeForArmor(newArmor));
 			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(newArmor);
+			newArmor.SetPossessor (this);
 			newArmor.ResetDurability();
 //			armor.SetOwner(this);
 			if(newArmor.owner == null){

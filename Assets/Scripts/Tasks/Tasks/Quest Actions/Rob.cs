@@ -32,8 +32,8 @@ public class Rob : CharacterTask {
 		if (_specificTarget == null) {
 			_specificTarget = GetCharacterTarget(character);
 		}
-		if(_specificTarget != null && _specificTarget is ECS.Character){
-			_targetCharacter = (ECS.Character)_specificTarget;
+		if(_specificTarget != null && _specificTarget is Character){
+			_targetCharacter = _specificTarget as Character;
 			if (_targetLocation == null) {
 				_targetLocation = _targetCharacter.specificLocation;
 			}

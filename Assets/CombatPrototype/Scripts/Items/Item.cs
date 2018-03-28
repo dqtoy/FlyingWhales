@@ -26,6 +26,7 @@ namespace ECS{
         public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
         protected ECS.Character _owner;
+		protected ECS.Character _possessor;
 
 		private bool _isEquipped;
         
@@ -35,6 +36,9 @@ namespace ECS{
 		}
 		public ECS.Character owner{
 			get { return _owner; }
+		}
+		public ECS.Character possessor{
+			get { return _possessor; }
 		}
 		public string nameWithQuality{
 			get{
@@ -69,6 +73,9 @@ namespace ECS{
         public void SetOwner(ECS.Character owner) {
             _owner = owner;
         }
+		public void SetPossessor(ECS.Character possessor) {
+			_possessor = possessor;
+		}
 		public void SetEquipped(bool state){
 			this._isEquipped = state;
 		}

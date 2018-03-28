@@ -230,10 +230,20 @@ public class MustHaveItem : TaskFilter {
 		_itemName = itemName;
 	}
 
+	public MustHaveItem() {
+		_itemName = string.Empty;
+	}
+
 	#region overrides
 	public override bool MeetsRequirements(ECS.Character character) {
-		if(character.GetItemInAll(_itemName) != null) {
-			return true;
+		if(_itemName != string.Empty){
+			if(character.GetItemInAll(_itemName) != null) {
+				return true;
+			}
+		}else{
+			if(character.inventory.Count > 0){
+				return true;
+			}
 		}
 		return false;
 	}

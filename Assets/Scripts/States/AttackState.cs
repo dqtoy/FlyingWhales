@@ -1,22 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using ECS;
 
 public class AttackState : State {
 	Action _wonInCombatAction;
-	ECS.Character _targetCharacter;
+	Character _targetCharacter;
 
 	public AttackState(CharacterTask parentTask, Action wonInCombatAction) : base(parentTask, STATE.ATTACK) {
 		_wonInCombatAction = wonInCombatAction;
-		_targetCharacter = _parentTask.specificTarget as ECS.Character;
     }
 
     #region overrides
+	public override void OnChooseState (Character character){
+		base.OnChooseState (character);
+		if(_parentTask.specificTarget != null){
+			_targetCharacter = _parentTask.specificTarget as Character;
+		}
+	}
     public override bool PerformStateAction() {
         if (!base.PerformStateAction()) { return false; }
         InitiateCombat();
         return true;
     }
+	protected override void ResetState (){
+		base.ResetState ();
+		_targetCharacter = null;
+	}
     #endregion
 
     private void InitiateCombat() {

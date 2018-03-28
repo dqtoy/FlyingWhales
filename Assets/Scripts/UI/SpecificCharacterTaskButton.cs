@@ -17,11 +17,11 @@ public class SpecificCharacterTaskButton : MonoBehaviour {
 	private void ChangeButtonText(){
 		string text = string.Empty;
 		if(this.target is ECS.Character){
-			text = ((ECS.Character)this.target).name;
+			text = (this.target as ECS.Character).name;
 		}else if(this.target is ECS.Item){
-			text = ((ECS.Item)this.target).itemName;
+			text = (this.target as ECS.Item).itemName;
 		} else if (this.target is Quest) {
-            text = ((Quest)this.target).questName;
+			text = (this.target as Quest).questName;
         }
         btnLabel.text = text;
 	}
@@ -46,6 +46,8 @@ public class SpecificCharacterTaskButton : MonoBehaviour {
 		if(character.currentTask != null){
 			character.currentTask.SetIsHalted (true);
 		}
+		task.ResetTask ();
+		task.SetLocation (PlayerActionsUI.Instance.location);
 		task.SetSpecificTarget (target);
         Log overrideLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "action_override_specific_target");
         overrideLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -108,7 +108,7 @@ public class QuestData {
     public void AddQuestTasksToWeightedDictionary(WeightedDictionary<CharacterTask> actionWeights) {
         for (int i = 0; i < _tasks.Count; i++) {
             CharacterTask currTask = _tasks[i];
-            if (!currTask.isDone) {
+            if (!currTask.isDone && !currTask.forPlayerOnly && currTask.AreConditionsMet(_owner)) {
                 actionWeights.AddElement(currTask, currTask.GetSelectionWeight(_owner));
             }
         }
