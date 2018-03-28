@@ -451,13 +451,13 @@ public class BaseLandmark : ILocation, TaskCreator {
 		return null;
 	}
     /*
-     Does the settlement have the required technology
+     Does the landmark have the required technology
      to produce a class?
          */
     public bool CanProduceClass(CHARACTER_CLASS charClass) {
-        if (_owner == null) {
-            return false;
-        }
+        //if (_owner == null) {
+        //    return false;
+        //}
         TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
         if (neededTech == TECHNOLOGY.NONE) {
             return true;

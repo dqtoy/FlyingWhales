@@ -22,7 +22,6 @@ public class MoveTo : CharacterTask {
         : base(createdBy, TASK_TYPE.MOVE_TO, stance, defaultDaysLeft, parentQuest) {
 		//_forPlayerOnly = true;
         //_actionString = "to visit";
-
 		_states = new System.Collections.Generic.Dictionary<STATE, State> {
 			{ STATE.MOVE, new MoveState (this) }
 		};
@@ -115,7 +114,7 @@ public class MoveTo : CharacterTask {
 
     private void SuccessTask() {
         EndTask(TASK_STATUS.SUCCESS);
-		DoNothing doNothing = new DoNothing (_assignedCharacter);
+		DoNothing doNothing = new DoNothing (_assignedCharacter, 3);
 		//doNothing.SetDaysLeft (3);
 		doNothing.OnChooseTask (_assignedCharacter);
     }

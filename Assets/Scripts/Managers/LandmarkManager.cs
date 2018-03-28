@@ -29,11 +29,11 @@ public class LandmarkManager : MonoBehaviour {
         BASE_LANDMARK_TYPE baseLandmarkType = Utilities.GetBaseLandmarkType(landmarkType);
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType, materialMadeOf);
         if(baseLandmarkType == BASE_LANDMARK_TYPE.SETTLEMENT && landmarkType != LANDMARK_TYPE.CITY) {
-            if(landmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-                //Create a new faction to occupy the new settlement
-                Faction newFaction = FactionManager.Instance.CreateNewFaction(typeof(Camp), RACE.GOBLIN);
-                newLandmark.OccupyLandmark(newFaction);
-            }
+            //if(landmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+            //    //Create a new faction to occupy the new settlement
+            //    Faction newFaction = FactionManager.Instance.CreateNewFaction(typeof(Camp), RACE.GOBLIN);
+            //    newLandmark.OccupyLandmark(newFaction);
+            //}
         }
 //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
