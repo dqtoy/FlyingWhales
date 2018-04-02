@@ -220,14 +220,16 @@ public class PathGenerator : MonoBehaviour {
 		}
 		PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, data));
 	}
-    public void CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
+    public PathFindingThread CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
         if (startingTile == null || destinationTile == null) {
-            return;
+            return null;
         }
         if (startingTile.tileTag != destinationTile.tileTag) {
-            return;
+            return null;
         }
-        PathfindingThreadPool.Instance.AddToThreadPool(new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, data));
+        PathFindingThread newThread = new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, data);
+        PathfindingThreadPool.Instance.AddToThreadPool(newThread);
+        return newThread;
     }
 
     /*

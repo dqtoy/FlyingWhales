@@ -10,6 +10,8 @@ public class CharacterAvatar : PooledObject{
     //public OnPathFinished onPathFinished;
     private Action onPathFinished;
 
+    private PathFindingThread _currPathfindingRequest; //the current pathfinding request this avatar is waiting for
+
 	[SerializeField] protected SmoothMovement smoothMovement;
 	[SerializeField] protected DIRECTION direction;
     [SerializeField] protected GameObject _avatarHighlight;
@@ -129,15 +131,23 @@ public class CharacterAvatar : PooledObject{
             if (_characters[0].party != null) {
 				faction = _characters[0].party.partyLeader.faction;
             }
-			PathGenerator.Instance.CreatePath(this, this.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
+			_currPathfindingRequest = PathGenerator.Instance.CreatePath(this, this.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
             //this.path = PathGenerator.Instance.GetPath(this.currLocation, this.targetLocation, pathFindingMode, faction);
             //NewMove();
         }
     }
-    internal virtual void ReceivePath(List<HexTile> path) {
+    internal virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
         if (!_isInitialized) {
             return;
         }
+        if (_currPathfindingRequest == null) {
+            return; //this avatar currently has no pathfinding request
+        } else {
+            if (_currPathfindingRequest != fromThread) {
+                return; //the current pathfinding request and the thread that returned the path are not the same
+            }
+        }
+        
         if (path == null) {
             throw new Exception(_characters[0].name + "'s Avatar. There is no path from " + this.specificLocation.tileLocation.name + " to " + targetLocation.tileLocation.name);
         }
@@ -161,6 +171,7 @@ public class CharacterAvatar : PooledObject{
                 _mainCharacter.AddHistory(leftLog);
             }
             this.path = path;
+            _currPathfindingRequest = null;
             _isTravelling = true;
             NewMove();
         }
@@ -371,6 +382,7 @@ public class CharacterAvatar : PooledObject{
         path = null;
         _hasArrived = false;
         _isInitialized = false;
+        _currPathfindingRequest = null;
         SetHighlightState(false);
     }
     #endregion
