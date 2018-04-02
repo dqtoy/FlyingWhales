@@ -2534,16 +2534,16 @@ namespace ECS {
 
         #region History
         internal void AddHistory(Log log) {
-            //check if the new log is a duplicate of the latest log
-            Log latestLog = history.ElementAtOrDefault(history.Count - 1);
-            if (latestLog != null) {
-                if (Utilities.AreLogsTheSame(log, latestLog)) {
-                    string text = name + " has duplicate logs!";
-                    text += "\n" + log.id + Utilities.LogReplacer(log) + " ST:" + log.logCallStack;
-                    text += "\n" + latestLog.id + Utilities.LogReplacer(latestLog) + " ST:" + latestLog.logCallStack;
-                    throw new Exception(text);
-                }
-            }
+            ////check if the new log is a duplicate of the latest log
+            //Log latestLog = history.ElementAtOrDefault(history.Count - 1);
+            //if (latestLog != null) {
+            //    if (Utilities.AreLogsTheSame(log, latestLog)) {
+            //        string text = name + " has duplicate logs!";
+            //        text += "\n" + log.id + Utilities.LogReplacer(log) + " ST:" + log.logCallStack;
+            //        text += "\n" + latestLog.id + Utilities.LogReplacer(latestLog) + " ST:" + latestLog.logCallStack;
+            //        throw new Exception(text);
+            //    }
+            //}
 
             _history.Add(log);
             if (this._history.Count > 20) {
