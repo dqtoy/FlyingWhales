@@ -784,6 +784,31 @@ public class Utilities : MonoBehaviour {
 		//{"110", LOG_IDENTIFIER.WAR_NAME},
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
+    public static bool AreLogsTheSame(Log log1, Log log2) {
+        string log1String = LogReplacer(log1);
+        string log2String = LogReplacer(log2);
+        if (log1String.Contains("left") || log2String.Contains("left") ||
+            log1String.Contains("visited") || log2String.Contains("visited")) {
+            return log1String.Equals(log2String);
+        }
+        return false;
+        //if (log1.key.Equals(log2.key)) {
+        //    if (log1.month == log2.month && log1.day == log2.day && log1.year == log2.year) {
+        //        bool hasSameFillers = true;
+        //        for (int i = 0; i < log1.fillers.Count; i++) {
+        //            LogFiller currFiller = log1.fillers[i];
+        //            for (int j = 0; j < log2.fillers.Count; j++) {
+        //                LogFiller otherFiller = log2.fillers[j];
+        //                if (currFiller.obj != otherFiller.obj) {
+        //                    hasSameFillers = false;
+        //                }
+        //            }
+        //        }
+        //        return hasSameFillers;
+        //    }
+        //}
+        //return false;
+    }
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
         EVENT_TYPES.ADVENTURE,

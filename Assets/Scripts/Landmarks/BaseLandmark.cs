@@ -1008,6 +1008,17 @@ public class BaseLandmark : ILocation, TaskCreator {
 
 	#region History
     internal void AddHistory(Log log) {
+        //check if the new log is a duplicate of the latest log
+        Log latestLog = history.ElementAtOrDefault(history.Count - 1);
+        if (latestLog != null) {
+            if (Utilities.AreLogsTheSame(log, latestLog)) {
+                string text = landmarkName + " has duplicate logs!";
+                text += "\n" + log.id + Utilities.LogReplacer(log) + " ST:" + log.logCallStack;
+                text += "\n" + latestLog.id + Utilities.LogReplacer(latestLog) + " ST:" + latestLog.logCallStack;
+                throw new System.Exception(text);
+            }
+        }
+
         _history.Add(log);
         if (this._history.Count > 20) {
             this._history.RemoveAt(0);

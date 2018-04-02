@@ -45,18 +45,18 @@ public class MoveTo : CharacterTask {
 		if (_targetLocation != null) {
 			//Debug.Log(_assignedCharacter.name + " goes to " + _targetLocation.locationName);
 			ChangeStateTo(STATE.MOVE);
-			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS);
+			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => SuccessTask());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
 	}
-    public override void PerformTask() {
-		if(!CanPerformTask()){
-			return;
-		}
-		base.PerformTask();
-		SuccessTask ();
-    }
+  //  public override void PerformTask() {
+		//if(!CanPerformTask()){
+		//	return;
+		//}
+		//base.PerformTask();
+		//SuccessTask ();
+  //  }
 	public override bool CanBeDone (ECS.Character character, ILocation location){
 		return true;
 	}
@@ -116,9 +116,11 @@ public class MoveTo : CharacterTask {
     #endregion
 
     private void SuccessTask() {
+        DoNothing doNothing = new DoNothing(_assignedCharacter, 3);
+        doNothing.SetLocation(_targetLocation);
+        //doNothing.SetDaysLeft (3);
+        //doNothing.OnChooseTask(_assignedCharacter);
+        _assignedCharacter.SetTaskToDoNext(doNothing);
         EndTask(TASK_STATUS.SUCCESS);
-		DoNothing doNothing = new DoNothing (_assignedCharacter, 3);
-		//doNothing.SetDaysLeft (3);
-		doNothing.OnChooseTask (_assignedCharacter);
     }
 }

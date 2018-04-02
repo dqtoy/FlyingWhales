@@ -190,7 +190,7 @@ public class ConsoleMenu : UIMenu {
 
         if (isQuestParameterNumeric && isCharacterParameterNumeric) {
             OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
-            ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
+            ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
 
             if(character.currentTask != null) {
                 character.SetTaskToDoNext(quest);
@@ -244,7 +244,7 @@ public class ConsoleMenu : UIMenu {
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
 
         if (isCharacterParameterNumeric) {
-            ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
+            ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
             character.Death();
         } else {
             AddCommandHistory(consoleLbl.text);
@@ -266,7 +266,7 @@ public class ConsoleMenu : UIMenu {
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
         bool isGoldParameterNumeric = int.TryParse(goldAdjustmentParamterString, out goldAdjustment);
         if (isCharacterParameterNumeric && isGoldParameterNumeric) {
-            ECS.Character character = FactionManager.Instance.GetCharacterByID(characterID);
+            ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
             character.AdjustGold(goldAdjustment);
             AddSuccessMessage(character.name + "'s gold was adjusted by " + goldAdjustment.ToString() + ". New gold is " + character.gold.ToString());
         } else {
@@ -286,7 +286,7 @@ public class ConsoleMenu : UIMenu {
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
         ECS.Character character = null;
         if (isCharacterParameterNumeric) {
-            character = FactionManager.Instance.GetCharacterByID(characterID);
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
         }
 
         if (character == null) {

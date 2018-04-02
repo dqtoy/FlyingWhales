@@ -17,6 +17,8 @@ public class Log {
 	public List<LogFiller> fillers;
 	public object[] allInvolved;
 
+    public string logCallStack;
+
 	public Log(int month, int day, int year, string category, string file, string key){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
@@ -26,6 +28,7 @@ public class Log {
 		this.file = file;
 		this.key = key;
 		this.fillers = new List<LogFiller>();
+        logCallStack = StackTraceUtility.ExtractStackTrace();
 	}
     public Log(GameDate date, string category, string file, string key) {
         this.id = Utilities.SetID<Log>(this);
@@ -36,6 +39,7 @@ public class Log {
         this.file = file;
         this.key = key;
         this.fillers = new List<LogFiller>();
+        logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
     internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier){

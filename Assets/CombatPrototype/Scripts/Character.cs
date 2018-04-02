@@ -2122,9 +2122,8 @@ namespace ECS {
 				_currentTask.SetIsHalted (true);
 			}
             if(nextTaskToDo != null) {
-                //Force accept quest, if any
+                //Force next task to do, if any
 				nextTaskToDo.OnChooseTask(this);
-//                nextTaskToDo.PerformTask();
                 nextTaskToDo = null;
                 return;
             }
@@ -2535,23 +2534,16 @@ namespace ECS {
 
         #region History
         internal void AddHistory(Log log) {
-            ////check if character already has log
-            //for (int i = 0; i < _history.Count; i++) {
-            //    Log currLog = _history[i];
-            //    if (currLog.key == log.key) {
-            //        bool areIdentical = true;
-            //        for (int j = 0; j < currLog.fillers.Count; j++) {
-            //            object currFiller = currLog.fillers[j];
-            //            object fillerFromLog = log.fillers.ElementAtOrDefault(j);
-            //            if (fillerFromLog != currFiller) {
-            //                areIdentical = false;
-            //            }
-            //        }
-            //        if (areIdentical) {
-            //            throw new Exception("IDENTICAL LOGS!");
-            //        }
-            //    }
-            //}
+            //check if the new log is a duplicate of the latest log
+            Log latestLog = history.ElementAtOrDefault(history.Count - 1);
+            if (latestLog != null) {
+                if (Utilities.AreLogsTheSame(log, latestLog)) {
+                    string text = name + " has duplicate logs!";
+                    text += "\n" + log.id + Utilities.LogReplacer(log) + " ST:" + log.logCallStack;
+                    text += "\n" + latestLog.id + Utilities.LogReplacer(latestLog) + " ST:" + latestLog.logCallStack;
+                    throw new Exception(text);
+                }
+            }
 
             _history.Add(log);
             if (this._history.Count > 20) {
@@ -2561,27 +2553,8 @@ namespace ECS {
             for (int i = 0; i < followers.Count; i++) {
                 followers[i].AddHistory(log);
             }
+            
         }
-        //internal void AddHistory(string text, object obj = null){
-        //	GameDate today = GameManager.Instance.Today ();
-        //	string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
-        //	if(obj != null){
-        //		if(obj is CombatPrototype){
-        //			CombatPrototype combat = (CombatPrototype)obj;
-        //			if(this.combatHistory.Count > 20){
-        //				this.combatHistory.Remove (0);
-        //			}
-        //			_combatHistoryID += 1;
-        //			combatHistory.Add (_combatHistoryID, combat);
-        //			string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
-        //			text = combatText;
-        //		}
-        //	}
-        //	this._history.Insert (0, date + " " + text);
-        //	if(this._history.Count > 20){
-        //		this._history.RemoveAt (this._history.Count - 1);
-        //	}
-        //}
         #endregion
 
         #region Prisoner
