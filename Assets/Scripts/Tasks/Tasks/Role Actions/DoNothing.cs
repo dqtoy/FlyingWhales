@@ -25,7 +25,7 @@ public class DoNothing : CharacterTask {
         }
 		if (_targetLocation != null) {
 			ChangeStateTo (STATE.MOVE);
-			character.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => StartDoingNothing());
+			character.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartDoingNothing());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}

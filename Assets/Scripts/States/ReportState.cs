@@ -26,7 +26,7 @@ public class ReportState : State {
             } else {
                 //go to the location of the character this character is supposed to report to
                 parentTask.ChangeStateTo(STATE.MOVE);
-                _assignedCharacter.GoToLocation((parentTask as Report).reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => parentTask.ChangeStateTo(STATE.REPORT));
+                _assignedCharacter.GoToLocation((parentTask as Report).reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS, () => parentTask.ChangeStateTo(STATE.REPORT));
             }
         }
 

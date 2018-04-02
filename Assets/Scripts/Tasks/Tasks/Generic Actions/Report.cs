@@ -47,7 +47,7 @@ public class Report : CharacterTask {
     public override void OnChooseTask(Character character) {
         base.OnChooseTask(character);
         ChangeStateTo(STATE.MOVE);
-        character.GoToLocation(_reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => ChangeStateTo(STATE.REPORT));
+        character.GoToLocation(_reportTo.specificLocation, PATHFINDING_MODE.USE_ROADS, () => ChangeStateTo(STATE.REPORT));
     }
     public override void TaskSuccess() {
         base.TaskSuccess();

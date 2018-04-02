@@ -44,7 +44,7 @@ public class Steal : CharacterTask {
 			}
 			if (_targetLocation != null && _targetLocation is BaseLandmark) {
 				ChangeStateTo(STATE.MOVE);
-				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => StartSteal());
+				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartSteal());
 			}else{
 				EndTask (TASK_STATUS.FAIL);
 			}

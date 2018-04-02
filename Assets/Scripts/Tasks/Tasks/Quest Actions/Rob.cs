@@ -39,7 +39,7 @@ public class Rob : CharacterTask {
 			}
 			if (_targetLocation != null) {
 				ChangeStateTo(STATE.MOVE);
-				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => StartRob());
+				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartRob());
 			}else{
 				EndTask (TASK_STATUS.FAIL);
 			}

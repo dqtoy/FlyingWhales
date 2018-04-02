@@ -81,7 +81,7 @@ public class Search : CharacterTask {
 			return;
 		}
         ChangeStateTo(STATE.MOVE);
-		_assignedCharacter.GoToLocation(_targetLandmark, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => StartSearch());
+		_assignedCharacter.GoToLocation(_targetLandmark, PATHFINDING_MODE.USE_ROADS, () => StartSearch());
     }
     public override bool AreConditionsMet(Character character) {
         //check if there are any landmarks in region with characters

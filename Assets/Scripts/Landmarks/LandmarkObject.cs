@@ -14,14 +14,7 @@ public class LandmarkObject : MonoBehaviour {
 
     public void SetLandmark(BaseLandmark landmark) {
         _landmark = landmark;
-        if(landmarkLbl != null) {
-            //Landmark object is an empty city
-			if(_landmark.landmarkName != string.Empty){
-				landmarkLbl.text = Utilities.NormalizeString(landmark.landmarkName);
-			}else{
-				landmarkLbl.text = Utilities.NormalizeString(landmark.specificLandmarkType.ToString());
-			}
-        }
+        UpdateName();
         if (_landmark.specificLandmarkType != LANDMARK_TYPE.CITY) {
             LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_landmark.specificLandmarkType);
             if (data.landmarkObjectSprite != null) {
@@ -32,6 +25,17 @@ public class LandmarkObject : MonoBehaviour {
             }
         }
         //UpdateLandmarkVisual();
+    }
+
+    public void UpdateName() {
+        if (landmarkLbl != null) {
+            //Landmark object is an empty city
+            if (_landmark.landmarkName != string.Empty) {
+                landmarkLbl.text = Utilities.NormalizeString(_landmark.landmarkName);
+            } else {
+                landmarkLbl.text = Utilities.NormalizeString(_landmark.specificLandmarkType.ToString());
+            }
+        }
     }
 
     public void SetBGState(bool state) {

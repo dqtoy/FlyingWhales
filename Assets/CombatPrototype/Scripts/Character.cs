@@ -2423,7 +2423,7 @@ namespace ECS {
 			this._cannotBeTakenAsPrisoner = state;
 		}
         public bool HasPathToParty(Party partyToJoin) {
-            return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, _faction) != null;
+            return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
         }
         public Settlement GetNearestNonHostileSettlement() {
 			if(faction != null){

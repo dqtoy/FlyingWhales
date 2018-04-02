@@ -37,7 +37,7 @@ public class HuntMagicUser : CharacterTask {
 			}
 			if (_targetLocation != null) {
                 ChangeStateTo(STATE.MOVE);
-				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP, () => ChangeStateTo(STATE.ATTACK));
+				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS, () => ChangeStateTo(STATE.ATTACK));
 			}else{
 				EndTask (TASK_STATUS.FAIL);
 			}

@@ -22,16 +22,15 @@ public class QuestPhaseRequirement : ICloneable{
     public QuestPhaseRequirement() {
         _isRequirementMet = false;
     }
-	public virtual void ActivateRequirement(ECS.Character owner){ this.owner = owner; }
+	public virtual void ActivateRequirement(ECS.Character owner){ this.owner = owner; } //What happens when this requirement is relevant
+    public virtual void DeactivateRequirement() { } //What happens when this requirement is no longer relevant
     public object Clone() {
         return this.MemberwiseClone();
     }
 }
 
 public class MustHaveItems : QuestPhaseRequirement {
-
     private List<string> neededItems;
-
     public MustHaveItems(string neededItem) : base(){
         neededItems = new List<string>();
         neededItems.Add(neededItem);
@@ -39,12 +38,14 @@ public class MustHaveItems : QuestPhaseRequirement {
     public MustHaveItems(List<string> neededItems) : base() {
         this.neededItems = new List<string>(neededItems);
     }
-
     public override void ActivateRequirement(ECS.Character owner) {
         base.ActivateRequirement(owner);
         Messenger.AddListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
     }
-
+    public override void DeactivateRequirement() {
+        base.DeactivateRequirement();
+        Messenger.RemoveListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
+    }
     protected void CheckIfRequirementMet(ECS.Character character, ECS.Item item) {
         if (character.id == owner.id) {
             for (int i = 0; i < neededItems.Count; i++) {
@@ -60,22 +61,21 @@ public class MustHaveItems : QuestPhaseRequirement {
             character.questData.CheckPhaseAdvancement();
         }
     }
-
 }
 
 public class MustFindItem : QuestPhaseRequirement {
-
     private string neededItem;
-
     public MustFindItem(string neededItem) : base() {
         this.neededItem = neededItem;
     }
-
     public override void ActivateRequirement(ECS.Character owner) {
         base.ActivateRequirement(owner);
         Messenger.AddListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
     }
-
+    public override void DeactivateRequirement() {
+        base.DeactivateRequirement();
+        Messenger.RemoveListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
+    }
     protected void CheckIfRequirementMet(ECS.Character character, ECS.Item item) {
         if (character.id == owner.id) {
             if (!item.itemName.Equals(neededItem)) {
@@ -90,14 +90,15 @@ public class MustFindItem : QuestPhaseRequirement {
 }
 
 public class MustFinishAllPhaseTasks : QuestPhaseRequirement {
-
     public MustFinishAllPhaseTasks() : base() {}
-
     public override void ActivateRequirement(ECS.Character owner) {
         base.ActivateRequirement(owner);
         Messenger.AddListener<ECS.Character, CharacterTask>(Signals.TASK_SUCCESS, CheckIfRequirementMet);
     }
-
+    public override void DeactivateRequirement() {
+        base.DeactivateRequirement();
+        Messenger.RemoveListener<ECS.Character, CharacterTask>(Signals.TASK_SUCCESS, CheckIfRequirementMet);
+    }
     protected void CheckIfRequirementMet(ECS.Character character, CharacterTask succeededTask) {
         if (character.id == owner.id && succeededTask.assignedCharacter.id == character.id) {
             for (int i = 0; i < character.questData.tasks.Count; i++) {
@@ -110,5 +111,4 @@ public class MustFinishAllPhaseTasks : QuestPhaseRequirement {
             character.questData.CheckPhaseAdvancement();
         }
     }
-
 }

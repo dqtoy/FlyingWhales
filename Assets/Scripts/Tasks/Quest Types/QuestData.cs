@@ -43,6 +43,10 @@ public class QuestData {
         if (_activeQuest != null) {
             QuestPhase questPhase = GetQuestPhase();
             _tasks = new List<CharacterTask>(questPhase.tasks);
+            for (int i = 0; i < _advancementRequirements.Count; i++) {
+                QuestPhaseRequirement currRequirement = _advancementRequirements[i];
+                currRequirement.DeactivateRequirement();
+            }
             _advancementRequirements.Clear();
             questPhase.OnPhaseActive(_owner);
         } else {

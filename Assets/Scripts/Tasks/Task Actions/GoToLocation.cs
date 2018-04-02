@@ -4,7 +4,7 @@ using System.Collections;
 public class GoToLocation : TaskAction {
 
     private ILocation targetLocation;
-    private PATHFINDING_MODE _pathfindingMode = PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP;
+    private PATHFINDING_MODE _pathfindingMode = PATHFINDING_MODE.USE_ROADS;
 
     #region getters/setters
     public HexTile targetTile {
