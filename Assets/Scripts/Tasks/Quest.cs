@@ -71,6 +71,9 @@ public class Quest {
      whether a character's role allows that alignment.
          */
     public virtual bool CanAcceptQuest(ECS.Character character) {
+        if (character.currentQuest != null) {
+            return false; //the character already has a current quest!
+        }
 		if(_acceptedCharacters.Count >= _maxRegistration){
 			return false;
 		}
