@@ -85,7 +85,7 @@ public class Utilities : MonoBehaviour {
         } else if(obj is ECS.Character) {
             lastCharacterID += 1;
             return lastCharacterID;
-        } else if (obj is OldQuest.Quest) {
+        } else if (obj is Quest) {
             lastQuestID += 1;
             return lastQuestID;
         } else if (obj is ECS.Item) {

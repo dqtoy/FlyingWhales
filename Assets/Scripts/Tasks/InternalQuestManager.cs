@@ -13,20 +13,20 @@ public class InternalQuestManager : TaskCreator {
 
     private Faction _owner;
 
-    private List<OldQuest.Quest> _activeQuests;
+    //private List<OldQuest.Quest> _activeQuests;
 
     #region getters/setters
     public Faction owner {
         get { return _owner; }
     }
-    public List<OldQuest.Quest> activeQuests {
-        get { return _activeQuests; }
-    }
+    //public List<OldQuest.Quest> activeQuests {
+    //    get { return _activeQuests; }
+    //}
     #endregion
 
     public InternalQuestManager(Faction owner) {
         _owner = owner;
-        _activeQuests = new List<OldQuest.Quest>();
+        //_activeQuests = new List<OldQuest.Quest>();
         //if(owner is Tribe) {
         //    GameDate dueDate = new GameDate(GameManager.Instance.month, 15, GameManager.Instance.year);
         //    SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
@@ -59,34 +59,34 @@ public class InternalQuestManager : TaskCreator {
      At the start of each month, if the Faction has not yet reached the cap of active Internal Quests, 
      it will attempt to create a new one.
          */
-    private void GenerateMonthlyQuests() {
-        if(_activeQuests.Count < GetMaxActiveQuests()) {
-            WeightedDictionary<OldQuest.Quest> questDictionary = GetQuestWeightedDictionary();
-            questDictionary.LogDictionaryValues("OldQuest.Quest Creation Weights: ");
-            if(questDictionary.GetTotalOfWeights() > 0) {
-                OldQuest.Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
-                AddNewQuest(chosenQuestToCreate);
-            }
-        }
+//    private void GenerateMonthlyQuests() {
+//        if(_activeQuests.Count < GetMaxActiveQuests()) {
+//            WeightedDictionary<OldQuest.Quest> questDictionary = GetQuestWeightedDictionary();
+//            questDictionary.LogDictionaryValues("OldQuest.Quest Creation Weights: ");
+//            if(questDictionary.GetTotalOfWeights() > 0) {
+//                OldQuest.Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
+//                AddNewQuest(chosenQuestToCreate);
+//            }
+//        }
 
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddDays(15);
-        SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
-    }
-    private WeightedDictionary<OldQuest.Quest> GetQuestWeightedDictionary() {
-        WeightedDictionary<OldQuest.Quest> questWeights = new WeightedDictionary<OldQuest.Quest>();
-        //Loop through each Region that the Faction has a Settlement in.
-        for (int i = 0; i < _owner.settlements.Count; i++) {
-            Settlement currSettlement = _owner.settlements[i];
-			Region regionOfSettlement = currSettlement.tileLocation.region;
+//        GameDate dueDate = GameManager.Instance.Today();
+//        dueDate.AddDays(15);
+//        SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
+//    }
+//    private WeightedDictionary<OldQuest.Quest> GetQuestWeightedDictionary() {
+//        WeightedDictionary<OldQuest.Quest> questWeights = new WeightedDictionary<OldQuest.Quest>();
+//        //Loop through each Region that the Faction has a Settlement in.
+//        for (int i = 0; i < _owner.settlements.Count; i++) {
+//            Settlement currSettlement = _owner.settlements[i];
+//			Region regionOfSettlement = currSettlement.tileLocation.region;
 
-            //AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
-//            AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
-            //AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
-            //AddExpeditionWeights(questWeights, currSettlement, regionOfSettlement);
-        }
-        return questWeights;
-    }
+//            //AddExpandWeights(questWeights, currSettlement, regionOfSettlement);
+////            AddExploreTileWeights(questWeights, currSettlement, regionOfSettlement);
+//            //AddBuildStructureWeights(questWeights, currSettlement, regionOfSettlement);
+//            //AddExpeditionWeights(questWeights, currSettlement, regionOfSettlement);
+//        }
+//        return questWeights;
+//    }
 //    private void AddExploreTileWeights(WeightedDictionary<OldQuest.Quest> questWeights, Settlement currSettlement, Region regionOfSettlement) {
 //        for (int j = 0; j < regionOfSettlement.landmarks.Count; j++) {
 //            object currConnection = regionOfSettlement.landmarks[j];
@@ -194,99 +194,99 @@ public class InternalQuestManager : TaskCreator {
 //		}
 		return 5;
 	}
-	internal void CreateExpandQuest(BaseLandmark originLandmark){
-		HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
-		if(unoccupiedTile != null){
-            Settlement settlement = originLandmark as Settlement;
-            //Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
-            MATERIAL matForConstruction = settlement.GetMaterialFor(PRODUCTION_TYPE.CONSTRUCTION);
-            if(matForConstruction != MATERIAL.NONE) {
-				Expand expand = new Expand(this, unoccupiedTile, originLandmark.tileLocation, matForConstruction);
-                expand.SetSettlement((Settlement)originLandmark);
-                AddNewQuest(expand);
-            }
-		}
-	}
+	//internal void CreateExpandQuest(BaseLandmark originLandmark){
+	//	HexTile unoccupiedTile = originLandmark.GetRandomAdjacentUnoccupiedTile ();
+	//	if(unoccupiedTile != null){
+ //           Settlement settlement = originLandmark as Settlement;
+ //           //Construction constructionData = ProductionManager.Instance.GetConstructionDataForCity();
+ //           MATERIAL matForConstruction = settlement.GetMaterialFor(PRODUCTION_TYPE.CONSTRUCTION);
+ //           if(matForConstruction != MATERIAL.NONE) {
+	//			Expand expand = new Expand(this, unoccupiedTile, originLandmark.tileLocation, matForConstruction);
+ //               expand.SetSettlement((Settlement)originLandmark);
+ //               AddNewQuest(expand);
+ //           }
+	//	}
+	//}
 	internal void CreateExploreTileQuest(BaseLandmark landmarkToExplore){
 //        ExploreTile exploreQuest = new ExploreTile(this, landmarkToExplore);
 //        exploreQuest.SetSettlement((Settlement)landmarkToExplore.location.region.centerOfMass.landmarkOnTile);
 //        AddNewQuest(exploreQuest);
     }
-    internal void CreateBuildStructureQuest(BaseLandmark landmarkToExplore) {
-        Construction constructionData = ProductionManager.Instance.GetConstruction((landmarkToExplore as ResourceLandmark).materialData.structure.name);
-		Settlement settlement = (Settlement)landmarkToExplore.tileLocation.region.centerOfMass.landmarkOnTile;
-		BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore.tileLocation, settlement.GetMaterialFor(PRODUCTION_TYPE.CONSTRUCTION), constructionData);
-        buildStructure.SetSettlement(settlement);
-        AddNewQuest(buildStructure);
-    }
+  //  internal void CreateBuildStructureQuest(BaseLandmark landmarkToExplore) {
+  //      Construction constructionData = ProductionManager.Instance.GetConstruction((landmarkToExplore as ResourceLandmark).materialData.structure.name);
+		//Settlement settlement = (Settlement)landmarkToExplore.tileLocation.region.centerOfMass.landmarkOnTile;
+		//BuildStructure buildStructure = new BuildStructure(this, landmarkToExplore.tileLocation, settlement.GetMaterialFor(PRODUCTION_TYPE.CONSTRUCTION), constructionData);
+  //      buildStructure.SetSettlement(settlement);
+  //      AddNewQuest(buildStructure);
+  //  }
     #endregion
 
     #region OldQuest.Quest Management
-    public void AddNewQuest(OldQuest.Quest quest) {
-        if (!_activeQuests.Contains(quest)) {
-            _activeQuests.Add(quest);
-            _owner.AddNewQuest(quest);
-            //if(quest.postedAt != null) {
-            //    quest.postedAt.AddQuestToBoard(quest);
-            //}
-            //quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
-        }
-    }
-    public void RemoveQuest(OldQuest.Quest quest) {
-        _activeQuests.Remove(quest);
-        _owner.RemoveQuest(quest);
-    }
-    public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
-        List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
-        for (int i = 0; i < _activeQuests.Count; i++) {
-            OldQuest.Quest currQuest = _activeQuests[i];
-            if(currQuest.questType == questType) {
-                quests.Add(currQuest);
-            }
-        }
-        return quests;
-    }
-	public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
-		for (int i = 0; i < _activeQuests.Count; i++) {
-			OldQuest.Quest currQuest = _activeQuests[i];
-			if(currQuest.questType == questType) {
-				if(questType == QUEST_TYPE.EXPLORE_REGION){
-					Region region = (Region)identifier;
-					if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
-						return true;
-					}
-				} else if(questType == QUEST_TYPE.EXPAND){
-					if(identifier is HexTile){
-						HexTile hexTile = (HexTile)identifier;
-						if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
-							return true;
-						}
-					}else if(identifier is BaseLandmark){
-						BaseLandmark landmark = (BaseLandmark)identifier;
-						if(((Expand)currQuest).originTile.id == landmark.tileLocation.id){
-							return true;
-						}
-					}
+ //   public void AddNewQuest(OldQuest.Quest quest) {
+ //       if (!_activeQuests.Contains(quest)) {
+ //           _activeQuests.Add(quest);
+ //           _owner.AddNewQuest(quest);
+ //           //if(quest.postedAt != null) {
+ //           //    quest.postedAt.AddQuestToBoard(quest);
+ //           //}
+ //           //quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
+ //       }
+ //   }
+ //   public void RemoveQuest(OldQuest.Quest quest) {
+ //       _activeQuests.Remove(quest);
+ //       _owner.RemoveQuest(quest);
+ //   }
+ //   public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
+ //       List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
+ //       for (int i = 0; i < _activeQuests.Count; i++) {
+ //           OldQuest.Quest currQuest = _activeQuests[i];
+ //           if(currQuest.questType == questType) {
+ //               quests.Add(currQuest);
+ //           }
+ //       }
+ //       return quests;
+ //   }
+	//public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
+	//	for (int i = 0; i < _activeQuests.Count; i++) {
+	//		OldQuest.Quest currQuest = _activeQuests[i];
+	//		if(currQuest.questType == questType) {
+	//			if(questType == QUEST_TYPE.EXPLORE_REGION){
+	//				Region region = (Region)identifier;
+	//				if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
+	//					return true;
+	//				}
+	//			} else if(questType == QUEST_TYPE.EXPAND){
+	//				if(identifier is HexTile){
+	//					HexTile hexTile = (HexTile)identifier;
+	//					if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
+	//						return true;
+	//					}
+	//				}else if(identifier is BaseLandmark){
+	//					BaseLandmark landmark = (BaseLandmark)identifier;
+	//					if(((Expand)currQuest).originTile.id == landmark.tileLocation.id){
+	//						return true;
+	//					}
+	//				}
 
-				} else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
-                    HexTile tile = (HexTile)identifier;
-                    if (((BuildStructure)currQuest).target.id == tile.id) {
-                        return true;
-                    }
-                } else if (questType == QUEST_TYPE.EXPEDITION) {
-                    string productionType = (string)identifier;
-                    if (((Expedition)currQuest).productionType.Equals(productionType)) {
-                        return true;
-                    }
-				} else if (questType == QUEST_TYPE.SAVE_LANDMARK) {
-					BaseLandmark target = (BaseLandmark)identifier;
-					if (((SaveLandmark)currQuest).target.id == target.id) {
-						return true;
-					}
-				}
-            }
-		}
-		return false;
-	}
+	//			} else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
+ //                   HexTile tile = (HexTile)identifier;
+ //                   if (((BuildStructure)currQuest).target.id == tile.id) {
+ //                       return true;
+ //                   }
+ //               } else if (questType == QUEST_TYPE.EXPEDITION) {
+ //                   string productionType = (string)identifier;
+ //                   if (((Expedition)currQuest).productionType.Equals(productionType)) {
+ //                       return true;
+ //                   }
+	//			} else if (questType == QUEST_TYPE.SAVE_LANDMARK) {
+	//				BaseLandmark target = (BaseLandmark)identifier;
+	//				if (((SaveLandmark)currQuest).target.id == target.id) {
+	//					return true;
+	//				}
+	//			}
+ //           }
+	//	}
+	//	return false;
+	//}
     #endregion
 }

@@ -69,7 +69,7 @@ namespace ECS {
         private bool _isFollower;
 		private bool _isDefeated;
 		private object _isPrisonerOf;
-		private List<OldQuest.Quest> _activeQuests;
+		//private List<OldQuest.Quest> _activeQuests;
 		private BaseLandmark _home;
         private BaseLandmark _lair;
 		private List<Log> _history;
@@ -210,9 +210,9 @@ namespace ECS {
 		public bool isFollower {
             get { return _isFollower; }
         }
-		public List<OldQuest.Quest> activeQuests {
-			get { return _activeQuests; }
-		}
+		//public List<OldQuest.Quest> activeQuests {
+		//	get { return _activeQuests; }
+		//}
 		public int strength {
 			get { return _strength + (int)((float)_strength * _statsModifierPercentage.strPercentage); }
 		}
@@ -418,7 +418,7 @@ namespace ECS {
 //          _maxHP = _baseMaxHP;
 //          _currentHP = maxHP;
 
-            _activeQuests = new List<OldQuest.Quest>();
+            //_activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
 			combatHistory = new Dictionary<int, CombatPrototype> ();
 			_combatHistoryID = 0;
@@ -795,17 +795,17 @@ namespace ECS {
             Faction ownerOfCurrLocation = this.currLocation.region.owner;
 			if (ownerOfCurrLocation != null && ownerOfCurrLocation.id != this.faction.id) {
                 if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
-                    OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
-                    if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
-                        //if it is, check if this character died on a region owned by the faction he/she means to negatively impact
-                        //if he/she is, do not count this character's death as an international incident
-                        if (currentQuest.targetFaction.id != ownerOfCurrLocation.id) {
-                            //otherwise, this is an international incident
-                            FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
-                        }
-                    } else {
-                        FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
-                    }
+                    //OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
+                    //if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
+                    //    //if it is, check if this character died on a region owned by the faction he/she means to negatively impact
+                    //    //if he/she is, do not count this character's death as an international incident
+                    //    if (currentQuest.targetFaction.id != ownerOfCurrLocation.id) {
+                    //        //otherwise, this is an international incident
+                    //        FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
+                    //    }
+                    //} else {
+                    //    FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
+                    //}
                 } else {
                     FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
                 }
@@ -1547,9 +1547,9 @@ namespace ECS {
 		        //case CHARACTER_ROLE.ADVENTURER:
 		        //	_role = new Adventurer(this);
 		        //	break;
-		        case CHARACTER_ROLE.COLONIST:
-			        _role = new Colonist(this);
-			        break;
+		        //case CHARACTER_ROLE.COLONIST:
+			       // _role = new Colonist(this);
+			       // break;
                 case CHARACTER_ROLE.WORKER:
                     _role = new Worker(this);
                     break;
@@ -2189,16 +2189,17 @@ namespace ECS {
 		public void CreateNewAvatar() {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
             if(this._role != null) {
-                if (this._role.roleType == CHARACTER_ROLE.COLONIST) {
-                    //				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
-                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
-                    ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
-                    if (party != null) {
-                        avatar.Init(party);
-                    } else {
-                        avatar.Init(this);
-                    }
-                } else if (this._role.roleType == CHARACTER_ROLE.WARLORD) {
+                //if (this._role.roleType == CHARACTER_ROLE.COLONIST) {
+                //    //				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
+                //    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
+                //    ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
+                //    if (party != null) {
+                //        avatar.Init(party);
+                //    } else {
+                //        avatar.Init(this);
+                //    }
+                //} else 
+                if (this._role.roleType == CHARACTER_ROLE.WARLORD) {
                     GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("WarlordAvatar", this.currLocation.transform.position, Quaternion.identity);
                     WarlordAvatar avatar = avatarGO.GetComponent<WarlordAvatar>();
                     if (party != null) {
@@ -2321,14 +2322,14 @@ namespace ECS {
             _questData.SetActiveQuest(currentQuest);
             UIManager.Instance.UpdateCharacterInfo();
         }
-		public void AddNewQuest(OldQuest.Quest quest) {
-			if (!_activeQuests.Contains(quest)) {
-				_activeQuests.Add(quest);
-			}
-		}
-		public void RemoveQuest(OldQuest.Quest quest) {
-			_activeQuests.Remove(quest);
-		}
+		//public void AddNewQuest(OldQuest.Quest quest) {
+		//	if (!_activeQuests.Contains(quest)) {
+		//		_activeQuests.Add(quest);
+		//	}
+		//}
+		//public void RemoveQuest(OldQuest.Quest quest) {
+		//	_activeQuests.Remove(quest);
+		//}
 		public void SetCurrentTask(CharacterTask currentTask) {
             if (_currentTask == null || _currentTask != currentTask) {
                 if (onTaskChanged != null) {
@@ -2346,16 +2347,16 @@ namespace ECS {
         public void ResetOnTaskChangedActions() {
             onTaskChanged = null;
         }
-        public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
-			List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
-			for (int i = 0; i < _activeQuests.Count; i++) {
-				OldQuest.Quest currQuest = _activeQuests[i];
-				if(currQuest.questType == questType) {
-					quests.Add(currQuest);
-				}
-			}
-			return quests;
-		}
+  //      public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
+		//	List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
+		//	for (int i = 0; i < _activeQuests.Count; i++) {
+		//		OldQuest.Quest currQuest = _activeQuests[i];
+		//		if(currQuest.questType == questType) {
+		//			quests.Add(currQuest);
+		//		}
+		//	}
+		//	return quests;
+		//}
 		public List<CharacterTask> GetAllPossibleTasks(ILocation location){
 			List<CharacterTask> possibleTasks = new List<CharacterTask> ();
             //Role Tasks

@@ -134,12 +134,12 @@ public class LandmarkInfoUI : UIMenu {
 					ECS.Character currChar = (ECS.Character)currObject;
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 					if (currChar.currentTask != null) {
-						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-							OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
-							text += " (" + currQuest.urlName + ")";
-						} else {
+						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
+						//	text += " (" + currQuest.urlName + ")";
+						//} else {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";
-						}
+						//}
                         for (int j = 0; j < currChar.currentTask.alignments.Count; j++) {
                             ACTION_ALIGNMENT currAlignment = currChar.currentTask.alignments[j];
                             text += currAlignment.ToString();
@@ -164,12 +164,12 @@ public class LandmarkInfoUI : UIMenu {
                     ECS.Character currChar = (ECS.Character)currObject;
                     text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
                     if (currChar.currentTask != null) {
-                        if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-                            OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
-                            text += " (" + currQuest.urlName + ")";
-                        } else {
+                        //if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+                        //    OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
+                        //    text += " (" + currQuest.urlName + ")";
+                        //} else {
                             text += " (" + currChar.currentTask.taskType.ToString() + ")";
-                        }
+                        //}
                     }
                 } else if (currObject is Party) {
                     Party currParty = (Party)currObject;
@@ -288,15 +288,15 @@ public class LandmarkInfoUI : UIMenu {
 		HideMenu ();
 	}
 
-	public void OnClickExpandBtn(){
-		currentlyShowingLandmark.owner.internalQuestManager.CreateExpandQuest(currentlyShowingLandmark);
-		expandBtnGO.SetActive (false);
-	}
-	public void OnClickExploreRegionBtn(){
-		currentlyShowingLandmark.tileLocation.region.centerOfMass
-            .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingLandmark);
-        exploreBtnGO.SetActive(false);
-    }
+	//public void OnClickExpandBtn(){
+	//	currentlyShowingLandmark.owner.internalQuestManager.CreateExpandQuest(currentlyShowingLandmark);
+	//	expandBtnGO.SetActive (false);
+	//}
+	//public void OnClickExploreRegionBtn(){
+	//	currentlyShowingLandmark.tileLocation.region.centerOfMass
+ //           .landmarkOnTile.owner.internalQuestManager.CreateExploreTileQuest(currentlyShowingLandmark);
+ //       exploreBtnGO.SetActive(false);
+ //   }
 
 //    private void ShowPlayerActions(){
 //		expandBtnGO.SetActive (CanExpand());

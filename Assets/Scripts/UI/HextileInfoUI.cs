@@ -70,12 +70,12 @@ public class HextileInfoUI : UIMenu {
 					ECS.Character currChar = (ECS.Character)currentlyShowingHexTile.charactersAtLocation [i];
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 					if (currChar.currentTask != null) {
-						if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-							OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
-							text += " (" + currQuest.urlName + ")";
-						} else {
+						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
+						//	text += " (" + currQuest.urlName + ")";
+						//} else {
 							text += " (" + currChar.currentTask.taskType.ToString () + ")";
-						}
+						//}
 					}
 				} else if (currentlyShowingHexTile.charactersAtLocation[i] is Party) {
 					Party currParty = (Party)currentlyShowingHexTile.charactersAtLocation [i];

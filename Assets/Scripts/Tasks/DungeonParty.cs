@@ -62,11 +62,11 @@ public class DungeonParty : Party {
 			for (int i = 0; i < encounteredByParty.partyMembers.Count; i++) {
 				//encounteredByParty.partyMembers [i].AddHistory ("Encountered " + this._name + ".", combat);
 			}
-			if(combat.charactersSideA.Count > 0) {
-				((OldQuest.Quest)encounteredByParty.currentTask).Result (true);
-			} else {
-				((OldQuest.Quest)encounteredByParty.currentTask).Result (false);
-			}
+			//if(combat.charactersSideA.Count > 0) {
+			//	((OldQuest.Quest)encounteredByParty.currentTask).Result (true);
+			//} else {
+			//	((OldQuest.Quest)encounteredByParty.currentTask).Result (false);
+			//}
 		}
 	}
 }

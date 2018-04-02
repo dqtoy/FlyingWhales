@@ -455,33 +455,33 @@ public class Party: IEncounterable, ICombatInitializer {
     internal bool IsCharacterFollowerOfParty(ECS.Character character) {
         return followers.Contains(character);
     }
-    public void GoBackToQuestGiver(TASK_STATUS taskResult) {
-		if(isInCombat){
-			SetCurrentFunction (() => GoBackToQuestGiver (taskResult));
-			return;
-		}
-        if(currentTask == null || currentTask.taskType != TASK_TYPE.QUEST) {
-            throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
-        }
-        OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
-        if(_avatar == null) {
-            _partyLeader.CreateNewAvatar();
-        }
-        if(currentQuest.postedAt == null) {
-            throw new Exception("Posted at of quest " + currentQuest.questName + " is null!");
-        }
-		if(_avatar.specificLocation.tileLocation.id == currentQuest.postedAt.tileLocation.id){
-			currentQuest.TurnInQuest (taskResult);
-		}else{
-			PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;
-			if(this.specificLocation is Settlement) {
-				pathMode = PATHFINDING_MODE.MAJOR_ROADS; //if this party is at a settlement, use major roads
-			}
+  //  public void GoBackToQuestGiver(TASK_STATUS taskResult) {
+		//if(isInCombat){
+		//	SetCurrentFunction (() => GoBackToQuestGiver (taskResult));
+		//	return;
+		//}
+  //      if(currentTask == null || currentTask.taskType != TASK_TYPE.QUEST) {
+  //          throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
+  //      }
+  //      OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
+  //      if(_avatar == null) {
+  //          _partyLeader.CreateNewAvatar();
+  //      }
+  //      if(currentQuest.postedAt == null) {
+  //          throw new Exception("Posted at of quest " + currentQuest.questName + " is null!");
+  //      }
+		//if(_avatar.specificLocation.tileLocation.id == currentQuest.postedAt.tileLocation.id){
+		//	currentQuest.TurnInQuest (taskResult);
+		//}else{
+		//	PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;
+		//	if(this.specificLocation is Settlement) {
+		//		pathMode = PATHFINDING_MODE.MAJOR_ROADS; //if this party is at a settlement, use major roads
+		//	}
 
-			_avatar.SetTarget(currentQuest.postedAt);
-			_avatar.StartPath(pathMode, () => currentQuest.TurnInQuest(taskResult));
-		}
-    }
+		//	_avatar.SetTarget(currentQuest.postedAt);
+		//	_avatar.StartPath(pathMode, () => currentQuest.TurnInQuest(taskResult));
+		//}
+  //  }
     ///*
     // This is the default action to be done when a 
     // party returns to the quest giver settlement after a quest.

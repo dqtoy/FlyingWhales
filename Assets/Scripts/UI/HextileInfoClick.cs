@@ -20,12 +20,14 @@ public class HextileInfoClick : MonoBehaviour {
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
 				}
-            } else if (url.Contains("_quest")) {
-                OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
-                if (quest != null) {
-                    UIManager.Instance.ShowQuestInfo(quest);
-                }
-			} else if (url.Contains("_party")) {
+            }
+   //         else if (url.Contains("_quest")) {
+   //             OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
+   //             if (quest != null) {
+   //                 UIManager.Instance.ShowQuestInfo(quest);
+   //             }
+			//}
+            else if (url.Contains("_party")) {
 				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
 				Party party = hextile.GetPartyAtLocationByLeaderID(idToUse);
 				if(party != null){

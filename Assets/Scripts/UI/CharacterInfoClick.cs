@@ -51,12 +51,14 @@ public class CharacterInfoClick : MonoBehaviour {
 				if(UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home.id == idToUse){
 					UIManager.Instance.ShowLandmarkInfo (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
 				}
-            } else if (url.Contains("_quest")) {
-                OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
-                if (quest != null) {
-                    UIManager.Instance.ShowQuestInfo(quest);
-                }
-			} else if (url.Contains("_party")) {
+            }
+   //         else if (url.Contains("_quest")) {
+   //             OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
+   //             if (quest != null) {
+   //                 UIManager.Instance.ShowQuestInfo(quest);
+   //             }
+			//}
+            else if (url.Contains("_party")) {
 				Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
 				if(party != null){
 					UIManager.Instance.ShowCharacterInfo(party.partyLeader);

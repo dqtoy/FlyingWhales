@@ -505,11 +505,11 @@ public class Settlement : BaseLandmark {
     #endregion
 
 	#region Save Landmark
-	internal void SaveALandmark(BaseLandmark landmarkToSave){
-		SaveLandmark saveLandmarkQuest = new SaveLandmark (this, landmarkToSave);
-		saveLandmarkQuest.SetSettlement (this);
-		AddNewQuest (saveLandmarkQuest);
-	}
+	//internal void SaveALandmark(BaseLandmark landmarkToSave){
+	//	SaveLandmark saveLandmarkQuest = new SaveLandmark (this, landmarkToSave);
+	//	saveLandmarkQuest.SetSettlement (this);
+	//	AddNewQuest (saveLandmarkQuest);
+	//}
 	//internal void CancelSaveALandmark(BaseLandmark landmarkToSave){
 		//for (int i = 0; i < _questBoard.Count; i++) {
 			//if(_questBoard[i].questType == QUEST_TYPE.SAVE_LANDMARK){

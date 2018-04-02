@@ -14,9 +14,9 @@ public class QuestManager : MonoBehaviour, TaskCreator {
     }
 
 	#region getters/setters
-	public List<OldQuest.Quest> activeQuests { 
-		get { return null; } //TODO: To be removed eventually
-	}
+	//public List<OldQuest.Quest> activeQuests { 
+	//	get { return null; } //TODO: To be removed eventually
+	//}
 	#endregion
 
     #region Quest Management
@@ -39,8 +39,8 @@ public class QuestManager : MonoBehaviour, TaskCreator {
         return questsForCharacter;
     }
 
-	public void AddNewQuest(OldQuest.Quest quest){}
-	public void RemoveQuest(OldQuest.Quest quest){}
+	//public void AddNewQuest(OldQuest.Quest quest){}
+	//public void RemoveQuest(OldQuest.Quest quest){}
     #endregion
 
 	#region Hunt Quest

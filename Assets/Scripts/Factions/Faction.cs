@@ -20,10 +20,10 @@ public class Faction {
     protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
-    protected List<OldQuest.Quest> _activeQuests;
-    protected InternalQuestManager _internalQuestManager;
+    //protected List<OldQuest.Quest> _activeQuests;
+    //protected InternalQuestManager _internalQuestManager;
     protected Dictionary<Faction, FactionRelationship> _relationships;
-	protected MilitaryManager _militaryManager;
+	//protected MilitaryManager _militaryManager;
 	protected int _warmongering;
 	protected Dictionary<PRODUCTION_TYPE, MaterialPreference> _productionPreferences;
     protected List<BaseLandmark> _landmarkInfo;
@@ -68,18 +68,18 @@ public class Faction {
     public List<ECS.Character> characters {
         get { return _characters; }
     }
-    public List<OldQuest.Quest> activeQuests {
-        get { return _activeQuests; }
-    }
-    public InternalQuestManager internalQuestManager {
-        get { return _internalQuestManager; }
-    }
+    //public List<OldQuest.Quest> activeQuests {
+    //    get { return _activeQuests; }
+    //}
+    //public InternalQuestManager internalQuestManager {
+    //    get { return _internalQuestManager; }
+    //}
     public Dictionary<Faction, FactionRelationship> relationships {
         get { return _relationships; }
     }
-	public MilitaryManager militaryManager {
-		get { return _militaryManager; }
-	}
+	//public MilitaryManager militaryManager {
+	//	get { return _militaryManager; }
+	//}
 	public int warmongering {
 		get { return _warmongering; }
 	}
@@ -109,10 +109,10 @@ public class Faction {
         _characters = new List<ECS.Character>();
         _settlements = new List<Settlement>();
         ConstructInititalTechnologies();
-        _activeQuests = new List<OldQuest.Quest>();
-        _internalQuestManager = new InternalQuestManager(this);
+        //_activeQuests = new List<OldQuest.Quest>();
+        //_internalQuestManager = new InternalQuestManager(this);
         _relationships = new Dictionary<Faction, FactionRelationship>();
-		_militaryManager = new MilitaryManager (this);
+		//_militaryManager = new MilitaryManager (this);
 		_warmongering = 0;
         _landmarkInfo = new List<BaseLandmark>();
 		MaterialPreferences ();
@@ -295,39 +295,39 @@ public class Faction {
 		}
 		return false;
 	}
-	public List<BaseLandmark> GetAllPossibleLandmarksToAttack(){
-		List<BaseLandmark> allPossibleLandmarksToAttack = new List<BaseLandmark> ();
-		for (int i = 0; i < _settlements.Count; i++) {
-			BaseLandmark settlement = _settlements[i];
-			for (int j = 0; j < settlement.tileLocation.region.landmarks.Count; j++) {
-				BaseLandmark regionLandmark = settlement.tileLocation.region.landmarks [j];
-				if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
-					FactionRelationship factionRel = GetRelationshipWith(regionLandmark.owner);
-					if (factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-						if (!_militaryManager.IsAlreadyBeingAttacked (regionLandmark)) {
-							allPossibleLandmarksToAttack.Add (regionLandmark);
-						}
-					}
-				}
-			}
-			for (int j = 0; j < settlement.tileLocation.region.connections.Count; j++) {
-				if(settlement.tileLocation.region.connections[j] is Region){
-					Region adjacentRegion = settlement.tileLocation.region.connections [j] as Region;
-					if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
-						FactionRelationship factionRel = GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-						if (factionRel != null && factionRel.isAtWar) {
-							if (!_militaryManager.IsAlreadyBeingAttacked (adjacentRegion.centerOfMass.landmarkOnTile)) {
-								if (!allPossibleLandmarksToAttack.Contains (adjacentRegion.centerOfMass.landmarkOnTile)) {
-									allPossibleLandmarksToAttack.Add (adjacentRegion.centerOfMass.landmarkOnTile);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return allPossibleLandmarksToAttack;
-    }
+	//public List<BaseLandmark> GetAllPossibleLandmarksToAttack(){
+	//	List<BaseLandmark> allPossibleLandmarksToAttack = new List<BaseLandmark> ();
+	//	for (int i = 0; i < _settlements.Count; i++) {
+	//		BaseLandmark settlement = _settlements[i];
+	//		for (int j = 0; j < settlement.tileLocation.region.landmarks.Count; j++) {
+	//			BaseLandmark regionLandmark = settlement.tileLocation.region.landmarks [j];
+	//			if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
+	//				FactionRelationship factionRel = GetRelationshipWith(regionLandmark.owner);
+	//				if (factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+	//					if (!_militaryManager.IsAlreadyBeingAttacked (regionLandmark)) {
+	//						allPossibleLandmarksToAttack.Add (regionLandmark);
+	//					}
+	//				}
+	//			}
+	//		}
+	//		for (int j = 0; j < settlement.tileLocation.region.connections.Count; j++) {
+	//			if(settlement.tileLocation.region.connections[j] is Region){
+	//				Region adjacentRegion = settlement.tileLocation.region.connections [j] as Region;
+	//				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
+	//					FactionRelationship factionRel = GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
+	//					if (factionRel != null && factionRel.isAtWar) {
+	//						if (!_militaryManager.IsAlreadyBeingAttacked (adjacentRegion.centerOfMass.landmarkOnTile)) {
+	//							if (!allPossibleLandmarksToAttack.Contains (adjacentRegion.centerOfMass.landmarkOnTile)) {
+	//								allPossibleLandmarksToAttack.Add (adjacentRegion.centerOfMass.landmarkOnTile);
+	//							}
+	//						}
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//	return allPossibleLandmarksToAttack;
+ //   }
     public bool IsHostileWith(Faction faction) {
         if(faction.id == this.id) {
             return false;
@@ -358,16 +358,16 @@ public class Faction {
     }
     #endregion
 
-    #region Quests
-    public void AddNewQuest(OldQuest.Quest quest) {
-        if (!_activeQuests.Contains(quest)) {
-            _activeQuests.Add(quest);
-        }
-    }
-    public void RemoveQuest(OldQuest.Quest quest) {
-        _activeQuests.Remove(quest);
-    }
-    #endregion
+    //#region Quests
+    //public void AddNewQuest(OldQuest.Quest quest) {
+    //    if (!_activeQuests.Contains(quest)) {
+    //        _activeQuests.Add(quest);
+    //    }
+    //}
+    //public void RemoveQuest(OldQuest.Quest quest) {
+    //    _activeQuests.Remove(quest);
+    //}
+    //#endregion
 
     #region Death
     public void Death() {

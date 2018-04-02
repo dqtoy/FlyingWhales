@@ -15,14 +15,16 @@ public class PartyInfoClick : MonoBehaviour {
 				if(character != null){
 					UIManager.Instance.ShowCharacterInfo(character);
 				}
-			} else if (url.Contains("_quest")) {
-				if(UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST){
-					OldQuest.Quest quest = (OldQuest.Quest)UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask;
-					if (quest != null) {
-						UIManager.Instance.ShowQuestInfo(quest);
-					}
-				}
-			}  else if(url.Contains("_prisoner")){
+			}
+   //         else if (url.Contains("_quest")) {
+			//	if(UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST){
+			//		OldQuest.Quest quest = (OldQuest.Quest)UIManager.Instance.partyinfoUI.currentlyShowingParty.currentTask;
+			//		if (quest != null) {
+			//			UIManager.Instance.ShowQuestInfo(quest);
+			//		}
+			//	}
+			//}
+            else if(url.Contains("_prisoner")){
 				Party party = UIManager.Instance.partyinfoUI.currentlyShowingParty;
 				ECS.Character character = party.GetPrisonerByID(idToUse);
 				if(character != null){

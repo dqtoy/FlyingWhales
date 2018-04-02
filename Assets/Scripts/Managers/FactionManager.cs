@@ -17,7 +17,7 @@ public class FactionManager : MonoBehaviour {
 	public List<Tribe> allTribes = new List<Tribe>();
     public List<Faction> orderedFactions = new List<Faction>();
 
-    public List<OldQuest.Quest> allQuests = new List<OldQuest.Quest>();
+    //public List<OldQuest.Quest> allQuests = new List<OldQuest.Quest>();
 
     public Dictionary<RACE, List<TECHNOLOGY>> initialRaceTechnologies = new Dictionary<RACE, List<TECHNOLOGY>>() {
         { RACE.HUMANS, new List<TECHNOLOGY>(){
@@ -456,34 +456,34 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Quests
-    public OldQuest.Quest GetQuestByID(int id) {
-        for (int i = 0; i < allQuests.Count; i++) {
-            OldQuest.Quest currQuest = allQuests[i];
-            if (currQuest.id == id) {
-                return currQuest;
-            }
-        }
-        return null;
-    }
-    public void AddQuest(OldQuest.Quest quest) {
-        allQuests.Add(quest);
-    }
-    public void RemoveQuest(OldQuest.Quest quest) {
-        allQuests.Remove(quest);
-    }
+    //public OldQuest.Quest GetQuestByID(int id) {
+    //    for (int i = 0; i < allQuests.Count; i++) {
+    //        OldQuest.Quest currQuest = allQuests[i];
+    //        if (currQuest.id == id) {
+    //            return currQuest;
+    //        }
+    //    }
+    //    return null;
+    //}
+    //public void AddQuest(OldQuest.Quest quest) {
+    //    allQuests.Add(quest);
+    //}
+    //public void RemoveQuest(OldQuest.Quest quest) {
+    //    allQuests.Remove(quest);
+    //}
     /*
-     Check if a quest can cause harmful effects to the owner
-     of the region.
-         */
-    public bool IsQuestHarmful(QUEST_TYPE questType) {
-        for (int i = 0; i < questTypeSetups.Count; i++) {
-            QuestTypeSetup currSetup = questTypeSetups[i];
-            if(currSetup.questType == questType) {
-                return currSetup.isHarmful;
-            }
-        }
-        return false;
-    }
+    // Check if a quest can cause harmful effects to the owner
+    // of the region.
+    //     */
+    //public bool IsQuestHarmful(QUEST_TYPE questType) {
+    //    for (int i = 0; i < questTypeSetups.Count; i++) {
+    //        QuestTypeSetup currSetup = questTypeSetups[i];
+    //        if(currSetup.questType == questType) {
+    //            return currSetup.isHarmful;
+    //        }
+    //    }
+    //    return false;
+    //}
     ///*
     // Can a quest type be accepted by characters from another faction.
     //     */
@@ -554,12 +554,12 @@ public class FactionManager : MonoBehaviour {
 				}
 			}
         }
-        //Negative OldQuest.Quest
-        else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
-            //Add Weight to Declare War as listed on the OldQuest.Quest Type
-            QuestTypeSetup qts = GetQuestTypeSetup(((OldQuest.Quest)data).questType);
-            actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, qts.declareWarWeight);
-        }
+        ////Negative OldQuest.Quest
+        //else if (incidentType == INTERNATIONAL_INCIDENT_TYPE.HARMFUL_QUEST) {
+        //    //Add Weight to Declare War as listed on the OldQuest.Quest Type
+        //    QuestTypeSetup qts = GetQuestTypeSetup(((OldQuest.Quest)data).questType);
+        //    actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, qts.declareWarWeight);
+        //}
 
         //Opinions
         if(relationship.sharedOpinion > 0) {
@@ -618,18 +618,19 @@ public class FactionManager : MonoBehaviour {
             declareWarLog.AddToFillers(character.currLocation.region.centerOfMass.landmarkOnTile, character.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
 				UIManager.Instance.ShowNotification(declareWarLog);
 			}
-        } else {
-			if (data is OldQuest.Quest) {
-				Log declareWarLog = new Log (GameManager.Instance.Today (), "General", "Faction", "declare_war_quest");
-            declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1);
-            declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2);
-				OldQuest.Quest quest = (OldQuest.Quest)data;
-				declareWarLog.AddToFillers (quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-				declareWarLog.AddToFillers (quest, quest.questName, LOG_IDENTIFIER.OTHER);
-            declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-				UIManager.Instance.ShowNotification (declareWarLog);
-			}
-        }
+        } 
+   //     else {
+			//if (data is OldQuest.Quest) {
+			//	Log declareWarLog = new Log (GameManager.Instance.Today (), "General", "Faction", "declare_war_quest");
+   //         declareWarLog.AddToFillers(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1);
+   //         declareWarLog.AddToFillers(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2);
+			//	OldQuest.Quest quest = (OldQuest.Quest)data;
+			//	declareWarLog.AddToFillers (quest.assignedParty.partyLeader, quest.assignedParty.partyLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+			//	declareWarLog.AddToFillers (quest, quest.questName, LOG_IDENTIFIER.OTHER);
+   //         declareWarLog.AddToFillers(quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile, quest.assignedParty.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+			//	UIManager.Instance.ShowNotification (declareWarLog);
+			//}
+   //     }
         
 
         /* When war is declared, Friends of the two Tribes have to determine what to do. 

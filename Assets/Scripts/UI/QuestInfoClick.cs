@@ -23,17 +23,19 @@ public class QuestInfoClick : MonoBehaviour {
                 if (character != null) {
                     UIManager.Instance.ShowCharacterInfo(character);
                 }
-            } else if (url.Contains("_quest")) {
-                OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
-                if (quest != null) {
-                    UIManager.Instance.ShowQuestInfo(quest);
-                }
-			} else if (url.Contains("_party")) {
-				Party party = UIManager.Instance.questInfoUI.currentlyShowingQuest.assignedParty;
-				if(party != null){
-					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
-				}
-			}
+            } 
+   //         else if (url.Contains("_quest")) {
+   //             OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(idToUse);
+   //             if (quest != null) {
+   //                 UIManager.Instance.ShowQuestInfo(quest);
+   //             }
+			//} 
+   //         else if (url.Contains("_party")) {
+			//	Party party = UIManager.Instance.questInfoUI.currentlyShowingQuest.assignedParty;
+			//	if(party != null){
+			//		UIManager.Instance.ShowCharacterInfo(party.partyLeader);
+			//	}
+			//}
         }
     }
 }

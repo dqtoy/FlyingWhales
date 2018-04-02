@@ -3082,9 +3082,9 @@ public class UIManager : MonoBehaviour {
 		if(hexTileInfoUI.isShowing){
 			hexTileInfoUI.HideMenu ();
 		}
-        if (questInfoUI.isShowing) {
-            questInfoUI.HideMenu();
-        }
+        //if (questInfoUI.isShowing) {
+        //    questInfoUI.HideMenu();
+        //}
 		if(partyinfoUI.isShowing){
 			partyinfoUI.HideMenu ();
 		}
@@ -3114,9 +3114,9 @@ public class UIManager : MonoBehaviour {
 		if(hexTileInfoUI.isShowing){
 			hexTileInfoUI.HideMenu ();
 		}
-        if (questInfoUI.isShowing) {
-            questInfoUI.HideMenu();
-        }
+        //if (questInfoUI.isShowing) {
+        //    questInfoUI.HideMenu();
+        //}
 		if(partyinfoUI.isShowing){
 			partyinfoUI.HideMenu ();
 		}
@@ -3145,9 +3145,9 @@ public class UIManager : MonoBehaviour {
 		if(hexTileInfoUI.isShowing){
 			hexTileInfoUI.HideMenu ();
 		}
-        if (questInfoUI.isShowing) {
-            questInfoUI.HideMenu();
-        }
+        //if (questInfoUI.isShowing) {
+        //    questInfoUI.HideMenu();
+        //}
 		if(partyinfoUI.isShowing){
 			partyinfoUI.HideMenu ();
 		}
@@ -3177,9 +3177,9 @@ public class UIManager : MonoBehaviour {
 		if(characterInfoUI.isShowing){
 			characterInfoUI.HideMenu ();
 		}
-        if (questInfoUI.isShowing) {
-            questInfoUI.HideMenu();
-        }
+        //if (questInfoUI.isShowing) {
+        //    questInfoUI.HideMenu();
+        //}
 		if(partyinfoUI.isShowing){
 			partyinfoUI.HideMenu ();
 		}
@@ -3208,9 +3208,9 @@ public class UIManager : MonoBehaviour {
 		if(characterInfoUI.isShowing){
 			characterInfoUI.HideMenu ();
 		}
-		if (questInfoUI.isShowing) {
-			questInfoUI.HideMenu();
-		}
+		//if (questInfoUI.isShowing) {
+		//	questInfoUI.HideMenu();
+		//}
 		if(hexTileInfoUI.isShowing){
 			hexTileInfoUI.HideMenu ();
 		}
@@ -3254,54 +3254,54 @@ public class UIManager : MonoBehaviour {
 	}
     #endregion
 
-    #region Quest Info
-    [Space(10)]
-    [Header("Quest Info")]
-    [SerializeField] internal QuestInfoUI questInfoUI;
-    public void ShowQuestInfo(OldQuest.Quest quest) {
-        if (settlementInfoUI.isShowing) {
-            settlementInfoUI.HideMenu();
-        }
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.HideMenu();
-        }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.HideMenu();
-        }
-        if (hexTileInfoUI.isShowing) {
-            hexTileInfoUI.HideMenu();
-        }
-		if(partyinfoUI.isShowing){
-			partyinfoUI.HideMenu ();
-		}
-        questInfoUI.SetData(quest);
-        questInfoUI.OpenMenu();
-        //		playerActionsUI.ShowPlayerActionsUI ();
-    }
-    public void UpdateQuestInfo() {
-        if (questInfoUI.isShowing) {
-            questInfoUI.UpdateQuestInfo();
-        }
-    }
-    #endregion
+  //  #region Quest Info
+  //  [Space(10)]
+  //  [Header("Quest Info")]
+  //  [SerializeField] internal QuestInfoUI questInfoUI;
+  //  public void ShowQuestInfo(OldQuest.Quest quest) {
+  //      if (settlementInfoUI.isShowing) {
+  //          settlementInfoUI.HideMenu();
+  //      }
+  //      if (factionInfoUI.isShowing) {
+  //          factionInfoUI.HideMenu();
+  //      }
+  //      if (characterInfoUI.isShowing) {
+  //          characterInfoUI.HideMenu();
+  //      }
+  //      if (hexTileInfoUI.isShowing) {
+  //          hexTileInfoUI.HideMenu();
+  //      }
+		//if(partyinfoUI.isShowing){
+		//	partyinfoUI.HideMenu ();
+		//}
+  //      questInfoUI.SetData(quest);
+  //      questInfoUI.OpenMenu();
+  //      //		playerActionsUI.ShowPlayerActionsUI ();
+  //  }
+  //  public void UpdateQuestInfo() {
+  //      if (questInfoUI.isShowing) {
+  //          questInfoUI.UpdateQuestInfo();
+  //      }
+  //  }
+  //  #endregion
 
-    #region Quest Logs
-    [Space(10)]
-    [Header("Quest Logs")]
-    [SerializeField] internal QuestLogsUI questLogUI;
-    public void ShowQuestLog(OldQuest.Quest quest) {
-		if(combatLogUI.isShowing){
-			combatLogUI.HideCombatLogs ();
-		}
-        questLogUI.ShowQuestLogs(quest);
-        questLogUI.UpdateQuestLogs();
-    }
-    public void UpdateQuestLogs() {
-        if (questLogUI.isShowing) {
-            questLogUI.UpdateQuestLogs();
-        }
-    }
-    #endregion
+  //  #region Quest Logs
+  //  [Space(10)]
+  //  [Header("Quest Logs")]
+  //  [SerializeField] internal QuestLogsUI questLogUI;
+  //  public void ShowQuestLog(OldQuest.Quest quest) {
+		//if(combatLogUI.isShowing){
+		//	combatLogUI.HideCombatLogs ();
+		//}
+  //      questLogUI.ShowQuestLogs(quest);
+  //      questLogUI.UpdateQuestLogs();
+  //  }
+  //  public void UpdateQuestLogs() {
+  //      if (questLogUI.isShowing) {
+  //          questLogUI.UpdateQuestLogs();
+  //      }
+  //  }
+  //  #endregion
 
     #region Menu History
     public void AddMenuToQueue(UIMenu menu, object data) {
@@ -3391,9 +3391,9 @@ public class UIManager : MonoBehaviour {
 	#region Combat History Logs
 	[SerializeField] internal CombatLogsUI combatLogUI;
 	public void ShowCombatLog(ECS.CombatPrototype combat) {
-		if(questLogUI.isShowing){
-			questLogUI.HideQuestLogs ();
-		}
+		//if(questLogUI.isShowing){
+		//	questLogUI.HideQuestLogs ();
+		//}
 		combatLogUI.ShowCombatLogs(combat);
 		combatLogUI.UpdateCombatLogs();
 	}

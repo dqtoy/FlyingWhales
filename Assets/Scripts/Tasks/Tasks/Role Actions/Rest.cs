@@ -6,7 +6,7 @@ using ECS;
 
 public class Rest : CharacterTask {
 
-    private RestAction restAction;
+    //private RestAction restAction;
 
     private List<ECS.Character> _charactersToRest;
 
