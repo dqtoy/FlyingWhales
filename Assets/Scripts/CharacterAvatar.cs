@@ -130,7 +130,18 @@ public class CharacterAvatar : PooledObject{
 				faction = _characters[0].party.partyLeader.faction;
             }
 			PathGenerator.Instance.CreatePath(this, this.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
-
+            //this.path = PathGenerator.Instance.GetPath(this.currLocation, this.targetLocation, pathFindingMode, faction);
+            //NewMove();
+        }
+    }
+    internal virtual void ReceivePath(List<HexTile> path) {
+        if (!_isInitialized) {
+            return;
+        }
+        if (path == null) {
+            throw new Exception(_characters[0].name + "'s Avatar. There is no path from " + this.specificLocation.tileLocation.name + " to " + targetLocation.tileLocation.name);
+        }
+        if (path != null && path.Count > 0) {
             if (this.specificLocation.tileLocation.landmarkOnTile != null) {
                 Log leftLog = null;
                 if (_mainCharacter.party != null) {
@@ -149,20 +160,6 @@ public class CharacterAvatar : PooledObject{
                 this.specificLocation.tileLocation.landmarkOnTile.AddHistory(leftLog);
                 _mainCharacter.AddHistory(leftLog);
             }
-            //this.path = PathGenerator.Instance.GetPath(this.currLocation, this.targetLocation, pathFindingMode, faction);
-            //NewMove();
-        }
-    }
-    internal virtual void ReceivePath(List<HexTile> path) {
-        if (!_isInitialized) {
-            return;
-        }
-        if (path != null && path.Count > 0) {
-//			if (this.specificLocation.tileLocation == null) {
-//                throw new Exception("Curr location of avatar is null! Is Initialized: " + _isInitialized.ToString());
-//            }
-			
-
             this.path = path;
             _isTravelling = true;
             NewMove();

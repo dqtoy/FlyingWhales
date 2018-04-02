@@ -40,14 +40,14 @@ public class HuntPrey : CharacterTask {
 			EndTask (TASK_STATUS.FAIL);
 		}
     }
-    public override void TaskCancel() {
-        base.TaskCancel();
-        _assignedCharacter.DestroyAvatar();
-    }
-    public override void TaskFail() {
-        base.TaskFail();
-        _assignedCharacter.DestroyAvatar();
-    }
+    //public override void TaskCancel() {
+    //    base.TaskCancel();
+    //    _assignedCharacter.DestroyAvatar();
+    //}
+    //public override void TaskFail() {
+    //    base.TaskFail();
+    //    _assignedCharacter.DestroyAvatar();
+    //}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.civilians > 0){
             if (location.tileLocation.landmarkOnTile.owner == null) {

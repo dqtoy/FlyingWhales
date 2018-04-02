@@ -180,7 +180,9 @@ public class Party: IEncounterable, ICombatInitializer {
 				_followers.Add (member);
 			}
             if(_avatar != null) {
-                member.DestroyAvatar();
+                if (member.avatar != null && member.avatar != _avatar) {
+                    member.DestroyAvatar();
+                }
                 _avatar.AddNewCharacter(member);
             }
             member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party

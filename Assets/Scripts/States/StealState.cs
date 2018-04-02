@@ -41,24 +41,42 @@ public class StealState : State {
 
 	private void StealAttempt(){
 		string attemptAction = TaskManager.Instance.stealAttemptActions.PickRandomElementGivenWeights ();
-		if (attemptAction == "success not caught"){
+        Log stealLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Steal", attemptAction);
+        stealLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        stealLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        if (attemptAction == "success not caught"){
 			Item itemToSteal = GetItemToSteal ();
 			if(itemToSteal != null){
 				itemToSteal.possessor.ThrowItem (itemToSteal, false);
 				_assignedCharacter.PickupItem (itemToSteal);
-			}
-		}else if (attemptAction == "success caught"){
+                stealLog.AddToFillers(null, itemToSteal.itemName, LOG_IDENTIFIER.ITEM_1);
+            } else {
+                stealLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Steal", "no_item_to_steal");
+                stealLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                stealLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            }
+        } else if (attemptAction == "success caught"){
 			Item itemToSteal = GetItemToSteal ();
 			if(itemToSteal != null){
 				itemToSteal.possessor.ThrowItem (itemToSteal, false);
 				_assignedCharacter.PickupItem (itemToSteal);
-			}
+                stealLog.AddToFillers(null, itemToSteal.itemName, LOG_IDENTIFIER.ITEM_1);
+            } else {
+                stealLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Steal", "no_item_to_steal_caught");
+                stealLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                stealLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            }
 			CharacterCaught ();
 		}else if (attemptAction == "failed not caught"){
-			//Nothing happens, just put log
+            //Nothing happens, just put log
 		}else if (attemptAction == "failed caught"){
-			CharacterCaught ();
+            CharacterCaught ();
 		}
+        _assignedCharacter.AddHistory(stealLog);
+        _targetCharacter.AddHistory(stealLog);
+        if (_assignedCharacter.specificLocation is BaseLandmark) {
+            (_assignedCharacter.specificLocation as BaseLandmark).AddHistory(stealLog);
+        }
 		_parentTask.EndTaskSuccess ();
 	}
 

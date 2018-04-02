@@ -40,24 +40,24 @@ public class Pillage : CharacterTask {
 			EndTask (TASK_STATUS.FAIL);
 		}
     }
-    public override void TaskCancel() {
-        base.TaskCancel();
-        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
-        _assignedCharacter.DestroyAvatar();
-//		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
-//			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-//			settlement.CancelSaveALandmark (_target);
-//		}
-    }
-    public override void TaskFail() {
-        base.TaskFail();
-        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
-        _assignedCharacter.DestroyAvatar();
-//		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
-//			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
-//			settlement.CancelSaveALandmark (_target);
-//		}
-    }
+//    public override void TaskCancel() {
+//        base.TaskCancel();
+//        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
+//        _assignedCharacter.DestroyAvatar();
+////		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+////			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
+////			settlement.CancelSaveALandmark (_target);
+////		}
+//    }
+//    public override void TaskFail() {
+//        base.TaskFail();
+//        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
+//        _assignedCharacter.DestroyAvatar();
+////		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
+////			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
+////			settlement.CancelSaveALandmark (_target);
+////		}
+//    }
 
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.itemsInLandmark.Count > 0){

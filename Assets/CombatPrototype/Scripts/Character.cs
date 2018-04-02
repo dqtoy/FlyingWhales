@@ -2277,18 +2277,18 @@ namespace ECS {
 			_avatar.SetTarget(allSettlements[0].tileLocation);
             _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
         }
-        /*
-         This is the default action to be done when a 
-         character returns to a non hostile settlement after a quest.
-             */
-        internal void OnReachNonHostileSettlementAfterQuest() {
-            //if (_party != null) {
-            //    _party.CheckLeavePartyAfterQuest();
-            //}
-            //_currLocation.AddCharacterOnTile(this);
-            DestroyAvatar();
-            DetermineAction();
-        }
+        ///*
+        // This is the default action to be done when a 
+        // character returns to a non hostile settlement after a quest.
+        //     */
+        //internal void OnReachNonHostileSettlementAfterQuest() {
+        //    //if (_party != null) {
+        //    //    _party.CheckLeavePartyAfterQuest();
+        //    //}
+        //    //_currLocation.AddCharacterOnTile(this);
+        //    DestroyAvatar();
+        //    DetermineAction();
+        //}
 		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
             if (specificLocation == null) {
                 throw new Exception("Specific location is null!");
