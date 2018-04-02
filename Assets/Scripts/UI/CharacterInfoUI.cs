@@ -62,11 +62,11 @@ public class CharacterInfoUI : UIMenu {
 	public override void ShowMenu (){
 		base.ShowMenu ();
         _activeCharacter = (ECS.Character)_data;
-        historyScrollView.ResetPosition();
+        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
     }
     public override void OpenMenu() {
         base.OpenMenu();
-        historyScrollView.ResetPosition();
+        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
         UpdateCharacterInfo();
     }
 

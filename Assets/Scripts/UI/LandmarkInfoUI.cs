@@ -50,13 +50,15 @@ public class LandmarkInfoUI : UIMenu {
 
     public override void OpenMenu() {
         base.OpenMenu();
-        historyScrollView.ResetPosition();
+        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
         UpdateLandmarkInfo();
     }
 
     public override void ShowMenu() {
         base.ShowMenu();
-        infoScrollView.ResetPosition();
+        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
     }
     public override void HideMenu() {
         base.HideMenu();
