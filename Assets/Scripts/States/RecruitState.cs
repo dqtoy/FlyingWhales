@@ -32,10 +32,10 @@ public class RecruitState : State {
 				//Create Follower For character
 				ECS.Character newFollower = settlement.CreateNewFollower();
 				Party party = _assignedCharacter.party;
-				if (party == null) {
-					party = _assignedCharacter.CreateNewParty();
-				}
-				party.AddPartyMember(newFollower);
+                if (party == null) {
+                    party = _assignedCharacter.CreateNewParty();
+                }
+                party.AddPartyMember(newFollower);
 //				_assignedCharacter.AddFollower(newFollower);
 				Log recruitFollowerLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "RecruitFollowers", "recruit");
 				recruitFollowerLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

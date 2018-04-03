@@ -85,10 +85,10 @@ public class Search : CharacterTask {
     }
     public override bool AreConditionsMet(Character character) {
         //check if there are any landmarks in region with characters
-		if(onAreConditionsMetAction != null){
-			return onAreConditionsMetAction (character);
-		}
-        return base.AreConditionsMet(character);
+//		if(onAreConditionsMetAction != null){
+//			return onAreConditionsMetAction (character);
+//		}
+        return true;
     }
     public override void PerformTask() {
         if(!CanPerformTask()){

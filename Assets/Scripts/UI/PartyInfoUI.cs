@@ -39,7 +39,6 @@ public class PartyInfoUI : UIMenu {
         string text = string.Empty;
         text += "[b]Name:[/b] " + currentlyShowingParty.name;
 		text += "\n[b]IsDisbanded:[/b] " + currentlyShowingParty.isDisbanded.ToString ();
-		text += "\n[b]IsOpen:[/b] " + currentlyShowingParty.isOpen.ToString ();
 		text += "\n[b]IsFull:[/b] " + currentlyShowingParty.isFull.ToString ();
 		text += "\n[b]Party Leader:[/b] " + currentlyShowingParty.partyLeader.urlName;
 		text += "\n[b]Members:[/b] ";

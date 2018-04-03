@@ -11,7 +11,7 @@ public class Party: IEncounterable, ICombatInitializer {
 
     protected string _name;
 
-    protected bool _isOpen; //is this party open to new members?
+    //protected bool _isOpen; //is this party open to new members?
     protected bool _isDisbanded;
 
     protected ECS.Character _partyLeader;
@@ -58,9 +58,6 @@ public class Party: IEncounterable, ICombatInitializer {
     }
     public bool isFull {
         get { return partyMembers.Count >= MAX_PARTY_MEMBERS; }
-    }
-    public bool isOpen {
-        get { return _isOpen; }
     }
     public bool isDisbanded {
         get { return _isDisbanded; }
@@ -198,12 +195,6 @@ public class Party: IEncounterable, ICombatInitializer {
             }
         }
     }
-    //public void AddPartyMemberAsOnTheWay(ECS.Character member) {
-    //    _partyMembersOnTheWay.Add(member);
-    //}
-    //public void PartyMemberHasArrived(ECS.Character member) {
-    //    _partyMembersOnTheWay.Remove(member);
-    //}
     /*
      Remove a character from this party.
          */
@@ -251,36 +242,6 @@ public class Party: IEncounterable, ICombatInitializer {
 	public void RemovePrisoner(ECS.Character character){
 		_prisoners.Remove (character);
 	}
-    //public void CheckLeavePartyAfterQuest() {
-    //    //Check which party members will leave
-    //    List<ECS.Character> charactersToLeave = new List<ECS.Character>();
-    //    Faction factionOfLeader = _partyLeader.faction;
-    //    for (int i = 0; i < _partyMembers.Count; i++) {
-    //        ECS.Character currMember = _partyMembers[i];
-    //        Faction factionOfMember = currMember.faction;
-    //        if (!IsCharacterLeaderOfParty(currMember)) {
-				//if((currMember.role == null || currMember.role.roleType != CHARACTER_ROLE.TAMED_BEAST) && factionOfMember != null && factionOfLeader.id != factionOfMember.id) {//if the faction of the member is different from the faction of the leader
-    //                FactionRelationship factionRel = FactionManager.Instance.GetRelationshipBetween(factionOfLeader, factionOfMember);
-    //                if(factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-    //                    //- if hostile, characters from both factions must leave party led by a character from the other faction after completing a quest
-    //                    charactersToLeave.Add(currMember);
-    //                    continue;
-    //                }
-    //            }
-                
-    //            WeightedDictionary<PARTY_ACTION> partyActionWeights = GetPartyActionWeightsForCharacter(currMember);
-    //            if (partyActionWeights.PickRandomElementGivenWeights() == PARTY_ACTION.LEAVE) {
-    //                charactersToLeave.Add(currMember);
-    //            }
-    //        }
-    //    }
-
-    //    for (int i = 0; i < charactersToLeave.Count; i++) {
-    //        ECS.Character characterToLeave = charactersToLeave[i];
-    //        RemovePartyMember(characterToLeave);
-    //        characterToLeave.GoToNearestNonHostileSettlement(() => characterToLeave.OnReachNonHostileSettlementAfterQuest()); //Make the character that left, go home then decide a new action
-    //    }
-    //}
     /*
      This will disband this party.
      The Party will only disband if the party leader becomes imprisoned or dies.
@@ -345,85 +306,44 @@ public class Party: IEncounterable, ICombatInitializer {
 
 		this.specificLocation.RemoveCharacterFromLocation (this);
     }
-    
-    public void SetOpenStatus(bool isOpen) {
-        _isOpen = isOpen;
-        //Do Nothing adventurers within the same city will be informed whenever a new character is registering for a Party. They will have first choice to join the party.
-
-    }
     #endregion
 
-    #region Quest
-    ///*
-    // Set the current task the party is on.
-    // This will also set the current task of all
-    // the characters in the party.
-    //     */
-    //public void SetCurrentTask(CharacterTask task) {
-    //    _currentTask = task;
+    //#region Relationships
+    //public void CreateRelationshipsForNewMember(ECS.Character newMember) {
     //    for (int i = 0; i < _partyMembers.Count; i++) {
-    //        ECS.Character currMember = _partyMembers[i];
-    //        currMember.SetCurrentTask(task);
-    //    }
-    //    if(task == null) {
-    //        Debug.Log("Set current quest of " + name + " to nothing");
-    //    } else {
-    //        if(task.taskType == TASK_TYPE.QUEST) {
-    //            Debug.Log("Set current quest of " + name + " to " + ((OldQuest.Quest)task).questType.ToString());
+    //        ECS.Character currPartyMember = _partyMembers[i];
+    //        if(newMember.GetRelationshipWith(currPartyMember) == null) {
+    //            CharacterManager.Instance.CreateNewRelationshipBetween(currPartyMember, newMember);
     //        }
     //    }
-        
     //}
     ///*
-    // Make the party leader decide the next action for the party.
+    // Adjust the relationship of each party member with each other by an amount
     //     */
-    //public void DetermineNextAction() {
-    //    _partyLeader.DetermineAction();
+    //public void AdjustPartyRelationships(int adjustment) {
+    //    for (int i = 0; i < _partyMembers.Count; i++) {
+    //        ECS.Character currPartyMember = _partyMembers[i];
+    //        for (int j = 0; j < _partyMembers.Count; j++) {
+    //            ECS.Character otherPartyMember = _partyMembers[j];
+    //            if (currPartyMember.id != otherPartyMember.id) {
+    //                currPartyMember.GetRelationshipWith(otherPartyMember).AdjustValue(adjustment);
+    //            }
+    //        }
+    //    }
     //}
-    ///*
-    // This is called when the quest assigned to this party ends.
-    //     */
-    //public void OnQuestEnd(TASK_RESULT result) {
-    //    AdjustRelationshipBasedOnQuestResult(result);
+    //private void AdjustRelationshipBasedOnQuestResult(TASK_STATUS result) {
+    //    switch (result) {
+    //        case TASK_STATUS.SUCCESS:
+    //            AdjustPartyRelationships(5); //Succeeded in a OldQuest.Quest Together: +5 (cumulative)
+    //            break;
+    //        case TASK_STATUS.FAIL:
+    //            AdjustPartyRelationships(-5); //Failed in a OldQuest.Quest Together: -5 (cumulative)
+    //            break;
+    //        default:
+    //            break;
+    //    }
     //}
-    #endregion
-
-    #region Relationships
-    public void CreateRelationshipsForNewMember(ECS.Character newMember) {
-        for (int i = 0; i < _partyMembers.Count; i++) {
-            ECS.Character currPartyMember = _partyMembers[i];
-            if(newMember.GetRelationshipWith(currPartyMember) == null) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(currPartyMember, newMember);
-            }
-        }
-    }
-    /*
-     Adjust the relationship of each party member with each other by an amount
-         */
-    public void AdjustPartyRelationships(int adjustment) {
-        for (int i = 0; i < _partyMembers.Count; i++) {
-            ECS.Character currPartyMember = _partyMembers[i];
-            for (int j = 0; j < _partyMembers.Count; j++) {
-                ECS.Character otherPartyMember = _partyMembers[j];
-                if (currPartyMember.id != otherPartyMember.id) {
-                    currPartyMember.GetRelationshipWith(otherPartyMember).AdjustValue(adjustment);
-                }
-            }
-        }
-    }
-    private void AdjustRelationshipBasedOnQuestResult(TASK_STATUS result) {
-        switch (result) {
-            case TASK_STATUS.SUCCESS:
-                AdjustPartyRelationships(5); //Succeeded in a OldQuest.Quest Together: +5 (cumulative)
-                break;
-            case TASK_STATUS.FAIL:
-                AdjustPartyRelationships(-5); //Failed in a OldQuest.Quest Together: -5 (cumulative)
-                break;
-            default:
-                break;
-        }
-    }
-    #endregion
+    //#endregion
 
     #region Utilities
     internal bool IsCharacterLeaderOfParty(ECS.Character character) {
@@ -432,108 +352,34 @@ public class Party: IEncounterable, ICombatInitializer {
     internal bool IsCharacterFollowerOfParty(ECS.Character character) {
         return followers.Contains(character);
     }
-  //  public void GoBackToQuestGiver(TASK_STATUS taskResult) {
-		//if(isInCombat){
-		//	SetCurrentFunction (() => GoBackToQuestGiver (taskResult));
-		//	return;
-		//}
-  //      if(currentTask == null || currentTask.taskType != TASK_TYPE.QUEST) {
-  //          throw new Exception(this.name + " cannot go back to quest giver because the party has no quest!");
-  //      }
-  //      OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
-  //      if(_avatar == null) {
-  //          _partyLeader.CreateNewAvatar();
-  //      }
-  //      if(currentQuest.postedAt == null) {
-  //          throw new Exception("Posted at of quest " + currentQuest.questName + " is null!");
-  //      }
-		//if(_avatar.specificLocation.tileLocation.id == currentQuest.postedAt.tileLocation.id){
-		//	currentQuest.TurnInQuest (taskResult);
-		//}else{
-		//	PATHFINDING_MODE pathMode = PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP;
-		//	if(this.specificLocation is Settlement) {
-		//		pathMode = PATHFINDING_MODE.MAJOR_ROADS; //if this party is at a settlement, use major roads
-		//	}
-
-		//	_avatar.SetTarget(currentQuest.postedAt);
-		//	_avatar.StartPath(pathMode, () => currentQuest.TurnInQuest(taskResult));
-		//}
-  //  }
-    ///*
-    // This is the default action to be done when a 
-    // party returns to the quest giver settlement after a quest.
-    //     */
-    //internal void OnQuestEnd() {
-    //    AdjustRelationshipBasedOnQuestResult(currentTask.taskStatus);
-    //    FactionManager.Instance.RemoveQuest((OldQuest.Quest)currentTask);
-    //    if (_partyLeader.isDead) {
-    //        //party leader is already dead!
-    //        SetCurrentTask(null);
-    //        DisbandParty();
-    //    } else {
-    //        //CheckLeavePartyAfterQuest();
-    //        _partyLeader.DestroyAvatar();
-    //        _partyLeader.DetermineAction();
-    //    }
-    //    //_currLocation.AddCharacterOnTile(this);
-    //}
-    public bool CanJoinParty(ECS.Character candidate) {
-        if(isFull || !_isOpen) {
-            return false; //cannot join party because it is already full or party is not open
+    public ECS.Character GetCharacterByID(int id) {
+        if (_partyLeader.id == id) {
+            return _partyLeader;
         }
-        Faction factionOfParty = _partyLeader.faction;
-        Faction factionOfCandidate = candidate.faction;
-        if(factionOfCandidate == null || factionOfParty == null) {
-            return true; //one of the characters are factionless, allow join
-        } else {
-            if(factionOfCandidate.id == factionOfParty.id) {
-                return true; //faction of party is the same as faction of candidate
-            }
-            FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(factionOfParty, factionOfCandidate);
-            if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                return false; //candidate cannot join party, because faction of leader and his/her faction are in hostile relations
-            }
-            return true;
-        }
-    }
-    public bool IsPartyWounded() {
         for (int i = 0; i < _partyMembers.Count; i++) {
-            if (_partyMembers[i].currentHP < _partyMembers[i].maxHP) {
-                return true;
+            if (_partyMembers[i].id == id) {
+                return _partyMembers[i];
             }
         }
-        return false;
+        return null;
+    }
+    public ECS.Character GetPrisonerByID(int id) {
+        for (int i = 0; i < _prisoners.Count; i++) {
+            if (_prisoners[i].id == id) {
+                return _prisoners[i];
+            }
+        }
+        return null;
     }
     #endregion
 
-    public ECS.Character GetCharacterByID(int id){
-		if(_partyLeader.id == id){
-			return _partyLeader;
-		}
-		for (int i = 0; i < _partyMembers.Count; i++) {
-			if (_partyMembers [i].id == id){
-				return _partyMembers [i];
-			}
-		}
-		return null;
-	}
-
-	public ECS.Character GetPrisonerByID(int id){
-		for (int i = 0; i < _prisoners.Count; i++) {
-			if (_prisoners [i].id == id){
-				return _prisoners [i];
-			}
-		}
-		return null;
-	}
-
-	#region Virtuals
-    public virtual void StartEncounter(ECS.Character encounteredBy){ }
-	public virtual void StartEncounter(Party encounteredBy){}
-    #endregion
+ //   #region Virtuals
+ //   public virtual void StartEncounter(ECS.Character encounteredBy){ }
+	//public virtual void StartEncounter(Party encounteredBy){}
+ //   #endregion
 
     #region ICombatInitializer
-    public virtual void ReturnResults(object result) { }
+    //public virtual void ReturnResults(object result) { }
     //public virtual bool InitializeCombat(){
     //	if(isDefeated){
     //		return false;
@@ -678,22 +524,8 @@ public class Party: IEncounterable, ICombatInitializer {
         to.AdjustCivilians(civilians);
     }
     public STANCE GetCurrentStance() {
-        //TODO: Make this more elegant! Add a stance variable per quest type maybe?
         if (currentTask != null) {
             return currentTask.stance;
-            //if (avatar != null && avatar.isTravelling) {
-            //    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-            //        return STANCE.COMBAT;
-            //    }
-            //    return STANCE.NEUTRAL;
-            //}
-            //if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-            //    return STANCE.COMBAT;
-            //} else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
-            //    return STANCE.NEUTRAL;
-            //} else if (currentTask is ExploreTile) {
-            //    return STANCE.STEALTHY;
-            //}
         }
         return STANCE.NEUTRAL;
     }

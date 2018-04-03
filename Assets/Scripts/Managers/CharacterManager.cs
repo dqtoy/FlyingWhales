@@ -36,7 +36,7 @@ public class CharacterManager : MonoBehaviour {
          */
 	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, int statAllocationBonus = 0, Faction faction = null) {
 		if(className == "None"){
-			className = "Classless";
+            className = "Classless";
 		}
         ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(className, race);
         if (setup == null) {
@@ -62,6 +62,25 @@ public class CharacterManager : MonoBehaviour {
         allCharacters.Add(newCharacter);
         return newCharacter;
 	}
+    /*
+     Create a new character, given filename.
+         */
+    public ECS.Character CreateNewCharacter(string fileName, int statAllocationBonus = 0, Faction faction = null) {
+        ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(fileName);
+        if (setup == null) {
+            Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + fileName + "!");
+            return null;
+        }
+        ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
+        if (faction != null) {
+            newCharacter.SetFaction(faction);
+        }
+        if (setup.optionalRole != CHARACTER_ROLE.NONE) {
+            newCharacter.AssignRole(setup.optionalRole);
+        }
+        allCharacters.Add(newCharacter);
+        return newCharacter;
+    }
     #endregion
 
     #region Traits

@@ -398,8 +398,9 @@ namespace ECS {
 			actionWeights = new WeightedDictionary<CharacterTask> ();
 
 			GenerateRaceTags ();
+            GenerateSetupTags(baseSetup);
 
-			AllocateStatPoints (statAllocationBonus);
+            AllocateStatPoints (statAllocationBonus);
 
             //GenerateTraits();
 
@@ -1853,6 +1854,12 @@ namespace ECS {
 			case CHARACTER_TAG.HUNTED:
 				charTag = new Hunted(this);
 				break;
+            case CHARACTER_TAG.ALPHA:
+                charTag = new Alpha(this);
+                break;
+            case CHARACTER_TAG.BETA:
+                charTag = new Beta(this);
+                break;
             }
 			if(charTag != null){
 				AddCharacterTag (charTag);
@@ -1864,6 +1871,11 @@ namespace ECS {
 				AssignTag (_raceSetting.tags [i]);
 			}
 		}
+        private void GenerateSetupTags(CharacterSetup setup) {
+            for (int i = 0; i < setup.tags.Count; i++) {
+                AssignTag(setup.tags[i]);
+            }
+        }
 		public void AddCharacterTag(CharacterTag tag){
 			_tags.Add(tag);
 			AddCharacterTagBonuses (tag);
@@ -2759,18 +2771,18 @@ namespace ECS {
 		public void ReturnCombatResults(CombatPrototype combat){
             this.SetIsInCombat(false);
 			if (this.isDefeated) {
-				//this character was defeated
-				if(_currentTask != null && faction != null) {
-					_currentTask.EndTask(TASK_STATUS.CANCEL);
-				}
-                if (!isDead && !isPrisoner) {
-                    BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
-                    if (targetLocation == null) {
-                        throw new Exception(this.name + " could not find a non hostile location to run to!");
-                    } else {
-                        GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => DetermineAction());
-                    }
-                }
+				////this character was defeated
+				//if(_currentTask != null && faction != null) {
+				//	_currentTask.EndTask(TASK_STATUS.CANCEL);
+				//}
+    //            if (!isDead && !isPrisoner) {
+    //                BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
+    //                if (targetLocation == null) {
+    //                    throw new Exception(this.name + " could not find a non hostile location to run to!");
+    //                } else {
+    //                    GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => DetermineAction());
+    //                }
+    //            }
             } else{
                 //this character won the combat, continue his/her current action if any
                 if (currentFunction != null) {

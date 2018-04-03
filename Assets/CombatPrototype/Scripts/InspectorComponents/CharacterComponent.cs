@@ -9,6 +9,7 @@ namespace ECS {
 		public string characterClassName;
 		public string raceSettingName;
 		public CHARACTER_ROLE optionalRole;
+        public List<CHARACTER_TAG> tags;
 
 		[SerializeField] internal List<ItemAndType> preEquippedItems;
 

@@ -13,19 +13,19 @@ public class DungeonLandmark : BaseLandmark {
     #region Encounterables
     public override void Initialize() {
         base.Initialize();
-		//DungeonEncounterChances dungeonEncounterChances = LandmarkManager.Instance.GetDungeonEncounterChances (specificLandmarkType);
-  //      if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
-		//	_landmarkName = RandomNameGenerator.Instance.GetAncientRuinName ();
+        //DungeonEncounterChances dungeonEncounterChances = LandmarkManager.Instance.GetDungeonEncounterChances (specificLandmarkType);
+        //      if(specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN) {
+        //	_landmarkName = RandomNameGenerator.Instance.GetAncientRuinName ();
 
-		//	int chance = UnityEngine.Random.Range (0, 100);
-		//	if(chance < dungeonEncounterChances.encounterPartyChance){
-		//		_dungeonParty = (DungeonParty)GeneratePartyEncounterable ("random");
-		//		_dungeonParty.partyLeader.DetermineAction ();
-		//	}
-		//	if (chance < dungeonEncounterChances.encounterLootChance) {
-		//		LandmarkItemsSpawn ();
-		//	}
-  //      } else 
+        //	int chance = UnityEngine.Random.Range (0, 100);
+        //	if(chance < dungeonEncounterChances.encounterPartyChance){
+        //		_dungeonParty = (DungeonParty)GeneratePartyEncounterable ("random");
+        //		_dungeonParty.partyLeader.DetermineAction ();
+        //	}
+        //	if (chance < dungeonEncounterChances.encounterLootChance) {
+        //		LandmarkItemsSpawn ();
+        //	}
+        //      } else 
         //if (specificLandmarkType == LANDMARK_TYPE.VAMPIRE_TOMB) {
         //    SpawnAncientVampire();
         //}
