@@ -34,7 +34,7 @@ public class Collect : CharacterTask {
 	}
 	public override bool CanBeDone(Character character, ILocation location) {
 		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-			BaseLandmark landmark = (BaseLandmark)location;
+			BaseLandmark landmark = location as BaseLandmark;
 			if(landmark.HasItem(_itemNameToCollect)){
 				return true;
 			}

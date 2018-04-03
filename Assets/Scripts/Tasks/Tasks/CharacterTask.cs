@@ -318,8 +318,9 @@ public class CharacterTask {
 			}
 		}
 	}
-	public bool CanMeetRequirements(ECS.Character targetCharacter){
+	public bool CanMeetRequirements(ECS.Character targetCharacter, ECS.Character assignedCharacter = null){
 		for (int i = 0; i < _filters.Length; i++) {
+			_filters [i].SetSecondCharacter (assignedCharacter);
 			if(!_filters[i].MeetsRequirements(targetCharacter)){
 				return false;
 			}

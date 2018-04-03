@@ -315,26 +315,6 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    public List<ECS.Character> GetCharacters(Region region, CharacterTask task) {
-        List<ECS.Character> characters = new List<ECS.Character>();
-        for (int i = 0; i < region.charactersInRegion.Count; i++) {
-            ECS.Character character = region.charactersInRegion[i].mainCharacter;
-            if (task.CanMeetRequirements(character)) {
-                characters.Add(character);
-            }
-        }
-        return characters;
-    }
-    public List<ECS.Character> GetCharacters(ILocation location, CharacterTask task) {
-        List<ECS.Character> characters = new List<ECS.Character>();
-        for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-            ECS.Character character = location.charactersAtLocation[i].mainCharacter;
-            if (task.CanMeetRequirements(character)) {
-                characters.Add(character);
-            }
-        }
-        return characters;
-    }
     public void EquipCharacterWithBestGear(Settlement village, ECS.Character character) {
         MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
         MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);

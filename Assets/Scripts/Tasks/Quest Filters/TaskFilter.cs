@@ -1,14 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 public class TaskFilter {
+	protected Character _character2;
 
     #region virtuals
-    public virtual bool MeetsRequirements(ECS.Character character) {
+	public virtual bool MeetsRequirements(Character character) {
         return true;
     }
     #endregion
+
+	public void SetSecondCharacter(Character character2){
+		_character2 = character2;
+	}
 }
 
 public class MustNotHaveTraits : TaskFilter {
@@ -20,7 +26,7 @@ public class MustNotHaveTraits : TaskFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
+    public override bool MeetsRequirements(Character character) {
         for (int i = 0; i < _traits.Count; i++) {
             if (character.HasTrait(_traits[i])) {
                 return false;
@@ -40,7 +46,7 @@ public class MustHaveTraits : TaskFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
+    public override bool MeetsRequirements(Character character) {
         for (int i = 0; i < _requiredTraits.Count; i++) {
             if (!character.HasTrait(_requiredTraits[i])) {
                 return false;
@@ -64,7 +70,7 @@ public class MustNotHaveTags : TaskFilter {
 	}
 
 	#region overrides
-	public override bool MeetsRequirements(ECS.Character character) {
+	public override bool MeetsRequirements(Character character) {
 		for (int i = 0; i < _tags.Count; i++) {
 			if (character.HasTag(_tags[i])) {
 				return false;
@@ -88,7 +94,7 @@ public class MustHaveTags : TaskFilter {
 	}
 
 	#region overrides
-	public override bool MeetsRequirements(ECS.Character character) {
+	public override bool MeetsRequirements(Character character) {
 		for (int i = 0; i < _tags.Count; i++) {
 			if (!character.HasTag(_tags[i])) {
 				return false;
@@ -108,7 +114,7 @@ public class MustHaveTags : TaskFilter {
 //    }
 //
 //    #region overrides
-//    public override bool MeetsRequirements(ECS.Character character) {
+//    public override bool MeetsRequirements(Character character) {
 //        if(character.role != null) {
 //			return character.role.roleType == _requiredRole;
 //        }
@@ -129,7 +135,7 @@ public class MustBeClass : TaskFilter {
         _allowedClasses = requiredClasses;
     }
     #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
+    public override bool MeetsRequirements(Character character) {
         //TODO change enum parsing if possible
         return _allowedClasses.Contains((CHARACTER_CLASS)System.Enum.Parse(typeof(CHARACTER_CLASS), character.characterClass.className, true));
     }
@@ -153,7 +159,7 @@ public class MustBeFaction : TaskFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
+    public override bool MeetsRequirements(Character character) {
         if(character.faction != null) {
             if (_allowedFactions.Contains(character.faction)) {
                 return true;
@@ -173,7 +179,7 @@ public class MustNotBeFaction : TaskFilter {
     }
 
     #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
+    public override bool MeetsRequirements(Character character) {
         if (character.faction != null) {
             if (_bannedFactions.Contains(character.faction)) {
                 return false;
@@ -186,18 +192,18 @@ public class MustNotBeFaction : TaskFilter {
 
 public class MustBeCharacter : TaskFilter {
 
-    private List<ECS.Character> _allowedCharacters;
+    private List<Character> _allowedCharacters;
 
-    public MustBeCharacter(List<ECS.Character> allowedCharacters) {
+    public MustBeCharacter(List<Character> allowedCharacters) {
         _allowedCharacters = allowedCharacters;
     }
-    public MustBeCharacter(ECS.Character allowedCharacter) {
-        _allowedCharacters = new List<ECS.Character>();
+    public MustBeCharacter(Character allowedCharacter) {
+        _allowedCharacters = new List<Character>();
         _allowedCharacters.Add(allowedCharacter);
     }
 
     #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
+    public override bool MeetsRequirements(Character character) {
         return _allowedCharacters.Contains(character);
     }
     #endregion
@@ -205,18 +211,18 @@ public class MustBeCharacter : TaskFilter {
 
 public class MustNotBeCharacter : TaskFilter {
 
-    private List<ECS.Character> _bannedCharacters;
+    private List<Character> _bannedCharacters;
 
-    public MustNotBeCharacter(List<ECS.Character> bannedCharacetrs) {
+    public MustNotBeCharacter(List<Character> bannedCharacetrs) {
         _bannedCharacters = bannedCharacetrs;
     }
-    public MustNotBeCharacter(ECS.Character bannedCharacter) {
-        _bannedCharacters = new List<ECS.Character>();
+    public MustNotBeCharacter(Character bannedCharacter) {
+        _bannedCharacters = new List<Character>();
         _bannedCharacters.Add(bannedCharacter);
     }
 
     #region overrides
-    public override bool MeetsRequirements(ECS.Character character) {
+    public override bool MeetsRequirements(Character character) {
         return !_bannedCharacters.Contains(character);
     }
     #endregion
@@ -235,7 +241,7 @@ public class MustHaveItem : TaskFilter {
 	}
 
 	#region overrides
-	public override bool MeetsRequirements(ECS.Character character) {
+	public override bool MeetsRequirements(Character character) {
 		if(_itemName != string.Empty){
 			if(character.GetItemInAll(_itemName) != null) {
 				return true;
@@ -244,6 +250,25 @@ public class MustHaveItem : TaskFilter {
 			if(character.inventory.Count > 0){
 				return true;
 			}
+		}
+		return false;
+	}
+	#endregion
+}
+
+public class MustBeRelationship : TaskFilter {
+
+	private CHARACTER_RELATIONSHIP _relationshipStatus;
+
+	public MustBeRelationship(CHARACTER_RELATIONSHIP relationshipStatus) {
+		_relationshipStatus = relationshipStatus;
+	}
+
+	#region overrides
+	public override bool MeetsRequirements(Character character) {
+		Relationship relationship = character.GetRelationshipWith (_character2);
+		if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
+			return true;
 		}
 		return false;
 	}
