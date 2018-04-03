@@ -23,7 +23,7 @@ public class DrinkBlood : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget(character);
 		}
-		if(_targetLocation != null && _targetLocation is BaseLandmark){
+		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
             ChangeStateTo(STATE.MOVE);
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartDrinkingBlood());
 		}else{

@@ -16,7 +16,7 @@ public class InfectPsytoxin : CharacterTask {
 		if(_assignedCharacter == null){
 			return;
 		}
-		if(_targetLocation != null && _targetLocation is BaseLandmark){
+		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartInfection ());
 		}else{

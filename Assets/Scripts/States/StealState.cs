@@ -74,7 +74,7 @@ public class StealState : State {
 		}
         _assignedCharacter.AddHistory(stealLog);
         _targetCharacter.AddHistory(stealLog);
-        if (_assignedCharacter.specificLocation is BaseLandmark) {
+        if (_assignedCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
             (_assignedCharacter.specificLocation as BaseLandmark).AddHistory(stealLog);
         }
 		_parentTask.EndTaskSuccess ();

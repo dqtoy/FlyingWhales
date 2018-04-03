@@ -42,7 +42,7 @@ public class Steal : CharacterTask {
 			if (_targetLocation == null) {
 				_targetLocation = _targetCharacter.specificLocation;
 			}
-			if (_targetLocation != null && _targetLocation is BaseLandmark) {
+			if (_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 				ChangeStateTo(STATE.MOVE);
 				_assignedCharacter.GoToLocation(_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartSteal());
 			}else{
@@ -53,7 +53,7 @@ public class Steal : CharacterTask {
 		}
 	}
 	public override bool CanBeDone(Character character, ILocation location) {
-		if(location is BaseLandmark) {
+		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 			for (int i = 0; i < location.charactersAtLocation.Count; i++) {
 				ICombatInitializer initializer = location.charactersAtLocation [i];
 				if(initializer is Party){

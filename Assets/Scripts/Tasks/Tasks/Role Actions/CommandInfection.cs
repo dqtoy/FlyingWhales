@@ -30,10 +30,10 @@ public class CommandInfection : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget (character);
 		}
-		if(_targetLocation != null && _targetLocation is BaseLandmark){
+		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 			for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
-				if(character.specificLocation.charactersAtLocation[i] is ECS.Character){
-					ECS.Character currCharacter = (ECS.Character) character.specificLocation.charactersAtLocation[i];
+				if(character.specificLocation.charactersAtLocation[i] is Character){
+					Character currCharacter = character.specificLocation.charactersAtLocation[i] as Character;
 					if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
 						_chosenSlyx = currCharacter;
 						break;
@@ -57,8 +57,8 @@ public class CommandInfection : CharacterTask {
 			BaseLandmark landmark = (BaseLandmark)location;
 			if(landmark is Settlement){
 				for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
-					if(character.specificLocation.charactersAtLocation[i] is ECS.Character){
-						ECS.Character currCharacter = (ECS.Character) character.specificLocation.charactersAtLocation[i];
+					if(character.specificLocation.charactersAtLocation[i] is Character){
+						Character currCharacter = (Character) character.specificLocation.charactersAtLocation[i];
 						if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
 							return true;
 						}

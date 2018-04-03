@@ -173,7 +173,7 @@ public class Quest {
         acceptQuestLog.AddToFillers(acceptedBy, acceptedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         acceptQuestLog.AddToFillers(null, GetQuestName(), LOG_IDENTIFIER.QUEST_NAME);
         acceptedBy.AddHistory(acceptQuestLog);
-        if (acceptedBy.specificLocation is BaseLandmark) {
+		if (acceptedBy.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
             (acceptedBy.specificLocation as BaseLandmark).AddHistory(acceptQuestLog);
         }
     }

@@ -121,7 +121,7 @@ public class Collect : CharacterTask {
         startLog.AddToFillers(null, itemToCollectLog, LOG_IDENTIFIER.ITEM_1);
 
         _assignedCharacter.AddHistory(startLog);
-        if (_targetLocation is BaseLandmark) {
+		if (_targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
             (targetLocation as BaseLandmark).AddHistory(startLog);
         }
 		ChangeStateTo (STATE.COLLECT);

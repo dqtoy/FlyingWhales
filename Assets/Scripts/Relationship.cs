@@ -9,10 +9,19 @@ public class Relationship {
     private int _value;
     private int _baseValue; //This is the value affected by traits, race, etc.
 
+	private CHARACTER_RELATIONSHIP _relationshipStatus;
+	private CHARACTER_RELATIONSHIP_CATEGORY _relationshipCategory;
+
     #region getters/setters
     public int totalValue {
         get { return _value + _baseValue; }
     }
+	public CHARACTER_RELATIONSHIP relationshipStatus {
+		get { return _relationshipStatus; }
+	}
+	public CHARACTER_RELATIONSHIP_CATEGORY relationshipCategory {
+		get { return _relationshipCategory; }
+	}
     #endregion
 
     public Relationship(ECS.Character character1, ECS.Character character2) {

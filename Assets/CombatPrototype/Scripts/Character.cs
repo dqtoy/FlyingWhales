@@ -103,6 +103,8 @@ namespace ECS {
 
         public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
 
+		private WeightedDictionary<CharacterTask> actionWeights;
+
 		#region getters / setters
 		public string firstName {
             get { return name.Split(' ')[0]; }
@@ -393,6 +395,7 @@ namespace ECS {
 			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData(this);
 			previousActions = new Dictionary<CharacterTask, string> ();
+			actionWeights = new WeightedDictionary<CharacterTask> ();
 
 			GenerateRaceTags ();
 
@@ -705,7 +708,7 @@ namespace ECS {
 
 				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
-				if(specificLocation is BaseLandmark){
+				if(specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
@@ -902,7 +905,7 @@ namespace ECS {
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
-            if (specificLocation is BaseLandmark) {
+			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 (specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
 
@@ -919,8 +922,8 @@ namespace ECS {
 			item.exploreWeight = 15;
 			if(addInLandmark){
 				ILocation location = specificLocation;
-				if(location != null && location is BaseLandmark){
-					BaseLandmark landmark = (BaseLandmark)location;
+				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+					BaseLandmark landmark = location as BaseLandmark;
 					landmark.AddItemInLandmark(item);
 				}
 			}
@@ -930,8 +933,8 @@ namespace ECS {
         internal void DropItem(Item item) {
             ThrowItem(item);
             ILocation location = specificLocation;
-            if (location != null && location is BaseLandmark) {
-                BaseLandmark landmark = (BaseLandmark)location;
+			if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+				BaseLandmark landmark = location as BaseLandmark;
                 Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
                 dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
@@ -942,7 +945,7 @@ namespace ECS {
 
         }
         internal void CheckForItemDrop() {
-            if (specificLocation != null && specificLocation is BaseLandmark) {
+			if (specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 if (UnityEngine.Random.Range(0, 100) < 3) {
                     Dictionary<Item, Character> itemPool = new Dictionary<Item, Character>();
                     List<Character> charactersToCheck = new List<Character>();
@@ -2127,7 +2130,7 @@ namespace ECS {
                 nextTaskToDo = null;
                 return;
             }
-			WeightedDictionary<CharacterTask> actionWeights = new WeightedDictionary<CharacterTask> ();
+			actionWeights.Clear ();
 			if(_role != null){
 				_role.AddTaskWeightsFromRole (actionWeights);
 			}
@@ -2151,7 +2154,7 @@ namespace ECS {
                 chosenTask.OnChooseTask(this);
             } else {
                 actionWeights.LogDictionaryValues(this.name + " action weights!");
-                throw new Exception(this.role.roleType.ToString() + " " + this.name + " could not determine an action!");
+				Debug.LogError(this.role.roleType.ToString() + " " + this.name + " could not determine an action!");
             }
 		}
         /*
@@ -2456,7 +2459,7 @@ namespace ECS {
             List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.allLandmarks);
             //elligibleLandmarks.Add(currRegionLocation.mainLandmark);
             //elligibleLandmarks.AddRange(currRegionLocation.landmarks);
-            if (specificLocation is BaseLandmark) {
+			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 elligibleLandmarks.Remove(specificLocation as BaseLandmark);
             }
             Dictionary<BaseLandmark, List<HexTile>> landmarksWithoutHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
@@ -2574,6 +2577,9 @@ namespace ECS {
 				}else if(_isPrisonerOf is BaseLandmark){
 					wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
 				}
+				if(wardenName == _name){
+					Debug.LogError (_name + " is a prisoner of " + wardenName + ". Can't be a prisoner of your ownself!");
+				}
                 Log becomePrisonerLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_prisoner");
                 becomePrisonerLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 becomePrisonerLog.AddToFillers(_isPrisonerOf, wardenName, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -2630,8 +2636,6 @@ namespace ECS {
             }
 			this._specificLocation = location;
 
-            SetPrisoner(false, null);
-
             Log releasePrisonerLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "release_prisoner");
             releasePrisonerLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
@@ -2683,7 +2687,6 @@ namespace ECS {
 			}else if(_isPrisonerOf is BaseLandmark){
 				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
 			}
-			SetPrisoner (false, null);
 		}
 		public void ConvertToFaction(){
             Faction previousFaction = this.faction;
@@ -2906,8 +2909,8 @@ namespace ECS {
 		#region Traces
 		public void LeaveTraceOnLandmark(){
 			ILocation location = specificLocation;
-			if(location != null && location is BaseLandmark){
-				BaseLandmark landmark = (BaseLandmark)location;
+			if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				BaseLandmark landmark = location as BaseLandmark;
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = GetLeaveTraceChance ();
 				if(chance < value){

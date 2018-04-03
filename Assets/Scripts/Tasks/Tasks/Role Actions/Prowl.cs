@@ -36,7 +36,7 @@ public class Prowl : CharacterTask {
         }
     }
     public override bool CanBeDone(ECS.Character character, ILocation location) {
-        return (location is BaseLandmark);
+		return (location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK);
     }
     public override bool AreConditionsMet(ECS.Character character) {
         Region regionOfChar = character.specificLocation.tileLocation.region;
@@ -76,7 +76,7 @@ public class Prowl : CharacterTask {
         startLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startLog.AddToFillers(_targetLocation, _targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_1);
         _assignedCharacter.AddHistory(startLog);
-        if (_targetLocation is BaseLandmark) {
+		if (_targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
             (_targetLocation as BaseLandmark).AddHistory(startLog);
         }
         

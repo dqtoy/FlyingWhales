@@ -32,9 +32,9 @@ public class Patrol : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget(character);
 		}
-		if (_targetLocation != null && _targetLocation is BaseLandmark) {
+		if (_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 			ChangeStateTo (STATE.MOVE);
-			_landmarkToPatrol = (BaseLandmark)_targetLocation;
+			_landmarkToPatrol = _targetLocation as BaseLandmark;
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartPatrol ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
