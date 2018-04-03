@@ -32,7 +32,7 @@ public class ExploreTile : CharacterTask {
 		if (_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 			ChangeStateTo (STATE.MOVE);
 			_landmarkToExplore = _targetLocation as BaseLandmark;
-			_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
+			_assignedCharacter.GoToLocation(_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
 		}
@@ -70,16 +70,14 @@ public class ExploreTile : CharacterTask {
         //Check If there are Dungeon Landmarks in current or adjacent regions
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                if (currRegion.landmarks[j] is DungeonLandmark) {
-                    return true;
-                }
+            if (currRegion.landmarks.Count > 0) {
+                return true;
             }
         }
 		return base.AreConditionsMet (character);
 	}
     public override int GetSelectionWeight(Character character) {
-        return 40; //If there are Dungeon Landmarks in current or adjacent regions: 40. Check AreConditionsMet() for requirements.
+        return 40; //If there are Landmarks in current or adjacent regions: 40. Check AreConditionsMet() for requirements.
     }
     protected override BaseLandmark GetLandmarkTarget(Character character) {
         base.GetLandmarkTarget(character);
@@ -91,8 +89,13 @@ public class ExploreTile : CharacterTask {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
+                int weight = 0;
                 if (currLandmark is DungeonLandmark) {
-                    int weight = 50; //Each Dungeon Landmark in current and adjacent regions: 50
+                    if (currRegion.id == characterRegion.id) {
+                        weight = 50; //Each Dungeon Landmark in current region: 50
+                    } else {
+                        weight = 30; //Each Dungeon Landmark in adjacent regions: 30
+                    }
                     if (character.exploredLandmarks.Contains(currLandmark)) {
                         weight -= 40; //If Dungeon Landmark has been Explored by this character within the past 6 months: -40
                     }
@@ -104,9 +107,12 @@ public class ExploreTile : CharacterTask {
                             weight += 300; //If character is part of a Faction and Dungeon Landmark is not yet part of Faction Landmark Information: +300
                         }
                     }
-                    if (weight > 0) {
-                        _landmarkWeights.AddElement(currLandmark, weight);
-                    }
+                } else {
+                    weight = 20; //Each non Dungeon Landmark in current region: 20
+                }
+
+                if (weight > 0) {
+                    _landmarkWeights.AddElement(currLandmark, weight);
                 }
             }
         }
