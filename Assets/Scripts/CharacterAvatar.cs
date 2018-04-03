@@ -230,7 +230,7 @@ public class CharacterAvatar : PooledObject{
                 if (_mainCharacter.currentTask == null) {
                     throw new Exception(_mainCharacter.name + "'s task is null!");
                 }
-                if (this.specificLocation is BaseLandmark) {
+				if (this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                     Log arriveLog = null;
                     if (_mainCharacter.currentTask is MoveTo) {
                         arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "visit_location");

@@ -42,9 +42,9 @@ public class VampiricEmbrace : CharacterTask {
 				_targetLocation = _targetCharacter.specificLocation;
 			}
 
-			if (_targetLocation != null && _targetLocation is BaseLandmark) {
+			if (_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 ChangeStateTo(STATE.MOVE);
-				_targetLandmark = (BaseLandmark)_targetLocation;
+				_targetLandmark = _targetLocation as BaseLandmark;
 				_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartVampiricEmbrace ());
 			}else{
 				EndTask (TASK_STATUS.FAIL);

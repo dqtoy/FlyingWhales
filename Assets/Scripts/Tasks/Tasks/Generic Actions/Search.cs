@@ -74,7 +74,7 @@ public class Search : CharacterTask {
         if (_targetLocation == null) {
             _targetLocation = GetLandmarkTarget(character);
         }
-		if(_targetLocation != null && _targetLocation is BaseLandmark){
+		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 			_targetLandmark = _targetLocation as BaseLandmark;
 		}else{
 			EndTask(TASK_STATUS.FAIL); //the character could not search anywhere, fail this task
@@ -85,10 +85,10 @@ public class Search : CharacterTask {
     }
     public override bool AreConditionsMet(Character character) {
         //check if there are any landmarks in region with characters
-		if(onAreConditionsMetAction != null){
-			return onAreConditionsMetAction (character);
-		}
-        return base.AreConditionsMet(character);
+//		if(onAreConditionsMetAction != null){
+//			return onAreConditionsMetAction (character);
+//		}
+        return true;
     }
     public override void PerformTask() {
         if(!CanPerformTask()){
@@ -151,8 +151,8 @@ public class Search : CharacterTask {
 			if (currLandmark.HasHostilitiesWith(character.faction)) {
 				weight -= 50;//If landmark has hostile characters: -50
 			}
-			if(characterLookingFor != null && characterLookingFor.specificLocation != null && characterLookingFor.specificLocation is BaseLandmark){
-				BaseLandmark landmark = (BaseLandmark)characterLookingFor.specificLocation;
+			if(characterLookingFor != null && characterLookingFor.specificLocation != null && characterLookingFor.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				BaseLandmark landmark = characterLookingFor.specificLocation as BaseLandmark;
 				if(landmark.id == currLandmark.id){
 					weight += 600; //If assigned character has a trace info of character he is looking for, and is in this landmark
 				}

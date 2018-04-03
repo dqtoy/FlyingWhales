@@ -178,13 +178,13 @@ public class PlayerActionsUI : MonoBehaviour {
 
 	private List<ECS.Character> CharacterTargets(ECS.Character assignedCharacter, CharacterTask task){
 		List<ECS.Character> characters = new List<ECS.Character> ();
-		BaseLandmark landmark = (BaseLandmark)this.location;
+		BaseLandmark landmark = this.location as BaseLandmark;
 		for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
 			ECS.Character character = landmark.charactersAtLocation [i].mainCharacter;
 			if(!task.canTargetSelf && character.id == assignedCharacter.id){
 				continue;
 			}
-			if(task.CanMeetRequirements(character)){
+			if(task.CanMeetRequirements(character, assignedCharacter)){
 				characters.Add (character);
 			}
 		}
@@ -192,7 +192,7 @@ public class PlayerActionsUI : MonoBehaviour {
 	}
 
     private void CreateButton(CharacterTask task){
-		GameObject characterTaskButton = (GameObject)GameObject.Instantiate (characterTaskButtonGO, buttonsGrid.transform);
+		GameObject characterTaskButton = GameObject.Instantiate (characterTaskButtonGO, buttonsGrid.transform) as GameObject;
 		characterTaskButton.transform.localScale = Vector3.one;
 		characterTaskButton.transform.localPosition = Vector3.zero;
 

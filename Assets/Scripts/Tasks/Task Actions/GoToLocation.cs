@@ -9,7 +9,7 @@ public class GoToLocation : TaskAction {
     #region getters/setters
     public HexTile targetTile {
         get {
-            if (targetLocation is BaseLandmark) {
+			if (targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 				return (targetLocation as BaseLandmark).tileLocation;
             } else {
                 return (targetLocation as HexTile);

@@ -38,9 +38,9 @@ public class Invade : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget(character);
 		}
-		if(_targetLocation != null && _targetLocation is BaseLandmark){
+		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 			ChangeStateTo (STATE.MOVE);
-			_landmarkToAttack = (BaseLandmark)_targetLocation;
+			_landmarkToAttack = _targetLocation as BaseLandmark;
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartAttack());
 		}else{
 			EndTask (TASK_STATUS.FAIL);
@@ -64,7 +64,7 @@ public class Invade : CharacterTask {
 		ReduceDaysLeft(1);
 	}
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location is BaseLandmark){
+		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
             return location.HasHostilitiesWith(character); //If there are unowned landmarks with hostile unaligned characters or owned by hostile faction within current region or adjacent region
 		}
 		return base.CanBeDone (character, location);

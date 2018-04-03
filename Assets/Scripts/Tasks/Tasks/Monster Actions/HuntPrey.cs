@@ -28,8 +28,8 @@ public class HuntPrey : CharacterTask {
 		if(_targetLocation == null){
 			_targetLocation = GetLandmarkTarget (character);
 		}
-		if(_targetLocation != null && _targetLocation is BaseLandmark){
-			_target = (BaseLandmark)_targetLocation;
+		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+			_target = _targetLocation as BaseLandmark;
 			hunterName = _assignedCharacter.name;
 			if(_assignedCharacter.party != null){
 				hunterName = _assignedCharacter.party.name;

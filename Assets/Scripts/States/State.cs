@@ -44,8 +44,8 @@ public class State {
 	public virtual void OnChooseState(Character character){
 		ResetState ();
 		_assignedCharacter = character;
-		if(_parentTask.targetLocation != null && _parentTask.targetLocation is BaseLandmark){
-			SetTargetLandmark((BaseLandmark)_parentTask.targetLocation);
+		if(_parentTask.targetLocation != null && _parentTask.targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+			SetTargetLandmark(_parentTask.targetLocation as BaseLandmark);
 		}
 	}
 	#endregion

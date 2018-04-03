@@ -12,13 +12,20 @@ public class DungeonParty : Party {
 
 	public override void AddPartyMember(ECS.Character member) {
 		if (!_partyMembers.Contains(member)) {
+			if(member.party != null){
+				member.party.DisbandParty ();
+				Debug.Log ("DISBANDING " + member.party.name + " before adding " + member.name + " to " + _name);
+			}else{
+				if (member.avatar != null) {
+					member.avatar.RemoveCharacter(member);
+				}
+			}
 			_partyMembers.Add(member);
 			if(member.id != _partyLeader.id){
 				_followers.Add (member);
-			}
-			if(_avatar != null) {
-				member.DestroyAvatar();
-				_avatar.AddNewCharacter(member);
+				if(_partyLeader.avatar != null){
+					_partyLeader.avatar.AddNewCharacter (member);
+				}
 			}
 			member.SetParty(this);
 			member.specificLocation.RemoveCharacterFromLocation (member);

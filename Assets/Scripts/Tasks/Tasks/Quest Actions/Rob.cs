@@ -48,7 +48,7 @@ public class Rob : CharacterTask {
 		}
 	}
 	public override bool CanBeDone(Character character, ILocation location) {
-		if(location is BaseLandmark) {
+		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 			foreach (Character targetCharacter in character.traceInfo.Keys) {
 				if(CanMeetRequirements(targetCharacter)){
 					if(targetCharacter.specificLocation == location){
@@ -61,7 +61,7 @@ public class Rob : CharacterTask {
 	}
 	public override bool AreConditionsMet(Character character) {
 		foreach (Character targetCharacter in character.traceInfo.Keys) {
-			if(targetCharacter.specificLocation is BaseLandmark && CanMeetRequirements(targetCharacter)){
+			if(targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && CanMeetRequirements(targetCharacter)){
 				if(targetCharacter.currentRegion.id == character.currentRegion.id || character.IsCharacterInAdjacentRegionOfThis(targetCharacter)){
 					return true;
 				}
@@ -111,8 +111,8 @@ public class Rob : CharacterTask {
 	}
 	private void RobItem(){
 		_assignedCharacter.AssignTag (CHARACTER_TAG.CRIMINAL);
-		if(_assignedCharacter.specificLocation is BaseLandmark){
-			BaseLandmark landmark = (BaseLandmark)_assignedCharacter.specificLocation;
+		if(_assignedCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+			BaseLandmark landmark = _assignedCharacter.specificLocation as BaseLandmark;
 			bool hasRobbedSuccessfully = false;
 			for (int i = 0; i < landmark.itemsInLandmark.Count; i++) {
 				Item item = landmark.itemsInLandmark [i];

@@ -1089,6 +1089,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	}
 	internal void RemovePrisoner(Character character){
 		_prisoners.Remove (character);
+		character.SetPrisoner (false, null);
 	}
 	#endregion
 

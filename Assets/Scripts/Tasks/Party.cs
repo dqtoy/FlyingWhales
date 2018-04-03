@@ -21,7 +21,6 @@ public class Party: IEncounterable, ICombatInitializer {
 	protected List<ECS.Character> _followers;
 
     //protected CharacterTask _currentTask;
-    protected CharacterAvatar _avatar;
 
     protected ILocation _specificLocation;
 	protected Region _currentRegion;
@@ -171,17 +170,22 @@ public class Party: IEncounterable, ICombatInitializer {
          */
     public virtual void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
+			if(member.party != null){
+				member.party.DisbandParty ();
+				Debug.Log ("DISBANDING " + member.party.name + " before adding " + member.name + " to " + _name);
+			}else{
+				if (member.avatar != null) {
+					member.avatar.RemoveCharacter(member);
+				}
+			}
             _partyMembers.Add(member);
             //CreateRelationshipsForNewMember(member);
 			if(member.id != _partyLeader.id){
 				_followers.Add (member);
+				if(_partyLeader.avatar != null){
+					_partyLeader.avatar.AddNewCharacter (member);
+				}
 			}
-            if(_avatar != null) {
-                if (member.avatar != null && member.avatar != _avatar) {
-                    member.DestroyAvatar();
-                }
-                _avatar.AddNewCharacter(member);
-            }
             member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
 
@@ -245,10 +249,6 @@ public class Party: IEncounterable, ICombatInitializer {
      of the nearest settlement of it's faction.
          */
     public void DisbandParty() {
-		if(isInCombat){
-			SetCurrentFunction (() => DisbandParty ());
-			return;
-		}
 		if(_isDisbanded){
 			return;
 		}
@@ -305,19 +305,6 @@ public class Party: IEncounterable, ICombatInitializer {
 		}
 
 		this.specificLocation.RemoveCharacterFromLocation (this);
-    }
-    #endregion
-
-    #region Character Avatar
-    public void SetAvatar(CharacterAvatar avatar) {
-        _avatar = avatar;
-        for (int i = 0; i < _partyMembers.Count; i++) {
-            ECS.Character currCharacter = _partyMembers[i];
-            if(currCharacter.avatar != avatar) {
-                currCharacter.DestroyAvatar();
-            }
-            avatar.AddNewCharacter(currCharacter);
-        }
     }
     #endregion
 

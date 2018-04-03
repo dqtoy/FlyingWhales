@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Relationship {
 
@@ -9,15 +10,21 @@ public class Relationship {
     private int _value;
     private int _baseValue; //This is the value affected by traits, race, etc.
 
+	private List<CHARACTER_RELATIONSHIP> _relationshipStatus;
+
     #region getters/setters
     public int totalValue {
         get { return _value + _baseValue; }
     }
+	public List<CHARACTER_RELATIONSHIP> relationshipStatus {
+		get { return _relationshipStatus; }
+	}
     #endregion
 
     public Relationship(ECS.Character character1, ECS.Character character2) {
         _character1 = character1;
         _character2 = character2;
+		_relationshipStatus = new List<CHARACTER_RELATIONSHIP> ();
 
         UpdateBaseValue();
     }
@@ -133,4 +140,22 @@ public class Relationship {
         _value += adjustment;
         _value = Mathf.Max(0, _value);
     }
+
+	public bool HasCategory(CHARACTER_RELATIONSHIP_CATEGORY category){
+		for (int i = 0; i < _relationshipStatus.Count; i++) {
+			if(Utilities.charRelationshipCategory[_relationshipStatus[i]] == category){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public bool HasStatus(CHARACTER_RELATIONSHIP status){
+		for (int i = 0; i < _relationshipStatus.Count; i++) {
+			if(_relationshipStatus[i] == status){
+				return true;
+			}
+		}
+		return false;
+	}
 }

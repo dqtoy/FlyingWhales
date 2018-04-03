@@ -29,9 +29,9 @@ public class ExploreTile : CharacterTask {
             _targetLocation = GetLandmarkTarget(character);
 		}
 
-		if (_targetLocation != null && _targetLocation is BaseLandmark) {
+		if (_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 			ChangeStateTo (STATE.MOVE);
-			_landmarkToExplore = (BaseLandmark)_targetLocation;
+			_landmarkToExplore = _targetLocation as BaseLandmark;
 			_assignedCharacter.GoToLocation (_landmarkToExplore, PATHFINDING_MODE.USE_ROADS, () => StartExploration ());
 		}else{
 			EndTask (TASK_STATUS.FAIL);

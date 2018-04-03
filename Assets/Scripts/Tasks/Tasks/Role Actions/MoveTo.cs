@@ -9,7 +9,7 @@ public class MoveTo : CharacterTask {
     #region getters/setters
     public HexTile targetTile {
         get {
-            if (_targetLocation is BaseLandmark) {
+			if (_targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 				return (_targetLocation as BaseLandmark).tileLocation;
             } else {
                 return (_targetLocation as HexTile);
