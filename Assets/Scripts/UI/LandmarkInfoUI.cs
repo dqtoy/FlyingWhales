@@ -50,14 +50,14 @@ public class LandmarkInfoUI : UIMenu {
 
     public override void OpenMenu() {
         base.OpenMenu();
-        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        //RepositionHistoryScrollView();
         StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
         UpdateLandmarkInfo();
     }
 
     public override void ShowMenu() {
         base.ShowMenu();
-        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        //RepositionHistoryScrollView();
         StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
     }
     public override void HideMenu() {
@@ -244,42 +244,59 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Log History
     private void UpdateHistoryInfo() {
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = currentlyShowingLandmark.history.ElementAtOrDefault(i);
-            if (currLog != null) {
-                currItem.SetLog(currLog);
-                currItem.gameObject.SetActive(true);
-                
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
-            } else {
-                currItem.gameObject.SetActive(false);
+        bool shouldUpdateHistory = false;
+        //check if the currently showing landmark is already showing all its history
+        for (int i = 0; i < currentlyShowingLandmark.history.Count; i++) {
+            Log currLog = currentlyShowingLandmark.history[i];
+            if (!IsLogAlreadyShown(currLog)) {
+                shouldUpdateHistory = true;
+                break; //there is a log that is not yet being shown, update
             }
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-        }
-        
-        //historyScrollView.UpdatePosition();
-        //string text = string.Empty;
-        //if (currentlyShowingLandmark.history.Count > 0) {
-        //    for (int i = 0; i < currentlyShowingLandmark.history.Count; i++) {
-        //        Log currentLog = currentlyShowingLandmark.history[i];
-        //        if (i > 0) {
-        //            text += "\n";
-        //        }
-        //        text += Utilities.LogReplacer(currentLog);
-        //    }
-        //} else {
-        //    text += "NONE";
-        //}
+        if (shouldUpdateHistory) {
+            for (int i = 0; i < logHistoryItems.Length; i++) {
+                LogHistoryItem currItem = logHistoryItems[i];
+                Log currLog = currentlyShowingLandmark.history.ElementAtOrDefault(i);
+                if (currLog != null) {
+                    currItem.SetLog(currLog);
+                    currItem.gameObject.SetActive(true);
 
-        //settlementHistoryInfoLbl.text = text;
-        //historyScrollView.UpdatePosition();
+                    if (Utilities.IsEven(i)) {
+                        currItem.SetLogColor(evenLogColor);
+                    } else {
+                        currItem.SetLogColor(oddLogColor);
+                    }
+                } else {
+                    currItem.gameObject.SetActive(false);
+                }
+            }
+            if (this.gameObject.activeInHierarchy) {
+                StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+                StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+            }
+        }
+    }
+    private void RepositionHistoryScrollView() {
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            currItem.gameObject.SetActive(true);
+        }
+        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            currItem.gameObject.SetActive(false);
+        }
+    }
+    private bool IsLogAlreadyShown(Log log) {
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            if (currItem.thisLog != null) {
+                if (currItem.thisLog.id == log.id) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     #endregion
 

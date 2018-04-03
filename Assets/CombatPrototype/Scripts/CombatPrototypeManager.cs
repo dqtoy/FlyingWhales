@@ -119,7 +119,8 @@ namespace ECS {
 		}
 		public void CombatResults(CombatPrototype combat){
 			for (int i = 0; i < combat.deadCharacters.Count; i++) {
-				combat.deadCharacters [i].Death ();
+                Character currDeadCharacter = combat.deadCharacters[i];
+                currDeadCharacter.Death (combat.GetOpposingCharacters(currDeadCharacter));
 			}
 
 			//Prisoner or Leave to Die
@@ -166,7 +167,7 @@ namespace ECS {
 									BaseLandmark landmark = combat.location as BaseLandmark;
 									//landmark.AddHistory (currFaintedChar.name + " is left to die.");
 								}
-								currFaintedChar.Death();
+								currFaintedChar.Death(combat.GetOpposingCharacters(currFaintedChar));
 							}
 						}else{
                             currFaintedChar.SetHP(1);
@@ -180,7 +181,7 @@ namespace ECS {
 								BaseLandmark landmark = combat.location as BaseLandmark;
 								//landmark.AddHistory (currFaintedChar.name + " is left to die.");
 							}
-                            currFaintedChar.Death();
+                            currFaintedChar.Death(combat.GetOpposingCharacters(currFaintedChar));
 						}else{
                             currFaintedChar.SetHP(1);
 						}
@@ -297,7 +298,11 @@ namespace ECS {
 						prisoners [0].TransferPrisoner (winningCharacters [0]);
 					}
 				}else if(pickedWeight == "kill"){
-					prisoners [0].Death ();
+                    if (winningCharacters[0].party != null) {
+                        prisoners[0].Death(winningCharacters[0].party);
+                    } else {
+                        prisoners[0].Death(winningCharacters[0]);
+                    }
 				}else if(pickedWeight == "release"){
 					prisoners [0].ReleasePrisoner ();
 				}

@@ -22,18 +22,20 @@ public class EliminateLostHeir : Quest {
 			
 		QuestPhase phase1 = new QuestPhase(this, "Search for Heirloom Necklace");
 		phase1.AddTask(new Search(createdBy, 5, "Heirloom Necklace", null, this));
+        phase1.AddPhaseRequirement(new MustFindItem("Heirloom Necklace")); //Must find item only
 
-		QuestPhase phase2 = new QuestPhase(this, "Attack " + _lostHeir.name + "!");
+        QuestPhase phase2 = new QuestPhase(this, "Attack " + _lostHeir.name + "!");
 		phase2.AddTask(new Attack(createdBy, _lostHeir, 5, this));
-
-		MoveTo moveTo = new MoveTo (createdBy, -1, this);
+        MoveTo moveTo = new MoveTo (createdBy, -1, this);
 		moveTo.SetForGameOnly (true);
 		phase2.AddTask(moveTo);
+        phase2.AddPhaseRequirement(new MustKillCharacter(_lostHeir));
 
-		QuestPhase phase3 = new QuestPhase(this, "Report to the Successor");
+        QuestPhase phase3 = new QuestPhase(this, "Report to the Successor");
 		phase3.AddTask (new Report (createdBy, _falseHeir, this));
+        phase3.AddPhaseRequirement(new MustFinishAllPhaseTasks());
 
-		_phases.Add(phase1);
+        _phases.Add(phase1);
 		_phases.Add(phase2);
 		_phases.Add(phase3);
 

@@ -1040,6 +1040,30 @@ namespace ECS{
 			}
 			return null;
 		}
+
+        public ICombatInitializer GetOpposingCharacters(ECS.Character character) {
+            if (attacker is ECS.Character) {
+                if ((attacker as Character).id == character.id) {
+                    return defender;
+                }
+            } else if (attacker is Party) {
+                if ((attacker as Party).partyMembers.Contains(character)) {
+                    return defender;
+                }
+            }
+
+            if (defender is ECS.Character) {
+                if ((defender as Character).id == character.id) {
+                    return attacker;
+                }
+            } else if (defender is Party) {
+                if ((defender as Party).partyMembers.Contains(character)) {
+                    return attacker;
+                }
+            }
+
+            return null;
+        }
     }
 }
 

@@ -17,6 +17,9 @@ public class UIMenu : MonoBehaviour {
             EventDelegate.Add(goBackBtn.onClick, GoBack);
         }
     }
+    /*
+     Used when a menu is currently being shown, but only the data has changed
+         */
     public virtual void ShowMenu() {
         isShowing = true;
         if(goBackBtn != null) {
@@ -28,6 +31,9 @@ public class UIMenu : MonoBehaviour {
         isShowing = false;
         this.gameObject.SetActive(false);
     }
+    /*
+     When a menu is opened from being closed
+         */
     public virtual void OpenMenu() {
         UIManager.Instance.AddMenuToQueue(this, _data);
         ShowMenu();

@@ -27,7 +27,7 @@ public class SiphonState : State {
 					_assignedCharacter.AddHistory(siphonLog);
 					currCharacter.AddHistory(siphonLog);
 					_assignedCharacter.AdjustHP (currCharacter.currentHP);
-					currCharacter.Death ();
+					currCharacter.Death (_assignedCharacter);
 					break;
 				}
 			}

@@ -16,18 +16,20 @@ public class HypnotizeState : State {
     private void PerformHypnotize() {
 		ECS.Character targetCharacter = (ECS.Character)_parentTask.specificTarget;
 		if(_targetLandmark != targetCharacter.specificLocation){
-			Debug.LogError ("Can't perform hypnotize, locations are different: " + _targetLandmark.landmarkName + " and " + targetCharacter.specificLocation.locationName);
-			return;
-		}
-        string chosenAction = TaskManager.Instance.hypnotizeActions.PickRandomElementGivenWeights();
-        if (chosenAction == "hypnotize") {
-            Log hypnotizeLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hypnotize", "hypnotize");
-            hypnotizeLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-			hypnotizeLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-			targetCharacter.AssignTag(CHARACTER_TAG.HYPNOTIZED);
-            MakeTargetCharacterAVampireFollower();
-            parentTask.EndTask(TASK_STATUS.SUCCESS);
-            return;
+            //Debug.LogError ("Can't perform hypnotize, locations are different: " + _targetLandmark.landmarkName + " and " + targetCharacter.specificLocation.locationName);
+            //return;
+            parentTask.EndTask(TASK_STATUS.FAIL); //target is no longer at location
+        } else {
+            string chosenAction = TaskManager.Instance.hypnotizeActions.PickRandomElementGivenWeights();
+            if (chosenAction == "hypnotize") {
+                Log hypnotizeLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "Hypnotize", "hypnotize");
+                hypnotizeLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                hypnotizeLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                targetCharacter.AssignTag(CHARACTER_TAG.HYPNOTIZED);
+                MakeTargetCharacterAVampireFollower();
+                parentTask.EndTask(TASK_STATUS.SUCCESS);
+                return;
+            }
         }
     }
 

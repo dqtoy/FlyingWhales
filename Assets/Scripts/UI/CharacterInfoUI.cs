@@ -59,16 +59,25 @@ public class CharacterInfoUI : UIMenu {
         }
     }
 
-	public override void ShowMenu (){
-		base.ShowMenu ();
+    #region Overrides
+    public override void HideMenu() {
+        if (currentlyShowingCharacter.avatar != null) {
+            currentlyShowingCharacter.avatar.SetHighlightState(false);
+        }
+        _activeCharacter = null;
+        base.HideMenu();
+    }
+    public override void ShowMenu() {
+        base.ShowMenu();
         _activeCharacter = (ECS.Character)_data;
-        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        //RepositionHistoryScrollView();
     }
     public override void OpenMenu() {
         base.OpenMenu();
-        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        //RepositionHistoryScrollView();
         UpdateCharacterInfo();
     }
+    #endregion
 
     public override void SetData(object data) {
         if (_data != null) {
@@ -293,41 +302,60 @@ public class CharacterInfoUI : UIMenu {
 		relationshipsScrollView.UpdatePosition();
 	}
 	private void UpdateHistoryInfo(){
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
-            if (currLog != null) {
-                currItem.SetLog(currLog);
-                currItem.gameObject.SetActive(true);
-
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
-            } else {
-                currItem.gameObject.SetActive(false);
+        bool shouldUpdateHistory = false;
+        //check if the currently showing landmark is already showing all its history
+        for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
+            Log currLog = currentlyShowingCharacter.history[i];
+            if (!IsLogAlreadyShown(currLog)) {
+                shouldUpdateHistory = true;
+                break; //there is a log that is not yet being shown, update
             }
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+        if (shouldUpdateHistory) {
+            for (int i = 0; i < logHistoryItems.Length; i++) {
+                LogHistoryItem currItem = logHistoryItems[i];
+                Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
+                if (currLog != null) {
+                    currItem.SetLog(currLog);
+                    currItem.gameObject.SetActive(true);
+                    if (Utilities.IsEven(i)) {
+                        currItem.SetLogColor(evenLogColor);
+                    } else {
+                        currItem.SetLogColor(oddLogColor);
+                    }
+                } else {
+                    currItem.gameObject.SetActive(false);
+                }
+            }
+            if (this.gameObject.activeInHierarchy) {
+                StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+                StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+            }
         }
-        //string text = string.Empty;
-        //if (currentlyShowingCharacter.history.Count > 0) {
-        //	for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
-        //		if(i > 0){
-        //			text += "\n";
-        //		}
-        //		text += currentlyShowingCharacter.history[i];
-        //	}
-        //} else {
-        //	text += "NONE";
-        //}
-
-        //historyLbl.text = text;
-        //historyScrollView.UpdatePosition();
     }
-	public void CenterCameraOnCharacter() {
+    private void RepositionHistoryScrollView() {
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            currItem.gameObject.SetActive(true);
+        }
+        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            currItem.gameObject.SetActive(false);
+        }
+    }
+    private bool IsLogAlreadyShown(Log log) {
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            if (currItem.thisLog != null) {
+                if (currItem.thisLog.id == log.id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public void CenterCameraOnCharacter() {
         GameObject centerOn = null;
         if (currentlyShowingCharacter.avatar != null) {
 			centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
@@ -341,15 +369,7 @@ public class CharacterInfoUI : UIMenu {
         return (isShowing && currentlyShowingCharacter == character);
     }
 
-	#region Overrides
-	public override void HideMenu (){
-        if (currentlyShowingCharacter.avatar != null) {
-            currentlyShowingCharacter.avatar.SetHighlightState(false);
-        }
-		_activeCharacter = null;
-		base.HideMenu ();
-	}
-	#endregion
+	
 //	public void OnClickCloseBtn(){
 ////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
 //		HideMenu ();

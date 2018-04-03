@@ -162,9 +162,10 @@ public class SearchState : State {
 			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasTag (strSearchingFor, includeParty)) {
 					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
-					if(_afterFindingTraceAction != null){
-						_afterFindingTraceAction ();
-					}
+                    Messenger.Broadcast(Signals.FOUND_TRACE, _assignedCharacter, strSearchingFor);
+					//if(_afterFindingTraceAction != null){
+					//	_afterFindingTraceAction ();
+					//}
 					break;
 				}
 			}
@@ -172,10 +173,11 @@ public class SearchState : State {
 			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasItem (strSearchingFor)) {
 					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
-					if(_afterFindingTraceAction != null){
-						_afterFindingTraceAction ();
-					}
-					break;
+                    Messenger.Broadcast(Signals.FOUND_TRACE, _assignedCharacter, strSearchingFor);
+                    //if(_afterFindingTraceAction != null){
+                    //	_afterFindingTraceAction ();
+                    //}
+                    break;
 				}
 			}
 		}

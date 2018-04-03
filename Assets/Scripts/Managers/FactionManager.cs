@@ -315,6 +315,19 @@ public class FactionManager : MonoBehaviour {
                     ECS.Character bandit = currCave.CreateNewCharacter(currCave.tileLocation.region.mainLandmark.owner.race, CHARACTER_ROLE.BANDIT, 
                         Utilities.NormalizeString(classProductionDictionary.PickRandomElementGivenWeights().ToString()), false);
                     Debug.Log("Created a bandit " + bandit.characterClass.className + " at " + currCave.landmarkName + "(" + currCave.tileLocation.name + ")");
+                } else {
+                    //generate a wolf
+                    if (Random.Range(0, 100) < 50) {
+                        if (Random.Range(0, 2) == 0) {
+                            //generate alpha wolf
+                            ECS.Character alphaWolf = currCave.CreateNewCharacter(RACE.WOLF, "Alpha Wolf", false);
+                            Debug.Log("Created an alpha wolf at " + currCave.landmarkName + "(" + currCave.tileLocation.name + ")");
+                        } else {
+                            //generate normal wolf
+                            ECS.Character alphaWolf = currCave.CreateNewCharacter(RACE.WOLF, "Wolf", false);
+                            Debug.Log("Created a wolf at " + currCave.landmarkName + "(" + currCave.tileLocation.name + ")");
+                        }
+                    }
                 }
             }
 

@@ -65,20 +65,40 @@ public class MustHaveItems : QuestPhaseRequirement {
 
 public class MustFindItem : QuestPhaseRequirement {
     private string neededItem;
-    public MustFindItem(string neededItem) : base() {
+    private bool includeTrace;
+
+    public MustFindItem(string neededItem, bool includeTrace = false) : base() {
         this.neededItem = neededItem;
+        this.includeTrace = includeTrace;
     }
     public override void ActivateRequirement(ECS.Character owner) {
         base.ActivateRequirement(owner);
-        Messenger.AddListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
+        Messenger.AddListener<ECS.Character, ECS.Item>(Signals.FOUND_ITEM, CheckIfRequirementMet);
+        if (includeTrace) {
+            Messenger.AddListener<ECS.Character, string>(Signals.FOUND_TRACE, CheckIfRequirementMet);
+        }
     }
     public override void DeactivateRequirement() {
         base.DeactivateRequirement();
-        Messenger.RemoveListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
+        Messenger.RemoveListener<ECS.Character, ECS.Item>(Signals.FOUND_ITEM, CheckIfRequirementMet);
+        if (includeTrace) {
+            Messenger.RemoveListener<ECS.Character, string>(Signals.FOUND_TRACE, CheckIfRequirementMet);
+        }
     }
     protected void CheckIfRequirementMet(ECS.Character character, ECS.Item item) {
         if (character.id == owner.id) {
             if (!item.itemName.Equals(neededItem)) {
+                return; //character did not find the right item
+            }
+            Debug.Log(owner.name + " has met requirements!: " + this.GetType().ToString());
+            //the character found the needed item
+            _isRequirementMet = true;
+            character.questData.CheckPhaseAdvancement();
+        }
+    }
+    protected void CheckIfRequirementMet(ECS.Character character, string item) {
+        if (character.id == owner.id) {
+            if (!item.Equals(neededItem)) {
                 return; //character did not find the right item
             }
             Debug.Log(owner.name + " has met requirements!: " + this.GetType().ToString());
@@ -108,7 +128,64 @@ public class MustFinishAllPhaseTasks : QuestPhaseRequirement {
             }
             //the character finished all the tasks
             _isRequirementMet = true;
+            owner.questData.CheckPhaseAdvancement();
+        }
+    }
+}
+
+public class MustKillCharacter : QuestPhaseRequirement {
+    private ECS.Character target;
+
+    public MustKillCharacter(ECS.Character target) : base() {
+        this.target = target;
+    }
+    public override void ActivateRequirement(ECS.Character owner) {
+        base.ActivateRequirement(owner);
+        Messenger.AddListener<ICombatInitializer, ECS.Character>(Signals.CHARACTER_KILLED, CheckIfRequirementMet);
+    }
+    public override void DeactivateRequirement() {
+        base.DeactivateRequirement();
+        Messenger.RemoveListener<ICombatInitializer, ECS.Character>(Signals.CHARACTER_KILLED, CheckIfRequirementMet);
+    }
+    protected void CheckIfRequirementMet(ICombatInitializer killer, ECS.Character characterThatDied) {
+        if (characterThatDied.id == target.id) {
+            if (killer is ECS.Character) {
+                if ((killer as ECS.Character).id == owner.id) {
+                    //the target has died
+                    _isRequirementMet = true;
+                    owner.questData.CheckPhaseAdvancement();
+                }
+            } else if (killer is Party) {
+                if ((killer as Party).partyMembers.Contains(owner)) {
+                    //the target has died
+                    _isRequirementMet = true;
+                    owner.questData.CheckPhaseAdvancement();
+                }
+            }
+        }
+    }
+}
+
+public class CharacterMustDie : QuestPhaseRequirement {
+    private ECS.Character target;
+
+    public CharacterMustDie(ECS.Character target) : base() {
+        this.target = target;
+    }
+    public override void ActivateRequirement(ECS.Character owner) {
+        base.ActivateRequirement(owner);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, CheckIfRequirementMet);
+    }
+    public override void DeactivateRequirement() {
+        base.DeactivateRequirement();
+        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, CheckIfRequirementMet);
+    }
+    protected void CheckIfRequirementMet(ECS.Character character) {
+        if (character.id == target.id) {
+            //the target has died
+            _isRequirementMet = true;
             character.questData.CheckPhaseAdvancement();
         }
     }
 }
+

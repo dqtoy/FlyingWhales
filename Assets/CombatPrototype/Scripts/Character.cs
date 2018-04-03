@@ -698,7 +698,7 @@ namespace ECS {
 		}
 
 		//Character's death
-		internal void Death(){
+		internal void Death(ICombatInitializer killer = null){
 			if(!_isDead){
 				_isDead = true;
 				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
@@ -776,6 +776,10 @@ namespace ECS {
 				}
                 onCharacterDeath = null;
                 Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
+                if (killer != null) {
+                    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
+                }
+
                 Debug.Log(this.name + " died!");
             }
 		}
