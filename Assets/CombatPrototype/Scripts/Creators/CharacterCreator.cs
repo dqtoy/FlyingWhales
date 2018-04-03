@@ -41,11 +41,15 @@ namespace ECS {
 			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("ECS.Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
 			characterComponent.optionalRole = (CHARACTER_ROLE)EditorGUILayout.EnumPopup("Optional Role: ", characterComponent.optionalRole);
 
-//			SerializedProperty serializedProperty = serializedObject.FindProperty("preEquippedItems");
-//			EditorGUILayout.PropertyField(serializedProperty, true);
-//			serializedObject.ApplyModifiedProperties();
+            SerializedProperty serializedTags = serializedObject.FindProperty("tags");
+            EditorGUILayout.PropertyField(serializedTags, true);
+            serializedObject.ApplyModifiedProperties();
 
-			characterComponent.itemFoldout = EditorGUILayout.Foldout(characterComponent.itemFoldout, "Pre-equipped Items");
+            //			SerializedProperty serializedProperty = serializedObject.FindProperty("preEquippedItems");
+            //			EditorGUILayout.PropertyField(serializedProperty, true);
+            //			serializedObject.ApplyModifiedProperties();
+
+            characterComponent.itemFoldout = EditorGUILayout.Foldout(characterComponent.itemFoldout, "Pre-equipped Items");
 
 			if (characterComponent.itemFoldout && characterComponent.preEquippedItems != null) {
 				EditorGUI.indentLevel++;
@@ -126,7 +130,8 @@ namespace ECS {
 			newCharacter.raceSettingName = characterComponent.raceSettingName;
 			newCharacter.characterClassName = characterComponent.characterClassName;
 			newCharacter.optionalRole = characterComponent.optionalRole;
-			newCharacter.preEquippedItems = characterComponent.preEquippedItems;
+            newCharacter.tags = characterComponent.tags;
+            newCharacter.preEquippedItems = characterComponent.preEquippedItems;
 
             return newCharacter;
         }

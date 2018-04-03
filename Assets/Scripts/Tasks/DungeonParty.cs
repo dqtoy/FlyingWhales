@@ -47,26 +47,26 @@ public class DungeonParty : Party {
 		}
 	}
 
-	public override void StartEncounter(Party encounteredBy){
-		this.encounteredByParty = encounteredBy;
-		ECS.CombatPrototype combat = new ECS.CombatPrototype (encounteredBy, this, this.currLocation);
-		combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
-		combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
-		CombatThreadPool.Instance.AddToThreadPool (combat);
-	}
+	//public override void StartEncounter(Party encounteredBy){
+	//	this.encounteredByParty = encounteredBy;
+	//	ECS.CombatPrototype combat = new ECS.CombatPrototype (encounteredBy, this, this.currLocation);
+	//	combat.AddCharacters (ECS.SIDES.A, encounteredBy.partyMembers);
+	//	combat.AddCharacters (ECS.SIDES.B, this._partyMembers);
+	//	CombatThreadPool.Instance.AddToThreadPool (combat);
+	//}
 
-	public override void ReturnResults (object result){
-		if(result is ECS.CombatPrototype){
-			ECS.CombatPrototype combat = (ECS.CombatPrototype)result;
-			encounteredByParty.currentTask.AddNewLogs(combat.resultsLog);
-			for (int i = 0; i < encounteredByParty.partyMembers.Count; i++) {
-				//encounteredByParty.partyMembers [i].AddHistory ("Encountered " + this._name + ".", combat);
-			}
-			//if(combat.charactersSideA.Count > 0) {
-			//	((OldQuest.Quest)encounteredByParty.currentTask).Result (true);
-			//} else {
-			//	((OldQuest.Quest)encounteredByParty.currentTask).Result (false);
-			//}
-		}
-	}
+	//public override void ReturnResults (object result){
+	//	if(result is ECS.CombatPrototype){
+	//		ECS.CombatPrototype combat = (ECS.CombatPrototype)result;
+	//		encounteredByParty.currentTask.AddNewLogs(combat.resultsLog);
+	//		for (int i = 0; i < encounteredByParty.partyMembers.Count; i++) {
+	//			//encounteredByParty.partyMembers [i].AddHistory ("Encountered " + this._name + ".", combat);
+	//		}
+	//		//if(combat.charactersSideA.Count > 0) {
+	//		//	((OldQuest.Quest)encounteredByParty.currentTask).Result (true);
+	//		//} else {
+	//		//	((OldQuest.Quest)encounteredByParty.currentTask).Result (false);
+	//		//}
+	//	}
+	//}
 }

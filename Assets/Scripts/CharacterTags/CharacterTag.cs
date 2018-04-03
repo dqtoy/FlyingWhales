@@ -57,6 +57,7 @@ public class CharacterTag {
     public virtual void OnRemoveTag() {
 		_isRemoved = true;
 	}
+    public virtual void PerformDailyAction() {}
 	#endregion
 
     public CharacterTask GetTask(TASK_TYPE taskType) {

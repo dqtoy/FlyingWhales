@@ -371,8 +371,11 @@ public class BaseLandmark : ILocation, TaskCreator {
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
-        if (charRole != CHARACTER_ROLE.FOLLOWER && determineAction) {
-            newCharacter.DetermineAction();
+        if (charRole != CHARACTER_ROLE.FOLLOWER) {
+            //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+            if (determineAction) {
+                newCharacter.DetermineAction();
+            }
         }
         UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
@@ -394,8 +397,36 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         AddCharacterToLocation(newCharacter);
         AddCharacterHomeOnLandmark(newCharacter);
+        //if (charRole != CHARACTER_ROLE.FOLLOWER) {
+        //    newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+        //}
         if (determineAction) {
             newCharacter.DetermineAction();
+        }
+        UIManager.Instance.UpdateFactionSummary();
+        return newCharacter;
+    }
+    /*
+     Create a new character, given a character setup name.
+         */
+    public Character CreateNewCharacter(RACE raceOfChar, string setupName, bool reduceCivilians = true, bool determineAction = true) {
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, 0, _owner);
+        //        newCharacter.AssignRole(charRole);
+        //newCharacter.SetFaction(_owner);
+        newCharacter.SetHome(this);
+        if (reduceCivilians) {
+            AdjustCivilians(raceOfChar, -1);
+        }
+        if (_owner != null) {
+            _owner.AddNewCharacter(newCharacter);
+        }
+        this.AddCharacterToLocation(newCharacter);
+        this.AddCharacterHomeOnLandmark(newCharacter);
+        if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
+            //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+            if (determineAction) {
+                newCharacter.DetermineAction();
+            }
         }
         UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
