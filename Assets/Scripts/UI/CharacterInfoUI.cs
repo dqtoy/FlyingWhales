@@ -56,6 +56,11 @@ public class CharacterInfoUI : UIMenu {
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);
+            logHistoryTable.Reposition();
+            historyScrollView.ResetPosition();
+        }
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            logHistoryItems[i].gameObject.SetActive(false);
         }
     }
 
@@ -302,16 +307,16 @@ public class CharacterInfoUI : UIMenu {
 		relationshipsScrollView.UpdatePosition();
 	}
 	private void UpdateHistoryInfo(){
-        bool shouldUpdateHistory = false;
-        //check if the currently showing landmark is already showing all its history
-        for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
-            Log currLog = currentlyShowingCharacter.history[i];
-            if (!IsLogAlreadyShown(currLog)) {
-                shouldUpdateHistory = true;
-                break; //there is a log that is not yet being shown, update
-            }
-        }
-        if (shouldUpdateHistory) {
+        //bool shouldUpdateHistory = false;
+        ////check if the currently showing landmark is already showing all its history
+        //for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
+        //    Log currLog = currentlyShowingCharacter.history[i];
+        //    if (!IsLogAlreadyShown(currLog)) {
+        //        shouldUpdateHistory = true;
+        //        break; //there is a log that is not yet being shown, update
+        //    }
+        //}
+        //if (shouldUpdateHistory) {
             for (int i = 0; i < logHistoryItems.Length; i++) {
                 LogHistoryItem currItem = logHistoryItems[i];
                 Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
@@ -331,19 +336,26 @@ public class CharacterInfoUI : UIMenu {
                 StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
                 StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
             }
-        }
+        //} 
+        //else {
+        //    if (currentlyShowingCharacter.history.Count <= 0) {
+        //        for (int i = 0; i < logHistoryItems.Length; i++) {
+        //            logHistoryItems[i].gameObject.SetActive(false);
+        //        }
+        //    }
+        //}
     }
-    private void RepositionHistoryScrollView() {
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            currItem.gameObject.SetActive(true);
-        }
-        StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            currItem.gameObject.SetActive(false);
-        }
-    }
+    //private void RepositionHistoryScrollView() {
+    //    for (int i = 0; i < logHistoryItems.Length; i++) {
+    //        LogHistoryItem currItem = logHistoryItems[i];
+    //        currItem.gameObject.SetActive(true);
+    //    }
+    //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+    //    for (int i = 0; i < logHistoryItems.Length; i++) {
+    //        LogHistoryItem currItem = logHistoryItems[i];
+    //        currItem.gameObject.SetActive(false);
+    //    }
+    //}
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];

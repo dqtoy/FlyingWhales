@@ -204,32 +204,24 @@ public class Party: IEncounterable, ICombatInitializer {
         if(member.avatar != null) {
 			member.avatar.RemoveCharacter(member);
         }
-		////If party is unaligned, change party leader immediately if party leader died
-		//if(faction == null && member.id == _partyLeader.id && _partyMembers.Count > 0){
-		//	_partyLeader = _partyMembers[0];
-		//}
 
-        if (!forDeath) { //If the member was removed from party, but did not die
-			this.specificLocation.AddCharacterToLocation(member);
-            Debug.Log(member.name + " has left the party of " + partyLeader.name);
-            //if (currentTask != null && _currentTask.taskType == TASK_TYPE.QUEST) {
-            //    ((OldQuest.Quest)currentTask).AddNewLog(member.name + " has left the party");
-            //}
-		}
-        
         member.SetParty(null);
-		member.SetCurrentTask (null);
+		member.SetCurrentTask(null);
 		if(member.isFollower){
 			member.SetFollowerState (false);
-//			member.isFollowerOf.RemoveFollower (member);
 			Settlement settlement = member.GetNearestSettlementFromFaction();
-			if (settlement == null) {
-				//TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
-				throw new Exception(member.name + " cannot find a settlement from his/her faction!");
-			}
-			//will go back to the nearest settlement of their faction
-			settlement.AdjustCivilians(member.raceSetting.race, 1);
-		}
+			if (settlement != null) {
+				////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
+				//throw new Exception(member.name + " cannot find a settlement from his/her faction!");
+                //will go back to the nearest settlement of their faction
+                settlement.AdjustCivilians(member.raceSetting.race, 1);
+            }
+        } else {
+            if (!forDeath) { //If the member was removed from party, but did not die
+                this.specificLocation.AddCharacterToLocation(member);
+                Debug.Log(member.name + " has left the party of " + partyLeader.name);
+            }
+        }
 		if (_partyMembers.Count <= 0 || member.id == _partyLeader.id) {
             //JustDisbandParty ();
             DisbandParty();
@@ -258,12 +250,6 @@ public class Party: IEncounterable, ICombatInitializer {
         if (!partyLeader.isDead) {
             RemovePartyMember(partyLeader);
         }
-		//if (_currentTask != null) {
-		//	if (!_currentTask.isDone) {
-		//		_currentTask.EndTask(TASK_STATUS.CANCEL); //Cancel OldQuest.Quest if party is currently on a quest
-		//	}
-		//}
-		//SetCurrentTask (null);
 
         //if this party has any prisoners
         for (int i = 0; i < _prisoners.Count; i++) {
@@ -272,16 +258,17 @@ public class Party: IEncounterable, ICombatInitializer {
             if (currPrisoner.isFollower) {
                 //if they are just followers
                 Settlement settlement = currPrisoner.GetNearestSettlementFromFaction();
-                if (settlement == null) {
-                    //TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
-                    throw new Exception(currPrisoner.name + " cannot find a settlement from his/her faction!");
+                if (settlement != null) {
+                    ////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
+                    //throw new Exception(currPrisoner.name + " cannot find a settlement from his/her faction!");
+                    //convert them to civilians of the nearest settlement of their faction
+                    settlement.AdjustCivilians(currPrisoner.raceSetting.race, 1);
                 }
-                //convert them to civilians of the nearest settlement of their faction
-                settlement.AdjustCivilians(currPrisoner.raceSetting.race, 1);
             } else {
                 //if they are not followers
                 //let them decide again, since they were set free
-                currPrisoner.SetSpecificLocation(specificLocation);
+                specificLocation.AddCharacterToLocation(currPrisoner);
+                //currPrisoner.SetSpecificLocation(specificLocation);
                 currPrisoner.DetermineAction();
             }
         }
@@ -303,7 +290,6 @@ public class Party: IEncounterable, ICombatInitializer {
 		while(_partyMembers.Count > 0){
 			RemovePartyMember (_partyMembers [0]);
 		}
-
 		this.specificLocation.RemoveCharacterFromLocation (this);
     }
     #endregion

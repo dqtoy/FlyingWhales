@@ -334,6 +334,14 @@ public class GridMap : MonoBehaviour {
             }
         }
 
+        ////check if all tiles have a region
+        //for (int i = 0; i < allHexTiles.Count; i++) {
+        //    HexTile currHexTile = allHexTiles[i];
+        //    if (currHexTile.region == null) {
+        //        throw new System.Exception(currHexTile.name + "'s region is null!");
+        //    }
+        //}
+
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
             currRegion.RevalidateCenterOfMass();
