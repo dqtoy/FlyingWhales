@@ -127,7 +127,7 @@ public class SearchState : State {
 		if(!hasBeenFound){
 			CheckTraces (itemName, "item");
 		} else {
-			Messenger.Broadcast(Signals.FOUND_ITEM, itemName);
+			Messenger.Broadcast(Signals.FOUND_ITEM, _assignedCharacter, itemName);
 		}
     }
     #endregion
