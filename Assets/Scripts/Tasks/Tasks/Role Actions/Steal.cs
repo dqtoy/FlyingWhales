@@ -109,6 +109,10 @@ public class Steal : CharacterTask {
 				}else if(initializer.mainCharacter.faction.id != character.faction.id){
 					weight += 100;
 				}
+				Relationship relationship = character.GetRelationshipWith (initializer.mainCharacter);
+				if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
+					weight += 100;
+				}
 				if(weight > 0){
 					_characterWeights.AddElement (initializer.mainCharacter, weight);
 				}
