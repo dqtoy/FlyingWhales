@@ -27,29 +27,9 @@ public class EventLabel : MonoBehaviour {
                     UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
                 } else if (lf.obj is BaseLandmark) {
                     UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
+                } else if (lf.obj is ECS.CombatPrototype) {
+                    UIManager.Instance.ShowCombatLog(lf.obj as ECS.CombatPrototype);
                 }
-                //if (lf.obj is City) {
-                //                //UIManager.Instance.ShowCityInfo ((City)lf.obj);
-                //                City currCity = (City)lf.obj;
-                //                if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
-                //                    CameraMove.Instance.CenterCameraOn(currCity.hexTile.gameObject);
-                //                }
-                //                //UIManager.Instance.SetKingdomAsSelected(((City)lf.obj).kingdom);
-                //} else if (lf.obj is Citizen) {
-                //	UIManager.Instance.ShowCitizenInfo ((Citizen)lf.obj);
-                //} else if (lf.obj is Kingdom) {
-                //                Kingdom currKingdom = (Kingdom)lf.obj;
-                //                for (int i = 0; i < currKingdom.cities.Count; i++) {
-                //                    City currCity = currKingdom.cities[i];
-                //                    if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
-                //                        CameraMove.Instance.CenterCameraOn(currKingdom.capitalCity.hexTile.gameObject);
-                //                        break;
-                //                    }
-                //                }
-                //                //UIManager.Instance.SetKingdomAsSelected ();
-                //} else if (lf.obj is GameEvent) {
-                //	UIManager.Instance.ShowEventLogs (lf.obj);
-                //}
             }
 		}
 	}

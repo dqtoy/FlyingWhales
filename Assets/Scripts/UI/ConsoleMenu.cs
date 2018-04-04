@@ -27,8 +27,9 @@ public class ConsoleMenu : UIMenu {
             //{"/quest_cancel", CancelQuest},
             {"/adjust_gold", AdjustGold},
             {"/lfli", LogFactionLandmarkInfo},
-            {"/log_actions", LogCharacterActions }
+            {"/log_actions", LogCharacterActions },
             //{"/adjust_resources", AdjustResources}
+            {"/center_character", CenterOnCharacter},
         };
     }
 
@@ -302,6 +303,36 @@ public class ConsoleMenu : UIMenu {
         }
         Debug.Log(detailedText);
         AddSuccessMessage(text);
+    }
+    private void CenterOnCharacter(string[] parameters) {
+        if (parameters.Length < 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string characterParameterString = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            characterParameterString += parameters[i];
+            if (i + 1 < parameters.Length) {
+                characterParameterString += " ";
+            }
+        }
+        int characterID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        UIManager.Instance.ShowCharacterInfo(character);
+        //character.CenterOnCharacter();
     }
     #endregion
 

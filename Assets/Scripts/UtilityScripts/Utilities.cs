@@ -781,7 +781,7 @@ public class Utilities : MonoBehaviour {
         {"107", LOG_IDENTIFIER.ITEM_1},
         {"108", LOG_IDENTIFIER.ITEM_2},
         {"109", LOG_IDENTIFIER.ITEM_3},
-		//{"110", LOG_IDENTIFIER.WAR_NAME},
+        {"110", LOG_IDENTIFIER.COMBAT},
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
     public static bool AreLogsTheSame(Log log1, Log log2) {

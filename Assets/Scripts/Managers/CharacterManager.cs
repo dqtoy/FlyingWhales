@@ -377,5 +377,14 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
+    public Character GetCharacterByName(string name) {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currChar = allCharacters[i];
+            if (currChar.name.Equals(name)) {
+                return currChar;
+            }
+        }
+        return null;
+    }
     #endregion
 }

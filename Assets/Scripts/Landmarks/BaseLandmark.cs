@@ -875,6 +875,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
         combatLog.AddToFillers(combatant1, combatant1Name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
         combatLog.AddToFillers(combatant2, combatant2Name, LOG_IDENTIFIER.TARGET_CHARACTER);
         AddHistory(combatLog);
         combatant1.mainCharacter.AddHistory(combatLog);

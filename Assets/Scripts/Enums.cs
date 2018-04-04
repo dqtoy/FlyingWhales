@@ -603,7 +603,7 @@ public enum LOG_IDENTIFIER{
     ITEM_1,
     ITEM_2,
     ITEM_3,
-    //WAR_NAME,
+    COMBAT,
     //PARTY_NAME,
     OTHER,
 }
