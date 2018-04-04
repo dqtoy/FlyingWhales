@@ -367,6 +367,9 @@ namespace ECS {
 		public Dictionary<Character, List<string>> traceInfo{
 			get { return _traceInfo; }
 		}
+		public COMBAT_INTENT combatIntent{
+			get { return (_currentTask == null ? COMBAT_INTENT.DEFEAT : _currentTask.currentState.combatIntent); }
+		}
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
