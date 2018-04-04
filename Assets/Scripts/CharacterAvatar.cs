@@ -19,7 +19,7 @@ public class CharacterAvatar : PooledObject{
 	protected List<ECS.Character> _characters;
     protected ECS.Character _mainCharacter;
 
-	protected ILocation _specificLocation;
+    protected ILocation _specificLocation;
     protected ILocation targetLocation;
 
 	protected List<HexTile> path;
@@ -51,7 +51,7 @@ public class CharacterAvatar : PooledObject{
         _characters = new List<ECS.Character>();
         AddNewCharacter(character);
         _mainCharacter = character;
-		_specificLocation = character.specificLocation;
+        _specificLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
     }
@@ -62,7 +62,7 @@ public class CharacterAvatar : PooledObject{
             AddNewCharacter(party.partyMembers[i]);
         }
         _mainCharacter = party.partyLeader;
-		_specificLocation = party.specificLocation;
+        _specificLocation = party.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
     }
@@ -147,7 +147,6 @@ public class CharacterAvatar : PooledObject{
                 return; //the current pathfinding request and the thread that returned the path are not the same
             }
         }
-        
         if (path == null) {
             throw new Exception(_characters[0].name + "'s Avatar. There is no path from " + this.specificLocation.tileLocation.name + " to " + targetLocation.tileLocation.name);
         }
@@ -181,12 +180,12 @@ public class CharacterAvatar : PooledObject{
 //			_characters[0].SetCurrentFunction (() => NewMove ());
 //			return;
 //		}
-
         if (this.targetLocation != null) {
             if (this.path != null) {
                 if (this.path.Count > 0) {
 					this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
-                    //RemoveCharactersFromLocation(this.currLocation); //TODO: Only remove once character has actually exited the tile
+                    RemoveCharactersFromLocation(this.specificLocation);
+                    AddCharactersToLocation(this.specificLocation.tileLocation);
                 }
             }
         }
@@ -211,10 +210,10 @@ public class CharacterAvatar : PooledObject{
 			Debug.LogError ("Location: " + specificLocation.locationName);
 		}
         if (this.path.Count > 0) {
-			RemoveCharactersFromLocation(this.specificLocation);
+            RemoveCharactersFromLocation(this.specificLocation);
             AddCharactersToLocation(this.path[0]);
 
-			_specificLocation = this.path[0];
+			//_specificLocation = this.path[0];
             this.path.RemoveAt(0);
         }
         //RevealRoads();
@@ -226,7 +225,7 @@ public class CharacterAvatar : PooledObject{
             if (!this._hasArrived) {
                 _isTravelling = false;
                 AddCharactersToLocation(targetLocation);
-				_specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
+                _specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
                 if (_mainCharacter.currentTask == null) {
                     throw new Exception(_mainCharacter.name + "'s task is null!");
                 }
@@ -326,7 +325,8 @@ public class CharacterAvatar : PooledObject{
         UIManager.Instance.UpdateLandmarkInfo();
     }
 	protected void AddCharactersToLocation(ILocation location) {
-		if(_characters[0].party == null){
+        _specificLocation = location;
+        if (_characters[0].party == null){
 			location.AddCharacterToLocation(_characters[0]);
 //			for (int i = 0; i < _characters.Count; i++) {
 //				ECS.Character currCharacter = _characters[i];
@@ -377,7 +377,7 @@ public class CharacterAvatar : PooledObject{
         smoothMovement.Reset();
         onPathFinished = null;
         direction = DIRECTION.LEFT;
-		_specificLocation = null;
+		//_specificLocation = null;
         targetLocation = null;
         path = null;
         _hasArrived = false;

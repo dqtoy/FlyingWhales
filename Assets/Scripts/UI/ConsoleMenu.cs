@@ -30,6 +30,7 @@ public class ConsoleMenu : UIMenu {
             {"/log_actions", LogCharacterActions },
             //{"/adjust_resources", AdjustResources}
             {"/center_character", CenterOnCharacter},
+            {"/center_landmark", CenterOnLandmark },
         };
     }
 
@@ -173,64 +174,97 @@ public class ConsoleMenu : UIMenu {
     }
     #endregion
 
-   // #region Quests
-   // private void AcceptQuest(string[] parameters) {
-   //     if (parameters.Length != 3) {
-   //         AddCommandHistory(consoleLbl.text);
-   //         AddErrorMessage("There was an error in the command format of /force_accept_quest");
-   //         return;
-   //     }
-   //     string questParameterString = parameters[1];
-   //     string characterParameterString = parameters[2];
+    #region Landmarks
+    private void CenterOnLandmark(string[] parameters) {
+        if (parameters.Length < 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string landmarkParameterString = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            landmarkParameterString += parameters[i];
+            if (i + 1 < parameters.Length) {
+                landmarkParameterString += " ";
+            }
+        }
+        int landmarkID;
 
-   //     int questID;
-   //     int characterID;
+        bool isLandmarkParameterNumeric = int.TryParse(landmarkParameterString, out landmarkID);
+        BaseLandmark landmark = null;
+        if (isLandmarkParameterNumeric) {
+            landmark = LandmarkManager.Instance.GetLandmarkByID(landmarkID);
+        } else {
+            landmark = LandmarkManager.Instance.GetLandmarkByName(landmarkParameterString);
+        }
 
-   //     bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
-   //     bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        if (landmark == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        UIManager.Instance.ShowLandmarkInfo(landmark);
+        //character.CenterOnCharacter();
+    }
+    #endregion
 
-   //     if (isQuestParameterNumeric && isCharacterParameterNumeric) {
-   //         OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
-   //         ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
+    // #region Quests
+    // private void AcceptQuest(string[] parameters) {
+    //     if (parameters.Length != 3) {
+    //         AddCommandHistory(consoleLbl.text);
+    //         AddErrorMessage("There was an error in the command format of /force_accept_quest");
+    //         return;
+    //     }
+    //     string questParameterString = parameters[1];
+    //     string characterParameterString = parameters[2];
 
-   //         if(character.currentTask != null) {
-   //             character.SetTaskToDoNext(quest);
-   //             //cancel character's current quest
-   //             character.currentTask.EndTask(TASK_STATUS.CANCEL);
-   //         } else {
-			//	quest.OnChooseTask (character);
-   //             quest.PerformTask();
-   //         }
-            
+    //     int questID;
+    //     int characterID;
 
-   //         AddSuccessMessage(character.name + " has accepted quest " + quest.questName);
-   //     } else {
-   //         AddCommandHistory(consoleLbl.text);
-   //         AddErrorMessage("There was an error in the command format of /force_accept_quest");
-   //     }
-   // }
-   // private void CancelQuest(string[] parameters) {
-   //     if (parameters.Length != 2) {
-   //         AddCommandHistory(consoleLbl.text);
-   //         AddErrorMessage("There was an error in the command format of /quest_cancel");
-   //         return;
-   //     }
-   //     string questParameterString = parameters[1];
+    //     bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
+    //     bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
 
-   //     int questID;
+    //     if (isQuestParameterNumeric && isCharacterParameterNumeric) {
+    //         OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
+    //         ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
 
-   //     bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
-   //     if (isQuestParameterNumeric) {
-   //         OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
-   //         quest.GoBackToQuestGiver(TASK_STATUS.CANCEL);
+    //         if(character.currentTask != null) {
+    //             character.SetTaskToDoNext(quest);
+    //             //cancel character's current quest
+    //             character.currentTask.EndTask(TASK_STATUS.CANCEL);
+    //         } else {
+    //	quest.OnChooseTask (character);
+    //             quest.PerformTask();
+    //         }
 
-			//AddSuccessMessage(quest.questName + " quest posted at " + quest.postedAt.tileLocation.name + " was cancelled.");
-   //     } else {
-   //         AddCommandHistory(consoleLbl.text);
-   //         AddErrorMessage("There was an error in the command format of /cancel_quest");
-   //     }
-   // }
-   // #endregion
+
+    //         AddSuccessMessage(character.name + " has accepted quest " + quest.questName);
+    //     } else {
+    //         AddCommandHistory(consoleLbl.text);
+    //         AddErrorMessage("There was an error in the command format of /force_accept_quest");
+    //     }
+    // }
+    // private void CancelQuest(string[] parameters) {
+    //     if (parameters.Length != 2) {
+    //         AddCommandHistory(consoleLbl.text);
+    //         AddErrorMessage("There was an error in the command format of /quest_cancel");
+    //         return;
+    //     }
+    //     string questParameterString = parameters[1];
+
+    //     int questID;
+
+    //     bool isQuestParameterNumeric = int.TryParse(questParameterString, out questID);
+    //     if (isQuestParameterNumeric) {
+    //         OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
+    //         quest.GoBackToQuestGiver(TASK_STATUS.CANCEL);
+
+    //AddSuccessMessage(quest.questName + " quest posted at " + quest.postedAt.tileLocation.name + " was cancelled.");
+    //     } else {
+    //         AddCommandHistory(consoleLbl.text);
+    //         AddErrorMessage("There was an error in the command format of /cancel_quest");
+    //     }
+    // }
+    // #endregion
 
     #region Characters
     private void KillCharacter(string[] parameters) {

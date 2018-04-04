@@ -432,12 +432,12 @@ public class RoadManager : MonoBehaviour {
         region2.AddConnection(region1);
         region1.centerOfMass.landmarkOnTile.AddConnection(region2.centerOfMass.landmarkOnTile);
         region2.centerOfMass.landmarkOnTile.AddConnection(region1.centerOfMass.landmarkOnTile);
-        if (region1.connections.Count > RoadManager.Instance.maxCityConnections) {
-            throw new System.Exception("Exceeded maximum connections!");
-        }
-        if (region2.connections.Count > RoadManager.Instance.maxCityConnections) {
-            throw new System.Exception("Exceeded maximum connections!");
-        }
+        //if (region1.connections.Count > RoadManager.Instance.maxCityConnections) {
+        //    throw new System.Exception("Exceeded maximum connections!");
+        //}
+        //if (region2.connections.Count > RoadManager.Instance.maxCityConnections) {
+        //    throw new System.Exception("Exceeded maximum connections!");
+        //}
         //List<HexTile> connection = PathGenerator.Instance.GetPath(region1.centerOfMass, region2.centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
         //if(connection == null) {
         //    throw new System.Exception("Cannot connect " + region1.centerOfMass.name + " to " + region2.centerOfMass.name);

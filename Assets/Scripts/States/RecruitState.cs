@@ -47,7 +47,7 @@ public class RecruitState : State {
 	}
 	private WeightedDictionary<string> GetRecruitmentDictionary(BaseLandmark location) {
 		int createWeight = 100; //100 Base Weight to Create New Follower
-		int noCreateWeight = 200; //200 Base Weight to Not Create New Follower
+		int noCreateWeight = 500; //200 Base Weight to Not Create New Follower
 		WeightedDictionary<string> recruitActions = new WeightedDictionary<string>();
 
 
