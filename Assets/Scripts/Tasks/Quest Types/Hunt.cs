@@ -36,6 +36,7 @@ public class Hunt : Quest {
 				return true;
 			}
 		}
+		return false;
 	}
 	#endregion
 }
