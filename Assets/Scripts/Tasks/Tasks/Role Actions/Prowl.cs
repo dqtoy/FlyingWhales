@@ -14,7 +14,7 @@ public class Prowl : CharacterTask {
 
     #region overrides
     public override CharacterTask CloneTask() {
-        MoveTo clonedTask = new MoveTo(_createdBy, _defaultDaysLeft, _parentQuest, _stance);
+		Prowl clonedTask = new Prowl(_createdBy, _defaultDaysLeft, _parentQuest, _stance);
         clonedTask.SetForGameOnly(_forGameOnly);
         clonedTask.SetForPlayerOnly(_forPlayerOnly);
         return clonedTask;

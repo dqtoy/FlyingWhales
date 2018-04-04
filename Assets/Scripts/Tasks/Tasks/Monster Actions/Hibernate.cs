@@ -71,15 +71,15 @@ public class Hibernate : CharacterTask {
 		int weight = 0;
 		for (int i = 0; i < character.currentRegion.allLandmarks.Count; i++) {
 			BaseLandmark landmark = character.currentRegion.allLandmarks [i];
-			weight = 5;
+			weight = 300;
 			if(!landmark.HasHostilitiesWith(character)){
-				weight += 100;
+				weight += 50;
 			}
 			if(landmark.charactersAtLocation.Count <= 0){
-				weight += 200;
+				weight += 100;
 			}
 			if(landmark.id == character.home.id){
-				weight += 400;
+				weight += 1000;
 			}
 			_landmarkWeights.AddElement (landmark, weight);
 		}
@@ -87,15 +87,15 @@ public class Hibernate : CharacterTask {
 			Region adjacentRegion = character.currentRegion.adjacentRegionsViaMajorRoad [i];
 			for (int j = 0; j < adjacentRegion.allLandmarks.Count; j++) {
 				BaseLandmark landmark = character.currentRegion.allLandmarks [i];
-				weight = 5;
+				weight = 50;
 				if(!landmark.HasHostilitiesWith(character)){
-					weight += 100;
+					weight += 50;
 				}
 				if(landmark.charactersAtLocation.Count <= 0){
-					weight += 200;
+					weight += 100;
 				}
 				if(landmark.id == character.home.id){
-					weight += 400;
+					weight += 1000;
 				}
 				_landmarkWeights.AddElement (landmark, weight);
 			}

@@ -15,10 +15,13 @@ public class EliminateLostHeir : Quest {
 		_chieftain = chieftain;
 		_falseHeir = falseHeir;
 		_lostHeir = lostHeir;
+
 		_filters = new TaskFilter[] {
 			new MustBeFaction((createdBy as Character).faction),
 			new MustNotBeCharacter(falseHeir)
 		};
+
+		Item heirloomNecklace = (StorylineManager.Instance.GetStorylineData (STORYLINE.LOST_HEIR) as TheLostHeirData).heirloomNecklace;
 			
 		QuestPhase phase1 = new QuestPhase(this, "Search for Heirloom Necklace");
 		phase1.AddTask(new Search(createdBy, 5, "Heirloom Necklace", null, this));
@@ -26,9 +29,7 @@ public class EliminateLostHeir : Quest {
 
         QuestPhase phase2 = new QuestPhase(this, "Attack " + _lostHeir.name + "!");
 		phase2.AddTask(new Attack(createdBy, _lostHeir, 5, this));
-        MoveTo moveTo = new MoveTo (createdBy, -1, this);
-		moveTo.SetForGameOnly (true);
-		phase2.AddTask(moveTo);
+		phase2.AddTask(new MoveTowardsCharacter (createdBy, heirloomNecklace, -1, this));
         phase2.AddPhaseRequirement(new MustKillCharacter(_lostHeir));
 
         QuestPhase phase3 = new QuestPhase(this, "Report to the Successor");

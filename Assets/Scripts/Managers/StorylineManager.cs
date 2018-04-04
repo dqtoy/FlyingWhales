@@ -20,6 +20,7 @@ public class StorylineManager : MonoBehaviour {
         activeStorylines = new List<StorylineData>();
     }
 
+	#region Utilities
     public void GenerateStoryLines() {
         foreach (KeyValuePair<STORYLINE, bool> kvp in storylineDict) {
             StorylineData createdData = null;
@@ -43,6 +44,16 @@ public class StorylineManager : MonoBehaviour {
         }
         UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
     }
+
+	public StorylineData GetStorylineData(STORYLINE storyline){
+		for (int i = 0; i < activeStorylines.Count; i++) {
+			if(activeStorylines[i].storyline == storyline){
+				return activeStorylines [i];
+			}
+		}
+		return null;
+	}
+	#endregion
 
 	#region Lost Heir
     //private void TriggerLostHeir() {

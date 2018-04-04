@@ -988,6 +988,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
 	STEAL,
     PROWL,
 	ATTACK_ENEMY,
+	MOVE_TOWARDS_CHARACTER,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,

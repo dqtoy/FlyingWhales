@@ -8,20 +8,15 @@ public class MoveTo : CharacterTask {
 
     #region getters/setters
     public HexTile targetTile {
-        get {
-			if (_targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-				return (_targetLocation as BaseLandmark).tileLocation;
-            } else {
-                return (_targetLocation as HexTile);
-            }
-        }
+		get { return _targetLocation.tileLocation; }
     }
     #endregion
 
-	public MoveTo(TaskCreator createdBy, int defaultDaysLeft = -1, Quest parentQuest = null, STANCE stance = STANCE.NEUTRAL) 
-        : base(createdBy, TASK_TYPE.MOVE_TO, stance, defaultDaysLeft, parentQuest) {
+	public MoveTo(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) 
+        : base(createdBy, TASK_TYPE.MOVE_TO, stance, defaultDaysLeft) {
 		//_forPlayerOnly = true;
         //_actionString = "to visit";
+
 		_states = new System.Collections.Generic.Dictionary<STATE, State> {
 			{ STATE.MOVE, new MoveState (this) }
 		};
@@ -29,7 +24,7 @@ public class MoveTo : CharacterTask {
 
     #region overrides
 	public override CharacterTask CloneTask (){
-		MoveTo clonedTask = new MoveTo(_createdBy, _defaultDaysLeft, _parentQuest, _stance);
+		MoveTo clonedTask = new MoveTo(_createdBy, _defaultDaysLeft, _stance);
 		clonedTask.SetForGameOnly (_forGameOnly);
 		clonedTask.SetForPlayerOnly (_forPlayerOnly);
 		return clonedTask;
@@ -64,49 +59,29 @@ public class MoveTo : CharacterTask {
 		return true;
 	}
     public override int GetSelectionWeight(Character character) {
-		if(_parentQuest != null){
-			if(_parentQuest is FindLostHeir || _parentQuest is EliminateLostHeir){
-				Character characterLookingFor = character.GetCharacterFromTraceInfo ("Heirloom Necklace");
-				if(characterLookingFor != null){
-					for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
-						if(character.currentRegion.adjacentRegionsViaMajorRoad[i].id == characterLookingFor.currentRegion.id){
-							return 50;
-						}
-					}
-				}
-				return 0;
-			}
-		}
         return 30;
     }
     protected override BaseLandmark GetLandmarkTarget(Character character) {
         base.GetLandmarkTarget(character);
         Region regionOfChar = character.specificLocation.tileLocation.region;
-        for (int i = 0; i < regionOfChar.adjacentRegionsViaMajorRoad.Count; i++) {
-			Region adjacentRegion = regionOfChar.adjacentRegionsViaMajorRoad[i];
-            int weight = 50 +  (50 * adjacentRegion.adjacentRegionsViaMajorRoad.Where(x => x.id != regionOfChar.id).Count()); //Each Adjacent Settlement: 50 + (50 x NoAdjacentSettlements)
-            if (adjacentRegion.mainLandmark.HasHostilitiesWith(character.faction, true)) {
-                weight -= 50; //If Adjacent Settlement is hostile: -30
-            }
-            if (adjacentRegion.mainLandmark.owner != null) {
-                if (adjacentRegion.mainLandmark.owner.id == character.id) {
-                    weight += 30; //If Adjacent Settlement is owned by my faction: +30
-                }
-            } else {
-                weight -= 20; //If Adjacent Settlement is unoccupied: -20
-            }
-
-			if (_parentQuest != null && (_parentQuest is FindLostHeir || _parentQuest is EliminateLostHeir)) {
-				Character characterLookingFor = character.GetCharacterFromTraceInfo ("Heirloom Necklace");
-				if (characterLookingFor != null && characterLookingFor.currentRegion.id == adjacentRegion.id) {
-					weight += 100;
+		for (int i = 0; i < regionOfChar.adjacentRegionsViaMajorRoad.Count; i++) {
+			Region adjacentRegion = regionOfChar.adjacentRegionsViaMajorRoad [i];
+			int weight = 50 + (50 * adjacentRegion.adjacentRegionsViaMajorRoad.Where (x => x.id != regionOfChar.id).Count ()); //Each Adjacent Settlement: 50 + (50 x NoAdjacentSettlements)
+			if (adjacentRegion.mainLandmark.HasHostilitiesWith (character.faction, true)) {
+				weight -= 50; //If Adjacent Settlement is hostile: -30
+			}
+			if (adjacentRegion.mainLandmark.owner != null) {
+				if (adjacentRegion.mainLandmark.owner.id == character.id) {
+					weight += 30; //If Adjacent Settlement is owned by my faction: +30
 				}
+			} else {
+				weight -= 20; //If Adjacent Settlement is unoccupied: -20
 			}
 
-            if (weight > 0) {
-                _landmarkWeights.AddElement(adjacentRegion.mainLandmark, weight);
-            }
-        }
+			if (weight > 0) {
+				_landmarkWeights.AddElement (adjacentRegion.mainLandmark, weight);
+			}
+		}
         LogTargetWeights(_landmarkWeights);
         if (_landmarkWeights.GetTotalOfWeights() > 0){
 			return _landmarkWeights.PickRandomElementGivenWeights ();
