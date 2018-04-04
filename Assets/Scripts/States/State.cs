@@ -10,6 +10,7 @@ public class State {
 	protected Character _assignedCharacter;
 	protected BaseLandmark _targetLandmark;
 	protected bool _isHalted;
+	protected COMBAT_INTENT _combatIntent;
 
 	#region getters/setters
 	public string stateName{
@@ -23,6 +24,9 @@ public class State {
 	}
 	public bool isHalted{
 		get { return _isHalted; }
+	}
+	public COMBAT_INTENT combatIntent{
+		get { return _combatIntent; }
 	}
 	#endregion
 

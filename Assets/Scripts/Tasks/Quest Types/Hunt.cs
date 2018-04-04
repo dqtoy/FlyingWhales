@@ -7,8 +7,9 @@ public class Hunt : Quest {
 	private Character _targetCharacter;
 
 	public Hunt(TaskCreator createdBy, Character target) : base(createdBy, QUEST_TYPE.HUNT) {
-		_questName = "Hunt " + target.name;
 		_targetCharacter = target;
+		_questName = "Hunt " + _targetCharacter.name;
+		_questURLName = "Hunt " + _targetCharacter.urlName;
 
 		_alignment = new List<ACTION_ALIGNMENT>() {
 			ACTION_ALIGNMENT.LAWFUL,
@@ -27,4 +28,15 @@ public class Hunt : Quest {
 		_targetCharacter.AddActionOnDeath (ForceCancelQuest);
 		_targetCharacter.AddActionOnImprison (ForceCancelQuest);
 	}
+
+	#region Overrides
+	public override bool CanAcceptQuest (Character character){
+		if (base.CanAcceptQuest (character)) {
+			if(character.currentRegion.id == _targetCharacter.currentRegion.id || character.currentRegion.adjacentRegionsViaMajorRoad.Contains(_targetCharacter.currentRegion)){
+				return true;
+			}
+		}
+		return false;
+	}
+	#endregion
 }

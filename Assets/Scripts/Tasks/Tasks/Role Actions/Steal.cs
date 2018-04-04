@@ -98,16 +98,20 @@ public class Steal : CharacterTask {
 					Party party = initializer as Party;
 					for (int k = 0; k < party.partyMembers.Count; k++) {
 						Character currCharacter = party.partyMembers [k];
-						weight += (currCharacter.inventory.Count * 10);
+						weight += (currCharacter.inventory.Count * 30);
 					}
 				}else if(initializer is Character){
 					Character currCharacter = initializer as Character;
-					weight += (currCharacter.inventory.Count * 10);
+					weight += (currCharacter.inventory.Count * 30);
 				}
 				if(initializer.mainCharacter.faction == null || character.faction == null){
-					weight += 100;
+					weight += 20;
 				}else if(initializer.mainCharacter.faction.id != character.faction.id){
-					weight += 100;
+					weight += 20;
+				}
+				Relationship relationship = character.GetRelationshipWith (initializer.mainCharacter);
+				if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
+					weight += 50;
 				}
 				if(weight > 0){
 					_characterWeights.AddElement (initializer.mainCharacter, weight);

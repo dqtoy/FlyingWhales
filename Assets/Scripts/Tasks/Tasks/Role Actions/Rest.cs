@@ -67,7 +67,7 @@ public class Rest : CharacterTask {
 		//Debug.Log(_assignedCharacter.name + " and party has finished resting on " + Utilities.GetDateString(GameManager.Instance.Today()));
 	}
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null){
+		if(location.tileLocation.landmarkOnTile != null && character.currentHP < character.maxHP){
 			if(character.faction == null){
 				BaseLandmark home = character.home;
 				if(home == null){
@@ -87,17 +87,19 @@ public class Rest : CharacterTask {
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		if(character.faction == null){
-			BaseLandmark home = character.home;
-			if(home == null){
-				home = character.lair;
-			}
-			if(home != null){
-				return true;
-			}
-		}else{
-			if(character.faction.settlements.Count > 0){
-				return true;
+		if(character.currentHP < character.maxHP){
+			if(character.faction == null){
+				BaseLandmark home = character.home;
+				if(home == null){
+					home = character.lair;
+				}
+				if(home != null){
+					return true;
+				}
+			}else{
+				if(character.faction.settlements.Count > 0){
+					return true;
+				}
 			}
 		}
 		return base.AreConditionsMet (character);

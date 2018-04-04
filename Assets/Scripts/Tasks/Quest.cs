@@ -38,6 +38,9 @@ public class Quest {
     public string questName {
         get { return _questName; }
     }
+	public string questURLName {
+		get { return _questURLName; }
+	}
     public QUEST_TYPE questType {
         get { return _questType; }
     }
@@ -57,6 +60,7 @@ public class Quest {
         _createdBy = createdBy;
         _questType = questType;
 		_questName = Utilities.NormalizeStringUpperCaseFirstLetters (_questType.ToString ());
+		_questURLName = _questName;
         _alignment = new List<ACTION_ALIGNMENT>();
         _acceptedCharacters = new List<Character>();
         _phases = new List<QuestPhase>();
