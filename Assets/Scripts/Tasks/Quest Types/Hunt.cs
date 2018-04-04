@@ -7,9 +7,9 @@ public class Hunt : Quest {
 	private Character _targetCharacter;
 
 	public Hunt(TaskCreator createdBy, Character target) : base(createdBy, QUEST_TYPE.HUNT) {
-		_questName = "Hunt " + target.name;
-		_questURLName = "Hunt " + target.urlName;
 		_targetCharacter = target;
+		_questName = "Hunt " + _targetCharacter.name;
+		_questURLName = "Hunt " + _targetCharacter.urlName;
 
 		_alignment = new List<ACTION_ALIGNMENT>() {
 			ACTION_ALIGNMENT.LAWFUL,
