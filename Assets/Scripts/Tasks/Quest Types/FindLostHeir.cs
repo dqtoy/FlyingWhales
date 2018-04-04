@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 public class FindLostHeir : Quest {
 
-    private ECS.Character _chieftain, _falseHeir, _lostHeir;
+    private Character _chieftain, _falseHeir, _lostHeir;
 
-    public FindLostHeir(TaskCreator createdBy, ECS.Character chieftain, ECS.Character falseHeir, ECS.Character lostHeir) : base(createdBy, QUEST_TYPE.FIND_LOST_HEIR) {
+    public FindLostHeir(TaskCreator createdBy, Character chieftain, Character falseHeir, Character lostHeir) : base(createdBy, QUEST_TYPE.FIND_LOST_HEIR) {
         _alignment = new List<ACTION_ALIGNMENT>() {
             ACTION_ALIGNMENT.LAWFUL,
             ACTION_ALIGNMENT.HEROIC
@@ -15,19 +16,19 @@ public class FindLostHeir : Quest {
         _falseHeir = falseHeir;
         _lostHeir = lostHeir;
         _filters = new TaskFilter[] {
-            new MustBeFaction((createdBy as ECS.Character).faction),
+            new MustBeFaction((createdBy as Character).faction),
             new MustNotBeCharacter(falseHeir)
         };
 
+		Item heirloomNecklace = (StorylineManager.Instance.GetStorylineData (STORYLINE.LOST_HEIR) as TheLostHeirData).heirloomNecklace;
+
         QuestPhase phase1 = new QuestPhase(this, "Search for Heirloom Necklace");
-		MoveTo moveTo = new MoveTo (createdBy, -1, this);
-		moveTo.SetForGameOnly (true);
         phase1.AddTask(new Search(createdBy, 5, "Heirloom Necklace", null, this));
-        phase1.AddTask(moveTo);
+		phase1.AddTask(new MoveTowardsCharacter (createdBy, heirloomNecklace, -1, this));
         phase1.AddPhaseRequirement(new MustFindItem("Heirloom Necklace"));
 
         QuestPhase phase2 = new QuestPhase(this, "Report back to chieftain");
-        phase2.AddTask(new Report(createdBy, createdBy as ECS.Character, this));
+        phase2.AddTask(new Report(createdBy, createdBy as Character, this));
         phase2.AddPhaseRequirement(new MustFinishAllPhaseTasks());
 
         _phases.Add(phase1);

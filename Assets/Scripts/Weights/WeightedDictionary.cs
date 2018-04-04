@@ -76,7 +76,9 @@ public class WeightedDictionary<T> {
     internal void AddWeightToElement(T key, int weight) {
         if (_dictionary.ContainsKey(key)) {
             _dictionary[key] += weight;
-        }
+		}else{
+			_dictionary.Add(key, weight);
+		}
     }
 
     internal void SubtractWeightFromElement(T key, int weight) {

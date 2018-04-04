@@ -12,6 +12,9 @@ public class StorylineData {
     protected List<Quest> _relevantQuests;
 
     #region getters/setters
+	public STORYLINE storyline {
+		get { return _storyline; }
+	} 
     public Log storylineDescription {
         get { return _storylineDescription; }
     }

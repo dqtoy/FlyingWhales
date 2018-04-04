@@ -17,6 +17,7 @@ public class Quest {
     protected TaskCreator _createdBy;
     protected QUEST_TYPE _questType;
 	protected string _questName;
+	protected string _questURLName;
 
     protected List<ACTION_ALIGNMENT> _alignment;
     protected List<ECS.Character> _acceptedCharacters;

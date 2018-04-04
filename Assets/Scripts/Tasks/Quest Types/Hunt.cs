@@ -18,9 +18,9 @@ public class Hunt : Quest {
 		QuestPhase phase1 = new QuestPhase(this, "Attack Target!");
 		phase1.AddTask(new Attack(createdBy, _targetCharacter, 5, this));
 
-		MoveTo moveTo = new MoveTo (createdBy, -1, this);
-		moveTo.SetForGameOnly (true);
-		phase1.AddTask(moveTo);
+		MoveTowardsCharacter moveTowardsCharacter = new MoveTowardsCharacter (createdBy, null, -1, this);
+		moveTowardsCharacter.SetSpecificTarget (_targetCharacter);
+		phase1.AddTask(moveTowardsCharacter);
 
 		_phases.Add(phase1);
 

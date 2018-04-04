@@ -6,9 +6,15 @@ using System.Linq;
 public class TheLostHeirData : StorylineData {
 
     private ECS.Character chieftain, falseHeir, lostHeir;
-    private ECS.Item heirloomNecklace;
+    private ECS.Item _heirloomNecklace;
     private Quest findLostHeirQuest;
 	private EliminateLostHeir eliminateLostHeirQuest;
+
+	#region getters/setters
+	public ECS.Item heirloomNecklace{
+		get { return _heirloomNecklace; }
+	}
+	#endregion
 
     public TheLostHeirData() : base(STORYLINE.LOST_HEIR) {
         
@@ -73,9 +79,9 @@ public class TheLostHeirData : StorylineData {
             lostHeirDescription.AddToFillers(chieftain, chieftain.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             AddRelevantItem(lostHeir, lostHeirDescription);
 
-            heirloomNecklace = ItemManager.Instance.CreateNewItemInstance("Heirloom Necklace");
-            AddRelevantItem(heirloomNecklace, CreateLogForStoryline("heirloom_description"));
-            lostHeir.PickupItem(heirloomNecklace);
+            _heirloomNecklace = ItemManager.Instance.CreateNewItemInstance("Heirloom Necklace");
+            AddRelevantItem(_heirloomNecklace, CreateLogForStoryline("heirloom_description"));
+            lostHeir.PickupItem(_heirloomNecklace);
 
             //Create find lost heir quest
             findLostHeirQuest = new FindLostHeir(chieftain, chieftain, falseHeir, lostHeir);
@@ -104,14 +110,14 @@ public class TheLostHeirData : StorylineData {
         return new Log(GameManager.Instance.Today(), "Storylines", "TheLostHeir", key);
     }
     private void OnHeirloomPlacedInLandmark(ECS.Item item, BaseLandmark landmark) {
-        if (item == heirloomNecklace) {
+        if (item == _heirloomNecklace) {
             Log changeLocation = CreateLogForStoryline("heirloom_drop");
             changeLocation.AddToFillers(landmark, landmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             ReplaceItemLog(item, changeLocation, 1);
         }
     }
     private void OnHeirloomPlacedInInventory(ECS.Item item, ECS.Character character) {
-        if (item == heirloomNecklace) {
+        if (item == _heirloomNecklace) {
             Log changeLocation = CreateLogForStoryline("heirloom_change_possession");
             changeLocation.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             ReplaceItemLog(item, changeLocation, 1);

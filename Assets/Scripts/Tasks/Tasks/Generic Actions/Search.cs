@@ -140,31 +140,38 @@ public class Search : CharacterTask {
     #region Get Landmark Target
 	private BaseLandmark GetLandmarkForCharacterSearching(Character character){
 		Region regionLocation = character.specificLocation.tileLocation.region;
-		Character characterLookingFor = null;
 		if(_searchingFor is string){
-			characterLookingFor = _assignedCharacter.GetCharacterFromTraceInfo(_searchingFor as string);
-		}
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
-			int weight = 0;
-			weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
-			if (currLandmark.HasHostilitiesWith(character.faction)) {
-				weight -= 50;//If landmark has hostile characters: -50
-			}
-			if(characterLookingFor != null && characterLookingFor.specificLocation != null && characterLookingFor.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-				BaseLandmark landmark = characterLookingFor.specificLocation as BaseLandmark;
-				if(landmark.id == currLandmark.id){
-					weight += 600; //If assigned character has a trace info of character he is looking for, and is in this landmark
+			string itemName = _searchingFor as string;
+			Character characterLookingFor = _assignedCharacter.GetCharacterFromTraceInfo(itemName);
+			for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
+				BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+				int weight = 0;
+				weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
+				if (currLandmark.HasHostilitiesWith(character.faction)) {
+					weight -= 50;//If landmark has hostile characters: -50
+				}
+				if(characterLookingFor != null && characterLookingFor.specificLocation != null && characterLookingFor.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+					BaseLandmark landmark = characterLookingFor.specificLocation as BaseLandmark;
+					if(landmark.id == currLandmark.id){
+						weight += 500; //If assigned character has a trace info of character he is looking for, and is in this landmark
+					}
+				}
+				for (int j = 0; j < currLandmark.charactersAtLocation.Count; j++) {
+					ECS.Character characterThatHasItem = currLandmark.charactersAtLocation [j].mainCharacter;
+					if(characterThatHasItem.GetItemInInventory(itemName) != null){
+						weight += 100;
+					}
+				}
+				//If this character has already Searched in the landmark within the past 6 months: -60
+				if (weight > 0) {
+					_landmarkWeights.AddElement(currLandmark, weight);
 				}
 			}
-			//If this character has already Searched in the landmark within the past 6 months: -60
-			if (weight > 0) {
-				_landmarkWeights.AddElement(currLandmark, weight);
+			if(_landmarkWeights.GetTotalOfWeights() > 0){
+				return _landmarkWeights.PickRandomElementGivenWeights ();
 			}
 		}
-		if(_landmarkWeights.GetTotalOfWeights() > 0){
-			return _landmarkWeights.PickRandomElementGivenWeights ();
-		}
+
 		return null;
 	}
 
