@@ -2946,7 +2946,21 @@ namespace ECS {
 			}
 			return 0;
 		}
-		public void AddTraceInfo(Character character, string identifier){
+		public void AddTraceInfo(Character character, string identifier, bool isUnique){
+			if(isUnique){
+				Character previousTrace = GetCharacterFromTraceInfo (identifier);
+				if(previousTrace != null){ //If there is an existing trace of the item, replace it with this new trace
+					if(previousTrace.id != character.id){
+						_traceInfo [previousTrace].Remove (identifier);
+						if(_traceInfo[previousTrace].Count <= 0){
+							_traceInfo.Remove (previousTrace);
+						}
+						Debug.Log (this.name +  " REMOVED TRACE INFO OF " + previousTrace.name + " FOR " + identifier);
+					}else{
+						return;
+					}
+				}
+			}
 			if(_traceInfo.ContainsKey(character)){
 				if(!_traceInfo [character].Contains(identifier)){
 					_traceInfo [character].Add (identifier);

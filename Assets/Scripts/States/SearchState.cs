@@ -8,11 +8,14 @@ public class SearchState : State {
     private Action _afterFindingAction;
 	private Action _afterFindingTraceAction;
     private Action _searchAction;
+	private bool _isSearchingUnique;
 
     public SearchState(CharacterTask parentTask, object searchingFor) : base(parentTask, STATE.SEARCH) {
         this.searchingFor = searchingFor;
+		this._isSearchingUnique = false;
         if (searchingFor is string) {
             if ((searchingFor as string).Equals("Heirloom Necklace")) {
+				this._isSearchingUnique = true;
 				SetSearchAction(() => SearchForItemInCharacter());
 				if(_parentTask.parentQuest != null && _parentTask.parentQuest is EliminateLostHeir){
 					SetAfterFindingTraceAction (() => _parentTask.EndTaskSuccess ());
@@ -161,7 +164,7 @@ public class SearchState : State {
 		if (identifier == "tag") {
 			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasTag (strSearchingFor, includeParty)) {
-					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
+					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor, this._isSearchingUnique);
                     Messenger.Broadcast(Signals.FOUND_TRACE, _assignedCharacter, strSearchingFor);
 					//if(_afterFindingTraceAction != null){
 					//	_afterFindingTraceAction ();
@@ -172,7 +175,7 @@ public class SearchState : State {
 		} else if (identifier == "item") {
 			foreach (ECS.Character currCharacter in _targetLandmark.characterTraces.Keys) {
 				if (currCharacter.HasItem (strSearchingFor)) {
-					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor);
+					_assignedCharacter.AddTraceInfo (currCharacter, strSearchingFor, this._isSearchingUnique);
                     Messenger.Broadcast(Signals.FOUND_TRACE, _assignedCharacter, strSearchingFor);
                     //if(_afterFindingTraceAction != null){
                     //	_afterFindingTraceAction ();
