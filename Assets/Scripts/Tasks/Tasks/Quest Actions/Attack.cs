@@ -82,25 +82,20 @@ public class Attack : CharacterTask {
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		//If there are unowned landmarks with hostile unaligned characters or owned by hostile faction within current region or adjacent region
-		if(character.currentRegion.id == _targetCharacter.currentRegion.id){
-			if(_targetCharacter.specificLocation != null && _targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-				return true;
-			}
-		}
-
-		return base.AreConditionsMet (character);
+		return true;
 	}
 	public override int GetSelectionWeight(Character character) {
-		return 200;
+		if(character.currentRegion.id == _targetCharacter.currentRegion.id){
+			if(_targetCharacter.specificLocation != null && _targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				return 200;
+			}
+		}
+		return 30;
 	}
 	protected override BaseLandmark GetLandmarkTarget(Character character) {
 		base.GetLandmarkTarget(character);
-		Region currRegion = character.currentRegion;
-		if(character.currentRegion.id == _targetCharacter.currentRegion.id){
-			if(_targetCharacter.specificLocation != null && _targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-				return _targetCharacter.specificLocation as BaseLandmark;
-			}
+		if(_targetCharacter.specificLocation != null && _targetCharacter.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+			return _targetCharacter.specificLocation as BaseLandmark;
 		}
 		return null;
 	}
