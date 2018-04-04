@@ -688,6 +688,8 @@ namespace ECS{
 			if(attackSkill.attackType != ATTACK_TYPE.STATUS){
 				string log = string.Empty;
 				float weaponPower = 0f;
+				float damageRange = 5f;
+
 				BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
 				if (chosenBodyPart == null) {
 					Debug.LogError ("NO MORE BODY PARTS!");
@@ -696,24 +698,23 @@ namespace ECS{
 				Armor armor = chosenBodyPart.GetArmor ();
 				log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
-				int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
-
 				if(weapon != null) {
+					damageRange = weapon.damageRange;
 					weaponPower = weapon.weaponPower;
-					//				if(Utilities.GetMaterialCategory(weapon.material) == MATERIAL_CATEGORY.WOOD && (weapon.weaponType == WEAPON_TYPE.BOW || weapon.weaponType == WEAPON_TYPE.STAFF)){
-					//					weaponPower *= 2f;
-					//				}
+
 					//reduce weapon durability by durability cost of skill
 					weapon.AdjustDurability(-attackSkill.durabilityCost);
 					log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
-
-					int damageRange = (int)((float)damage * (weapon.damageRange / 100f));
-					int minDamageRange = damage - damageRange;
-					int maxDamageRange = damage + damageRange;
-					damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
+			
 				}else{
 					log += ".";
 				}
+
+				int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
+				int computedDamageRange = (int)((float)damage * (damageRange / 100f));
+				int minDamageRange = damage - computedDamageRange;
+				int maxDamageRange = damage + computedDamageRange;
+				damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
 
 				if(armor != null){
 					if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
