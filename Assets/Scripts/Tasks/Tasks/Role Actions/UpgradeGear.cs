@@ -43,7 +43,7 @@ public class UpgradeGear : CharacterTask {
         if (location.tileLocation.landmarkOnTile != null && character.faction != null && location.tileLocation.landmarkOnTile is Settlement) {
             Settlement settlement = location.tileLocation.landmarkOnTile as Settlement;
             if (settlement.owner != null && settlement.owner.id == character.faction.id) {
-                if (settlement.owner != null && !settlement.HasHostilitiesWith(character)) {
+                if (settlement.owner != null && !settlement.HasHostileCharactersWith(character)) {
                     return true;
                 }
             }
@@ -60,7 +60,7 @@ public class UpgradeGear : CharacterTask {
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             //Non Hostile Settlement in current region and adjacent regions: 100
-            if (currRegion.mainLandmark.HasHostilitiesWith(character)) {
+            if (currRegion.mainLandmark.HasHostileCharactersWith(character)) {
                 return true;
             }
         }
@@ -77,7 +77,7 @@ public class UpgradeGear : CharacterTask {
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             //Non Hostile Settlement in current region and adjacent regions: 100
-            if (currRegion.mainLandmark.HasHostilitiesWith(character)) {
+            if (currRegion.mainLandmark.HasHostileCharactersWith(character)) {
                 _landmarkWeights.AddElement(currRegion.mainLandmark, 100);
             }
         }

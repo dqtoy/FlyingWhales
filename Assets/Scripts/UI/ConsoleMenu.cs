@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using ECS;
 
 public class ConsoleMenu : UIMenu {
 
@@ -31,6 +32,7 @@ public class ConsoleMenu : UIMenu {
             //{"/adjust_resources", AdjustResources}
             {"/center_character", CenterOnCharacter},
             {"/center_landmark", CenterOnLandmark },
+            {"/l_combat_rooms", LogCombatRooms },
         };
     }
 
@@ -113,6 +115,34 @@ public class ConsoleMenu : UIMenu {
         for (int i = 0; i < _consoleActions.Count; i++) {
             AddCommandHistory(_consoleActions.Keys.ElementAt(i));
         }
+    }
+    private void LogCombatRooms(string[] parameters) {
+        if (parameters.Length > 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string log = "All Active Combat Rooms: ";
+
+        List<CombatRoom> allCombatRooms = CombatManager.Instance.GetAllRoadCombats();
+        if (allCombatRooms.Count > 0) {
+            for (int i = 0; i < allCombatRooms.Count; i++) {
+                CombatRoom currRoom = allCombatRooms[i];
+                log += "\n Room at " + currRoom.location.locationName + ": ";
+                for (int j = 0; j < currRoom.combatants.Count; j++) {
+                    ICombatInitializer currCombatant = currRoom.combatants[j];
+                    if (currCombatant is Party) {
+                        log += "\n" + (currCombatant as Party).name;
+                    } else if (currCombatant is Character) {
+                        log += "\n" + (currCombatant as Character).name;
+                    }
+                }
+                log += "\n";
+            }
+        } else {
+            log += "\n NONE";
+        }
+        AddSuccessMessage(log);
     }
     #endregion
 

@@ -11,13 +11,13 @@ public class CombatLogsUI : UIMenu {
 	[SerializeField] private UIScrollView sideAScrollView;
 	[SerializeField] private UIScrollView sideBScrollView;
 
-	private ECS.CombatPrototype _currentlyShowingCombat;
+	private ECS.Combat _currentlyShowingCombat;
 
-	public ECS.CombatPrototype currentlyShowingCombat{
+	public ECS.Combat currentlyShowingCombat{
 		get { return _currentlyShowingCombat; }
 	}
 
-	public void ShowCombatLogs(ECS.CombatPrototype combat) {
+	public void ShowCombatLogs(ECS.Combat combat) {
 		_currentlyShowingCombat = combat;
         isShowing = true;
         this.gameObject.SetActive(true);

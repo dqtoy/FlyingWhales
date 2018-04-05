@@ -21,6 +21,12 @@ public class TheLostHeirData : StorylineData {
     }
 
     #region overrides
+    public override bool CanCreateStoryline() {
+        if (LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.HUT).Count > 0) {
+            return true;
+        }
+        return base.CanCreateStoryline();
+    }
     public override void InitialStorylineSetup() {
         base.InitialStorylineSetup();
 

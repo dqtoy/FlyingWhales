@@ -13,7 +13,7 @@ public class EncounterParty : MonoBehaviour {
 	}
 	private void ConstructAllCharacterSetups(){
 		for (int i = 0; i < partyMembers.Length; i++) {
-			ECS.CharacterSetup charSetup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(partyMembers[i].name);
+			ECS.CharacterSetup charSetup = ECS.CombatManager.Instance.GetBaseCharacterSetup(partyMembers[i].name);
 			_characterSetups.Add(charSetup);
 		}	
 	}

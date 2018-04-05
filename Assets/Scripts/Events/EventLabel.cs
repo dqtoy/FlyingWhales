@@ -27,8 +27,8 @@ public class EventLabel : MonoBehaviour {
                     UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
                 } else if (lf.obj is BaseLandmark) {
                     UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
-                } else if (lf.obj is ECS.CombatPrototype) {
-                    UIManager.Instance.ShowCombatLog(lf.obj as ECS.CombatPrototype);
+                } else if (lf.obj is ECS.Combat) {
+                    UIManager.Instance.ShowCombatLog(lf.obj as ECS.Combat);
                 }
             }
 		}

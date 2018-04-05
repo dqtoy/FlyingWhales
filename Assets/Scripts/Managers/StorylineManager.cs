@@ -38,8 +38,10 @@ public class StorylineManager : MonoBehaviour {
                 }
             }
             if (createdData != null) {
-                activeStorylines.Add(createdData);
-                createdData.InitialStorylineSetup();
+                if (createdData.CanCreateStoryline()) {
+                    activeStorylines.Add(createdData);
+                    createdData.InitialStorylineSetup();
+                }
             }
         }
         UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();

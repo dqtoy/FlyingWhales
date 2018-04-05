@@ -73,14 +73,14 @@ public class MustFindItem : QuestPhaseRequirement {
     }
     public override void ActivateRequirement(ECS.Character owner) {
         base.ActivateRequirement(owner);
-        Messenger.AddListener<ECS.Character, ECS.Item>(Signals.FOUND_ITEM, CheckIfRequirementMet);
+        Messenger.AddListener<ECS.Character, string>(Signals.FOUND_ITEM, CheckIfRequirementMet);
         if (includeTrace) {
             Messenger.AddListener<ECS.Character, string>(Signals.FOUND_TRACE, CheckIfRequirementMet);
         }
     }
     public override void DeactivateRequirement() {
         base.DeactivateRequirement();
-        Messenger.RemoveListener<ECS.Character, ECS.Item>(Signals.FOUND_ITEM, CheckIfRequirementMet);
+        Messenger.RemoveListener<ECS.Character, string>(Signals.FOUND_ITEM, CheckIfRequirementMet);
         if (includeTrace) {
             Messenger.RemoveListener<ECS.Character, string>(Signals.FOUND_TRACE, CheckIfRequirementMet);
         }

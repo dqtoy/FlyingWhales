@@ -32,6 +32,9 @@ public class CharacterAvatar : PooledObject{
 	private Action queuedAction = null;
 
     #region getters/setters
+    public ECS.Character mainCharacter {
+        get { return _mainCharacter; }
+    }
     public List<ECS.Character> characters {
         get { return _characters; }
     }
@@ -41,7 +44,11 @@ public class CharacterAvatar : PooledObject{
     public bool isTravelling {
         get { return _isTravelling; }
     }
-	public bool isMovingToHex {
+    public bool isMovementPaused {
+        get { return _isMovementPaused; }
+    }
+
+    public bool isMovingToHex {
 		get { return _isMovingToHex; }
 	}
     #endregion
@@ -92,7 +99,30 @@ public class CharacterAvatar : PooledObject{
 			UIManager.Instance.ShowCharacterInfo (characters [0]);
 		}
 	}
-	#endregion
+    //public void OnTriggerEnter2D(Collider2D other) {
+    //    if (other is EdgeCollider2D) {
+    //        CharacterAvatar otherAvatar = other.GetComponent<CharacterAvatar>();
+    //        Debug.Log(this.mainCharacter.name + " collided with " + otherAvatar.mainCharacter.name + "'s " + other.GetType().ToString());
+    //        ICombatInitializer combatant1 = mainCharacter;
+    //        if (mainCharacter.party != null) {
+    //            combatant1 = mainCharacter.party;
+    //        }
+    //        ICombatInitializer combatant2 = otherAvatar.mainCharacter;
+    //        if (otherAvatar.mainCharacter.party != null) {
+    //            combatant2 = otherAvatar.mainCharacter.party;
+    //        }
+    //        Messenger.Broadcast(Signals.COLLIDED_WITH_CHARACTER, combatant1, combatant2);
+    //        //if (this.mainCharacter.CanInitiateBattleWith(otherAvatar.mainCharacter)) {
+    //        //    //if (isMovingToHex) {
+    //        //    //    //if this avatar is currently moving from tile to tile, wait for it to arrive at it's destination tile, then pause movement
+    //        //    //    this.smoothMovement.onMoveFinished += PauseMovement;
+    //        //    //} else {
+    //        //        PauseMovement();
+    //        //    //}
+    //        //}
+    //    }
+    //}
+    #endregion
 
     #region ECS.Character Management
     public void AddNewCharacter(ECS.Character character) {
@@ -283,10 +313,13 @@ public class CharacterAvatar : PooledObject{
         _hasArrived = state;
     }
     internal void PauseMovement() {
+        Debug.Log(this.mainCharacter.name + "'s avatar has paused movement!");
         _isMovementPaused = true;
         smoothMovement.ForceStopMovement();
+        //this.smoothMovement.onMoveFinished -= PauseMovement;
     }
     internal void ResumeMovement() {
+        Debug.Log(this.mainCharacter.name + "'s avatar has resumed movement!");
         _isMovementPaused = false;
         NewMove();
     }
@@ -302,7 +335,7 @@ public class CharacterAvatar : PooledObject{
     }
 	public void InstantDestroyAvatar(){
 		for (int i = 0; i < _characters.Count; i++) {
-			_characters [i].SetAvatar (null);
+			_characters[i].SetAvatar (null);
 		}
 		_characters.Clear ();
 		DestroyObject ();

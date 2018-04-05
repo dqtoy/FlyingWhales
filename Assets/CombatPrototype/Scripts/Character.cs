@@ -83,8 +83,8 @@ namespace ECS {
         private Dictionary<RACE, int> _civiliansByRace;
 
 		internal int actRate;
-		internal CombatPrototype currentCombat;
-		internal Dictionary<int, CombatPrototype> combatHistory;
+		internal Combat currentCombat;
+		internal Dictionary<int, Combat> combatHistory;
 
 		private float _equippedWeaponPower;
         private int _gold;
@@ -427,7 +427,7 @@ namespace ECS {
 
             //_activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
-			combatHistory = new Dictionary<int, CombatPrototype> ();
+			combatHistory = new Dictionary<int, Combat> ();
 			_combatHistoryID = 0;
 
 			Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
@@ -520,7 +520,7 @@ namespace ECS {
 
 
 		//Enables or Disables skills based on skill requirements
-		internal void EnableDisableSkills(CombatPrototype combat){
+		internal void EnableDisableSkills(Combat combat){
 			bool isAllAttacksInRange = true;
 			bool isAttackInRange = false;
 			for (int i = 0; i < this._skills.Count; i++) {
@@ -710,15 +710,14 @@ namespace ECS {
 				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
 
-				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (_characterColor);
+				CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
-				if(specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				if(specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
                     (specificLocation as BaseLandmark).AddHistory(deathLog);
 				}
-
 				//Drop all Items
 				while (_equippedItems.Count > 0) {
 					ThrowItem (_equippedItems [0]);
@@ -762,7 +761,11 @@ namespace ECS {
 					SetFollowerState (false);
 				}
                 if (_avatar != null) {
-                    _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
+                    if (_avatar.mainCharacter.id == this.id) {
+                        DestroyAvatar();
+                    } else {
+                        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
+                    }
                 }
 
                 if (_isPrisoner){
@@ -1386,7 +1389,7 @@ namespace ECS {
 				STATUS_EFFECT statusEffect = statusEffects [i];
 				int chance = Utilities.rng.Next (0, 100);
 				if (chance < 15) {
-					CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+					CombatManager.Instance.combat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 					RemoveStatusEffect (statusEffect);
 					i--;
 				}
@@ -1399,7 +1402,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
-								CombatPrototypeManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+								CombatManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
@@ -1529,7 +1532,7 @@ namespace ECS {
 		}
 
 		private void GetRandomCharacterColor(){
-			_characterColor = CombatPrototypeManager.Instance.UseRandomCharacterColor ();
+			_characterColor = CombatManager.Instance.UseRandomCharacterColor ();
 			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
 		}
 		public void SetCharacterColor(Color color){
@@ -2211,26 +2214,7 @@ namespace ECS {
 		public void CreateNewAvatar() {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
             if(this._role != null) {
-                //if (this._role.roleType == CHARACTER_ROLE.COLONIST) {
-                //    //				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
-                //    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("ColonistAvatar", this.currLocation.transform.position, Quaternion.identity);
-                //    ColonistAvatar avatar = avatarGO.GetComponent<ColonistAvatar>();
-                //    if (party != null) {
-                //        avatar.Init(party);
-                //    } else {
-                //        avatar.Init(this);
-                //    }
-                //} else 
-                if (this._role.roleType == CHARACTER_ROLE.WARLORD) {
-                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("WarlordAvatar", this.currLocation.transform.position, Quaternion.identity);
-                    WarlordAvatar avatar = avatarGO.GetComponent<WarlordAvatar>();
-                    if (party != null) {
-                        avatar.Init(party);
-                    } else {
-                        avatar.Init(this);
-                    }
-                } else if (this._role.roleType == CHARACTER_ROLE.HERO) {
-                    //				GameObject avatarGO = (GameObject)GameObject.Instantiate (ObjectPoolManager.Instance.otherPrefabs [2], this.currLocation.transform.position, Quaternion.identity);
+                if (this._role.roleType == CHARACTER_ROLE.HERO) {
                     GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("HeroAvatar", this.currLocation.transform.position, Quaternion.identity);
                     HeroAvatar avatar = avatarGO.GetComponent<HeroAvatar>();
                     if (party != null) {
@@ -2256,7 +2240,6 @@ namespace ECS {
                     avatar.Init(this);
                 }
             }
-			
         }
 		public void SetAvatar(CharacterAvatar avatar) {
 			_avatar = avatar;
@@ -2729,27 +2712,6 @@ namespace ECS {
 		#endregion
 
 		#region ICombatInitializer
-		//public bool InitializeCombat(){
-		//	if(_role != null && _role.roleType == CHARACTER_ROLE.WARLORD){
-		//		//Start Combat with hostile or unaligned
-		//		ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
-		//		if(enemy != null){
-		//			CombatPrototype combat = new CombatPrototype (this, enemy, this.specificLocation);
-		//			combat.AddCharacters (SIDES.A, new List<Character>(){this});
-		//			if(enemy is Party){
-		//				combat.AddCharacters (SIDES.B, ((Party)enemy).partyMembers);
-		//			}else{
-		//				combat.AddCharacters (SIDES.B, new List<Character>(){((Character)enemy)});
-		//			}
-		//			this.specificLocation.SetCurrentCombat (combat);
-		//			CombatThreadPool.Instance.AddToThreadPool (combat);
-		//			return true;
-		//		}
-		//		return false;
-		//	}else{
-		//		return false;
-		//	}
-		//}
 		public bool IsHostileWith(ICombatInitializer combatInitializer){
             if (this.faction == null) {
                 return true; //this character has no faction
@@ -2775,31 +2737,21 @@ namespace ECS {
             }
 			
 		}
-		public void ReturnCombatResults(CombatPrototype combat){
+		public void ReturnCombatResults(Combat combat){
             this.SetIsInCombat(false);
 			if (this.isDefeated) {
-				////this character was defeated
-				//if(_currentTask != null && faction != null) {
-				//	_currentTask.EndTask(TASK_STATUS.CANCEL);
-				//}
-    //            if (!isDead && !isPrisoner) {
-    //                BaseLandmark targetLocation = GetNearestLandmarkWithoutHostiles();
-    //                if (targetLocation == null) {
-    //                    throw new Exception(this.name + " could not find a non hostile location to run to!");
-    //                } else {
-    //                    GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => DetermineAction());
-    //                }
-    //            }
+                
             } else{
                 //this character won the combat, continue his/her current action if any
                 if (currentFunction != null) {
                     currentFunction();
                     SetCurrentFunction(null);
                 }
-     //           else {
-					//DetermineAction();
-     //           }
+                if (avatar != null && avatar.isMovementPaused) {
+                    avatar.ResumeMovement();
+                }
 			}
+            SetIsDefeated(false);
         }
 		public void SetIsDefeated(bool state){
 			_isDefeated = state;
@@ -2847,12 +2799,18 @@ namespace ECS {
         public void ContinueDailyAction() {
             if (!isInCombat) {
                 if (currentTask != null) {
-                    if (avatar != null && avatar.isTravelling) {
-                        return;
-                    }
+                    //if (avatar != null && avatar.isTravelling) {
+                    //    return;
+                    //}
                     currentTask.PerformTask();
                 }
             }
+        }
+        public bool CanInitiateCombat() {
+            if (currentTask.combatPriority > 0) {
+                return true;
+            }
+            return false;
         }
         #endregion
 

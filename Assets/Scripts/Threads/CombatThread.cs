@@ -11,7 +11,7 @@ public class CombatThread {
 
 	private TODO _todo;
 
-	private ECS.CombatPrototype combat;
+	private ECS.Combat combat;
 	private List<ECS.Character> characterSideA;
 	private List<ECS.Character> characterSideB;
 

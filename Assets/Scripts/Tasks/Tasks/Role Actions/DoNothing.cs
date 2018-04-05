@@ -73,7 +73,7 @@ public class DoNothing : CharacterTask {
                     }
                 }
             }
-            if (currLandmark.HasHostilitiesWith(character)) {
+            if (currLandmark.HasHostileCharactersWith(character)) {
                 weight -= 50; //Each landmark in the current region with hostile characters: -50
             }
             if (weight > 0) {

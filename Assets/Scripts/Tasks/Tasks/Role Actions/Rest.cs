@@ -125,7 +125,7 @@ public class Rest : CharacterTask {
                     weight += 300; //If landmark is owned by a non-hostile faction: +300
                 }
             }
-            if (!currLandmark.HasHostilitiesWith(character)) {
+            if (!currLandmark.HasHostileCharactersWith(character)) {
                 weight += 100;//If landmark does not have any hostile characters: +100
             }
             if (weight > 0) {
