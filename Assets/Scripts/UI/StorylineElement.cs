@@ -19,7 +19,9 @@ public class StorylineElement : MonoBehaviour {
             elementLbl.text = (element as ECS.Item).itemName;
         } else if (element is BaseLandmark) {
             elementLbl.text = (element as BaseLandmark).landmarkName;
-        }
+		} else if (element is string) {
+			elementLbl.text = (element as string);
+		}
         EventDelegate.Set(elementEventTrigger.onClick, OnClickElement);
         EventDelegate.Set(elementEventTrigger.onHoverOver, ShowInfo);
         EventDelegate.Set(elementEventTrigger.onHoverOut, UIManager.Instance.storylinesSummaryMenu.HideElementInfo);

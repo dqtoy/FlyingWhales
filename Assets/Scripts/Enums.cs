@@ -1207,8 +1207,9 @@ public enum STANCE {
 }
 
 public enum STORYLINE {
-    LOST_HEIR,
+    THE_LOST_HEIR,
 	INIMICAL_INCANTATIONS,
+	METEOR_STRIKE,
 }
 
 public enum ACTION_ALIGNMENT {

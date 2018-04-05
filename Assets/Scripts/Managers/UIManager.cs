@@ -3420,7 +3420,7 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
             Quest currentQuest = QuestManager.Instance.availableQuests[i];
             if (!currentQuest.isDone) {
-                questSummary += "\n" + currentQuest.questName;
+                questSummary += "\n" + currentQuest.questURLName;
                 questSummary += "\n   Characters on Quest: ";
                 if (currentQuest.acceptedCharacters.Count > 0) {
                     for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
@@ -3447,6 +3447,7 @@ public class UIManager : MonoBehaviour {
         HideQuestsSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoStorylinesBtn.transform);
         storylinesSummaryMenu.ShowMenu();
+		storylinesSummaryMenu.RepositionTable ();
         //UpdateQuestsSummary();
     }
     public void HideStorylinesSummary() {

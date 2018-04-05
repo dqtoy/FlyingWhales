@@ -6,6 +6,7 @@ public class StorylineItem : MonoBehaviour {
 
     private StorylineData storyline;
 
+	[SerializeField] private UILabel storylineTitleLbl;
     [SerializeField] private UILabel storylineDescriptionLbl;
     [SerializeField] private UIEventTrigger expandCollapseBtn;
     [SerializeField] private TweenRotation expandCollapseTween;
@@ -23,6 +24,7 @@ public class StorylineItem : MonoBehaviour {
 
     public void SetStoryline(StorylineData storyline) {
         this.storyline = storyline;
+		storylineTitleLbl.text = Utilities.LogReplacer(storyline.storylineTitle);
         storylineDescriptionLbl.text = Utilities.LogReplacer(storyline.storylineDescription);
         LoadElements();
         LoadQuests();

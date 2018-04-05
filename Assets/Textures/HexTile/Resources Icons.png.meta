@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: be352ea3d46036640bb6df35b7b4dc2b
-timeCreated: 1510039776
+timeCreated: 1522919792
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -21,15 +21,24 @@ TextureImporter:
     21300028: BEHEMOTH
     21300030: COBALT
     21300032: Resources Icons_0
-    21300034: Resources Icons_1
-    21300036: Resources Icons_2
+    21300034: villain
+    21300036: bandit
     21300038: Resources Icons_3
     21300040: Resources Icons_4
     21300042: Resources Icons_5
-    21300044: Resources Icons_6
+    21300044: chieftain
     21300046: Resources Icons_7
     21300048: Resources Icons_8
-    21300050: Resources Icons_9
+    21300050: hermit
+    21300052: ancient_ruin
+    21300054: hut
+    21300056: hero
+    21300058: goblin_camp
+    21300060: ritual_stones
+    21300062: cave
+    21300064: wildlands
+    21300066: tomb
+    21300068: wolf
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -261,7 +270,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Resources Icons_1
+      name: villain
       rect:
         serializedVersion: 2
         x: 160
@@ -274,7 +283,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Resources Icons_2
+      name: bandit
       rect:
         serializedVersion: 2
         x: 17
@@ -326,7 +335,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Resources Icons_6
+      name: chieftain
       rect:
         serializedVersion: 2
         x: 165
@@ -365,13 +374,130 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Resources Icons_9
+      name: hermit
       rect:
         serializedVersion: 2
         x: 316
         y: 318
         width: 122
         height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: ancient_ruin
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 315
+        width: 125
+        height: 126
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: hut
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 319
+        width: 125
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: hero
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 316
+        width: 122
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: goblin_camp
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 169
+        width: 123
+        height: 122
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: ritual_stones
+      rect:
+        serializedVersion: 2
+        x: 481
+        y: 19
+        width: 122
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: cave
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 171
+        width: 126
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: wildlands
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 16
+        width: 126
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tomb
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 167
+        width: 119
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: wolf
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 18
+        width: 122
+        height: 123
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

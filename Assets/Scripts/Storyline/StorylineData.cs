@@ -6,6 +6,8 @@ using ECS;
 public class StorylineData {
 
     private STORYLINE _storyline;
+	private string _storylineName;
+	protected Log _storylineTitle;
     protected Log _storylineDescription;
 
     protected Dictionary<object, List<Log>> _relevantItems;
@@ -18,6 +20,9 @@ public class StorylineData {
     public Log storylineDescription {
         get { return _storylineDescription; }
     }
+	public Log storylineTitle {
+		get { return _storylineTitle; }
+	}
     public Dictionary<object, List<Log>> relevantItems {
         get { return _relevantItems; }
     }
@@ -27,8 +32,10 @@ public class StorylineData {
 
     #endregion
 
-    public StorylineData(STORYLINE storyline) {
+	public StorylineData(STORYLINE storyline) {
         _storyline = storyline;
+		_storylineName = Utilities.NormalizeStringUpperCaseFirstLetters (_storyline.ToString ());
+		_storylineTitle = CreateLogForStoryline ("title");
         _relevantItems = new Dictionary<object, List<Log>>();
         _relevantQuests = new List<Quest>();
     }
@@ -38,7 +45,7 @@ public class StorylineData {
     /*
      Setup initial storyline elements. This is called upon world generation
          */
-    public virtual void InitialStorylineSetup() { }
+	public virtual bool InitialStorylineSetup() { return false; }
     /*
      Setup the storyline. Spawn characters, assign tags, create landmarks, etc. This is called when a storyline setup needs to be triggered in the middle of the game
          */
@@ -61,10 +68,14 @@ public class StorylineData {
     }
     public void ReplaceItemLog(object obj, Log log, int indexToReplace) {
         if (_relevantItems.ContainsKey(obj)) {
-            _relevantItems[obj].Insert(indexToReplace, log);
-            if (_relevantItems[obj].Count < indexToReplace + 1) {
-                _relevantItems[obj].RemoveAt(indexToReplace + 1);
-            }
+			if(indexToReplace >= _relevantItems[obj].Count){
+				_relevantItems[obj].Add(log);
+			}else{
+				_relevantItems[obj].Insert(indexToReplace, log);
+				if (_relevantItems[obj].Count < indexToReplace + 1) {
+					_relevantItems[obj].RemoveAt(indexToReplace + 1);
+				}
+			}
         }
     }
     #endregion
