@@ -1544,6 +1544,9 @@ namespace ECS {
 		public void AssignRole(CHARACTER_ROLE role) {
 			if(_role != null){
 				_role.ChangedRole ();
+                Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
+                roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                AddHistory(roleChangeLog);
 			}
 			switch (role) {
 		        case CHARACTER_ROLE.CHIEFTAIN:
@@ -2542,17 +2545,6 @@ namespace ECS {
 
         #region History
         internal void AddHistory(Log log) {
-            ////check if the new log is a duplicate of the latest log
-            //Log latestLog = history.ElementAtOrDefault(history.Count - 1);
-            //if (latestLog != null) {
-            //    if (Utilities.AreLogsTheSame(log, latestLog)) {
-            //        string text = name + " has duplicate logs!";
-            //        text += "\n" + log.id + Utilities.LogReplacer(log) + " ST:" + log.logCallStack;
-            //        text += "\n" + latestLog.id + Utilities.LogReplacer(latestLog) + " ST:" + latestLog.logCallStack;
-            //        throw new Exception(text);
-            //    }
-            //}
-
             _history.Add(log);
             if (this._history.Count > 20) {
                 this._history.RemoveAt(0);
@@ -2561,7 +2553,7 @@ namespace ECS {
             for (int i = 0; i < followers.Count; i++) {
                 followers[i].AddHistory(log);
             }
-            
+            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
         #endregion
 

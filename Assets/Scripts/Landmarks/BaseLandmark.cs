@@ -1114,6 +1114,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (this._history.Count > 20) {
             this._history.RemoveAt(0);
         }
+        Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
     }
     //internal void AddHistory(string text, object obj = null) {
     //    GameDate today = GameManager.Instance.Today();

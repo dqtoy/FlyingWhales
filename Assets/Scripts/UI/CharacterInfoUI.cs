@@ -48,6 +48,7 @@ public class CharacterInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
+        Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
@@ -81,6 +82,7 @@ public class CharacterInfoUI : UIMenu {
         base.OpenMenu();
         //RepositionHistoryScrollView();
         UpdateCharacterInfo();
+        UpdateAllHistoryInfo();
     }
     #endregion
 
@@ -112,7 +114,7 @@ public class CharacterInfoUI : UIMenu {
 		UpdateEquipmentInfo ();
 		UpdateInventoryInfo ();
 		UpdateRelationshipInfo ();
-		UpdateHistoryInfo ();
+		//UpdateAllHistoryInfo ();
 	}
     public void UpdateGeneralInfo() {
         string text = string.Empty;
@@ -306,56 +308,34 @@ public class CharacterInfoUI : UIMenu {
 		relationshipsLbl.text = text;
 		relationshipsScrollView.UpdatePosition();
 	}
-	private void UpdateHistoryInfo(){
-        //bool shouldUpdateHistory = false;
-        ////check if the currently showing landmark is already showing all its history
-        //for (int i = 0; i < currentlyShowingCharacter.history.Count; i++) {
-        //    Log currLog = currentlyShowingCharacter.history[i];
-        //    if (!IsLogAlreadyShown(currLog)) {
-        //        shouldUpdateHistory = true;
-        //        break; //there is a log that is not yet being shown, update
-        //    }
-        //}
-        //if (shouldUpdateHistory) {
-            for (int i = 0; i < logHistoryItems.Length; i++) {
-                LogHistoryItem currItem = logHistoryItems[i];
-                Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
-                if (currLog != null) {
-                    currItem.SetLog(currLog);
-                    currItem.gameObject.SetActive(true);
-                    if (Utilities.IsEven(i)) {
-                        currItem.SetLogColor(evenLogColor);
-                    } else {
-                        currItem.SetLogColor(oddLogColor);
-                    }
-                } else {
-                    currItem.gameObject.SetActive(false);
-                }
-            }
-            if (this.gameObject.activeInHierarchy) {
-                StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-                StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-            }
-        //} 
-        //else {
-        //    if (currentlyShowingCharacter.history.Count <= 0) {
-        //        for (int i = 0; i < logHistoryItems.Length; i++) {
-        //            logHistoryItems[i].gameObject.SetActive(false);
-        //        }
-        //    }
-        //}
+
+    #region History
+    private void UpdateHistory(object obj) {
+        if (obj is ECS.Character && currentlyShowingCharacter != null && (obj as ECS.Character).id == currentlyShowingCharacter.id) {
+            UpdateAllHistoryInfo();
+        }
     }
-    //private void RepositionHistoryScrollView() {
-    //    for (int i = 0; i < logHistoryItems.Length; i++) {
-    //        LogHistoryItem currItem = logHistoryItems[i];
-    //        currItem.gameObject.SetActive(true);
-    //    }
-    //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-    //    for (int i = 0; i < logHistoryItems.Length; i++) {
-    //        LogHistoryItem currItem = logHistoryItems[i];
-    //        currItem.gameObject.SetActive(false);
-    //    }
-    //}
+    private void UpdateAllHistoryInfo() {
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
+            if (currLog != null) {
+                currItem.SetLog(currLog);
+                currItem.gameObject.SetActive(true);
+                if (Utilities.IsEven(i)) {
+                    currItem.SetLogColor(evenLogColor);
+                } else {
+                    currItem.SetLogColor(oddLogColor);
+                }
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+        if (this.gameObject.activeInHierarchy) {
+            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+            StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        }
+    }
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
@@ -367,6 +347,8 @@ public class CharacterInfoUI : UIMenu {
         }
         return false;
     }
+    #endregion
+
     public void CenterCameraOnCharacter() {
         GameObject centerOn = null;
         if (currentlyShowingCharacter.avatar != null) {
