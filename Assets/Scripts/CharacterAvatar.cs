@@ -15,6 +15,7 @@ public class CharacterAvatar : PooledObject{
 	[SerializeField] protected SmoothMovement smoothMovement;
 	[SerializeField] protected DIRECTION direction;
     [SerializeField] protected GameObject _avatarHighlight;
+	[SerializeField] protected SpriteRenderer _avatarSpriteRenderer;
 
 	protected List<ECS.Character> _characters;
     protected ECS.Character _mainCharacter;
@@ -61,6 +62,9 @@ public class CharacterAvatar : PooledObject{
         _specificLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
+		if(_mainCharacter.role != null){
+			SetSprite (_mainCharacter.role.roleType);
+		}
     }
     internal virtual void Init(Party party) {
         this.smoothMovement.avatarGO = this.gameObject;
@@ -72,6 +76,9 @@ public class CharacterAvatar : PooledObject{
         _specificLocation = party.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
+		if(_mainCharacter.role != null){
+			SetSprite (_mainCharacter.role.roleType);
+		}
     }
 
     #region For Testing
@@ -381,6 +388,12 @@ public class CharacterAvatar : PooledObject{
 	private void CharacterHasLeftTile(){
 		LeaveCharacterTrace();
         CheckForItemDrop();
+	}
+	public void SetSprite(CHARACTER_ROLE role){
+		Sprite sprite = CharacterManager.Instance.GetSpriteByRole (role);
+		if(sprite != null){
+			_avatarSpriteRenderer.sprite = sprite;
+		}
 	}
     #endregion
 

@@ -13,6 +13,13 @@ public class CharacterManager : MonoBehaviour {
     private Dictionary<TRAIT, string> traitDictionary;
     private List<Character> allCharacters;
 
+	public Sprite heroSprite;
+	public Sprite villainSprite;
+	public Sprite hermitSprite;
+	public Sprite beastSprite;
+	public Sprite banditSprite;
+	public Sprite chieftainSprite;
+
     #region getters/setters
     //public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
     //    get { return citizenAgeTable.Where(x => x.Value.Any()).ToDictionary(x => x.Key, v => v.Value); }
@@ -387,4 +394,24 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     #endregion
+
+	#region Avatars
+	public Sprite GetSpriteByRole(CHARACTER_ROLE role){
+		switch(role){
+		case CHARACTER_ROLE.HERO:
+			return heroSprite;
+		case CHARACTER_ROLE.VILLAIN:
+			return villainSprite;
+		case CHARACTER_ROLE.HERMIT:
+			return hermitSprite;
+		case CHARACTER_ROLE.BEAST:
+			return beastSprite;
+		case CHARACTER_ROLE.BANDIT:
+			return banditSprite;
+		case CHARACTER_ROLE.CHIEFTAIN:
+			return chieftainSprite;
+		}
+		return null;
+	}
+	#endregion
 }
