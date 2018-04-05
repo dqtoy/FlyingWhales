@@ -26,20 +26,21 @@ public class StorylineManager : MonoBehaviour {
             StorylineData createdData = null;
             if (kvp.Value) { //is the current storyline enabled?
                 switch (kvp.Key) {
-                    case STORYLINE.LOST_HEIR:
+                    case STORYLINE.THE_LOST_HEIR:
                         createdData = new TheLostHeirData();
                         //TriggerLostHeir();
                         break;
 					case STORYLINE.INIMICAL_INCANTATIONS:
-						TriggerInimicalIncantations();
+					createdData = new InimicalIncantationsData();
 						break;
                     default:
                         break;
                 }
             }
             if (createdData != null) {
-                activeStorylines.Add(createdData);
-                createdData.InitialStorylineSetup();
+				if(createdData.InitialStorylineSetup()){
+					activeStorylines.Add(createdData);
+				}
             }
         }
         UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
@@ -52,6 +53,12 @@ public class StorylineManager : MonoBehaviour {
 			}
 		}
 		return null;
+	}
+
+	public void AddStoryline(StorylineData storylineData){
+		if(storylineData.InitialStorylineSetup()){
+			activeStorylines.Add(storylineData);
+		}
 	}
 	#endregion
 
@@ -87,7 +94,7 @@ public class StorylineManager : MonoBehaviour {
     //    if (huts.Count > 0) {
     //        BaseLandmark chosenHut = huts[Random.Range(0, huts.Count)];
     //        ECS.Character lostHeir = chosenHut.CreateNewCharacter(chosenChieftain.raceSetting.race, CHARACTER_ROLE.HERMIT, "Swordsman");
-    //        lostHeir.AssignTag(CHARACTER_TAG.LOST_HEIR); //and add a lost heir tag and an heirloom necklace item to him. That character should not belong to any faction.
+    //        lostHeir.AssignTag(CHARACTER_TAG.THE_LOST_HEIR); //and add a lost heir tag and an heirloom necklace item to him. That character should not belong to any faction.
     //        log += "\nAssigned lost heir to " + lostHeir.name + " at " + chosenHut.location.name;
 
     //        //Create find lost heir quest
@@ -99,58 +106,6 @@ public class StorylineManager : MonoBehaviour {
     //    Debug.Log(log);
         
     //}
-	#endregion
-
-	#region Inimical Incantations
-	private void TriggerInimicalIncantations(){
-		//Check if there is a Ritual Stone in the World
-		bool hasRitualStone = false;
-		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-			Region region = GridMap.Instance.allRegions [i];
-			for (int j = 0; j < region.landmarks.Count; j++) {
-				BaseLandmark landmark = region.landmarks [j];
-				if(landmark.specificLandmarkType == LANDMARK_TYPE.RITUAL_STONES){
-					hasRitualStone = true;
-				}
-			}
-		}
-		if(!hasRitualStone){
-			return;
-		}
-
-		//Spawn Neuroctus Plant in Caves and Get All Ancient Ruins
-		List<DungeonLandmark> ancientRuins = new List<DungeonLandmark>();
-		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-			Region region = GridMap.Instance.allRegions [i];
-			for (int j = 0; j < region.landmarks.Count; j++) {
-				BaseLandmark landmark = region.landmarks [j];
-				if(landmark is DungeonLandmark){
-					if(landmark.specificLandmarkType == LANDMARK_TYPE.CAVE){
-						landmark.SpawnItemInLandmark ("Neuroctus");
-					}else if(landmark.specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN){
-						ancientRuins.Add ((DungeonLandmark)landmark);
-					}
-				}
-			}
-		}
-
-		//Spawn 3 Books of Inimical Incantations in 3 Random Ancient Ruins
-		if(ancientRuins.Count > 0){
-			for (int i = 0; i < 3; i++) {
-				int index = UnityEngine.Random.Range (0, ancientRuins.Count);
-				DungeonLandmark chosenAncientRuin = ancientRuins [index];
-				chosenAncientRuin.SpawnItemInLandmark ("Book of Inimical Incantations");
-				ancientRuins.RemoveAt (index);
-				if(ancientRuins.Count <= 0){
-					break;
-				}
-			}
-		}
-
-		//Create Dark Ritual Quest
-		TheDarkRitual theDarkRitual = new TheDarkRitual(QuestManager.Instance);
-		QuestManager.Instance.AddQuestToAvailableQuests(theDarkRitual);
-	}
 	#endregion
 
     #region Item Triggers

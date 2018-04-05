@@ -16,13 +16,13 @@ public class TheLostHeirData : StorylineData {
 	}
 	#endregion
 
-    public TheLostHeirData() : base(STORYLINE.LOST_HEIR) {
+    public TheLostHeirData() : base(STORYLINE.THE_LOST_HEIR) {
         
     }
 
     #region overrides
-    public override void InitialStorylineSetup() {
-        base.InitialStorylineSetup();
+    public override bool InitialStorylineSetup() {
+//        base.InitialStorylineSetup();
 
         Messenger.AddListener<ECS.Item, BaseLandmark>(Signals.ITEM_PLACED_LANDMARK, OnHeirloomPlacedInLandmark);
         Messenger.AddListener<ECS.Item, ECS.Character>(Signals.ITEM_PLACED_INVENTORY, OnHeirloomPlacedInInventory);
@@ -84,11 +84,11 @@ public class TheLostHeirData : StorylineData {
             lostHeir.PickupItem(_heirloomNecklace);
 
             //Create find lost heir quest
-            findLostHeirQuest = new FindLostHeir(chieftain, chieftain, falseHeir, lostHeir);
+			findLostHeirQuest = new FindLostHeir(chieftain, chieftain, falseHeir, lostHeir, _heirloomNecklace);
             QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
             //chieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
 
-			eliminateLostHeirQuest = new EliminateLostHeir(chieftain, chieftain, falseHeir, lostHeir);
+			eliminateLostHeirQuest = new EliminateLostHeir(chieftain, chieftain, falseHeir, lostHeir, _heirloomNecklace);
 			QuestManager.Instance.AddQuestToAvailableQuests(eliminateLostHeirQuest);
 //			chosenChieftain.AddActionOnDeath(eliminateLostHeirQuest.ForceCancelQuest);
 
@@ -101,7 +101,8 @@ public class TheLostHeirData : StorylineData {
             _storylineDescription = CreateLogForStoryline("description");
             _storylineDescription.AddToFillers(chieftain, chieftain.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             _storylineDescription.AddToFillers(null, Utilities.NormalizeString(chosenTag.ToString()), LOG_IDENTIFIER.OTHER);
-        }        
+        }
+		return true;
     }
     #endregion
 
