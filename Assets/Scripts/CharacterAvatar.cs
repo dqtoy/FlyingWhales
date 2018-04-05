@@ -426,6 +426,7 @@ public class CharacterAvatar : PooledObject{
 		//_specificLocation = null;
         targetLocation = null;
         path = null;
+        _isMovementPaused = false;
         _hasArrived = false;
         _isInitialized = false;
         _currPathfindingRequest = null;

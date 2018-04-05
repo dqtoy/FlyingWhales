@@ -47,9 +47,8 @@ public class RecruitState : State {
 	}
 	private WeightedDictionary<string> GetRecruitmentDictionary(BaseLandmark location) {
 		int createWeight = 100; //100 Base Weight to Create New Follower
-		int noCreateWeight = 500; //200 Base Weight to Not Create New Follower
+		int noCreateWeight = 700; //700 Base Weight to Not Create New Follower
 		WeightedDictionary<string> recruitActions = new WeightedDictionary<string>();
-
 
 		int minimumCivilianReq = location.GetMinimumCivilianRequirement();
 		if (location.civilians <= minimumCivilianReq) {
@@ -70,6 +69,13 @@ public class RecruitState : State {
 		recruitActions.AddElement(createKey, createWeight);
 		recruitActions.AddElement(noCreateKey, noCreateWeight);
 
-		return recruitActions;
+        LogTargetWeights(recruitActions);
+        return recruitActions;
 	}
+
+    protected void LogTargetWeights<T>(WeightedDictionary<T> weights) {
+        if (UIManager.Instance.characterInfoUI.activeCharacter != null && _assignedCharacter.id == UIManager.Instance.characterInfoUI.activeCharacter.id) {
+            weights.LogDictionaryValues(_assignedCharacter.name + "'s Recruitment weights ");
+        }
+    }
 }
