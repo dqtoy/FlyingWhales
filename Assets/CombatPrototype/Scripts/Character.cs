@@ -344,7 +344,14 @@ namespace ECS {
 			get { return followers.Count >= MAX_FOLLOWERS; }
 		}
         public int missingFollowers {
-            get { return Mathf.Max(0, MAX_FOLLOWERS - followers.Count); }
+            get {
+                if (party == null) {
+                    return MAX_FOLLOWERS;
+                } else {
+                    return Mathf.Max(0, MAX_FOLLOWERS - (party.partyMembers.Count - 1));
+                }
+                
+            }
         }
 		public Character isFollowerOf{
 			get { return _isFollowerOf; }
