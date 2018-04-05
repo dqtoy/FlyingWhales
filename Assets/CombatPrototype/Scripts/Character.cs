@@ -2747,9 +2747,9 @@ namespace ECS {
                     currentFunction();
                     SetCurrentFunction(null);
                 }
-                if (avatar != null && avatar.isMovementPaused) {
-                    avatar.ResumeMovement();
-                }
+                //if (avatar != null && avatar.isMovementPaused) {
+                //    avatar.ResumeMovement();
+                //}
 			}
             SetIsDefeated(false);
         }
