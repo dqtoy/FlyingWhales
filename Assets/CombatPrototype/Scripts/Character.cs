@@ -2506,7 +2506,9 @@ namespace ECS {
             return false;
         }
         public void CenterOnCharacter() {
-            CameraMove.Instance.CenterCameraOn(this.currLocation.gameObject);
+            if (!this.isDead) {
+                CameraMove.Instance.CenterCameraOn(this.currLocation.gameObject);
+            }
         }
 
 		//Death of this character if he/she is in the region specified
@@ -2591,6 +2593,10 @@ namespace ECS {
                     ((Character)_isPrisonerOf).AddHistory(becomePrisonerLog);
                 } else if (_isPrisonerOf is BaseLandmark) {
                     ((BaseLandmark)_isPrisonerOf).AddHistory(becomePrisonerLog);
+                }
+
+                if (_avatar != null && _avatar.mainCharacter.id == this.id) {
+                    DestroyAvatar();
                 }
 
                 Unfaint ();
