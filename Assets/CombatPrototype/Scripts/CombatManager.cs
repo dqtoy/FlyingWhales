@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace ECS {
-    public class CombatPrototypeManager : MonoBehaviour {
+    public class CombatManager : MonoBehaviour {
 
-        public static CombatPrototypeManager Instance = null;
+        public static CombatManager Instance = null;
 
         public CharacterSetup[] baseCharacters;
 		public Color[] characterColors;
@@ -15,7 +15,9 @@ namespace ECS {
 
 		private List<Color> unusedColors = new List<Color>();
 		private List<Color> usedColors = new List<Color>();
-		public CombatPrototype combat;
+		public Combat combat;
+
+        private Dictionary<ICombatInitializer, CombatRoom> _combatRooms;
 
         private void Awake() {
             Instance = this;
@@ -25,7 +27,9 @@ namespace ECS {
 			ConstructCharacterColors ();
 //			ConstructAttributeSkills ();
 			NewCombat ();
-		}
+            _combatRooms = new Dictionary<ICombatInitializer, CombatRoom>();
+            Messenger.AddListener<ICombatInitializer, ICombatInitializer>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
+        }
         private void ConstructBaseCharacters() {
             string path = "Assets/CombatPrototype/Data/CharacterSetups/";
             string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
@@ -112,12 +116,12 @@ namespace ECS {
 		}
 
 		internal void NewCombat(){
-			this.combat = new CombatPrototype (null, null, null);
+			this.combat = new Combat (null, null, null);
 		}
 		public void StartCombat(){
 			this.combat.CombatSimulation ();
 		}
-		public void CombatResults(CombatPrototype combat){
+		public void CombatResults(Combat combat){
 			for (int i = 0; i < combat.deadCharacters.Count; i++) {
                 Character currDeadCharacter = combat.deadCharacters[i];
                 currDeadCharacter.Death (combat.GetOpposingCharacters(currDeadCharacter));
@@ -308,5 +312,73 @@ namespace ECS {
 				}
 			}
 		}
+
+        #region Roads Combat
+        private void CheckForCombat(ICombatInitializer character1, ICombatInitializer character2) {
+            if (character1.IsHostileWith(character2)) { //if the 2 characters are hostile with each other
+                if (character1.CanInitiateCombat() || character2.CanInitiateCombat()) { //can either of the characters initiate combat? (Have combat priorities)
+                    //if at least 1 character can initiate combat and the 2 characters are hostile with each other, create a combat room
+                    //if either of the characters already have a combat room, have the other join their room instead
+                    if (HasCombatRoom(character1) && HasCombatRoom(character2)) {
+                        CombatRoom char1Room = GetCombatRoom(character1);
+                        CombatRoom char2Room = GetCombatRoom(character2);
+                        if (char1Room != char2Room) {
+                            throw new System.Exception(character1.mainCharacter.name + " and " + character2.mainCharacter.name + " already have different combat rooms!");
+                        } else {
+                            Debug.Log(character1.mainCharacter.name + " is already in the same combat room as " + character2.mainCharacter.name);
+                            return;
+                        }
+                    }
+                    if (HasCombatRoom(character1)) {
+                        //make character 2 join character 1 combat room
+                        CombatRoom char1CombatRoom = GetCombatRoom(character1);
+                        char1CombatRoom.AddCombatant(character2);
+                    } else if (HasCombatRoom(character2)) {
+                        //make character 1 join character 2 combat room
+                        CombatRoom char2CombatRoom = GetCombatRoom(character2);
+                        char2CombatRoom.AddCombatant(character1);
+                    } else {
+                        //none of the 2 have combat rooms, create a new one
+                        CreateNewCombatRoomFor(character1, character2);
+                    }
+                }
+            }
+            
+
+        }
+        private CombatRoom CreateNewCombatRoomFor(ICombatInitializer attacker, ICombatInitializer defender) {
+            CombatRoom newCombatRoom = new CombatRoom(attacker, defender, defender.mainCharacter.specificLocation);
+            Debug.Log("Created a new combat room for " + attacker.mainCharacter.name + " and " + defender.mainCharacter.name);
+            return newCombatRoom;
+        }
+        public bool HasCombatRoom(ICombatInitializer combatant) {
+            return _combatRooms.ContainsKey(combatant);
+        }
+        public CombatRoom GetCombatRoom(ICombatInitializer other) {
+            if (_combatRooms.ContainsKey(other)) {
+                return _combatRooms[other];
+            }
+            return null;
+        }
+        public void SetCombatantCombatRoom(ICombatInitializer combatant, CombatRoom combatRoom) {
+            if (!_combatRooms.ContainsKey(combatant)) {
+                _combatRooms.Add(combatant, combatRoom);
+            } else {
+                _combatRooms[combatant] = combatRoom;
+            }
+        }
+        public void RemoveCombatant(ICombatInitializer combatant) {
+            _combatRooms.Remove(combatant);
+        }
+        public List<CombatRoom> GetAllRoadCombats() {
+            List<CombatRoom> combatRooms = new List<CombatRoom>();
+            foreach (KeyValuePair<ICombatInitializer, CombatRoom> kvp in _combatRooms) {
+                if (!combatRooms.Contains(kvp.Value)) {
+                    combatRooms.Add(kvp.Value);
+                }
+            }
+            return combatRooms;
+        }
+        #endregion
     }
 }

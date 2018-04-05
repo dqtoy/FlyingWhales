@@ -9,7 +9,7 @@ namespace ECS{
 		B,
 	}
 
-	public class CombatPrototype {
+	public class Combat {
 
         public float updateIntervals = 0f;
 
@@ -36,7 +36,7 @@ namespace ECS{
         internal ILocation location;
 		internal bool isDone;
 
-		public CombatPrototype(ICombatInitializer attacker, ICombatInitializer defender, ILocation location){
+		public Combat(ICombatInitializer attacker, ICombatInitializer defender, ILocation location){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
@@ -186,7 +186,7 @@ namespace ECS{
         #endregion
 
 		public void ReturnCombatResults(){
-			CombatPrototypeManager.Instance.CombatResults(this);
+			CombatManager.Instance.CombatResults(this);
             if (attacker != null) {
                 attacker.ReturnCombatResults(this);
                 //else if (caller is IEncounterable) {

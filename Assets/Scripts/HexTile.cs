@@ -1978,11 +1978,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
-        //Messenger.AddListener("OnDayStart", CheckForCombat);
+        //Messenger.AddListener(Signals.DAY_START, CheckForCombat);
     }
     public void UnScheduleCombatCheck() {
         //_hasScheduledCombatCheck = false;
-        //Messenger.RemoveListener("OnDayStart", CheckForCombat);
+        //Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
     }
     /*
      Check this location for encounters, start if any.
@@ -1990,88 +1990,133 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
          */
     public void CheckForCombat() {
         //At the start of each day:
-		if(_charactersAtLocation.Count > 1){
-			if (HasHostilities()) {
-				//1. Attacking characters will attempt to initiate combat:
-				CheckAttackingGroupsCombat();
-				//2. Patrolling characters will attempt to initiate combat:
-				CheckPatrollingGroupsCombat();
-			}
-		}
-        //3. Pillaging and Hunting characters will perform their daily action if they havent been engaged in combat
-        //4. Exploring and Stealing characters will perform their daily action if they havent been engaged in combat
-        //5. Resting and Hibernating characters will recover HP if they havent been engaged in combat
+        if (HasHostilities() && HasCombatInitializers()) {
+            PairUpCombats();
+        }
         ContinueDailyActions();
     }
-    public void CheckAttackingGroupsCombat() {
-        List<ICombatInitializer> attackingGroups = GetAttackingGroups();
-        for (int i = 0; i < attackingGroups.Count; i++) {
-            ICombatInitializer currAttackingGroup = attackingGroups[i];
-            if (currAttackingGroup.isInCombat) {
-                continue; //this current group is already in combat, skip it
-            }
-            //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-            List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-            if (combatGroups.Count > 0) {
-                ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
-                StartCombatBetween(currAttackingGroup, chosenEnemy);
-                continue; //the attacking group has found an enemy! skip to the next group
-            }
-
-            //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-            List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-            if (neutralGroups.Count > 0) {
-                ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
-                StartCombatBetween(currAttackingGroup, chosenEnemy);
-                continue; //the attacking group has found an enemy! skip to the next group
-            }
-
-            //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
-            List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-            if (stealthGroups.Count > 0) {
-                //The chance of initiating combat is 35%
-                if (Random.Range(0, 100) < 35) {
-                    ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
-                    StartCombatBetween(currAttackingGroup, chosenEnemy);
+    public void PairUpCombats() {
+        List<ICombatInitializer> combatInitializers = GetCharactersByCombatPriority();
+        if (combatInitializers != null) {
+            for (int i = 0; i < combatInitializers.Count; i++) {
+                ICombatInitializer currInitializer = combatInitializers[i];
+                Debug.Log("Finding combat pair for " + currInitializer.mainCharacter.name);
+                if (currInitializer.isInCombat) {
+                    continue; //this current group is already in combat, skip it
+                }
+                //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
+                List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                if (combatGroups.Count > 0) {
+                    ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
+                    StartCombatBetween(currInitializer, chosenEnemy);
                     continue; //the attacking group has found an enemy! skip to the next group
+                }
+
+                //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
+                List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                if (neutralGroups.Count > 0) {
+                    ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
+                    StartCombatBetween(currInitializer, chosenEnemy);
+                    continue; //the attacking group has found an enemy! skip to the next group
+                }
+
+                //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
+                List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                if (stealthGroups.Count > 0) {
+                    //The chance of initiating combat is 35%
+                    if (Random.Range(0, 100) < 35) {
+                        ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
+                        StartCombatBetween(currInitializer, chosenEnemy);
+                        continue; //the attacking group has found an enemy! skip to the next group
+                    }
                 }
             }
         }
     }
-    public void CheckPatrollingGroupsCombat() {
-        List<ICombatInitializer> patrollingGroups = GetPatrollingGroups();
-        for (int i = 0; i < patrollingGroups.Count; i++) {
-            ICombatInitializer currPatrollingGroup = patrollingGroups[i];
-            if (currPatrollingGroup.isInCombat) {
-                continue; //this current group is already in combat, skip it
-            }
-            //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-            List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-            if (combatGroups.Count > 0) {
-                ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
-                StartCombatBetween(currPatrollingGroup, chosenEnemy);
-                continue; //the attacking group has found an enemy! skip to the next group
-            }
+    public List<ICombatInitializer> GetCharactersByCombatPriority() {
+        if (_charactersAtLocation.Count <= 0) {
+            return null;
+        }
+        return _charactersAtLocation.Where(x => x.currentTask.combatPriority > 0).OrderByDescending(x => x.currentTask.combatPriority).ToList();
+    }
+    //public void CheckAttackingGroupsCombat() {
+    //    List<ICombatInitializer> attackingGroups = GetAttackingGroups();
+    //    for (int i = 0; i < attackingGroups.Count; i++) {
+    //        ICombatInitializer currAttackingGroup = attackingGroups[i];
+    //        if (currAttackingGroup.isInCombat) {
+    //            continue; //this current group is already in combat, skip it
+    //        }
+    //        //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
+    //        List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
+    //        if (combatGroups.Count > 0) {
+    //            ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
+    //            StartCombatBetween(currAttackingGroup, chosenEnemy);
+    //            continue; //the attacking group has found an enemy! skip to the next group
+    //        }
 
-            //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-            List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-            if (neutralGroups.Count > 0) {
-                ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
-                StartCombatBetween(currPatrollingGroup, chosenEnemy);
-                continue; //the attacking group has found an enemy! skip to the next group
-            }
+    //        //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
+    //        List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
+    //        if (neutralGroups.Count > 0) {
+    //            ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
+    //            StartCombatBetween(currAttackingGroup, chosenEnemy);
+    //            continue; //the attacking group has found an enemy! skip to the next group
+    //        }
 
-            //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random
-            List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-            if (stealthGroups.Count > 0) {
-                //The chance of initiating combat is 35%
-                if (Random.Range(0, 100) < 35) {
-                    ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
-                    StartCombatBetween(currPatrollingGroup, chosenEnemy);
-                    continue; //the attacking group has found an enemy! skip to the next group
-                }
+    //        //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
+    //        List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
+    //        if (stealthGroups.Count > 0) {
+    //            //The chance of initiating combat is 35%
+    //            if (Random.Range(0, 100) < 35) {
+    //                ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
+    //                StartCombatBetween(currAttackingGroup, chosenEnemy);
+    //                continue; //the attacking group has found an enemy! skip to the next group
+    //            }
+    //        }
+    //    }
+    //}
+    //public void CheckPatrollingGroupsCombat() {
+    //    List<ICombatInitializer> patrollingGroups = GetPatrollingGroups();
+    //    for (int i = 0; i < patrollingGroups.Count; i++) {
+    //        ICombatInitializer currPatrollingGroup = patrollingGroups[i];
+    //        if (currPatrollingGroup.isInCombat) {
+    //            continue; //this current group is already in combat, skip it
+    //        }
+    //        //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
+    //        List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
+    //        if (combatGroups.Count > 0) {
+    //            ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
+    //            StartCombatBetween(currPatrollingGroup, chosenEnemy);
+    //            continue; //the attacking group has found an enemy! skip to the next group
+    //        }
+
+    //        //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
+    //        List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
+    //        if (neutralGroups.Count > 0) {
+    //            ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
+    //            StartCombatBetween(currPatrollingGroup, chosenEnemy);
+    //            continue; //the attacking group has found an enemy! skip to the next group
+    //        }
+
+    //        //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random
+    //        List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
+    //        if (stealthGroups.Count > 0) {
+    //            //The chance of initiating combat is 35%
+    //            if (Random.Range(0, 100) < 35) {
+    //                ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
+    //                StartCombatBetween(currPatrollingGroup, chosenEnemy);
+    //                continue; //the attacking group has found an enemy! skip to the next group
+    //            }
+    //        }
+    //    }
+    //}
+    public bool HasCombatInitializers() {
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            ICombatInitializer currChar = _charactersAtLocation[i];
+            if (currChar.currentTask.combatPriority > 0) {
+                return true;
             }
         }
+        return false;
     }
     public bool HasHostilities() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
@@ -2087,9 +2132,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return false;
     }
-    public bool HasHostilitiesWith(Character character) {
+    public bool HasHostileCharactersWith(Character character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currItem = _charactersAtLocation[i];
+            if (currItem == character) {
+                continue; //skip
+            }
             Faction factionOfItem = null;
             if (currItem is Character) {
                 factionOfItem = (currItem as Character).faction;
@@ -2139,26 +2187,26 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         
         return false;
     }
-    public List<ICombatInitializer> GetAttackingGroups() {
-        List<ICombatInitializer> groups = new List<ICombatInitializer>();
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currGroup = _charactersAtLocation[i];
-            if (currGroup.currentTask is Invade) {
-                groups.Add(currGroup);
-            }
-        }
-        return groups;
-    }
-    public List<ICombatInitializer> GetPatrollingGroups() {
-        List<ICombatInitializer> groups = new List<ICombatInitializer>();
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currGroup = _charactersAtLocation[i];
-            if (currGroup.currentTask is Patrol) {
-                groups.Add(currGroup);
-            }
-        }
-        return groups;
-    }
+    //public List<ICombatInitializer> GetAttackingGroups() {
+    //    List<ICombatInitializer> groups = new List<ICombatInitializer>();
+    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //        ICombatInitializer currGroup = _charactersAtLocation[i];
+    //        if (currGroup.currentTask is Invade) {
+    //            groups.Add(currGroup);
+    //        }
+    //    }
+    //    return groups;
+    //}
+    //public List<ICombatInitializer> GetPatrollingGroups() {
+    //    List<ICombatInitializer> groups = new List<ICombatInitializer>();
+    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //        ICombatInitializer currGroup = _charactersAtLocation[i];
+    //        if (currGroup.currentTask is Patrol) {
+    //            groups.Add(currGroup);
+    //        }
+    //    }
+    //    return groups;
+    //}
     public List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
@@ -2178,7 +2226,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         return groups;
     }
     public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
-        CombatPrototype combat = new CombatPrototype(combatant1, combatant2, this);
+        Combat combat = new Combat(combatant1, combatant2, this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
         if (combatant1 is Party) {

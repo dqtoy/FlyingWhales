@@ -359,10 +359,10 @@ public class Party: IEncounterable, ICombatInitializer {
     }
     #endregion
 
- //   #region Virtuals
- //   public virtual void StartEncounter(ECS.Character encounteredBy){ }
-	//public virtual void StartEncounter(Party encounteredBy){}
- //   #endregion
+    //   #region Virtuals
+    //   public virtual void StartEncounter(ECS.Character encounteredBy){ }
+    //public virtual void StartEncounter(Party encounteredBy){}
+    //   #endregion
 
     #region ICombatInitializer
     //public virtual void ReturnResults(object result) { }
@@ -429,7 +429,7 @@ public class Party: IEncounterable, ICombatInitializer {
             return true;
         }
     }
-    public virtual void ReturnCombatResults(ECS.CombatPrototype combat) {
+    public virtual void ReturnCombatResults(ECS.Combat combat) {
         this.SetIsInCombat(false);
         if (this.isDisbanded) {
             return;
@@ -475,7 +475,10 @@ public class Party: IEncounterable, ICombatInitializer {
             if (currentFunction != null) {
                 currentFunction();
                 SetCurrentFunction(null);
-            } 
+            }
+            //if (avatar != null && avatar.isMovementPaused) {
+            //    avatar.ResumeMovement();
+            //}
         }
         SetIsDefeated(false);
     }
@@ -518,12 +521,18 @@ public class Party: IEncounterable, ICombatInitializer {
     public void ContinueDailyAction() {
         if (!isInCombat) {
             if (currentTask != null) {
-                if (avatar != null && avatar.isTravelling) {
-                    return;
-                }
+                //if (avatar != null && avatar.isTravelling) {
+                //    return;
+                //}
                 currentTask.PerformTask();
             }
         }
+    }
+    public bool CanInitiateCombat() {
+        if (currentTask.combatPriority > 0) {
+            return true;
+        }
+        return false;
     }
     #endregion
 

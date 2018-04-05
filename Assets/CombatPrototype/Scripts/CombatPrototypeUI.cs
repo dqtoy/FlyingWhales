@@ -31,7 +31,7 @@ namespace ECS{
         }
 
         private void Start() {
-			CombatPrototypeManager.Instance.Initialize();
+			CombatManager.Instance.Initialize();
             LoadCharacterChoices();
             LoadItemTypeChoices();
         }
@@ -39,8 +39,8 @@ namespace ECS{
         private void LoadCharacterChoices() {
             sideAPopupList.Clear();
             sideBPopupList.Clear();
-            for (int i = 0; i < CombatPrototypeManager.Instance.baseCharacters.Length; i++) {
-                CharacterSetup currChoice = CombatPrototypeManager.Instance.baseCharacters[i];
+            for (int i = 0; i < CombatManager.Instance.baseCharacters.Length; i++) {
+                CharacterSetup currChoice = CombatManager.Instance.baseCharacters[i];
                 sideAPopupList.AddItem(currChoice.fileName, currChoice);
                 sideBPopupList.AddItem(currChoice.fileName, currChoice);
                 if (i == 0) {
@@ -82,14 +82,14 @@ namespace ECS{
         }
 
         public void AddCharacterToSideA() {
-            ECS.Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
-            CombatPrototypeManager.Instance.combat.AddCharacter(SIDES.A, newChar);
+            ECS.Character newChar = CombatManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
+            CombatManager.Instance.combat.AddCharacter(SIDES.A, newChar);
             CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
         public void AddCharacterToSideB() {
-            ECS.Character newChar = CombatPrototypeManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
-            CombatPrototypeManager.Instance.combat.AddCharacter(SIDES.B, newChar);
+            ECS.Character newChar = CombatManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
+            CombatManager.Instance.combat.AddCharacter(SIDES.B, newChar);
             CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
@@ -100,7 +100,7 @@ namespace ECS{
                 labelToUpdate = sideBCharactersLbl;
                 sideText = "_sideB";
             }
-            List<ECS.Character> charactersFromSide = CombatPrototypeManager.Instance.combat.GetCharactersOnSide(side);
+            List<ECS.Character> charactersFromSide = CombatManager.Instance.combat.GetCharactersOnSide(side);
             labelToUpdate.text = string.Empty;
             for (int i = 0; i < charactersFromSide.Count; i++) {
                 ECS.Character currCharacter = charactersFromSide[i];
@@ -132,15 +132,15 @@ namespace ECS{
         }
 
         public void ResetSimulation() {
-			while (CombatPrototypeManager.Instance.combat.charactersSideA.Count > 0) {
-				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (CombatPrototypeManager.Instance.combat.charactersSideA[0].characterColor);
-				CombatPrototypeManager.Instance.combat.charactersSideA.RemoveAt (0);
+			while (CombatManager.Instance.combat.charactersSideA.Count > 0) {
+				CombatManager.Instance.ReturnCharacterColorToPool (CombatManager.Instance.combat.charactersSideA[0].characterColor);
+				CombatManager.Instance.combat.charactersSideA.RemoveAt (0);
 			}
-			while (CombatPrototypeManager.Instance.combat.charactersSideB.Count > 0) {
-				CombatPrototypeManager.Instance.ReturnCharacterColorToPool (CombatPrototypeManager.Instance.combat.charactersSideB[0].characterColor);
-				CombatPrototypeManager.Instance.combat.charactersSideB.RemoveAt (0);
+			while (CombatManager.Instance.combat.charactersSideB.Count > 0) {
+				CombatManager.Instance.ReturnCharacterColorToPool (CombatManager.Instance.combat.charactersSideB[0].characterColor);
+				CombatManager.Instance.combat.charactersSideB.RemoveAt (0);
 			}
-			CombatPrototypeManager.Instance.NewCombat ();
+			CombatManager.Instance.NewCombat ();
 			ClearCombatLogs();
 //            CombatPrototypeManager.Instance.combat.charactersSideA.Clear();
 //            CombatPrototypeManager.Instance.combat.charactersSideB.Clear();

@@ -65,7 +65,7 @@ public class Invade : CharacterTask {
 	}
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-            return location.HasHostilitiesWith(character); //If there are unowned landmarks with hostile unaligned characters or owned by hostile faction within current region or adjacent region
+            return location.HasHostileCharactersWith(character); //If there are unowned landmarks with hostile unaligned characters or owned by hostile faction within current region or adjacent region
 		}
 		return base.CanBeDone (character, location);
 	}
@@ -102,11 +102,11 @@ public class Invade : CharacterTask {
                 if (landmark.owner != character.faction) {
                     int weight = 0;
                     if (currRegion.id == regionOfChar.id) {
-                        if (landmark.HasHostilitiesWith(character)) {
+                        if (landmark.HasHostileCharactersWith(character)) {
                             weight += 100; //Each unowned landmark with hostile unaligned characters or owned by hostile faction within current region: 100
                         }
                     } else {
-                        if (landmark.HasHostilitiesWith(character)) {
+                        if (landmark.HasHostileCharactersWith(character)) {
                             weight += 50; //Each unowned landmark with hostile unaligned characters or owned by hostile faction within adjacent regions: 50
                         }
                     }

@@ -41,6 +41,7 @@ public class StorylineData {
     }
 
     #region virtuals
+    public virtual bool CanCreateStoryline() { return false; }
     /*
      Setup initial storyline elements. This is called upon world generation
          */

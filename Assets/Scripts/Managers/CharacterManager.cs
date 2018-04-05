@@ -38,7 +38,7 @@ public class CharacterManager : MonoBehaviour {
 		if(className == "None"){
             className = "Classless";
 		}
-        ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(className, race);
+        ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className, race);
         if (setup == null) {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + className + "!");
             return null;
@@ -66,7 +66,7 @@ public class CharacterManager : MonoBehaviour {
      Create a new character, given filename.
          */
     public ECS.Character CreateNewCharacter(string fileName, int statAllocationBonus = 0, Faction faction = null) {
-        ECS.CharacterSetup setup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup(fileName);
+        ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(fileName);
         if (setup == null) {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + fileName + "!");
             return null;

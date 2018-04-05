@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour {
 	}
 
     public void DayStarted() {
-        Messenger.Broadcast("OnDayStart");
+        Messenger.Broadcast(Signals.DAY_START);
     }
 
     /*

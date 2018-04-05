@@ -77,7 +77,7 @@ public class DrinkBlood : CharacterTask {
                     if (currLandmark.owner != null && currLandmark.owner == character.faction) {
                         weight += 100;//Landmark owned by a different faction: +100
                     }
-                    if (currLandmark.HasHostilitiesWith(character)) {
+                    if (currLandmark.HasHostileCharactersWith(character)) {
                         weight -= 50;
                     }
                     _landmarkWeights.AddElement(currLandmark, weight);

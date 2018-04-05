@@ -17,11 +17,12 @@ public interface ICombatInitializer {
 
 	//bool InitializeCombat();
 	bool IsHostileWith (ICombatInitializer combatInitializer);
-	void ReturnCombatResults(ECS.CombatPrototype combat);
+	void ReturnCombatResults(ECS.Combat combat);
 	void SetIsDefeated (bool state);
-	//void SetCivilians (int amount);
-	//void AdjustCivilians (int amount);
-	void SetIsInCombat (bool state);
+    bool CanInitiateCombat();
+    //void SetCivilians (int amount);
+    //void AdjustCivilians (int amount);
+    void SetIsInCombat (bool state);
 	void SetCurrentFunction (Action function);
     void ContinueDailyAction();
 

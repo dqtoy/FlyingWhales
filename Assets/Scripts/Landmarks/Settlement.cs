@@ -535,7 +535,7 @@ public class Settlement : BaseLandmark {
 		Messenger.AddListener ("Psytoxinated", ListenPsytoxinated);
 		Messenger.AddListener ("Unpsytoxinated", ListenUnpsytoxinated);
 
-		ECS.CharacterSetup charSetup = ECS.CombatPrototypeManager.Instance.GetBaseCharacterSetup("Dehkbrug");
+		ECS.CharacterSetup charSetup = ECS.CombatManager.Instance.GetBaseCharacterSetup("Dehkbrug");
 		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charSetup.optionalRole, charSetup);
 		newCharacter.SetCharacterColor (Color.red);
 		newCharacter.SetName ("Nihvram");

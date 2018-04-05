@@ -8,7 +8,7 @@ public class StartupManager : MonoBehaviour {
 		LocalizationManager.Instance.Initialize ();
 		ItemManager.Instance.Initialize ();
 		SkillManager.Instance.Initialize ();
-		ECS.CombatPrototypeManager.Instance.Initialize ();
+		ECS.CombatManager.Instance.Initialize ();
 		EncounterPartyManager.Instance.Initialize ();
 		CharacterManager.Instance.ConstructTraitDictionary();
 		MaterialManager.Instance.Initialize ();

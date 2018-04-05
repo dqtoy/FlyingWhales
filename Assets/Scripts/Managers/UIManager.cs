@@ -3390,7 +3390,7 @@ public class UIManager : MonoBehaviour {
 
 	#region Combat History Logs
 	[SerializeField] internal CombatLogsUI combatLogUI;
-	public void ShowCombatLog(ECS.CombatPrototype combat) {
+	public void ShowCombatLog(ECS.Combat combat) {
 		//if(questLogUI.isShowing){
 		//	questLogUI.HideQuestLogs ();
 		//}

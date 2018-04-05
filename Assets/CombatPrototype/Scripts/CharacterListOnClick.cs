@@ -12,9 +12,9 @@ namespace ECS{
 				int idToUse = int.Parse (id);
                 //Debug.Log("Clicked " + url);
 				if(url.Contains("_sideA")){
-                    CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatPrototypeManager.Instance.combat.charactersSideA[idToUse]);
+                    CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatManager.Instance.combat.charactersSideA[idToUse]);
 				}else if(url.Contains("_sideB")){
-					CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatPrototypeManager.Instance.combat.charactersSideB[idToUse]);
+					CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatManager.Instance.combat.charactersSideB[idToUse]);
                 }
 			}
 		}
