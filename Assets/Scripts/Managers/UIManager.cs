@@ -3447,7 +3447,7 @@ public class UIManager : MonoBehaviour {
         HideQuestsSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoStorylinesBtn.transform);
         storylinesSummaryMenu.ShowMenu();
-		storylinesSummaryMenu.RepositionTable ();
+		StartCoroutine(RepositionTable (storylinesSummaryMenu.storyTable));
         //UpdateQuestsSummary();
     }
     public void HideStorylinesSummary() {

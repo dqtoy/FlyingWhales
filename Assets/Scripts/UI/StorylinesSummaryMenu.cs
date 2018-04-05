@@ -10,6 +10,10 @@ public class StorylinesSummaryMenu : UIMenu {
 
     [SerializeField] private GameObject storylineItemPrefab;
 
+	public UITable storyTable{
+		get { return storylinesTable; }
+	}
+
     internal void PopulateStorylinesTable() {
         for (int i = 0; i < StorylineManager.Instance.activeStorylines.Count; i++) {
             StorylineData currStoryline = StorylineManager.Instance.activeStorylines[i];
@@ -19,17 +23,6 @@ public class StorylinesSummaryMenu : UIMenu {
             storylineItem.SetStoryline(currStoryline);
         }
     }
-
-	public IEnumerator RepositionStorylineTable(){
-		yield return new WaitForEndOfFrame ();
-		yield return new WaitForEndOfFrame ();
-		storylinesTable.Reposition();
-	}
-	public void RepositionTable(){
-		StartCoroutine (RepositionStorylineTable ());
-//		storylinesTable.Reposition();
-	}
-
 
     public void ShowElementInfo(string info) {
         storylineInfoGO.SetActive(true);
