@@ -23,7 +23,9 @@ public class TheLostHeirData : StorylineData {
     #region overrides
     public override bool InitialStorylineSetup() {
 //        base.InitialStorylineSetup();
-
+		if (LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.HUT).Count <= 0) {
+			return false;
+		}
         Messenger.AddListener<ECS.Item, BaseLandmark>(Signals.ITEM_PLACED_LANDMARK, OnHeirloomPlacedInLandmark);
         Messenger.AddListener<ECS.Item, ECS.Character>(Signals.ITEM_PLACED_INVENTORY, OnHeirloomPlacedInInventory);
 
