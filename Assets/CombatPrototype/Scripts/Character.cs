@@ -749,12 +749,12 @@ namespace ECS {
                 //CheckForInternationalIncident();
 
                 if (this._party != null) {
-					Party party = this._party;
-					party.RemovePartyMember(this, true);
-					if(party.partyLeader.id == this._id){
-						party.DisbandParty ();
+                    Party party = this._party;
+                    party.RemovePartyMember(this, true);
+                    if (party.partyLeader.id == this._id) {
+                        party.DisbandParty();
                     }
-				}else{
+                } else if (this.specificLocation != null){
 					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
 

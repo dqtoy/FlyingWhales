@@ -51,7 +51,7 @@ public class CharactersSummaryUI : UIMenu {
             characterEntries.Remove(characterEntry);
         }
         ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
-        UIManager.Instance.RepositionGrid(characterEntriesGrid);
+        sortingAction();
     }
 
     private CharacterSummaryEntry GetCharacterEntry(ECS.Character character) {
@@ -69,6 +69,7 @@ public class CharactersSummaryUI : UIMenu {
         if (charEntry != null) {
             charEntry.UpdateCharacterInfo();
         }
+        sortingAction();
     }
 
     #region Sorting
