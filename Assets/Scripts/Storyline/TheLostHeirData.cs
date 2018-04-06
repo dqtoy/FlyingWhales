@@ -94,6 +94,8 @@ public class TheLostHeirData : StorylineData {
 			QuestManager.Instance.AddQuestToAvailableQuests(eliminateLostHeirQuest);
 //			chosenChieftain.AddActionOnDeath(eliminateLostHeirQuest.ForceCancelQuest);
 
+			Relationship rel = CharacterManager.Instance.CreateNewRelationshipBetween (chieftain, lostHeir);
+			rel.AddRelationshipStatus (CHARACTER_RELATIONSHIP.PARENT, CHARACTER_RELATIONSHIP.CHILD);
 
             AddRelevantQuest(findLostHeirQuest);
 			AddRelevantQuest(eliminateLostHeirQuest);
