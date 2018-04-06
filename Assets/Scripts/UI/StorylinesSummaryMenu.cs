@@ -25,6 +25,10 @@ public class StorylinesSummaryMenu : UIMenu {
         }
     }
 
+    public void RepositionTable() {
+        StartCoroutine(UIManager.Instance.RepositionTable(storylinesTable));
+    }
+
     public void ShowElementInfo(string info) {
         storylineInfoGO.SetActive(true);
         storylineInfoLbl.text = info;
