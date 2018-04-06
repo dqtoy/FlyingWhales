@@ -49,8 +49,8 @@ public class CharactersSummaryUI : UIMenu {
         CharacterSummaryEntry characterEntry = GetCharacterEntry(character);
         if (characterEntry != null) {
             characterEntries.Remove(characterEntry);
+            ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
         }
-        ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
         sortingAction();
     }
 

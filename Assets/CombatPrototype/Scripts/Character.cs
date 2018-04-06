@@ -754,7 +754,7 @@ namespace ECS {
                     if (party.partyLeader.id == this._id) {
                         party.DisbandParty();
                     }
-                } else if (this.specificLocation != null){
+                } else {
 					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
 
@@ -2732,6 +2732,9 @@ namespace ECS {
 		public bool IsHostileWith(ICombatInitializer combatInitializer){
             if (this.faction == null) {
                 return true; //this character has no faction
+            }
+            if (this.currentTask.HasHostilitiesBecauseOfTask(combatInitializer)) {
+                return true;
             }
             //Check here if the combatInitializer is hostile with this character, if yes, return true
             Faction factionOfEnemy = null;

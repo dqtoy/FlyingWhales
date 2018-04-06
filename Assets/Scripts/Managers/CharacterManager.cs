@@ -58,7 +58,6 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.AssignRole(charRole);
         }
         allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
 	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, ECS.CharacterSetup setup, int statAllocationBonus = 0) {

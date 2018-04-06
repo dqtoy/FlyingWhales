@@ -256,6 +256,7 @@ public class CharacterTask {
         return null;
     }
     protected virtual WeightedDictionary<ECS.Character> GetCharacterTargetWeights(ECS.Character character) { return new WeightedDictionary<ECS.Character>(); }
+    public virtual bool HasHostilitiesBecauseOfTask(ICombatInitializer other) { return false; }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

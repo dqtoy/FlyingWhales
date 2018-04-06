@@ -99,9 +99,21 @@ public class Attack : CharacterTask {
 		}
 		return null;
 	}
-	#endregion
+    public override bool HasHostilitiesBecauseOfTask(ICombatInitializer other) {
+        if (other is ECS.Character) {
+            if (targetCharacter.id == (other as ECS.Character).id) {
+                return true;
+            }
+        } else if(other is Party) {
+            if ((other as Party).partyMembers.Contains(targetCharacter)) {
+                return true;
+            }
+        }
+        return base.HasHostilitiesBecauseOfTask(other);
+    }
+    #endregion
 
-	private void StartAttack(){
+    private void StartAttack(){
 		ChangeStateTo (STATE.ATTACK);
 	}
 
