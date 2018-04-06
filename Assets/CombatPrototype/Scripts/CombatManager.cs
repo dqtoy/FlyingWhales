@@ -156,7 +156,7 @@ namespace ECS {
                         ECS.Character currFaintedChar = combat.faintedCharacters[i];
                         if (currFaintedChar.currentSide != combat.winningSide){
 							if(!currFaintedChar.cannotBeTakenAsPrisoner){
-								currFaintedChar.Faint ();
+								//currFaintedChar.Faint ();
 								//if the currFaintedChar has a party, and it is not yet disbanded
 								if (currFaintedChar.party != null && !currFaintedChar.party.isDisbanded) {
 									//Check if he/she is the party leader

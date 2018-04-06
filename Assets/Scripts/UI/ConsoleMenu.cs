@@ -33,6 +33,7 @@ public class ConsoleMenu : UIMenu {
             {"/center_character", CenterOnCharacter},
             {"/center_landmark", CenterOnLandmark },
             {"/l_combat_rooms", LogCombatRooms },
+            {"/l_character_location_history", LogCharacterLocationHistory },
         };
     }
 
@@ -352,6 +353,8 @@ public class ConsoleMenu : UIMenu {
         ECS.Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         }
 
         if (character == null) {
@@ -397,6 +400,37 @@ public class ConsoleMenu : UIMenu {
         }
         UIManager.Instance.ShowCharacterInfo(character);
         //character.CenterOnCharacter();
+    }
+    private void LogCharacterLocationHistory(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string characterParameterString = parameters[1];
+        int characterID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string text = character.name + "'s Location History: ";
+        for (int i = 0; i < character.specificLocationHistory.Count; i++) {
+            text += "\n" + character.specificLocationHistory[i];
+        }
+        Debug.Log(text);
+        string fileLocation = "Assets/Logs/" + character.name + "'s_Location_History.txt";
+        System.IO.File.WriteAllText(fileLocation, text);
+        AddSuccessMessage("Logged " + character.name + "'s location history in console. And created text file of log at " + fileLocation);
     }
     #endregion
 

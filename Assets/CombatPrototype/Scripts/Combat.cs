@@ -189,19 +189,10 @@ namespace ECS{
 			CombatManager.Instance.CombatResults(this);
             if (attacker != null) {
                 attacker.ReturnCombatResults(this);
-                //else if (caller is IEncounterable) {
-                //    IEncounterable encounterable = (IEncounterable)caller;
-                //    encounterable.ReturnResults(this);
-                //}
             }
             if (defender != null) {
                 defender.ReturnCombatResults(this);
-                //else if (caller is IEncounterable) {
-                //    IEncounterable encounterable = (IEncounterable)caller;
-                //    encounterable.ReturnResults(this);
-                //}
             }
-			//this.location.StartCombatAtLocation ();
 		}
 
         //This simulates the whole combat system
@@ -742,7 +733,7 @@ namespace ECS{
 				AddCombatLog (log, sourceCharacter.currentSide);
 
 				targetCharacter.AdjustHP (-damage);
-			}else{
+			} else {
 				string log = sourceCharacter.coloredUrlName + " used " + attackSkill.skillName.ToLower () + " on " + targetCharacter.coloredUrlName + ".";
 				int chance = Utilities.rng.Next (0, 100);
 				if (attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0) {

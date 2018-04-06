@@ -989,6 +989,7 @@ public enum TASK_TYPE { //This is the list of actions a character can do on it's
     PROWL,
 	ATTACK_ENEMY,
 	MOVE_TOWARDS_CHARACTER,
+    FAINT,
 }
 public enum TASK_ACTION_RESULT {
     SUCCESS,
@@ -1251,6 +1252,7 @@ public enum STATE{
 	INVADE,
     PROWL,
 	STEAL,
+    FAINTED,
 }
 
 public enum CHARACTER_RELATIONSHIP{

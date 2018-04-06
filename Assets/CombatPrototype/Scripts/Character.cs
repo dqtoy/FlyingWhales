@@ -700,7 +700,10 @@ namespace ECS {
 				if (_isFollower) {
 					SetFollowerState (false);
 				}
-			}
+                //Set Task to Fainted
+                Faint faintTask = new Faint(this);
+                faintTask.OnChooseTask(this)
+;			}
 		}
 
 		internal void Unfaint(){
@@ -718,6 +721,10 @@ namespace ECS {
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
 
 				CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
+
+                if (specificLocation == null) {
+                    throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+                }
 
 				if(specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
@@ -2113,10 +2120,24 @@ namespace ECS {
 		public void SetParty(Party party) {
 			_party = party;
 		}
-		#endregion
+        #endregion
 
-		#region Location
+        #region Location
+        public List<string> specificLocationHistory = new List<string>();
         public void SetSpecificLocation(ILocation specificLocation) {
+            string previousLocationString = string.Empty;
+            string newLocationString = string.Empty;
+            if (_specificLocation == null) {
+                previousLocationString = "null";
+            } else {
+                previousLocationString = _specificLocation.ToString();
+            }
+            if (specificLocation == null) {
+                newLocationString = "null";
+            } else {
+                newLocationString = specificLocation.ToString();
+            }
+            specificLocationHistory.Add("Specific Location was changed from " + previousLocationString + " to " + newLocationString + " ST: " + StackTraceUtility.ExtractStackTrace());
             _specificLocation = specificLocation;
 			if(_specificLocation != null){
 				_currentRegion = _specificLocation.tileLocation.region;

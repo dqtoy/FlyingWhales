@@ -1086,6 +1086,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void CenterOnLandmark() {
 		CameraMove.Instance.CenterCameraOn(this.tileLocation.gameObject);
     }
+    public override string ToString() {
+        return this.landmarkName;
+    }
     #endregion
 
     #region Prisoner

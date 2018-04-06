@@ -1414,7 +1414,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     //[SerializeField] private int kingdomToConquerIndex = 0;
     [SerializeField] private int range = 0;
     List<HexTile> tiles = new List<HexTile>();
-
     [ContextMenu("Show Tiles In Range")]
     public void ShowTilesInRange() {
         for (int i = 0; i < tiles.Count; i++) {
@@ -1426,71 +1425,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             tiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
         }
     }
-
     [ContextMenu("Show Border Tiles")]
     public void ShowBorderTiles() {
         for (int i = 0; i < this.city.borderTiles.Count; i++) {
             this.city.borderTiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
         }
     }
-
-    //[ContextMenu("Show Adjacent Kingdoms")]
-    //public void ShowAdjacentKingdoms() {
-    //    for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-    //        Debug.Log("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
-    //    }
-    //}
-
     [ContextMenu("Show Hextile Positions")]
     public void ShowHextileBounds() {
         Debug.Log("Local Pos: " + this.transform.localPosition.ToString());
         Debug.Log("Pos: " + this.transform.position.ToString());
     }
-
-    [ContextMenu("Force Kill City")]
-    public void ForceKillCity() {
-        city.KillCity();
-    }
-
     [ContextMenu("Force Reset Tile")]
     public void ForceResetTile() {
         ResetTile();
-    }
-
-    //[ContextMenu("Force Conquer Tile")]
-    //public void ForceTileToBeConqueredByKingdom() {
-    //    Kingdom conqueror = KingdomManager.Instance.allKingdoms[kingdomToConquerIndex];
-    //    if (conqueror.id == this.city.kingdom.id) {
-    //        Debug.LogWarning("City is already part of " + conqueror.name);
-    //    } else {
-    //        conqueror.ConquerCity(city, null);
-    //    }
-    //}
-
-    [ContextMenu("Kill King")]
-    public void KillKing() {
-        Debug.Log("Force kill " + this.ownedByCity.kingdom.king.name + " king of " + this.ownedByCity.kingdom.name);
-        this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
-    }
-
-    //[ContextMenu("Kill Chancellor")]
-    //public void KillChancellor() {
-    //    this.ownedByCity.importantCitizensInCity[ROLE.GRAND_CHANCELLOR].Death(DEATH_REASONS.ACCIDENT);
-    //}
-
-    //[ContextMenu("Kill Marshal")]
-    //public void KillMarshal() {
-    //    this.ownedByCity.importantCitizensInCity[ROLE.GRAND_MARSHAL].Death(DEATH_REASONS.ACCIDENT);
-    //}
-
-    //[ContextMenu("Force Transfer City")]
-    //public void ForceChangeKingdom() {
-    //    KingdomManager.Instance.TransferCitiesToOtherKingdom(ownedByCity.kingdom, KingdomManager.Instance.allKingdoms[kingdomToConquerIndex], ownedByCity);
-    //}
-
-    [ContextMenu("Kill Kingdom Using Population")]
-    public void KillKingdomUsingPopulation() {
-        ownedByCity.kingdom.DamagePopulation(ownedByCity.kingdom.population);
     }
     [ContextMenu("Select Neighbours")]
     public void SelectAllTilesInRegion() {
@@ -1522,17 +1470,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     //    allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
     //    UnityEditor.Selection.objects = allTiles.ToArray();
     //}
-
     [ContextMenu("Toggle Militarize")]
     public void ToggleMilitarize() {
         ownedByCity.kingdom.Militarize(!ownedByCity.kingdom.isMilitarize);
     }
-
     [ContextMenu("Toggle Fortify")]
     public void ToggleFortify() {
         ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
     }
-
     [ContextMenu("Load Border Lines")]
     public void LoadBorderLinesForTesting() {
         HexTile currTile = this;
@@ -1554,12 +1499,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             }
         }
     }
-
     [ContextMenu("Make King Determine Weighted Action")]
     public void MakeKingDetermineWeightedAction() {
         this.city.kingdom.PerformWeightedAction();
     }
-
     private void ShowRegionInfo() {
         string text = string.Empty;
         text += "[b]Tile:[/b] " + this.name + "\n";
@@ -1574,7 +1517,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         UIManager.Instance.ShowSmallInfo(text);
     }
-
     private void HideRegionInfo() {
         HideSmallInfoWindow();
         for (int i = 0; i < this.region.connections.Count; i++) {
@@ -1586,7 +1528,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             //}
         }
     }
-
     private void ShowHexTileInfo() {
         string text = string.Empty;
         text += "Characters in tile: ";
@@ -1599,7 +1540,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             }
         }
     }
-
     private void ShowLandmarkInfo() {
         string text = string.Empty;
         text += "[b]Characters in landmark: [/b]";
@@ -1697,7 +1637,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //        }
         UIManager.Instance.ShowSmallInfo(text);
     }
-
     //private void HideLandmarkInfo() {
     //    HideSmallInfoWindow();
     //    //for (int i = 0; i < this.landmark.connections.Count; i++) {
@@ -1709,7 +1648,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     //    //    }
     //    //}
     //}
-
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]Tile:[/b] " + this.name + "\n";
@@ -1826,13 +1764,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //}
         UIManager.Instance.ShowSmallInfo(text);
     }
-
     private void HideSmallInfoWindow() {
         UIManager.Instance.HideSmallInfo();
     }
+    public override string ToString() {
+        return this.tileName;
+    }
     #endregion
 
-	internal float GetDistanceTo(HexTile targetHextile){
+    internal float GetDistanceTo(HexTile targetHextile){
 		return Vector3.Distance (this.transform.position, targetHextile.transform.position);
 	}
 	
@@ -2248,52 +2188,51 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             currItem.ContinueDailyAction();
         }
     }
-
- //   public void StartCombatAtLocation(){
-	//	if(!CombatAtLocation()){
-	//		this._currentCombat = null;
-	//		for (int i = 0; i < _charactersAtLocation.Count; i++) {
- //               ICombatInitializer currItem = _charactersAtLocation[i];
- //               currItem.SetIsDefeated (false);
-	//			currItem.SetIsInCombat (false);
-	//			if(currItem.currentFunction != null){
-	//				currItem.currentFunction ();
-	//			}
-	//			currItem.SetCurrentFunction(null);
- //           }
- //       } else {
- //           for (int i = 0; i < _charactersAtLocation.Count; i++) {
- //               ICombatInitializer currItem = _charactersAtLocation[i];
-	//			currItem.SetIsInCombat (false);
- //           }
- //       }
-	//}
- //   public bool CombatAtLocation(){
-	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
-	//		if(_charactersAtLocation[i].InitializeCombat()){
-	//			return true;
-	//		}
-	//	}
-	//	return false;
-	//}
- //   public ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer) {
-	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
-	//		if(_charactersAtLocation[i] != combatInitializer){
-	//			if(_charactersAtLocation[i] is Party){
-	//				if(((Party)_charactersAtLocation[i]).isDefeated){
-	//					continue;
-	//				}
-	//			}
-	//			if(combatInitializer.IsHostileWith(_charactersAtLocation[i])){
-	//				return _charactersAtLocation [i];
-	//			}
-	//		}
-	//	}
-	//	return null;
-	//}
- //   public void SetCurrentCombat(CombatPrototype combat) {
-	//	_currentCombat = combat;
-	//}
+    //   public void StartCombatAtLocation(){
+    //	if(!CombatAtLocation()){
+    //		this._currentCombat = null;
+    //		for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //               ICombatInitializer currItem = _charactersAtLocation[i];
+    //               currItem.SetIsDefeated (false);
+    //			currItem.SetIsInCombat (false);
+    //			if(currItem.currentFunction != null){
+    //				currItem.currentFunction ();
+    //			}
+    //			currItem.SetCurrentFunction(null);
+    //           }
+    //       } else {
+    //           for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //               ICombatInitializer currItem = _charactersAtLocation[i];
+    //			currItem.SetIsInCombat (false);
+    //           }
+    //       }
+    //}
+    //   public bool CombatAtLocation(){
+    //	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //		if(_charactersAtLocation[i].InitializeCombat()){
+    //			return true;
+    //		}
+    //	}
+    //	return false;
+    //}
+    //   public ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer) {
+    //	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //		if(_charactersAtLocation[i] != combatInitializer){
+    //			if(_charactersAtLocation[i] is Party){
+    //				if(((Party)_charactersAtLocation[i]).isDefeated){
+    //					continue;
+    //				}
+    //			}
+    //			if(combatInitializer.IsHostileWith(_charactersAtLocation[i])){
+    //				return _charactersAtLocation [i];
+    //			}
+    //		}
+    //	}
+    //	return null;
+    //}
+    //   public void SetCurrentCombat(CombatPrototype combat) {
+    //	_currentCombat = combat;
+    //}
     #endregion
 
     #region Materials
