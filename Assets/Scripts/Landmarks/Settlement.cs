@@ -54,9 +54,7 @@ public class Settlement : BaseLandmark {
     #region Overrides
     public override void Initialize (){
 		base.Initialize ();
-		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
-			InitializeCrater ();
-		} else if (_specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+		if (_specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
             //When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
             AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
             GenerateGoblinCampTechnologies();
@@ -529,29 +527,6 @@ public class Settlement : BaseLandmark {
 	#endregion
 
 	#region Crater
-	private void InitializeCrater(){
-		_numOfPsytoxinated = 0;
-		LandmarkManager.Instance.craterLandmark = this;
-		Messenger.AddListener ("Psytoxinated", ListenPsytoxinated);
-		Messenger.AddListener ("Unpsytoxinated", ListenUnpsytoxinated);
-
-		ECS.CharacterSetup charSetup = ECS.CombatManager.Instance.GetBaseCharacterSetup("Dehkbrug");
-		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charSetup.optionalRole, charSetup);
-		newCharacter.SetCharacterColor (Color.red);
-		newCharacter.SetName ("Nihvram");
-
-		newCharacter.SetHome(this);
-		this.AddCharacterToLocation(newCharacter);
-		newCharacter.DetermineAction();
-
-		SpawnItemInLandmark ("Meteorite");
-//		EmitPsytoxin ();
-		if(Messenger.eventTable.ContainsKey("RegionPsytoxin")){
-			Messenger.Broadcast<List<Region>> ("RegionPsytoxin", this.tileLocation.region.adjacentRegions);
-		}
-		PsytoxinCure psytoxinCure = new PsytoxinCure (QuestManager.Instance, this);
-		QuestManager.Instance.AddQuestToAvailableQuests(psytoxinCure);
-	}
 	private void EmitPsytoxin(){
 		Region currRegion = this.tileLocation.region;
 		for (int i = 0; i < currRegion.adjacentRegions.Count; i++) {
@@ -581,6 +556,9 @@ public class Settlement : BaseLandmark {
 			DestroyLandmark (false);
 		}
 	}
+	public void SetNumOfPsytoxinated(int amount){
+		_numOfPsytoxinated = amount;
+	}
 	private void DestroyCrater(){
 		Messenger.RemoveListener ("Psytoxinated", ListenPsytoxinated);
 		Messenger.RemoveListener ("Unpsytoxinated", ListenUnpsytoxinated);
@@ -588,10 +566,10 @@ public class Settlement : BaseLandmark {
 		ChangeLandmarkType (LANDMARK_TYPE.CITY);
 		Initialize ();
 	}
-	private void ListenPsytoxinated(){
+	public void ListenPsytoxinated(){
 		AdjustNumOfPsytoxinated (1);
 	}
-	private void ListenUnpsytoxinated(){
+	public void ListenUnpsytoxinated(){
 		AdjustNumOfPsytoxinated (-1);
 	}
     #endregion

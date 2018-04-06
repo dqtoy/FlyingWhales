@@ -117,8 +117,8 @@ public class SearchState : State {
 					//_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
 					//_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
 					hasBeenFound = true;
-					_assignedCharacter.PickupItem(item);
 					_targetLandmark.RemoveItemInLandmark(item);
+					_assignedCharacter.PickupItem(item);
 					if (_afterFindingAction != null) {
 						_afterFindingAction();
 					}

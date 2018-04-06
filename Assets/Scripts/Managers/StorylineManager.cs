@@ -58,6 +58,7 @@ public class StorylineManager : MonoBehaviour {
 	public void AddStoryline(StorylineData storylineData){
 		if(storylineData.InitialStorylineSetup()){
 			activeStorylines.Add(storylineData);
+			UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
 		}
 	}
 	#endregion

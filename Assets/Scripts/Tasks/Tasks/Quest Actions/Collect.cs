@@ -83,6 +83,8 @@ public class Collect : CharacterTask {
 	public override int GetSelectionWeight(ECS.Character character) {
 		if (_parentQuest is TheDarkRitual) {
 			return 80;
+		}else if (_parentQuest is PsytoxinCure) {
+			return 150;
 		}
 		return 0;
 	}

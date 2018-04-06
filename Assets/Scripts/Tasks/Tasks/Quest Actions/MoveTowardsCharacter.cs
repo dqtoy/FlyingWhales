@@ -62,7 +62,7 @@ public class MoveTowardsCharacter : CharacterTask {
 			if(characterLookingFor != null){
 				for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
 					if(character.currentRegion.adjacentRegionsViaMajorRoad[i].id == characterLookingFor.currentRegion.id){
-						return 50;
+						return 150;
 					}
 				}
 			}
@@ -73,8 +73,8 @@ public class MoveTowardsCharacter : CharacterTask {
 		base.GetLandmarkTarget(character);
 		Character characterLookingFor = _traceCharacter;
 		bool hasTrace = false;
-		if(_traceItem != null && _traceCharacter == null){
-			characterLookingFor = _traceItem.possessor;
+		if(_traceItem != null && _traceCharacter == null && _traceItem.possessor is Character){
+			characterLookingFor = _traceItem.possessor as Character;
 		}else{
 			characterLookingFor = _specificTarget as Character;
 		}

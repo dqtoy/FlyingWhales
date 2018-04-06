@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 public class StorylineElement : MonoBehaviour {
 
@@ -13,10 +14,10 @@ public class StorylineElement : MonoBehaviour {
     public void SetElement(object element, List<Log> log) {
         this.element = element;
         this.logs = log;
-        if (element is ECS.Character) {
-            elementLbl.text = (element as ECS.Character).name;
-        } else if (element is ECS.Item) {
-            elementLbl.text = (element as ECS.Item).itemName;
+        if (element is Character) {
+            elementLbl.text = (element as Character).name;
+        } else if (element is Item) {
+            elementLbl.text = (element as Item).itemName;
         } else if (element is BaseLandmark) {
             elementLbl.text = (element as BaseLandmark).landmarkName;
 		} else if (element is string) {
@@ -37,10 +38,19 @@ public class StorylineElement : MonoBehaviour {
     }
     
     private void OnClickElement() {
-        if (element is ECS.Character) {
-            UIManager.Instance.ShowCharacterInfo((element as ECS.Character));
+        if (element is Character) {
+            UIManager.Instance.ShowCharacterInfo((element as Character));
         } else if (element is BaseLandmark) {
             UIManager.Instance.ShowLandmarkInfo((element as BaseLandmark));
-        }
+		} else if (element is Item) {
+			Item item = element as Item;
+			if(item.possessor != null){
+				if(item.possessor is Character){
+					UIManager.Instance.ShowCharacterInfo((item.possessor as Character));
+				}else{
+					UIManager.Instance.ShowLandmarkInfo((item.possessor as BaseLandmark));
+				}
+			}
+		}
     }
 }
