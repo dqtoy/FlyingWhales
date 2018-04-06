@@ -117,8 +117,8 @@ public class Rob : CharacterTask {
 			for (int i = 0; i < landmark.itemsInLandmark.Count; i++) {
 				Item item = landmark.itemsInLandmark [i];
 				if(item.itemName == _itemNameToRob){
-					_assignedCharacter.PickupItem (item);
 					landmark.RemoveItemInLandmark (item);
+					_assignedCharacter.PickupItem (item);
 					hasRobbedSuccessfully = true;
 					break;
 				}

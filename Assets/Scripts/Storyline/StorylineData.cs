@@ -75,6 +75,15 @@ public class StorylineData {
 				_relevantItems[obj].RemoveAt(indexToReplace + 1);
 			}
         }
+//		if (indexToReplace < _relevantItems[obj].Count) {
+//			_relevantItems[obj].RemoveAt(indexToReplace);
+//		}
+//		if(indexToReplace >= _relevantItems[obj].Count){
+//			_relevantItems[obj].Add(log);
+//		}else{
+//			_relevantItems[obj].Insert(indexToReplace, log);
+//
+//		}
     }
     #endregion
 

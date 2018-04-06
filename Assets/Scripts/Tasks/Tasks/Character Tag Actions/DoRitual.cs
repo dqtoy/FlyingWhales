@@ -73,7 +73,7 @@ public class DoRitual : CharacterTask {
 		return null;
 	}
 	public override int GetSelectionWeight(ECS.Character character){ 
-		return 75; 
+		return 175; 
 	}
 	public override void EndTaskSuccess (){
 		_currentState.SetIsHalted (false);

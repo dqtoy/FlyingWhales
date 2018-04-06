@@ -25,8 +25,8 @@ namespace ECS{
         public bool _isObtainable;
         public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
-        protected ECS.Character _owner;
-		protected ECS.Character _possessor;
+		protected ECS.Character _owner; //Not included in CreateNewCopy
+		protected TaskCreator _possessor; //Not included in CreateNewCopy
 
 		private bool _isEquipped;
         
@@ -37,9 +37,10 @@ namespace ECS{
 		public ECS.Character owner{
 			get { return _owner; }
 		}
-		public ECS.Character possessor{
+		public TaskCreator possessor{
 			get { return _possessor; }
 		}
+
 		public string nameWithQuality{
 			get{
 				if(itemType == ITEM_TYPE.ARMOR){
@@ -73,7 +74,7 @@ namespace ECS{
         public void SetOwner(ECS.Character owner) {
             _owner = owner;
         }
-		public void SetPossessor(ECS.Character possessor) {
+		public void SetPossessor(TaskCreator possessor) {
 			_possessor = possessor;
 		}
 		public void SetEquipped(bool state){

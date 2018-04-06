@@ -1259,6 +1259,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             throw new System.Exception(this.landmarkName + " already has an instance of " + item.itemName);
         }
 		_itemsInLandmark.Add (item);
+		item.SetPossessor (this);
         item.OnItemPlacedOnLandmark(this);
 	}
 	public void AddItemsInLandmark(List<Item> item){
@@ -1267,6 +1268,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public void RemoveItemInLandmark(Item item){
 		if(!item.isUnlimited){
 			_itemsInLandmark.Remove (item);
+			item.SetPossessor (null);
 		}
 	}
     public void RemoveItemInLandmark(string itemName) {

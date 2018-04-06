@@ -423,9 +423,15 @@ namespace ECS{
 					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
 						activationWeight /= 2;
 					}else if(skill is FleeSkill){
-						activationWeight = 51 - (sourceCharacter.currentHP / ((int)(sourceCharacter.maxHP * 0.01f)));
+						activationWeight = 50 - (sourceCharacter.currentHP / ((int)(sourceCharacter.maxHP * 0.01f)));
+						if(activationWeight == 0){
+							activationWeight = 1;
+						}
+						activationWeight *= 2;
 					}
-					categoryActivationWeights.Add (skill, activationWeight);
+					if(activationWeight > 0){
+						categoryActivationWeights.Add (skill, activationWeight);
+					}
 				}
 			}
 			if(categoryActivationWeights.Count > 0){

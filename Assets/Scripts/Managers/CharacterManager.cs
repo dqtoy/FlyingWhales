@@ -293,10 +293,11 @@ public class CharacterManager : MonoBehaviour {
      Create a new relationship between 2 characters,
      then add add a reference to that relationship, to both of the characters.
          */
-    public void CreateNewRelationshipBetween(ECS.Character character1, ECS.Character character2) {
+    public Relationship CreateNewRelationshipBetween(ECS.Character character1, ECS.Character character2) {
         Relationship newRel = new Relationship(character1, character2);
         character1.AddNewRelationship(character2, newRel);
         character2.AddNewRelationship(character1, newRel);
+		return newRel;
     }
     /*
      Utility Function for getting the relationship between 2 characters,

@@ -31,8 +31,8 @@ public class CollectState : State {
 					for (int j = alreadyCollected; j < _quantityToCollect; j++) {
 						chance = UnityEngine.Random.Range (0, 100);
 						if (chance < item.collectChance) {
-							_assignedCharacter.PickupItem (item);
 							_targetLandmark.RemoveItemInLandmark (item);
+							_assignedCharacter.PickupItem (item);
 							_quantityAlreadyCollected++;
 							collectedAmount++;
 						}
@@ -40,8 +40,8 @@ public class CollectState : State {
 				} else {
 					chance = UnityEngine.Random.Range (0, 100);
 					if (chance < item.collectChance) {
-						_assignedCharacter.PickupItem (item);
 						_targetLandmark.RemoveItemInLandmark (item);
+						_assignedCharacter.PickupItem (item);
 						_quantityAlreadyCollected++;
 						collectedAmount++;
 					}

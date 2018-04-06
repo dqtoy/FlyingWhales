@@ -38,10 +38,10 @@ public class PillageState : State {
 	private void ObtainItem(){
 		if(_targetLandmark.itemsInLandmark.Count > 0){
 			Item chosenItem = _targetLandmark.itemsInLandmark [UnityEngine.Random.Range (0, _targetLandmark.itemsInLandmark.Count)];
+			_targetLandmark.RemoveItemInLandmark (chosenItem);
 			if(!_assignedCharacter.EquipItem(chosenItem)){
 				_assignedCharacter.PickupItem (chosenItem);
 			}
-			_targetLandmark.RemoveItemInLandmark (chosenItem);
 		}
 	}
 	private void CivilianDies(){

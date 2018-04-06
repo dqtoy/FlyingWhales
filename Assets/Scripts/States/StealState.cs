@@ -46,8 +46,8 @@ public class StealState : State {
         stealLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         if (attemptAction == "success not caught"){
 			Item itemToSteal = GetItemToSteal ();
-			if(itemToSteal != null){
-				itemToSteal.possessor.ThrowItem (itemToSteal, false);
+			if(itemToSteal != null && itemToSteal.possessor is Character){
+				(itemToSteal.possessor as Character).ThrowItem (itemToSteal, false);
 				_assignedCharacter.PickupItem (itemToSteal);
                 stealLog.AddToFillers(null, itemToSteal.itemName, LOG_IDENTIFIER.ITEM_1);
             } else {
@@ -57,8 +57,8 @@ public class StealState : State {
             }
         } else if (attemptAction == "success caught"){
 			Item itemToSteal = GetItemToSteal ();
-			if(itemToSteal != null){
-				itemToSteal.possessor.ThrowItem (itemToSteal, false);
+			if(itemToSteal != null && itemToSteal.possessor is Character){
+				(itemToSteal.possessor as Character).ThrowItem (itemToSteal, false);
 				_assignedCharacter.PickupItem (itemToSteal);
                 stealLog.AddToFillers(null, itemToSteal.itemName, LOG_IDENTIFIER.ITEM_1);
             } else {

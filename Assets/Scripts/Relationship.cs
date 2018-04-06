@@ -10,21 +10,27 @@ public class Relationship {
     private int _value;
     private int _baseValue; //This is the value affected by traits, race, etc.
 
-	private List<CHARACTER_RELATIONSHIP> _relationshipStatus;
+	private List<CharacterRelationship> _relationshipStatus;
 
     #region getters/setters
     public int totalValue {
         get { return _value + _baseValue; }
     }
-	public List<CHARACTER_RELATIONSHIP> relationshipStatus {
+	public List<CharacterRelationship> relationshipStatus {
 		get { return _relationshipStatus; }
+	}
+	public ECS.Character character1 {
+		get { return _character1; }
+	}
+	public ECS.Character character2 {
+		get { return _character2; }
 	}
     #endregion
 
     public Relationship(ECS.Character character1, ECS.Character character2) {
         _character1 = character1;
         _character2 = character2;
-		_relationshipStatus = new List<CHARACTER_RELATIONSHIP> ();
+		_relationshipStatus = new List<CharacterRelationship> ();
 
         UpdateBaseValue();
     }
@@ -35,10 +41,13 @@ public class Relationship {
             _baseValue += 10; //Same Tribe: +10
         }
         
-        FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(_character1.faction, _character2.faction);
-        if (rel != null && rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-            _baseValue -= 25;//Opposing Tribes: -25
-        }
+		if(_character1.faction != null && _character2.faction != null){
+			FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(_character1.faction, _character2.faction);
+			if (rel != null && rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+				_baseValue -= 25;//Opposing Tribes: -25
+			}
+		}
+
 
         if (_character1.raceSetting.race == _character2.raceSetting.race) {
             _baseValue += 5; //Same Race: +5
@@ -141,9 +150,21 @@ public class Relationship {
         _value = Mathf.Max(0, _value);
     }
 
+	public void AddRelationshipStatus(CHARACTER_RELATIONSHIP char1Relationship, CHARACTER_RELATIONSHIP char2Relationship){
+		if(GetExactRelationship(char1Relationship, char2Relationship) == null){
+			CharacterRelationship charRel = new CharacterRelationship (char1Relationship, char2Relationship);
+			_relationshipStatus.Add (charRel);
+		}
+	}
+	public void RemoveRelationshipStatus(CHARACTER_RELATIONSHIP char1Relationship, CHARACTER_RELATIONSHIP char2Relationship){
+		CharacterRelationship rel = GetExactRelationship (char1Relationship, char2Relationship);
+		if(rel != null){
+			_relationshipStatus.Remove (rel);
+		}
+	}
 	public bool HasCategory(CHARACTER_RELATIONSHIP_CATEGORY category){
 		for (int i = 0; i < _relationshipStatus.Count; i++) {
-			if(Utilities.charRelationshipCategory[_relationshipStatus[i]] == category){
+			if(Utilities.charRelationshipCategory[_relationshipStatus[i].character1Relationship] == category){
 				return true;
 			}
 		}
@@ -152,10 +173,18 @@ public class Relationship {
 
 	public bool HasStatus(CHARACTER_RELATIONSHIP status){
 		for (int i = 0; i < _relationshipStatus.Count; i++) {
-			if(_relationshipStatus[i] == status){
+			if(_relationshipStatus[i].character1Relationship == status || _relationshipStatus[i].character2Relationship == status){
 				return true;
 			}
 		}
 		return false;
+	}
+	public CharacterRelationship GetExactRelationship(CHARACTER_RELATIONSHIP char1Relationship, CHARACTER_RELATIONSHIP char2Relationship){
+		for (int i = 0; i < _relationshipStatus.Count; i++) {
+			if(_relationshipStatus[i].character1Relationship == char1Relationship && _relationshipStatus[i].character2Relationship == char2Relationship){
+				return _relationshipStatus[i];
+			}
+		}
+		return null;
 	}
 }
