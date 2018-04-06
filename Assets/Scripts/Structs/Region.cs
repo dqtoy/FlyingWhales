@@ -288,7 +288,10 @@ public class Region {
     }
     internal void ResetTilesInRegion() {
         for (int i = 0; i < _tilesInRegion.Count; i++) {
-            _tilesInRegion[i].SetRegion(null);
+            HexTile tile = _tilesInRegion[i];
+            if (tile.region != this) {
+                tile.SetRegion(null);
+            }
         }
         _tilesInRegion.Clear();
     }

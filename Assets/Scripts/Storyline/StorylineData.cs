@@ -72,9 +72,7 @@ public class StorylineData {
 				_relevantItems[obj].Add(log);
 			}else{
 				_relevantItems[obj].Insert(indexToReplace, log);
-				if (_relevantItems[obj].Count < indexToReplace + 1) {
-					_relevantItems[obj].RemoveAt(indexToReplace + 1);
-				}
+				_relevantItems[obj].RemoveAt(indexToReplace + 1);
 			}
         }
     }

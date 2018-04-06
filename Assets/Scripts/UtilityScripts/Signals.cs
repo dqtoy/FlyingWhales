@@ -15,4 +15,6 @@ public static class Signals {
     public static string CHARACTER_KILLED = "OnCharacterKilled"; //Parameters (ICombatInitializer killer, Character characterThatDied)
     public static string COLLIDED_WITH_CHARACTER = "OnCollideWithCharacter"; //Parameters (ICombatInitializer character1, ICombatInitializer character2)
     public static string HISTORY_ADDED = "OnHistoryAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
+    public static string CHARACTER_CREATED = "OnCharacterCreated"; //Parameters (Character createdCharacter)
+    public static string ROLE_CHANGED = "OnCharacterRoleChanged"; //Parameters (Character characterThatChangedRole)
 }

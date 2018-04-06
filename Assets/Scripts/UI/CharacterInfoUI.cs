@@ -77,12 +77,14 @@ public class CharacterInfoUI : UIMenu {
         base.ShowMenu();
         _activeCharacter = (ECS.Character)_data;
         //RepositionHistoryScrollView();
+        UpdateCharacterInfo();
+        UpdateAllHistoryInfo();
     }
     public override void OpenMenu() {
         base.OpenMenu();
         //RepositionHistoryScrollView();
-        UpdateCharacterInfo();
-        UpdateAllHistoryInfo();
+        //UpdateCharacterInfo();
+        //UpdateAllHistoryInfo();
     }
     #endregion
 

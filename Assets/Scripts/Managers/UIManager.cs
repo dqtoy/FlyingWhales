@@ -275,7 +275,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("World Info Menu")]
     [SerializeField] private GameObject worldInfoSelectedGO;
-    [SerializeField] private GameObject worldInfoFactionBtn;
+    [SerializeField] private GameObject worldInfoCharactersBtn;
     //[SerializeField] private GameObject worldInfoAllianceBtn;
     //[SerializeField] private GameObject worldInfoWarsBtn;
     [SerializeField] private GameObject worldInfoQuestsBtn;
@@ -3225,20 +3225,20 @@ public class UIManager : MonoBehaviour {
 	#endregion
 
 
-    #region Faction Summary
-    public void ShowFactionsSummary() {
-        factionSummaryUI.ShowFactionSummary();
-        HideStorylinesSummary();
-        HideQuestsSummary();
-        SetWorldInfoMenuItemAsSelected(worldInfoFactionBtn.transform);
-    }
-    public void HideFactionsSummary() {
-        factionSummaryUI.HideFactionSummary();
-    }
-    public void UpdateFactionSummary() {
-        factionSummaryUI.UpdateFactionsSummary();
-    }
-    #endregion
+    //#region Faction Summary
+    //public void ShowFactionsSummary() {
+    //    factionSummaryUI.ShowFactionSummary();
+    //    HideStorylinesSummary();
+    //    HideQuestsSummary();
+    //    SetWorldInfoMenuItemAsSelected(worldInfoFactionBtn.transform);
+    //}
+    //public void HideFactionsSummary() {
+    //    factionSummaryUI.HideFactionSummary();
+    //}
+    //public void UpdateFactionSummary() {
+    //    factionSummaryUI.UpdateFactionsSummary();
+    //}
+    //#endregion
 
     #region Player Actions
     [Space(10)]
@@ -3405,7 +3405,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UILabel questsSummaryLbl;
     [SerializeField] private GameObject questsSummaryGO;
     public void ShowQuestsSummary() {
-        HideFactionsSummary();
+        HideCharactersSummary();
         HideStorylinesSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoQuestsBtn.transform);
 		questsSummaryGO.SetActive(true);
@@ -3443,7 +3443,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject storylinesSummaryGO;
     public StorylinesSummaryMenu storylinesSummaryMenu;
     public void ShowStorylinesSummary() {
-        HideFactionsSummary();
+        HideCharactersSummary();
         HideQuestsSummary();
         SetWorldInfoMenuItemAsSelected(worldInfoStorylinesBtn.transform);
         storylinesSummaryMenu.ShowMenu();
@@ -3453,5 +3453,42 @@ public class UIManager : MonoBehaviour {
     public void HideStorylinesSummary() {
         storylinesSummaryMenu.HideMenu();
     }
+    #endregion
+
+    #region Characters Summary
+    [Space(10)]
+    [Header("Characters Summary")]
+    [SerializeField] private GameObject charactersSummaryGO;
+    public CharactersSummaryUI charactersSummaryMenu;
+    public void ShowCharactersSummary() {
+        HideQuestsSummary();
+        HideStorylinesSummary();
+        SetWorldInfoMenuItemAsSelected(worldInfoCharactersBtn.transform);
+        charactersSummaryMenu.OpenMenu();
+    }
+    public void HideCharactersSummary() {
+        charactersSummaryMenu.CloseMenu();
+    }
+    //public void UpdateCharacterSummary() {
+    //    string questSummary = string.Empty;
+    //    questSummary += "[b]Available Quests: [/b]";
+    //    for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
+    //        Quest currentQuest = QuestManager.Instance.availableQuests[i];
+    //        if (!currentQuest.isDone) {
+    //            questSummary += "\n" + currentQuest.questURLName;
+    //            questSummary += "\n   Characters on Quest: ";
+    //            if (currentQuest.acceptedCharacters.Count > 0) {
+    //                for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
+    //                    ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
+    //                    questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
+    //                }
+    //            } else {
+    //                questSummary += "NONE";
+    //            }
+    //        }
+    //    }
+    //    questsSummaryLbl.text = questSummary;
+    //    questsSummaryLbl.ResizeCollider();
+    //}
     #endregion
 }

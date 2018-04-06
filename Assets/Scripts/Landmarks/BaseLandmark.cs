@@ -377,7 +377,7 @@ public class BaseLandmark : ILocation, TaskCreator {
                 newCharacter.DetermineAction();
             }
         }
-        UIManager.Instance.UpdateFactionSummary();
+        //UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
     /*
@@ -403,7 +403,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (determineAction) {
             newCharacter.DetermineAction();
         }
-        UIManager.Instance.UpdateFactionSummary();
+        //UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
     /*
@@ -428,7 +428,7 @@ public class BaseLandmark : ILocation, TaskCreator {
                 newCharacter.DetermineAction();
             }
         }
-        UIManager.Instance.UpdateFactionSummary();
+        //UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
     /*

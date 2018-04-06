@@ -1549,12 +1549,14 @@ namespace ECS {
 
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
+            bool wasRoleChanged = false;
 			if(_role != null){
 				_role.ChangedRole ();
                 Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
                 roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 AddHistory(roleChangeLog);
-			}
+                wasRoleChanged = true;
+            }
 			switch (role) {
 		        case CHARACTER_ROLE.CHIEFTAIN:
 			        _role = new Chieftain(this);
@@ -1609,6 +1611,9 @@ namespace ECS {
 			}
             if (_role != null) {
                 _role.OnAssignRole();
+            }
+            if (wasRoleChanged) {
+                Messenger.Broadcast(Signals.ROLE_CHANGED, this);
             }
 		}
 		public void ChangeRole(){

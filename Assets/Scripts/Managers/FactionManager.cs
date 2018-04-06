@@ -258,7 +258,7 @@ public class FactionManager : MonoBehaviour {
         allFactions.Add(newFaction);
         CreateRelationshipsForNewFaction(newFaction);
         FactionManager.Instance.UpdateFactionOrderBy();
-        UIManager.Instance.UpdateFactionSummary();
+        //UIManager.Instance.UpdateFactionSummary();
         return newFaction;
     }
     private void CreateInitialResourceStructuresForFaction(Faction faction, Settlement settlement, Region region) {
@@ -405,7 +405,7 @@ public class FactionManager : MonoBehaviour {
             orderedFactions = majorFactions.OrderBy(x => x.characters.Count).ToList();
             orderedFactions.AddRange(minorFactions.OrderBy(x => x.characters.Count));
         }
-        UIManager.Instance.UpdateFactionSummary();
+        //UIManager.Instance.UpdateFactionSummary();
     }
     public Faction GetFactionBasedOnID(int id) {
         for (int i = 0; i < allFactions.Count; i++) {

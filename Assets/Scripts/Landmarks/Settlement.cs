@@ -218,7 +218,7 @@ public class Settlement : BaseLandmark {
             _currentPopulationProduction = excess;
         }
         //AdjustPopulation(populationGrowth);
-        UIManager.Instance.UpdateFactionSummary();
+        //UIManager.Instance.UpdateFactionSummary();
         ScheduleMonthlyPopulationIncrease();
     }
     #endregion

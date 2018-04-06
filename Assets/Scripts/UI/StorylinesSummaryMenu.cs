@@ -17,6 +17,7 @@ public class StorylinesSummaryMenu : UIMenu {
             storylineItemGO.transform.localScale = Vector3.one;
             StorylineItem storylineItem = storylineItemGO.GetComponent<StorylineItem>();
             storylineItem.SetStoryline(currStoryline);
+            storylinesTable.Reposition();
         }
     }
 
