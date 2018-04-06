@@ -31,6 +31,7 @@ public class QuestData {
     public void SetActiveQuest(Quest quest) {
         _activeQuest = quest;
         if (quest == null) {
+            DeactivateAllPhaseRequirements();
             //quest is being set to null, it means the quest is no longer available or the character chose to leave the quest
             if (_owner.currentTask != null && tasks.Contains(_owner.currentTask)) {
                 _owner.currentTask.EndTask(TASK_STATUS.CANCEL); //cancel the characters current task if it comes from the list of tasks granted by his/her active quest
@@ -43,10 +44,7 @@ public class QuestData {
         if (_activeQuest != null) {
             QuestPhase questPhase = GetQuestPhase();
             _tasks = new List<CharacterTask>(questPhase.tasks);
-            for (int i = 0; i < _advancementRequirements.Count; i++) {
-                QuestPhaseRequirement currRequirement = _advancementRequirements[i];
-                currRequirement.DeactivateRequirement();
-            }
+            DeactivateAllPhaseRequirements();
             _advancementRequirements.Clear();
             questPhase.OnPhaseActive(_owner);
         } else {
@@ -71,44 +69,6 @@ public class QuestData {
     public void EndQuest(TASK_STATUS taskStatus) {
         _activeQuest.EndQuest(taskStatus, _owner);
     }
-    //private List<CharacterTask> GetAllTasks() {
-    //    List<CharacterTask> allTasks = new List<CharacterTask>();
-    //    allTasks.AddRange(_tasks);
-    //    return allTasks;
-    //}
-    ///*
-    // What to do when a task succeeds?
-    //     */
-    //public void OnTaskSuccess(CharacterTask succeededTask) {
-    //    if (!_importantTasks.Contains(succeededTask) && !_unimportantTasks.Contains(succeededTask)) {
-    //        throw new System.Exception(_owner.name + " does not have a task " + succeededTask.taskType.ToString() + " in his task list!");
-    //    }
-
-    //    if (_unimportantTasks.Contains(succeededTask)) {
-    //        //succeeded task is unimportant to the progress of the quest
-    //        succeededTask.ResetTask();
-    //    } else {
-    //        //succeeded task is important to the progress of the quest, check if the character has done all the important tasks.
-
-    //        //check if all the tasks in the important tasks list are done
-    //        for (int i = 0; i < _importantTasks.Count; i++) {
-    //            CharacterTask currTask = _importantTasks[i];
-    //            if (!currTask.isDone) {
-    //                return; //there is still a pending task
-    //            }
-    //        }
-
-    //        //All tasks are done, check if there is still a next phase
-    //        if (_activeQuest.phases.Count > _currentPhase + 1) {
-    //            //there is still a next phase, advance to the next phase
-    //            AdvanceToNextPhase();
-    //        } else {
-    //            //there are no more phases, end the quest
-    //            EndQuest(TASK_STATUS.SUCCESS);
-    //        }
-    //    }
-    //}
-
     public void AddQuestTasksToWeightedDictionary(WeightedDictionary<CharacterTask> actionWeights) {
         for (int i = 0; i < _tasks.Count; i++) {
             CharacterTask currTask = _tasks[i];
@@ -117,7 +77,6 @@ public class QuestData {
             }
         }
     }
-
     public void AddPhaseRequirement(QuestPhaseRequirement requirement) {
         _advancementRequirements.Add(requirement);
         requirement.ActivateRequirement(_owner);
@@ -131,5 +90,11 @@ public class QuestData {
         }
         Debug.Log("All requirements for " + _owner.name + "'s quest (" + activeQuest.questName + "). Quest phase: " + GetQuestPhase().phaseName);
         AdvanceToNextPhase(); //all requirements have been met, advance to next phase
+    }
+    private void DeactivateAllPhaseRequirements() {
+        for (int i = 0; i < _advancementRequirements.Count; i++) {
+            QuestPhaseRequirement currRequirement = _advancementRequirements[i];
+            currRequirement.DeactivateRequirement();
+        }
     }
 }

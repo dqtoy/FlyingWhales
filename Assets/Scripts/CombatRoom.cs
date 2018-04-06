@@ -44,23 +44,26 @@ public class CombatRoom {
         if (combatant.avatar != null) {
             combatant.avatar.ResumeMovement();
         }
-        if (_combatants.Count <= 1) {
-            ClearCombatRoom();
+        if (_combatants.Count == 0) {
+            //ClearCombatRoom();
+            //There are no more combatants in this room
+            Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
+            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
     }
 
-    private void ClearCombatRoom() {
-        for (int i = 0; i < _combatants.Count; i++) {
-            ICombatInitializer combatant = _combatants[i];
-            CombatManager.Instance.RemoveCombatant(combatant);
-            if (combatant.avatar != null) {
-                combatant.avatar.ResumeMovement();
-            }
-        }
-        _combatants.Clear();
-        Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
-        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-    }
+    //private void ClearCombatRoom() {
+    //    for (int i = 0; i < _combatants.Count; i++) {
+    //        ICombatInitializer combatant = _combatants[i];
+    //        CombatManager.Instance.RemoveCombatant(combatant);
+    //        if (combatant.avatar != null) {
+    //            combatant.avatar.ResumeMovement();
+    //        }
+    //    }
+    //    _combatants.Clear();
+    //    Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
+    //    Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    //}
 
     private void CheckForCombat() {
         //At the start of each day:

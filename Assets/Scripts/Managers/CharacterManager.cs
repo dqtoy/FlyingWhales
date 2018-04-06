@@ -67,6 +67,7 @@ public class CharacterManager : MonoBehaviour {
 		ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
 		newCharacter.AssignRole(charRole);
         allCharacters.Add(newCharacter);
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
 	}
     /*
@@ -86,6 +87,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.AssignRole(setup.optionalRole);
         }
         allCharacters.Add(newCharacter);
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
     #endregion

@@ -8,7 +8,7 @@ public class DoNothing : CharacterTask {
     private Action endAction;
     private GameDate endDate;
 
-	public DoNothing(TaskCreator createdBy, int defaultDaysLeft = 10, STANCE stance = STANCE.NEUTRAL) 
+	public DoNothing(TaskCreator createdBy, int defaultDaysLeft = 25, STANCE stance = STANCE.NEUTRAL) 
         : base(createdBy, TASK_TYPE.DO_NOTHING, stance, defaultDaysLeft) {
         //_actionString = "to dilly dally at";
 		_states = new System.Collections.Generic.Dictionary<STATE, State> {

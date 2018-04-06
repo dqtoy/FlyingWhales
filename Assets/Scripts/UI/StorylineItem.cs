@@ -20,6 +20,7 @@ public class StorylineItem : MonoBehaviour {
     private void Awake() {
         EventDelegate.Set(expandCollapseBtn.onClick, PlayExpandCollapseAnimation);
         EventDelegate.Add(expandCollapseTween.onFinished, ToggleContent);
+        EventDelegate.Add(expandCollapseTween.onFinished, UIManager.Instance.storylinesSummaryMenu.RepositionTable);
     }
 
     public void SetStoryline(StorylineData storyline) {
