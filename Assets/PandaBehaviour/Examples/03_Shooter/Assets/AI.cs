@@ -242,13 +242,13 @@ namespace Panda.Examples.Shooter
                 }
 
                 // Search the closest cover point
-                NavMeshPath selfPath = new NavMeshPath();
-                NavMeshPath attackerPath = new NavMeshPath();
+                UnityEngine.AI.NavMeshPath selfPath = new UnityEngine.AI.NavMeshPath();
+                UnityEngine.AI.NavMeshPath attackerPath = new UnityEngine.AI.NavMeshPath();
                 Vector3 closest = pos;
                 float minD = float.PositiveInfinity;
                 foreach ( var p in possibleCovers)
                 {
-                    if( self.navMeshAgent.CalculatePath(p, selfPath) && selfPath.status == NavMeshPathStatus.PathComplete )
+                    if( self.navMeshAgent.CalculatePath(p, selfPath) && selfPath.status == UnityEngine.AI.NavMeshPathStatus.PathComplete )
                     {
                         float attackerDistance = 0.0f;
                         if (attacker != null && attacker.navMeshAgent != null && attacker.navMeshAgent.CalculatePath(p, attackerPath))
@@ -271,7 +271,7 @@ namespace Panda.Examples.Shooter
 
         }
 
-        static float PathLength( NavMeshPath path )
+        static float PathLength( UnityEngine.AI.NavMeshPath path )
         {
             float d = float.PositiveInfinity;
 

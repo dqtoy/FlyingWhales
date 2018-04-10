@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace ECS {
-    [System.Serializable]
+//    [System.Serializable]
     public class AttackSkill : Skill {
         public ATTACK_TYPE attackType;
         public int durabilityDamage;

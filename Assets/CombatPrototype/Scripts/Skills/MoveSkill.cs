@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace ECS {
-    [System.Serializable]
+//    [System.Serializable]
     public class MoveSkill : Skill {
         
     }

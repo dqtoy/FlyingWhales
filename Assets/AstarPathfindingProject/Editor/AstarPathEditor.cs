@@ -560,8 +560,8 @@ namespace Pathfinding {
 				graph.name = GUILayout.TextField(graph.name ?? "", level1LabelStyle, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false));
 
 				// Mark the name field as deselected when it has been deselected or when the user presses Return or Escape
-				if ((Event.current.type == EventType.Repaint && GUI.GetNameOfFocusedControl() != graphGUIDString) || (Event.current.type == EventType.keyUp && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.Escape))) {
-					if (Event.current.type == EventType.keyUp) Event.current.Use();
+				if ((Event.current.type == EventType.Repaint && GUI.GetNameOfFocusedControl() != graphGUIDString) || (Event.current.type == EventType.KeyUp && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.Escape))) {
+					if (Event.current.type == EventType.KeyUp) Event.current.Use();
 					graphNameFocused = null;
 				}
 			} else {

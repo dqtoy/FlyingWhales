@@ -79,7 +79,7 @@ namespace ECS{
 				if(attribute != null){
 					attribute.SetAttributeAsUsed(true);
 					currItem.bodyPartsAttached.Add(this);
-					itemsAttached.Add (item);
+//					itemsAttached.Add (item);
 					return true;
 				}
             } else if (item is Armor) {
@@ -88,7 +88,7 @@ namespace ECS{
 				if(currAttribute != null){
 					currAttribute.SetAttributeAsUsed(true);
 					currItem.bodyPartAttached = this;
-					itemsAttached.Add (item);
+//					itemsAttached.Add (item);
 					return true;
 				}
             }
@@ -101,7 +101,7 @@ namespace ECS{
 				if(attribute != null){
 					attribute.SetAttributeAsUsed(false);
 					currItem.bodyPartsAttached.Remove(this);
-					itemsAttached.Remove(item);
+//					itemsAttached.Remove(item);
 					return true;
 				}
             } else if (item is Armor) {
@@ -110,7 +110,7 @@ namespace ECS{
 				if(attribute != null){
 					attribute.SetAttributeAsUsed(false);
 					currItem.bodyPartAttached = null;
-					itemsAttached.Remove(item);
+//					itemsAttached.Remove(item);
 					return true;
 				}
             }

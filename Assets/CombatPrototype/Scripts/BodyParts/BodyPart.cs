@@ -4,13 +4,6 @@ using System.Collections.Generic;
 
 namespace ECS{
 	[System.Serializable]
-	public class BodyPartsData {
-		public RACE race;
-		public List<BodyPart> bodyParts;
-	}
-
-
-	[System.Serializable]
 	public class BodyPart: IBodyPart {
 		[SerializeField] internal List<SecondaryBodyPart> secondaryBodyParts;
 

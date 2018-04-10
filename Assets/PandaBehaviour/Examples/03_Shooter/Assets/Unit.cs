@@ -31,7 +31,7 @@ namespace Panda.Examples.Shooter
         public float lastHitTime; // Last time this unit hit another unit.
 
         [HideInInspector]
-        public NavMeshAgent navMeshAgent;
+        public UnityEngine.AI.NavMeshAgent navMeshAgent;
 
         [HideInInspector]
         public Vector3 destination; // The movement destination.
@@ -53,7 +53,7 @@ namespace Panda.Examples.Shooter
         {
             lastShotTime = lastHitTime = float.NegativeInfinity;
 
-            navMeshAgent = GetComponent<NavMeshAgent>();
+            navMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
             startHealth = health;
             destination = this.transform.position;
 

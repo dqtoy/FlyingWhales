@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 namespace ECS {
-	[System.Serializable]
+//	[System.Serializable]
 	public class Character : TaskCreator, ICombatInitializer {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;

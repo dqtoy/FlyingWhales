@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 
 namespace ECS {
-    [System.Serializable]
+//    [System.Serializable]
     public class Skill {
         public string skillName;
 		public SKILL_TYPE skillType;
