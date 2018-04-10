@@ -25,9 +25,9 @@ public class LandmarkManager : MonoBehaviour {
     /*
      Create a new landmark on a specified tile.
      */
-    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType, MATERIAL materialMadeOf = MATERIAL.NONE) {
+    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
         BASE_LANDMARK_TYPE baseLandmarkType = Utilities.GetBaseLandmarkType(landmarkType);
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType, materialMadeOf);
+        BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
         if(baseLandmarkType == BASE_LANDMARK_TYPE.SETTLEMENT && landmarkType != LANDMARK_TYPE.CITY) {
             //if(landmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
             //    //Create a new faction to occupy the new settlement
@@ -116,11 +116,7 @@ public class LandmarkManager : MonoBehaviour {
                 if (data.isUnique) {
                     dungeonWeights.RemoveElement(chosenLandmarkType); //Since the chosen landmark type is unique, remove it from the choices.
                 }
-                MATERIAL chosenMaterial = MATERIAL.NONE;
-                if (data.possibleMaterials.Length > 0) {
-                    chosenMaterial = data.possibleMaterials[Random.Range(0, data.possibleMaterials.Length)];
-                }
-                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType, chosenMaterial);
+                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType);
                 RoadManager.Instance.CreateRoad(createdRoad, ROAD_TYPE.MINOR);
                 createdLandmarks++;
             }
@@ -168,11 +164,7 @@ public class LandmarkManager : MonoBehaviour {
                 if (data.isUnique) {
                     settlementWeights.RemoveElement(chosenLandmarkType); //Since the chosen landmark type is unique, remove it from the choices.
                 }
-                MATERIAL chosenMaterial = MATERIAL.NONE;
-                if (data.possibleMaterials.Length > 0) {
-                    chosenMaterial = data.possibleMaterials[Random.Range(0, data.possibleMaterials.Length)];
-                }
-                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType, chosenMaterial);
+                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType);
                 RoadManager.Instance.CreateRoad(createdRoad, ROAD_TYPE.MINOR);
                 createdLandmarks++;
             }

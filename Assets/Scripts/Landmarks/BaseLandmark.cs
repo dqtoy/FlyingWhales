@@ -24,7 +24,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<Character> _charactersWithHomeOnLandmark;
     //protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
     //protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
-    protected MATERIAL _materialMadeOf; //What material is this landmark made of?
     protected Dictionary<RACE, int> _civiliansByRace;
     protected int _currDurability;
 	protected int _totalDurability;
@@ -125,15 +124,13 @@ public class BaseLandmark : ILocation, TaskCreator {
     public int totalDurability {
 		get { return _totalDurability; }
     }
-    public MATERIAL materialMadeOf {
-        get { return _materialMadeOf; }
-    }
+    
 	public Dictionary<Character, GameDate> characterTraces {
 		get { return _characterTraces; }
 	}
     #endregion
 
-    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf = MATERIAL.NONE) {
+    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
         _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
@@ -153,8 +150,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		//_activeQuests = new List<OldQuest.Quest>();
 		_itemsInLandmark = new List<Item> ();
 		_characterTraces = new Dictionary<Character, GameDate> ();
-        _materialMadeOf = materialMadeOf;
-		_totalDurability = GetTotalDurability ();
+		_totalDurability =  LandmarkManager.Instance.GetLandmarkData(specificLandmarkType).durability;
 		_currDurability = _totalDurability;
         ConstructTechnologiesDictionary();
 		//ConstructMaterialValues();
@@ -947,24 +943,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Utilities
-    public int GetTotalDurability() {
-        int durabilityFromMaterial = 0;
-        int durabilityModifierFromLandmarkType = 0;
-
-        if(_materialMadeOf != MATERIAL.NONE) {
-            durabilityFromMaterial = MaterialManager.Instance.GetMaterialData(_materialMadeOf).sturdiness;
-        }
-
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        if (landmarkData != null) {
-            durabilityModifierFromLandmarkType = landmarkData.durabilityModifier;
-        }
-
-        if(durabilityModifierFromLandmarkType == 0) {
-            return durabilityFromMaterial;
-        }
-        return durabilityFromMaterial * durabilityModifierFromLandmarkType;
-    }
     public void SetExploredState(bool isExplored) {
         _isExplored = isExplored;
         //if (landmarkObject != null) {

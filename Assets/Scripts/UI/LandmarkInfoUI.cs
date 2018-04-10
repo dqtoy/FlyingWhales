@@ -93,7 +93,6 @@ public class LandmarkInfoUI : UIMenu {
 		text += "[b]Location:[/b] " + currentlyShowingLandmark.tileLocation.urlName;
         text += "\n[b]Landmark Type:[/b] " + Utilities.NormalizeString(currentlyShowingLandmark.specificLandmarkType.ToString());
 		text += "\n[b]Material:[/b] " + currentlyShowingLandmark.tileLocation.materialOnTile.ToString();
-        text += "\n[b]Made of Material:[/b] " + currentlyShowingLandmark.materialMadeOf.ToString();
         text += "\n[b]Durability:[/b] " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
         text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
 		text += "\n[b]Is Occupied:[/b] " + currentlyShowingLandmark.isOccupied.ToString();

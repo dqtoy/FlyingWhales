@@ -15,7 +15,7 @@ public class ResourceLandmark : BaseLandmark {
     }
     #endregion
 
-    public ResourceLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf) : base(location, specificLandmarkType, materialMadeOf) {
+    public ResourceLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
         _materialOnLandmark = Utilities.ConvertLandmarkTypeToMaterial(specificLandmarkType);
         _materialData = MaterialManager.Instance.materialsLookup[_materialOnLandmark];

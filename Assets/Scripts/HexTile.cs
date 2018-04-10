@@ -308,7 +308,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //    }
         //}
     }
-    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType, MATERIAL materialMadeOf) {
+    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
         this.hasLandmark = true;
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
@@ -321,19 +321,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
-                _landmarkOnTile = new Settlement(this, landmarkType, materialMadeOf);
+                _landmarkOnTile = new Settlement(this, landmarkType);
                 break;
             case BASE_LANDMARK_TYPE.RESOURCE:
-                _landmarkOnTile = new ResourceLandmark(this, landmarkType, materialMadeOf);
+                _landmarkOnTile = new ResourceLandmark(this, landmarkType);
                 break;
             case BASE_LANDMARK_TYPE.DUNGEON:
-                _landmarkOnTile = new DungeonLandmark(this, landmarkType, materialMadeOf);
+                _landmarkOnTile = new DungeonLandmark(this, landmarkType);
                 break;
             case BASE_LANDMARK_TYPE.LAIR:
-                _landmarkOnTile = new LairLandmark(this, landmarkType, materialMadeOf);
+                _landmarkOnTile = new LairLandmark(this, landmarkType);
                 break;
             default:
-			    _landmarkOnTile = new BaseLandmark(this, landmarkType, materialMadeOf);
+			    _landmarkOnTile = new BaseLandmark(this, landmarkType);
                 break;
         }
         if(_landmarkOnTile != null) {

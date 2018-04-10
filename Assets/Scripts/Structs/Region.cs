@@ -197,8 +197,7 @@ public class Region {
         _centerOfMass = newCenter;
         _centerOfMass.isHabitable = true;
 		_centerOfMass.emptyCityGO.SetActive (true);
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(LANDMARK_TYPE.CITY);
-        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.CITY, landmarkData.possibleMaterials[Random.Range(0, landmarkData.possibleMaterials.Length)]);
+        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.CITY);
     }
     #endregion
 
@@ -289,7 +288,7 @@ public class Region {
     internal void ResetTilesInRegion() {
         for (int i = 0; i < _tilesInRegion.Count; i++) {
             HexTile tile = _tilesInRegion[i];
-            if (tile.region != this) {
+            if (tile.region == this) {
                 tile.SetRegion(null);
             }
         }

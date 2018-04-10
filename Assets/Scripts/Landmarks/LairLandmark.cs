@@ -3,7 +3,7 @@ using System.Collections;
 
 public class LairLandmark : BaseLandmark {
 
-    public LairLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf) : base(location, specificLandmarkType, materialMadeOf) {
+    public LairLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = false;
     }
 }
