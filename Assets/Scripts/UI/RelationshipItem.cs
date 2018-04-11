@@ -50,9 +50,9 @@ public class RelationshipItem : MonoBehaviour {
 			summary += "\n\n TP: " + rk._theoreticalPower.ToString() + ", RS: " + rk.relativeStrength.ToString();
 //			summary += "\n RS: " + rk._relativeStrength.ToString() + ", RW: " + rk._relativeWeakness.ToString();
 
-            UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);
+            //UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);
         } else {
-            UIManager.Instance.HideRelationshipSummary();
+            //UIManager.Instance.HideRelationshipSummary();
         }
     }
 

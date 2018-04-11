@@ -865,8 +865,6 @@ public class Kingdom{
         newLog.AddToFillers(null, yearsLasted, LOG_IDENTIFIER.OTHER);
         UIManager.Instance.ShowNotification(newLog);
 
-        UIManager.Instance.CheckIfShowingKingdomIsAlive(this);
-
         Debug.Log(this.id + " - Kingdom: " + this.name + " has died!");
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
     }
@@ -1411,7 +1409,6 @@ public class Kingdom{
             remainingCitizens.AddRange(_citizens[city]);
         }
         _citizens.Remove(city);
-        UIManager.Instance.UpdateKingdomCitiesMenu();
         return remainingCitizens;
     }
     internal void SetCapitalCity(City city) {
@@ -1713,9 +1710,6 @@ public class Kingdom{
     }
     internal void UnHighlightAllOwnedTilesInKingdom() {
         for (int i = 0; i < this.cities.Count; i++) {
-            if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities[i].id) {
-                continue;
-            }
             this.cities[i].UnHighlightAllOwnedTiles();
         }
     }
@@ -1861,9 +1855,6 @@ public class Kingdom{
 		if(this._techCounter == this._techCapacity){
 			this.UpgradeTechLevel (1);
 		}
-        if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-            UIManager.Instance.UpdateTechMeter();
-        }
 	}
 	internal void UpgradeTechLevel(int amount){
 		this._techLevel += amount;
@@ -1875,9 +1866,6 @@ public class Kingdom{
 		//AdjustPowerPointsToAllCities(amount);
   //      AdjustDefensePointsToAllCities(amount);
 		this.UpdateTechCapacity();
-        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-            UIManager.Instance.UpdateTechMeter();
-        }
     }
     internal void DegradeTechLevel(int amount) {
         _techLevel -= amount;
@@ -1888,9 +1876,6 @@ public class Kingdom{
         _techLevel = Mathf.Max(0, _techLevel);
         this._techCounter = 0;
         UpdateTechCapacity();
-        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-            UIManager.Instance.UpdateTechMeter();
-        }
     }
 	#endregion
 	
@@ -2035,11 +2020,6 @@ public class Kingdom{
         if (!_fogOfWarDict[fowState].Contains(tile)) {
             //if not, add it to the new states list
             _fogOfWarDict[fowState].Add(tile);
-        }
-
-        //if this kingdom is currently the active kingdom, automatically update the tile visual
-        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-            UpdateFogOfWarVisualForTile(tile, fowState);
         }
 
         //For checking if tile dictionary is accurate, remove this when checking is no longer necessary
@@ -2313,43 +2293,9 @@ public class Kingdom{
     #region Balance of Power
     internal void Militarize(bool state, bool isAttacking = false){
 		this._isMilitarize = state;
-		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
-			UIManager.Instance.militarizingGO.SetActive (state);
-		}
-//        if (state) {
-//            Kingdom kingdom2 = null;
-//            float highestInvasionValue = -1;
-//			bool isAtWar = false;
-//            foreach (KingdomRelationship kr in relationships.Values) {
-//                if (kr.isDiscovered) {
-//                    if(kr.targetKingdomInvasionValue > highestInvasionValue) {
-//                        kingdom2 = kr.targetKingdom;
-//                        highestInvasionValue = kr.targetKingdomInvasionValue;
-//                    }
-//                }
-//				if(kr.isAtWar && isAttacking){
-//					isAtWar = true;
-//					kingdom2 = kr.targetKingdom;
-//					break;
-//				}
-//            }
-//            if (kingdom2 != null) {
-//				string militarizeFileName = "militarize";
-//				if(isAttacking && isAtWar){
-//					militarizeFileName = "militarize_attack";
-//				}
-//				Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", militarizeFileName);
-//                militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-//                militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-//                UIManager.Instance.ShowNotification(militarizeLog, new HashSet<Kingdom>() { this }, false);
-//            }
-//        }
     }
 	internal void Fortify(bool state, bool isUnderAttack = false){
 		this._isFortifying = state;
-		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
-			UIManager.Instance.fortifyingGO.SetActive (state);
-		}
 		if (state) {
             Kingdom kingdom2 = null;
             float highestKingdomThreat = -1;
@@ -2536,26 +2482,6 @@ public class Kingdom{
     #endregion
 
     #region Population
-//	internal void AdjustPopulation(float adjustment, bool isUpdateKingdomList = true) {
-//        _population += adjustment;
-//        if(_population < 0f) {
-//			_population = 0f;
-//        }
-//		if(isUpdateKingdomList){
-//			KingdomManager.Instance.UpdateKingdomList();
-//		}
-//    }
-//	internal void SetPopulation(float newPopulation) {
-//        _population = newPopulation;
-//        KingdomManager.Instance.UpdateKingdomList();
-//    }
-//	internal void UpdatePopulation(){
-//		this._population = 0f;
-//		for (int i = 0; i < this.cities.Count; i++) {
-//			this._population += this.cities [i]._population;
-//		}
-//		KingdomManager.Instance.UpdateKingdomList ();
-//	}
 	internal void DamagePopulation(int damage){
 		int distributableDamage = damage / this.cities.Count;
 		int remainder = damage % this.cities.Count;

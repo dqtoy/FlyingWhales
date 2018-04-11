@@ -24,8 +24,4 @@ public class GovernorPortrait : MonoBehaviour {
 			UIManager.Instance.HideSmallInfo ();
 		}
 	}
-
-	void OnClick(){
-		UIManager.Instance.ShowCitizenInfo (citizen);
-	}
 }

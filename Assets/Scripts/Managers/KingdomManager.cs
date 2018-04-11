@@ -521,12 +521,6 @@ public class KingdomManager : MonoBehaviour {
         kingdom1.AddTradeDealWith(kingdom2);
         kingdom2.AddTradeDealWith(kingdom1);
         allTradeDeals.Add(new TradeDeal(kingdom1, kingdom2));
-        if (UIManager.Instance.goAlliance.activeSelf) {
-            if (UIManager.Instance.warAllianceState == "alliance") {
-                UIManager.Instance.UpdateAllianceSummary();
-            }
-        }
-
     }
     internal void RemoveTradeDeal(Kingdom kingdom1, Kingdom kingdom2) {
         kingdom1.RemoveTradeDealWith(kingdom2);
@@ -537,11 +531,6 @@ public class KingdomManager : MonoBehaviour {
                 (kingdom1.id == currDeal.kingdom2.id && kingdom2.id == currDeal.kingdom1.id)) {
                 allTradeDeals.Remove(currDeal);
                 break;
-            }
-        }
-        if (UIManager.Instance.goAlliance.activeSelf) {
-            if (UIManager.Instance.warAllianceState == "alliance") {
-                UIManager.Instance.UpdateAllianceSummary();
             }
         }
     }

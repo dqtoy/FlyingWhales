@@ -134,14 +134,6 @@ public class CityItem : MonoBehaviour {
     public void CenterOnCity() {
         CameraMove.Instance.CenterCameraOn(_city.hexTile.gameObject);
     }
-		
-
-    public void SetKingdomAsSelected() {
-        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != _city.kingdom.id) {
-            UIManager.Instance.SetKingdomAsActive(_city.kingdom);
-        }
-        //UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
-    }
 
     private void ShowLoyaltySummary() {
         Citizen thisCitizen = _governor.citizen;
@@ -165,12 +157,7 @@ public class CityItem : MonoBehaviour {
             }
             loyaltySummary += thisCitizen.loyaltyModifierForTesting + "   Admin Modifier\n";
         }
-        UIManager.Instance.ShowRelationshipSummary(thisCitizen, loyaltySummary);
     }
-
-	public void ShowCityHistory(){
-		UIManager.Instance.ShowCityHistory (this._city);
-	}
 
     #region For Testing
     //public void SetPower() {

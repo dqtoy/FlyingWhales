@@ -21,7 +21,6 @@ public class AllianceWarLabel : MonoBehaviour {
 			}else if(url.Contains("_kingdom")){
 				if(kingdomsInLabel.ContainsKey(idToUse)){
 					Kingdom currKingdom = kingdomsInLabel[idToUse];
-					UIManager.Instance.SetKingdomAsActive (currKingdom);
 					CameraMove.Instance.CenterCameraOn(currKingdom.capitalCity.hexTile.gameObject);
 				}
 			}

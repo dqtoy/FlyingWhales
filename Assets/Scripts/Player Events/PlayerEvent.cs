@@ -154,8 +154,4 @@ public class PlayerEvent {
 		}
 		return false;
 	}
-	//When an event has been constructed and created
-	internal void PlayerEventIsCreated(){
-		UIManager.Instance.ShowPlayerEventsOfType (this);
-	}
 }

@@ -448,7 +448,6 @@ public class City {
         this.kingdom.CreateNewGovernorFamily(this);
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
-        UIManager.Instance.UpdateKingdomCitiesMenu();
         UIManager.Instance.UpdateMinimapInfo();
 	}
 

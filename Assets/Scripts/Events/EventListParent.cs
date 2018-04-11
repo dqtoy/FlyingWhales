@@ -10,7 +10,6 @@ public class EventListParent : MonoBehaviour {
 	public TweenRotation tweenRotation;
 
 	public void ToggleList(){
-		UIManager.Instance.RepositionKingdomEventsTable();
 		eventsGrid.gameObject.SetActive(!eventsGrid.gameObject.activeSelf);
 	}
 

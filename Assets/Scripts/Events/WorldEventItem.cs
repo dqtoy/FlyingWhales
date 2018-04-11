@@ -8,7 +8,6 @@ public class WorldEventItem : MonoBehaviour {
 
 	public void SetGameEvent(GameEvent gameEvent){
 		this.gameEvent = gameEvent;
-		this.SetIcon(UIManager.Instance.GetSpriteForEvent(this.gameEvent.eventType));
 	}
 
 	private void SetIcon(Sprite sprite){

@@ -40,8 +40,6 @@ public class EventItem : PooledObject {
 
 	public void SetEvent(GameEvent gameEvent){
 		this.gameEvent = gameEvent;
-        SetSpriteIcon(UIManager.Instance.GetSpriteForEvent(gameEvent.eventType));
-        onClickEvent += UIManager.Instance.ShowEventLogs;
         StartExpirationTimer();
         this.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
         gameEvent.goEventItem = this.gameObject;
@@ -100,11 +98,6 @@ public class EventItem : PooledObject {
 
     #region overrides
     public override void Reset() {
-        if (onClickEvent != null) {
-            onClickEvent -= UIManager.Instance.ShowEventLogs;
-        }
-        //		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
-        //		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
     }
     #endregion
 

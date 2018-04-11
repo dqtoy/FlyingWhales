@@ -21,6 +21,6 @@ public class PlayerEventItem : MonoBehaviour {
     }
 
     public void OnClickEventItem() {
-        UIManager.Instance.ShowInterveneEvent(this.eventType);
+        //UIManager.Instance.ShowInterveneEvent(this.eventType);
     }
 }

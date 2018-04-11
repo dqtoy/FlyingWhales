@@ -261,12 +261,6 @@ public class WorldHistoryUI : UIMenu {
     }
     #endregion
 
-    #region War History
-    public void ToggleWarHistory() {
-        UIManager.Instance.ToggleWarHistory();
-    }
-    #endregion
-
     public IEnumerator RepositionTable(UITable thisTable) {
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();

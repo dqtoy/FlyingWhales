@@ -43,12 +43,12 @@ public class WarHistoryItem : MonoBehaviour {
         //StartCoroutine(UIManager.Instance.RepositionTable(battlesTable));
         battlesTable.Reposition();
         battlesTable.repositionNow = true;
-        UIManager.Instance.RepositionWarHistoryTable();
+        //UIManager.Instance.RepositionWarHistoryTable();
         //StartCoroutine(RepositionTable(battlesTable));
     }
 
     public void ToggleBattles() {
         UIManager.Instance.ToggleObject(battlesTable.gameObject);
-        UIManager.Instance.RepositionWarHistoryTable();
+        //UIManager.Instance.RepositionWarHistoryTable();
     }
 }

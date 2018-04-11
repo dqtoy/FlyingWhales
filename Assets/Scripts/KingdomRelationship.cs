@@ -319,44 +319,8 @@ public class KingdomRelationship {
 			this._relationshipSummary += adjustment.ToString() + " " + summary + "\n";
 		}
 
-//		int threat = this.targetKingdomThreatLevel;
-//		bool hasOpportunistic = false; 
-//		for (int i = 0; i < this._sourceKingdom.king.allTraits.Count; i++) {
-//			summary = string.Empty;
-//			adjustment = this._sourceKingdom.king.allTraits [i].GetKingdomThreatOpinionChange (threat, out summary);
-//			if(adjustment != 0 && summary != string.Empty){
-//				baseLoyalty += adjustment;
-//				if (adjustment >= 0) {
-//					this._relationshipSummary += "+";
-//				}
-//				this._relationshipSummary += adjustment.ToString () + " " + summary + "\n";
-//			}
-//
-//			if(this._sourceKingdom.king.allTraits[i].trait == TRAIT.OPPORTUNIST){
-//				hasOpportunistic = true;
-//			}
-//		}
-//		if(!hasOpportunistic){
-//			if(threat >= 100){
-//				adjustment = -50;
-//				baseLoyalty += adjustment;
-//				this._relationshipSummary += adjustment.ToString () + " Fears Power\n";
-//			}else if(threat > 50 && threat < 100){
-//				adjustment = -30;
-//				baseLoyalty += adjustment;
-//				this._relationshipSummary += adjustment.ToString () + " Fears Power\n";
-//			}else if(threat > 25 && threat <= 50){
-//				adjustment = -15;
-//				baseLoyalty += adjustment;
-//				this._relationshipSummary += adjustment.ToString () + " Fears Power\n";
-//			}
-//		}
-
         this._like = 0;
         this.AdjustLikeness(baseLoyalty);
-        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
-            UIManager.Instance.UpdateRelationships();
-        }
     }
 
     /*

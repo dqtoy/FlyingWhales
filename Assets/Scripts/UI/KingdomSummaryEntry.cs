@@ -34,8 +34,6 @@ public class KingdomSummaryEntry : MonoBehaviour {
 //      armorLbl.text = kingdom.effectiveDefense.ToString();
 
 		EventDelegate.Set(emblemEventTrigger.onClick, delegate () { SwitchKingdom(kingdom); });
-        EventDelegate.Set(emblemEventTrigger.onHoverOver, delegate () { UIManager.Instance.PreviewKingdomInfo(kingdom); });
-        EventDelegate.Set(emblemEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideKingdomInfoPreview();});
         //      EventDelegate.Set(weaponLblEventTrigger.onHoverOver, delegate () { OnHoverWeapons(); });
         //      EventDelegate.Set(weaponLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
     }
@@ -52,7 +50,6 @@ public class KingdomSummaryEntry : MonoBehaviour {
 //    }
 
     private void SwitchKingdom(Kingdom kingdom) {
-        UIManager.Instance.SetKingdomAsActive(_kingdom);
         CameraMove.Instance.CenterCameraOn(kingdom.capitalCity.hexTile.gameObject);
     }
 
