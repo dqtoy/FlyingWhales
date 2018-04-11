@@ -732,7 +732,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currChar = _charactersAtLocation[i];
-            if (currChar.currentTask.combatPriority > 0) {
+            if (currChar.currentTask != null && currChar.currentTask.combatPriority > 0) {
                 return true;
             }
         }
