@@ -15,18 +15,18 @@ public class PathFindingThread {
 	private HexTile _startingTile;
 	private HexTile _destinationTile;
 	private PATHFINDING_MODE _pathfindingMode;
-	private CitizenAvatar _citizenAvatar;
+	//private CitizenAvatar _citizenAvatar;
     private CharacterAvatar _characterAvatar;
     private object _data;
 
-	public PathFindingThread(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data){
-		receivedPath = new List<HexTile> ();
-		this._startingTile = startingTile;
-		this._destinationTile = destinationTile;
-		this._pathfindingMode = pathfindingMode;
-		this._citizenAvatar = citizenAvatar;
-        this._data = data;
-	}
+	//public PathFindingThread(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data){
+	//	receivedPath = new List<HexTile> ();
+	//	this._startingTile = startingTile;
+	//	this._destinationTile = destinationTile;
+	//	this._pathfindingMode = pathfindingMode;
+	//	this._citizenAvatar = citizenAvatar;
+ //       this._data = data;
+	//}
 
     public PathFindingThread(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data) {
         receivedPath = new List<HexTile>();
@@ -77,11 +77,11 @@ public class PathFindingThread {
 	}
 
 	public void ReturnPath(){
-        if(_citizenAvatar != null) {
-            this._citizenAvatar.ReceivePath(receivedPath);
-        } else {
+        //if(_citizenAvatar != null) {
+        //    this._citizenAvatar.ReceivePath(receivedPath);
+        //} else {
             this._characterAvatar.ReceivePath(receivedPath, this);
-        }
+        //}
 		
 	}
 }

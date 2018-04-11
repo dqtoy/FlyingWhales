@@ -61,20 +61,20 @@ public class Deceitful : Trait {
     //    }
     //    return weight;
     //}
-    internal override int GetAllianceOfProtectionWeightModification(Kingdom otherKingdom) {
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        int weight = 0;
-        if (sourceKingdom.IsThreatened()) {
-            //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
-            KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-            KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
-			if (!relWithOtherKingdom.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
-                weight += 2 * relOfOtherWithSource.totalLike; //add 2 Weight for every positive Opinion it has towards me
-                weight = Mathf.Max(0, weight); //minimum 0
-            }
-        }
-        return weight;
-    }
+   // internal override int GetAllianceOfProtectionWeightModification(Kingdom otherKingdom) {
+   //     Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+   //     int weight = 0;
+   //     if (sourceKingdom.IsThreatened()) {
+   //         //loop through known Kingdoms i am not at war with and whose Opinion of me is positive
+   //         KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+   //         KingdomRelationship relOfOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+			//if (!relWithOtherKingdom.sharedRelationship.isAtWar && relOfOtherWithSource.totalLike > 0) {
+   //             weight += 2 * relOfOtherWithSource.totalLike; //add 2 Weight for every positive Opinion it has towards me
+   //             weight = Mathf.Max(0, weight); //minimum 0
+   //         }
+   //     }
+   //     return weight;
+   // }
     //internal override int GetInciteUnrestWeightModification(Kingdom otherKingdom) {
     //    Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
     //    int weight = 0;
@@ -89,27 +89,27 @@ public class Deceitful : Trait {
     //    }
     //    return weight;
     //}
-    internal override int GetFlatterWeightModification(Kingdom otherKingdom) {
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        int weight = 0;
+ //   internal override int GetFlatterWeightModification(Kingdom otherKingdom) {
+ //       Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+ //       int weight = 0;
 
-        KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        if(relWithOtherKingdom.totalLike < 0) {
-            weight += Mathf.Abs(2 * relWithOtherKingdom.totalLike); //add 2 to Default Weight for each negative point of Opinion I have towards the target
-        }
-        return weight;
-    }
-	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
-		if (kr.AreAllies ()) {
-			if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY) {
-				return 50;
-			}else if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION) {
-				KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
-				if(kr._theoreticalPower > rk._theoreticalPower && kr.targetKingdom.HasWar(kr.sourceKingdom)){
-					return (20 * rk.relativeStrength);
-				}
-			}
-		}
-		return 0;
-	}
+ //       KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+ //       if(relWithOtherKingdom.totalLike < 0) {
+ //           weight += Mathf.Abs(2 * relWithOtherKingdom.totalLike); //add 2 to Default Weight for each negative point of Opinion I have towards the target
+ //       }
+ //       return weight;
+ //   }
+	//internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+	//	if (kr.AreAllies ()) {
+	//		if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY) {
+	//			return 50;
+	//		}else if (incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION) {
+	//			KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+	//			if(kr._theoreticalPower > rk._theoreticalPower && kr.targetKingdom.HasWar(kr.sourceKingdom)){
+	//				return (20 * rk.relativeStrength);
+	//			}
+	//		}
+	//	}
+	//	return 0;
+	//}
 }

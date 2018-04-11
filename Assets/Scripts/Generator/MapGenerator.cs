@@ -13,9 +13,6 @@ public class MapGenerator : MonoBehaviour {
 
     internal void InitializeWorld() {
         //StartCoroutine (StartGeneration());
-        if (GameManager.Instance.enableGameAgents) {
-            PathfindingManager.Instance.Initialize();
-        }
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
@@ -24,9 +21,6 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        if (GameManager.Instance.enableGameAgents) {
-            PathfindingManager.Instance.CreateGrid();
-        }
         
         //Biomes.Instance.GenerateSpecialResources ();
         //Biomes.Instance.GenerateTileTags();

@@ -12,7 +12,7 @@ public class Region {
     private Color regionColor;
     private List<Region> _adjacentRegions;
     private List<Region> _adjacentRegionsViaMajorRoad;
-    private City _occupant;
+    //private City _occupant;
     private List<HexTile> _tilesWithMaterials; //The tiles inside the region that have materials
 
     private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
@@ -70,9 +70,9 @@ public class Region {
     internal List<Region> adjacentRegionsViaMajorRoad {
         get { return _adjacentRegionsViaMajorRoad; }
     }
-    internal City occupant {
-        get { return _occupant; }
-    }
+    //internal City occupant {
+    //    get { return _occupant; }
+    //}
  //   internal RESOURCE specialResource {
  //       get { return _specialResource; }
  //   }
@@ -197,7 +197,7 @@ public class Region {
         _centerOfMass = newCenter;
         _centerOfMass.isHabitable = true;
 		_centerOfMass.emptyCityGO.SetActive (true);
-        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.CITY);
+        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.TOWN);
     }
     #endregion
 
@@ -241,15 +241,15 @@ public class Region {
             } 
         }
     }
-    internal bool IsAdjacentToKingdom(Kingdom kingdom) {
-        for (int i = 0; i < _adjacentRegions.Count; i++) {
-            Region currRegion = _adjacentRegions[i];
-            if(currRegion.occupant != null && currRegion.occupant.kingdom == kingdom) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //internal bool IsAdjacentToKingdom(Kingdom kingdom) {
+    //    for (int i = 0; i < _adjacentRegions.Count; i++) {
+    //        Region currRegion = _adjacentRegions[i];
+    //        if(currRegion.occupant != null && currRegion.occupant.kingdom == kingdom) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Tile Functions
@@ -294,111 +294,6 @@ public class Region {
         }
         _tilesInRegion.Clear();
     }
-    internal void SetOccupant(City occupant) {
-        _occupant = occupant;
-        //_occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
-//        _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
-		_cityLevelCap = 12;
-        //SetAdjacentRegionsAsVisibleForOccupant();
-        //SetRegionPathfindingTag(occupant.kingdom.kingdomTagIndex);
-        Color occupantColor = Color.clear;
-        if (_occupant.kingdom != null) {
-            occupantColor = _occupant.kingdom.kingdomColor;
-        } else {
-            occupantColor = _occupant.faction.factionColor;
-        }
-        occupantColor.a = 255f / 255f;
-        ReColorBorderTiles(occupantColor);
-        occupant.HighlightAllOwnedTiles(69f / 255f);
-        //      if(_specialResource != RESOURCE.NONE) {
-        //          _tileWithSpecialResource.Occupy(occupant);
-        //          CreateStructureOnSpecialResourceTile();
-        //      }
-        //if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
-        //	this._occupant.kingdom.AdjustFoodCityCapacity (this._tileWithSpecialResource.cityCapacity);
-        //}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
-        //	if(this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
-        //		this._occupant.kingdom.AdjustMaterialCityCapacityForHumans (this._tileWithSpecialResource.cityCapacity);
-        //	}else if(this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY){
-        //		this._occupant.kingdom.AdjustMaterialCityCapacityForElves (this._tileWithSpecialResource.cityCapacity);
-        //	}
-        //}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
-        //	this._occupant.kingdom.AdjustOreCityCapacity (this._tileWithSpecialResource.cityCapacity);
-        //}
-        //StartProducing ();
-    }
-    internal void RemoveOccupant() {
-        City previousOccupant = _occupant;
-        _occupant = null;
-
-		////Remove Resource City Estimation Capacity for Surplus / Deficit
-		//if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
-		//	previousOccupant.kingdom.AdjustFoodCityCapacity (-this._tileWithSpecialResource.cityCapacity);
-		//}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
-		//	if(this._tileWithSpecialResource.specialResource == RESOURCE.SLATE || this._tileWithSpecialResource.specialResource == RESOURCE.GRANITE){
-		//		previousOccupant.kingdom.AdjustMaterialCityCapacityForHumans (-this._tileWithSpecialResource.cityCapacity);
-		//	}else if(this._tileWithSpecialResource.specialResource == RESOURCE.OAK || this._tileWithSpecialResource.specialResource == RESOURCE.EBONY){
-		//		previousOccupant.kingdom.AdjustMaterialCityCapacityForElves (-this._tileWithSpecialResource.cityCapacity);
-		//	}
-		//}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
-		//	previousOccupant.kingdom.AdjustOreCityCapacity (-this._tileWithSpecialResource.cityCapacity);
-		//}
-
-        //Check if this region has adjacent regions that has the same occupant as this one, if so set region as visible
-        if (IsAdjacentToKingdom(previousOccupant.kingdom)) {
-            previousOccupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
-        } else {
-            previousOccupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.SEEN);
-        }
-
-        //Change fog of war of region for discovered kingdoms
-        for (int i = 0; i < previousOccupant.kingdom.discoveredKingdoms.Count; i++) {
-            Kingdom otherKingdom = previousOccupant.kingdom.discoveredKingdoms[i];
-            if (IsAdjacentToKingdom(otherKingdom)) {
-                otherKingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
-            } else {
-                otherKingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.HIDDEN);
-            }
-        }
-
-        //Check adjacent regions
-        for (int i = 0; i < adjacentRegions.Count; i++) {
-            Region adjacentRegion = adjacentRegions[i];
-            if (adjacentRegion.IsAdjacentToKingdom(previousOccupant.kingdom)) {
-                previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.VISIBLE);
-                continue;
-            }
-
-            if (adjacentRegion.occupant == null) {
-                previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.HIDDEN);
-            } else {
-                Kingdom occupantOfAdjacentRegion = adjacentRegion.occupant.kingdom;
-                if (previousOccupant.kingdom.discoveredKingdoms.Contains(occupantOfAdjacentRegion)) {
-                    previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.SEEN);
-                } else if(occupantOfAdjacentRegion == previousOccupant.kingdom) {
-                    previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.VISIBLE);
-                } else {
-                    previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.HIDDEN);
-                }
-            }
-        }
-        SetRegionPathfindingTag(PathfindingManager.unoccupiedTagIndex);
-
-        ReColorBorderTiles(defaultBorderColor);
-        
-        //if (_specialResource != RESOURCE.NONE) {
-        //    _tileWithSpecialResource.Unoccupy();
-        //}
-		//StopProducing ();
-    }
-    private void SetAdjacentRegionsAsVisibleForOccupant() {
-        for (int i = 0; i < _adjacentRegions.Count; i++) {
-            Region currRegion = _adjacentRegions[i];
-            if(currRegion._occupant == null || currRegion._occupant.kingdom != _occupant.kingdom) {
-                _occupant.kingdom.SetFogOfWarStateForRegion(currRegion, FOG_OF_WAR_STATE.VISIBLE);
-            }
-        }
-    }
     /*
      Highlight all tiles in the region.
          */
@@ -435,96 +330,96 @@ public class Region {
     #endregion
 
     #region Resources
-    /*
-     * <summary>
-     * Compute the natural resource level for each race.
-     * NOTE: Only Call this once special resource is determined, to compute
-     * the correct value.
-     * </summary>
-     * */
-    internal void ComputeNaturalResourceLevel() {
-        int humanTilePoints = 0;
-        int elvenTilePoints = 0;
-        _naturalResourceLevel = new Dictionary<RACE, int>() {
-            {RACE.HUMANS, 0},
-            {RACE.ELVES, 0},
-            {RACE.MINGONS, 0},
-            {RACE.CROMADS, 0}
-        };
-        for (int i = 0; i < _tilesInRegion.Count; i++) {
-            HexTile currTile = _tilesInRegion[i];
-            if (currTile.elevationType == ELEVATION.MOUNTAIN) {
-                //if current tile is mountain continue with other additions
-                elvenTilePoints += 1;
-            } else if (currTile.elevationType == ELEVATION.WATER) {
-                //if current tile is water disregard any other additions
-                humanTilePoints += 2;
-                elvenTilePoints += 2;
-                continue;
-            }
-            switch (currTile.biomeType) {
-                case BIOMES.SNOW:
-                    humanTilePoints += 1;
-                    elvenTilePoints += 1;
-                    break;
-                case BIOMES.TUNDRA:
-                    humanTilePoints += 3;
-                    elvenTilePoints += 3;
-                    break;
-                case BIOMES.DESERT:
-                    humanTilePoints += 2;
-                    elvenTilePoints += 1;
-                    break;
-                case BIOMES.GRASSLAND:
-                    humanTilePoints += 8;
-                    elvenTilePoints += 5;
-                    break;
-                case BIOMES.WOODLAND:
-                    humanTilePoints += 4;
-                    elvenTilePoints += 6;
-                    break;
-                case BIOMES.FOREST:
-                    humanTilePoints += 3;
-                    elvenTilePoints += 8;
-                    break;
-                default:
-                    break;
-            }
-        }
+    ///*
+    // * <summary>
+    // * Compute the natural resource level for each race.
+    // * NOTE: Only Call this once special resource is determined, to compute
+    // * the correct value.
+    // * </summary>
+    // * */
+    //internal void ComputeNaturalResourceLevel() {
+    //    int humanTilePoints = 0;
+    //    int elvenTilePoints = 0;
+    //    _naturalResourceLevel = new Dictionary<RACE, int>() {
+    //        {RACE.HUMANS, 0},
+    //        {RACE.ELVES, 0},
+    //        {RACE.MINGONS, 0},
+    //        {RACE.CROMADS, 0}
+    //    };
+    //    for (int i = 0; i < _tilesInRegion.Count; i++) {
+    //        HexTile currTile = _tilesInRegion[i];
+    //        if (currTile.elevationType == ELEVATION.MOUNTAIN) {
+    //            //if current tile is mountain continue with other additions
+    //            elvenTilePoints += 1;
+    //        } else if (currTile.elevationType == ELEVATION.WATER) {
+    //            //if current tile is water disregard any other additions
+    //            humanTilePoints += 2;
+    //            elvenTilePoints += 2;
+    //            continue;
+    //        }
+    //        switch (currTile.biomeType) {
+    //            case BIOMES.SNOW:
+    //                humanTilePoints += 1;
+    //                elvenTilePoints += 1;
+    //                break;
+    //            case BIOMES.TUNDRA:
+    //                humanTilePoints += 3;
+    //                elvenTilePoints += 3;
+    //                break;
+    //            case BIOMES.DESERT:
+    //                humanTilePoints += 2;
+    //                elvenTilePoints += 1;
+    //                break;
+    //            case BIOMES.GRASSLAND:
+    //                humanTilePoints += 8;
+    //                elvenTilePoints += 5;
+    //                break;
+    //            case BIOMES.WOODLAND:
+    //                humanTilePoints += 4;
+    //                elvenTilePoints += 6;
+    //                break;
+    //            case BIOMES.FOREST:
+    //                humanTilePoints += 3;
+    //                elvenTilePoints += 8;
+    //                break;
+    //            default:
+    //                break;
+    //        }
+    //    }
 
-        //int increaseFromSpecialResource = 0;
-        //if(_specialResource != RESOURCE.NONE) {
-        //    increaseFromSpecialResource = 3;
-        //}
+    //    //int increaseFromSpecialResource = 0;
+    //    //if(_specialResource != RESOURCE.NONE) {
+    //    //    increaseFromSpecialResource = 3;
+    //    //}
 
-        //_naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15) + increaseFromSpecialResource;
-        //_naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15) + increaseFromSpecialResource;
+    //    //_naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15) + increaseFromSpecialResource;
+    //    //_naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15) + increaseFromSpecialResource;
 
-        _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15);
-        _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15);
+    //    _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15);
+    //    _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15);
 
-        //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
-        //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
-        //    naturalResourceLevel[RACE.ELVES].ToString(), 5, Color.white, "Minimap");
-    }
-    internal void ShowNaturalResourceLevelForRace(RACE race) {
-        int maxXCoordinate = _tilesInRegion.Max(x => x.xCoordinate);
-        int minXCoordinate = _tilesInRegion.Min(x => x.xCoordinate);
-        int maxYCoordinate = _tilesInRegion.Max(x => x.yCoordinate);
-        int minYCoordinate = _tilesInRegion.Min(x => x.yCoordinate);
+    //    //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
+    //    //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
+    //    //    naturalResourceLevel[RACE.ELVES].ToString(), 5, Color.white, "Minimap");
+    //}
+    //internal void ShowNaturalResourceLevelForRace(RACE race) {
+    //    int maxXCoordinate = _tilesInRegion.Max(x => x.xCoordinate);
+    //    int minXCoordinate = _tilesInRegion.Min(x => x.xCoordinate);
+    //    int maxYCoordinate = _tilesInRegion.Max(x => x.yCoordinate);
+    //    int minYCoordinate = _tilesInRegion.Min(x => x.yCoordinate);
 
-        int midPointX = (minXCoordinate + maxXCoordinate) / 2;
-        int midPointY = (minYCoordinate + maxYCoordinate) / 2;
+    //    int midPointX = (minXCoordinate + maxXCoordinate) / 2;
+    //    int midPointY = (minYCoordinate + maxYCoordinate) / 2;
 
-        HexTile midPoint = GridMap.Instance.map[midPointX, midPointY];
+    //    HexTile midPoint = GridMap.Instance.map[midPointX, midPointY];
 
-        string text = "0";
-        if (_occupant != null) {
-            text = _occupant.ownedTiles.Count.ToString();
-        }
-        text += "/" + _naturalResourceLevel[race].ToString();
-        midPoint.SetTileText(text, 6, Color.white, "Minimap");
-    }
+    //    string text = "0";
+    //    if (_occupant != null) {
+    //        text = _occupant.ownedTiles.Count.ToString();
+    //    }
+    //    text += "/" + _naturalResourceLevel[race].ToString();
+    //    midPoint.SetTileText(text, 6, Color.white, "Minimap");
+    //}
     internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material) {
         int count = 0;
         for (int i = 0; i < _landmarks.Count; i++) {
@@ -573,7 +468,7 @@ public class Region {
         List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
         for (int i = 0; i < allLandmarks.Count; i++) {
             BaseLandmark currLandmark = allLandmarks[i];
-            if (Utilities.GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
+            if (LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType).baseLandmarkType == baseLandmarkType) {
                 landmarksOfType.Add(currLandmark);
             }
         }
@@ -581,95 +476,95 @@ public class Region {
     }
     #endregion
 
-    #region Kingdom Discovery Functions
-    internal void CheckForDiscoveredKingdoms() {
-        //List<Region> adjacentRegionsOfOtherRegions = new List<Region>();
-        //List<Kingdom> adjacentKingdoms = new List<Kingdom>();
+    //#region Kingdom Discovery Functions
+    //internal void CheckForDiscoveredKingdoms() {
+    //    //List<Region> adjacentRegionsOfOtherRegions = new List<Region>();
+    //    //List<Kingdom> adjacentKingdoms = new List<Kingdom>();
 
-        //NEW: Kingdoms only discover kingdoms they are adjacent to!
-        for (int i = 0; i < _adjacentRegionsViaMajorRoad.Count; i++) {
-            Region adjacentRegion = _adjacentRegionsViaMajorRoad[i];
+    //    //NEW: Kingdoms only discover kingdoms they are adjacent to!
+    //    for (int i = 0; i < _adjacentRegionsViaMajorRoad.Count; i++) {
+    //        Region adjacentRegion = _adjacentRegionsViaMajorRoad[i];
 
-            if (adjacentRegion.occupant != null) {
-                Kingdom otherKingdom = adjacentRegion.occupant.kingdom;
-                if (otherKingdom.id != occupant.kingdom.id) {
-                    //if (!adjacentKingdoms.Contains(otherKingdom)) {
-                    //    adjacentKingdoms.Add(otherKingdom);
-                    //}
-                    if (!_occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
-                        KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
-                    }
-                    _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
-                }
+    //        if (adjacentRegion.occupant != null) {
+    //            Kingdom otherKingdom = adjacentRegion.occupant.kingdom;
+    //            if (otherKingdom.id != occupant.kingdom.id) {
+    //                //if (!adjacentKingdoms.Contains(otherKingdom)) {
+    //                //    adjacentKingdoms.Add(otherKingdom);
+    //                //}
+    //                if (!_occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
+    //                    KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
+    //                }
+    //                _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
+    //            }
 
-                //for (int j = 0; j < adjacentRegion.adjacentRegionsViaMajorRoad.Count; j++) {
-                //    Region otherAdjacentRegion = adjacentRegion.adjacentRegionsViaMajorRoad[j];
-                //    if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion) && otherAdjacentRegion != this) {
-                //        adjacentRegionsOfOtherRegions.Add(otherAdjacentRegion);
-                //    }
-                //}
-            }
-        }
+    //            //for (int j = 0; j < adjacentRegion.adjacentRegionsViaMajorRoad.Count; j++) {
+    //            //    Region otherAdjacentRegion = adjacentRegion.adjacentRegionsViaMajorRoad[j];
+    //            //    if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion) && otherAdjacentRegion != this) {
+    //            //        adjacentRegionsOfOtherRegions.Add(otherAdjacentRegion);
+    //            //    }
+    //            //}
+    //        }
+    //    }
 
-        ////When you discover another kingdom via adjacency, you discover all other kingdoms that it has discovered
-        //for (int i = 0; i < adjacentKingdoms.Count; i++) {
-        //    Kingdom otherKingdom = adjacentKingdoms[i];
-        //    List<Kingdom> discoveredKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
-        //    for (int j = 0; j < discoveredKingdomsOfOtherKingdom.Count; j++) {
-        //        Kingdom kingdomToDiscover = discoveredKingdomsOfOtherKingdom[j];
-        //        if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
-        //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
-        //        }
-        //    }
-        //}
+    //    ////When you discover another kingdom via adjacency, you discover all other kingdoms that it has discovered
+    //    //for (int i = 0; i < adjacentKingdoms.Count; i++) {
+    //    //    Kingdom otherKingdom = adjacentKingdoms[i];
+    //    //    List<Kingdom> discoveredKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
+    //    //    for (int j = 0; j < discoveredKingdomsOfOtherKingdom.Count; j++) {
+    //    //        Kingdom kingdomToDiscover = discoveredKingdomsOfOtherKingdom[j];
+    //    //        if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
+    //    //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
+    //    //        }
+    //    //    }
+    //    //}
 
-        ////When you discover another kingdom via adjacency, you also discover all other regions it is adjacent to.
-        //for (int i = 0; i < adjacentRegionsOfOtherRegions.Count; i++) {
-        //    Region otherAdjacentRegion = adjacentRegionsOfOtherRegions[i];
-        //    if (otherAdjacentRegion.occupant != null) {
-        //        Kingdom adjacentKingdomOfOtherKingdom = otherAdjacentRegion.occupant.kingdom;
-        //        if (!adjacentKingdomOfOtherKingdom.isDead && adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
-        //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, adjacentKingdomOfOtherKingdom);
-        //        }
-        //    }
-        //}
+    //    ////When you discover another kingdom via adjacency, you also discover all other regions it is adjacent to.
+    //    //for (int i = 0; i < adjacentRegionsOfOtherRegions.Count; i++) {
+    //    //    Region otherAdjacentRegion = adjacentRegionsOfOtherRegions[i];
+    //    //    if (otherAdjacentRegion.occupant != null) {
+    //    //        Kingdom adjacentKingdomOfOtherKingdom = otherAdjacentRegion.occupant.kingdom;
+    //    //        if (!adjacentKingdomOfOtherKingdom.isDead && adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
+    //    //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, adjacentKingdomOfOtherKingdom);
+    //    //        }
+    //    //    }
+    //    //}
 
-        ////When you discover another kingdom via adjacency, you also discover all other kingdoms it is adjacent to.
-        //for (int i = 0; i < adjacentKingdoms.Count; i++) {
-        //    Kingdom otherKingdom = adjacentKingdoms[i];
-        //    List<Kingdom> adjacentKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
-        //    for (int j = 0; j < adjacentKingdomsOfOtherKingdom.Count; j++) {
-        //        Kingdom kingdomToDiscover = adjacentKingdomsOfOtherKingdom[j];
-        //        if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
-        //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
-        //        }
-        //    }
-        //}
+    //    ////When you discover another kingdom via adjacency, you also discover all other kingdoms it is adjacent to.
+    //    //for (int i = 0; i < adjacentKingdoms.Count; i++) {
+    //    //    Kingdom otherKingdom = adjacentKingdoms[i];
+    //    //    List<Kingdom> adjacentKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
+    //    //    for (int j = 0; j < adjacentKingdomsOfOtherKingdom.Count; j++) {
+    //    //        Kingdom kingdomToDiscover = adjacentKingdomsOfOtherKingdom[j];
+    //    //        if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
+    //    //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
+    //    //        }
+    //    //    }
+    //    //}
 
-        ////When a kingdom expands kingdoms it is adjacent to should discover each other
-        //if (_occupant.kingdom.adjacentKingdoms.Count > 1) {
-        //    for (int i = 0; i < _occupant.kingdom.adjacentKingdoms.Count; i++) {
-        //        Kingdom currentKingdom = _occupant.kingdom.adjacentKingdoms[i];
-        //        for (int j = 0; j < _occupant.kingdom.adjacentKingdoms.Count; j++) {
-        //            Kingdom otherKingdom = _occupant.kingdom.adjacentKingdoms[j];
-        //            if (currentKingdom.id != otherKingdom.id && !currentKingdom.discoveredKingdoms.Contains(otherKingdom)) {
-        //                KingdomManager.Instance.DiscoverKingdom(currentKingdom, otherKingdom);
-        //            }
-        //        }
-        //    }
-        //}
-    }
-    #endregion
+    //    ////When a kingdom expands kingdoms it is adjacent to should discover each other
+    //    //if (_occupant.kingdom.adjacentKingdoms.Count > 1) {
+    //    //    for (int i = 0; i < _occupant.kingdom.adjacentKingdoms.Count; i++) {
+    //    //        Kingdom currentKingdom = _occupant.kingdom.adjacentKingdoms[i];
+    //    //        for (int j = 0; j < _occupant.kingdom.adjacentKingdoms.Count; j++) {
+    //    //            Kingdom otherKingdom = _occupant.kingdom.adjacentKingdoms[j];
+    //    //            if (currentKingdom.id != otherKingdom.id && !currentKingdom.discoveredKingdoms.Contains(otherKingdom)) {
+    //    //                KingdomManager.Instance.DiscoverKingdom(currentKingdom, otherKingdom);
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
+    //}
+    //#endregion
 
-    #region Pathfinding
-    private void SetRegionPathfindingTag(int pathfindingTag) {
-        for (int i = 0; i < tilesInRegion.Count; i++) {
-            tilesInRegion[i].SetPathfindingTag(pathfindingTag);
-        }
+    //#region Pathfinding
+    //private void SetRegionPathfindingTag(int pathfindingTag) {
+    //    for (int i = 0; i < tilesInRegion.Count; i++) {
+    //        tilesInRegion[i].SetPathfindingTag(pathfindingTag);
+    //    }
 
-        //PathfindingManager.Instance.RescanSpecificPortion(_guo);
-    }
-    #endregion
+    //    //PathfindingManager.Instance.RescanSpecificPortion(_guo);
+    //}
+    //#endregion
 
     #region Road Functions
     internal void AddConnection(Region otherRegion) {

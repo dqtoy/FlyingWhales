@@ -6,11 +6,11 @@ using System.Linq;
 public class RoadManager : MonoBehaviour {
     public static RoadManager Instance = null;
 
-    public Transform majorRoadParent;
-    public Transform minorRoadParent;
+    //public Transform majorRoadParent;
+    //public Transform minorRoadParent;
 
-    public GameObject majorRoadGO;
-    public GameObject minorRoadGO;
+    //public GameObject majorRoadGO;
+    //public GameObject minorRoadGO;
 
     public int maxConnections;
     public int maxCityConnections;

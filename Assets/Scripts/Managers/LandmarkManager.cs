@@ -13,6 +13,7 @@ public class LandmarkManager : MonoBehaviour {
     public int initialDungeonLandmarks;
     public int initialSettlementLandmarks;
 
+    public List<BaseLandmarkData> baseLandmarkData;
     public List<LandmarkData> landmarkData;
 
 	//Crater
@@ -26,15 +27,8 @@ public class LandmarkManager : MonoBehaviour {
      Create a new landmark on a specified tile.
      */
     public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
-        BASE_LANDMARK_TYPE baseLandmarkType = Utilities.GetBaseLandmarkType(landmarkType);
+        BASE_LANDMARK_TYPE baseLandmarkType = LandmarkManager.Instance.GetLandmarkData(landmarkType).baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
-        if(baseLandmarkType == BASE_LANDMARK_TYPE.SETTLEMENT && landmarkType != LANDMARK_TYPE.CITY) {
-            //if(landmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-            //    //Create a new faction to occupy the new settlement
-            //    Faction newFaction = FactionManager.Instance.CreateNewFaction(typeof(Camp), RACE.GOBLIN);
-            //    newLandmark.OccupyLandmark(newFaction);
-            //}
-        }
 //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
@@ -176,7 +170,7 @@ public class LandmarkManager : MonoBehaviour {
         WeightedDictionary<LANDMARK_TYPE> dungeonAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
-            if(Utilities.GetBaseLandmarkType(currData.landmarkType) == BASE_LANDMARK_TYPE.DUNGEON) {
+            if(currData.baseLandmarkType == BASE_LANDMARK_TYPE.DUNGEON) {
                 dungeonAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
             }
         }
@@ -186,7 +180,7 @@ public class LandmarkManager : MonoBehaviour {
         WeightedDictionary<LANDMARK_TYPE> settlementAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
-            if (Utilities.GetBaseLandmarkType(currData.landmarkType) == BASE_LANDMARK_TYPE.SETTLEMENT && currData.landmarkType != LANDMARK_TYPE.CITY) {
+            if (currData.baseLandmarkType == BASE_LANDMARK_TYPE.SETTLEMENT && currData.landmarkType != LANDMARK_TYPE.TOWN) {
                 settlementAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
             }
         }
@@ -199,7 +193,7 @@ public class LandmarkManager : MonoBehaviour {
                 return currData;
             }
         }
-        return null;
+        throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
     }
     public List<HexTile> CreateRoadsForLandmarks(HexTile location) {
         List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
@@ -248,51 +242,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         return characterWeights;
     }
-	//public WeightedDictionary<CHARACTER_ROLE> GetCharacterRoleProductionDictionaryNoRestrictions(Faction faction, Settlement settlement) {
-	//	WeightedDictionary<CHARACTER_ROLE> characterWeights = new WeightedDictionary<CHARACTER_ROLE>();
-	//	for (int i = 0; i < characterProductionWeights.Count; i++) {
-	//		CharacterProductionWeight currWeight = characterProductionWeights[i];
-	//		//bool shouldIncludeWeight = true;
-	//		//for (int j = 0; j < currWeight.productionCaps.Count; j++) {
-	//		//	CharacterProductionCap currCap = currWeight.productionCaps[j];
-	//		//	if(currCap.IsCapReached(currWeight.role, faction, settlement)) {
-	//		//		shouldIncludeWeight = false; //The current faction has already reached the cap for the current role, do not add to weights.
-	//		//		break;
-	//		//	}
-	//		//}
-	//		//if (shouldIncludeWeight) {
-	//			characterWeights.AddElement(currWeight.role, currWeight.weight);
-	//		//}
-	//	}
-	//	return characterWeights;
-	//}
-    /*
-     Get the character class weights for a settlement.
-     This will eliminate any character classes that the settlement cannot
-     produce due to a lack of technologies.
-         */
-	//public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark, ref MATERIAL material) {
- //       WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
- //       CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
- //       Settlement settlement = null;
- //       if(landmark is Settlement) {
- //           settlement = landmark as Settlement;
- //       } else {
-	//		settlement = landmark.tileLocation.region.mainLandmark as Settlement;
- //       }
- //       for (int i = 1; i < allClasses.Length; i++) {
- //           CHARACTER_CLASS charClass = allClasses[i];
-	//		if (settlement.CanProduceClass(charClass, ref material)) { //Does the settlement have the required technologies to produce this class
- //               classes.AddElement(charClass, 200);
- //           }
- //       }
- //       return classes;
- //   }
-    /*
-     Get the character class weights for a settlement.
-     This will eliminate any character classes that the settlement cannot
-     produce due to a lack of technologies.
-         */
     public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark) {
         WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
         CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
@@ -360,16 +309,11 @@ public class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    //   public DungeonEncounterChances GetDungeonEncounterChances(LANDMARK_TYPE dungeonType){
-    //	for (int i = 0; i < dungeonEncounterChances.Length; i++) {
-    //		if(dungeonType == dungeonEncounterChances[i].dungeonType){
-    //			return dungeonEncounterChances [i];
-    //		}
-    //	}
-    //	return new DungeonEncounterChances ();
-    //}
-
     #region Utilities
+    public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
+        LandmarkData landmarkData = GetLandmarkData(landmarkType);
+        return landmarkData.baseLandmarkType;
+    }
     public BaseLandmark GetLandmarkByID(int id) {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
@@ -412,6 +356,15 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         return allLandmarksOfType;
+    }
+    public BaseLandmarkData GetBaseLandmarkData(BASE_LANDMARK_TYPE baseLandmarkType) {
+        for (int i = 0; i < baseLandmarkData.Count; i++) {
+            BaseLandmarkData currData = baseLandmarkData[i];
+            if (currData.baseLandmarkType == baseLandmarkType) {
+                return currData;
+            }
+        }
+        throw new System.Exception("There is no base landmark data for " + baseLandmarkType);
     }
     #endregion
 

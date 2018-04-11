@@ -75,7 +75,6 @@ public class GridMap : MonoBehaviour {
 				currHex.tileName = RandomNameGenerator.Instance.GetTileName();
                 currHex.xCoordinate = x;
                 currHex.yCoordinate = y;
-                currHex.SetPathfindingTag(0);
                 listHexes.Add(hex);
                 map[x, y] = hex.GetComponent<HexTile>();
                 id++;
@@ -346,18 +345,18 @@ public class GridMap : MonoBehaviour {
             Region currRegion = allRegions[i];
             currRegion.RevalidateCenterOfMass();
             currRegion.CheckForAdjacency();
-            currRegion.ComputeNaturalResourceLevel();
+            //currRegion.ComputeNaturalResourceLevel();
         }
         return true;
     }
-    public void UpdateAllRegionsDiscoveredKingdoms() {
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            if (currRegion.occupant != null) {
-                currRegion.CheckForDiscoveredKingdoms();
-            }
-        }
-    }
+    //public void UpdateAllRegionsDiscoveredKingdoms() {
+    //    for (int i = 0; i < allRegions.Count; i++) {
+    //        Region currRegion = allRegions[i];
+    //        if (currRegion.occupant != null) {
+    //            currRegion.CheckForDiscoveredKingdoms();
+    //        }
+    //    }
+    //}
     #endregion
 }
 

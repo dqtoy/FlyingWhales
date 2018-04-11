@@ -7,11 +7,11 @@ public class FactionManager : MonoBehaviour {
 
     public static FactionManager Instance = null;
 
-    [SerializeField] private RACE[] inititalRaces;
+    //[SerializeField] private RACE[] inititalRaces;
 
     private ORDER_BY orderBy = ORDER_BY.CITIES;
 
-    public List<QuestTypeSetup> questTypeSetups;
+    //public List<QuestTypeSetup> questTypeSetups;
 
     public List<Faction> allFactions = new List<Faction>();
 	public List<Tribe> allTribes = new List<Tribe>();
@@ -104,7 +104,7 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
     [Space(10)]
-    [Header("Kingdom Size Modifiers")]
+    [Header("Faction Size Modifiers")]
     [SerializeField] internal float smallToMediumReqPercentage;
     [SerializeField] internal float mediumToLargeReqPercentage;
     [SerializeField] internal int smallToMediumReq;
@@ -509,15 +509,15 @@ public class FactionManager : MonoBehaviour {
     //    }
     //    return false;
     //}
-    public QuestTypeSetup GetQuestTypeSetup(QUEST_TYPE questType) {
-        for (int i = 0; i < questTypeSetups.Count; i++) {
-            QuestTypeSetup currSetup = questTypeSetups[i];
-            if (currSetup.questType == questType) {
-                return currSetup;
-            }
-        }
-        return null;
-    }
+    //public QuestTypeSetup GetQuestTypeSetup(QUEST_TYPE questType) {
+    //    for (int i = 0; i < questTypeSetups.Count; i++) {
+    //        QuestTypeSetup currSetup = questTypeSetups[i];
+    //        if (currSetup.questType == questType) {
+    //            return currSetup;
+    //        }
+    //    }
+    //    return null;
+    //}
     #endregion
 
     #region International Incidents

@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class LandmarkData {
     public LANDMARK_TYPE landmarkType;
+    public BASE_LANDMARK_TYPE baseLandmarkType;
+    public int minCivilians;
+    public int maxCivilians;
     public int durability;
     public int appearanceWeight;
     public bool isUnique;
+    public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
 

@@ -46,68 +46,68 @@ public class Imperialist : Trait {
     //      }
     //      return weight;
     //  }
-    internal override int GetAllianceOfConquestWeightModification(Kingdom otherKingdom, Kingdom causingKindom) {
-        //otherKingdom is possible ally
-        int weight = 0;
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        KingdomRelationship relOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
+ //   internal override int GetAllianceOfConquestWeightModification(Kingdom otherKingdom, Kingdom causingKindom) {
+ //       //otherKingdom is possible ally
+ //       int weight = 0;
+ //       Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+ //       KingdomRelationship relSourceWithOther = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+ //       KingdomRelationship relOtherWithSource = otherKingdom.GetRelationshipWithKingdom(sourceKingdom);
 
-        KingdomRelationship relSourceWithAdj = sourceKingdom.GetRelationshipWithKingdom(causingKindom);
-        KingdomRelationship relOtherWithAdj = otherKingdom.GetRelationshipWithKingdom(causingKindom);
-        //for each non-ally adjacent kingdom that have negative Relative Strength
-        if (relSourceWithAdj.sharedRelationship.isAdjacent && relOtherWithAdj.sharedRelationship.isAdjacent && !relSourceWithAdj.AreAllies() 
-            && relSourceWithAdj.relativeStrength < 0) {
-            if (relSourceWithOther.totalLike > 0) {
-                weight += 3 * relSourceWithOther.totalLike; //add 3 Weight per positive opinion i have towards each alliance members
-            } else if (relSourceWithOther.totalLike < 0) {
-                weight += 2 * relSourceWithOther.totalLike; //subtract 2 Weight per negative opinion i have towards each alliance members
-            }
-            if (relOtherWithSource.totalLike > 0) {
-                weight += 3 * relOtherWithSource.totalLike; //add 3 Weight per positive opinion each alliance member has towards me
-            }
-            if (relOtherWithAdj.totalLike > 0) {
-                weight -= 2 * relOtherWithAdj.totalLike; //subtract 2 Weight per positive opinion each alliance member has towards Conquest Target
-            } else if (relOtherWithAdj.totalLike < 0) {
-                weight += Mathf.Abs(2 * relOtherWithAdj.totalLike); //add 2 Weight per negative opinion each alliance member has towards Conquest Target
-            }
-            if (sourceKingdom.recentlyRejectedOffers.ContainsKey(otherKingdom)) {
-                weight -= 50;
-            } else if (sourceKingdom.recentlyBrokenAlliancesWith.Contains(otherKingdom)) {
-                weight -= 50;
-            }
-            weight = Mathf.Max(0, weight); //minimum 0
-        }
+ //       KingdomRelationship relSourceWithAdj = sourceKingdom.GetRelationshipWithKingdom(causingKindom);
+ //       KingdomRelationship relOtherWithAdj = otherKingdom.GetRelationshipWithKingdom(causingKindom);
+ //       //for each non-ally adjacent kingdom that have negative Relative Strength
+ //       if (relSourceWithAdj.sharedRelationship.isAdjacent && relOtherWithAdj.sharedRelationship.isAdjacent && !relSourceWithAdj.AreAllies() 
+ //           && relSourceWithAdj.relativeStrength < 0) {
+ //           if (relSourceWithOther.totalLike > 0) {
+ //               weight += 3 * relSourceWithOther.totalLike; //add 3 Weight per positive opinion i have towards each alliance members
+ //           } else if (relSourceWithOther.totalLike < 0) {
+ //               weight += 2 * relSourceWithOther.totalLike; //subtract 2 Weight per negative opinion i have towards each alliance members
+ //           }
+ //           if (relOtherWithSource.totalLike > 0) {
+ //               weight += 3 * relOtherWithSource.totalLike; //add 3 Weight per positive opinion each alliance member has towards me
+ //           }
+ //           if (relOtherWithAdj.totalLike > 0) {
+ //               weight -= 2 * relOtherWithAdj.totalLike; //subtract 2 Weight per positive opinion each alliance member has towards Conquest Target
+ //           } else if (relOtherWithAdj.totalLike < 0) {
+ //               weight += Mathf.Abs(2 * relOtherWithAdj.totalLike); //add 2 Weight per negative opinion each alliance member has towards Conquest Target
+ //           }
+ //           if (sourceKingdom.recentlyRejectedOffers.ContainsKey(otherKingdom)) {
+ //               weight -= 50;
+ //           } else if (sourceKingdom.recentlyBrokenAlliancesWith.Contains(otherKingdom)) {
+ //               weight -= 50;
+ //           }
+ //           weight = Mathf.Max(0, weight); //minimum 0
+ //       }
 
-        return weight;
-    }
-	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
-		if(!kr.AreAllies()){
-			KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
-			if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
-				if(kr._theoreticalPower < rk._theoreticalPower){
-					return 5 * kr.relativeStrength;
-				}
-			}else if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION){
-				if(kr._theoreticalPower > rk._theoreticalPower){
-					return 10 * rk.relativeStrength;
-				}
-			}
-		}
-		return 0;
-	}
-	internal override int GetKingdomThreatOpinionChange(int threat, out string summary){
-		summary = string.Empty;
-		if(threat >= -50 && threat < -25){
-			summary = "Preys on the Weak";
-			return -15;
-		}else if(threat > -100 && threat < -50){
-			summary = "Preys on the Weak";
-			return -30;
-		}else if(threat <= -100){
-			summary = "Preys on the Weak";
-			return -50;
-		}
-		return 0;
-	}
+ //       return weight;
+ //   }
+	//internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+	//	if(!kr.AreAllies()){
+	//		KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kr.sourceKingdom);
+	//		if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
+	//			if(kr._theoreticalPower < rk._theoreticalPower){
+	//				return 5 * kr.relativeStrength;
+	//			}
+	//		}else if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.INCREASE_TENSION){
+	//			if(kr._theoreticalPower > rk._theoreticalPower){
+	//				return 10 * rk.relativeStrength;
+	//			}
+	//		}
+	//	}
+	//	return 0;
+	//}
+	//internal override int GetKingdomThreatOpinionChange(int threat, out string summary){
+	//	summary = string.Empty;
+	//	if(threat >= -50 && threat < -25){
+	//		summary = "Preys on the Weak";
+	//		return -15;
+	//	}else if(threat > -100 && threat < -50){
+	//		summary = "Preys on the Weak";
+	//		return -30;
+	//	}else if(threat <= -100){
+	//		summary = "Preys on the Weak";
+	//		return -50;
+	//	}
+	//	return 0;
+	//}
 }

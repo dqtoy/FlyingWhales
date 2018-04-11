@@ -208,18 +208,18 @@ public class PathGenerator : MonoBehaviour {
 		}
 		return null;
 	}
-	/*
-	 * Get List of tiles (Path) that will connect 2 city tiles
-	 * */
-	public void CreatePath(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, object data = null){
-		if(startingTile == null || destinationTile == null){
-			return;
-		}
-		if(startingTile.tileTag != destinationTile.tileTag) {
-			return;
-		}
-		PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, data));
-	}
+	///*
+	// * Get List of tiles (Path) that will connect 2 city tiles
+	// * */
+	//public void CreatePath(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, object data = null){
+	//	if(startingTile == null || destinationTile == null){
+	//		return;
+	//	}
+	//	if(startingTile.tileTag != destinationTile.tileTag) {
+	//		return;
+	//	}
+	//	PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, data));
+	//}
     public PathFindingThread CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
         if (startingTile == null || destinationTile == null) {
             return null;
@@ -314,22 +314,22 @@ public class PathGenerator : MonoBehaviour {
 		}
 	}
 
-	public List<HexTile> GetAllHabitableTilesByDistance(HexTile hexTile){
-		List<HexTile> allHabitableTiles = CityGenerator.Instance.stoneHabitableTiles.OrderBy(x => Vector2.Distance(hexTile.transform.position, x.transform.position)).ToList();
-		allHabitableTiles.Remove(hexTile);
-		return allHabitableTiles;
-	}
+	//public List<HexTile> GetAllHabitableTilesByDistance(HexTile hexTile){
+	//	List<HexTile> allHabitableTiles = CityGenerator.Instance.stoneHabitableTiles.OrderBy(x => Vector2.Distance(hexTile.transform.position, x.transform.position)).ToList();
+	//	allHabitableTiles.Remove(hexTile);
+	//	return allHabitableTiles;
+	//}
 
-	public HexTile FindNearestCityWithConnection(HexTile hexTile){
-		List<HexTile> habitableTilesOrderedByDistance = this.GetAllHabitableTilesByDistance(hexTile);
-		for (int i = 0; i < habitableTilesOrderedByDistance.Count; i++) {
-			if (habitableTilesOrderedByDistance[i].connectedTiles.Count > 0) {
-				return habitableTilesOrderedByDistance[i];
-			}
-		}
-		if (habitableTilesOrderedByDistance.Count > 0) {
-			return habitableTilesOrderedByDistance[0];
-		}
-		return null;
-	}
+	//public HexTile FindNearestCityWithConnection(HexTile hexTile){
+	//	List<HexTile> habitableTilesOrderedByDistance = this.GetAllHabitableTilesByDistance(hexTile);
+	//	for (int i = 0; i < habitableTilesOrderedByDistance.Count; i++) {
+	//		if (habitableTilesOrderedByDistance[i].connectedTiles.Count > 0) {
+	//			return habitableTilesOrderedByDistance[i];
+	//		}
+	//	}
+	//	if (habitableTilesOrderedByDistance.Count > 0) {
+	//		return habitableTilesOrderedByDistance[0];
+	//	}
+	//	return null;
+	//}
 }

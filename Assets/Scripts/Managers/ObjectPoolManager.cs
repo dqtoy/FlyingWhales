@@ -12,9 +12,9 @@ public class ObjectPoolManager : MonoBehaviour {
     private Dictionary<string, EZObjectPool> allObjectPools;
 
     [SerializeField] private GameObject[] UIPrefabs;
-    [SerializeField] internal GameObject[] citizenAvatarPrefabs;
-    [SerializeField] private GameObject[] monsterAvatarPrefabs;
-    [SerializeField] private GameObject[] agentPrefabs;
+    //[SerializeField] internal GameObject[] citizenAvatarPrefabs;
+    //[SerializeField] private GameObject[] monsterAvatarPrefabs;
+    //[SerializeField] private GameObject[] agentPrefabs;
     [SerializeField] internal GameObject[] otherPrefabs;
 
     private void Awake() {
@@ -34,15 +34,15 @@ public class ObjectPoolManager : MonoBehaviour {
             newUIPool.transform.SetParent(UIObjectPoolParent.transform);
         }
 
-        for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
-            GameObject currPrefab = citizenAvatarPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
-        }
+        //for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
+        //    GameObject currPrefab = citizenAvatarPrefabs[i];
+        //    CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
+        //}
 
-        for (int i = 0; i < agentPrefabs.Length; i++) {
-            GameObject currPrefab = agentPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
-        }
+        //for (int i = 0; i < agentPrefabs.Length; i++) {
+        //    GameObject currPrefab = agentPrefabs[i];
+        //    CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
+        //}
 
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
@@ -65,10 +65,10 @@ public class ObjectPoolManager : MonoBehaviour {
             }
         }
 
-        for (int i = 0; i < monsterAvatarPrefabs.Length; i++) {
-            GameObject currPrefab = monsterAvatarPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
-        }
+        //for (int i = 0; i < monsterAvatarPrefabs.Length; i++) {
+        //    GameObject currPrefab = monsterAvatarPrefabs[i];
+        //    CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
+        //}
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {

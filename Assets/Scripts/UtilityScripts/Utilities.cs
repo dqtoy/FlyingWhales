@@ -11,17 +11,12 @@ using System.Linq;
 
 public class Utilities : MonoBehaviour {
 	public static System.Random rng = new System.Random(); 
-	public static int lastKingdomID = 0;
-	public static int lastCitizenID = 0;
-	public static int lastCityID = 0;
     public static int lastRegionID = 0;
-	public static int lastEventID = 0;
 	public static int lastKingdomColorIndex = 0;
     public static int lastFactionColorIndex = 0;
 	public static int lastAlliancePoolID = 0;
 	public static int lastWarfareID = 0;
     public static int lastLogID = 0;
-	public static int lastSharedKingdomRelationshipID = 0;
     public static int lastLandmarkID = 0;
 	public static int lastFactionID = 0;
     public static int lastCharacterID = 0;
@@ -55,28 +50,31 @@ public class Utilities : MonoBehaviour {
 	 * Set unique id
 	 * */
 	public static int SetID<T>(T obj){
-		if (obj is Kingdom) {
-			lastKingdomID += 1;
-			return lastKingdomID;
-		} else if (obj is City) {
-			lastCityID += 1;
-			return lastCityID;
-		} else if (obj is Citizen) {
-			lastCitizenID += 1;
-			return lastCitizenID;
-		}else if (obj is GameEvent) {
-			lastEventID += 1;
-			return lastEventID;
-		}else if(obj is Region) {
+		//if (obj is Kingdom) {
+		//	lastKingdomID += 1;
+		//	return lastKingdomID;
+		//} else if (obj is City) {
+		//	lastCityID += 1;
+		//	return lastCityID;
+		//} else if (obj is Citizen) {
+		//	lastCitizenID += 1;
+		//	return lastCitizenID;
+		//}else if (obj is GameEvent) {
+		//	lastEventID += 1;
+		//	return lastEventID;
+		//}else 
+        if(obj is Region) {
             lastRegionID += 1;
             return lastRegionID;
         } else if (obj is Log) {
             lastLogID += 1;
             return lastLogID;
-		} else if (obj is SharedKingdomRelationship) {
-			lastSharedKingdomRelationshipID += 1;
-			return lastSharedKingdomRelationshipID;
-        } else if (obj is BaseLandmark) {
+		} 
+   //     else if (obj is SharedKingdomRelationship) {
+			//lastSharedKingdomRelationshipID += 1;
+			//return lastSharedKingdomRelationshipID;
+   //     } 
+        else if (obj is BaseLandmark) {
             lastLandmarkID += 1;
             return lastLandmarkID;
 		} else if (obj is Faction) {
@@ -129,56 +127,56 @@ public class Utilities : MonoBehaviour {
         BIOMES.SNOW
     };
 
-	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
-		{BIOMES.BARE, new SpecialResourceChance(
-			new RESOURCE[] {RESOURCE.NONE}, 
-			new int[] {100})
-		},
+	//public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
+	//	{BIOMES.BARE, new SpecialResourceChance(
+	//		new RESOURCE[] {RESOURCE.NONE}, 
+	//		new int[] {100})
+	//	},
         
-		{BIOMES.GRASSLAND, new SpecialResourceChance(
-            //new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT},
-            //new int[] {100, 20, 40, 20, 60, 35, 5, 5})
-			new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.CORN, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL},
-            new int[] {10, 60, 20, 10, 5})
-        },
+	//	{BIOMES.GRASSLAND, new SpecialResourceChance(
+ //           //new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT},
+ //           //new int[] {100, 20, 40, 20, 60, 35, 5, 5})
+	//		new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.CORN, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL},
+ //           new int[] {10, 60, 20, 10, 5})
+ //       },
 
-		{BIOMES.WOODLAND, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.COBALT},
-   //         new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
-			new RESOURCE[] {RESOURCE.PIG, RESOURCE.RICE, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.COBALT},
-            new int[] {10, 40, 30, 30, 5})
-        },
+	//	{BIOMES.WOODLAND, new SpecialResourceChance(
+	//		//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.COBALT},
+ //  //         new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
+	//		new RESOURCE[] {RESOURCE.PIG, RESOURCE.RICE, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.COBALT},
+ //           new int[] {10, 40, 30, 30, 5})
+ //       },
 
 
-		{BIOMES.FOREST, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.EBONY, RESOURCE.DEER, RESOURCE.BEHEMOTH, RESOURCE.MANA_STONE, RESOURCE.MITHRIL, RESOURCE.GOLD}, 
-			//new int[] {15, 40, 15, 0, 0, 0})
-			new RESOURCE[] {RESOURCE.BEHEMOTH, RESOURCE.DEER, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.MANA_STONE},
-            new int[] {10, 60, 20, 10, 5})
-        },
+	//	{BIOMES.FOREST, new SpecialResourceChance(
+	//		//new RESOURCE[] {RESOURCE.EBONY, RESOURCE.DEER, RESOURCE.BEHEMOTH, RESOURCE.MANA_STONE, RESOURCE.MITHRIL, RESOURCE.GOLD}, 
+	//		//new int[] {15, 40, 15, 0, 0, 0})
+	//		new RESOURCE[] {RESOURCE.BEHEMOTH, RESOURCE.DEER, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.MANA_STONE},
+ //           new int[] {10, 60, 20, 10, 5})
+ //       },
 
-		{BIOMES.DESERT, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.SLATE, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT, RESOURCE.GOLD}, 
-			//new int[] {20, 20, 15, 15, 0, 0, 0})
-			new RESOURCE[] {RESOURCE.PIG, RESOURCE.GRANITE, RESOURCE.MITHRIL, RESOURCE.BEHEMOTH},
-            new int[] {40, 60, 5, 5})
-        },
+	//	{BIOMES.DESERT, new SpecialResourceChance(
+	//		//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.SLATE, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT, RESOURCE.GOLD}, 
+	//		//new int[] {20, 20, 15, 15, 0, 0, 0})
+	//		new RESOURCE[] {RESOURCE.PIG, RESOURCE.GRANITE, RESOURCE.MITHRIL, RESOURCE.BEHEMOTH},
+ //           new int[] {40, 60, 5, 5})
+ //       },
 
-		{BIOMES.TUNDRA, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.GOLD}, 
-			//new int[] {50, 15, 10, 25, 10, 0, 0})
-			new RESOURCE[] {RESOURCE.RICE, RESOURCE.OAK, RESOURCE.MANA_STONE, RESOURCE.BEHEMOTH},
-            new int[] {40, 60, 5, 5})
-        },
+	//	{BIOMES.TUNDRA, new SpecialResourceChance(
+	//		//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.GOLD}, 
+	//		//new int[] {50, 15, 10, 25, 10, 0, 0})
+	//		new RESOURCE[] {RESOURCE.RICE, RESOURCE.OAK, RESOURCE.MANA_STONE, RESOURCE.BEHEMOTH},
+ //           new int[] {40, 60, 5, 5})
+ //       },
 
-		{BIOMES.SNOW, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
-			//new int[] {15, 5, 15, 5, 5, 0, 0})
-            new RESOURCE[] {RESOURCE.GRANITE, RESOURCE.OAK, RESOURCE.COBALT},
-            new int[] {50, 50, 5})
-        },
+	//	{BIOMES.SNOW, new SpecialResourceChance(
+	//		//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
+	//		//new int[] {15, 5, 15, 5, 5, 0, 0})
+ //           new RESOURCE[] {RESOURCE.GRANITE, RESOURCE.OAK, RESOURCE.COBALT},
+ //           new int[] {50, 50, 5})
+ //       },
 
-	};
+	//};
 
 //	public static string CauseOfAccident(){
 //		
@@ -328,16 +326,16 @@ public class Utilities : MonoBehaviour {
 	}
 	#endregion
 
-	public static void ChangeDescendantsRecursively(Citizen royalty, bool isDescendant){
-		royalty.isDirectDescendant = isDescendant;
+	//public static void ChangeDescendantsRecursively(Citizen royalty, bool isDescendant){
+	//	royalty.isDirectDescendant = isDescendant;
 
 
-		for(int i = 0; i < royalty.children.Count; i++){
-			if(royalty.children[i] != null){
-				ChangeDescendantsRecursively (royalty.children [i], isDescendant);
-			}
-		}
-	}
+	//	for(int i = 0; i < royalty.children.Count; i++){
+	//		if(royalty.children[i] != null){
+	//			ChangeDescendantsRecursively (royalty.children [i], isDescendant);
+	//		}
+	//	}
+	//}
 
 	public static List<T> Shuffle<T>(List<T> list)  
 	{
@@ -375,14 +373,14 @@ public class Utilities : MonoBehaviour {
 		return returnArray;
 	}
 
-	public static bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
-		for(int i = 0; i < unwantedGovernors.Count; i++){
-			if(governor.id == unwantedGovernors[i].id){
-				return true;
-			}	
-		}
-		return false;
-	}
+	//public static bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
+	//	for(int i = 0; i < unwantedGovernors.Count; i++){
+	//		if(governor.id == unwantedGovernors[i].id){
+	//			return true;
+	//		}	
+	//	}
+	//	return false;
+	//}
 	public static Color[] kingdomColorCycle = new Color[] {
 		new Color32(0xDB, 0x00, 0x00, 0x91), // Red DB000091
 		new Color32(0x00, 0x51, 0xF3, 0x91), // Blue 0051F391
@@ -1314,11 +1312,12 @@ public class Utilities : MonoBehaviour {
         foreach (KeyValuePair<T, int> kvp in weights) {
             T key = kvp.Key;
             int value = kvp.Value;
-            if(key is Kingdom) {
-                actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
-            } else if(key is AlliancePool) {
-                actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
-            } else if (key is ECS.Character) {
+            //if(key is Kingdom) {
+            //    actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
+            //} else if(key is AlliancePool) {
+            //    actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
+            //} else 
+            if (key is ECS.Character) {
                 actionWeightsSummary += "\n" + (key as ECS.Character).name + " - " + kvp.Value.ToString();
             } else if (key is BaseLandmark) {
                 actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
@@ -1341,24 +1340,24 @@ public class Utilities : MonoBehaviour {
         return actionWeightsSummary;
     }
 
-    public static string GetWeightsSummary(Dictionary<Kingdom, int> weights, string title = "Weights Summary: ") {
-        string actionWeightsSummary = title;
-        foreach (KeyValuePair<Kingdom, int> kvp in weights) {
-            actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
-        }
-        return actionWeightsSummary;
-    }
+    //public static string GetWeightsSummary(Dictionary<Kingdom, int> weights, string title = "Weights Summary: ") {
+    //    string actionWeightsSummary = title;
+    //    foreach (KeyValuePair<Kingdom, int> kvp in weights) {
+    //        actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
+    //    }
+    //    return actionWeightsSummary;
+    //}
 
-    public static string GetWeightsSummary(Dictionary<Kingdom, Dictionary<Kingdom, int>> weights, string title = "Weights Summary: ") {
-        string actionWeightsSummary = title;
-        foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in weights) {
-            actionWeightsSummary += "\n" + kvp.Key.name + " : ";
-            foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
-                actionWeightsSummary += "\n     " + pair.Key.name + " - " + pair.Value.ToString();
-            }
-        }
-        return actionWeightsSummary;
-    }
+    //public static string GetWeightsSummary(Dictionary<Kingdom, Dictionary<Kingdom, int>> weights, string title = "Weights Summary: ") {
+    //    string actionWeightsSummary = title;
+    //    foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in weights) {
+    //        actionWeightsSummary += "\n" + kvp.Key.name + " : ";
+    //        foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
+    //            actionWeightsSummary += "\n     " + pair.Key.name + " - " + pair.Value.ToString();
+    //        }
+    //    }
+    //    return actionWeightsSummary;
+    //}
 
     public static string GetDateString(GameDate date) {
         return NormalizeString(((MONTH)date.month).ToString()) + " " + date.day.ToString() + ", " + date.year.ToString();
@@ -1472,20 +1471,20 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
-	public static bool AreTwoCitiesConnected(City sourceCity, City targetCity, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
-		List<HexTile> path = PathGenerator.Instance.GetPath (sourceCity.hexTile, targetCity.hexTile, pathFindingMode);
-		if(path != null){
-			return true;
-		}
-		return false;
-	}
-	public static bool HasPath(HexTile startingLocation, HexTile targetLocation, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
-		List<HexTile> path = PathGenerator.Instance.GetPath (startingLocation, targetLocation, pathFindingMode);
-		if(path != null){
-			return true;
-		}
-		return false;
-	}
+	//public static bool AreTwoCitiesConnected(City sourceCity, City targetCity, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
+	//	List<HexTile> path = PathGenerator.Instance.GetPath (sourceCity.hexTile, targetCity.hexTile, pathFindingMode);
+	//	if(path != null){
+	//		return true;
+	//	}
+	//	return false;
+	//}
+	//public static bool HasPath(HexTile startingLocation, HexTile targetLocation, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
+	//	List<HexTile> path = PathGenerator.Instance.GetPath (startingLocation, targetLocation, pathFindingMode);
+	//	if(path != null){
+	//		return true;
+	//	}
+	//	return false;
+	//}
     public static GENDER GetRandomGender() {
         if(UnityEngine.Random.Range(0, 2) == 0) {
             return GENDER.MALE;
@@ -1513,45 +1512,45 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Landmarks
-    public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
-        switch (landmarkType) {
-            case LANDMARK_TYPE.CLAY:
-            case LANDMARK_TYPE.LIMESTONE:
-            case LANDMARK_TYPE.GRANITE:
-            case LANDMARK_TYPE.MARBLE:
-            case LANDMARK_TYPE.SILK:
-            case LANDMARK_TYPE.COTTON:
-            case LANDMARK_TYPE.FLAX:
-            case LANDMARK_TYPE.CORN:
-            case LANDMARK_TYPE.RICE:
-            case LANDMARK_TYPE.PIGMEAT:
-            case LANDMARK_TYPE.COWMEAT:
-            case LANDMARK_TYPE.GOATHIDE:
-            case LANDMARK_TYPE.DEERHIDE:
-            case LANDMARK_TYPE.BEHEMOTHHIDE:
-            case LANDMARK_TYPE.OAK:
-            case LANDMARK_TYPE.YEW:
-            case LANDMARK_TYPE.EBONY:
-            case LANDMARK_TYPE.IRON:
-            case LANDMARK_TYPE.COBALT:
-            case LANDMARK_TYPE.MITHRIL:
-                return BASE_LANDMARK_TYPE.RESOURCE;
-            case LANDMARK_TYPE.ANCIENT_RUIN:
-            case LANDMARK_TYPE.VAMPIRE_TOMB:
-            case LANDMARK_TYPE.ANCIENT_REACTOR:
-            case LANDMARK_TYPE.CAVE:
-            case LANDMARK_TYPE.WILDLANDS:
-			case LANDMARK_TYPE.RITUAL_STONES:
-                return BASE_LANDMARK_TYPE.DUNGEON;
-			case LANDMARK_TYPE.CITY:
-			case LANDMARK_TYPE.GOBLIN_CAMP:
-            case LANDMARK_TYPE.HUT:
-			case LANDMARK_TYPE.CRATER:
-                return BASE_LANDMARK_TYPE.SETTLEMENT;
-            default:
-                return BASE_LANDMARK_TYPE.NONE;
-        }
-    }
+   // public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
+   //     switch (landmarkType) {
+   //         case LANDMARK_TYPE.CLAY:
+   //         case LANDMARK_TYPE.LIMESTONE:
+   //         case LANDMARK_TYPE.GRANITE:
+   //         case LANDMARK_TYPE.MARBLE:
+   //         case LANDMARK_TYPE.SILK:
+   //         case LANDMARK_TYPE.COTTON:
+   //         case LANDMARK_TYPE.FLAX:
+   //         case LANDMARK_TYPE.CORN:
+   //         case LANDMARK_TYPE.RICE:
+   //         case LANDMARK_TYPE.PIGMEAT:
+   //         case LANDMARK_TYPE.COWMEAT:
+   //         case LANDMARK_TYPE.GOATHIDE:
+   //         case LANDMARK_TYPE.DEERHIDE:
+   //         case LANDMARK_TYPE.BEHEMOTHHIDE:
+   //         case LANDMARK_TYPE.OAK:
+   //         case LANDMARK_TYPE.YEW:
+   //         case LANDMARK_TYPE.EBONY:
+   //         case LANDMARK_TYPE.IRON:
+   //         case LANDMARK_TYPE.COBALT:
+   //         case LANDMARK_TYPE.MITHRIL:
+   //             return BASE_LANDMARK_TYPE.RESOURCE;
+   //         case LANDMARK_TYPE.ANCIENT_RUIN:
+   //         case LANDMARK_TYPE.VAMPIRE_TOMB:
+   //         case LANDMARK_TYPE.ANCIENT_REACTOR:
+   //         case LANDMARK_TYPE.CAVE:
+   //         case LANDMARK_TYPE.WILDLANDS:
+			//case LANDMARK_TYPE.RITUAL_STONES:
+   //             return BASE_LANDMARK_TYPE.DUNGEON;
+			//case LANDMARK_TYPE.CITY:
+			//case LANDMARK_TYPE.GOBLIN_CAMP:
+   //         case LANDMARK_TYPE.HUT:
+			//case LANDMARK_TYPE.CRATER:
+   //             return BASE_LANDMARK_TYPE.SETTLEMENT;
+   //         default:
+   //             return BASE_LANDMARK_TYPE.NONE;
+   //     }
+   // }
     #endregion
 
     public static bool DoesFileExist(string path) {
