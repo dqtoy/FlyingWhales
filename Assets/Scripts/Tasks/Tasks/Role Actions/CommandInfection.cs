@@ -96,8 +96,8 @@ public class CommandInfection : CharacterTask {
 		}
 		if(_regionWeights.Count > 0){
 			Region pickedRegion = _regionWeights.PickRandomElementGivenWeights ();
-			for (int i = 0; i < pickedRegion.allLandmarks.Count; i++) {
-				BaseLandmark landmark = pickedRegion.allLandmarks [i];
+			for (int i = 0; i < pickedRegion.landmarks.Count; i++) {
+				BaseLandmark landmark = pickedRegion.landmarks [i];
 				if(landmark.charactersAtLocation.Count > 0){
 					int landmarkWeight = 0;
 					for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {

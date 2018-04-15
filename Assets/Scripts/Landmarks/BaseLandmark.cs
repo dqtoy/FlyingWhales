@@ -12,10 +12,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected int _id;
     protected HexTile _location;
     protected LANDMARK_TYPE _specificLandmarkType;
-    protected List<object> _connections;
+    protected List<BaseLandmark> _connections;
     protected bool _canBeOccupied; //can the landmark be occupied?
     protected bool _isOccupied;
-    protected bool _isExplored; //has landmark been explored?
     protected string _landmarkName;
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
@@ -55,7 +54,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public LANDMARK_TYPE specificLandmarkType {
         get { return _specificLandmarkType; }
     }
-    public List<object> connections {
+    public List<BaseLandmark> connections {
         get { return _connections; }
     }
     public bool canBeOccupied {
@@ -63,9 +62,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool isOccupied {
         get { return _isOccupied; }
-    }
-    public bool isExplored {
-        get { return _isExplored; }
     }
     public Faction owner {
         get { return _owner; }
@@ -123,8 +119,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
-        _connections = new List<object>();
-        _isExplored = false;
+        _connections = new List<BaseLandmark>();
         _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
@@ -159,10 +154,41 @@ public class BaseLandmark : ILocation, TaskCreator {
             _connections.Add(connection);
         }
     }
-    public void AddConnection(Region connection) {
-        if (!_connections.Contains(connection)) {
-            _connections.Add(connection);
+    public bool IsConnectedTo(Region region) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.tileLocation.region.id == region.id) {
+                return true;
+            }
         }
+        return false;
+    }
+    public bool IsConnectedTo(BaseLandmark landmark) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.id == landmark.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool IsIndirectlyConnectedTo(Region region) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.IsConnectedTo(region)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool IsIndirectlyConnectedTo(BaseLandmark landmark) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.IsConnectedTo(landmark)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -170,9 +196,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public virtual void OccupyLandmark(Faction faction) {
         _owner = faction;
         _isOccupied = true;
-        SetExploredState(true);
         _location.Occupy();
         EnableInitialTechnologies(faction);
+        _owner.OwnLandmark(this);
     }
     public virtual void UnoccupyLandmark() {
         if(_owner == null) {
@@ -327,7 +353,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, bool reduceCivilians = true, bool determineAction = true) {
         RACE raceOfChar = GetRaceBasedOnProportion();
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
-        //        newCharacter.AssignRole(charRole);
+        //newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
         if (reduceCivilians) {
@@ -781,76 +807,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         _landmarkObject = obj;
         _landmarkObject.SetLandmark(this);
     }
-    public void SetExploredState(bool isExplored) {
-        _isExplored = isExplored;
-        //if (landmarkObject != null) {
-        //    landmarkObject.UpdateLandmarkVisual();
-        //}
-    }
-    internal bool IsBorder() {
-        if (this.owner == null) {
-            return false;
-        }
-		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
-			if (this.tileLocation.region.connections[i] is Region) {
-				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
-                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    internal bool IsAdjacentToEnemyTribe() {
-        if (this.owner == null || (this.owner != null && !(this.owner is Tribe))) {
-            return false;
-        }
-		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
-			if (this.tileLocation.region.connections[i] is Region) {
-				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
-                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && this.owner is Tribe && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
-                    FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-                    if (factionRel != null && factionRel.isAtWar) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    internal bool HasWarlordOnAdjacentVillage() {
-        if (this.owner == null) {
-            return false;
-        }
-		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
-			if (this.tileLocation.region.connections[i] is Region) {
-				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
-                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
-                    FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-                    if (factionRel != null && factionRel.isAtWar) {
-                        if (adjacentRegion.centerOfMass.landmarkOnTile.HasWarlord()) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    internal bool HasWarlord() {
-        for (int i = 0; i < this._location.charactersAtLocation.Count; i++) {
-            if (this._location.charactersAtLocation[i] is Character) {
-                if (((Character)this._location.charactersAtLocation[i]).role.roleType == CHARACTER_ROLE.WARLORD) {
-                    return true;
-                }
-            } else if (this._location.charactersAtLocation[i] is Party) {
-                if (((Party)this._location.charactersAtLocation[i]).partyLeader.role.roleType == CHARACTER_ROLE.WARLORD) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     internal int GetTechnologyCount() {
         int count = 0;
         foreach (bool isTrue in _technologies.Values) {
@@ -859,17 +815,6 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
         return count;
-    }
-    internal bool HasAdjacentUnoccupiedTile() {
-        for (int i = 0; i < this._location.region.connections.Count; i++) {
-            if (this._location.region.connections[i] is Region) {
-                Region adjacentRegion = (Region)this._location.region.connections[i];
-                if (!adjacentRegion.centerOfMass.isOccupied) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
     internal int GetMinimumCivilianRequirement() {
         if (this is ResourceLandmark) {

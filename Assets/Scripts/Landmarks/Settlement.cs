@@ -72,13 +72,13 @@ public class Settlement : BaseLandmark {
 		if (tileLocation.isHabitable) {
             //Create structures on location
             faction.AddSettlement(this);
-			tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
-			tileLocation.region.ReColorBorderTiles(faction.factionColor);
+			//tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
+			//tileLocation.region.ReColorBorderTiles(faction.factionColor);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
             tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             landmarkObject.UpdateName();
 			//tileLocation.emptyCityGO.SetActive(false);
-            _producingPopulationFor = GetRaceBasedOnProportion();
+            //_producingPopulationFor = GetRaceBasedOnProportion();
         }
     }
     public override void UnoccupyLandmark() {
@@ -331,10 +331,10 @@ public class Settlement : BaseLandmark {
 		Region currRegion = this.tileLocation.region;
 		for (int i = 0; i < currRegion.adjacentRegions.Count; i++) {
 			Region adjacentRegion = currRegion.adjacentRegions [i];
-			for (int j = 0; j < adjacentRegion.allLandmarks.Count; j++) {
-				if(adjacentRegion.allLandmarks[j].charactersAtLocation.Count > 0){
-					for (int k = 0; k < adjacentRegion.allLandmarks[j].charactersAtLocation.Count; k++) {
-						ICombatInitializer combatInitializer = adjacentRegion.allLandmarks [j].charactersAtLocation [k];
+			for (int j = 0; j < adjacentRegion.landmarks.Count; j++) {
+				if(adjacentRegion.landmarks[j].charactersAtLocation.Count > 0){
+					for (int k = 0; k < adjacentRegion.landmarks[j].charactersAtLocation.Count; k++) {
+						ICombatInitializer combatInitializer = adjacentRegion.landmarks [j].charactersAtLocation [k];
 						if(combatInitializer is Party){
 							Party party = (Party)combatInitializer;
 							for (int l = 0; l < party.partyMembers.Count; l++) {

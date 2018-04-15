@@ -13,6 +13,8 @@ public class LandmarkManager : MonoBehaviour {
     public int initialDungeonLandmarks;
     public int initialSettlementLandmarks;
 
+    public int initialLandmarkCount;
+
     public List<BaseLandmarkData> baseLandmarkData;
     public List<LandmarkData> landmarkData;
 
@@ -49,6 +51,63 @@ public class LandmarkManager : MonoBehaviour {
 	}
 
     #region Landmark Generation
+    public bool GenerateLandmarks() {
+        List<BaseLandmark> createdLandmarks = new List<BaseLandmark>();
+        List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles);
+
+        //create landmarks on all regions' center of mass first
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if (currRegion.centerOfMass.landmarkOnTile == null) {
+                WeightedDictionary<LANDMARK_TYPE> landmarkWeights = GetLandmarkAppearanceWeights(currRegion);
+                LANDMARK_TYPE chosenType = landmarkWeights.PickRandomElementGivenWeights();
+                BaseLandmark createdLandmark = CreateNewLandmarkOnTile(currRegion.centerOfMass, chosenType);
+                elligibleTiles.Remove(createdLandmark.tileLocation);
+                Utilities.ListRemoveRange(elligibleTiles, createdLandmark.tileLocation.GetTilesInRange(3)); //remove tiles in range (3)
+                createdLandmarks.Add(createdLandmark);
+            }
+        }
+
+        //all factions must have 1 kings castle in 1 of their owned regions
+        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
+            Faction currTribe = FactionManager.Instance.allTribes[i];
+            if (currTribe.HasAccessToLandmarkOfType(LANDMARK_TYPE.KINGS_CASTLE)) {
+                //occupy that kings castle instead
+                BaseLandmark kingsCastle = currTribe.GetAccessibleLandmarkOfType(LANDMARK_TYPE.KINGS_CASTLE);
+                kingsCastle.OccupyLandmark(currTribe);
+            } else {
+                //the currTribe doesn't own a region that has a kings castle create a new one and occupy it
+                List<HexTile> tilesToChooseFrom = new List<HexTile>();
+                currTribe.ownedRegions.ForEach(x => tilesToChooseFrom.AddRange(x.tilesInRegion.Where(y => elligibleTiles.Contains(y))));
+                HexTile chosenTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
+                BaseLandmark createdLandmark = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.KINGS_CASTLE);
+                createdLandmark.OccupyLandmark(currTribe);
+                elligibleTiles.Remove(createdLandmark.tileLocation);
+                Utilities.ListRemoveRange(elligibleTiles, createdLandmark.tileLocation.GetTilesInRange(3)); //remove tiles in range (3)
+                createdLandmarks.Add(createdLandmark);
+            }
+        }
+
+        
+        
+        while (createdLandmarks.Count < initialLandmarkCount) {
+            if (elligibleTiles.Count <= 0) {
+                return false; //ran out of tiles
+            }
+            HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
+            WeightedDictionary<LANDMARK_TYPE> landmarkWeights = GetLandmarkAppearanceWeights(chosenTile.region);
+            LANDMARK_TYPE chosenType = landmarkWeights.PickRandomElementGivenWeights();
+            BaseLandmark createdLandmark = CreateNewLandmarkOnTile(chosenTile, chosenType);
+            elligibleTiles.Remove(createdLandmark.tileLocation);
+            Utilities.ListRemoveRange(elligibleTiles, createdLandmark.tileLocation.GetTilesInRange(3)); //remove tiles in range (3)
+            createdLandmarks.Add(createdLandmark);
+        }
+
+        Debug.Log("Created " + createdLandmarks.Count + " landmarks.");
+
+        return true;
+    }
+
     /*
      Generate new landmarks (Lairs, Dungeons)
          */
@@ -60,8 +119,8 @@ public class LandmarkManager : MonoBehaviour {
     public void InitializeLandmarks() {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.allLandmarks[j];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
                 currLandmark.Initialize();
             }
         }
@@ -71,10 +130,10 @@ public class LandmarkManager : MonoBehaviour {
 			Region region = GridMap.Instance.allRegions [i];
 			if(region.centerOfMass.landmarkOnTile != null){
 //				region.AddLandmarkToRegion (region.centerOfMass.landmarkOnTile);
-				if(region.allLandmarks.Count > 0){
-					region.allLandmarks.Insert (0, region.centerOfMass.landmarkOnTile);
+				if(region.landmarks.Count > 0){
+					region.landmarks.Insert (0, region.centerOfMass.landmarkOnTile);
 				}else{
-					region.allLandmarks.Add (region.centerOfMass.landmarkOnTile);
+					region.landmarks.Add (region.centerOfMass.landmarkOnTile);
 				}
 			}
 		}
@@ -186,6 +245,20 @@ public class LandmarkManager : MonoBehaviour {
         }
         return settlementAppearanceWeights;
     }
+    private WeightedDictionary<LANDMARK_TYPE> GetLandmarkAppearanceWeights(Region region) {
+        WeightedDictionary<LANDMARK_TYPE> landmarkAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
+        for (int i = 0; i < landmarkData.Count; i++) {
+            LandmarkData currData = landmarkData[i];
+            if (currData.onOccupiedOnly && !region.isOwned) {
+                continue; //skip
+            }
+            if (currData.isUnique && HasLandmarkOfType(currData.landmarkType)) {
+                continue; //skip
+            }
+            landmarkAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
+        }
+        return landmarkAppearanceWeights;
+    }
     public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
@@ -209,7 +282,7 @@ public class LandmarkManager : MonoBehaviour {
         List<HexTile> nearestPath = null;
         for (int i = 0; i < elligibleTilesToConnectTo.Count; i++) {
             HexTile currTile = elligibleTilesToConnectTo[i];
-            List<HexTile> path = PathGenerator.Instance.GetPath(location, currTile, PATHFINDING_MODE.LANDMARK_CONNECTION);
+            List<HexTile> path = PathGenerator.Instance.GetPath(location, currTile, PATHFINDING_MODE.LANDMARK_ROADS);
             if(path != null && (nearestPath == null || path.Count < nearestPath.Count)) {
                 nearestPath = path;
             }
@@ -344,12 +417,24 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
+    public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if (currLandmark.specificLandmarkType == landmarkType) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
         List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.allLandmarks[j];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
                 if (currLandmark.specificLandmarkType == landmarkType) {
                     allLandmarksOfType.Add(currLandmark);
                 }
@@ -365,6 +450,14 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         throw new System.Exception("There is no base landmark data for " + baseLandmarkType);
+    }
+    public List<BaseLandmark> GetAllLandmarks() {
+        List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            allLandmarks.AddRange(currRegion.landmarks);
+        }
+        return allLandmarks;
     }
     #endregion
 

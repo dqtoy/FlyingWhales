@@ -56,8 +56,8 @@ public class AttackEnemy : CharacterTask {
 		return base.CanBeDone(character, location);
 	}
 	public override bool AreConditionsMet(Character character) {
-		for (int i = 0; i < character.currentRegion.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.currentRegion.allLandmarks [i];
+		for (int i = 0; i < character.currentRegion.landmarks.Count; i++) {
+			BaseLandmark landmark = character.currentRegion.landmarks [i];
 			if(CanBeDone(character, landmark)){
 				return true;
 			}
@@ -70,8 +70,8 @@ public class AttackEnemy : CharacterTask {
 	protected override Character GetCharacterTarget(Character character) {
 		base.GetCharacterTarget(character);
 		int weight = 0;
-		for (int i = 0; i < character.currentRegion.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.currentRegion.allLandmarks [i];
+		for (int i = 0; i < character.currentRegion.landmarks.Count; i++) {
+			BaseLandmark landmark = character.currentRegion.landmarks [i];
 			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
 				Character targetCharacter = landmark.charactersAtLocation [j].mainCharacter;
 				Relationship relationship = character.GetRelationshipWith (targetCharacter);

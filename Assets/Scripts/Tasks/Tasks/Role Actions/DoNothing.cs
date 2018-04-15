@@ -40,8 +40,8 @@ public class DoNothing : CharacterTask {
         base.GetLandmarkTarget(character);
         Region regionOfCharacter = character.specificLocation.tileLocation.region;
         Faction factionOfCharacter = character.faction;
-        for (int i = 0; i < regionOfCharacter.allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = regionOfCharacter.allLandmarks[i];
+        for (int i = 0; i < regionOfCharacter.landmarks.Count; i++) {
+            BaseLandmark currLandmark = regionOfCharacter.landmarks[i];
             Faction ownerOfLandmark = currLandmark.owner;
             int weight = 20; //Each landmark in the current region gets a base weight of 20
             if (character.faction != null) {

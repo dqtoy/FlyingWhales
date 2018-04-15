@@ -11,6 +11,7 @@ public class LandmarkData {
     public int durability;
     public int appearanceWeight;
     public bool isUnique;
+    public bool onOccupiedOnly;
     public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;

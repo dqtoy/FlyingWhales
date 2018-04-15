@@ -6,50 +6,29 @@ using Pathfinding;
 
 public class Region {
     private int _id;
+    private string _name;
     private HexTile _centerOfMass;
     private List<HexTile> _tilesInRegion; //This also includes the center of mass
     private List<HexTile> _outerGridTilesInRegion;
     private Color regionColor;
     private List<Region> _adjacentRegions;
     private List<Region> _adjacentRegionsViaMajorRoad;
-    //private City _occupant;
     private List<HexTile> _tilesWithMaterials; //The tiles inside the region that have materials
 
     private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
 
     //Landmarks
-    private RESOURCE _specialResource;
-    [System.Obsolete] private HexTile _tileWithSpecialResource;
-    [System.Obsolete] private HexTile _tileWithSummoningShrine;
-    [System.Obsolete] private HexTile _tileWithHabitat;
     private List<BaseLandmark> _landmarks; //This contains all the landmarks in the region, except for it's city
-	private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
-
-    private Dictionary<RACE, int> _naturalResourceLevel;
-    private int _cityLevelCap;
-
-    //Population
-//    private int _populationGrowth;
-
-	private List<HexTile> _corpseMoundTiles;
+	//private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
 
     private List<HexTile> _outerTiles;
     private List<SpriteRenderer> regionBorderLines;
 
-    //Pathfinding
-    private GraphUpdateObject _guo;
-
     //Roads
-    private List<object> _connections;
     private List<HexTile> _roadTilesInRegion;
 
-	internal int foodMultiplierCapacity;
-	internal int materialMultiplierCapacity;
-	internal int oreMultiplierCapacity;
-
-	private bool isOtherDay;
-
-	private float _populationGrowth;
+    //Ownership
+    private Faction _owner;
 
     #region getters/sertters
 	internal int id {
@@ -70,50 +49,23 @@ public class Region {
     internal List<Region> adjacentRegionsViaMajorRoad {
         get { return _adjacentRegionsViaMajorRoad; }
     }
-    //internal City occupant {
-    //    get { return _occupant; }
-    //}
- //   internal RESOURCE specialResource {
- //       get { return _specialResource; }
- //   }
- //   internal HexTile tileWithSpecialResource {
- //       get { return _tileWithSpecialResource; }
- //   }
-	//internal HexTile tileWithSummoningShrine {
-	//	get { return this._tileWithSummoningShrine; }
-	//}
-	//internal HexTile tileWithHabitat {
-	//	get { return this._tileWithHabitat; }
-	//}
-    internal Dictionary<RACE, int> naturalResourceLevel {
-        get { return _naturalResourceLevel; }
-    }
-    internal int cityLevelCap {
-        get { return _cityLevelCap; }
-    }
-    internal float populationGrowth {
-        get { return _populationGrowth; }
-    }
-	internal List<HexTile> corpseMoundTiles {
-		get { return this._corpseMoundTiles; }
-	}
 	internal List<HexTile> outerTiles {
 		get { return this._outerTiles; }
 	}
     internal List<BaseLandmark> landmarks {
         get { return _landmarks; }
     }
-	internal List<BaseLandmark> allLandmarks {
-		get { return _allLandmarks; }
-	}
-    internal List<object> connections {
-        get { return _connections; }
-    }
+	//internal List<BaseLandmark> allLandmarks {
+	//	get { return _landmarks; }
+	//}
     internal List<HexTile> roadTilesInRegion {
         get { return _roadTilesInRegion; }
     }
     internal Faction owner {
-        get { return _centerOfMass.landmarkOnTile.owner; } //The faction that owns this region
+        get { return _owner; } //The faction that owns this region
+    }
+    internal bool isOwned {
+        get { return owner != null; }
     }
     internal BaseLandmark mainLandmark {
         get { return _centerOfMass.landmarkOnTile; }
@@ -125,32 +77,22 @@ public class Region {
         get { return GetCharactersInRegion(); }
     }
 	internal int numOfCharactersInLandmarks{
-		get { return _allLandmarks.Sum (x => x.charactersAtLocation.Sum (y => y.numOfCharacters)); }
+		get { return _landmarks.Sum (x => x.charactersAtLocation.Sum (y => y.numOfCharacters)); }
 	}
     #endregion
 
     public Region(HexTile centerOfMass) {
         _id = Utilities.SetID(this);
+        _name = RandomNameGenerator.Instance.GetRegionName();
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
-		this._corpseMoundTiles = new List<HexTile> ();
         _adjacentRegionsViaMajorRoad = new List<Region>();
-        _connections = new List<object>();
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
-		_allLandmarks = new List<BaseLandmark> ();
         _tilesWithMaterials = new List<HexTile>();
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
-		this.foodMultiplierCapacity = 2;
-		this.materialMultiplierCapacity = 2;
-		this.oreMultiplierCapacity = 2;
-		this.isOtherDay = false;
-
-        //Generate population growth
-//        int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
-		_populationGrowth = UnityEngine.Random.Range(0.3f, 1.5f) / 100f;
     }
 
     #region Center Of Mass Functions
@@ -180,8 +122,8 @@ public class Region {
         SetCenterOfMass(newCenterOfMass);
     }
     internal void RevalidateCenterOfMass() {
-        if (_centerOfMass.elevationType != ELEVATION.PLAIN || _centerOfMass.specialResource != RESOURCE.NONE) {
-            SetCenterOfMass(_tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.specialResource == RESOURCE.NONE)
+        if (_centerOfMass.elevationType != ELEVATION.PLAIN) {
+            SetCenterOfMass(_tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN)
                 .OrderBy(x => x.GetDistanceTo(_centerOfMass)).FirstOrDefault());
             if (_centerOfMass == null) {
                 throw new System.Exception("center of mass is null!");
@@ -190,14 +132,20 @@ public class Region {
     }
     internal void SetCenterOfMass(HexTile newCenter) {
         if(_centerOfMass != null) {
-            _centerOfMass.RemoveLandmarkOnTile();
+            //_centerOfMass.RemoveLandmarkOnTile();
             _centerOfMass.isHabitable = false;
-            _centerOfMass.emptyCityGO.SetActive(false);
+            //_centerOfMass.emptyCityGO.SetActive(false);
         }
         _centerOfMass = newCenter;
         _centerOfMass.isHabitable = true;
-		_centerOfMass.emptyCityGO.SetActive (true);
-        _centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.TOWN);
+		//_centerOfMass.emptyCityGO.SetActive (true);
+        //_centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.TOWN);
+    }
+    #endregion
+
+    #region Ownership
+    public void SetOwner(Faction owner) {
+        _owner = owner;
     }
     #endregion
 
@@ -241,15 +189,6 @@ public class Region {
             } 
         }
     }
-    //internal bool IsAdjacentToKingdom(Kingdom kingdom) {
-    //    for (int i = 0; i < _adjacentRegions.Count; i++) {
-    //        Region currRegion = _adjacentRegions[i];
-    //        if(currRegion.occupant != null && currRegion.occupant.kingdom == kingdom) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
     #endregion
 
     #region Tile Functions
@@ -329,113 +268,6 @@ public class Region {
     }
     #endregion
 
-    #region Resources
-    ///*
-    // * <summary>
-    // * Compute the natural resource level for each race.
-    // * NOTE: Only Call this once special resource is determined, to compute
-    // * the correct value.
-    // * </summary>
-    // * */
-    //internal void ComputeNaturalResourceLevel() {
-    //    int humanTilePoints = 0;
-    //    int elvenTilePoints = 0;
-    //    _naturalResourceLevel = new Dictionary<RACE, int>() {
-    //        {RACE.HUMANS, 0},
-    //        {RACE.ELVES, 0},
-    //        {RACE.MINGONS, 0},
-    //        {RACE.CROMADS, 0}
-    //    };
-    //    for (int i = 0; i < _tilesInRegion.Count; i++) {
-    //        HexTile currTile = _tilesInRegion[i];
-    //        if (currTile.elevationType == ELEVATION.MOUNTAIN) {
-    //            //if current tile is mountain continue with other additions
-    //            elvenTilePoints += 1;
-    //        } else if (currTile.elevationType == ELEVATION.WATER) {
-    //            //if current tile is water disregard any other additions
-    //            humanTilePoints += 2;
-    //            elvenTilePoints += 2;
-    //            continue;
-    //        }
-    //        switch (currTile.biomeType) {
-    //            case BIOMES.SNOW:
-    //                humanTilePoints += 1;
-    //                elvenTilePoints += 1;
-    //                break;
-    //            case BIOMES.TUNDRA:
-    //                humanTilePoints += 3;
-    //                elvenTilePoints += 3;
-    //                break;
-    //            case BIOMES.DESERT:
-    //                humanTilePoints += 2;
-    //                elvenTilePoints += 1;
-    //                break;
-    //            case BIOMES.GRASSLAND:
-    //                humanTilePoints += 8;
-    //                elvenTilePoints += 5;
-    //                break;
-    //            case BIOMES.WOODLAND:
-    //                humanTilePoints += 4;
-    //                elvenTilePoints += 6;
-    //                break;
-    //            case BIOMES.FOREST:
-    //                humanTilePoints += 3;
-    //                elvenTilePoints += 8;
-    //                break;
-    //            default:
-    //                break;
-    //        }
-    //    }
-
-    //    //int increaseFromSpecialResource = 0;
-    //    //if(_specialResource != RESOURCE.NONE) {
-    //    //    increaseFromSpecialResource = 3;
-    //    //}
-
-    //    //_naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15) + increaseFromSpecialResource;
-    //    //_naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15) + increaseFromSpecialResource;
-
-    //    _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15);
-    //    _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15);
-
-    //    //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
-    //    //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
-    //    //    naturalResourceLevel[RACE.ELVES].ToString(), 5, Color.white, "Minimap");
-    //}
-    //internal void ShowNaturalResourceLevelForRace(RACE race) {
-    //    int maxXCoordinate = _tilesInRegion.Max(x => x.xCoordinate);
-    //    int minXCoordinate = _tilesInRegion.Min(x => x.xCoordinate);
-    //    int maxYCoordinate = _tilesInRegion.Max(x => x.yCoordinate);
-    //    int minYCoordinate = _tilesInRegion.Min(x => x.yCoordinate);
-
-    //    int midPointX = (minXCoordinate + maxXCoordinate) / 2;
-    //    int midPointY = (minYCoordinate + maxYCoordinate) / 2;
-
-    //    HexTile midPoint = GridMap.Instance.map[midPointX, midPointY];
-
-    //    string text = "0";
-    //    if (_occupant != null) {
-    //        text = _occupant.ownedTiles.Count.ToString();
-    //    }
-    //    text += "/" + _naturalResourceLevel[race].ToString();
-    //    midPoint.SetTileText(text, 6, Color.white, "Minimap");
-    //}
-    internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material) {
-        int count = 0;
-        for (int i = 0; i < _landmarks.Count; i++) {
-            BaseLandmark currLandmark = _landmarks[i];
-            if(currLandmark is ResourceLandmark) {
-                ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
-                //check if the landmark has the material specified, and already has a structure built on it.
-				if (resourceLandmark.materialOnLandmark == material && resourceLandmark.tileLocation.HasStructure()) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-    #endregion
-
     #region Materials
     public void AddTileWithMaterial(HexTile tile) {
         if (!_tilesWithMaterials.Contains(tile)) {
@@ -445,19 +277,41 @@ public class Region {
     public void RemoveTileWithMaterial(HexTile tile) {
         _tilesWithMaterials.Remove(tile);
     }
+    internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material) {
+        int count = 0;
+        for (int i = 0; i < _landmarks.Count; i++) {
+            BaseLandmark currLandmark = _landmarks[i];
+            if (currLandmark is ResourceLandmark) {
+                ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
+                //check if the landmark has the material specified, and already has a structure built on it.
+                if (resourceLandmark.materialOnLandmark == material && resourceLandmark.tileLocation.HasStructure()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
     #endregion
 
     #region Landmark Functions
     internal void AddLandmarkToRegion(BaseLandmark landmark) {
         if (!_landmarks.Contains(landmark)) {
             _landmarks.Add(landmark);
-			_allLandmarks.Add (landmark);
         }
+    }
+    public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
+            if (currLandmark.specificLandmarkType == landmarkType) {
+                return true;
+            }
+        }
+        return false;
     }
     public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
         List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
             if (currLandmark.specificLandmarkType == landmarkType) {
                 landmarksOfType.Add(currLandmark);
             }
@@ -466,8 +320,8 @@ public class Region {
     }
     public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
         List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
             if (LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType).baseLandmarkType == baseLandmarkType) {
                 landmarksOfType.Add(currLandmark);
             }
@@ -476,114 +330,39 @@ public class Region {
     }
     #endregion
 
-    //#region Kingdom Discovery Functions
-    //internal void CheckForDiscoveredKingdoms() {
-    //    //List<Region> adjacentRegionsOfOtherRegions = new List<Region>();
-    //    //List<Kingdom> adjacentKingdoms = new List<Kingdom>();
-
-    //    //NEW: Kingdoms only discover kingdoms they are adjacent to!
-    //    for (int i = 0; i < _adjacentRegionsViaMajorRoad.Count; i++) {
-    //        Region adjacentRegion = _adjacentRegionsViaMajorRoad[i];
-
-    //        if (adjacentRegion.occupant != null) {
-    //            Kingdom otherKingdom = adjacentRegion.occupant.kingdom;
-    //            if (otherKingdom.id != occupant.kingdom.id) {
-    //                //if (!adjacentKingdoms.Contains(otherKingdom)) {
-    //                //    adjacentKingdoms.Add(otherKingdom);
-    //                //}
-    //                if (!_occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
-    //                    KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
-    //                }
-    //                _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
-    //            }
-
-    //            //for (int j = 0; j < adjacentRegion.adjacentRegionsViaMajorRoad.Count; j++) {
-    //            //    Region otherAdjacentRegion = adjacentRegion.adjacentRegionsViaMajorRoad[j];
-    //            //    if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion) && otherAdjacentRegion != this) {
-    //            //        adjacentRegionsOfOtherRegions.Add(otherAdjacentRegion);
-    //            //    }
-    //            //}
-    //        }
-    //    }
-
-    //    ////When you discover another kingdom via adjacency, you discover all other kingdoms that it has discovered
-    //    //for (int i = 0; i < adjacentKingdoms.Count; i++) {
-    //    //    Kingdom otherKingdom = adjacentKingdoms[i];
-    //    //    List<Kingdom> discoveredKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
-    //    //    for (int j = 0; j < discoveredKingdomsOfOtherKingdom.Count; j++) {
-    //    //        Kingdom kingdomToDiscover = discoveredKingdomsOfOtherKingdom[j];
-    //    //        if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
-    //    //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
-    //    //        }
-    //    //    }
-    //    //}
-
-    //    ////When you discover another kingdom via adjacency, you also discover all other regions it is adjacent to.
-    //    //for (int i = 0; i < adjacentRegionsOfOtherRegions.Count; i++) {
-    //    //    Region otherAdjacentRegion = adjacentRegionsOfOtherRegions[i];
-    //    //    if (otherAdjacentRegion.occupant != null) {
-    //    //        Kingdom adjacentKingdomOfOtherKingdom = otherAdjacentRegion.occupant.kingdom;
-    //    //        if (!adjacentKingdomOfOtherKingdom.isDead && adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
-    //    //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, adjacentKingdomOfOtherKingdom);
-    //    //        }
-    //    //    }
-    //    //}
-
-    //    ////When you discover another kingdom via adjacency, you also discover all other kingdoms it is adjacent to.
-    //    //for (int i = 0; i < adjacentKingdoms.Count; i++) {
-    //    //    Kingdom otherKingdom = adjacentKingdoms[i];
-    //    //    List<Kingdom> adjacentKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
-    //    //    for (int j = 0; j < adjacentKingdomsOfOtherKingdom.Count; j++) {
-    //    //        Kingdom kingdomToDiscover = adjacentKingdomsOfOtherKingdom[j];
-    //    //        if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
-    //    //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
-    //    //        }
-    //    //    }
-    //    //}
-
-    //    ////When a kingdom expands kingdoms it is adjacent to should discover each other
-    //    //if (_occupant.kingdom.adjacentKingdoms.Count > 1) {
-    //    //    for (int i = 0; i < _occupant.kingdom.adjacentKingdoms.Count; i++) {
-    //    //        Kingdom currentKingdom = _occupant.kingdom.adjacentKingdoms[i];
-    //    //        for (int j = 0; j < _occupant.kingdom.adjacentKingdoms.Count; j++) {
-    //    //            Kingdom otherKingdom = _occupant.kingdom.adjacentKingdoms[j];
-    //    //            if (currentKingdom.id != otherKingdom.id && !currentKingdom.discoveredKingdoms.Contains(otherKingdom)) {
-    //    //                KingdomManager.Instance.DiscoverKingdom(currentKingdom, otherKingdom);
-    //    //            }
-    //    //        }
-    //    //    }
-    //    //}
-    //}
-    //#endregion
-
-    //#region Pathfinding
-    //private void SetRegionPathfindingTag(int pathfindingTag) {
-    //    for (int i = 0; i < tilesInRegion.Count; i++) {
-    //        tilesInRegion[i].SetPathfindingTag(pathfindingTag);
-    //    }
-
-    //    //PathfindingManager.Instance.RescanSpecificPortion(_guo);
-    //}
-    //#endregion
-
     #region Road Functions
-    internal void AddConnection(Region otherRegion) {
-        if (!_connections.Contains(otherRegion)) {
-            _connections.Add(otherRegion);
-            if (!_adjacentRegionsViaMajorRoad.Contains(otherRegion)) {
-                _adjacentRegionsViaMajorRoad.Add(otherRegion);
+    /*
+     Check if there are any landmarks in this region, 
+     that are connected to any landmarks in another region.
+     Also check landmarks in this region that has connections, and check
+     if any of them are already connected to the other region
+         */
+    internal bool HasConnectionToRegion(Region otherRegion) {
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
+            if (currLandmark.IsConnectedTo(otherRegion) || currLandmark.IsIndirectlyConnectedTo(otherRegion)) {
+                return true;
             }
         }
+        return false;
     }
-    internal void AddConnection(BaseLandmark otherObject) {
-        if (!_connections.Contains(otherObject)) {
-            _connections.Add(otherObject);
-            if (otherObject is Settlement) {
-				if (!_adjacentRegionsViaMajorRoad.Contains(otherObject.tileLocation.region)) {
-					_adjacentRegionsViaMajorRoad.Add(otherObject.tileLocation.region);
+    internal BaseLandmark GetLandmarkNearestTo(Region otherRegion) {
+        int nearestDistance = 9999;
+        BaseLandmark nearestLandmark = null;
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
+            for (int j = 0; j < otherRegion.landmarks.Count; j++) {
+                BaseLandmark otherLandmark = otherRegion.landmarks[j];
+                List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.tileLocation, otherLandmark.tileLocation, PATHFINDING_MODE.LANDMARK_CONNECTION);
+                if (path != null) { //check if there is a path between the 2 landmarks
+                    if (path.Count < nearestDistance) {
+                        nearestDistance = path.Count;
+                        nearestLandmark = currLandmark;
+                    }
                 }
             }
         }
+        return nearestLandmark;
     }
     internal void AddTileAsRoad(HexTile tile) {
         if (!_roadTilesInRegion.Contains(tile)) {
@@ -594,13 +373,6 @@ public class Region {
         _roadTilesInRegion.Remove(tile);
     }
     #endregion
-
-    internal void AddCorpseMoundTile(HexTile hexTile){
-		this._corpseMoundTiles.Add (hexTile);
-	}
-	internal void RemoveCorpseMoundTile(HexTile hexTile){
-		this._corpseMoundTiles.Remove (hexTile);
-	}
 
     #region Utilities
     private List<ECS.Character> GetCharactersInRegion() {
@@ -615,20 +387,4 @@ public class Region {
         return characters;
     }
     #endregion
-
-    //internal void StartProducing(){
-    //	Messenger.AddListener(Signals.DAY_END, ProduceResource);
-    //}
-    //internal void StopProducing(){
-    //	Messenger.RemoveListener(Signals.DAY_END, ProduceResource);
-    //}
-    //private void ProduceResource(){
-    //	if(!isOtherDay){
-    //		isOtherDay = true;
-    //		return;
-    //	}else{
-    //		isOtherDay = false;
-    //	}
-    //	this._tileWithSpecialResource.ProduceResource();
-    //}
 }

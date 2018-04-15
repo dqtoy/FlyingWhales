@@ -2501,7 +2501,7 @@ namespace ECS {
         }
         public BaseLandmark GetNearestLandmarkWithoutHostiles() {
             Region currRegionLocation = specificLocation.tileLocation.region;
-            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.allLandmarks);
+            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.landmarks);
             //elligibleLandmarks.Add(currRegionLocation.mainLandmark);
             //elligibleLandmarks.AddRange(currRegionLocation.landmarks);
 			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {

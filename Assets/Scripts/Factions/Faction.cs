@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class Faction {
 	protected int _id;
@@ -15,7 +16,8 @@ public class Faction {
     protected FACTION_SIZE _factionSize;
     private Sprite _emblem;
     private Sprite _emblemBG;
-    [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
+    protected List<Region> _ownedRegions;
+    protected List<BaseLandmark> _ownedLandmarks;
     protected List<Settlement> _settlements;
     protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
@@ -68,6 +70,9 @@ public class Faction {
     public List<ECS.Character> characters {
         get { return _characters; }
     }
+    public List<Region> ownedRegions {
+        get { return _ownedRegions; }
+    }
     //public List<OldQuest.Quest> activeQuests {
     //    get { return _activeQuests; }
     //}
@@ -107,6 +112,8 @@ public class Faction {
         _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
         factionColor = Utilities.GetColorForFaction();
         _characters = new List<ECS.Character>();
+        _ownedLandmarks = new List<BaseLandmark>();
+        _ownedRegions = new List<Region>();
         _settlements = new List<Settlement>();
         ConstructInititalTechnologies();
         //_activeQuests = new List<OldQuest.Quest>();
@@ -169,6 +176,28 @@ public class Faction {
     }
     #endregion
 
+    #region Regions
+    public void OwnRegion(Region region) {
+        if (!_ownedRegions.Contains(region)) {
+            _ownedRegions.Add(region);
+        }
+    }
+    public void UnownRegion(Region region) {
+        _ownedRegions.Remove(region);
+    }
+    #endregion
+
+    #region Landmarks
+    public void OwnLandmark(BaseLandmark landmark) {
+        if (!_ownedLandmarks.Contains(landmark)) {
+            _ownedLandmarks.Add(landmark);
+        }
+    }
+    public void UnownLandmark(BaseLandmark landmark) {
+        _ownedLandmarks.Remove(landmark);
+    }
+    #endregion
+
     #region Technologies
     protected void ConstructInititalTechnologies() {
         _initialTechnologies = new List<TECHNOLOGY>();
@@ -196,7 +225,7 @@ public class Faction {
         }
         List<TECHNOLOGY> choices = FactionManager.Instance.bonusRaceTechnologies[this.race].Where(x => !_initialTechnologies.Contains(x)).ToList();
         for (int i = 0; i < bonusTechAmt; i++) {
-            TECHNOLOGY bonusTech = choices[Random.Range(0, choices.Count)];
+            TECHNOLOGY bonusTech = choices[UnityEngine.Random.Range(0, choices.Count)];
             _initialTechnologies.Add(bonusTech);
             choices.Remove(bonusTech);
         }
@@ -335,6 +364,33 @@ public class Faction {
         FactionRelationship rel = GetRelationshipWith(faction);
         return rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE;
     }
+    public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        for (int i = 0; i < _ownedLandmarks.Count; i++) {
+            BaseLandmark currLandmark = _ownedLandmarks[i];
+            if (currLandmark.specificLandmarkType == landmarkType) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasAccessToLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        for (int i = 0; i < _ownedRegions.Count; i++) {
+            Region currRegion = _ownedRegions[i];
+            if (currRegion.HasLandmarkOfType(landmarkType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public BaseLandmark GetAccessibleLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        for (int i = 0; i < _ownedRegions.Count; i++) {
+            Region currRegion = _ownedRegions[i];
+            if (currRegion.HasLandmarkOfType(landmarkType)) {
+                return currRegion.GetLandmarksOfType(landmarkType).First();
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Relationships
@@ -357,17 +413,6 @@ public class Faction {
         return null;
     }
     #endregion
-
-    //#region Quests
-    //public void AddNewQuest(OldQuest.Quest quest) {
-    //    if (!_activeQuests.Contains(quest)) {
-    //        _activeQuests.Add(quest);
-    //    }
-    //}
-    //public void RemoveQuest(OldQuest.Quest quest) {
-    //    _activeQuests.Remove(quest);
-    //}
-    //#endregion
 
     #region Death
     public void Death() {

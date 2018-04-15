@@ -69,8 +69,8 @@ public class Hibernate : CharacterTask {
 	protected override BaseLandmark GetLandmarkTarget (Character character){
 		base.GetLandmarkTarget (character);
 		int weight = 0;
-		for (int i = 0; i < character.currentRegion.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.currentRegion.allLandmarks [i];
+		for (int i = 0; i < character.currentRegion.landmarks.Count; i++) {
+			BaseLandmark landmark = character.currentRegion.landmarks [i];
 			weight = 300;
 			if(!landmark.HasHostileCharactersWith(character)){
 				weight += 50;
@@ -85,8 +85,8 @@ public class Hibernate : CharacterTask {
 		}
 		for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
 			Region adjacentRegion = character.currentRegion.adjacentRegionsViaMajorRoad [i];
-			for (int j = 0; j < adjacentRegion.allLandmarks.Count; j++) {
-				BaseLandmark landmark = character.currentRegion.allLandmarks [i];
+			for (int j = 0; j < adjacentRegion.landmarks.Count; j++) {
+				BaseLandmark landmark = character.currentRegion.landmarks [i];
 				weight = 50;
 				if(!landmark.HasHostileCharactersWith(character)){
 					weight += 50;

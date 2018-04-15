@@ -27,7 +27,6 @@ public class GridMap : MonoBehaviour {
     [Header("Region Settings")]
     public int numOfRegions;
     public int refinementLevel;
-	internal Dictionary<RESOURCE, int> resources = new Dictionary<RESOURCE, int>();
 
     [Space(10)]
 	public List<GameObject> listHexes;

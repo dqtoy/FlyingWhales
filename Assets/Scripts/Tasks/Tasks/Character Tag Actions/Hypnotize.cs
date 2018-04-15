@@ -65,8 +65,8 @@ public class Hypnotize : CharacterTask {
 		if (character.party == null || (!character.party.isFull && !character.party.isDisbanded)) {
 			return true;
 		}
-		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+		for (int i = 0; i < character.specificLocation.tileLocation.region.landmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.landmarks [i];
 			if(CanBeDone(character, landmark)){
 				return true;
 			}

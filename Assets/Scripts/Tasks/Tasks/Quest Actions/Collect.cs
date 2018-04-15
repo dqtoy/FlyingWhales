@@ -59,8 +59,8 @@ public class Collect : CharacterTask {
 	public override bool AreConditionsMet(Character character) {
 		//check if there are any landmarks in region with characters
 		Region regionLocation = character.specificLocation.tileLocation.region;
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+		for (int i = 0; i < regionLocation.landmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.landmarks[i];
 			if(CanBeDone(character, currLandmark)) {
 				return true;
 			}
@@ -91,8 +91,8 @@ public class Collect : CharacterTask {
 	protected override BaseLandmark GetLandmarkTarget(ECS.Character character) {
 		base.GetLandmarkTarget(character);
 		Region regionLocation = character.specificLocation.tileLocation.region;
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+		for (int i = 0; i < regionLocation.landmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.landmarks[i];
 			if(CanBeDone(character, currLandmark)){
 				int weight = 0;
 				weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20

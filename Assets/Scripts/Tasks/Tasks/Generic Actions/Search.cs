@@ -143,8 +143,8 @@ public class Search : CharacterTask {
 		if(_searchingFor is string){
 			string itemName = _searchingFor as string;
 			Character characterLookingFor = _assignedCharacter.GetCharacterFromTraceInfo(itemName);
-			for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-				BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+			for (int i = 0; i < regionLocation.landmarks.Count; i++) {
+				BaseLandmark currLandmark = regionLocation.landmarks[i];
 				int weight = 0;
 				weight += currLandmark.charactersAtLocation.Count * 20;//For each character in a landmark in the current region: +20
 				if (currLandmark.HasHostilitiesWith(character.faction)) {
@@ -177,8 +177,8 @@ public class Search : CharacterTask {
 
 	private BaseLandmark GetLandmarkForLandmarkItemsSearching(Character character){
 		Region regionLocation = character.specificLocation.tileLocation.region;
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+		for (int i = 0; i < regionLocation.landmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.landmarks[i];
 			int weight = 0;
 			weight += currLandmark.itemsInLandmark.Count * 20;//For each item in a landmark in the current region: +20
 			if (currLandmark.HasHostilitiesWith(character.faction)) {
@@ -200,8 +200,8 @@ public class Search : CharacterTask {
 	#region Are Conditions Met Action
 	private bool AreConditionsMetForCharacterSearching(Character character){
 		Region regionLocation = character.specificLocation.tileLocation.region;
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+		for (int i = 0; i < regionLocation.landmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.landmarks[i];
 			if(currLandmark.charactersAtLocation.Count > 0) {
 				return true;
 			}
@@ -210,8 +210,8 @@ public class Search : CharacterTask {
 	}
 	private bool AreConditionsMetForLandmarkItemsSearching(Character character){
 		Region regionLocation = character.specificLocation.tileLocation.region;
-		for (int i = 0; i < regionLocation.allLandmarks.Count; i++) {
-			BaseLandmark currLandmark = regionLocation.allLandmarks[i];
+		for (int i = 0; i < regionLocation.landmarks.Count; i++) {
+			BaseLandmark currLandmark = regionLocation.landmarks[i];
 			if(currLandmark.itemsInLandmark.Count > 0) {
 				return true;
 			}

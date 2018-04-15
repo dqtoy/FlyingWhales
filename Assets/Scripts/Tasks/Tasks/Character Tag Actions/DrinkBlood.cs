@@ -51,8 +51,8 @@ public class DrinkBlood : CharacterTask {
         regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegions);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
-            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.allLandmarks[j];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
                 if (currLandmark.civilians > 0) {
                     return true;
                 }
@@ -70,8 +70,8 @@ public class DrinkBlood : CharacterTask {
         regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegions);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
-            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.allLandmarks[j];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
                 if (currLandmark.civilians > 0) {
                     int weight = 100;//All landmarks with civilians in current and adjacent regions: 100
                     if (currLandmark.owner != null && currLandmark.owner == character.faction) {
