@@ -113,8 +113,8 @@ public class Rest : CharacterTask {
         base.GetLandmarkTarget(character);
         Region regionOfChar = character.specificLocation.tileLocation.region;
         Faction factionOfChar = character.faction;
-        for (int i = 0; i < regionOfChar.allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = regionOfChar.allLandmarks[i];
+        for (int i = 0; i < regionOfChar.landmarks.Count; i++) {
+            BaseLandmark currLandmark = regionOfChar.landmarks[i];
             Faction ownerOfLandmark = currLandmark.owner;
             int weight = 20; //Each landmark in the region: 20
             if (currLandmark is Settlement) {

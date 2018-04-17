@@ -92,6 +92,11 @@ public class RandomNameGenerator : MonoBehaviour {
 		"Kreaqiodin", "Meammeaspea", "Bresalan", "Struledore", "Ihorynn", "Bleagirah", "Heanniodu", "Zemmolas", "Cistiapia", "Ottelon", "Heomiorim", "Rummemos", "Wreassiogana", "Accanara", "Wreoddiaryon"
 	};
 
+    private string[] baseRegionNames = new string[] {
+        "Caloocan", "Las Piñas", "Makati", "Malabon", "Mandaluyong", "Manila", "Marikina", "Muntinlupa", "Navotas",
+        "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela"
+    };
+
 	#region Alliance
 	private string[] allianceType = new string[]{
 		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
@@ -135,13 +140,6 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 	#endregion
 
-    //private MarkovNameGenerator generatedHumanSurnames;
-    //private MarkovNameGenerator generatedHumanKingdomNames;
-    //private MarkovNameGenerator generatedElvenKingdomNames;
-    ////private MarkovNameGenerator generatedElvenCityNames;
-    //private MarkovNameGenerator generatedElvenFemaleNames;
-    //private MarkovNameGenerator generatedElvenMaleNames;
-
     Sobriquet.Generator generatedHumanSurnames;
     Sobriquet.Generator generatedHumanKingdomNames;
     Sobriquet.Generator generatedElvenKingdomNames;
@@ -149,6 +147,7 @@ public class RandomNameGenerator : MonoBehaviour {
     Sobriquet.Generator generatedElvenMaleNames;
 	Sobriquet.Generator generatedAncientRuinNames;
 	Sobriquet.Generator generatedTileNames;
+    Sobriquet.Generator generatedRegionNames;
 
     private List<string> humanKingdomNames;
     private List<string> humanSurnames;
@@ -157,6 +156,7 @@ public class RandomNameGenerator : MonoBehaviour {
     private List<string> elvenMaleNames;
 	private List<string> ancientRuinNames;
 	private List<string> tileNames;
+    private List<string> regionNames;
 
     void Awake(){
 		Instance = this;
@@ -169,6 +169,8 @@ public class RandomNameGenerator : MonoBehaviour {
 
 		generatedAncientRuinNames = new Sobriquet.Generator (2, baseAncientRuinPrefixes);
 		generatedTileNames = new Sobriquet.Generator (2, baseTileNames);
+
+        generatedRegionNames = new Sobriquet.Generator(2, baseRegionNames);
 
         humanKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
@@ -234,6 +236,12 @@ public class RandomNameGenerator : MonoBehaviour {
 			tileNames.AddRange(generatedTileNames.AllRaw(i).Take(20000).ToList());
 		}
 		tileNames = Utilities.Shuffle(tileNames);
+
+        regionNames = new List<string>();
+        for (int i = 6; i <= 9; i++) {
+            regionNames.AddRange(generatedRegionNames.AllRaw(i).Take(20000).ToList());
+        }
+        regionNames = Utilities.Shuffle(regionNames);
 
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
@@ -388,21 +396,30 @@ public class RandomNameGenerator : MonoBehaviour {
 		tileNames.RemoveAt (index);
 		return name;
 	}
-//	public static string GenerateRandomName(){
-//		string firstName = firstNames [Random.Range (0, firstNames.Length)];
-//		string prefix = prefixes [Random.Range (0, prefixes.Length)];
-//		string suffix = suffixes [Random.Range (0, suffixes.Length)];
-//
-//		int choice = Random.Range (0, 100);
-//
-//		if (choice >= 0 && choice < 25) {
-//			return prefix + " " + firstName;
-//		} else {
-//			return firstName + " " + suffix;
-//		}
-//
-//		return " ";
-//	}
+    public string GetRegionName() {
+        if (regionNames.Count <= 0) {
+            regionNames = generatedRegionNames.AllRaw(6).ToList();
+        }
+        int index = UnityEngine.Random.Range(0, regionNames.Count);
+        string name = regionNames[index];
+        regionNames.RemoveAt(index);
+        return name;
+    }
+    //	public static string GenerateRandomName(){
+    //		string firstName = firstNames [Random.Range (0, firstNames.Length)];
+    //		string prefix = prefixes [Random.Range (0, prefixes.Length)];
+    //		string suffix = suffixes [Random.Range (0, suffixes.Length)];
+    //
+    //		int choice = Random.Range (0, 100);
+    //
+    //		if (choice >= 0 && choice < 25) {
+    //			return prefix + " " + firstName;
+    //		} else {
+    //			return firstName + " " + suffix;
+    //		}
+    //
+    //		return " ";
+    //	}
 }
 
 

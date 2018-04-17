@@ -24,28 +24,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	public float temperature;
 	public BIOMES biomeType;
 	public ELEVATION elevationType;
-	public int movementDays;
-
-    [Space(10)]
-    [Header("Pathfinding Objects")]
-    [SerializeField] private GameObject pathfindingGO; //Place this in tag Water, Mountain or Plain when biome & elevation is determined
-    [SerializeField] private GraphUpdateScene gus; //This is used to tag the tiles
-    [SerializeField] private Collider2D _pathfindingCollider;
-
-    [Space(10)]
-    [Header("Resources")]
-	public RESOURCE_TYPE specialResourceType;
-    public RESOURCE specialResource;
-	public int resourceCount;
-    public int nearbyResourcesCount = 0;
-	public int cityCapacity;
-
-    [System.NonSerialized] public City city = null;
-	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
-
-	public Lair lair;
-
-	private List<Lair> _lairsInRange = new List<Lair>();
 
     [Space(10)]
     [Header("Booleans")]
@@ -53,21 +31,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	public bool isRoad = false;
     public bool isRoadHidden = true;
 	public bool isOccupied = false;
-	public bool isBorder = false;
-	public bool isTargeted = false;
-	public bool isLair = false;
-	public bool hasLandmark = false;
-
-    [SerializeField] private List<City> _isBorderOfCities = new List<City>();
-    [SerializeField] private List<City> _isOuterTileOfCities = new List<City>();
-    [SerializeField] private List<Kingdom> _visibleByKingdoms = new List<Kingdom>(); //This is only occupied when a tile becomes occupies, becaoms a border or becomes an outer tile of a city!
 
     private List<GameObject> roadGOs = new List<GameObject>();
 
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
-    [SerializeField] private ResourceIcon resourceIcon;
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
     [SerializeField] internal Transform UIParent;
@@ -123,17 +92,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
 
-    //Settlement
-    private Settlement _settlement = null; //Use settlement instead of city or landmark to unify the 2 variables
-
-    private Transform _namePlateParent;
-    private CityItem _cityInfo;
-	private LairItem _lairItem;
-	private GameObject plagueIcon;
-	private GameObject _corpseMoundGO = null;
-	private CorpseMound _corpseMound = null;
-	private GameDate _corpseMoundDestroyDate;
-
 	protected List<ICombatInitializer> _charactersAtLocation = new List<ICombatInitializer>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
@@ -150,8 +108,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
 	public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
     public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
-    //public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
-    public List<HexTile> LandmarkExternalConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
+    public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
+    //public List<HexTile> LandmarkExternalConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> CombatTiles { get { return NoWaterTiles; }}
     public List<HexTile> AvatarTiles { get { return NoWaterTiles; }}
@@ -179,34 +137,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	public GameObject highlightGO{
 		get { return this._highlightGO; }
 	}
-	public CityItem cityInfo{
-		get { return this._cityInfo; }
-	}
-	public LairItem lairItem{
-		get { return this._lairItem; }
-	}
     public FOG_OF_WAR_STATE currFogOfWarState {
         //get { return _currFogOfWarState; }
         get { return FOG_OF_WAR_STATE.VISIBLE; }
     }
-    public List<City> isBorderOfCities {
-        get { return _isBorderOfCities; }
-    }
-    public List<City> isOuterTileOfCities {
-        get { return _isOuterTileOfCities; }
-    }
-    public List<Kingdom> visibleByKingdoms {
-        get { return _visibleByKingdoms; }
-    }
     internal Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections {
         get { return _neighbourDirections; }
     }
-    internal Collider2D pathfindingCollider {
-        get { return _pathfindingCollider; }
-    }
-    public CorpseMound corpseMound{
-		get { return this._corpseMound; }
-	}
 	public GameObject emptyCityGO{
 		get { return this._emptyCityGO; }
 	}
@@ -231,6 +168,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public MATERIAL materialOnTile {
         get { return _materialOnTile; }
     }
+    public bool hasLandmark {
+        get { return _landmarkOnTile != null; }
+    }
     #endregion
 
     #region Region Functions
@@ -242,20 +182,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #region Elevation Functions
     internal void SetElevation(ELEVATION elevationType) {
         this.elevationType = elevationType;
-        switch (elevationType) {
-            case ELEVATION.MOUNTAIN:
-                //AddPathfindingTag(PathfindingManager.mountainTag);
-                pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Mountains");
-                break;
-            case ELEVATION.WATER:
-                //AddPathfindingTag(PathfindingManager.waterTag);
-                pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Water");
-                break;
-            case ELEVATION.PLAIN:
-                //AddPathfindingTag(PathfindingManager.plainTag);
-                pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Plains");
-                break;
-        }
     }
     #endregion
 
@@ -281,44 +207,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #endregion
 
     #region Landmarks
-    internal void CreateRandomLandmark() {
-        LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkToCreate);
-
-        //List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
-        //elligibleTilesToConnectTo.AddRange(this.region.landmarks.Select(x => x.location));
-        //elligibleTilesToConnectTo.Add(this.region.centerOfMass);
-
-        ////Connect to the nearest landmark
-        //elligibleTilesToConnectTo = new List<HexTile>(elligibleTilesToConnectTo.OrderBy(x => Vector2.Distance(this.transform.position, x.transform.position)));
-        //for (int j = 0; j < elligibleTilesToConnectTo.Count; j++) {
-        //    HexTile currTileToConnectTo = elligibleTilesToConnectTo[j];
-        //    List<HexTile> path = PathGenerator.Instance.GetPath(this, currTileToConnectTo, PATHFINDING_MODE.LANDMARK_CONNECTION);
-        //    if (path != null) {
-        //        //Create new random landmark given weights
-        //        LANDMARK_TYPE landmarkToCreate = Utilities.GetLandmarkWeights().PickRandomElementGivenWeights();
-        //        LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkToCreate);
-        //        if (currTileToConnectTo.isHabitable) {
-        //            RoadManager.Instance.ConnectLandmarkToRegion(this, currTileToConnectTo.region);
-        //        } else {
-        //            RoadManager.Instance.ConnectLandmarkToLandmark(this, currTileToConnectTo);
-        //        }
-
-        //        RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-        //    }
-        //}
-    }
     public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
-        this.hasLandmark = true;
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-        if (landmarkType != LANDMARK_TYPE.CITY && baseLandmarkType != BASE_LANDMARK_TYPE.RESOURCE) {
+        //if (landmarkType != LANDMARK_TYPE.TOWN && baseLandmarkType != BASE_LANDMARK_TYPE.RESOURCE) {
             //NOTE: Only create landmark object if landmark type is not a city and a resource!
             landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
-        }
-        
+        //}
+
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
                 _landmarkOnTile = new Settlement(this, landmarkType);
@@ -333,20 +231,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 _landmarkOnTile = new LairLandmark(this, landmarkType);
                 break;
             default:
-			    _landmarkOnTile = new BaseLandmark(this, landmarkType);
+                _landmarkOnTile = new BaseLandmark(this, landmarkType);
                 break;
         }
-        if(_landmarkOnTile != null) {
-			if (landmarkType != LANDMARK_TYPE.CITY) {
-				if (landmarkGO != null) {
-					_landmarkOnTile.SetLandmarkObject (landmarkGO.GetComponent<LandmarkObject> ());
-				}
-				_region.AddLandmarkToRegion (_landmarkOnTile);
-			} else {
-				//Created landmark was a city
-				_landmarkOnTile.SetLandmarkObject (_emptyCityGO.GetComponent<LandmarkObject> ());
-			}
+        if (landmarkGO != null) {
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
         }
+  //      if (landmarkType != LANDMARK_TYPE.TOWN) {
+		//	if (landmarkGO != null) {
+		//		_landmarkOnTile.SetLandmarkObject (landmarkGO.GetComponent<LandmarkObject> ());
+		//	}
+		//} else {
+		//	//Created landmark was a city
+		//	_landmarkOnTile.SetLandmarkObject (_emptyCityGO.GetComponent<LandmarkObject> ());
+		//}
+        _region.AddLandmarkToRegion(_landmarkOnTile);
+
         return _landmarkOnTile;
     }
     public void RemoveLandmarkOnTile() {
@@ -612,10 +512,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #endregion
 
     #region Pathfinding
-    internal void SetPathfindingTag(int pathfindingTag) {
-        gus.setTag = pathfindingTag;
-        gus.Apply();
-    }
     public void FindNeighbours(HexTile[,] gameBoard, bool isForOuterGrid = false) {
         _neighbourDirections = new Dictionary<HEXTILE_DIRECTION, HexTile>();
         var neighbours = new List<HexTile>();
@@ -836,7 +732,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
     }
     internal void DeactivateCenterPiece() {
-        if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
+        if (this.biomeType == BIOMES.FOREST && this.elevationType == ELEVATION.PLAIN) {
             centerPiece.SetActive(false);
         }
     }
@@ -954,113 +850,113 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
  //   internal void HideTileHighlight(){
 	//	this.kingdomColorSprite.gameObject.SetActive(false);
 	//}
-    internal void ShowNamePlate() {
-        if (_namePlateParent != null) {
-            _namePlateParent.gameObject.SetActive(true);
-        }
-        if (_cityInfo != null) {
-            UpdateCityNamePlate();
-        }
-        if (_lairItem != null) {
-            UpdateLairNamePlate();
-        }
-    }
-    internal void HideNamePlate() {
-        _namePlateParent.gameObject.SetActive(false);
-    }
+    //internal void ShowNamePlate() {
+    //    if (_namePlateParent != null) {
+    //        _namePlateParent.gameObject.SetActive(true);
+    //    }
+    //    if (_cityInfo != null) {
+    //        UpdateCityNamePlate();
+    //    }
+    //    if (_lairItem != null) {
+    //        UpdateLairNamePlate();
+    //    }
+    //}
+    //internal void HideNamePlate() {
+    //    _namePlateParent.gameObject.SetActive(false);
+    //}
     /*
      * This will instantiate a new CityItem Prefab and set it's city 
      * according to the passed parameter.
      * */
-    internal void CreateCityNamePlate(City city) {
-        //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
+ //   internal void CreateCityNamePlate(City city) {
+ //       //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
 
-        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("CityNamePlatePanel", UIParent);
-        namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
-        _namePlateParent = namePlateGO.transform;
-        _cityInfo = namePlateGO.GetComponentInChildren<CityItem>();
-        namePlateGO.transform.localPosition = new Vector3(0f, -1.45f, 0f);
-        Messenger.AddListener("UpdateUI", UpdateCityNamePlate);
+ //       GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("CityNamePlatePanel", UIParent);
+ //       namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
+ //       _namePlateParent = namePlateGO.transform;
+ //       _cityInfo = namePlateGO.GetComponentInChildren<CityItem>();
+ //       namePlateGO.transform.localPosition = new Vector3(0f, -1.45f, 0f);
+ //       Messenger.AddListener("UpdateUI", UpdateCityNamePlate);
 
-        UpdateCityNamePlate();
-		UpdateCityFoodMaterialOreUI ();
-    }
-    internal void UpdateCityNamePlate() {
-        if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            _cityInfo.SetCity(city, false, false, false, true);
-        } else {
-            _cityInfo.SetCity(city, false, true, false, true);
-        }
-    }
-	internal void UpdateCityFoodMaterialOreUI(){
-		if(_cityInfo != null){
-			_cityInfo.UpdateFoodMaterialOreUI ();
-		}
-	}
-    internal void RemoveCityNamePlate() {
-        if (_namePlateParent != null) {
-            ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
-            _namePlateParent = null;
-            _cityInfo = null;
-            Messenger.RemoveListener("UpdateUI", UpdateCityNamePlate);
-        }
-    }
+ //       UpdateCityNamePlate();
+	//	UpdateCityFoodMaterialOreUI ();
+ //   }
+ //   internal void UpdateCityNamePlate() {
+ //       if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+ //           _cityInfo.SetCity(city, false, false, false, true);
+ //       } else {
+ //           _cityInfo.SetCity(city, false, true, false, true);
+ //       }
+ //   }
+	//internal void UpdateCityFoodMaterialOreUI(){
+	//	if(_cityInfo != null){
+	//		_cityInfo.UpdateFoodMaterialOreUI ();
+	//	}
+	//}
+ //   internal void RemoveCityNamePlate() {
+ //       if (_namePlateParent != null) {
+ //           ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+ //           _namePlateParent = null;
+ //           _cityInfo = null;
+ //           Messenger.RemoveListener("UpdateUI", UpdateCityNamePlate);
+ //       }
+ //   }
     #endregion
 
-	#region Lair
-    internal void CreateLairNamePlate() {
-        //Debug.Log("Create lair nameplate on " + this.name);
+	//#region Lair
+ //   internal void CreateLairNamePlate() {
+ //       //Debug.Log("Create lair nameplate on " + this.name);
 
-        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("LairNamePlatePanel", UIParent);
-        namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
-        _namePlateParent = namePlateGO.transform;
-        _lairItem = namePlateGO.GetComponentInChildren<LairItem>();
-        namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
-        Messenger.AddListener("UpdateUI", UpdateLairNamePlate);
+ //       GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("LairNamePlatePanel", UIParent);
+ //       namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
+ //       _namePlateParent = namePlateGO.transform;
+ //       _lairItem = namePlateGO.GetComponentInChildren<LairItem>();
+ //       namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
+ //       Messenger.AddListener("UpdateUI", UpdateLairNamePlate);
 
-        UpdateLairNamePlate();
-	}
-    internal void UpdateLairNamePlate() {
-		this._lairItem.SetLair(this.lair);
-	}
-    internal void RemoveLairNamePlate() {
-        if (_namePlateParent != null) {
-            ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
-            _namePlateParent = null;
-            _lairItem = null;
-            Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
-        }
-    }
-	internal void AddLairsInRange(Lair lair){
-		this._lairsInRange.Add (lair);
-	}
-	internal void CheckLairsInRange(){
-		if (this._lairsInRange.Count > 0) {
-			for (int i = 0; i < this._lairsInRange.Count; i++) {
-				this._lairsInRange [i].ActivateLair ();
-			}
-			this._lairsInRange.Clear ();
-		}
-	}
-    #endregion
+ //       UpdateLairNamePlate();
+	//}
+ //   internal void UpdateLairNamePlate() {
+	//	this._lairItem.SetLair(this.lair);
+	//}
+ //   internal void RemoveLairNamePlate() {
+ //       if (_namePlateParent != null) {
+ //           ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+ //           _namePlateParent = null;
+ //           _lairItem = null;
+ //           Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
+ //       }
+ //   }
+	//internal void AddLairsInRange(Lair lair){
+	//	this._lairsInRange.Add (lair);
+	//}
+	//internal void CheckLairsInRange(){
+	//	if (this._lairsInRange.Count > 0) {
+	//		for (int i = 0; i < this._lairsInRange.Count; i++) {
+	//			this._lairsInRange [i].ActivateLair ();
+	//		}
+	//		this._lairsInRange.Clear ();
+	//	}
+	//}
+ //   #endregion
 
     #region Structures Functions
-    internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
-        //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
-        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
+  //  internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
+  //      //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
+  //      GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
 
-        string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
-		GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
-        AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
-		structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
-        structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
+  //      string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
+		//GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
+  //      AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
+		//structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
+  //      structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
 
-        this._centerPiece.SetActive(false);
+  //      this._centerPiece.SetActive(false);
 
-        //Color color = this.ownedByCity.kingdom.kingdomColor;
-        //SetMinimapTileColor(color);
-        //SetTileHighlightColor(color);
-    }
+  //      //Color color = this.ownedByCity.kingdom.kingdomColor;
+  //      //SetMinimapTileColor(color);
+  //      //SetTileHighlightColor(color);
+  //  }
     internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
@@ -1102,33 +998,33 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         structureGO.transform.localPosition = Vector3.zero;
         return structureGO;
     }
-	internal CorpseMound CreateCorpseMoundObjectOnTile(int initialCorpseCount) {
-		this._corpseMoundGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetCorpseMoundGO().name,
-			Vector3.zero, Quaternion.identity, structureParentGO.transform);
-		this._corpseMoundGO.transform.localPosition = Vector3.zero;
-		SetCorpseMound (this._corpseMoundGO.GetComponent<CorpseMound>());
-		this._corpseMound.Initialize (this, initialCorpseCount);
-		return this._corpseMound;
-	}
+	//internal CorpseMound CreateCorpseMoundObjectOnTile(int initialCorpseCount) {
+	//	this._corpseMoundGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetCorpseMoundGO().name,
+	//		Vector3.zero, Quaternion.identity, structureParentGO.transform);
+	//	this._corpseMoundGO.transform.localPosition = Vector3.zero;
+	//	SetCorpseMound (this._corpseMoundGO.GetComponent<CorpseMound>());
+	//	this._corpseMound.Initialize (this, initialCorpseCount);
+	//	return this._corpseMound;
+	//}
     internal void HideStructures() {
         structureParentGO.SetActive(false);
     }
     internal void ShowStructures() {
         structureParentGO.SetActive(true);
     }
-    public void ReColorStructure() {
-        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(structureParentGO);
-        for (int i = 0; i < children.Length; i++) {
-            GameObject structureToRecolor = children[i].gameObject;
+    //public void ReColorStructure() {
+    //    Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(structureParentGO);
+    //    for (int i = 0; i < children.Length; i++) {
+    //        GameObject structureToRecolor = children[i].gameObject;
 
-            SpriteRenderer[] allColorizers = structureToRecolor.GetComponentsInChildren<SpriteRenderer>().
-            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+    //        SpriteRenderer[] allColorizers = structureToRecolor.GetComponentsInChildren<SpriteRenderer>().
+    //        Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
 
-            for (int j = 0; j < allColorizers.Length; j++) {
-                allColorizers[j].color = this.ownedByCity.kingdom.kingdomColor;
-            }
-        }
-    }
+    //        for (int j = 0; j < allColorizers.Length; j++) {
+    //            allColorizers[j].color = this.ownedByCity.kingdom.kingdomColor;
+    //        }
+    //    }
+    //}
     public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
         if (structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
@@ -1152,9 +1048,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 
     #region Fog of War Functions
     internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
-        if (!KingdomManager.Instance.useFogOfWar) {
-            fowState = FOG_OF_WAR_STATE.VISIBLE;
-        }
+        //if (!KingdomManager.Instance.useFogOfWar) {
+        //    fowState = FOG_OF_WAR_STATE.VISIBLE;
+        //}
         _currFogOfWarState = fowState;
         Color newColor = FOWSprite.color;
         //Color minimapColor = minimapFOWSprite.color;
@@ -1166,9 +1062,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 //} else {
                 //    minimapColor = biomeColor;
                 //}
-                if ((isHabitable && isOccupied) || isLair) {
-                    ShowNamePlate();
-                }
+                //if ((isHabitable && isOccupied) || isLair) {
+                //    ShowNamePlate();
+                //}
                 if (isOccupied) {
                     ShowStructures();
                 }
@@ -1182,9 +1078,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 //} else {
                 //    minimapColor = biomeColor;
                 //}
-                if ((isHabitable && isOccupied) || isLair) {
-                    ShowNamePlate();
-                }
+                //if ((isHabitable && isOccupied) || isLair) {
+                //    ShowNamePlate();
+                //}
                 if (isOccupied) {
                     ShowStructures();
                 }
@@ -1194,9 +1090,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             case FOG_OF_WAR_STATE.HIDDEN:
                 newColor.a = 255f / 255f;
                 //minimapColor = Color.black;
-                if ((isHabitable && isOccupied) || isLair) {
-                    HideNamePlate();
-                }
+                //if ((isHabitable && isOccupied) || isLair) {
+                //    HideNamePlate();
+                //}
                 if (isOccupied) {
                     HideStructures();
                 }
@@ -1236,35 +1132,34 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public void ResetTile() {
         //this.city = null;
         this.isOccupied = false;
-        this.isBorder = false;
-        this.ownedByCity = null;
+        //this.ownedByCity = null;
         //SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
         this.kingdomColorSprite.gameObject.SetActive(false);
-        this._lairItem = null;
-        Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
+        //this._lairItem = null;
+        //Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
 
         RuinStructureOnTile(false);
-        RemoveCityNamePlate();
+        //RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-    public void Occupy(City city) {
-        this.isOccupied = true;
-        //if (!isVisibleByCities.Contains(city)) {
-        //    this.isVisibleByCities.Add(city);
-        //}
-        //this.isOccupiedByCityID = city.id;
-        this.city = city;
-        this.ownedByCity = city;
-        if (!_visibleByKingdoms.Contains(city.kingdom)) {
-            _visibleByKingdoms.Add(city.kingdom);
-        }
-        //this.isBorder = false;
-        //this.isBorderOfCityID = 0;
-    }
+    //public void Occupy(City city) {
+    //    this.isOccupied = true;
+    //    //if (!isVisibleByCities.Contains(city)) {
+    //    //    this.isVisibleByCities.Add(city);
+    //    //}
+    //    //this.isOccupiedByCityID = city.id;
+    //    this.city = city;
+    //    this.ownedByCity = city;
+    //    if (!_visibleByKingdoms.Contains(city.kingdom)) {
+    //        _visibleByKingdoms.Add(city.kingdom);
+    //    }
+    //    //this.isBorder = false;
+    //    //this.isBorderOfCityID = 0;
+    //}
     public void Occupy() {
         this.isOccupied = true;
     }
@@ -1274,52 +1169,52 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //    _visibleByKingdoms.Remove(ownedByCity.kingdom);
         //}
         isOccupied = false;
-        ownedByCity = null;
+        //ownedByCity = null;
         //SetMinimapTileColor(biomeColor);
         //this._kingdomColorSprite.color = Color.white;
         //this.kingdomColorSprite.gameObject.SetActive(false);
         RuinStructureOnTile(immediatelyDestroyStructures);
-        city = null;
+        //city = null;
 
         //Destroy Nameplates
-        RemoveCityNamePlate();
+        //RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-    public void Borderize(City city) {
-        this.isBorder = true;
-        //if (!_isBorderOfCities.Contains(city)) {
-        //    _isBorderOfCities.Add(city);
-        //}
-        //if (!_visibleByKingdoms.Contains(city.kingdom)) {
-        //    _visibleByKingdoms.Add(city.kingdom);
-        //}
-        //if (!isVisibleByCities.Contains(city)) {
-        //    this.isVisibleByCities.Add(city);
-        //}
-        //this.isBorderOfCityID = city.id;
-        //this.ownedByCity = city;
-    }
-    public void UnBorderize(City city) {
-        this.isBorder = false;
-        //this.isBorderOfCityID = 0;
-        //this.ownedByCity = null;
-        //_isBorderOfCities.Remove(city);
-        //if (_isBorderOfCities.Count <= 0) {
-        //    this.isBorder = false;
-        //    this._kingdomColorSprite.color = Color.white;
-        //    this.kingdomColorSprite.gameObject.SetActive(false);
-        //}
+    //public void Borderize(City city) {
+    //    this.isBorder = true;
+    //    //if (!_isBorderOfCities.Contains(city)) {
+    //    //    _isBorderOfCities.Add(city);
+    //    //}
+    //    //if (!_visibleByKingdoms.Contains(city.kingdom)) {
+    //    //    _visibleByKingdoms.Add(city.kingdom);
+    //    //}
+    //    //if (!isVisibleByCities.Contains(city)) {
+    //    //    this.isVisibleByCities.Add(city);
+    //    //}
+    //    //this.isBorderOfCityID = city.id;
+    //    //this.ownedByCity = city;
+    //}
+    //public void UnBorderize(City city) {
+    //    this.isBorder = false;
+    //    //this.isBorderOfCityID = 0;
+    //    //this.ownedByCity = null;
+    //    //_isBorderOfCities.Remove(city);
+    //    //if (_isBorderOfCities.Count <= 0) {
+    //    //    this.isBorder = false;
+    //    //    this._kingdomColorSprite.color = Color.white;
+    //    //    this.kingdomColorSprite.gameObject.SetActive(false);
+    //    //}
 
-        //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
-        //    && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
-        //    && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
-        //    _visibleByKingdoms.Remove(city.kingdom);
-        //}
-        //this.isVisibleByCities.Remove(city);
-    }
+    //    //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
+    //    //    && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
+    //    //    && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
+    //    //    _visibleByKingdoms.Remove(city.kingdom);
+    //    //}
+    //    //this.isVisibleByCities.Remove(city);
+    //}
     #endregion
 
     #region Monobehaviour Functions
@@ -1425,12 +1320,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             tiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
         }
     }
-    [ContextMenu("Show Border Tiles")]
-    public void ShowBorderTiles() {
-        for (int i = 0; i < this.city.borderTiles.Count; i++) {
-            this.city.borderTiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
-        }
-    }
+    //[ContextMenu("Show Border Tiles")]
+    //public void ShowBorderTiles() {
+    //    for (int i = 0; i < this.city.borderTiles.Count; i++) {
+    //        this.city.borderTiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
+    //    }
+    //}
     [ContextMenu("Show Hextile Positions")]
     public void ShowHextileBounds() {
         Debug.Log("Local Pos: " + this.transform.localPosition.ToString());
@@ -1470,14 +1365,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     //    allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
     //    UnityEditor.Selection.objects = allTiles.ToArray();
     //}
-    [ContextMenu("Toggle Militarize")]
-    public void ToggleMilitarize() {
-        ownedByCity.kingdom.Militarize(!ownedByCity.kingdom.isMilitarize);
-    }
-    [ContextMenu("Toggle Fortify")]
-    public void ToggleFortify() {
-        ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
-    }
+    //[ContextMenu("Toggle Militarize")]
+    //public void ToggleMilitarize() {
+    //    ownedByCity.kingdom.Militarize(!ownedByCity.kingdom.isMilitarize);
+    //}
+    //[ContextMenu("Toggle Fortify")]
+    //public void ToggleFortify() {
+    //    ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
+    //}
     [ContextMenu("Load Border Lines")]
     public void LoadBorderLinesForTesting() {
         HexTile currTile = this;
@@ -1499,35 +1394,35 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             }
         }
     }
-    [ContextMenu("Make King Determine Weighted Action")]
-    public void MakeKingDetermineWeightedAction() {
-        this.city.kingdom.PerformWeightedAction();
-    }
-    private void ShowRegionInfo() {
-        string text = string.Empty;
-        text += "[b]Tile:[/b] " + this.name + "\n";
-        text += "[b]Connections:[/b] " + this.region.connections.Count.ToString();
-        for (int i = 0; i < this.region.connections.Count; i++) {
-            object currConnection = this.region.connections[i];
-            if (currConnection is Region) {
-                text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
-            } else {
-				text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).tileLocation.name;
-            }
-        }
-        UIManager.Instance.ShowSmallInfo(text);
-    }
-    private void HideRegionInfo() {
-        HideSmallInfoWindow();
-        for (int i = 0; i < this.region.connections.Count; i++) {
-            object currConnection = this.region.connections[i];
-            //if (currConnection is Region) {
-            //    ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
-            //} else if (currConnection is HexTile) {
-            //    ((HexTile)currConnection).HideTileHighlight();
-            //}
-        }
-    }
+    //[ContextMenu("Make King Determine Weighted Action")]
+    //public void MakeKingDetermineWeightedAction() {
+    //    this.city.kingdom.PerformWeightedAction();
+    //}
+    //private void ShowRegionInfo() {
+    //    string text = string.Empty;
+    //    text += "[b]Tile:[/b] " + this.name + "\n";
+    //    text += "[b]Connections:[/b] " + this.region.connections.Count.ToString();
+    //    for (int i = 0; i < this.region.connections.Count; i++) {
+    //        object currConnection = this.region.connections[i];
+    //        if (currConnection is Region) {
+    //            text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
+    //        } else {
+				//text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).tileLocation.name;
+    //        }
+    //    }
+    //    UIManager.Instance.ShowSmallInfo(text);
+    //}
+    //private void HideRegionInfo() {
+    //    HideSmallInfoWindow();
+    //    for (int i = 0; i < this.region.connections.Count; i++) {
+    //        object currConnection = this.region.connections[i];
+    //        //if (currConnection is Region) {
+    //        //    ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
+    //        //} else if (currConnection is HexTile) {
+    //        //    ((HexTile)currConnection).HideTileHighlight();
+    //        //}
+    //    }
+    //}
     private void ShowHexTileInfo() {
         string text = string.Empty;
         text += "Characters in tile: ";
@@ -1648,122 +1543,122 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     //    //    }
     //    //}
     //}
-    private void ShowKingdomInfo() {
-        string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
-        text += "[b]Tile:[/b] " + this.name + "\n";
-        text += "[b]" + this.city.kingdom.name + "[/b]" +
-        "\n [b]King Character Type:[/b] " + this.city.kingdom.king.characterType.characterTypeName +
-        "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
-        for (int i = 0; i < this.region.connections.Count; i++) {
-            object currConnection = this.region.connections[i];
-            text += "\n " + currConnection.ToString();
-            if (currConnection is Region) {
-                text += " - " + ((Region)currConnection).centerOfMass.name;
-            }
-        }
-        //text += "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
-        //if(this.city.region.specialResource != RESOURCE.NONE) {
-        //    text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
-        //}
-		text += "\n [b]Food Count:[/b] " + this.city.foodCount.ToString () + "/" + this.city.foodCapacity + "(" + this.city.foodRequirement.ToString () + ")" +
-		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialCapacity + "(" + this.city.materialRequirement.ToString () + ")" +
-		"\n [b]Material Count For Humans:[/b] " + this.city.materialCountForHumans.ToString () + "/" + this.city.materialCapacity +
-		"\n [b]Material Count For Elves:[/b] " + this.city.materialCountForElves.ToString () + "/" + this.city.materialCapacity +
-		"\n [b]Ore Count:[/b] " + this.city.oreCount.ToString () + "/" + this.city.oreCapacity + "(" + this.city.oreRequirement.ToString () + ")" +
-		"\n [b]Kingdom Food S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.foodCityCapacity +
-		"\n [b]Kingdom Material For Humans S/D:[/b] " + ((this.city.kingdom.race == RACE.HUMANS) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForHumans +
-		"\n [b]Kingdom Material For Elves S/D:[/b] " + ((this.city.kingdom.race == RACE.ELVES) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForElves +
-		"\n [b]Kingdom Ore S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.oreCityCapacity +
-		"\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
-        "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
-        "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
-        "\n [b]Kingdom Base Weapons:[/b] " + this.city.kingdom.baseWeapons.ToString() +
-//        "\n [b]Kingdom Base Armor:[/b] " + this.city.kingdom.baseArmor.ToString() +
-        "\n [b]Weapons Over Production:[/b] " + this.city.kingdom.GetWeaponOverProductionPercentage().ToString() + "%" + 
-//        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
-        "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
-		"\n [b]Population Count:[/b] " + this.city.population.ToString() + "/" + this.city.populationCapacity.ToString() +
-		"\n [b]PopulationF Count:[/b] " + this.city._population.ToString() +
-		"\n [b]City Population Growth:[/b] " + this.region.populationGrowth.ToString() +
-        "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
-        "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +
-        "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
-        "\n [b]Draft Rate: [/b]" + (this.city.kingdom.draftRate * 100f).ToString() + "%" +
-        "\n [b]Research Rate: [/b]" + (this.city.kingdom.researchRate * 100f).ToString() + "%" +
-        "\n [b]Production Rate: [/b]" + (this.city.kingdom.productionRate * 100f).ToString() + "%" +
-        "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
+//    private void ShowKingdomInfo() {
+//        string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
+//        text += "[b]Tile:[/b] " + this.name + "\n";
+//        text += "[b]" + this.city.kingdom.name + "[/b]" +
+//        "\n [b]King Character Type:[/b] " + this.city.kingdom.king.characterType.characterTypeName +
+//        "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
+//        for (int i = 0; i < this.region.connections.Count; i++) {
+//            object currConnection = this.region.connections[i];
+//            text += "\n " + currConnection.ToString();
+//            if (currConnection is Region) {
+//                text += " - " + ((Region)currConnection).centerOfMass.name;
+//            }
+//        }
+//        //text += "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
+//        //if(this.city.region.specialResource != RESOURCE.NONE) {
+//        //    text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
+//        //}
+//		text += "\n [b]Food Count:[/b] " + this.city.foodCount.ToString () + "/" + this.city.foodCapacity + "(" + this.city.foodRequirement.ToString () + ")" +
+//		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialCapacity + "(" + this.city.materialRequirement.ToString () + ")" +
+//		"\n [b]Material Count For Humans:[/b] " + this.city.materialCountForHumans.ToString () + "/" + this.city.materialCapacity +
+//		"\n [b]Material Count For Elves:[/b] " + this.city.materialCountForElves.ToString () + "/" + this.city.materialCapacity +
+//		"\n [b]Ore Count:[/b] " + this.city.oreCount.ToString () + "/" + this.city.oreCapacity + "(" + this.city.oreRequirement.ToString () + ")" +
+//		"\n [b]Kingdom Food S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.foodCityCapacity +
+//		"\n [b]Kingdom Material For Humans S/D:[/b] " + ((this.city.kingdom.race == RACE.HUMANS) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForHumans +
+//		"\n [b]Kingdom Material For Elves S/D:[/b] " + ((this.city.kingdom.race == RACE.ELVES) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForElves +
+//		"\n [b]Kingdom Ore S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.oreCityCapacity +
+//		"\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
+//        "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
+//        "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
+//        "\n [b]Kingdom Base Weapons:[/b] " + this.city.kingdom.baseWeapons.ToString() +
+////        "\n [b]Kingdom Base Armor:[/b] " + this.city.kingdom.baseArmor.ToString() +
+//        "\n [b]Weapons Over Production:[/b] " + this.city.kingdom.GetWeaponOverProductionPercentage().ToString() + "%" + 
+////        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
+//        "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
+//		"\n [b]Population Count:[/b] " + this.city.population.ToString() + "/" + this.city.populationCapacity.ToString() +
+//		"\n [b]PopulationF Count:[/b] " + this.city._population.ToString() +
+//		"\n [b]City Population Growth:[/b] " + this.region.populationGrowth.ToString() +
+//        "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
+//        "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +
+//        "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
+//        "\n [b]Draft Rate: [/b]" + (this.city.kingdom.draftRate * 100f).ToString() + "%" +
+//        "\n [b]Research Rate: [/b]" + (this.city.kingdom.researchRate * 100f).ToString() + "%" +
+//        "\n [b]Production Rate: [/b]" + (this.city.kingdom.productionRate * 100f).ToString() + "%" +
+//        "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
 
-        text += "[b]Trade Deals: [/b]\n";
-        if (this.city.kingdom.kingdomsInTradeDealWith.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.kingdomsInTradeDealWith.Count; i++) {
-                text += this.city.kingdom.kingdomsInTradeDealWith[i].name + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+//        text += "[b]Trade Deals: [/b]\n";
+//        if (this.city.kingdom.kingdomsInTradeDealWith.Count > 0) {
+//            for (int i = 0; i < this.city.kingdom.kingdomsInTradeDealWith.Count; i++) {
+//                text += this.city.kingdom.kingdomsInTradeDealWith[i].name + "\n";
+//            }
+//        } else {
+//            text += "NONE\n";
+//        }
 
-        text += "[b]Adjacent Kingdoms: [/b]\n";
-        if (this.city.kingdom.adjacentKingdoms.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-                text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+//        text += "[b]Adjacent Kingdoms: [/b]\n";
+//        if (this.city.kingdom.adjacentKingdoms.Count > 0) {
+//            for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+//                text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
+//            }
+//        } else {
+//            text += "NONE\n";
+//        }
 
-        //text += "[b]Discovered Kingdoms: [/b]\n";
-        //if (this.city.kingdom.discoveredKingdoms.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
-        //        Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
-        //        text += currKingdom.name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+//        //text += "[b]Discovered Kingdoms: [/b]\n";
+//        //if (this.city.kingdom.discoveredKingdoms.Count > 0) {
+//        //    for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
+//        //        Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
+//        //        text += currKingdom.name + "\n";
+//        //    }
+//        //} else {
+//        //    text += "NONE\n";
+//        //}
 
-        //text += "[b]Alliance Kingdoms: [/b]\n";
-        //if(this.city.kingdom.alliancePool != null) {
-        //    for (int i = 0; i < this.city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-        //        Kingdom currKingdom = this.city.kingdom.alliancePool.kingdomsInvolved[i];
-        //        text += currKingdom.name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+//        //text += "[b]Alliance Kingdoms: [/b]\n";
+//        //if(this.city.kingdom.alliancePool != null) {
+//        //    for (int i = 0; i < this.city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
+//        //        Kingdom currKingdom = this.city.kingdom.alliancePool.kingdomsInvolved[i];
+//        //        text += currKingdom.name + "\n";
+//        //    }
+//        //} else {
+//        //    text += "NONE\n";
+//        //}
 
-        //text += "[b]Important Citizens in City: [/b]\n";
-        //if (this.city.importantCitizensInCity.Count > 0) {
-        //    for (int i = 0; i < this.city.importantCitizensInCity.Count; i++) {
-        //        text += this.city.importantCitizensInCity.Values.ElementAt(i).name + " - " + this.city.importantCitizensInCity.Keys.ElementAt(i).ToString() + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+//        //text += "[b]Important Citizens in City: [/b]\n";
+//        //if (this.city.importantCitizensInCity.Count > 0) {
+//        //    for (int i = 0; i < this.city.importantCitizensInCity.Count; i++) {
+//        //        text += this.city.importantCitizensInCity.Values.ElementAt(i).name + " - " + this.city.importantCitizensInCity.Keys.ElementAt(i).ToString() + "\n";
+//        //    }
+//        //} else {
+//        //    text += "NONE\n";
+//        //}
 
-        //text += "[b]Citizens in City: [/b]\n";
-        //if (this.city.citizens.Count > 0) {
-        //    for (int i = 0; i < this.city.citizens.Count; i++) {
-        //        Citizen currCitizen = this.city.citizens[i];
-        //        if (currCitizen.role != ROLE.UNTRAINED) {
-        //            text += currCitizen.role + " - " + currCitizen.name + "\n";
-        //        }
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+//        //text += "[b]Citizens in City: [/b]\n";
+//        //if (this.city.citizens.Count > 0) {
+//        //    for (int i = 0; i < this.city.citizens.Count; i++) {
+//        //        Citizen currCitizen = this.city.citizens[i];
+//        //        if (currCitizen.role != ROLE.UNTRAINED) {
+//        //            text += currCitizen.role + " - " + currCitizen.name + "\n";
+//        //        }
+//        //    }
+//        //} else {
+//        //    text += "NONE\n";
+//        //}
 
-        //text += "[b]Kingdom values: [/b]\n";
-        //Dictionary<CHARACTER_VALUE, int> kingdomVals = this.city.kingdom.importantCharacterValues;
-        //if (kingdomVals.Count > 0) {
-        //    for (int i = 0; i < kingdomVals.Count(); i++) {
-        //        KeyValuePair<CHARACTER_VALUE, int> kvp = kingdomVals.ElementAt(i);
-        //        text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
-        UIManager.Instance.ShowSmallInfo(text);
-    }
+//        //text += "[b]Kingdom values: [/b]\n";
+//        //Dictionary<CHARACTER_VALUE, int> kingdomVals = this.city.kingdom.importantCharacterValues;
+//        //if (kingdomVals.Count > 0) {
+//        //    for (int i = 0; i < kingdomVals.Count(); i++) {
+//        //        KeyValuePair<CHARACTER_VALUE, int> kvp = kingdomVals.ElementAt(i);
+//        //        text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
+//        //    }
+//        //} else {
+//        //    text += "NONE\n";
+//        //}
+//        UIManager.Instance.ShowSmallInfo(text);
+//    }
     private void HideSmallInfoWindow() {
         UIManager.Instance.HideSmallInfo();
     }
@@ -1877,16 +1772,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
 	#endregion
 
-	internal void SetCorpseMound(CorpseMound corpseMound){
-		this._corpseMound = corpseMound;
-		if(corpseMound != null){
-			this.region.AddCorpseMoundTile (this);
-		}else{
-			if(this.region.corpseMoundTiles.Count > 0){
-				this.region.RemoveCorpseMoundTile (this);
-			}
-		}
-	}
+	//internal void SetCorpseMound(CorpseMound corpseMound){
+	//	this._corpseMound = corpseMound;
+	//	if(corpseMound != null){
+	//		this.region.AddCorpseMoundTile (this);
+	//	}else{
+	//		if(this.region.corpseMoundTiles.Count > 0){
+	//			this.region.RemoveCorpseMoundTile (this);
+	//		}
+	//	}
+	//}
 	internal bool IsAdjacentWithRegion(Region region){
 		List<HexTile> neighbors = this.AllNeighbours;
 		for (int i = 0; i < neighbors.Count; i++) {

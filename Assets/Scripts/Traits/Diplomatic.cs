@@ -12,30 +12,30 @@ public class Diplomatic : Trait {
     }
     #endregion
 
-    internal override int GetFlatterWeightModification(Kingdom otherKingdom) {
-        Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
-        int weight = 0;
+ //   internal override int GetFlatterWeightModification(Kingdom otherKingdom) {
+ //       Kingdom sourceKingdom = ownerOfTrait.city.kingdom;
+ //       int weight = 0;
 
-        KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
-        //add 2 to Default Weight for each positive point of Opinion I have towards the target
-        if(relWithOtherKingdom.totalLike > 0) {
-            weight += 2 * relWithOtherKingdom.totalLike;
-        }
+ //       KingdomRelationship relWithOtherKingdom = sourceKingdom.GetRelationshipWithKingdom(otherKingdom);
+ //       //add 2 to Default Weight for each positive point of Opinion I have towards the target
+ //       if(relWithOtherKingdom.totalLike > 0) {
+ //           weight += 2 * relWithOtherKingdom.totalLike;
+ //       }
         
-        return weight;
-    }
+ //       return weight;
+ //   }
 
-    internal override int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
-        return -40; //subtract 40 from Default Weight
-    }
+ //   internal override int GetLeaveTradeDealWeightModification(Kingdom otherKingdom) {
+ //       return -40; //subtract 40 from Default Weight
+ //   }
 
-	internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
-		if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
-			return 100;
-		}
-		return 0;
-	}
-	internal override int GetRandomInternationalIncidentWeight(){
-		return -20;
-	}
+	//internal override int GetInternationalIncidentReactionWeight (InternationalIncident.INCIDENT_ACTIONS incidentAction, KingdomRelationship kr){
+	//	if(incidentAction == InternationalIncident.INCIDENT_ACTIONS.RESOLVE_PEACEFULLY){
+	//		return 100;
+	//	}
+	//	return 0;
+	//}
+	//internal override int GetRandomInternationalIncidentWeight(){
+	//	return -20;
+	//}
 }

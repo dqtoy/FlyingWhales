@@ -7,11 +7,11 @@ public class FactionManager : MonoBehaviour {
 
     public static FactionManager Instance = null;
 
-    [SerializeField] private RACE[] inititalRaces;
+    //[SerializeField] private RACE[] inititalRaces;
 
     private ORDER_BY orderBy = ORDER_BY.CITIES;
 
-    public List<QuestTypeSetup> questTypeSetups;
+    //public List<QuestTypeSetup> questTypeSetups;
 
     public List<Faction> allFactions = new List<Faction>();
 	public List<Tribe> allTribes = new List<Tribe>();
@@ -104,7 +104,7 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
     [Space(10)]
-    [Header("Kingdom Size Modifiers")]
+    [Header("Faction Size Modifiers")]
     [SerializeField] internal float smallToMediumReqPercentage;
     [SerializeField] internal float mediumToLargeReqPercentage;
     [SerializeField] internal int smallToMediumReq;
@@ -131,7 +131,6 @@ public class FactionManager : MonoBehaviour {
     public bool GenerateInitialFactions() {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
-        //List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
         List<Region> elligibleRegions = new List<Region>(GridMap.Instance.allRegions);
 
         InitialTribeSetting initialTribes = _initialTribes[Random.Range(0, _initialTribes.Count)]; //Choose a random tribe setup
@@ -157,27 +156,57 @@ public class FactionManager : MonoBehaviour {
         int numOfRegionsForCurrentFaction = GetInitialVillageCount(size);
         Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
         newFaction.GenerateBonusTech(size);
-        for (int j = 0; j < numOfRegionsForCurrentFaction; j++) {
-            Region chosenRegion = null;
-            if (j == 0) {
-                chosenRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
-            } else {
-                List<Region> elligibleRegionsForFaction = GetElligibleRegionsForFaction(newFaction);
-                if (elligibleRegionsForFaction.Count <= 0) {
-                    //throw new System.Exception("There are no more elligible regions for this faction!");
-                    return false;
+        Region initialRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
+        List<Region> chosenRegions = new List<Region>();
+        chosenRegions.Add(initialRegion);
+
+        while (chosenRegions.Count != numOfRegionsForCurrentFaction) {
+            List<Region> choices = new List<Region>();
+            //Add unowned adjacent regions of chosenRegions to choices
+            for (int i = 0; i < chosenRegions.Count; i++) {
+                Region currChosenRegion = chosenRegions[i];
+                for (int j = 0; j < currChosenRegion.adjacentRegions.Count; j++) {
+                    Region currAdjacentRegion = currChosenRegion.adjacentRegions[j];
+                    if (!chosenRegions.Contains(currAdjacentRegion) && !currAdjacentRegion.isOwned && !choices.Contains(currAdjacentRegion)) {
+                        choices.Add(currAdjacentRegion);
+                    }
                 }
-                //Order elligible regions by the number of adjacent regions they have that are not yet owned (least first)
-                elligibleRegions.OrderBy(x => x.adjacentRegions.Where(y => y.owner == null).Count());
-                chosenRegion = elligibleRegionsForFaction[0];
             }
-            chosenRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
-            LandmarkManager.Instance.OccupyLandmark(chosenRegion, newFaction);
-            //CreateInititalFactionCharacters(newFaction, chosenRegion.mainLandmark as Settlement);
-            CreateInitialResourceStructuresForFaction(newFaction, chosenRegion.mainLandmark as Settlement, chosenRegion);
-            elligibleRegions.Remove(chosenRegion);
+            if (choices.Count > 0) {
+                Region chosenRegion = choices[Random.Range(0, choices.Count)];
+                chosenRegions.Add(chosenRegion);
+            } else {
+                return false;
+            }
         }
-        //CreateChieftainForFaction(newFaction);
+
+        for (int i = 0; i < chosenRegions.Count; i++) {
+            Region currRegion = chosenRegions[i];
+            elligibleRegions.Remove(currRegion);
+            currRegion.SetOwner(newFaction);
+            newFaction.OwnRegion(currRegion);
+            currRegion.ReColorBorderTiles(newFaction.factionColor);
+            currRegion.HighlightRegionTiles(newFaction.factionColor, 69f / 255f);
+        }
+        //for (int j = 0; j < numOfRegionsForCurrentFaction; j++) {
+            //Region chosenRegion = null;
+            //if (j == 0) {
+            //    chosenRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
+            //} else {
+            //    List<Region> elligibleRegionsForFaction = GetElligibleRegionsForFaction(newFaction);
+            //    if (elligibleRegionsForFaction.Count <= 0) {
+            //        //throw new System.Exception("There are no more elligible regions for this faction!");
+            //        return false;
+            //    }
+            //    //Order elligible regions by the number of adjacent regions they have that are not yet owned (least first)
+            //    elligibleRegions.OrderBy(x => x.adjacentRegions.Where(y => y.owner == null).Count());
+            //    chosenRegion = elligibleRegionsForFaction[0];
+            //}
+            //chosenRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
+            //LandmarkManager.Instance.OccupyLandmark(chosenRegion, newFaction);
+            //CreateInitialResourceStructuresForFaction(newFaction, chosenRegion.mainLandmark as Settlement, chosenRegion);
+            //elligibleRegions.Remove(chosenRegion);
+        //}
         return true;
     }
     public void GenerateFactionCharacters() {
@@ -216,9 +245,9 @@ public class FactionManager : MonoBehaviour {
         }
     }
     private void CreateChieftainForFaction(Faction faction) {
-        Settlement randomSettlement = faction.settlements[Random.Range(0, faction.settlements.Count)];
-        ECS.Character chieftain = randomSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
-        CharacterManager.Instance.EquipCharacterWithBestGear(randomSettlement, chieftain);
+        Settlement kingsCastle = faction.GetOwnedLandmarkOfType(LANDMARK_TYPE.KINGS_CASTLE) as Settlement;
+        ECS.Character chieftain = kingsCastle.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
+        CharacterManager.Instance.EquipCharacterWithBestGear(kingsCastle, chieftain);
         faction.SetLeader(chieftain);
     }
     /*
@@ -261,24 +290,24 @@ public class FactionManager : MonoBehaviour {
         //UIManager.Instance.UpdateFactionSummary();
         return newFaction;
     }
-    private void CreateInitialResourceStructuresForFaction(Faction faction, Settlement settlement, Region region) {
-        for (int i = 0; i < region.tilesWithMaterials.Count; i++) {
-            HexTile currTile = region.tilesWithMaterials[i];
-            if (currTile.HasStructure()) {
-                continue; //skip tiles that already have structures
-            }
-            //Does the settlement have the needed technology to build a structure on the current tile?
-            if (settlement.HasTechnology(MaterialManager.Instance.GetNeededTechnologyForMaterialStructure(currTile.materialOnTile))) {
-                //Based on known technologies of each Tribe, create Structures for the Resource Landmarks within their regions.
-                BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(currTile, Utilities.ConvertMaterialToLandmarkType(currTile.materialOnTile));
-                newLandmark.OccupyLandmark(faction);
-                newLandmark.AdjustCivilians(faction.race, Random.Range(5, 11)); //Each one should have between 5 to 10 civilians.
-                settlement.AddLandmarkAsOwned(newLandmark);
-				List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.tileLocation);
-                RoadManager.Instance.CreateRoad(road, ROAD_TYPE.MINOR);
-            }
-        }
-    }
+    //private void CreateInitialResourceStructuresForFaction(Faction faction, Settlement settlement, Region region) {
+    //    for (int i = 0; i < region.tilesWithMaterials.Count; i++) {
+    //        HexTile currTile = region.tilesWithMaterials[i];
+    //        if (currTile.HasStructure()) {
+    //            continue; //skip tiles that already have structures
+    //        }
+    //        //Does the settlement have the needed technology to build a structure on the current tile?
+    //        if (settlement.HasTechnology(MaterialManager.Instance.GetNeededTechnologyForMaterialStructure(currTile.materialOnTile))) {
+    //            //Based on known technologies of each Tribe, create Structures for the Resource Landmarks within their regions.
+    //            BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(currTile, Utilities.ConvertMaterialToLandmarkType(currTile.materialOnTile));
+    //            newLandmark.OccupyLandmark(faction);
+    //            newLandmark.AdjustCivilians(faction.race, Random.Range(5, 11)); //Each one should have between 5 to 10 civilians.
+    //            settlement.AddLandmarkAsOwned(newLandmark);
+				//List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.tileLocation);
+    //            RoadManager.Instance.CreateRoad(road, ROAD_TYPE.MINOR);
+    //        }
+    //    }
+    //}
     public void GenerateMonsters() {
         List<BaseLandmark> goblinCamps = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.GOBLIN_CAMP);
         List<BaseLandmark> caves = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.CAVE);
@@ -331,6 +360,20 @@ public class FactionManager : MonoBehaviour {
                 }
             }
 
+        }
+    }
+    public void OccupyLandmarksInFactionRegions() {
+        for (int i = 0; i < allTribes.Count; i++) {
+            Faction currTribe = allTribes[i];
+            for (int j = 0; j < currTribe.ownedRegions.Count; j++) {
+                Region currRegion = currTribe.ownedRegions[j];
+                for (int k = 0; k < currRegion.landmarks.Count; k++) {
+                    BaseLandmark currLandmark = currRegion.landmarks[k];
+                    if (currLandmark is Settlement && !currLandmark.isOccupied) {
+                        currLandmark.OccupyLandmark(currTribe);
+                    }
+                }
+            }
         }
     }
     #endregion
@@ -509,15 +552,15 @@ public class FactionManager : MonoBehaviour {
     //    }
     //    return false;
     //}
-    public QuestTypeSetup GetQuestTypeSetup(QUEST_TYPE questType) {
-        for (int i = 0; i < questTypeSetups.Count; i++) {
-            QuestTypeSetup currSetup = questTypeSetups[i];
-            if (currSetup.questType == questType) {
-                return currSetup;
-            }
-        }
-        return null;
-    }
+    //public QuestTypeSetup GetQuestTypeSetup(QUEST_TYPE questType) {
+    //    for (int i = 0; i < questTypeSetups.Count; i++) {
+    //        QuestTypeSetup currSetup = questTypeSetups[i];
+    //        if (currSetup.questType == questType) {
+    //            return currSetup;
+    //        }
+    //    }
+    //    return null;
+    //}
     #endregion
 
     #region International Incidents

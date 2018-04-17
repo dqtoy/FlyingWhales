@@ -96,13 +96,12 @@ public class LandmarkInfoUI : UIMenu {
         text += "\n[b]Durability:[/b] " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
         text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
 		text += "\n[b]Is Occupied:[/b] " + currentlyShowingLandmark.isOccupied.ToString();
-		text += "\n[b]Is Explored:[/b] " + currentlyShowingLandmark.isExplored.ToString();
 
         if (currentlyShowingLandmark.owner != null) {
             text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
             text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
             text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.civilians.ToString() + "[/url]";
-			text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
+			//text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
 
             if (currentlyShowingLandmark is Settlement) {
       //          text += "\n[b]Quest Board: [/b] ";
@@ -134,7 +133,17 @@ public class LandmarkInfoUI : UIMenu {
             }
         }
 
-		text += "\n[b]Characters At Landmark: [/b] ";
+        text += "\n[b]Connections: [/b] ";
+        if (currentlyShowingLandmark.connections.Count > 0) {
+            for (int i = 0; i < currentlyShowingLandmark.connections.Count; i++) {
+                BaseLandmark connection = currentlyShowingLandmark.connections[i];
+                text += "\n" + connection.urlName;
+            }
+        } else {
+            text += "NONE";
+        }
+
+        text += "\n[b]Characters At Landmark: [/b] ";
         if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
                 object currObject = currentlyShowingLandmark.charactersAtLocation[i];

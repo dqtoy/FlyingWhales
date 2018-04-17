@@ -74,8 +74,8 @@ public class Pillage : CharacterTask {
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+		for (int i = 0; i < character.specificLocation.tileLocation.region.landmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.landmarks [i];
 			if(CanBeDone(character, landmark)){
 				return true;
 			}
@@ -87,8 +87,8 @@ public class Pillage : CharacterTask {
     }
     protected override BaseLandmark GetLandmarkTarget (Character character){
 		base.GetLandmarkTarget (character);
-		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+		for (int i = 0; i < character.specificLocation.tileLocation.region.landmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.landmarks [i];
             int weight = 0;
             if ((landmark.owner == null || (character.faction == null || landmark.owner.id != character.faction.id))) {
                 if (landmark is ResourceLandmark) {

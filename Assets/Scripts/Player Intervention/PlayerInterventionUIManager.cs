@@ -20,7 +20,7 @@ public class PlayerInterventionUIManager : MonoBehaviour {
 	}
 	public void OnClickOkSelectRegion(){
 		Region selectedRegion = SelectRegion.Instance.selectedTile.region;
-		PlayerInterventionManager.Instance.SpawnMonsterLair (selectedRegion);
+		//PlayerInterventionManager.Instance.SpawnMonsterLair (selectedRegion);
 		selectRegionGO.SetActive (false);
 		btnMonsterLair.SetClickState (false);
 	}

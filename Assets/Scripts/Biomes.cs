@@ -114,37 +114,31 @@ public class Biomes : MonoBehaviour {
         int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
         switch (currentHexTile.biomeType) {
             case BIOMES.SNOW:
-                currentHexTile.movementDays = 1;//3;
                 Sprite snowSpriteToUse = snowTiles[Random.Range(0, snowTiles.Length)];
                 currentHexTile.SetBaseSprite(snowSpriteToUse);
                 sortingOrder += 6;
                 break;
             case BIOMES.TUNDRA:
-                currentHexTile.movementDays = 1;//2;
                 Sprite tundraSpriteToUse = tundraTiles[Random.Range(0, tundraTiles.Length)];
                 currentHexTile.SetBaseSprite(tundraSpriteToUse);
                 sortingOrder += 3;
                 break;
             case BIOMES.DESERT:
-                currentHexTile.movementDays = 2;//4;
                 Sprite desertSpriteToUse = desertTiles[Random.Range(0, desertTiles.Length)];
                 currentHexTile.SetBaseSprite(desertSpriteToUse);
                 sortingOrder += 5;
                 break;
             case BIOMES.GRASSLAND:
-                currentHexTile.movementDays = 1;//2;
                 Sprite grasslandSpriteToUse = grasslandTiles[Random.Range(0, grasslandTiles.Length)];
                 currentHexTile.SetBaseSprite(grasslandSpriteToUse);
                 sortingOrder += 1;
                 break;
             case BIOMES.WOODLAND:
-                currentHexTile.movementDays = 1;//3;
                 Sprite woodlandSpriteToUse = woodlandTiles[Random.Range(0, woodlandTiles.Length)];
                 currentHexTile.SetBaseSprite(woodlandSpriteToUse);
                 sortingOrder += 2;
                 break;
             case BIOMES.FOREST:
-                currentHexTile.movementDays = 2;
                 Sprite forestSpriteToUse = forestTiles[Random.Range(0, forestTiles.Length)];
                 currentHexTile.SetBaseSprite(forestSpriteToUse);
                 sortingOrder += 4;
@@ -203,9 +197,7 @@ public class Biomes : MonoBehaviour {
                 break;
         }
         if (biomeDetailToUse != null) {
-            if (tile.specialResource == RESOURCE.NONE) {
-                tile.AddBiomeDetailToTile(biomeDetailToUse);
-            }
+            tile.AddBiomeDetailToTile(biomeDetailToUse);
         }
 
         tile.UpdateSortingOrder();
@@ -265,9 +257,6 @@ public class Biomes : MonoBehaviour {
                 break;
         }
         currentHexTile.UpdateSortingOrder();
-        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-            currentHexTile.movementDays = 3;
-        }
     }
 //	internal void GenerateSpecialResources(){
 //		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
@@ -368,58 +357,6 @@ public class Biomes : MonoBehaviour {
             }
         }
     }
-    internal void GenerateElevationAfterRoads() {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < currRegion.adjacentRegions.Count; j++) {
-                Region adjacentRegion = currRegion.adjacentRegions[j];
-                if (!currRegion.connections.Contains(adjacentRegion)) {
-                    //currRegion and adjacentRegion are not connected
-                    //Get tiles that are adjacent to to adjacentRegion
-                    List<HexTile> adjacentTiles = currRegion.GetTilesAdjacentOnlyTo(adjacentRegion);
-                    for (int k = 0; k < adjacentTiles.Count; k++) {
-                        HexTile adjacentTile = adjacentTiles[k];
-                        int tilesToGet = 0;
-                        if(Random.Range(0, 100) < 3) {
-                            tilesToGet = 1;
-                        }
-                        List<HexTile> tilesToSetElevation = new List<HexTile>();
-                        if (tilesToGet > 0) {
-                            tilesToSetElevation.AddRange((adjacentTile.GetTilesInRange(tilesToGet)
-                            .Where(x => currRegion.tilesInRegion.Contains(x))));
-                        }
-                        tilesToSetElevation.Add(adjacentTile);
-                        for (int l = 0; l < tilesToSetElevation.Count; l++) {
-                            HexTile currTile = tilesToSetElevation[l];
-                            if(adjacentTiles.Contains(currTile) && currTile.id != adjacentTile.id) {
-                                continue;
-                            }
-                            
-                            if (currTile.hasLandmark || currTile.isRoad) {
-                                currTile.SetElevation(ELEVATION.MOUNTAIN);
-                            } else {
-                                int neighbourWaterTiles = currTile.AllNeighbours.Where(x => x.elevationType == ELEVATION.WATER).Count();
-                                int neighbourMountainTiles = currTile.AllNeighbours.Where(x => x.elevationType == ELEVATION.MOUNTAIN).Count();
-                                if (neighbourMountainTiles > neighbourWaterTiles) {
-                                    currTile.SetElevation(ELEVATION.MOUNTAIN);
-                                } else if (neighbourWaterTiles > neighbourMountainTiles) {
-                                    currTile.SetElevation(ELEVATION.WATER);
-                                } else {
-                                    if (Random.Range(0, 2) == 0) {
-                                        currTile.SetElevation(ELEVATION.WATER);
-                                    } else {
-                                        currTile.SetElevation(ELEVATION.MOUNTAIN);
-                                    }
-                                }
-                            }
-                            SetElevationSpriteForTile(currTile);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 	private void CalculateElevationAndMoisture(){
         float elevationFrequency = 10f; //14.93f;//2.66f;
         float moistureFrequency = 3.34f; //3.34f;//2.94f;
@@ -545,8 +482,6 @@ public class Biomes : MonoBehaviour {
 
 			if(elevationType == ELEVATION.WATER){
 				if(moisture <= 0.3f) {
-					
-					currentHexTile.movementDays = 2;
 					currentHexTile.biomeType = BIOMES.BARE;
 					Sprite bareSpriteToUse = _bareTiles [Random.Range (0, _bareTiles.Length)];
 					currentHexTile.SetBaseSprite (bareSpriteToUse);
@@ -636,36 +571,36 @@ public class Biomes : MonoBehaviour {
         return null;
     }
        
-    internal GameObject GetPrefabForResource(RESOURCE resource) {
-        switch (resource) {
-            case RESOURCE.CORN:
-                return cornPrefab;
-            case RESOURCE.WHEAT:
-                return wheatPrefab;
-            case RESOURCE.RICE:
-                return ricePrefab;
-            case RESOURCE.DEER:
-                return deerPrefab;
-            case RESOURCE.PIG:
-                return pigPrefab;
-            case RESOURCE.BEHEMOTH:
-                return behemothPrefab;
-            case RESOURCE.OAK:
-                return oakPrefab;
-            case RESOURCE.EBONY:
-                return ebonyPrefab;
-            case RESOURCE.GRANITE:
-                return granitePrefab;
-            case RESOURCE.SLATE:
-                return slatePrefab;
-            case RESOURCE.MANA_STONE:
-                return manaStonesPrefab;
-            case RESOURCE.MITHRIL:
-                return mithrilPrefab;
-            case RESOURCE.COBALT:
-                return cobaltPrefab;
-            default:
-                return null;
-        }
-    }
+    //internal GameObject GetPrefabForResource(RESOURCE resource) {
+    //    switch (resource) {
+    //        case RESOURCE.CORN:
+    //            return cornPrefab;
+    //        case RESOURCE.WHEAT:
+    //            return wheatPrefab;
+    //        case RESOURCE.RICE:
+    //            return ricePrefab;
+    //        case RESOURCE.DEER:
+    //            return deerPrefab;
+    //        case RESOURCE.PIG:
+    //            return pigPrefab;
+    //        case RESOURCE.BEHEMOTH:
+    //            return behemothPrefab;
+    //        case RESOURCE.OAK:
+    //            return oakPrefab;
+    //        case RESOURCE.EBONY:
+    //            return ebonyPrefab;
+    //        case RESOURCE.GRANITE:
+    //            return granitePrefab;
+    //        case RESOURCE.SLATE:
+    //            return slatePrefab;
+    //        case RESOURCE.MANA_STONE:
+    //            return manaStonesPrefab;
+    //        case RESOURCE.MITHRIL:
+    //            return mithrilPrefab;
+    //        case RESOURCE.COBALT:
+    //            return cobaltPrefab;
+    //        default:
+    //            return null;
+    //    }
+    //}
 }

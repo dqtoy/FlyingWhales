@@ -80,12 +80,13 @@ public enum PATHFINDING_MODE{
 	MAJOR_ROADS_WITH_ALLIES,
 	MINOR_ROADS_ONLY_KINGDOM,
     REGION_CONNECTION,
-    LANDMARK_CONNECTION,
+    LANDMARK_ROADS,
     USE_ROADS,
 	USE_ROADS_WITH_ALLIES,
 	USE_ROADS_TRADE,
     USE_ROADS_FACTION_RELATIONSHIP,
-    NORMAL_FACTION_RELATIONSHIP
+    NORMAL_FACTION_RELATIONSHIP,
+    LANDMARK_CONNECTION,
 }
 
 public enum GENDER{
@@ -108,28 +109,28 @@ public enum MONTH{
 	NOV,
 	DEC,
 }
-public enum RESOURCE{
-	NONE,
-	CORN,
-	WHEAT,
-	RICE,
-	DEER,
-	PIG,
-	BEHEMOTH,
-	OAK,
-	EBONY,
-	GRANITE,
-	SLATE,
-	MANA_STONE,
-	MITHRIL,
-	COBALT,
-}
-public enum RESOURCE_TYPE{
-	NONE,
-	FOOD,
-	MATERIAL,
-	ORE,
-}
+//public enum RESOURCE{
+//	NONE,
+//	CORN,
+//	WHEAT,
+//	RICE,
+//	DEER,
+//	PIG,
+//	BEHEMOTH,
+//	OAK,
+//	EBONY,
+//	GRANITE,
+//	SLATE,
+//	MANA_STONE,
+//	MITHRIL,
+//	COBALT,
+//}
+//public enum RESOURCE_TYPE{
+//	NONE,
+//	FOOD,
+//	MATERIAL,
+//	ORE,
+//}
 public enum MATERIAL{
 	NONE, //0
 	CLAY, //11
@@ -218,16 +219,16 @@ public enum KINGDOM_TYPE {
 	NONE
 }
 
-public enum BASE_RESOURCE_TYPE{
-	FOOD,
-	WOOD,
-	STONE,
-	MANA_STONE,
-	MITHRIL,
-	COBALT,
-	GOLD,
-	NONE
-}
+//public enum BASE_RESOURCE_TYPE{
+//	FOOD,
+//	WOOD,
+//	STONE,
+//	MANA_STONE,
+//	MITHRIL,
+//	COBALT,
+//	GOLD,
+//	NONE
+//}
 
 #region Traits
 public enum TRAIT {
@@ -743,38 +744,58 @@ public enum BASE_LANDMARK_TYPE {
     DUNGEON,
     LAIR
 }
-
+public enum LANDMARK_TAG {
+    CAN_HUNT,
+    CAN_SCAVENGE,
+}
 public enum LANDMARK_TYPE {
-    CLAY,
-    LIMESTONE,
-    GRANITE,
-    MARBLE,
-    SILK,
-    COTTON,
-    FLAX,
-    CORN,
-    RICE,
-    PIGMEAT,
-    COWMEAT,
-    GOATHIDE,
-    DEERHIDE,
-    BEHEMOTHHIDE,
-    OAK,
-    YEW,
-    EBONY,
-    IRON,
-    COBALT,
-    MITHRIL,
+    //CLAY,
+    //LIMESTONE,
+    //GRANITE,
+    //MARBLE,
+    //SILK,
+    //COTTON,
+    //FLAX,
+    //CORN,
+    //RICE,
+    //PIGMEAT,
+    //COWMEAT,
+    //GOATHIDE,
+    //DEERHIDE,
+    //BEHEMOTHHIDE,
+    //OAK,
+    //YEW,
+    //EBONY,
+    //IRON,
+    //COBALT,
+    //MITHRIL,
+    //   GOBLIN_CAMP,
+    //   ANCIENT_RUIN,
+    //   VAMPIRE_TOMB,
+    //   ANCIENT_REACTOR,
+    //   CAVE,
+    //   WILDLANDS,
+    //CITY,
+    //   PEASANT_HUT,
+    //CRATER,
+    //RITUAL_STONES,
+
+    HAMLET,
+    VILLAGE,
+    TOWN,
     GOBLIN_CAMP,
-    ANCIENT_RUIN,
-    VAMPIRE_TOMB,
-    ANCIENT_REACTOR,
-    CAVE,
+    KINGS_CASTLE,
     WILDLANDS,
-    CITY,
-    HUT,
-	CRATER,
-	RITUAL_STONES,
+    CAVE,
+    RITUAL_STONES,
+    PEASANT_HUT,
+    VAMPIRE_TOMB,
+    ANCIENT_RUIN,
+    ENCHANTED_GROVE,
+    DARK_WOODS,
+    MAGICAL_LAKE,
+    MURKY_SWAMP,
+    CRATER,
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,

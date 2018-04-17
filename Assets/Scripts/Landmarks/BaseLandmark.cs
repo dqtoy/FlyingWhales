@@ -12,18 +12,14 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected int _id;
     protected HexTile _location;
     protected LANDMARK_TYPE _specificLandmarkType;
-    protected List<object> _connections;
+    protected List<BaseLandmark> _connections;
     protected bool _canBeOccupied; //can the landmark be occupied?
     protected bool _isOccupied;
-    //protected bool _isHidden; //is landmark hidden or discovered?
-    protected bool _isExplored; //has landmark been explored?
     protected string _landmarkName;
     protected Faction _owner;
     protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
 	protected int _reservedCivilians;
     protected List<Character> _charactersWithHomeOnLandmark;
-    //protected Dictionary<MATERIAL, MaterialValues> _materialsInventory; //list of materials in landmark
-    //protected Dictionary<PRODUCTION_TYPE, MATERIAL> _neededMaterials; //list of materials in landmark
     protected Dictionary<RACE, int> _civiliansByRace;
     protected int _currDurability;
 	protected int _totalDurability;
@@ -35,10 +31,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected int _combatHistoryID;
 	protected Dictionary<int, Combat> _combatHistory;
     protected List<ICombatInitializer> _charactersAtLocation;
-    protected Combat _currentCombat;
-	//protected List<OldQuest.Quest> _activeQuests;
 	protected List<Item> _itemsInLandmark;
 	protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
+    protected List<LANDMARK_TAG> _landmarkTags;
 
     private bool _hasScheduledCombatCheck = false;
 
@@ -58,7 +53,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public LANDMARK_TYPE specificLandmarkType {
         get { return _specificLandmarkType; }
     }
-    public List<object> connections {
+    public List<BaseLandmark> connections {
         get { return _connections; }
     }
     public bool canBeOccupied {
@@ -66,12 +61,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool isOccupied {
         get { return _isOccupied; }
-    }
-    //public bool isHidden {
-    //    get { return _isHidden; }
-    //}
-    public bool isExplored {
-        get { return _isExplored; }
     }
     public Faction owner {
         get { return _owner; }
@@ -85,9 +74,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Dictionary<RACE, int> civiliansByRace {
         get { return _civiliansByRace; }
     }
-  //  public Dictionary<MATERIAL, MaterialValues> materialsInventory {
-		//get { return _materialsInventory; }
-  //  }
     public Dictionary<TECHNOLOGY, bool> technologies {
         get { return _technologies; }
     }
@@ -106,9 +92,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     public List<ICombatInitializer> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
-	//public List<OldQuest.Quest> activeQuests {
-	//	get { return _activeQuests; }
-	//}
 	public HexTile tileLocation{
 		get { return _location; }
 	}
@@ -124,21 +107,19 @@ public class BaseLandmark : ILocation, TaskCreator {
     public int totalDurability {
 		get { return _totalDurability; }
     }
-    
 	public Dictionary<Character, GameDate> characterTraces {
 		get { return _characterTraces; }
 	}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+
         _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
-        _connections = new List<object>();
-        //_isHidden = true;
-        _isExplored = false;
+        _connections = new List<BaseLandmark>();
         _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
-//		_landmarkName = _specificLandmarkType.ToString ();
         _owner = null; //landmark has no owner yet
         _civilians = 0f;
         _charactersWithHomeOnLandmark = new List<Character>();
@@ -147,16 +128,15 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_combatHistory = new Dictionary<int, Combat>();
 		_combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
-		//_activeQuests = new List<OldQuest.Quest>();
 		_itemsInLandmark = new List<Item> ();
 		_characterTraces = new Dictionary<Character, GameDate> ();
-		_totalDurability =  LandmarkManager.Instance.GetLandmarkData(specificLandmarkType).durability;
+        _totalDurability = landmarkData.durability;
 		_currDurability = _totalDurability;
+        ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
-		//ConstructMaterialValues();
         ConstructCiviliansDictionary();
+        GenerateCivilians();
         SpawnInitialLandmarkItems();
-//        Initialize();
     }
 
     #region Virtuals
@@ -168,25 +148,47 @@ public class BaseLandmark : ILocation, TaskCreator {
     public virtual void SearchLandmark(Character character) { }
 	#endregion
 
-    public void SetLandmarkObject(LandmarkObject obj) {
-        _landmarkObject = obj;
-        _landmarkObject.SetLandmark(this);
-        //if(this is ResourceLandmark) {
-        //    SetHiddenState(false);
-        //    SetExploredState(true);
-        //}
-    }
-
     #region Connections
     public void AddConnection(BaseLandmark connection) {
         if (!_connections.Contains(connection)) {
             _connections.Add(connection);
         }
     }
-    public void AddConnection(Region connection) {
-        if (!_connections.Contains(connection)) {
-            _connections.Add(connection);
+    public bool IsConnectedTo(Region region) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.tileLocation.region.id == region.id) {
+                return true;
+            }
         }
+        return false;
+    }
+    public bool IsConnectedTo(BaseLandmark landmark) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.id == landmark.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool IsIndirectlyConnectedTo(Region region) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.IsConnectedTo(region)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool IsIndirectlyConnectedTo(BaseLandmark landmark) {
+        for (int i = 0; i < _connections.Count; i++) {
+            BaseLandmark currConnection = _connections[i];
+            if (currConnection.IsConnectedTo(landmark)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -194,9 +196,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public virtual void OccupyLandmark(Faction faction) {
         _owner = faction;
         _isOccupied = true;
-        SetExploredState(true);
         _location.Occupy();
         EnableInitialTechnologies(faction);
+        _owner.OwnLandmark(this);
     }
     public virtual void UnoccupyLandmark() {
         if(_owner == null) {
@@ -303,6 +305,25 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
+    private void GenerateCivilians() {
+        Faction ownerOfRegion = tileLocation.region.owner;
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+        int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
+        RACE civiliansRace = RACE.NONE;
+        if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+            civiliansRace = RACE.GOBLIN;
+        } else {
+            if (ownerOfRegion != null) {
+                civiliansRace = ownerOfRegion.race;
+            } else {
+                civiliansRace = RACE.HUMANS;
+                if (Random.Range(0, 2) == 1) {
+                    civiliansRace = RACE.ELVES;
+                }
+            }
+        }
+        AdjustCivilians(civiliansRace, civilians);
+    }
     public void AdjustCivilians(RACE race, int amount, Character culprit = null) {
         _civiliansByRace[race] += amount;
         _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
@@ -334,12 +355,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 			_civiliansByRace [races [i]] = 0;
 		}
 	}
-    //public void AdjustPopulation(float adjustment) {
-    //    _civilians += adjustment;
-    //}
-	//public void AdjustReservedPopulation(int amount){
-	//	_reservedCivilians += amount;
-	//}
     protected RACE GetRaceBasedOnProportion() {
         WeightedDictionary<RACE> raceDict = new WeightedDictionary<RACE>(_civiliansByRace);
         if (raceDict.GetTotalOfWeights() > 0) {
@@ -357,7 +372,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, bool reduceCivilians = true, bool determineAction = true) {
         RACE raceOfChar = GetRaceBasedOnProportion();
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
-        //        newCharacter.AssignRole(charRole);
+        //newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
         if (reduceCivilians) {
@@ -655,76 +670,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return _charactersAtLocation.Where(x => x.currentTask.combatPriority > 0).OrderByDescending(x => x.currentTask.combatPriority).ToList();
     }
-    //public void CheckAttackingGroupsCombat() {
-    //    List<ICombatInitializer> attackingGroups = GetAttackingGroups();
-    //    for (int i = 0; i < attackingGroups.Count; i++) {
-    //        ICombatInitializer currAttackingGroup = attackingGroups[i];
-    //        if (currAttackingGroup.isInCombat) {
-    //            continue; //this current group is already in combat, skip it
-    //        }
-    //        //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-    //        if (combatGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
-    //            StartCombatBetween(currAttackingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-    //        if (neutralGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
-    //            StartCombatBetween(currAttackingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
-    //        List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-    //        if (stealthGroups.Count > 0) {
-    //            //The chance of initiating combat is 35%
-    //            if (Random.Range(0, 100) < 35) {
-    //                ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
-    //                StartCombatBetween(currAttackingGroup, chosenEnemy);
-    //                continue; //the attacking group has found an enemy! skip to the next group
-    //            }
-    //        }
-    //    }
-    //}
-    //public void CheckPatrollingGroupsCombat() {
-    //    List<ICombatInitializer> patrollingGroups = GetPatrollingGroups();
-    //    for (int i = 0; i < patrollingGroups.Count; i++) {
-    //        ICombatInitializer currPatrollingGroup = patrollingGroups[i];
-    //        if (currPatrollingGroup.isInCombat) {
-    //            continue; //this current group is already in combat, skip it
-    //        }
-    //        //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-    //        if (combatGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
-    //            StartCombatBetween(currPatrollingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-    //        if (neutralGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
-    //            StartCombatBetween(currPatrollingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random
-    //        List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-    //        if (stealthGroups.Count > 0) {
-    //            //The chance of initiating combat is 35%
-    //            if (Random.Range(0, 100) < 35) {
-    //                ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
-    //                StartCombatBetween(currPatrollingGroup, chosenEnemy);
-    //                continue; //the attacking group has found an enemy! skip to the next group
-    //            }
-    //        }
-    //    }
-    //}
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currChar = _charactersAtLocation[i];
@@ -816,26 +761,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return false;
     }
-   // public List<ICombatInitializer> GetAttackingGroups() {
-   //     List<ICombatInitializer> groups = new List<ICombatInitializer>();
-   //     for (int i = 0; i < _charactersAtLocation.Count; i++) {
-   //         ICombatInitializer currGroup = _charactersAtLocation[i];
-   //         if (currGroup.currentTask is Invade) {
-   //             groups.Add(currGroup);
-   //         }
-   //     }
-   //     return groups;
-   // }
-   // public List<ICombatInitializer> GetPatrollingGroups() {
-   //     List<ICombatInitializer> groups = new List<ICombatInitializer>();
-   //     for (int i = 0; i < _charactersAtLocation.Count; i++) {
-   //         ICombatInitializer currGroup = _charactersAtLocation[i];
-			//if (currGroup.currentTask is Patrol) {
-   //             groups.Add(currGroup);
-   //         }
-   //     }
-   //     return groups;
-   // }
     public List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
@@ -894,124 +819,12 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
-
-    //public void StartCombatAtLocation() {
-    //    if (!CombatAtLocation()) {
-    //        this._currentCombat = null;
-    //        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //            ICombatInitializer currItem = _charactersAtLocation[i];
-    //            currItem.SetIsDefeated(false);
-    //currItem.SetIsInCombat (false);
-    //if(currItem.currentFunction != null){
-    //	currItem.currentFunction ();
-    //}
-    //currItem.SetCurrentFunction(null);
-    //        }
-    //    } else {
-    //        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //            ICombatInitializer currItem = _charactersAtLocation[i];
-    //currItem.SetIsInCombat (true);
-    //        }
-    //    }
-    //}
-    //public bool CombatAtLocation() {
-    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //        if (_charactersAtLocation[i].InitializeCombat()) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public ICombatInitializer GetCombatEnemy(ICombatInitializer combatInitializer) {
-    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //        if (_charactersAtLocation[i] != combatInitializer) {
-    //            if (_charactersAtLocation[i] is Party) {
-    //                if (((Party)_charactersAtLocation[i]).isDefeated) {
-    //                    continue;
-    //                }
-    //            }
-    //            if (combatInitializer.IsHostileWith(_charactersAtLocation[i])) {
-    //                return _charactersAtLocation[i];
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public void SetCurrentCombat(CombatPrototype combat) {
-    //    _currentCombat = combat;
-    //}
     #endregion
 
     #region Utilities
-    public void SetExploredState(bool isExplored) {
-        _isExplored = isExplored;
-        //if (landmarkObject != null) {
-        //    landmarkObject.UpdateLandmarkVisual();
-        //}
-    }
-    internal bool IsBorder() {
-        if (this.owner == null) {
-            return false;
-        }
-		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
-			if (this.tileLocation.region.connections[i] is Region) {
-				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
-                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    internal bool IsAdjacentToEnemyTribe() {
-        if (this.owner == null || (this.owner != null && !(this.owner is Tribe))) {
-            return false;
-        }
-		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
-			if (this.tileLocation.region.connections[i] is Region) {
-				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
-                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && this.owner is Tribe && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
-                    FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-                    if (factionRel != null && factionRel.isAtWar) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    internal bool HasWarlordOnAdjacentVillage() {
-        if (this.owner == null) {
-            return false;
-        }
-		for (int i = 0; i < this.tileLocation.region.connections.Count; i++) {
-			if (this.tileLocation.region.connections[i] is Region) {
-				Region adjacentRegion = (Region)this.tileLocation.region.connections[i];
-                if (adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this.owner.id) {
-                    FactionRelationship factionRel = this._owner.GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-                    if (factionRel != null && factionRel.isAtWar) {
-                        if (adjacentRegion.centerOfMass.landmarkOnTile.HasWarlord()) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    internal bool HasWarlord() {
-        for (int i = 0; i < this._location.charactersAtLocation.Count; i++) {
-            if (this._location.charactersAtLocation[i] is Character) {
-                if (((Character)this._location.charactersAtLocation[i]).role.roleType == CHARACTER_ROLE.WARLORD) {
-                    return true;
-                }
-            } else if (this._location.charactersAtLocation[i] is Party) {
-                if (((Party)this._location.charactersAtLocation[i]).partyLeader.role.roleType == CHARACTER_ROLE.WARLORD) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public void SetLandmarkObject(LandmarkObject obj) {
+        _landmarkObject = obj;
+        _landmarkObject.SetLandmark(this);
     }
     internal int GetTechnologyCount() {
         int count = 0;
@@ -1022,33 +835,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return count;
     }
-    internal bool HasAdjacentUnoccupiedTile() {
-        for (int i = 0; i < this._location.region.connections.Count; i++) {
-            if (this._location.region.connections[i] is Region) {
-                Region adjacentRegion = (Region)this._location.region.connections[i];
-                if (!adjacentRegion.centerOfMass.isOccupied) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    //internal HexTile GetRandomAdjacentUnoccupiedTile() {
-    //    List<HexTile> allUnoccupiedCenterOfMass = new List<HexTile>();
-    //    for (int i = 0; i < this._location.region.connections.Count; i++) {
-    //        if (this._location.region.connections[i] is Region) {
-    //            Region adjacentRegion = (Region)this._location.region.connections[i];
-    //            if (!adjacentRegion.centerOfMass.isOccupied && !this.owner.internalQuestManager.AlreadyHasQuestOfType(QUEST_TYPE.EXPAND, adjacentRegion.centerOfMass)) {
-    //                allUnoccupiedCenterOfMass.Add(adjacentRegion.centerOfMass);
-    //            }
-    //        }
-    //    }
-    //    if (allUnoccupiedCenterOfMass.Count > 0) {
-    //        return allUnoccupiedCenterOfMass[UnityEngine.Random.Range(0, allUnoccupiedCenterOfMass.Count)];
-    //    } else {
-    //        return null;
-    //    }
-    //}
     internal int GetMinimumCivilianRequirement() {
         if (this is ResourceLandmark) {
             return 5;
@@ -1099,26 +885,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
     }
-    //internal void AddHistory(string text, object obj = null) {
-    //    GameDate today = GameManager.Instance.Today();
-    //    string date = "[" + ((MONTH)today.month).ToString() + " " + today.day + ", " + today.year + "]";
-    //    if (obj != null) {
-    //        if (obj is CombatPrototype) {
-    //            CombatPrototype combat = (CombatPrototype)obj;
-    //            if (this.combatHistory.Count > 20) {
-    //                this.combatHistory.Remove(0);
-    //            }
-    //            _combatHistoryID += 1;
-    //            combatHistory.Add(_combatHistoryID, combat);
-    //            string combatText = "[url=" + _combatHistoryID.ToString() + "_combat]" + text + "[/url]";
-    //            text = combatText;
-    //        }
-    //    }
-    //    this._history.Insert(0, date + " " + text);
-    //    if (this._history.Count > 20) {
-    //        this._history.RemoveAt(this._history.Count - 1);
-    //    }
-    //}
     #endregion
 
     #region Materials
@@ -1126,70 +892,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_currDurability += amount;
 		_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
 	}
-    #endregion
-
-    #region Quests
- //   public void AddNewQuest(OldQuest.Quest quest) {
-	//	if (!_activeQuests.Contains(quest)) {
-	//		_activeQuests.Add(quest);
-	//		_owner.AddNewQuest(quest);
-	//		//if(quest.postedAt != null) {
-	//		//	quest.postedAt.AddQuestToBoard(quest);
-	//		//}
-	//		//quest.ScheduleDeadline(); //Once a quest has been added to active quest, scedule it's deadline
-	//	}
-	//}
-	//public void RemoveQuest(OldQuest.Quest quest) {
-	//	_activeQuests.Remove(quest);
-	//	_owner.RemoveQuest(quest);
-	//}
-	//public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
-	//	List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
-	//	for (int i = 0; i < _activeQuests.Count; i++) {
-	//		OldQuest.Quest currQuest = _activeQuests[i];
-	//		if(currQuest.questType == questType) {
-	//			quests.Add(currQuest);
-	//		}
-	//	}
-	//	return quests;
-	//}
-	//public bool AlreadyHasQuestOfType(QUEST_TYPE questType, object identifier){
-	//	for (int i = 0; i < _activeQuests.Count; i++) {
-	//		OldQuest.Quest currQuest = _activeQuests[i];
-	//		if(currQuest.questType == questType) {
-	//			if(questType == QUEST_TYPE.EXPLORE_REGION){
-	//				Region region = (Region)identifier;
-	//				if(((ExploreRegion)currQuest).regionToExplore.id == region.id){
-	//					return true;
-	//				}
-	//			} else if(questType == QUEST_TYPE.EXPAND){
-	//				if(identifier is HexTile){
-	//					HexTile hexTile = (HexTile)identifier;
-	//					if(((Expand)currQuest).targetUnoccupiedTile.id == hexTile.id){
-	//						return true;
-	//					}
-	//				}else if(identifier is BaseLandmark){
-	//					BaseLandmark landmark = (BaseLandmark)identifier;
-	//					if(((Expand)currQuest).originTile.id == landmark.tileLocation.id){
-	//						return true;
-	//					}
-	//				}
-
-	//			} else if (questType == QUEST_TYPE.BUILD_STRUCTURE) {
-	//				BaseLandmark landmark = (BaseLandmark)identifier;
-	//				if (((BuildStructure)currQuest).target.id == landmark.id) {
-	//					return true;
-	//				}
-	//			} else if (questType == QUEST_TYPE.OBTAIN_MATERIAL) {
-	//				MATERIAL material = (MATERIAL)identifier;
-	//				if (((ObtainMaterial)currQuest).materialToObtain == material) {
-	//					return true;
-	//				}
-	//			}
-	//		}
-	//	}
-	//	return false;
-	//}
     #endregion
 
     #region Items
@@ -1266,56 +968,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return itemWeights;
     }
-    ///*
-    // What should happen when this landmark is explored?
-    //     */
-    //public virtual void ExploreLandmark(Character explorer) {
-    //    //default behaviour is a random item will be given to the explorer based on the landmarks item weights
-    //    Item generatedItem = GenerateRandomItem();
-    //    if (generatedItem != null) {
-    //        if (generatedItem.isObtainable) {
-    //            if (!explorer.EquipItem(generatedItem)) {
-    //                explorer.PickupItem(generatedItem);
-    //            }
-    //        } else {
-    //            //item should only be interacted with
-    //            StorylineManager.Instance.OnInteractWith(generatedItem, this, explorer);
-    //            Log interactLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "interact_item");
-    //            interactLog.AddToFillers(explorer, explorer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //            interactLog.AddToFillers(null, generatedItem.interactString, LOG_IDENTIFIER.OTHER);
-    //            interactLog.AddToFillers(null, generatedItem.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
-    //            AddHistory(interactLog);
-    //            explorer.AddHistory(interactLog);
-    //        }
-
-    //    }
-    //}
-   // /*
-   //  Generate a random item, given the data of this landmark type
-   //      */
-   // public Item GenerateRandomItem() {
-   //     WeightedDictionary<Item> itemWeights = GetExploreItemWeights();
-   //     if (itemWeights.GetTotalOfWeights() > 0) {
-   //         Item chosenItem = itemWeights.PickRandomElementGivenWeights();
-			////Remove item form weights if it is not unlimited
-			//RemoveItemInLandmark(chosenItem);
-   //         return chosenItem;
-   //         //if (ItemManager.Instance.IsLootChest(chosenItem)) {
-   //         //    //chosen item is a loot crate, generate a random item
-   //         //    string[] words = chosenItem.itemName.Split(' ');
-   //         //    int tier = System.Int32.Parse(words[1]);
-   //         //    if (chosenItem.itemName.Contains("Armor")) {
-   //         //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
-   //         //    }else if (chosenItem.itemName.Contains("Weapon")) {
-   //         //        return ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
-   //         //    }
-   //         //} else {
-
-   //         //}
-
-   //     }
-   //     return null;
-   // }
 
 	public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
 		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
@@ -1368,5 +1020,14 @@ public class BaseLandmark : ILocation, TaskCreator {
 			}
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Tags
+    private void ConstructTags(LandmarkData landmarkData) {
+        _landmarkTags = new List<LANDMARK_TAG>(landmarkData.uniqueTags); //add unique tags
+        //add common tags from base landmark type
+        BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
+        _landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
+    }
+    #endregion
 }

@@ -2316,40 +2316,40 @@ namespace ECS {
 				_avatar.InstantDestroyAvatar();
             }
         }
-        public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
-//			if(isInCombat){
-//				SetCurrentFunction (() => GoToNearestNonHostileSettlement (() => onReachSettlement()));
-//				return;
-//			}
-            //check first if the character is already at a non hostile settlement
-            if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
-                && this.currLocation.landmarkOnTile.owner != null) {
-                if(this.faction.id != this.currLocation.landmarkOnTile.owner.id) {
-                    if(FactionManager.Instance.GetRelationshipBetween(this.faction, this.currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                        onReachSettlement();
-                        return;
-                    }
-                } else {
-                    onReachSettlement();
-                    return;
-                }
-            }
-            //character is not on a non hostile settlement
-            List<Settlement> allSettlements = new List<Settlement>();
-            for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
-                Tribe currTribe = FactionManager.Instance.allTribes[i];
-                if(this.faction.id == currTribe.id ||
-                    FactionManager.Instance.GetRelationshipBetween(this.faction, currTribe).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                    allSettlements.AddRange(currTribe.settlements);
-                }
-            }
-            allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.tileLocation.transform.position)).ToList();
-            if(_avatar == null) {
-                CreateNewAvatar();
-            }
-			_avatar.SetTarget(allSettlements[0].tileLocation);
-            _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
-        }
+//        public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
+////			if(isInCombat){
+////				SetCurrentFunction (() => GoToNearestNonHostileSettlement (() => onReachSettlement()));
+////				return;
+////			}
+//            //check first if the character is already at a non hostile settlement
+//            if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
+//                && this.currLocation.landmarkOnTile.owner != null) {
+//                if(this.faction.id != this.currLocation.landmarkOnTile.owner.id) {
+//                    if(FactionManager.Instance.GetRelationshipBetween(this.faction, this.currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+//                        onReachSettlement();
+//                        return;
+//                    }
+//                } else {
+//                    onReachSettlement();
+//                    return;
+//                }
+//            }
+//            //character is not on a non hostile settlement
+//            List<Settlement> allSettlements = new List<Settlement>();
+//            for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
+//                Tribe currTribe = FactionManager.Instance.allTribes[i];
+//                if(this.faction.id == currTribe.id ||
+//                    FactionManager.Instance.GetRelationshipBetween(this.faction, currTribe).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+//                    allSettlements.AddRange(currTribe.settlements);
+//                }
+//            }
+//            allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.tileLocation.transform.position)).ToList();
+//            if(_avatar == null) {
+//                CreateNewAvatar();
+//            }
+//			_avatar.SetTarget(allSettlements[0].tileLocation);
+//            _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
+//        }
         ///*
         // This is the default action to be done when a 
         // character returns to a non hostile settlement after a quest.
@@ -2525,7 +2525,7 @@ namespace ECS {
         }
         public BaseLandmark GetNearestLandmarkWithoutHostiles() {
             Region currRegionLocation = specificLocation.tileLocation.region;
-            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.allLandmarks);
+            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.landmarks);
             //elligibleLandmarks.Add(currRegionLocation.mainLandmark);
             //elligibleLandmarks.AddRange(currRegionLocation.landmarks);
 			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {

@@ -15,7 +15,7 @@ public class LandmarkObject : MonoBehaviour {
     public void SetLandmark(BaseLandmark landmark) {
         _landmark = landmark;
         UpdateName();
-        if (_landmark.specificLandmarkType != LANDMARK_TYPE.CITY) {
+        if (_landmark.specificLandmarkType != LANDMARK_TYPE.TOWN) {
             LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_landmark.specificLandmarkType);
             if (data.landmarkObjectSprite != null) {
                 iconSprite.sprite = data.landmarkObjectSprite;
