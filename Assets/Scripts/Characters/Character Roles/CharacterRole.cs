@@ -18,6 +18,18 @@ public class CharacterRole {
 	protected CharacterTask _defaultRoleTask;
 	protected bool _cancelsAllOtherTasks;
 	protected bool _isRemoved;
+    protected int _food;
+    protected int _energy;
+    protected int _joy;
+    protected int _prestige;
+    protected bool _isHungry;
+    protected bool _isFamished;
+    protected bool _isTired;
+    protected bool _isExhausted;
+    protected bool _isSad;
+    protected bool _isDepressed;
+    protected bool _isAnxious;
+    protected bool _isInsecure;
 
     #region getters/setters
     public CHARACTER_ROLE roleType {
@@ -92,5 +104,155 @@ public class CharacterRole {
 		}
 		return null;
 	}
-	#endregion
+    #endregion
+
+    #region Needs
+    public void DepleteFood() {
+        AdjustFood(-10);
+    }
+    public void SetFood(int amount) {
+        _food = amount;
+    }
+    public void AdjustFood(int amount) {
+        _food += amount;
+        _food = Mathf.Clamp(_food, 0, 1000);
+
+        if(_food <= 100 && !_isFamished) {
+            _isFamished = true;
+            if (_isHungry) {
+                _isHungry = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
+            }
+            _character.AssignTag(CHARACTER_TAG.FAMISHED);
+        }
+        else if(_food > 100 && _food <= 300 && !_isHungry) {
+            _isHungry = true;
+            if (_isFamished) {
+                _isFamished = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.FAMISHED);
+            }
+            _character.AssignTag(CHARACTER_TAG.HUNGRY);
+        }
+        else if (_food > 300) {
+            if (_isHungry) {
+                _isHungry = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
+            }
+            if (_isFamished) {
+                _isFamished = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.FAMISHED);
+            }
+        }
+    }
+
+    public void DepleteEnergy() {
+        AdjustEnergy(-10);
+    }
+    public void SetEnergy(int amount) {
+        _energy = amount;
+    }
+    public void AdjustEnergy(int amount) {
+        _energy += amount;
+        _energy = Mathf.Clamp(_food, 0, 1000);
+
+        if (_energy <= 100 && !_isExhausted) {
+            _isExhausted = true;
+            if (_isTired) {
+                _isTired = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
+            }
+            _character.AssignTag(CHARACTER_TAG.EXHAUSTED);
+        }
+        else if (_energy > 100 && _energy <= 300 && !_isTired) {
+            _isTired = true;
+            if (_isExhausted) {
+                _isExhausted = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.EXHAUSTED);
+            }
+            _character.AssignTag(CHARACTER_TAG.TIRED);
+        }
+        else if (_energy > 300) {
+            if (_isTired) {
+                _isTired = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
+            }
+            if (_isExhausted) {
+                _isExhausted = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.EXHAUSTED);
+            }
+        }
+    }
+
+    public void DepleteJoy() {
+        AdjustJoy(-10);
+    }
+    public void SetJoy(int amount) {
+        _joy = amount;
+    }
+    public void AdjustJoy(int amount) {
+        _joy += amount;
+        if (_joy <= 100 && !_isDepressed) {
+            _isDepressed = true;
+            if (_isSad) {
+                _isSad = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
+            }
+            _character.AssignTag(CHARACTER_TAG.DEPRESSED);
+        }
+        else if (_joy > 100 && _joy <= 300 && !_isSad) {
+            _isSad = true;
+            if (_isDepressed) {
+                _isDepressed = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.DEPRESSED);
+            }
+            _character.AssignTag(CHARACTER_TAG.SAD);
+        }
+        else if (_joy > 300) {
+            if (_isSad) {
+                _isSad = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
+            }
+            if (_isDepressed) {
+                _isDepressed = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.DEPRESSED);
+            }
+        }
+    }
+
+    public void DepletePrestige() {
+        AdjustPrestige(-10);
+    }
+    public void SetPrestige(int amount) {
+        _prestige = amount;
+    }
+    public void AdjustPrestige(int amount) {
+        _prestige += amount;
+        if (_prestige <= 100 && !_isInsecure) {
+            _isInsecure = true;
+            if (_isAnxious) {
+                _isAnxious = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
+            }
+            _character.AssignTag(CHARACTER_TAG.INSECURE);
+        }
+        else if (_prestige > 100 && _prestige <= 300 && !_isAnxious) {
+            _isAnxious = true;
+            if (_isInsecure) {
+                _isInsecure = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.INSECURE);
+            }
+            _character.AssignTag(CHARACTER_TAG.ANXIOUS);
+        }
+        else if (_prestige > 300) {
+            if (_isAnxious) {
+                _isAnxious = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
+            }
+            if (_isInsecure) {
+                _isInsecure = false;
+                _character.RemoveCharacterTag(CHARACTER_TAG.INSECURE);
+            }
+        }
+    }
+    #endregion
 }

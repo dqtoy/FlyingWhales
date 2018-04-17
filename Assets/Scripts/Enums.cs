@@ -1187,6 +1187,14 @@ public enum CHARACTER_TAG{
 	HERBALIST,
 	RITUALIST,
 	HUNTED,
+    HUNGRY,
+    FAMISHED,
+    TIRED,
+    EXHAUSTED,
+    SAD,
+    DEPRESSED,
+    ANXIOUS,
+    INSECURE,
 }
 
 public enum PRODUCTION_TYPE{

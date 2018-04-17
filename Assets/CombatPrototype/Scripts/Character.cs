@@ -1892,6 +1892,30 @@ namespace ECS {
             case CHARACTER_TAG.BETA:
                 charTag = new Beta(this);
                 break;
+            case CHARACTER_TAG.HUNGRY:
+                charTag = new Hungry(this);
+                break;
+            case CHARACTER_TAG.FAMISHED:
+                charTag = new Famished(this);
+                break;
+            case CHARACTER_TAG.TIRED:
+                charTag = new Tired(this);
+                break;
+            case CHARACTER_TAG.EXHAUSTED:
+                charTag = new Exhausted(this);
+                break;
+            case CHARACTER_TAG.SAD:
+                charTag = new Sad(this);
+                break;
+            case CHARACTER_TAG.DEPRESSED:
+                charTag = new Depressed(this);
+                break;
+            case CHARACTER_TAG.ANXIOUS:
+                charTag = new Anxious(this);
+                break;
+            case CHARACTER_TAG.INSECURE:
+                charTag = new Insecure(this);
+                break;
             }
 			if(charTag != null){
 				AddCharacterTag (charTag);

@@ -74,7 +74,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();
-        Biomes.Instance.GenerateTileEdges();
+        //Biomes.Instance.GenerateTileEdges();
 
         //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
