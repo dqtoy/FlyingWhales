@@ -55,6 +55,12 @@ public class Biomes : MonoBehaviour {
 
     [Space(10)]
     [Header("Hextile Masks")]
+    //public Sprite[] topRightMasks;
+    //public Sprite[] rightMasks;
+    //public Sprite[] botRightMasks;
+    //public Sprite[] topLeftMasks;
+    //public Sprite[] leftMasks;
+    //public Sprite[] botLeftMasks;
     public Texture[] topRightMasks;
     public Texture[] rightMasks;
     public Texture[] botRightMasks;

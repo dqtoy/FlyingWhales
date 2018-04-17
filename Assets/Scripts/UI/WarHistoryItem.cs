@@ -32,9 +32,9 @@ public class WarHistoryItem : MonoBehaviour {
         }
 
         for (int i = nextIndex; i < war.allBattles.Count; i++) {
-            GameObject battleGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.battleHistoryPrefab.name, battlesTable.transform);
-            battleGO.transform.localScale = Vector3.one;
-            battleGO.GetComponent<BattleHistoryItem>().SetBattle(war.allBattles[i], this);
+            //GameObject battleGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.battleHistoryPrefab.name, battlesTable.transform);
+            //battleGO.transform.localScale = Vector3.one;
+            //battleGO.GetComponent<BattleHistoryItem>().SetBattle(war.allBattles[i], this);
         }
         RepositionBattlesTable();
     }

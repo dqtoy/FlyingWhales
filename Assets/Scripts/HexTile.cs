@@ -842,22 +842,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     }
     internal void LoadEdges() {
         int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
-		List<HexTile> neighbours = new List<HexTile>(this.AllNeighbours);
+        List<HexTile> neighbours = new List<HexTile>(this.AllNeighbours);
         if (this.elevationType == ELEVATION.WATER) {
             neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
         }
         for (int i = 0; i < neighbours.Count; i++) {
-            HexTile currentNeighbour = neighbours[i];            
+            HexTile currentNeighbour = neighbours[i];
 
             int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
 
-            if(biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
+            if (biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
                 int neighbourX = currentNeighbour.xCoordinate;
                 int neighbourY = currentNeighbour.yCoordinate;
 
                 Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
                     (currentNeighbour.yCoordinate - this.yCoordinate));
-                if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) || 
+                if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) ||
                     this.elevationType == ELEVATION.WATER) {
                     GameObject gameObjectToEdit = null;
                     Texture[] spriteMasksToChooseFrom = null;
@@ -866,49 +866,60 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                             //top left
                             gameObjectToEdit = this.topLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        } else if (difference.X == 0 && difference.Y == 1) {
+                        }
+                        else if (difference.X == 0 && difference.Y == 1) {
                             //top right
                             gameObjectToEdit = this.topRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        } else if (difference.X == 1 && difference.Y == 0) {
+                        }
+                        else if (difference.X == 1 && difference.Y == 0) {
                             //right
                             gameObjectToEdit = this.rightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        } else if (difference.X == 0 && difference.Y == -1) {
+                        }
+                        else if (difference.X == 0 && difference.Y == -1) {
                             //bottom right
                             gameObjectToEdit = this.botRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        } else if (difference.X == -1 && difference.Y == -1) {
+                        }
+                        else if (difference.X == -1 && difference.Y == -1) {
                             //bottom left
                             gameObjectToEdit = this.botLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        } else if (difference.X == -1 && difference.Y == 0) {
+                        }
+                        else if (difference.X == -1 && difference.Y == 0) {
                             //left
                             gameObjectToEdit = this.leftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
                         }
-                    } else {
+                    }
+                    else {
                         if (difference.X == 0 && difference.Y == 1) {
                             //top left
                             gameObjectToEdit = this.topLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        } else if (difference.X == 1 && difference.Y == 1) {
+                        }
+                        else if (difference.X == 1 && difference.Y == 1) {
                             //top right
                             gameObjectToEdit = this.topRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        } else if (difference.X == 1 && difference.Y == 0) {
+                        }
+                        else if (difference.X == 1 && difference.Y == 0) {
                             //right
                             gameObjectToEdit = this.rightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        } else if (difference.X == 1 && difference.Y == -1) {
+                        }
+                        else if (difference.X == 1 && difference.Y == -1) {
                             //bottom right
                             gameObjectToEdit = this.botRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        } else if (difference.X == 0 && difference.Y == -1) {
+                        }
+                        else if (difference.X == 0 && difference.Y == -1) {
                             //bottom left
                             gameObjectToEdit = this.botLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        } else if (difference.X == -1 && difference.Y == 0) {
+                        }
+                        else if (difference.X == -1 && difference.Y == 0) {
                             //left
                             gameObjectToEdit = this.leftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
@@ -920,9 +931,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                         sr.sortingOrder += biomeLayerOfNeighbour;
                         //                        Material mat = new Material(Shader.Find("AlphaMask"));
                         gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
-						gameObjectToEdit.SetActive(true);
+                        gameObjectToEdit.SetActive(true);
 
-//                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
+                        //                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
                         //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
                         //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
                     }
@@ -930,9 +941,112 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 }
             }
 
-            
+
         }
     }
+    //internal void LoadEdges() {
+    //    int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
+    //    List<HexTile> neighbours = new List<HexTile>(this.AllNeighbours);
+    //    if (this.elevationType == ELEVATION.WATER) {
+    //        neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
+    //    }
+    //    for (int i = 0; i < neighbours.Count; i++) {
+    //        HexTile currentNeighbour = neighbours[i];
+
+    //        int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
+
+    //        if (biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
+    //            int neighbourX = currentNeighbour.xCoordinate;
+    //            int neighbourY = currentNeighbour.yCoordinate;
+
+    //            Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
+    //                (currentNeighbour.yCoordinate - this.yCoordinate));
+    //            if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) ||
+    //                this.elevationType == ELEVATION.WATER) {
+    //                GameObject gameObjectToEdit = null;
+    //                Sprite[] spriteMasksToChooseFrom = null;
+    //                if (this.yCoordinate % 2 == 0) {
+    //                    if (difference.X == -1 && difference.Y == 1) {
+    //                        //top left
+    //                        gameObjectToEdit = this.topLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
+    //                    }
+    //                    else if (difference.X == 0 && difference.Y == 1) {
+    //                        //top right
+    //                        gameObjectToEdit = this.topRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
+    //                    }
+    //                    else if (difference.X == 1 && difference.Y == 0) {
+    //                        //right
+    //                        gameObjectToEdit = this.rightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
+    //                    }
+    //                    else if (difference.X == 0 && difference.Y == -1) {
+    //                        //bottom right
+    //                        gameObjectToEdit = this.botRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
+    //                    }
+    //                    else if (difference.X == -1 && difference.Y == -1) {
+    //                        //bottom left
+    //                        gameObjectToEdit = this.botLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
+    //                    }
+    //                    else if (difference.X == -1 && difference.Y == 0) {
+    //                        //left
+    //                        gameObjectToEdit = this.leftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
+    //                    }
+    //                }
+    //                else {
+    //                    if (difference.X == 0 && difference.Y == 1) {
+    //                        //top left
+    //                        gameObjectToEdit = this.topLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
+    //                    }
+    //                    else if (difference.X == 1 && difference.Y == 1) {
+    //                        //top right
+    //                        gameObjectToEdit = this.topRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
+    //                    }
+    //                    else if (difference.X == 1 && difference.Y == 0) {
+    //                        //right
+    //                        gameObjectToEdit = this.rightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
+    //                    }
+    //                    else if (difference.X == 1 && difference.Y == -1) {
+    //                        //bottom right
+    //                        gameObjectToEdit = this.botRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
+    //                    }
+    //                    else if (difference.X == 0 && difference.Y == -1) {
+    //                        //bottom left
+    //                        gameObjectToEdit = this.botLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
+    //                    }
+    //                    else if (difference.X == -1 && difference.Y == 0) {
+    //                        //left
+    //                        gameObjectToEdit = this.leftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
+    //                    }
+    //                }
+    //                if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
+    //                    SpriteRenderer sr = gameObjectToEdit.GetComponent<SpriteRenderer>();
+    //                    sr.sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
+    //                    sr.sortingOrder += biomeLayerOfNeighbour;
+    //                    gameObjectToEdit.GetComponentInChildren<SpriteMask>().sprite = spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)];
+    //                    //                        Material mat = new Material(Shader.Find("AlphaMask"));
+    //                    //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+    //                    gameObjectToEdit.SetActive(true);
+
+    //                    //                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
+    //                    //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+    //                    //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
+    //                }
+
+    //            }
+    //        }
+    //    }
+    //}
     internal void SetBaseSprite(Sprite baseSprite){
 		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
 	}

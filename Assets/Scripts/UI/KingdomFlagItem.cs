@@ -67,9 +67,9 @@ public class KingdomFlagItem : MonoBehaviour {
             eventItemToUse.SetEvent(gameEventToAdd);
             eventItemToUse.gameObject.SetActive(true);
         } else {
-            GameObject eventGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.gameEventPrefab.name, _eventsGrid.transform);
-            AddGameObjectToGrid(eventGO);
-            eventGO.GetComponent<EventItem>().SetEvent(gameEventToAdd);
+            //GameObject eventGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.gameEventPrefab.name, _eventsGrid.transform);
+            //AddGameObjectToGrid(eventGO);
+            //eventGO.GetComponent<EventItem>().SetEvent(gameEventToAdd);
         }
     }
 

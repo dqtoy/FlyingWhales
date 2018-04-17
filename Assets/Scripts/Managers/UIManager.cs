@@ -17,24 +17,7 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Prefabs")]
-    public GameObject characterPortraitPrefab;
-	public GameObject historyPortraitPrefab;
-	public GameObject eventPortraitPrefab;
-	public GameObject gameEventPrefab;
-	public GameObject kingdomEventsListParentPrefab;
-	public GameObject kingdomEventsListItemPrefab;
-    public GameObject kingdomFlagPrefab;
-    public GameObject logItemPrefab;
-    public GameObject cityItemPrefab;
-	//public GameObject lairItemPrefab;
-	//public GameObject hextileEventItemPrefab;
-    public GameObject resourceIconPrefab;
-    public GameObject playerEventItemPrefab;
-    [SerializeField] private GameObject kingdomIntervenePrefab;
     [SerializeField] private GameObject notificationPrefab;
-    [SerializeField] private GameObject logHistoryPrefab;
-    public GameObject warHistoryPrefab;
-    public GameObject battleHistoryPrefab;
 
     [Space(10)]
     [Header("Main UI Objects")]
@@ -64,10 +47,10 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("World Info Menu")]
-    [SerializeField] private GameObject worldInfoSelectedGO;
+    [SerializeField] private GameObject worldInfoCharactersSelectedGO;
+    [SerializeField] private GameObject worldInfoQuestsSelectedGO;
+    [SerializeField] private GameObject worldInfoStorylinesSelectedGO;
     [SerializeField] private GameObject worldInfoCharactersBtn;
-    //[SerializeField] private GameObject worldInfoAllianceBtn;
-    //[SerializeField] private GameObject worldInfoWarsBtn;
     [SerializeField] private GameObject worldInfoQuestsBtn;
     [SerializeField] private GameObject worldInfoStorylinesBtn;
 
@@ -136,7 +119,7 @@ public class UIManager : MonoBehaviour {
 		isShowKingdomHistoryOnly = false;
   //      PopulateHistoryTable();
 		//PopulateCityHistoryTable ();
-        UpdateUI();
+        //UpdateUI();
 	}
 
     internal void InitializeUI() {
@@ -521,13 +504,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region World Info Menu
-    private void SetWorldInfoMenuItemAsSelected(Transform worldInfoMenuItem) {
-        worldInfoSelectedGO.transform.parent = worldInfoMenuItem;
-        worldInfoSelectedGO.transform.localPosition = Vector3.zero;
-    }
-    #endregion
-
     #region Settlement Info
     [Space(10)]
     [Header("Settlement Info")]
@@ -867,11 +843,12 @@ public class UIManager : MonoBehaviour {
     public void ShowQuestsSummary() {
         HideCharactersSummary();
         HideStorylinesSummary();
-        SetWorldInfoMenuItemAsSelected(worldInfoQuestsBtn.transform);
-		questsSummaryGO.SetActive(true);
+        worldInfoQuestsSelectedGO.SetActive(true);
+        questsSummaryGO.SetActive(true);
 		UpdateQuestsSummary();
     }
     public void HideQuestsSummary() {
+        worldInfoQuestsSelectedGO.SetActive(false);
         questsSummaryGO.SetActive(false);
     }
     public void UpdateQuestsSummary() {
@@ -905,12 +882,13 @@ public class UIManager : MonoBehaviour {
     public void ShowStorylinesSummary() {
         HideCharactersSummary();
         HideQuestsSummary();
-        SetWorldInfoMenuItemAsSelected(worldInfoStorylinesBtn.transform);
+        worldInfoStorylinesSelectedGO.SetActive(true);
         storylinesSummaryMenu.ShowMenu();
 		StartCoroutine(RepositionTable (storylinesSummaryMenu.storyTable));
         //UpdateQuestsSummary();
     }
     public void HideStorylinesSummary() {
+        worldInfoStorylinesSelectedGO.SetActive(false);
         storylinesSummaryMenu.HideMenu();
     }
     #endregion
@@ -923,10 +901,11 @@ public class UIManager : MonoBehaviour {
     public void ShowCharactersSummary() {
         HideQuestsSummary();
         HideStorylinesSummary();
-        SetWorldInfoMenuItemAsSelected(worldInfoCharactersBtn.transform);
+        worldInfoCharactersSelectedGO.SetActive(true);
         charactersSummaryMenu.OpenMenu();
     }
     public void HideCharactersSummary() {
+        worldInfoCharactersSelectedGO.SetActive(false);
         charactersSummaryMenu.CloseMenu();
     }
     //public void UpdateCharacterSummary() {

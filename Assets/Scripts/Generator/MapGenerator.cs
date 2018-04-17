@@ -74,7 +74,16 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();
-        Biomes.Instance.GenerateTileEdges();
+        StartCoroutine(StartWorld());
+    }
+
+    internal void ReloadScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    IEnumerator StartWorld() {
+        yield return new WaitForSeconds(1f);
+        //Biomes.Instance.GenerateTileEdges();
 
         //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
@@ -83,13 +92,9 @@ public class MapGenerator : MonoBehaviour {
         FactionManager.Instance.GenerateFactionCharacters();
         FactionManager.Instance.GenerateMonsters();
         StorylineManager.Instance.GenerateStoryLines();
-		CharacterManager.Instance.SchedulePrisonerConversion ();
+        CharacterManager.Instance.SchedulePrisonerConversion();
         //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
-		CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
+        CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
-    }
-
-    internal void ReloadScene() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
