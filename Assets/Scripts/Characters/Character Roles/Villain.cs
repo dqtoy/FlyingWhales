@@ -30,8 +30,8 @@ public class Villain : CharacterRole {
 
         SetFood(1000);
         SetEnergy(1000);
-        SetJoy(1000);
-        SetPrestige(1000);
+        SetJoy(600);
+        SetPrestige(400);
 
         Messenger.AddListener("OnDayEnd", StartDepletion);
 	}

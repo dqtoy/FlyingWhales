@@ -120,7 +120,7 @@ public class CharacterRole {
 
     #region Needs
     public void DepleteFood() {
-        AdjustFood(-10);
+        AdjustFood(-25);
     }
     public void SetFood(int amount) {
         _food = amount;
@@ -158,7 +158,7 @@ public class CharacterRole {
     }
 
     public void DepleteEnergy() {
-        AdjustEnergy(-10);
+        AdjustEnergy(-12);
     }
     public void SetEnergy(int amount) {
         _energy = amount;
@@ -196,7 +196,7 @@ public class CharacterRole {
     }
 
     public void DepleteJoy() {
-        AdjustJoy(-10);
+        AdjustJoy(-7);
     }
     public void SetJoy(int amount) {
         _joy = amount;
@@ -232,7 +232,7 @@ public class CharacterRole {
     }
 
     public void DepletePrestige() {
-        AdjustPrestige(-10);
+        AdjustPrestige(-4);
     }
     public void SetPrestige(int amount) {
         _prestige = amount;
