@@ -479,6 +479,15 @@ public class Faction {
         }
         return ownedLandmarks;
     }
+    public BaseLandmark GetOwnedLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        for (int i = 0; i < _ownedLandmarks.Count; i++) {
+            BaseLandmark currLandmark = _ownedLandmarks[i];
+            if (currLandmark.specificLandmarkType == landmarkType) {
+                return currLandmark;
+            }
+        }
+        return null;
+    }
     public void AddLandmarkInfo(BaseLandmark landmark) {
         if (!_landmarkInfo.Contains(landmark)) {
             _landmarkInfo.Add(landmark);

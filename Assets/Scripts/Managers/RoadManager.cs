@@ -451,7 +451,14 @@ public class RoadManager : MonoBehaviour {
         for (int i = 0; i < allLandmarks.Count; i++) {
             islands.Add(allLandmarks[i], new Island(allLandmarks[i]));
         }
-        ConnectFactionRegions(islands);
+        if (!ConnectFactionRegions(islands)) {
+            return false;
+        }
+        
+        if (!ConnectRegionLandmarks(islands)) {
+            return false;
+        }
+        
         allLandmarks = allLandmarks.Where(x => x.connections.Count < recommendedLandmarkConnections).ToList();
         //choose a random landmark to start
         BaseLandmark initialLandmark = allLandmarks[Random.Range(0, allLandmarks.Count)];
@@ -490,7 +497,9 @@ public class RoadManager : MonoBehaviour {
                 }
             }
         }
-        CheckForIslands(islands);
+        if (!CheckForIslands(islands)) {
+            return false;
+        }
         Debug.Log("Landmarks with 1 connection: " + LandmarkManager.Instance.GetAllLandmarks().Where(x => x.connections.Count == 1).Count());
         Debug.Log("Landmarks with 2 connections: " + LandmarkManager.Instance.GetAllLandmarks().Where(x => x.connections.Count == 2).Count());
         Debug.Log("Landmarks with 3 connections: " + LandmarkManager.Instance.GetAllLandmarks().Where(x => x.connections.Count == 3).Count());
@@ -501,7 +510,7 @@ public class RoadManager : MonoBehaviour {
     /*
      Connect faction regions with each other
          */
-    private void ConnectFactionRegions(Dictionary<BaseLandmark, Island> islands) {
+    private bool ConnectFactionRegions(Dictionary<BaseLandmark, Island> islands) {
         for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
             Faction currFaction = FactionManager.Instance.allTribes[i];
             if (currFaction.ownedRegions.Count > 1) {
@@ -516,21 +525,26 @@ public class RoadManager : MonoBehaviour {
                             if (!currRegion.HasConnectionToRegion(otherRegion)) { //make sure that the other region doesn't already have a connection with the current region
                                 //pick landmark in this region that is nearest to the other region
                                 BaseLandmark chosenLandmark = currRegion.GetLandmarkNearestTo(otherRegion);
-                                List<BaseLandmark> choices = new List<BaseLandmark>(otherRegion.landmarks);
-                                choices = choices.OrderBy(x => chosenLandmark.tileLocation.GetDistanceTo(x.tileLocation)).ToList();
-                                for (int l = 0; l < choices.Count; l++) {
-                                    BaseLandmark otherLandmark = choices[l];
-                                    List<HexTile> path = PathGenerator.Instance.GetPath(chosenLandmark.tileLocation, otherLandmark.tileLocation, PATHFINDING_MODE.LANDMARK_CONNECTION);
-                                    if (path != null && path.Count <= maxRoadLength) {
-                                        Debug.Log("Connecting " + chosenLandmark.landmarkName + " to " + otherLandmark.landmarkName);
-                                        Island islandOfChosenLandmark = islands[chosenLandmark];
-                                        Island islandOfOtherLandmark = islands[otherLandmark];
-                                        MergeIslands(islandOfChosenLandmark, islandOfOtherLandmark, islands);
-                                        ConnectLandmarkToLandmark(chosenLandmark, otherLandmark);
-                                        CreateRoad(path, ROAD_TYPE.MAJOR);
-                                        break;
+                                if (chosenLandmark != null) {
+                                    List<BaseLandmark> choices = new List<BaseLandmark>(otherRegion.landmarks);
+                                    choices = choices.OrderBy(x => chosenLandmark.tileLocation.GetDistanceTo(x.tileLocation)).ToList();
+                                    for (int l = 0; l < choices.Count; l++) {
+                                        BaseLandmark otherLandmark = choices[l];
+                                        List<HexTile> path = PathGenerator.Instance.GetPath(chosenLandmark.tileLocation, otherLandmark.tileLocation, PATHFINDING_MODE.LANDMARK_CONNECTION);
+                                        if (path != null && path.Count <= maxRoadLength) {
+                                            Debug.Log("Connecting " + chosenLandmark.landmarkName + " to " + otherLandmark.landmarkName);
+                                            Island islandOfChosenLandmark = islands[chosenLandmark];
+                                            Island islandOfOtherLandmark = islands[otherLandmark];
+                                            MergeIslands(islandOfChosenLandmark, islandOfOtherLandmark, islands);
+                                            ConnectLandmarkToLandmark(chosenLandmark, otherLandmark);
+                                            CreateRoad(path, ROAD_TYPE.MAJOR);
+                                            break;
+                                        }
                                     }
+                                } else {
+                                    return false;
                                 }
+                                
                             }
                         }
                     }
@@ -538,17 +552,59 @@ public class RoadManager : MonoBehaviour {
                 }
             }
         }
+        return true;
     }
-    private void ConnectRegionLandmarks() {
+    private bool ConnectRegionLandmarks(Dictionary<BaseLandmark, Island> islands) {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
+            if (currRegion.landmarks.Count <= 1) {
+                continue; //skip
+            }
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (!currLandmark.IsConnectedTo(currRegion)) {
+                List<BaseLandmark> otherLandmarks = new List<BaseLandmark>(currRegion.landmarks.Where(x => x.id != currLandmark.id && PathGenerator.Instance.GetPath(currLandmark.tileLocation, x.tileLocation, PATHFINDING_MODE.LANDMARK_CONNECTION) != null)
+                    .OrderBy(y => PathGenerator.Instance.GetPath(currLandmark.tileLocation, y.tileLocation, PATHFINDING_MODE.LANDMARK_CONNECTION).Count));
 
+                for (int k = 0; k < otherLandmarks.Count; k++) {
+                    BaseLandmark otherLandmark = otherLandmarks[k];
+                    if (currLandmark.id != otherLandmark.id && otherLandmark.connections.Count < maxLandmarkConnections && !currLandmark.IsConnectedTo(otherLandmark) && !currLandmark.IsIndirectlyConnectedTo(otherLandmark)) {
+                        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.tileLocation, otherLandmark.tileLocation, PATHFINDING_MODE.LANDMARK_CONNECTION);
+                        if (path != null) {
+                            Island islandOfChosenLandmark = islands[currLandmark];
+                            Island islandOfOtherLandmark = islands[otherLandmark];
+                            MergeIslands(islandOfChosenLandmark, islandOfOtherLandmark, islands);
+                            ConnectLandmarkToLandmark(currLandmark, otherLandmark);
+                            CreateRoad(path, ROAD_TYPE.MAJOR);
+                        }
+                    }
+                    if (currLandmark.connections.Count >= maxLandmarkConnections) {
+                        break;
+                    }
                 }
+                if (!currLandmark.IsConnectedTo(currRegion)) {
+                    return false; //The current landmark has not connected to a landmark in its region, return a failure
+                }
+
+                //if (!currLandmark.IsConnectedTo(currRegion)) { //currLandmark is not yet connected to a region from its region
+                    //List<BaseLandmark> choices = new List<BaseLandmark>();
+                    //choices.AddRange(currRegion.landmarks);
+                    //choices.Remove(currLandmark);
+                    ////connect the currLandmark to the nearest landmark
+                    //List<HexTile> path = new List<HexTile>();
+                    //BaseLandmark nearestLandmark = GetLandmarkNearestTo(currLandmark, choices, PATHFINDING_MODE.LANDMARK_CONNECTION, ref path);
+                    //if (nearestLandmark != null) {
+                    //    Island islandOfChosenLandmark = islands[currLandmark];
+                    //    Island islandOfOtherLandmark = islands[nearestLandmark];
+                    //    MergeIslands(islandOfChosenLandmark, islandOfOtherLandmark, islands);
+                    //    ConnectLandmarkToLandmark(currLandmark, nearestLandmark);
+                    //    CreateRoad(path, ROAD_TYPE.MAJOR);
+                    //} else {
+                    //    throw new System.Exception(currLandmark.landmarkName + " could not connect to any landmark");
+                    //}
+                //}
             }
         }
+        return true;
     }
     private BaseLandmark GetLandmarkForConnection(BaseLandmark origin) {
         Debug.Log("========== Choosing connection for " + origin.landmarkName + " ==========");
@@ -600,21 +656,27 @@ public class RoadManager : MonoBehaviour {
         }
         return nearestLandmark;
     }
-    private void CheckForIslands(Dictionary<BaseLandmark, Island> islandsDict) {
+    private bool CheckForIslands(Dictionary<BaseLandmark, Island> islandsDict) {
         List<Island> allIslands = new List<Island>();
         foreach (KeyValuePair<BaseLandmark, Island> kvp in islandsDict) {
             if (!allIslands.Contains(kvp.Value)) {
                 allIslands.Add(kvp.Value);
             }
         }
+        Island mainIsland = allIslands[0];
         if (allIslands.Count > 1) {
-            Island mainIsland = allIslands[0];
             for (int i = 1; i < allIslands.Count; i++) {
                 Island otherIsland = allIslands[i];
                 ConnectIslands(mainIsland, otherIsland, islandsDict);
             }
         }
 
+        foreach (KeyValuePair<BaseLandmark, Island> kvp in islandsDict) {
+            if (kvp.Value.landamrksInIsland.Count > 0 && kvp.Value != mainIsland) {
+                return false; //an island that is not the main island still remains
+            }
+        }
+        return true;
     }
     private void ConnectIslands(Island island1, Island island2, Dictionary<BaseLandmark, Island> islands) {
         List<BaseLandmark> island1Choices = island1.landamrksInIsland.Where(x => x.connections.Count < maxLandmarkConnections).ToList();
@@ -800,6 +862,24 @@ public class RoadManager : MonoBehaviour {
             }
         }
 
+    }
+
+    private BaseLandmark GetLandmarkNearestTo(BaseLandmark origin, List<BaseLandmark> choices, PATHFINDING_MODE pathfindingMode, ref List<HexTile> bestPath) {
+        BaseLandmark nearestLandmark = null;
+        List<HexTile> nearestPath = null;
+        for (int i = 0; i < choices.Count; i++) {
+            BaseLandmark currChoice = choices[i];
+            if (origin.IsConnectedTo(currChoice)) {
+                continue;
+            }
+            List<HexTile> path = PathGenerator.Instance.GetPath(origin.tileLocation, currChoice.tileLocation, pathfindingMode);
+            if (path != null && path.Count <= maxRoadLength && (nearestPath == null || path.Count < nearestPath.Count)) {
+                nearestPath = path;
+                nearestLandmark = currChoice;
+            }
+        }
+        bestPath = nearestPath;
+        return nearestLandmark;
     }
 }
 

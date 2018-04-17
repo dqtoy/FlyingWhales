@@ -55,8 +55,8 @@ public class Settlement : BaseLandmark {
     public override void Initialize (){
 		base.Initialize ();
 		if (_specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-            //When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
-            AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
+            ////When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
+            //AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
             GenerateGoblinCampTechnologies();
         }
     }
@@ -69,15 +69,15 @@ public class Settlement : BaseLandmark {
 	}
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
-		if (tileLocation.isHabitable) {
+        faction.AddSettlement(this);
+        if (specificLandmarkType == LANDMARK_TYPE.KINGS_CASTLE) {
             //Create structures on location
-            faction.AddSettlement(this);
-			//tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
-			//tileLocation.region.ReColorBorderTiles(faction.factionColor);
+            //tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
+            //tileLocation.region.ReColorBorderTiles(faction.factionColor);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
             tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             landmarkObject.UpdateName();
-			//tileLocation.emptyCityGO.SetActive(false);
+            //tileLocation.emptyCityGO.SetActive(false);
             //_producingPopulationFor = GetRaceBasedOnProportion();
         }
     }

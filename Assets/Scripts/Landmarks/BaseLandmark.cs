@@ -31,7 +31,6 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected int _combatHistoryID;
 	protected Dictionary<int, Combat> _combatHistory;
     protected List<ICombatInitializer> _charactersAtLocation;
-    protected Combat _currentCombat;
 	protected List<Item> _itemsInLandmark;
 	protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
@@ -136,6 +135,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
         ConstructCiviliansDictionary();
+        GenerateCivilians();
         SpawnInitialLandmarkItems();
     }
 
@@ -304,6 +304,25 @@ public class BaseLandmark : ILocation, TaskCreator {
                 _civiliansByRace.Add(currRace, 0);
             }
         }
+    }
+    private void GenerateCivilians() {
+        Faction ownerOfRegion = tileLocation.region.owner;
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+        int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
+        RACE civiliansRace = RACE.NONE;
+        if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+            civiliansRace = RACE.GOBLIN;
+        } else {
+            if (ownerOfRegion != null) {
+                civiliansRace = ownerOfRegion.race;
+            } else {
+                civiliansRace = RACE.HUMANS;
+                if (Random.Range(0, 2) == 1) {
+                    civiliansRace = RACE.ELVES;
+                }
+            }
+        }
+        AdjustCivilians(civiliansRace, civilians);
     }
     public void AdjustCivilians(RACE race, int amount, Character culprit = null) {
         _civiliansByRace[race] += amount;

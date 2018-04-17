@@ -57,9 +57,9 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
-
-        CameraMove.Instance.UpdateMinimapTexture();
-        return;
+        FactionManager.Instance.OccupyLandmarksInFactionRegions();
+        //CameraMove.Instance.UpdateMinimapTexture();
+        //return;
         //if (!RoadManager.Instance.GenerateRegionRoads()) {
         //    //reset
         //    Debug.LogWarning("Road generation ran into a problem, reloading scene...");
@@ -67,7 +67,7 @@ public class MapGenerator : MonoBehaviour {
         //    ReloadScene();
         //    return;
         //}
-        LandmarkManager.Instance.GenerateOtherLandmarks();
+        //LandmarkManager.Instance.GenerateOtherLandmarks();
         LandmarkManager.Instance.GenerateMaterials();
 
         RoadManager.Instance.FlattenRoads();

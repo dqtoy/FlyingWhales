@@ -245,9 +245,9 @@ public class FactionManager : MonoBehaviour {
         }
     }
     private void CreateChieftainForFaction(Faction faction) {
-        Settlement randomSettlement = faction.settlements[Random.Range(0, faction.settlements.Count)];
-        ECS.Character chieftain = randomSettlement.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
-        CharacterManager.Instance.EquipCharacterWithBestGear(randomSettlement, chieftain);
+        Settlement kingsCastle = faction.GetOwnedLandmarkOfType(LANDMARK_TYPE.KINGS_CASTLE) as Settlement;
+        ECS.Character chieftain = kingsCastle.CreateNewCharacter(CHARACTER_ROLE.CHIEFTAIN, "Swordsman");
+        CharacterManager.Instance.EquipCharacterWithBestGear(kingsCastle, chieftain);
         faction.SetLeader(chieftain);
     }
     /*
@@ -290,24 +290,24 @@ public class FactionManager : MonoBehaviour {
         //UIManager.Instance.UpdateFactionSummary();
         return newFaction;
     }
-    private void CreateInitialResourceStructuresForFaction(Faction faction, Settlement settlement, Region region) {
-        for (int i = 0; i < region.tilesWithMaterials.Count; i++) {
-            HexTile currTile = region.tilesWithMaterials[i];
-            if (currTile.HasStructure()) {
-                continue; //skip tiles that already have structures
-            }
-            //Does the settlement have the needed technology to build a structure on the current tile?
-            if (settlement.HasTechnology(MaterialManager.Instance.GetNeededTechnologyForMaterialStructure(currTile.materialOnTile))) {
-                //Based on known technologies of each Tribe, create Structures for the Resource Landmarks within their regions.
-                BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(currTile, Utilities.ConvertMaterialToLandmarkType(currTile.materialOnTile));
-                newLandmark.OccupyLandmark(faction);
-                newLandmark.AdjustCivilians(faction.race, Random.Range(5, 11)); //Each one should have between 5 to 10 civilians.
-                settlement.AddLandmarkAsOwned(newLandmark);
-				List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.tileLocation);
-                RoadManager.Instance.CreateRoad(road, ROAD_TYPE.MINOR);
-            }
-        }
-    }
+    //private void CreateInitialResourceStructuresForFaction(Faction faction, Settlement settlement, Region region) {
+    //    for (int i = 0; i < region.tilesWithMaterials.Count; i++) {
+    //        HexTile currTile = region.tilesWithMaterials[i];
+    //        if (currTile.HasStructure()) {
+    //            continue; //skip tiles that already have structures
+    //        }
+    //        //Does the settlement have the needed technology to build a structure on the current tile?
+    //        if (settlement.HasTechnology(MaterialManager.Instance.GetNeededTechnologyForMaterialStructure(currTile.materialOnTile))) {
+    //            //Based on known technologies of each Tribe, create Structures for the Resource Landmarks within their regions.
+    //            BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(currTile, Utilities.ConvertMaterialToLandmarkType(currTile.materialOnTile));
+    //            newLandmark.OccupyLandmark(faction);
+    //            newLandmark.AdjustCivilians(faction.race, Random.Range(5, 11)); //Each one should have between 5 to 10 civilians.
+    //            settlement.AddLandmarkAsOwned(newLandmark);
+				//List<HexTile> road = LandmarkManager.Instance.CreateRoadsForLandmarks(newLandmark.tileLocation);
+    //            RoadManager.Instance.CreateRoad(road, ROAD_TYPE.MINOR);
+    //        }
+    //    }
+    //}
     public void GenerateMonsters() {
         List<BaseLandmark> goblinCamps = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.GOBLIN_CAMP);
         List<BaseLandmark> caves = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.CAVE);
@@ -360,6 +360,20 @@ public class FactionManager : MonoBehaviour {
                 }
             }
 
+        }
+    }
+    public void OccupyLandmarksInFactionRegions() {
+        for (int i = 0; i < allTribes.Count; i++) {
+            Faction currTribe = allTribes[i];
+            for (int j = 0; j < currTribe.ownedRegions.Count; j++) {
+                Region currRegion = currTribe.ownedRegions[j];
+                for (int k = 0; k < currRegion.landmarks.Count; k++) {
+                    BaseLandmark currLandmark = currRegion.landmarks[k];
+                    if (currLandmark is Settlement && !currLandmark.isOccupied) {
+                        currLandmark.OccupyLandmark(currTribe);
+                    }
+                }
+            }
         }
     }
     #endregion
