@@ -468,7 +468,7 @@ public class RoadManager : MonoBehaviour {
         while (landmarkQueue.Count > 0) {
             BaseLandmark currLandmark = landmarkQueue.Dequeue();
             //yield return new WaitForSeconds(2f);
-            UIManager.Instance.ShowLandmarkInfo(currLandmark);
+            //UIManager.Instance.ShowLandmarkInfo(currLandmark);
             BaseLandmark landmarkToConnectTo = GetLandmarkForConnection(currLandmark);
             if (landmarkToConnectTo != null) {
                 ConnectLandmarkToLandmark(currLandmark, landmarkToConnectTo);
@@ -569,7 +569,7 @@ public class RoadManager : MonoBehaviour {
                     BaseLandmark otherLandmark = otherLandmarks[k];
                     if (currLandmark.id != otherLandmark.id && otherLandmark.connections.Count < maxLandmarkConnections && !currLandmark.IsConnectedTo(otherLandmark) && !currLandmark.IsIndirectlyConnectedTo(otherLandmark)) {
                         List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.tileLocation, otherLandmark.tileLocation, PATHFINDING_MODE.LANDMARK_CONNECTION);
-                        if (path != null) {
+                        if (path != null && path.Count < maxRoadLength) {
                             Island islandOfChosenLandmark = islands[currLandmark];
                             Island islandOfOtherLandmark = islands[otherLandmark];
                             MergeIslands(islandOfChosenLandmark, islandOfOtherLandmark, islands);
