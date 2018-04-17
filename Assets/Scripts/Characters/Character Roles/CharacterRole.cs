@@ -56,9 +56,21 @@ public class CharacterRole {
 	public bool isRemoved {
 		get { return _isRemoved; }
 	}
+    public int food {
+        get { return _food; }
+    }
+    public int energy {
+        get { return _energy; }
+    }
+    public int joy {
+        get { return _joy; }
+    }
+    public int prestige {
+        get { return _prestige; }
+    }
     #endregion
 
-	public CharacterRole(ECS.Character character){
+    public CharacterRole(ECS.Character character){
 		_character = character;
 		_cancelsAllOtherTasks = false;
 		_isRemoved = false;

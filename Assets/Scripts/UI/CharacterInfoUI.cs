@@ -164,15 +164,19 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-        text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
-        text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
+        //text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
+        //text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
 		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
-		text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
-//        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
-//            if (kvp.Value > 0) {
-//                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-//            }
-//        }
+		//text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
+        if (currentlyShowingCharacter.role != null) {
+            text += "\nFood: " + currentlyShowingCharacter.role.food + ", Energy: " + currentlyShowingCharacter.role.energy;
+            text += "\nJoy: " + currentlyShowingCharacter.role.joy + ", Prestige: " + currentlyShowingCharacter.role.prestige;
+        }
+        //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
+        //            if (kvp.Value > 0) {
+        //                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+        //            }
+        //        }
         //		text += "\n[b]Skills:[/b] ";
         //		if(currentlyShowingCharacter.skills.Count > 0){
         //			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
