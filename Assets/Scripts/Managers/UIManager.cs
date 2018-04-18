@@ -55,10 +55,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject worldInfoStorylinesBtn;
 
     [Space(10)]
-    [Header("World History Menu")]
-    [SerializeField] private WorldHistoryUI worldHistoryUI;
-
-    [Space(10)]
     [Header("Faction Summary Menu")]
     [SerializeField] private FactionSummaryUI factionSummaryUI;
 
@@ -77,8 +73,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     private const int KINGDOM_EXPIRY_DAYS = 30;
-
-    private Dictionary<DateTime, Kingdom> kingdomDisplayExpiry;
 
 	internal List<object> eventLogsQueue = new List<object> ();
 
@@ -350,7 +344,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Notifications Area
-    public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif, bool addLogToHistory = true) {
+    //public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif, bool addLogToHistory = true) {
 //      if (addLogToHistory) {
 //          AddLogToLogHistory(log);
 //      }
@@ -374,7 +368,7 @@ public class UIManager : MonoBehaviour {
         ////notificationParent.Reposition();
         //notificationScrollView.UpdatePosition();
 
-    }
+    //}
     public void ShowNotification(Log log, bool addLogToHistory = true) {
 //        if (addLogToHistory) {
 //            AddLogToLogHistory(log);
@@ -428,7 +422,7 @@ public class UIManager : MonoBehaviour {
         Messenger.Broadcast<Log>("AddLogToHistory", log);
     }
     public void ToggleNotificationHistory() {
-        worldHistoryUI.ToggleWorldHistoryUI();
+        //worldHistoryUI.ToggleWorldHistoryUI();
         //if (notificationHistoryGO.activeSelf) {
         //    HideNotificationHistory();
         //} else {
