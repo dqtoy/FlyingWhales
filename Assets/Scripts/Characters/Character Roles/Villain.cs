@@ -27,6 +27,31 @@ public class Villain : CharacterRole {
 		//_roleTasks.Add (new Patrol (this._character, 10));
 
 		_defaultRoleTask = _roleTasks [1];
+
+        SetFood(1000);
+        SetEnergy(1000);
+        SetJoy(600);
+        SetPrestige(400);
+
+        Messenger.AddListener("OnDayEnd", StartDepletion);
 	}
+
+    #region Overrides
+    public override void DeathRole() {
+        base.DeathRole();
+        Messenger.RemoveListener("OnDayEnd", StartDepletion);
+    }
+    public override void ChangedRole() {
+        base.ChangedRole();
+        Messenger.RemoveListener("OnDayEnd", StartDepletion);
+    }
+    #endregion
+
+    private void StartDepletion() {
+        DepleteFood();
+        DepleteEnergy();
+        DepleteJoy();
+        DepletePrestige();
+    }
 
 }

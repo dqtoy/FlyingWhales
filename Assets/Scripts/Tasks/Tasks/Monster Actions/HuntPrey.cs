@@ -65,8 +65,8 @@ public class HuntPrey : CharacterTask {
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
-		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+		for (int i = 0; i < character.specificLocation.tileLocation.region.landmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.landmarks [i];
 			if(CanBeDone(character, landmark)){
 				return true;
 			}
@@ -78,8 +78,8 @@ public class HuntPrey : CharacterTask {
     }
     protected override BaseLandmark GetLandmarkTarget (Character character){
 		base.GetLandmarkTarget (character);
-		for (int i = 0; i < character.specificLocation.tileLocation.region.allLandmarks.Count; i++) {
-			BaseLandmark landmark = character.specificLocation.tileLocation.region.allLandmarks [i];
+		for (int i = 0; i < character.specificLocation.tileLocation.region.landmarks.Count; i++) {
+			BaseLandmark landmark = character.specificLocation.tileLocation.region.landmarks [i];
 			if(CanBeDone(character, landmark)){
 				_landmarkWeights.AddElement (landmark, 50);
 			}

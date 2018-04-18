@@ -40,7 +40,7 @@ public class Prowl : CharacterTask {
     }
     public override bool AreConditionsMet(ECS.Character character) {
         Region regionOfChar = character.specificLocation.tileLocation.region;
-        return regionOfChar.allLandmarks.Count > 0; //if there are any landmarks in the region the character is in, return true.
+        return regionOfChar.landmarks.Count > 0; //if there are any landmarks in the region the character is in, return true.
     }
     public override int GetSelectionWeight(Character character) {
         return 40;
@@ -48,8 +48,8 @@ public class Prowl : CharacterTask {
     protected override BaseLandmark GetLandmarkTarget(Character character) {
         base.GetLandmarkTarget(character);
         Region regionOfChar = character.specificLocation.tileLocation.region;
-        for (int i = 0; i < regionOfChar.allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = regionOfChar.allLandmarks[i];
+        for (int i = 0; i < regionOfChar.landmarks.Count; i++) {
+            BaseLandmark currLandmark = regionOfChar.landmarks[i];
             int weight = 20; //Each landmark in the region: +20
             if (currLandmark.owner == null) {
                 weight += 50; //Landmark is not owned by any Faction: +50

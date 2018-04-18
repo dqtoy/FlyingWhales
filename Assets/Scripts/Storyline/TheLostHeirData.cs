@@ -23,7 +23,7 @@ public class TheLostHeirData : StorylineData {
     #region overrides
     public override bool InitialStorylineSetup() {
 //        base.InitialStorylineSetup();
-		if (LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.HUT).Count <= 0) {
+		if (LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.PEASANT_HUT).Count <= 0) {
 			return false;
 		}
         Messenger.AddListener<ECS.Item, BaseLandmark>(Signals.ITEM_PLACED_LANDMARK, OnHeirloomPlacedInLandmark);
@@ -68,7 +68,7 @@ public class TheLostHeirData : StorylineData {
         AddRelevantItem(falseHeir, successorDescription2);
 
         //If there is at least 1 Hut landmark in the world, generate a character in one of those Huts
-        List<BaseLandmark> huts = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.HUT);
+        List<BaseLandmark> huts = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.PEASANT_HUT);
         if (huts.Count > 0) {
             BaseLandmark chosenHut = huts[Random.Range(0, huts.Count)];
             lostHeir = chosenHut.CreateNewCharacter(chieftain.raceSetting.race, CHARACTER_ROLE.HERMIT, "Swordsman");

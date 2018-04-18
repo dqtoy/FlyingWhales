@@ -11,17 +11,12 @@ using System.Linq;
 
 public class Utilities : MonoBehaviour {
 	public static System.Random rng = new System.Random(); 
-	public static int lastKingdomID = 0;
-	public static int lastCitizenID = 0;
-	public static int lastCityID = 0;
     public static int lastRegionID = 0;
-	public static int lastEventID = 0;
 	public static int lastKingdomColorIndex = 0;
     public static int lastFactionColorIndex = 0;
 	public static int lastAlliancePoolID = 0;
 	public static int lastWarfareID = 0;
     public static int lastLogID = 0;
-	public static int lastSharedKingdomRelationshipID = 0;
     public static int lastLandmarkID = 0;
 	public static int lastFactionID = 0;
     public static int lastCharacterID = 0;
@@ -32,51 +27,17 @@ public class Utilities : MonoBehaviour {
 
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
 
-	public static string[] accidentCauses = new string[]{
-		"because he/she forgot to breath",
-		"after falling off a cliff",
-		"due to an infection from an arrow in the knee",
-		"of heartbreak",
-		"from an animal attack",
-		"after a boulder rolled over him",
-		"after a brick fell on his head",
-		"after slipping on the floor",
-		"from a landslide",
-		"from drinking too much alcohol",
-		"from eating poisonous mushrooms"
-	};
-	public static string[] crisis = new string[]{
-		"Food",
-	};
-
-	public static int specialResourceCount = 0;
-	
 	/*
 	 * Set unique id
 	 * */
 	public static int SetID<T>(T obj){
-		if (obj is Kingdom) {
-			lastKingdomID += 1;
-			return lastKingdomID;
-		} else if (obj is City) {
-			lastCityID += 1;
-			return lastCityID;
-		} else if (obj is Citizen) {
-			lastCitizenID += 1;
-			return lastCitizenID;
-		}else if (obj is GameEvent) {
-			lastEventID += 1;
-			return lastEventID;
-		}else if(obj is Region) {
+        if(obj is Region) {
             lastRegionID += 1;
             return lastRegionID;
         } else if (obj is Log) {
             lastLogID += 1;
             return lastLogID;
-		} else if (obj is SharedKingdomRelationship) {
-			lastSharedKingdomRelationshipID += 1;
-			return lastSharedKingdomRelationshipID;
-        } else if (obj is BaseLandmark) {
+		} else if (obj is BaseLandmark) {
             lastLandmarkID += 1;
             return lastLandmarkID;
 		} else if (obj is Faction) {
@@ -95,19 +56,10 @@ public class Utilities : MonoBehaviour {
         return 0;
 	}
 
-	public static Color GetColorForKingdom(){
-		Color chosenColor = kingdomColorCycle[lastKingdomColorIndex];
-		lastKingdomColorIndex += 1;
-		if (lastKingdomColorIndex >= kingdomColorCycle.Length) {
-			lastKingdomColorIndex = 0;
-		}
-		return chosenColor;
-	}
-
     public static Color GetColorForFaction() {
-        Color chosenColor = kingdomColorCycle[lastFactionColorIndex];
+        Color chosenColor = factionColorCycle[lastFactionColorIndex];
         lastFactionColorIndex += 1;
-        if (lastFactionColorIndex >= kingdomColorCycle.Length) {
+        if (lastFactionColorIndex >= factionColorCycle.Length) {
             lastFactionColorIndex = 0;
         }
         return chosenColor;
@@ -128,176 +80,6 @@ public class Utilities : MonoBehaviour {
         BIOMES.DESERT,
         BIOMES.SNOW
     };
-
-	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
-		{BIOMES.BARE, new SpecialResourceChance(
-			new RESOURCE[] {RESOURCE.NONE}, 
-			new int[] {100})
-		},
-        
-		{BIOMES.GRASSLAND, new SpecialResourceChance(
-            //new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT},
-            //new int[] {100, 20, 40, 20, 60, 35, 5, 5})
-			new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.CORN, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL},
-            new int[] {10, 60, 20, 10, 5})
-        },
-
-		{BIOMES.WOODLAND, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.COBALT},
-   //         new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
-			new RESOURCE[] {RESOURCE.PIG, RESOURCE.RICE, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.COBALT},
-            new int[] {10, 40, 30, 30, 5})
-        },
-
-
-		{BIOMES.FOREST, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.EBONY, RESOURCE.DEER, RESOURCE.BEHEMOTH, RESOURCE.MANA_STONE, RESOURCE.MITHRIL, RESOURCE.GOLD}, 
-			//new int[] {15, 40, 15, 0, 0, 0})
-			new RESOURCE[] {RESOURCE.BEHEMOTH, RESOURCE.DEER, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.MANA_STONE},
-            new int[] {10, 60, 20, 10, 5})
-        },
-
-		{BIOMES.DESERT, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.SLATE, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT, RESOURCE.GOLD}, 
-			//new int[] {20, 20, 15, 15, 0, 0, 0})
-			new RESOURCE[] {RESOURCE.PIG, RESOURCE.GRANITE, RESOURCE.MITHRIL, RESOURCE.BEHEMOTH},
-            new int[] {40, 60, 5, 5})
-        },
-
-		{BIOMES.TUNDRA, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.GOLD}, 
-			//new int[] {50, 15, 10, 25, 10, 0, 0})
-			new RESOURCE[] {RESOURCE.RICE, RESOURCE.OAK, RESOURCE.MANA_STONE, RESOURCE.BEHEMOTH},
-            new int[] {40, 60, 5, 5})
-        },
-
-		{BIOMES.SNOW, new SpecialResourceChance(
-			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
-			//new int[] {15, 5, 15, 5, 5, 0, 0})
-            new RESOURCE[] {RESOURCE.GRANITE, RESOURCE.OAK, RESOURCE.COBALT},
-            new int[] {50, 50, 5})
-        },
-
-	};
-
-//	public static string CauseOfAccident(){
-//		
-//	}
-
-    public static BASE_RESOURCE_TYPE GetBasicResourceForRace(RACE race) {
-        if (race == RACE.HUMANS) {
-            return BASE_RESOURCE_TYPE.STONE;
-        } else if (race == RACE.ELVES) {
-            return BASE_RESOURCE_TYPE.WOOD;
-        } else if (race == RACE.MINGONS) {
-            return BASE_RESOURCE_TYPE.WOOD;
-        } else {
-            return BASE_RESOURCE_TYPE.STONE;
-        }
-    }
-	public static BASE_RESOURCE_TYPE GetBaseResourceType(RESOURCE resourceType){
-		if (resourceType == RESOURCE.CORN || resourceType == RESOURCE.WHEAT || resourceType == RESOURCE.RICE ||
-		    resourceType == RESOURCE.DEER || resourceType == RESOURCE.PIG || resourceType == RESOURCE.BEHEMOTH) {
-			return BASE_RESOURCE_TYPE.FOOD;
-		} else if (resourceType == RESOURCE.OAK || resourceType == RESOURCE.EBONY) {
-			return BASE_RESOURCE_TYPE.WOOD;
-		} else if (resourceType == RESOURCE.GRANITE || resourceType == RESOURCE.SLATE) {
-			return BASE_RESOURCE_TYPE.STONE;
-		} else if (resourceType == RESOURCE.MANA_STONE) {
-			return BASE_RESOURCE_TYPE.MANA_STONE;
-		} else if (resourceType == RESOURCE.MITHRIL) {
-			return BASE_RESOURCE_TYPE.MITHRIL;
-		} else if (resourceType == RESOURCE.COBALT) {
-			return BASE_RESOURCE_TYPE.COBALT;
-		}
-		return BASE_RESOURCE_TYPE.NONE;
-	}
-
-	//public static STRUCTURE GetStructureThatProducesResource(RESOURCE resourceType){
-	//	if (resourceType == RESOURCE.CORN || resourceType == RESOURCE.WHEAT || resourceType == RESOURCE.RICE) {
-	//		return STRUCTURE.FARM;
-	//	} else if (resourceType == RESOURCE.DEER || resourceType == RESOURCE.PIG || resourceType == RESOURCE.BEHEMOTH) {
-	//		return STRUCTURE.HUNTING_LODGE;
-	//	}else if (resourceType == RESOURCE.CEDAR || resourceType == RESOURCE.OAK || resourceType == RESOURCE.EBONY) {
-	//		return STRUCTURE.LUMBERYARD;
-	//	} else if (resourceType == RESOURCE.GRANITE || resourceType == RESOURCE.SLATE || resourceType == RESOURCE.MARBLE) {
-	//		return STRUCTURE.QUARRY;
-	//	} else if (resourceType == RESOURCE.MANA_STONE) {
-	//		return STRUCTURE.MINES;
-	//	} else if (resourceType == RESOURCE.MITHRIL) {
-	//		return STRUCTURE.MINES;
-	//	} else if (resourceType == RESOURCE.COBALT) {
-	//		return STRUCTURE.MINES;
-	//	}
-	//	return STRUCTURE.NONE;
-	//}
-
-    public static STRUCTURE_TYPE GetStructureTypeForResource(RACE race, RESOURCE resourceType) {
-        if (resourceType != RESOURCE.NONE) {
-            if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.FOOD) {
-                if (resourceType == RESOURCE.BEHEMOTH || resourceType == RESOURCE.DEER ||
-                    resourceType == RESOURCE.PIG) {
-                    return STRUCTURE_TYPE.HUNTING_LODGE;
-                } else {
-                    return STRUCTURE_TYPE.MINE; //TODO: Change to Farm when farm is available
-                }
-            } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.WOOD) {
-                if(race == RACE.HUMANS) {
-                    return STRUCTURE_TYPE.LUMBERYARD;
-                } else {
-                    return STRUCTURE_TYPE.LUMBERYARD;
-                }
-            } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.STONE) {
-                if (race == RACE.ELVES) {
-                    return STRUCTURE_TYPE.QUARRY;
-                } else {
-                    return STRUCTURE_TYPE.QUARRY;
-                }
-            } else {
-                return STRUCTURE_TYPE.MINE;
-            }
-        }
-        return STRUCTURE_TYPE.GENERIC;
-    }
-
-    //public static STRUCTURE_TYPE GetStructureTypeForMaterial(MATERIAL material) {
-    //    MATERIAL_CATEGORY matCat = GetMaterialCategory(material);
-    //    switch (matCat) {
-    //        case MATERIAL_CATEGORY.METAL:
-    //            return STRUCTURE_TYPE.MINE;
-    //        case MATERIAL_CATEGORY.WOOD:
-    //            return STRUCTURE_TYPE.LUMBERYARD;
-    //        case MATERIAL_CATEGORY.STONE:
-    //            return STRUCTURE_TYPE.QUARRY;
-    //        case MATERIAL_CATEGORY.CLOTH:
-    //        case MATERIAL_CATEGORY.PLANT:
-    //        case MATERIAL_CATEGORY.MEAT:
-    //            return STRUCTURE_TYPE.GENERIC; //TODO: Change this to farm, when farm structure prefab is available
-    //        case MATERIAL_CATEGORY.LEATHER:
-    //            return STRUCTURE_TYPE.HUNTING_LODGE;
-    //        default:
-    //            return STRUCTURE_TYPE.GENERIC;
-    //    }
-    //}
-
-    public static Color GetColorForRelationship(KINGDOM_RELATIONSHIP_STATUS status){
-		if (status == KINGDOM_RELATIONSHIP_STATUS.LOVE) {
-			return new Color (0f, (139f/255f), (69f/255f), 1f);
-		} else if (status == KINGDOM_RELATIONSHIP_STATUS.AFFECTIONATE) {
-			return new Color (0f, 1f, (127f/255f), 1f);
-		} else if (status == KINGDOM_RELATIONSHIP_STATUS.LIKE) {
-			return new Color ((118f/255f), (238f/255f), (198f/255f), 1f);
-		} else if (status == KINGDOM_RELATIONSHIP_STATUS.NEUTRAL) {
-			return Color.white;
-		} else if (status == KINGDOM_RELATIONSHIP_STATUS.DISLIKE) {
-			return new Color ((240f/255f), (128f/255f), (128f/255f), 1f);
-		} else if (status == KINGDOM_RELATIONSHIP_STATUS.HATE) {
-			return new Color (1f, (64f/255f), (64f/255f), 1f);
-		} else if (status == KINGDOM_RELATIONSHIP_STATUS.SPITE) {
-			return new Color (1f, 0f, 0f, 1f);
-		}
-		return Color.white;
-	}
 
 	#region Pathfinding
 	public static List<Point> EvenNeighbours {
@@ -327,17 +109,6 @@ public class Utilities : MonoBehaviour {
 		}
 	}
 	#endregion
-
-	public static void ChangeDescendantsRecursively(Citizen royalty, bool isDescendant){
-		royalty.isDirectDescendant = isDescendant;
-
-
-		for(int i = 0; i < royalty.children.Count; i++){
-			if(royalty.children[i] != null){
-				ChangeDescendantsRecursively (royalty.children [i], isDescendant);
-			}
-		}
-	}
 
 	public static List<T> Shuffle<T>(List<T> list)  
 	{
@@ -375,15 +146,7 @@ public class Utilities : MonoBehaviour {
 		return returnArray;
 	}
 
-	public static bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
-		for(int i = 0; i < unwantedGovernors.Count; i++){
-			if(governor.id == unwantedGovernors[i].id){
-				return true;
-			}	
-		}
-		return false;
-	}
-	public static Color[] kingdomColorCycle = new Color[] {
+	public static Color[] factionColorCycle = new Color[] {
 		new Color32(0xDB, 0x00, 0x00, 0x91), // Red DB000091
 		new Color32(0x00, 0x51, 0xF3, 0x91), // Blue 0051F391
 		new Color32(0xFF, 0xFF, 0x00, 0x91), // Yellow FFFF00A0
@@ -412,31 +175,6 @@ public class Utilities : MonoBehaviour {
         {BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
     };
 
-    //public static WeightedDictionary<LANDMARK_TYPE> GetDungeonlandmarkWeights() {
-    //    WeightedDictionary<LANDMARK_TYPE> dungeonLandmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
-    //    dungeonLandmarkWeights.AddElement(LANDMARK_TYPE.VAMPIRE_TOMB, 20);
-
-    //}
-
-    public static WeightedDictionary<LANDMARK_TYPE> GetLandmarkWeights() {
-        WeightedDictionary<LANDMARK_TYPE> _landmarkWeights = new WeightedDictionary<LANDMARK_TYPE>();
-        //MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
-        //for (int i = 0; i < allMaterials.Length; i++) {
-        //    MATERIAL currMat = allMaterials[i];
-        //    if (currMat != MATERIAL.NONE) {
-        //        LANDMARK_TYPE landmarkType = ConvertMaterialToLandmarkType(currMat);
-        //        _landmarkWeights.AddElement(landmarkType, MaterialManager.Instance.materialsLookup[currMat].weight);
-        //    }
-        //}
-        //_landmarkWeights.AddElement(LANDMARK_TYPE.GOBLIN_CAMP, 15);
-        //_landmarkWeights.AddElement(LANDMARK_TYPE.DARK_CAVE, 25);
-        _landmarkWeights.AddElement(LANDMARK_TYPE.ANCIENT_RUIN, 40);
-        //_landmarkWeights.AddElement(LANDMARK_TYPE.ABANDONED_DUNGEON, 25);
-        //_landmarkWeights.AddElement(LANDMARK_TYPE.MYSTERIOUS_TOWER, 6);
-        //_landmarkWeights.AddElement(LANDMARK_TYPE.SUMMONING_SHRINE, 15);
-        return _landmarkWeights;
-    }
-
     public static WeightedDictionary<MATERIAL> GetMaterialWeights() {
         WeightedDictionary<MATERIAL> materialWeights = new WeightedDictionary<MATERIAL>();
         MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
@@ -448,28 +186,6 @@ public class Utilities : MonoBehaviour {
         }
         return materialWeights;
     }
-
-    //public static Dictionary<WEIGHTED_ACTION, List<TRAIT>> weightedActionValidTraits = new Dictionary<WEIGHTED_ACTION, List<TRAIT>>() {
-    //    {WEIGHTED_ACTION.WAR_OF_CONQUEST, new List<TRAIT>(){
-    //        TRAIT.OPPORTUNIST, TRAIT.DECEITFUL, TRAIT.IMPERIALIST, TRAIT.HOSTILE, TRAIT.PACIFIST
-    //    }},
-    //    {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, new List<TRAIT>(){
-    //        TRAIT.IMPERIALIST
-    //    }},
-    //    {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, new List<TRAIT>(){
-    //        TRAIT.OPPORTUNIST, TRAIT.DECEITFUL
-    //    }},
-    //};
-
-    //public static List<WEIGHTED_ACTION> actionsWithDefaultWeights = new List<WEIGHTED_ACTION>() {
-    //    WEIGHTED_ACTION.TRADE_DEAL
-    //};
-
-    //public static Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE> weightedActionTypes = new Dictionary<WEIGHTED_ACTION, WEIGHTED_ACTION_TYPE>() {
-    //    {WEIGHTED_ACTION.WAR_OF_CONQUEST, WEIGHTED_ACTION_TYPE.DIRECT},
-    //    {WEIGHTED_ACTION.ALLIANCE_OF_CONQUEST, WEIGHTED_ACTION_TYPE.INDIRECT},
-    //    {WEIGHTED_ACTION.ALLIANCE_OF_PROTECTION, WEIGHTED_ACTION_TYPE.DIRECT}
-    //};
     //	public static string StringReplacer(string text, LogFiller[] logFillers){
     //		List<int> specificWordIndexes = new List<int> ();
     //		string newText = text;
@@ -784,65 +500,10 @@ public class Utilities : MonoBehaviour {
         {"110", LOG_IDENTIFIER.COMBAT},
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
-    public static bool AreLogsTheSame(Log log1, Log log2) {
-        string log1String = LogReplacer(log1);
-        string log2String = LogReplacer(log2);
-        if (log1String.Contains("left") || log2String.Contains("left") ||
-            log1String.Contains("visited") || log2String.Contains("visited")) {
-            return log1String.Equals(log2String);
-        }
-        return false;
-        //if (log1.key.Equals(log2.key)) {
-        //    if (log1.month == log2.month && log1.day == log2.day && log1.year == log2.year) {
-        //        bool hasSameFillers = true;
-        //        for (int i = 0; i < log1.fillers.Count; i++) {
-        //            LogFiller currFiller = log1.fillers[i];
-        //            for (int j = 0; j < log2.fillers.Count; j++) {
-        //                LogFiller otherFiller = log2.fillers[j];
-        //                if (currFiller.obj != otherFiller.obj) {
-        //                    hasSameFillers = false;
-        //                }
-        //            }
-        //        }
-        //        return hasSameFillers;
-        //    }
-        //}
-        //return false;
-    }
-
-    public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
-        EVENT_TYPES.ADVENTURE,
-        EVENT_TYPES.INVASION_PLAN,
-        EVENT_TYPES.HUNT_LAIR,
-        EVENT_TYPES.EXPANSION,
-        EVENT_TYPES.ALTAR_OF_BLESSING,
-        EVENT_TYPES.TRIBUTE,
-        EVENT_TYPES.PROVOCATION,
-        EVENT_TYPES.MUTUAL_DEFENSE_TREATY,
-        EVENT_TYPES.MILITARY_ALLIANCE_OFFER,
-        EVENT_TYPES.INSTIGATION
-    };
-
+    
 	public static string PronounReplacer(string word, object genderSubject){
 //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
 		string[] pronouns = word.Split ('/');
-
-        //if(genderSubject is Citizen){
-        //	GENDER gender = ((Citizen)genderSubject).gender;
-        //	if(gender == GENDER.MALE){
-        //		if(pronouns.Length > 0){
-        //			if(!string.IsNullOrEmpty(pronouns[0])){
-        //				return pronouns [0];
-        //			}
-        //		}
-        //	}else{
-        //		if (pronouns.Length > 1) {
-        //			if (!string.IsNullOrEmpty (pronouns [0])) {
-        //				return pronouns [1];
-        //			}
-        //		}
-        //	}
-        //}
         if (genderSubject is ECS.Character) {
             GENDER gender = ((ECS.Character)genderSubject).gender;
             if (gender == GENDER.MALE) {
@@ -989,145 +650,6 @@ public class Utilities : MonoBehaviour {
             trans.gameObject.layer = layerNumber;
         }
     }
-
-    public static bool CanReachInTime(EVENT_TYPES eventType, List<HexTile> path, int duration){
-		switch (eventType) {
-		case EVENT_TYPES.STATE_VISIT:
-			return true;
-		case EVENT_TYPES.RAID:
-			return true;
-		case EVENT_TYPES.JOIN_WAR_REQUEST:
-			return true;
-		case EVENT_TYPES.EXPANSION:
-			return true;
-        case EVENT_TYPES.TRADE:
-            return true;
-		case EVENT_TYPES.ATTACK_CITY:
-			return true;
-        case EVENT_TYPES.REQUEST_PEACE:
-            return true;
-		case EVENT_TYPES.REINFORCE_CITY:
-			return true;
-		case EVENT_TYPES.RIOT_WEAPONS:
-			return true;
-		case EVENT_TYPES.REBELLION:
-			return true;
-        case EVENT_TYPES.PLAGUE:
-            return true;
-		case EVENT_TYPES.SCOURGE_CITY:
-			return true;
-		case EVENT_TYPES.BOON_OF_POWER:
-			return true;
-		case EVENT_TYPES.PROVOCATION:
-			return true;
-		case EVENT_TYPES.EVANGELISM:
-			return true;
-		case EVENT_TYPES.SPOUSE_ABDUCTION:
-			return true;
-		case EVENT_TYPES.FIRST_AND_KEYSTONE:
-			return true;
-		case EVENT_TYPES.RUMOR:
-			return true;
-		case EVENT_TYPES.SLAVES_MERCHANT:
-			return true;
-		case EVENT_TYPES.HIDDEN_HISTORY_BOOK:
-			return true;
-        case EVENT_TYPES.HYPNOTISM:
-            return true;
-        case EVENT_TYPES.KINGDOM_HOLIDAY:
-            return true;
-		case EVENT_TYPES.SERUM_OF_ALACRITY:
-			return true;
-        case EVENT_TYPES.DEVELOP_WEAPONS:
-            return true;
-        case EVENT_TYPES.KINGS_COUNCIL:
-            return true;
-        case EVENT_TYPES.ADVENTURE:
-            return true;
-        case EVENT_TYPES.EVIL_INTENT:
-            return true;
-        case EVENT_TYPES.ALTAR_OF_BLESSING:
-			return true;
-		case EVENT_TYPES.GREAT_STORM:
-			return true;
-		case EVENT_TYPES.HUNT_LAIR:
-			return true;
-		case EVENT_TYPES.ANCIENT_RUIN:
-			return true;
-        case EVENT_TYPES.MILITARY_ALLIANCE_OFFER:
-			return true;
-		case EVENT_TYPES.MUTUAL_DEFENSE_TREATY:
-			return true;
-        case EVENT_TYPES.TRIBUTE:
-            return true;
-        case EVENT_TYPES.INSTIGATION:
-            return true;
-		case EVENT_TYPES.SEND_RELIEF_GOODS:
-			if(duration == -1){
-				return true;
-			}else{
-				if (path.Count > duration) {
-					return false;
-				}
-				return true;
-			}
-        case EVENT_TYPES.BORDER_CONFLICT:
-		    if(duration == -1){
-			    return true;
-		    }else{
-			    if (path.Count > duration) {
-				    return false;
-			    }
-			    return true;
-		    }
-		case EVENT_TYPES.DIPLOMATIC_CRISIS:
-			if(duration == -1){
-				return true;
-			}else{
-				if (path.Count > duration) {
-					return false;
-				}
-				return true;
-			}
-		case EVENT_TYPES.INVASION_PLAN:
-			if(duration == -1){
-				return true;
-			}else{
-				if (path.Count > duration) {
-					return false;
-				}
-				return true;
-			}
-		case EVENT_TYPES.SABOTAGE:
-			if(duration == -1){
-				return true;
-			}else{
-				if (path.Count > duration) {
-					return false;
-				}
-				return true;
-			}
-		case EVENT_TYPES.ASSASSINATION:
-			if(duration == -1){
-				return true;
-			}else{
-				if (path.Count > duration) {
-					return false;
-				}
-				return true;
-			}
-		case EVENT_TYPES.SECESSION:
-			if(duration == -1){
-				return true;
-			}else{
-				if (path.Count > duration) {
-					return false;
-				}
-				return true;
-			}
-		}
-		return false;
-	}
 
     public static string FirstLetterToUpperCase(string s) {
         if (string.IsNullOrEmpty(s))
@@ -1314,11 +836,12 @@ public class Utilities : MonoBehaviour {
         foreach (KeyValuePair<T, int> kvp in weights) {
             T key = kvp.Key;
             int value = kvp.Value;
-            if(key is Kingdom) {
-                actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
-            } else if(key is AlliancePool) {
-                actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
-            } else if (key is ECS.Character) {
+            //if(key is Kingdom) {
+            //    actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
+            //} else if(key is AlliancePool) {
+            //    actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
+            //} else 
+            if (key is ECS.Character) {
                 actionWeightsSummary += "\n" + (key as ECS.Character).name + " - " + kvp.Value.ToString();
             } else if (key is BaseLandmark) {
                 actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
@@ -1341,24 +864,24 @@ public class Utilities : MonoBehaviour {
         return actionWeightsSummary;
     }
 
-    public static string GetWeightsSummary(Dictionary<Kingdom, int> weights, string title = "Weights Summary: ") {
-        string actionWeightsSummary = title;
-        foreach (KeyValuePair<Kingdom, int> kvp in weights) {
-            actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
-        }
-        return actionWeightsSummary;
-    }
+    //public static string GetWeightsSummary(Dictionary<Kingdom, int> weights, string title = "Weights Summary: ") {
+    //    string actionWeightsSummary = title;
+    //    foreach (KeyValuePair<Kingdom, int> kvp in weights) {
+    //        actionWeightsSummary += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
+    //    }
+    //    return actionWeightsSummary;
+    //}
 
-    public static string GetWeightsSummary(Dictionary<Kingdom, Dictionary<Kingdom, int>> weights, string title = "Weights Summary: ") {
-        string actionWeightsSummary = title;
-        foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in weights) {
-            actionWeightsSummary += "\n" + kvp.Key.name + " : ";
-            foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
-                actionWeightsSummary += "\n     " + pair.Key.name + " - " + pair.Value.ToString();
-            }
-        }
-        return actionWeightsSummary;
-    }
+    //public static string GetWeightsSummary(Dictionary<Kingdom, Dictionary<Kingdom, int>> weights, string title = "Weights Summary: ") {
+    //    string actionWeightsSummary = title;
+    //    foreach (KeyValuePair<Kingdom, Dictionary<Kingdom, int>> kvp in weights) {
+    //        actionWeightsSummary += "\n" + kvp.Key.name + " : ";
+    //        foreach (KeyValuePair<Kingdom, int> pair in kvp.Value) {
+    //            actionWeightsSummary += "\n     " + pair.Key.name + " - " + pair.Value.ToString();
+    //        }
+    //    }
+    //    return actionWeightsSummary;
+    //}
 
     public static string GetDateString(GameDate date) {
         return NormalizeString(((MONTH)date.month).ToString()) + " " + date.day.ToString() + ", " + date.year.ToString();
@@ -1384,52 +907,6 @@ public class Utilities : MonoBehaviour {
 
         return UnityEngine.Random.Range(maxMean, max);
     }
-
-    #region Lycanthropy
-    public static int GetMoonPhase(int year, int month, int day) {
-        /*k
-          Calculates the moon phase (0-7), accurate to 1 segment.
-          0 = > new moon.
-          4 => Full moon.
-        */
-
-        int g, e;
-
-        if (month == 1) --day;
-        else if (month == 2) day += 30;
-        else // m >= 3
-        {
-            day += 28 + (month - 2) * 3059 / 100;
-
-            //// adjust for leap years
-            //if (!(year & 3)) ++day;
-            //if ((year % 100) == 0) --day;
-        }
-
-        g = (year - 1900) % 19 + 1;
-        e = (11 * g + 18) % 30;
-        if ((e == 25 && g > 11) || e == 24) e++;
-        return ((((e + day) * 6 + 11) % 177) / 22 & 7);
-    }
-    #endregion
-
-    #region Plague
-    public static string[] plagueAdjectives = new string[] {
-        "Red", "Green", "Yellow", "Black", "Rotting", "Silent", "Screaming", "Trembling", "Sleeping",
-        "Cat", "Dog", "Pig", "Lamb", "Lizard", "Bog", "Death", "Stomach", "Eye", "Finger", "Rabid",
-        "Fatal", "Blistering", "Icy", "Scaly", "Sexy", "Violent", "Necrotic", "Foul", "Vile", "Nasty",
-        "Ghastly", "Malodorous", "Cave", "Phantom", "Wicked", "Strange"
-    };
-
-    public static string[] plagueDieseases = new string[] {
-        "Sores", "Ebola", "Anthrax", "Pox", "Face", "Sneeze", "Gangrene", "Throat", "Rash", "Warts",
-        "Cholera", "Colds", "Ache", "Syndrome", "Tumor", "Chills", "Blisters", "Mouth", "Fever", "Delirium",
-        "Measles", "Mutata", "Disease"
-    };
-    public static string GeneratePlagueName() {
-        return plagueAdjectives[UnityEngine.Random.Range(0, plagueAdjectives.Length)] + " " + plagueDieseases[UnityEngine.Random.Range(0, plagueDieseases.Length)];
-    }
-    #endregion
 
     public static List<T> Intersect<T> (List<T> firstList, List<T> secondList){
 		List<T> newList = new List<T> ();
@@ -1464,28 +941,6 @@ public class Utilities : MonoBehaviour {
 		return newList;
 	}
 
-    #region AI
-    public static Vector2 PickRandomPointInCircle(Vector2 origin, float radius) {
-        Vector2 point = UnityEngine.Random.insideUnitCircle * radius;
-        point += (Vector2)origin;
-        return point;
-    }
-    #endregion
-
-	public static bool AreTwoCitiesConnected(City sourceCity, City targetCity, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
-		List<HexTile> path = PathGenerator.Instance.GetPath (sourceCity.hexTile, targetCity.hexTile, pathFindingMode);
-		if(path != null){
-			return true;
-		}
-		return false;
-	}
-	public static bool HasPath(HexTile startingLocation, HexTile targetLocation, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
-		List<HexTile> path = PathGenerator.Instance.GetPath (startingLocation, targetLocation, pathFindingMode);
-		if(path != null){
-			return true;
-		}
-		return false;
-	}
     public static GENDER GetRandomGender() {
         if(UnityEngine.Random.Range(0, 2) == 0) {
             return GENDER.MALE;
@@ -1513,45 +968,45 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Landmarks
-    public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
-        switch (landmarkType) {
-            case LANDMARK_TYPE.CLAY:
-            case LANDMARK_TYPE.LIMESTONE:
-            case LANDMARK_TYPE.GRANITE:
-            case LANDMARK_TYPE.MARBLE:
-            case LANDMARK_TYPE.SILK:
-            case LANDMARK_TYPE.COTTON:
-            case LANDMARK_TYPE.FLAX:
-            case LANDMARK_TYPE.CORN:
-            case LANDMARK_TYPE.RICE:
-            case LANDMARK_TYPE.PIGMEAT:
-            case LANDMARK_TYPE.COWMEAT:
-            case LANDMARK_TYPE.GOATHIDE:
-            case LANDMARK_TYPE.DEERHIDE:
-            case LANDMARK_TYPE.BEHEMOTHHIDE:
-            case LANDMARK_TYPE.OAK:
-            case LANDMARK_TYPE.YEW:
-            case LANDMARK_TYPE.EBONY:
-            case LANDMARK_TYPE.IRON:
-            case LANDMARK_TYPE.COBALT:
-            case LANDMARK_TYPE.MITHRIL:
-                return BASE_LANDMARK_TYPE.RESOURCE;
-            case LANDMARK_TYPE.ANCIENT_RUIN:
-            case LANDMARK_TYPE.VAMPIRE_TOMB:
-            case LANDMARK_TYPE.ANCIENT_REACTOR:
-            case LANDMARK_TYPE.CAVE:
-            case LANDMARK_TYPE.WILDLANDS:
-			case LANDMARK_TYPE.RITUAL_STONES:
-                return BASE_LANDMARK_TYPE.DUNGEON;
-			case LANDMARK_TYPE.CITY:
-			case LANDMARK_TYPE.GOBLIN_CAMP:
-            case LANDMARK_TYPE.HUT:
-			case LANDMARK_TYPE.CRATER:
-                return BASE_LANDMARK_TYPE.SETTLEMENT;
-            default:
-                return BASE_LANDMARK_TYPE.NONE;
-        }
-    }
+   // public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
+   //     switch (landmarkType) {
+   //         case LANDMARK_TYPE.CLAY:
+   //         case LANDMARK_TYPE.LIMESTONE:
+   //         case LANDMARK_TYPE.GRANITE:
+   //         case LANDMARK_TYPE.MARBLE:
+   //         case LANDMARK_TYPE.SILK:
+   //         case LANDMARK_TYPE.COTTON:
+   //         case LANDMARK_TYPE.FLAX:
+   //         case LANDMARK_TYPE.CORN:
+   //         case LANDMARK_TYPE.RICE:
+   //         case LANDMARK_TYPE.PIGMEAT:
+   //         case LANDMARK_TYPE.COWMEAT:
+   //         case LANDMARK_TYPE.GOATHIDE:
+   //         case LANDMARK_TYPE.DEERHIDE:
+   //         case LANDMARK_TYPE.BEHEMOTHHIDE:
+   //         case LANDMARK_TYPE.OAK:
+   //         case LANDMARK_TYPE.YEW:
+   //         case LANDMARK_TYPE.EBONY:
+   //         case LANDMARK_TYPE.IRON:
+   //         case LANDMARK_TYPE.COBALT:
+   //         case LANDMARK_TYPE.MITHRIL:
+   //             return BASE_LANDMARK_TYPE.RESOURCE;
+   //         case LANDMARK_TYPE.ANCIENT_RUIN:
+   //         case LANDMARK_TYPE.VAMPIRE_TOMB:
+   //         case LANDMARK_TYPE.ANCIENT_REACTOR:
+   //         case LANDMARK_TYPE.CAVE:
+   //         case LANDMARK_TYPE.WILDLANDS:
+			//case LANDMARK_TYPE.RITUAL_STONES:
+   //             return BASE_LANDMARK_TYPE.DUNGEON;
+			//case LANDMARK_TYPE.CITY:
+			//case LANDMARK_TYPE.GOBLIN_CAMP:
+   //         case LANDMARK_TYPE.HUT:
+			//case LANDMARK_TYPE.CRATER:
+   //             return BASE_LANDMARK_TYPE.SETTLEMENT;
+   //         default:
+   //             return BASE_LANDMARK_TYPE.NONE;
+   //     }
+   // }
     #endregion
 
     public static bool DoesFileExist(string path) {

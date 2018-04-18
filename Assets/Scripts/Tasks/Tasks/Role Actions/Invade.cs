@@ -76,8 +76,8 @@ public class Invade : CharacterTask {
         regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegionsViaMajorRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
-            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
-                BaseLandmark landmark = currRegion.allLandmarks[j];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark landmark = currRegion.landmarks[j];
                 if (CanBeDone(character, landmark)) {
                     return true;
                 }
@@ -97,8 +97,8 @@ public class Invade : CharacterTask {
         regionsToCheck.AddRange(regionOfChar.adjacentRegionsViaMajorRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
-            for (int j = 0; j < currRegion.allLandmarks.Count; j++) {
-                BaseLandmark landmark = currRegion.allLandmarks[j];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark landmark = currRegion.landmarks[j];
                 if (landmark.owner != character.faction) {
                     int weight = 0;
                     if (currRegion.id == regionOfChar.id) {

@@ -42,7 +42,7 @@ public class Settlement : BaseLandmark {
 	}
     #endregion
 
-    public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType, MATERIAL materialMadeOf) : base(location, specificLandmarkType, materialMadeOf) {
+    public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = true;
         //_questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
@@ -55,8 +55,8 @@ public class Settlement : BaseLandmark {
     public override void Initialize (){
 		base.Initialize ();
 		if (_specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-            //When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
-            AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
+            ////When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
+            //AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
             GenerateGoblinCampTechnologies();
         }
     }
@@ -69,16 +69,16 @@ public class Settlement : BaseLandmark {
 	}
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
-		if (tileLocation.isHabitable) {
+        faction.AddSettlement(this);
+        if (specificLandmarkType == LANDMARK_TYPE.KINGS_CASTLE) {
             //Create structures on location
-            faction.AddSettlement(this);
-			tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
-			tileLocation.region.ReColorBorderTiles(faction.factionColor);
+            //tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
+            //tileLocation.region.ReColorBorderTiles(faction.factionColor);
             _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
             tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
             landmarkObject.UpdateName();
-			//tileLocation.emptyCityGO.SetActive(false);
-            _producingPopulationFor = GetRaceBasedOnProportion();
+            //tileLocation.emptyCityGO.SetActive(false);
+            //_producingPopulationFor = GetRaceBasedOnProportion();
         }
     }
     public override void UnoccupyLandmark() {
@@ -192,206 +192,6 @@ public class Settlement : BaseLandmark {
         return characters;
     }
     #endregion
-
-    #region Population
-    /*
-     Reschedule monthly population growth.
-     NOTE: Not to be used when inititally scheduling monthly population increase!
-         */
-    private void ScheduleMonthlyPopulationIncrease() {
-        GameDate increasePopulationDate = GameManager.Instance.Today();
-        increasePopulationDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(increasePopulationDate.month, 1, increasePopulationDate.year, () => IncreasePopulationPerMonth());
-    }
-    /*
-     Increase population of this settlement every end of the month.
-         */
-    private void IncreasePopulationPerMonth() {
-		float populationGrowth = this.totalPopulation * this.tileLocation.region.populationGrowth;
-        _currentPopulationProduction += populationGrowth;
-        if (_currentPopulationProduction >= 1f) {
-            float excess = _currentPopulationProduction - 1f;
-            AdjustCivilians(_producingPopulationFor, 1);
-            _producingPopulationFor = GetRaceBasedOnProportion();
-            _currentPopulationProduction = excess;
-        }
-        //AdjustPopulation(populationGrowth);
-        //UIManager.Instance.UpdateFactionSummary();
-        ScheduleMonthlyPopulationIncrease();
-    }
-    #endregion
-
-//    #region Quests
-//    internal void AddQuestToBoard(Quest quest) {
-//        _questBoard.Add(quest);
-//        //quest.OnQuestPosted(); //Call On OldQuest.Quest Posted after quest is posted
-//    }
-//    internal void RemoveQuestFromBoard(Quest quest) {
-//        _questBoard.Remove(quest);
-//    }
-	
-//    internal List<Quest> GetQuestsOnBoardByType(QUEST_TYPE questType) {
-//        List<Quest> quests = new List<Quest>();
-//        for (int i = 0; i < _questBoard.Count; i++) {
-//            Quest currQuest = _questBoard[i];
-//            if(currQuest.questType == questType) {
-//                quests.Add(currQuest);
-//            }
-//        }
-//        return quests;
-//    }
-//	internal int GetNumberOfQuestsOnBoardByType(QUEST_TYPE questType){
-//		int count = 0;
-//		for (int i = 0; i < _questBoard.Count; i++) {
-//			Quest currQuest = _questBoard[i];
-//			if(currQuest.questType == questType) {
-//				count++;
-//			}
-//		}
-//		return count;
-//	}
-//	//private void ScheduleUpdateAvailableMaterialsToGet(){
-//	//	GameDate newSched = GameManager.Instance.Today();
-//	//	newSched.AddMonths (1);
-//	//	newSched.SetDay (GameManager.daysInMonth [newSched.month] - 1);
-//	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateAvailableMaterialsToGet ());
-//	//}
-//	//private void ScheduleUpdateNeededMaterials(){
-//	//	GameDate newSched = GameManager.Instance.Today();
-//	//	newSched.AddMonths (1);
-//	//	newSched.SetDay (GameManager.daysInMonth [newSched.month]);
-//	//	SchedulingManager.Instance.AddEntry (newSched, () => UpdateNeededMaterials ());
-//	//}
-//	private void ScheduleMonthlyQuests(){
-//		GameDate dueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-//		dueDate.AddMonths (1);
-//		SchedulingManager.Instance.AddEntry(dueDate, () => GenerateMonthlyQuests());
-//	}
-//	//private void UpdateAvailableMaterialsToGet(){
-//	//	foreach (MATERIAL material in _materialsInventory.Keys) {
-//	//		_materialsInventory [material].availableExcessOfOtherSettlements = (this._owner.settlements.Sum (x => x.materialsInventory [material].excess)) - _materialsInventory[material].excess;
-//	//		_materialsInventory [material].availableExcessOfResourceLandmarks = this._ownedLandmarks.Sum (x => x.materialsInventory [material].excess);
-//	//		_materialsInventory [material].capacity = 0;
-//	//		_materialsInventory [material].isNeeded = false;
-//	//	}
-//	//	ScheduleUpdateAvailableMaterialsToGet ();
-//	//}
-//	//private void UpdateNeededMaterials(){
-//	//	int count = this._owner.productionPreferences [PRODUCTION_TYPE.WEAPON].prioritizedMaterials.Count;
-//	//	List<PRODUCTION_TYPE> productionTypes = this._owner.productionPreferences.Keys.ToList ();
-//	//	for (int i = 0; i < count; i++) {
-//	//		for (int j = 0; j < productionTypes.Count; j++) {
-//	//			MATERIAL material = this._owner.productionPreferences [productionTypes[j]].prioritizedMaterials [i];
-//	//			if((_materialsInventory[material].availableExcessOfOtherSettlements + _materialsInventory [material].availableExcessOfResourceLandmarks) > 0){
-//	//				_materialsInventory [material].capacity += 200;
-//	//				_materialsInventory [material].isNeeded = true;
-//	//				productionTypes.RemoveAt (j);
-//	//				j--;
-//	//			}
-//	//		}
-//	//		if(productionTypes.Count <= 0){
-//	//			break;
-//	//		}
-//	//	}
-//	//	ScheduleUpdateNeededMaterials ();
-//	//}
-//	//private MATERIAL GetObtainMaterialTarget(){
-//	//	_materialWeights.Clear ();
-//	//	foreach (MATERIAL material in _materialsInventory.Keys) {
-//	//		if (_materialsInventory [material].isNeeded) {
-//	//			if (_materialsInventory [material].availableExcessOfOtherSettlements > 0 || materialsInventory [material].availableExcessOfResourceLandmarks > 0) {
-//	//				if (_materialsInventory [material].count < _materialsInventory [material].capacity) {
-//	//					_materialWeights.AddElement (material, 200);
-//	//				} else {
-//	//					_materialWeights.AddElement (material, 30);
-//	//				}
-//	//			}
-//	//		}else{
-//	//			if(_materialsInventory [material].availableExcessOfResourceLandmarks > 0){
-//	//				_materialWeights.AddElement (material, 60);
-//	//			}
-//	//		}
-//	//	}
-//	//	if(_materialWeights.Count > 0){
-//	//		return _materialWeights.PickRandomElementGivenWeights ();
-//	//	}
-//	//	return MATERIAL.NONE;
-//	//}
-//	private MATERIAL RepickObtainMaterialTarget(){
-//		if(_materialWeights.Count > 0){
-//			return _materialWeights.PickRandomElementGivenWeights ();
-//		}
-//		return MATERIAL.NONE;
-//	}
-//	private void GenerateMonthlyQuests() {
-////		WeightedDictionary<OldQuest.Quest> questDictionary = new WeightedDictionary<OldQuest.Quest>();
-////		questDictionary.LogDictionaryValues("OldQuest.Quest Creation Weights: ");
-////		if(questDictionary.GetTotalOfWeights() > 0) {
-////			OldQuest.Quest chosenQuestToCreate = questDictionary.PickRandomElementGivenWeights();
-////			AddNewQuest(chosenQuestToCreate);
-////		}
-//		CreateQuest(QUEST_TYPE.OBTAIN_MATERIAL);
-//		ScheduleMonthlyQuests();
-//	}
-//	private void CreateQuest(QUEST_TYPE questType){
-//		int noOfQuestsOnBoard = GetNumberOfQuestsOnBoardByType (questType);
-//		int maxNoOfQuests = GetMaxQuests (questType);
-//		//if(questType == QUEST_TYPE.OBTAIN_MATERIAL){
-//		//	if(noOfQuestsOnBoard < maxNoOfQuests){
-//  //              MATERIAL material = GetObtainMaterialTarget();
-//  //              MATERIAL previousMaterial = MATERIAL.NONE;
-//		//		for (int i = 0; i < 2; i++) {
-//		//			if(material != MATERIAL.NONE && material != previousMaterial && !AlreadyHasQuestOfType(QUEST_TYPE.OBTAIN_MATERIAL, material)){
-//		//				previousMaterial = material;
-//		//				BaseLandmark target = GetTargetObtainMaterial (material);
-//		//				if(target != null){
-//		//					ObtainMaterial obtainMaterialQuest = new ObtainMaterial (this, material, target);
-//		//					obtainMaterialQuest.SetSettlement (this);
-//		//					AddNewQuest (obtainMaterialQuest);
-//		//					if((noOfQuestsOnBoard + 1) < maxNoOfQuests){
-//		//						material = RepickObtainMaterialTarget ();
-//		//					}else{
-//		//						break;
-//		//					}
-//		//				}else{
-//		//					if(i == 0){
-//		//						material = RepickObtainMaterialTarget ();
-//		//					}
-//		//				}
-//		//			}else{
-//		//				break;
-//		//			}
-//		//		}
-//		//	}
-//		//}
-//	}
-//	private int GetMaxQuests(QUEST_TYPE questType){
-//		if (questType == QUEST_TYPE.OBTAIN_MATERIAL) {
-//			return 3;
-//		}
-//		return 0;
-//	}
-//    //private BaseLandmark GetTargetObtainMaterial(MATERIAL materialToObtain){
-//    //	WeightedDictionary<BaseLandmark> targetWeights = new WeightedDictionary<BaseLandmark> ();
-//    //	for (int i = 0; i < this.owner.settlements.Count; i++) {
-//    //		if(this.id == this.owner.settlements[i].id){
-//    //			for (int j = 0; j < this.ownedLandmarks.Count; j++) {
-//    //				if(this.ownedLandmarks[j].materialsInventory[materialToObtain].excess > 0){
-//    //					targetWeights.AddElement (this.ownedLandmarks [j], this.ownedLandmarks [j].materialsInventory [materialToObtain].excess);
-//    //				}
-//    //			}
-//    //		}else{
-//    //			if(this.owner.settlements[i].materialsInventory[materialToObtain].excess > 0){
-//    //				targetWeights.AddElement (this.owner.settlements[i], this.owner.settlements[i].materialsInventory [materialToObtain].excess);
-//    //			}
-//    //		}
-//    //	}
-//    //	if(targetWeights.Count > 0){
-//    //		return targetWeights.PickRandomElementGivenWeights ();
-//    //	}
-//    //	return null;
-//    //}
-//    #endregion
 
     #region Materials
     /*
@@ -531,10 +331,10 @@ public class Settlement : BaseLandmark {
 		Region currRegion = this.tileLocation.region;
 		for (int i = 0; i < currRegion.adjacentRegions.Count; i++) {
 			Region adjacentRegion = currRegion.adjacentRegions [i];
-			for (int j = 0; j < adjacentRegion.allLandmarks.Count; j++) {
-				if(adjacentRegion.allLandmarks[j].charactersAtLocation.Count > 0){
-					for (int k = 0; k < adjacentRegion.allLandmarks[j].charactersAtLocation.Count; k++) {
-						ICombatInitializer combatInitializer = adjacentRegion.allLandmarks [j].charactersAtLocation [k];
+			for (int j = 0; j < adjacentRegion.landmarks.Count; j++) {
+				if(adjacentRegion.landmarks[j].charactersAtLocation.Count > 0){
+					for (int k = 0; k < adjacentRegion.landmarks[j].charactersAtLocation.Count; k++) {
+						ICombatInitializer combatInitializer = adjacentRegion.landmarks [j].charactersAtLocation [k];
 						if(combatInitializer is Party){
 							Party party = (Party)combatInitializer;
 							for (int l = 0; l < party.partyMembers.Count; l++) {
@@ -563,7 +363,7 @@ public class Settlement : BaseLandmark {
 		Messenger.RemoveListener ("Psytoxinated", ListenPsytoxinated);
 		Messenger.RemoveListener ("Unpsytoxinated", ListenUnpsytoxinated);
 		LandmarkManager.Instance.craterLandmark = null;
-		ChangeLandmarkType (LANDMARK_TYPE.CITY);
+		ChangeLandmarkType (LANDMARK_TYPE.TOWN);
 		Initialize ();
 	}
 	public void ListenPsytoxinated(){

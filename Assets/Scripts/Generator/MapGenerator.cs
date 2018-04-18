@@ -13,9 +13,6 @@ public class MapGenerator : MonoBehaviour {
 
     internal void InitializeWorld() {
         //StartCoroutine (StartGeneration());
-        if (GameManager.Instance.enableGameAgents) {
-            PathfindingManager.Instance.Initialize();
-        }
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
@@ -24,9 +21,6 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        if (GameManager.Instance.enableGameAgents) {
-            PathfindingManager.Instance.CreateGrid();
-        }
         
         //Biomes.Instance.GenerateSpecialResources ();
         //Biomes.Instance.GenerateTileTags();
@@ -48,53 +42,52 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
-
-        if (!RoadManager.Instance.GenerateRegionRoads()) {
+        if (!LandmarkManager.Instance.GenerateLandmarks()) {
+            //reset
+            Debug.LogWarning("Landmark generation ran into a problem, reloading scene...");
+            Messenger.Cleanup();
+            ReloadScene();
+            return;
+        }
+        //StartCoroutine(RoadManager.Instance.GenerateRoads());
+        if (!RoadManager.Instance.GenerateRoads()) {
             //reset
             Debug.LogWarning("Road generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
             return;
-        }        
-        LandmarkManager.Instance.GenerateOtherLandmarks();
+        }
+        FactionManager.Instance.OccupyLandmarksInFactionRegions();
+        //CameraMove.Instance.UpdateMinimapTexture();
+        //return;
+        //if (!RoadManager.Instance.GenerateRegionRoads()) {
+        //    //reset
+        //    Debug.LogWarning("Road generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //}
+        //LandmarkManager.Instance.GenerateOtherLandmarks();
         LandmarkManager.Instance.GenerateMaterials();
 
-        //KingdomManager.Instance.GenerateInitialKingdoms();
-        //GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
-
-        //GridMap.Instance.GenerateResourcesPerRegion();
-        //		GridMap.Instance.GenerateResourceTiles();
-        //GridMap.Instance.GenerateOtherLandmarksPerRegion();
-        //GridMap.Instance.GenerateUniqueLandmarks();
-        //GridMap.Instance.GenerateLandmarkExtraConnections();
-        //Biomes.Instance.GenerateElevationAfterRoads();
-        //Biomes.Instance.GenerateRegionBorderElevation();
         RoadManager.Instance.FlattenRoads();
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();
-        StartCoroutine(StartWorld());
-    }
-
-    internal void ReloadScene() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    IEnumerator StartWorld() {
-        yield return new WaitForSeconds(1f);
         //Biomes.Instance.GenerateTileEdges();
-
-        //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
         FactionManager.Instance.GenerateFactionCharacters();
         FactionManager.Instance.GenerateMonsters();
         StorylineManager.Instance.GenerateStoryLines();
-        CharacterManager.Instance.SchedulePrisonerConversion();
-        //CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
-        CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
+		CharacterManager.Instance.SchedulePrisonerConversion ();
+		CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
+    }
+
+    internal void ReloadScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

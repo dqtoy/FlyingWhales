@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class LandmarkData {
     public LANDMARK_TYPE landmarkType;
-    public int durabilityModifier;
+    public BASE_LANDMARK_TYPE baseLandmarkType;
+    public int minCivilians;
+    public int maxCivilians;
+    public int durability;
     public int appearanceWeight;
     public bool isUnique;
-    public MATERIAL[] possibleMaterials; //Possible materials that this landmark can be made of (this affects the landmarks durability)
+    public bool onOccupiedOnly;
+    public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
 
