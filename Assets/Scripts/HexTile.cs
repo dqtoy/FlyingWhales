@@ -1554,10 +1554,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public void ForceResetTile() {
         ResetTile();
     }
+
+#if UNITY_EDITOR
     [ContextMenu("Select Neighbours")]
     public void SelectAllTilesInRegion() {
         UnityEditor.Selection.objects = this.AllNeighbours.Select(x => x.gameObject).ToArray();
     }
+#endif
     //[ContextMenu("Select Tiles in Same Region")]
     //public void SelectAllTilesInRegion() {
     //    UnityEditor.Selection.objects = region.tilesInRegion.Select(x => x.gameObject).ToArray();

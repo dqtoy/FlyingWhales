@@ -1,17 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System;
 
-[System.Serializable]
-public class LandmarkItemData{
-    public string itemName;
-    public int exploreWeight;
-    public bool isUnlimited; //Can this item be obtained at a landmark unlimited times?
-    [SerializeField] private int itemIndex; //For custom editor
-}
+#if UNITY_EDITOR
+using UnityEditor;
 
 [CustomPropertyDrawer(typeof(LandmarkItemData))]
 public class LandmarkItemDataDrawer : PropertyDrawer {
@@ -75,4 +69,13 @@ public class LandmarkItemDataDrawer : PropertyDrawer {
         }
         return allItemNames;
     }
+}
+#endif
+
+[System.Serializable]
+public class LandmarkItemData {
+    public string itemName;
+    public int exploreWeight;
+    public bool isUnlimited; //Can this item be obtained at a landmark unlimited times?
+    [SerializeField] private int itemIndex; //For custom editor
 }

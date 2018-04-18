@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
+using System.Collections;
 
 [CustomEditor(typeof(CharacterManager))]
 public class CitizenManagerEditor : Editor {
@@ -17,3 +18,4 @@ public class CitizenManagerEditor : Editor {
         }
     }
 }
+#endif

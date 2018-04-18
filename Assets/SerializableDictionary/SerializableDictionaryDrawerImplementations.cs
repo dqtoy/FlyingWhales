@@ -1,8 +1,8 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEngine.UI;
- 
+
 using UnityEditor;
- 
 // ---------------
 //  String => Int
 // ---------------
@@ -35,3 +35,4 @@ public class StorylineBoolDictionaryDrawer : SerializableDictionaryDrawer<STORYL
     }
 }
 internal class SerializableStorylineBoolTemplate : SerializableKeyValueTemplate<STORYLINE, bool> { }
+#endif

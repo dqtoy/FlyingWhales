@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
+using System.Collections;
 
 namespace ECS {
     [CustomPropertyDrawer(typeof(SkillRequirement))]
@@ -59,3 +60,4 @@ namespace ECS {
         }
     }
 }
+#endif

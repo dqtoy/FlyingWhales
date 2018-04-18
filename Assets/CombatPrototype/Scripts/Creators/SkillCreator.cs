@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
+using System.Collections;
 using System.IO;
 
 namespace ECS {
@@ -223,4 +224,4 @@ namespace ECS {
         #endregion
     }
 }
-
+#endif

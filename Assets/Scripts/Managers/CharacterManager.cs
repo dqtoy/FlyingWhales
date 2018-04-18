@@ -227,12 +227,7 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public void ApplyTraitSetup() {
-        for (int i = 0; i < traitSetup.Count; i++) {
-            Trait currTrait = traitSetup[i];
-            SaveTraitJson(currTrait.traitName, currTrait);
-        }
-    }
+
     public void ResetTraitSetup() {
         traitSetup.Clear();
         TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
@@ -243,6 +238,13 @@ public class CharacterManager : MonoBehaviour {
                 Trait traitFromFile = JsonUtility.FromJson<Trait>(jsonStringOfTrait);
                 traitSetup.Add(traitFromFile);
             }
+        }
+    }
+#if UNITY_EDITOR
+    public void ApplyTraitSetup() {
+        for (int i = 0; i < traitSetup.Count; i++) {
+            Trait currTrait = traitSetup[i];
+            SaveTraitJson(currTrait.traitName, currTrait);
         }
     }
     private void SaveTraitJson(string fileName, Trait traitSetup) {
@@ -261,6 +263,7 @@ public class CharacterManager : MonoBehaviour {
         //Print the text from the file
         Debug.Log(GetJsonStringOfTrait(traitSetup.trait));
     }
+#endif
     private string GetJsonStringOfTrait(TRAIT trait) {
         string path = "Assets/Resources/Data/Traits/" + Utilities.NormalizeString(trait.ToString()) + ".json";
         string jsonString = string.Empty;

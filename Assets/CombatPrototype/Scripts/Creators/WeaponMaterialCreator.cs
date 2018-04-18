@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,3 +53,4 @@ namespace ECS {
 		}
 	}
 }
+#endif
