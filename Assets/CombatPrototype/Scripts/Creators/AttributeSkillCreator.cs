@@ -56,7 +56,7 @@ namespace ECS {
 				EditorUtility.DisplayDialog("Error", "Please specify a filename", "OK");
 				return;
 			}
-			string path = "Assets/CombatPrototype/Data/AttributeSkills/" + fileName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/AttributeSkills/" + fileName + ".json";
 			if (Utilities.DoesFileExist(path)) {
 				if (EditorUtility.DisplayDialog("Overwrite File", "A file with name " + fileName + " already exists. Replace with this file?", "Yes", "No")) {
 					File.Delete(path);
@@ -83,14 +83,14 @@ namespace ECS {
 		#region Skills
 		private List<string> GetAllSkillsOfType(SKILL_CATEGORY category, SKILL_TYPE skillType) {
 			List<string> allSkillsOfType = new List<string>();
-			string path = "Assets/CombatPrototype/Data/Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
+			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
 			foreach (string file in Directory.GetFiles(path, "*.json")) {
 				allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
 			}
 			return allSkillsOfType;
 		}
 		private void AddSkillToList(string skillName) {
-			string path = "Assets/CombatPrototype/Data/Skills/BODY_PART/" + attributeComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Skills/BODY_PART/" + attributeComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
 			string dataAsJson = File.ReadAllText(path);
 			switch (attributeComponent.skillTypeToAdd) {
 			case SKILL_TYPE.ATTACK:

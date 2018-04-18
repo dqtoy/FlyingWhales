@@ -37,14 +37,14 @@ namespace ECS {
 //        #region Skills
 //        private List<string> GetAllSkillsOfType(SKILL_TYPE skillType) {
 //            List<string> allSkillsOfType = new List<string>();
-//            string path = "Assets/CombatPrototype/Data/Skills/" + skillType.ToString() + "/";
+//            string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + skillType.ToString() + "/";
 //            foreach (string file in Directory.GetFiles(path, "*.json")) {
 //                allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
 //            }
 //            return allSkillsOfType;
 //        }
 //        private void AddSkillToList(string skillName) {
-//			string path = "Assets/CombatPrototype/Data/Skills/" + currCharacterClass.skillTypeToAdd.ToString() + "/" + skillName + ".json";
+//			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + currCharacterClass.skillTypeToAdd.ToString() + "/" + skillName + ".json";
 //            string dataAsJson = File.ReadAllText(path);
 //			switch (currCharacterClass.skillTypeToAdd) {
 //            case SKILL_TYPE.ATTACK:
@@ -77,7 +77,7 @@ namespace ECS {
                 EditorUtility.DisplayDialog("Error", "Please specify a Class Name", "OK");
                 return;
             }
-            string path = "Assets/CombatPrototype/Data/CharacterClasses/" + currCharacterClass.className + ".json";
+            string path = Application.dataPath + "/StreamingAssets/Data/CharacterClasses/" + currCharacterClass.className + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + currCharacterClass.className + " already exists. Replace with this class?", "Yes", "No")) {
                     File.Delete(path);
@@ -99,7 +99,7 @@ namespace ECS {
 
         #region Loading
 //        private void LoadCharacterClass() {
-//            string filePath = EditorUtility.OpenFilePanel("Select ECS.Character Json", "Assets/CombatPrototype/Data/CharacterClasses/", "json");
+//            string filePath = EditorUtility.OpenFilePanel("Select ECS.Character Json", Application.dataPath + "/StreamingAssets/Data/CharacterClasses/", "json");
 //            if (!string.IsNullOrEmpty(filePath)) {
 //                ResetValues();
 //                string dataAsJson = File.ReadAllText(filePath);

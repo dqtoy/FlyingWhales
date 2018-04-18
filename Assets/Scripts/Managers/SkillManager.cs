@@ -26,7 +26,7 @@ public class SkillManager : MonoBehaviour {
     private void ConstructAllSkillsList() {
         allSkills = new Dictionary<string, ECS.Skill>();
 		bodyPartSkills = new Dictionary<string, ECS.Skill> ();
-        string path = "Assets/CombatPrototype/Data/Skills/";
+        string path = Application.dataPath + "/StreamingAssets/Data/Skills/";
         string[] directories = Directory.GetDirectories(path); //Get first level skill types
         for (int i = 0; i < directories.Length; i++) {
             string currDirectory = directories[i];
@@ -87,7 +87,7 @@ public class SkillManager : MonoBehaviour {
     }
 
 //    private void ConstructAttributeSkills() {
-//        string path = "Assets/CombatPrototype/Data/AttributeSkills/";
+//        string path = Application.dataPath + "/StreamingAssets/Data/AttributeSkills/";
 //        string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
 //        attributeSkills = new ECS.AttributeSkill[attributeSkillsJson.Length];
 //        for (int i = 0; i < attributeSkillsJson.Length; i++) {
@@ -100,7 +100,7 @@ public class SkillManager : MonoBehaviour {
 //    }
 
     private void ConstructWeaponTypeSkills() {
-        string path = "Assets/CombatPrototype/Data/WeaponTypes/";
+        string path = Application.dataPath + "/StreamingAssets/Data/WeaponTypes/";
         string[] weaponTypesJson = System.IO.Directory.GetFiles(path, "*.json");
 		for (int i = 0; i < weaponTypesJson.Length; i++) {
 			string file = weaponTypesJson[i];

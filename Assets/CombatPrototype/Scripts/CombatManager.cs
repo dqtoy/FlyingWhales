@@ -31,7 +31,7 @@ namespace ECS {
             Messenger.AddListener<ICombatInitializer, ICombatInitializer>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
         }
         private void ConstructBaseCharacters() {
-            string path = "Assets/CombatPrototype/Data/CharacterSetups/";
+            string path = Application.dataPath + "/StreamingAssets/Data/CharacterSetups/";
             string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
             baseCharacters = new CharacterSetup[baseCharacterJsons.Length];
             for (int i = 0; i < baseCharacterJsons.Length; i++) {
@@ -74,7 +74,7 @@ namespace ECS {
 		}
 
 //		private void ConstructAttributeSkills(){
-//			string path = "Assets/CombatPrototype/Data/AttributeSkills/";
+//			string path = Application.dataPath + "/StreamingAssets/Data/AttributeSkills/";
 //			string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
 //			attributeSkills = new AttributeSkill[attributeSkillsJson.Length];
 //			for (int i = 0; i < attributeSkillsJson.Length; i++) {

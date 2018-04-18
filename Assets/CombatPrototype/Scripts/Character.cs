@@ -1009,7 +1009,7 @@ namespace ECS {
 		//Equip generic item, can be a weapon, armor, etc.
 		public void EquipItem(ITEM_TYPE itemType, string itemName) {
 			string strItemType = itemType.ToString();
-			string path = "Assets/CombatPrototype/Data/Items/" + strItemType + "/" + itemName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Items/" + strItemType + "/" + itemName + ".json";
 			if(System.IO.File.Exists(path)){
 				string dataAsJson = System.IO.File.ReadAllText(path);
 				if (strItemType.Contains("WEAPON")) {
@@ -1023,7 +1023,7 @@ namespace ECS {
 			}
 		}
 		public void EquipItem(string itemType, string itemName) {
-			string path = "Assets/CombatPrototype/Data/Items/" + itemType + "/" + itemName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Items/" + itemType + "/" + itemName + ".json";
 			string dataAsJson = System.IO.File.ReadAllText(path);
 			if (itemType.Contains("WEAPON")) {
 				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
@@ -1115,7 +1115,7 @@ namespace ECS {
 			}
 
 			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
-			//CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
+			//StreamingAssetsUI.Instance.UpdateCharacterSummary(this);
 			return true;
 		}
 		private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req){
@@ -1444,7 +1444,7 @@ namespace ECS {
 		#region Skills
 		private List<Skill> GetGeneralSkills(){
 			List<Skill> generalSkills = new List<Skill> ();
-			string mainPath = "Assets/CombatPrototype/Data/Skills/GENERAL/";
+			string mainPath = Application.dataPath + "/StreamingAssets/Data/Skills/GENERAL/";
 			string[] folders = System.IO.Directory.GetDirectories (mainPath);
 			for (int i = 0; i < folders.Length; i++) {
 				string path = folders[i] + "/";

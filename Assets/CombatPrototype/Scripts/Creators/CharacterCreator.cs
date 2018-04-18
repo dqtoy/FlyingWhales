@@ -93,7 +93,7 @@ namespace ECS {
         #region ECS.Character Classes
         private List<string> GetAllCharacterClasses() {
             List<string> allCharacterClasses = new List<string>();
-            string path = "Assets/CombatPrototype/Data/CharacterClasses/";
+            string path = Application.dataPath + "/StreamingAssets/Data/CharacterClasses/";
             foreach (string file in Directory.GetFiles(path, "*.json")) {
                 allCharacterClasses.Add(Path.GetFileNameWithoutExtension(file));
             }
@@ -104,7 +104,7 @@ namespace ECS {
         #region Race Setups
         private List<string> GetAllRaceSetups() {
             List<string> allRaceSetups = new List<string>();
-            string path = "Assets/CombatPrototype/Data/RaceSettings/";
+            string path = Application.dataPath + "/StreamingAssets/Data/RaceSettings/";
             foreach (string file in Directory.GetFiles(path, "*.json")) {
                 allRaceSetups.Add(Path.GetFileNameWithoutExtension(file));
             }
@@ -113,7 +113,7 @@ namespace ECS {
         #endregion
 
         private void SaveCharacter(CharacterSetup characterSetup) {
-			string path = "Assets/CombatPrototype/Data/CharacterSetups/" + characterComponent.fileName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/CharacterSetups/" + characterComponent.fileName + ".json";
             if (File.Exists(path)) {
 				if (EditorUtility.DisplayDialog("Overwrite ECS.Character", characterComponent.fileName + " already exists. Replace with this character?", "Yes", "No")) {
                     File.Delete(path);
@@ -125,8 +125,8 @@ namespace ECS {
         }
 		private CharacterSetup ConstructCharacterSetup() {
             CharacterSetup newCharacter = new CharacterSetup();
-            //string raceData = File.ReadAllText("Assets/CombatPrototype/Data/RaceSettings/" + raceSettingFileName + ".json");
-            //string characterClassData = File.ReadAllText("Assets/CombatPrototype/Data/CharacterClasses/" + characterClassFileName + ".json");
+            //string raceData = File.ReadAllText(Application.dataPath + "/StreamingAssets/Data/RaceSettings/" + raceSettingFileName + ".json");
+            //string characterClassData = File.ReadAllText(Application.dataPath + "/StreamingAssets/Data/CharacterClasses/" + characterClassFileName + ".json");
             newCharacter.fileName = characterComponent.fileName;
 			newCharacter.raceSettingName = characterComponent.raceSettingName;
 			newCharacter.characterClassName = characterComponent.characterClassName;
@@ -149,7 +149,7 @@ namespace ECS {
         }
 
 		private List<string> GetAllItems() {
-			string mainPath = "Assets/CombatPrototype/Data/Items/";
+			string mainPath = Application.dataPath + "/StreamingAssets/Data/Items/";
 			string[] folders = System.IO.Directory.GetDirectories (mainPath);
 			List<string> allItemsOfType = new List<string>();
 			for (int i = 0; i < folders.Length; i++) {
@@ -163,14 +163,14 @@ namespace ECS {
 		}
 		private List<string> GetAllItemsOfType(ITEM_TYPE itemType) {
 			List<string> allItemsOfType = new List<string>();
-			string path = "Assets/CombatPrototype/Data/Items/" + itemType.ToString() + "/";
+			string path = Application.dataPath + "/StreamingAssets/Data/Items/" + itemType.ToString() + "/";
 			foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
 				allItemsOfType.Add(System.IO.Path.GetFileNameWithoutExtension(file));
 			}
 			return allItemsOfType;
 		}
 //        private void LoadCharacter() {
-//            string filePath = EditorUtility.OpenFilePanel("Select character data file", "Assets/CombatPrototype/Data/CharacterSetups/", "json");
+//            string filePath = EditorUtility.OpenFilePanel("Select character data file", Application.dataPath + "/StreamingAssets/Data/CharacterSetups/", "json");
 //
 //            if (!string.IsNullOrEmpty(filePath)) {
 //                string dataAsJson = File.ReadAllText(filePath);

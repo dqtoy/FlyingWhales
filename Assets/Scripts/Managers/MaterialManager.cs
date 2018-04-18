@@ -25,7 +25,7 @@ public class MaterialManager : MonoBehaviour {
 	private void ConstructMaterials(){
 		_materialsLookup = new Dictionary<MATERIAL, Materials> ();
 		_edibleMaterials = new List<MATERIAL> ();
-		string path = "Assets/CombatPrototype/Data/Materials/";
+		string path = Application.dataPath + "/StreamingAssets/Data/Materials/";
 		string[] materials = System.IO.Directory.GetFiles(path, "*.json");
 		for (int i = 0; i < materials.Length; i++) {
 			string dataAsJson = System.IO.File.ReadAllText(materials[i]);

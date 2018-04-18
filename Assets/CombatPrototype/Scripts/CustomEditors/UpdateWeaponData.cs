@@ -15,7 +15,7 @@ namespace ECS{
 		}
 
 		private static void UpdateData(){
-			string weaponTypePath = "Assets/CombatPrototype/Data/WeaponTypes/";
+			string weaponTypePath = Application.dataPath + "/StreamingAssets/Data/WeaponTypes/";
 			GameObject productionManagerGO = GameObject.Find("Production");
 			ProductionManager productionManager = productionManagerGO.GetComponent<ProductionManager> ();
 
@@ -31,7 +31,7 @@ namespace ECS{
 		}
 
 		private static Weapon CreateWeapon(MATERIAL materialType, WeaponType weaponType){
-			string materialPath = "Assets/CombatPrototype/Data/Materials/" + Utilities.NormalizeString(materialType.ToString()) + ".json";
+			string materialPath = Application.dataPath + "/StreamingAssets/Data/Materials/" + Utilities.NormalizeString(materialType.ToString()) + ".json";
 			Materials material = JsonUtility.FromJson<Materials> (System.IO.File.ReadAllText (materialPath));
 
 			Weapon weapon = new Weapon ();
@@ -55,7 +55,7 @@ namespace ECS{
 		}
 
 		private static void SaveWeapon(Weapon weapon){
-			string path = "Assets/CombatPrototype/Data/Items/WEAPON/" + weapon.itemName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Items/WEAPON/" + weapon.itemName + ".json";
 			if (Utilities.DoesFileExist(path)) {
 				File.Delete(path);
 				Save(weapon, path);

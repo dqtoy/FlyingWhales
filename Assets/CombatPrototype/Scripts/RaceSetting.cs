@@ -45,7 +45,7 @@ namespace ECS {
 
 //		private void ConstructBodyPartSkills(){
 //			this.skills = new List<Skill> ();
-//			string path = "Assets/CombatPrototype/Data/Skills/ATTACK/";
+//			string path = Application.dataPath + "/StreamingAssets/Data/Skills/ATTACK/";
 //			foreach (string file in Directory.GetFiles(path, "*.json")) {
 //				AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
 //				if(attackSkill.skillCategory == SKILL_CATEGORY.BODY_PART){
@@ -62,11 +62,11 @@ namespace ECS {
 //
 //		private void AddBodyPartSkill(IBodyPart bodyPart){
 //			if(bodyPart.HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON)){
-//				AttackSkill punch = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/Skills/ATTACK/Punch.json"));
+//				AttackSkill punch = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(Application.dataPath + "/StreamingAssets/Data/Skills/ATTACK/Punch.json"));
 //				this.skills.Add (punch);
 //			}
 //			if(bodyPart.HasAttribute(IBodyPart.ATTRIBUTE.CAN_PUNCH_NO_WEAPON)){
-//				AttackSkill punch = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText("Assets/CombatPrototype/Data/Skills/ATTACK/Punch.json"));
+//				AttackSkill punch = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(Application.dataPath + "/StreamingAssets/Data/Skills/ATTACK/Punch.json"));
 //				this.skills.Add (punch);
 //			}
 //		}

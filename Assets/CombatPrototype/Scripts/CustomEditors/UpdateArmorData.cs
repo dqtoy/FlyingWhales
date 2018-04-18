@@ -15,7 +15,7 @@ namespace ECS{
 		}
 
 		private static void UpdateData(){
-			string armorTypePath = "Assets/CombatPrototype/Data/ArmorTypes/";
+			string armorTypePath = Application.dataPath + "/StreamingAssets/Data/ArmorTypes/";
 			GameObject productionManagerGO = GameObject.Find("Production");
 			ProductionManager productionManager = productionManagerGO.GetComponent<ProductionManager> ();
 
@@ -32,7 +32,7 @@ namespace ECS{
 		}
 
 		private static Armor CreateArmor(MATERIAL materialType, ArmorType armorType){
-			string materialPath = "Assets/CombatPrototype/Data/Materials/" + Utilities.NormalizeString(materialType.ToString()) + ".json";
+			string materialPath = Application.dataPath + "/StreamingAssets/Data/Materials/" + Utilities.NormalizeString(materialType.ToString()) + ".json";
 			Materials material = JsonUtility.FromJson<Materials> (System.IO.File.ReadAllText (materialPath));
 
 			Armor armor = new Armor ();
@@ -53,7 +53,7 @@ namespace ECS{
 		}
 
 		private static void SaveArmor(Armor armor){
-			string path = "Assets/CombatPrototype/Data/Items/ARMOR/" + armor.itemName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Items/ARMOR/" + armor.itemName + ".json";
 			if (Utilities.DoesFileExist(path)) {
 				File.Delete(path);
 				Save(armor, path);

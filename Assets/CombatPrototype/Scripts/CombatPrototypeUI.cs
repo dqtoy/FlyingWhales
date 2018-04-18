@@ -74,7 +74,7 @@ namespace ECS{
 
         private List<string> GetAllItemsOfType(ITEM_TYPE itemType) {
             List<string> allItemsOfType = new List<string>();
-            string path = "Assets/CombatPrototype/Data/Items/" + itemType.ToString() + "/";
+            string path = Application.dataPath + "/StreamingAssets/Data/Items/" + itemType.ToString() + "/";
             foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
                 allItemsOfType.Add(System.IO.Path.GetFileNameWithoutExtension(file));
             }

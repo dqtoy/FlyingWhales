@@ -53,31 +53,31 @@ namespace ECS {
 //            _skills = new List<Skill>();
 //            for (int i = 0; i < attackSkills.Count; i++) {
 //                string skillName = attackSkills[i];
-//                string path = "Assets/CombatPrototype/Data/Skills/ATTACK/" + skillName + ".json";
+//                string path = Application.dataPath + "/StreamingAssets/Data/Skills/ATTACK/" + skillName + ".json";
 //                AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
 //                _skills.Add(currSkill);
 //            }
 //            for (int i = 0; i < healSkills.Count; i++) {
 //                string skillName = healSkills[i];
-//                string path = "Assets/CombatPrototype/Data/Skills/HEAL/" + skillName + ".json";
+//                string path = Application.dataPath + "/StreamingAssets/Data/Skills/HEAL/" + skillName + ".json";
 //                HealSkill currSkill = JsonUtility.FromJson<HealSkill>(System.IO.File.ReadAllText(path));
 //                _skills.Add(currSkill);
 //            }
 //            for (int i = 0; i < obtainSkills.Count; i++) {
 //                string skillName = obtainSkills[i];
-//                string path = "Assets/CombatPrototype/Data/Skills/OBTAIN_ITEM/" + skillName + ".json";
+//                string path = Application.dataPath + "/StreamingAssets/Data/Skills/OBTAIN_ITEM/" + skillName + ".json";
 //                ObtainSkill currSkill = JsonUtility.FromJson<ObtainSkill>(System.IO.File.ReadAllText(path));
 //                _skills.Add(currSkill);
 //            }
 //            for (int i = 0; i < fleeSkills.Count; i++) {
 //                string skillName = fleeSkills[i];
-//                string path = "Assets/CombatPrototype/Data/Skills/FLEE/" + skillName + ".json";
+//                string path = Application.dataPath + "/StreamingAssets/Data/Skills/FLEE/" + skillName + ".json";
 //                FleeSkill currSkill = JsonUtility.FromJson<FleeSkill>(System.IO.File.ReadAllText(path));
 //                _skills.Add(currSkill);
 //            }
 //            for (int i = 0; i < moveSkills.Count; i++) {
 //                string skillName = moveSkills[i];
-//                string path = "Assets/CombatPrototype/Data/Skills/MOVE/" + skillName + ".json";
+//                string path = Application.dataPath + "/StreamingAssets/Data/Skills/MOVE/" + skillName + ".json";
 //                MoveSkill currSkill = JsonUtility.FromJson<MoveSkill>(System.IO.File.ReadAllText(path));
 //                _skills.Add(currSkill);
 //            }

@@ -68,7 +68,7 @@ public class ItemManager : MonoBehaviour {
         allItems = new Dictionary<string, ECS.Item>();
 		allWeapons = new Dictionary<string, ECS.Weapon>();
 		allArmors = new Dictionary<string, ECS.Armor> ();
-        string path = "Assets/CombatPrototype/Data/Items/";
+        string path = Application.dataPath + "/StreamingAssets/Data/Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
             string currDirectory = directories[i];
@@ -113,7 +113,7 @@ public class ItemManager : MonoBehaviour {
     }
     private void ConstructWeaponTypeData() {
         _weaponTypeData = new Dictionary<WEAPON_TYPE, ECS.WeaponType>();
-        string path = "Assets/CombatPrototype/Data/WeaponTypes/";
+        string path = Application.dataPath + "/StreamingAssets/Data/WeaponTypes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             string currFilePath = files[i];
@@ -126,7 +126,7 @@ public class ItemManager : MonoBehaviour {
     }
     private void ConstructArmorTypeData() {
         _armorTypeData = new Dictionary<ARMOR_TYPE, ECS.ArmorType>();
-        string path = "Assets/CombatPrototype/Data/ArmorTypes/";
+        string path = Application.dataPath + "/StreamingAssets/Data/ArmorTypes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             string currFilePath = files[i];

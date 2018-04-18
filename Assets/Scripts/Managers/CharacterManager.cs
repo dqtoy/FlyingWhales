@@ -248,7 +248,7 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     private void SaveTraitJson(string fileName, Trait traitSetup) {
-        string path = "Assets/Resources/Data/Traits/" + fileName + ".json";
+        string path = Application.dataPath + "/Resources/Data/Traits/" + fileName + ".json";
 
         string jsonString = JsonUtility.ToJson(traitSetup);
 
@@ -265,7 +265,7 @@ public class CharacterManager : MonoBehaviour {
     }
 #endif
     private string GetJsonStringOfTrait(TRAIT trait) {
-        string path = "Assets/Resources/Data/Traits/" + Utilities.NormalizeString(trait.ToString()) + ".json";
+        string path = Application.dataPath + "/Resources/Data/Traits/" + Utilities.NormalizeString(trait.ToString()) + ".json";
         string jsonString = string.Empty;
         try {
             //Read the text from directly from the test.txt file

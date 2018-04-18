@@ -54,7 +54,7 @@ public class LandmarkItemDataDrawer : PropertyDrawer {
          */
     public List<string> GetAllItemNames() {
         List<string> allItemNames = new List<string>();
-        string path = "Assets/CombatPrototype/Data/Items/";
+        string path = Application.dataPath + "/StreamingAssets/Data/Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
             string currDirectory = directories[i];

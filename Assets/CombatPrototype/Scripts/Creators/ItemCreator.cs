@@ -122,7 +122,7 @@ namespace ECS {
                 EditorUtility.DisplayDialog("Error", "Please specify an Item Name", "OK");
                 return;
             }
-			string path = "Assets/CombatPrototype/Data/Items/" + itemComponent.itemType.ToString() + "/" + fileName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Items/" + itemComponent.itemType.ToString() + "/" + fileName + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Item", "An item with name " + fileName + " already exists. Replace with this item?", "Yes", "No")) {
                     File.Delete(path);
@@ -216,14 +216,14 @@ namespace ECS {
 		#region Skills
 		private List<string> GetAllSkillsOfType(SKILL_CATEGORY category, SKILL_TYPE skillType) {
 			List<string> allSkillsOfType = new List<string>();
-			string path = "Assets/CombatPrototype/Data/Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
+			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
 			foreach (string file in Directory.GetFiles(path, "*.json")) {
 				allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
 			}
 			return allSkillsOfType;
 		}
 		private void AddSkillToList(string skillName) {
-			string path = "Assets/CombatPrototype/Data/Skills/" + itemComponent.itemType.ToString() + "/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + itemComponent.itemType.ToString() + "/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
 			string dataAsJson = File.ReadAllText(path);
 			switch (itemComponent.skillTypeToAdd) {
 			case SKILL_TYPE.ATTACK:
@@ -252,7 +252,7 @@ namespace ECS {
 
         #region Loading
 //        private void LoadItem() {
-//            string filePath = EditorUtility.OpenFilePanel("Select Item Json", "Assets/CombatPrototype/Data/Items/", "json");
+//            string filePath = EditorUtility.OpenFilePanel("Select Item Json", Application.dataPath + "/StreamingAssets/Data/Items/", "json");
 //            if (!string.IsNullOrEmpty(filePath)) {
 //                string dataAsJson = File.ReadAllText(filePath);
 //                if (filePath.Contains("WEAPON")) {

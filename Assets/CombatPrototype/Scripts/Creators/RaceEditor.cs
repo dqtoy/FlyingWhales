@@ -48,7 +48,7 @@ namespace ECS {
 
         #region Saving
         private void SaveRaceSettings() {
-			string path = "Assets/CombatPrototype/Data/RaceSettings/" + raceComponent.race.ToString() + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/RaceSettings/" + raceComponent.race.ToString() + ".json";
             if (Utilities.DoesFileExist(path)) {
 				if (EditorUtility.DisplayDialog("Overwrite Race Setting", "A race setting with name " + raceComponent.race.ToString() + " already exists. Replace with these settings?", "Yes", "No")) {
                     File.Delete(path);
@@ -69,7 +69,7 @@ namespace ECS {
 
         #region Loading
 //        private void LoadRaceSettings(RACE race) {
-//            string path = "Assets/CombatPrototype/Data/RaceSettings/" + race.ToString() + ".json";
+//            string path = Application.dataPath + "/StreamingAssets/Data/RaceSettings/" + race.ToString() + ".json";
 //            string dataAsJson = File.ReadAllText(path);
 //			raceComponent = JsonUtility.FromJson<RaceSetting>(dataAsJson);
 //        }

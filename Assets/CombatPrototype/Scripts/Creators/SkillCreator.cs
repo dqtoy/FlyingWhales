@@ -79,7 +79,7 @@ namespace ECS {
                 EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
                 return;
             }
-			string path = "Assets/CombatPrototype/Data/Skills/" + skillComponent.skillCategory.ToString() + "/"+ skillComponent.skillType.ToString() + "/" + fileName + ".json";
+			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + skillComponent.skillCategory.ToString() + "/"+ skillComponent.skillType.ToString() + "/" + fileName + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Skill", "A skill with name " + fileName + " already exists. Replace with this skill?", "Yes", "No")) {
                     File.Delete(path);
@@ -162,7 +162,7 @@ namespace ECS {
 
         #region Loading
 //        private void LoadSkill() {
-//            string filePath = EditorUtility.OpenFilePanel("Select Skill Json", "Assets/CombatPrototype/Data/Skills/", "json");
+//            string filePath = EditorUtility.OpenFilePanel("Select Skill Json", Application.dataPath + "/StreamingAssets/Data/Skills/", "json");
 //            if (!string.IsNullOrEmpty(filePath)) {
 //                string dataAsJson = File.ReadAllText(filePath);
 //                if (filePath.Contains("ATTACK")) {
