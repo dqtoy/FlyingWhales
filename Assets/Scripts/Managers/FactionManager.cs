@@ -214,7 +214,9 @@ public class FactionManager : MonoBehaviour {
             Tribe currTribe = allTribes[i];
             for (int j = 0; j < currTribe.settlements.Count; j++) {
                 Settlement currSettlement = currTribe.settlements[j];
-                CreateInititalFactionCharacters(currTribe, currSettlement);
+                if (currSettlement.civilians > 0) {
+                    CreateInititalFactionCharacters(currTribe, currSettlement);
+                }
             }
             CreateChieftainForFaction(currTribe);
         }

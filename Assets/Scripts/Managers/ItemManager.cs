@@ -68,7 +68,7 @@ public class ItemManager : MonoBehaviour {
         allItems = new Dictionary<string, ECS.Item>();
 		allWeapons = new Dictionary<string, ECS.Weapon>();
 		allArmors = new Dictionary<string, ECS.Armor> ();
-        string path = Application.dataPath + "/StreamingAssets/Data/Items/";
+        string path = Application.dataPath + "/Resources/Data/Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
             string currDirectory = directories[i];

@@ -31,7 +31,7 @@ namespace ECS {
             Messenger.AddListener<ICombatInitializer, ICombatInitializer>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
         }
         private void ConstructBaseCharacters() {
-            string path = Application.dataPath + "/StreamingAssets/Data/CharacterSetups/";
+            string path = Application.dataPath + "/Resources/Data/CharacterSetups/";
             string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
             baseCharacters = new CharacterSetup[baseCharacterJsons.Length];
             for (int i = 0; i < baseCharacterJsons.Length; i++) {

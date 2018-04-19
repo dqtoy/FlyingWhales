@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using PathFind;
 using System.Linq;
 using Panda;
-using Pathfinding;
 using ECS;
 
 public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{

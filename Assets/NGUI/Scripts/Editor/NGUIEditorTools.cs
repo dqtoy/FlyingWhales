@@ -19,11 +19,17 @@ public static class NGUIEditorTools
 	static Texture2D mGradientTex;
 	static GameObject mPrevious;
 
-	/// <summary>
-	/// Returns a blank usable 1x1 white texture.
-	/// </summary>
+#if UNITY_4_7 || UNITY_5_5 || UNITY_5_6
+        static public string textArea = "AS TextArea";
+#else
+    static public string textArea = "TextArea";
+#endif
 
-	static public Texture2D blankTexture
+    /// <summary>
+    /// Returns a blank usable 1x1 white texture.
+    /// </summary>
+
+    static public Texture2D blankTexture
 	{
 		get
 		{
@@ -1339,7 +1345,7 @@ public static class NGUIEditorTools
 		{
 			mEndHorizontal = true;
 			GUILayout.BeginHorizontal();
-			EditorGUILayout.BeginHorizontal("AS TextArea", GUILayout.MinHeight(10f));
+			EditorGUILayout.BeginHorizontal(textArea, GUILayout.MinHeight(10f));
 		}
 		else
 		{
