@@ -434,7 +434,7 @@ public class ConsoleMenu : UIMenu {
             text += "\n" + character.specificLocationHistory[i];
         }
         Debug.Log(text);
-        string fileLocation = Application.dataPath + "/StreamingAssets/Logs/" + character.name + "'s_Location_History.txt";
+        string fileLocation = Utilities.dataPath + "Logs/" + character.name + "'s_Location_History.txt";
         System.IO.File.WriteAllText(fileLocation, text);
         AddSuccessMessage("Logged " + character.name + "'s location history in console. And created text file of log at " + fileLocation);
     }

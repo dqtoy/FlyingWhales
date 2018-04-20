@@ -32,7 +32,7 @@ namespace ECS {
 				EditorUtility.DisplayDialog("Error", "Please specify a filename", "OK");
 				return;
 			}
-			string path = Application.dataPath + "/StreamingAssets/Data/ArmorTypes/" + fileName + ".json";
+			string path = Utilities.dataPath + "ArmorTypes/" + fileName + ".json";
 			if (Utilities.DoesFileExist(path)) {
 				if (EditorUtility.DisplayDialog("Overwrite File", "A file with name " + fileName + " already exists. Replace with this file?", "Yes", "No")) {
 					File.Delete(path);

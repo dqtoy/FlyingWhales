@@ -59,28 +59,6 @@ namespace ECS{
             }
         }
 
-        public void LoadItemChoices() {
-            equipmentPopupList.Clear();
-            equipmentPopupList.value = string.Empty;
-            ITEM_TYPE currTypeChosen = (ITEM_TYPE)itemTypePopupList.data;
-            List<string> items = GetAllItemsOfType(currTypeChosen);
-            for (int i = 0; i < items.Count; i++) {
-                equipmentPopupList.AddItem(items[i]);
-                if (i == 0) {
-                    equipmentPopupList.value = items[i];
-                }
-            }
-        }
-
-        private List<string> GetAllItemsOfType(ITEM_TYPE itemType) {
-            List<string> allItemsOfType = new List<string>();
-            string path = Application.dataPath + "/StreamingAssets/Data/Items/" + itemType.ToString() + "/";
-            foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-                allItemsOfType.Add(System.IO.Path.GetFileNameWithoutExtension(file));
-            }
-            return allItemsOfType;
-        }
-
         public void AddCharacterToSideA() {
             ECS.Character newChar = CombatManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
             CombatManager.Instance.combat.AddCharacter(SIDES.A, newChar);

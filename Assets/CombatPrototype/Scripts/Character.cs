@@ -1008,32 +1008,30 @@ namespace ECS {
 		//For prototype only, in reality, an instance of an Item must be passed as parameter
 		//Equip generic item, can be a weapon, armor, etc.
 		public void EquipItem(ITEM_TYPE itemType, string itemName) {
-			string strItemType = itemType.ToString();
-			string path = Application.dataPath + "/StreamingAssets/Data/Items/" + strItemType + "/" + itemName + ".json";
-			if(System.IO.File.Exists(path)){
-				string dataAsJson = System.IO.File.ReadAllText(path);
-				if (strItemType.Contains("WEAPON")) {
-					Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
+			if(ItemManager.Instance.allItems.ContainsKey(itemName)){
+				if (itemType == ITEM_TYPE.WEAPON) {
+					Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
 					weapon.ConstructSkillsList ();
 					TryEquipWeapon(weapon);
-				} else if (strItemType.Contains("ARMOR")) {
-					Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
+				} else if (itemType == ITEM_TYPE.ARMOR) {
+                    Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
 					TryEquipArmor(armor);
 				}
 			}
 		}
 		public void EquipItem(string itemType, string itemName) {
-			string path = Application.dataPath + "/StreamingAssets/Data/Items/" + itemType + "/" + itemName + ".json";
-			string dataAsJson = System.IO.File.ReadAllText(path);
-			if (itemType.Contains("WEAPON")) {
-				Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-				weapon.ConstructSkillsList ();
-				TryEquipWeapon(weapon);
-			} else if (itemType.Contains("ARMOR")) {
-				Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
-				TryEquipArmor(armor);
-			}
-		}
+            if (ItemManager.Instance.allItems.ContainsKey(itemName)) {
+                if (itemType.ToLower() == "weapon") {
+                    Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
+                    weapon.ConstructSkillsList();
+                    TryEquipWeapon(weapon);
+                }
+                else if (itemType.ToLower() == "armor") {
+                    Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
+                    TryEquipArmor(armor);
+                }
+            }
+        }
 
         /*
          this is the real way to equip an item
@@ -1443,40 +1441,7 @@ namespace ECS {
 
 		#region Skills
 		private List<Skill> GetGeneralSkills(){
-			List<Skill> generalSkills = new List<Skill> ();
-			string mainPath = Application.dataPath + "/StreamingAssets/Data/Skills/GENERAL/";
-			string[] folders = System.IO.Directory.GetDirectories (mainPath);
-			for (int i = 0; i < folders.Length; i++) {
-				string path = folders[i] + "/";
-				DirectoryInfo di = new DirectoryInfo (path);
-				if (di.Name == "ATTACK") {
-					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-						AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (System.IO.File.ReadAllText (file));
-						generalSkills.Add (attackSkill);
-					}
-				}else if (di.Name == "HEAL") {
-					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-						HealSkill healSkill = JsonUtility.FromJson<HealSkill> (System.IO.File.ReadAllText (file));
-						generalSkills.Add (healSkill);
-					}
-				}else if (di.Name == "FLEE") {
-					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-						FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill> (System.IO.File.ReadAllText (file));
-						generalSkills.Add (fleeSkill);
-					}
-				}else if (di.Name == "MOVE") {
-					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-						MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill> (System.IO.File.ReadAllText (file));
-						generalSkills.Add (moveSkill);
-					}
-				}else if (di.Name == "OBTAIN_ITEM") {
-					foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
-						ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill> (System.IO.File.ReadAllText (file));
-						generalSkills.Add (obtainSkill);
-					}
-				}
-			}
-			return generalSkills;
+			return SkillManager.Instance.generalSkills.Values.ToList();
 		}
 		private List<Skill> GetBodyPartSkills(){
 			List<Skill> allBodyPartSkills = new List<Skill>();
@@ -1493,20 +1458,6 @@ namespace ECS {
 					allBodyPartSkills.Add (skill.CreateNewCopy ());
 				}
 			}
-//			for (int i = 0; i < SkillManager.Instance.allSkills.Count; i++) {
-//				bool requirementsPassed = true;
-//				for (int j = 0; j < SkillManager.Instance.attributeSkills[i].requirements.Length; j++) {
-//					if(!HasAttribute(SkillManager.Instance.attributeSkills[i].requirements[j].attributeRequired, SkillManager.Instance.attributeSkills[i].requirements[j].itemQuantity)){
-//						requirementsPassed = false;
-//						break;
-//					}
-//				}
-//				if(requirementsPassed){
-//					for (int j = 0; j < SkillManager.Instance.attributeSkills[i].skills.Count; j++) {
-//						allBodyPartSkills.Add (SkillManager.Instance.attributeSkills [i].skills [j].CreateNewCopy());
-//					}
-//				}
-//			}
 			return allBodyPartSkills;
 		}
 		#endregion

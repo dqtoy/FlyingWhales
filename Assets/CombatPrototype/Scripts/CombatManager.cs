@@ -23,15 +23,15 @@ namespace ECS {
             Instance = this;
         }
 		internal void Initialize(){
-			ConstructBaseCharacters();
-			ConstructCharacterColors ();
-//			ConstructAttributeSkills ();
-			NewCombat ();
+            ConstructBaseCharacters();
+            //ConstructCharacterColors ();
+            //			ConstructAttributeSkills ();
+            NewCombat();
             _combatRooms = new Dictionary<ICombatInitializer, CombatRoom>();
             Messenger.AddListener<ICombatInitializer, ICombatInitializer>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
         }
         private void ConstructBaseCharacters() {
-            string path = Application.dataPath + "/Resources/Data/CharacterSetups/";
+            string path = Utilities.dataPath + "CharacterSetups/";
             string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
             baseCharacters = new CharacterSetup[baseCharacterJsons.Length];
             for (int i = 0; i < baseCharacterJsons.Length; i++) {
@@ -73,18 +73,6 @@ namespace ECS {
 			}
 		}
 
-//		private void ConstructAttributeSkills(){
-//			string path = Application.dataPath + "/StreamingAssets/Data/AttributeSkills/";
-//			string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
-//			attributeSkills = new AttributeSkill[attributeSkillsJson.Length];
-//			for (int i = 0; i < attributeSkillsJson.Length; i++) {
-//				string file = attributeSkillsJson[i];
-//				string dataAsJson = System.IO.File.ReadAllText(file);
-//				AttributeSkill attSkill = JsonUtility.FromJson<AttributeSkill>(dataAsJson);
-//				attSkill.ConstructAttributeSkillsList ();
-//				attributeSkills[i] = attSkill;
-//			}
-//		}
 		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
 			for (int i = 0; i < this.baseCharacters.Length; i++) {
                 CharacterSetup currBase = this.baseCharacters[i];

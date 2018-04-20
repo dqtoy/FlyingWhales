@@ -26,11 +26,22 @@ public class Utilities : MonoBehaviour {
 	public static int defaultCityHP = 300;
 
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
+    public static string dataPath {
+        get {
+#if UNITY_EDITOR
+            return Application.dataPath + "/Resources/Data/";
+#elif UNITY_STANDALONE
+            return Application.streamingAssetsPath + "/Data/";
+#endif
+        }
+    }
 
-	/*
+
+
+    /*
 	 * Set unique id
 	 * */
-	public static int SetID<T>(T obj){
+    public static int SetID<T>(T obj){
         if(obj is Region) {
             lastRegionID += 1;
             return lastRegionID;
@@ -81,7 +92,7 @@ public class Utilities : MonoBehaviour {
         BIOMES.SNOW
     };
 
-	#region Pathfinding
+#region Pathfinding
 	public static List<Point> EvenNeighbours {
 		get {
 			return new List<Point> {
@@ -108,7 +119,7 @@ public class Utilities : MonoBehaviour {
 			};
 		}
 	}
-	#endregion
+#endregion
 
 	public static List<T> Shuffle<T>(List<T> list)  
 	{
@@ -948,7 +959,7 @@ public class Utilities : MonoBehaviour {
         return GENDER.FEMALE;
     }
 
-    #region Resources
+#region Resources
     public static MATERIAL ConvertLandmarkTypeToMaterial(LANDMARK_TYPE landmarkType) {
         try {
             MATERIAL mat = (MATERIAL) System.Enum.Parse(typeof(MATERIAL), landmarkType.ToString(), true);
@@ -965,9 +976,9 @@ public class Utilities : MonoBehaviour {
             throw new Exception("THERE IS NO LANDMARK TYPE FOR MATERIAL " + material.ToString());
         }
     }
-    #endregion
+#endregion
 
-    #region Landmarks
+#region Landmarks
    // public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
    //     switch (landmarkType) {
    //         case LANDMARK_TYPE.CLAY:
@@ -1007,13 +1018,13 @@ public class Utilities : MonoBehaviour {
    //             return BASE_LANDMARK_TYPE.NONE;
    //     }
    // }
-    #endregion
+#endregion
 
     public static bool DoesFileExist(string path) {
         return System.IO.File.Exists(path);
     }
 
-    #region Combat Prototype
+#region Combat Prototype
     public static ECS.IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(ECS.Armor armor) {
         switch (armor.armorBodyType) {
             case "Head":
@@ -1036,7 +1047,7 @@ public class Utilities : MonoBehaviour {
                 return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
         }
     }
-    #endregion
+#endregion
 
 	public static MATERIAL_CATEGORY GetMaterialCategory(MATERIAL material){
 		if(material == MATERIAL.IRON || material == MATERIAL.COBALT || material == MATERIAL.MITHRIL){
@@ -1057,7 +1068,7 @@ public class Utilities : MonoBehaviour {
 		return MATERIAL_CATEGORY.NONE;
 	}
 
-    #region Characters
+#region Characters
     public static TECHNOLOGY GetTechnologyForCharacterClass(CHARACTER_CLASS charClass) {
         switch (charClass) {
             case CHARACTER_CLASS.ARCHER:
@@ -1125,7 +1136,7 @@ public class Utilities : MonoBehaviour {
                 throw new Exception("There is no technology for " + equipmentType.ToString());
         }
     }
-    #endregion
+#endregion
 
     public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;
     public static WeightedDictionary<ARMOR_TYPE> GetWeightedArmorTypes() {
@@ -1196,7 +1207,7 @@ public class Utilities : MonoBehaviour {
         Debug.Log("Dictionary: " + log);
     }
 
-	#region Character Tags
+#region Character Tags
 	public static int GetTagWorldGenChance(CHARACTER_TAG tag){
 		switch(tag){
 		case CHARACTER_TAG.HERBALIST:
@@ -1206,13 +1217,13 @@ public class Utilities : MonoBehaviour {
 			return 0;
 		}
 	}
-	#endregion
+#endregion
 
     public static bool IsEven(int num) {
         return num % 2 == 0;
     }
 
-	#region Character Relationship
+#region Character Relationship
 	public static Dictionary<CHARACTER_RELATIONSHIP, CHARACTER_RELATIONSHIP_CATEGORY> charRelationshipCategory = new Dictionary<CHARACTER_RELATIONSHIP, CHARACTER_RELATIONSHIP_CATEGORY> () {
 		{CHARACTER_RELATIONSHIP.RIVAL, CHARACTER_RELATIONSHIP_CATEGORY.NEGATIVE},
 		{CHARACTER_RELATIONSHIP.FRIEND, CHARACTER_RELATIONSHIP_CATEGORY.POSITIVE},
@@ -1226,5 +1237,5 @@ public class Utilities : MonoBehaviour {
 		{CHARACTER_RELATIONSHIP.MENTOR, CHARACTER_RELATIONSHIP_CATEGORY.POSITIVE},
 		{CHARACTER_RELATIONSHIP.ACQUAINTANCE, CHARACTER_RELATIONSHIP_CATEGORY.NEUTRAL},
 	};
-	#endregion
+#endregion
 }

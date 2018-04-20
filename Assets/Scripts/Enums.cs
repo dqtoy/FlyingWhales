@@ -690,35 +690,6 @@ public enum DECAY_INTERVAL{
 	MONTHLY,
 	YEARLY,
 }
-public enum SUBTERFUGE_ACTIONS{
-	DESTROY_WEAPONS,
-//	DESTROY_ARMORS,
-	REDUCE_STABILITY,
-	FLATTER,
-	SPREAD_PLAGUE,
-    ASSASSINATE_KING,
-    INTERNATIONAL_INCIDENT
-}
-public enum ENTITY_TYPE {
-    GUARD,
-    WORKER,
-    BANDIT,
-    MONSTER,
-    ALL,
-    NONE
-}
-public enum ACTION_TYPE {
-    NONE,
-    ATTACK,
-    FLEE,
-    RANDOM
-    
-}
-public enum MOVE_TYPE {
-    GROUND,
-    FLYING,
-    NONE
-}
 public enum AGENT_CATEGORY {
     LIVING,
     STRUCTURE
@@ -1311,3 +1282,6 @@ public enum COMBAT_INTENT{
 	DEFEAT,
 }
 
+public enum ACTION_TYPE {
+    REST,
+}

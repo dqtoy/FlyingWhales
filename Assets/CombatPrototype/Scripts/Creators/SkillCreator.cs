@@ -79,7 +79,7 @@ namespace ECS {
                 EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
                 return;
             }
-			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + skillComponent.skillCategory.ToString() + "/"+ skillComponent.skillType.ToString() + "/" + fileName + ".json";
+			string path = Utilities.dataPath + "Skills/" + skillComponent.skillCategory.ToString() + "/"+ skillComponent.skillType.ToString() + "/" + fileName + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Skill", "A skill with name " + fileName + " already exists. Replace with this skill?", "Yes", "No")) {
                     File.Delete(path);
@@ -158,69 +158,6 @@ namespace ECS {
             writer.WriteLine(jsonString);
             writer.Close();
         }
-        #endregion
-
-        #region Loading
-//        private void LoadSkill() {
-//            string filePath = EditorUtility.OpenFilePanel("Select Skill Json", Application.dataPath + "/StreamingAssets/Data/Skills/", "json");
-//            if (!string.IsNullOrEmpty(filePath)) {
-//                string dataAsJson = File.ReadAllText(filePath);
-//                if (filePath.Contains("ATTACK")) {
-//                    AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-//                    LoadAttackSkill(currSkill);
-//                } else if (filePath.Contains("HEAL")) {
-//                    HealSkill currSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-//                    LoadHealSkill(currSkill);
-//                } else if (filePath.Contains("OBTAIN")) {
-//                    ObtainSkill currSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-//                    LoadObtainSkill(currSkill);
-//                } else if (filePath.Contains("FLEE")) {
-//                    FleeSkill currSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
-//                    LoadFleeSkill(currSkill);
-//                } else if (filePath.Contains("MOVE")) {
-//                    MoveSkill currSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-//                    LoadMoveSkill(currSkill);
-//                }
-//            }
-//        }
-//        private void LoadCommonData(Skill skill) {
-//            skillName = skill.skillName;
-//            activationWeight = skill.activationWeight;
-//            accuracy = skill.accuracy;
-//            range = skill.range;
-//            skillRequirements = skill.skillRequirements;
-//        }
-//        private void LoadAttackSkill(AttackSkill skill) {
-//            skillType = SKILL_TYPE.ATTACK;
-//            LoadCommonData(skill);
-//
-//            //Attack Skill Fields
-//            attackPower = skill.attackPower;
-//            attackType = skill.attackType;
-//            statusEffect = skill.statusEffect;
-//            statusEffectRate = skill.statusEffectRate;
-//            injuryRate = skill.injuryRate;
-//            decapitationRate = skill.decapitationRate;
-//        }
-//        private void LoadHealSkill(HealSkill skill) {
-//            skillType = SKILL_TYPE.HEAL;
-//            LoadCommonData(skill);
-//
-//            //Heal Skill Fields
-//            healPower = skill.healPower;
-//        }
-//        private void LoadObtainSkill(ObtainSkill skill) {
-//            skillType = SKILL_TYPE.OBTAIN_ITEM;
-//            LoadCommonData(skill);
-//        }
-//        private void LoadFleeSkill(FleeSkill skill) {
-//            skillType = SKILL_TYPE.FLEE;
-//            LoadCommonData(skill);
-//        }
-//        private void LoadMoveSkill(MoveSkill skill) {
-//            skillType = SKILL_TYPE.MOVE;
-//            LoadCommonData(skill);
-//        }
         #endregion
     }
 }
