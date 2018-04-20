@@ -440,6 +440,19 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarksOfType;
     }
+    public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
+        List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
+                    allLandmarksOfType.Add(currLandmark);
+                }
+            }
+        }
+        return allLandmarksOfType;
+    }
     public BaseLandmarkData GetBaseLandmarkData(BASE_LANDMARK_TYPE baseLandmarkType) {
         for (int i = 0; i < baseLandmarkData.Count; i++) {
             BaseLandmarkData currData = baseLandmarkData[i];

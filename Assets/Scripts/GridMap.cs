@@ -53,7 +53,7 @@ public class GridMap : MonoBehaviour {
         map = new HexTile[(int)width, (int)height];
         listHexes = new List<GameObject>();
         hexTiles = new List<HexTile>();
-        int id = 1;
+        int id = 0;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 float xPosition = x * xOffset;
@@ -82,6 +82,7 @@ public class GridMap : MonoBehaviour {
         listHexes.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(map));
         mapWidth = listHexes[listHexes.Count - 1].transform.position.x;
         mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
+        listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
     }
     internal void GenerateOuterGrid() {
         int newWidth = (int)width + (_borderThickness * 2);

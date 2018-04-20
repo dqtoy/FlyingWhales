@@ -34,7 +34,9 @@ public class ConsoleMenu : UIMenu {
             {"/center_landmark", CenterOnLandmark },
             {"/l_combat_rooms", LogCombatRooms },
             {"/l_character_location_history", LogCharacterLocationHistory },
-            //{"/get_path", GetPath },
+            {"/get_path", GetPath },
+            {"/get_all_paths", GetAllPaths },
+            {"/r_road_highlights", ResetRoadHighlights },
         };
     }
 
@@ -145,6 +147,9 @@ public class ConsoleMenu : UIMenu {
             log += "\n NONE";
         }
         AddSuccessMessage(log);
+    }
+    public void AddText(string text) {
+        consoleInputField.value += " " + text;
     }
     #endregion
 
@@ -520,39 +525,90 @@ public class ConsoleMenu : UIMenu {
     }
     #endregion
 
-    //#region Pathfinding
-    //private void GetPath(string[] parameters) {
-    //    if (parameters.Length != 4) {
-    //        AddCommandHistory(consoleLbl.text);
-    //        AddErrorMessage("There was an error in the command format of " + parameters[0]);
-    //        return;
-    //    }
-    //    string characterParameterString = parameters[1];
-    //    int characterID;
+    #region Pathfinding
+    private void GetPath(string[] parameters) {
+        if (parameters.Length < 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string startTileName = parameters[1];
+        string targetTileName = parameters[2];
+        //string pathfindingModeString = parameters[3];
 
-    //    bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-    //    ECS.Character character = null;
-    //    if (isCharacterParameterNumeric) {
-    //        character = CharacterManager.Instance.GetCharacterByID(characterID);
-    //    } else {
-    //        character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
-    //    }
+        HexTile startTile = null;
+        HexTile targetTile = null;
+        PATHFINDING_MODE pathfindingMode = PATHFINDING_MODE.USE_ROADS;
+        if (parameters.Length > 3) {
+            pathfindingMode = (PATHFINDING_MODE)Enum.Parse(typeof(PATHFINDING_MODE), parameters[3]);
+        }
 
-    //    if (character == null) {
-    //        AddErrorMessage("There was an error in the command format of " + parameters[0]);
-    //        return;
-    //    }
+        string[] startTileCoords = startTileName.Split(',');
+        int startTileX = Int32.Parse(startTileCoords[0]);
+        int startTileY = Int32.Parse(startTileCoords[1]);
 
-    //    string text = character.name + "'s Location History: ";
-    //    for (int i = 0; i < character.specificLocationHistory.Count; i++) {
-    //        text += "\n" + character.specificLocationHistory[i];
-    //    }
-    //    Debug.Log(text);
-    //    string fileLocation = "Assets/Logs/" + character.name + "'s_Location_History.txt";
-    //    System.IO.File.WriteAllText(fileLocation, text);
-    //    AddSuccessMessage("Logged " + character.name + "'s location history in console. And created text file of log at " + fileLocation);
-    //}
-    //#endregion
+        string[] targetTileCoords = targetTileName.Split(',');
+        int targetTileX = Int32.Parse(targetTileCoords[0]);
+        int targetTileY = Int32.Parse(targetTileCoords[1]);
+
+        startTile = GridMap.Instance.map[startTileX, startTileY];
+        targetTile = GridMap.Instance.map[targetTileX, targetTileY];
+
+        List<HexTile> path = PathGenerator.Instance.GetPath(startTile, targetTile, pathfindingMode);
+        if (path != null) {
+            for (int i = 0; i < path.Count; i++) {
+                path[i].HighlightRoad(Color.red);
+            }
+            CameraMove.Instance.CenterCameraOn(startTile.gameObject);
+        } else {
+            AddErrorMessage("There is no path from " + startTile.name + " to " + targetTile.name + " using mode " + pathfindingMode.ToString());
+        }
+    }
+    private void GetAllPaths(string[] parameters) {
+        if (parameters.Length != 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string startTileName = parameters[1];
+        string targetTileName = parameters[2];
+
+        HexTile startTile = null;
+        HexTile targetTile = null;
+
+        string[] startTileCoords = startTileName.Split(',');
+        int startTileX = Int32.Parse(startTileCoords[0]);
+        int startTileY = Int32.Parse(startTileCoords[1]);
+
+        string[] targetTileCoords = targetTileName.Split(',');
+        int targetTileX = Int32.Parse(targetTileCoords[0]);
+        int targetTileY = Int32.Parse(targetTileCoords[1]);
+
+        startTile = GridMap.Instance.map[startTileX, startTileY];
+        targetTile = GridMap.Instance.map[targetTileX, targetTileY];
+
+        List<List<HexTile>> paths = PathGenerator.Instance.GetAllPaths(startTile, targetTile);
+        if (paths != null) {
+            for (int i = 0; i < paths.Count; i++) {
+                List<HexTile> currPath = paths[i];
+                for (int j = 0; j < currPath.Count; j++) {
+                    currPath[j].HighlightRoad(Color.red);
+                }
+            }
+            CameraMove.Instance.CenterCameraOn(startTile.gameObject);
+        } else {
+            AddErrorMessage("There are no paths from " + startTile.name + " to " + targetTile.name);
+        }
+    }
+    private void ResetRoadHighlights(string[] parameters) {
+        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+            HexTile currTile = GridMap.Instance.hexTiles[i];
+            if (currTile.isRoad || currTile.hasLandmark) {
+                currTile.ResetRoadsColors();
+            }
+        }
+    }
+    #endregion
 
 
 }

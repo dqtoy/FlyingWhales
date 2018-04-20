@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace PathFind {
 	public static class PathFind {
-		public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate, PATHFINDING_MODE pathfindingMode, object data = null) 
+		public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate
+            , PATHFINDING_MODE pathfindingMode, object data = null) 
 			where Node : HexTile, IHasNeighbours<Node> {
 
 			var closed = new HashSet<Node>();

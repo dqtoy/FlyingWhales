@@ -619,6 +619,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #endregion
 
     #region Roads
+    public void HighlightRoad(Color color) {
+        for (int i = 0; i < roadGOs.Count; i++) {
+            GameObject currRoad = roadGOs[i];
+            SetRoadColor(currRoad, color);
+        }
+    }
     public void SetRoadColor(GameObject roadToChange, Color color) {
         //roadToChange.GetComponent<SpriteRenderer>().color = color;
         SpriteRenderer[] children = roadToChange.GetComponentsInChildren<SpriteRenderer>();
@@ -674,6 +680,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         for (int i = 0; i < roadGOs.Count; i++) {
             GameObject road = roadGOs[i];
             road.SetActive(state);
+        }
+    }
+    public void ResetRoadsColors() {
+        Color color = Color.white;
+        if (this.roadType == ROAD_TYPE.MINOR) {
+            color = Color.gray;
+        }
+        for (int i = 0; i < roadGOs.Count; i++) {
+            GameObject currRoad = roadGOs[i];
+            SetRoadColor(currRoad, color);
         }
     }
     #endregion
@@ -1335,7 +1351,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 //		
 //	}
 	private void OnMouseOver() {
-		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
 			return;
 		}
         if (this.landmarkOnTile != null) {
@@ -1368,6 +1384,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
     private void LeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+            if (UIManager.Instance.IsConsoleShowing()) {
+                UIManager.Instance.consoleUI.AddText(this.name);
+            }
             return;
         }
 		if(this.landmarkOnTile != null){
@@ -1380,7 +1399,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     }
 	private void RightClick(){
 		if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
-			return;
+            if (UIManager.Instance.IsConsoleShowing() && this.hasLandmark) {
+                UIManager.Instance.consoleUI.AddText(this.landmarkOnTile.landmarkName);
+            }
+            return;
 		}
 		UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
 

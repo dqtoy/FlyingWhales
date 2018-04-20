@@ -3006,5 +3006,10 @@ namespace ECS {
 			return null;
 		}
 		#endregion
+
+        //private Settlement GetRandomSettlementToVisit() {
+        //    List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT);
+
+        //}
     }
 }
