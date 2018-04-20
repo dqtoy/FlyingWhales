@@ -13,7 +13,7 @@ public class ItemManager : MonoBehaviour {
         "Tier 1 Weapon Chest"
     };
 
-    private Dictionary<string, ECS.Item> allItems;
+    private Dictionary<string, ECS.Item> _allItems;
 	private Dictionary<string, ECS.Weapon> allWeapons;
 	private Dictionary<string, ECS.Armor> allArmors;
 
@@ -46,7 +46,10 @@ public class ItemManager : MonoBehaviour {
 	public Dictionary<WEAPON_TYPE, ECS.WeaponType> weaponTypeData{
 		get { return _weaponTypeData; }
 	}
-	#endregion
+    public Dictionary<string, ECS.Item> allItems {
+        get { return _allItems; }
+    }
+    #endregion
 
     private void Awake() {
         Instance = this;
@@ -65,10 +68,10 @@ public class ItemManager : MonoBehaviour {
 
 	}
     private void ConstructItemsDictionary() {
-        allItems = new Dictionary<string, ECS.Item>();
+        _allItems = new Dictionary<string, ECS.Item>();
 		allWeapons = new Dictionary<string, ECS.Weapon>();
 		allArmors = new Dictionary<string, ECS.Armor> ();
-        string path = Application.dataPath + "/Resources/Data/Items/";
+        string path = Utilities.dataPath + "Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
             string currDirectory = directories[i];
@@ -81,39 +84,39 @@ public class ItemManager : MonoBehaviour {
                 switch (currItemType) {
 				case ITEM_TYPE.WEAPON:
 					ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
-					allItems.Add (newWeapon.itemName, newWeapon);
+					_allItems.Add (newWeapon.itemName, newWeapon);
 					allWeapons.Add (newWeapon.itemName, newWeapon);
                     break;
                 case ITEM_TYPE.ARMOR:
                     ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
-                    allItems.Add(newArmor.itemName, newArmor);
+                    _allItems.Add(newArmor.itemName, newArmor);
 					allArmors.Add (newArmor.itemName, newArmor);
                     break;
                 default:
 					ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
-					allItems.Add(newItem.itemName, newItem);
+					_allItems.Add(newItem.itemName, newItem);
                     break;
                 }
             }
         }
     }
     public ECS.Item CreateNewItemInstance(string itemName) {
-        if (allItems.ContainsKey(itemName)) {
-            return allItems[itemName].CreateNewCopy();
+        if (_allItems.ContainsKey(itemName)) {
+            return _allItems[itemName].CreateNewCopy();
         }
         throw new System.Exception("There is no item type called " + itemName);
     }
 
     public ECS.Item CreateNewItemInstance(MATERIAL itemMaterial, EQUIPMENT_TYPE equipmentType) {
         string itemName = Utilities.NormalizeString(itemMaterial.ToString()) + " " + Utilities.NormalizeString(equipmentType.ToString());
-        if (allItems.ContainsKey(itemName)) {
-            return allItems[itemName].CreateNewCopy();
+        if (_allItems.ContainsKey(itemName)) {
+            return _allItems[itemName].CreateNewCopy();
         }
         throw new System.Exception("There is no item type called " + itemName);
     }
     private void ConstructWeaponTypeData() {
         _weaponTypeData = new Dictionary<WEAPON_TYPE, ECS.WeaponType>();
-        string path = Application.dataPath + "/StreamingAssets/Data/WeaponTypes/";
+        string path = Utilities.dataPath + "WeaponTypes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             string currFilePath = files[i];
@@ -126,7 +129,7 @@ public class ItemManager : MonoBehaviour {
     }
     private void ConstructArmorTypeData() {
         _armorTypeData = new Dictionary<ARMOR_TYPE, ECS.ArmorType>();
-        string path = Application.dataPath + "/StreamingAssets/Data/ArmorTypes/";
+        string path = Utilities.dataPath + "ArmorTypes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             string currFilePath = files[i];

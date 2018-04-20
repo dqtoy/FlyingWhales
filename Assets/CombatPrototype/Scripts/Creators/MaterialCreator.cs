@@ -71,7 +71,7 @@ public class MaterialCreator : Editor {
 			EditorUtility.DisplayDialog("Error", "Please specify a filename", "OK");
 			return;
 		}
-		string path = Application.dataPath + "/StreamingAssets/Data/Materials/" + fileName + ".json";
+		string path = Utilities.dataPath + "Materials/" + fileName + ".json";
 		if (Utilities.DoesFileExist(path)) {
 			if (EditorUtility.DisplayDialog("Overwrite File", "A file with name " + fileName + " already exists. Replace with this file?", "Yes", "No")) {
 				File.Delete(path);

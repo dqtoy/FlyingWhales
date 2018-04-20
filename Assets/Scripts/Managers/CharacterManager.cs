@@ -11,6 +11,8 @@ public class CharacterManager : MonoBehaviour {
     public List<CharacterType> characterTypes;
     public List<Trait> traitSetup;
     private Dictionary<TRAIT, string> traitDictionary;
+    private Dictionary<string, CharacterClass> _classesDictionary;
+
     private List<Character> allCharacters;
 
 	public Sprite heroSprite;
@@ -24,11 +26,19 @@ public class CharacterManager : MonoBehaviour {
     //public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
     //    get { return citizenAgeTable.Where(x => x.Value.Any()).ToDictionary(x => x.Key, v => v.Value); }
     //}
+    public Dictionary<string, CharacterClass> classesDictionary {
+        get { return _classesDictionary; }
+    }
     #endregion
 
     private void Awake() {
         Instance = this;
         allCharacters = new List<Character>();
+    }
+
+    public void Initialize() {
+        ConstructTraitDictionary();
+        ConstructAllClasses();
     }
 
     #region ECS.Character Types
@@ -89,6 +99,15 @@ public class CharacterManager : MonoBehaviour {
         allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
+    }
+    private void ConstructAllClasses() {
+        _classesDictionary = new Dictionary<string, CharacterClass>();
+        string path = Utilities.dataPath + "CharacterClasses/";
+        string[] classes = System.IO.Directory.GetFiles(path, "*.json");
+        for (int i = 0; i < classes.Length; i++) {
+            CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
+            _classesDictionary.Add(currentClass.className, currentClass);
+        }
     }
     #endregion
 
@@ -248,7 +267,7 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     private void SaveTraitJson(string fileName, Trait traitSetup) {
-        string path = Application.dataPath + "/Resources/Data/Traits/" + fileName + ".json";
+        string path = Utilities.dataPath + "Traits/" + fileName + ".json";
 
         string jsonString = JsonUtility.ToJson(traitSetup);
 
@@ -265,7 +284,7 @@ public class CharacterManager : MonoBehaviour {
     }
 #endif
     private string GetJsonStringOfTrait(TRAIT trait) {
-        string path = Application.dataPath + "/Resources/Data/Traits/" + Utilities.NormalizeString(trait.ToString()) + ".json";
+        string path = Utilities.dataPath + "Traits/" + Utilities.NormalizeString(trait.ToString()) + ".json";
         string jsonString = string.Empty;
         try {
             //Read the text from directly from the test.txt file

@@ -39,15 +39,13 @@ namespace ECS {
 			skills = new List<Skill>();
 			for (int i = 0; i < attackSkills.Count; i++) {
 				string skillName = attackSkills[i];
-				string path = Application.dataPath + "/StreamingAssets/Data/Skills/WEAPON/ATTACK/" + skillName + ".json";
-				AttackSkill currSkill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
+				AttackSkill currSkill = SkillManager.Instance.allSkills[skillName] as AttackSkill;
 				skills.Add(currSkill);
 			}
 			for (int i = 0; i < healSkills.Count; i++) {
 				string skillName = healSkills[i];
-				string path = Application.dataPath + "/StreamingAssets/Data/Skills/WEAPON/HEAL/" + skillName + ".json";
-				HealSkill currSkill = JsonUtility.FromJson<HealSkill>(System.IO.File.ReadAllText(path));
-				skills.Add(currSkill);
+				HealSkill currSkill = SkillManager.Instance.allSkills[skillName] as HealSkill;
+                skills.Add(currSkill);
 			}
 		}
 	}

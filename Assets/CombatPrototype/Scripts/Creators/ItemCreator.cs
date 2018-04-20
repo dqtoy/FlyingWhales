@@ -122,7 +122,7 @@ namespace ECS {
                 EditorUtility.DisplayDialog("Error", "Please specify an Item Name", "OK");
                 return;
             }
-			string path = Application.dataPath + "/StreamingAssets/Data/Items/" + itemComponent.itemType.ToString() + "/" + fileName + ".json";
+			string path = Utilities.dataPath + "Items/" + itemComponent.itemType.ToString() + "/" + fileName + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Item", "An item with name " + fileName + " already exists. Replace with this item?", "Yes", "No")) {
                     File.Delete(path);
@@ -216,14 +216,14 @@ namespace ECS {
 		#region Skills
 		private List<string> GetAllSkillsOfType(SKILL_CATEGORY category, SKILL_TYPE skillType) {
 			List<string> allSkillsOfType = new List<string>();
-			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
+			string path = Utilities.dataPath + "Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
 			foreach (string file in Directory.GetFiles(path, "*.json")) {
 				allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
 			}
 			return allSkillsOfType;
 		}
 		private void AddSkillToList(string skillName) {
-			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + itemComponent.itemType.ToString() + "/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
+			string path = Utilities.dataPath + "Skills/" + itemComponent.itemType.ToString() + "/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
 			string dataAsJson = File.ReadAllText(path);
 			switch (itemComponent.skillTypeToAdd) {
 			case SKILL_TYPE.ATTACK:
@@ -249,52 +249,6 @@ namespace ECS {
 			}
 		}
 		#endregion
-
-        #region Loading
-//        private void LoadItem() {
-//            string filePath = EditorUtility.OpenFilePanel("Select Item Json", Application.dataPath + "/StreamingAssets/Data/Items/", "json");
-//            if (!string.IsNullOrEmpty(filePath)) {
-//                string dataAsJson = File.ReadAllText(filePath);
-//                if (filePath.Contains("WEAPON")) {
-//					Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-//					LoadWeapon(weapon);
-//                } else if (filePath.Contains("ARMOR")) {
-//					Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
-//					LoadArmor(armor);
-//                }
-//            }
-//        }
-//		private void LoadCommonData(Item newItem) {
-            //this.itemType = newItem.itemType;
-//			this.itemName = newItem.itemName;
-//			this.bonusActRate = newItem.bonusActRate;
-//			this.bonusStrength = newItem.bonusStrength;
-//			this.bonusIntelligence = newItem.bonusIntelligence;
-//			this.bonusAgility = newItem.bonusAgility;
-//			this.bonusMaxHP = newItem.bonusMaxHP;
-//			this.bonusDodgeRate = newItem.bonusDodgeRate;
-//			this.bonusParryRate = newItem.bonusParryRate;
-//			this.bonusBlockRate = newItem.bonusBlockRate;
-//        }
-//        private void LoadWeapon(Weapon weapon) {
-//            itemType = ITEM_TYPE.WEAPON;
-//			LoadCommonData(weapon);
-//
-//            //Weapon Fields
-//			this.weaponType = weapon.weaponType;
-//			this.skillPowerModifier = weapon.skillPowerModifier;
-//			this.weaponAttributes = weapon.attributes;
-//        }
-//		private void LoadArmor(Armor armor) {
-//            itemType = ITEM_TYPE.ARMOR;
-//			LoadCommonData (armor);
-//
-//            //Armor Fields
-//			this.armorType = armor.armorType;
-//			this.damageMitigation = armor.damageMitigation;
-//			this.armorAttributes = armor.attributes;
-//		}
-        #endregion
     }
 }
 #endif

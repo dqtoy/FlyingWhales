@@ -3,16 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using ECS;
 
 public class SkillManager : MonoBehaviour {
 
     public static SkillManager Instance = null;
 
-    public Dictionary<string, ECS.Skill> allSkills;
-//    public ECS.AttributeSkill[] attributeSkills;
-	public Dictionary<string, ECS.Skill> bodyPartSkills;
+    public Dictionary<string, Skill> allSkills;
+	public Dictionary<string, Skill> bodyPartSkills;
+    public Dictionary<string, Skill> generalSkills;
 
-    public Dictionary<WEAPON_TYPE, List<ECS.Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<ECS.Skill>>();
+    public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
 
     private void Awake() {
         Instance = this;
@@ -20,13 +21,13 @@ public class SkillManager : MonoBehaviour {
     }
 	internal void Initialize(){
 		ConstructAllSkillsList();
-//		ConstructAttributeSkills();
 		ConstructWeaponTypeSkills();
 	}
     private void ConstructAllSkillsList() {
-        allSkills = new Dictionary<string, ECS.Skill>();
-		bodyPartSkills = new Dictionary<string, ECS.Skill> ();
-        string path = Application.dataPath + "/StreamingAssets/Data/Skills/";
+        allSkills = new Dictionary<string, Skill>();
+		bodyPartSkills = new Dictionary<string, Skill> ();
+        generalSkills = new Dictionary<string, Skill>();
+        string path = Utilities.dataPath + "Skills/";
         string[] directories = Directory.GetDirectories(path); //Get first level skill types
         for (int i = 0; i < directories.Length; i++) {
             string currDirectory = directories[i];
@@ -39,30 +40,30 @@ public class SkillManager : MonoBehaviour {
                     string currFilePath = files[k];
                     string dataAsJson = File.ReadAllText(currFilePath);
                     SKILL_TYPE currSkillType = (SKILL_TYPE)Enum.Parse(typeof(SKILL_TYPE), skillType);
-					ECS.Skill skill = null;
+					Skill skill = null;
                     switch (currSkillType) {
 						case SKILL_TYPE.ATTACK:
-							ECS.AttackSkill attackSkill = JsonUtility.FromJson<ECS.AttackSkill> (dataAsJson);
+							AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill> (dataAsJson);
 							skill = attackSkill;
                             allSkills.Add(attackSkill.skillName, attackSkill);
                             break;
                         case SKILL_TYPE.HEAL:
-                            ECS.HealSkill healSkill = JsonUtility.FromJson<ECS.HealSkill>(dataAsJson);
+                            HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
 							skill = healSkill;
                             allSkills.Add(healSkill.skillName, healSkill);
                             break;
                         case SKILL_TYPE.OBTAIN_ITEM:
-                            ECS.ObtainSkill obtainSkill = JsonUtility.FromJson<ECS.ObtainSkill>(dataAsJson);
+                            ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
 							skill = obtainSkill;
                             allSkills.Add(obtainSkill.skillName, obtainSkill);
                             break;
                         case SKILL_TYPE.FLEE:
-                            ECS.FleeSkill fleeSkill = JsonUtility.FromJson<ECS.FleeSkill>(dataAsJson);
+                            FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
 							skill = fleeSkill;
                             allSkills.Add(fleeSkill.skillName, fleeSkill);
                             break;
                         case SKILL_TYPE.MOVE:
-                            ECS.MoveSkill moveSkill = JsonUtility.FromJson<ECS.MoveSkill>(dataAsJson);
+                            MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
 							skill = moveSkill;
                             allSkills.Add(moveSkill.skillName, moveSkill);
                             break;
@@ -72,42 +73,30 @@ public class SkillManager : MonoBehaviour {
 					if(skill != null){
 						if(skill.skillCategory == SKILL_CATEGORY.BODY_PART){
 							bodyPartSkills.Add(skill.skillName, skill);
-						}
-					}
+						}else if (skill.skillCategory == SKILL_CATEGORY.GENERAL) {
+                            generalSkills.Add(skill.skillName, skill);
+                        }
+                    }
                 }
             }
         }
     }
 
-    public ECS.Skill CreateNewSkillInstance(string skillName) {
+    public Skill CreateNewSkillInstance(string skillName) {
         if (allSkills.ContainsKey(skillName)) {
             return allSkills[skillName].CreateNewCopy();
         }
         throw new System.Exception("There is no skill called " + skillName);
     }
-
-//    private void ConstructAttributeSkills() {
-//        string path = Application.dataPath + "/StreamingAssets/Data/AttributeSkills/";
-//        string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
-//        attributeSkills = new ECS.AttributeSkill[attributeSkillsJson.Length];
-//        for (int i = 0; i < attributeSkillsJson.Length; i++) {
-//            string file = attributeSkillsJson[i];
-//            string dataAsJson = System.IO.File.ReadAllText(file);
-//            ECS.AttributeSkill attSkill = JsonUtility.FromJson<ECS.AttributeSkill>(dataAsJson);
-//            attSkill.ConstructSkillList();
-//            attributeSkills[i] = attSkill;
-//        }
-//    }
-
     private void ConstructWeaponTypeSkills() {
-        string path = Application.dataPath + "/StreamingAssets/Data/WeaponTypes/";
+        string path = Utilities.dataPath + "WeaponTypes/";
         string[] weaponTypesJson = System.IO.Directory.GetFiles(path, "*.json");
 		for (int i = 0; i < weaponTypesJson.Length; i++) {
 			string file = weaponTypesJson[i];
             string dataAsJson = System.IO.File.ReadAllText(file);
-			ECS.WeaponType weapType = JsonUtility.FromJson<ECS.WeaponType>(dataAsJson);
+			WeaponType weapType = JsonUtility.FromJson<WeaponType>(dataAsJson);
 			weapType.ConstructWeaponSkillsList();
-			weaponTypeSkills.Add(weapType.weaponType, new List<ECS.Skill>(weapType.skills));
+			weaponTypeSkills.Add(weapType.weaponType, new List<Skill>(weapType.skills));
         }
     }
 }

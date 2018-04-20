@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace ECS {
     [System.Serializable]
@@ -23,7 +24,12 @@ namespace ECS {
         public CharacterClass characterClass {
             get {
                 if (_charClass == null) {
-					_charClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(Application.dataPath + "/StreamingAssets/Data/CharacterClasses/" + characterClassName + ".json"));
+                    if (CharacterManager.Instance.classesDictionary.ContainsKey(characterClassName)) {
+                        _charClass = CharacterManager.Instance.classesDictionary[characterClassName];
+                    }
+                    else {
+                        throw new Exception("There is no class with the name " + characterClassName);
+                    }
                 }
                 return _charClass;
             }
@@ -31,7 +37,12 @@ namespace ECS {
 		public RaceSetting raceSetting {
             get {
                 if (_raceSetting == null) {
-					_raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Application.dataPath + "/StreamingAssets/Data/RaceSettings/" + raceSettingName + ".json"));
+                    if (RaceManager.Instance.racesDictionary.ContainsKey(raceSettingName)) {
+                        _raceSetting = RaceManager.Instance.racesDictionary[raceSettingName];
+                    }
+                    else {
+                        throw new Exception("There is no race with the name " + raceSettingName);
+                    }
                 }
                 return _raceSetting;
             }

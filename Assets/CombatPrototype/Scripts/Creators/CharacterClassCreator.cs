@@ -34,50 +34,13 @@ namespace ECS {
             }
         }
 
-//        #region Skills
-//        private List<string> GetAllSkillsOfType(SKILL_TYPE skillType) {
-//            List<string> allSkillsOfType = new List<string>();
-//            string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + skillType.ToString() + "/";
-//            foreach (string file in Directory.GetFiles(path, "*.json")) {
-//                allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
-//            }
-//            return allSkillsOfType;
-//        }
-//        private void AddSkillToList(string skillName) {
-//			string path = Application.dataPath + "/StreamingAssets/Data/Skills/" + currCharacterClass.skillTypeToAdd.ToString() + "/" + skillName + ".json";
-//            string dataAsJson = File.ReadAllText(path);
-//			switch (currCharacterClass.skillTypeToAdd) {
-//            case SKILL_TYPE.ATTACK:
-//                AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-//				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, attackSkill);
-//                break;
-//            case SKILL_TYPE.HEAL:
-//                HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-//				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, healSkill);
-//                break;
-//            case SKILL_TYPE.OBTAIN_ITEM:
-//                ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-//				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, obtainSkill);
-//                break;
-//            case SKILL_TYPE.FLEE:
-//                FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
-//				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, fleeSkill);
-//                break;
-//            case SKILL_TYPE.MOVE:
-//                MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-//				currCharacterClass.AddSkillOfType(currCharacterClass.skillTypeToAdd, moveSkill);
-//                break;
-//            }
-//        }
-//        #endregion
-
         #region Saving
         private void SaveCharacterClass() {
             if (string.IsNullOrEmpty(currCharacterClass.className)) {
                 EditorUtility.DisplayDialog("Error", "Please specify a Class Name", "OK");
                 return;
             }
-            string path = Application.dataPath + "/StreamingAssets/Data/CharacterClasses/" + currCharacterClass.className + ".json";
+            string path = Utilities.dataPath + "CharacterClasses/" + currCharacterClass.className + ".json";
             if (Utilities.DoesFileExist(path)) {
                 if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + currCharacterClass.className + " already exists. Replace with this class?", "Yes", "No")) {
                     File.Delete(path);
@@ -95,21 +58,6 @@ namespace ECS {
             UnityEditor.AssetDatabase.ImportAsset(path);
             Debug.Log("Successfully saved class " + characterClass.className + " at " + path);
         }
-        #endregion
-
-        #region Loading
-//        private void LoadCharacterClass() {
-//            string filePath = EditorUtility.OpenFilePanel("Select ECS.Character Json", Application.dataPath + "/StreamingAssets/Data/CharacterClasses/", "json");
-//            if (!string.IsNullOrEmpty(filePath)) {
-//                ResetValues();
-//                string dataAsJson = File.ReadAllText(filePath);
-//                LoadCharacter(JsonUtility.FromJson<CharacterClass>(dataAsJson));
-//            }
-//        }
-//        private void LoadCharacter(CharacterClass character) {
-//            currCharacterClass = character;
-//            currCharacterClass.ConstructAllSkillsList();
-//        }
         #endregion
 
         private void ResetValues() {
