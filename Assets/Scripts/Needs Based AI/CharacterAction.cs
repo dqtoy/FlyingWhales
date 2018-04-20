@@ -28,7 +28,6 @@ public class CharacterAction {
 
     #region Virtuals
     public virtual void PerformAction(Character character) {
-
     }
     #endregion
 

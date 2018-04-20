@@ -5,6 +5,7 @@ using ECS;
 
 public class ObjectState {
     protected IObject _object;
+    protected string _stateName;
     protected Dictionary<CharacterAction, Reward> _actionRewardDictionary;
     protected float _foodAdvertisementMod;
     protected float _energyAdvertisementMod;
@@ -14,6 +15,9 @@ public class ObjectState {
     #region getters/setters
     public IObject obj {
         get { return _object; }
+    }
+    public string stateName {
+        get { return _stateName; }
     }
     public float foodAdvertisementMod {
         get { return _foodAdvertisementMod; }

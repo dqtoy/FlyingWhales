@@ -4,10 +4,14 @@ using UnityEngine;
 
 public interface IObject {
     //Data
+    string objectName { get; }
     List<ObjectState> states { get; }
+    ObjectState currentState { get; }
     bool isInvisible { get; }
     int foodAdvertisementValue { get; }
     int energyAdvertisementValue { get; }
     int joyAdvertisementValue { get; }
     int prestigeAdvertisementValue { get; }
+
+    void ChangeState(ObjectState state);
 }
