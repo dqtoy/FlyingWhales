@@ -52,6 +52,7 @@ namespace ECS {
 		private Faction _faction;
 		private Party _party;
         private QuestData _questData;
+        private CharacterActionQueue<CharacterAction> _actionQueue;
 		private CharacterTask _currentTask;
         private ILocation _specificLocation;
 		private Region _currentRegion;
@@ -404,6 +405,7 @@ namespace ECS {
 			_isFollowerOf = null;
 			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData(this);
+            _actionQueue = new CharacterActionQueue<CharacterAction>();
 			previousActions = new Dictionary<CharacterTask, string> ();
 			actionWeights = new WeightedDictionary<CharacterTask> ();
 
@@ -2119,8 +2121,8 @@ namespace ECS {
 			}
         }
 		public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter){
-			for (int i = 0; i < _currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
-				if(targetCharacter.currentRegion.id == _currentRegion.adjacentRegionsViaMajorRoad[i].id){
+			for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
+				if(targetCharacter.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id){
 					return true;
 				}
 			}
@@ -2486,7 +2488,7 @@ namespace ECS {
             Dictionary<BaseLandmark, List<HexTile>> landmarksWithHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
             for (int i = 0; i < elligibleLandmarks.Count; i++) {
                 BaseLandmark currLandmark = elligibleLandmarks[i];
-				List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.tileLocation, PATHFINDING_MODE.USE_ROADS);
+                List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.tileLocation, PATHFINDING_MODE.USE_ROADS);
                 if(path != null) {
                     //check for hostiles
                     if (!currLandmark.HasHostilitiesWith(this.faction)) {
@@ -2956,11 +2958,36 @@ namespace ECS {
 			}
 			return null;
 		}
-		#endregion
+        #endregion
 
-        //private Settlement GetRandomSettlementToVisit() {
-        //    List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT);
+        #region Action Queue
+        public void AddActionToQueue(CharacterAction action) {
+            _actionQueue.Enqueue(action);
+        }
+        public void InsertActionToQueue(CharacterAction action, int index) {
+            _actionQueue.Enqueue(action, index);
+        }
+        #endregion
 
-        //}
+        private void GenerateRoamingBehaviour() {
+            List<Region> exclude = new List<Region>();
+            exclude.Add(this.specificLocation.tileLocation.region);
+            exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
+            List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
+            Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
+            for (int i = 0; i < allSettlements.Count; i++) {
+                BaseLandmark currLandmark = allSettlements[i];
+                List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
+                if (allPaths.Count > 0) {
+                    choices.Add(currLandmark, allPaths);
+                }
+            }
+            if (choices.Count > 0) {
+                BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
+                List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
+                List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
+                //TODO: queue go to location of each landmark in path
+            }
+        }
     }
 }

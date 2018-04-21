@@ -83,8 +83,8 @@ public class Hibernate : CharacterTask {
 			}
 			_landmarkWeights.AddElement (landmark, weight);
 		}
-		for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
-			Region adjacentRegion = character.currentRegion.adjacentRegionsViaMajorRoad [i];
+		for (int i = 0; i < character.currentRegion.adjacentRegionsViaRoad.Count; i++) {
+			Region adjacentRegion = character.currentRegion.adjacentRegionsViaRoad [i];
 			for (int j = 0; j < adjacentRegion.landmarks.Count; j++) {
 				BaseLandmark landmark = character.currentRegion.landmarks [i];
 				weight = 50;

@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PathFind;
+using System;
 
-public class Region {
+public class Region : IHasNeighbours<Region> {
     private int _id;
     private string _name;
     private HexTile _centerOfMass;
@@ -11,14 +13,14 @@ public class Region {
     private List<HexTile> _outerGridTilesInRegion;
     private Color regionColor;
     private List<Region> _adjacentRegions;
-    private List<Region> _adjacentRegionsViaMajorRoad;
+    private List<Region> _adjacentRegionsViaRoad;
     private List<HexTile> _tilesWithMaterials; //The tiles inside the region that have materials
 
     private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
 
     //Landmarks
     private List<BaseLandmark> _landmarks; //This contains all the landmarks in the region, except for it's city
-	//private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
+                                           //private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
 
     private List<HexTile> _outerTiles;
     private List<SpriteRenderer> regionBorderLines;
@@ -30,9 +32,9 @@ public class Region {
     private Faction _owner;
 
     #region getters/sertters
-	internal int id {
-		get { return this._id; }
-	}
+    internal int id {
+        get { return this._id; }
+    }
     internal HexTile centerOfMass {
         get { return _centerOfMass; }
     }
@@ -45,18 +47,18 @@ public class Region {
     internal List<Region> adjacentRegions {
         get { return _adjacentRegions; }
     }
-    internal List<Region> adjacentRegionsViaMajorRoad {
-        get { return _adjacentRegionsViaMajorRoad; }
+    internal List<Region> adjacentRegionsViaRoad {
+        get { return _adjacentRegionsViaRoad; }
     }
-	internal List<HexTile> outerTiles {
-		get { return this._outerTiles; }
-	}
+    internal List<HexTile> outerTiles {
+        get { return this._outerTiles; }
+    }
     internal List<BaseLandmark> landmarks {
         get { return _landmarks; }
     }
-	//internal List<BaseLandmark> allLandmarks {
-	//	get { return _landmarks; }
-	//}
+    //internal List<BaseLandmark> allLandmarks {
+    //	get { return _landmarks; }
+    //}
     internal List<HexTile> roadTilesInRegion {
         get { return _roadTilesInRegion; }
     }
@@ -75,10 +77,16 @@ public class Region {
     internal List<ECS.Character> charactersInRegion {
         get { return GetCharactersInRegion(); }
     }
-	internal int numOfCharactersInLandmarks{
-		get { return _landmarks.Sum (x => x.charactersAtLocation.Sum (y => y.numOfCharacters)); }
-	}
+    internal int numOfCharactersInLandmarks {
+        get { return _landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
+    }
     #endregion
+
+    public List<Region> ValidTiles {
+        get {
+            return new List<Region>(adjacentRegionsViaRoad);
+        }
+    }
 
     public Region(HexTile centerOfMass) {
         _id = Utilities.SetID(this);
@@ -86,12 +94,12 @@ public class Region {
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
-        _adjacentRegionsViaMajorRoad = new List<Region>();
+        _adjacentRegionsViaRoad = new List<Region>();
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
         _tilesWithMaterials = new List<HexTile>();
         AddTile(_centerOfMass);
-        regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
+        regionColor = UnityEngine.Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
     }
 
     #region Center Of Mass Functions
@@ -104,13 +112,13 @@ public class Region {
         int midPointX = (minXCoordinate + maxXCoordinate) / 2;
         int midPointY = (minYCoordinate + maxYCoordinate) / 2;
 
-        if(GridMap.Instance.width - 2 >= midPointX) {
+        if (GridMap.Instance.width - 2 >= midPointX) {
             midPointX -= 2;
         }
         if (GridMap.Instance.height - 2 >= midPointY) {
             midPointY -= 2;
         }
-        if(midPointX >= 2) {
+        if (midPointX >= 2) {
             midPointX += 2;
         }
         if (midPointY >= 2) {
@@ -130,14 +138,14 @@ public class Region {
         }
     }
     internal void SetCenterOfMass(HexTile newCenter) {
-        if(_centerOfMass != null) {
+        if (_centerOfMass != null) {
             //_centerOfMass.RemoveLandmarkOnTile();
             _centerOfMass.isHabitable = false;
             //_centerOfMass.emptyCityGO.SetActive(false);
         }
         _centerOfMass = newCenter;
         _centerOfMass.isHabitable = true;
-		//_centerOfMass.emptyCityGO.SetActive (true);
+        //_centerOfMass.emptyCityGO.SetActive (true);
         //_centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.TOWN);
     }
     #endregion
@@ -176,16 +184,24 @@ public class Region {
                         _outerTiles.Add(currTile);
                     }
                     //if (currNeighbour.region != null) {
-                        if (!_adjacentRegions.Contains(currNeighbour.region)) {
-                            if (currNeighbour.region == null) {
-                                throw new System.Exception("REGION IS NULL! " + currNeighbour.name);
-                            } else {
-                                _adjacentRegions.Add(currNeighbour.region);
-                            }
+                    if (!_adjacentRegions.Contains(currNeighbour.region)) {
+                        if (currNeighbour.region == null) {
+                            throw new System.Exception("REGION IS NULL! " + currNeighbour.name);
+                        } else {
+                            _adjacentRegions.Add(currNeighbour.region);
                         }
+                    }
                     //}
                 }
-            } 
+            }
+        }
+    }
+    public void CheckForRoadAdjacency() {
+        for (int i = 0; i < adjacentRegions.Count; i++) {
+            Region otherRegion = adjacentRegions[i];
+            if (HasConnectionToRegion(otherRegion, true)) {
+                _adjacentRegionsViaRoad.Add(otherRegion);
+            }
         }
     }
     #endregion
@@ -336,11 +352,17 @@ public class Region {
      Also check landmarks in this region that has connections, and check
      if any of them are already connected to the other region
          */
-    internal bool HasConnectionToRegion(Region otherRegion) {
+    internal bool HasConnectionToRegion(Region otherRegion, bool directOnly = false) {
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
-            if (currLandmark.IsConnectedTo(otherRegion) || currLandmark.IsIndirectlyConnectedTo(otherRegion)) {
-                return true;
+            if (directOnly) {
+                if (currLandmark.IsConnectedTo(otherRegion)) {
+                    return true;
+                }
+            } else {
+                if (currLandmark.IsConnectedTo(otherRegion) || currLandmark.IsIndirectlyConnectedTo(otherRegion)) {
+                    return true;
+                }
             }
         }
         return false;

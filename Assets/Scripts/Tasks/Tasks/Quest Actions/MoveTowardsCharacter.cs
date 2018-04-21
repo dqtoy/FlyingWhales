@@ -60,8 +60,8 @@ public class MoveTowardsCharacter : CharacterTask {
 			Character characterLookingFor = character.GetCharacterFromTraceInfo (_traceItem.itemName);
 			_traceCharacter = characterLookingFor;
 			if(characterLookingFor != null){
-				for (int i = 0; i < character.currentRegion.adjacentRegionsViaMajorRoad.Count; i++) {
-					if(character.currentRegion.adjacentRegionsViaMajorRoad[i].id == characterLookingFor.currentRegion.id){
+				for (int i = 0; i < character.currentRegion.adjacentRegionsViaRoad.Count; i++) {
+					if(character.currentRegion.adjacentRegionsViaRoad[i].id == characterLookingFor.currentRegion.id){
 						return 150;
 					}
 				}
@@ -82,8 +82,8 @@ public class MoveTowardsCharacter : CharacterTask {
 		if(characterLookingFor != null){
 			if(_traceCharacter != null){
 				Region regionOfChar = character.specificLocation.tileLocation.region;
-				for (int i = 0; i < regionOfChar.adjacentRegionsViaMajorRoad.Count; i++) {
-					Region adjacentRegion = regionOfChar.adjacentRegionsViaMajorRoad [i];
+				for (int i = 0; i < regionOfChar.adjacentRegionsViaRoad.Count; i++) {
+					Region adjacentRegion = regionOfChar.adjacentRegionsViaRoad [i];
 					if (characterLookingFor.currentRegion.id == adjacentRegion.id) {
 						_landmarkWeights.AddWeightToElement (adjacentRegion.mainLandmark, 100);
 					}

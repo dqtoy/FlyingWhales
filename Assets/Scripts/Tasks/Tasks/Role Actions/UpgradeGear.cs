@@ -56,7 +56,7 @@ public class UpgradeGear : CharacterTask {
         //}
         List<Region> regionsToCheck = new List<Region>();
         regionsToCheck.Add(character.currentRegion);
-        regionsToCheck.AddRange(character.currentRegion.adjacentRegionsViaMajorRoad);
+        regionsToCheck.AddRange(character.currentRegion.adjacentRegionsViaRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             //Non Hostile Settlement in current region and adjacent regions: 100
@@ -73,7 +73,7 @@ public class UpgradeGear : CharacterTask {
         base.GetLandmarkTarget(character);
         List<Region> regionsToCheck = new List<Region>();
         regionsToCheck.Add(character.currentRegion);
-        regionsToCheck.AddRange(character.currentRegion.adjacentRegionsViaMajorRoad);
+        regionsToCheck.AddRange(character.currentRegion.adjacentRegionsViaRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             //Non Hostile Settlement in current region and adjacent regions: 100

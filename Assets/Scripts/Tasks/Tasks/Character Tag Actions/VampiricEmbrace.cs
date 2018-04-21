@@ -82,7 +82,7 @@ public class VampiricEmbrace : CharacterTask {
         List<Region> regionsToCheck = new List<Region>();
         Region regionOfCharacter = character.specificLocation.tileLocation.region;
         regionsToCheck.Add(regionOfCharacter);
-        regionsToCheck.AddRange(regionOfCharacter.adjacentRegionsViaMajorRoad);
+        regionsToCheck.AddRange(regionOfCharacter.adjacentRegionsViaRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.charactersInRegion.Count; j++) {

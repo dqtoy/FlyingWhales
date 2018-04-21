@@ -504,6 +504,11 @@ public class RoadManager : MonoBehaviour {
         Debug.Log("Landmarks with 2 connections: " + LandmarkManager.Instance.GetAllLandmarks().Where(x => x.connections.Count == 2).Count());
         Debug.Log("Landmarks with 3 connections: " + LandmarkManager.Instance.GetAllLandmarks().Where(x => x.connections.Count == 3).Count());
 
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            currRegion.CheckForRoadAdjacency(); //populate the adjacentViaMajorRoads of all regions
+        }
+
         return true;
     }
 

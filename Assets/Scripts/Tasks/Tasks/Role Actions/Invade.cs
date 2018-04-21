@@ -73,7 +73,7 @@ public class Invade : CharacterTask {
         //If there are unowned landmarks with hostile unaligned characters or owned by hostile faction within current region or adjacent region
         List<Region> regionsToCheck = new List<Region>();
         regionsToCheck.Add(character.specificLocation.tileLocation.region);
-        regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegionsViaMajorRoad);
+        regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegionsViaRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
@@ -94,7 +94,7 @@ public class Invade : CharacterTask {
         List<Region> regionsToCheck = new List<Region>();
         Region regionOfChar = character.specificLocation.tileLocation.region;
         regionsToCheck.Add(regionOfChar);
-        regionsToCheck.AddRange(regionOfChar.adjacentRegionsViaMajorRoad);
+        regionsToCheck.AddRange(regionOfChar.adjacentRegionsViaRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {

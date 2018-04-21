@@ -49,8 +49,8 @@ public class MoveToBeast : CharacterTask {
     public override bool AreConditionsMet(ECS.Character character) {
         //if there are any dungoon landmarks in the characters adjacent regions
         Region regionOfChar = character.specificLocation.tileLocation.region;
-        for (int i = 0; i < regionOfChar.adjacentRegionsViaMajorRoad.Count; i++) {
-            Region adjacentRegion = regionOfChar.adjacentRegionsViaMajorRoad[i];
+        for (int i = 0; i < regionOfChar.adjacentRegionsViaRoad.Count; i++) {
+            Region adjacentRegion = regionOfChar.adjacentRegionsViaRoad[i];
             List<BaseLandmark> dungeonLandmarks = adjacentRegion.GetLandmarksOfType(BASE_LANDMARK_TYPE.DUNGEON);
             if (dungeonLandmarks.Count > 0) {
                 return true;
@@ -64,8 +64,8 @@ public class MoveToBeast : CharacterTask {
     protected override BaseLandmark GetLandmarkTarget(Character character) {
         base.GetLandmarkTarget(character);
         Region regionOfChar = character.specificLocation.tileLocation.region;
-        for (int i = 0; i < regionOfChar.adjacentRegionsViaMajorRoad.Count; i++) {
-            Region adjacentRegion = regionOfChar.adjacentRegionsViaMajorRoad[i];
+        for (int i = 0; i < regionOfChar.adjacentRegionsViaRoad.Count; i++) {
+            Region adjacentRegion = regionOfChar.adjacentRegionsViaRoad[i];
             List<BaseLandmark> dungeonLandmarks = adjacentRegion.GetLandmarksOfType(BASE_LANDMARK_TYPE.DUNGEON);
             for (int j = 0; j < dungeonLandmarks.Count; j++) {
                 BaseLandmark currLandmark = dungeonLandmarks[j];

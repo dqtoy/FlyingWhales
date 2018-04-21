@@ -66,7 +66,7 @@ public class ExploreTile : CharacterTask {
         List<Region> regionsToCheck = new List<Region>();
         Region characterRegion = character.specificLocation.tileLocation.region;
         regionsToCheck.Add(characterRegion);
-        regionsToCheck.AddRange(characterRegion.adjacentRegionsViaMajorRoad);
+        regionsToCheck.AddRange(characterRegion.adjacentRegionsViaRoad);
         //Check If there are Dungeon Landmarks in current or adjacent regions
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
@@ -84,7 +84,7 @@ public class ExploreTile : CharacterTask {
         List<Region> regionsToCheck = new List<Region>();
         Region characterRegion = character.specificLocation.tileLocation.region;
         regionsToCheck.Add(characterRegion);
-        regionsToCheck.AddRange(characterRegion.adjacentRegionsViaMajorRoad);
+        regionsToCheck.AddRange(characterRegion.adjacentRegionsViaRoad);
         for (int i = 0; i < regionsToCheck.Count; i++) {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {

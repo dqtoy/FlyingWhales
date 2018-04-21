@@ -206,7 +206,39 @@ namespace PathFind {
 			}
 			return null;
 		}
-	}
+
+        public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate)
+            where Node : Region, IHasNeighbours<Node> {
+
+            var closed = new HashSet<Node>();
+            var queue = new PriorityQueue<double, Path<Node>>();
+            queue.Enqueue(0, new Path<Node>(start));
+            Node lastStep = start;
+
+            //Region region1 = start.region;
+            //Region region2 = destination.region;
+
+            while (!queue.IsEmpty) {
+                var path = queue.Dequeue();
+                if (closed.Contains(path.LastStep))
+                    continue;
+                if (path.LastStep.Equals(destination))
+                    return path;
+
+                closed.Add(path.LastStep);
+                lastStep = path.LastStep;
+
+                double d;
+                Path<Node> newPath;
+                foreach (Node n in path.LastStep.ValidTiles) {
+                    d = distance(path.LastStep, n);
+                    newPath = path.AddStep(n, d);
+                    queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                }
+            }
+            return null;
+        }
+    }
 
 
 

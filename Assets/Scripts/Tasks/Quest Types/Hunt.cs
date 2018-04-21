@@ -32,7 +32,7 @@ public class Hunt : Quest {
 	#region Overrides
 	public override bool CanAcceptQuest (Character character){
 		if (base.CanAcceptQuest (character)) {
-			if(character.currentRegion.id == _targetCharacter.currentRegion.id || character.currentRegion.adjacentRegionsViaMajorRoad.Contains(_targetCharacter.currentRegion)){
+			if(character.currentRegion.id == _targetCharacter.currentRegion.id || character.currentRegion.adjacentRegionsViaRoad.Contains(_targetCharacter.currentRegion)){
 				return true;
 			}
 		}

@@ -110,7 +110,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     //public List<HexTile> LandmarkExternalConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
-    public List<HexTile> CombatTiles { get { return NoWaterTiles; }}
+    //public List<HexTile> CombatTiles { get { return NoWaterTiles; } }
     public List<HexTile> AvatarTiles { get { return NoWaterTiles; }}
 
     public List<HexTile> sameTagNeighbours;
@@ -1416,7 +1416,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     #endregion
 
     internal bool HasCombatPathTo(HexTile target){
-		List<HexTile> path = PathGenerator.Instance.GetPath (this, target, PATHFINDING_MODE.AVATAR);
+        List<HexTile> path = PathGenerator.Instance.GetPath (this, target, PATHFINDING_MODE.AVATAR);
 		if(path != null){
 			return true;
 		}

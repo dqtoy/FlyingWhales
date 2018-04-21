@@ -453,6 +453,22 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarksOfType;
     }
+    public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType, List<Region> except) {
+        List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if (except.Contains(currRegion)) {
+                continue; //skip
+            }
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
+                    allLandmarksOfType.Add(currLandmark);
+                }
+            }
+        }
+        return allLandmarksOfType;
+    }
     public BaseLandmarkData GetBaseLandmarkData(BASE_LANDMARK_TYPE baseLandmarkType) {
         for (int i = 0; i < baseLandmarkData.Count; i++) {
             BaseLandmarkData currData = baseLandmarkData[i];
@@ -462,10 +478,14 @@ public class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception("There is no base landmark data for " + baseLandmarkType);
     }
-    public List<BaseLandmark> GetAllLandmarks() {
+    public List<BaseLandmark> GetAllLandmarks(List<Region> regions = null) {
         List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
+        List<Region> choices = GridMap.Instance.allRegions;
+        if (regions != null) {
+            choices = regions;
+        }
+        for (int i = 0; i < choices.Count; i++) {
+            Region currRegion = choices[i];
             allLandmarks.AddRange(currRegion.landmarks);
         }
         return allLandmarks;
