@@ -2135,62 +2135,50 @@ namespace ECS {
          Determine what action the character will do, and execute that action.
              */
 		internal void DetermineAction() {
-            //Set Task of character to do nothing for now
+			//if(_isFainted || _isPrisoner || _isDead || _isFollower){
+			//	return;
+			//}
+   //         if(_party != null) {
+   //             //if the character is in a party, and is not the leader, do not decide any action
+   //             if (!_party.IsCharacterLeaderOfParty(this)) {
+   //                 return;
+   //             }
+   //         }
+			//if(_currentTask != null && !_currentTask.isDone){
+			//	_currentTask.SetIsHalted (true);
+			//}
+   //         if(nextTaskToDo != null) {
+   //             //Force next task to do, if any
+			//	nextTaskToDo.OnChooseTask(this);
+   //             nextTaskToDo = null;
+   //             return;
+   //         }
+			//actionWeights.Clear ();
 			//if(_role != null){
-			//	if(_role.defaultRoleTask != null){
-			//		_role.defaultRoleTask.OnChooseTask (this);
+			//	_role.AddTaskWeightsFromRole (actionWeights);
+			//}
+
+			//if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {				
+			//	for (int i = 0; i < _tags.Count; i++) {
+			//		_tags [i].AddTaskWeightsFromTags (actionWeights);
+			//	}
+			//	if (currentQuest != null) {
+			//		//Quest Tasks
+			//		_questData.AddQuestTasksToWeightedDictionary(actionWeights);
 			//	}
 			//}
-   //         return;
 
-//			if(isInCombat){
-//				SetCurrentFunction (() => DetermineAction ());
-//				return;
-//			}
-			if(_isFainted || _isPrisoner || _isDead || _isFollower){
-				return;
-			}
-            if(_party != null) {
-                //if the character is in a party, and is not the leader, do not decide any action
-                if (!_party.IsCharacterLeaderOfParty(this)) {
-                    return;
-                }
-            }
-			if(_currentTask != null && !_currentTask.isDone){
-				_currentTask.SetIsHalted (true);
-			}
-            if(nextTaskToDo != null) {
-                //Force next task to do, if any
-				nextTaskToDo.OnChooseTask(this);
-                nextTaskToDo = null;
-                return;
-            }
-			actionWeights.Clear ();
-			if(_role != null){
-				_role.AddTaskWeightsFromRole (actionWeights);
-			}
-
-			if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {				
-				for (int i = 0; i < _tags.Count; i++) {
-					_tags [i].AddTaskWeightsFromTags (actionWeights);
-				}
-				if (currentQuest != null) {
-					//Quest Tasks
-					_questData.AddQuestTasksToWeightedDictionary(actionWeights);
-				}
-			}
-
-            if (actionWeights.GetTotalOfWeights() > 0) {
-                CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
-                if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
-                    LogActionWeights(actionWeights, chosenTask);
-                }
-                chosenTask.ResetTask();
-                chosenTask.OnChooseTask(this);
-            } else {
-                actionWeights.LogDictionaryValues(this.name + " action weights!");
-				Debug.LogError(this.role.roleType.ToString() + " " + this.name + " could not determine an action!");
-            }
+   //         if (actionWeights.GetTotalOfWeights() > 0) {
+   //             CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
+   //             if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
+   //                 LogActionWeights(actionWeights, chosenTask);
+   //             }
+   //             chosenTask.ResetTask();
+   //             chosenTask.OnChooseTask(this);
+   //         } else {
+   //             actionWeights.LogDictionaryValues(this.name + " action weights!");
+			//	Debug.LogError(this.role.roleType.ToString() + " " + this.name + " could not determine an action!");
+   //         }
 		}
         /*
          Set a task that this character will accept next
@@ -2731,7 +2719,7 @@ namespace ECS {
             if (this.faction == null) {
                 return true; //this character has no faction
             }
-            if (this.currentTask.HasHostilitiesBecauseOfTask(combatInitializer)) {
+            if (this.currentTask != null && this.currentTask.HasHostilitiesBecauseOfTask(combatInitializer)) {
                 return true;
             }
             //Check here if the combatInitializer is hostile with this character, if yes, return true

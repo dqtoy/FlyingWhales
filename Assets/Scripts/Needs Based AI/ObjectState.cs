@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
+using System.Linq;
 
 public class ObjectState {
     protected IObject _object;
@@ -36,8 +37,9 @@ public class ObjectState {
     }
     #endregion
 
-    public ObjectState(IObject obj) {
+    public ObjectState(IObject obj, string stateName) {
         _object = obj;
+        _stateName = stateName;
         _actionRewardDictionary = new Dictionary<CharacterAction, Reward>();
     }
 
@@ -63,4 +65,22 @@ public class ObjectState {
         }
         return false;
     }
+
+    #region Actions
+    public void AddNewAction(CharacterAction action, Reward reward) {
+        _actionRewardDictionary.Add(action, reward);
+    }
+    public void RemoveAction(CharacterAction action) {
+        _actionRewardDictionary.Remove(action);
+    }
+    public CharacterAction GetAction(ACTION_TYPE type) {
+        for (int i = 0; i < _actionRewardDictionary.Keys.Count; i++) {
+            CharacterAction currAction = _actionRewardDictionary.Keys.ElementAt(i);
+            if (currAction.actionType == type) {
+                return currAction;
+            }
+        }
+        return null;
+    }
+    #endregion
 }

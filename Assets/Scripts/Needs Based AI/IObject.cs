@@ -14,4 +14,6 @@ public interface IObject {
     int prestigeAdvertisementValue { get; }
 
     void ChangeState(ObjectState state);
+    CharacterAction GetAction(ACTION_TYPE type);
+
 }

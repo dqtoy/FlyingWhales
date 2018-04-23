@@ -1284,4 +1284,5 @@ public enum COMBAT_INTENT{
 
 public enum ACTION_TYPE {
     REST,
+    MOVE,
 }

@@ -17,16 +17,16 @@ public class Villain : CharacterRole {
 			ACTION_ALIGNMENT.UNLAWFUL
 		};
 
-		_roleTasks.Add (new DoNothing (this._character));
-		_roleTasks.Add (new Rest (this._character));
-		_roleTasks.Add (new ExploreTile (this._character, 5));
-		_roleTasks.Add (new UpgradeGear (this._character));
-		_roleTasks.Add (new MoveTo (this._character));
-		_roleTasks.Add (new TakeQuest (this._character));
+		//_roleTasks.Add (new DoNothing (this._character));
+		//_roleTasks.Add (new Rest (this._character));
+		//_roleTasks.Add (new ExploreTile (this._character, 5));
+		//_roleTasks.Add (new UpgradeGear (this._character));
+		//_roleTasks.Add (new MoveTo (this._character));
+		//_roleTasks.Add (new TakeQuest (this._character));
   //      _roleTasks.Add (new Attack (this._character, 10));
 		//_roleTasks.Add (new Patrol (this._character, 10));
 
-		_defaultRoleTask = _roleTasks [1];
+		//_defaultRoleTask = _roleTasks [1];
 
         SetFood(1000);
         SetEnergy(1000);

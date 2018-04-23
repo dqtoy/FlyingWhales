@@ -22,8 +22,9 @@ public class CharacterAction {
     }
     #endregion
 
-    public CharacterAction(ObjectState state) {
+    public CharacterAction(ObjectState state, ACTION_TYPE actionType) {
         _state = state;
+        _actionType = actionType;
     }
 
     #region Virtuals

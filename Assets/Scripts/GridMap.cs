@@ -82,7 +82,7 @@ public class GridMap : MonoBehaviour {
         listHexes.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(map));
         mapWidth = listHexes[listHexes.Count - 1].transform.position.x;
         mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
-        listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
+        //listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
     }
     internal void GenerateOuterGrid() {
         int newWidth = (int)width + (_borderThickness * 2);

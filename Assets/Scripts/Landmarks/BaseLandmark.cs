@@ -34,6 +34,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected List<Item> _itemsInLandmark;
 	protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
+    protected List<IObject> _objects;
 
     private bool _hasScheduledCombatCheck = false;
 
@@ -110,6 +111,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public Dictionary<Character, GameDate> characterTraces {
 		get { return _characterTraces; }
 	}
+    public List<IObject> objects {
+        get { return _objects; }
+    }
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -132,6 +136,8 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_characterTraces = new Dictionary<Character, GameDate> ();
         _totalDurability = landmarkData.durability;
 		_currDurability = _totalDurability;
+        _objects = new List<IObject>();
+        //TODO: Add Landmark invisible object to advertise move to action
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
         ConstructCiviliansDictionary();
@@ -1028,6 +1034,17 @@ public class BaseLandmark : ILocation, TaskCreator {
         //add common tags from base landmark type
         BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
         _landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
+    }
+    #endregion
+
+    #region Objects
+    public void AddObject(IObject obj) {
+        if (!_objects.Contains(obj)) {
+            _objects.Add(obj);
+        }
+    }
+    public void RemoveObject(IObject obj) {
+        _objects.Remove(obj);
     }
     #endregion
 }

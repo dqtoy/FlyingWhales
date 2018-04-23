@@ -25,13 +25,13 @@ public class Chieftain : CharacterRole {
 			QUEST_TYPE.SAVE_LANDMARK,
         };
 
-		_roleTasks.Add (new DoNothing (this._character));
-		_roleTasks.Add (new Rest (this._character));
-		_roleTasks.Add (new MoveTo (this._character));
-        _roleTasks.Add (new ProclaimSuccessor(this._character));
+		//_roleTasks.Add (new DoNothing (this._character));
+		//_roleTasks.Add (new Rest (this._character));
+		//_roleTasks.Add (new MoveTo (this._character));
+        //_roleTasks.Add (new ProclaimSuccessor(this._character));
         //_roleTasks.Add (new Attack (this._character, 10));
 
-		_defaultRoleTask = _roleTasks [1];
+		//_defaultRoleTask = _roleTasks [1];
     }
 
 	#region Overrides
