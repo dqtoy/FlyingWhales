@@ -20,6 +20,13 @@ public class CharacterActionData {
 
     public int successRate;
     public int duration;
+
+    public RESOURCE resourceGiven;
+    public int minResourceGiven;
+    public int maxResourceGiven;
+
+    public RESOURCE resourceNeeded;
+    public int resourceAmountNeeded;
 }
 
 [CustomPropertyDrawer(typeof(CharacterActionData))]
@@ -85,14 +92,70 @@ public class CharacterActionDrawer : PropertyDrawer {
         ACTION_TYPE actionType = (ACTION_TYPE)property.FindPropertyRelative("actionType").enumValueIndex;
 
         bool enableSuccessRate = HasSuccessRate(actionType);
+        bool enableDuration = HasDuration(actionType);
+        bool enableResourceGiven = GivesResource(actionType);
+        bool enableResourceNeeded = NeedResource(actionType);
+
+        float succesRateYPos = position.y + 80;
+        float durationYPos = position.y + 100;
+        float resourceGivenYPos = position.y + 120;
+        float resourceNeededYPos = position.y + 160;
+
         EditorGUI.BeginDisabledGroup(!enableSuccessRate);
         EditorGUI.indentLevel = -7;
-
-        var successRateRect = new Rect(position.x, position.y + 80, 30, 16);
-        EditorGUI.PropertyField(successRateRect, property.FindPropertyRelative("successRate"));
-
+        EditorGUI.LabelField(new Rect(position.x, succesRateYPos, 50, 50), "Success Rate");
+        var successRateRect = new Rect(position.x + 90, succesRateYPos, 80, 16);
+        EditorGUI.PropertyField(successRateRect, property.FindPropertyRelative("successRate"), GUIContent.none);
         EditorGUI.indentLevel = 0;
         EditorGUI.EndDisabledGroup();
+
+        if (!enableSuccessRate) {
+            property.FindPropertyRelative("successRate").intValue = 0;
+        }
+
+        EditorGUI.BeginDisabledGroup(!enableDuration);
+        EditorGUI.indentLevel = -7;
+        EditorGUI.LabelField(new Rect(position.x, durationYPos, 50, 50), "Duration");
+        var durationRect = new Rect(position.x + 90, durationYPos, 80, 16);
+        EditorGUI.PropertyField(durationRect, property.FindPropertyRelative("duration"), GUIContent.none);
+        EditorGUI.indentLevel = 0;
+        EditorGUI.EndDisabledGroup();
+        if (!enableSuccessRate) {
+            property.FindPropertyRelative("duration").intValue = 0;
+        }
+
+        EditorGUI.BeginDisabledGroup(!enableResourceGiven);
+        EditorGUI.indentLevel = -7;
+        EditorGUI.LabelField(new Rect(position.x, resourceGivenYPos, 50, 50), "Gives Resource");
+        var resourceGivenRect = new Rect(position.x, resourceGivenYPos + 20, 5, 16);
+        var minResourceRect = new Rect(position.x + 120, resourceGivenYPos + 20, -50, 16);
+        var maxResourceRect = new Rect(position.x + 180, resourceGivenYPos + 20, -50, 16);
+        EditorGUI.PropertyField(resourceGivenRect, property.FindPropertyRelative("resourceGiven"), GUIContent.none);
+        EditorGUI.PropertyField(minResourceRect, property.FindPropertyRelative("minResourceGiven"), GUIContent.none);
+        EditorGUI.PropertyField(maxResourceRect, property.FindPropertyRelative("maxResourceGiven"), GUIContent.none);
+        EditorGUI.indentLevel = 0;
+        EditorGUI.EndDisabledGroup();
+
+        if (!enableResourceGiven) {
+            property.FindPropertyRelative("resourceGiven").enumValueIndex = 0;
+            property.FindPropertyRelative("minResourceGiven").intValue = 0;
+            property.FindPropertyRelative("maxResourceGiven").intValue = 0;
+        }
+
+        EditorGUI.BeginDisabledGroup(!enableResourceNeeded);
+        EditorGUI.indentLevel = -7;
+        EditorGUI.LabelField(new Rect(position.x, resourceNeededYPos, 50, 50), "Needs Resource");
+        var resourceNeededRect = new Rect(position.x, resourceNeededYPos + 20, 5, 16);
+        var resourceAmountNeededRect = new Rect(position.x + 120, resourceNeededYPos + 20, -50, 16);
+        EditorGUI.PropertyField(resourceNeededRect, property.FindPropertyRelative("resourceNeeded"), GUIContent.none);
+        EditorGUI.PropertyField(resourceAmountNeededRect, property.FindPropertyRelative("resourceAmountNeeded"), GUIContent.none);
+        EditorGUI.indentLevel = 0;
+        EditorGUI.EndDisabledGroup();
+
+        if (!enableResourceNeeded) {
+            property.FindPropertyRelative("resourceNeeded").enumValueIndex = 0;
+            property.FindPropertyRelative("resourceAmountNeeded").intValue = 0;
+        }
 
         // Set indent back to what it was
         EditorGUI.indentLevel = indent;
@@ -106,26 +169,42 @@ public class CharacterActionDrawer : PropertyDrawer {
 
     private bool HasSuccessRate(ACTION_TYPE actionType) {
         switch (actionType) {
-            case ACTION_TYPE.REST:
-                return false;
-            case ACTION_TYPE.MOVE:
-                return false;
             case ACTION_TYPE.HUNT:
                 return true;
             case ACTION_TYPE.DESTROY:
                 return true;
-            case ACTION_TYPE.EAT:
-                return false;
-            case ACTION_TYPE.BUILD:
-                return false;
-            case ACTION_TYPE.REPAIR:
-                return false;
-            case ACTION_TYPE.DRINK:
-                return false;
-            case ACTION_TYPE.HARVEST:
-                return false;
             default:
-                throw new System.Exception(actionType.ToString() + " not implemented!");
+                return false;
+        }
+    }
+    private bool HasDuration(ACTION_TYPE actionType) {
+        switch (actionType) {
+            case ACTION_TYPE.HUNT:
+                return true;
+            case ACTION_TYPE.DESTROY:
+                return true;
+            case ACTION_TYPE.BUILD:
+                return true;
+            case ACTION_TYPE.REPAIR:
+                return true;
+            default:
+                return false;
+        }
+    }
+    private bool GivesResource(ACTION_TYPE actionType) {
+        switch (actionType) {
+            case ACTION_TYPE.HARVEST:
+                return true;
+            default:
+                return false;
+        }
+    }
+    private bool NeedResource(ACTION_TYPE actionType) {
+        switch (actionType) {
+            case ACTION_TYPE.REPAIR:
+                return true;
+            default:
+                return false;
         }
     }
 }

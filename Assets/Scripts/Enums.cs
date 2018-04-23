@@ -109,22 +109,22 @@ public enum MONTH{
 	NOV,
 	DEC,
 }
-//public enum RESOURCE{
-//	NONE,
-//	CORN,
-//	WHEAT,
-//	RICE,
-//	DEER,
-//	PIG,
-//	BEHEMOTH,
-//	OAK,
-//	EBONY,
-//	GRANITE,
-//	SLATE,
-//	MANA_STONE,
-//	MITHRIL,
-//	COBALT,
-//}
+public enum RESOURCE {
+    NONE,
+    //CORN,
+    //WHEAT,
+    //RICE,
+    //DEER,
+    //PIG,
+    //BEHEMOTH,
+    OAK,
+    //EBONY,
+    //GRANITE,
+    //SLATE,
+    //MANA_STONE,
+    //MITHRIL,
+    //COBALT,
+}
 //public enum RESOURCE_TYPE{
 //	NONE,
 //	FOOD,
