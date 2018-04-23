@@ -16,18 +16,6 @@ public class ObjectState {
     public string stateName {
         get { return _stateName; }
     }
-    public float foodAdvertisementMod {
-        get { return _foodAdvertisementMod; }
-    }
-    public float energyAdvertisementMod {
-        get { return _energyAdvertisementMod; }
-    }
-    public float joyAdvertisementMod {
-        get { return _joyAdvertisementMod; }
-    }
-    public float prestigeAdvertisementMod {
-        get { return _prestigeAdvertisementMod; }
-    }
     public Dictionary<CharacterAction, Reward> actionRewardDictionary {
         get { return _actionRewardDictionary; }
     }
