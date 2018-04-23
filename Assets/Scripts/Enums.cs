@@ -1286,3 +1286,10 @@ public enum ACTION_TYPE {
     REST,
     MOVE,
 }
+
+public enum OBJECT_TYPE {
+    CHARACTER,
+    STRUCTURE,
+    ITEM,
+    NPC,
+}
