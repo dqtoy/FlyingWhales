@@ -4,10 +4,11 @@ using UnityEngine;
 using ECS;
 using System.Linq;
 
+[System.Serializable]
 public class ObjectState {
     protected IObject _object;
-    protected string _stateName;
-    protected Dictionary<CharacterAction, Reward> _actionRewardDictionary;
+    [SerializeField] protected string _stateName;
+    [SerializeField] protected List<CharacterAction> _actions;
 
     #region getters/setters
     public IObject obj {
@@ -16,15 +17,15 @@ public class ObjectState {
     public string stateName {
         get { return _stateName; }
     }
-    public Dictionary<CharacterAction, Reward> actionRewardDictionary {
-        get { return _actionRewardDictionary; }
+    public List<CharacterAction> actions {
+        get { return _actions; }
     }
     #endregion
 
-    public ObjectState(IObject obj, string stateName) {
-        _object = obj;
-        _stateName = stateName;
-        _actionRewardDictionary = new Dictionary<CharacterAction, Reward>();
+    public ObjectState() {
+        //_object = obj;
+        //_stateName = stateName;
+        //_actions = new List<CharacterAction>();
     }
 
     #region Virtuals
@@ -39,8 +40,9 @@ public class ObjectState {
     #endregion
 
     public bool HasActionInState(CharacterAction action, bool changeActionIfTrue = false) {
-        foreach (CharacterAction currentAction in _actionRewardDictionary.Keys) {
-            if(currentAction.actionType == action.actionType && currentAction.state.obj == action.state.obj) {
+        for (int i = 0; i < _actions.Count; i++) {
+            CharacterAction currentAction = _actions[i];
+            if (currentAction.actionType == action.actionType && currentAction.state.obj == action.state.obj) {
                 if (changeActionIfTrue) {
                     //TODO: Change action of character to currentAction if it matches
                 }
@@ -52,14 +54,14 @@ public class ObjectState {
 
     #region Actions
     public void AddNewAction(CharacterAction action, Reward reward) {
-        _actionRewardDictionary.Add(action, reward);
+        _actions.Add(action);
     }
     public void RemoveAction(CharacterAction action) {
-        _actionRewardDictionary.Remove(action);
+        _actions.Remove(action);
     }
     public CharacterAction GetAction(ACTION_TYPE type) {
-        for (int i = 0; i < _actionRewardDictionary.Keys.Count; i++) {
-            CharacterAction currAction = _actionRewardDictionary.Keys.ElementAt(i);
+        for (int i = 0; i < _actions.Count; i++) {
+            CharacterAction currAction = _actions[i];
             if (currAction.actionType == type) {
                 return currAction;
             }

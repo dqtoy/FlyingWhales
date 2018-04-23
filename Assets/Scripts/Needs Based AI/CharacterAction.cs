@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
+[System.Serializable]
 public class CharacterAction {
-    protected ACTION_TYPE _actionType;
-    protected string _actionName;
+    //[SerializeField] protected ACTION_TYPE _actionType;
+    //[SerializeField] protected string _actionName;
     protected ObjectState _state;
     protected ActionFilter[] _filters;
+    public CharacterActionData actionData;
 
     #region getters/setters
     public ACTION_TYPE actionType {
-        get { return _actionType; }
+        get { return actionData.actionType; }
     }
     public ObjectState state {
         get { return _state; }
@@ -20,7 +22,7 @@ public class CharacterAction {
 
     public CharacterAction(ObjectState state, ACTION_TYPE actionType) {
         _state = state;
-        _actionType = actionType;
+        //_actionType = actionType;
     }
 
     #region Virtuals
@@ -28,7 +30,7 @@ public class CharacterAction {
     }
     #endregion
 
-    public Reward GetReward() {
-        return _state.actionRewardDictionary[this];
-    }
+    //public Reward GetReward() {
+    //    return _state.actions[this];
+    //}
 }

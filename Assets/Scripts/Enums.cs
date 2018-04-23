@@ -1285,6 +1285,13 @@ public enum COMBAT_INTENT{
 public enum ACTION_TYPE {
     REST,
     MOVE,
+    HUNT,
+    DESTROY,
+    EAT,
+    BUILD,
+    REPAIR,
+    DRINK,
+    HARVEST,
 }
 
 public enum OBJECT_TYPE {
