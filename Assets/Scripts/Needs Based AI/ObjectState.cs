@@ -8,10 +8,6 @@ public class ObjectState {
     protected IObject _object;
     protected string _stateName;
     protected Dictionary<CharacterAction, Reward> _actionRewardDictionary;
-    protected float _foodAdvertisementMod;
-    protected float _energyAdvertisementMod;
-    protected float _joyAdvertisementMod;
-    protected float _prestigeAdvertisementMod;
 
     #region getters/setters
     public IObject obj {
