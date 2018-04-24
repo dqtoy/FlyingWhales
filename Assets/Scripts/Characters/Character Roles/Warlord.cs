@@ -11,10 +11,6 @@ public class Warlord : CharacterRole {
 
 	public Warlord(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.WARLORD;
-        _allowedRoadTypes = new List<ROAD_TYPE>() {
-            ROAD_TYPE.MAJOR
-        };
-        _canPassHiddenRoads = false;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.ATTACK,
             QUEST_TYPE.DEFEND,

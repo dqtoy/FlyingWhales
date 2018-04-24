@@ -6,10 +6,6 @@ using System.Collections.Generic;
 public class Worker : CharacterRole {
     public Worker(ECS.Character character) : base(character) {
         _roleType = CHARACTER_ROLE.WORKER;
-        _allowedRoadTypes = new List<ROAD_TYPE>() {
-            ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
-        };
-        _canPassHiddenRoads = true;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.BUILD_STRUCTURE,
 			QUEST_TYPE.OBTAIN_MATERIAL,

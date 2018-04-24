@@ -11,10 +11,6 @@ public class CraterBeast : CharacterRole {
 
 	public CraterBeast(ECS.Character character): base (character) {
 		_roleType = CHARACTER_ROLE.CRATER_BEAST;
-		_allowedRoadTypes = new List<ROAD_TYPE>() {
-			ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
-		};
-		_canPassHiddenRoads = true;
 
 //		_roleTasks.Add (new DoNothing (this._character));
 		_roleTasks.Clear();

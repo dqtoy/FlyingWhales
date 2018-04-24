@@ -6,10 +6,6 @@ public class Villain : CharacterRole {
 
 	public Villain(ECS.Character character): base (character) {
 		_roleType = CHARACTER_ROLE.VILLAIN;
-		_allowedRoadTypes = new List<ROAD_TYPE>() {
-			ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
-		};
-		_canPassHiddenRoads = true;
 
 		_allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
 			ACTION_ALIGNMENT.VILLAINOUS,

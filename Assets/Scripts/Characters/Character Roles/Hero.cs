@@ -12,10 +12,6 @@ public class Hero : CharacterRole {
 
 	public Hero(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.HERO;
-        _allowedRoadTypes = new List<ROAD_TYPE>() {
-            ROAD_TYPE.MAJOR, ROAD_TYPE.MINOR
-        };
-        _canPassHiddenRoads = true;
         _allowedQuestTypes = new List<QUEST_TYPE>() {
             QUEST_TYPE.DEFEND,
             QUEST_TYPE.EXPLORE_TILE,
