@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class CharacterActionData {
     public ACTION_TYPE actionType;
     public string actionName;
 
-    public int advertisedHunger;
+    public int advertisedFullness;
     public int advertisedJoy;
     public int advertisedEnergy;
     public int advertisedPrestige;
 
-    public int providedHunger;
+    public int providedFullness;
     public int providedJoy;
     public int providedEnergy;
     public int providedPrestige;
 
     public int successRate;
-    public int duration;
+    public int duration = -1;
 
     public RESOURCE resourceGiven;
     public int minResourceGiven;
@@ -27,13 +28,16 @@ public class CharacterActionData {
 
     public RESOURCE resourceNeeded;
     public int resourceAmountNeeded;
+
+    public UnityEvent successFunction;
+    public UnityEvent failFunction;
+
 }
 
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         EditorGUI.BeginProperty(position, label, property);
-
         position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
         var indent = EditorGUI.indentLevel;
@@ -43,8 +47,8 @@ public class CharacterActionDrawer : PropertyDrawer {
         var actionNameRect = new Rect(position.x + 180, position.y, 70, 16);
 
         EditorGUI.PropertyField(actionTypeRect, property.FindPropertyRelative("actionType"), GUIContent.none);
-        EditorGUI.LabelField(new Rect(position.x + 135, position.y, 50, 16), "Name");
-        EditorGUI.PropertyField(actionNameRect, property.FindPropertyRelative("actionName"), GUIContent.none);
+        //EditorGUI.LabelField(new Rect(position.x + 135, position.y, 50, 16), "Name");
+        //EditorGUI.PropertyField(actionNameRect, property.FindPropertyRelative("actionName"), GUIContent.none);
 
         EditorGUI.indentLevel = -1;
         EditorGUI.LabelField(new Rect(position.x, position.y + 20, 50, 50), "Hunger");
@@ -62,7 +66,7 @@ public class CharacterActionDrawer : PropertyDrawer {
         var aEnergyRect = new Rect(position.x + 100, position.y + 40, 30, 16);
         var aPrestigeRect = new Rect(position.x + 150, position.y + 40, 30, 16);
 
-        EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedHunger"), GUIContent.none);
+        EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedFullness"), GUIContent.none);
         EditorGUI.PropertyField(aJoyRect, property.FindPropertyRelative("advertisedJoy"), GUIContent.none);
         EditorGUI.PropertyField(aEnergyRect, property.FindPropertyRelative("advertisedEnergy"), GUIContent.none);
         EditorGUI.PropertyField(aPrestigeRect, property.FindPropertyRelative("advertisedPrestige"), GUIContent.none);
@@ -76,12 +80,23 @@ public class CharacterActionDrawer : PropertyDrawer {
         var pEnergyRect = new Rect(position.x + 100, position.y + 60, 30, 16);
         var pPrestigeRect = new Rect(position.x + 150, position.y + 60, 30, 16);
 
-        EditorGUI.PropertyField(pHungerRect, property.FindPropertyRelative("providedHunger"), GUIContent.none);
+        EditorGUI.PropertyField(pHungerRect, property.FindPropertyRelative("providedFullness"), GUIContent.none);
         EditorGUI.PropertyField(pJoyRect, property.FindPropertyRelative("providedJoy"), GUIContent.none);
         EditorGUI.PropertyField(pEnergyRect, property.FindPropertyRelative("providedEnergy"), GUIContent.none);
         EditorGUI.PropertyField(pPrestigeRect, property.FindPropertyRelative("providedPrestige"), GUIContent.none);
 
-        EditorGUI.indentLevel = 0;
+
+        SerializedProperty successFunctionProperty = property.FindPropertyRelative("successFunction");
+        SerializedProperty failFunctionProperty = property.FindPropertyRelative("failFunction");
+
+        EditorGUI.LabelField(new Rect(position.x - 120, position.y + 80, 60, 50), "On Success");
+        var pSuccessFunctionRect = new Rect(position.x - 120, position.y + 100, 350, 100);
+        EditorGUI.PropertyField(pSuccessFunctionRect, successFunctionProperty, GUIContent.none);
+
+        var pFailFunctionLabelRect = new Rect(pSuccessFunctionRect.x, pSuccessFunctionRect.y + pSuccessFunctionRect.height, 60, 50);
+        var pFailFunctionRect = new Rect(pFailFunctionLabelRect.x, pFailFunctionLabelRect.y + 20, 350, 100);
+        EditorGUI.LabelField(pFailFunctionLabelRect, "On Fail");
+        EditorGUI.PropertyField(pFailFunctionRect, failFunctionProperty, GUIContent.none);
 
         ACTION_TYPE actionType = (ACTION_TYPE)property.FindPropertyRelative("actionType").enumValueIndex;
 
@@ -114,7 +129,7 @@ public class CharacterActionDrawer : PropertyDrawer {
             }
             LoadDurationField(durationYPos, position, property, label);
         } else {
-            property.FindPropertyRelative("duration").intValue = 0;
+            property.FindPropertyRelative("duration");
         }
 
         //Resource Given

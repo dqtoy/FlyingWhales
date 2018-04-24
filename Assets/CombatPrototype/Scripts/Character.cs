@@ -106,6 +106,8 @@ namespace ECS {
 
 		private WeightedDictionary<CharacterTask> actionWeights;
 
+        private ActionData _actionData;
+
 		#region getters / setters
 		public string firstName {
             get { return name.Split(' ')[0]; }
@@ -378,6 +380,9 @@ namespace ECS {
 		public COMBAT_INTENT combatIntent{
 			get { return (_currentTask == null ? COMBAT_INTENT.DEFEAT : _currentTask.currentState.combatIntent); }
 		}
+        public ActionData actionData {
+            get { return _actionData; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -408,6 +413,7 @@ namespace ECS {
             _actionQueue = new CharacterActionQueue<CharacterAction>();
 			previousActions = new Dictionary<CharacterTask, string> ();
 			actionWeights = new WeightedDictionary<CharacterTask> ();
+            _actionData = new ActionData(this);
 
 			GenerateRaceTags ();
             GenerateSetupTags(baseSetup);
@@ -742,6 +748,9 @@ namespace ECS {
 					ThrowItem (_inventory [0]);
 				}
 
+                //Remove ActionData
+                _actionData.DetachActionData();
+
 				if(_home != null){
                     //Remove character home on landmark
 					_home.RemoveCharacterHomeOnLandmark (this);
@@ -813,33 +822,6 @@ namespace ECS {
         }
         internal void RemoveActionOnDeath(OnCharacterDeath onDeathAction) {
             onCharacterDeath -= onDeathAction;
-        }
-        private void CheckForInternationalIncident() {
-            //a non-Adventurer character from a tribe dies while in a region owned by another tribe
-			if(this._role == null){
-				return;
-			}
-            if (this.faction == null) {
-                return;
-            }
-            Faction ownerOfCurrLocation = this.currLocation.region.owner;
-			if (ownerOfCurrLocation != null && ownerOfCurrLocation.id != this.faction.id) {
-                if(currentTask != null && currentTask.taskType == TASK_TYPE.QUEST) { //if this character is in a quest when he/she died
-                    //OldQuest.Quest currentQuest = (OldQuest.Quest)currentTask;
-                    //if (FactionManager.Instance.IsQuestHarmful(currentQuest.questType)) { //check if the quest is meant to negatively impact a faction
-                    //    //if it is, check if this character died on a region owned by the faction he/she means to negatively impact
-                    //    //if he/she is, do not count this character's death as an international incident
-                    //    if (currentQuest.targetFaction.id != ownerOfCurrLocation.id) {
-                    //        //otherwise, this is an international incident
-                    //        FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
-                    //    }
-                    //} else {
-                    //    FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
-                    //}
-                } else {
-                    FactionManager.Instance.InternationalIncidentOccured(this.faction, this.currLocation.region.owner, INTERNATIONAL_INCIDENT_TYPE.CHARACTER_DEATH, this);
-                }
-            }
         }
 
 		#region Body Parts

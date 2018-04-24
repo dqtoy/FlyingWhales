@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New NPC Object", menuName = "Objects/New NPC Object")]
-public class NPCObj : ScriptableObject, INPCObject {
-    [SerializeField] private OBJECT_TYPE _objectType;
-    [SerializeField] private bool _isInvisible;
-    [SerializeField] private List<ObjectState> _states;
+public class LandmarkObj : IObject {
+    private string _objectName;
+    private OBJECT_TYPE _objectType;
+    private bool _isInvisible;
+    private List<ObjectState> _states;
 
     private ObjectState _currentState;
 
     #region getters/setters
     public string objectName {
-        get { return this.name; }
+        get { return _objectName; }
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
@@ -28,8 +28,9 @@ public class NPCObj : ScriptableObject, INPCObject {
     }
     #endregion
 
-    public NPCObj() {
-     
+    public LandmarkObj() {
+        _objectName = "Landmark Object";
+        _isInvisible = true;
     }
 
     public void ChangeState(ObjectState state) {

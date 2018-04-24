@@ -22,12 +22,9 @@ public class ObjectState {
     }
     #endregion
 
-    public ObjectState() {
-        //_object = obj;
-        //_stateName = stateName;
-        //_actions = new List<CharacterAction>();
+    public ObjectState(IObject iobject) {
+        _object = iobject;
     }
-
     #region Virtuals
     protected virtual void OnStartState() {
         Messenger.AddListener("OnDayEnd", EverydayEffect);
@@ -39,6 +36,10 @@ public class ObjectState {
     protected virtual void OnInteractWith(Character character) { }
     #endregion
 
+    #region Utilities
+    public void SetObject(IObject iobject) {
+        _object = iobject;
+    }
     public bool HasActionInState(CharacterAction action, bool changeActionIfTrue = false) {
         for (int i = 0; i < _actions.Count; i++) {
             CharacterAction currentAction = _actions[i];
@@ -51,9 +52,10 @@ public class ObjectState {
         }
         return false;
     }
+    #endregion
 
     #region Actions
-    public void AddNewAction(CharacterAction action, Reward reward) {
+    public void AddNewAction(CharacterAction action) {
         _actions.Add(action);
     }
     public void RemoveAction(CharacterAction action) {

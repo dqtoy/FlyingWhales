@@ -43,6 +43,7 @@ public class ObjectManager : MonoBehaviour {
             for (int j = 0; j < state.actions.Count; j++) {
                 CharacterAction action = state.actions[j];
                 action.SetObjectState(state);
+                action.GenerateName();
             }
         }
     }

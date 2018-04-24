@@ -1305,3 +1305,10 @@ public enum ACTION_RESULT {
     SUCCESS,
     FAIL,
 }
+
+public enum NEEDS {
+    FULLNESS,
+    ENERGY,
+    JOY,
+    PRESTIGE,
+}
