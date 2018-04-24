@@ -75,6 +75,7 @@ public class ActionData {
             for (int j = 0; j < landmark.objects.Count; j++) {
                 IObject iobject = landmark.objects[j];
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+                    //TODO: Add Filter Here, put this code inside something like if meetsfilterrequirements
                     CharacterAction action = iobject.currentState.actions[k];
                     int advertisement = action.GetTotalAdvertisementValue(_character);
                     actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + ")";
