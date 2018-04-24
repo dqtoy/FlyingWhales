@@ -37,6 +37,7 @@ public class ConsoleMenu : UIMenu {
             {"/get_path", GetPath },
             {"/get_all_paths", GetAllPaths },
             {"/r_road_highlights", ResetRoadHighlights },
+            {"/spawn_obj", SpawnNewObject },
         };
     }
 
@@ -606,6 +607,35 @@ public class ConsoleMenu : UIMenu {
             if (currTile.isRoad || currTile.hasLandmark) {
                 currTile.ResetRoadsColors();
             }
+        }
+    }
+    #endregion
+
+    #region Objects
+    private void SpawnNewObject(string[] parameters) {
+        if (parameters.Length != 3) { //command, object name, location
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string objectName = parameters[1];
+        string landmarkParameterString = parameters[2];
+        int landmarkID;
+
+        bool isLandmarkParameterNumeric = int.TryParse(landmarkParameterString, out landmarkID);
+        BaseLandmark landmark = null;
+        if (isLandmarkParameterNumeric) {
+            landmark = LandmarkManager.Instance.GetLandmarkByID(landmarkID);
+        } else {
+            landmark = LandmarkManager.Instance.GetLandmarkByName(landmarkParameterString);
+        }
+
+        if (landmark != null) {
+            ObjectManager.Instance.CreateNewObject(objectName, landmark);
+            AddSuccessMessage("Spawned a new " + objectName + " at " + landmark.landmarkName);
+            CameraMove.Instance.CenterCameraOn(landmark.tileLocation.gameObject);
+        } else {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
         }
     }
     #endregion

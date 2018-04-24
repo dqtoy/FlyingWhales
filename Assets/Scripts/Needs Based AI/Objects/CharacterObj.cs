@@ -28,11 +28,25 @@ public class CharacterObj : ScriptableObject, ICharacterObject {
     }
     #endregion
 
+
     public CharacterObj() {
      
     }
 
     public void ChangeState(ObjectState state) {
 
+    }
+
+    public IObject Clone() {
+        CharacterObj clone = ScriptableObject.CreateInstance<CharacterObj>();
+        clone.name = this.objectName;
+        clone._objectType = this._objectType;
+        clone._isInvisible = this.isInvisible;
+        clone._states = new List<ObjectState>();
+        for (int i = 0; i < this.states.Count; i++) {
+            ObjectState currState = this.states[i];
+            clone._states.Add(currState.Clone(clone));
+        }
+        return clone;
     }
 }

@@ -11,4 +11,5 @@ public interface IObject {
     bool isInvisible { get; }
 
     void ChangeState(ObjectState state);
+    IObject Clone();
 }

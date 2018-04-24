@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
-public class CharacterActionData {
+public struct CharacterActionData {
     public ACTION_TYPE actionType;
     public string actionName;
 
@@ -31,6 +31,8 @@ public class CharacterActionData {
 
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
+    private bool enableSuccessRate, enableDuration, enableResourceGiven, enableResourceNeeded;
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         EditorGUI.BeginProperty(position, label, property);
 
@@ -85,10 +87,10 @@ public class CharacterActionDrawer : PropertyDrawer {
 
         ACTION_TYPE actionType = (ACTION_TYPE)property.FindPropertyRelative("actionType").enumValueIndex;
 
-        bool enableSuccessRate = HasSuccessRate(actionType);
-        bool enableDuration = HasDuration(actionType);
-        bool enableResourceGiven = GivesResource(actionType);
-        bool enableResourceNeeded = NeedResource(actionType);
+        enableSuccessRate = HasSuccessRate(actionType);
+        enableDuration = HasDuration(actionType);
+        enableResourceGiven = GivesResource(actionType);
+        enableResourceNeeded = NeedResource(actionType);
 
         float defaultSuccessRateYPos = position.y + 80;
         float defaultDurationYPos = position.y + 100;
@@ -154,7 +156,20 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.EndProperty();
     }
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-        return base.GetPropertyHeight(property, label) * 10;
+        int modifier = 5;
+        if (enableSuccessRate) {
+            modifier += 2;
+        }
+        if (enableDuration) {
+            modifier += 2;
+        }
+        if (enableResourceGiven) {
+            modifier += 3;
+        }
+        if (enableResourceNeeded) {
+            modifier += 3;
+        }
+        return base.GetPropertyHeight(property, label) * modifier;
     }
 
     #region Special Fields
