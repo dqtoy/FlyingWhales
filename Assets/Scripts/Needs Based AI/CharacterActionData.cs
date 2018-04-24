@@ -38,72 +38,71 @@ public struct CharacterActionData {
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
     private bool enableSuccessRate, enableDuration, enableResourceGiven, enableResourceNeeded;
-
+    private Rect lastRect; 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         EditorGUI.BeginProperty(position, label, property);
-        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), GUIContent.none);
 
         var indent = EditorGUI.indentLevel;
         EditorGUI.indentLevel = 0;
 
-        var actionTypeRect = new Rect(position.x, position.y, 100, 16);
-        var actionNameRect = new Rect(position.x + 180, position.y, 70, 16);
+        var actionTypeRect = new Rect(position.x, position.y, position.width, 16);
+        //var actionNameRect = new Rect(position.x + 180, position.y, 70, 16);
 
         EditorGUI.PropertyField(actionTypeRect, property.FindPropertyRelative("actionType"), GUIContent.none);
         //EditorGUI.LabelField(new Rect(position.x + 135, position.y, 50, 16), "Name");
         //EditorGUI.PropertyField(actionNameRect, property.FindPropertyRelative("actionName"), GUIContent.none);
 
-        float startPosY = position.y + 40;
+        float startPosY = position.y + 20;
 
-        float headersPosY = startPosY;
-        EditorGUI.indentLevel = -1;
-        EditorGUI.LabelField(new Rect(position.x, headersPosY, 50, 50), "Hunger");
-        EditorGUI.LabelField(new Rect(position.x + 57, headersPosY, 50, 50), "Joy");
-        EditorGUI.LabelField(new Rect(position.x + 100, headersPosY, 50, 50), "Energy");
-        EditorGUI.LabelField(new Rect(position.x + 150, headersPosY, 50, 50), "Prestige");
-        EditorGUI.indentLevel = 0;
+        //float headersPosY = startPosY;
+        //EditorGUI.indentLevel = -1;
+        //EditorGUI.LabelField(new Rect(position.x, headersPosY, 50, 50), "Hunger");
+        //EditorGUI.LabelField(new Rect(position.x + 57, headersPosY, 50, 50), "Joy");
+        //EditorGUI.LabelField(new Rect(position.x + 100, headersPosY, 50, 50), "Energy");
+        //EditorGUI.LabelField(new Rect(position.x + 150, headersPosY, 50, 50), "Prestige");
+        //EditorGUI.indentLevel = 0;
 
-        float advertisedPosY = headersPosY + 20;
-        EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, advertisedPosY, 50, 50), "Advertised");
-        EditorGUI.indentLevel = -1;
-        var aHungerRect = new Rect(position.x, advertisedPosY, 30, 16);
-        var aJoyRect = new Rect(position.x + 50, advertisedPosY, 30, 16);
-        var aEnergyRect = new Rect(position.x + 100, advertisedPosY, 30, 16);
-        var aPrestigeRect = new Rect(position.x + 150, advertisedPosY, 30, 16);
+        float advertisedPosY = startPosY;
+        var advertisedLblRect = new Rect(position.x, advertisedPosY, position.width, 16);
+        EditorGUI.LabelField(advertisedLblRect, "Advertised", EditorStyles.boldLabel);
+        EditorGUI.indentLevel++;
+        var aHungerRect = new Rect(position.x, advertisedLblRect.y + 16, position.width, 16);
+        var aJoyRect = new Rect(position.x, aHungerRect.y + 16, position.width, 16);
+        var aEnergyRect = new Rect(position.x, aJoyRect.y + 16, position.width, 16);
+        var aPrestigeRect = new Rect(position.x, aEnergyRect.y + 16, position.width, 16);
+        EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedFullness"), new GUIContent("Fullness"));
+        EditorGUI.PropertyField(aJoyRect, property.FindPropertyRelative("advertisedJoy"), new GUIContent("Joy"));
+        EditorGUI.PropertyField(aEnergyRect, property.FindPropertyRelative("advertisedEnergy"), new GUIContent("Energy"));
+        EditorGUI.PropertyField(aPrestigeRect, property.FindPropertyRelative("advertisedPrestige"), new GUIContent("Prestige"));
+        EditorGUI.indentLevel--;
 
-        EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedFullness"), GUIContent.none);
-        EditorGUI.PropertyField(aJoyRect, property.FindPropertyRelative("advertisedJoy"), GUIContent.none);
-        EditorGUI.PropertyField(aEnergyRect, property.FindPropertyRelative("advertisedEnergy"), GUIContent.none);
-        EditorGUI.PropertyField(aPrestigeRect, property.FindPropertyRelative("advertisedPrestige"), GUIContent.none);
-
-        float providedPosY = advertisedPosY + 20;
-        EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, providedPosY, 50, 50), "Provided");
-
-        EditorGUI.indentLevel = -1;
-        var pHungerRect = new Rect(position.x, providedPosY, 30, 16);
-        var pJoyRect = new Rect(position.x + 50, providedPosY, 30, 16);
-        var pEnergyRect = new Rect(position.x + 100, providedPosY, 30, 16);
-        var pPrestigeRect = new Rect(position.x + 150, providedPosY, 30, 16);
-
-        EditorGUI.PropertyField(pHungerRect, property.FindPropertyRelative("providedFullness"), GUIContent.none);
-        EditorGUI.PropertyField(pJoyRect, property.FindPropertyRelative("providedJoy"), GUIContent.none);
-        EditorGUI.PropertyField(pEnergyRect, property.FindPropertyRelative("providedEnergy"), GUIContent.none);
-        EditorGUI.PropertyField(pPrestigeRect, property.FindPropertyRelative("providedPrestige"), GUIContent.none);
-
+        float providedPosY = aPrestigeRect.y + 20;
+        var providedLblRect = new Rect(position.x, providedPosY, position.width, 16);
+        EditorGUI.LabelField(providedLblRect, "Provided", EditorStyles.boldLabel);
+        EditorGUI.indentLevel++;
+        var pHungerRect = new Rect(position.x, providedLblRect.y + 16, position.width, 16);
+        var pJoyRect = new Rect(position.x, pHungerRect.y + 16, position.width, 16);
+        var pEnergyRect = new Rect(position.x, pJoyRect.y + 16, position.width, 16);
+        var pPrestigeRect = new Rect(position.x, pEnergyRect.y + 16, position.width, 16);
+        EditorGUI.PropertyField(pHungerRect, property.FindPropertyRelative("providedFullness"), new GUIContent("Fullness"));
+        EditorGUI.PropertyField(pJoyRect, property.FindPropertyRelative("providedJoy"), new GUIContent("Joy"));
+        EditorGUI.PropertyField(pEnergyRect, property.FindPropertyRelative("providedEnergy"), new GUIContent("Energy"));
+        EditorGUI.PropertyField(pPrestigeRect, property.FindPropertyRelative("providedPrestige"), new GUIContent("Prestige"));
+        EditorGUI.indentLevel--;
 
         SerializedProperty successFunctionProperty = property.FindPropertyRelative("successFunction");
         SerializedProperty failFunctionProperty = property.FindPropertyRelative("failFunction");
 
-        EditorGUI.LabelField(new Rect(position.x - 120, position.y + 80, 60, 50), "On Success");
-        var pSuccessFunctionRect = new Rect(position.x - 120, position.y + 100, 350, 100);
-        EditorGUI.PropertyField(pSuccessFunctionRect, successFunctionProperty, GUIContent.none);
+        float successPosY = pEnergyRect.y + 40;
+        //EditorGUI.LabelField(new Rect(position.x - 120, successPosY, position.width, 50), "On Success");
+        var pSuccessFunctionRect = new Rect(position.x, successPosY, position.width, 100);
+        EditorGUI.PropertyField(pSuccessFunctionRect, successFunctionProperty);
 
-        var pFailFunctionLabelRect = new Rect(pSuccessFunctionRect.x, pSuccessFunctionRect.y + pSuccessFunctionRect.height, 60, 50);
-        var pFailFunctionRect = new Rect(pFailFunctionLabelRect.x, pFailFunctionLabelRect.y + 20, 350, 100);
-        EditorGUI.LabelField(pFailFunctionLabelRect, "On Fail");
-        EditorGUI.PropertyField(pFailFunctionRect, failFunctionProperty, GUIContent.none);
+        float failPosY = successPosY + pSuccessFunctionRect.height;
+        var pFailFunctionRect = new Rect(position.x, failPosY, position.width, 100);
+        EditorGUI.PropertyField(pFailFunctionRect, failFunctionProperty);
+        lastRect = pFailFunctionRect;
 
         ACTION_TYPE actionType = (ACTION_TYPE)property.FindPropertyRelative("actionType").enumValueIndex;
 
@@ -112,10 +111,10 @@ public class CharacterActionDrawer : PropertyDrawer {
         enableResourceGiven = GivesResource(actionType);
         enableResourceNeeded = NeedResource(actionType);
 
-        float defaultSuccessRateYPos = providedPosY + 20;
-        float defaultDurationYPos = providedPosY + 40;
-        float defaultResourceGivenYPos = providedPosY + 70;
-        float defaultResourceNeededYPos = providedPosY + 110;
+        float defaultSuccessRateYPos = failPosY + pFailFunctionRect.height;
+        float defaultDurationYPos = failPosY + pFailFunctionRect.height + 16;
+        float defaultResourceGivenYPos = failPosY + pFailFunctionRect.height + 32;
+        float defaultResourceNeededYPos = failPosY + pFailFunctionRect.height + 48;
 
         float successRateYPos = defaultSuccessRateYPos;
         float durationYPos = defaultDurationYPos;
@@ -176,7 +175,7 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.EndProperty();
     }
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-        float modifier = 7;
+        float modifier = 25;
         if (enableSuccessRate) {
             modifier += 2;
         }
@@ -194,38 +193,41 @@ public class CharacterActionDrawer : PropertyDrawer {
 
     #region Special Fields
     private void LoadSuccessRateField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
-        EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Success Rate");
-        var successRateRect = new Rect(position.x + 90, yPos, 80, 16);
-        EditorGUI.PropertyField(successRateRect, property.FindPropertyRelative("successRate"), GUIContent.none);
-        EditorGUI.indentLevel = 0;
+        //EditorGUI.indentLevel;
+        //EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Success Rate");
+        var successRateRect = new Rect(position.x, yPos, position.width, 16);
+        EditorGUI.PropertyField(successRateRect, property.FindPropertyRelative("successRate"));
+        lastRect = successRateRect;
+        //EditorGUI.indentLevel = 0;
     }
     private void LoadDurationField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
-        EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Duration");
-        var durationRect = new Rect(position.x + 90, yPos, 80, 16);
-        EditorGUI.PropertyField(durationRect, property.FindPropertyRelative("duration"), GUIContent.none);
-        EditorGUI.indentLevel = 0;
+        //EditorGUI.indentLevel = -7;
+        //EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Duration");
+        var durationRect = new Rect(position.x, yPos, position.width, 16);
+        EditorGUI.PropertyField(durationRect, property.FindPropertyRelative("duration"));
+        lastRect = durationRect;
+        //EditorGUI.indentLevel = 0;
     }
     private void LoadResourceGivenField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
-        EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Gives Resource");
-        var resourceGivenRect = new Rect(position.x, yPos + 20, 5, 16);
-        var minResourceRect = new Rect(position.x + 120, yPos + 20, -50, 16);
-        var maxResourceRect = new Rect(position.x + 180, yPos + 20, -50, 16);
-        EditorGUI.PropertyField(resourceGivenRect, property.FindPropertyRelative("resourceGiven"), GUIContent.none);
-        EditorGUI.PropertyField(minResourceRect, property.FindPropertyRelative("minResourceGiven"), GUIContent.none);
-        EditorGUI.PropertyField(maxResourceRect, property.FindPropertyRelative("maxResourceGiven"), GUIContent.none);
-        EditorGUI.indentLevel = 0;
+        //EditorGUI.indentLevel = -7;
+        var resourceGivenRect = new Rect(position.x, yPos, position.width, 16);
+        var minResourceRect = new Rect(position.x, resourceGivenRect.y + 16, position.width, 16);
+        var maxResourceRect = new Rect(position.x, minResourceRect.y + 16, position.width, 16);
+        EditorGUI.PropertyField(resourceGivenRect, property.FindPropertyRelative("resourceGiven"));
+        EditorGUI.PropertyField(minResourceRect, property.FindPropertyRelative("minResourceGiven"));
+        EditorGUI.PropertyField(maxResourceRect, property.FindPropertyRelative("maxResourceGiven"));
+        lastRect = maxResourceRect;
+        //EditorGUI.indentLevel = 0;
     }
     private void LoadNeedsResourceField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
-        EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Needs Resource");
-        var resourceNeededRect = new Rect(position.x, yPos + 20, 5, 16);
-        var resourceAmountNeededRect = new Rect(position.x + 120, yPos + 20, -50, 16);
-        EditorGUI.PropertyField(resourceNeededRect, property.FindPropertyRelative("resourceNeeded"), GUIContent.none);
-        EditorGUI.PropertyField(resourceAmountNeededRect, property.FindPropertyRelative("resourceAmountNeeded"), GUIContent.none);
-        EditorGUI.indentLevel = 0;
+        //EditorGUI.indentLevel = -7;
+        //EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Needs Resource");
+        var resourceNeededRect = new Rect(position.x, yPos, position.width, 16);
+        var resourceAmountNeededRect = new Rect(position.x, resourceNeededRect.y + 16, position.width, 16);
+        EditorGUI.PropertyField(resourceNeededRect, property.FindPropertyRelative("resourceNeeded"));
+        EditorGUI.PropertyField(resourceAmountNeededRect, property.FindPropertyRelative("resourceAmountNeeded"));
+        lastRect = resourceAmountNeededRect;
+        //EditorGUI.indentLevel = 0;
     }
     #endregion
 
