@@ -38,7 +38,7 @@ public class Hero : CharacterRole {
 
 		//_defaultRoleTask = _roleTasks [1];
 
-        SetFood(1000);
+        SetFullness(1000);
         SetEnergy(1000);
         SetJoy(600);
         SetPrestige(400);
@@ -58,7 +58,7 @@ public class Hero : CharacterRole {
     #endregion
 
     private void StartDepletion() {
-        DepleteFood();
+        DepleteFullness();
         DepleteEnergy();
         DepleteJoy();
         DepletePrestige();

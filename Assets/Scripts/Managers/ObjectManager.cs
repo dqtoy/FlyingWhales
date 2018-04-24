@@ -39,10 +39,11 @@ public class ObjectManager : MonoBehaviour {
     private void SetInitialDataOfObjects(IObject iobject) {
         for (int i = 0; i < iobject.states.Count; i++) {
             ObjectState state = iobject.states[i];
-            //state.SetObject(iobject);
+            state.SetObject(iobject);
             for (int j = 0; j < state.actions.Count; j++) {
                 CharacterAction action = state.actions[j];
-                //action.SetObjectState(state);
+                action.SetObjectState(state);
+                action.GenerateName();
             }
         }
     }

@@ -16,10 +16,14 @@ public class CharacterRole {
 	protected CharacterTask _defaultRoleTask;
 	protected bool _cancelsAllOtherTasks;
 	protected bool _isRemoved;
-    protected int _food;
+    protected int _fullness;
     protected int _energy;
     protected int _joy;
     protected int _prestige;
+    protected int _maxFullness;
+    protected int _maxEnergy;
+    protected int _maxJoy;
+    protected int _maxPrestige;
     protected bool _isHungry;
     protected bool _isFamished;
     protected bool _isTired;
@@ -54,8 +58,8 @@ public class CharacterRole {
 	public bool isRemoved {
 		get { return _isRemoved; }
 	}
-    public int food {
-        get { return _food; }
+    public int fullness {
+        get { return _fullness; }
     }
     public int energy {
         get { return _energy; }
@@ -65,6 +69,18 @@ public class CharacterRole {
     }
     public int prestige {
         get { return _prestige; }
+    }
+    public int maxFullness {
+        get { return _maxFullness; }
+    }
+    public int maxEnergy {
+        get { return _maxEnergy; }
+    }
+    public int maxJoy {
+        get { return _maxJoy; }
+    }
+    public int maxPrestige {
+        get { return _maxPrestige; }
     }
     #endregion
 
@@ -76,11 +92,15 @@ public class CharacterRole {
 		_roleTasks = new List<CharacterTask> ();
 		_roleTasks.Add (new RecruitFollowers (this._character, 5));
         _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
+        _maxFullness = 1000;
+        _maxEnergy = 1000;
+        _maxJoy = 1000;
+        _maxPrestige = 1000;
     }
 
 
-	#region Virtuals
-	public virtual void DeathRole(){
+    #region Virtuals
+    public virtual void DeathRole(){
 		_isRemoved = true;
 	}
 	public virtual void ChangedRole(){
@@ -117,17 +137,17 @@ public class CharacterRole {
     #endregion
 
     #region Needs
-    public void DepleteFood() {
-        AdjustFood(-25);
+    public void DepleteFullness() {
+        AdjustFullness(-25);
     }
-    public void SetFood(int amount) {
-        _food = amount;
+    public void SetFullness(int amount) {
+        _fullness = amount;
     }
-    public void AdjustFood(int amount) {
-        _food += amount;
-        _food = Mathf.Clamp(_food, 0, 1000);
+    public void AdjustFullness(int amount) {
+        _fullness += amount;
+        _fullness = Mathf.Clamp(_fullness, 0, _maxFullness);
 
-        if(_food <= 100 && !_isFamished) {
+        if(_fullness <= 100 && !_isFamished) {
             _isFamished = true;
             if (_isHungry) {
                 _isHungry = false;
@@ -135,7 +155,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.FAMISHED);
         }
-        else if(_food > 100 && _food <= 300 && !_isHungry) {
+        else if(_fullness > 100 && _fullness <= 300 && !_isHungry) {
             _isHungry = true;
             if (_isFamished) {
                 _isFamished = false;
@@ -143,7 +163,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.HUNGRY);
         }
-        else if (_food > 300) {
+        else if (_fullness > 300) {
             if (_isHungry) {
                 _isHungry = false;
                 _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
@@ -163,7 +183,7 @@ public class CharacterRole {
     }
     public void AdjustEnergy(int amount) {
         _energy += amount;
-        _energy = Mathf.Clamp(_energy, 0, 1000);
+        _energy = Mathf.Clamp(_energy, 0, _maxEnergy);
 
         if (_energy <= 100 && !_isExhausted) {
             _isExhausted = true;
@@ -201,7 +221,7 @@ public class CharacterRole {
     }
     public void AdjustJoy(int amount) {
         _joy += amount;
-        _joy = Mathf.Clamp(_joy, 0, 1000);
+        _joy = Mathf.Clamp(_joy, 0, _maxJoy);
         if (_joy <= 100 && !_isDepressed) {
             _isDepressed = true;
             if (_isSad) {
@@ -238,7 +258,7 @@ public class CharacterRole {
     }
     public void AdjustPrestige(int amount) {
         _prestige += amount;
-        _prestige = Mathf.Clamp(_prestige, 0, 1000);
+        _prestige = Mathf.Clamp(_prestige, 0, _maxPrestige);
         if (_prestige <= 100 && !_isInsecure) {
             _isInsecure = true;
             if (_isAnxious) {
@@ -265,6 +285,20 @@ public class CharacterRole {
                 _character.RemoveCharacterTag(CHARACTER_TAG.INSECURE);
             }
         }
+    }
+
+    public bool IsFull(NEEDS need) {
+        switch (need) {
+            case NEEDS.FULLNESS:
+            return _fullness >= _maxFullness;
+            case NEEDS.ENERGY:
+            return _energy >= _maxEnergy;
+            case NEEDS.JOY:
+            return _joy >= _maxJoy;
+            case NEEDS.PRESTIGE:
+            return _prestige >= _maxPrestige;
+        }
+        return false;
     }
     #endregion
 }

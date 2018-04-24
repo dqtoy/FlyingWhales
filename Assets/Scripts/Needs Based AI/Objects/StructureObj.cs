@@ -38,7 +38,6 @@ public class StructureObj : ScriptableObject, IStructureObject {
     #endregion
 
     public StructureObj() {
-     
     }
 
     public void ChangeState(ObjectState state) {

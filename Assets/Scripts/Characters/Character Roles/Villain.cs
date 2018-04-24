@@ -19,12 +19,12 @@ public class Villain : CharacterRole {
 		//_roleTasks.Add (new UpgradeGear (this._character));
 		//_roleTasks.Add (new MoveTo (this._character));
 		//_roleTasks.Add (new TakeQuest (this._character));
-  //      _roleTasks.Add (new Attack (this._character, 10));
+        //_roleTasks.Add (new Attack (this._character, 10));
 		//_roleTasks.Add (new Patrol (this._character, 10));
 
 		//_defaultRoleTask = _roleTasks [1];
 
-        SetFood(1000);
+        SetFullness(1000);
         SetEnergy(1000);
         SetJoy(600);
         SetPrestige(400);
@@ -44,7 +44,7 @@ public class Villain : CharacterRole {
     #endregion
 
     private void StartDepletion() {
-        DepleteFood();
+        DepleteFullness();
         DepleteEnergy();
         DepleteJoy();
         DepletePrestige();
