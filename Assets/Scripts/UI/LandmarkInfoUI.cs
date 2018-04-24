@@ -102,35 +102,6 @@ public class LandmarkInfoUI : UIMenu {
             text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
             text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.civilians.ToString() + "[/url]";
 			//text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
-
-            if (currentlyShowingLandmark is Settlement) {
-      //          text += "\n[b]Quest Board: [/b] ";
-      //          Settlement settlement = (Settlement)currentlyShowingLandmark;
-      //          if (settlement.questBoard.Count > 0) {
-      //              for (int i = 0; i < settlement.questBoard.Count; i++) {
-      //                  OldQuest.Quest currQuest = settlement.questBoard[i];
-      //                  text += "\n" + currQuest.urlName;
-      //                  if (currQuest.questType == QUEST_TYPE.EXPLORE_REGION) {
-      //                      text += " " + ((ExploreRegion)currQuest).regionToExplore.centerOfMass.tileName;
-      //                  } else if (currQuest.questType == QUEST_TYPE.BUILD_STRUCTURE) {
-      //                      text += " " + ((BuildStructure)currQuest).target.tileName;
-						//} else if (currQuest.questType == QUEST_TYPE.OBTAIN_MATERIAL) {
-						//	text += " " + ((ObtainMaterial)currQuest).materialToObtain.ToString();
-						//} else if (currQuest.questType == QUEST_TYPE.SAVE_LANDMARK) {
-						//	text += " " + ((SaveLandmark)currQuest).target.location.tileName;
-						//}
-      //                  //						else {
-      //                  //                            text += "[/url]";
-      //                  //                        }
-      //                  if (currQuest.isAccepted) {
-      //                      text += " - A";
-      //                      text += " (" + currQuest.assignedParty.name + ")";
-      //                  } else {
-      //                      text += " - N";
-      //                  }
-      //              }
-      //          }
-            }
         }
 
         text += "\n[b]Connections: [/b] ";
@@ -228,7 +199,17 @@ public class LandmarkInfoUI : UIMenu {
                 text += "NONE";
             }
         }
-       
+
+        text += "\n[b]Objects: [/b] ";
+        if (currentlyShowingLandmark.objects.Count > 0) {
+            for (int i = 0; i < currentlyShowingLandmark.objects.Count; i++) {
+                IObject currObj = currentlyShowingLandmark.objects[i];
+                text += "\n" + currObj.objectName;
+            }
+        } else {
+            text += "NONE";
+        }
+
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = currentlyShowingLandmark.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {

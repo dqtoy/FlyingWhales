@@ -25,6 +25,18 @@ public class ObjectState {
     public ObjectState(IObject iobject) {
         _object = iobject;
     }
+
+    public ObjectState Clone(IObject obj) {
+        ObjectState clone = new ObjectState(obj);
+        clone._stateName = this.stateName;
+        clone._actions = new List<CharacterAction>();
+        for (int i = 0; i < this.actions.Count; i++) {
+            CharacterAction ogAction = this.actions[i];
+            clone._actions.Add(ogAction.Clone(clone));
+        }
+        return clone;
+    }
+
     #region Virtuals
     protected virtual void OnStartState() {
         Messenger.AddListener("OnDayEnd", EverydayEffect);

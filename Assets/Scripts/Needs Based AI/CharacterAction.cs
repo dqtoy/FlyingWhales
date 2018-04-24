@@ -7,21 +7,36 @@ using ECS;
 public class CharacterAction {
     protected ObjectState _state;
     protected ActionFilter[] _filters;
-    public CharacterActionData actionData;
+    [SerializeField] protected CharacterActionData _actionData;
 
     #region getters/setters
     public ACTION_TYPE actionType {
-        get { return actionData.actionType; }
+        get { return _actionData.actionType; }
     }
     public ObjectState state {
         get { return _state; }
+    }
+    public CharacterActionData actionData {
+        get { return _actionData; }
     }
     #endregion
 
     public CharacterAction(ObjectState state, ACTION_TYPE actionType) {
         _state = state;
-        actionData.actionType = actionType;
-        actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
+        _actionData.actionType = actionType;
+        _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
+    }
+
+    public CharacterAction Clone(ObjectState state) {
+        CharacterAction clone = new CharacterAction(state, this.actionType);
+        if (this._filters != null) {
+            clone._filters = new ActionFilter[this._filters.Length];
+            for (int i = 0; i < this._filters.Length; i++) {
+                clone._filters[i] = this._filters[i];
+            }
+        }
+        clone._actionData = this._actionData;
+        return clone;
     }
 
     #region Virtuals
@@ -29,13 +44,13 @@ public class CharacterAction {
 
     }
     public virtual void ActionSuccess() {
-        if (actionData.successFunction != null) {
-            actionData.successFunction.Invoke();
+        if (_actionData.successFunction != null) {
+            _actionData.successFunction.Invoke();
         }
     }
     public virtual void ActionFail() {
-        if (actionData.failFunction != null) {
-            actionData.failFunction.Invoke();
+        if (_actionData.failFunction != null) {
+            _actionData.failFunction.Invoke();
         }
     }
     #endregion
@@ -45,7 +60,7 @@ public class CharacterAction {
         _state = state;
     }
     public void GenerateName() {
-        actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
+        _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
     public void EndAction(Character character) {
         character.actionData.EndAction();
@@ -53,16 +68,16 @@ public class CharacterAction {
     public void GiveReward(NEEDS need, Character character) {
         switch (need) {
             case NEEDS.FULLNESS:
-            character.role.AdjustFullness(actionData.providedFullness);
+            character.role.AdjustFullness(_actionData.providedFullness);
             break;
             case NEEDS.ENERGY:
-            character.role.AdjustEnergy(actionData.providedEnergy);
+            character.role.AdjustEnergy(_actionData.providedEnergy);
             break;
             case NEEDS.JOY:
-            character.role.AdjustJoy(actionData.providedJoy);
+            character.role.AdjustJoy(_actionData.providedJoy);
             break;
             case NEEDS.PRESTIGE:
-            character.role.AdjustPrestige(actionData.providedPrestige);
+            character.role.AdjustPrestige(_actionData.providedPrestige);
             break;
         }
     }
@@ -87,16 +102,16 @@ public class CharacterAction {
         return 0;
     }
     private int GetFoodAdvertisementValue(Character character) {
-        return GetAdvertisementValue(character.role.fullness, actionData.advertisedFullness);
+        return GetAdvertisementValue(character.role.fullness, _actionData.advertisedFullness);
     }
     private int GetEnergyAdvertisementValue(Character character) {
-        return GetAdvertisementValue(character.role.energy, actionData.advertisedEnergy);
+        return GetAdvertisementValue(character.role.energy, _actionData.advertisedEnergy);
     }
     private int GetJoyAdvertisementValue(Character character) {
-        return GetAdvertisementValue(character.role.joy, actionData.advertisedJoy);
+        return GetAdvertisementValue(character.role.joy, _actionData.advertisedJoy);
     }
     private int GetPrestigeAdvertisementValue(Character character) {
-        return GetAdvertisementValue(character.role.prestige, actionData.advertisedPrestige);
+        return GetAdvertisementValue(character.role.prestige, _actionData.advertisedPrestige);
     }
     #endregion
 

@@ -36,4 +36,15 @@ public class LandmarkObj : IObject {
     public void ChangeState(ObjectState state) {
 
     }
+
+    public IObject Clone() {
+        LandmarkObj clone = new LandmarkObj();
+        clone._objectType = this._objectType;
+        clone._states = new List<ObjectState>();
+        for (int i = 0; i < this.states.Count; i++) {
+            ObjectState currState = this.states[i];
+            clone._states.Add(currState.Clone(clone));
+        }
+        return clone;
+    }
 }

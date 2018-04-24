@@ -56,7 +56,7 @@ public class ActionData {
     private void PerformCurrentAction() {
         if(!isDone && currentAction != null) {
             currentAction.PerformAction(_character);
-            if(currentAction.actionData.duration != -1) {
+            if(currentAction.actionData.duration > 0) {
                 AdjustCurrentDay(1);
             }
         } else {
