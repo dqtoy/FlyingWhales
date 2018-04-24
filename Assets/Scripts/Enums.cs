@@ -1300,3 +1300,8 @@ public enum OBJECT_TYPE {
     ITEM,
     NPC,
 }
+
+public enum ACTION_RESULT {
+    SUCCESS,
+    FAIL,
+}
