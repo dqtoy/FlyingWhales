@@ -7,6 +7,7 @@ using UnityEngine;
 public struct CharacterActionData {
     public ACTION_TYPE actionType;
     public string actionName;
+    public ActionFilterData[] filters;
 
     public int advertisedHunger;
     public int advertisedJoy;
@@ -48,35 +49,39 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.LabelField(new Rect(position.x + 135, position.y, 50, 16), "Name");
         EditorGUI.PropertyField(actionNameRect, property.FindPropertyRelative("actionName"), GUIContent.none);
 
+        float startPosY = position.y + 40;
+
+        float headersPosY = startPosY;
         EditorGUI.indentLevel = -1;
-        EditorGUI.LabelField(new Rect(position.x, position.y + 20, 50, 50), "Hunger");
-        EditorGUI.LabelField(new Rect(position.x + 57, position.y + 20, 50, 50), "Joy");
-        EditorGUI.LabelField(new Rect(position.x + 100, position.y + 20, 50, 50), "Energy");
-        EditorGUI.LabelField(new Rect(position.x + 150, position.y + 20, 50, 50), "Prestige");
+        EditorGUI.LabelField(new Rect(position.x, headersPosY, 50, 50), "Hunger");
+        EditorGUI.LabelField(new Rect(position.x + 57, headersPosY, 50, 50), "Joy");
+        EditorGUI.LabelField(new Rect(position.x + 100, headersPosY, 50, 50), "Energy");
+        EditorGUI.LabelField(new Rect(position.x + 150, headersPosY, 50, 50), "Prestige");
         EditorGUI.indentLevel = 0;
 
+        float advertisedPosY = headersPosY + 20;
         EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, position.y + 40, 50, 50), "Advertised");
-
+        EditorGUI.LabelField(new Rect(position.x, advertisedPosY, 50, 50), "Advertised");
         EditorGUI.indentLevel = -1;
-        var aHungerRect = new Rect(position.x, position.y + 40, 30, 16);
-        var aJoyRect = new Rect(position.x + 50, position.y + 40, 30, 16);
-        var aEnergyRect = new Rect(position.x + 100, position.y + 40, 30, 16);
-        var aPrestigeRect = new Rect(position.x + 150, position.y + 40, 30, 16);
+        var aHungerRect = new Rect(position.x, advertisedPosY, 30, 16);
+        var aJoyRect = new Rect(position.x + 50, advertisedPosY, 30, 16);
+        var aEnergyRect = new Rect(position.x + 100, advertisedPosY, 30, 16);
+        var aPrestigeRect = new Rect(position.x + 150, advertisedPosY, 30, 16);
 
         EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedHunger"), GUIContent.none);
         EditorGUI.PropertyField(aJoyRect, property.FindPropertyRelative("advertisedJoy"), GUIContent.none);
         EditorGUI.PropertyField(aEnergyRect, property.FindPropertyRelative("advertisedEnergy"), GUIContent.none);
         EditorGUI.PropertyField(aPrestigeRect, property.FindPropertyRelative("advertisedPrestige"), GUIContent.none);
 
+        float providedPosY = advertisedPosY + 20;
         EditorGUI.indentLevel = -7;
-        EditorGUI.LabelField(new Rect(position.x, position.y + 60, 50, 50), "Provided");
+        EditorGUI.LabelField(new Rect(position.x, providedPosY, 50, 50), "Provided");
 
         EditorGUI.indentLevel = -1;
-        var pHungerRect = new Rect(position.x, position.y + 60, 30, 16);
-        var pJoyRect = new Rect(position.x + 50, position.y + 60, 30, 16);
-        var pEnergyRect = new Rect(position.x + 100, position.y + 60, 30, 16);
-        var pPrestigeRect = new Rect(position.x + 150, position.y + 60, 30, 16);
+        var pHungerRect = new Rect(position.x, providedPosY, 30, 16);
+        var pJoyRect = new Rect(position.x + 50, providedPosY, 30, 16);
+        var pEnergyRect = new Rect(position.x + 100, providedPosY, 30, 16);
+        var pPrestigeRect = new Rect(position.x + 150, providedPosY, 30, 16);
 
         EditorGUI.PropertyField(pHungerRect, property.FindPropertyRelative("providedHunger"), GUIContent.none);
         EditorGUI.PropertyField(pJoyRect, property.FindPropertyRelative("providedJoy"), GUIContent.none);
@@ -92,10 +97,10 @@ public class CharacterActionDrawer : PropertyDrawer {
         enableResourceGiven = GivesResource(actionType);
         enableResourceNeeded = NeedResource(actionType);
 
-        float defaultSuccessRateYPos = position.y + 80;
-        float defaultDurationYPos = position.y + 100;
-        float defaultResourceGivenYPos = position.y + 110;
-        float defaultResourceNeededYPos = position.y + 160;
+        float defaultSuccessRateYPos = providedPosY + 20;
+        float defaultDurationYPos = providedPosY + 40;
+        float defaultResourceGivenYPos = providedPosY + 70;
+        float defaultResourceNeededYPos = providedPosY + 110;
 
         float successRateYPos = defaultSuccessRateYPos;
         float durationYPos = defaultDurationYPos;
@@ -156,7 +161,7 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.EndProperty();
     }
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-        int modifier = 5;
+        float modifier = 7;
         if (enableSuccessRate) {
             modifier += 2;
         }

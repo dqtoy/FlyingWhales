@@ -1305,3 +1305,18 @@ public enum ACTION_RESULT {
     SUCCESS,
     FAIL,
 }
+
+public enum ACTION_FILTER_TYPE {
+    ROLE,
+    LOCATION,
+}
+public enum ACTION_FILTER_CONDITION {
+    IS,
+    IS_NOT,
+}
+
+public enum ACTION_FILTER {
+    HERO,
+    VILLAIN,
+    RUINED
+}

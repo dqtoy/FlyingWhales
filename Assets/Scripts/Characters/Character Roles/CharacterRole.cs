@@ -10,8 +10,6 @@ using System.Collections.Generic;
 public class CharacterRole {
 	protected ECS.Character _character;
     protected CHARACTER_ROLE _roleType;
-    protected List<ROAD_TYPE> _allowedRoadTypes; //states what roads this role can use.
-    protected bool _canPassHiddenRoads; //can the character use roads that haven't been discovered yet?
     protected List<ACTION_ALIGNMENT> _allowedQuestAlignments;
     protected List<QUEST_TYPE> _allowedQuestTypes;
 	protected List<CharacterTask> _roleTasks;
