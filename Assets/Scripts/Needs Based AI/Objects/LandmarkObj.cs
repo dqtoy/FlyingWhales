@@ -33,10 +33,23 @@ public class LandmarkObj : IObject {
         _isInvisible = true;
     }
 
-    public void ChangeState(ObjectState state) {
-
+    #region Interface Requirements
+    public void SetObjectName(string name) {
+        _objectName = name;
     }
-
+    public void ChangeState(ObjectState state) {
+        _currentState.OnEndState();
+        _currentState = state;
+        _currentState.OnStartState();
+    }
+    public ObjectState GetState(string name) {
+        for (int i = 0; i < _states.Count; i++) {
+            if (_states[i].stateName == name) {
+                return _states[i];
+            }
+        }
+        return null;
+    }
     public IObject Clone() {
         LandmarkObj clone = new LandmarkObj();
         clone._objectType = this._objectType;
@@ -47,4 +60,5 @@ public class LandmarkObj : IObject {
         }
         return clone;
     }
+    #endregion
 }

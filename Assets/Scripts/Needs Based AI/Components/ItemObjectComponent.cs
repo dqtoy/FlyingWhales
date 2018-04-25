@@ -2,5 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface INPCObject : IObject {
+public class ItemObjectComponent : MonoBehaviour {
+    public ItemObj itemObject;
 }

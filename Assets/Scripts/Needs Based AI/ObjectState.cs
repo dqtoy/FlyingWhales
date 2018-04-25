@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 using System.Linq;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class ObjectState {
     protected IObject _object;
     [SerializeField] protected string _stateName;
+    [SerializeField] protected UnityEvent _everydayAction;
     [SerializeField] protected List<CharacterAction> _actions;
 
     #region getters/setters
@@ -38,14 +40,18 @@ public class ObjectState {
     }
 
     #region Virtuals
-    protected virtual void OnStartState() {
+    public virtual void OnStartState() {
         Messenger.AddListener("OnDayEnd", EverydayEffect);
     }
-    protected virtual void OnEndState() {
+    public virtual void OnEndState() {
         Messenger.RemoveListener("OnDayEnd", EverydayEffect);
     }
-    protected virtual void EverydayEffect() { }
-    protected virtual void OnInteractWith(Character character) { }
+    public virtual void EverydayEffect() {
+        if(_everydayAction != null) {
+            _everydayAction.Invoke();
+        }
+    }
+    public virtual void OnInteractWith(Character character) { }
     #endregion
 
     #region Utilities

@@ -10,6 +10,8 @@ public interface IObject {
     ObjectState currentState { get; }
     bool isInvisible { get; }
 
+    void SetObjectName(string name);
     void ChangeState(ObjectState state);
+    ObjectState GetState(string name);
     IObject Clone();
 }

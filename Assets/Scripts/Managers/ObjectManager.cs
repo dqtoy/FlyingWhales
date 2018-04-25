@@ -1,16 +1,39 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ObjectManager : MonoBehaviour {
     public static ObjectManager Instance;
 
-    public List<StructureObj> structureObjects;
-    public List<CharacterObj> characterObjects;
-    public List<ItemObj> itemObjects;
-    public List<NPCObj> npcObjects;
+    [SerializeField] private List<StructureObjectComponent> structureObjectComponents;
+    [SerializeField] private List<CharacterObjectComponent> characterObjectComponents;
+    [SerializeField] private List<ItemObjectComponent> itemObjectComponents;
+    [SerializeField] private List<NPCObjectComponent> npcObjectComponents;
 
+    private List<StructureObj> _structureObjects;
+    private List<CharacterObj> _characterObjects;
+    private List<ItemObj> _itemObjects;
+    private List<NPCObj> _npcObjects;
     private List<IObject> _allObjects;
+
+    #region getters/setters
+    public List<StructureObj> structureObjects {
+        get { return _structureObjects; }
+    }
+    public List<CharacterObj> characterObjects {
+        get { return _characterObjects; }
+    }
+    public List<ItemObj> itemObjects {
+        get { return _itemObjects; }
+    }
+    public List<NPCObj> npcObjects {
+        get { return _npcObjects; }
+    }
+    public List<IObject> allObjects {
+        get { return _allObjects; }
+    }
+    #endregion
 
     void Awake() {
         Instance = this;
@@ -18,25 +41,34 @@ public class ObjectManager : MonoBehaviour {
 
     public void Initialize() {
         _allObjects = new List<IObject>();
-        for (int i = 0; i < structureObjects.Count; i++) {
-            SetInitialDataOfObjects(structureObjects[i]);
-            _allObjects.Add(structureObjects[i]);
+        for (int i = 0; i < structureObjectComponents.Count; i++) {
+            StructureObj structureObject = structureObjectComponents[i].structureObject;
+            SetInitialDataOfObjects(structureObject, structureObjectComponents[i].gameObject.name);
+            _structureObjects.Add(structureObject);
+            _allObjects.Add(structureObject);
         }
-        for (int i = 0; i < characterObjects.Count; i++) {
-            SetInitialDataOfObjects(characterObjects[i]);
-            _allObjects.Add(characterObjects[i]);
+        for (int i = 0; i < characterObjectComponents.Count; i++) {
+            CharacterObj characterObject = characterObjectComponents[i].characterObject;
+            SetInitialDataOfObjects(characterObject, characterObjectComponents[i].gameObject.name);
+            _characterObjects.Add(characterObject);
+            _allObjects.Add(characterObject);
         }
-        for (int i = 0; i < itemObjects.Count; i++) {
-            SetInitialDataOfObjects(itemObjects[i]);
-            _allObjects.Add(itemObjects[i]);
+        for (int i = 0; i < itemObjectComponents.Count; i++) {
+            ItemObj itemObject = itemObjectComponents[i].itemObject;
+            SetInitialDataOfObjects(itemObject, itemObjectComponents[i].gameObject.name);
+            _itemObjects.Add(itemObject);
+            _allObjects.Add(itemObject);
         }
-        for (int i = 0; i < npcObjects.Count; i++) {
-            SetInitialDataOfObjects(npcObjects[i]);
-            _allObjects.Add(npcObjects[i]);
+        for (int i = 0; i < npcObjectComponents.Count; i++) {
+            NPCObj npcObject = npcObjectComponents[i].npcObject;
+            SetInitialDataOfObjects(npcObject, npcObjectComponents[i].gameObject.name);
+            _npcObjects.Add(npcObject);
+            _allObjects.Add(npcObject);
         }
     }
 
-    private void SetInitialDataOfObjects(IObject iobject) {
+    private void SetInitialDataOfObjects(IObject iobject, string objectName) {
+        iobject.SetObjectName(objectName);
         for (int i = 0; i < iobject.states.Count; i++) {
             ObjectState state = iobject.states[i];
             state.SetObject(iobject);
@@ -79,4 +111,16 @@ public class ObjectManager : MonoBehaviour {
     public IObject CreateNewObject(string objName, BaseLandmark location) {
         return CreateNewObject(GetObjectType(objName), objName, location);
     }
+
+    #region Wild Pigs
+    public void WildPigsChangeToDepleted(ObjectState state) {
+        int chance = UnityEngine.Random.Range(0, 100);
+        if (chance < 15) {
+
+        }
+    }
+    public void WildPigsChangeToTeeming() {
+
+    }
+    #endregion
 }

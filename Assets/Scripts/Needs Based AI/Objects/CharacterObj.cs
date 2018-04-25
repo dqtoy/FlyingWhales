@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Character Object", menuName = "Objects/New Character Object")]
-public class CharacterObj : ScriptableObject, ICharacterObject {
+[System.Serializable]
+public class CharacterObj : IObject {
     [SerializeField] private OBJECT_TYPE _objectType;
     [SerializeField] private bool _isInvisible;
     [SerializeField] private List<ObjectState> _states;
 
+    private string _objectName;
     private ObjectState _currentState;
 
     #region getters/setters
     public string objectName {
-        get { return this.name; }
+        get { return _objectName; }
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
@@ -30,16 +31,29 @@ public class CharacterObj : ScriptableObject, ICharacterObject {
 
 
     public CharacterObj() {
-     
+
     }
 
+    #region Interface Requirements
+    public void SetObjectName(string name) {
+        _objectName = name;
+    }
     public void ChangeState(ObjectState state) {
 
     }
 
+    public ObjectState GetState(string name) {
+        for (int i = 0; i < _states.Count; i++) {
+            if (_states[i].stateName == name) {
+                return _states[i];
+            }
+        }
+        return null;
+    }
+
     public IObject Clone() {
-        CharacterObj clone = ScriptableObject.CreateInstance<CharacterObj>();
-        clone.name = this.objectName;
+        CharacterObj clone = new CharacterObj();
+        clone.SetObjectName(this._objectName);
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
         clone._states = new List<ObjectState>();
@@ -49,4 +63,5 @@ public class CharacterObj : ScriptableObject, ICharacterObject {
         }
         return clone;
     }
+    #endregion
 }

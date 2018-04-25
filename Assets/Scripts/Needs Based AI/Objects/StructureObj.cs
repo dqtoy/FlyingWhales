@@ -1,21 +1,25 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-[CreateAssetMenu(fileName = "New Structure Object", menuName = "Objects/New Structure Object")]
-public class StructureObj : ScriptableObject, IStructureObject {
+[Serializable]
+public class StructureObj : IObject {
+    public Action onHPReachedZero;
+    public Action onHPReachedFull;
+
     [SerializeField] private OBJECT_TYPE _objectType;
     [SerializeField] private bool _isInvisible;
     [SerializeField] private int _maxHP;
     [SerializeField] private List<ObjectState> _states;
 
+    private string _objectName;
     private ObjectState _currentState;
     private int _currentHP;
 
     #region getters/setters
     public string objectName {
-        get { return this.name; }
+        get { return _objectName; }
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
@@ -40,17 +44,41 @@ public class StructureObj : ScriptableObject, IStructureObject {
     public StructureObj() {
     }
 
+    #region Interface Requirements
+    public void SetObjectName(string name) {
+        _objectName = name;
+    }
     public void ChangeState(ObjectState state) {
-
+        _currentState.OnEndState();
+        _currentState = state;
+        _currentState.OnStartState();
     }
 
+    public ObjectState GetState(string name) {
+        for (int i = 0; i < _states.Count; i++) {
+            if (_states[i].stateName == name) {
+                return _states[i];
+            }
+        }
+        return null;
+    }
     public void AdjustHP(int amount) {
         //When hp reaches 0 or 100 a function will be called
+        int previousHP = _currentHP;
+        _currentHP += amount;
+        _currentHP = Mathf.Clamp(_currentHP, 0, 100);
+        if (previousHP != _currentHP) {
+            if (_currentHP == 0 && onHPReachedZero != null) {
+                onHPReachedZero();
+            } else if (_currentHP == 100 && onHPReachedFull != null) {
+                onHPReachedFull();
+            }
+        }
     }
 
     public IObject Clone() {
-        StructureObj clone = ScriptableObject.CreateInstance<StructureObj>();
-        clone.name = this.objectName;
+        StructureObj clone = new StructureObj();
+        clone.SetObjectName(this._objectName);
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
         clone._maxHP = this.maxHP;
@@ -61,4 +89,5 @@ public class StructureObj : ScriptableObject, IStructureObject {
         }
         return clone;
     }
+    #endregion
 }
