@@ -27,17 +27,7 @@ public class CharacterAction {
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
 
-    public CharacterAction Clone(ObjectState state) {
-        CharacterAction clone = new CharacterAction(state, this.actionType);
-        if (this._filters != null) {
-            clone._filters = new ActionFilter[this._filters.Length];
-            for (int i = 0; i < this._filters.Length; i++) {
-                clone._filters[i] = this._filters[i];
-            }
-        }
-        clone._actionData = this._actionData;
-        return clone;
-    }
+   
 
     #region Virtuals
     public virtual void PerformAction(Character character) {
@@ -52,6 +42,11 @@ public class CharacterAction {
         if (_actionData.failFunction != null) {
             _actionData.failFunction.Invoke();
         }
+    }
+    public virtual CharacterAction Clone() {
+        CharacterAction clone = new CharacterAction(_state, actionType);
+        SetCommonData(clone);
+        return clone;
     }
     #endregion
 
@@ -80,6 +75,15 @@ public class CharacterAction {
             character.role.AdjustPrestige(_actionData.providedPrestige);
             break;
         }
+    }
+    public void SetCommonData(CharacterAction action) {
+        if (this._filters != null) {
+            action._filters = new ActionFilter[this._filters.Length];
+            for (int i = 0; i < this._filters.Length; i++) {
+                action._filters[i] = this._filters[i];
+            }
+        }
+        action._actionData = this._actionData;
     }
     #endregion
 

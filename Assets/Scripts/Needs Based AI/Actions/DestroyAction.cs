@@ -31,5 +31,10 @@ public class DestroyAction : CharacterAction {
             GiveReward(NEEDS.ENERGY, character);
         }
     }
+    public override CharacterAction Clone() {
+        DestroyAction destroyAction = new DestroyAction(_state);
+        SetCommonData(destroyAction);
+        return destroyAction;
+    }
     #endregion
 }

@@ -24,5 +24,10 @@ public class HuntAction : CharacterAction {
             GiveReward(NEEDS.ENERGY, character);
         }
     }
+    public override CharacterAction Clone() {
+        HuntAction huntAction = new HuntAction(_state);
+        SetCommonData(huntAction);
+        return huntAction;
+    }
     #endregion
 }

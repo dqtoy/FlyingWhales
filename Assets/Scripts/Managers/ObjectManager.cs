@@ -73,9 +73,8 @@ public class ObjectManager : MonoBehaviour {
             ObjectState state = iobject.states[i];
             state.SetObject(iobject);
             for (int j = 0; j < state.actions.Count; j++) {
-                CharacterAction action = state.actions[j];
-                action.SetObjectState(state);
-                action.GenerateName();
+                CharacterAction action = CreateNewCharacterAction(state.actions[j].actionType, state);
+                state.actions[j].SetCommonData(action);
             }
         }
     }
@@ -112,15 +111,19 @@ public class ObjectManager : MonoBehaviour {
         return CreateNewObject(GetObjectType(objName), objName, location);
     }
 
-    #region Wild Pigs
-    public void WildPigsChangeToDepleted(ObjectState state) {
-        int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 15) {
-
+    public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType, ObjectState state) {
+        switch (actionType) {
+            case ACTION_TYPE.BUILD:
+            return new BuildAction(state);
+            case ACTION_TYPE.DESTROY:
+            return new DestroyAction(state);
+            case ACTION_TYPE.REST:
+            return new RestAction(state);
+            case ACTION_TYPE.HUNT:
+            return new HuntAction(state);
+            case ACTION_TYPE.EAT:
+            return new EatAction(state);
         }
+        return null;
     }
-    public void WildPigsChangeToTeeming() {
-
-    }
-    #endregion
 }
