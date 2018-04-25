@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NPCObj : IObject {
+    [SerializeField] private SPECIFIC_OBJECT_TYPE _specificObjType;
     [SerializeField] private OBJECT_TYPE _objectType;
     [SerializeField] private bool _isInvisible;
     [SerializeField] private List<ObjectState> _states;
@@ -13,6 +14,9 @@ public class NPCObj : IObject {
     #region getters/setters
     public string objectName {
         get { return _objectName; }
+    }
+    public SPECIFIC_OBJECT_TYPE specificObjType {
+        get { return _specificObjType; }
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
@@ -33,6 +37,9 @@ public class NPCObj : IObject {
     }
 
     #region Interface Requirements
+    public void SetStates(List<ObjectState> states) {
+        _states = states;
+    }
     public void SetObjectName(string name) {
         _objectName = name;
     }
@@ -53,6 +60,7 @@ public class NPCObj : IObject {
     public IObject Clone() {
         NPCObj clone = new NPCObj();
         clone.SetObjectName (this._objectName);
+        clone._specificObjType = this.specificObjType;
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
         clone._states = new List<ObjectState>();

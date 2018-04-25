@@ -34,7 +34,7 @@ public class ObjectState {
         clone._actions = new List<CharacterAction>();
         for (int i = 0; i < this.actions.Count; i++) {
             CharacterAction ogAction = this.actions[i];
-            clone._actions.Add(ogAction.Clone(clone));
+            clone._actions.Add(ogAction.Clone());
         }
         return clone;
     }

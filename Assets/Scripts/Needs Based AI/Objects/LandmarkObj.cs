@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LandmarkObj : IObject {
     private string _objectName;
+    private SPECIFIC_OBJECT_TYPE _specificObjType;
     private OBJECT_TYPE _objectType;
     private bool _isInvisible;
     private List<ObjectState> _states;
@@ -13,6 +14,9 @@ public class LandmarkObj : IObject {
     #region getters/setters
     public string objectName {
         get { return _objectName; }
+    }
+    public SPECIFIC_OBJECT_TYPE specificObjType {
+        get { return _specificObjType; }
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
@@ -34,6 +38,9 @@ public class LandmarkObj : IObject {
     }
 
     #region Interface Requirements
+    public void SetStates(List<ObjectState> states) {
+        _states = states;
+    }
     public void SetObjectName(string name) {
         _objectName = name;
     }
@@ -52,6 +59,7 @@ public class LandmarkObj : IObject {
     }
     public IObject Clone() {
         LandmarkObj clone = new LandmarkObj();
+        clone._specificObjType = this._specificObjType;
         clone._objectType = this._objectType;
         clone._states = new List<ObjectState>();
         for (int i = 0; i < this.states.Count; i++) {
