@@ -30,8 +30,8 @@ public class CharacterActionData {
     public RESOURCE resourceNeeded;
     public int resourceAmountNeeded;
 
-    public UnityEvent successFunction;
-    public UnityEvent failFunction;
+    public ActionEvent successFunction;
+    public ActionEvent failFunction;
 }
 
 [CustomPropertyDrawer(typeof(CharacterActionData))]

@@ -27,20 +27,18 @@ public class CharacterAction {
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
 
-   
-
     #region Virtuals
     public virtual void PerformAction(Character character) {
 
     }
     public virtual void ActionSuccess() {
         if (_actionData.successFunction != null) {
-            _actionData.successFunction.Invoke();
+            _actionData.successFunction.Invoke(_state.obj);
         }
     }
     public virtual void ActionFail() {
         if (_actionData.failFunction != null) {
-            _actionData.failFunction.Invoke();
+            _actionData.failFunction.Invoke(_state.obj);
         }
     }
     public virtual CharacterAction Clone() {

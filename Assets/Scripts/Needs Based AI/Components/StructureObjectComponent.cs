@@ -7,19 +7,19 @@ public class StructureObjectComponent : ObjectComponent {
     public StructureObj structureObject;
 
     #region Wild Pigs
-    public void ChangeToDepletedState() {
+    public void ChangeToDepletedState(IObject iobject) {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 15) {
-            ObjectState depletedState = structureObject.GetState("Depleted");
-            structureObject.ChangeState(depletedState);
+            ObjectState depletedState = iobject.GetState("Depleted");
+            iobject.ChangeState(depletedState);
         }
     }
-    public void ChangeToTeemingState() {
+    public void ChangeToTeemingState(IObject iobject) {
         if(GameManager.Instance.days == 1) {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 25) {
-                ObjectState teemingState = structureObject.GetState("Teeming");
-                structureObject.ChangeState(teemingState);
+                ObjectState teemingState = iobject.GetState("Teeming");
+                iobject.ChangeState(teemingState);
             }
         }
     }

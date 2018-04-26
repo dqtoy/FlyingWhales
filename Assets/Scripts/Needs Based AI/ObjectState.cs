@@ -9,7 +9,7 @@ using UnityEngine.Events;
 public class ObjectState {
     protected IObject _object;
     [SerializeField] protected string _stateName;
-    [SerializeField] protected UnityEvent _everydayAction;
+    [SerializeField] protected ActionEvent _everydayAction;
     [SerializeField] protected List<CharacterAction> _actions;
 
     #region getters/setters
@@ -48,7 +48,7 @@ public class ObjectState {
     }
     public virtual void EverydayEffect() {
         if(_everydayAction != null) {
-            _everydayAction.Invoke();
+            _everydayAction.Invoke(_object);
         }
     }
     public virtual void OnInteractWith(Character character) { }
