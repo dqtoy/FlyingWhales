@@ -42,33 +42,37 @@ public class ObjectManager : MonoBehaviour {
     public void Initialize() {
         _allObjects = new List<IObject>();
         for (int i = 0; i < structureObjectComponents.Count; i++) {
-            StructureObj structureObject = structureObjectComponents[i].structureObject;
-            SetInitialDataOfObjects(structureObject, structureObjectComponents[i].gameObject.name);
+            StructureObjectComponent currComp = structureObjectComponents[i];
+            StructureObj structureObject = currComp.structureObject;
+            SetInitialDataOfObjects(currComp, structureObject, structureObjectComponents[i].gameObject.name);
             _structureObjects.Add(structureObject);
             _allObjects.Add(structureObject);
         }
         for (int i = 0; i < characterObjectComponents.Count; i++) {
+            CharacterObjectComponent currComp = characterObjectComponents[i];
             CharacterObj characterObject = characterObjectComponents[i].characterObject;
-            SetInitialDataOfObjects(characterObject, characterObjectComponents[i].gameObject.name);
+            SetInitialDataOfObjects(currComp, characterObject, characterObjectComponents[i].gameObject.name);
             _characterObjects.Add(characterObject);
             _allObjects.Add(characterObject);
         }
         for (int i = 0; i < itemObjectComponents.Count; i++) {
+            ItemObjectComponent currComp = itemObjectComponents[i];
             ItemObj itemObject = itemObjectComponents[i].itemObject;
-            SetInitialDataOfObjects(itemObject, itemObjectComponents[i].gameObject.name);
+            SetInitialDataOfObjects(currComp, itemObject, itemObjectComponents[i].gameObject.name);
             _itemObjects.Add(itemObject);
             _allObjects.Add(itemObject);
         }
         for (int i = 0; i < npcObjectComponents.Count; i++) {
+            NPCObjectComponent currComp = npcObjectComponents[i];
             NPCObj npcObject = npcObjectComponents[i].npcObject;
-            SetInitialDataOfObjects(npcObject, npcObjectComponents[i].gameObject.name);
+            SetInitialDataOfObjects(currComp, npcObject, npcObjectComponents[i].gameObject.name);
             _npcObjects.Add(npcObject);
             _allObjects.Add(npcObject);
         }
     }
-
-    private void SetInitialDataOfObjects(IObject iobject, string objectName) {
+    private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName) {
         iobject.SetObjectName(objectName);
+        iobject.SetStates(objComp.states);
         for (int i = 0; i < iobject.states.Count; i++) {
             ObjectState state = iobject.states[i];
             state.SetObject(iobject);
@@ -79,38 +83,35 @@ public class ObjectManager : MonoBehaviour {
         }
     }
 
-    private IObject GetReference(OBJECT_TYPE objType, string objName) {
-        for (int i = 0; i < _allObjects.Count; i++) {
-            IObject currObject = _allObjects[i];
-            if (currObject.objectType == objType && currObject.objectName.Equals(objName)) {
-                return currObject;
-            }
-        }
-        return null;
-    }
-    public OBJECT_TYPE GetObjectType(string objName) {
-        for (int i = 0; i < _allObjects.Count; i++) {
-            IObject currObject = _allObjects[i];
-            if (currObject.objectName.Equals(objName)) {
-                return currObject.objectType;
-            }
-        }
-        throw new System.Exception("Object with the name " + objName + " does not exist!");
-    }
-
-
-    public IObject CreateNewObject(OBJECT_TYPE objType, string objName, BaseLandmark location) {
-        IObject reference = GetReference(objType, objName);
+    public IObject CreateNewObject(OBJECT_TYPE objType, SPECIFIC_OBJECT_TYPE specificObjectType, BaseLandmark location) {
+        IObject reference = GetReference(objType, specificObjectType);
         if (reference != null) {
             IObject newObj = reference.Clone();
             location.AddObject(newObj);
         }
         return null;
     }
-    public IObject CreateNewObject(string objName, BaseLandmark location) {
-        return CreateNewObject(GetObjectType(objName), objName, location);
+    public IObject CreateNewObject(SPECIFIC_OBJECT_TYPE specificObjType, BaseLandmark location) {
+        return CreateNewObject(GetObjectType(specificObjType), specificObjType, location);
     }
-
+    private IObject GetReference(OBJECT_TYPE objType, SPECIFIC_OBJECT_TYPE specificObjType) {
+        for (int i = 0; i < _allObjects.Count; i++) {
+            IObject currObject = _allObjects[i];
+            if (currObject.objectType == objType && currObject.specificObjType == specificObjType) {
+                return currObject;
+            }
+        }
+        return null;
+    }
+    public OBJECT_TYPE GetObjectType(SPECIFIC_OBJECT_TYPE specificObjType) {
+        for (int i = 0; i < _allObjects.Count; i++) {
+            IObject currObject = _allObjects[i];
+            if (currObject.specificObjType == specificObjType) {
+                return currObject.objectType;
+            }
+        }
+        throw new System.Exception("Object with the name " + specificObjType.ToString() + " does not exist!");
+    }
     public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType, ObjectState state) {
         switch (actionType) {
             case ACTION_TYPE.BUILD:

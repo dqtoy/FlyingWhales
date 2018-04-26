@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StructureObjectComponent : MonoBehaviour {
+public class StructureObjectComponent : ObjectComponent {
     public StructureObj structureObject;
 
     #region Wild Pigs

@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public struct CharacterActionData {
+public class CharacterActionData {
     public ACTION_TYPE actionType;
     public string actionName;
-    public ActionFilterData[] filters;
+    //public ActionFilterData[] filters;
 
     public int advertisedFullness;
     public int advertisedJoy;
@@ -32,7 +32,6 @@ public struct CharacterActionData {
 
     public UnityEvent successFunction;
     public UnityEvent failFunction;
-
 }
 
 [CustomPropertyDrawer(typeof(CharacterActionData))]
@@ -95,7 +94,6 @@ public class CharacterActionDrawer : PropertyDrawer {
         SerializedProperty failFunctionProperty = property.FindPropertyRelative("failFunction");
 
         float successPosY = pEnergyRect.y + 40;
-        //EditorGUI.LabelField(new Rect(position.x - 120, successPosY, position.width, 50), "On Success");
         var pSuccessFunctionRect = new Rect(position.x, successPosY, position.width, 100);
         EditorGUI.PropertyField(pSuccessFunctionRect, successFunctionProperty);
 

@@ -20,7 +20,6 @@ public class LandmarkManager : MonoBehaviour {
 
 	//Crater
 	public BaseLandmark craterLandmark;
-
     private void Awake() {
         Instance = this;
     }
@@ -29,10 +28,18 @@ public class LandmarkManager : MonoBehaviour {
      Create a new landmark on a specified tile.
      */
     public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
-        BASE_LANDMARK_TYPE baseLandmarkType = LandmarkManager.Instance.GetLandmarkData(landmarkType).baseLandmarkType;
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
+        BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
+        ConstructLandmarkObjects(landmarkData, newLandmark);
 //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
+    }
+    public void ConstructLandmarkObjects(LandmarkData data, BaseLandmark landmark) {
+        for (int i = 0; i < data.initialObjects.Count; i++) {
+            SPECIFIC_OBJECT_TYPE objType = data.initialObjects[i];
+            IObject createdObject = ObjectManager.Instance.CreateNewObject(objType, landmark);
+        }
     }
     /*
      Occupy a specified landmark.
@@ -105,7 +112,6 @@ public class LandmarkManager : MonoBehaviour {
 
         return true;
     }
-
   //  /*
   //   Generate new landmarks (Lairs, Dungeons)
   //       */
@@ -123,126 +129,6 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
-//	private void AddAllCenterOfMassToRegionLandmarksList(){
-//		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-//			Region region = GridMap.Instance.allRegions [i];
-//			if(region.centerOfMass.landmarkOnTile != null){
-////				region.AddLandmarkToRegion (region.centerOfMass.landmarkOnTile);
-//				if(region.landmarks.Count > 0){
-//					region.landmarks.Insert (0, region.centerOfMass.landmarkOnTile);
-//				}else{
-//					region.landmarks.Add (region.centerOfMass.landmarkOnTile);
-//				}
-//			}
-//		}
-//	}
-    //private void GenerateDungeonLandmarks() {
-    //    List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles
-    //        .Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad && x.landmarkOnTile == null));
-
-    //    //Tiles that are within 2 tiles of a habitable tile, cannot be landmarks
-    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-    //        Region currRegion = GridMap.Instance.allRegions[i];
-    //        List<HexTile> tilesToRemove = currRegion.centerOfMass.GetTilesInRange(2);
-    //        Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-    //    }
-
-    //    Debug.Log("Creating " + initialDungeonLandmarks.ToString() + " dungeon landmarks..... ");
-    //    int createdLandmarks = 0;
-    //    WeightedDictionary<LANDMARK_TYPE> dungeonWeights = GetDungeonLandmarkAppearanceWeights();
-    //    while (createdLandmarks != initialDungeonLandmarks) {
-    //        if (elligibleTiles.Count <= 0) {
-    //            Debug.LogWarning("Only created " + createdLandmarks.ToString() + " dungeon landmarks");
-    //            return;
-    //        }
-    //        HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-    //        List<HexTile> createdRoad = CreateRoadsForLandmarks(chosenTile);
-    //        if (createdRoad != null) {
-    //            Utilities.ListRemoveRange(elligibleTiles, createdRoad);
-    //            elligibleTiles.Remove(chosenTile);
-    //            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
-    //            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-    //            LANDMARK_TYPE chosenLandmarkType = dungeonWeights.PickRandomElementGivenWeights();
-    //            LandmarkData data = GetLandmarkData(chosenLandmarkType);
-    //            if (data.isUnique) {
-    //                dungeonWeights.RemoveElement(chosenLandmarkType); //Since the chosen landmark type is unique, remove it from the choices.
-    //            }
-    //            BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType);
-    //            RoadManager.Instance.CreateRoad(createdRoad, ROAD_TYPE.MINOR);
-    //            createdLandmarks++;
-    //        }
-    //        //chosenTile.CreateLandmarkOfType(BASE_LANDMARK_TYPE.DUNGEON, LANDMARK_TYPE.);
-    //    }
-    //    Debug.Log("Created " + createdLandmarks.ToString() + " dungeon landmarks");
-    //}
-    //private void GenerateSettlementLandmarks() {
-    //    List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles
-    //        .Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad && x.landmarkOnTile == null));
-
-    //    //Tiles that are within 2 tiles of a habitable tile, cannot be landmarks
-    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-    //        Region currRegion = GridMap.Instance.allRegions[i];
-    //        List<HexTile> tilesToRemove = currRegion.centerOfMass.GetTilesInRange(2);
-    //        Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-    //        //Tiles that are within 2 tiles of a landmark tile, cannot be landmarks
-    //        for (int j = 0; j < currRegion.landmarks.Count; j++) {
-    //            BaseLandmark currLandmark = currRegion.landmarks[j];
-				//tilesToRemove = currLandmark.tileLocation.GetTilesInRange(2);
-    //            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-    //        }
-    //    }
-
-    //    Debug.Log("Creating " + initialSettlementLandmarks.ToString() + " settlement landmarks..... ");
-    //    int createdLandmarks = 0;
-    //    WeightedDictionary<LANDMARK_TYPE> settlementWeights = GetSettlementLandmarkAppearanceWeights();
-    //    if (settlementWeights.GetTotalOfWeights() <= 0) {
-    //        return; //there are no settlement weights
-    //    }
-    //    while (createdLandmarks != initialSettlementLandmarks) {
-    //        if (elligibleTiles.Count <= 0) {
-    //            Debug.LogWarning("Only created " + createdLandmarks.ToString() + " settlement landmarks");
-    //            return;
-    //        }
-    //        HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-    //        List<HexTile> createdRoad = CreateRoadsForLandmarks(chosenTile);
-    //        if (createdRoad != null) {
-    //            Utilities.ListRemoveRange(elligibleTiles, createdRoad);
-    //            elligibleTiles.Remove(chosenTile);
-    //            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
-    //            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-    //            LANDMARK_TYPE chosenLandmarkType = settlementWeights.PickRandomElementGivenWeights();
-    //            LandmarkData data = GetLandmarkData(chosenLandmarkType);
-    //            if (data.isUnique) {
-    //                settlementWeights.RemoveElement(chosenLandmarkType); //Since the chosen landmark type is unique, remove it from the choices.
-    //            }
-    //            BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, chosenLandmarkType);
-    //            RoadManager.Instance.CreateRoad(createdRoad, ROAD_TYPE.MINOR);
-    //            createdLandmarks++;
-    //        }
-    //        //chosenTile.CreateLandmarkOfType(BASE_LANDMARK_TYPE.DUNGEON, LANDMARK_TYPE.);
-    //    }
-    //    Debug.Log("Created " + createdLandmarks.ToString() + " settlement landmarks");
-    //}
-    //private WeightedDictionary<LANDMARK_TYPE> GetDungeonLandmarkAppearanceWeights() {
-    //    WeightedDictionary<LANDMARK_TYPE> dungeonAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
-    //    for (int i = 0; i < landmarkData.Count; i++) {
-    //        LandmarkData currData = landmarkData[i];
-    //        if(currData.baseLandmarkType == BASE_LANDMARK_TYPE.DUNGEON) {
-    //            dungeonAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
-    //        }
-    //    }
-    //    return dungeonAppearanceWeights;
-    //}
-    //private WeightedDictionary<LANDMARK_TYPE> GetSettlementLandmarkAppearanceWeights() {
-    //    WeightedDictionary<LANDMARK_TYPE> settlementAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
-    //    for (int i = 0; i < landmarkData.Count; i++) {
-    //        LandmarkData currData = landmarkData[i];
-    //        if (currData.baseLandmarkType == BASE_LANDMARK_TYPE.SETTLEMENT && currData.landmarkType != LANDMARK_TYPE.TOWN) {
-    //            settlementAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
-    //        }
-    //    }
-    //    return settlementAppearanceWeights;
-    //}
     private WeightedDictionary<LANDMARK_TYPE> GetLandmarkAppearanceWeights(Region region) {
         WeightedDictionary<LANDMARK_TYPE> landmarkAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
         for (int i = 0; i < landmarkData.Count; i++) {
@@ -266,28 +152,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
     }
-   // public List<HexTile> CreateRoadsForLandmarks(HexTile location) {
-   //     List<HexTile> elligibleTilesToConnectTo = new List<HexTile>();
-   //     elligibleTilesToConnectTo.AddRange(location.region.roadTilesInRegion.Where(x => x.roadType == ROAD_TYPE.MAJOR));
-   //     elligibleTilesToConnectTo.AddRange(location.region.roadTilesInRegion.Where(x => x.roadType == ROAD_TYPE.MINOR));
-   //     elligibleTilesToConnectTo.Add(location.region.centerOfMass);
-   //     for (int i = 0; i < location.region.landmarks.Count; i++) {
-   //         BaseLandmark currLandmark = location.region.landmarks[i];
-			//if (currLandmark.tileLocation.id != location.id) {
-			//	elligibleTilesToConnectTo.Add(currLandmark.tileLocation);
-   //         }
-   //     }
-   //     List<HexTile> nearestPath = null;
-   //     for (int i = 0; i < elligibleTilesToConnectTo.Count; i++) {
-   //         HexTile currTile = elligibleTilesToConnectTo[i];
-   //         List<HexTile> path = PathGenerator.Instance.GetPath(location, currTile, PATHFINDING_MODE.LANDMARK_ROADS);
-   //         if(path != null && (nearestPath == null || path.Count < nearestPath.Count)) {
-   //             nearestPath = path;
-   //         }
-   //     }
-   //     return nearestPath;
-   // }
-
 	private void AddInitialLandmarkItems(BaseLandmark landmark){
 		List<ECS.Item> items = new List<ECS.Item> ();
 		switch(landmark.specificLandmarkType){

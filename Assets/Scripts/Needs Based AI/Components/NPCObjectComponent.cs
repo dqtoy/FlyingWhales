@@ -3,6 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPCObjectComponent : MonoBehaviour {
+public class NPCObjectComponent : ObjectComponent {
     public NPCObj npcObject;
 }

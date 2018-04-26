@@ -631,9 +631,9 @@ public class ConsoleMenu : UIMenu {
         }
 
         if (landmark != null) {
-            ObjectManager.Instance.CreateNewObject(objectName, landmark);
-            AddSuccessMessage("Spawned a new " + objectName + " at " + landmark.landmarkName);
-            CameraMove.Instance.CenterCameraOn(landmark.tileLocation.gameObject);
+            //ObjectManager.Instance.CreateNewObject(objectName, landmark);
+            //AddSuccessMessage("Spawned a new " + objectName + " at " + landmark.landmarkName);
+            //CameraMove.Instance.CenterCameraOn(landmark.tileLocation.gameObject);
         } else {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
         }
