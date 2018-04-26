@@ -81,8 +81,10 @@ public class ObjectManager : MonoBehaviour {
             ObjectState state = iobject.states[i];
             state.SetObject(iobject);
             for (int j = 0; j < state.actions.Count; j++) {
+                state.actions[j].GenerateName();
                 CharacterAction action = CreateNewCharacterAction(state.actions[j].actionType, state);
                 state.actions[j].SetCommonData(action);
+                state.actions[j] = action;
             }
         }
     }

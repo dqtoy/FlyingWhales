@@ -9,7 +9,7 @@ public class LandmarkObj : IObject {
     private bool _isInvisible;
     private List<ObjectState> _states;
 
-    private ObjectState _currentState;
+    [System.NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
 
     #region getters/setters
@@ -36,14 +36,28 @@ public class LandmarkObj : IObject {
     }
     #endregion
 
-    public LandmarkObj() {
+    public LandmarkObj(BaseLandmark landmark) {
         _objectName = "Landmark Object";
         _isInvisible = true;
+        SetObjectLocation(landmark);
+        List<ObjectState> states = new List<ObjectState>();
+        ObjectState defaultState = new ObjectState(this);
+        defaultState.SetName("Default");
+        states.Add(defaultState);
+
+        IdleAction idle = new IdleAction(defaultState);
+        CharacterActionData data = idle.actionData;
+        data.duration = 5;
+        idle.SetActionData(data);
+
+        defaultState.AddNewAction(idle);
+        SetStates(states);
     }
 
     #region Interface Requirements
     public void SetStates(List<ObjectState> states) {
         _states = states;
+        ChangeState(states[0]);
     }
     public void SetObjectName(string name) {
         _objectName = name;
@@ -52,7 +66,9 @@ public class LandmarkObj : IObject {
         _objectLocation = newLocation;
     }
     public void ChangeState(ObjectState state) {
-        _currentState.OnEndState();
+        if (_currentState != null) {
+            _currentState.OnEndState();
+        }
         _currentState = state;
         _currentState.OnStartState();
     }
@@ -65,18 +81,19 @@ public class LandmarkObj : IObject {
         return null;
     }
     public IObject Clone() {
-        LandmarkObj clone = new LandmarkObj();
+        LandmarkObj clone = new LandmarkObj(_objectLocation);
         clone._specificObjType = this._specificObjType;
         clone._objectType = this._objectType;
-        clone._states = new List<ObjectState>();
+        List<ObjectState> states = new List<ObjectState>();
         for (int i = 0; i < this.states.Count; i++) {
             ObjectState currState = this.states[i];
             ObjectState clonedState = currState.Clone(clone);
-            clone._states.Add(clonedState);
-            if (this.currentState == currState) {
-                clone.ChangeState(clonedState);
-            }
+            states.Add(clonedState);
+            //if (this.currentState == currState) {
+            //    clone.ChangeState(clonedState);
+            //}
         }
+        clone.SetStates(states);
         return clone;
     }
     #endregion

@@ -19,8 +19,8 @@ public class DrinkAction : CharacterAction {
             EndAction(character);
         }
     }
-    public override CharacterAction Clone() {
-        DrinkAction drinkAction = new DrinkAction(_state);
+    public override CharacterAction Clone(ObjectState state) {
+        DrinkAction drinkAction = new DrinkAction(state);
         SetCommonData(drinkAction);
         return drinkAction;
     }

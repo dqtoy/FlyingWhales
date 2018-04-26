@@ -10,7 +10,7 @@ public class ItemObj : IObject {
     [SerializeField] private List<ObjectState> _states;
 
     private string _objectName;
-    private ObjectState _currentState;
+    [System.NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
 
     #region getters/setters
@@ -44,6 +44,7 @@ public class ItemObj : IObject {
     #region Interface Requirements
     public void SetStates(List<ObjectState> states) {
         _states = states;
+        ChangeState(states[0]);
     }
     public void SetObjectName(string name) {
         _objectName = name;
@@ -52,7 +53,9 @@ public class ItemObj : IObject {
         _objectLocation = newLocation;
     }
     public void ChangeState(ObjectState state) {
-        _currentState.OnEndState();
+        if (_currentState != null) {
+            _currentState.OnEndState();
+        }
         _currentState = state;
         _currentState.OnStartState();
     }
@@ -71,15 +74,16 @@ public class ItemObj : IObject {
         clone._specificObjType = this.specificObjType;
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
-        clone._states = new List<ObjectState>();
+        List<ObjectState> states = new List<ObjectState>();
         for (int i = 0; i < this.states.Count; i++) {
             ObjectState currState = this.states[i];
             ObjectState clonedState = currState.Clone(clone);
-            clone._states.Add(clonedState);
-            if (this.currentState == currState) {
-                clone.ChangeState(clonedState);
-            }
+            states.Add(clonedState);
+            //if (this.currentState == currState) {
+            //    clone.ChangeState(clonedState);
+            //}
         }
+        clone.SetStates(states);
         return clone;
     }
     #endregion

@@ -19,8 +19,8 @@ public class EatAction : CharacterAction {
             EndAction(character);
         }
     }
-    public override CharacterAction Clone() {
-        EatAction eatAction = new EatAction(_state);
+    public override CharacterAction Clone(ObjectState state) {
+        EatAction eatAction = new EatAction(state);
         SetCommonData(eatAction);
         return eatAction;
     }

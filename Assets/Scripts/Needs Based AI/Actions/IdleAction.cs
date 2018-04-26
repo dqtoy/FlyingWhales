@@ -16,8 +16,8 @@ public class IdleAction : CharacterAction {
         GiveReward(NEEDS.JOY, character);
         GiveReward(NEEDS.PRESTIGE, character);
     }
-    public override CharacterAction Clone() {
-        IdleAction idleAction = new IdleAction(_state);
+    public override CharacterAction Clone(ObjectState state) {
+        IdleAction idleAction = new IdleAction(state);
         SetCommonData(idleAction);
         return idleAction;
     }

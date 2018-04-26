@@ -136,7 +136,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_characterTraces = new Dictionary<Character, GameDate> ();
         _totalDurability = landmarkData.durability;
 		_currDurability = _totalDurability;
-        _objects = new List<IObject>();
+        _objects = new List<IObject>() { new LandmarkObj(this) };
         //TODO: Add Landmark invisible object to advertise move to action
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
@@ -1041,10 +1041,12 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void AddObject(IObject obj) {
         if (!_objects.Contains(obj)) {
             _objects.Add(obj);
+            obj.SetObjectLocation(this);
         }
     }
     public void RemoveObject(IObject obj) {
         _objects.Remove(obj);
+        obj.SetObjectLocation(null);
     }
     #endregion
 }

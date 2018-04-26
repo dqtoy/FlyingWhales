@@ -21,7 +21,6 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        ObjectManager.Instance.Initialize();
         //Biomes.Instance.GenerateSpecialResources ();
         //Biomes.Instance.GenerateTileTags();
         if (!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
@@ -58,6 +57,8 @@ public class MapGenerator : MonoBehaviour {
             return;
         }
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
+        ObjectManager.Instance.Initialize();
+        LandmarkManager.Instance.ConstructAllLandmarkObjects();
         //CameraMove.Instance.UpdateMinimapTexture();
         //return;
         //if (!RoadManager.Instance.GenerateRegionRoads()) {

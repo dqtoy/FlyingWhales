@@ -26,8 +26,8 @@ public class BuildAction : CharacterAction {
             EndAction(character);
         }
     }
-    public override CharacterAction Clone() {
-        BuildAction buildAction = new BuildAction(_state);
+    public override CharacterAction Clone(ObjectState state) {
+        BuildAction buildAction = new BuildAction(state);
         SetCommonData(buildAction);
         return buildAction;
     }

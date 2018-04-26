@@ -20,8 +20,8 @@ public class RestAction : CharacterAction {
             EndAction(character);
         }
     }
-    public override CharacterAction Clone() {
-        RestAction restAction = new RestAction(_state);
+    public override CharacterAction Clone(ObjectState state) {
+        RestAction restAction = new RestAction(state);
         SetCommonData(restAction);
         return restAction;
     }

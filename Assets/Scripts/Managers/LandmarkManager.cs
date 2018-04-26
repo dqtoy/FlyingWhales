@@ -31,9 +31,17 @@ public class LandmarkManager : MonoBehaviour {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
-        ConstructLandmarkObjects(landmarkData, newLandmark);
+        //ConstructLandmarkObjects(landmarkData, newLandmark);
 //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
+    }
+    public void ConstructAllLandmarkObjects() {
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
+            ConstructLandmarkObjects(data, currLandmark);
+        }
     }
     public void ConstructLandmarkObjects(LandmarkData data, BaseLandmark landmark) {
         for (int i = 0; i < data.initialObjects.Count; i++) {

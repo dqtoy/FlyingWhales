@@ -31,8 +31,8 @@ public class DestroyAction : CharacterAction {
             GiveReward(NEEDS.ENERGY, character);
         }
     }
-    public override CharacterAction Clone() {
-        DestroyAction destroyAction = new DestroyAction(_state);
+    public override CharacterAction Clone(ObjectState state) {
+        DestroyAction destroyAction = new DestroyAction(state);
         SetCommonData(destroyAction);
         return destroyAction;
     }

@@ -41,14 +41,23 @@ public class CharacterAction {
             _actionData.failFunction.Invoke(_state.obj);
         }
     }
-    public virtual CharacterAction Clone() {
-        CharacterAction clone = new CharacterAction(_state, actionType);
+    public virtual CharacterAction Clone(ObjectState state) {
+        CharacterAction clone = new CharacterAction(state, actionType);
         SetCommonData(clone);
         return clone;
     }
     #endregion
 
+    #region Filters
+    public void SetFilters(ActionFilter[] filters) {
+        _filters = filters;
+    }
+    #endregion
+
     #region Utilities
+    public void SetActionData(CharacterActionData data) {
+        _actionData = data;
+    }
     public void SetObjectState(ObjectState state) {
         _state = state;
     }

@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public struct CharacterActionData {
     public ACTION_TYPE actionType;
     public string actionName;
-    //public ActionFilterData[] filters;
+    public ActionFilterData[] filters;
 
     public int advertisedFullness;
     public int advertisedJoy;
@@ -32,12 +32,18 @@ public struct CharacterActionData {
 
     public ActionEvent successFunction;
     public ActionEvent failFunction;
+
+    //public void SetActionName(string name) {
+    //    this.actionName = name;
+    //}
 }
 
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
     private bool enableSuccessRate, enableDuration, enableResourceGiven, enableResourceNeeded;
-    private Rect lastRect; 
+    private SerializedProperty filtersProp;
+    private float filtersHeight;
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         EditorGUI.BeginProperty(position, label, property);
         position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), GUIContent.none);
@@ -100,7 +106,6 @@ public class CharacterActionDrawer : PropertyDrawer {
         float failPosY = successPosY + pSuccessFunctionRect.height;
         var pFailFunctionRect = new Rect(position.x, failPosY, position.width, 100);
         EditorGUI.PropertyField(pFailFunctionRect, failFunctionProperty);
-        lastRect = pFailFunctionRect;
 
         ACTION_TYPE actionType = (ACTION_TYPE)property.FindPropertyRelative("actionType").enumValueIndex;
 
@@ -168,12 +173,51 @@ public class CharacterActionDrawer : PropertyDrawer {
             property.FindPropertyRelative("resourceAmountNeeded").intValue = 0;
         }
 
+        float filtersYPos = defaultResourceNeededYPos;
+        if (!enableResourceNeeded) {
+            filtersYPos = defaultResourceNeededYPos;
+            if (!enableResourceGiven) {
+                filtersYPos = defaultResourceGivenYPos;
+                if (!enableDuration) {
+                    filtersYPos = defaultDurationYPos;
+                    if (!enableSuccessRate) {
+                        filtersYPos = defaultSuccessRateYPos;
+                    }
+                }
+            }
+        }
+        filtersYPos += 16;
+
+        //filters
+        filtersProp = property.FindPropertyRelative("filters");
+
+        filtersHeight = 0;
+        if (filtersProp.isExpanded) {
+            int filterCount = filtersProp.arraySize;
+            filtersHeight += 8 * (filterCount + 1);
+            for (int i = 0; i < filterCount; i++) {
+                SerializedProperty currElement = filtersProp.GetArrayElementAtIndex(i);
+                if (currElement.isExpanded) {
+                    filtersHeight += 24; // add the 3 elements
+                    SerializedProperty objects = currElement.FindPropertyRelative("objects");
+                    if (objects.isExpanded) { //objects drawer for current element is opened
+                        filtersHeight += 10 * (objects.arraySize + 1);
+                    }
+                }
+            }
+        }
+        
+        
+        var filtersRect = new Rect(position.x, filtersYPos, position.width, filtersHeight);
+        EditorGUI.PropertyField(filtersRect, filtersProp, true);
+
         // Set indent back to what it was
         EditorGUI.indentLevel = indent;
         EditorGUI.EndProperty();
     }
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
         float modifier = 25;
+        modifier += filtersHeight / 8;
         if (enableSuccessRate) {
             modifier += 2;
         }
@@ -195,7 +239,6 @@ public class CharacterActionDrawer : PropertyDrawer {
         //EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Success Rate");
         var successRateRect = new Rect(position.x, yPos, position.width, 16);
         EditorGUI.PropertyField(successRateRect, property.FindPropertyRelative("successRate"));
-        lastRect = successRateRect;
         //EditorGUI.indentLevel = 0;
     }
     private void LoadDurationField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
@@ -203,7 +246,6 @@ public class CharacterActionDrawer : PropertyDrawer {
         //EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Duration");
         var durationRect = new Rect(position.x, yPos, position.width, 16);
         EditorGUI.PropertyField(durationRect, property.FindPropertyRelative("duration"));
-        lastRect = durationRect;
         //EditorGUI.indentLevel = 0;
     }
     private void LoadResourceGivenField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
@@ -214,7 +256,6 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.PropertyField(resourceGivenRect, property.FindPropertyRelative("resourceGiven"));
         EditorGUI.PropertyField(minResourceRect, property.FindPropertyRelative("minResourceGiven"));
         EditorGUI.PropertyField(maxResourceRect, property.FindPropertyRelative("maxResourceGiven"));
-        lastRect = maxResourceRect;
         //EditorGUI.indentLevel = 0;
     }
     private void LoadNeedsResourceField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
@@ -224,7 +265,6 @@ public class CharacterActionDrawer : PropertyDrawer {
         var resourceAmountNeededRect = new Rect(position.x, resourceNeededRect.y + 16, position.width, 16);
         EditorGUI.PropertyField(resourceNeededRect, property.FindPropertyRelative("resourceNeeded"));
         EditorGUI.PropertyField(resourceAmountNeededRect, property.FindPropertyRelative("resourceAmountNeeded"));
-        lastRect = resourceAmountNeededRect;
         //EditorGUI.indentLevel = 0;
     }
     #endregion

@@ -26,17 +26,22 @@ public class ObjectState {
 
     public ObjectState(IObject iobject) {
         _object = iobject;
+        _actions = new List<CharacterAction>();
     }
 
     public ObjectState Clone(IObject obj) {
-        ObjectState clone = new ObjectState(obj);
-        clone._stateName = this.stateName;
-        clone._actions = new List<CharacterAction>();
+        ObjectState clonedState = new ObjectState(obj);
+        clonedState._stateName = this.stateName;
+        clonedState._actions = new List<CharacterAction>();
         for (int i = 0; i < this.actions.Count; i++) {
             CharacterAction ogAction = this.actions[i];
-            clone._actions.Add(ogAction.Clone());
+            clonedState._actions.Add(ogAction.Clone(clonedState));
         }
-        return clone;
+        return clonedState;
+    }
+
+    public void SetName(string name) {
+        _stateName = name;
     }
 
     #region Virtuals
