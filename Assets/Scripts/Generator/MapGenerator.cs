@@ -21,10 +21,10 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        
+        ObjectManager.Instance.Initialize();
         //Biomes.Instance.GenerateSpecialResources ();
         //Biomes.Instance.GenerateTileTags();
-        if(!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
+        if (!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
             Debug.LogWarning("Region generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
@@ -79,7 +79,6 @@ public class MapGenerator : MonoBehaviour {
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
-        ObjectManager.Instance.Initialize();
         FactionManager.Instance.GenerateFactionCharacters();
         FactionManager.Instance.GenerateMonsters();
         StorylineManager.Instance.GenerateStoryLines();
