@@ -41,6 +41,10 @@ public class ObjectManager : MonoBehaviour {
 
     public void Initialize() {
         _allObjects = new List<IObject>();
+        _structureObjects = new List<StructureObj>();
+        _characterObjects = new List<CharacterObj>();
+        _itemObjects = new List<ItemObj>();
+        _npcObjects = new List<NPCObj>();
         for (int i = 0; i < structureObjectComponents.Count; i++) {
             StructureObjectComponent currComp = structureObjectComponents[i];
             StructureObj structureObject = currComp.structureObject;

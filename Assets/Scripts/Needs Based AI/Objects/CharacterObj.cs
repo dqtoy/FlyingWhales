@@ -34,9 +34,7 @@ public class CharacterObj : IObject {
     #endregion
 
 
-    public CharacterObj() {
-
-    }
+    public CharacterObj() { }
 
     #region Interface Requirements
     public void SetStates(List<ObjectState> states) {
@@ -46,7 +44,9 @@ public class CharacterObj : IObject {
         _objectName = name;
     }
     public void ChangeState(ObjectState state) {
-
+        _currentState.OnEndState();
+        _currentState = state;
+        _currentState.OnStartState();
     }
 
     public ObjectState GetState(string name) {
@@ -67,7 +67,11 @@ public class CharacterObj : IObject {
         clone._states = new List<ObjectState>();
         for (int i = 0; i < this.states.Count; i++) {
             ObjectState currState = this.states[i];
-            clone._states.Add(currState.Clone(clone));
+            ObjectState clonedState = currState.Clone(clone);
+            clone._states.Add(clonedState);
+            if (this.currentState == currState) {
+                clone.ChangeState(clonedState);
+            }
         }
         return clone;
     }

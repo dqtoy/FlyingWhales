@@ -136,7 +136,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		_characterTraces = new Dictionary<Character, GameDate> ();
         _totalDurability = landmarkData.durability;
 		_currDurability = _totalDurability;
-        _objects = new List<IObject>() { new LandmarkObj() };
+        _objects = new List<IObject>();
         //TODO: Add Landmark invisible object to advertise move to action
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();

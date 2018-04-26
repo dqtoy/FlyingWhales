@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class CharacterActionData {
+public struct CharacterActionData {
     public ACTION_TYPE actionType;
     public string actionName;
     //public ActionFilterData[] filters;
