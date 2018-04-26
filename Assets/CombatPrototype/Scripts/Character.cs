@@ -46,7 +46,7 @@ namespace ECS {
 		//Skills
 		private List<Skill> _skills;
 
-		private CharacterClass _characterClass;
+		[NonSerialized] private CharacterClass _characterClass;
 		private RaceSetting _raceSetting;
 		private CharacterRole _role;
 		private Faction _faction;
