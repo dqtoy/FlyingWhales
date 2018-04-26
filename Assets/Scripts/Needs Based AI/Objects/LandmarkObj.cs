@@ -10,6 +10,7 @@ public class LandmarkObj : IObject {
     private List<ObjectState> _states;
 
     private ObjectState _currentState;
+    private BaseLandmark _objectLocation;
 
     #region getters/setters
     public string objectName {
@@ -30,6 +31,9 @@ public class LandmarkObj : IObject {
     public bool isInvisible {
         get { return _isInvisible; }
     }
+    public BaseLandmark objectLocation {
+        get { return _objectLocation; }
+    }
     #endregion
 
     public LandmarkObj() {
@@ -43,6 +47,9 @@ public class LandmarkObj : IObject {
     }
     public void SetObjectName(string name) {
         _objectName = name;
+    }
+    public void SetObjectLocation(BaseLandmark newLocation) {
+        _objectLocation = newLocation;
     }
     public void ChangeState(ObjectState state) {
         _currentState.OnEndState();

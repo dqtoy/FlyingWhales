@@ -10,10 +10,12 @@ public interface IObject {
     List<ObjectState> states { get; }
     ObjectState currentState { get; }
     bool isInvisible { get; }
+    BaseLandmark objectLocation { get; }
 
     void SetStates(List<ObjectState> states);
     void SetObjectName(string name);
     void ChangeState(ObjectState state);
+    void SetObjectLocation(BaseLandmark newLocation);
     ObjectState GetState(string name);
     IObject Clone();
 }

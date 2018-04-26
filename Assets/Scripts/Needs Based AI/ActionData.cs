@@ -55,10 +55,15 @@ public class ActionData {
 
     private void PerformCurrentAction() {
         if(!isDone && currentAction != null) {
-            currentAction.PerformAction(_character);
-            if(currentAction.actionData.duration > 0) {
-                AdjustCurrentDay(1);
+            if(_character.specificLocation != null && _character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _character.specificLocation == currentAction.state.obj.objectLocation) {
+                currentAction.PerformAction(_character);
+                if (currentAction.actionData.duration > 0) {
+                    AdjustCurrentDay(1);
+                }
             }
+            //else {
+            //    Debug.Log(_character.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
+            //}
         } else {
             LookForAction();
         }
@@ -117,7 +122,9 @@ public class ActionData {
             maxChoice = 2;
         }
         int chosenIndex = UnityEngine.Random.Range(0, maxChoice);
-        AssignAction(choices[chosenIndex].action);
-        Debug.Log("Chosen Action: " + choices[chosenIndex].action.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + choices[chosenIndex].action.state.obj.objectName + ")");
+        CharacterAction chosenAction = choices[chosenIndex].action;
+        AssignAction(chosenAction);
+        _character.GoToLocation(chosenAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
+        Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + ")");
     }
 }

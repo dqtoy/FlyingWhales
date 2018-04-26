@@ -16,6 +16,7 @@ public class StructureObj : IObject {
 
     private string _objectName;
     private ObjectState _currentState;
+    private BaseLandmark _objectLocation;
     private int _currentHP;
 
     #region getters/setters
@@ -43,6 +44,9 @@ public class StructureObj : IObject {
     public int currentHP {
         get { return _currentHP; }
     }
+    public BaseLandmark objectLocation {
+        get { return _objectLocation; }
+    }
     #endregion
 
     public StructureObj() {
@@ -54,6 +58,9 @@ public class StructureObj : IObject {
     }
     public void SetObjectName(string name) {
         _objectName = name;
+    }
+    public void SetObjectLocation(BaseLandmark newLocation) {
+        _objectLocation = newLocation;
     }
     public void ChangeState(ObjectState state) {
         _currentState.OnEndState();
