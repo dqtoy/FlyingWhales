@@ -1292,6 +1292,7 @@ public enum ACTION_TYPE {
     REPAIR,
     DRINK,
     HARVEST,
+    IDLE,
 }
 
 public enum OBJECT_TYPE {

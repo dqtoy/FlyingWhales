@@ -128,6 +128,10 @@ public class ObjectManager : MonoBehaviour {
             return new HuntAction(state);
             case ACTION_TYPE.EAT:
             return new EatAction(state);
+            case ACTION_TYPE.DRINK:
+            return new DrinkAction(state);
+            case ACTION_TYPE.IDLE:
+            return new IdleAction(state);
         }
         return null;
     }
