@@ -118,6 +118,7 @@ public class ObjectManager : MonoBehaviour {
         }
         throw new System.Exception("Object with the name " + specificObjType.ToString() + " does not exist!");
     }
+
     public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType, ObjectState state) {
         switch (actionType) {
             case ACTION_TYPE.BUILD:
@@ -134,6 +135,14 @@ public class ObjectManager : MonoBehaviour {
             return new DrinkAction(state);
             case ACTION_TYPE.IDLE:
             return new IdleAction(state);
+        }
+        return null;
+    }
+    public StructureObj GetNewStructureObject(string name) {
+        for (int i = 0; i < _structureObjects.Count; i++) {
+            if(_structureObjects[i].objectName == name) {
+                return _structureObjects[i].Clone() as StructureObj;
+            }
         }
         return null;
     }
