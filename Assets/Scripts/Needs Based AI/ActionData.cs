@@ -6,6 +6,7 @@ using ECS;
 public class ActionData {
     private Character _character;
     public CharacterAction currentAction;
+    public object specificTarget;
     public int currentDay;
     public bool isDone;
 
@@ -22,6 +23,10 @@ public class ActionData {
         this.currentAction = null;
         this.currentDay = 0;
         this.isDone = false;
+    }
+
+    public void SetSpecificTarget(object target) {
+        specificTarget = target;
     }
 
     public void AssignAction(CharacterAction action) {

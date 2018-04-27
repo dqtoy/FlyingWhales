@@ -10,11 +10,13 @@ public class ObjectManager : MonoBehaviour {
     [SerializeField] private List<CharacterObjectComponent> characterObjectComponents;
     [SerializeField] private List<ItemObjectComponent> itemObjectComponents;
     [SerializeField] private List<NPCObjectComponent> npcObjectComponents;
+    [SerializeField] private List<LandmarkObjectComponent> landmarkObjectComponents;
 
     private List<StructureObj> _structureObjects;
     private List<CharacterObj> _characterObjects;
     private List<ItemObj> _itemObjects;
     private List<NPCObj> _npcObjects;
+    private List<LandmarkObj> _landmarkObjects;
     private List<IObject> _allObjects;
 
     #region getters/setters
@@ -29,6 +31,9 @@ public class ObjectManager : MonoBehaviour {
     }
     public List<NPCObj> npcObjects {
         get { return _npcObjects; }
+    }
+    public List<LandmarkObj> landmarkObjects {
+        get { return _landmarkObjects; }
     }
     public List<IObject> allObjects {
         get { return _allObjects; }
@@ -45,6 +50,7 @@ public class ObjectManager : MonoBehaviour {
         _characterObjects = new List<CharacterObj>();
         _itemObjects = new List<ItemObj>();
         _npcObjects = new List<NPCObj>();
+        _landmarkObjects = new List<LandmarkObj>();
         for (int i = 0; i < structureObjectComponents.Count; i++) {
             StructureObjectComponent currComp = structureObjectComponents[i];
             StructureObj structureObject = currComp.structureObject;
@@ -72,6 +78,13 @@ public class ObjectManager : MonoBehaviour {
             SetInitialDataOfObjects(currComp, npcObject, npcObjectComponents[i].gameObject.name);
             _npcObjects.Add(npcObject);
             _allObjects.Add(npcObject);
+        }
+        for (int i = 0; i < landmarkObjectComponents.Count; i++) {
+            LandmarkObjectComponent currComp = landmarkObjectComponents[i];
+            LandmarkObj landmarkObject = landmarkObjectComponents[i].landmarkObject;
+            SetInitialDataOfObjects(currComp, landmarkObject, landmarkObjectComponents[i].gameObject.name);
+            _landmarkObjects.Add(landmarkObject);
+            _allObjects.Add(landmarkObject);
         }
     }
     private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName) {
@@ -164,8 +177,8 @@ public class ObjectManager : MonoBehaviour {
 
     public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType, ObjectState state) {
         switch (actionType) {
-            case ACTION_TYPE.BUILD:
-            return new BuildAction(state);
+            //case ACTION_TYPE.BUILD:
+            //return new BuildAction(state);
             case ACTION_TYPE.DESTROY:
             return new DestroyAction(state);
             case ACTION_TYPE.REST:

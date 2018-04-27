@@ -145,7 +145,7 @@ public class CharacterRole {
     }
     public void AdjustFullness(int amount) {
         _fullness += amount;
-        _fullness = Mathf.Clamp(_fullness, 0, _maxFullness);
+        _fullness = Mathf.Clamp(_fullness, 1, _maxFullness);
 
         if(_fullness <= 100 && !_isFamished) {
             _isFamished = true;
@@ -183,7 +183,7 @@ public class CharacterRole {
     }
     public void AdjustEnergy(int amount) {
         _energy += amount;
-        _energy = Mathf.Clamp(_energy, 0, _maxEnergy);
+        _energy = Mathf.Clamp(_energy, 1, _maxEnergy);
 
         if (_energy <= 100 && !_isExhausted) {
             _isExhausted = true;
@@ -221,7 +221,7 @@ public class CharacterRole {
     }
     public void AdjustJoy(int amount) {
         _joy += amount;
-        _joy = Mathf.Clamp(_joy, 0, _maxJoy);
+        _joy = Mathf.Clamp(_joy, 1, _maxJoy);
         if (_joy <= 100 && !_isDepressed) {
             _isDepressed = true;
             if (_isSad) {
@@ -258,7 +258,7 @@ public class CharacterRole {
     }
     public void AdjustPrestige(int amount) {
         _prestige += amount;
-        _prestige = Mathf.Clamp(_prestige, 0, _maxPrestige);
+        _prestige = Mathf.Clamp(_prestige, 1, _maxPrestige);
         if (_prestige <= 100 && !_isInsecure) {
             _isInsecure = true;
             if (_isAnxious) {

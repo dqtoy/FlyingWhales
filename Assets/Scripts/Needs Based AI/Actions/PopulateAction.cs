@@ -35,7 +35,7 @@ public class PopulateAction : CharacterAction {
             character.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, this.state.obj as StructureObj);
             ActionSuccess();
         } else {
-            EndAction();
+            EndAction(character);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

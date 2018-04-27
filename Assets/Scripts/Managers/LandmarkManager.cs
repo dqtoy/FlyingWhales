@@ -52,6 +52,7 @@ public class LandmarkManager : MonoBehaviour {
                 createdObject.ChangeState(createdObject.GetState("Default"));
             }
         }
+        ObjectManager.Instance.CreateNewObject("Landmark Object", landmark);
         for (int i = 0; i < data.initialObjects.Count; i++) {
             string objName = data.initialObjects[i].name;
             IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);

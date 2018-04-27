@@ -7,6 +7,7 @@ using ECS;
 public class CharacterAction {
     protected ObjectState _state;
     protected ActionFilter[] _filters;
+    protected bool _needsSpecificTarget;
     [SerializeField] protected CharacterActionData _actionData;
 
     #region getters/setters
@@ -22,10 +23,14 @@ public class CharacterAction {
     public CharacterActionData actionData {
         get { return _actionData; }
     }
+    public bool needsSpecificTarget {
+        get { return _needsSpecificTarget; }
+    }
     #endregion
 
     public CharacterAction(ObjectState state, ACTION_TYPE actionType) {
         _state = state;
+        _needsSpecificTarget = false;
         _actionData.actionType = actionType;
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
@@ -52,8 +57,11 @@ public class CharacterAction {
         SetCommonData(clone);
         return clone;
     }
-    public virtual void EndAction() {
-
+    public virtual bool CanBeDone() {
+        return true;
+    }
+    public virtual void EndAction(Character character) {
+        character.actionData.EndAction();
     }
     #endregion
 
@@ -83,9 +91,6 @@ public class CharacterAction {
     }
     public void GenerateName() {
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
-    }
-    public void EndAction(Character character) {
-        character.actionData.EndAction();
     }
     public void GiveReward(NEEDS need, Character character) {
         switch (need) {
