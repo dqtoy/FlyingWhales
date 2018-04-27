@@ -1049,5 +1049,21 @@ public class BaseLandmark : ILocation, TaskCreator {
         _objects.Remove(obj);
         obj.SetObjectLocation(null);
     }
+    public IObject GetObject(OBJECT_TYPE objectType, string name) {
+        for (int i = 0; i < _objects.Count; i++) {
+            if(_objects[i].objectType == objectType && _objects[i].objectName == name) {
+                return _objects[i];
+            }
+        }
+        return null;
+    }
+    public IObject GetObject(string name) {
+        for (int i = 0; i < _objects.Count; i++) {
+            if (_objects[i].objectName == name) {
+                return _objects[i];
+            }
+        }
+        return null;
+    }
     #endregion
 }
