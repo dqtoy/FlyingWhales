@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class LandmarkObj : IObject {
-    private string _objectName;
-    private OBJECT_TYPE _objectType;
-    private bool _isInvisible;
+    [SerializeField] private OBJECT_TYPE _objectType;
+    [SerializeField] private bool _isInvisible;
     private List<ObjectState> _states;
-    private Dictionary<RESOURCE, int> _resourceInventory;
 
     [System.NonSerialized] private ObjectState _currentState;
+    private string _objectName;
+    private Dictionary<RESOURCE, int> _resourceInventory;
     private BaseLandmark _objectLocation;
 
     #region getters/setters
@@ -37,21 +38,21 @@ public class LandmarkObj : IObject {
     #endregion
 
     public LandmarkObj(BaseLandmark landmark) {
-        _objectName = "Landmark Object";
-        _isInvisible = true;
-        SetObjectLocation(landmark);
-        List<ObjectState> states = new List<ObjectState>();
-        ObjectState defaultState = new ObjectState(this);
-        defaultState.SetName("Default");
-        states.Add(defaultState);
+        //_objectName = "Landmark Object";
+        //_isInvisible = true;
+        //SetObjectLocation(landmark);
+        //List<ObjectState> states = new List<ObjectState>();
+        //ObjectState defaultState = new ObjectState(this);
+        //defaultState.SetName("Default");
+        //states.Add(defaultState);
 
-        IdleAction idle = new IdleAction(defaultState);
-        CharacterActionData data = idle.actionData;
-        data.duration = 5;
-        idle.SetActionData(data);
+        //IdleAction idle = new IdleAction(defaultState);
+        //CharacterActionData data = idle.actionData;
+        //data.duration = 5;
+        //idle.SetActionData(data);
 
-        defaultState.AddNewAction(idle);
-        SetStates(states);
+        //defaultState.AddNewAction(idle);
+        //SetStates(states);
     }
 
     #region Interface Requirements

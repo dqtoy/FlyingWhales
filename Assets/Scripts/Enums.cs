@@ -1290,6 +1290,7 @@ public enum OBJECT_TYPE {
     STRUCTURE,
     ITEM,
     NPC,
+    LANDMARK,
 }
 
 public enum ACTION_RESULT {
