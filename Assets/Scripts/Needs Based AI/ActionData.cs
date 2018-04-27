@@ -39,6 +39,7 @@ public class ActionData {
     }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
+        action.OnChooseAction();
     }
     public void SetCurrentDay(int day) {
         this.currentDay = day;

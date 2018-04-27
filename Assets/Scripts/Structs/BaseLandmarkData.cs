@@ -6,4 +6,5 @@ using System.Collections.Generic;
 public struct BaseLandmarkData {
     public BASE_LANDMARK_TYPE baseLandmarkType;
     public List<LANDMARK_TAG> baseLandmarkTags;
+    public List<ObjectComponent> initialObjects;
 }

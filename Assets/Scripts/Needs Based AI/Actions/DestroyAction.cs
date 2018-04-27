@@ -10,11 +10,15 @@ public class DestroyAction : CharacterAction {
         if (state.obj is StructureObj) {
             _structure = state.obj as StructureObj;
         }
-        _amountToReduce = 100 / actionData.duration;
-        
     }
 
     #region Overrides
+    public override void OnChooseAction() {
+        base.OnChooseAction();
+        if (_amountToReduce == 0) {
+            _amountToReduce = 100 / actionData.duration;
+        }
+    }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         int chance = UnityEngine.Random.Range(0, 100);

@@ -120,5 +120,14 @@ public class LandmarkObj : IObject {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
     }
+    public int GetTotalCivilians() {
+        int total = 0;
+        foreach (KeyValuePair<RESOURCE, int> kvp in _resourceInventory) {
+            if (kvp.Key.ToString().Contains("CIVILIAN")) {
+                total += kvp.Value;
+            }
+        }
+        return total;
+    }
     #endregion
 }

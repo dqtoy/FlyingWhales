@@ -191,7 +191,7 @@ public class CharacterActionDrawer : PropertyDrawer {
         //filters
         filtersProp = property.FindPropertyRelative("filters");
 
-        filtersHeight = 0;
+        filtersHeight = 16;
         if (filtersProp.isExpanded) {
             int filterCount = filtersProp.arraySize;
             filtersHeight += 8 * (filterCount + 1);
@@ -217,7 +217,7 @@ public class CharacterActionDrawer : PropertyDrawer {
     }
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
         float modifier = 25;
-        modifier += filtersHeight / 8;
+        modifier += filtersHeight / 5;
         if (enableSuccessRate) {
             modifier += 2;
         }

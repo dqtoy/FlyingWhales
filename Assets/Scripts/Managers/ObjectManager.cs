@@ -178,6 +178,12 @@ public class ObjectManager : MonoBehaviour {
             return new DrinkAction(state);
             case ACTION_TYPE.IDLE:
             return new IdleAction(state);
+            case ACTION_TYPE.POPULATE:
+            return new PopulateAction(state);
+            case ACTION_TYPE.HARVEST:
+            return new HarvestAction(state);
+            case ACTION_TYPE.TORTURE:
+            return new TortureAction(state);
         }
         return null;
     }

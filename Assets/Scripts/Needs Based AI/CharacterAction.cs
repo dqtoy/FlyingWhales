@@ -31,6 +31,9 @@ public class CharacterAction {
     }
 
     #region Virtuals
+    public virtual void OnChooseAction() {
+
+    }
     public virtual void PerformAction(Character character) {
 
     }

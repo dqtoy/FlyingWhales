@@ -40,13 +40,24 @@ public class LandmarkManager : MonoBehaviour {
         for (int i = 0; i < allLandmarks.Count; i++) {
             BaseLandmark currLandmark = allLandmarks[i];
             LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
-            ConstructLandmarkObjects(data, currLandmark);
+            BaseLandmarkData baseData = LandmarkManager.Instance.GetBaseLandmarkData(LandmarkManager.Instance.GetBaseLandmarkType(currLandmark.specificLandmarkType));
+            ConstructLandmarkObjects(baseData, data, currLandmark);
         }
     }
-    public void ConstructLandmarkObjects(LandmarkData data, BaseLandmark landmark) {
+    public void ConstructLandmarkObjects(BaseLandmarkData baseData, LandmarkData data, BaseLandmark landmark) {
+        for (int i = 0; i < baseData.initialObjects.Count; i++) {
+            string objName = baseData.initialObjects[i].name;
+            IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);
+            if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
+                createdObject.ChangeState(createdObject.GetState("Default"));
+            }
+        }
         for (int i = 0; i < data.initialObjects.Count; i++) {
             string objName = data.initialObjects[i].name;
             IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);
+            if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
+                createdObject.ChangeState(createdObject.GetState("Default"));
+            }
         }
     }
     /*

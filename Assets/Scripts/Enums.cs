@@ -1283,6 +1283,7 @@ public enum ACTION_TYPE {
     HARVEST,
     IDLE,
     POPULATE,
+    TORTURE,
 }
 
 public enum OBJECT_TYPE {
