@@ -16,7 +16,7 @@ public class ActionData {
         Reset();
         _character = character;
         choices = new CharacterActionAdvertisement[3];
-        Messenger.AddListener("OnDayEnd", PerformCurrentAction);
+        Messenger.AddListener(Signals.DAY_END, PerformCurrentAction);
     }
 
     public void Reset() {
@@ -36,7 +36,7 @@ public class ActionData {
     public void DetachActionData() {
         Reset();
         _character = null;
-        Messenger.RemoveListener("OnDayEnd", PerformCurrentAction);
+        Messenger.RemoveListener(Signals.DAY_END, PerformCurrentAction);
     }
 
     public void EndAction() {
@@ -80,7 +80,7 @@ public class ActionData {
         choices[1].Reset();
         choices[2].Reset();
 
-        string actionLog = "Action Advertisements:";
+        string actionLog = _character.name + "'s Action Advertisements: ";
         for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
             BaseLandmark landmark = _character.currentRegion.landmarks[i];
             for (int j = 0; j < landmark.objects.Count; j++) {
@@ -90,14 +90,16 @@ public class ActionData {
                         CharacterAction action = iobject.currentState.actions[k];
                         if (action.MeetsRequirements(_character, landmark)) { //Filter
                             int advertisement = action.GetTotalAdvertisementValue(_character);
-                            actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + ")";
+                            actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
                             PutToChoices(action, advertisement);
                         }
                     }
                 }
             }
         }
-        Debug.Log(actionLog);
+        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
+            Debug.Log(actionLog);
+        }
         PickAction();
     }
     private void PutToChoices(CharacterAction action, int advertisement) {
@@ -134,6 +136,8 @@ public class ActionData {
         CharacterAction chosenAction = choices[chosenIndex].action;
         AssignAction(chosenAction);
         _character.GoToLocation(chosenAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
-        Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + ")");
+        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
+            Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
+        }
     }
 }

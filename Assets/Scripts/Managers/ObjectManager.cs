@@ -150,6 +150,7 @@ public class ObjectManager : MonoBehaviour {
         if (reference != null) {
             IObject newObj = reference.Clone();
             location.AddObject(newObj);
+            return newObj;
         }
         return null;
     }
