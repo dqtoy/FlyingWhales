@@ -164,8 +164,8 @@ public class ObjectManager : MonoBehaviour {
 
     public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType, ObjectState state) {
         switch (actionType) {
-            case ACTION_TYPE.BUILD:
-            return new BuildAction(state);
+            //case ACTION_TYPE.BUILD:
+            //return new BuildAction(state);
             case ACTION_TYPE.DESTROY:
             return new DestroyAction(state);
             case ACTION_TYPE.REST:

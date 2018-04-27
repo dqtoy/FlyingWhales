@@ -38,7 +38,7 @@ public class HarvestAction : CharacterAction {
         }
 
         //TODO: if character's required resource of the type provided has been reached, end Harvest action
-        EndAction();
+        EndAction(character);
     }
     public override CharacterAction Clone(ObjectState state) {
         HarvestAction populateAction = new HarvestAction(state);
