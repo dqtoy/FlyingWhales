@@ -111,10 +111,11 @@ public class CombatRoom {
         }
     }
     private List<ICombatInitializer> GetCharactersByCombatPriority() {
-        if (_combatants.Count <= 0) {
-            return null;
-        }
-        return _combatants.Where(x => x.currentTask.combatPriority > 0).OrderByDescending(x => x.currentTask.combatPriority).ToList();
+        //if (_combatants.Count <= 0) {
+        //    return null;
+        //}
+        //return _combatants.Where(x => x.currentAction.combatPriority > 0).OrderByDescending(x => x.currentAction.combatPriority).ToList();
+        return null;
     }
     private List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
@@ -137,9 +138,9 @@ public class CombatRoom {
     private bool HasCombatInitializers() {
         for (int i = 0; i < _combatants.Count; i++) {
             ICombatInitializer currChar = _combatants[i];
-            if (currChar.currentTask.combatPriority > 0) {
-                return true;
-            }
+            //if (currChar.currentAction.combatPriority > 0) {
+            //    return true;
+            //}
         }
         return false;
     }

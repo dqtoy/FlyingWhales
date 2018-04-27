@@ -6,6 +6,12 @@ using UnityEngine;
 public class StructureObjectComponent : ObjectComponent {
     public StructureObj structureObject;
 
+    #region getters/setters
+    public override string name {
+        get { return structureObject.objectName; }
+    }
+    #endregion
+
     #region Wild Pigs
     public void ChangeToDepletedState(IObject iobject) {
         int chance = UnityEngine.Random.Range(0, 100);

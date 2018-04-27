@@ -13,6 +13,9 @@ public class CharacterAction {
     public ACTION_TYPE actionType {
         get { return _actionData.actionType; }
     }
+    public ActionFilter[] filters {
+        get { return _filters; }
+    }
     public ObjectState state {
         get { return _state; }
     }
@@ -51,6 +54,17 @@ public class CharacterAction {
     #region Filters
     public void SetFilters(ActionFilter[] filters) {
         _filters = filters;
+    }
+    public bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+        if (filters != null) {
+            for (int i = 0; i < filters.Length; i++) {
+                ActionFilter currFilter = filters[i];
+                if (!currFilter.MeetsRequirements(character, landmark)) {
+                    return false; //does not meet a requirement
+                }
+            }
+        }
+        return true; //meets all requirements
     }
     #endregion
 

@@ -37,8 +37,8 @@ public class CharacterTaskButton : MonoBehaviour {
 				UIManager.Instance.HidePlayerActions ();
 				return;
 			}
-			if (character.currentTask != null) {
-				character.currentTask.SetIsHalted (true);
+			if (character.currentAction != null) {
+				//character.currentAction.SetIsHalted (true);
 			}
 		}
 

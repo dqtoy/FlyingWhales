@@ -12,7 +12,7 @@ public class GoHome : CharacterTask {
 			return;
 		}
         base.PerformTask();
-		_assignedCharacter.SetCurrentTask(this);
+		//_assignedCharacter.SetCurrentTask(this);
 		//if (_assignedCharacter.party != null) {
 		//	_assignedCharacter.party.SetCurrentTask(this);
 		//}

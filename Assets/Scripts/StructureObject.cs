@@ -27,6 +27,9 @@ public class StructureObject : PooledObject {
     internal HexTile hexTile {
         get { return _hexTile; }
     }
+    public STRUCTURE_STATE structureState {
+        get { return _structureState; }
+    }
     #endregion
 
     public void Initialize(STRUCTURE_TYPE structureType, Color structureColor,  STRUCTURE_STATE structureState, HexTile hexTile) {

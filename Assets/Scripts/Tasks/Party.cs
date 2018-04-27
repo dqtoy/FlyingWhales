@@ -71,8 +71,8 @@ public class Party: IEncounterable, ICombatInitializer {
     public List<ECS.Character> followers {
         get { return _followers; }
     }
-    public CharacterTask currentTask {
-        get { return _partyLeader.currentTask; }
+    public CharacterAction currentAction {
+        get { return _partyLeader.currentAction; }
 	}
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
@@ -190,7 +190,7 @@ public class Party: IEncounterable, ICombatInitializer {
             member.SetParty(this);
 
             if (!IsCharacterLeaderOfParty(member)) {
-                member.SetCurrentTask(currentTask);
+                //member.SetCurrentTask(currentAction);
                 member.SetFollowerState(true);
             }
         }
@@ -206,7 +206,7 @@ public class Party: IEncounterable, ICombatInitializer {
         }
 
         member.SetParty(null);
-		member.SetCurrentTask(null);
+		//member.SetCurrentTask(null);
 		if(member.isFollower){
 			member.SetFollowerState (false);
 			Settlement settlement = member.GetNearestSettlementFromFaction();
@@ -454,9 +454,9 @@ public class Party: IEncounterable, ICombatInitializer {
                         //if he/she is not dead and is not a prisoner, it means that this party chose to flee combat
                         //when a party chooses to flee, it's current task will be considered as cancelled, and it will return
                         //to it's nearest non hostile location, and determine it's next action there
-                        if (currentTask != null) {
-                            currentTask.EndTask(TASK_STATUS.CANCEL);
-                        }
+                        //if (currentAction != null) {
+                        //    currentAction.EndTask(TASK_STATUS.CANCEL);
+                        //}
                         BaseLandmark targetLocation = partyLeader.GetNearestLandmarkWithoutHostiles();
                         if(targetLocation == null) {
                             throw new Exception(this.name + " could not find a non hostile location to run to!");
@@ -513,25 +513,25 @@ public class Party: IEncounterable, ICombatInitializer {
         to.AdjustCivilians(civilians);
     }
     public STANCE GetCurrentStance() {
-        if (currentTask != null) {
-            return currentTask.stance;
+        if (currentAction != null) {
+            //return currentAction.stance;
         }
         return STANCE.NEUTRAL;
     }
     public void ContinueDailyAction() {
         if (!isInCombat) {
-            if (currentTask != null) {
+            if (currentAction != null) {
                 //if (avatar != null && avatar.isTravelling) {
                 //    return;
                 //}
-                currentTask.PerformTask();
+                //currentAction.PerformTask();
             }
         }
     }
     public bool CanInitiateCombat() {
-        if (currentTask.combatPriority > 0) {
-            return true;
-        }
+        //if (currentAction.combatPriority > 0) {
+        //    return true;
+        //}
         return false;
     }
     #endregion

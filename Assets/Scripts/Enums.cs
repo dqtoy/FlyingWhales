@@ -1328,17 +1328,17 @@ public enum ACTION_FILTER {
     RUINED
 }
 
-public enum SPECIFIC_OBJECT_TYPE {
-    WILD_PIGS,
-    SOULSTONE,
-    INN,
-    PUB,
-    DANK_SHELTER,
-    ELVEN_RESIDENCES,
-    IRON_MINE,
-    OAK_WOODS,
-    LAIR,
-    TORTURE_CHAMBER,
-    ENCHANTED_GROVE,
-    SEALED_TOMB
-}
+//public enum SPECIFIC_OBJECT_TYPE {
+//    WILD_PIGS,
+//    SOULSTONE,
+//    INN,
+//    PUB,
+//    DANK_SHELTER,
+//    ELVEN_RESIDENCES,
+//    IRON_MINE,
+//    OAK_WOODS,
+//    LAIR,
+//    TORTURE_CHAMBER,
+//    ENCHANTED_GROVE,
+//    SEALED_TOMB
+//}

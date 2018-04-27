@@ -8,7 +8,6 @@ public class StructureObj : IObject {
     public Action onHPReachedZero;
     public Action onHPReachedFull;
 
-    [SerializeField] private SPECIFIC_OBJECT_TYPE _specificObjType;
     [SerializeField] private OBJECT_TYPE _objectType;
     [SerializeField] private bool _isInvisible;
     [SerializeField] private int _maxHP;
@@ -22,9 +21,6 @@ public class StructureObj : IObject {
     #region getters/setters
     public string objectName {
         get { return _objectName; }
-    }
-    public SPECIFIC_OBJECT_TYPE specificObjType {
-        get { return _specificObjType; }
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
@@ -95,7 +91,6 @@ public class StructureObj : IObject {
     public IObject Clone() {
         StructureObj clone = new StructureObj();
         clone.SetObjectName(this._objectName);
-        clone._specificObjType = this._specificObjType;
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
         clone._maxHP = this.maxHP;

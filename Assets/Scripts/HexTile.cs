@@ -67,7 +67,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     [Space(10)]
     [Header("Structure Objects")]
     [SerializeField] private GameObject structureParentGO;
-    private StructureObject structureObjOnTile;
+    private StructureObject _structureObjOnTile;
 
     [Space(10)]
     [Header("Minimap Objects")]
@@ -169,6 +169,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     }
     public bool hasLandmark {
         get { return _landmarkOnTile != null; }
+    }
+    public StructureObject structureObjOnTile {
+        get { return _structureObjOnTile; }
     }
     #endregion
 
@@ -896,7 +899,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             _landmarkOnTile.landmarkObject.SetBGState(false);
         }
 
-        structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
+        _structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
         this._centerPiece.SetActive(false);
 
         //Color color = this.ownedByCity.kingdom.kingdomColor;
@@ -909,11 +912,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
      * and replace it with the new assigned one.
      * */
     internal void AssignStructureObjectToTile(StructureObject structureObj) {
-        if (structureObjOnTile != null) {
+        if (_structureObjOnTile != null) {
             //Destroy Current Structure
-            structureObjOnTile.DestroyStructure();
+            _structureObjOnTile.DestroyStructure();
         }
-        structureObjOnTile = structureObj;
+        _structureObjOnTile = structureObj;
         structureObj.transform.SetParent(this.structureParentGO.transform);
         structureObj.transform.localPosition = Vector3.zero;
     }
@@ -953,12 +956,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     //    }
     //}
     public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
-        if (structureObjOnTile != null) {
+        if (_structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
             if (immediatelyDestroyStructures) {
-                structureObjOnTile.DestroyStructure();
+                _structureObjOnTile.DestroyStructure();
             } else {
-                structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
+                _structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
             }
 			if(landmarkOnTile != null){
 				//landmarkOnTile.AddHistory ("Landmark structure destroyed!");
@@ -969,7 +972,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
      Does this tile have a structure on it?
          */
     public bool HasStructure() {
-        return structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
+        return _structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
     }
     #endregion
 
@@ -1805,10 +1808,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
     }
     public List<ICombatInitializer> GetCharactersByCombatPriority() {
-        if (_charactersAtLocation.Count <= 0) {
-            return null;
-        }
-        return _charactersAtLocation.Where(x => x.currentTask.combatPriority > 0).OrderByDescending(x => x.currentTask.combatPriority).ToList();
+        //if (_charactersAtLocation.Count <= 0) {
+        //    return null;
+        //}
+        //return _charactersAtLocation.Where(x => x.currentAction.combatPriority > 0).OrderByDescending(x => x.currentAction.combatPriority).ToList();
+        return null;
     }
     //public void CheckAttackingGroupsCombat() {
     //    List<ICombatInitializer> attackingGroups = GetAttackingGroups();
@@ -1883,9 +1887,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currChar = _charactersAtLocation[i];
-            if (currChar.currentTask.combatPriority > 0) {
-                return true;
-            }
+            //if (currChar.currentAction.combatPriority > 0) {
+            //    return true;
+            //}
         }
         return false;
     }
