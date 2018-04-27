@@ -61,7 +61,7 @@ public class GoToLocation : TaskAction {
 			}
 			actionDoer.avatar.SetTarget (targetLocation);
 			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
-            actionDoer.currentTask.AddNewLog(actionDoer.name + " goes to " + targetTile.name);
+            //actionDoer.currentAction.AddNewLog(actionDoer.name + " goes to " + targetTile.name);
 
         }
 	}

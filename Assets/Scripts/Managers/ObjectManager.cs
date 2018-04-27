@@ -81,11 +81,54 @@ public class ObjectManager : MonoBehaviour {
             ObjectState state = iobject.states[i];
             state.SetObject(iobject);
             for (int j = 0; j < state.actions.Count; j++) {
-                state.actions[j].GenerateName();
-                CharacterAction action = CreateNewCharacterAction(state.actions[j].actionType, state);
-                state.actions[j].SetCommonData(action);
-                state.actions[j] = action;
+                CharacterAction originalAction = state.actions[j];
+                ConstructActionFilters(originalAction);
+                originalAction.GenerateName();
+                CharacterAction action = CreateNewCharacterAction(originalAction.actionType, state);
+                originalAction.SetCommonData(action);
+                action.SetFilters(originalAction.filters);
+                originalAction = action;
             }
+        }
+    }
+
+    private void ConstructActionFilters(CharacterAction action) {
+        ActionFilter[] createdFilters = new ActionFilter[action.actionData.filters.Length];
+        for (int i = 0; i < action.actionData.filters.Length; i++) {
+            ActionFilterData currData = action.actionData.filters[i];
+            ActionFilter createdFilter = CreateActionFilterFromData(currData);
+            createdFilters[i] = createdFilter;
+        }
+        action.SetFilters(createdFilters);
+    }
+
+    private ActionFilter CreateActionFilterFromData(ActionFilterData data) {
+        switch (data.filterType) {
+            case ACTION_FILTER_TYPE.ROLE:
+                return CreateRoleFilter(data);
+            case ACTION_FILTER_TYPE.LOCATION:
+                return CreateLandmarkFilter(data);
+            default:
+                return null;
+        }
+    }
+
+    private ActionFilter CreateRoleFilter(ActionFilterData data) {
+        switch (data.condition) {
+            case ACTION_FILTER_CONDITION.IS:
+                return new MustBeRole(data.objects);
+            case ACTION_FILTER_CONDITION.IS_NOT:
+                return new MustNotBeRole(data.objects);
+            default:
+                return null;
+        }
+    }
+    private ActionFilter CreateLandmarkFilter(ActionFilterData data) {
+        switch (data.condition) {
+            case ACTION_FILTER_CONDITION.IS:
+                return new LandmarkMustBeState(data.objects[0]);
+            default:
+                return null;
         }
     }
 

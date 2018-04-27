@@ -64,12 +64,12 @@ public class PartyInfoUI : UIMenu {
 		}
 
 		text += "\n[b]Current Task:[/b] ";
-		if (currentlyShowingParty.currentTask != null) {
+		if (currentlyShowingParty.currentAction != null) {
 			//if (currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST) {
 			//	OldQuest.Quest currQuest = (OldQuest.Quest)currentlyShowingParty.currentTask;
 			//	text += " (" + currQuest.urlName + ")";
 			//} else {
-				text += " (" + currentlyShowingParty.currentTask.taskType.ToString () + ")";
+				text += " (" + currentlyShowingParty.currentAction.actionData.actionName + ")";
 			//}
 		} else {
 			text += "NONE";

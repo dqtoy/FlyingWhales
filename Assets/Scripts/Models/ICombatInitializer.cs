@@ -8,7 +8,7 @@ public interface ICombatInitializer {
 	bool isDefeated { get;}
 	int civilians { get;}
 	Faction faction { get;}
-	CharacterTask currentTask { get;}
+	CharacterAction currentAction { get;}
 	bool isInCombat { get; }
 	Action currentFunction { get; }
 	ECS.Character mainCharacter { get; }

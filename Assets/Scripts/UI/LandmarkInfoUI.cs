@@ -121,24 +121,24 @@ public class LandmarkInfoUI : UIMenu {
                 if (currObject is ECS.Character) {
 					ECS.Character currChar = (ECS.Character)currObject;
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
-					if (currChar.currentTask != null) {
+					if (currChar.currentAction != null) {
 						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
 						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
 						//	text += " (" + currQuest.urlName + ")";
 						//} else {
-							text += " (" + currChar.currentTask.taskType.ToString () + ")";
+							text += " (" + currChar.currentAction.actionData.actionName + ")";
 						//}
-                        for (int j = 0; j < currChar.currentTask.alignments.Count; j++) {
-                            ACTION_ALIGNMENT currAlignment = currChar.currentTask.alignments[j];
-                            text += currAlignment.ToString();
-                            if (j + 1 < currChar.currentTask.alignments.Count) {
-                                text += ", ";
-                            }
-                        }
+                        //for (int j = 0; j < currChar.currentAction.alignments.Count; j++) {
+                        //    ACTION_ALIGNMENT currAlignment = currChar.currentAction.alignments[j];
+                        //    text += currAlignment.ToString();
+                        //    if (j + 1 < currChar.currentAction.alignments.Count) {
+                        //        text += ", ";
+                        //    }
+                        //}
                     }
 				} else if (currObject is Party) {
 					Party currParty = (Party)currObject;
-					text += "\n" + currParty.urlNameWithRole + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
+					text += "\n" + currParty.urlNameWithRole + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
 				}
 			}
 		} else {
@@ -151,17 +151,17 @@ public class LandmarkInfoUI : UIMenu {
                 if (currObject is ECS.Character) {
                     ECS.Character currChar = (ECS.Character)currObject;
                     text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-                    if (currChar.currentTask != null) {
+                    if (currChar.currentAction != null) {
                         //if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
                         //    OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
                         //    text += " (" + currQuest.urlName + ")";
                         //} else {
-                            text += " (" + currChar.currentTask.taskType.ToString() + ")";
+                            text += " (" + currChar.currentAction.actionData.actionName + ")";
                         //}
                     }
                 } else if (currObject is Party) {
                     Party currParty = (Party)currObject;
-                    text += "\n" + currParty.urlName + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString() : "NONE");
+                    text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString() : "NONE");
                 }
             }
         } else {

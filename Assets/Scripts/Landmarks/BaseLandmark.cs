@@ -671,17 +671,18 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
     }
     public List<ICombatInitializer> GetCharactersByCombatPriority() {
-        if (_charactersAtLocation.Count <= 0) {
-            return null;
-        }
-        return _charactersAtLocation.Where(x => x.currentTask.combatPriority > 0).OrderByDescending(x => x.currentTask.combatPriority).ToList();
+        //if (_charactersAtLocation.Count <= 0) {
+        //    return null;
+        //}
+        //return _charactersAtLocation.Where(x => x.currentAction.combatPriority > 0).OrderByDescending(x => x.currentAction.combatPriority).ToList();
+        return null;
     }
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currChar = _charactersAtLocation[i];
-            if (currChar.currentTask != null && currChar.currentTask.combatPriority > 0) {
-                return true;
-            }
+            //if (currChar.currentAction != null && currChar.currentAction.combatPriority > 0) {
+            //    return true;
+            //}
         }
         return false;
     }

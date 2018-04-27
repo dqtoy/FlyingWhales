@@ -138,26 +138,26 @@ public class CharacterInfoUI : UIMenu {
             text += "NONE";
         }
         text += "\nCurrent Action: ";
-        if (currentlyShowingCharacter.currentTask != null) {
-            text += currentlyShowingCharacter.currentTask.taskType.ToString() + " ";
-            for (int i = 0; i < currentlyShowingCharacter.currentTask.alignments.Count; i++) {
-                ACTION_ALIGNMENT currAlignment = currentlyShowingCharacter.currentTask.alignments[i];
-                text += currAlignment.ToString();
-                if (i + 1 < currentlyShowingCharacter.currentTask.alignments.Count) {
-                    text += ", ";
-                }
-            }
+        if (currentlyShowingCharacter.currentAction != null) {
+            text += currentlyShowingCharacter.currentAction.actionData.actionName.ToString() + " ";
+            //for (int i = 0; i < currentlyShowingCharacter.currentAction.alignments.Count; i++) {
+            //    ACTION_ALIGNMENT currAlignment = currentlyShowingCharacter.currentAction.alignments[i];
+            //    text += currAlignment.ToString();
+            //    if (i + 1 < currentlyShowingCharacter.currentAction.alignments.Count) {
+            //        text += ", ";
+            //    }
+            //}
         } else {
             text += "NONE";
         }
-		text += "\nCurrent State: ";
-		if (currentlyShowingCharacter.currentTask != null) {
-			if(currentlyShowingCharacter.currentTask.currentState != null){
-				text += currentlyShowingCharacter.currentTask.currentState.stateName;
-			}
-		} else {
-			text += "NONE";
-		}
+		//text += "\nCurrent State: ";
+		//if (currentlyShowingCharacter.currentAction != null) {
+		//	if(currentlyShowingCharacter.currentAction.currentState != null){
+		//		text += currentlyShowingCharacter.currentAction.currentState.stateName;
+		//	}
+		//} else {
+		//	text += "NONE";
+		//}
         text += "\nCurrent Quest: ";
         if (currentlyShowingCharacter.currentQuest != null) {
             text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";

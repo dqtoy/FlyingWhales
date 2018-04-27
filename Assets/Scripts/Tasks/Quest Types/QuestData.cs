@@ -33,9 +33,9 @@ public class QuestData {
         if (quest == null) {
             DeactivateAllPhaseRequirements();
             //quest is being set to null, it means the quest is no longer available or the character chose to leave the quest
-            if (_owner.currentTask != null && tasks.Contains(_owner.currentTask)) {
-                _owner.currentTask.EndTask(TASK_STATUS.CANCEL); //cancel the characters current task if it comes from the list of tasks granted by his/her active quest
-            }
+            //if (_owner.currentAction != null && tasks.Contains(_owner.currentAction)) {
+            //    _owner.currentAction.EndTask(TASK_STATUS.CANCEL); //cancel the characters current task if it comes from the list of tasks granted by his/her active quest
+            //}
         }
         SetQuestPhase(0);
     }

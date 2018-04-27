@@ -43,8 +43,8 @@ public class SpecificCharacterTaskButton : MonoBehaviour {
 			UIManager.Instance.HidePlayerActions ();
 			return;
 		}
-		if(character.currentTask != null){
-			character.currentTask.SetIsHalted (true);
+		if(character.currentAction != null){
+			//character.currentAction.SetIsHalted (true);
 		}
 		task.ResetTask ();
 		task.SetLocation (PlayerActionsUI.Instance.location);

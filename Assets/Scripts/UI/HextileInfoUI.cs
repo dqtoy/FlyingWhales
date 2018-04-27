@@ -69,17 +69,17 @@ public class HextileInfoUI : UIMenu {
 				if (currentlyShowingHexTile.charactersAtLocation[i] is ECS.Character) {
 					ECS.Character currChar = (ECS.Character)currentlyShowingHexTile.charactersAtLocation [i];
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
-					if (currChar.currentTask != null) {
+					if (currChar.currentAction != null) {
 						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
 						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
 						//	text += " (" + currQuest.urlName + ")";
 						//} else {
-							text += " (" + currChar.currentTask.taskType.ToString () + ")";
+							text += " (" + currChar.currentAction.actionData.actionName.ToString () + ")";
 						//}
 					}
 				} else if (currentlyShowingHexTile.charactersAtLocation[i] is Party) {
 					Party currParty = (Party)currentlyShowingHexTile.charactersAtLocation [i];
-					text += "\n" + currParty.urlName + " - " + (currParty.currentTask != null ? currParty.currentTask.ToString () : "NONE");
+					text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
 				}
 			}
 		} else {

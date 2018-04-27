@@ -44,7 +44,7 @@ public class DungeonParty : Party {
 			member.specificLocation.AddCharacterToLocation(member);
 		}
 		member.SetParty(null);
-		member.SetCurrentTask (null);
+		//member.SetCurrentTask (null);
 		if(member.isFollower){
 			member.SetFollowerState (false);
 //			member.isFollowerOf.RemoveFollower (member);

@@ -54,12 +54,12 @@ namespace ECS{
 			this.attacker = attacker;
             this.defender = defender;
 
-			if(attacker != null && attacker.faction == null && (attacker.currentTask != null && attacker.currentTask.taskType == TASK_TYPE.DO_NOTHING)){
-				attacker.currentTask.EndTask (TASK_STATUS.CANCEL);
+			if(attacker != null && attacker.faction == null && (attacker.currentAction != null)){
+				//attacker.currentAction.EndTask (TASK_STATUS.CANCEL);
 			}
 
-			if(defender != null && defender.faction == null && (defender.currentTask != null && defender.currentTask.taskType == TASK_TYPE.DO_NOTHING)){
-				defender.currentTask.EndTask (TASK_STATUS.CANCEL);
+			if(defender != null && defender.faction == null && (defender.currentAction != null)){
+				//defender.currentAction.EndTask (TASK_STATUS.CANCEL);
 			}
 //			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
 		}

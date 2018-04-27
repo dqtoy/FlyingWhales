@@ -14,8 +14,8 @@ namespace ECS {
 		public delegate void OnImprisonCharacter();
 		public OnImprisonCharacter onImprisonCharacter;
 
-        public delegate void OnTaskChanged();
-        private OnTaskChanged onTaskChanged; //What should happen if a character chooses to change it's task
+        //public delegate void OnTaskChanged();
+        //private OnTaskChanged onTaskChanged; //What should happen if a character chooses to change it's task
 
         [SerializeField] private string _name;
         private int _id;
@@ -53,7 +53,7 @@ namespace ECS {
 		private Party _party;
         private QuestData _questData;
         private CharacterActionQueue<CharacterAction> _actionQueue;
-		private CharacterTask _currentTask;
+		//private CharacterAction _currentAction;
         private ILocation _specificLocation;
 		private Region _currentRegion;
 		private CharacterAvatar _avatar;
@@ -166,8 +166,8 @@ namespace ECS {
         public QuestPhase currentQuestPhase {
             get { return _questData.GetQuestPhase(); }
         }
-        public CharacterTask currentTask {
-			get { return _currentTask; }
+        public CharacterAction currentAction {
+			get { return _actionData.currentAction; }
 		}
         public ILocation specificLocation {
             get {
@@ -378,7 +378,10 @@ namespace ECS {
 			get { return _traceInfo; }
 		}
 		public COMBAT_INTENT combatIntent{
-			get { return (_currentTask == null ? COMBAT_INTENT.DEFEAT : _currentTask.currentState.combatIntent); }
+			get {
+                return COMBAT_INTENT.KILL; //TODO: Change this when task is changed to action
+                //return (_currentAction == null ? COMBAT_INTENT.DEFEAT : _currentAction.currentState.combatIntent);
+            }
 		}
         public ActionData actionData {
             get { return _actionData; }
@@ -2325,23 +2328,23 @@ namespace ECS {
 		//public void RemoveQuest(OldQuest.Quest quest) {
 		//	_activeQuests.Remove(quest);
 		//}
-		public void SetCurrentTask(CharacterTask currentTask) {
-            if (_currentTask == null || _currentTask != currentTask) {
-                if (onTaskChanged != null) {
-                    onTaskChanged();
-                }
-            }
-            _currentTask = currentTask;
-        }
-        public void AddActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
-            onTaskChanged += onTaskChangeAction;
-        }
-        public void RemoveActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
-            onTaskChanged -= onTaskChangeAction;
-        }
-        public void ResetOnTaskChangedActions() {
-            onTaskChanged = null;
-        }
+		//public void SetCurrentTask(CharacterAction action) {
+  //          if (_currentAction == null || _currentAction != action) {
+  //              if (onTaskChanged != null) {
+  //                  onTaskChanged();
+  //              }
+  //          }
+  //          _currentAction = action;
+  //      }
+        //public void AddActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
+        //    onTaskChanged += onTaskChangeAction;
+        //}
+        //public void RemoveActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
+        //    onTaskChanged -= onTaskChangeAction;
+        //}
+        //public void ResetOnTaskChangedActions() {
+        //    onTaskChanged = null;
+        //}
   //      public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
 		//	List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
 		//	for (int i = 0; i < _activeQuests.Count; i++) {
@@ -2701,9 +2704,9 @@ namespace ECS {
             if (this.faction == null) {
                 return true; //this character has no faction
             }
-            if (this.currentTask != null && this.currentTask.HasHostilitiesBecauseOfTask(combatInitializer)) {
-                return true;
-            }
+            //if (this.currentAction != null && this.currentAction.HasHostilitiesBecauseOfTask(combatInitializer)) {
+            //    return true;
+            //}
             //Check here if the combatInitializer is hostile with this character, if yes, return true
             Faction factionOfEnemy = null;
             if(combatInitializer is Character) {
@@ -2766,8 +2769,8 @@ namespace ECS {
             to.AdjustCivilians(civilians);
         }
         public STANCE GetCurrentStance() {
-            if (currentTask != null) {
-                return currentTask.stance;
+            //if (currentAction != null) {
+            //    return currentAction.stance;
                 //if (avatar != null && avatar.isTravelling) {
                 //    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
                 //        return STANCE.COMBAT;
@@ -2781,23 +2784,23 @@ namespace ECS {
                 //} else if (currentTask is ExploreTile) {
                 //    return STANCE.STEALTHY;
                 //}
-            }
+            //}
             return STANCE.NEUTRAL;
         }
         public void ContinueDailyAction() {
             if (!isInCombat) {
-                if (currentTask != null) {
+                if (currentAction != null) {
                     //if (avatar != null && avatar.isTravelling) {
                     //    return;
                     //}
-                    currentTask.PerformTask();
+                    //currentAction.PerformTask();
                 }
             }
         }
         public bool CanInitiateCombat() {
-            if (currentTask.combatPriority > 0) {
-                return true;
-            }
+            //if (currentAction.combatPriority > 0) {
+            //    return true;
+            //}
             return false;
         }
         #endregion
