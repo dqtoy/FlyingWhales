@@ -5,7 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class ItemObj : IObject {
     [SerializeField] private OBJECT_TYPE _objectType;
-    [SerializeField] private SPECIFIC_OBJECT_TYPE _specificObjType;
     [SerializeField] private bool _isInvisible;
     [SerializeField] private List<ObjectState> _states;
 
@@ -16,9 +15,6 @@ public class ItemObj : IObject {
     #region getters/setters
     public string objectName {
         get { return _objectName; }
-    }
-    public SPECIFIC_OBJECT_TYPE specificObjType {
-        get { return _specificObjType; }
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
@@ -71,7 +67,6 @@ public class ItemObj : IObject {
     public IObject Clone() {
         ItemObj clone = new ItemObj();
         clone.SetObjectName(this._objectName);
-        clone._specificObjType = this.specificObjType;
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
         List<ObjectState> states = new List<ObjectState>();

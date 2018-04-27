@@ -132,34 +132,34 @@ public class ObjectManager : MonoBehaviour {
         }
     }
 
-    public IObject CreateNewObject(OBJECT_TYPE objType, SPECIFIC_OBJECT_TYPE specificObjectType, BaseLandmark location) {
-        IObject reference = GetReference(objType, specificObjectType);
+    public IObject CreateNewObject(OBJECT_TYPE objType, string objectName, BaseLandmark location) {
+        IObject reference = GetReference(objType, objectName);
         if (reference != null) {
             IObject newObj = reference.Clone();
             location.AddObject(newObj);
         }
         return null;
     }
-    public IObject CreateNewObject(SPECIFIC_OBJECT_TYPE specificObjType, BaseLandmark location) {
-        return CreateNewObject(GetObjectType(specificObjType), specificObjType, location);
+    public IObject CreateNewObject(string objectName, BaseLandmark location) {
+        return CreateNewObject(GetObjectType(objectName), objectName, location);
     }
-    private IObject GetReference(OBJECT_TYPE objType, SPECIFIC_OBJECT_TYPE specificObjType) {
+    private IObject GetReference(OBJECT_TYPE objType, string objectName) {
         for (int i = 0; i < _allObjects.Count; i++) {
             IObject currObject = _allObjects[i];
-            if (currObject.objectType == objType && currObject.specificObjType == specificObjType) {
+            if (currObject.objectType == objType && currObject.objectName.Equals(objectName)) {
                 return currObject;
             }
         }
         return null;
     }
-    public OBJECT_TYPE GetObjectType(SPECIFIC_OBJECT_TYPE specificObjType) {
+    public OBJECT_TYPE GetObjectType(string objectName) {
         for (int i = 0; i < _allObjects.Count; i++) {
             IObject currObject = _allObjects[i];
-            if (currObject.specificObjType == specificObjType) {
+            if (currObject.objectName.Equals(objectName)) {
                 return currObject.objectType;
             }
         }
-        throw new System.Exception("Object with the name " + specificObjType.ToString() + " does not exist!");
+        throw new System.Exception("Object with the name " + objectName + " does not exist!");
     }
     public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType, ObjectState state) {
         switch (actionType) {

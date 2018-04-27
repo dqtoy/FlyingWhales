@@ -5,7 +5,6 @@ using UnityEngine;
 public interface IObject {
     //Data
     string objectName { get; }
-    SPECIFIC_OBJECT_TYPE specificObjType { get; }
     OBJECT_TYPE objectType { get; }
     List<ObjectState> states { get; }
     ObjectState currentState { get; }
