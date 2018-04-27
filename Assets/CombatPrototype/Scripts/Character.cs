@@ -96,20 +96,19 @@ namespace ECS {
 
         //When the character should have a next action it should do after it's current one.
         private CharacterTask nextTaskToDo;
-
-//        private Dictionary<MATERIAL, int> _materialInventory;
 		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
-
 		private Dictionary<Character, List<string>> _traceInfo;
-
-        public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
-
 		private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
 
-		#region getters / setters
-		public string firstName {
+        //For Testing
+        public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
+
+        private Dictionary<RESOURCE, int> _resourceInventory;
+
+        #region getters / setters
+        public string firstName {
             get { return name.Split(' ')[0]; }
         }
 		public string name{
@@ -215,9 +214,6 @@ namespace ECS {
 		public bool isFollower {
             get { return _isFollower; }
         }
-		//public List<OldQuest.Quest> activeQuests {
-		//	get { return _activeQuests; }
-		//}
 		public int strength {
 			get { return _strength + (int)((float)_strength * _statsModifierPercentage.strPercentage); }
 		}
@@ -301,9 +297,6 @@ namespace ECS {
 		}
 		public bool isDefeated {
 			get {
-//				if(_party != null){
-//					return _party.isDefeated;
-//				}
 				return _isDefeated; 
 			}
 		}
@@ -318,9 +311,6 @@ namespace ECS {
 		public Dictionary<RACE, int> civiliansByRace{
 			get { return _civiliansByRace; }
 		}
-//      public Dictionary<MATERIAL, int> materialInventory {
-//          get { return _materialInventory; }
-//      }
 		public List<BaseLandmark> exploredLandmarks {
 			get { return _exploredLandmarks; }
 		}
@@ -333,19 +323,11 @@ namespace ECS {
 			}
 		}
 		public Action currentFunction{
-			get { 
-//				if(_party != null){
-//					return _party.currentFunction;
-//				}
-				return _currentFunction; 
-			}
+			get { return _currentFunction; }
 		}
         public bool isFactionless {
             get { return faction == null; }
         }
-		internal bool isFollowersFull{
-			get { return followers.Count >= MAX_FOLLOWERS; }
-		}
         public int missingFollowers {
             get {
                 if (party == null) {
@@ -386,6 +368,12 @@ namespace ECS {
         public ActionData actionData {
             get { return _actionData; }
         }
+        public Dictionary<RESOURCE, int> resourceInventory {
+            get { return _resourceInventory; }
+        }
+        public int totalResourceCount {
+            get { return resourceInventory.Sum(x => x.Value); }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -417,6 +405,7 @@ namespace ECS {
 			previousActions = new Dictionary<CharacterTask, string> ();
 			actionWeights = new WeightedDictionary<CharacterTask> ();
             _actionData = new ActionData(this);
+            _resourceInventory = new Dictionary<RESOURCE, int>();
 
 			GenerateRaceTags ();
             GenerateSetupTags(baseSetup);
@@ -443,7 +432,6 @@ namespace ECS {
 //          _maxHP = _baseMaxHP;
 //          _currentHP = maxHP;
 
-            //_activeQuests = new List<OldQuest.Quest>();
 			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
 			_combatHistoryID = 0;
@@ -452,7 +440,8 @@ namespace ECS {
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
 
             //ConstructMaterialInventory();
-		}
+            ConstructResourceInventory();
+        }
 
 		private void AllocateStatPoints(int statAllocationBonus){
 			_baseMaxHP = _raceSetting.baseHP;
@@ -517,7 +506,6 @@ namespace ECS {
 			}
 			return false;
 		}
-
 		internal bool HasBodyPart(string bodyPartType){
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
@@ -535,8 +523,6 @@ namespace ECS {
 			}
 			return false;
 		}
-
-
 		//Enables or Disables skills based on skill requirements
 		internal void EnableDisableSkills(Combat combat){
 			bool isAllAttacksInRange = true;
@@ -640,17 +626,14 @@ namespace ECS {
 				}
 			}
 		}
-
 		//Changes row number of this character
 		internal void SetRowNumber(int rowNumber){
 			this._currentRow = rowNumber;
 		}
-
 		//Changes character's side
 		internal void SetSide(SIDES side){
 			this._currentSide = side;
 		}
-
 		//Adjust current HP based on specified paramater, but HP must not go below 0
 		internal void AdjustHP(int amount){
 			this._currentHP += amount;
@@ -696,7 +679,6 @@ namespace ECS {
 				}
 			}
 		}
-
 		//When character will faint
 		internal void Faint(){
 			if(!_isFainted){
@@ -716,14 +698,12 @@ namespace ECS {
                 faintTask.OnChooseTask(this)
 ;			}
 		}
-
 		internal void Unfaint(){
 			if (_isFainted) {
 				_isFainted = false;
 				SetHP (1);
 			}
 		}
-
 		//Character's death
 		internal void Death(ICombatInitializer killer = null){
 			if(!_isDead){
@@ -924,7 +904,6 @@ namespace ECS {
             Messenger.Broadcast(Signals.OBTAIN_ITEM, this, newItem);
             newItem.OnItemPutInInventory(this);
         }
-
 		internal void ThrowItem(Item item, bool addInLandmark = true){
 			if(item.isEquipped){
 				UnequipItem (item);
@@ -941,7 +920,6 @@ namespace ECS {
 			}
 
 		}
-
         internal void DropItem(Item item) {
             ThrowItem(item);
             ILocation location = specificLocation;
@@ -982,7 +960,6 @@ namespace ECS {
                 }
             }
         }
-
         //If character set up has pre equipped items, equip it here evey time a character is made
         internal void EquipPreEquippedItems(CharacterSetup charSetup){
 			if(charSetup.preEquippedItems.Count > 0){
@@ -991,7 +968,6 @@ namespace ECS {
 				}
 			}
 		}
-
 		//For prototype only, in reality, an instance of an Item must be passed as parameter
 		//Equip generic item, can be a weapon, armor, etc.
 		public void EquipItem(ITEM_TYPE itemType, string itemName) {
@@ -1019,7 +995,6 @@ namespace ECS {
                 }
             }
         }
-
         /*
          this is the real way to equip an item
          this will return a boolean whether the character successfully equipped
@@ -1042,7 +1017,6 @@ namespace ECS {
             }
             return hasEquipped;
 		}
-
 		//Unequips an item of a character, whether it's a weapon, armor, etc.
 		internal void UnequipItem(Item item){
 			if(item is Weapon){
@@ -1052,7 +1026,6 @@ namespace ECS {
 			}
 			RemoveEquippedItem(item);
 		}
-
 		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
 		internal bool UnownItem(Item item){
 			if(item.owner.id == this._id){
@@ -1061,17 +1034,14 @@ namespace ECS {
 			}
 			return false;
 		}
-
 		//Own an Item
 		internal void OwnItem(Item item){
 			item.SetOwner (this);
 		}
-
 		//Transfer item ownership
 		internal void TransferItemOwnership(Item item, Character newOwner){
 			newOwner.OwnItem (item);
 		}
-
 		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipWeapon(Weapon weapon){
 			for (int j = 0; j < weapon.equipRequirements.Count; j++) {
@@ -1135,7 +1105,6 @@ namespace ECS {
 			}
 			_equippedWeaponPower -= weapon.weaponPower;
 		}
-
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipArmor(Armor armor){
 			IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
@@ -1378,11 +1347,9 @@ namespace ECS {
 		internal void AddStatusEffect(STATUS_EFFECT statusEffect){
 			this.statusEffects.Add (statusEffect);
 		}
-
 		internal void RemoveStatusEffect(STATUS_EFFECT statusEffect){
 			this.statusEffects.Remove (statusEffect);
 		}
-
         internal void CureStatusEffects(){
 			for (int i = 0; i < statusEffects.Count; i++) {
 				STATUS_EFFECT statusEffect = statusEffects [i];
@@ -1411,7 +1378,6 @@ namespace ECS {
 				}
 			}
 		}
-
         internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
 			if (statusEffects.Contains(statusEffect)) {
 				return true;
@@ -2242,52 +2208,6 @@ namespace ECS {
 				_avatar.InstantDestroyAvatar();
             }
         }
-//        public void GoToNearestNonHostileSettlement(Action onReachSettlement) {
-////			if(isInCombat){
-////				SetCurrentFunction (() => GoToNearestNonHostileSettlement (() => onReachSettlement()));
-////				return;
-////			}
-//            //check first if the character is already at a non hostile settlement
-//            if(this.currLocation.landmarkOnTile != null && this.currLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CITY
-//                && this.currLocation.landmarkOnTile.owner != null) {
-//                if(this.faction.id != this.currLocation.landmarkOnTile.owner.id) {
-//                    if(FactionManager.Instance.GetRelationshipBetween(this.faction, this.currLocation.landmarkOnTile.owner).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-//                        onReachSettlement();
-//                        return;
-//                    }
-//                } else {
-//                    onReachSettlement();
-//                    return;
-//                }
-//            }
-//            //character is not on a non hostile settlement
-//            List<Settlement> allSettlements = new List<Settlement>();
-//            for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) { //Get all the occupied settlements
-//                Tribe currTribe = FactionManager.Instance.allTribes[i];
-//                if(this.faction.id == currTribe.id ||
-//                    FactionManager.Instance.GetRelationshipBetween(this.faction, currTribe).relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-//                    allSettlements.AddRange(currTribe.settlements);
-//                }
-//            }
-//            allSettlements = allSettlements.OrderBy(x => Vector2.Distance(this.currLocation.transform.position, x.tileLocation.transform.position)).ToList();
-//            if(_avatar == null) {
-//                CreateNewAvatar();
-//            }
-//			_avatar.SetTarget(allSettlements[0].tileLocation);
-//            _avatar.StartPath(PATHFINDING_MODE.USE_ROADS, () => onReachSettlement());
-//        }
-        ///*
-        // This is the default action to be done when a 
-        // character returns to a non hostile settlement after a quest.
-        //     */
-        //internal void OnReachNonHostileSettlementAfterQuest() {
-        //    //if (_party != null) {
-        //    //    _party.CheckLeavePartyAfterQuest();
-        //    //}
-        //    //_currLocation.AddCharacterOnTile(this);
-        //    DestroyAvatar();
-        //    DetermineAction();
-        //}
 		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
             if (specificLocation == null) {
                 throw new Exception("Specific location is null!");
@@ -2503,7 +2423,6 @@ namespace ECS {
                 CameraMove.Instance.CenterCameraOn(this.currLocation.gameObject);
             }
         }
-
 		//Death of this character if he/she is in the region specified
 		private void RegionDeath(Region region){
 			if(currentRegion.id == region.id){
@@ -2962,5 +2881,31 @@ namespace ECS {
                 //TODO: queue go to location of each landmark in path
             }
         }
+
+        #region Resource Inventory
+        private void ConstructResourceInventory() {
+            _resourceInventory = new Dictionary<RESOURCE, int>();
+            RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
+            for (int i = 0; i < allResources.Length; i++) {
+                _resourceInventory.Add(allResources[i], 0);
+            }
+        }
+        public void AdjustResource(RESOURCE resource, int amount) {
+            _resourceInventory[resource] += amount;
+        }
+        public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
+            AdjustResource(resource, -amount);
+            target.AdjustResource(resource, amount);
+        }
+        public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
+            AdjustResource(resource, -amount);
+            target.AdjustResource(resource, amount);
+        }
+        public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
+            AdjustResource(resource, -amount);
+            target.AdjustResource(resource, amount);
+        }
+        #endregion
+
     }
 }

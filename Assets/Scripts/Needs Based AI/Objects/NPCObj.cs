@@ -62,7 +62,6 @@ public class NPCObj : IObject {
         }
         return null;
     }
-
     public IObject Clone() {
         NPCObj clone = new NPCObj();
         clone.SetObjectName (this._objectName);

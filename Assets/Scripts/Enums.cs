@@ -111,19 +111,8 @@ public enum MONTH{
 }
 public enum RESOURCE {
     NONE,
-    //CORN,
-    //WHEAT,
-    //RICE,
-    //DEER,
-    //PIG,
-    //BEHEMOTH,
     OAK,
-    //EBONY,
-    //GRANITE,
-    //SLATE,
-    //MANA_STONE,
-    //MITHRIL,
-    //COBALT,
+    ELF_CIVILIAN,
 }
 //public enum RESOURCE_TYPE{
 //	NONE,
@@ -1293,6 +1282,7 @@ public enum ACTION_TYPE {
     DRINK,
     HARVEST,
     IDLE,
+    POPULATE,
 }
 
 public enum OBJECT_TYPE {
