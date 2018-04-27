@@ -35,8 +35,8 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
     protected List<IObject> _objects;
-
     private bool _hasScheduledCombatCheck = false;
+    private Dictionary<RESOURCE, int> _resourceInventory;
 
     #region getters/setters
     public int id {
@@ -143,6 +143,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         ConstructCiviliansDictionary();
         GenerateCivilians();
         SpawnInitialLandmarkItems();
+        ConstructResourceInventory();
     }
 
     #region Virtuals
@@ -1048,6 +1049,27 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void RemoveObject(IObject obj) {
         _objects.Remove(obj);
         obj.SetObjectLocation(null);
+    }
+    #endregion
+
+    #region Resource Inventory
+    public void ConstructResourceInventory() {
+        _resourceInventory = new Dictionary<RESOURCE, int>();
+        RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
+        for (int i = 0; i < allResources.Length; i++) {
+            _resourceInventory.Add(allResources[i], 0);
+        }
+    }
+    public void AdjustResource(RESOURCE resource, int amount) {
+        _resourceInventory[resource] += amount;
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, BaseLandmark target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, Character target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
     }
     #endregion
 }

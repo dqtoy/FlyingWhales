@@ -105,7 +105,7 @@ namespace ECS {
         //For Testing
         public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
 
-        public Dictionary<RESOURCE, int> _resourceInventory;
+        private Dictionary<RESOURCE, int> _resourceInventory;
 
         #region getters / setters
         public string firstName {
@@ -370,6 +370,9 @@ namespace ECS {
         }
         public Dictionary<RESOURCE, int> resourceInventory {
             get { return _resourceInventory; }
+        }
+        public int totalResourceCount {
+            get { return resourceInventory.Sum(x => x.Value); }
         }
         #endregion
 
@@ -2887,12 +2890,22 @@ namespace ECS {
                 _resourceInventory.Add(allResources[i], 0);
             }
         }
-        public void AddResource(RESOURCE resource, int amount) {
+        public void AdjustResource(RESOURCE resource, int amount) {
             _resourceInventory[resource] += amount;
         }
-        public void ReduceResource(RESOURCE resource, int amount) {
-            _resourceInventory[resource] -= amount;
+        public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
+            AdjustResource(resource, -amount);
+            target.AdjustResource(resource, amount);
+        }
+        public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
+            AdjustResource(resource, -amount);
+            target.AdjustResource(resource, amount);
+        }
+        public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
+            AdjustResource(resource, -amount);
+            target.AdjustResource(resource, amount);
         }
         #endregion
+
     }
 }

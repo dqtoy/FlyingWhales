@@ -7,6 +7,7 @@ public class LandmarkObj : IObject {
     private OBJECT_TYPE _objectType;
     private bool _isInvisible;
     private List<ObjectState> _states;
+    private Dictionary<RESOURCE, int> _resourceInventory;
 
     [System.NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
@@ -29,6 +30,9 @@ public class LandmarkObj : IObject {
     }
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
+    }
+    public Dictionary<RESOURCE, int> resourceInventory {
+        get { return _resourceInventory; }
     }
     #endregion
 
@@ -90,6 +94,31 @@ public class LandmarkObj : IObject {
         }
         clone.SetStates(states);
         return clone;
+    }
+    #endregion
+
+    #region Resource Inventory
+    private void ConstructResourceInventory() {
+        _resourceInventory = new Dictionary<RESOURCE, int>();
+        RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
+        for (int i = 0; i < allResources.Length; i++) {
+            _resourceInventory.Add(allResources[i], 0);
+        }
+    }
+    public void AdjustResource(RESOURCE resource, int amount) {
+        _resourceInventory[resource] += amount;
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
     }
     #endregion
 }

@@ -49,13 +49,16 @@ public class CharacterAction {
         SetCommonData(clone);
         return clone;
     }
+    public virtual void EndAction() {
+
+    }
     #endregion
 
     #region Filters
     public void SetFilters(ActionFilter[] filters) {
         _filters = filters;
     }
-    public bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+    public virtual bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
         if (filters != null) {
             for (int i = 0; i < filters.Length; i++) {
                 ActionFilter currFilter = filters[i];

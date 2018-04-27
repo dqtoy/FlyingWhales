@@ -12,6 +12,7 @@ public class StructureObj : IObject {
     [SerializeField] private bool _isInvisible;
     [SerializeField] private int _maxHP;
     private List<ObjectState> _states;
+    private Dictionary<RESOURCE, int> _resourceInventory;
 
     private string _objectName;
     [NonSerialized] private ObjectState _currentState;
@@ -43,9 +44,13 @@ public class StructureObj : IObject {
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
     }
+    public Dictionary<RESOURCE, int> resourceInventory {
+        get { return _resourceInventory; }
+    }
     #endregion
 
     public StructureObj() {
+        ConstructResourceInventory();
     }
 
     #region Interface Requirements
@@ -66,7 +71,6 @@ public class StructureObj : IObject {
         _currentState = state;
         _currentState.OnStartState();
     }
-
     public ObjectState GetState(string name) {
         for (int i = 0; i < _states.Count; i++) {
             if (_states[i].stateName == name) {
@@ -105,6 +109,31 @@ public class StructureObj : IObject {
         }
         clone.SetStates(states);
         return clone;
+    }
+    #endregion
+
+    #region Resource Inventory
+    private void ConstructResourceInventory() {
+        _resourceInventory = new Dictionary<RESOURCE, int>();
+        RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
+        for (int i = 0; i < allResources.Length; i++) {
+            _resourceInventory.Add(allResources[i], 0);
+        }
+    }
+    public void AdjustResource(RESOURCE resource, int amount) {
+        _resourceInventory[resource] += amount;
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
     }
     #endregion
 }

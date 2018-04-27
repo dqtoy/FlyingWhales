@@ -63,7 +63,6 @@ public class ItemObj : IObject {
         }
         return null;
     }
-
     public IObject Clone() {
         ItemObj clone = new ItemObj();
         clone.SetObjectName(this._objectName);
