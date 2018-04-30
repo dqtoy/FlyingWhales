@@ -93,6 +93,7 @@ public class ObjectManager : MonoBehaviour {
         for (int i = 0; i < iobject.states.Count; i++) {
             ObjectState state = iobject.states[i];
             state.SetObject(iobject);
+            List<CharacterAction> newActions = new List<CharacterAction>();
             for (int j = 0; j < state.actions.Count; j++) {
                 CharacterAction originalAction = state.actions[j];
                 ConstructActionFilters(originalAction);
@@ -100,8 +101,10 @@ public class ObjectManager : MonoBehaviour {
                 CharacterAction action = CreateNewCharacterAction(originalAction.actionType, state);
                 originalAction.SetCommonData(action);
                 action.SetFilters(originalAction.filters);
-                originalAction = action;
+                newActions.Add(action);
+                //originalAction = action;
             }
+            state.SetActions(newActions);
         }
     }
 

@@ -84,6 +84,9 @@ public class ObjectState {
     public void RemoveAction(CharacterAction action) {
         _actions.Remove(action);
     }
+    public void SetActions(List<CharacterAction> actions) {
+        _actions = actions;
+    }
     public CharacterAction GetAction(ACTION_TYPE type) {
         for (int i = 0; i < _actions.Count; i++) {
             CharacterAction currAction = _actions[i];

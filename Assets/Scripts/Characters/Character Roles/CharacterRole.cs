@@ -138,7 +138,7 @@ public class CharacterRole {
 
     #region Needs
     public void DepleteFullness() {
-        AdjustFullness(-25);
+        AdjustFullness(-9);
     }
     public void SetFullness(int amount) {
         _fullness = amount;
@@ -176,7 +176,7 @@ public class CharacterRole {
     }
 
     public void DepleteEnergy() {
-        AdjustEnergy(-12);
+        AdjustEnergy(-5);
     }
     public void SetEnergy(int amount) {
         _energy = amount;
@@ -214,7 +214,7 @@ public class CharacterRole {
     }
 
     public void DepleteJoy() {
-        AdjustJoy(-7);
+        AdjustJoy(-3);
     }
     public void SetJoy(int amount) {
         _joy = amount;
@@ -251,7 +251,7 @@ public class CharacterRole {
     }
 
     public void DepletePrestige() {
-        AdjustPrestige(-4);
+        AdjustPrestige(-1);
     }
     public void SetPrestige(int amount) {
         _prestige = amount;

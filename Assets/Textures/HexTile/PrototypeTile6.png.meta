@@ -139,6 +139,12 @@ TextureImporter:
     21300264: PrototypeTile6_94
     21300266: PrototypeTile6_95
     21300268: PrototypeTile6_96
+    21300270: TopLeft_Outline
+    21300272: TopRight_Outline
+    21300274: BotLeft_Outline
+    21300276: BotRight_Outline
+    21300278: Left_Outline
+    21300280: Right_Outline
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -180,8 +186,9 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -2116,6 +2123,90 @@ TextureImporter:
         height: 113
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: TopLeft_Outline
+      rect:
+        serializedVersion: 2
+        x: 1501
+        y: 1683
+        width: 133
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: TopRight_Outline
+      rect:
+        serializedVersion: 2
+        x: 1647
+        y: 1683
+        width: 133
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: BotLeft_Outline
+      rect:
+        serializedVersion: 2
+        x: 1503
+        y: 1604
+        width: 131
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: BotRight_Outline
+      rect:
+        serializedVersion: 2
+        x: 1647
+        y: 1604
+        width: 132
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Left_Outline
+      rect:
+        serializedVersion: 2
+        x: 1797
+        y: 1611
+        width: 8
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Right_Outline
+      rect:
+        serializedVersion: 2
+        x: 1821
+        y: 1611
+        width: 9
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

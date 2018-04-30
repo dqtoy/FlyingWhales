@@ -204,7 +204,9 @@ public class LandmarkInfoUI : UIMenu {
         if (currentlyShowingLandmark.objects.Count > 0) {
             for (int i = 0; i < currentlyShowingLandmark.objects.Count; i++) {
                 IObject currObj = currentlyShowingLandmark.objects[i];
-                text += "\n" + currObj.objectName;
+                if (!currObj.isInvisible) {
+                    text += "\n" + currObj.objectName;
+                }
             }
         } else {
             text += "NONE";

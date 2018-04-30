@@ -83,6 +83,7 @@ public class LandmarkObj : IObject {
     }
     public IObject Clone() {
         LandmarkObj clone = new LandmarkObj(_objectLocation);
+        clone._isInvisible = true;
         clone._objectType = this._objectType;
         List<ObjectState> states = new List<ObjectState>();
         for (int i = 0; i < this.states.Count; i++) {
