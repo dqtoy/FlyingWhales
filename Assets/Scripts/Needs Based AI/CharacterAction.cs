@@ -120,10 +120,10 @@ public class CharacterAction {
     #endregion
 
     #region Advertisement
-    public int GetTotalAdvertisementValue(Character character) {
+    public float GetTotalAdvertisementValue(Character character) {
         return GetFoodAdvertisementValue(character) + GetEnergyAdvertisementValue(character) + GetJoyAdvertisementValue(character) + GetPrestigeAdvertisementValue(character);
     }
-    private int GetAdvertisementValue(int currentNeed, int advertisedNeed) {
+    private float GetAdvertisementValue(int currentNeed, int advertisedNeed) {
         if(advertisedNeed != 0) {
             float x = (float) currentNeed;
             float y = x + ((float) advertisedNeed * 80f);
@@ -133,25 +133,30 @@ public class CharacterAction {
             float result = (1000f / x) - (1000f / y);
 
             //Add quest modifier
-            return (int) result;
+            return result;
         }
-        return 0;
+        return 0f;
     }
-    private int GetFoodAdvertisementValue(Character character) {
+    private float GetFoodAdvertisementValue(Character character) {
         return GetAdvertisementValue(character.role.fullness, _actionData.advertisedFullness);
     }
-    private int GetEnergyAdvertisementValue(Character character) {
+    private float GetEnergyAdvertisementValue(Character character) {
         return GetAdvertisementValue(character.role.energy, _actionData.advertisedEnergy);
     }
-    private int GetJoyAdvertisementValue(Character character) {
+    private float GetJoyAdvertisementValue(Character character) {
         return GetAdvertisementValue(character.role.joy, _actionData.advertisedJoy);
     }
-    private int GetPrestigeAdvertisementValue(Character character) {
+    private float GetPrestigeAdvertisementValue(Character character) {
         return GetAdvertisementValue(character.role.prestige, _actionData.advertisedPrestige);
     }
     #endregion
 
-    #region Action Perform
-
+    #region Logs
+    public virtual string GetArriveActionString() {
+        return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", this.GetType().ToString(), "arrive_action");
+    }
+    public virtual string GetLeaveActionString() {
+        return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", this.GetType().ToString(), "leave_action");
+    }
     #endregion
 }

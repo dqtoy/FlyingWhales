@@ -89,7 +89,7 @@ public class ActionData {
                     for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                         CharacterAction action = iobject.currentState.actions[k];
                         if (action.MeetsRequirements(_character, landmark)) { //Filter
-                            int advertisement = action.GetTotalAdvertisementValue(_character);
+                            float advertisement = action.GetTotalAdvertisementValue(_character);
                             actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
                             PutToChoices(action, advertisement);
                         }
@@ -102,7 +102,7 @@ public class ActionData {
         }
         PickAction();
     }
-    private void PutToChoices(CharacterAction action, int advertisement) {
+    private void PutToChoices(CharacterAction action, float advertisement) {
         if(choices[0].action == null) {
             choices[0].Set(action, advertisement);
         } else if (choices[1].action == null) {

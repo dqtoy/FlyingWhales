@@ -4,14 +4,14 @@ using UnityEngine;
 
 public struct CharacterActionAdvertisement {
     public CharacterAction action;
-    public int advertisement;
+    public float advertisement;
 
     public void Reset() {
         this.action = null;
         this.advertisement = 0;
     }
 
-    public void Set(CharacterAction action, int advertisement) {
+    public void Set(CharacterAction action, float advertisement) {
         this.action = action;
         this.advertisement = advertisement;
     }
