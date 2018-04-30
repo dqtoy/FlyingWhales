@@ -133,27 +133,41 @@ public class FactionManager : MonoBehaviour {
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> elligibleRegions = new List<Region>(GridMap.Instance.allRegions);
 
-        InitialTribeSetting initialTribes = _initialTribes[Random.Range(0, _initialTribes.Count)]; //Choose a random tribe setup
-        Dictionary<FACTION_SIZE, int> tribeSetupDict = initialTribes.GetDictionary();
-        Utilities.LogDictionary(tribeSetupDict);
-
         RACE[] races = new RACE[] { RACE.HUMANS, RACE.ELVES };
 
-        //loop through the initial tribe setup
-        foreach (KeyValuePair<FACTION_SIZE, int> kvp in tribeSetupDict) {
-            FACTION_SIZE currSize = kvp.Key;
-            int numOfTribes = kvp.Value;
-            for (int i = 0; i < numOfTribes; i++) {
-                RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
-                if(!CreateInitialFaction(currSize, elligibleRegions, chosenRace)) {
-                    return false;
-                }
+        //For now just generate 2-5 tribes with 1 region each
+        int numOfTribes = Random.Range(2, 6);
+        for (int i = 0; i < numOfTribes; i++) {
+            RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
+            if (!CreateInitialFaction(FACTION_SIZE.SMALL, elligibleRegions, chosenRace, 1)) {
+                return false;
             }
         }
         return true;
+
+        //InitialTribeSetting initialTribes = _initialTribes[Random.Range(0, _initialTribes.Count)]; //Choose a random tribe setup
+        //Dictionary<FACTION_SIZE, int> tribeSetupDict = initialTribes.GetDictionary();
+        //Utilities.LogDictionary(tribeSetupDict);
+
+
+        ////loop through the initial tribe setup
+        //foreach (KeyValuePair<FACTION_SIZE, int> kvp in tribeSetupDict) {
+        //    FACTION_SIZE currSize = kvp.Key;
+        //    int numOfTribes = kvp.Value;
+        //    for (int i = 0; i < numOfTribes; i++) {
+        //        RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
+        //        if(!CreateInitialFaction(currSize, elligibleRegions, chosenRace)) {
+        //            return false;
+        //        }
+        //    }
+        //}
+        //return true;
     }
-    private bool CreateInitialFaction(FACTION_SIZE size, List<Region> elligibleRegions, RACE chosenRace) {
-        int numOfRegionsForCurrentFaction = GetInitialVillageCount(size);
+    private bool CreateInitialFaction(FACTION_SIZE size, List<Region> elligibleRegions, RACE chosenRace, int numOfRegions = 0) {
+        int numOfRegionsForCurrentFaction = numOfRegions;
+        if (numOfRegions == 0) {
+            numOfRegionsForCurrentFaction = GetInitialVillageCount(size);
+        }
         Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
         newFaction.GenerateBonusTech(size);
         Region initialRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
@@ -188,25 +202,6 @@ public class FactionManager : MonoBehaviour {
             currRegion.ReColorBorderTiles(newFaction.factionColor);
             currRegion.HighlightRegionTiles(newFaction.factionColor, 69f / 255f);
         }
-        //for (int j = 0; j < numOfRegionsForCurrentFaction; j++) {
-            //Region chosenRegion = null;
-            //if (j == 0) {
-            //    chosenRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
-            //} else {
-            //    List<Region> elligibleRegionsForFaction = GetElligibleRegionsForFaction(newFaction);
-            //    if (elligibleRegionsForFaction.Count <= 0) {
-            //        //throw new System.Exception("There are no more elligible regions for this faction!");
-            //        return false;
-            //    }
-            //    //Order elligible regions by the number of adjacent regions they have that are not yet owned (least first)
-            //    elligibleRegions.OrderBy(x => x.adjacentRegions.Where(y => y.owner == null).Count());
-            //    chosenRegion = elligibleRegionsForFaction[0];
-            //}
-            //chosenRegion.mainLandmark.AdjustCivilians(chosenRace, Random.Range(15, 51)); //Randomize number of civilians per Village between 15 to 50.
-            //LandmarkManager.Instance.OccupyLandmark(chosenRegion, newFaction);
-            //CreateInitialResourceStructuresForFaction(newFaction, chosenRegion.mainLandmark as Settlement, chosenRegion);
-            //elligibleRegions.Remove(chosenRegion);
-        //}
         return true;
     }
     public void GenerateFactionCharacters() {
@@ -218,7 +213,7 @@ public class FactionManager : MonoBehaviour {
                     CreateInititalFactionCharacters(currTribe, currSettlement);
                 }
             }
-            CreateChieftainForFaction(currTribe);
+            //CreateChieftainForFaction(currTribe);
         }
     }
     private List<Region> GetElligibleRegionsForFaction(Faction faction) {

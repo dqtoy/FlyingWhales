@@ -82,6 +82,11 @@ public class LandmarkManager : MonoBehaviour {
         List<BaseLandmark> createdLandmarks = new List<BaseLandmark>();
         List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles);
 
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            Utilities.ListRemoveRange(elligibleTiles, currRegion.outerTiles);
+        }
+
         //create landmarks on all regions' center of mass first
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];

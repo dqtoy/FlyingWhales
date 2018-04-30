@@ -48,7 +48,6 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
-        //StartCoroutine(RoadManager.Instance.GenerateRoads());
         if (!RoadManager.Instance.GenerateRoads()) {
             //reset
             Debug.LogWarning("Road generation ran into a problem, reloading scene...");
@@ -59,16 +58,7 @@ public class MapGenerator : MonoBehaviour {
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
         ObjectManager.Instance.Initialize();
         LandmarkManager.Instance.ConstructAllLandmarkObjects();
-        //CameraMove.Instance.UpdateMinimapTexture();
-        //return;
-        //if (!RoadManager.Instance.GenerateRegionRoads()) {
-        //    //reset
-        //    Debug.LogWarning("Road generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //}
-        //LandmarkManager.Instance.GenerateOtherLandmarks();
+
         LandmarkManager.Instance.GenerateMaterials();
 
         RoadManager.Instance.FlattenRoads();
@@ -76,15 +66,14 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();
-        //Biomes.Instance.GenerateTileEdges();
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
         FactionManager.Instance.GenerateFactionCharacters();
-        FactionManager.Instance.GenerateMonsters();
-        StorylineManager.Instance.GenerateStoryLines();
-		CharacterManager.Instance.SchedulePrisonerConversion ();
-		CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
+        //FactionManager.Instance.GenerateMonsters();
+        //StorylineManager.Instance.GenerateStoryLines();
+        CharacterManager.Instance.SchedulePrisonerConversion();
+        CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
     }
 
