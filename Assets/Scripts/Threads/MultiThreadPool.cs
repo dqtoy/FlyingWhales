@@ -28,6 +28,11 @@ public class MultiThreadPool : MonoBehaviour {
     }
 
     void LateUpdate() {
+        StartCoroutine(DoUpdate());
+    }
+
+    IEnumerator DoUpdate() {
+        yield return new WaitForSeconds(1f);
         if (this.functionsToBeResolved.Count > 0) {
             Multithread action = this.functionsToBeResolved.Dequeue();
             action.FinishMultithread();

@@ -290,6 +290,8 @@ public class CharacterActionDrawer : PropertyDrawer {
                 return true;
             case ACTION_TYPE.REPAIR:
                 return true;
+            case ACTION_TYPE.IDLE:
+                return true;
             default:
                 return false;
         }
