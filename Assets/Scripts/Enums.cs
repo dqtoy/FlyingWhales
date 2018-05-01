@@ -1284,6 +1284,7 @@ public enum ACTION_TYPE {
     IDLE,
     POPULATE,
     TORTURE,
+    PATROL,
 }
 
 public enum OBJECT_TYPE {

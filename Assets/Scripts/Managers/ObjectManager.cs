@@ -201,6 +201,8 @@ public class ObjectManager : MonoBehaviour {
             return new HarvestAction(state);
             case ACTION_TYPE.TORTURE:
             return new TortureAction(state);
+            case ACTION_TYPE.PATROL:
+            return new PatrolAction(state);
         }
         return null;
     }
