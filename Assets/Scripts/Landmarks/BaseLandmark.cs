@@ -817,7 +817,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         Debug.Log("Starting combat between " + combatant1Name + " and  " + combatant2Name);
 
         //this.specificLocation.SetCurrentCombat(combat);
-        CombatThreadPool.Instance.AddToThreadPool(combat);
+        MultiThreadPool.Instance.AddToThreadPool(combat);
     }
     public void ContinueDailyActions() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {

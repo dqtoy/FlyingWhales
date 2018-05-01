@@ -9,24 +9,33 @@ public class ActionData {
     public object specificTarget;
     public int currentDay;
     public bool isDone;
-
+    public bool isWaiting; //is still waiting from other thread?
     private CharacterActionAdvertisement[] choices;
+    private ActionThread actionThread;
 
     public ActionData(Character character) {
         Reset();
         _character = character;
         choices = new CharacterActionAdvertisement[3];
+        actionThread = new ActionThread(_character);
         Messenger.AddListener(Signals.DAY_END, PerformCurrentAction);
+
     }
 
     public void Reset() {
         this.currentAction = null;
         this.currentDay = 0;
         this.isDone = false;
+        this.isWaiting = false;
     }
 
     public void SetSpecificTarget(object target) {
         specificTarget = target;
+    }
+
+    public void ReturnActionFromThread(CharacterAction characterAction) {
+        AssignAction(characterAction);
+        _character.GoToLocation(characterAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
     }
 
     public void AssignAction(CharacterAction action) {
@@ -60,86 +69,92 @@ public class ActionData {
     }
 
     private void PerformCurrentAction() {
-        if(!isDone && currentAction != null) {
-            if(_character.specificLocation != null && _character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _character.specificLocation == currentAction.state.obj.objectLocation) {
-                currentAction.PerformAction(_character);
-                if (currentAction.actionData.duration > 0) {
-                    AdjustCurrentDay(1);
+        if (!isWaiting) {
+            if (!isDone && currentAction != null) {
+                if (_character.specificLocation != null && _character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _character.specificLocation == currentAction.state.obj.objectLocation) {
+                    currentAction.PerformAction(_character);
+                    if (currentAction.actionData.duration > 0) {
+                        AdjustCurrentDay(1);
+                    }
                 }
+                //else {
+                //    Debug.Log(_character.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
+                //}
+            } else {
+                LookForAction();
             }
-            //else {
-            //    Debug.Log(_character.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
-            //}
-        } else {
-            LookForAction();
         }
     }
 
     private void LookForAction() {
-        choices[0].Reset();
-        choices[1].Reset();
-        choices[2].Reset();
+        isWaiting = true;
+        MultiThreadPool.Instance.AddToThreadPool(actionThread);
+    }
 
-        string actionLog = _character.name + "'s Action Advertisements: ";
-        for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
-            BaseLandmark landmark = _character.currentRegion.landmarks[i];
-            for (int j = 0; j < landmark.objects.Count; j++) {
-                IObject iobject = landmark.objects[j];
-                if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-                    for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-                        CharacterAction action = iobject.currentState.actions[k];
-                        if (action.MeetsRequirements(_character, landmark)) { //Filter
-                            float advertisement = action.GetTotalAdvertisementValue(_character);
-                            actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
-                            PutToChoices(action, advertisement);
-                        }
-                    }
-                }
-            }
-        }
-        Debug.Log(actionLog);
-        //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
-        //    Debug.Log(actionLog);
-        //}
-        PickAction();
-    }
-    private void PutToChoices(CharacterAction action, float advertisement) {
-        if(choices[0].action == null) {
-            choices[0].Set(action, advertisement);
-        } else if (choices[1].action == null) {
-            choices[1].Set(action, advertisement);
-        } else if (choices[2].action == null) {
-            choices[2].Set(action, advertisement);
-        } else {
-            if(choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
-                if(advertisement > choices[0].advertisement) {
-                    choices[0].Set(action, advertisement);
-                }
-            }else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
-                if (advertisement > choices[1].advertisement) {
-                    choices[1].Set(action, advertisement);
-                }
-            } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
-                if (advertisement > choices[2].advertisement) {
-                    choices[2].Set(action, advertisement);
-                }
-            }
-        }
-    }
-    private void PickAction() {
-        int maxChoice = 3;
-        if(choices[1].action == null) {
-            maxChoice = 1;
-        } else if (choices[2].action == null) {
-            maxChoice = 2;
-        }
-        int chosenIndex = UnityEngine.Random.Range(0, maxChoice);
-        CharacterAction chosenAction = choices[chosenIndex].action;
-        AssignAction(chosenAction);
-        _character.GoToLocation(chosenAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
-        Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
-        //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
-        //    Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
-        //}
-    }
+    //public void LookForAction() {
+    //    string actionLog = _character.name + "'s Action Advertisements: ";
+    //    for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
+    //        BaseLandmark landmark = _character.currentRegion.landmarks[i];
+    //        for (int j = 0; j < landmark.objects.Count; j++) {
+    //            IObject iobject = landmark.objects[j];
+    //            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+    //                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+    //                    CharacterAction action = iobject.currentState.actions[k];
+    //                    if (action.MeetsRequirements(_character, landmark)) { //Filter
+    //                        float advertisement = action.GetTotalAdvertisementValue(_character);
+    //                        actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
+    //                        PutToChoices(action, advertisement);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //    //Debug.Log(actionLog);
+    //    if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
+    //        Debug.Log(actionLog);
+    //    }
+    //    PickAction();
+    //}
+    //private void PutToChoices(CharacterAction action, float advertisement) {
+    //    if (choices[0].action == null) {
+    //        choices[0].Set(action, advertisement);
+    //    } else if (choices[1].action == null) {
+    //        choices[1].Set(action, advertisement);
+    //    } else if (choices[2].action == null) {
+    //        choices[2].Set(action, advertisement);
+    //    } else {
+    //        if (choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
+    //            if (advertisement > choices[0].advertisement) {
+    //                choices[0].Set(action, advertisement);
+    //            }
+    //        } else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
+    //            if (advertisement > choices[1].advertisement) {
+    //                choices[1].Set(action, advertisement);
+    //            }
+    //        } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
+    //            if (advertisement > choices[2].advertisement) {
+    //                choices[2].Set(action, advertisement);
+    //            }
+    //        }
+    //    }
+    //}
+    //private CharacterAction PickAction() {
+    //    int maxChoice = 3;
+    //    if (choices[1].action == null) {
+    //        maxChoice = 1;
+    //    } else if (choices[2].action == null) {
+    //        maxChoice = 2;
+    //    }
+    //    int chosenIndex = Utilities.rng.Next(0, maxChoice);
+    //    CharacterAction chosenAction = choices[chosenIndex].action;
+    //    AssignAction(chosenAction);
+    //    _character.GoToLocation(chosenAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
+    //    if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
+    //        Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
+    //    }
+    //    //Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
+    //    return chosenAction;
+
+    //}
+
 }

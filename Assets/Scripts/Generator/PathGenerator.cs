@@ -147,7 +147,7 @@ public class PathGenerator : MonoBehaviour {
             return null;
         }
         PathFindingThread newThread = new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, data);
-        PathfindingThreadPool.Instance.AddToThreadPool(newThread);
+        MultiThreadPool.Instance.AddToThreadPool(newThread);
         return newThread;
     }
 

@@ -191,7 +191,7 @@ public class CombatRoom {
         Debug.Log("Starting combat between " + combatant1Name + " and  " + combatant2Name);
 
         //this.specificLocation.SetCurrentCombat(combat);
-        CombatThreadPool.Instance.AddToThreadPool(combat);
+        MultiThreadPool.Instance.AddToThreadPool(combat);
     }
     private void ContinueMovement() {
         List<ICombatInitializer> nonCombating = _combatants.Where(x => !x.isInCombat).ToList();

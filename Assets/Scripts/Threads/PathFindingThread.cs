@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class PathFindingThread {
+public class PathFindingThread : Multithread {
 	public enum TODO{
 		FIND_PATH,
 	}
@@ -37,6 +37,16 @@ public class PathFindingThread {
         this._data = data;
     }
 
+    #region Overrides
+    public override void DoMultithread() {
+        base.DoMultithread();
+        FindPath();
+    }
+    public override void FinishMultithread() {
+        base.FinishMultithread();
+        ReturnPath();
+    }
+    #endregion
     public void FindPath(){
 //		bool isStartingTileRoad = _startingTile.isRoad;
 //		bool isDestinationTileRoad = _destinationTile.isRoad;

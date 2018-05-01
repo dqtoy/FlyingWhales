@@ -2015,7 +2015,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             combat.AddCharacter(SIDES.B, combatant2 as Character);
         }
         //this.specificLocation.SetCurrentCombat(combat);
-        CombatThreadPool.Instance.AddToThreadPool(combat);
+        MultiThreadPool.Instance.AddToThreadPool(combat);
     }
     public void ContinueDailyActions() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {

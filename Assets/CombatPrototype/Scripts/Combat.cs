@@ -9,7 +9,7 @@ namespace ECS{
 		B,
 	}
 
-	public class Combat {
+	public class Combat : Multithread {
 
         public float updateIntervals = 0f;
 
@@ -185,7 +185,17 @@ namespace ECS{
         }
         #endregion
 
-		public void ReturnCombatResults(){
+        #region Overrides
+        public override void DoMultithread() {
+            base.DoMultithread();
+            CombatSimulation();
+        }
+        public override void FinishMultithread() {
+            base.FinishMultithread();
+            ReturnCombatResults();
+        }
+        #endregion
+        public void ReturnCombatResults(){
 			CombatManager.Instance.CombatResults(this);
             if (attacker != null) {
                 attacker.ReturnCombatResults(this);
