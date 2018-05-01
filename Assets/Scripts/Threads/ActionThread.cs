@@ -24,6 +24,10 @@ public class ActionThread : Multithread {
     }
     #endregion
     private void LookForAction() {
+        choices[0].Reset();
+        choices[1].Reset();
+        choices[2].Reset();
+
         string actionLog = _character.name + "'s Action Advertisements: ";
         for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
             BaseLandmark landmark = _character.currentRegion.landmarks[i];

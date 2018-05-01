@@ -27,7 +27,7 @@ public class MultiThreadPool : MonoBehaviour {
         newThread.Start();
     }
 
-    void Update() {
+    void LateUpdate() {
         if (this.functionsToBeResolved.Count > 0) {
             Multithread action = this.functionsToBeResolved.Dequeue();
             action.FinishMultithread();
@@ -43,7 +43,7 @@ public class MultiThreadPool : MonoBehaviour {
     private void RunThread() {
         while (isRunning) {
             if (this.functionsToBeRunInThread.Count > 0) {
-                Thread.Sleep(2);
+                Thread.Sleep(5);
                 Multithread newFunction = null;
                 lock (THREAD_LOCKER) {
                     newFunction = this.functionsToBeRunInThread.Dequeue();
