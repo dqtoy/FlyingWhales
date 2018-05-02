@@ -58,10 +58,17 @@ public class LandmarkManager : MonoBehaviour {
         }
         ObjectManager.Instance.CreateNewObject("Landmark Object", landmark);
         for (int i = 0; i < data.initialObjects.Count; i++) {
-            string objName = data.initialObjects[i].name;
-            IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);
-            if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
-                createdObject.ChangeState(createdObject.GetState("Default"));
+            int chance = UnityEngine.Random.Range(0, 100);
+            if(chance < data.initialObjects[i].spawnChance) {
+                string objName = data.initialObjects[i].obj.name;
+                IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);
+                if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
+                    ObjectState defaultOrEmptyState = createdObject.GetState("Default");
+                    if (defaultOrEmptyState == null) {
+                        defaultOrEmptyState = createdObject.GetState("Empty");
+                    }
+                    createdObject.ChangeState(defaultOrEmptyState);
+                }
             }
         }
     }

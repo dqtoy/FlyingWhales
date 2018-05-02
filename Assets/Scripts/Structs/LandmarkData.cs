@@ -15,7 +15,7 @@ public class LandmarkData {
     public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
-    public List<ObjectComponent> initialObjects;
+    public List<ObjectSpawnLandmark> initialObjects;
 
     private WeightedDictionary<string> _itemWeights;
 
