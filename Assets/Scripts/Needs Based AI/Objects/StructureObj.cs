@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using System;
 
 [Serializable]
 public class StructureObj : IObject {
-    public Action onHPReachedZero;
-    public Action onHPReachedFull;
-
     [SerializeField] private OBJECT_TYPE _objectType;
     [SerializeField] private bool _isInvisible;
     [SerializeField] private int _maxHP;
+    [SerializeField] private ActionEvent _onHPReachedZero;
+    [SerializeField] private ActionEvent _onHPReachedFull;
+
     private List<ObjectState> _states;
     private Dictionary<RESOURCE, int> _resourceInventory;
 
@@ -46,6 +47,12 @@ public class StructureObj : IObject {
     }
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
+    }
+    public bool isHPFull {
+        get { return _currentHP >= _maxHP; }
+    }
+    public bool isHPZero {
+        get { return _currentHP == 0; }
     }
     #endregion
 
@@ -85,10 +92,10 @@ public class StructureObj : IObject {
         _currentHP += amount;
         _currentHP = Mathf.Clamp(_currentHP, 0, 100);
         if (previousHP != _currentHP) {
-            if (_currentHP == 0 && onHPReachedZero != null) {
-                onHPReachedZero();
-            } else if (_currentHP == 100 && onHPReachedFull != null) {
-                onHPReachedFull();
+            if (_currentHP == 0 && _onHPReachedZero != null) {
+                _onHPReachedZero.Invoke(this);
+            } else if (_currentHP == 100 && _onHPReachedFull != null) {
+                _onHPReachedFull.Invoke(this);
             }
         }
     }
@@ -98,6 +105,8 @@ public class StructureObj : IObject {
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
         clone._maxHP = this.maxHP;
+        clone._onHPReachedZero = this._onHPReachedZero;
+        clone._onHPReachedFull = this._onHPReachedFull;
         List<ObjectState> states = new List<ObjectState>();
         for (int i = 0; i < this.states.Count; i++) {
             ObjectState currState = this.states[i];
@@ -122,6 +131,18 @@ public class StructureObj : IObject {
     }
     public void AdjustResource(RESOURCE resource, int amount) {
         _resourceInventory[resource] += amount;
+        if(_resourceInventory[resource] < 0) {
+            _resourceInventory[resource] = 0;
+        }
+        if(objectName == "Torture Chamber") {
+            if(_resourceInventory[resource] == 0 && _currentState.stateName == "Occupied") {
+                ObjectState emptyState = GetState("Empty");
+                ChangeState(emptyState);
+            }else if (_resourceInventory[resource] > 0 && _currentState.stateName == "Empty") {
+                ObjectState occupiedState = GetState("Occupied");
+                ChangeState(occupiedState);
+            }
+        }
     }
     public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
         AdjustResource(resource, -amount);

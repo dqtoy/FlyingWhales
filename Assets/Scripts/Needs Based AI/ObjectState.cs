@@ -63,17 +63,14 @@ public class ObjectState {
     public void SetObject(IObject iobject) {
         _object = iobject;
     }
-    public bool HasActionInState(CharacterAction action, bool changeActionIfTrue = false) {
+    public CharacterAction GetActionInState(CharacterAction action) {
         for (int i = 0; i < _actions.Count; i++) {
             CharacterAction currentAction = _actions[i];
             if (currentAction.actionType == action.actionType && currentAction.state.obj == action.state.obj) {
-                if (changeActionIfTrue) {
-                    //TODO: Change action of character to currentAction if it matches
-                }
-                return true;
+                return currentAction;
             }
         }
-        return false;
+        return null;
     }
     #endregion
 

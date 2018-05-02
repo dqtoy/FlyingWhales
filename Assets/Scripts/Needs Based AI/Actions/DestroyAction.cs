@@ -16,7 +16,7 @@ public class DestroyAction : CharacterAction {
     public override void OnChooseAction() {
         base.OnChooseAction();
         if (_amountToReduce == 0) {
-            _amountToReduce = 100 / actionData.duration;
+            _amountToReduce = Mathf.RoundToInt(100f / (float) _actionData.duration);
         }
     }
     public override void PerformAction(Character character) {
@@ -28,8 +28,10 @@ public class DestroyAction : CharacterAction {
             GiveReward(NEEDS.ENERGY, character);
             GiveReward(NEEDS.JOY, character);
 
-            _structure.onHPReachedZero = () => EndAction(character);
             _structure.AdjustHP(-_amountToReduce);
+            if (_structure.isHPZero) {
+                EndAction(character);
+            }
         } else {
             ActionFail();
             GiveReward(NEEDS.ENERGY, character);

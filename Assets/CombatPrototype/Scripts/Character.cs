@@ -14,6 +14,9 @@ namespace ECS {
 		public delegate void OnImprisonCharacter();
 		public OnImprisonCharacter onImprisonCharacter;
 
+        public delegate void DailyAction();
+        public DailyAction onDailyAction;
+
         //public delegate void OnTaskChanged();
         //private OnTaskChanged onTaskChanged; //What should happen if a character chooses to change it's task
 
@@ -436,11 +439,13 @@ namespace ECS {
 			combatHistory = new Dictionary<int, Combat> ();
 			_combatHistoryID = 0;
 
-			Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
-			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
-
-            //ConstructMaterialInventory();
             ConstructResourceInventory();
+
+            Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
+			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
+            Messenger.AddListener(Signals.DAY_END, EverydayAction);
+            //ConstructMaterialInventory();
+           
         }
 
 		private void AllocateStatPoints(int statAllocationBonus){
@@ -1341,10 +1346,22 @@ namespace ECS {
 			}
 			return null;
 		}
+        private void AddItemBonuses(Item item) {
+            AdjustMaxHP(item.bonusMaxHP);
+            this._strength += item.bonusStrength;
+            this._intelligence += item.bonusIntelligence;
+            this._agility += item.bonusAgility;
+        }
+        private void RemoveItemBonuses(Item item) {
+            AdjustMaxHP(-item.bonusMaxHP);
+            this._strength -= item.bonusStrength;
+            this._intelligence -= item.bonusIntelligence;
+            this._agility -= item.bonusAgility;
+        }
         #endregion
 
-		#region Status Effects
-		internal void AddStatusEffect(STATUS_EFFECT statusEffect){
+        #region Status Effects
+        internal void AddStatusEffect(STATUS_EFFECT statusEffect){
 			this.statusEffects.Add (statusEffect);
 		}
 		internal void RemoveStatusEffect(STATUS_EFFECT statusEffect){
@@ -1421,42 +1438,8 @@ namespace ECS {
 		}
 		internal void AdjustAgility (int amount){
 			this._agility += amount;
-		}
-		#endregion
-
-		private void AddItemBonuses(Item item){
-			AdjustMaxHP (item.bonusMaxHP);
-			this._strength += item.bonusStrength;
-			this._intelligence += item.bonusIntelligence;
-			this._agility += item.bonusAgility;
-		}
-		private void RemoveItemBonuses(Item item){
-			AdjustMaxHP (-item.bonusMaxHP);
-			this._strength -= item.bonusStrength;
-			this._intelligence -= item.bonusIntelligence;
-			this._agility -= item.bonusAgility;
-		}
-		internal void AdjustMaxHP(int amount){
-			this._fixedMaxHP += amount;
-//			this._maxHP = this._maxHP + (int)((float)this._maxHP * _statsModifierPercentage.hpPercentage);
-			RecomputeMaxHP();
-		}
-		private void RecomputeMaxHP(){
-			int previousMaxHP = this._maxHP;
-			this._maxHP = this._fixedMaxHP + (int)((float)this._fixedMaxHP * _statsModifierPercentage.hpPercentage);
-			if(this._currentHP > this._maxHP || this._currentHP == previousMaxHP){
-				this._currentHP = this._maxHP;
-			}
-		}
-
-		private void GetRandomCharacterColor(){
-			_characterColor = CombatManager.Instance.UseRandomCharacterColor ();
-			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
-		}
-		public void SetCharacterColor(Color color){
-			_characterColor = color;
-			_characterColorCode = ColorUtility.ToHtmlStringRGBA (_characterColor).Substring (0, 6);
-		}
+		}        
+        #endregion
 
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
@@ -2160,10 +2143,22 @@ namespace ECS {
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-		#endregion
+        internal void AdjustMaxHP(int amount) {
+            this._fixedMaxHP += amount;
+            //			this._maxHP = this._maxHP + (int)((float)this._maxHP * _statsModifierPercentage.hpPercentage);
+            RecomputeMaxHP();
+        }
+        private void RecomputeMaxHP() {
+            int previousMaxHP = this._maxHP;
+            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * _statsModifierPercentage.hpPercentage);
+            if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
+                this._currentHP = this._maxHP;
+            }
+        }
+        #endregion
 
-		#region Avatar
-		public void CreateNewAvatar() {
+        #region Avatar
+        public void CreateNewAvatar() {
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
 			GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
 			CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
@@ -2429,6 +2424,19 @@ namespace ECS {
 				Death ();
 			}
 		}
+        private void GetRandomCharacterColor() {
+            _characterColor = CombatManager.Instance.UseRandomCharacterColor();
+            _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
+        }
+        public void SetCharacterColor(Color color) {
+            _characterColor = color;
+            _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
+        }
+        private void EverydayAction() {
+            if(onDailyAction != null) {
+                onDailyAction();
+            }
+        }
         #endregion
 
         #region Relationships

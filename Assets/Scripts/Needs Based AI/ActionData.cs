@@ -18,7 +18,8 @@ public class ActionData {
         _character = character;
         choices = new CharacterActionAdvertisement[3];
         actionThread = new ActionThread(_character);
-        Messenger.AddListener(Signals.DAY_END, PerformCurrentAction);
+        _character.onDailyAction += PerformCurrentAction;
+        //Messenger.AddListener(Signals.DAY_END, PerformCurrentAction);
 
     }
 
@@ -41,11 +42,13 @@ public class ActionData {
     public void AssignAction(CharacterAction action) {
         Reset();
         SetCurrentAction(action);
+        action.OnChooseAction();
     }
     public void DetachActionData() {
         Reset();
         _character = null;
-        Messenger.RemoveListener(Signals.DAY_END, PerformCurrentAction);
+        _character.onDailyAction -= PerformCurrentAction;
+        //Messenger.RemoveListener(Signals.DAY_END, PerformCurrentAction);
     }
 
     public void EndAction() {
@@ -53,7 +56,6 @@ public class ActionData {
     }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
-        action.OnChooseAction();
     }
     public void SetCurrentDay(int day) {
         this.currentDay = day;
@@ -72,6 +74,16 @@ public class ActionData {
         if (!isWaiting) {
             if (!isDone && currentAction != null) {
                 if (_character.specificLocation != null && _character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _character.specificLocation == currentAction.state.obj.objectLocation) {
+                    //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
+                    if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
+                        CharacterAction newAction = currentAction.state.obj.currentState.GetActionInState(currentAction);
+                        if(newAction != null) {
+                            AssignAction(newAction);
+                        } else {
+                            EndAction();
+                            return;
+                        }
+                    }
                     currentAction.PerformAction(_character);
                     if (currentAction.actionData.duration > 0) {
                         AdjustCurrentDay(1);

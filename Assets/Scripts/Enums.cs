@@ -113,6 +113,7 @@ public enum RESOURCE {
     NONE,
     OAK,
     ELF_CIVILIAN,
+    CIVILIAN,
 }
 //public enum RESOURCE_TYPE{
 //	NONE,

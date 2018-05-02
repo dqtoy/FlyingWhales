@@ -49,7 +49,11 @@ public class LandmarkManager : MonoBehaviour {
             string objName = baseData.initialObjects[i].name;
             IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);
             if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
-                createdObject.ChangeState(createdObject.GetState("Default"));
+                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
+                if(defaultOrEmptyState == null) {
+                    defaultOrEmptyState = createdObject.GetState("Empty");
+                }
+                createdObject.ChangeState(defaultOrEmptyState);
             }
         }
         ObjectManager.Instance.CreateNewObject("Landmark Object", landmark);

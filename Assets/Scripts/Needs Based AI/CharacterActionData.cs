@@ -292,6 +292,8 @@ public class CharacterActionDrawer : PropertyDrawer {
                 return true;
             case ACTION_TYPE.IDLE:
                 return true;
+            case ACTION_TYPE.TORTURE:
+                return true;
             default:
                 return false;
         }
