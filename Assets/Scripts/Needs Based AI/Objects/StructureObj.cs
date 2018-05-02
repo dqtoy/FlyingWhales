@@ -135,12 +135,16 @@ public class StructureObj : IObject {
             _resourceInventory[resource] = 0;
         }
         if(objectName == "Torture Chamber") {
-            if(_resourceInventory[resource] == 0 && _currentState.stateName == "Occupied") {
-                ObjectState emptyState = GetState("Empty");
-                ChangeState(emptyState);
-            }else if (_resourceInventory[resource] > 0 && _currentState.stateName == "Empty") {
-                ObjectState occupiedState = GetState("Occupied");
-                ChangeState(occupiedState);
+            if(GetTotalCivilians() == 0) {
+                if(_currentState.stateName == "Occupied") {
+                    ObjectState emptyState = GetState("Empty");
+                    ChangeState(emptyState);
+                }
+            } else {
+                if (_currentState.stateName == "Empty") {
+                    ObjectState occupiedState = GetState("Occupied");
+                    ChangeState(occupiedState);
+                }
             }
         }
     }
@@ -158,11 +162,16 @@ public class StructureObj : IObject {
     }
     public int GetTotalCivilians() {
         int total = 0;
-        foreach (KeyValuePair<RESOURCE, int> kvp in _resourceInventory) {
-            if (kvp.Key.ToString().Contains("CIVILIAN")) {
-                total += kvp.Value;
+        foreach(RESOURCE resource in _resourceInventory.Keys) {
+            if (resource.ToString().Contains("CIVILIAN")) {
+                total += _resourceInventory[resource];
             }
         }
+        //foreach (KeyValuePair<RESOURCE, int> kvp in _resourceInventory) {
+        //    if (kvp.Key.ToString().Contains("CIVILIAN")) {
+        //        total += kvp.Value;
+        //    }
+        //}
         return total;
     }
     #endregion

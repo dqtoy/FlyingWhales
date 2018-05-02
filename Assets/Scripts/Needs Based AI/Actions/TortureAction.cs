@@ -18,7 +18,7 @@ public class TortureAction : CharacterAction {
         //    //if yes, 
         //}
 
-        if(_structure.resourceInventory[RESOURCE.CIVILIAN] > 0) {
+        if(_structure.GetTotalCivilians() > 0) {
             GiveReward(NEEDS.FULLNESS, character);
             GiveReward(NEEDS.PRESTIGE, character);
             GiveReward(NEEDS.ENERGY, character);

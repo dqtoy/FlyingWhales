@@ -43,7 +43,7 @@ public class StructureObjectComponent : ObjectComponent {
         if (iobject is StructureObj) {
             StructureObj structure = iobject as StructureObj;
             string occupiedOrEmpty = "Empty";
-            if (structure.resourceInventory[RESOURCE.CIVILIAN] > 0) {
+            if (structure.GetTotalCivilians() > 0) {
                 occupiedOrEmpty = "Occupied";
             }
             ObjectState defaultState = iobject.GetState(occupiedOrEmpty);
@@ -55,7 +55,19 @@ public class StructureObjectComponent : ObjectComponent {
         if(chance == 0) {
             if (iobject is StructureObj) {
                 StructureObj structure = iobject as StructureObj;
-                structure.AdjustResource(RESOURCE.CIVILIAN, -1);
+                //TODO: Make this flexible
+                RESOURCE chosenResource = RESOURCE.HUMAN_CIVILIAN;
+                if(structure.resourceInventory[RESOURCE.ELF_CIVILIAN] > 0 && structure.resourceInventory[RESOURCE.HUMAN_CIVILIAN] > 0) {
+                    int raceChance = UnityEngine.Random.Range(0, 2);
+                    if(raceChance == 0) {
+                        chosenResource = RESOURCE.ELF_CIVILIAN;
+                    }
+                } else {
+                    if(structure.resourceInventory[RESOURCE.ELF_CIVILIAN] > 0) {
+                        chosenResource = RESOURCE.ELF_CIVILIAN;
+                    }
+                }
+                structure.AdjustResource(chosenResource, -1);
             }
         }
     }

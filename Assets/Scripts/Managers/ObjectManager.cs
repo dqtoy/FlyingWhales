@@ -203,6 +203,8 @@ public class ObjectManager : MonoBehaviour {
             return new TortureAction(state);
             case ACTION_TYPE.PATROL:
             return new PatrolAction(state);
+            case ACTION_TYPE.REPAIR:
+            return new RepairAction(state);
         }
         return null;
     }
