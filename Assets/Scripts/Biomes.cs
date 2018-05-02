@@ -364,8 +364,8 @@ public class Biomes : MonoBehaviour {
         }
     }
 	private void CalculateElevationAndMoisture(){
-        float elevationFrequency = 10f; //14.93f;//2.66f;
-        float moistureFrequency = 3.34f; //3.34f;//2.94f;
+        float elevationFrequency = 13.1f; //14.93f;//2.66f;
+        float moistureFrequency = 12.34f; //3.34f;//2.94f;
 		float tempFrequency = 2.64f;//2.4f;
 
 		float elevationRand = UnityEngine.Random.Range(500f,2000f);
@@ -400,9 +400,9 @@ public class Biomes : MonoBehaviour {
 
 	private ELEVATION GetElevationType(float elevationNoise){
         //return ELEVATION.PLAIN;
-        if (elevationNoise <= 0.25f) {
-			return ELEVATION.PLAIN;
-        } else if (elevationNoise > 0.25f && elevationNoise <= 0.7f) {
+        if (elevationNoise <= 0.18f) {
+			return ELEVATION.WATER;
+        } else if (elevationNoise > 0.18f && elevationNoise <= 0.6f) {
             return ELEVATION.PLAIN;
         } else {
             return ELEVATION.MOUNTAIN;
