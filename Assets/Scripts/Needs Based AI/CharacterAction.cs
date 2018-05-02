@@ -124,15 +124,17 @@ public class CharacterAction {
         return GetFoodAdvertisementValue(character) + GetEnergyAdvertisementValue(character) + GetJoyAdvertisementValue(character) + GetPrestigeAdvertisementValue(character);
     }
     private float GetAdvertisementValue(int currentNeed, int advertisedNeed) {
-        //1000, 7
+        //1, -1
         if(advertisedNeed != 0) {
             float x = (float) currentNeed;
             float y = x + ((float) advertisedNeed * 80f);
             if(y > 1000f) {
                 y = 1000f;
             }
-            float result = (1000f / x) - (1000f / y);
-
+            float result = 1000f / y;
+            if (y > 0) {
+               result = (1000f / x) - (1000f / y);
+            }
             //Add quest modifier
             return result;
         }

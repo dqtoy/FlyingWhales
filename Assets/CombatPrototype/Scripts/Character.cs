@@ -2895,7 +2895,9 @@ namespace ECS {
             _resourceInventory = new Dictionary<RESOURCE, int>();
             RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
             for (int i = 0; i < allResources.Length; i++) {
-                _resourceInventory.Add(allResources[i], 0);
+                if(allResources[i] != RESOURCE.NONE) {
+                    _resourceInventory.Add(allResources[i], 0);
+                }
             }
         }
         public void AdjustResource(RESOURCE resource, int amount) {

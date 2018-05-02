@@ -280,17 +280,21 @@ public class CharacterInfoUI : UIMenu {
 
 	private void UpdateInventoryInfo(){
 		string text = string.Empty;
-		if(currentlyShowingCharacter.inventory.Count > 0) {
-			for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
-				ECS.Item item = currentlyShowingCharacter.inventory [i];
-				if(i > 0){
-					text += "\n";
-				}
-				text += item.itemName;
-			}
-		}else{
-			text += "NONE";
-		}
+        foreach (RESOURCE resource in currentlyShowingCharacter.resourceInventory.Keys) {
+            text += resource.ToString() + ": " + currentlyShowingCharacter.resourceInventory[resource];
+            text += "\n";
+        }
+		//if(currentlyShowingCharacter.inventory.Count > 0) {
+		//	for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
+		//		ECS.Item item = currentlyShowingCharacter.inventory [i];
+		//		if(i > 0){
+		//			text += "\n";
+		//		}
+		//		text += item.itemName;
+		//	}
+		//}else{
+		//	text += "NONE";
+		//}
 		inventoryInfoLbl.text = text;
 		inventoryScrollView.UpdatePosition ();
 	}
