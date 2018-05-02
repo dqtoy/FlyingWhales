@@ -72,4 +72,18 @@ public class StructureObjectComponent : ObjectComponent {
         }
     }
     #endregion
+
+    #region Resources
+    public void RepairedResourceStructure(IObject iobject) {
+        if (iobject is StructureObj) {
+            StructureObj structure = iobject as StructureObj;
+            string defaultOrDepleted = "Depleted";
+            if (structure.resourceInventory[RESOURCE.OAK] > 0) {
+                defaultOrDepleted = "Default";
+            }
+            ObjectState defaultState = iobject.GetState(defaultOrDepleted);
+            iobject.ChangeState(defaultState);
+        }
+    }
+    #endregion
 }

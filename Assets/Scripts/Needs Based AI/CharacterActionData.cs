@@ -302,6 +302,8 @@ public class CharacterActionDrawer : PropertyDrawer {
         switch (actionType) {
             case ACTION_TYPE.HARVEST:
                 return true;
+            case ACTION_TYPE.POPULATE:
+                return true;
             default:
                 return false;
         }

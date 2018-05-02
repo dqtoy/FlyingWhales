@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using ECS;
 
 [Serializable]
 public class StructureObj : IObject {
@@ -58,6 +59,8 @@ public class StructureObj : IObject {
 
     public StructureObj() {
         ConstructResourceInventory();
+        _resourceInventory[RESOURCE.OAK] = 5000;
+        _resourceInventory[RESOURCE.IRON] = 5000;
     }
 
     #region Interface Requirements
@@ -146,6 +149,18 @@ public class StructureObj : IObject {
                     ChangeState(occupiedState);
                 }
             }
+        } else if (objectName == "Oak Woods" || objectName == "Iron Mines") {
+            if (_resourceInventory[resource] == 0) {
+                if (_currentState.stateName == "Default") {
+                    ObjectState emptyState = GetState("Depleted");
+                    ChangeState(emptyState);
+                }
+            } else {
+                if (_currentState.stateName == "Depleted") {
+                    ObjectState occupiedState = GetState("Default");
+                    ChangeState(occupiedState);
+                }
+            }
         }
     }
     public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
@@ -157,6 +172,10 @@ public class StructureObj : IObject {
         target.AdjustResource(resource, amount);
     }
     public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
+        AdjustResource(resource, -amount);
+        target.AdjustResource(resource, amount);
+    }
+    public void TransferResourceTo(RESOURCE resource, int amount, Character target) {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
     }

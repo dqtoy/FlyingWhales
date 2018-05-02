@@ -11,6 +11,7 @@ public class PopulateAction : CharacterAction {
     #region Overrides
     public override void PerformAction(Character character) {
         base.PerformAction(character);
+        //TODO: Lahat ng nasa baba, nakahardcode sya currently
         int characterResourceAmount = character.resourceInventory[this.actionData.resourceGiven];
         if (characterResourceAmount > 0) { //if character's resource count is still greater than 0
             //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
@@ -31,7 +32,7 @@ public class PopulateAction : CharacterAction {
             }
 
             //transfer the character resource amount between min and max (inclusive) to the object
-            int resourceAmount = Random.Range(minResource, maxResource);
+            int resourceAmount = Random.Range(minResource, maxResource + 1);
             character.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, this.state.obj as StructureObj);
             ActionSuccess();
         } else {

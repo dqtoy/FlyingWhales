@@ -114,6 +114,7 @@ public enum RESOURCE {
     OAK,
     ELF_CIVILIAN,
     HUMAN_CIVILIAN,
+    IRON,
 }
 //public enum RESOURCE_TYPE{
 //	NONE,
