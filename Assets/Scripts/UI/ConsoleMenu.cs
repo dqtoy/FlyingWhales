@@ -38,6 +38,7 @@ public class ConsoleMenu : UIMenu {
             {"/get_all_paths", GetAllPaths },
             {"/r_road_highlights", ResetRoadHighlights },
             {"/spawn_obj", SpawnNewObject },
+            {"/toggle_road", ToggleRoads },
         };
     }
 
@@ -636,6 +637,22 @@ public class ConsoleMenu : UIMenu {
             //CameraMove.Instance.CenterCameraOn(landmark.tileLocation.gameObject);
         } else {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
+        }
+    }
+    #endregion
+
+    #region Roads
+    private void ToggleRoads(string[] parameters) {
+        if (parameters.Length != 1) { //command, object name, location
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+            HexTile currTile = GridMap.Instance.hexTiles[i];
+            if (currTile.isRoad) {
+                currTile.SetRoadState(!currTile.roadState);
+            }
         }
     }
     #endregion

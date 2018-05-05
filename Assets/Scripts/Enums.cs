@@ -8,7 +8,7 @@ public enum BIOMES{
 	TUNDRA,
 	DESERT,
 	GRASSLAND,
-	WOODLAND,
+	//WOODLAND,
 	FOREST,
 	BARE,
 	NONE,
@@ -23,6 +23,7 @@ public enum ELEVATION{
 	MOUNTAIN,
 	WATER,
 	PLAIN,
+    TREES,
 }
 
 public enum RACE{

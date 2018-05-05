@@ -6,63 +6,65 @@ using System.Linq;
 using Panda;
 using ECS;
 
-public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
+public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("General Tile Details")]
     public int id;
     public int xCoordinate;
-	public int yCoordinate;
+    public int yCoordinate;
     public int tileTag;
-	public string tileName;
+    public string tileName;
     private Region _region;
     private MATERIAL _materialOnTile = MATERIAL.NONE;
 
     [Space(10)]
     [Header("Biome Settings")]
     public float elevationNoise;
-	public float moistureNoise;
-	public float temperature;
-	public BIOMES biomeType;
-	public ELEVATION elevationType;
+    public float moistureNoise;
+    public float temperature;
+    public BIOMES biomeType;
+    public ELEVATION elevationType;
 
     [Space(10)]
     [Header("Booleans")]
     public bool isHabitable = false;
-	public bool isRoad = false;
-    public bool isRoadHidden = true;
-	public bool isOccupied = false;
+    public bool isRoad = false;
+    public bool isOccupied = false;
+    [SerializeField] private bool _isPassable = false;
 
-    private List<GameObject> roadGOs = new List<GameObject>();
+    [Space(10)]
+    [Header("Pathfinding")]
+    public GameObject unpassableGO;
 
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
-	[SerializeField] private SpriteRenderer _kingdomColorSprite;
-	[SerializeField] private GameObject _highlightGO;
+    //[SerializeField] private SpriteRenderer _tileColorSprite;
+    [SerializeField] private GameObject _highlightGO;
     [SerializeField] internal Transform UIParent;
     [SerializeField] private Transform resourceParent;
     [SerializeField] private GameObject biomeDetailParentGO;
     [SerializeField] private TextMesh tileTextMesh;
-	[SerializeField] private GameObject _emptyCityGO;
+    [SerializeField] private GameObject _emptyCityGO;
     [SerializeField] private GameObject _hoverHighlightGO;
-	[SerializeField] private GameObject _clickHighlightGO;
+    [SerializeField] private GameObject _clickHighlightGO;
 
     [Space(10)]
     [Header("Tile Edges")]
     [SerializeField] private GameObject topLeftEdge;
-	[SerializeField] private GameObject leftEdge;
-	[SerializeField] private GameObject botLeftEdge;
-	[SerializeField] private GameObject botRightEdge;
-	[SerializeField] private GameObject rightEdge;
-	[SerializeField] private GameObject topRightEdge;
+    [SerializeField] private GameObject leftEdge;
+    [SerializeField] private GameObject botLeftEdge;
+    [SerializeField] private GameObject botRightEdge;
+    [SerializeField] private GameObject rightEdge;
+    [SerializeField] private GameObject topRightEdge;
 
     [Space(10)]
     [Header("Tile Borders")]
     [SerializeField] private SpriteRenderer topLeftBorder;
-	[SerializeField] private SpriteRenderer leftBorder;
-	[SerializeField] private SpriteRenderer botLeftBorder;
-	[SerializeField] private SpriteRenderer botRightBorder;
-	[SerializeField] private SpriteRenderer rightBorder;
-	[SerializeField] private SpriteRenderer topRightBorder;
+    [SerializeField] private SpriteRenderer leftBorder;
+    [SerializeField] private SpriteRenderer botLeftBorder;
+    [SerializeField] private SpriteRenderer botRightBorder;
+    [SerializeField] private SpriteRenderer rightBorder;
+    [SerializeField] private SpriteRenderer topRightBorder;
 
     [Space(10)]
     [Header("Structure Objects")]
@@ -78,64 +80,58 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     [Header("Fog Of War Objects")]
     [SerializeField] private SpriteRenderer FOWSprite;
     [SerializeField] private SpriteRenderer minimapFOWSprite;
-
-    [Space(10)]
-    [Header("Fog Of War Objects")]
     [SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
 
     [Space(10)]
     [Header("Road Objects")]
+    private List<GameObject> roadGOs = new List<GameObject>();
     [SerializeField] private List<HexRoads> roads;
     [SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
 
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
 
-	protected List<ICombatInitializer> _charactersAtLocation = new List<ICombatInitializer>(); //List of characters/party on landmark
+    protected List<ICombatInitializer> _charactersAtLocation = new List<ICombatInitializer>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
-	[System.NonSerialized] public Dictionary<HexTile, RoadConnection> connectedTiles = new Dictionary<HexTile, RoadConnection>();
-
     public List<HexTile> allNeighbourRoads = new List<HexTile>();
 
-	public List<HexTile> AllNeighbours { get; set; }
-	public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList();}}
+    public List<HexTile> AllNeighbours { get; set; }
+    public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
     public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
     public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
     public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
-	public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
+    public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
     public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
-    //public List<HexTile> LandmarkExternalConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
-    //public List<HexTile> CombatTiles { get { return NoWaterTiles; } }
-    public List<HexTile> AvatarTiles { get { return NoWaterTiles; }}
+    public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
 
     public List<HexTile> sameTagNeighbours;
 
     private bool _hasScheduledCombatCheck = false;
 
-	#region getters/setters
+    #region getters/setters
     public string locationName {
         get { return tileName; }
     }
-	public string urlName{
-		get { return "[url=" + this.id.ToString() + "_hextile]" + tileName + "[/url]"; }
-	}
+    public string urlName {
+        get { return "[url=" + this.id.ToString() + "_hextile]" + tileName + "[/url]"; }
+    }
     public Region region {
         get { return _region; }
     }
-	public GameObject centerPiece{
-		get { return this._centerPiece; }
-	}
-	public SpriteRenderer kingdomColorSprite{
-		get { return this._kingdomColorSprite; }
-	}
-	public GameObject highlightGO{
-		get { return this._highlightGO; }
-	}
+    public GameObject centerPiece {
+        get { return this._centerPiece; }
+    }
+    //public SpriteRenderer kingdomColorSprite {
+    //    get { return this._tileColorSprite; }
+    //}
+    public GameObject highlightGO {
+        get { return this._highlightGO; }
+    }
     public FOG_OF_WAR_STATE currFogOfWarState {
         //get { return _currFogOfWarState; }
         get { return FOG_OF_WAR_STATE.VISIBLE; }
@@ -143,32 +139,38 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
     internal Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections {
         get { return _neighbourDirections; }
     }
-	public GameObject emptyCityGO{
-		get { return this._emptyCityGO; }
-	}
+    public GameObject emptyCityGO {
+        get { return this._emptyCityGO; }
+    }
     internal ROAD_TYPE roadType {
         get { return _roadType; }
     }
     public BaseLandmark landmarkOnTile {
         get { return _landmarkOnTile; }
     }
-	public GameObject clickHighlightGO {
-		get { return _clickHighlightGO; }
-	}
-	public List<ICombatInitializer> charactersAtLocation{
-		get { return _charactersAtLocation; }
-	}
-	public HexTile tileLocation{
-		get { return this; }
-	}
-	public LOCATION_IDENTIFIER locIdentifier{
-		get { return LOCATION_IDENTIFIER.HEXTILE; }
-	}
+    public GameObject clickHighlightGO {
+        get { return _clickHighlightGO; }
+    }
+    public List<ICombatInitializer> charactersAtLocation {
+        get { return _charactersAtLocation; }
+    }
+    public HexTile tileLocation {
+        get { return this; }
+    }
+    public LOCATION_IDENTIFIER locIdentifier {
+        get { return LOCATION_IDENTIFIER.HEXTILE; }
+    }
     public MATERIAL materialOnTile {
         get { return _materialOnTile; }
     }
     public bool hasLandmark {
         get { return _landmarkOnTile != null; }
+    }
+    public bool isPassable {
+        get { return _isPassable; }
+    }
+    public bool roadState {
+        get { return roadGOs[0].activeInHierarchy; }
     }
     public StructureObject structureObjOnTile {
         get { return _structureObjOnTile; }
@@ -237,6 +239,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
         }
         _region.AddLandmarkToRegion(_landmarkOnTile);
+        if (_landmarkOnTile != null) {
+            SetPassableState(true);
+        }
         return _landmarkOnTile;
     }
     public void RemoveLandmarkOnTile() {
@@ -309,6 +314,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
         return tilesInRange;
     }
+    internal float GetDistanceTo(HexTile targetHextile) {
+        return Vector3.Distance(this.transform.position, targetHextile.transform.position);
+    }
+    public void SetTag(int tag) {
+        this.tileTag = tag;
+    }
     #endregion
 
     #region Pathfinding
@@ -316,20 +327,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         _neighbourDirections = new Dictionary<HEXTILE_DIRECTION, HexTile>();
         var neighbours = new List<HexTile>();
 
-		List<Point> possibleExits;
+        List<Point> possibleExits;
 
-		if ((yCoordinate % 2) == 0) {
-			possibleExits = Utilities.EvenNeighbours;
-		} else {
-			possibleExits = Utilities.OddNeighbours;
-		}
+        if ((yCoordinate % 2) == 0) {
+            possibleExits = Utilities.EvenNeighbours;
+        } else {
+            possibleExits = Utilities.OddNeighbours;
+        }
 
-		for (int i = 0; i < possibleExits.Count; i++) {
-			int neighbourCoordinateX = xCoordinate + possibleExits [i].X;
-			int neighbourCoordinateY = yCoordinate + possibleExits [i].Y;
-			if (neighbourCoordinateX >= 0 && neighbourCoordinateX < gameBoard.GetLength(0) && neighbourCoordinateY >= 0 && neighbourCoordinateY < gameBoard.GetLength(1)){
+        for (int i = 0; i < possibleExits.Count; i++) {
+            int neighbourCoordinateX = xCoordinate + possibleExits[i].X;
+            int neighbourCoordinateY = yCoordinate + possibleExits[i].Y;
+            if (neighbourCoordinateX >= 0 && neighbourCoordinateX < gameBoard.GetLength(0) && neighbourCoordinateY >= 0 && neighbourCoordinateY < gameBoard.GetLength(1)) {
                 HexTile currNeighbour = gameBoard[neighbourCoordinateX, neighbourCoordinateY];
-                if(currNeighbour != null) {
+                if (currNeighbour != null) {
                     neighbours.Add(currNeighbour);
                 } else {
                     //This part is for outerGridTiles only!
@@ -344,8 +355,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                 }
             }
 
-		}
-		this.AllNeighbours = neighbours;
+        }
+        this.AllNeighbours = neighbours;
 
         for (int i = 0; i < neighbours.Count; i++) {
             HexTile currNeighbour = neighbours[i];
@@ -354,9 +365,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             } catch {
                 Debug.Log("LALALALALALALA");
             }
-            
+
         }
-	}
+    }
     internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour, bool isForOuterGrid = false) {
         if (neighbour == null) {
             return HEXTILE_DIRECTION.NONE;
@@ -449,11 +460,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             List<RoadObject> availableRoads = roads.First(x => x.from == from).destinations;
             return availableRoads.Where(x => x.to == to).First().roadObj;
         }
-        
+
     }
     public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType, GameObject roadGO) {
         roadGOs.Add(roadGO);
-        if(this.isHabitable || this.hasLandmark) {
+        if (this.isHabitable || this.hasLandmark) {
             if (isRoad) {
                 if (_roadType == ROAD_TYPE.NONE) {
                     _roadType = roadType;
@@ -477,7 +488,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         }
     }
     public void SetRoadState(bool state) {
-        isRoadHidden = !state;
         for (int i = 0; i < roadGOs.Count; i++) {
             GameObject road = roadGOs[i];
             road.SetActive(state);
@@ -513,7 +523,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             resourcesSprites[i].sortingOrder = sortingOrder + 57;
         }
 
-        kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+        //kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
 
         topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
@@ -578,60 +588,49 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                             //top left
                             gameObjectToEdit = this.topLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        }
-                        else if (difference.X == 0 && difference.Y == 1) {
+                        } else if (difference.X == 0 && difference.Y == 1) {
                             //top right
                             gameObjectToEdit = this.topRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        }
-                        else if (difference.X == 1 && difference.Y == 0) {
+                        } else if (difference.X == 1 && difference.Y == 0) {
                             //right
                             gameObjectToEdit = this.rightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        }
-                        else if (difference.X == 0 && difference.Y == -1) {
+                        } else if (difference.X == 0 && difference.Y == -1) {
                             //bottom right
                             gameObjectToEdit = this.botRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        }
-                        else if (difference.X == -1 && difference.Y == -1) {
+                        } else if (difference.X == -1 && difference.Y == -1) {
                             //bottom left
                             gameObjectToEdit = this.botLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        }
-                        else if (difference.X == -1 && difference.Y == 0) {
+                        } else if (difference.X == -1 && difference.Y == 0) {
                             //left
                             gameObjectToEdit = this.leftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
                         }
-                    }
-                    else {
+                    } else {
                         if (difference.X == 0 && difference.Y == 1) {
                             //top left
                             gameObjectToEdit = this.topLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        }
-                        else if (difference.X == 1 && difference.Y == 1) {
+                        } else if (difference.X == 1 && difference.Y == 1) {
                             //top right
                             gameObjectToEdit = this.topRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        }
-                        else if (difference.X == 1 && difference.Y == 0) {
+                        } else if (difference.X == 1 && difference.Y == 0) {
                             //right
                             gameObjectToEdit = this.rightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        }
-                        else if (difference.X == 1 && difference.Y == -1) {
+                        } else if (difference.X == 1 && difference.Y == -1) {
                             //bottom right
                             gameObjectToEdit = this.botRightEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        }
-                        else if (difference.X == 0 && difference.Y == -1) {
+                        } else if (difference.X == 0 && difference.Y == -1) {
                             //bottom left
                             gameObjectToEdit = this.botLeftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        }
-                        else if (difference.X == -1 && difference.Y == 0) {
+                        } else if (difference.X == -1 && difference.Y == 0) {
                             //left
                             gameObjectToEdit = this.leftEdge;
                             spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
@@ -656,255 +655,41 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 
         }
     }
-    //internal void LoadEdges() {
-    //    int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
-    //    List<HexTile> neighbours = new List<HexTile>(this.AllNeighbours);
-    //    if (this.elevationType == ELEVATION.WATER) {
-    //        neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
-    //    }
-    //    for (int i = 0; i < neighbours.Count; i++) {
-    //        HexTile currentNeighbour = neighbours[i];
-
-    //        int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
-
-    //        if (biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
-    //            int neighbourX = currentNeighbour.xCoordinate;
-    //            int neighbourY = currentNeighbour.yCoordinate;
-
-    //            Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
-    //                (currentNeighbour.yCoordinate - this.yCoordinate));
-    //            if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) ||
-    //                this.elevationType == ELEVATION.WATER) {
-    //                GameObject gameObjectToEdit = null;
-    //                Sprite[] spriteMasksToChooseFrom = null;
-    //                if (this.yCoordinate % 2 == 0) {
-    //                    if (difference.X == -1 && difference.Y == 1) {
-    //                        //top left
-    //                        gameObjectToEdit = this.topLeftEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-    //                    }
-    //                    else if (difference.X == 0 && difference.Y == 1) {
-    //                        //top right
-    //                        gameObjectToEdit = this.topRightEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-    //                    }
-    //                    else if (difference.X == 1 && difference.Y == 0) {
-    //                        //right
-    //                        gameObjectToEdit = this.rightEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-    //                    }
-    //                    else if (difference.X == 0 && difference.Y == -1) {
-    //                        //bottom right
-    //                        gameObjectToEdit = this.botRightEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-    //                    }
-    //                    else if (difference.X == -1 && difference.Y == -1) {
-    //                        //bottom left
-    //                        gameObjectToEdit = this.botLeftEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-    //                    }
-    //                    else if (difference.X == -1 && difference.Y == 0) {
-    //                        //left
-    //                        gameObjectToEdit = this.leftEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
-    //                    }
-    //                }
-    //                else {
-    //                    if (difference.X == 0 && difference.Y == 1) {
-    //                        //top left
-    //                        gameObjectToEdit = this.topLeftEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-    //                    }
-    //                    else if (difference.X == 1 && difference.Y == 1) {
-    //                        //top right
-    //                        gameObjectToEdit = this.topRightEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-    //                    }
-    //                    else if (difference.X == 1 && difference.Y == 0) {
-    //                        //right
-    //                        gameObjectToEdit = this.rightEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-    //                    }
-    //                    else if (difference.X == 1 && difference.Y == -1) {
-    //                        //bottom right
-    //                        gameObjectToEdit = this.botRightEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-    //                    }
-    //                    else if (difference.X == 0 && difference.Y == -1) {
-    //                        //bottom left
-    //                        gameObjectToEdit = this.botLeftEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-    //                    }
-    //                    else if (difference.X == -1 && difference.Y == 0) {
-    //                        //left
-    //                        gameObjectToEdit = this.leftEdge;
-    //                        spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
-    //                    }
-    //                }
-    //                if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
-    //                    SpriteRenderer sr = gameObjectToEdit.GetComponent<SpriteRenderer>();
-    //                    sr.sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
-    //                    sr.sortingOrder += biomeLayerOfNeighbour;
-    //                    gameObjectToEdit.GetComponentInChildren<SpriteMask>().sprite = spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)];
-    //                    //                        Material mat = new Material(Shader.Find("AlphaMask"));
-    //                    //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
-    //                    gameObjectToEdit.SetActive(true);
-
-    //                    //                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
-    //                    //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
-    //                    //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
-    //                }
-
-    //            }
-    //        }
-    //    }
-    //}
-    internal void SetBaseSprite(Sprite baseSprite){
-		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
-	}
-    internal void SetCenterSprite(Sprite centerSprite){
-		this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
-		this.centerPiece.SetActive(true);
-	}
- //   internal void SetTileHighlightColor(Color color){
- //       //color.a = 30f / 255f;
- //       this._kingdomColorSprite.color = color;
-	//}
+    internal void SetBaseSprite(Sprite baseSprite) {
+        this.GetComponent<SpriteRenderer>().sprite = baseSprite;
+    }
+    internal void SetCenterSprite(Sprite centerSprite) {
+        this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
+        this.centerPiece.SetActive(true);
+    }
     internal void SetMinimapTileColor(Color color) {
         color.a = 255f / 255f;
         minimapHexSprite.color = color;
     }
- //   internal void ShowTileHighlight(){
-	//	this._kingdomColorSprite.gameObject.SetActive(true);
-	//}
- //   internal void HideTileHighlight(){
-	//	this.kingdomColorSprite.gameObject.SetActive(false);
-	//}
-    //internal void ShowNamePlate() {
-    //    if (_namePlateParent != null) {
-    //        _namePlateParent.gameObject.SetActive(true);
-    //    }
-    //    if (_cityInfo != null) {
-    //        UpdateCityNamePlate();
-    //    }
-    //    if (_lairItem != null) {
-    //        UpdateLairNamePlate();
-    //    }
-    //}
-    //internal void HideNamePlate() {
-    //    _namePlateParent.gameObject.SetActive(false);
-    //}
-    /*
-     * This will instantiate a new CityItem Prefab and set it's city 
-     * according to the passed parameter.
-     * */
- //   internal void CreateCityNamePlate(City city) {
- //       //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
-
- //       GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("CityNamePlatePanel", UIParent);
- //       namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
- //       _namePlateParent = namePlateGO.transform;
- //       _cityInfo = namePlateGO.GetComponentInChildren<CityItem>();
- //       namePlateGO.transform.localPosition = new Vector3(0f, -1.45f, 0f);
- //       Messenger.AddListener("UpdateUI", UpdateCityNamePlate);
-
- //       UpdateCityNamePlate();
-	//	UpdateCityFoodMaterialOreUI ();
- //   }
- //   internal void UpdateCityNamePlate() {
- //       if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
- //           _cityInfo.SetCity(city, false, false, false, true);
- //       } else {
- //           _cityInfo.SetCity(city, false, true, false, true);
- //       }
- //   }
-	//internal void UpdateCityFoodMaterialOreUI(){
-	//	if(_cityInfo != null){
-	//		_cityInfo.UpdateFoodMaterialOreUI ();
-	//	}
-	//}
- //   internal void RemoveCityNamePlate() {
- //       if (_namePlateParent != null) {
- //           ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
- //           _namePlateParent = null;
- //           _cityInfo = null;
- //           Messenger.RemoveListener("UpdateUI", UpdateCityNamePlate);
- //       }
- //   }
+    public void SetTileText(string text, int fontSize, Color fontColor, string layer = "Default") {
+        tileTextMesh.text = text;
+        tileTextMesh.characterSize = fontSize;
+        tileTextMesh.color = fontColor;
+        tileTextMesh.gameObject.layer = LayerMask.NameToLayer(layer);
+        tileTextMesh.transform.localPosition = Vector3.zero;
+        tileTextMesh.gameObject.SetActive(true);
+    }
     #endregion
 
-	//#region Lair
- //   internal void CreateLairNamePlate() {
- //       //Debug.Log("Create lair nameplate on " + this.name);
-
- //       GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("LairNamePlatePanel", UIParent);
- //       namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
- //       _namePlateParent = namePlateGO.transform;
- //       _lairItem = namePlateGO.GetComponentInChildren<LairItem>();
- //       namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
- //       Messenger.AddListener("UpdateUI", UpdateLairNamePlate);
-
- //       UpdateLairNamePlate();
-	//}
- //   internal void UpdateLairNamePlate() {
-	//	this._lairItem.SetLair(this.lair);
-	//}
- //   internal void RemoveLairNamePlate() {
- //       if (_namePlateParent != null) {
- //           ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
- //           _namePlateParent = null;
- //           _lairItem = null;
- //           Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
- //       }
- //   }
-	//internal void AddLairsInRange(Lair lair){
-	//	this._lairsInRange.Add (lair);
-	//}
-	//internal void CheckLairsInRange(){
-	//	if (this._lairsInRange.Count > 0) {
-	//		for (int i = 0; i < this._lairsInRange.Count; i++) {
-	//			this._lairsInRange [i].ActivateLair ();
-	//		}
-	//		this._lairsInRange.Clear ();
-	//	}
-	//}
- //   #endregion
-
     #region Structures Functions
-  //  internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
-  //      //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
-  //      GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.faction.race, structureType);
-
-  //      string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
-		//GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
-  //      AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
-		//structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
-  //      structureObjOnTile.Initialize(structureType, this.ownedByCity.faction.factionColor, structureState, this);
-
-  //      this._centerPiece.SetActive(false);
-
-  //      //Color color = this.ownedByCity.kingdom.kingdomColor;
-  //      //SetMinimapTileColor(color);
-  //      //SetTileHighlightColor(color);
-  //  }
     internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
-        //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
 
         string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
         GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
-        if(structureType == STRUCTURE_TYPE.CITY) {
+        if (structureType == STRUCTURE_TYPE.CITY) {
             structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
             _landmarkOnTile.landmarkObject.SetBGState(false);
         }
 
         _structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
         this._centerPiece.SetActive(false);
-
-        //Color color = this.ownedByCity.kingdom.kingdomColor;
-        //SetMinimapTileColor(color);
-        //SetTileHighlightColor(color);
     }
     /*
      * Assign a structure object to this tile.
@@ -928,33 +713,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         structureGO.transform.localPosition = Vector3.zero;
         return structureGO;
     }
-	//internal CorpseMound CreateCorpseMoundObjectOnTile(int initialCorpseCount) {
-	//	this._corpseMoundGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetCorpseMoundGO().name,
-	//		Vector3.zero, Quaternion.identity, structureParentGO.transform);
-	//	this._corpseMoundGO.transform.localPosition = Vector3.zero;
-	//	SetCorpseMound (this._corpseMoundGO.GetComponent<CorpseMound>());
-	//	this._corpseMound.Initialize (this, initialCorpseCount);
-	//	return this._corpseMound;
-	//}
     internal void HideStructures() {
         structureParentGO.SetActive(false);
     }
     internal void ShowStructures() {
         structureParentGO.SetActive(true);
     }
-    //public void ReColorStructure() {
-    //    Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(structureParentGO);
-    //    for (int i = 0; i < children.Length; i++) {
-    //        GameObject structureToRecolor = children[i].gameObject;
-
-    //        SpriteRenderer[] allColorizers = structureToRecolor.GetComponentsInChildren<SpriteRenderer>().
-    //        Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
-
-    //        for (int j = 0; j < allColorizers.Length; j++) {
-    //            allColorizers[j].color = this.ownedByCity.kingdom.kingdomColor;
-    //        }
-    //    }
-    //}
     public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
         if (_structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
@@ -963,9 +727,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             } else {
                 _structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
             }
-			if(landmarkOnTile != null){
-				//landmarkOnTile.AddHistory ("Landmark structure destroyed!");
-			}
+            if (landmarkOnTile != null) {
+                //landmarkOnTile.AddHistory ("Landmark structure destroyed!");
+            }
         }
     }
     /*
@@ -999,7 +763,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                     ShowStructures();
                 }
                 UIParent.gameObject.SetActive(true);
-//                ShowAllCitizensOnTile();
+                //                ShowAllCitizensOnTile();
                 break;
             case FOG_OF_WAR_STATE.SEEN:
                 newColor.a = 128f / 255f;
@@ -1015,7 +779,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                     ShowStructures();
                 }
                 UIParent.gameObject.SetActive(true);
-//                HideAllCitizensOnTile();
+                //                HideAllCitizensOnTile();
                 break;
             case FOG_OF_WAR_STATE.HIDDEN:
                 newColor.a = 255f / 255f;
@@ -1027,7 +791,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
                     HideStructures();
                 }
                 UIParent.gameObject.SetActive(false);
-//                HideAllCitizensOnTile();
+                //                HideAllCitizensOnTile();
                 break;
             default:
                 break;
@@ -1060,36 +824,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
      * in StructureObject instead.
      * */
     public void ResetTile() {
-        //this.city = null;
         this.isOccupied = false;
-        //this.ownedByCity = null;
-        //SetMinimapTileColor(biomeColor);
-        this._kingdomColorSprite.color = Color.white;
-        this.kingdomColorSprite.gameObject.SetActive(false);
-        //this._lairItem = null;
-        //Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
 
         RuinStructureOnTile(false);
-        //RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-    //public void Occupy(City city) {
-    //    this.isOccupied = true;
-    //    //if (!isVisibleByCities.Contains(city)) {
-    //    //    this.isVisibleByCities.Add(city);
-    //    //}
-    //    //this.isOccupiedByCityID = city.id;
-    //    this.city = city;
-    //    this.ownedByCity = city;
-    //    if (!_visibleByKingdoms.Contains(city.kingdom)) {
-    //        _visibleByKingdoms.Add(city.kingdom);
-    //    }
-    //    //this.isBorder = false;
-    //    //this.isBorderOfCityID = 0;
-    //}
     public void Occupy() {
         this.isOccupied = true;
     }
@@ -1113,45 +855,44 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-    //public void Borderize(City city) {
-    //    this.isBorder = true;
-    //    //if (!_isBorderOfCities.Contains(city)) {
-    //    //    _isBorderOfCities.Add(city);
-    //    //}
-    //    //if (!_visibleByKingdoms.Contains(city.kingdom)) {
-    //    //    _visibleByKingdoms.Add(city.kingdom);
-    //    //}
-    //    //if (!isVisibleByCities.Contains(city)) {
-    //    //    this.isVisibleByCities.Add(city);
-    //    //}
-    //    //this.isBorderOfCityID = city.id;
-    //    //this.ownedByCity = city;
-    //}
-    //public void UnBorderize(City city) {
-    //    this.isBorder = false;
-    //    //this.isBorderOfCityID = 0;
-    //    //this.ownedByCity = null;
-    //    //_isBorderOfCities.Remove(city);
-    //    //if (_isBorderOfCities.Count <= 0) {
-    //    //    this.isBorder = false;
-    //    //    this._kingdomColorSprite.color = Color.white;
-    //    //    this.kingdomColorSprite.gameObject.SetActive(false);
-    //    //}
+    #endregion
 
-    //    //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
-    //    //    && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
-    //    //    && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
-    //    //    _visibleByKingdoms.Remove(city.kingdom);
-    //    //}
-    //    //this.isVisibleByCities.Remove(city);
+    #region Passability
+    //public void LoadPassableObject() {
+    //    GameObject impassablePrefab = 
+    //    GameObject impassableGO = GameObject.Instantiate(Biomes.Instance.)
     //}
+    public void SetPassableState(bool state) {
+        _isPassable = state;
+        _centerPiece.SetActive(!state);
+        unpassableGO.SetActive(!state);
+        //UpdatePassableVisuals();
+    }
+    private void UpdatePassableVisuals() {
+        //SetCenterSprite(Biomes.Instance.GetCenterPieceSprite(this));
+        if (!_isPassable) {
+            
+        }
+        
+    }
+    public void SetPassableObject(object obj) {
+        if (obj == null) {
+            SetCenterSprite(null);
+            return;
+        }
+        if (obj is Sprite) {
+            SetCenterSprite(obj as Sprite);
+        } else {
+            GameObject centerObj = GameObject.Instantiate(obj as Object, centerPiece.transform) as GameObject;
+            centerObj.transform.localPosition = Vector3.zero;
+            centerObj.transform.localScale = Vector3.one;
+            SetCenterSprite(null);
+        }
+    }
     #endregion
 
     #region Monobehaviour Functions
-//	private void OnMouseDown(){
-//		
-//	}
-	private void OnMouseOver() {
+    private void OnMouseOver() {
 		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
 			return;
 		}
@@ -1213,36 +954,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 //			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
 //		}
 	}
-
     #endregion
 
-    internal bool HasCombatPathTo(HexTile target){
-        List<HexTile> path = PathGenerator.Instance.GetPath (this, target, PATHFINDING_MODE.AVATAR);
-		if(path != null){
-			return true;
-		}
-		return false;
-	}
-
     #region For Testing
-    //private void HighlightTilesInRegion() {
-    //    for (int i = 0; i < _region.tilesInRegion.Count; i++) {
-    //        HexTile currTileInRegion = _region.tilesInRegion[i];
-    //        currTileInRegion.SetTileHighlightColor(Color.gray);
-    //        currTileInRegion.ShowTileHighlight();
-    //    }
-    //}
-
-    //private void UnHighlightTilesInRegion() {
-    //    for (int i = 0; i < _region.tilesInRegion.Count; i++) {
-    //        HexTile currTileInRegion = _region.tilesInRegion[i];
-    //        currTileInRegion.HideTileHighlight();
-    //    }
-    //}
-
     [Space(10)]
     [Header("For Testing")]
-    //[SerializeField] private int kingdomToConquerIndex = 0;
     [SerializeField] private int range = 0;
     List<HexTile> tiles = new List<HexTile>();
     [ContextMenu("Show Tiles In Range")]
@@ -1256,12 +972,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             tiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
         }
     }
-    //[ContextMenu("Show Border Tiles")]
-    //public void ShowBorderTiles() {
-    //    for (int i = 0; i < this.city.borderTiles.Count; i++) {
-    //        this.city.borderTiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
-    //    }
-    //}
     [ContextMenu("Show Hextile Positions")]
     public void ShowHextileBounds() {
         Debug.Log("Local Pos: " + this.transform.localPosition.ToString());
@@ -1278,40 +988,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         UnityEditor.Selection.objects = this.AllNeighbours.Select(x => x.gameObject).ToArray();
     }
 #endif
-    //[ContextMenu("Select Tiles in Same Region")]
-    //public void SelectAllTilesInRegion() {
-    //    UnityEditor.Selection.objects = region.tilesInRegion.Select(x => x.gameObject).ToArray();
-    //}
-    //[ContextMenu("Select All Relevant Tiles")]
-    //public void SelectAllRelevantTiles() {
-    //    List<GameObject> allTiles = new List<GameObject>();
-    //    allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
-    //    allTiles.AddRange(city.ownedTiles.Select(x => x.gameObject));
-    //    allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
-    //    UnityEditor.Selection.objects = allTiles.ToArray();
-    //}
-
-    //[ContextMenu("Select All Border Tiles")]
-    //public void SelectAllBorderTiles() {
-    //    List<GameObject> allTiles = new List<GameObject>();
-    //    allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
-    //    UnityEditor.Selection.objects = allTiles.ToArray();
-    //}
-
-    //[ContextMenu("Select All Outer Tiles")]
-    //public void SelectAllOuterTiles() {
-    //    List<GameObject> allTiles = new List<GameObject>();
-    //    allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
-    //    UnityEditor.Selection.objects = allTiles.ToArray();
-    //}
-    //[ContextMenu("Toggle Militarize")]
-    //public void ToggleMilitarize() {
-    //    ownedByCity.kingdom.Militarize(!ownedByCity.kingdom.isMilitarize);
-    //}
-    //[ContextMenu("Toggle Fortify")]
-    //public void ToggleFortify() {
-    //    ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
-    //}
     [ContextMenu("Load Border Lines")]
     public void LoadBorderLinesForTesting() {
         HexTile currTile = this;
@@ -1333,35 +1009,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             }
         }
     }
-    //[ContextMenu("Make King Determine Weighted Action")]
-    //public void MakeKingDetermineWeightedAction() {
-    //    this.city.kingdom.PerformWeightedAction();
-    //}
-    //private void ShowRegionInfo() {
-    //    string text = string.Empty;
-    //    text += "[b]Tile:[/b] " + this.name + "\n";
-    //    text += "[b]Connections:[/b] " + this.region.connections.Count.ToString();
-    //    for (int i = 0; i < this.region.connections.Count; i++) {
-    //        object currConnection = this.region.connections[i];
-    //        if (currConnection is Region) {
-    //            text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
-    //        } else {
-				//text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).tileLocation.name;
-    //        }
-    //    }
-    //    UIManager.Instance.ShowSmallInfo(text);
-    //}
-    //private void HideRegionInfo() {
-    //    HideSmallInfoWindow();
-    //    for (int i = 0; i < this.region.connections.Count; i++) {
-    //        object currConnection = this.region.connections[i];
-    //        //if (currConnection is Region) {
-    //        //    ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
-    //        //} else if (currConnection is HexTile) {
-    //        //    ((HexTile)currConnection).HideTileHighlight();
-    //        //}
-    //    }
-    //}
     private void ShowHexTileInfo() {
         string text = string.Empty;
         text += "Characters in tile: ";
@@ -1471,133 +1118,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //        }
         UIManager.Instance.ShowSmallInfo(text);
     }
-    //private void HideLandmarkInfo() {
-    //    HideSmallInfoWindow();
-    //    //for (int i = 0; i < this.landmark.connections.Count; i++) {
-    //    //    object currConnection = this.landmark.connections[i];
-    //    //    if (currConnection is Region) {
-    //    //        ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
-    //    //    } else if (currConnection is HexTile) {
-    //    //        ((HexTile)currConnection).HideTileHighlight();
-    //    //    }
-    //    //}
-    //}
-//    private void ShowKingdomInfo() {
-//        string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
-//        text += "[b]Tile:[/b] " + this.name + "\n";
-//        text += "[b]" + this.city.kingdom.name + "[/b]" +
-//        "\n [b]King Character Type:[/b] " + this.city.kingdom.king.characterType.characterTypeName +
-//        "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
-//        for (int i = 0; i < this.region.connections.Count; i++) {
-//            object currConnection = this.region.connections[i];
-//            text += "\n " + currConnection.ToString();
-//            if (currConnection is Region) {
-//                text += " - " + ((Region)currConnection).centerOfMass.name;
-//            }
-//        }
-//        //text += "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
-//        //if(this.city.region.specialResource != RESOURCE.NONE) {
-//        //    text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
-//        //}
-//		text += "\n [b]Food Count:[/b] " + this.city.foodCount.ToString () + "/" + this.city.foodCapacity + "(" + this.city.foodRequirement.ToString () + ")" +
-//		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialCapacity + "(" + this.city.materialRequirement.ToString () + ")" +
-//		"\n [b]Material Count For Humans:[/b] " + this.city.materialCountForHumans.ToString () + "/" + this.city.materialCapacity +
-//		"\n [b]Material Count For Elves:[/b] " + this.city.materialCountForElves.ToString () + "/" + this.city.materialCapacity +
-//		"\n [b]Ore Count:[/b] " + this.city.oreCount.ToString () + "/" + this.city.oreCapacity + "(" + this.city.oreRequirement.ToString () + ")" +
-//		"\n [b]Kingdom Food S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.foodCityCapacity +
-//		"\n [b]Kingdom Material For Humans S/D:[/b] " + ((this.city.kingdom.race == RACE.HUMANS) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForHumans +
-//		"\n [b]Kingdom Material For Elves S/D:[/b] " + ((this.city.kingdom.race == RACE.ELVES) ? this.city.kingdom.cities.Count.ToString () : "0") + "/" + this.city.kingdom.materialCityCapacityForElves +
-//		"\n [b]Kingdom Ore S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.oreCityCapacity +
-//		"\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
-//        "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
-//        "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
-//        "\n [b]Kingdom Base Weapons:[/b] " + this.city.kingdom.baseWeapons.ToString() +
-////        "\n [b]Kingdom Base Armor:[/b] " + this.city.kingdom.baseArmor.ToString() +
-//        "\n [b]Weapons Over Production:[/b] " + this.city.kingdom.GetWeaponOverProductionPercentage().ToString() + "%" + 
-////        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
-//        "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
-//		"\n [b]Population Count:[/b] " + this.city.population.ToString() + "/" + this.city.populationCapacity.ToString() +
-//		"\n [b]PopulationF Count:[/b] " + this.city._population.ToString() +
-//		"\n [b]City Population Growth:[/b] " + this.region.populationGrowth.ToString() +
-//        "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
-//        "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +
-//        "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
-//        "\n [b]Draft Rate: [/b]" + (this.city.kingdom.draftRate * 100f).ToString() + "%" +
-//        "\n [b]Research Rate: [/b]" + (this.city.kingdom.researchRate * 100f).ToString() + "%" +
-//        "\n [b]Production Rate: [/b]" + (this.city.kingdom.productionRate * 100f).ToString() + "%" +
-//        "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
-
-//        text += "[b]Trade Deals: [/b]\n";
-//        if (this.city.kingdom.kingdomsInTradeDealWith.Count > 0) {
-//            for (int i = 0; i < this.city.kingdom.kingdomsInTradeDealWith.Count; i++) {
-//                text += this.city.kingdom.kingdomsInTradeDealWith[i].name + "\n";
-//            }
-//        } else {
-//            text += "NONE\n";
-//        }
-
-//        text += "[b]Adjacent Kingdoms: [/b]\n";
-//        if (this.city.kingdom.adjacentKingdoms.Count > 0) {
-//            for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-//                text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
-//            }
-//        } else {
-//            text += "NONE\n";
-//        }
-
-//        //text += "[b]Discovered Kingdoms: [/b]\n";
-//        //if (this.city.kingdom.discoveredKingdoms.Count > 0) {
-//        //    for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
-//        //        Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
-//        //        text += currKingdom.name + "\n";
-//        //    }
-//        //} else {
-//        //    text += "NONE\n";
-//        //}
-
-//        //text += "[b]Alliance Kingdoms: [/b]\n";
-//        //if(this.city.kingdom.alliancePool != null) {
-//        //    for (int i = 0; i < this.city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-//        //        Kingdom currKingdom = this.city.kingdom.alliancePool.kingdomsInvolved[i];
-//        //        text += currKingdom.name + "\n";
-//        //    }
-//        //} else {
-//        //    text += "NONE\n";
-//        //}
-
-//        //text += "[b]Important Citizens in City: [/b]\n";
-//        //if (this.city.importantCitizensInCity.Count > 0) {
-//        //    for (int i = 0; i < this.city.importantCitizensInCity.Count; i++) {
-//        //        text += this.city.importantCitizensInCity.Values.ElementAt(i).name + " - " + this.city.importantCitizensInCity.Keys.ElementAt(i).ToString() + "\n";
-//        //    }
-//        //} else {
-//        //    text += "NONE\n";
-//        //}
-
-//        //text += "[b]Citizens in City: [/b]\n";
-//        //if (this.city.citizens.Count > 0) {
-//        //    for (int i = 0; i < this.city.citizens.Count; i++) {
-//        //        Citizen currCitizen = this.city.citizens[i];
-//        //        if (currCitizen.role != ROLE.UNTRAINED) {
-//        //            text += currCitizen.role + " - " + currCitizen.name + "\n";
-//        //        }
-//        //    }
-//        //} else {
-//        //    text += "NONE\n";
-//        //}
-
-//        //text += "[b]Kingdom values: [/b]\n";
-//        //Dictionary<CHARACTER_VALUE, int> kingdomVals = this.city.kingdom.importantCharacterValues;
-//        //if (kingdomVals.Count > 0) {
-//        //    for (int i = 0; i < kingdomVals.Count(); i++) {
-//        //        KeyValuePair<CHARACTER_VALUE, int> kvp = kingdomVals.ElementAt(i);
-//        //        text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
-//        //    }
-//        //} else {
-//        //    text += "NONE\n";
-//        //}
-//        UIManager.Instance.ShowSmallInfo(text);
-//    }
     private void HideSmallInfoWindow() {
         UIManager.Instance.HideSmallInfo();
     }
@@ -1605,25 +1125,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         return this.tileName;
     }
     #endregion
-
-    internal float GetDistanceTo(HexTile targetHextile){
-		return Vector3.Distance (this.transform.position, targetHextile.transform.position);
-	}
-	
-    public void SetTag(int tag) {
-        this.tileTag = tag;
-        //tileTextMesh.text = xCoordinate.ToString() + "," + yCoordinate.ToString();
-        //tileTextMesh.gameObject.SetActive(true);
-    }
-
-    public void SetTileText(string text, int fontSize, Color fontColor, string layer = "Default") {
-        tileTextMesh.text = text;
-        tileTextMesh.characterSize = fontSize;
-        tileTextMesh.color = fontColor;
-        tileTextMesh.gameObject.layer = LayerMask.NameToLayer(layer);
-        tileTextMesh.transform.localPosition = Vector3.zero;
-        tileTextMesh.gameObject.SetActive(true);
-    }
 
 	#region Characters
 	public void AddCharacterToLocation(ICombatInitializer character) {
@@ -1711,16 +1212,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 	}
 	#endregion
 
-	//internal void SetCorpseMound(CorpseMound corpseMound){
-	//	this._corpseMound = corpseMound;
-	//	if(corpseMound != null){
-	//		this.region.AddCorpseMoundTile (this);
-	//	}else{
-	//		if(this.region.corpseMoundTiles.Count > 0){
-	//			this.region.RemoveCorpseMoundTile (this);
-	//		}
-	//	}
-	//}
 	internal bool IsAdjacentWithRegion(Region region){
 		List<HexTile> neighbors = this.AllNeighbours;
 		for (int i = 0; i < neighbors.Count; i++) {
@@ -1729,24 +1220,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
 			}
 		}
 		return false;
-	}
-
-	//internal void DestroyConnections(){
-	//	while(this.connectedTiles.Count > 0){
-	//		RoadManager.Instance.DestroyConnection (this, this.connectedTiles.Keys.ElementAt(0));
-	//	}
-	//}
-
-	internal int GetNumOfConnectedCenterOfMass(){
-		int count = 0;
-		if(this.connectedTiles.Count > 0){
-			foreach (HexTile tile in this.connectedTiles.Keys) {
-				if(tile.region.centerOfMass.id == tile.id){
-					count += 1;
-				}
-			}
-		}
-		return count;
 	}
 
     #region Combat
@@ -1814,76 +1287,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         //return _charactersAtLocation.Where(x => x.currentAction.combatPriority > 0).OrderByDescending(x => x.currentAction.combatPriority).ToList();
         return null;
     }
-    //public void CheckAttackingGroupsCombat() {
-    //    List<ICombatInitializer> attackingGroups = GetAttackingGroups();
-    //    for (int i = 0; i < attackingGroups.Count; i++) {
-    //        ICombatInitializer currAttackingGroup = attackingGroups[i];
-    //        if (currAttackingGroup.isInCombat) {
-    //            continue; //this current group is already in combat, skip it
-    //        }
-    //        //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-    //        if (combatGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
-    //            StartCombatBetween(currAttackingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-    //        if (neutralGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
-    //            StartCombatBetween(currAttackingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
-    //        List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currAttackingGroup).Where(x => x.IsHostileWith(currAttackingGroup)));
-    //        if (stealthGroups.Count > 0) {
-    //            //The chance of initiating combat is 35%
-    //            if (Random.Range(0, 100) < 35) {
-    //                ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
-    //                StartCombatBetween(currAttackingGroup, chosenEnemy);
-    //                continue; //the attacking group has found an enemy! skip to the next group
-    //            }
-    //        }
-    //    }
-    //}
-    //public void CheckPatrollingGroupsCombat() {
-    //    List<ICombatInitializer> patrollingGroups = GetPatrollingGroups();
-    //    for (int i = 0; i < patrollingGroups.Count; i++) {
-    //        ICombatInitializer currPatrollingGroup = patrollingGroups[i];
-    //        if (currPatrollingGroup.isInCombat) {
-    //            continue; //this current group is already in combat, skip it
-    //        }
-    //        //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-    //        if (combatGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
-    //            StartCombatBetween(currPatrollingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-    //        List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-    //        if (neutralGroups.Count > 0) {
-    //            ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
-    //            StartCombatBetween(currPatrollingGroup, chosenEnemy);
-    //            continue; //the attacking group has found an enemy! skip to the next group
-    //        }
-
-    //        //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random
-    //        List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currPatrollingGroup).Where(x => x.IsHostileWith(currPatrollingGroup)));
-    //        if (stealthGroups.Count > 0) {
-    //            //The chance of initiating combat is 35%
-    //            if (Random.Range(0, 100) < 35) {
-    //                ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
-    //                StartCombatBetween(currPatrollingGroup, chosenEnemy);
-    //                continue; //the attacking group has found an enemy! skip to the next group
-    //            }
-    //        }
-    //    }
-    //}
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             ICombatInitializer currChar = _charactersAtLocation[i];
@@ -1962,26 +1365,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
         
         return false;
     }
-    //public List<ICombatInitializer> GetAttackingGroups() {
-    //    List<ICombatInitializer> groups = new List<ICombatInitializer>();
-    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //        ICombatInitializer currGroup = _charactersAtLocation[i];
-    //        if (currGroup.currentTask is Invade) {
-    //            groups.Add(currGroup);
-    //        }
-    //    }
-    //    return groups;
-    //}
-    //public List<ICombatInitializer> GetPatrollingGroups() {
-    //    List<ICombatInitializer> groups = new List<ICombatInitializer>();
-    //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //        ICombatInitializer currGroup = _charactersAtLocation[i];
-    //        if (currGroup.currentTask is Patrol) {
-    //            groups.Add(currGroup);
-    //        }
-    //    }
-    //    return groups;
-    //}
     public List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
         List<ICombatInitializer> groups = new List<ICombatInitializer>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
@@ -2023,59 +1406,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>, ILocation{
             currItem.ContinueDailyAction();
         }
     }
-    //   public void StartCombatAtLocation(){
-    //	if(!CombatAtLocation()){
-    //		this._currentCombat = null;
-    //		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //               ICombatInitializer currItem = _charactersAtLocation[i];
-    //               currItem.SetIsDefeated (false);
-    //			currItem.SetIsInCombat (false);
-    //			if(currItem.currentFunction != null){
-    //				currItem.currentFunction ();
-    //			}
-    //			currItem.SetCurrentFunction(null);
-    //           }
-    //       } else {
-    //           for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //               ICombatInitializer currItem = _charactersAtLocation[i];
-    //			currItem.SetIsInCombat (false);
-    //           }
-    //       }
-    //}
-    //   public bool CombatAtLocation(){
-    //	for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //		if(_charactersAtLocation[i].InitializeCombat()){
-    //			return true;
-    //		}
-    //	}
-    //	return false;
-    //}
-    //   public ICombatInitializer GetCombatEnemy (ICombatInitializer combatInitializer) {
-    //	for (int i = 0; i < _charactersAtLocation.Count; i++) {
-    //		if(_charactersAtLocation[i] != combatInitializer){
-    //			if(_charactersAtLocation[i] is Party){
-    //				if(((Party)_charactersAtLocation[i]).isDefeated){
-    //					continue;
-    //				}
-    //			}
-    //			if(combatInitializer.IsHostileWith(_charactersAtLocation[i])){
-    //				return _charactersAtLocation [i];
-    //			}
-    //		}
-    //	}
-    //	return null;
-    //}
-    //   public void SetCurrentCombat(CombatPrototype combat) {
-    //	_currentCombat = combat;
-    //}
     #endregion
 
     #region Materials
     public void SetMaterialOnTile(MATERIAL material) {
         _materialOnTile = material;
-        GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
-        resource.transform.localPosition = Vector3.zero;
-        resource.transform.localScale = Vector3.one;
+        //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
+        //resource.transform.localPosition = Vector3.zero;
+        //resource.transform.localScale = Vector3.one;
         region.AddTileWithMaterial(this);
     }
     #endregion
