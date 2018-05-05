@@ -83,6 +83,7 @@ public class ObjectManager : MonoBehaviour {
             LandmarkObjectComponent currComp = landmarkObjectComponents[i];
             LandmarkObj landmarkObject = landmarkObjectComponents[i].landmarkObject;
             SetInitialDataOfObjects(currComp, landmarkObject, landmarkObjectComponents[i].gameObject.name);
+            landmarkObject.SetObjectName(landmarkObjectComponents[i].gameObject.name);
             _landmarkObjects.Add(landmarkObject);
             _allObjects.Add(landmarkObject);
         }
