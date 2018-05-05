@@ -400,7 +400,7 @@ public class Biomes : MonoBehaviour {
 			return ELEVATION.TREES;
         } else if (elevationNoise > 0.35f && elevationNoise <= 0.5f) {
             return ELEVATION.PLAIN;
-        } else {
+        } else { 
             return ELEVATION.MOUNTAIN;
         }
     }
