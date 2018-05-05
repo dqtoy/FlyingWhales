@@ -1288,6 +1288,7 @@ public enum ACTION_TYPE {
     POPULATE,
     TORTURE,
     PATROL,
+    ABDUCT,
 }
 
 public enum OBJECT_TYPE {

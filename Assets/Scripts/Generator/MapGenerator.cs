@@ -66,7 +66,7 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();
         //Biomes.Instance.LoadElevationSprites();
-        //Biomes.Instance.GenerateTileBiomeDetails();
+        Biomes.Instance.GenerateTileBiomeDetails();
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();

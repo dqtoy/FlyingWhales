@@ -29,6 +29,10 @@ public class StructureObjectComponent : ObjectComponent {
         ObjectState defaultState = iobject.GetState("Default");
         iobject.ChangeState(defaultState);
     }
+    public void Destroyed(IObject iobject) {
+        ObjectState defaultState = iobject.GetState("Ruined");
+        iobject.ChangeState(defaultState);
+    }
     #endregion
 
     #region Wild Pigs

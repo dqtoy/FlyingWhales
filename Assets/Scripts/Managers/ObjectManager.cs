@@ -205,6 +205,8 @@ public class ObjectManager : MonoBehaviour {
             return new PatrolAction(state);
             case ACTION_TYPE.REPAIR:
             return new RepairAction(state);
+            case ACTION_TYPE.ABDUCT:
+            return new AbductAction(state);
         }
         return null;
     }
@@ -237,6 +239,9 @@ public class ObjectManager : MonoBehaviour {
             break;
             case SPECIFIC_OBJECT_TYPE.WILD_PIGS:
             structureObj = new WildPigs();
+            break;
+            case SPECIFIC_OBJECT_TYPE.HUMAN_RESIDENCES:
+            structureObj = new HumanResidences();
             break;
         }
         component.CopyDataToStructureObject(structureObj);

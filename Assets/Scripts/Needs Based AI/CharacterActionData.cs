@@ -294,6 +294,8 @@ public class CharacterActionDrawer : PropertyDrawer {
                 return true;
             case ACTION_TYPE.TORTURE:
                 return true;
+            case ACTION_TYPE.ABDUCT:
+                return true;
             default:
                 return false;
         }
@@ -303,6 +305,8 @@ public class CharacterActionDrawer : PropertyDrawer {
             case ACTION_TYPE.HARVEST:
                 return true;
             case ACTION_TYPE.POPULATE:
+                return true;
+            case ACTION_TYPE.ABDUCT:
                 return true;
             default:
                 return false;
