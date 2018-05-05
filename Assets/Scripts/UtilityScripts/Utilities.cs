@@ -1212,7 +1212,7 @@ public class Utilities : MonoBehaviour {
 		switch(tag){
 		case CHARACTER_TAG.HERBALIST:
 		case CHARACTER_TAG.RITUALIST:
-			return 5;
+			return 13;
 		default:
 			return 0;
 		}

@@ -29,7 +29,7 @@ public class Villain : CharacterRole {
         SetJoy(600);
         SetPrestige(400);
 
-        _character.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;
+        _character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;
         Messenger.AddListener("OnDayEnd", StartDepletion);
 	}
 

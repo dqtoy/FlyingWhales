@@ -11,7 +11,7 @@ public class ObjectComponent : MonoBehaviour {
 
     #region getters/setters
     public virtual new string name {
-        get { return this.name; }
+        get { return this.gameObject.name; }
     }
     #endregion
 }
