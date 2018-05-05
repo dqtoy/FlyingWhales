@@ -513,13 +513,13 @@ public class RoadManager : MonoBehaviour {
                 currTile.SetTileAsRoad(true, roadType, roadGO);
                 if (currTile.roadType == ROAD_TYPE.MINOR) {
                     currTile.SetRoadColor(roadGO, Color.gray);
-                    currTile.SetRoadState(true);
-                    //currTile.SetRoadState(!GameManager.Instance.initiallyHideRoads);
+                    currTile.SetRoadState(false);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
                     currTile.SetRoadColor(roadGO, Color.white);
-                    currTile.SetRoadState(true); //Major Roads should already be visible
+                    currTile.SetRoadState(false); 
                 }
             }
+            currTile.SetPassableState(true);
         }
     }
     public void ConnectLandmarkToLandmark(BaseLandmark landmark1, BaseLandmark landmark2) {

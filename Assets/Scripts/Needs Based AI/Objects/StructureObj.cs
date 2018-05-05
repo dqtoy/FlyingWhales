@@ -7,19 +7,20 @@ using ECS;
 
 [Serializable]
 public class StructureObj : IObject {
-    [SerializeField] private OBJECT_TYPE _objectType;
-    [SerializeField] private bool _isInvisible;
-    [SerializeField] private int _maxHP;
-    [SerializeField] private ActionEvent _onHPReachedZero;
-    [SerializeField] private ActionEvent _onHPReachedFull;
+    [SerializeField] protected OBJECT_TYPE _objectType;
+    [SerializeField] protected SPECIFIC_OBJECT_TYPE _specificObjectType;
+    [SerializeField] protected bool _isInvisible;
+    [SerializeField] protected int _maxHP;
+    [SerializeField] protected ActionEvent _onHPReachedZero;
+    [SerializeField] protected ActionEvent _onHPReachedFull;
 
-    private List<ObjectState> _states;
-    private Dictionary<RESOURCE, int> _resourceInventory;
+    protected List<ObjectState> _states;
+    protected Dictionary<RESOURCE, int> _resourceInventory;
 
-    private string _objectName;
-    [NonSerialized] private ObjectState _currentState;
-    private BaseLandmark _objectLocation;
-    private int _currentHP;
+    protected string _objectName;
+    [NonSerialized] protected ObjectState _currentState;
+    protected BaseLandmark _objectLocation;
+    protected int _currentHP;
 
     #region getters/setters
     public string objectName {
@@ -27,6 +28,9 @@ public class StructureObj : IObject {
     }
     public OBJECT_TYPE objectType {
         get { return _objectType; }
+    }
+    public SPECIFIC_OBJECT_TYPE specificObjectType {
+        get { return _specificObjectType; }
     }
     public List<ObjectState> states {
         get { return _states; }
@@ -59,9 +63,58 @@ public class StructureObj : IObject {
 
     public StructureObj() {
         ConstructResourceInventory();
-        _resourceInventory[RESOURCE.OAK] = 5000;
-        _resourceInventory[RESOURCE.IRON] = 5000;
     }
+
+    #region Virtuals
+    public virtual IObject Clone() {
+        StructureObj clone = new StructureObj();
+        clone.SetObjectName(this._objectName);
+        clone._specificObjectType = this._specificObjectType;
+        clone._objectType = this._objectType;
+        clone._isInvisible = this.isInvisible;
+        clone._maxHP = this.maxHP;
+        clone._onHPReachedZero = this._onHPReachedZero;
+        clone._onHPReachedFull = this._onHPReachedFull;
+        List<ObjectState> states = new List<ObjectState>();
+        for (int i = 0; i < this.states.Count; i++) {
+            ObjectState currState = this.states[i];
+            ObjectState clonedState = currState.Clone(clone);
+            states.Add(clonedState);
+            //if (this.currentState == currState) {
+            //    clone.ChangeState(clonedState);
+            //}
+        }
+        clone.SetStates(states);
+        return clone;
+    }
+    public virtual IObject NewCopyObject(IObject iobject) {
+        StructureObj clone = new StructureObj();
+        clone.SetObjectName(this._objectName);
+        clone._specificObjectType = this._specificObjectType;
+        clone._objectType = this._objectType;
+        clone._isInvisible = this.isInvisible;
+        clone._maxHP = this.maxHP;
+        clone._onHPReachedZero = this._onHPReachedZero;
+        clone._onHPReachedFull = this._onHPReachedFull;
+        List<ObjectState> states = new List<ObjectState>();
+        for (int i = 0; i < this.states.Count; i++) {
+            ObjectState currState = this.states[i];
+            ObjectState clonedState = currState.Clone(clone);
+            states.Add(clonedState);
+            //if (this.currentState == currState) {
+            //    clone.ChangeState(clonedState);
+            //}
+        }
+        clone.SetStates(states);
+        return clone;
+    }
+    public virtual void AdjustResource(RESOURCE resource, int amount) {
+        _resourceInventory[resource] += amount;
+        if (_resourceInventory[resource] < 0) {
+            _resourceInventory[resource] = 0;
+        }
+    }
+    #endregion
 
     #region Interface Requirements
     public void SetStates(List<ObjectState> states) {
@@ -70,6 +123,21 @@ public class StructureObj : IObject {
     }
     public void SetObjectName(string name) {
         _objectName = name;
+    }
+    public void SetSpecificObjectType(SPECIFIC_OBJECT_TYPE specificObjectType) {
+        _specificObjectType = specificObjectType;
+    }
+    public void SetIsInvisible(bool state) {
+        _isInvisible = state;
+    }
+    public void SetOnHPFullFunction(ActionEvent action) {
+        _onHPReachedFull = action;
+    }
+    public void SetOnHPZeroFunction(ActionEvent action) {
+        _onHPReachedZero = action;
+    }
+    public void SetMaxHP(int amount) {
+        _maxHP = amount;
     }
     public void SetObjectLocation(BaseLandmark newLocation) {
         _objectLocation = newLocation;
@@ -102,26 +170,6 @@ public class StructureObj : IObject {
             }
         }
     }
-    public IObject Clone() {
-        StructureObj clone = new StructureObj();
-        clone.SetObjectName(this._objectName);
-        clone._objectType = this._objectType;
-        clone._isInvisible = this.isInvisible;
-        clone._maxHP = this.maxHP;
-        clone._onHPReachedZero = this._onHPReachedZero;
-        clone._onHPReachedFull = this._onHPReachedFull;
-        List<ObjectState> states = new List<ObjectState>();
-        for (int i = 0; i < this.states.Count; i++) {
-            ObjectState currState = this.states[i];
-            ObjectState clonedState = currState.Clone(clone);
-            states.Add(clonedState);
-            //if (this.currentState == currState) {
-            //    clone.ChangeState(clonedState);
-            //}
-        }
-        clone.SetStates(states);
-        return clone;
-    }
     #endregion
 
     #region Resource Inventory
@@ -134,37 +182,6 @@ public class StructureObj : IObject {
             }
         }
     }
-    public void AdjustResource(RESOURCE resource, int amount) {
-        _resourceInventory[resource] += amount;
-        if(_resourceInventory[resource] < 0) {
-            _resourceInventory[resource] = 0;
-        }
-        if(objectName == "Torture Chamber") {
-            if(GetTotalCivilians() == 0) {
-                if(_currentState.stateName == "Occupied") {
-                    ObjectState emptyState = GetState("Empty");
-                    ChangeState(emptyState);
-                }
-            } else {
-                if (_currentState.stateName == "Empty") {
-                    ObjectState occupiedState = GetState("Occupied");
-                    ChangeState(occupiedState);
-                }
-            }
-        } else if (objectName == "Oak Woods" || objectName == "Iron Mines") {
-            if (_resourceInventory[resource] == 0) {
-                if (_currentState.stateName == "Default") {
-                    ObjectState emptyState = GetState("Depleted");
-                    ChangeState(emptyState);
-                }
-            } else {
-                if (_currentState.stateName == "Depleted") {
-                    ObjectState occupiedState = GetState("Default");
-                    ChangeState(occupiedState);
-                }
-            }
-        }
-    }
     public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
@@ -174,10 +191,6 @@ public class StructureObj : IObject {
         target.AdjustResource(resource, amount);
     }
     public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
-        AdjustResource(resource, -amount);
-        target.AdjustResource(resource, amount);
-    }
-    public void TransferResourceTo(RESOURCE resource, int amount, Character target) {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
     }

@@ -166,7 +166,10 @@ public class GridMap : MonoBehaviour {
                 Biomes.Instance.SetElevationSpriteForTile(currHex);
                 hexToCopy.region.AddOuterGridTile(currHex);
 
+
                 currHex.DisableColliders();
+                currHex.unpassableGO.GetComponent<PolygonCollider2D>().enabled = true;
+                currHex.unpassableGO.SetActive(true);
                 //currHex.HideFogOfWarObjects();
             }
         }

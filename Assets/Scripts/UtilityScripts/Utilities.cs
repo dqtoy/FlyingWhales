@@ -85,7 +85,7 @@ public class Utilities : MonoBehaviour {
     
     public static List<BIOMES> biomeLayering = new List<BIOMES>() {
         BIOMES.GRASSLAND,
-        BIOMES.WOODLAND,
+        //BIOMES.WOODLAND,
         BIOMES.TUNDRA,
         BIOMES.FOREST,
         BIOMES.DESERT,
@@ -183,7 +183,7 @@ public class Utilities : MonoBehaviour {
         {BIOMES.FOREST, new Color(34f/255f, 139f/255f, 34f/255f)},
         {BIOMES.SNOW, new Color(255f/255f, 255f/255f, 255f/255f)},
         {BIOMES.TUNDRA, new Color(106f/255f, 108f/255f, 59f/255f)},
-        {BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
+        //{BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
     };
 
     public static WeightedDictionary<MATERIAL> GetMaterialWeights() {
@@ -1212,7 +1212,7 @@ public class Utilities : MonoBehaviour {
 		switch(tag){
 		case CHARACTER_TAG.HERBALIST:
 		case CHARACTER_TAG.RITUALIST:
-			return 5;
+			return 13;
 		default:
 			return 0;
 		}

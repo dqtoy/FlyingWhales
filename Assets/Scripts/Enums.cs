@@ -8,7 +8,7 @@ public enum BIOMES{
 	TUNDRA,
 	DESERT,
 	GRASSLAND,
-	WOODLAND,
+	//WOODLAND,
 	FOREST,
 	BARE,
 	NONE,
@@ -23,6 +23,7 @@ public enum ELEVATION{
 	MOUNTAIN,
 	WATER,
 	PLAIN,
+    TREES,
 }
 
 public enum RACE{
@@ -1323,17 +1324,18 @@ public enum ACTION_FILTER {
     RUINED
 }
 
-//public enum SPECIFIC_OBJECT_TYPE {
-//    WILD_PIGS,
-//    SOULSTONE,
-//    INN,
-//    PUB,
-//    DANK_SHELTER,
-//    ELVEN_RESIDENCES,
-//    IRON_MINE,
-//    OAK_WOODS,
-//    LAIR,
-//    TORTURE_CHAMBER,
-//    ENCHANTED_GROVE,
-//    SEALED_TOMB
-//}
+public enum SPECIFIC_OBJECT_TYPE {
+    WILD_PIGS,
+    SOULSTONE,
+    INN,
+    PUB,
+    DANK_SHELTER,
+    ELVEN_RESIDENCES,
+    HUMAN_RESIDENCES,
+    IRON_MINE,
+    OAK_WOODS,
+    LAIR,
+    TORTURE_CHAMBER,
+    ENCHANTED_GROVE,
+    SEALED_TOMB
+}

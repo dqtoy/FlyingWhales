@@ -104,11 +104,12 @@ namespace ECS {
 		private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
+        private CharacterObj _characterObject;
 
         //For Testing
         public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
 
-        private Dictionary<RESOURCE, int> _resourceInventory;
+        //private Dictionary<RESOURCE, int> _resourceInventory;
 
         #region getters / setters
         public string firstName {
@@ -371,12 +372,15 @@ namespace ECS {
         public ActionData actionData {
             get { return _actionData; }
         }
-        public Dictionary<RESOURCE, int> resourceInventory {
-            get { return _resourceInventory; }
+        public CharacterObj characterObject {
+            get { return _characterObject; }
         }
-        public int totalResourceCount {
-            get { return resourceInventory.Sum(x => x.Value); }
-        }
+        //public Dictionary<RESOURCE, int> resourceInventory {
+        //    get { return _resourceInventory; }
+        //}
+        //public int totalResourceCount {
+        //    get { return resourceInventory.Sum(x => x.Value); }
+        //}
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -408,7 +412,7 @@ namespace ECS {
 			previousActions = new Dictionary<CharacterTask, string> ();
 			actionWeights = new WeightedDictionary<CharacterTask> ();
             _actionData = new ActionData(this);
-            _resourceInventory = new Dictionary<RESOURCE, int>();
+            //_resourceInventory = new Dictionary<RESOURCE, int>();
 
 			GenerateRaceTags ();
             GenerateSetupTags(baseSetup);
@@ -439,7 +443,9 @@ namespace ECS {
 			combatHistory = new Dictionary<int, Combat> ();
 			_combatHistoryID = 0;
 
-            ConstructResourceInventory();
+            _characterObject = new CharacterObj(this);
+
+            //ConstructResourceInventory();
 
             Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
@@ -2891,30 +2897,30 @@ namespace ECS {
         }
 
         #region Resource Inventory
-        private void ConstructResourceInventory() {
-            _resourceInventory = new Dictionary<RESOURCE, int>();
-            RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
-            for (int i = 0; i < allResources.Length; i++) {
-                if(allResources[i] != RESOURCE.NONE) {
-                    _resourceInventory.Add(allResources[i], 0);
-                }
-            }
-        }
-        public void AdjustResource(RESOURCE resource, int amount) {
-            _resourceInventory[resource] += amount;
-        }
-        public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
-            AdjustResource(resource, -amount);
-            target.AdjustResource(resource, amount);
-        }
-        public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
-            AdjustResource(resource, -amount);
-            target.AdjustResource(resource, amount);
-        }
-        public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
-            AdjustResource(resource, -amount);
-            target.AdjustResource(resource, amount);
-        }
+        //private void ConstructResourceInventory() {
+        //    _resourceInventory = new Dictionary<RESOURCE, int>();
+        //    RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
+        //    for (int i = 0; i < allResources.Length; i++) {
+        //        if(allResources[i] != RESOURCE.NONE) {
+        //            _resourceInventory.Add(allResources[i], 0);
+        //        }
+        //    }
+        //}
+        //public void AdjustResource(RESOURCE resource, int amount) {
+        //    _resourceInventory[resource] += amount;
+        //}
+        //public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
+        //    AdjustResource(resource, -amount);
+        //    target.AdjustResource(resource, amount);
+        //}
+        //public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
+        //    AdjustResource(resource, -amount);
+        //    target.AdjustResource(resource, amount);
+        //}
+        //public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
+        //    AdjustResource(resource, -amount);
+        //    target.AdjustResource(resource, amount);
+        //}
         #endregion
 
     }
