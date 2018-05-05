@@ -12,7 +12,6 @@ public class MapGenerator : MonoBehaviour {
     }
 
     internal void InitializeWorld() {
-        //StartCoroutine (StartGeneration());
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
@@ -21,8 +20,7 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        //Biomes.Instance.GenerateSpecialResources ();
-        //Biomes.Instance.GenerateTileTags();
+        Biomes.Instance.LoadPassableObjects();
         if (!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
             Debug.LogWarning("Region generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
@@ -33,6 +31,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.DivideOuterGridRegions();
 
         UIManager.Instance.InitializeUI();
+
 
         if (!FactionManager.Instance.GenerateInitialFactions()) {
             //reset
@@ -55,6 +54,8 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
+        PathfindingManager.Instance.CreateGrid();
+
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
         ObjectManager.Instance.Initialize();
         LandmarkManager.Instance.ConstructAllLandmarkObjects();
@@ -64,8 +65,8 @@ public class MapGenerator : MonoBehaviour {
         RoadManager.Instance.FlattenRoads();
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();
-        Biomes.Instance.LoadElevationSprites();
-        Biomes.Instance.GenerateTileBiomeDetails();
+        //Biomes.Instance.LoadElevationSprites();
+        //Biomes.Instance.GenerateTileBiomeDetails();
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
