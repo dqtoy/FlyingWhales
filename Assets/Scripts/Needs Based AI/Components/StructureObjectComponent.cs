@@ -4,12 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class StructureObjectComponent : ObjectComponent {
-    public StructureObj structureObject;
+    public SPECIFIC_OBJECT_TYPE specificObjectType;
+    public bool isInvisible;
+    public int maxHP;
+    public ActionEvent onHPReachedZero;
+    public ActionEvent onHPReachedFull;
+
+    public void CopyDataToStructureObject(StructureObj structureObject) {
+        structureObject.SetSpecificObjectType(specificObjectType);
+        structureObject.SetIsInvisible(isInvisible);
+        structureObject.SetOnHPFullFunction(onHPReachedFull);
+        structureObject.SetOnHPZeroFunction(onHPReachedZero);
+        structureObject.SetMaxHP(maxHP);
+    }
 
     #region getters/setters
-    public override string name {
-        get { return structureObject.objectName; }
-    }
+    //public override string name {
+    //    get { return structureObject.objectName; }
+    //}
     #endregion
 
     #region General

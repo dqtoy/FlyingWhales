@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 [System.Serializable]
 public class CharacterObj : IObject {
@@ -10,6 +11,7 @@ public class CharacterObj : IObject {
     [SerializeField] private List<ObjectState> _states;
     private Dictionary<RESOURCE, int> _resourceInventory;
 
+    private Character _character;
     private string _objectName;
     [NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
@@ -39,7 +41,8 @@ public class CharacterObj : IObject {
     #endregion
 
 
-    public CharacterObj() {
+    public CharacterObj(Character character) {
+        _character = character;
         ConstructResourceInventory();
     }
 
@@ -70,7 +73,7 @@ public class CharacterObj : IObject {
         return null;
     }
     public IObject Clone() {
-        CharacterObj clone = new CharacterObj();
+        CharacterObj clone = new CharacterObj(_character);
         clone.SetObjectName(this._objectName);
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;

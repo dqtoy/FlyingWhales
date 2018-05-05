@@ -53,7 +53,7 @@ public class ObjectManager : MonoBehaviour {
         _landmarkObjects = new List<LandmarkObj>();
         for (int i = 0; i < structureObjectComponents.Count; i++) {
             StructureObjectComponent currComp = structureObjectComponents[i];
-            StructureObj structureObject = currComp.structureObject;
+            StructureObj structureObject = ConvertComponentToStructureObject(currComp);
             SetInitialDataOfObjects(currComp, structureObject, structureObjectComponents[i].gameObject.name);
             _structureObjects.Add(structureObject);
             _allObjects.Add(structureObject);
@@ -88,7 +88,7 @@ public class ObjectManager : MonoBehaviour {
         }
     }
     private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName) {
-        iobject.SetObjectName(objectName);
+        //iobject.SetObjectName(objectName);
         iobject.SetStates(objComp.states);
         for (int i = 0; i < iobject.states.Count; i++) {
             ObjectState state = iobject.states[i];
@@ -207,6 +207,40 @@ public class ObjectManager : MonoBehaviour {
             return new RepairAction(state);
         }
         return null;
+    }
+    public StructureObj ConvertComponentToStructureObject(StructureObjectComponent component) {
+        StructureObj structureObj = null;
+        switch (component.specificObjectType) {
+            case SPECIFIC_OBJECT_TYPE.INN:
+            structureObj = new Inn();
+            break;
+            case SPECIFIC_OBJECT_TYPE.DANK_SHELTER:
+            structureObj = new DankShelter();
+            break;
+            case SPECIFIC_OBJECT_TYPE.IRON_MINE:
+            structureObj = new IronMine();
+            break;
+            case SPECIFIC_OBJECT_TYPE.LAIR:
+            structureObj = new Lair();
+            break;
+            case SPECIFIC_OBJECT_TYPE.OAK_WOODS:
+            structureObj = new OakWoods();
+            break;
+            case SPECIFIC_OBJECT_TYPE.PUB:
+            structureObj = new Pub();
+            break;
+            case SPECIFIC_OBJECT_TYPE.SOULSTONE:
+            structureObj = new Soulstone();
+            break;
+            case SPECIFIC_OBJECT_TYPE.TORTURE_CHAMBER:
+            structureObj = new TortureChamber();
+            break;
+            case SPECIFIC_OBJECT_TYPE.WILD_PIGS:
+            structureObj = new WildPigs();
+            break;
+        }
+        component.CopyDataToStructureObject(structureObj);
+        return structureObj;
     }
     public StructureObj GetNewStructureObject(string name) {
         for (int i = 0; i < _structureObjects.Count; i++) {

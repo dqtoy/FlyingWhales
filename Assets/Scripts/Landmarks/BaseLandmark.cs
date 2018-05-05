@@ -1085,7 +1085,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
     }
-    public void TransferResourceTo(RESOURCE resource, int amount, Character target) {
+    public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
     }

@@ -280,8 +280,8 @@ public class CharacterInfoUI : UIMenu {
 
 	private void UpdateInventoryInfo(){
 		string text = string.Empty;
-        foreach (RESOURCE resource in currentlyShowingCharacter.resourceInventory.Keys) {
-            text += resource.ToString() + ": " + currentlyShowingCharacter.resourceInventory[resource];
+        foreach (RESOURCE resource in currentlyShowingCharacter.characterObject.resourceInventory.Keys) {
+            text += resource.ToString() + ": " + currentlyShowingCharacter.characterObject.resourceInventory[resource];
             text += "\n";
         }
 		//if(currentlyShowingCharacter.inventory.Count > 0) {

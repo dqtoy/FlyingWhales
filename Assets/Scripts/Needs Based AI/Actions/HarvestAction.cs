@@ -36,7 +36,7 @@ public class HarvestAction : CharacterAction {
 
             //give the character resource amount between min and max (inclusive)
             int resourceAmount = Random.Range(minResource, maxResource);
-            _structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character);
+            _structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character.characterObject);
             ActionSuccess();
         }
 
