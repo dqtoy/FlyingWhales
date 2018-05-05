@@ -161,9 +161,12 @@ public class Biomes : MonoBehaviour {
     internal void GenerateTileBiomeDetails() {
         for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
             HexTile currentHexTile = GridMap.Instance.hexTiles[i].GetComponent<HexTile>();
-            if(currentHexTile.elevationType != ELEVATION.PLAIN) {
-                continue;
-            }
+            //if(currentHexTile.elevationType != ELEVATION.PLAIN) {
+            //    continue;
+            //}
+            //if (currentHexTile.biomeType == BIOMES.FOREST) {
+            //    continue;
+            //}
             AddBiomeDetailToTile(currentHexTile);
         }
     }
@@ -200,11 +203,11 @@ public class Biomes : MonoBehaviour {
             //    tile.SetCenterSprite(centerSpriteToUse);
             //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
             //    break;
-            case BIOMES.FOREST:
-                centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
-                tile.SetCenterSprite(centerSpriteToUse);
-                //Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
-                break;
+            //case BIOMES.FOREST:
+            //    centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
+            //    tile.SetCenterSprite(centerSpriteToUse);
+            //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
+            //    break;
         }
         if (biomeDetailToUse != null) {
             tile.AddBiomeDetailToTile(biomeDetailToUse);
