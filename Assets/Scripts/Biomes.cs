@@ -363,7 +363,7 @@ public class Biomes : MonoBehaviour {
         }
     }
 	private void CalculateElevationAndMoisture(){
-        float elevationFrequency = 13.1f; //14.93f;//2.66f;
+        float elevationFrequency = 19.1f; //14.93f;//2.66f;
         float moistureFrequency = 12.34f; //3.34f;//2.94f;
 		float tempFrequency = 2.64f;//2.4f;
 
@@ -399,9 +399,11 @@ public class Biomes : MonoBehaviour {
 
 	private ELEVATION GetElevationType(float elevationNoise){
         //return ELEVATION.PLAIN;
-        if (elevationNoise <= 0.35f) {
+        if (elevationNoise <= 0.15f) {
+			return ELEVATION.WATER;
+		} else if (elevationNoise > 0.15f && elevationNoise <= 0.45f) {
 			return ELEVATION.TREES;
-        } else if (elevationNoise > 0.35f && elevationNoise <= 0.5f) {
+        } else if (elevationNoise > 0.45f && elevationNoise <= 0.6f) {
             return ELEVATION.PLAIN;
         } else { 
             return ELEVATION.MOUNTAIN;
