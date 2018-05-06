@@ -114,6 +114,9 @@ public class StructureObj : IObject {
             _resourceInventory[resource] = 0;
         }
     }
+    public virtual void OnAddToLandmark(BaseLandmark newLocation) {
+        SetObjectLocation(newLocation);
+    }
     #endregion
 
     #region Interface Requirements

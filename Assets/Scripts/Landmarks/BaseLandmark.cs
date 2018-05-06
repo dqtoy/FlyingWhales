@@ -1043,7 +1043,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void AddObject(IObject obj) {
         if (!_objects.Contains(obj)) {
             _objects.Add(obj);
-            obj.SetObjectLocation(this);
+            obj.OnAddToLandmark(this);
         }
     }
     public void RemoveObject(IObject obj) {

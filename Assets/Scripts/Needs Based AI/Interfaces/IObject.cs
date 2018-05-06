@@ -15,6 +15,7 @@ public interface IObject {
     void SetObjectName(string name);
     void ChangeState(ObjectState state);
     void SetObjectLocation(BaseLandmark newLocation);
+    void OnAddToLandmark(BaseLandmark newLocation);
 
     ObjectState GetState(string name);
     IObject Clone();

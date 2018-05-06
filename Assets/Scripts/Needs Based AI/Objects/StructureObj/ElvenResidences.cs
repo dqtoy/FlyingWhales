@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HumanResidences : StructureObj {
+public class ElvenResidences : StructureObj {
 
-    public HumanResidences() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.HUMAN_RESIDENCES;
+    public ElvenResidences() : base() {
+        _specificObjectType = SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 
     #region Overrides
     public override IObject Clone() {
-        HumanResidences clone = new HumanResidences();
+        ElvenResidences clone = new ElvenResidences();
         clone.SetObjectName(this._objectName);
         clone._specificObjectType = this._specificObjectType;
         clone._objectType = this._objectType;
