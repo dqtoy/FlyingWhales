@@ -21,6 +21,10 @@ public class DestroyAction : CharacterAction {
     }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
+        if (_structure.isHPZero) {
+            EndAction(character);
+            return;
+        }
         int chance = UnityEngine.Random.Range(0, 100);
         if (chance < actionData.successRate) {
             ActionSuccess();

@@ -93,8 +93,9 @@ public class StructureObjectComponent : ObjectComponent {
     public void RepairedResourceStructure(IObject iobject) {
         if (iobject is StructureObj) {
             StructureObj structure = iobject as StructureObj;
+            RESOURCE resource = Utilities.GetResourceTypeByObjectType(structure.specificObjectType);
             string defaultOrDepleted = "Depleted";
-            if (structure.resourceInventory[RESOURCE.OAK] > 0) {
+            if (structure.resourceInventory[resource] > 0) {
                 defaultOrDepleted = "Default";
             }
             ObjectState defaultState = iobject.GetState(defaultOrDepleted);

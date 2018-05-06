@@ -5,14 +5,13 @@ using UnityEngine.Events;
 using System;
 using ECS;
 
-[Serializable]
 public class StructureObj : IObject {
-    [SerializeField] protected OBJECT_TYPE _objectType;
-    [SerializeField] protected SPECIFIC_OBJECT_TYPE _specificObjectType;
-    [SerializeField] protected bool _isInvisible;
-    [SerializeField] protected int _maxHP;
-    [SerializeField] protected ActionEvent _onHPReachedZero;
-    [SerializeField] protected ActionEvent _onHPReachedFull;
+    protected OBJECT_TYPE _objectType;
+    protected SPECIFIC_OBJECT_TYPE _specificObjectType;
+    protected bool _isInvisible;
+    protected int _maxHP;
+    protected ActionEvent _onHPReachedZero;
+    protected ActionEvent _onHPReachedFull;
 
     protected List<ObjectState> _states;
     protected Dictionary<RESOURCE, int> _resourceInventory;
@@ -21,6 +20,7 @@ public class StructureObj : IObject {
     [NonSerialized] protected ObjectState _currentState;
     protected BaseLandmark _objectLocation;
     protected int _currentHP;
+    protected RESOURCE _madeOf;
 
     #region getters/setters
     public string objectName {
@@ -59,53 +59,25 @@ public class StructureObj : IObject {
     public bool isHPZero {
         get { return _currentHP == 0; }
     }
+    public RESOURCE madeOf {
+        get { return _madeOf; }
+    }
     #endregion
 
     public StructureObj() {
+        _objectType = OBJECT_TYPE.STRUCTURE;
         ConstructResourceInventory();
     }
 
     #region Virtuals
     public virtual IObject Clone() {
         StructureObj clone = new StructureObj();
-        clone.SetObjectName(this._objectName);
-        clone._specificObjectType = this._specificObjectType;
-        clone._objectType = this._objectType;
-        clone._isInvisible = this.isInvisible;
-        clone._maxHP = this.maxHP;
-        clone._onHPReachedZero = this._onHPReachedZero;
-        clone._onHPReachedFull = this._onHPReachedFull;
-        List<ObjectState> states = new List<ObjectState>();
-        for (int i = 0; i < this.states.Count; i++) {
-            ObjectState currState = this.states[i];
-            ObjectState clonedState = currState.Clone(clone);
-            states.Add(clonedState);
-            //if (this.currentState == currState) {
-            //    clone.ChangeState(clonedState);
-            //}
-        }
-        clone.SetStates(states);
+        
         return clone;
     }
     public virtual IObject NewCopyObject(IObject iobject) {
         StructureObj clone = new StructureObj();
-        clone.SetObjectName(this._objectName);
-        clone._specificObjectType = this._specificObjectType;
-        clone._objectType = this._objectType;
-        clone._isInvisible = this.isInvisible;
-        clone._maxHP = this.maxHP;
-        clone._onHPReachedZero = this._onHPReachedZero;
-        clone._onHPReachedFull = this._onHPReachedFull;
-        List<ObjectState> states = new List<ObjectState>();
-        for (int i = 0; i < this.states.Count; i++) {
-            ObjectState currState = this.states[i];
-            ObjectState clonedState = currState.Clone(clone);
-            states.Add(clonedState);
-            //if (this.currentState == currState) {
-            //    clone.ChangeState(clonedState);
-            //}
-        }
-        clone.SetStates(states);
+        SetCommonData(clone);
         return clone;
     }
     public virtual void AdjustResource(RESOURCE resource, int amount) {
@@ -173,6 +145,9 @@ public class StructureObj : IObject {
             }
         }
     }
+    public void SetHP(int amount) {
+        _currentHP = amount;
+    }
     #endregion
 
     #region Resource Inventory
@@ -210,6 +185,29 @@ public class StructureObj : IObject {
         //    }
         //}
         return total;
+    }
+    #endregion
+
+    #region Utilities
+    public void SetCommonData(StructureObj clone) {
+        clone.SetObjectName(this._objectName);
+        clone._specificObjectType = this._specificObjectType;
+        clone._objectType = this._objectType;
+        clone._isInvisible = this.isInvisible;
+        clone._maxHP = this.maxHP;
+        clone._onHPReachedZero = this._onHPReachedZero;
+        clone._onHPReachedFull = this._onHPReachedFull;
+        clone._madeOf = this._madeOf;
+        List<ObjectState> states = new List<ObjectState>();
+        for (int i = 0; i < this.states.Count; i++) {
+            ObjectState currState = this.states[i];
+            ObjectState clonedState = currState.Clone(clone);
+            states.Add(clonedState);
+            //if (this.currentState == currState) {
+            //    clone.ChangeState(clonedState);
+            //}
+        }
+        clone.SetStates(states);
     }
     #endregion
 }

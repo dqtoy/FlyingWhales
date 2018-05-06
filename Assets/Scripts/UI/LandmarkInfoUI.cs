@@ -206,6 +206,10 @@ public class LandmarkInfoUI : UIMenu {
                 IObject currObj = currentlyShowingLandmark.objects[i];
                 if (!currObj.isInvisible) {
                     text += "\n" + currObj.objectName + " (" + currObj.currentState.stateName + ")";
+                    if(currObj.objectType == OBJECT_TYPE.STRUCTURE) {
+                        StructureObj structure = currObj as StructureObj;
+                        text += " (" + structure.currentHP + "/" + structure.maxHP + ")";
+                    }
                 }
             }
         } else {
