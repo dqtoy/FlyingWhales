@@ -97,6 +97,9 @@ public class LandmarkObj : IObject {
         clone.SetStates(states);
         return clone;
     }
+    public void OnAddToLandmark(BaseLandmark newLocation) {
+        SetObjectLocation(newLocation);
+    }
     #endregion
 
     #region Resource Inventory

@@ -54,7 +54,7 @@ public class ObjectManager : MonoBehaviour {
         for (int i = 0; i < structureObjectComponents.Count; i++) {
             StructureObjectComponent currComp = structureObjectComponents[i];
             StructureObj structureObject = ConvertComponentToStructureObject(currComp);
-            SetInitialDataOfObjects(currComp, structureObject, structureObjectComponents[i].gameObject.name);
+            SetInitialDataOfObjects(currComp, structureObject);
             _structureObjects.Add(structureObject);
             _allObjects.Add(structureObject);
         }
@@ -87,8 +87,10 @@ public class ObjectManager : MonoBehaviour {
             _allObjects.Add(landmarkObject);
         }
     }
-    private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName) {
-        //iobject.SetObjectName(objectName);
+    private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName = "") {
+        if(objectName != string.Empty) {
+            iobject.SetObjectName(objectName);
+        }
         iobject.SetStates(objComp.states);
         for (int i = 0; i < iobject.states.Count; i++) {
             ObjectState state = iobject.states[i];
@@ -242,6 +244,9 @@ public class ObjectManager : MonoBehaviour {
             break;
             case SPECIFIC_OBJECT_TYPE.HUMAN_RESIDENCES:
             structureObj = new HumanResidences();
+            break;
+            case SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES:
+            structureObj = new ElvenResidences();
             break;
         }
         component.CopyDataToStructureObject(structureObj);

@@ -45,9 +45,9 @@ public class LandmarkManager : MonoBehaviour {
         }
     }
     public void ConstructLandmarkObjects(BaseLandmarkData baseData, LandmarkData data, BaseLandmark landmark) {
+        IObject createdObject = null;
         for (int i = 0; i < baseData.initialObjects.Count; i++) {
-            string objName = baseData.initialObjects[i].name;
-            IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);
+            createdObject = ObjectManager.Instance.CreateNewObject(baseData.initialObjects[i].name, landmark);
             if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
                 ObjectState defaultOrEmptyState = createdObject.GetState("Default");
                 if(defaultOrEmptyState == null) {
@@ -60,15 +60,18 @@ public class LandmarkManager : MonoBehaviour {
         for (int i = 0; i < data.initialObjects.Count; i++) {
             int chance = UnityEngine.Random.Range(0, 100);
             if(chance < data.initialObjects[i].spawnChance) {
-                string objName = data.initialObjects[i].obj.name;
-                IObject createdObject = ObjectManager.Instance.CreateNewObject(objName, landmark);
-                if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
-                    ObjectState defaultOrEmptyState = createdObject.GetState("Default");
-                    if (defaultOrEmptyState == null) {
-                        defaultOrEmptyState = createdObject.GetState("Empty");
-                    }
-                    createdObject.ChangeState(defaultOrEmptyState);
+                createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].obj.name, landmark);
+            } else {
+                if(data.initialObjects[i].fallbackObject != null) {
+                    createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].fallbackObject.name, landmark);
                 }
+            }
+            if (createdObject != null && createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
+                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
+                if (defaultOrEmptyState == null) {
+                    defaultOrEmptyState = createdObject.GetState("Empty");
+                }
+                createdObject.ChangeState(defaultOrEmptyState);
             }
         }
     }
