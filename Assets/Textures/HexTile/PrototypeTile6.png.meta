@@ -145,6 +145,8 @@ TextureImporter:
     21300276: BotRight_Outline
     21300278: Left_Outline
     21300280: Right_Outline
+    21300282: TopLeft_Ledge
+    21300284: TopRight_Ledge
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -2136,7 +2138,7 @@ TextureImporter:
         width: 133
         height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2150,7 +2152,7 @@ TextureImporter:
         width: 133
         height: 71
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2164,7 +2166,7 @@ TextureImporter:
         width: 131
         height: 69
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2178,7 +2180,7 @@ TextureImporter:
         width: 132
         height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2192,7 +2194,7 @@ TextureImporter:
         width: 8
         height: 135
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2205,6 +2207,34 @@ TextureImporter:
         y: 1611
         width: 9
         height: 135
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: TopLeft_Ledge
+      rect:
+        serializedVersion: 2
+        x: 1053
+        y: 1530
+        width: 131
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: TopRight_Ledge
+      rect:
+        serializedVersion: 2
+        x: 1196
+        y: 1529
+        width: 132
+        height: 86
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

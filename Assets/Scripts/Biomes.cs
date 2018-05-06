@@ -113,6 +113,7 @@ public class Biomes : MonoBehaviour {
         for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
             HexTile currTile = GridMap.Instance.hexTiles[i];
             SetElevationSpriteForTile(currTile);
+            currTile.UpdateLedgesAndOutlines();
         }
     }
     internal void SetBiomeForTile(BIOMES biomeForTile, HexTile currentHexTile) {
@@ -280,88 +281,6 @@ public class Biomes : MonoBehaviour {
 	internal void GenerateElevation(){
 		CalculateElevationAndMoisture();
 	}
-    /*
-     * Generate elavation for each of
-     * the regions border tiles.
-     * */
-    internal void GenerateRegionBorderElevation() {
-        List<HexTile> checkedTiles = new List<HexTile>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-
-            for (int j = 0; j < currRegion.outerTiles.Count; j++) {
-                HexTile currBorderTile = currRegion.outerTiles[j];
-                if (currBorderTile.elevationType != ELEVATION.PLAIN || checkedTiles.Contains(currBorderTile)) {
-                    //The current border tile already has an elevation type
-                    //that is not plain, skip it.
-                    continue;
-                }
-                //Get Tiles in batch
-                List<HexTile> tilesInBatch = new List<HexTile>();
-                tilesInBatch.Add(currBorderTile);
-                for (int k = 0; k < tilesInBatch.Count; k++) {
-                    HexTile currTile = tilesInBatch[k];
-                    for (int l = 0; l < currTile.AllNeighbours.Count; l++) {
-                        HexTile currNeighbour = currTile.AllNeighbours[l];
-                        if(currRegion.outerTiles.Contains(currNeighbour) && currNeighbour.roadType != ROAD_TYPE.MAJOR) {
-                            if (!tilesInBatch.Contains(currNeighbour)) {
-                                tilesInBatch.Add(currNeighbour);
-                            }
-                        }
-                    }
-                }
-
-                ELEVATION elevationToUse = ELEVATION.PLAIN;
-
-
-                //Dictionary<ELEVATION, int> elevations = new Dictionary<ELEVATION, int>();
-                //List<HexTile> tilesToCheck = new List<HexTile>(tilesInBatch);
-                //tilesInBatch.ForEach(x => tilesToCheck.AddRange(x.AllNeighbours.Where(y => y.roadType != ROAD_TYPE.MAJOR && !tilesInBatch.Contains(y) && y.region.outerTiles.Contains(y))));
-                ////Check if the tiles in the batch have any elevation types
-                //for (int k = 0; k < tilesToCheck.Count; k++) {
-                //    HexTile tileToCheck = tilesToCheck[k];
-                //    if(tileToCheck.elevationType != ELEVATION.PLAIN) {
-                //        if (elevations.ContainsKey(tileToCheck.elevationType)) {
-                //            elevations[tileToCheck.elevationType]++;
-                //        } else {
-                //            elevations.Add(tileToCheck.elevationType, 1);
-                //        }
-                //    }
-                //}
-
-                //if(elevations.Count > 0) {
-                //    elevationToUse = elevations.Keys.First();
-                //    if (elevations.Count > 1) {
-                //        Debug.LogWarning("There is more than one elevation type in this batch!");
-                //    }
-                //}
-
-                //if (Random.Range(0, 2) == 0) {
-                    elevationToUse = ELEVATION.MOUNTAIN;
-                //} else {
-                //    elevationToUse = ELEVATION.WATER;
-                //}
-
-                for (int k = 0; k < tilesInBatch.Count; k++) {
-                    HexTile tile = tilesInBatch[k];
-                    checkedTiles.Add(tile);
-                    for (int l = 0; l < tile.AllNeighbours.Count; l++) {
-                        HexTile currNeighbour = tile.AllNeighbours[l];
-                        if(currNeighbour.roadType != ROAD_TYPE.MAJOR && currNeighbour.region.outerTiles.Contains(currNeighbour) && currNeighbour.region.id != tile.region.id) {
-                            //if(currNeighbour.AllNeighbours.Where(x => x.region.id != tile.region.id).Count() < 3) {
-                            currNeighbour.SetElevation(ELEVATION.PLAIN);
-                            if (!checkedTiles.Contains(currNeighbour)) {
-                                    checkedTiles.Add(currNeighbour);
-                            }
-                            //}
-                        }
-                    }
-                    tile.SetElevation(elevationToUse);
-                }
-                
-            }
-        }
-    }
 	private void CalculateElevationAndMoisture(){
         float elevationFrequency = 19.1f; //14.93f;//2.66f;
         float moistureFrequency = 12.34f; //3.34f;//2.94f;
