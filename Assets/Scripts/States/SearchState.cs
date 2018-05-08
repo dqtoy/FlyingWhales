@@ -6,7 +6,7 @@ public class SearchState : State {
 
     private object searchingFor;
     private Action _afterFindingAction;
-	private Action _afterFindingTraceAction;
+	//private Action _afterFindingTraceAction;
     private Action _searchAction;
 	private bool _isSearchingUnique;
 
@@ -52,7 +52,7 @@ public class SearchState : State {
 		_afterFindingAction = action;
 	}
 	public void SetAfterFindingTraceAction(Action action){
-		_afterFindingTraceAction = action;
+		//_afterFindingTraceAction = action;
 	}
 	public void SetSearchAction(Action action){
 		_searchAction = action;

@@ -39,6 +39,7 @@ public class ConsoleMenu : UIMenu {
             {"/r_road_highlights", ResetRoadHighlights },
             {"/spawn_obj", SpawnNewObject },
             {"/toggle_road", ToggleRoads },
+            {"/set_icon_target", SetIconTarget },
         };
     }
 
@@ -610,6 +611,44 @@ public class ConsoleMenu : UIMenu {
             }
         }
     }
+    private void SetIconTarget(string[] parameters) {
+        if (parameters.Length < 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string destinationParameterString = parameters[1];
+        string characterParameterString = string.Empty;
+        for (int i = 2; i < parameters.Length; i++) {
+            characterParameterString += parameters[i];
+            if (i + 1 < parameters.Length) {
+                characterParameterString += " ";
+            }
+        }
+        int characterID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string[] targetTileCoords = destinationParameterString.Split(',');
+        int targetTileX = Int32.Parse(targetTileCoords[0]);
+        int targetTileY = Int32.Parse(targetTileCoords[1]);
+
+        HexTile targetTile = GridMap.Instance.map[targetTileX, targetTileY];
+
+        character.icon.SetTarget(targetTile);
+    }
     #endregion
 
     #region Objects
@@ -619,7 +658,7 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
             return;
         }
-        string objectName = parameters[1];
+        //string objectName = parameters[1];
         string landmarkParameterString = parameters[2];
         int landmarkID;
 

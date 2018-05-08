@@ -156,7 +156,7 @@ namespace ECS {
 								winningCharacters[0].AddPrisoner(currFaintedChar);
 							}else{
 								if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-									BaseLandmark landmark = combat.location as BaseLandmark;
+									//BaseLandmark landmark = combat.location as BaseLandmark;
 									//landmark.AddHistory (currFaintedChar.name + " is left to die.");
 								}
 								currFaintedChar.Death(combat.GetOpposingCharacters(currFaintedChar));
@@ -170,7 +170,7 @@ namespace ECS {
                         ECS.Character currFaintedChar = combat.faintedCharacters[i];
                         if (currFaintedChar.currentSide != combat.winningSide){
 							if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-								BaseLandmark landmark = combat.location as BaseLandmark;
+								//BaseLandmark landmark = combat.location as BaseLandmark;
 								//landmark.AddHistory (currFaintedChar.name + " is left to die.");
 							}
                             currFaintedChar.Death(combat.GetOpposingCharacters(currFaintedChar));

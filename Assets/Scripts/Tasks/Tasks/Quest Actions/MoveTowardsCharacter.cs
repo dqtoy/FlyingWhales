@@ -72,7 +72,7 @@ public class MoveTowardsCharacter : CharacterTask {
 	protected override BaseLandmark GetLandmarkTarget(Character character) {
 		base.GetLandmarkTarget(character);
 		Character characterLookingFor = _traceCharacter;
-		bool hasTrace = false;
+		//bool hasTrace = false;
 		if(_traceItem != null && _traceCharacter == null && _traceItem.possessor is Character){
 			characterLookingFor = _traceItem.possessor as Character;
 		}else{

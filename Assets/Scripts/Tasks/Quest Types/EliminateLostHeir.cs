@@ -5,14 +5,14 @@ using ECS;
 
 public class EliminateLostHeir : Quest {
 
-	private Character _chieftain, _falseHeir, _lostHeir;
+	private Character _falseHeir, _lostHeir;
 
 	public EliminateLostHeir(TaskCreator createdBy, Character chieftain, Character falseHeir, Character lostHeir, Item heirloomNecklace) : base(createdBy, QUEST_TYPE.ELIMINATE_LOST_HEIR) {
 		_alignment = new List<ACTION_ALIGNMENT>() {
 			ACTION_ALIGNMENT.UNLAWFUL,
 			ACTION_ALIGNMENT.VILLAINOUS
 		};
-		_chieftain = chieftain;
+		//_chieftain = chieftain;
 		_falseHeir = falseHeir;
 		_lostHeir = lostHeir;
 

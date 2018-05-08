@@ -6,13 +6,13 @@ public class NoScaleGO : MonoBehaviour {
 	private float orthoOrg;
 	private float orthoCurr;
 	private Vector3 scaleOrg;
-	private Vector3 posOrg;
+	//private Vector3 posOrg;
 
 	void Start() {
 		orthoOrg = Camera.main.orthographicSize;
 		orthoCurr = orthoOrg;
 		scaleOrg = transform.localScale;
-		posOrg = Camera.main.WorldToViewportPoint(transform.position);
+		//posOrg = Camera.main.WorldToViewportPoint(transform.position);
 	}
 	void Update() {
 		var osize = Camera.main.orthographicSize;

@@ -54,17 +54,6 @@ public class PathGenerator : MonoBehaviour {
         }
     }
 
-    [ContextMenu("Log All Landmark Paths")]
-    public void LogAllLandmarkPaths() {
-        List<List<BaseLandmark>> allPaths = GetAllLandmarkPaths(startTile.landmarkOnTile, targetTile.landmarkOnTile);
-        //for (int i = 0; i < allPaths.Count; i++) {
-        //    List<BaseLandmark> currPath = allPaths[i];
-        //    for (int j = 0; j < currPath.Count; j++) {
-        //        currPath[j].HighlightRoad(Color.red);
-        //    }
-        //}
-    }
-
     [ContextMenu("Get Distance")]
     public void GetDistance() {
         Debug.Log(Vector2.Distance(startTile.transform.position, targetTile.transform.position));

@@ -17,13 +17,10 @@ namespace ECS {
         public delegate void DailyAction();
         public DailyAction onDailyAction;
 
-        //public delegate void OnTaskChanged();
-        //private OnTaskChanged onTaskChanged; //What should happen if a character chooses to change it's task
-
         [SerializeField] private string _name;
         private int _id;
 		private GENDER _gender;
-        [System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
+        //[System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
         [System.NonSerialized] private List<Trait>	_traits;
         private List<TRAIT> _allTraits;
 		private List<CharacterTag>	_tags;
@@ -65,6 +62,9 @@ namespace ECS {
 		[SerializeField] private List<Item> _equippedItems;
 		[SerializeField] private List<Item> _inventory;
 
+        //Character Icon
+        private CharacterIcon _icon;
+
 		private Color _characterColor;
 		private string _characterColorCode;
 		private bool _isDead;
@@ -73,11 +73,10 @@ namespace ECS {
         private bool _isFollower;
 		private bool _isDefeated;
 		private object _isPrisonerOf;
-		//private List<OldQuest.Quest> _activeQuests;
 		private BaseLandmark _home;
         private BaseLandmark _lair;
 		private List<Log> _history;
-		private int _combatHistoryID;
+		//private int _combatHistoryID;
 		private List<Character> _prisoners;
 		private List<Character> _followers;
 		private Character _isFollowerOf;
@@ -98,10 +97,10 @@ namespace ECS {
 		private bool _isInCombat;
 
         //When the character should have a next action it should do after it's current one.
-        private CharacterTask nextTaskToDo;
+        //private CharacterTask nextTaskToDo;
 		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
 		private Dictionary<Character, List<string>> _traceInfo;
-		private WeightedDictionary<CharacterTask> actionWeights;
+		//private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
         private CharacterObj _characterObject;
@@ -174,9 +173,9 @@ namespace ECS {
 		}
         public ILocation specificLocation {
             get {
-                ILocation loc = null;
-				loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
-                return loc;
+    //            ILocation loc = null;
+				//loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
+                return _specificLocation;
             }
         }
 		public HexTile currLocation{
@@ -375,6 +374,9 @@ namespace ECS {
         public CharacterObj characterObject {
             get { return _characterObject; }
         }
+        public CharacterIcon icon {
+            get { return _icon; }
+        }
         //public Dictionary<RESOURCE, int> resourceInventory {
         //    get { return _resourceInventory; }
         //}
@@ -410,7 +412,7 @@ namespace ECS {
             _questData = new QuestData(this);
             _actionQueue = new CharacterActionQueue<CharacterAction>();
 			previousActions = new Dictionary<CharacterTask, string> ();
-			actionWeights = new WeightedDictionary<CharacterTask> ();
+			//actionWeights = new WeightedDictionary<CharacterTask> ();
             _actionData = new ActionData(this);
             //_resourceInventory = new Dictionary<RESOURCE, int>();
 
@@ -441,7 +443,7 @@ namespace ECS {
 
 			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
-			_combatHistoryID = 0;
+			//_combatHistoryID = 0;
 
             _characterObject = new CharacterObj(this);
 
@@ -935,7 +937,7 @@ namespace ECS {
             ThrowItem(item);
             ILocation location = specificLocation;
 			if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-				BaseLandmark landmark = location as BaseLandmark;
+				//BaseLandmark landmark = location as BaseLandmark;
                 Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
                 dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
@@ -1470,12 +1472,6 @@ namespace ECS {
 		        case CHARACTER_ROLE.HERO:
 			        _role = new Hero(this);
 			        break;
-		        //case CHARACTER_ROLE.ADVENTURER:
-		        //	_role = new Adventurer(this);
-		        //	break;
-		        //case CHARACTER_ROLE.COLONIST:
-			       // _role = new Colonist(this);
-			       // break;
                 case CHARACTER_ROLE.WORKER:
                     _role = new Worker(this);
                     break;
@@ -1542,7 +1538,7 @@ namespace ECS {
 		#region Traits
         private void GenerateTraits() {
             CharacterType baseCharacterType = CharacterManager.Instance.GetRandomCharacterType();
-            _characterType = baseCharacterType;
+            //_characterType = baseCharacterType;
             _allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
             //Charisma
             if (baseCharacterType.charismaTrait == CHARISMA.NONE) {
@@ -1911,7 +1907,6 @@ namespace ECS {
 			}
 			return false;
 		}
-
 		public bool HasTag(CHARACTER_TAG tag, bool includeParty = false) {
 			if(!includeParty){
 				for (int i = 0; i < _tags.Count; i++) {
@@ -2124,7 +2119,7 @@ namespace ECS {
          Set a task that this character will accept next
              */
         internal void SetTaskToDoNext(CharacterTask taskToDo) {
-            nextTaskToDo = taskToDo;
+            //nextTaskToDo = taskToDo;
         }
         private void LogActionWeights(WeightedDictionary<CharacterTask> actionWeights, CharacterTask chosenTask) {
             actionWeights.LogDictionaryValues(this.name + " action weights!");
@@ -2165,14 +2160,15 @@ namespace ECS {
 
         #region Avatar
         public void CreateNewAvatar() {
+            return;
 			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
-			GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
-			CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-			if (party != null) {
-				avatar.Init(party);
-			} else {
-				avatar.Init(this);
-			}
+			//GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
+			//CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
+			//if (party != null) {
+			//	avatar.Init(party);
+			//} else {
+			//	avatar.Init(this);
+			//}
 //            if(this._role != null) {
 //                if (this._role.roleType == CHARACTER_ROLE.HERO) {
 //                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("HeroAvatar", this.currLocation.transform.position, Quaternion.identity);
@@ -2210,33 +2206,58 @@ namespace ECS {
             }
         }
 		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
-            if (specificLocation == null) {
-                throw new Exception("Specific location is null!");
+            if (specificLocation == targetLocation) {
+                //action doer is already at the target location
+                if (doneAction != null) {
+                    doneAction();
+                }
+            } else {
+                _icon.SetActionOnTargetReached(doneAction);
+                _icon.SetTarget(targetLocation);
             }
-            if (targetLocation == null) {
-                throw new Exception("target location is null!");
-            }
-			if (specificLocation == targetLocation) {
-				//action doer is already at the target location
-				if(doneAction != null){
-					doneAction ();
-				}
-			} else {
-				if (_avatar == null) {
-					//Instantiate a new character avatar
-					CreateNewAvatar();
-				}
-				_avatar.SetTarget(targetLocation);
-				if(doneAction == null){
-					_avatar.StartPath(pathfindingMode);
-				}else{
-					_avatar.StartPath(pathfindingMode, () => doneAction());
-				}
-			}
-		}
-		#endregion
 
-		#region Task Management
+            return;
+            //if (specificLocation == null) {
+            //    throw new Exception("Specific location is null!");
+            //}
+            //if (targetLocation == null) {
+            //    throw new Exception("target location is null!");
+            //}
+			//if (specificLocation == targetLocation) {
+			//	//action doer is already at the target location
+			//	if(doneAction != null){
+			//		doneAction ();
+			//	}
+			//} else {
+			//	if (_avatar == null) {
+			//		//Instantiate a new character avatar
+			//		CreateNewAvatar();
+			//	}
+			//	_avatar.SetTarget(targetLocation);
+			//	if(doneAction == null){
+			//		_avatar.StartPath(pathfindingMode);
+			//	}else{
+			//		_avatar.StartPath(pathfindingMode, () => doneAction());
+			//	}
+			//}
+		}
+        #endregion
+
+        #region Icon
+        /*
+         Create a new icon for this character.
+         Each character owns 1 icon.
+             */
+        public void CreateIcon() {
+            GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
+                Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
+            _icon = characterIconGO.GetComponent<CharacterIcon>();
+            _icon.SetCharacter(this);
+            PathfindingManager.Instance.AddAgent(_icon.aiPath);
+        }
+        #endregion
+
+        #region Task Management
         public void SetCurrentQuest(Quest currentQuest) {
             _questData.SetActiveQuest(currentQuest);
             UIManager.Instance.UpdateCharacterInfo();

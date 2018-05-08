@@ -899,7 +899,6 @@ public class UIPanel : UIRect
 		mTrans = transform;
 
 		mHalfPixelOffset = (Application.platform == RuntimePlatform.WindowsPlayer ||
-			Application.platform == RuntimePlatform.XBOX360 ||
 			false ||
 			Application.platform == RuntimePlatform.WindowsEditor);
 

@@ -8,6 +8,9 @@ public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
 
+    public GameObject characterIconPrefab;
+    public Transform characterIconsParent;
+
     public List<CharacterType> characterTypes;
     public List<Trait> traitSetup;
     private Dictionary<TRAIT, string> traitDictionary;
@@ -277,7 +280,7 @@ public class CharacterManager : MonoBehaviour {
 
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
-        TextAsset asset = Resources.Load("Data/Traits/" + fileName + ".json") as TextAsset;
+        //TextAsset asset = Resources.Load("Data/Traits/" + fileName + ".json") as TextAsset;
 
         //Print the text from the file
         Debug.Log(GetJsonStringOfTrait(traitSetup.trait));

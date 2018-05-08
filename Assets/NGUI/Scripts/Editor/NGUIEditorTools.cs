@@ -450,7 +450,7 @@ public static class NGUIEditorTools
 		if (force || !settings.readable || settings.npotScale != TextureImporterNPOTScale.None || settings.alphaIsTransparency)
 		{
 			settings.readable = true;
-			if (NGUISettings.trueColorAtlas) settings.textureFormat = TextureImporterFormat.AutomaticTruecolor;
+			//if (NGUISettings.trueColorAtlas) settings.textureFormat = TextureImporterFormat.AutomaticTruecolor;
 			settings.npotScale = TextureImporterNPOTScale.None;
 			settings.alphaIsTransparency = false;
 			ti.SetTextureSettings(settings);
@@ -469,17 +469,18 @@ public static class NGUIEditorTools
 		TextureImporter ti = AssetImporter.GetAtPath(path) as TextureImporter;
 		if (ti == null) return false;
 
+
 		TextureImporterSettings settings = new TextureImporterSettings();
 		ti.ReadTextureSettings(settings);
 
 		if (force ||
 			settings.readable ||
-			settings.maxTextureSize < 4096 ||
+			//settings.maxTextureSize < 4096 ||
 			settings.wrapMode != TextureWrapMode.Clamp ||
 			settings.npotScale != TextureImporterNPOTScale.ToNearest)
 		{
 			settings.readable = false;
-			settings.maxTextureSize = 4096;
+			//settings.maxTextureSize = 4096;
 			settings.wrapMode = TextureWrapMode.Clamp;
 			settings.npotScale = TextureImporterNPOTScale.ToNearest;
 

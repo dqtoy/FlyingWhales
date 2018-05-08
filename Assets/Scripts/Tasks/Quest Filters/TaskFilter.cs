@@ -258,10 +258,10 @@ public class MustHaveItem : TaskFilter {
 
 public class MustBeRelationship : TaskFilter {
 
-	private CHARACTER_RELATIONSHIP _relationshipStatus;
+	//private CHARACTER_RELATIONSHIP _relationshipStatus;
 
 	public MustBeRelationship(CHARACTER_RELATIONSHIP relationshipStatus) {
-		_relationshipStatus = relationshipStatus;
+		//_relationshipStatus = relationshipStatus;
 	}
 
 	#region overrides

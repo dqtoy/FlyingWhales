@@ -250,7 +250,7 @@ public class LandmarkManager : MonoBehaviour {
 
         WeightedDictionary<MATERIAL> materialWeights = Utilities.GetMaterialWeights();
 
-        Dictionary<MATERIAL, int> createdMaterials = new Dictionary<MATERIAL, int>();
+        //Dictionary<MATERIAL, int> createdMaterials = new Dictionary<MATERIAL, int>();
         Debug.Log("Creating " + initialResourceLandmarks.ToString() + " materials..... ");
         int placedMaterials = 0;
 
@@ -267,19 +267,19 @@ public class LandmarkManager : MonoBehaviour {
             MATERIAL chosenMaterial = materialWeights.PickRandomElementGivenWeights();
             chosenTile.SetMaterialOnTile(chosenMaterial);
 
-            //Keep track of number of materials per type
-            if (createdMaterials.ContainsKey(chosenMaterial)) {
-                createdMaterials[chosenMaterial]++;
-            } else {
-                createdMaterials.Add(chosenMaterial, 1);
-            }
+            ////Keep track of number of materials per type
+            //if (createdMaterials.ContainsKey(chosenMaterial)) {
+            //    createdMaterials[chosenMaterial]++;
+            //} else {
+            //    createdMaterials.Add(chosenMaterial, 1);
+            //}
             placedMaterials++;
         }
         Debug.Log("Created " + placedMaterials.ToString() + " materials");
 
-        foreach (KeyValuePair<MATERIAL, int> kvp in createdMaterials) {
-            Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
-        }
+        //foreach (KeyValuePair<MATERIAL, int> kvp in createdMaterials) {
+        //    Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
+        //}
     }
     #endregion
 

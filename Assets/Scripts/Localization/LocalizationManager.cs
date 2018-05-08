@@ -12,7 +12,7 @@ public class LocalizationManager : MonoBehaviour {
 
 	protected Dictionary<string, Dictionary<string, Dictionary<string, string>>> _localizedText = new Dictionary<string, Dictionary<string, Dictionary<string, string>>> ();
 	private bool isReady = false;
-	private string missingTextString = "Localized text not found";
+	//private string missingTextString = "Localized text not found";
 
 
 	//getters and setters

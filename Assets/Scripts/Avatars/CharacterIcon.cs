@@ -1,0 +1,115 @@
+﻿using ECS;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CharacterIcon : MonoBehaviour {
+
+    [SerializeField] private SpriteRenderer _icon;
+    [SerializeField] private GameObject _avatarGO;
+    [SerializeField] private CharacterAIPath _aiPath;
+    [SerializeField] private SpriteRenderer _avatarSprite;
+
+    private Character _character;
+
+    private ILocation _targetLocation;
+
+    #region getters/setters
+    public Character character {
+        get { return _character; }
+    }
+    public CharacterAIPath aiPath {
+        get { return _aiPath; }
+    }
+    public ILocation targetLocation {
+        get { return _targetLocation; }
+    }
+    #endregion
+
+    public void SetCharacter(Character character) {
+        _character = character;
+        UpdateColor();
+        this.name = _character.name + "'s Icon";
+        if (_character.role != null) {
+            _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
+        }
+        
+        Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
+        Messenger.AddListener<bool>(Signals.PAUSED, SetMovementState);
+        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+    }
+
+    public void SetTarget(ILocation target) {
+        _targetLocation = target;
+        _aiPath.destination = _targetLocation.tileLocation.transform.position;
+    }
+
+    #region Visuals
+    private void UpdateColor() {
+        if (_character.role == null) {
+            return;
+        }
+        switch (_character.role.roleType) {
+            case CHARACTER_ROLE.HERO:
+                _icon.color = Color.blue;
+                break;
+            case CHARACTER_ROLE.VILLAIN:
+                _icon.color = Color.red;
+                break;
+            default:
+                break;
+        }
+    }
+    public void SetAvatarState(bool state) {
+        _avatarGO.SetActive(state);
+    }
+    #endregion
+
+    #region Speed
+    private void SetMovementState(bool state) {
+        if (state) {
+            _aiPath.maxSpeed = 0f;
+        }
+    }
+    private void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
+        switch (speed) {
+            case PROGRESSION_SPEED.X1:
+                _aiPath.maxSpeed = 1;
+                break;
+            case PROGRESSION_SPEED.X2:
+                _aiPath.maxSpeed = 2;
+                break;
+            case PROGRESSION_SPEED.X4:
+                _aiPath.maxSpeed = 4;
+                break;
+        }
+    }
+    #endregion
+
+    private void OnRoleChanged(Character character) {
+        if (_character.id == character.id) {
+            UpdateColor();
+            if (_character.role != null) {
+                _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
+            }
+        }
+    }
+
+    public void SetPosition(Vector3 position) {
+        this.transform.position = position;
+    }
+
+    public void SetActionOnTargetReached(Action action) {
+        _aiPath.SetActionOnTargetReached(action);
+    }
+
+    #region Monobehaviours
+    private void LateUpdate() {
+        Vector3 newPos = _aiPath.transform.localPosition;
+        newPos.y += 0.38f;
+        newPos.x += 0.02f;
+        _avatarGO.transform.localPosition = newPos;
+    }
+    #endregion
+}

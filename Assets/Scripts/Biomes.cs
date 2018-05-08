@@ -96,7 +96,7 @@ public class Biomes : MonoBehaviour {
             BIOMES biomeForTile = GetBiomeSimple(currentHexTileGO);
             SetBiomeForTile(biomeForTile, currentHexTile);
             //SetElevationSpriteForTile(currentHexTile);
-            currentHexTile.SetPassableState(false);
+            //currentHexTile.SetPassableState(false);
         }
 		//GenerateBareBiome();
 	}
@@ -105,7 +105,11 @@ public class Biomes : MonoBehaviour {
             HexTile currentHexTile = GridMap.Instance.hexTiles[i];
             object centerObj = GetCenterObject(currentHexTile);
             currentHexTile.SetPassableObject(centerObj);
-            currentHexTile.SetPassableState(false);
+            if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+                currentHexTile.SetPassableState(true);
+            } else {
+                currentHexTile.SetPassableState(false);
+            }
             currentHexTile.UpdateSortingOrder();
         }
     }
@@ -177,7 +181,7 @@ public class Biomes : MonoBehaviour {
             return;
         }
         GameObject biomeDetailToUse = null;
-        Sprite centerSpriteToUse = null;
+        //Sprite centerSpriteToUse = null;
         switch (tile.biomeType) {
             case BIOMES.SNOW:
                 if (snowDetails.Length > 0) {
@@ -218,7 +222,7 @@ public class Biomes : MonoBehaviour {
     }
 
     internal void SetElevationSpriteForTile(HexTile currentHexTile) {
-        int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
+        //int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
         if(currentHexTile.elevationType == ELEVATION.WATER) {
             Sprite waterSpriteToUse = waterTiles[Random.Range(0, waterTiles.Length)];
             currentHexTile.GetComponent<SpriteRenderer>().sortingLayerName = "Water";

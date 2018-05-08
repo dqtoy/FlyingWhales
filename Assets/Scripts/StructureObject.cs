@@ -8,7 +8,7 @@ public class StructureObject : PooledObject {
 
     private HexTile _hexTile;
 
-    private STRUCTURE_TYPE _structureType;
+    //private STRUCTURE_TYPE _structureType;
     private STRUCTURE_STATE _structureState;
 
     private GameObject[] normalParents;
@@ -40,7 +40,7 @@ public class StructureObject : PooledObject {
         if (ruinedParents == null) {
             ruinedParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Ruined").Select(x => x.gameObject).ToArray();
         }
-        _structureType = structureType;
+        //_structureType = structureType;
         SetStructureState(structureState);
         SetStructureColor(structureColor);
 

@@ -94,7 +94,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("Fog Of War Objects")]
     [SerializeField] private SpriteRenderer FOWSprite;
     [SerializeField] private SpriteRenderer minimapFOWSprite;
-    [SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
+    //[SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
 
     [Space(10)]
     [Header("Road Objects")]
@@ -641,8 +641,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
 
             if (biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
-                int neighbourX = currentNeighbour.xCoordinate;
-                int neighbourY = currentNeighbour.yCoordinate;
+                //int neighbourX = currentNeighbour.xCoordinate;
+                //int neighbourY = currentNeighbour.yCoordinate;
 
                 Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
                     (currentNeighbour.yCoordinate - this.yCoordinate));
@@ -820,7 +820,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //if (!KingdomManager.Instance.useFogOfWar) {
         //    fowState = FOG_OF_WAR_STATE.VISIBLE;
         //}
-        _currFogOfWarState = fowState;
+        //_currFogOfWarState = fowState;
         Color newColor = FOWSprite.color;
         //Color minimapColor = minimapFOWSprite.color;
         switch (fowState) {
@@ -973,7 +973,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        }
+        } 
+        //else {
+        //    ShowHexTileInfo();
+        //}
 		//if (_landmarkOnTile != null) {
 		//	if(_landmarkOnTile.owner != null) { //landmark is occupied
 		//		if (isHabitable) {
@@ -1029,6 +1032,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 //			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
 //		}
 	}
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if (!this._isPassable) {
+            return;
+        }
+        //Debug.Log(collision.name + " entered " + this.name, this);
+        Character character = collision.gameObject.GetComponent<CharacterAIPath>().icon.character;
+        if (character.specificLocation != null) {
+            character.specificLocation.RemoveCharacterFromLocation(character);
+        }
+        AddCharacterToLocation(character);
+    }
+    //private void OnTriggerExit2D(Collider2D collision) {
+    //    Debug.Log(collision.name + " exited " + this.name, this);
+    //    Character character = collision.gameObject.GetComponent<CharacterIcon>().character;
+    //    if (character.specificLocation == null) {
+    //        Debug.LogError(character.name + " has no specific location!", this);
+    //    }
+    //    character.specificLocation.RemoveCharacterFromLocation(character);
+    //}
     #endregion
 
     #region For Testing
@@ -1093,15 +1115,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         Debug.Log(text);
     }
     private void ShowHexTileInfo() {
-        string text = string.Empty;
-        text += "Characters in tile: ";
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currObj = _charactersAtLocation[i];
-            if (currObj is Party) {
-                text += "\n" + ((Party)currObj).name;
-            } else if (currObj is Character) {
-                text += "\n" + ((Character)currObj).name;
+        if (_charactersAtLocation.Count > 0) {
+            string text = string.Empty;
+            text += "Characters in tile: ";
+            for (int i = 0; i < _charactersAtLocation.Count; i++) {
+                ICombatInitializer currObj = _charactersAtLocation[i];
+                if (currObj is Party) {
+                    text += "\n" + ((Party)currObj).name;
+                } else if (currObj is Character) {
+                    text += "\n" + ((Character)currObj).name;
+                }
             }
+            UIManager.Instance.ShowSmallInfo(text);
         }
     }
     private void ShowLandmarkInfo() {

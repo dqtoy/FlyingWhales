@@ -34,7 +34,7 @@ public class LandmarkItemDataDrawer : PropertyDrawer {
         var weightRect = new Rect(position.x + 155, position.y, 50, position.height);
         var isUnlimitedRect = new Rect(position.x + 205, position.y, 50, position.height);
 
-        SerializedProperty itemNameProp = property.FindPropertyRelative("itemName");
+        property.FindPropertyRelative("itemName");
         property.FindPropertyRelative("itemIndex").intValue = EditorGUI.Popup(itemNameRect, property.FindPropertyRelative("itemIndex").intValue, choices);
         property.FindPropertyRelative("itemName").stringValue = choices[property.FindPropertyRelative("itemIndex").intValue];
         // Draw fields - passs GUIContent.none to each so they are drawn without labels
