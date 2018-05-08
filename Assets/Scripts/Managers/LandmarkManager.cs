@@ -48,12 +48,15 @@ public class LandmarkManager : MonoBehaviour {
         IObject createdObject = null;
         for (int i = 0; i < baseData.initialObjects.Count; i++) {
             createdObject = ObjectManager.Instance.CreateNewObject(baseData.initialObjects[i].name, landmark);
-            if (createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
-                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
-                if(defaultOrEmptyState == null) {
-                    defaultOrEmptyState = createdObject.GetState("Empty");
+            if (createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
+                if(createdObject.currentState.stateName.Equals("Under Construction")) {
+                    ObjectState defaultOrEmptyState = createdObject.GetState("Default");
+                    if (defaultOrEmptyState == null) {
+                        defaultOrEmptyState = createdObject.GetState("Empty");
+                    }
+                    createdObject.ChangeState(defaultOrEmptyState);
                 }
-                createdObject.ChangeState(defaultOrEmptyState);
+                (createdObject as StructureObj).SetHP(100);
             }
         }
         ObjectManager.Instance.CreateNewObject("Landmark Object", landmark);
@@ -66,12 +69,15 @@ public class LandmarkManager : MonoBehaviour {
                     createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].fallbackObject.name, landmark);
                 }
             }
-            if (createdObject != null && createdObject.objectType == OBJECT_TYPE.STRUCTURE && createdObject.currentState.stateName.Equals("Under Construction")) {
-                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
-                if (defaultOrEmptyState == null) {
-                    defaultOrEmptyState = createdObject.GetState("Empty");
+            if (createdObject != null && createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
+                if (createdObject.currentState.stateName.Equals("Under Construction")) {
+                    ObjectState defaultOrEmptyState = createdObject.GetState("Default");
+                    if (defaultOrEmptyState == null) {
+                        defaultOrEmptyState = createdObject.GetState("Empty");
+                    }
+                    createdObject.ChangeState(defaultOrEmptyState);
                 }
-                createdObject.ChangeState(defaultOrEmptyState);
+                (createdObject as StructureObj).SetHP(100);
             }
         }
     }
