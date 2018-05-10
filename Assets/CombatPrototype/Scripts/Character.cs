@@ -2894,6 +2894,15 @@ namespace ECS {
         public void InsertActionToQueue(CharacterAction action, int index) {
             _actionQueue.Enqueue(action, index);
         }
+        public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
+            if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
+                ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
+                if(resourcePrerequisite.resourceType != RESOURCE.NONE && characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         private void GenerateRoamingBehaviour() {

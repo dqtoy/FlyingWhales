@@ -35,6 +35,9 @@ public class LandmarkObj : IObject {
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
     }
+    public RESOURCE madeOf {
+        get { return RESOURCE.NONE; }
+    }
     #endregion
 
     public LandmarkObj(BaseLandmark landmark) {

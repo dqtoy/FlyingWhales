@@ -11,15 +11,12 @@ public class BuildAction : CharacterAction {
     public BuildAction(ObjectState state, string structureName) : base(state, ACTION_TYPE.BUILD) {
         _structureName = structureName;
         _needsSpecificTarget = true;
-    }
-
-    #region Overrides
-    public override void OnChooseAction() {
-        base.OnChooseAction();
-        if(_amountToIncrease == 0) {
+        if (_amountToIncrease == 0) {
             _amountToIncrease = Mathf.RoundToInt(100f / (float) _actionData.duration);
         }
     }
+
+    #region Overrides
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         if(_structureObject == null) {

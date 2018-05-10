@@ -116,6 +116,11 @@ public class CharacterAction {
             }
         }
         action._actionData = this._actionData;
+        if(action._actionData.prerequisites != null) {
+            for (int i = 0; i < action._actionData.prerequisites.Count; i++) {
+                action._actionData.prerequisites[i].SetAction(action);
+            }
+        }
     }
     #endregion
 

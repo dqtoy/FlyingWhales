@@ -56,7 +56,9 @@ public class LandmarkManager : MonoBehaviour {
                     }
                     createdObject.ChangeState(defaultOrEmptyState);
                 }
-                (createdObject as StructureObj).SetHP(100);
+                StructureObj structure = createdObject as StructureObj;
+                structure.SetHP(100);
+                structure.SetIsMadeOf(RESOURCE.OAK);
             }
         }
         ObjectManager.Instance.CreateNewObject("Landmark Object", landmark);
@@ -77,7 +79,9 @@ public class LandmarkManager : MonoBehaviour {
                     }
                     createdObject.ChangeState(defaultOrEmptyState);
                 }
-                (createdObject as StructureObj).SetHP(100);
+                StructureObj structure = createdObject as StructureObj;
+                structure.SetHP(100);
+                structure.SetIsMadeOf(RESOURCE.OAK);
             }
         }
     }

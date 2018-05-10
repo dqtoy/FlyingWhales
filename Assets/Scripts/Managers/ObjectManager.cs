@@ -104,10 +104,26 @@ public class ObjectManager : MonoBehaviour {
                 CharacterAction action = CreateNewCharacterAction(originalAction.actionType, state);
                 originalAction.SetCommonData(action);
                 action.SetFilters(originalAction.filters);
+                ConstructPrerequisites(action);
                 newActions.Add(action);
                 //originalAction = action;
             }
             state.SetActions(newActions);
+        }
+    }
+
+    private void ConstructPrerequisites(CharacterAction action) {
+        if (action.actionData.resourceAmountNeeded > 0) {
+            CharacterActionData copy = action.actionData;
+            RESOURCE resourceType = action.actionData.resourceNeeded;
+            if(resourceType == RESOURCE.NONE) {
+                if (action.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
+                    resourceType = (action.state.obj as StructureObj).madeOf;
+                }
+            }
+            ResourcePrerequisite resourcePrerequisite = new ResourcePrerequisite(resourceType, action.actionData.resourceAmountNeeded, action);
+            copy.prerequisites = new List<IPrerequisite>() { resourcePrerequisite };
+            action.SetActionData(copy);
         }
     }
 

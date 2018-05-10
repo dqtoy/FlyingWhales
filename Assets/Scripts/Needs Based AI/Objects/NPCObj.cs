@@ -30,6 +30,12 @@ public class NPCObj : IObject {
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
     }
+    public Dictionary<RESOURCE, int> resourceInventory {
+        get { return null; }
+    }
+    public RESOURCE madeOf {
+        get { return RESOURCE.NONE; }
+    }
     #endregion
 
     public NPCObj() {
