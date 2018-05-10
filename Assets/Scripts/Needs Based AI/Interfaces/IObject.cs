@@ -10,6 +10,8 @@ public interface IObject {
     ObjectState currentState { get; }
     bool isInvisible { get; }
     BaseLandmark objectLocation { get; }
+    RESOURCE madeOf { get; }
+    Dictionary<RESOURCE, int> resourceInventory { get; }
 
     void SetStates(List<ObjectState> states);
     void SetObjectName(string name);

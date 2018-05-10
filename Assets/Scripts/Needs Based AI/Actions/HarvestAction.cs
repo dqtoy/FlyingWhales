@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class HarvestAction : CharacterAction {
     private StructureObj _structure;
+
     public HarvestAction(ObjectState state) : base(state, ACTION_TYPE.HARVEST) {
         if(state.obj is StructureObj) {
             _structure = state.obj as StructureObj;
@@ -14,7 +15,6 @@ public class HarvestAction : CharacterAction {
     #region Overrides
     public override void PerformAction(Character character) {
         base.PerformAction(character);
-        
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
         GiveReward(NEEDS.FULLNESS, character);
@@ -23,7 +23,7 @@ public class HarvestAction : CharacterAction {
         GiveReward(NEEDS.JOY, character);
 
         int objectResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
-        if (objectResourceAmount > 0) { //if object's resource count is still greater than 0
+        if (objectResourceAmount > 0 && !character.DoesSatisfiesPrerequisite(character.actionData.currentChainAction.prerequisite)) { //if object's resource count is still greater than 0 and character doesn't have the required resource amount yet
             int minResource = this.actionData.minResourceGiven;
             if (minResource > objectResourceAmount) {
                 //the minimum required resource is greater than the amount of resource that the object has
@@ -38,10 +38,10 @@ public class HarvestAction : CharacterAction {
             int resourceAmount = Random.Range(minResource, maxResource);
             _structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character.characterObject);
             ActionSuccess();
+        } else {
+            EndAction(character);
         }
 
-        //TODO: if character's required resource of the type provided has been reached, end Harvest action
-        EndAction(character);
     }
     public override CharacterAction Clone(ObjectState state) {
         HarvestAction populateAction = new HarvestAction(state);

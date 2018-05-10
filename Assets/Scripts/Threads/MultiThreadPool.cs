@@ -28,11 +28,6 @@ public class MultiThreadPool : MonoBehaviour {
     }
 
     void LateUpdate() {
-        StartCoroutine(DoUpdate());
-    }
-
-    IEnumerator DoUpdate() {
-        yield return new WaitForSeconds(1f);
         if (this.functionsToBeResolved.Count > 0) {
             Multithread action = this.functionsToBeResolved.Dequeue();
             action.FinishMultithread();
@@ -40,26 +35,18 @@ public class MultiThreadPool : MonoBehaviour {
     }
 
     public void AddToThreadPool(Multithread multiThread) {
-        lock (THREAD_LOCKER) {
-            functionsToBeRunInThread.Enqueue(multiThread);
-        }
+        functionsToBeRunInThread.Enqueue(multiThread);
     }
 
     private void RunThread() {
         while (isRunning) {
             if (this.functionsToBeRunInThread.Count > 0) {
-                Thread.Sleep(5);
-                Multithread newFunction = null;
-                lock (THREAD_LOCKER) {
-                    newFunction = this.functionsToBeRunInThread.Dequeue();
-                }
+                Thread.Sleep(20);
+                Multithread newFunction = this.functionsToBeRunInThread.Dequeue();
                 if (newFunction != null) {
                     newFunction.DoMultithread();
-                }
-                lock (THREAD_LOCKER) {
                     this.functionsToBeResolved.Enqueue(newFunction);
                 }
-
             }
         }
     }

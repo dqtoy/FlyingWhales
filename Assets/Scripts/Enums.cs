@@ -1340,3 +1340,9 @@ public enum SPECIFIC_OBJECT_TYPE {
     ENCHANTED_GROVE,
     SEALED_TOMB
 }
+
+public enum PREREQUISITE {
+    RESOURCE,
+    ITEM,
+    POWER,
+}

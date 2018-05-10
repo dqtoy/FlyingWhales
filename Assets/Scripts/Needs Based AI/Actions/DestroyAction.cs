@@ -10,15 +10,12 @@ public class DestroyAction : CharacterAction {
         if (state.obj is StructureObj) {
             _structure = state.obj as StructureObj;
         }
-    }
-
-    #region Overrides
-    public override void OnChooseAction() {
-        base.OnChooseAction();
         if (_amountToReduce == 0) {
             _amountToReduce = Mathf.RoundToInt(100f / (float) _actionData.duration);
         }
     }
+
+    #region Overrides
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         if (_structure.isHPZero) {

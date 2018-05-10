@@ -6,6 +6,7 @@ using ECS;
 public class ActionData {
     private Character _character;
     public CharacterAction currentAction;
+    public ChainAction currentChainAction;
     public object specificTarget;
     public int currentDay;
     public bool isDone;
@@ -25,6 +26,7 @@ public class ActionData {
 
     public void Reset() {
         this.currentAction = null;
+        this.currentChainAction = null;
         this.currentDay = 0;
         this.isDone = false;
         this.isWaiting = false;
@@ -34,15 +36,19 @@ public class ActionData {
         specificTarget = target;
     }
 
-    public void ReturnActionFromThread(CharacterAction characterAction) {
-        AssignAction(characterAction);
-        _character.GoToLocation(characterAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
+    public void ReturnActionFromThread(CharacterAction characterAction, ChainAction chainAction) {
+        AssignAction(characterAction, chainAction);
     }
-
-    public void AssignAction(CharacterAction action) {
+    public void AssignAction(CharacterAction action, ChainAction chainAction = null) {
         Reset();
+        if (chainAction != null) {
+            action = chainAction.action;
+        }
+        this.currentChainAction = chainAction;
         SetCurrentAction(action);
         action.OnChooseAction();
+        _character.GoToLocation(action.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
+
     }
     public void DetachActionData() {
         Reset();
@@ -93,7 +99,19 @@ public class ActionData {
                 //    Debug.Log(_character.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
                 //}
             } else {
-                LookForAction();
+                if(currentChainAction != null && currentChainAction.parentChainAction != null) {
+                    if(currentChainAction.IsPrerequisiteFinished(_character, currentChainAction)) {
+                        if(currentChainAction.parentChainAction.satisfiedPrerequisites.Count > 0) {
+                            AssignAction(currentChainAction.parentChainAction.satisfiedPrerequisites[0].action, currentChainAction.parentChainAction.satisfiedPrerequisites[0]);
+                        } else {
+                            AssignAction(currentChainAction.parentChainAction.action, currentChainAction.parentChainAction);
+                        }
+                    } else {
+                        LookForAction();
+                    }
+                } else {
+                    LookForAction();
+                }
             }
         }
     }

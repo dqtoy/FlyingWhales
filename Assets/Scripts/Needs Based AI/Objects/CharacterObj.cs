@@ -38,6 +38,9 @@ public class CharacterObj : IObject {
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
     }
+    public RESOURCE madeOf {
+        get { return RESOURCE.NONE; }
+    }
     #endregion
 
 
@@ -106,6 +109,9 @@ public class CharacterObj : IObject {
     }
     public void AdjustResource(RESOURCE resource, int amount) {
         _resourceInventory[resource] += amount;
+        if(_resourceInventory[resource] < 0) {
+            _resourceInventory[resource] = 0;
+        }
     }
     public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
         AdjustResource(resource, -amount);

@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
+using System;
 
 public class ActionThread : Multithread {
     private CharacterActionAdvertisement[] choices;
     private Character _character;
     private CharacterAction chosenAction;
+    private List<CharacterActionAdvertisement> allChoices;
+    private ChainAction chosenChainAction;
 
     public ActionThread(Character character) {
         choices = new CharacterActionAdvertisement[3];
+        allChoices = new List<CharacterActionAdvertisement>();
         _character = character;
     }
 
@@ -24,9 +28,7 @@ public class ActionThread : Multithread {
     }
     #endregion
     private void LookForAction() {
-        choices[0].Reset();
-        choices[1].Reset();
-        choices[2].Reset();
+        allChoices.Clear();
 
         string actionLog = _character.name + "'s Action Advertisements: ";
         for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
@@ -50,34 +52,123 @@ public class ActionThread : Multithread {
             Debug.Log(actionLog);
         }
         chosenAction = PickAction();
+
+        //Check Prerequisites, currently for resource prerequisites only
+        CheckPrerequisites(chosenAction);
+
     }
-    private void ReturnAction() {
-        _character.actionData.ReturnActionFromThread(chosenAction);
+    private void CheckPrerequisites(CharacterAction characterAction) {
+        if (HasPrerequisite(characterAction)) {
+            if (CanDoPrerequisite(characterAction)) {
+                DoPrerequisite(characterAction, null, null);
+            } else {
+                RemoveActionFromChoices(characterAction);
+                chosenAction = PickAction();
+                CheckPrerequisites(chosenAction);
+            }
+        }
     }
-    private void PutToChoices(CharacterAction action, float advertisement) {
-        if (choices[0].action == null) {
-            choices[0].Set(action, advertisement);
-        } else if (choices[1].action == null) {
-            choices[1].Set(action, advertisement);
-        } else if (choices[2].action == null) {
-            choices[2].Set(action, advertisement);
-        } else {
-            if (choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
-                if (advertisement > choices[0].advertisement) {
-                    choices[0].Set(action, advertisement);
+    private bool CanDoPrerequisite(CharacterAction characterAction) {
+        if(HasPrerequisite(characterAction)) {
+            for (int i = 0; i < characterAction.actionData.prerequisites.Count; i++) {
+                IPrerequisite prerequisite = characterAction.actionData.prerequisites[i];
+                if (_character.DoesSatisfiesPrerequisite(prerequisite)) {
+                    continue;
                 }
-            } else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
-                if (advertisement > choices[1].advertisement) {
-                    choices[1].Set(action, advertisement);
+                if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
+                    ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
+                    CharacterAction satisfyingAction = GetActionThatMatchesResourcePrerequisite(resourcePrerequisite);
+                    if (satisfyingAction == null || (satisfyingAction != null && !CanDoPrerequisite(satisfyingAction))) {
+                        return false;
+                    }
                 }
-            } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
-                if (advertisement > choices[2].advertisement) {
-                    choices[2].Set(action, advertisement);
+            }
+        }
+        return true;
+    }
+    private void DoPrerequisite(CharacterAction characterAction, ChainAction parentAction, IPrerequisite iprerequisite) {
+        ChainAction chainAction = new ChainAction();
+        chainAction.parentChainAction = parentAction;
+        chainAction.action = characterAction;
+        chainAction.prerequisite = iprerequisite;
+        chainAction.satisfiedPrerequisites = new List<ChainAction>();
+        chainAction.finishedPrerequisites = new List<IPrerequisite>();
+        if (parentAction != null) {
+            parentAction.satisfiedPrerequisites.Add(chainAction);
+        }
+        chosenChainAction = chainAction;
+        if (HasPrerequisite(characterAction)) {
+            for (int i = 0; i < characterAction.actionData.prerequisites.Count; i++) {
+                IPrerequisite prerequisite = characterAction.actionData.prerequisites[i];
+                if (_character.DoesSatisfiesPrerequisite(prerequisite)) {
+                    chainAction.finishedPrerequisites.Add(prerequisite);
+                    continue;
+                }
+                if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
+                    ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
+                    CharacterAction satisfyingAction = GetActionThatMatchesResourcePrerequisite(resourcePrerequisite);
+                    if (satisfyingAction != null) {
+                        DoPrerequisite(satisfyingAction, chainAction, prerequisite);
+                    }
                 }
             }
         }
     }
+    private bool HasPrerequisite(CharacterAction characterAction) {
+        return characterAction.actionData.prerequisites != null;
+    }
+    private CharacterAction GetActionThatMatchesResourcePrerequisite(ResourcePrerequisite resourcePrerequisite) {
+        for (int i = 0; i < allChoices.Count; i++) {
+            CharacterAction action = allChoices[i].action;
+            if (action.actionData.advertisedResource != RESOURCE.NONE && resourcePrerequisite.resourceType != RESOURCE.NONE && action.actionData.advertisedResource == resourcePrerequisite.resourceType && action.state.obj.resourceInventory != null) {
+                if (action.state.obj.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+                    return action;
+                }
+            }
+        }
+        return null;
+    }
+    private void ReturnAction() {
+        _character.actionData.ReturnActionFromThread(chosenAction, chosenChainAction);
+    }
+    private void PutToChoices(CharacterAction action, float advertisement) {
+        CharacterActionAdvertisement actionAdvertisement = new CharacterActionAdvertisement();
+        actionAdvertisement.Set(action, advertisement);
+        allChoices.Add(actionAdvertisement);
+       
+    }
     private CharacterAction PickAction() {
+        choices[0].Reset();
+        choices[1].Reset();
+        choices[2].Reset();
+        float advertisement = 0f;
+        CharacterAction action = null;
+        for (int i = 0; i < allChoices.Count; i++) {
+            action = allChoices[i].action;
+            advertisement = allChoices[i].advertisement;
+            if (choices[0].action == null) {
+                choices[0].Set(action, advertisement);
+            } else if (choices[1].action == null) {
+                choices[1].Set(action, advertisement);
+            } else if (choices[2].action == null) {
+                choices[2].Set(action, advertisement);
+            } else {
+                if (choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
+                    if (advertisement > choices[0].advertisement) {
+                        choices[0].Set(action, advertisement);
+                    }
+                } else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
+                    if (advertisement > choices[1].advertisement) {
+                        choices[1].Set(action, advertisement);
+                    }
+                } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
+                    if (advertisement > choices[2].advertisement) {
+                        choices[2].Set(action, advertisement);
+                    }
+                }
+            }
+        }
+       
         int maxChoice = 3;
         if (choices[1].action == null) {
             maxChoice = 1;
@@ -93,5 +184,14 @@ public class ActionThread : Multithread {
         return chosenAction;
         //AssignAction(chosenAction);
         //_character.GoToLocation(chosenAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
+    }
+
+    private void RemoveActionFromChoices(CharacterAction action) {
+        for (int i = 0; i < allChoices.Count; i++) {
+            if(allChoices[i].action == action) {
+                allChoices.RemoveAt(i);
+                break;
+            }
+        }
     }
 }

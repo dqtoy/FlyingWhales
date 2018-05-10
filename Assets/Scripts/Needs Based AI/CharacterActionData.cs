@@ -14,6 +14,7 @@ public struct CharacterActionData {
     public int advertisedJoy;
     public int advertisedEnergy;
     public int advertisedPrestige;
+    public RESOURCE advertisedResource;
 
     public int providedFullness;
     public int providedJoy;
@@ -33,10 +34,12 @@ public struct CharacterActionData {
     public ActionEvent successFunction;
     public ActionEvent failFunction;
 
+    public List<IPrerequisite> prerequisites;
+}
+
     //public void SetActionName(string name) {
     //    this.actionName = name;
     //}
-}
 
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
@@ -76,13 +79,16 @@ public class CharacterActionDrawer : PropertyDrawer {
         var aJoyRect = new Rect(position.x, aHungerRect.y + 16, position.width, 16);
         var aEnergyRect = new Rect(position.x, aJoyRect.y + 16, position.width, 16);
         var aPrestigeRect = new Rect(position.x, aEnergyRect.y + 16, position.width, 16);
+        var aResourceRect = new Rect(position.x, aPrestigeRect.y + 16, position.width, 16);
         EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedFullness"), new GUIContent("Fullness"));
         EditorGUI.PropertyField(aJoyRect, property.FindPropertyRelative("advertisedJoy"), new GUIContent("Joy"));
         EditorGUI.PropertyField(aEnergyRect, property.FindPropertyRelative("advertisedEnergy"), new GUIContent("Energy"));
         EditorGUI.PropertyField(aPrestigeRect, property.FindPropertyRelative("advertisedPrestige"), new GUIContent("Prestige"));
+        EditorGUI.PropertyField(aResourceRect, property.FindPropertyRelative("advertisedResource"), new GUIContent("Resource"));
+
         EditorGUI.indentLevel--;
 
-        float providedPosY = aPrestigeRect.y + 20;
+        float providedPosY = aResourceRect.y + 20;
         var providedLblRect = new Rect(position.x, providedPosY, position.width, 16);
         EditorGUI.LabelField(providedLblRect, "Provided", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;

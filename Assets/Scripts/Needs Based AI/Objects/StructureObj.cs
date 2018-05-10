@@ -72,7 +72,7 @@ public class StructureObj : IObject {
     #region Virtuals
     public virtual IObject Clone() {
         StructureObj clone = new StructureObj();
-        
+        SetCommonData(clone);
         return clone;
     }
     public virtual IObject NewCopyObject(IObject iobject) {
@@ -208,6 +208,9 @@ public class StructureObj : IObject {
             //}
         }
         clone.SetStates(states);
+    }
+    public void SetIsMadeOf(RESOURCE resource) {
+        _madeOf = resource;
     }
     #endregion
 }
