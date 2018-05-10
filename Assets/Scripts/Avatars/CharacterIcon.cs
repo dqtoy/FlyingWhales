@@ -41,6 +41,10 @@ public class CharacterIcon : MonoBehaviour {
     }
 
     public void SetTarget(ILocation target) {
+        //remove character from his/her specific location
+        if (character.specificLocation != null) {
+            character.specificLocation.RemoveCharacterFromLocation(character);
+        }
         _targetLocation = target;
         _aiPath.destination = _targetLocation.tileLocation.transform.position;
         //_aiPath.SetRecalculatePathState(true);
