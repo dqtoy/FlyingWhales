@@ -54,9 +54,9 @@ namespace Pathfinding.Examples {
 			end = graph.transformation.InverseTransform(end);
 		}
 
-		protected void Update () {
+		protected override void Update () {
 			RefreshTransform();
-			base.UpdateMe();
+			base.Update();
 		}
 	}
 }

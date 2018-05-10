@@ -309,53 +309,38 @@ namespace Pathfinding {
 			lastDeltaTime = 0;
 		}
 
-        public void UpdateMe() {
-            //if (shouldRecalculatePath) SearchPath();
+		/** Called every frame.
+		 * If no rigidbodies are used then all movement happens here.
+		 */
+		protected virtual void Update () {
+			if (shouldRecalculatePath) SearchPath();
 
-            //// If gravity is used depends on a lot of things.
-            //// For example when a non-kinematic rigidbody is used then the rigidbody will apply the gravity itself
-            //// Note that the gravity can contain NaN's, which is why the comparison uses !(a==b) instead of just a!=b.
-            //usingGravity = !(gravity == Vector3.zero) && (!updatePosition || ((rigid == null || rigid.isKinematic) && (rigid2D == null || rigid2D.isKinematic)));
-            //if (rigid == null && rigid2D == null && canMove) {
-            //    Vector3 nextPosition;
-            //    Quaternion nextRotation;
-            //    MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
-            //    FinalizeMovement(nextPosition, nextRotation);
-            //}
-        }
+			// If gravity is used depends on a lot of things.
+			// For example when a non-kinematic rigidbody is used then the rigidbody will apply the gravity itself
+			// Note that the gravity can contain NaN's, which is why the comparison uses !(a==b) instead of just a!=b.
+			usingGravity = !(gravity == Vector3.zero) && (!updatePosition || ((rigid == null || rigid.isKinematic) && (rigid2D == null || rigid2D.isKinematic)));
+			if (rigid == null && rigid2D == null && canMove) {
+				Vector3 nextPosition;
+				Quaternion nextRotation;
+				MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+				FinalizeMovement(nextPosition, nextRotation);
+			}
+		}
 
-        /** Called every frame.
-         * If no rigidbodies are used then all movement happens here.
-         */
-        protected virtual void Update() {
-            if (shouldRecalculatePath) SearchPath();
+		/** Called every physics update.
+		 * If rigidbodies are used then all movement happens here.
+		 */
+		protected virtual void FixedUpdate () {
+			if (!(rigid == null && rigid2D == null) && canMove) {
+				Vector3 nextPosition;
+				Quaternion nextRotation;
+				MovementUpdate(Time.fixedDeltaTime, out nextPosition, out nextRotation);
+				FinalizeMovement(nextPosition, nextRotation);
+			}
+		}
 
-            // If gravity is used depends on a lot of things.
-            // For example when a non-kinematic rigidbody is used then the rigidbody will apply the gravity itself
-            // Note that the gravity can contain NaN's, which is why the comparison uses !(a==b) instead of just a!=b.
-            usingGravity = !(gravity == Vector3.zero) && (!updatePosition || ((rigid == null || rigid.isKinematic) && (rigid2D == null || rigid2D.isKinematic)));
-            if (rigid == null && rigid2D == null && canMove) {
-                Vector3 nextPosition;
-                Quaternion nextRotation;
-                MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
-                FinalizeMovement(nextPosition, nextRotation);
-            }
-        }
-
-        /** Called every physics update.
-   * If rigidbodies are used then all movement happens here.
-   */
-        protected virtual void FixedUpdate() {
-            if (!(rigid == null && rigid2D == null) && canMove) {
-                Vector3 nextPosition;
-                Quaternion nextRotation;
-                MovementUpdate(Time.fixedDeltaTime, out nextPosition, out nextRotation);
-                FinalizeMovement(nextPosition, nextRotation);
-            }
-        }
-
-        /** \copydoc Pathfinding::IAstarAI::MovementUpdate */
-        public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
+		/** \copydoc Pathfinding::IAstarAI::MovementUpdate */
+		public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
 			lastDeltaTime = deltaTime;
 			MovementUpdateInternal(deltaTime, out nextPosition, out nextRotation);
 		}
