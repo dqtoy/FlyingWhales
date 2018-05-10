@@ -42,7 +42,7 @@ namespace Pathfinding.Legacy {
 		static float deltaTime;
 
 		/** Update is called once per frame */
-		protected override void Update () {
+		protected void Update () {
 			deltaTime = Mathf.Min(Time.smoothDeltaTime*2, Time.deltaTime);
 
 			if (richPath != null) {

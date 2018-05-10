@@ -130,7 +130,7 @@ namespace Pathfinding.Legacy {
 			}
 		}
 
-		protected override void Update () {
+		protected void Update () {
 			if (!canMove) { return; }
 
 			Vector3 dir = CalculateVelocity(GetFeetPosition());
