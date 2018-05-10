@@ -571,11 +571,11 @@ public class UIAtlasMaker : EditorWindow
 		if (System.IO.File.Exists(newPath))
 		{
 #if !UNITY_4_1 && !UNITY_4_0 && !UNITY_3_5
-			if (!AssetDatabase.IsOpenForEdit(newPath))
-			{
-				Debug.LogError(newPath + " is not editable. Did you forget to do a check out?");
-				return false;
-			}
+			//if (!AssetDatabase.IsOpenForEdit(newPath))
+			//{
+			//	Debug.LogError(newPath + " is not editable. Did you forget to do a check out?");
+			//	return false;
+			//}
 #endif
 			System.IO.FileAttributes newPathAttrs = System.IO.File.GetAttributes(newPath);
 			newPathAttrs &= ~System.IO.FileAttributes.ReadOnly;

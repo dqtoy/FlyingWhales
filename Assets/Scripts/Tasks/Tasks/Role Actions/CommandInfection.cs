@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using ECS;
 
 public class CommandInfection : CharacterTask {
-	private CraterBeast craterBeast;
-	private BaseLandmark _targetLandmark;
+	//private CraterBeast craterBeast;
+	//private BaseLandmark _targetLandmark;
 	private Character _chosenSlyx;
 	private WeightedDictionary<Region> _regionWeights;
 
@@ -40,8 +40,8 @@ public class CommandInfection : CharacterTask {
 					}
 				}
 			}
-			_targetLandmark = (BaseLandmark)_targetLocation;
-			craterBeast = (CraterBeast)_assignedCharacter.role;
+			//_targetLandmark = (BaseLandmark)_targetLocation;
+			//craterBeast = (CraterBeast)_assignedCharacter.role;
 			ChangeStateTo (STATE.COMMAND_INFECTION, true);
 		}else{
 			EndTask(TASK_STATUS.FAIL);

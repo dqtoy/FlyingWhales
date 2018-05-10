@@ -185,7 +185,8 @@ public class CharacterAvatar : PooledObject{
             }
         }
         if (path == null) {
-            throw new Exception(_characters[0].name + "'s Avatar. There is no path from " + this.specificLocation.tileLocation.name + " to " + targetLocation.tileLocation.name);
+            Debug.LogError(_characters[0].name + "'s Avatar. There is no path from " + this.specificLocation.tileLocation.name + " to " + targetLocation.tileLocation.name, this);
+            return;
         }
         if (path != null && path.Count > 0) {
             if (this.specificLocation.tileLocation.landmarkOnTile != null) {

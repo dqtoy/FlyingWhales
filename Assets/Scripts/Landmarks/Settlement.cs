@@ -14,11 +14,11 @@ public class Settlement : BaseLandmark {
     private ECS.Character _headOfSettlement;
 	private List<BaseLandmark> _ownedLandmarks;
 
-	private WeightedDictionary<MATERIAL> _materialWeights;
+	//private WeightedDictionary<MATERIAL> _materialWeights;
 
     private const int CHARACTER_LIMIT = 10;
 
-    private RACE _producingPopulationFor;
+    //private RACE _producingPopulationFor;
     private float _currentPopulationProduction;
 
 	//Crater
@@ -46,8 +46,8 @@ public class Settlement : BaseLandmark {
         _canBeOccupied = true;
         //_questBoard = new List<Quest>();
 		_ownedLandmarks = new List<BaseLandmark>();
-		_materialWeights = new WeightedDictionary<MATERIAL>();
-        _producingPopulationFor = RACE.NONE;
+		//_materialWeights = new WeightedDictionary<MATERIAL>();
+        //_producingPopulationFor = RACE.NONE;
 //		ConstructNeededMaterials ();
     }
 

@@ -6,13 +6,13 @@ using ECS;
 
 public class MeteorStrikeData : StorylineData {
 
-	private PsytoxinCure _psytoxinCureQuest;
+	//private PsytoxinCure _psytoxinCureQuest;
 	private BaseLandmark _ritualStones;
 
 	#region getters/setters
-	public PsytoxinCure psytoxinCureQuest{
-		get { return _psytoxinCureQuest; }
-	}
+	//public PsytoxinCure psytoxinCureQuest{
+	//	get { return _psytoxinCureQuest; }
+	//}
 	#endregion
 
 	public MeteorStrikeData(BaseLandmark ritualStones) : base(STORYLINE.METEOR_STRIKE) {

@@ -379,23 +379,21 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, bool reduceCivilians = true, bool determineAction = true) {
         RACE raceOfChar = GetRaceBasedOnProportion();
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
-        //newCharacter.AssignRole(charRole);
-        //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
         if (reduceCivilians) {
             AdjustCivilians(raceOfChar, -1);
         }
-        //this.AdjustPopulation(-1); //Adjust population by -1
+        newCharacter.CreateIcon();
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
+        newCharacter.icon.SetPosition(this.tileLocation.transform.position);
         if (charRole != CHARACTER_ROLE.FOLLOWER) {
             //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
             if (determineAction) {
                 newCharacter.DetermineAction();
             }
         }
-        //UIManager.Instance.UpdateFactionSummary();
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -414,15 +412,13 @@ public class BaseLandmark : ILocation, TaskCreator {
             newCharacter.SetFaction(owner);
             owner.AddNewCharacter(newCharacter);
         }
+        newCharacter.CreateIcon();
         AddCharacterToLocation(newCharacter);
         AddCharacterHomeOnLandmark(newCharacter);
-        //if (charRole != CHARACTER_ROLE.FOLLOWER) {
-        //    newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-        //}
+        newCharacter.icon.SetPosition(this.tileLocation.transform.position);
         if (determineAction) {
             newCharacter.DetermineAction();
         }
-        //UIManager.Instance.UpdateFactionSummary();
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -440,8 +436,10 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (_owner != null) {
             _owner.AddNewCharacter(newCharacter);
         }
+        newCharacter.CreateIcon();
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
+        newCharacter.icon.SetPosition(this.tileLocation.transform.position);
         if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
             //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
             if (determineAction) {

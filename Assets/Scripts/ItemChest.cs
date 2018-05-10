@@ -11,8 +11,8 @@ public class ItemChest : IEncounterable {
     private WeightedDictionary<MATERIAL> _materialWeights;
     private WeightedDictionary<QUALITY> _qualityWeights;
 	private List<ECS.Item> _itemsInChest;
-	private List<ECS.Character> _allNeed;
-	private List<ECS.Character> _allGreed;
+	//private List<ECS.Character> _allNeed;
+	//private List<ECS.Character> _allGreed;
 
 	#region getters/setters
     public string encounterName {
@@ -27,8 +27,8 @@ public class ItemChest : IEncounterable {
         _tier = tier;
         _chestType = chestType;
         _chanceToGet = chanceToGet;
-		_allNeed = new List<ECS.Character> ();
-		_allGreed = new List<ECS.Character> ();
+		//_allNeed = new List<ECS.Character> ();
+		//_allGreed = new List<ECS.Character> ();
         ConstructMaterialWeightsDictionary();
         ConstructQualityWeightsDictionary();
 		PopulateItemChest ();

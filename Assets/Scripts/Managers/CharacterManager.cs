@@ -8,6 +8,9 @@ public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
 
+    public GameObject characterIconPrefab;
+    public Transform characterIconsParent;
+
     public List<CharacterType> characterTypes;
     public List<Trait> traitSetup;
     private Dictionary<TRAIT, string> traitDictionary;
@@ -277,7 +280,7 @@ public class CharacterManager : MonoBehaviour {
 
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
-        TextAsset asset = Resources.Load("Data/Traits/" + fileName + ".json") as TextAsset;
+        //TextAsset asset = Resources.Load("Data/Traits/" + fileName + ".json") as TextAsset;
 
         //Print the text from the file
         Debug.Log(GetJsonStringOfTrait(traitSetup.trait));
@@ -417,6 +420,25 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    public void GenerateCharactersForTesting(int number) {
+        List<Settlement> allOwnedSettlements = new List<Settlement>();
+        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
+            allOwnedSettlements.AddRange(FactionManager.Instance.allTribes[i].settlements);
+        }
+        WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
+
+        for (int i = 0; i < number; i++) {
+            Settlement chosenSettlement = allOwnedSettlements[Random.Range(0, allOwnedSettlements.Count)];
+            WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
+
+            CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+            ECS.Character newChar = chosenSettlement.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
+            //Initial Character tags
+            newChar.AssignInitialTags();
+            CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);
+        }
     }
     #endregion
 

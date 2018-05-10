@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
     //public bool hideLandmarks = true;
     public bool initiallyHideRoads = false;
     public bool allowConsole = true;
+    public bool displayFPS = true;
 
     private const float X1_SPEED = 2f;
     private const float X2_SPEED = 1f;
@@ -91,6 +92,7 @@ public class GameManager : MonoBehaviour {
 
 	public void SetPausedState(bool isPaused){
 		this.isPaused = isPaused;
+        Messenger.Broadcast(Signals.PAUSED, isPaused);
 	}
 
     /*
@@ -105,6 +107,7 @@ public class GameManager : MonoBehaviour {
             speed = X4_SPEED;
         }
 		this.progressionSpeed = speed;
+        Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
 
     public void DayStarted() {

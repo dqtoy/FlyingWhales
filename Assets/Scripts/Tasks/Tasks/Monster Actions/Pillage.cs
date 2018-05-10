@@ -7,7 +7,7 @@ using ECS;
 public class Pillage : CharacterTask {
     private BaseLandmark _target;
 
-	private string pillagerName;
+	//private string pillagerName;
 
 	public Pillage(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
         : base(createdBy, TASK_TYPE.PILLAGE, stance, defaultDaysLeft) {
@@ -30,10 +30,10 @@ public class Pillage : CharacterTask {
 		}
 		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 			_target = _targetLocation as BaseLandmark;
-			pillagerName = _assignedCharacter.name;
-			if(_assignedCharacter.party != null){
-				pillagerName = _assignedCharacter.party.name;
-			}
+			//pillagerName = _assignedCharacter.name;
+			//if(_assignedCharacter.party != null){
+			//	pillagerName = _assignedCharacter.party.name;
+			//}
 			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartPillage ());
 		}else{

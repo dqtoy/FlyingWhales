@@ -99,33 +99,33 @@ public class EquatorGenerator : MonoBehaviour {
 
 	internal string GetHexEquatorName(){
 		return 0 + "," + ((int)GridMap.Instance.height / 2);
-		if(this.equatorLine == EQUATOR_LINE.HORIZONTAL){
-			int randomY = UnityEngine.Random.Range(0, (int)GridMap.Instance.height);
-			return 0 + "," + randomY;
-		}else if(this.equatorLine == EQUATOR_LINE.VERTICAL){
-			int randomX = UnityEngine.Random.Range(0, (int)GridMap.Instance.width);
-			return randomX + "," + 0;
-		}else{
-			int randomX = UnityEngine.Random.Range(0, (int)GridMap.Instance.height);
-			int[] verticalPos = {0,(int)GridMap.Instance.height - 1};
-			int randomPos = UnityEngine.Random.Range(0,2);
-			return randomX + "," + verticalPos[randomPos];
-		}
+		//if(this.equatorLine == EQUATOR_LINE.HORIZONTAL){
+		//	int randomY = UnityEngine.Random.Range(0, (int)GridMap.Instance.height);
+		//	return 0 + "," + randomY;
+		//}else if(this.equatorLine == EQUATOR_LINE.VERTICAL){
+		//	int randomX = UnityEngine.Random.Range(0, (int)GridMap.Instance.width);
+		//	return randomX + "," + 0;
+		//}else{
+		//	int randomX = UnityEngine.Random.Range(0, (int)GridMap.Instance.height);
+		//	int[] verticalPos = {0,(int)GridMap.Instance.height - 1};
+		//	int randomPos = UnityEngine.Random.Range(0,2);
+		//	return randomX + "," + verticalPos[randomPos];
+		//}
 
-		return string.Empty;
+		//return string.Empty;
 	}
 	private EQUATOR_LINE GetEquatorLine(){
 		return EQUATOR_LINE.HORIZONTAL;
 
-		int randomLine = UnityEngine.Random.Range(0,4);
-		if(randomLine == 0){
-			return EQUATOR_LINE.HORIZONTAL;
-		}else if(randomLine == 1){
-			return EQUATOR_LINE.VERTICAL;
-		}else if(randomLine == 2){
-			return EQUATOR_LINE.DIAGONAL_RIGHT;
-		}else{
-			return EQUATOR_LINE.DIAGONAL_LEFT;
-		}
+		//int randomLine = UnityEngine.Random.Range(0,4);
+		//if(randomLine == 0){
+		//	return EQUATOR_LINE.HORIZONTAL;
+		//}else if(randomLine == 1){
+		//	return EQUATOR_LINE.VERTICAL;
+		//}else if(randomLine == 2){
+		//	return EQUATOR_LINE.DIAGONAL_RIGHT;
+		//}else{
+		//	return EQUATOR_LINE.DIAGONAL_LEFT;
+		//}
 	}
 }

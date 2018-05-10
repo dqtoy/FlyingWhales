@@ -6,7 +6,7 @@ using ECS;
 public class StorylineData {
 
     private STORYLINE _storyline;
-	private string _storylineName;
+	//private string _storylineName;
 	protected Log _storylineTitle;
     protected Log _storylineDescription;
 
@@ -34,7 +34,7 @@ public class StorylineData {
 
 	public StorylineData(STORYLINE storyline) {
         _storyline = storyline;
-		_storylineName = Utilities.NormalizeStringUpperCaseFirstLetters (_storyline.ToString ());
+		//_storylineName = Utilities.NormalizeStringUpperCaseFirstLetters (_storyline.ToString ());
 		_storylineTitle = CreateLogForStoryline ("title");
         _relevantItems = new Dictionary<object, List<Log>>();
         _relevantQuests = new List<Quest>();

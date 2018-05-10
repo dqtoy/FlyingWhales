@@ -12,8 +12,8 @@ public class SmoothMovement : MonoBehaviour {
 	internal bool hasAttacked;
 
     [SerializeField] private float step = 0f;
-    [SerializeField] private float timeStarted = 0f;
-    [SerializeField] private float timeSinceStarted = 0f;
+    //[SerializeField] private float timeStarted = 0f;
+    //[SerializeField] private float timeSinceStarted = 0f;
 
 	internal GameObject avatarGO;
 
@@ -30,8 +30,8 @@ public class SmoothMovement : MonoBehaviour {
 
     internal void Reset() {
         step = 0f;
-        timeStarted = 0f;
-        timeSinceStarted = 0f;
+        //timeStarted = 0f;
+        //timeSinceStarted = 0f;
         isMoving = false;
         targetPosition = Vector3.zero;
         direction = DIRECTION.LEFT;
@@ -53,8 +53,8 @@ public class SmoothMovement : MonoBehaviour {
 		this.direction = direction;
 		this.targetPosition = endPos;
 		this.isMoving = true;
-		this.timeStarted = Time.time;
-		this.timeSinceStarted = 0f;
+		//this.timeStarted = Time.time;
+		//this.timeSinceStarted = 0f;
 		this.step = 0f;
 	}
 

@@ -50,10 +50,10 @@ public class RandomNameGenerator : MonoBehaviour {
 		"Thalessa", "Tavrovel", "Thranduil", "Uralen", "Urdwyn", "Valinor", "Vinyamar", "Vasmundin", "Wylia"
 	};
 
-	private string[] baseElvenCityNames = new string[]{
-		"Aglarond", "Alqualonde", "Avallone", "Beleriand", "Brithombar", "Doriath",
-		"Galadhon", "Gondolin", "Harlond", "Imladris", "Lindon", "Lorien", "Lothlorien", "Menegroth", "Mithlond"
-	};
+	//private string[] baseElvenCityNames = new string[]{
+	//	"Aglarond", "Alqualonde", "Avallone", "Beleriand", "Brithombar", "Doriath",
+	//	"Galadhon", "Gondolin", "Harlond", "Imladris", "Lindon", "Lorien", "Lothlorien", "Menegroth", "Mithlond"
+	//};
 
 	private string[] baseElvenFemaleNames = new string[]{
 		"Arwen", "Amarie", "Alassea", "Arasinya", "Aredhel", "Authiel", "Amirala", "Bainwen", "Berissa", "Beriana", "Berondiel" , "Calathiel", "Caladwen", "Celebrian", "Castiel", "Ciristel", "Dayanara", 

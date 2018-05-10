@@ -12,14 +12,9 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private float _minFov;
 	[SerializeField] private float _maxFov;
 	[SerializeField] private float sensitivity;
-	[SerializeField] private Camera eventIconCamera;
 	[SerializeField] private Camera resourceIconCamera;
-	[SerializeField] private Camera generalCamera;
-	[SerializeField] private Camera traderCamera;
     [SerializeField] private Camera nameplateCamera;
-    [SerializeField] private Camera fogOfWarCamera;
     [SerializeField] private Camera _wholeMapCamera;
-    [SerializeField] internal Camera _canvasCamera;
     //[SerializeField] private MinimapCamera _minimap;
 
 	private float dampTime = 0.2f;
@@ -156,12 +151,8 @@ public class CameraMove : MonoBehaviour {
                 //}
                 previousCameraFOV = fov;
                 Camera.main.orthographicSize = fov;
-                eventIconCamera.orthographicSize = fov;
                 resourceIconCamera.orthographicSize = fov;
-                generalCamera.orthographicSize = fov;
                 nameplateCamera.orthographicSize = fov;
-                fogOfWarCamera.orthographicSize = fov;
-                _canvasCamera.orthographicSize = fov;
                 Minimap.Instance.UpdateCameraBorderScale();
                 CalculateCameraBounds();
             }
@@ -207,18 +198,6 @@ public class CameraMove : MonoBehaviour {
         } else {
             target = GO.transform;
         }
-	}
-
-	public void ToggleResourceIcons(){
-//		resourceIconCamera.gameObject.SetActive(!resourceIconCamera.gameObject.activeSelf);
-	}
-
-	public void ToggleGeneralCamera(){
-		generalCamera.gameObject.SetActive(!generalCamera.gameObject.activeSelf);
-	}
-
-	public void ToggleTraderCamera() {
-		traderCamera.gameObject.SetActive(!traderCamera.gameObject.activeSelf);
 	}
 
     public void ToggleMainCameraLayer(string layerName) {

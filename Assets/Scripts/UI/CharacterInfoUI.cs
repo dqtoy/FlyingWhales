@@ -67,9 +67,10 @@ public class CharacterInfoUI : UIMenu {
 
     #region Overrides
     public override void HideMenu() {
-        if (currentlyShowingCharacter.avatar != null) {
-            currentlyShowingCharacter.avatar.SetHighlightState(false);
-        }
+        //if (currentlyShowingCharacter.avatar != null) {
+        //    currentlyShowingCharacter.avatar.SetHighlightState(false);
+        //}
+        currentlyShowingCharacter.icon.SetAvatarState(false);
         _activeCharacter = null;
         base.HideMenu();
     }
@@ -91,14 +92,16 @@ public class CharacterInfoUI : UIMenu {
     public override void SetData(object data) {
         if (_data != null) {
             ECS.Character previousCharacter = _data as ECS.Character;
-            if (previousCharacter.avatar != null) {
-                previousCharacter.avatar.SetHighlightState(false);
-            }
+            //if (previousCharacter.avatar != null) {
+            //    previousCharacter.avatar.SetHighlightState(false);
+            //}
+            previousCharacter.icon.SetAvatarState(false);
         }
         base.SetData(data);
-        if (currentlyShowingCharacter.avatar != null) {
-            currentlyShowingCharacter.avatar.SetHighlightState(true);
-        }
+        //if (currentlyShowingCharacter.avatar != null) {
+        //    currentlyShowingCharacter.avatar.SetHighlightState(true);
+        //}
+        currentlyShowingCharacter.icon.SetAvatarState(true);
         historyScrollView.ResetPosition();
         if (isShowing) {
             UpdateCharacterInfo();

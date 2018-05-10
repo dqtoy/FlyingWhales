@@ -5,7 +5,7 @@ using ECS;
 
 public class UpgradeGear : CharacterTask {
 
-    private Settlement _settlement;
+    //private Settlement _settlement;
 
 	public UpgradeGear(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.UPGRADE_GEAR, stance, defaultDaysLeft) {
 		_states = new Dictionary<STATE, State> {
@@ -24,7 +24,7 @@ public class UpgradeGear : CharacterTask {
 		}
 		if(_targetLocation != null){
 			ChangeStateTo (STATE.MOVE);
-			_settlement = (Settlement)_targetLocation;
+			//_settlement = (Settlement)_targetLocation;
 			_assignedCharacter.GoToLocation (_targetLocation, PATHFINDING_MODE.USE_ROADS, () => StartPurchase());
 		}else{
 			EndTask (TASK_STATUS.FAIL);

@@ -21,39 +21,69 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
         Biomes.Instance.LoadPassableObjects();
-        if (!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
+
+        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        st.Start();
+        bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
+        st.Stop();
+        
+        if (regionGenerationFailed) {
             Debug.LogWarning("Region generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
             return;
+        } else {
+            Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
         }
+        
+        
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
 
         UIManager.Instance.InitializeUI();
 
+        st.Start();
+        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions();
+        st.Stop();
 
-        if (!FactionManager.Instance.GenerateInitialFactions()) {
+        if (factionGenerationFailed) {
             //reset
             Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
             return;
+        } else {
+            Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
         }
-        if (!LandmarkManager.Instance.GenerateLandmarks()) {
+
+        st.Start();
+        bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
+        st.Stop();
+
+        if (landmarkGenerationFailed) {
             //reset
             Debug.LogWarning("Landmark generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
             return;
+        } else {
+            Debug.Log(string.Format("Landmark Generation took {0} ms to complete", st.ElapsedMilliseconds));
         }
-        if (!RoadManager.Instance.GenerateRoads()) {
+
+        st.Start();
+        bool roadGenerationFailed = !RoadManager.Instance.GenerateRoads();
+        st.Stop();
+
+        if (roadGenerationFailed) {
             //reset
             Debug.LogWarning("Road generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
             return;
+        } else {
+            Debug.Log(string.Format("Road Generation took {0} ms to complete", st.ElapsedMilliseconds));
         }
+
         PathfindingManager.Instance.CreateGrid();
 
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
@@ -70,6 +100,7 @@ public class MapGenerator : MonoBehaviour {
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
+        //CharacterManager.Instance.GenerateCharactersForTesting(100);
         FactionManager.Instance.GenerateFactionCharacters();
         //FactionManager.Instance.GenerateMonsters();
         //StorylineManager.Instance.GenerateStoryLines();

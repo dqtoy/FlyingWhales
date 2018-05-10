@@ -122,6 +122,8 @@ namespace Pathfinding {
 		/** Cached CharacterController component */
 		protected CharacterController controller;
 
+		/** Cached RVOController component */
+		protected RVOController rvoController;
 
 		/** Plane which this agent is moving in.
 		 * This is used to convert between world space and a movement plane to make it possible to use this script in
@@ -246,6 +248,7 @@ namespace Pathfinding {
 		protected virtual void FindComponents () {
 			tr = transform;
 			seeker = GetComponent<Seeker>();
+			rvoController = GetComponent<RVOController>();
 			// Find attached movement components
 			controller = GetComponent<CharacterController>();
 			rigid = GetComponent<Rigidbody>();
@@ -284,6 +287,7 @@ namespace Pathfinding {
 			if (clearPath) CancelCurrentPathRequest();
 			prevPosition1 = prevPosition2 = simulatedPosition = newPosition;
 			if (updatePosition) tr.position = newPosition;
+			if (rvoController != null) rvoController.Move(Vector3.zero);
 			if (clearPath) SearchPath();
 		}
 
@@ -305,10 +309,7 @@ namespace Pathfinding {
 			lastDeltaTime = 0;
 		}
 
-		/** Called every frame.
-		 * If no rigidbodies are used then all movement happens here.
-		 */
-		protected virtual void Update () {
+		public void UpdateMe() {
 			if (shouldRecalculatePath) SearchPath();
 
 			// If gravity is used depends on a lot of things.
@@ -323,17 +324,35 @@ namespace Pathfinding {
 			}
 		}
 
-		/** Called every physics update.
-		 * If rigidbodies are used then all movement happens here.
-		 */
-		protected virtual void FixedUpdate () {
-			if (!(rigid == null && rigid2D == null) && canMove) {
-				Vector3 nextPosition;
-				Quaternion nextRotation;
-				MovementUpdate(Time.fixedDeltaTime, out nextPosition, out nextRotation);
-				FinalizeMovement(nextPosition, nextRotation);
-			}
-		}
+        ///** Called every frame.
+        // * If no rigidbodies are used then all movement happens here.
+        // */
+        //protected virtual void Update() {
+        //    if (shouldRecalculatePath) SearchPath();
+
+        //    // If gravity is used depends on a lot of things.
+        //    // For example when a non-kinematic rigidbody is used then the rigidbody will apply the gravity itself
+        //    // Note that the gravity can contain NaN's, which is why the comparison uses !(a==b) instead of just a!=b.
+        //    usingGravity = !(gravity == Vector3.zero) && (!updatePosition || ((rigid == null || rigid.isKinematic) && (rigid2D == null || rigid2D.isKinematic)));
+        //    if (rigid == null && rigid2D == null && canMove) {
+        //        Vector3 nextPosition;
+        //        Quaternion nextRotation;
+        //        MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+        //        FinalizeMovement(nextPosition, nextRotation);
+        //    }
+        //}
+
+        ///** Called every physics update.
+        //   * If rigidbodies are used then all movement happens here.
+        //   */
+        //protected virtual void FixedUpdate() {
+        //    if (!(rigid == null && rigid2D == null) && canMove) {
+        //        Vector3 nextPosition;
+        //        Quaternion nextRotation;
+        //        MovementUpdate(Time.fixedDeltaTime, out nextPosition, out nextRotation);
+        //        FinalizeMovement(nextPosition, nextRotation);
+        //    }
+        //}
 
 		/** \copydoc Pathfinding::IAstarAI::MovementUpdate */
 		public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
@@ -384,6 +403,10 @@ namespace Pathfinding {
 		 * To solve this the start point of the requested paths is always at the base of the character.
 		 */
 		public virtual Vector3 GetFeetPosition () {
+			if (rvoController != null && rvoController.enabled && rvoController.movementPlane == MovementPlane.XZ) {
+				return position + (rotation * Vector3.up)*(rvoController.center - rvoController.height*0.5f);
+			}
+
 			// Use the base of the CharacterController.
 			// If updatePosition is false then fall back to only using the simulated position
 			if (controller != null && controller.enabled && updatePosition) {
@@ -435,6 +458,11 @@ namespace Pathfinding {
 
 		/** Calculates how far to move during a single frame */
 		protected Vector2 CalculateDeltaToMoveThisFrame (Vector2 position, float distanceToEndOfPath, float deltaTime) {
+			if (rvoController != null && rvoController.enabled) {
+				// Use RVOController to get a processed delta position
+				// such that collisions will be avoided if possible
+				return movementPlane.ToPlane(rvoController.CalculateMovementDelta(movementPlane.ToWorld(position, 0), deltaTime));
+			}
 			// Direction and distance to move during this frame
 			return Vector2.ClampMagnitude(velocity2D * deltaTime, distanceToEndOfPath);
 		}

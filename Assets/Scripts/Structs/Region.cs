@@ -7,16 +7,16 @@ using System;
 
 public class Region : IHasNeighbours<Region> {
     private int _id;
-    private string _name;
+    //private string _name;
     private HexTile _centerOfMass;
     private List<HexTile> _tilesInRegion; //This also includes the center of mass
     private List<HexTile> _outerGridTilesInRegion;
-    private Color regionColor;
+    //private Color regionColor;
     private List<Region> _adjacentRegions;
     private List<Region> _adjacentRegionsViaRoad;
     private List<HexTile> _tilesWithMaterials; //The tiles inside the region that have materials
 
-    private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
+    //private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
 
     //Landmarks
     private List<BaseLandmark> _landmarks; //This contains all the landmarks in the region, except for it's city
@@ -90,7 +90,7 @@ public class Region : IHasNeighbours<Region> {
 
     public Region(HexTile centerOfMass) {
         _id = Utilities.SetID(this);
-        _name = RandomNameGenerator.Instance.GetRegionName();
+        //_name = RandomNameGenerator.Instance.GetRegionName();
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
@@ -99,7 +99,7 @@ public class Region : IHasNeighbours<Region> {
         _landmarks = new List<BaseLandmark>();
         _tilesWithMaterials = new List<HexTile>();
         AddTile(_centerOfMass);
-        regionColor = UnityEngine.Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
+        //regionColor = UnityEngine.Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
     }
 
     #region Center Of Mass Functions

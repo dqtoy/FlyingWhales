@@ -7,7 +7,7 @@ public class HuntPrey : CharacterTask {
 
     private BaseLandmark _target;
 
-	private string hunterName;
+	//private string hunterName;
 
 	public HuntPrey(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.COMBAT) 
         : base(createdBy, TASK_TYPE.HUNT_PREY, stance, defaultDaysLeft) {
@@ -30,10 +30,10 @@ public class HuntPrey : CharacterTask {
 		}
 		if(_targetLocation != null && _targetLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 			_target = _targetLocation as BaseLandmark;
-			hunterName = _assignedCharacter.name;
-			if(_assignedCharacter.party != null){
-				hunterName = _assignedCharacter.party.name;
-			}
+			//hunterName = _assignedCharacter.name;
+			//if(_assignedCharacter.party != null){
+			//	hunterName = _assignedCharacter.party.name;
+			//}
 			ChangeStateTo (STATE.MOVE);
 			_assignedCharacter.GoToLocation (_target, PATHFINDING_MODE.USE_ROADS, () => StartHunt ());
 		}else{

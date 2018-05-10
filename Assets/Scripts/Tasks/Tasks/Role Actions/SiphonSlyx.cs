@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ECS;
 
 public class SiphonSlyx : CharacterTask {
-	private CraterBeast craterBeast;
+	//private CraterBeast craterBeast;
 
 	public SiphonSlyx(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.SIPHON_SLYX, stance, defaultDaysLeft) {
 		_states = new Dictionary<STATE, State> {
@@ -18,7 +18,7 @@ public class SiphonSlyx : CharacterTask {
 		if(_assignedCharacter == null){
 			return;
 		}
-		craterBeast = (CraterBeast)_assignedCharacter.role;
+		//craterBeast = (CraterBeast)_assignedCharacter.role;
 		StartSiphon ();
 	}
 	public override bool CanBeDone (Character character, ILocation location){

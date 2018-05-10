@@ -79,8 +79,8 @@ public class UIManager : MonoBehaviour {
 	internal string warAllianceState = string.Empty;
 
     private List<NotificationItem> notificationItemsThatCanBeReused;
-    private List<Log> logHistory;
-	private bool isShowKingdomHistoryOnly;
+    //private List<Log> logHistory;
+	//private bool isShowKingdomHistoryOnly;
 
     private List<UIMenuSettings> _menuHistory;
 
@@ -95,7 +95,7 @@ public class UIManager : MonoBehaviour {
 
     void Awake(){
 		Instance = this;
-        logHistory = new List<Log>();
+        //logHistory = new List<Log>();
         notificationItemsThatCanBeReused = new List<NotificationItem>();
         _menuHistory = new List<UIMenuSettings>();
         //kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
@@ -110,7 +110,7 @@ public class UIManager : MonoBehaviour {
         NormalizeFontSizes();
         ToggleBorders();
         toggleBordersBtn.SetClickState(true);
-		isShowKingdomHistoryOnly = false;
+		//isShowKingdomHistoryOnly = false;
   //      PopulateHistoryTable();
 		//PopulateCityHistoryTable ();
         //UpdateUI();
@@ -487,15 +487,15 @@ public class UIManager : MonoBehaviour {
         CameraMove.Instance.ToggleMainCameraLayer("Borders");
         CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
     }
-    public void ToggleResourceIcons() {
-        CameraMove.Instance.ToggleResourceIcons();
-    }
-    public void ToggleGeneralCamera() {
-        CameraMove.Instance.ToggleGeneralCamera();
-    }
-    public void ToggleTraderCamera() {
-        CameraMove.Instance.ToggleTraderCamera();
-    }
+    //public void ToggleResourceIcons() {
+    //    CameraMove.Instance.ToggleResourceIcons();
+    //}
+    //public void ToggleGeneralCamera() {
+    //    CameraMove.Instance.ToggleGeneralCamera();
+    //}
+    //public void ToggleTraderCamera() {
+    //    CameraMove.Instance.ToggleTraderCamera();
+    //}
     #endregion
 
     #region Settlement Info

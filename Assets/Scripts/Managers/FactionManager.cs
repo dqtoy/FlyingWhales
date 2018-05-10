@@ -346,11 +346,11 @@ public class FactionManager : MonoBehaviour {
                     if (Random.Range(0, 100) < 50) {
                         if (Random.Range(0, 2) == 0) {
                             //generate alpha wolf
-                            ECS.Character alphaWolf = currCave.CreateNewCharacter(RACE.WOLF, "Alpha Wolf", false);
+                            currCave.CreateNewCharacter(RACE.WOLF, "Alpha Wolf", false);
                             Debug.Log("Created an alpha wolf at " + currCave.landmarkName + "(" + currCave.tileLocation.name + ")");
                         } else {
                             //generate normal wolf
-                            ECS.Character alphaWolf = currCave.CreateNewCharacter(RACE.WOLF, "Wolf", false);
+                            currCave.CreateNewCharacter(RACE.WOLF, "Wolf", false);
                             Debug.Log("Created a wolf at " + currCave.landmarkName + "(" + currCave.tileLocation.name + ")");
                         }
                     }
