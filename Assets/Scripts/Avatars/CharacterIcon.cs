@@ -43,6 +43,7 @@ public class CharacterIcon : MonoBehaviour {
     public void SetTarget(ILocation target) {
         _targetLocation = target;
         _aiPath.destination = _targetLocation.tileLocation.transform.position;
+        //_aiPath.SetRecalculatePathState(true);
     }
 
     #region Visuals

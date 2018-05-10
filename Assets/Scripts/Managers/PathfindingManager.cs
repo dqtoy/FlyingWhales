@@ -23,37 +23,20 @@ public class PathfindingManager : MonoBehaviour {
         _allAgents = new List<CharacterAIPath>();
     }
 
-    //internal void Initialize() {
-    //    aStarPath.ClearTagNames();
-    //    AddNewTag(unoccupiedTag);
-    //}
-
     internal void CreateGrid() {
         //GameObject planeGO = GameObject.Instantiate(planePrefab, mapGenerator.transform) as GameObject;
         HexTile topCornerHexTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1];
         float xSize = (topCornerHexTile.transform.localPosition.x + 4f);
         float zSize = (topCornerHexTile.transform.localPosition.y + 4f);
-        //planeGO.transform.localScale = new Vector3(xSize, 1f, zSize);
-        //planeGO.transform.localPosition = new Vector3(-0.6f, -0.6f, 2f);
-        //aStarPath.gra
-        mainGraph = aStarPath.data.AddGraph(typeof(GridGraph)) as GridGraph;
 
-        //mainGraph.isometricAngle = 90 - Mathf.Atan(1 / Mathf.Sqrt(2)) * Mathf.Rad2Deg;
-        //mainGraph.aspectRatio = 1;
-        //mainGraph.uniformEdgeCosts = true;
-        //mainGraph.neighbours = NumNeighbours.Six;
+        mainGraph = aStarPath.data.AddGraph(typeof(GridGraph)) as GridGraph;
         mainGraph.cutCorners = false;
         mainGraph.rotation = new Vector3(-90f, 0f, 0f);
         mainGraph.SetDimensions(Mathf.FloorToInt(xSize), Mathf.FloorToInt(zSize), 1f);
         mainGraph.nodeSize = 0.5f;
-        //mainGraph.SetDimensions((int)GridMap.Instance.width + 35, (int)GridMap.Instance.height, 1f);
         mainGraph.collision.use2D = true;
         mainGraph.collision.type = ColliderType.Sphere;
         mainGraph.collision.diameter = 1f;
-
-        //AddNewTag(waterTag);
-        //AddNewTag(plainTag);
-        //AddNewTag(mountainTag);
         mainGraph.collision.mask = LayerMask.GetMask("Unpassable");
         RescanGrid();
     }

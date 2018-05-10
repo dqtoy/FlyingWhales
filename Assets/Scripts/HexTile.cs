@@ -1032,17 +1032,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 //			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
 //		}
 	}
-    private void OnTriggerEnter2D(Collider2D collision) {
-        if (!this._isPassable) {
-            return;
-        }
-        //Debug.Log(collision.name + " entered " + this.name, this);
-        Character character = collision.gameObject.GetComponent<CharacterAIPath>().icon.character;
-        if (character.specificLocation != null) {
-            character.specificLocation.RemoveCharacterFromLocation(character);
-        }
-        AddCharacterToLocation(character);
-    }
+    //private void OnTriggerEnter2D(Collider2D collision) {
+    //    if (!this._isPassable) {
+    //        return;
+    //    }
+    //    //Debug.Log(collision.name + " entered " + this.name, this);
+    //    Character character = collision.gameObject.GetComponent<CharacterAIPath>().icon.character;
+    //    if (character.specificLocation != null) {
+    //        character.specificLocation.RemoveCharacterFromLocation(character);
+    //    }
+    //    AddCharacterToLocation(character);
+    //}
     //private void OnTriggerExit2D(Collider2D collision) {
     //    Debug.Log(collision.name + " exited " + this.name, this);
     //    Character character = collision.gameObject.GetComponent<CharacterIcon>().character;

@@ -10,11 +10,15 @@ public class CharacterAIPath : AIPath {
 
     [SerializeField] private CharacterIcon _icon;
     private Action onTargetReachedAction;
+    //private bool _shouldRecalculatePath = false;
 
     #region getters/setters
     public CharacterIcon icon {
         get { return _icon; }
     }
+    //protected override bool shouldRecalculatePath {
+    //    get { return _shouldRecalculatePath; }
+    //}
     #endregion
 
     #region overrides
@@ -27,8 +31,13 @@ public class CharacterAIPath : AIPath {
         if (_icon.targetLocation is BaseLandmark) {
             _icon.targetLocation.AddCharacterToLocation(_icon.character);
         }
+        //SetRecalculatePathState(false);
     }
     #endregion
+
+    //public void SetRecalculatePathState(bool state) {
+    //    _shouldRecalculatePath = state;
+    //}
 
     public void SetActionOnTargetReached(Action action) {
         onTargetReachedAction = action;

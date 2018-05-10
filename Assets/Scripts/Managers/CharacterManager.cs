@@ -421,6 +421,25 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
+    public void GenerateCharactersForTesting(int number) {
+        List<Settlement> allOwnedSettlements = new List<Settlement>();
+        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
+            allOwnedSettlements.AddRange(FactionManager.Instance.allTribes[i].settlements);
+        }
+        WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
+
+        for (int i = 0; i < number; i++) {
+            Settlement chosenSettlement = allOwnedSettlements[Random.Range(0, allOwnedSettlements.Count)];
+            WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
+
+            CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+            ECS.Character newChar = chosenSettlement.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
+            //Initial Character tags
+            newChar.AssignInitialTags();
+            CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);
+        }
+    }
     #endregion
 
 	#region Avatars
