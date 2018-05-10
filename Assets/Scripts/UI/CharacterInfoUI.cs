@@ -140,6 +140,7 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+        text += "\nSpecific Location: " + currentlyShowingCharacter.specificLocation.locationName;
         text += "\nCurrent Action: ";
         if (currentlyShowingCharacter.currentAction != null) {
             text += currentlyShowingCharacter.currentAction.actionData.actionName.ToString() + " ";
