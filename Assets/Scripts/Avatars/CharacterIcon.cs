@@ -1,4 +1,5 @@
 ﻿using ECS;
+using Pathfinding;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private CharacterAIPath _aiPath;
     [SerializeField] private SpriteRenderer _avatarSprite;
     [SerializeField] private Animator _avatarAnimator;
+    [SerializeField] private AIDestinationSetter _destinationSetter;
 
     private Character _character;
 
@@ -26,6 +28,9 @@ public class CharacterIcon : MonoBehaviour {
     }
     public ILocation targetLocation {
         get { return _targetLocation; }
+    }
+    public AIDestinationSetter destinationSetter {
+        get { return _destinationSetter; }
     }
     #endregion
 
@@ -50,7 +55,13 @@ public class CharacterIcon : MonoBehaviour {
             character.specificLocation.RemoveCharacterFromLocation(character);
         }
         _targetLocation = target;
-        _aiPath.destination = _targetLocation.tileLocation.transform.position;
+        if (target != null) {
+            _destinationSetter.target = target.tileLocation.transform;
+        } else {
+            _destinationSetter.target = null;
+        }
+        
+        //_aiPath.destination = _targetLocation.tileLocation.transform.position;
         //_aiPath.SetRecalculatePathState(true);
     }
 

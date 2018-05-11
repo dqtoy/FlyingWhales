@@ -129,7 +129,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region getters/setters
     public string locationName {
-        get { return tileName; }
+        get { return tileName + "(" + xCoordinate + ", " + yCoordinate + ")"; }
     }
     public string urlName {
         get { return "[url=" + this.id.ToString() + "_hextile]" + tileName + "[/url]"; }
@@ -1036,7 +1036,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //    if (!this._isPassable) {
     //        return;
     //    }
-    //    //Debug.Log(collision.name + " entered " + this.name, this);
+    //    Debug.Log(collision.name + " entered " + this.name, this);
     //    Character character = collision.gameObject.GetComponent<CharacterAIPath>().icon.character;
     //    if (character.specificLocation != null) {
     //        character.specificLocation.RemoveCharacterFromLocation(character);

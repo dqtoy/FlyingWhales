@@ -553,10 +553,10 @@ public class BaseLandmark : ILocation, TaskCreator {
         _charactersAtLocation.Remove(character);
         if (character is Character) {
             Character currChar = character as Character;
-			currChar.SetSpecificLocation(this.tileLocation); //make the characters location, the hex tile that this landmark is on, meaning that the character exited the structure
+			currChar.SetSpecificLocation(null);
         } else if (character is Party) {
             Party currParty = character as Party;
-			currParty.SetSpecificLocation(this.tileLocation);//make the party's location, the hex tile that this landmark is on, meaning that the party exited the structure
+			currParty.SetSpecificLocation(null);
         }
         if (_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();

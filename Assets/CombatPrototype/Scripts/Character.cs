@@ -176,7 +176,7 @@ namespace ECS {
             get {
     //            ILocation loc = null;
 				//loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
-                return _specificLocation;
+                return GetSpecificLocation();
             }
         }
 		public HexTile currLocation{
@@ -2062,6 +2062,19 @@ namespace ECS {
 			}
 			return false;
 		}
+        private ILocation GetSpecificLocation() {
+            if (_specificLocation != null) {
+                return _specificLocation;
+            } else {
+                Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 5f, LayerMask.GetMask("Hextiles"));
+                //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
+                HexTile tile = collide.gameObject.GetComponent<HexTile>();
+                if (tile != null) {
+                    return tile;
+                }
+                return null;
+            }
+        }
 		#endregion
 
 		#region Quests
@@ -2444,7 +2457,7 @@ namespace ECS {
         }
         public void CenterOnCharacter() {
             if (!this.isDead) {
-                CameraMove.Instance.CenterCameraOn(this.currLocation.gameObject);
+                CameraMove.Instance.CenterCameraOn(this.icon.aiPath.gameObject);
             }
         }
 		//Death of this character if he/she is in the region specified
