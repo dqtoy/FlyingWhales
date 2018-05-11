@@ -10,10 +10,12 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private GameObject _avatarGO;
     [SerializeField] private CharacterAIPath _aiPath;
     [SerializeField] private SpriteRenderer _avatarSprite;
+    [SerializeField] private Animator _avatarAnimator;
 
     private Character _character;
 
     private ILocation _targetLocation;
+    private bool _isIdle;
 
     #region getters/setters
     public Character character {
@@ -29,15 +31,17 @@ public class CharacterIcon : MonoBehaviour {
 
     public void SetCharacter(Character character) {
         _character = character;
-        UpdateColor();
+        //UpdateColor();
         this.name = _character.name + "'s Icon";
-        if (_character.role != null) {
-            _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
-        }
+        _isIdle = true;
+        //if (_character.role != null) {
+        //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
+        //}
         
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, SetMovementState);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        _currentPos = _aiPath.position;
     }
 
     public void SetTarget(ILocation target) {
@@ -67,7 +71,7 @@ public class CharacterIcon : MonoBehaviour {
         }
     }
     public void SetAvatarState(bool state) {
-        _avatarGO.SetActive(state);
+        //_avatarGO.SetActive(state);
     }
     #endregion
 
@@ -94,10 +98,10 @@ public class CharacterIcon : MonoBehaviour {
 
     private void OnRoleChanged(Character character) {
         if (_character.id == character.id) {
-            UpdateColor();
-            if (_character.role != null) {
-                _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
-            }
+            //UpdateColor();
+            //if (_character.role != null) {
+            //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
+            //}
         }
     }
 
@@ -110,11 +114,66 @@ public class CharacterIcon : MonoBehaviour {
     }
 
     #region Monobehaviours
+    Vector3 _currentPos;
+    string upOrDown = "Down";
+    string previousDir;
     private void LateUpdate() {
+        //Debug.Log(_aiPath.velocity);
         Vector3 newPos = _aiPath.transform.localPosition;
         newPos.y += 0.38f;
         newPos.x += 0.02f;
         _avatarGO.transform.localPosition = newPos;
+
+        
+    }
+    void FixedUpdate() {
+        //Debug.Log(_aiPath.velocity);
+        if (_aiPath.velocity != Vector3.zero) {
+            if (GetLeftRight() == "Left") {
+                if (_avatarAnimator.transform.localScale.x < 0f) {
+                    _avatarAnimator.transform.localScale = new Vector3(_avatarAnimator.transform.localScale.x * -1f, _avatarAnimator.transform.localScale.y, _avatarAnimator.transform.localScale.z);
+                }
+            } else {
+                if (_avatarAnimator.transform.localScale.x >= 0f) {
+                    _avatarAnimator.transform.localScale = new Vector3(_avatarAnimator.transform.localScale.x * -1f, _avatarAnimator.transform.localScale.y, _avatarAnimator.transform.localScale.z);
+                }
+            }
+            upOrDown = GetUpDown();
+            Walk(upOrDown);
+        } else {
+            Idle(upOrDown);
+        }
+    }
+    #endregion
+
+    #region Animation
+    private void Idle(string direction) {
+        if (!_isIdle) {
+            _isIdle = true;
+            _avatarAnimator.Play("Idle_" + direction);
+        }
+    }
+    private void Walk(string direction) {
+        if (_isIdle || previousDir != direction) {
+            _isIdle = false;
+            _avatarAnimator.Play("Walk_" + direction);
+            previousDir = direction;
+        }
+    }
+    private string GetLeftRight() {
+        //Debug.Log(_aiPath.velocity.x);
+        if(_aiPath.velocity.x <= 0f) {
+            return "Left";
+        } else {
+            return "Right";
+        }
+    }
+    private string GetUpDown() {
+        if (_aiPath.velocity.y <= 0f) {
+            return "Down";
+        } else {
+            return "Up";
+        }
     }
     #endregion
 }

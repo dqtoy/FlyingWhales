@@ -11,7 +11,7 @@ public class DestroyAction : CharacterAction {
             _structure = state.obj as StructureObj;
         }
         if (_amountToReduce == 0) {
-            _amountToReduce = Mathf.RoundToInt(100f / (float) _actionData.duration);
+            _amountToReduce = Mathf.RoundToInt((float)_structure.maxHP / (float) _actionData.duration);
         }
     }
 

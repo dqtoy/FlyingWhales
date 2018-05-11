@@ -16,6 +16,8 @@ public interface IObject {
     void SetStates(List<ObjectState> states);
     void SetObjectName(string name);
     void ChangeState(ObjectState state);
+    void StartState(ObjectState state);
+    void EndState(ObjectState state);
     void SetObjectLocation(BaseLandmark newLocation);
     void OnAddToLandmark(BaseLandmark newLocation);
 

@@ -1289,6 +1289,7 @@ public enum ACTION_TYPE {
     TORTURE,
     PATROL,
     ABDUCT,
+    DISPEL,
 }
 
 public enum OBJECT_TYPE {

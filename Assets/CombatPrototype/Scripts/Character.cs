@@ -72,6 +72,7 @@ namespace ECS {
 		private bool _isPrisoner;
         private bool _isFollower;
 		private bool _isDefeated;
+        private bool _isIdle; //can't do action, needs will not deplete
 		private object _isPrisonerOf;
 		private BaseLandmark _home;
         private BaseLandmark _lair;
@@ -377,12 +378,9 @@ namespace ECS {
         public CharacterIcon icon {
             get { return _icon; }
         }
-        //public Dictionary<RESOURCE, int> resourceInventory {
-        //    get { return _resourceInventory; }
-        //}
-        //public int totalResourceCount {
-        //    get { return resourceInventory.Sum(x => x.Value); }
-        //}
+        public bool isIdle {
+            get { return _isIdle; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
@@ -402,6 +400,7 @@ namespace ECS {
 			_isDefeated = false;
 			_doesNotTakePrisoners = false;
 			_cannotBeTakenAsPrisoner = false;
+            _isIdle = false;
 			_traceInfo = new Dictionary<Character, List<string>> ();
 			_isPrisonerOf = null;
 			_prisoners = new List<Character> ();
@@ -2363,6 +2362,9 @@ namespace ECS {
 		public void SetCannotBeTakenAsPrisoner(bool state) {
 			this._cannotBeTakenAsPrisoner = state;
 		}
+        public void SetIsIdle(bool state) {
+            _isIdle = state;
+        }
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
         }
@@ -2460,8 +2462,10 @@ namespace ECS {
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
         }
         private void EverydayAction() {
-            if(onDailyAction != null) {
-                onDailyAction();
+            if (!_isIdle) {
+                if (onDailyAction != null) {
+                    onDailyAction();
+                }
             }
         }
         #endregion
@@ -2925,33 +2929,5 @@ namespace ECS {
                 //TODO: queue go to location of each landmark in path
             }
         }
-
-        #region Resource Inventory
-        //private void ConstructResourceInventory() {
-        //    _resourceInventory = new Dictionary<RESOURCE, int>();
-        //    RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
-        //    for (int i = 0; i < allResources.Length; i++) {
-        //        if(allResources[i] != RESOURCE.NONE) {
-        //            _resourceInventory.Add(allResources[i], 0);
-        //        }
-        //    }
-        //}
-        //public void AdjustResource(RESOURCE resource, int amount) {
-        //    _resourceInventory[resource] += amount;
-        //}
-        //public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
-        //    AdjustResource(resource, -amount);
-        //    target.AdjustResource(resource, amount);
-        //}
-        //public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
-        //    AdjustResource(resource, -amount);
-        //    target.AdjustResource(resource, amount);
-        //}
-        //public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
-        //    AdjustResource(resource, -amount);
-        //    target.AdjustResource(resource, amount);
-        //}
-        #endregion
-
     }
 }

@@ -89,6 +89,12 @@ public class StructureObj : IObject {
     public virtual void OnAddToLandmark(BaseLandmark newLocation) {
         SetObjectLocation(newLocation);
     }
+    public virtual void StartState(ObjectState state) {
+
+    }
+    public virtual void EndState(ObjectState state) {
+
+    }
     #endregion
 
     #region Interface Requirements

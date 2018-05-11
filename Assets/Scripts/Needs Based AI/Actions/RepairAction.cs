@@ -18,7 +18,7 @@ public class RepairAction : CharacterAction {
             }
         }
         if (_amountToIncrease == 0) {
-            _amountToIncrease = Mathf.RoundToInt(100f / (float) _actionData.duration);
+            _amountToIncrease = Mathf.RoundToInt((float)_structure.maxHP / (float) _actionData.duration);
         }
         if (_resourceAmountToDecrease == 0) {
             _resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);

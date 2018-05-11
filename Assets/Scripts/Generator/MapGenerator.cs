@@ -100,7 +100,7 @@ public class MapGenerator : MonoBehaviour {
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
-        //CharacterManager.Instance.GenerateCharactersForTesting(100);
+        //CharacterManager.Instance.GenerateCharactersForTesting(1);
         FactionManager.Instance.GenerateFactionCharacters();
         //FactionManager.Instance.GenerateMonsters();
         //StorylineManager.Instance.GenerateStoryLines();

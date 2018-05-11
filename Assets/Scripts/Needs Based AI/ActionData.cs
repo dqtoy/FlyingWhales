@@ -77,7 +77,7 @@ public class ActionData {
     }
 
     private void PerformCurrentAction() {
-        if (!isWaiting) {
+        if (!isWaiting && !_character.isIdle) {
             if (!isDone && currentAction != null) {
                 if (_character.specificLocation != null && _character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _character.specificLocation == currentAction.state.obj.objectLocation) {
                     //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action

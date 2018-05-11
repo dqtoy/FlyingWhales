@@ -61,6 +61,12 @@ public class ItemObj : IObject {
         _currentState = state;
         _currentState.OnStartState();
     }
+    public void StartState(ObjectState state) {
+
+    }
+    public void EndState(ObjectState state) {
+
+    }
     public ObjectState GetState(string name) {
         for (int i = 0; i < _states.Count; i++) {
             if (_states[i].stateName == name) {

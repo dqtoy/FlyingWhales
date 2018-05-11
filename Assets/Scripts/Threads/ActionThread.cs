@@ -20,7 +20,11 @@ public class ActionThread : Multithread {
     #region Overrides
     public override void DoMultithread() {
         base.DoMultithread();
-        LookForAction();
+        try {
+            LookForAction();
+        } catch (Exception e) {
+            Debug.LogError(e.Message);
+        }
     }
     public override void FinishMultithread() {
         base.FinishMultithread();

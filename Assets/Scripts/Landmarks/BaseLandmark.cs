@@ -1038,11 +1038,13 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Objects
-    public void AddObject(IObject obj) {
+    public bool AddObject(IObject obj) {
         if (!_objects.Contains(obj)) {
             _objects.Add(obj);
             obj.OnAddToLandmark(this);
+            return true;
         }
+        return false;
     }
     public void RemoveObject(IObject obj) {
         _objects.Remove(obj);

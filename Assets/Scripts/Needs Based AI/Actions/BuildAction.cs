@@ -7,22 +7,23 @@ public class BuildAction : CharacterAction {
     private int _amountToIncrease;
     private string _structureName;
     private StructureObj _structureObject;
+    private bool _isStructureInLandmark;
 
     public BuildAction(ObjectState state, string structureName) : base(state, ACTION_TYPE.BUILD) {
         _structureName = structureName;
         _needsSpecificTarget = true;
-        if (_amountToIncrease == 0) {
-            _amountToIncrease = Mathf.RoundToInt(100f / (float) _actionData.duration);
-        }
+        _isStructureInLandmark = false;
+        _structureObject = ObjectManager.Instance.GetNewStructureObject(_structureName);
+        _amountToIncrease = Mathf.RoundToInt((float)_structureObject.maxHP / (float) _actionData.duration);
     }
 
     #region Overrides
     public override void PerformAction(Character character) {
         base.PerformAction(character);
-        if(_structureObject == null) {
-            _structureObject = ObjectManager.Instance.GetNewStructureObject(_structureName);
-            _state.obj.objectLocation.AddObject(_structureObject);
+        if (!_isStructureInLandmark) {
+            _isStructureInLandmark = _state.obj.objectLocation.AddObject(_structureObject);
         }
+
         ActionSuccess();
         GiveReward(NEEDS.FULLNESS, character);
         GiveReward(NEEDS.ENERGY, character);

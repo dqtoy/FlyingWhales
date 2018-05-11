@@ -92,9 +92,8 @@ public class ObjectManager : MonoBehaviour {
         if(objectName != string.Empty) {
             iobject.SetObjectName(objectName);
         }
-        iobject.SetStates(objComp.states);
-        for (int i = 0; i < iobject.states.Count; i++) {
-            ObjectState state = iobject.states[i];
+        for (int i = 0; i < objComp.states.Count; i++) {
+            ObjectState state = objComp.states[i];
             state.SetObject(iobject);
             List<CharacterAction> newActions = new List<CharacterAction>();
             for (int j = 0; j < state.actions.Count; j++) {
@@ -110,6 +109,7 @@ public class ObjectManager : MonoBehaviour {
             }
             state.SetActions(newActions);
         }
+        iobject.SetStates(objComp.states);
     }
 
     private void ConstructPrerequisites(CharacterAction action) {
@@ -264,6 +264,9 @@ public class ObjectManager : MonoBehaviour {
             break;
             case SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES:
             structureObj = new ElvenResidences();
+            break;
+            case SPECIFIC_OBJECT_TYPE.SEALED_TOMB:
+            structureObj = new SealedTomb();
             break;
         }
         component.CopyDataToStructureObject(structureObj);

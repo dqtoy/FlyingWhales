@@ -44,22 +44,21 @@ public class ObjectState {
         _stateName = name;
     }
 
-    #region Virtuals
-    public virtual void OnStartState() {
+    #region Utilities
+    public void OnStartState() {
         Messenger.AddListener("OnDayEnd", EverydayEffect);
+        _object.StartState(this);
     }
-    public virtual void OnEndState() {
+    public void OnEndState() {
         Messenger.RemoveListener("OnDayEnd", EverydayEffect);
+        _object.EndState(this);
     }
-    public virtual void EverydayEffect() {
-        if(_everydayAction != null) {
+    public void EverydayEffect() {
+        if (_everydayAction != null) {
             _everydayAction.Invoke(_object);
         }
     }
-    public virtual void OnInteractWith(Character character) { }
-    #endregion
-
-    #region Utilities
+    public void OnInteractWith(Character character) { }
     public void SetObject(IObject iobject) {
         _object = iobject;
     }
