@@ -442,6 +442,232 @@ public class Biomes : MonoBehaviour {
         }
     }
 
+    public void DetermineIslands() {
+        List<HexTile> passableTiles = GetPassableTiles();
+        Dictionary<HexTile, MapIsland> islands = new Dictionary<HexTile, MapIsland>();
+        for (int i = 0; i < passableTiles.Count; i++) {
+            HexTile currTile = passableTiles[i];
+            MapIsland island = new MapIsland(currTile);
+            islands.Add(currTile, island);
+        }
+
+        Queue<HexTile> tileQueue = new Queue<HexTile>();
+
+        while (passableTiles.Count != 0) {
+            HexTile currTile;
+            if (tileQueue.Count <= 0) {
+                currTile = passableTiles[Random.Range(0, passableTiles.Count)];
+            } else {
+                currTile = tileQueue.Dequeue();
+            }
+            MapIsland islandOfCurrTile = islands[currTile];
+            List<HexTile> neighbours = currTile.AllNeighbours;
+            for (int i = 0; i < neighbours.Count; i++) {
+                HexTile currNeighbour = neighbours[i];
+                if (currNeighbour.isPassable && passableTiles.Contains(currNeighbour)) {
+                    MapIsland islandOfNeighbour = islands[currNeighbour];
+                    MergeIslands(islandOfCurrTile, islandOfNeighbour, islands);
+                    tileQueue.Enqueue(currNeighbour);
+                }
+            }
+            passableTiles.Remove(currTile);
+        }
+
+        List<MapIsland> allIslands = new List<MapIsland>();
+        foreach (KeyValuePair<HexTile, MapIsland> kvp in islands) {
+            MapIsland currIsland = kvp.Value;
+            if (!allIslands.Contains(currIsland)) {
+                allIslands.Add(currIsland);
+            }
+        }
+        ////Color islands
+        //for (int i = 0; i < allIslands.Count; i++) {
+        //    MapIsland currIsland = allIslands[i];
+        //    Color islandColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        //    for (int j = 0; j < currIsland.tilesInIsland.Count; j++) {
+        //        HexTile currTile = currIsland.tilesInIsland[j];
+        //        currTile.highlightGO.SetActive(true);
+        //        currTile.highlightGO.GetComponent<SpriteRenderer>().color = islandColor;
+        //    }
+        //}
+
+        ConnectIslands(allIslands, islands);
+    }
+
+    private void ConnectIslands(List<MapIsland> islands, Dictionary<HexTile, MapIsland> islandsDict) {
+        //List<MapIsland> allIslands = islands.OrderByDescending(x => x.tilesInIsland.Count).ToList();
+        //for (int i = 0; i < allIslands.Count; i++) {
+        //    MapIsland currIsland = allIslands[i];
+        //    if (currIsland.tilesInIsland.Count > 0) {
+        //        ConnectToNearestIsland(currIsland, islandsDict, islands);
+        //    }
+        //}
+        //islands = islands.OrderByDescending(x => x.tilesInIsland.Count).ToList();
+        while (islands.Count > 1) {
+            MapIsland currIsland = islands[Random.Range(0, islands.Count)];
+            ConnectToNearestIsland(currIsland, islandsDict, islands);
+            //for (int i = 0; i < islands.Count; i++) {
+            //    MapIsland currIsland = islands[i];
+            //    CameraMove.Instance.CenterCameraOn(currIsland.mainTile.gameObject);
+            //    if (currIsland.tilesInIsland.Count > 0) {
+            //        ConnectToNearestIsland(currIsland, islandsDict, islands);
+            //    }
+        }
+    }
+
+    private void ConnectToNearestIsland(MapIsland originIsland, Dictionary<HexTile, MapIsland> islandsDict, List<MapIsland> islands) {
+        int nearestDistance = 9999;
+        MapIsland nearestIsland = null;
+        List<HexTile> nearestPath = null;
+
+
+        for (int i = 0; i < islands.Count; i++) {
+            MapIsland otherIsland = islands[i];
+            if (otherIsland != originIsland && !AreIslandsConnected(originIsland, otherIsland)) {
+                List<HexTile> path = PathGenerator.Instance.GetPath(originIsland.mainTile, otherIsland.mainTile, PATHFINDING_MODE.UNRESTRICTED);
+                if (path != null && path.Count < nearestDistance) {
+                    nearestDistance = path.Count;
+                    nearestPath = path;
+                    nearestIsland = otherIsland;
+                }
+            }
+        }
+
+        //List<MapIsland> nearIslands = GetNearIslands(originIsland, islandsDict);
+
+        //if (nearIslands.Count <= 0) {
+        //    throw new System.Exception("There are no near islands!");
+        //}
+
+        //for (int i = 0; i < originIsland.outerTiles.Count; i++) {
+        //    HexTile originIslandTile = originIsland.outerTiles[i];
+        //    List<HexTile> allOtherOuterTiles = new List<HexTile>();
+        //    for (int j = 0; j < nearIslands.Count; j++) {
+        //        MapIsland otherIsland = nearIslands[j];
+        //        if (originIsland != otherIsland && otherIsland.tilesInIsland.Count > 0 && !AreIslandsConnected(originIsland, otherIsland)) {
+        //            allOtherOuterTiles.AddRange(otherIsland.outerTiles);
+        //        }
+        //    }
+        //    for (int j = 0; j < allOtherOuterTiles.Count; j++) {
+        //        HexTile tileInOtherIsland = allOtherOuterTiles[j];
+        //        List<HexTile> path = PathGenerator.Instance.GetPath(tileInOtherIsland, originIslandTile, PATHFINDING_MODE.UNRESTRICTED);
+        //        if (path != null) {
+        //            if (path.Count < nearestDistance) {
+        //                nearestPath = path;
+        //                nearestDistance = path.Count;
+        //                nearestIsland = islandsDict[tileInOtherIsland];
+        //            }
+        //        }
+        //    }
+        //}
+
+        //for (int i = 0; i < islands.Count; i++) {
+        //    MapIsland otherIsland = islands[i];
+        //    if (originIsland != otherIsland && !AreIslandsConnected(originIsland, otherIsland)) {
+        //        for (int j = 0; j < otherIsland.outerTiles.Count; j++) {
+        //            HexTile tileInOtherIsland = otherIsland.outerTiles[j];
+        //            for (int k = 0; k < originIsland.outerTiles.Count; k++) {
+        //                HexTile tileInOriginIsland = originIsland.outerTiles[k];
+        //                List<HexTile> path = PathGenerator.Instance.GetPath(tileInOtherIsland, tileInOriginIsland, PATHFINDING_MODE.NORMAL);
+        //                if (path != null) {
+        //                    if (path.Count < nearestDistance) {
+        //                        nearestPath = path;
+        //                        nearestDistance = path.Count;
+        //                        nearestIsland = otherIsland;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        if (nearestPath != null) {
+            //originIsland.AddTileToIsland(nearestPath); 
+            MergeIslands(originIsland, nearestIsland, islandsDict);
+            islands.Remove(nearestIsland);
+            FlattenTiles(nearestPath);
+        }
+        
+
+        //else {
+        //    throw new System.Exception("Could not not connect island!");
+        //}
+    }
+
+    private List<MapIsland> GetNearIslands(MapIsland originIsland, Dictionary<HexTile, MapIsland> islands) {
+        List<MapIsland> nearIslands = new List<MapIsland>();
+        List<Collider2D> colliders = new List<Collider2D>();
+        List<HexTile> checkedTiles = new List<HexTile>();
+        for (int i = 0; i < originIsland.outerTiles.Count; i++) {
+            HexTile currOuterTile = originIsland.outerTiles[i];
+            Collider2D[] collidesWith = Physics2D.OverlapCircleAll(currOuterTile.transform.position, 10f, LayerMask.GetMask("Hextiles"));
+            for (int j = 0; j < collidesWith.Length; j++) {
+                HexTile currTile = collidesWith[j].GetComponent<HexTile>();
+                if (currTile != null && !checkedTiles.Contains(currTile) && islands.ContainsKey(currTile)) {
+                    MapIsland islandOfTile = islands[currTile];
+                    if (originIsland != islandOfTile && !nearIslands.Contains(islandOfTile)) {
+                        nearIslands.Add(islandOfTile);
+                    }
+                }
+                checkedTiles.Add(currTile);
+            }
+
+        }
+        //Collider2D[] colliders = Physics2D.OverlapCircleAll(originIsland.mainTile.transform.position, 20f, LayerMask.GetMask("Hextiles"));
+        //for (int i = 0; i < colliders.Length; i++) {
+        //    HexTile currTile = colliders[i].GetComponent<HexTile>();
+        //    if (islands.ContainsKey(currTile)) {
+        //        MapIsland islandOfTile = islands[currTile];
+        //        if (originIsland != islandOfTile && !nearIslands.Contains(islandOfTile)) {
+        //            nearIslands.Add(islandOfTile);
+        //        }
+        //    }
+        //}
+        return nearIslands;
+    }
+
+    private bool AreIslandsConnected(MapIsland island1, MapIsland island2) {
+        HexTile randomTile1 = island1.tilesInIsland[Random.Range(0, island1.tilesInIsland.Count)];
+        HexTile randomTile2 = island2.tilesInIsland[Random.Range(0, island2.tilesInIsland.Count)];
+
+        return PathGenerator.Instance.GetPath(randomTile1, randomTile2, PATHFINDING_MODE.USE_ROADS) != null;
+    }
+
+    public List<HexTile> GetPassableTiles() {
+        List<HexTile> passableTiles = new List<HexTile>();
+        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+            HexTile currTile = GridMap.Instance.hexTiles[i];
+            if (currTile.isPassable) {
+                passableTiles.Add(currTile);
+            }
+        }
+        return passableTiles;
+    }
+    private MapIsland MergeIslands(MapIsland island1, MapIsland island2, Dictionary<HexTile, MapIsland> islands) {
+        if (island1 == island2) {
+            return island1;
+        }
+        island1.AddTileToIsland(island2.tilesInIsland);
+        for (int i = 0; i < island2.tilesInIsland.Count; i++) {
+            HexTile currTile = island2.tilesInIsland[i];
+            islands[currTile] = island1;
+        }
+        island2.ClearIsland();
+        return island1;
+    }
+    private void FlattenTiles(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            if (currTile.isPassable) {
+                continue;
+            }
+            //currTile.highlightGO.SetActive(true);
+            //currTile.highlightGO.GetComponent<SpriteRenderer>().color = Color.black;
+            currTile.SetElevation(ELEVATION.PLAIN);
+            currTile.SetPassableState(true);
+        }
+    }
+
     [ContextMenu("Generate Tags")]
     public void GenerateTileTags() {
         List<HexTile> tilesToTag = new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>()));
@@ -595,4 +821,57 @@ public class Biomes : MonoBehaviour {
     //            return null;
     //    }
     //}
+}
+
+public class MapIsland {
+    private HexTile _mainTile;
+    private List<HexTile> _tilesInIsland;
+    private List<HexTile> _outerTiles;
+
+    public HexTile mainTile {
+        get { return _mainTile; }
+    }
+    public List<HexTile> tilesInIsland {
+        get { return _tilesInIsland; }
+    }
+    public List<HexTile> outerTiles {
+        get { return _outerTiles; }
+    }
+
+    public MapIsland(HexTile tile) {
+        _mainTile = tile;
+        _tilesInIsland = new List<HexTile>();
+        _outerTiles = new List<HexTile>();
+        AddTileToIsland(tile);
+    }
+
+    public void AddTileToIsland(HexTile tile, bool recomputeOuterTiles = true) {
+        if (!_tilesInIsland.Contains(tile)) {
+            _tilesInIsland.Add(tile);
+            if (recomputeOuterTiles) {
+                RecomputeOuterTiles();
+            }
+        }
+    }
+    public void AddTileToIsland(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            AddTileToIsland(tiles[i], false);
+        }
+        RecomputeOuterTiles();
+    }
+    public void RemoveTileFromIsland(HexTile tile) {
+        _tilesInIsland.Remove(tile);
+    }
+    public void ClearIsland() {
+        _tilesInIsland.Clear();
+    }
+    public void RecomputeOuterTiles() {
+        _outerTiles.Clear();
+        for (int i = 0; i < tilesInIsland.Count; i++) {
+            HexTile currTile = tilesInIsland[i];
+            if (currTile.AllNeighbours.Where(x => !_tilesInIsland.Contains(x)).Any()) {
+                _outerTiles.Add(currTile);
+            }
+        }
+    }
 }

@@ -114,14 +114,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
-    public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
-    public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
+    //public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
+    //public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
     public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
     public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
     public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
-    public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
+    //public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
 
     public List<HexTile> sameTagNeighbours;
 
@@ -943,13 +943,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         unpassableGO.SetActive(!state);
         //UpdatePassableVisuals();
     }
-    private void UpdatePassableVisuals() {
-        //SetCenterSprite(Biomes.Instance.GetCenterPieceSprite(this));
-        if (!_isPassable) {
-            
-        }
-        
-    }
     public void SetPassableObject(object obj) {
         if (obj == null) {
             SetCenterSprite(null);
@@ -964,6 +957,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             SetCenterSprite(null);
         }
     }
+    //public PASSABLE_TYPE GetPassableType() {
+    //    List<HexTile> passableNeighbours = AllNeighbours.Where(x => x.isPassable).ToList();
+
+    //}
+    private PassableTileData GetPassableTileData() {
+        return new PassableTileData(this);
+    }
     #endregion
 
     #region Monobehaviour Functions
@@ -973,18 +973,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        } 
-        //else {
-        //    ShowHexTileInfo();
-        //}
-		//if (_landmarkOnTile != null) {
-		//	if(_landmarkOnTile.owner != null) { //landmark is occupied
-		//		if (isHabitable) {
-		//			this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
-		//		}
-		//	}
-		//} 
-		if(Input.GetMouseButtonDown(0)){
+        } else {
+            ShowHexTileInfo();
+        }
+        //if (_landmarkOnTile != null) {
+        //	if(_landmarkOnTile.owner != null) { //landmark is occupied
+        //		if (isHabitable) {
+        //			this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+        //		}
+        //	}
+        //} 
+        if (Input.GetMouseButtonDown(0)){
 			LeftClick ();
 		}else if(Input.GetMouseButtonDown(1)){
 			RightClick ();
@@ -1115,19 +1114,29 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         Debug.Log(text);
     }
     private void ShowHexTileInfo() {
-        if (_charactersAtLocation.Count > 0) {
-            string text = string.Empty;
-            text += "Characters in tile: ";
-            for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currObj = _charactersAtLocation[i];
-                if (currObj is Party) {
-                    text += "\n" + ((Party)currObj).name;
-                } else if (currObj is Character) {
-                    text += "\n" + ((Character)currObj).name;
-                }
+        //if (_charactersAtLocation.Count > 0) {
+        //    string text = string.Empty;
+        //    text += "Characters in tile: ";
+        //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //        ICombatInitializer currObj = _charactersAtLocation[i];
+        //        if (currObj is Party) {
+        //            text += "\n" + ((Party)currObj).name;
+        //        } else if (currObj is Character) {
+        //            text += "\n" + ((Character)currObj).name;
+        //        }
+        //    }
+        //    UIManager.Instance.ShowSmallInfo(text);
+        //}
+        PassableTileData data = GetPassableTileData();
+        string text = this.name + " Adjacent Tile Collections: ";
+        for (int i = 0; i < data.adjacentTiles.Count; i++) {
+            TileCollection currCollection = data.adjacentTiles[i];
+            text += "\n " + i.ToString() + " - ";
+            for (int j = 0; j < currCollection.tiles.Count; j++) {
+                text += currCollection.tiles[j].name + "/";
             }
-            UIManager.Instance.ShowSmallInfo(text);
         }
+        UIManager.Instance.ShowSmallInfo(text);
     }
     private void ShowLandmarkInfo() {
         string text = string.Empty;

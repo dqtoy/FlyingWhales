@@ -12,6 +12,8 @@ public class MapGenerator : MonoBehaviour {
     }
 
     internal void InitializeWorld() {
+        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
@@ -21,12 +23,11 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
         Biomes.Instance.LoadPassableObjects();
-
-        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        
         st.Start();
         bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
-        
+
         if (regionGenerationFailed) {
             Debug.LogWarning("Region generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
@@ -35,8 +36,20 @@ public class MapGenerator : MonoBehaviour {
         } else {
             Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
         }
-        
-        
+
+        st.Start();
+        Biomes.Instance.DetermineIslands();
+        st.Stop();
+        Debug.Log(string.Format("Island Connections took {0} ms to complete", st.ElapsedMilliseconds));
+
+        RoadManager.Instance.FlattenRoads();
+        Biomes.Instance.LoadElevationSprites();
+        Biomes.Instance.GenerateTileBiomeDetails();
+        return;
+
+
+
+
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
 
@@ -100,8 +113,8 @@ public class MapGenerator : MonoBehaviour {
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
-        //CharacterManager.Instance.GenerateCharactersForTesting(100);
-        FactionManager.Instance.GenerateFactionCharacters();
+        CharacterManager.Instance.GenerateCharactersForTesting(1);
+        //FactionManager.Instance.GenerateFactionCharacters();
         //FactionManager.Instance.GenerateMonsters();
         //StorylineManager.Instance.GenerateStoryLines();
         CharacterManager.Instance.SchedulePrisonerConversion();
