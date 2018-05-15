@@ -352,14 +352,24 @@ public class GridMap : MonoBehaviour {
         }
         return true;
     }
-    //public void UpdateAllRegionsDiscoveredKingdoms() {
-    //    for (int i = 0; i < allRegions.Count; i++) {
-    //        Region currRegion = allRegions[i];
-    //        if (currRegion.occupant != null) {
-    //            currRegion.CheckForDiscoveredKingdoms();
-    //        }
-    //    }
-    //}
+    public void BottleneckBorders() {
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            for (int j = 0; j < currRegion.outerTiles.Count; j++) {
+                HexTile currBorderTile = currRegion.outerTiles[j];
+                if (currBorderTile.isPassable && !currBorderTile.IsBottleneck()) {
+                    List<HexTile> borderNeighbours = currBorderTile.AllNeighbours.Where(x => x.IsBorderTileOfRegion()).ToList();
+                    if (!borderNeighbours.Where(x => x.IsBottleneck()).Any()) {
+                        //this tile has no border neighbours that are bottlenecks or dead ends, make this tile unpassable
+                        currBorderTile.SetPassableState(false);
+                        //make passable neighbours recompute their passable type
+                        List<HexTile> passableNeighbours = currBorderTile.AllNeighbours.Where(x => x.isPassable).ToList();
+                        passableNeighbours.ForEach(x => x.DeterminePassableType());
+                    }
+                }
+            }
+        }
+    }
     #endregion
 }
 

@@ -819,7 +819,7 @@ public class Biomes : MonoBehaviour {
                         return greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
                 }
                 break;
-            //case ELEVATION.PLAIN:
+            case ELEVATION.PLAIN:
             case ELEVATION.TREES:
                 switch (tile.biomeType) {
                     case BIOMES.SNOW:

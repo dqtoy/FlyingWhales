@@ -186,6 +186,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public StructureObject structureObjOnTile {
         get { return _structureObjOnTile; }
     }
+    public PASSABLE_TYPE passableType {
+        get { return _passableType; }
+    }
     #endregion
 
     #region Region Functions
@@ -998,6 +1001,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private PassableTileData GetPassableTileData() {
         return new PassableTileData(this);
     }
+    public bool IsBottleneck() {
+        return _passableType == PASSABLE_TYPE.MAJOR_BOTTLENECK || _passableType == PASSABLE_TYPE.MINOR_BOTTLENECK;
+    }
+    public bool IsDeadEnd() {
+        return _passableType == PASSABLE_TYPE.MAJOR_DEADEND || _passableType == PASSABLE_TYPE.MINOR_DEADEND;
+    }
+    public bool IsBorderTileOfRegion() {
+        return region.outerTiles.Contains(this);
+    }
     #endregion
 
     #region Monobehaviour Functions
@@ -1007,10 +1019,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        } 
-        //else if (isPassable) {
-        //    ShowHexTileInfo();
-        //}
+        } else if (isPassable) {
+            ShowHexTileInfo();
+        }
         //if (_landmarkOnTile != null) {
         //	if(_landmarkOnTile.owner != null) { //landmark is occupied
         //		if (isHabitable) {
@@ -1179,31 +1190,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //        text += currCollection.tiles[j].name + "/";
         //    }
         //}
-        PassableTileData data = GetPassableTileData();
-        string text = this.tileName + " - " + GetPassableType().ToString();
-        if (data.adjacentTiles.Count > 0) {
-            text += "\n Adjacent Data: ";
-            for (int i = 0; i < data.adjacentTiles.Count; i++) {
-                TileCollection currCollection = data.adjacentTiles[i];
-                text += "\n Collection " + i.ToString() + ": ";
-                for (int j = 0; j < currCollection.tiles.Count; j++) {
-                    HexTile currTile = currCollection.tiles[j];
-                    text += "\n- " + currTile.tileName;
-                }
-            }
-        }
-        if (data.unadjacentTiles.Count > 0) {
-            text += "\n Unadjacent Data: ";
-            for (int i = 0; i < data.unadjacentTiles.Count; i++) {
-                TileCollection currCollection = data.unadjacentTiles[i];
-                text += "\n Collection " + i.ToString() + ": ";
-                for (int j = 0; j < currCollection.tiles.Count; j++) {
-                    HexTile currTile = currCollection.tiles[j];
-                    text += "\n- " + currTile.tileName;
-                }
-            }
-        }
-        UIManager.Instance.ShowSmallInfo(text);
+        //PassableTileData data = GetPassableTileData();
+        //string text = this.tileName + " - " + GetPassableType().ToString();
+        //if (data.adjacentTiles.Count > 0) {
+        //    text += "\n Adjacent Data: ";
+        //    for (int i = 0; i < data.adjacentTiles.Count; i++) {
+        //        TileCollection currCollection = data.adjacentTiles[i];
+        //        text += "\n Collection " + i.ToString() + ": ";
+        //        for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //            HexTile currTile = currCollection.tiles[j];
+        //            text += "\n- " + currTile.tileName;
+        //        }
+        //    }
+        //}
+        //if (data.unadjacentTiles.Count > 0) {
+        //    text += "\n Unadjacent Data: ";
+        //    for (int i = 0; i < data.unadjacentTiles.Count; i++) {
+        //        TileCollection currCollection = data.unadjacentTiles[i];
+        //        text += "\n Collection " + i.ToString() + ": ";
+        //        for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //            HexTile currTile = currCollection.tiles[j];
+        //            text += "\n- " + currTile.tileName;
+        //        }
+        //    }
+        //}
+        UIManager.Instance.ShowSmallInfo(this.tileName + " - " + _passableType.ToString());
     }
     private void ShowLandmarkInfo() {
         string text = string.Empty;

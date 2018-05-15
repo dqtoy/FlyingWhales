@@ -45,9 +45,10 @@ public class MapGenerator : MonoBehaviour {
         //RoadManager.Instance.FlattenRoads();
         //Biomes.Instance.LoadElevationSprites();
         //Biomes.Instance.GenerateTileBiomeDetails();
-        
-        //return;
 
+        //return;
+        RoadManager.Instance.GenerateTilePassableTypes();
+        GridMap.Instance.BottleneckBorders();
 
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
@@ -104,12 +105,13 @@ public class MapGenerator : MonoBehaviour {
 
         LandmarkManager.Instance.GenerateMaterials();
 
-        RoadManager.Instance.FlattenRoads();
+        //RoadManager.Instance.FlattenRoads();
         //Biomes.Instance.GenerateTileTags();
         //GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.UpdateTileVisuals();
         Biomes.Instance.GenerateTileBiomeDetails();
-        RoadManager.Instance.GenerateTilePassableTypes();
+        
+        
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
