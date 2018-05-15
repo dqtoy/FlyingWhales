@@ -42,6 +42,7 @@ public class PopulateAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         PopulateAction populateAction = new PopulateAction(state);
         SetCommonData(populateAction);
+        populateAction.Initialize();
         return populateAction;
     }
     #endregion

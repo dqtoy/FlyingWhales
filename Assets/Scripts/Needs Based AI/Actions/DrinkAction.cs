@@ -22,6 +22,7 @@ public class DrinkAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         DrinkAction drinkAction = new DrinkAction(state);
         SetCommonData(drinkAction);
+        drinkAction.Initialize();
         return drinkAction;
     }
     #endregion

@@ -23,6 +23,7 @@ public class PatrolAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         PatrolAction patrolAction = new PatrolAction(state);
         SetCommonData(patrolAction);
+        patrolAction.Initialize();
         return patrolAction;
     }
     #endregion

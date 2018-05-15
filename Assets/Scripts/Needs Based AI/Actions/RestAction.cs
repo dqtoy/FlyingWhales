@@ -23,6 +23,7 @@ public class RestAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         RestAction restAction = new RestAction(state);
         SetCommonData(restAction);
+        restAction.Initialize();
         return restAction;
     }
     #endregion

@@ -6,12 +6,16 @@ using UnityEngine;
 public class TortureAction : CharacterAction {
     private StructureObj _structure;
     public TortureAction(ObjectState state) : base(state, ACTION_TYPE.TORTURE) {
-        if(_state.obj is StructureObj) {
-            _structure = _state.obj as StructureObj;
-        }
+       
     }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        if (_state.obj is StructureObj) {
+            _structure = _state.obj as StructureObj;
+        }
+    }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         //if (obj.GetTotalCivilians() > 0) {//check if there are civilians in the object
@@ -33,9 +37,10 @@ public class TortureAction : CharacterAction {
         //}
     }
     public override CharacterAction Clone(ObjectState state) {
-        TortureAction populateAction = new TortureAction(state);
-        SetCommonData(populateAction);
-        return populateAction;
+        TortureAction tortureAction = new TortureAction(state);
+        SetCommonData(tortureAction);
+        tortureAction.Initialize();
+        return tortureAction;
     }
     #endregion
 }

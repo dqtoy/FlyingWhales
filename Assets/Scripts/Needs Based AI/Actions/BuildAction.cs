@@ -13,11 +13,14 @@ public class BuildAction : CharacterAction {
         _structureName = structureName;
         _needsSpecificTarget = true;
         _isStructureInLandmark = false;
-        _structureObject = ObjectManager.Instance.GetNewStructureObject(_structureName);
-        _amountToIncrease = Mathf.RoundToInt((float)_structureObject.maxHP / (float) _actionData.duration);
     }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        _structureObject = ObjectManager.Instance.GetNewStructureObject(_structureName);
+        _amountToIncrease = Mathf.RoundToInt((float) _structureObject.maxHP / (float) _actionData.duration);
+    }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         if (!_isStructureInLandmark) {
@@ -40,6 +43,7 @@ public class BuildAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         BuildAction buildAction = new BuildAction(state, _structureName);
         SetCommonData(buildAction);
+        buildAction.Initialize();
         return buildAction;
     }
     public override bool CanBeDone() {

@@ -19,6 +19,7 @@ public class IdleAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         IdleAction idleAction = new IdleAction(state);
         SetCommonData(idleAction);
+        idleAction.Initialize();
         return idleAction;
     }
     #endregion

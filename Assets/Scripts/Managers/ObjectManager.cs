@@ -102,7 +102,8 @@ public class ObjectManager : MonoBehaviour {
                 originalAction.GenerateName();
                 CharacterAction action = CreateNewCharacterAction(originalAction.actionType, state);
                 originalAction.SetCommonData(action);
-                action.SetFilters(originalAction.filters);
+                action.Initialize();
+                //action.SetFilters(originalAction.filters);
                 ConstructPrerequisites(action);
                 newActions.Add(action);
                 //originalAction = action;

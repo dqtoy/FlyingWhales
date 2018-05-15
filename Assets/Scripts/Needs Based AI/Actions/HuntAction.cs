@@ -27,6 +27,7 @@ public class HuntAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         HuntAction huntAction = new HuntAction(state);
         SetCommonData(huntAction);
+        huntAction.Initialize();
         return huntAction;
     }
     #endregion

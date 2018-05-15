@@ -7,12 +7,16 @@ public class HarvestAction : CharacterAction {
     private StructureObj _structure;
 
     public HarvestAction(ObjectState state) : base(state, ACTION_TYPE.HARVEST) {
-        if(state.obj is StructureObj) {
-            _structure = state.obj as StructureObj;
-        }
+       
     }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        if (state.obj is StructureObj) {
+            _structure = state.obj as StructureObj;
+        }
+    }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
 
@@ -44,9 +48,10 @@ public class HarvestAction : CharacterAction {
 
     }
     public override CharacterAction Clone(ObjectState state) {
-        HarvestAction populateAction = new HarvestAction(state);
-        SetCommonData(populateAction);
-        return populateAction;
+        HarvestAction harvestAction = new HarvestAction(state);
+        SetCommonData(harvestAction);
+        harvestAction.Initialize();
+        return harvestAction;
     }
     #endregion
 }

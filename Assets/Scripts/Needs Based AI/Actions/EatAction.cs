@@ -22,6 +22,7 @@ public class EatAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         EatAction eatAction = new EatAction(state);
         SetCommonData(eatAction);
+        eatAction.Initialize();
         return eatAction;
     }
     #endregion

@@ -8,12 +8,15 @@ public class AbductAction : CharacterAction {
     private int structureResourceAmount;
 
     public AbductAction(ObjectState state) : base(state, ACTION_TYPE.ABDUCT) {
-        if(state.obj is StructureObj) {
-            _structure = state.obj as StructureObj;
-        }
     }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        if (state.obj is StructureObj) {
+            _structure = state.obj as StructureObj;
+        }
+    }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
 
@@ -43,6 +46,7 @@ public class AbductAction : CharacterAction {
     public override CharacterAction Clone(ObjectState state) {
         AbductAction abductAction = new AbductAction(state);
         SetCommonData(abductAction);
+        abductAction.Initialize();
         return abductAction;
     }
     #endregion

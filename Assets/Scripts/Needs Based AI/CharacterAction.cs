@@ -36,12 +36,9 @@ public class CharacterAction {
     }
 
     #region Virtuals
-    public virtual void OnChooseAction() {
-
-    }
-    public virtual void PerformAction(Character character) {
-
-    }
+    public virtual void Initialize() {}
+    public virtual void OnChooseAction() {}
+    public virtual void PerformAction(Character character) {}
     public virtual void ActionSuccess() {
         if (_actionData.successFunction != null) {
             _actionData.successFunction.Invoke(_state.obj);
@@ -55,6 +52,7 @@ public class CharacterAction {
     public virtual CharacterAction Clone(ObjectState state) {
         CharacterAction clone = new CharacterAction(state, actionType);
         SetCommonData(clone);
+        clone.Initialize();
         return clone;
     }
     public virtual bool CanBeDone() {
