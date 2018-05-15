@@ -278,7 +278,8 @@ public class GridMap : MonoBehaviour {
      * for the logic used.
      * */
     public bool GenerateRegions(int numOfRegions, int refinementLevel) {
-        List<HexTile> allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
+        List<HexTile> allHexTiles = new List<HexTile>(hexTiles);
+        Utilities.Shuffle(allHexTiles);
         List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles.Where(x => (x.xCoordinate > 1 && x.xCoordinate < width - 1) && (x.yCoordinate < height - 2 && x.yCoordinate > 2)));
         HexTile[] initialCenters = new HexTile[numOfRegions];
         allRegions = new List<Region>();
@@ -305,7 +306,8 @@ public class GridMap : MonoBehaviour {
 
         for (int i = 0; i < refinementLevel; i++) {
             if (i != 0) {
-                allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
+                allHexTiles = new List<HexTile>(hexTiles);
+                Utilities.Shuffle(allHexTiles);
                 for (int j = 0; j < allRegions.Count; j++) {
                     Region currRegion = allRegions[j];
                     currRegion.ReComputeCenterOfMass();
@@ -332,7 +334,7 @@ public class GridMap : MonoBehaviour {
                 } else {
                     throw new System.Exception("Could not find closest distance for tile " + currHexTile.name);
                 }
-
+                //allRegions = allRegions.OrderByDescending(x => x.tilesInRegion.Count).ToList();
             }
         }
 
