@@ -576,26 +576,36 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     internal void UpdateSortingOrder() {
         int sortingOrder = GetComponent<SpriteRenderer>().sortingOrder;
-        if (elevationType == ELEVATION.MOUNTAIN) {
-            centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
-        } else {
-            centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
+        //if (elevationType == ELEVATION.MOUNTAIN) {
+        //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
+        //} else {
+        //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
+        //}
+        int centerPieceSortingOrder = (int)GridMap.Instance.height - yCoordinate;
+        //SpriteRenderer mainRenderer = centerPiece.GetComponent<SpriteRenderer>();
+        //mainRenderer.sortingOrder = centerPieceSortingOrder;
+        SpriteRenderer[] children = centerPiece.GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < children.Length; i++) {
+            SpriteRenderer currRenderer = children[i];
+            //if (currRenderer != mainRenderer) {
+                currRenderer.sortingOrder = centerPieceSortingOrder;
+            //}
         }
 
-        SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
-        for (int i = 0; i < resourcesSprites.Length; i++) {
-            resourcesSprites[i].sortingOrder = sortingOrder + 57;
-        }
+        //SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
+        //for (int i = 0; i < resourcesSprites.Length; i++) {
+        //    resourcesSprites[i].sortingOrder = sortingOrder + 57;
+        //}
 
         //kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
 
-        topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction) {
         switch (direction) {
@@ -947,6 +957,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             GameObject centerObj = GameObject.Instantiate(obj as Object, centerPiece.transform) as GameObject;
             centerObj.transform.localPosition = Vector3.zero;
             centerObj.transform.localScale = Vector3.one;
+            SpriteRenderer[] children = centerObj.GetComponentsInChildren<SpriteRenderer>();
+            for (int i = 0; i < children.Length; i++) {
+                SpriteRenderer currChild = children[i];
+                currChild.sortingLayerName = "TileDetails";
+            }
             SetCenterSprite(null);
         }
     }
@@ -993,7 +1008,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         } 
-        //else if (isPassable){
+        //else if (isPassable) {
         //    ShowHexTileInfo();
         //}
         //if (_landmarkOnTile != null) {
