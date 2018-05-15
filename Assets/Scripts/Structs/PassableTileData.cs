@@ -42,8 +42,12 @@ public class PassableTileData {
                         //both tiles are already in a list, merge them
                         TileCollection collectionOfCurrTile = GetAdjacentListOf(currTile);
                         TileCollection collectionOfNeighbour = GetAdjacentListOf(neighbourOfCurrTile);
-                        collectionOfCurrTile.AddTile(collectionOfNeighbour.tiles);
-                        adjacentTiles.Remove(collectionOfNeighbour);
+                        //Check if the 2 tiles are not of the same list, if they are not, merge them, if they are, keep them as is.
+                        if (collectionOfCurrTile != collectionOfNeighbour) {
+                            //the two tiles are from different lists, remove one after merge
+                            collectionOfCurrTile.AddTile(collectionOfNeighbour.tiles);
+                            adjacentTiles.Remove(collectionOfNeighbour);
+                        }
                     } else if (IsInAdjacentList(neighbourOfCurrTile)) {
                         //the adjacent neighbour is already in a collection, add the current tile to that collection instead
                         GetAdjacentListOf(neighbourOfCurrTile).AddTile(currTile);
@@ -102,7 +106,7 @@ public class PassableTileData {
     }
 
     public bool IsDeadEnd() {
-        if ((adjacentTiles.Count == 1 && adjacentTiles[0].tiles.Count <= 2 &&  unadjacentTiles.Count == 0)
+        if ((adjacentTiles.Count == 1 && adjacentTiles[0].tiles.Count <= 3 &&  unadjacentTiles.Count == 0)
             || (unadjacentTiles.Count == 1 && adjacentTiles.Count == 0)) {
             return true;
         }
@@ -132,7 +136,7 @@ public class PassableTileData {
     }
 }
 
-public struct TileCollection {
+public class TileCollection {
     public List<HexTile> tiles;
 
     public TileCollection(HexTile tile) {

@@ -951,28 +951,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     public void DeterminePassableType() {
-        PassableTileData data = GetPassableTileData();
-        if (data.adjacentTiles.Count == 2) {
-            //minor bottleneck (connected to 2 unadjacent pairs of either 1 or 2 adjacent passable tiles)
-            _passableType = PASSABLE_TYPE.MINOR_BOTTLENECK;
-        } else if (data.HasNumberOfAdjacentTiles(1) || data.HasNumberOfAdjacentTiles(2)) {
-            _passableType = PASSABLE_TYPE.MAJOR_DEADEND;
-        } else if (data.HasNumberOfAdjacentTiles(3)) {
-            _passableType = PASSABLE_TYPE.MINOR_DEADEND;
-        } else if (data.unadjacentTiles.Count == 2) {
-            //major bottleneck (connected to 2 unadjacent passable tiles)
-            _passableType = PASSABLE_TYPE.MAJOR_BOTTLENECK;
-        } else if (data.unadjacentTiles.Count == 3) {
-            //crossroad (connected to 3 unadjacent passable tiles)
-            _passableType = PASSABLE_TYPE.CROSSROAD;
-        } else if (data.TotalPassableNeighbours(this) >= 4) {
-            //wide open (connected to 4o to 6 passable tiles)
-            _passableType = PASSABLE_TYPE.WIDE_OPEN;
-        } else {
-            //open (the rest)
-            _passableType = PASSABLE_TYPE.OPEN;
-        }
-
+        _passableType = GetPassableType();
     }
     public PASSABLE_TYPE GetPassableType() {
         PassableTileData data = GetPassableTileData();
@@ -1013,9 +992,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        } else if (isPassable){
-            ShowHexTileInfo();
-        }
+        } 
+        //else if (isPassable){
+        //    ShowHexTileInfo();
+        //}
         //if (_landmarkOnTile != null) {
         //	if(_landmarkOnTile.owner != null) { //landmark is occupied
         //		if (isHabitable) {
@@ -1184,7 +1164,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //        text += currCollection.tiles[j].name + "/";
         //    }
         //}
-        UIManager.Instance.ShowSmallInfo(GetPassableType().ToString());
+        PassableTileData data = GetPassableTileData();
+        string text = this.tileName + " - " + GetPassableType().ToString();
+        if (data.adjacentTiles.Count > 0) {
+            text += "\n Adjacent Data: ";
+            for (int i = 0; i < data.adjacentTiles.Count; i++) {
+                TileCollection currCollection = data.adjacentTiles[i];
+                text += "\n Collection " + i.ToString() + ": ";
+                for (int j = 0; j < currCollection.tiles.Count; j++) {
+                    HexTile currTile = currCollection.tiles[j];
+                    text += "\n- " + currTile.tileName;
+                }
+            }
+        }
+        if (data.unadjacentTiles.Count > 0) {
+            text += "\n Unadjacent Data: ";
+            for (int i = 0; i < data.unadjacentTiles.Count; i++) {
+                TileCollection currCollection = data.unadjacentTiles[i];
+                text += "\n Collection " + i.ToString() + ": ";
+                for (int j = 0; j < currCollection.tiles.Count; j++) {
+                    HexTile currTile = currCollection.tiles[j];
+                    text += "\n- " + currTile.tileName;
+                }
+            }
+        }
+        UIManager.Instance.ShowSmallInfo(text);
     }
     private void ShowLandmarkInfo() {
         string text = string.Empty;
