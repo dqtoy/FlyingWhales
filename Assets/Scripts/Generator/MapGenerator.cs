@@ -45,6 +45,7 @@ public class MapGenerator : MonoBehaviour {
         RoadManager.Instance.FlattenRoads();
         Biomes.Instance.LoadElevationSprites();
         Biomes.Instance.GenerateTileBiomeDetails();
+        RoadManager.Instance.GenerateTilePassableTypes();
         return;
 
 

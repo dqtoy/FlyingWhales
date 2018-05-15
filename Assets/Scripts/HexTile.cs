@@ -52,7 +52,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
-    //[SerializeField] private SpriteRenderer _tileColorSprite;
     [SerializeField] private GameObject _highlightGO;
     [SerializeField] internal Transform UIParent;
     [SerializeField] private Transform resourceParent;
@@ -94,13 +93,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("Fog Of War Objects")]
     [SerializeField] private SpriteRenderer FOWSprite;
     [SerializeField] private SpriteRenderer minimapFOWSprite;
-    //[SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
 
     [Space(10)]
     [Header("Road Objects")]
     private List<GameObject> roadGOs = new List<GameObject>();
     [SerializeField] private List<HexRoads> roads;
     [SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
+
+    private PASSABLE_TYPE _passableType;
 
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
@@ -140,9 +140,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject centerPiece {
         get { return this._centerPiece; }
     }
-    //public SpriteRenderer kingdomColorSprite {
-    //    get { return this._tileColorSprite; }
-    //}
     public GameObject highlightGO {
         get { return this._highlightGO; }
     }
@@ -933,10 +930,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Passability
-    //public void LoadPassableObject() {
-    //    GameObject impassablePrefab = 
-    //    GameObject impassableGO = GameObject.Instantiate(Biomes.Instance.)
-    //}
     public void SetPassableState(bool state) {
         _isPassable = state;
         _centerPiece.SetActive(!state);
@@ -957,10 +950,57 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             SetCenterSprite(null);
         }
     }
-    //public PASSABLE_TYPE GetPassableType() {
-    //    List<HexTile> passableNeighbours = AllNeighbours.Where(x => x.isPassable).ToList();
+    public void DeterminePassableType() {
+        PassableTileData data = GetPassableTileData();
+        if (data.adjacentTiles.Count == 2) {
+            //minor bottleneck (connected to 2 unadjacent pairs of either 1 or 2 adjacent passable tiles)
+            _passableType = PASSABLE_TYPE.MINOR_BOTTLENECK;
+        } else if (data.HasNumberOfAdjacentTiles(1) || data.HasNumberOfAdjacentTiles(2)) {
+            _passableType = PASSABLE_TYPE.MAJOR_DEADEND;
+        } else if (data.HasNumberOfAdjacentTiles(3)) {
+            _passableType = PASSABLE_TYPE.MINOR_DEADEND;
+        } else if (data.unadjacentTiles.Count == 2) {
+            //major bottleneck (connected to 2 unadjacent passable tiles)
+            _passableType = PASSABLE_TYPE.MAJOR_BOTTLENECK;
+        } else if (data.unadjacentTiles.Count == 3) {
+            //crossroad (connected to 3 unadjacent passable tiles)
+            _passableType = PASSABLE_TYPE.CROSSROAD;
+        } else if (data.TotalPassableNeighbours(this) >= 4) {
+            //wide open (connected to 4o to 6 passable tiles)
+            _passableType = PASSABLE_TYPE.WIDE_OPEN;
+        } else {
+            //open (the rest)
+            _passableType = PASSABLE_TYPE.OPEN;
+        }
 
-    //}
+    }
+    public PASSABLE_TYPE GetPassableType() {
+        PassableTileData data = GetPassableTileData();
+        if (data.adjacentTiles.Count == 2 
+            || (data.adjacentTiles.Count == 1 && data.adjacentTiles[0].tiles.Count <= 2 && data.unadjacentTiles.Count == 1)) {
+            //minor bottleneck (connected to 2 unadjacent pairs of either 1 or 2 adjacent passable tiles)
+            return PASSABLE_TYPE.MINOR_BOTTLENECK;
+        } else if (data.unadjacentTiles.Count == 2) {
+            //major bottleneck (connected to 2 unadjacent passable tiles)
+            return PASSABLE_TYPE.MAJOR_BOTTLENECK;
+        } else if (data.IsDeadEnd()) {
+            if (data.HasNumberOfUnadjacentTiles(1) || data.HasNumberOfAdjacentTiles(2)) {
+                return PASSABLE_TYPE.MAJOR_DEADEND;
+            } else if (data.HasNumberOfAdjacentTiles(3)) {
+                return PASSABLE_TYPE.MINOR_DEADEND;
+            }
+            throw new System.Exception("Cannot Get Dead End Type!");
+        }  else if (data.unadjacentTiles.Count == 3) {
+            //crossroad (connected to 3 unadjacent passable tiles)
+            return PASSABLE_TYPE.CROSSROAD;
+        } else if (data.TotalPassableNeighbours(this) >= 4) {
+            //wide open (connected to 4o to 6 passable tiles)
+            return PASSABLE_TYPE.WIDE_OPEN;
+        } else {
+            //open (the rest)
+            return PASSABLE_TYPE.OPEN;
+        }
+    }
     private PassableTileData GetPassableTileData() {
         return new PassableTileData(this);
     }
@@ -973,7 +1013,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        } else {
+        } else if (isPassable){
             ShowHexTileInfo();
         }
         //if (_landmarkOnTile != null) {
@@ -1127,16 +1167,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    }
         //    UIManager.Instance.ShowSmallInfo(text);
         //}
-        PassableTileData data = GetPassableTileData();
-        string text = this.name + " Adjacent Tile Collections: ";
-        for (int i = 0; i < data.adjacentTiles.Count; i++) {
-            TileCollection currCollection = data.adjacentTiles[i];
-            text += "\n " + i.ToString() + " - ";
-            for (int j = 0; j < currCollection.tiles.Count; j++) {
-                text += currCollection.tiles[j].name + "/";
-            }
-        }
-        UIManager.Instance.ShowSmallInfo(text);
+        //PassableTileData data = GetPassableTileData();
+        //string text = this.name + " Adjacent Tile Collections: ";
+        //for (int i = 0; i < data.adjacentTiles.Count; i++) {
+        //    TileCollection currCollection = data.adjacentTiles[i];
+        //    text += "\n " + i.ToString() + " - ";
+        //    for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //        text += currCollection.tiles[j].name + "/";
+        //    }
+        //}
+        //text += "\n" + this.name + " Unadjacent Tile Collections: ";
+        //for (int i = 0; i < data.unadjacentTiles.Count; i++) {
+        //    TileCollection currCollection = data.unadjacentTiles[i];
+        //    text += "\n " + i.ToString() + " - ";
+        //    for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //        text += currCollection.tiles[j].name + "/";
+        //    }
+        //}
+        UIManager.Instance.ShowSmallInfo(GetPassableType().ToString());
     }
     private void ShowLandmarkInfo() {
         string text = string.Empty;

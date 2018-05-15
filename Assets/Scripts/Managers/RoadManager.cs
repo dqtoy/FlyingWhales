@@ -654,6 +654,15 @@ public class RoadManager : MonoBehaviour {
         bestPath = nearestPath;
         return nearestLandmark;
     }
+
+    public void GenerateTilePassableTypes() {
+        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+            HexTile currTile = GridMap.Instance.hexTiles[i];
+            if (currTile.isPassable) {
+                currTile.DeterminePassableType();
+            }
+        }
+    }
 }
 
 public class Island {
