@@ -136,7 +136,9 @@ public class FactionManager : MonoBehaviour {
         RACE[] races = new RACE[] { RACE.HUMANS, RACE.ELVES };
 
         //For now just generate 2-5 tribes with 1 region each
-        int numOfTribes = Random.Range(2, 6);
+        //int numOfTribes = Random.Range(2, 6);
+        //5 regions will be owned by five different kingdoms. The other region will contain the Player's Demonic Portal.
+        int numOfTribes = 5;
         for (int i = 0; i < numOfTribes; i++) {
             RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
             if (!CreateInitialFaction(FACTION_SIZE.SMALL, elligibleRegions, chosenRace, 1)) {

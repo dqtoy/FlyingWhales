@@ -947,6 +947,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _isPassable = state;
         _centerPiece.SetActive(!state);
         unpassableGO.SetActive(!state);
+        if (!state) {
+            _passableType = PASSABLE_TYPE.UNPASSABLE;
+        }
         //UpdatePassableVisuals();
     }
     public void SetPassableObject(object obj) {
@@ -1019,9 +1022,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        } else if (isPassable) {
-            ShowHexTileInfo();
-        }
+        } 
+        ShowHexTileInfo();
         //if (_landmarkOnTile != null) {
         //	if(_landmarkOnTile.owner != null) { //landmark is occupied
         //		if (isHabitable) {

@@ -7,7 +7,7 @@ using System;
 
 public class Region : IHasNeighbours<Region> {
     private int _id;
-    //private string _name;
+    private string _name;
     private HexTile _centerOfMass;
     private List<HexTile> _tilesInRegion; //This also includes the center of mass
     private List<HexTile> _outerGridTilesInRegion;
@@ -90,7 +90,7 @@ public class Region : IHasNeighbours<Region> {
 
     public Region(HexTile centerOfMass) {
         _id = Utilities.SetID(this);
-        //_name = RandomNameGenerator.Instance.GetRegionName();
+        _name = RandomNameGenerator.Instance.GetRegionName();
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
@@ -406,6 +406,23 @@ public class Region : IHasNeighbours<Region> {
             }
         }
         return characters;
+    }
+    internal void LogPassableTiles() {
+        Dictionary<PASSABLE_TYPE, int> passableTiles = new Dictionary<PASSABLE_TYPE, int>();
+        PASSABLE_TYPE[] types = Utilities.GetEnumValues<PASSABLE_TYPE>();
+        for (int i = 0; i < types.Length; i++) {
+            passableTiles.Add(types[i], 0);
+        }
+
+        for (int i = 0; i < tilesInRegion.Count; i++) {
+            HexTile currTile = tilesInRegion[i];
+            passableTiles[currTile.passableType]++;
+        }
+        string text = this._name + " tiles summary (" + tilesInRegion.Count.ToString() + "): ";
+        foreach (KeyValuePair<PASSABLE_TYPE, int> kvp in passableTiles) {
+            text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+        }
+        Debug.Log(text, this.centerOfMass);
     }
     #endregion
 }

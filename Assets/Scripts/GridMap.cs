@@ -359,7 +359,7 @@ public class GridMap : MonoBehaviour {
                 HexTile currBorderTile = currRegion.outerTiles[j];
                 if (currBorderTile.isPassable && !currBorderTile.IsBottleneck()) {
                     List<HexTile> borderNeighbours = currBorderTile.AllNeighbours.Where(x => x.IsBorderTileOfRegion()).ToList();
-                    if (!borderNeighbours.Where(x => x.IsBottleneck()).Any()) {
+                    if (!currBorderTile.AllNeighbours.Where(x => x.IsBottleneck()).Any()) {
                         //this tile has no border neighbours that are bottlenecks or dead ends, make this tile unpassable
                         currBorderTile.SetPassableState(false);
                         //make passable neighbours recompute their passable type
@@ -368,6 +368,7 @@ public class GridMap : MonoBehaviour {
                     }
                 }
             }
+            currRegion.LogPassableTiles();
         }
     }
     #endregion

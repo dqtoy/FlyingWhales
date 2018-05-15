@@ -55,19 +55,19 @@ public class MapGenerator : MonoBehaviour {
 
         UIManager.Instance.InitializeUI();
 
-        //st.Start();
-        //bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions();
-        //st.Stop();
+        st.Start();
+        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions();
+        st.Stop();
 
-        //if (factionGenerationFailed) {
-        //    //reset
-        //    Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //} else {
-        //    Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        //}
+        if (factionGenerationFailed) {
+            //reset
+            Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
+            Messenger.Cleanup();
+            ReloadScene();
+            return;
+        } else {
+            Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        }
 
         //st.Start();
         //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
