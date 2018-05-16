@@ -15,6 +15,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public string tileName;
     private Region _region;
     private MATERIAL _materialOnTile = MATERIAL.NONE;
+    [System.NonSerialized] public SpriteRenderer spriteRenderer;
 
     [Space(10)]
     [Header("Biome Settings")]
@@ -30,6 +31,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool isRoad = false;
     public bool isOccupied = false;
     [SerializeField] private bool _isPassable = false;
+    private bool _isCorrupted = false;
+    private bool _canBeCorrupted = true;
 
     [Space(10)]
     [Header("Pathfinding")]
@@ -61,6 +64,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _emptyCityGO;
     [SerializeField] private GameObject _hoverHighlightGO;
     [SerializeField] private GameObject _clickHighlightGO;
+    [SerializeField] private GameObject _corruptionHighlightGO;
+
 
     [Space(10)]
     [Header("Tile Edges")]
@@ -127,6 +132,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     private bool _hasScheduledCombatCheck = false;
 
+    private Dictionary<BaseLandmark, string> _landmarkDirection = new Dictionary<BaseLandmark, string>();
+
     #region getters/setters
     public string locationName {
         get { return tileName + "(" + xCoordinate + ", " + yCoordinate + ")"; }
@@ -189,11 +196,33 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public StructureObject structureObjOnTile {
         get { return _structureObjOnTile; }
     }
+    public bool isCorrupted {
+        get { return _isCorrupted; }
+    }
+    public bool canBeCorrupted {
+        get { return _canBeCorrupted; }
+    }
+    public Dictionary<BaseLandmark, string> landmarkDirection {
+        get { return _landmarkDirection; }
+    }
     #endregion
+
+    public void Initialize() {
+        spriteRenderer = this.GetComponent<SpriteRenderer>();
+    }
 
     #region Region Functions
     internal void SetRegion(Region region) {
         _region = region;
+    }
+    internal bool IsAdjacentWithRegion(Region region) {
+        List<HexTile> neighbors = this.AllNeighbours;
+        for (int i = 0; i < neighbors.Count; i++) {
+            if (neighbors[i].region.id == region.id) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -452,7 +481,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
                     (neighbour.yCoordinate - thisYCoordinate));
-        if (thisYCoordinate % 2 == 0) {
+        if (thisYCoordinate % 2 == 0) { //even
             if (difference.X == -1 && difference.Y == 1) {
                 //top left
                 return HEXTILE_DIRECTION.NORTH_WEST;
@@ -472,7 +501,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 //left
                 return HEXTILE_DIRECTION.WEST;
             }
-        } else {
+        } else { //odd
             if (difference.X == 0 && difference.Y == 1) {
                 //top left
                 return HEXTILE_DIRECTION.NORTH_WEST;
@@ -505,7 +534,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     public void SetRoadColor(GameObject roadToChange, Color color) {
-        //roadToChange.GetComponent<SpriteRenderer>().color = color;
+        //roadToChange.spriteRenderer.color = color;
         SpriteRenderer[] children = roadToChange.GetComponentsInChildren<SpriteRenderer>();
         for (int i = 0; i < children.Length; i++) {
             children[i].color = color;
@@ -574,11 +603,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Tile Visuals
     internal void SetSortingOrder(int sortingOrder) {
-        GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+        spriteRenderer.sortingOrder = sortingOrder;
         UpdateSortingOrder();
     }
     internal void UpdateSortingOrder() {
-        int sortingOrder = GetComponent<SpriteRenderer>().sortingOrder;
+        int sortingOrder = spriteRenderer.sortingOrder;
         if (elevationType == ELEVATION.MOUNTAIN) {
             centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
         } else {
@@ -590,7 +619,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             resourcesSprites[i].sortingOrder = sortingOrder + 57;
         }
 
-        //kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+        //kingdomColorSprite.spriteRenderer.sortingOrder = sortingOrder + 3;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
 
         topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
@@ -711,8 +740,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                         gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
                         gameObjectToEdit.SetActive(true);
 
-                        //                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
-                        //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+                        //                        gameObjectToEdit.spriteRenderer.material = mat;
+                        //gameObjectToEdit.spriteRenderer.material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
                         //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
                     }
 
@@ -723,7 +752,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     internal void SetBaseSprite(Sprite baseSprite) {
-        this.GetComponent<SpriteRenderer>().sprite = baseSprite;
+        spriteRenderer.sprite = baseSprite;
     }
     internal void SetCenterSprite(Sprite centerSprite) {
         this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
@@ -1061,12 +1090,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [ContextMenu("Show Tiles In Range")]
     public void ShowTilesInRange() {
         for (int i = 0; i < tiles.Count; i++) {
-            tiles[i].GetComponent<SpriteRenderer>().color = Color.white;
+            tiles[i].spriteRenderer.color = Color.white;
         }
         tiles.Clear();
         tiles.AddRange(this.GetTilesInRange(range));
         for (int i = 0; i < tiles.Count; i++) {
-            tiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
+            tiles[i].spriteRenderer.color = Color.magenta;
         }
     }
     [ContextMenu("Show Hextile Positions")]
@@ -1320,16 +1349,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	}
 	#endregion
 
-	internal bool IsAdjacentWithRegion(Region region){
-		List<HexTile> neighbors = this.AllNeighbours;
-		for (int i = 0; i < neighbors.Count; i++) {
-			if(neighbors[i].region.id == region.id){
-				return true;
-			}
-		}
-		return false;
-	}
-
     #region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
@@ -1523,6 +1542,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //resource.transform.localPosition = Vector3.zero;
         //resource.transform.localScale = Vector3.one;
         region.AddTileWithMaterial(this);
+    }
+    #endregion
+
+    #region Corruption
+    public void SetCorruption(bool state) {
+        if(_isCorrupted != state) {
+            _isCorrupted = state;
+            this._corruptionHighlightGO.SetActive(_isCorrupted);
+            if (landmarkOnTile != null) {
+                landmarkOnTile.ToggleCorruption(_isCorrupted);
+            }
+        }
+    }
+    public bool CanThisTileBeCorrupted() {
+        if(_landmarkDirection.Count > 0) {
+            foreach (BaseLandmark landmark in _landmarkDirection.Keys) {
+                if (landmark.IsDirectionBlocked(_landmarkDirection[landmark])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public void SetCanBeCorrupted(bool state) {
+        _canBeCorrupted = state;
     }
     #endregion
 }

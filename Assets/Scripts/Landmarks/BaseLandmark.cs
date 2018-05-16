@@ -37,6 +37,15 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<IObject> _objects;
     private bool _hasScheduledCombatCheck = false;
     private Dictionary<RESOURCE, int> _resourceInventory;
+    private HexTile _currentCorruptedTileToCheck;
+    private Queue<HexTile> _nextCorruptedTilesToCheck;
+    private bool _hasBeenCorrupted;
+    //private List<HexTile> _diagonalRightTiles;
+    //private List<HexTile> _diagonalLeftTiles;
+    //private List<HexTile> _horizontalTiles;
+    private int _diagonalLeftBlocked;
+    private int _diagonalRightBlocked;
+    private int _horizontalBlocked;
 
     #region getters/setters
     public int id {
@@ -114,11 +123,19 @@ public class BaseLandmark : ILocation, TaskCreator {
     public List<IObject> objects {
         get { return _objects; }
     }
+    public int diagonalLeftBlocked {
+        get { return _diagonalLeftBlocked; }
+    }
+    public int diagonalRightBlocked {
+        get { return _diagonalRightBlocked; }
+    }
+    public int horizontalBlocked {
+        get { return _horizontalBlocked; }
+    }
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-
         _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
@@ -137,6 +154,14 @@ public class BaseLandmark : ILocation, TaskCreator {
         _totalDurability = landmarkData.durability;
 		_currDurability = _totalDurability;
         _objects = new List<IObject>();
+        _nextCorruptedTilesToCheck = new Queue<HexTile>();
+        _hasBeenCorrupted = false;
+        //_diagonalLeftTiles = new List<HexTile>();
+        //_diagonalRightTiles = new List<HexTile>();
+        //_horizontalTiles = new List<HexTile>();
+        _diagonalLeftBlocked = 0;
+        _diagonalRightBlocked = 0;
+        _horizontalBlocked = 0;
         //TODO: Add Landmark invisible object to advertise move to action
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
@@ -1088,6 +1113,214 @@ public class BaseLandmark : ILocation, TaskCreator {
     public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
+    }
+    #endregion
+
+    #region Corruption
+    public void ToggleCorruption(bool state) {
+        if (state) {
+            if (!_hasBeenCorrupted) {
+                _hasBeenCorrupted = true;
+                _nextCorruptedTilesToCheck.Enqueue(tileLocation);
+            }
+            _diagonalLeftBlocked = 0;
+            _diagonalRightBlocked = 0;
+            _horizontalBlocked = 0;
+            tileLocation.region.LandmarkStartedCorruption(this);
+            Messenger.AddListener(Signals.DAY_END, DoCorruption);
+        } else {
+            StopSpreadCorruption();
+        }
+    }
+    private void StopSpreadCorruption() {
+        tileLocation.region.LandmarkStoppedCorruption(this);
+        Messenger.RemoveListener(Signals.DAY_END, DoCorruption);
+    }
+    private void DoCorruption() {
+        if(_nextCorruptedTilesToCheck.Count > 0) {
+            _currentCorruptedTileToCheck = _nextCorruptedTilesToCheck.Dequeue();
+            SpreadCorruption(_currentCorruptedTileToCheck);
+        } else {
+            StopSpreadCorruption();
+        }
+    }
+    private void SpreadCorruption(HexTile originTile) {
+        if (!originTile.CanThisTileBeCorrupted()) {
+            return;
+        }
+        for (int i = 0; i < originTile.AllNeighbours.Count; i++) {
+            HexTile neighbor = originTile.AllNeighbours[i];
+            if (neighbor.canBeCorrupted) {
+                if (!neighbor.isCorrupted && neighbor.region.id == originTile.region.id && neighbor.CanThisTileBeCorrupted()) {
+                    neighbor.SetCorruption(true);
+                    _nextCorruptedTilesToCheck.Enqueue(neighbor);
+                }
+                //if(neighbor.landmarkNeighbor != null && !neighbor.landmarkNeighbor.tileLocation.isCorrupted) {
+                //    neighbor.landmarkNeighbor.CreateWall();
+                //}
+            } 
+            //else {
+                //if cannot be corrupted it means that it has a landmark still owned by a kingdom
+                //neighbor.landmarkOnTile.CreateWall();
+            //}
+        }
+    }
+    public string GetBlockedDirection() {
+        List<HEXTILE_DIRECTION> directions = new List<HEXTILE_DIRECTION>();
+        foreach(HEXTILE_DIRECTION direction in tileLocation.neighbourDirections.Keys) {
+            if (tileLocation.neighbourDirections[direction].isCorrupted) {
+                directions.Add(direction);
+            }
+        }
+        if (directions.Count == 2) {
+            if ((directions[0] == HEXTILE_DIRECTION.NORTH_WEST || directions[0] == HEXTILE_DIRECTION.NORTH_EAST && directions[1] == HEXTILE_DIRECTION.NORTH_WEST || directions[1] == HEXTILE_DIRECTION.NORTH_EAST)
+                || (directions[0] == HEXTILE_DIRECTION.SOUTH_WEST || directions[0] == HEXTILE_DIRECTION.SOUTH_EAST && directions[1] == HEXTILE_DIRECTION.SOUTH_WEST || directions[1] == HEXTILE_DIRECTION.SOUTH_EAST)) { //top left and right is corrupted
+                return "horizontal";
+            } else if ((directions[0] == HEXTILE_DIRECTION.NORTH_WEST || directions[0] == HEXTILE_DIRECTION.WEST && directions[1] == HEXTILE_DIRECTION.NORTH_WEST || directions[1] == HEXTILE_DIRECTION.WEST)
+                || (directions[0] == HEXTILE_DIRECTION.SOUTH_EAST || directions[0] == HEXTILE_DIRECTION.EAST && directions[1] == HEXTILE_DIRECTION.SOUTH_EAST || directions[1] == HEXTILE_DIRECTION.EAST)) { //top left and left is corrupted
+                return "diagonalright";
+            } else if ((directions[0] == HEXTILE_DIRECTION.NORTH_EAST || directions[0] == HEXTILE_DIRECTION.EAST && directions[1] == HEXTILE_DIRECTION.NORTH_EAST || directions[1] == HEXTILE_DIRECTION.EAST)
+                || (directions[0] == HEXTILE_DIRECTION.SOUTH_WEST || directions[0] == HEXTILE_DIRECTION.WEST && directions[1] == HEXTILE_DIRECTION.SOUTH_WEST || directions[1] == HEXTILE_DIRECTION.WEST)) { //top left and left is corrupted
+                return "diagonalleft";
+            } else {
+                //what if corrupted neighbors are in opposite direction
+            }
+        } else if (directions.Count == 1) {
+            int chance = UnityEngine.Random.Range(0, 2);
+            if(directions[0] == HEXTILE_DIRECTION.NORTH_WEST || directions[0] == HEXTILE_DIRECTION.NORTH_EAST) {
+                return "horizontal";
+                //if (chance == 0) {
+                //    return "diagonalright";
+                //} else {
+                //    return "horizontal";
+                //}
+            }else if (directions[0] == HEXTILE_DIRECTION.SOUTH_EAST || directions[0] == HEXTILE_DIRECTION.SOUTH_WEST) {
+                return "horizontal";
+                //if (chance == 0) {
+                //    return "diagonalleft";
+                //} else {
+                //    return "horizontal";
+                //}
+            } else if (directions[0] == HEXTILE_DIRECTION.EAST || directions[0] == HEXTILE_DIRECTION.WEST) {
+                if (chance == 0) {
+                    return "diagonalright";
+                } else {
+                    return "diagonalleft";
+                }
+            }
+            
+        }
+        return "none";
+    }
+    public void AdjustDiagonalLeftBlocked(int amount) {
+        _diagonalLeftBlocked += amount;
+        if(_diagonalLeftBlocked < 0) {
+            _diagonalLeftBlocked = 0;
+        }
+    }
+    public void AdjustDiagonalRightBlocked(int amount) {
+        _diagonalRightBlocked += amount;
+        if (_diagonalRightBlocked < 0) {
+            _diagonalRightBlocked = 0;
+        }
+    }
+    public void AdjustHorizontalBlocked(int amount) {
+        _horizontalBlocked += amount;
+        if (_horizontalBlocked < 0) {
+            _horizontalBlocked = 0;
+        }
+    }
+    public void ALandmarkHasStartedCorruption(BaseLandmark corruptedLandmark) {
+        int corruptedX = corruptedLandmark.tileLocation.xCoordinate;
+        int corruptedY = corruptedLandmark.tileLocation.yCoordinate;
+
+        if(tileLocation.xCoordinate == corruptedX) {
+            //if same column, create wall horizontally
+            AdjustHorizontalBlocked(1);
+        } else {
+            if(tileLocation.xCoordinate < corruptedX) {
+                if(tileLocation.yCoordinate <= corruptedY) {
+                    AdjustDiagonalLeftBlocked(1);
+                } else {
+                    AdjustDiagonalRightBlocked(1);
+                }
+            } else {
+                if (tileLocation.yCoordinate <= corruptedY) {
+                    AdjustDiagonalRightBlocked(1);
+                } else {
+                    AdjustDiagonalLeftBlocked(1);
+                }
+            }
+        }
+    }
+    public void ALandmarkHasStoppedCorruption(BaseLandmark corruptedLandmark) {
+        int corruptedX = corruptedLandmark.tileLocation.xCoordinate;
+        int corruptedY = corruptedLandmark.tileLocation.yCoordinate;
+
+        if (tileLocation.xCoordinate == corruptedX) {
+            //if same column, create wall horizontally
+            AdjustHorizontalBlocked(-1);
+        } else {
+            if (tileLocation.xCoordinate < corruptedX) {
+                if (tileLocation.yCoordinate <= corruptedY) {
+                    AdjustDiagonalLeftBlocked(-1);
+                } else {
+                    AdjustDiagonalRightBlocked(-1);
+                }
+            } else {
+                if (tileLocation.yCoordinate <= corruptedY) {
+                    AdjustDiagonalRightBlocked(-1);
+                } else {
+                    AdjustDiagonalLeftBlocked(-1);
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Hextiles
+    public void GenerateDiagonalLeftTiles() {
+        AddTileRecursivelyByDirection(HEXTILE_DIRECTION.NORTH_WEST, tileLocation);
+        AddTileRecursivelyByDirection(HEXTILE_DIRECTION.SOUTH_EAST, tileLocation);
+    }
+    public void GenerateDiagonalRightTiles() {
+        AddTileRecursivelyByDirection(HEXTILE_DIRECTION.NORTH_EAST, tileLocation);
+        AddTileRecursivelyByDirection(HEXTILE_DIRECTION.SOUTH_WEST, tileLocation);
+    }
+    public void GenerateHorizontalTiles() {
+        AddTileRecursivelyByDirection(HEXTILE_DIRECTION.EAST, tileLocation);
+        AddTileRecursivelyByDirection(HEXTILE_DIRECTION.WEST, tileLocation);
+    }
+    private void AddTileRecursivelyByDirection(HEXTILE_DIRECTION direction, HexTile originTile) {
+        if (originTile.tileLocation.neighbourDirections.ContainsKey(direction)) {
+            HexTile directionTile = originTile.tileLocation.neighbourDirections[direction];
+            if(directionTile.region.id == originTile.region.id && directionTile.landmarkOnTile == null) {
+                string strDirection = "diagonalleft";
+                if (direction == HEXTILE_DIRECTION.NORTH_WEST || direction == HEXTILE_DIRECTION.SOUTH_EAST) {
+                    //_diagonalLeftTiles.Add(directionTile);
+                }else if (direction == HEXTILE_DIRECTION.NORTH_EAST || direction == HEXTILE_DIRECTION.SOUTH_WEST) {
+                    //_diagonalRightTiles.Add(directionTile);
+                    strDirection = "diagonalright";
+                } else if (direction == HEXTILE_DIRECTION.EAST || direction == HEXTILE_DIRECTION.WEST) {
+                    //_horizontalTiles.Add(directionTile);
+                    strDirection = "horizontal";
+                }
+                directionTile.landmarkDirection.Add(this, strDirection);
+                AddTileRecursivelyByDirection(direction, directionTile);
+            }
+        }
+    }
+    public bool IsDirectionBlocked(string direction) {
+        if (!tileLocation.isCorrupted) {
+            if(direction == "diagonalleft") {
+                return _diagonalLeftBlocked > 0;
+            }else if (direction == "diagonalright") {
+                return _diagonalRightBlocked > 0;
+            } else if (direction == "horizontal") {
+                return _horizontalBlocked > 0;
+            }
+        }
+        return false;
     }
     #endregion
 }

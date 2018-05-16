@@ -61,6 +61,8 @@ public class UIManager : MonoBehaviour {
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;
+    public ButtonToggle corruptionBtn;
+
 
     public delegate void OnPauseEventExpiration(bool state);
 	public OnPauseEventExpiration onPauseEventExpiration;
@@ -486,6 +488,12 @@ public class UIManager : MonoBehaviour {
     public void ToggleBorders() {
         CameraMove.Instance.ToggleMainCameraLayer("Borders");
         CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
+    }
+    public void StartCorruption() {
+        if(settlementInfoUI.currentlyShowingLandmark != null) {
+            settlementInfoUI.currentlyShowingLandmark.tileLocation.SetCanBeCorrupted(true);
+            settlementInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true);
+        }
     }
     //public void ToggleResourceIcons() {
     //    CameraMove.Instance.ToggleResourceIcons();

@@ -27,7 +27,6 @@ public class GameManager : MonoBehaviour {
 
     private float timeElapsed;
 
-
     #region For Testing
     [ContextMenu("Print Event Table")]
     public void PrintEventTable() {

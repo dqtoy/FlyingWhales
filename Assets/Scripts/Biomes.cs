@@ -206,12 +206,12 @@ public class Biomes : MonoBehaviour {
             //case BIOMES.WOODLAND:
             //    centerSpriteToUse = woodlandTrees[Random.Range(0, woodlandTrees.Length)];
             //    tile.SetCenterSprite(centerSpriteToUse);
-            //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
+            //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
             //    break;
             //case BIOMES.FOREST:
             //    centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
             //    tile.SetCenterSprite(centerSpriteToUse);
-            //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
+            //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
             //    break;
         }
         if (biomeDetailToUse != null) {
@@ -225,8 +225,8 @@ public class Biomes : MonoBehaviour {
         //int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
         if(currentHexTile.elevationType == ELEVATION.WATER) {
             Sprite waterSpriteToUse = waterTiles[Random.Range(0, waterTiles.Length)];
-            currentHexTile.GetComponent<SpriteRenderer>().sortingLayerName = "Water";
-            currentHexTile.GetComponent<SpriteRenderer>().sprite = waterSpriteToUse;
+            currentHexTile.spriteRenderer.sortingLayerName = "Water";
+            currentHexTile.spriteRenderer.sprite = waterSpriteToUse;
             currentHexTile.centerPiece.SetActive(false);
             return;
         }
@@ -235,42 +235,42 @@ public class Biomes : MonoBehaviour {
         //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
         //            Sprite mountainSpriteToUse = snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
         //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "TileDetails");
+        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
         //        }
         //        break;
         //    case BIOMES.TUNDRA:
         //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
         //            Sprite mountainSpriteToUse = snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
         //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "TileDetails");
+        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
         //        }
         //        break;
         //    case BIOMES.DESERT:
         //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
         //            Sprite mountainSpriteToUse = desertMountainTiles[Random.Range(0, desertMountainTiles.Length)];
         //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "TileDetails");
+        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
         //        }
         //        break;
         //    case BIOMES.GRASSLAND:
         //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
         //            Sprite mountainSpriteToUse = greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
         //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "TileDetails");
+        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
         //        }
         //        break;
         //    //case BIOMES.WOODLAND:
         //    //    if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
         //    //        Sprite mountainSpriteToUse = greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
         //    //        currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //    //        Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "TileDetails");
+        //    //        Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
         //    //    }
         //    //    break;
         //    case BIOMES.FOREST:
         //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
         //            Sprite mountainSpriteToUse = greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
         //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "TileDetails");
+        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
         //        }
         //        break;
         //}

@@ -31,6 +31,13 @@ public class LandmarkManager : MonoBehaviour {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
+        newLandmark.tileLocation.SetCanBeCorrupted(false);
+        newLandmark.GenerateDiagonalLeftTiles();
+        newLandmark.GenerateDiagonalRightTiles();
+        newLandmark.GenerateHorizontalTiles();
+        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
+        //    location.AllNeighbours[i].landmarkNeighbor = newLandmark;
+        //}
         //ConstructLandmarkObjects(landmarkData, newLandmark);
 //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
@@ -404,5 +411,4 @@ public class LandmarkManager : MonoBehaviour {
         return allLandmarks;
     }
     #endregion
-
 }

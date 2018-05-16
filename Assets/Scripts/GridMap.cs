@@ -74,6 +74,7 @@ public class GridMap : MonoBehaviour {
 				currHex.tileName = RandomNameGenerator.Instance.GetTileName();
                 currHex.xCoordinate = x;
                 currHex.yCoordinate = y;
+                currHex.Initialize();
                 listHexes.Add(hex);
                 map[x, y] = hex.GetComponent<HexTile>();
                 id++;
@@ -122,6 +123,7 @@ public class GridMap : MonoBehaviour {
                 currHex.tileName = hex.name;
                 currHex.xCoordinate = x;
                 currHex.yCoordinate = y;
+                currHex.Initialize();
                 outerGrid[x, y] = currHex;
                 outerGridList.Add(currHex);
 

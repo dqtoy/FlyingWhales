@@ -18,6 +18,8 @@ public class CharacterIcon : MonoBehaviour {
 
     private ILocation _targetLocation;
     private bool _isIdle;
+    private string upOrDown = "Down";
+    private string previousDir;
 
     #region getters/setters
     public Character character {
@@ -46,7 +48,6 @@ public class CharacterIcon : MonoBehaviour {
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, SetMovementState);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        _currentPos = _aiPath.position;
     }
 
     public void SetTarget(ILocation target) {
@@ -125,9 +126,6 @@ public class CharacterIcon : MonoBehaviour {
     }
 
     #region Monobehaviours
-    Vector3 _currentPos;
-    string upOrDown = "Down";
-    string previousDir;
     private void LateUpdate() {
         //Debug.Log(_aiPath.velocity);
         Vector3 newPos = _aiPath.transform.localPosition;
