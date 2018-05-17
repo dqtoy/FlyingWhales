@@ -12,7 +12,9 @@ public class MapGenerator : MonoBehaviour {
     }
 
     internal void InitializeWorld() {
+        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        loadingWatch.Start();
 
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
@@ -126,6 +128,8 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.SchedulePrisonerConversion();
         //CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
+        loadingWatch.Stop();
+        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
     }
 
     internal void ReloadScene() {
