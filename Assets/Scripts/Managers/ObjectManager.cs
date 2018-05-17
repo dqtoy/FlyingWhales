@@ -168,17 +168,21 @@ public class ObjectManager : MonoBehaviour {
         }
     }
 
-    public IObject CreateNewObject(OBJECT_TYPE objType, string objectName, BaseLandmark location) {
+    public IObject CreateNewObject(OBJECT_TYPE objType, string objectName) {
         IObject reference = GetReference(objType, objectName);
         if (reference != null) {
             IObject newObj = reference.Clone();
-            location.AddObject(newObj);
+            //location.AddObject(newObj);
             return newObj;
         }
         return null;
     }
-    public IObject CreateNewObject(string objectName, BaseLandmark location) {
-        return CreateNewObject(GetObjectType(objectName), objectName, location);
+    public IObject CreateNewObject(string objectName) {
+        return CreateNewObject(GetObjectType(objectName), objectName);
+    }
+    public IObject CreateNewObject(LANDMARK_TYPE landmarkType) {
+        string objectName = Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString());
+        return CreateNewObject(objectName);
     }
     private IObject GetReference(OBJECT_TYPE objType, string objectName) {
         for (int i = 0; i < _allObjects.Count; i++) {
@@ -204,71 +208,73 @@ public class ObjectManager : MonoBehaviour {
             //case ACTION_TYPE.BUILD:
             //return new BuildAction(state);
             case ACTION_TYPE.DESTROY:
-            return new DestroyAction(state);
+                return new DestroyAction(state);
             case ACTION_TYPE.REST:
-            return new RestAction(state);
+                return new RestAction(state);
             case ACTION_TYPE.HUNT:
-            return new HuntAction(state);
+                return new HuntAction(state);
             case ACTION_TYPE.EAT:
-            return new EatAction(state);
+                return new EatAction(state);
             case ACTION_TYPE.DRINK:
-            return new DrinkAction(state);
+                return new DrinkAction(state);
             case ACTION_TYPE.IDLE:
-            return new IdleAction(state);
+                return new IdleAction(state);
             case ACTION_TYPE.POPULATE:
-            return new PopulateAction(state);
+                return new PopulateAction(state);
             case ACTION_TYPE.HARVEST:
-            return new HarvestAction(state);
+                return new HarvestAction(state);
             case ACTION_TYPE.TORTURE:
-            return new TortureAction(state);
+                return new TortureAction(state);
             case ACTION_TYPE.PATROL:
-            return new PatrolAction(state);
+                return new PatrolAction(state);
             case ACTION_TYPE.REPAIR:
-            return new RepairAction(state);
+                return new RepairAction(state);
             case ACTION_TYPE.ABDUCT:
-            return new AbductAction(state);
+                return new AbductAction(state);
+            case ACTION_TYPE.PRAY:
+                return new PrayAction(state);
         }
         return null;
     }
     public StructureObj ConvertComponentToStructureObject(StructureObjectComponent component) {
         StructureObj structureObj = null;
         switch (component.specificObjectType) {
+            case SPECIFIC_OBJECT_TYPE.DEMONIC_PORTAL:
+                structureObj = new DemonicPortal();
+                break;
+            case SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT:
+                structureObj = new ElvenSettlement();
+                break;
+            case SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT:
+                structureObj = new HumanSettlement();
+                break;
+            case SPECIFIC_OBJECT_TYPE.GARRISON:
+                structureObj = new Garrison();
+                break;
+            case SPECIFIC_OBJECT_TYPE.OAK_FORTIFICATION:
+                structureObj = new OakFortification();
+                break;
+            case SPECIFIC_OBJECT_TYPE.IRON_FORTIFICATION:
+                structureObj = new IronFortification();
+                break;
+            case SPECIFIC_OBJECT_TYPE.OAK_LUMBERYARD:
+                structureObj = new OakLumberyard();
+                break;
+            case SPECIFIC_OBJECT_TYPE.IRON_MINES:
+                structureObj = new IronMines();
+                break;
             case SPECIFIC_OBJECT_TYPE.INN:
-            structureObj = new Inn();
-            break;
-            case SPECIFIC_OBJECT_TYPE.DANK_SHELTER:
-            structureObj = new DankShelter();
-            break;
-            case SPECIFIC_OBJECT_TYPE.IRON_MINE:
-            structureObj = new IronMine();
-            break;
-            case SPECIFIC_OBJECT_TYPE.LAIR:
-            structureObj = new Lair();
-            break;
-            case SPECIFIC_OBJECT_TYPE.OAK_WOODS:
-            structureObj = new OakWoods();
-            break;
+                structureObj = new Inn();
+                break;
             case SPECIFIC_OBJECT_TYPE.PUB:
-            structureObj = new Pub();
-            break;
-            case SPECIFIC_OBJECT_TYPE.SOULSTONE:
-            structureObj = new Soulstone();
-            break;
-            case SPECIFIC_OBJECT_TYPE.TORTURE_CHAMBER:
-            structureObj = new TortureChamber();
-            break;
-            case SPECIFIC_OBJECT_TYPE.WILD_PIGS:
-            structureObj = new WildPigs();
-            break;
-            case SPECIFIC_OBJECT_TYPE.HUMAN_RESIDENCES:
-            structureObj = new HumanResidences();
-            break;
-            case SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES:
-            structureObj = new ElvenResidences();
-            break;
-            case SPECIFIC_OBJECT_TYPE.SEALED_TOMB:
-            structureObj = new SealedTomb();
-            break;
+                structureObj = new Pub();
+                break;
+            case SPECIFIC_OBJECT_TYPE.TEMPLE:
+                structureObj = new Temple();
+                break;
+            case SPECIFIC_OBJECT_TYPE.HUNTING_GROUNDS:
+                structureObj = new HuntingGrounds();
+                break;
         }
         component.CopyDataToStructureObject(structureObj);
         return structureObj;

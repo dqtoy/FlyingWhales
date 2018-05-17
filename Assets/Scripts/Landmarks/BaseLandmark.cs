@@ -21,8 +21,8 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected int _reservedCivilians;
     protected List<Character> _charactersWithHomeOnLandmark;
     protected Dictionary<RACE, int> _civiliansByRace;
-    protected int _currDurability;
-	protected int _totalDurability;
+    //protected int _currDurability;
+	//protected int _totalDurability;
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
     protected LandmarkObject _landmarkObject;
@@ -34,7 +34,8 @@ public class BaseLandmark : ILocation, TaskCreator {
 	protected List<Item> _itemsInLandmark;
 	protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
-    protected List<IObject> _objects;
+    protected StructureObj _landmarkObj;
+    //protected List<IObject> _objects;
     private bool _hasScheduledCombatCheck = false;
     private Dictionary<RESOURCE, int> _resourceInventory;
     private HexTile _currentCorruptedTileToCheck;
@@ -114,17 +115,20 @@ public class BaseLandmark : ILocation, TaskCreator {
 		get { return _itemsInLandmark; }
 	}
     public int currDurability {
-        get { return _currDurability; }
+        get { return _landmarkObj.currentHP; }
     }
     public int totalDurability {
-		get { return _totalDurability; }
+		get { return _landmarkObj.maxHP; }
     }
 	public Dictionary<Character, GameDate> characterTraces {
 		get { return _characterTraces; }
 	}
-    public List<IObject> objects {
-        get { return _objects; }
+    public IObject landmarkObj {
+        get { return _landmarkObj; }
     }
+    //public List<IObject> objects {
+    //    get { return _objects; }
+    //}
     //public int diagonalLeftBlocked {
     //    get { return _diagonalLeftBlocked; }
     //}
@@ -153,9 +157,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         _charactersAtLocation = new List<ICombatInitializer>();
 		_itemsInLandmark = new List<Item> ();
 		_characterTraces = new Dictionary<Character, GameDate> ();
-        _totalDurability = landmarkData.hitPoints;
-		_currDurability = _totalDurability;
-        _objects = new List<IObject>();
+        //_totalDurability = landmarkData.hitPoints;
+		//_currDurability = _totalDurability;
+        //_objects = new List<IObject>();
         _nextCorruptedTilesToCheck = new List<HexTile>();
         _hasBeenCorrupted = false;
         _diagonalLeftTiles = new List<HexTile>();
@@ -169,7 +173,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         Messenger.AddListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
         //Messenger.AddListener<BaseLandmark>("StopCorruption", ALandmarkHasStoppedCorruption);
 
-        //TODO: Add Landmark invisible object to advertise move to action
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
         ConstructCiviliansDictionary();
@@ -347,7 +350,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     private void GenerateCivilians() {
         Faction ownerOfRegion = tileLocation.region.owner;
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
+        //int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
         RACE civiliansRace = RACE.NONE;
         //if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
         //    civiliansRace = RACE.GOBLIN;
@@ -927,8 +930,9 @@ public class BaseLandmark : ILocation, TaskCreator {
 
     #region Materials
     public void AdjustDurability(int amount){
-		_currDurability += amount;
-		_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
+        _landmarkObj.AdjustHP(amount);
+		//_currDurability += amount;
+		//_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
 	}
     #endregion
 
@@ -1070,34 +1074,37 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Objects
-    public bool AddObject(IObject obj) {
-        if (!_objects.Contains(obj)) {
-            _objects.Add(obj);
-            obj.OnAddToLandmark(this);
-            return true;
-        }
-        return false;
+    public void SetObject(StructureObj obj) {
+        _landmarkObj = obj;
     }
-    public void RemoveObject(IObject obj) {
-        _objects.Remove(obj);
-        obj.SetObjectLocation(null);
-    }
-    public IObject GetObject(OBJECT_TYPE objectType, string name) {
-        for (int i = 0; i < _objects.Count; i++) {
-            if(_objects[i].objectType == objectType && _objects[i].objectName == name) {
-                return _objects[i];
-            }
-        }
-        return null;
-    }
-    public IObject GetObject(string name) {
-        for (int i = 0; i < _objects.Count; i++) {
-            if (_objects[i].objectName == name) {
-                return _objects[i];
-            }
-        }
-        return null;
-    }
+    //public bool AddObject(IObject obj) {
+    //    if (!_objects.Contains(obj)) {
+    //        _objects.Add(obj);
+    //        obj.OnAddToLandmark(this);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //public void RemoveObject(IObject obj) {
+    //    _objects.Remove(obj);
+    //    obj.SetObjectLocation(null);
+    //}
+    //public IObject GetObject(OBJECT_TYPE objectType, string name) {
+    //    for (int i = 0; i < _objects.Count; i++) {
+    //        if(_objects[i].objectType == objectType && _objects[i].objectName == name) {
+    //            return _objects[i];
+    //        }
+    //    }
+    //    return null;
+    //}
+    //public IObject GetObject(string name) {
+    //    for (int i = 0; i < _objects.Count; i++) {
+    //        if (_objects[i].objectName == name) {
+    //            return _objects[i];
+    //        }
+    //    }
+    //    return null;
+    //}
     #endregion
 
     #region Resource Inventory

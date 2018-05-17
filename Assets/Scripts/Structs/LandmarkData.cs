@@ -6,16 +6,16 @@ using System.Collections.Generic;
 public class LandmarkData {
     public LANDMARK_TYPE landmarkType;
     public BASE_LANDMARK_TYPE baseLandmarkType;
-    public int minCivilians;
-    public int maxCivilians;
-    public int hitPoints;
+    //public int minCivilians;
+    //public int maxCivilians;
+    //public int hitPoints;
     //public int appearanceWeight;
     //public bool isUnique;
     //public bool onOccupiedOnly;
     public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
-    public List<ObjectSpawnLandmark> initialObjects;
+    //public List<ObjectSpawnLandmark> initialObjects;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
 
     private WeightedDictionary<string> _itemWeights;

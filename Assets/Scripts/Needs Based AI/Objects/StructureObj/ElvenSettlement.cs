@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElvenResidences : StructureObj {
+public class ElvenSettlement : StructureObj {
 
-    public ElvenResidences() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES;
+    public ElvenSettlement() : base() {
+        _specificObjectType = SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
+        _resourceInventory[RESOURCE.ELF_CIVILIAN] = 500;
     }
 
     #region Overrides
     public override IObject Clone() {
-        ElvenResidences clone = new ElvenResidences();
+        ElvenSettlement clone = new ElvenSettlement();
         SetCommonData(clone);
         return clone;
     }
@@ -22,11 +23,11 @@ public class ElvenResidences : StructureObj {
         }
         if (_resourceInventory[resource] == 0) {
             if (_currentState.stateName == "Default") {
-                ObjectState emptyState = GetState("Depleted");
+                ObjectState emptyState = GetState("Empty");
                 ChangeState(emptyState);
             }
         } else {
-            if (_currentState.stateName == "Depleted") {
+            if (_currentState.stateName == "Empty") {
                 ObjectState occupiedState = GetState("Default");
                 ChangeState(occupiedState);
             }
@@ -35,8 +36,8 @@ public class ElvenResidences : StructureObj {
     public override void OnAddToLandmark(BaseLandmark newLocation) {
         base.OnAddToLandmark(newLocation);
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(newLocation.specificLandmarkType);
-        int numOfCivilians = UnityEngine.Random.Range(data.minCivilians, data.maxCivilians + 1);
-        _resourceInventory[RESOURCE.HUMAN_CIVILIAN] = numOfCivilians;
+        //int numOfCivilians = UnityEngine.Random.Range(data.minCivilians, data.maxCivilians + 1);
+        //_resourceInventory[RESOURCE.HUMAN_CIVILIAN] = numOfCivilians;
     }
     #endregion
 }

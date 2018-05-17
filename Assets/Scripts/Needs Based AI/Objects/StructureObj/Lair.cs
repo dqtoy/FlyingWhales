@@ -5,7 +5,7 @@ using UnityEngine;
 public class Lair : StructureObj {
 
 	public Lair() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.LAIR;
+        //_specificObjectType = SPECIFIC_OBJECT_TYPE.LAIR;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

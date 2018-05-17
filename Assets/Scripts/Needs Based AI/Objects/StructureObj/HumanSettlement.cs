@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IronMine : StructureObj {
+public class HumanSettlement : StructureObj {
 
-	public IronMine() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.IRON_MINE;
+    public HumanSettlement() : base() {
+        _specificObjectType = SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        _resourceInventory[RESOURCE.IRON] = 5000;
     }
 
     #region Overrides
     public override IObject Clone() {
-        IronMine clone = new IronMine();
+        HumanSettlement clone = new HumanSettlement();
         SetCommonData(clone);
         return clone;
     }
@@ -32,6 +31,12 @@ public class IronMine : StructureObj {
                 ChangeState(occupiedState);
             }
         }
+    }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        base.OnAddToLandmark(newLocation);
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(newLocation.specificLandmarkType);
+        //int numOfCivilians = UnityEngine.Random.Range(data.minCivilians, data.maxCivilians + 1);
+        //_resourceInventory[RESOURCE.HUMAN_CIVILIAN] = numOfCivilians;
     }
     #endregion
 }

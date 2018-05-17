@@ -16,6 +16,7 @@ public class StructureObjectComponent : ObjectComponent {
         structureObject.SetOnHPFullFunction(onHPReachedFull);
         structureObject.SetOnHPZeroFunction(onHPReachedZero);
         structureObject.SetMaxHP(maxHP);
+        structureObject.SetHP(maxHP);
     }
 
     #region getters/setters
@@ -108,15 +109,15 @@ public class StructureObjectComponent : ObjectComponent {
     public void RepairedSealedTomb(IObject iobject) {
         if (iobject.objectType == OBJECT_TYPE.STRUCTURE) {
             StructureObj structure = iobject as StructureObj;
-            if(structure.specificObjectType == SPECIFIC_OBJECT_TYPE.SEALED_TOMB) {
-                SealedTomb sealedTomb = structure as SealedTomb;
-                string unsealedOrEmpty = "Empty";
-                if (sealedTomb.content != null) {
-                    unsealedOrEmpty = "Unsealed";
-                }
-                ObjectState state = iobject.GetState(unsealedOrEmpty);
-                iobject.ChangeState(state);
-            }
+            //if(structure.specificObjectType == SPECIFIC_OBJECT_TYPE.SEALED_TOMB) {
+            //    SealedTomb sealedTomb = structure as SealedTomb;
+            //    string unsealedOrEmpty = "Empty";
+            //    if (sealedTomb.content != null) {
+            //        unsealedOrEmpty = "Unsealed";
+            //    }
+            //    ObjectState state = iobject.GetState(unsealedOrEmpty);
+            //    iobject.ChangeState(state);
+            //}
         }
     }
     #endregion

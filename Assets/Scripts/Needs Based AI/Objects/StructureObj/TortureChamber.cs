@@ -5,7 +5,7 @@ using UnityEngine;
 public class TortureChamber : StructureObj {
 
 	public TortureChamber() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.TORTURE_CHAMBER;
+        //_specificObjectType = SPECIFIC_OBJECT_TYPE.TORTURE_CHAMBER;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

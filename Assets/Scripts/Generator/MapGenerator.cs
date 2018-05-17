@@ -57,6 +57,8 @@ public class MapGenerator : MonoBehaviour {
 
         UIManager.Instance.InitializeUI();
 
+        ObjectManager.Instance.Initialize();
+
         st.Start();
         bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions();
         st.Stop();
@@ -106,8 +108,8 @@ public class MapGenerator : MonoBehaviour {
         PathfindingManager.Instance.CreateGrid();
 
         //FactionManager.Instance.OccupyLandmarksInFactionRegions();
-        ObjectManager.Instance.Initialize();
-        LandmarkManager.Instance.ConstructAllLandmarkObjects();
+        //ObjectManager.Instance.Initialize();
+        //LandmarkManager.Instance.ConstructAllLandmarkObjects();
 
         LandmarkManager.Instance.GenerateMaterials();
 
