@@ -29,9 +29,9 @@ public class InimicalIncantationsData : StorylineData {
 			Region region = GridMap.Instance.allRegions [i];
 			for (int j = 0; j < region.landmarks.Count; j++) {
 				BaseLandmark landmark = region.landmarks [j];
-				if(landmark.specificLandmarkType == LANDMARK_TYPE.RITUAL_STONES){
-					hasRitualStone = true;
-				}
+				//if(landmark.specificLandmarkType == LANDMARK_TYPE.RITUAL_STONES){
+				//	hasRitualStone = true;
+				//}
 			}
 		}
 		if(!hasRitualStone){
@@ -47,11 +47,11 @@ public class InimicalIncantationsData : StorylineData {
 			for (int j = 0; j < region.landmarks.Count; j++) {
 				BaseLandmark landmark = region.landmarks [j];
 				if(landmark is DungeonLandmark){
-					if(landmark.specificLandmarkType == LANDMARK_TYPE.CAVE){
-						caves.Add ((DungeonLandmark)landmark);
-					}else if(landmark.specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN){
-						ancientRuins.Add ((DungeonLandmark)landmark);
-					}
+					//if(landmark.specificLandmarkType == LANDMARK_TYPE.CAVE){
+					//	caves.Add ((DungeonLandmark)landmark);
+					//}else if(landmark.specificLandmarkType == LANDMARK_TYPE.ANCIENT_RUIN){
+					//	ancientRuins.Add ((DungeonLandmark)landmark);
+					//}
 				}
 			}
 		}

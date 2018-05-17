@@ -280,7 +280,8 @@ public class GridMap : MonoBehaviour {
      * for the logic used.
      * */
     public bool GenerateRegions(int numOfRegions, int refinementLevel) {
-        List<HexTile> allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
+        List<HexTile> allHexTiles = new List<HexTile>(hexTiles);
+        Utilities.Shuffle(allHexTiles);
         List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles.Where(x => (x.xCoordinate > 1 && x.xCoordinate < width - 1) && (x.yCoordinate < height - 2 && x.yCoordinate > 2)));
         HexTile[] initialCenters = new HexTile[numOfRegions];
         allRegions = new List<Region>();
@@ -307,7 +308,8 @@ public class GridMap : MonoBehaviour {
 
         for (int i = 0; i < refinementLevel; i++) {
             if (i != 0) {
-                allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
+                allHexTiles = new List<HexTile>(hexTiles);
+                Utilities.Shuffle(allHexTiles);
                 for (int j = 0; j < allRegions.Count; j++) {
                     Region currRegion = allRegions[j];
                     currRegion.ReComputeCenterOfMass();
@@ -334,7 +336,7 @@ public class GridMap : MonoBehaviour {
                 } else {
                     throw new System.Exception("Could not find closest distance for tile " + currHexTile.name);
                 }
-
+                //allRegions = allRegions.OrderByDescending(x => x.tilesInRegion.Count).ToList();
             }
         }
 
@@ -354,13 +356,55 @@ public class GridMap : MonoBehaviour {
         }
         return true;
     }
-    //public void UpdateAllRegionsDiscoveredKingdoms() {
-    //    for (int i = 0; i < allRegions.Count; i++) {
-    //        Region currRegion = allRegions[i];
-    //        if (currRegion.occupant != null) {
-    //            currRegion.CheckForDiscoveredKingdoms();
+    public void BottleneckBorders() {
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            for (int j = 0; j < currRegion.outerTiles.Count; j++) {
+                HexTile currBorderTile = currRegion.outerTiles[j];
+                if (currBorderTile.isPassable && !currBorderTile.IsBottleneck()) {
+                    List<HexTile> borderNeighbours = currBorderTile.AllNeighbours.Where(x => x.IsBorderTileOfRegion()).ToList();
+                    if (!currBorderTile.AllNeighbours.Where(x => x.IsBottleneck()).Any()) {
+                        //this tile has no border neighbours that are bottlenecks or dead ends, make this tile unpassable
+                        currBorderTile.SetPassableState(false);
+                        //make passable neighbours recompute their passable type
+                        List<HexTile> passableNeighbours = currBorderTile.AllNeighbours.Where(x => x.isPassable).ToList();
+                        passableNeighbours.ForEach(x => x.DeterminePassableType());
+                    }
+                }
+            }
+            currRegion.LogPassableTiles();
+            currRegion.DetermineRegionIslands();
+        }
+    }
+    //private void NormalizeRegions() {
+    //    List<Region> orderedRegions = allRegions.OrderBy(x => x.tilesInRegion.Count).ToList();
+    //    while (true) {
+    //        //check if the regions have too much gaps between their number of tiles
+    //        bool hasBigGaps = false;
+    //        for (int i = 0; i < allRegions.Count; i++) {
+    //            Region currRegion = allRegions[i];
+    //            for (int j = 0; j < allRegions.Count; j++) {
+    //                Region otherRegion = allRegions[j];
+    //                if (currRegion.id != otherRegion.id) {
+    //                    if (otherRegion.tilesInRegion.Count > currRegion.tilesInRegion.Count) {
+    //                        if (otherRegion.tilesInRegion.Count - currRegion.tilesInRegion.Count >= currRegion.tilesInRegion.Count * 1.5f) {
+    //                            hasBigGaps = true;
+    //                            break;
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+
+    //        if (hasBigGaps) {
+                
+    //        } else {
+    //            break;
     //        }
     //    }
+    //}
+    //private void AddTilesToRegion(Region region, int tilesToAdd) {
+
     //}
     #endregion
 }

@@ -23,9 +23,9 @@ public class TheLostHeirData : StorylineData {
     #region overrides
     public override bool InitialStorylineSetup() {
 //        base.InitialStorylineSetup();
-		if (LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.PEASANT_HUT).Count <= 0) {
-			return false;
-		}
+		//if (LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.PEASANT_HUT).Count <= 0) {
+		//	return false;
+		//}
         Messenger.AddListener<ECS.Item, BaseLandmark>(Signals.ITEM_PLACED_LANDMARK, OnHeirloomPlacedInLandmark);
         Messenger.AddListener<ECS.Item, ECS.Character>(Signals.ITEM_PLACED_INVENTORY, OnHeirloomPlacedInInventory);
 
@@ -68,44 +68,44 @@ public class TheLostHeirData : StorylineData {
         AddRelevantItem(falseHeir, successorDescription2);
 
         //If there is at least 1 Hut landmark in the world, generate a character in one of those Huts
-        List<BaseLandmark> huts = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.PEASANT_HUT);
-        if (huts.Count > 0) {
-            BaseLandmark chosenHut = huts[Random.Range(0, huts.Count)];
-            lostHeir = chosenHut.CreateNewCharacter(chieftain.raceSetting.race, CHARACTER_ROLE.HERMIT, "Swordsman");
-            lostHeir.AssignTag(CHARACTER_TAG.LOST_HEIR); //and add a lost heir tag and an heirloom necklace item to him. That character should not belong to any faction.
+//        List<BaseLandmark> huts = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.PEASANT_HUT);
+//        if (huts.Count > 0) {
+//            BaseLandmark chosenHut = huts[Random.Range(0, huts.Count)];
+//            lostHeir = chosenHut.CreateNewCharacter(chieftain.raceSetting.race, CHARACTER_ROLE.HERMIT, "Swordsman");
+//            lostHeir.AssignTag(CHARACTER_TAG.LOST_HEIR); //and add a lost heir tag and an heirloom necklace item to him. That character should not belong to any faction.
 
-            AddRelevantItem(lostHeir, CreateLogForStoryline("lost_heir_title"));
+//            AddRelevantItem(lostHeir, CreateLogForStoryline("lost_heir_title"));
 
-            Log lostHeirDescription = CreateLogForStoryline("lost_heir_description");
-            lostHeirDescription.AddToFillers(lostHeir, lostHeir.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            lostHeirDescription.AddToFillers(chieftain, chieftain.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            AddRelevantItem(lostHeir, lostHeirDescription);
+//            Log lostHeirDescription = CreateLogForStoryline("lost_heir_description");
+//            lostHeirDescription.AddToFillers(lostHeir, lostHeir.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//            lostHeirDescription.AddToFillers(chieftain, chieftain.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+//            AddRelevantItem(lostHeir, lostHeirDescription);
 
-            _heirloomNecklace = ItemManager.Instance.CreateNewItemInstance("Heirloom Necklace");
-            AddRelevantItem(_heirloomNecklace, CreateLogForStoryline("heirloom_description"));
-            lostHeir.PickupItem(_heirloomNecklace);
+//            _heirloomNecklace = ItemManager.Instance.CreateNewItemInstance("Heirloom Necklace");
+//            AddRelevantItem(_heirloomNecklace, CreateLogForStoryline("heirloom_description"));
+//            lostHeir.PickupItem(_heirloomNecklace);
 
-            //Create find lost heir quest
-			findLostHeirQuest = new FindLostHeir(chieftain, chieftain, falseHeir, lostHeir, _heirloomNecklace);
-            QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
-            //chieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
+//            //Create find lost heir quest
+//			findLostHeirQuest = new FindLostHeir(chieftain, chieftain, falseHeir, lostHeir, _heirloomNecklace);
+//            QuestManager.Instance.AddQuestToAvailableQuests(findLostHeirQuest);
+//            //chieftain.AddActionOnDeath(findLostHeirQuest.ForceCancelQuest);
 
-			eliminateLostHeirQuest = new EliminateLostHeir(chieftain, chieftain, falseHeir, lostHeir, _heirloomNecklace);
-			QuestManager.Instance.AddQuestToAvailableQuests(eliminateLostHeirQuest);
-//			chosenChieftain.AddActionOnDeath(eliminateLostHeirQuest.ForceCancelQuest);
+//			eliminateLostHeirQuest = new EliminateLostHeir(chieftain, chieftain, falseHeir, lostHeir, _heirloomNecklace);
+//			QuestManager.Instance.AddQuestToAvailableQuests(eliminateLostHeirQuest);
+////			chosenChieftain.AddActionOnDeath(eliminateLostHeirQuest.ForceCancelQuest);
 
-			Relationship rel = CharacterManager.Instance.CreateNewRelationshipBetween (chieftain, lostHeir);
-			rel.AddRelationshipStatus (CHARACTER_RELATIONSHIP.PARENT, CHARACTER_RELATIONSHIP.CHILD);
+//			Relationship rel = CharacterManager.Instance.CreateNewRelationshipBetween (chieftain, lostHeir);
+//			rel.AddRelationshipStatus (CHARACTER_RELATIONSHIP.PARENT, CHARACTER_RELATIONSHIP.CHILD);
 
-            AddRelevantQuest(findLostHeirQuest);
-			AddRelevantQuest(eliminateLostHeirQuest);
+//            AddRelevantQuest(findLostHeirQuest);
+//			AddRelevantQuest(eliminateLostHeirQuest);
 
-			Debug.Log("LOST HEIR LOCATION: " + chosenHut.landmarkName + " - " + chosenHut.tileLocation.tileName);
+//			Debug.Log("LOST HEIR LOCATION: " + chosenHut.landmarkName + " - " + chosenHut.tileLocation.tileName);
 
-            _storylineDescription = CreateLogForStoryline("description");
-            _storylineDescription.AddToFillers(chieftain, chieftain.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            _storylineDescription.AddToFillers(null, Utilities.NormalizeString(chosenTag.ToString()), LOG_IDENTIFIER.OTHER);
-        }
+//            _storylineDescription = CreateLogForStoryline("description");
+//            _storylineDescription.AddToFillers(chieftain, chieftain.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//            _storylineDescription.AddToFillers(null, Utilities.NormalizeString(chosenTag.ToString()), LOG_IDENTIFIER.OTHER);
+//        }
 		return true;
     }
     #endregion
