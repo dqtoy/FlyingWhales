@@ -145,7 +145,10 @@ public class FactionManager : MonoBehaviour {
                 return false;
             }
         }
+
+        LandmarkManager.Instance.GeneratePlayerLandmarks(elligibleRegions[0]);
         return true;
+
 
         //InitialTribeSetting initialTribes = _initialTribes[Random.Range(0, _initialTribes.Count)]; //Choose a random tribe setup
         //Dictionary<FACTION_SIZE, int> tribeSetupDict = initialTribes.GetDictionary();

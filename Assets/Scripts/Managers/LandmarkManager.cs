@@ -169,6 +169,32 @@ public class LandmarkManager : MonoBehaviour {
 
     //    return true;
     //}
+    public void GeneratePlayerLandmarks(Region chosenRegion) {
+        //generate landmarks owned by the player in the empty region
+        //Create Demonic Portal on the tile nearest to the center of the region
+        HexTile tileToUse = null;
+        LandmarkData demonicPortalData = GetLandmarkData(LANDMARK_TYPE.DEMONIC_PORTAL);
+        if (chosenRegion.centerOfMass.isPassable && demonicPortalData.possibleSpawnPoints.Contains(chosenRegion.centerOfMass.passableType)) {
+            tileToUse = chosenRegion.centerOfMass;
+        } else {
+            float nearestDistance = 9999f;
+            List<HexTile> passableTilesInRegion = chosenRegion.tilesInRegion.Where(x => x.isPassable && x.id != chosenRegion.centerOfMass.id && demonicPortalData.possibleSpawnPoints.Contains(x.passableType)).ToList();
+            for (int i = 0; i < passableTilesInRegion.Count; i++) {
+                HexTile currTile = passableTilesInRegion[i];
+                float distance = currTile.GetDistanceTo(chosenRegion.centerOfMass);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    tileToUse = currTile;
+                }
+            }
+        }
+
+        if (tileToUse != null) {
+            CreateNewLandmarkOnTile(tileToUse, LANDMARK_TYPE.DEMONIC_PORTAL);
+        } else {
+            throw new System.Exception("Cannot create Demonic Portal for Player!");
+        }
+    }
     public bool GenerateFactionLandmarks() {
         for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
             Tribe currTribe = FactionManager.Instance.allTribes[i];
