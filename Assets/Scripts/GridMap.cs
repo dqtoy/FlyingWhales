@@ -371,8 +371,39 @@ public class GridMap : MonoBehaviour {
                 }
             }
             currRegion.LogPassableTiles();
+            currRegion.DetermineRegionIslands();
         }
     }
+    //private void NormalizeRegions() {
+    //    List<Region> orderedRegions = allRegions.OrderBy(x => x.tilesInRegion.Count).ToList();
+    //    while (true) {
+    //        //check if the regions have too much gaps between their number of tiles
+    //        bool hasBigGaps = false;
+    //        for (int i = 0; i < allRegions.Count; i++) {
+    //            Region currRegion = allRegions[i];
+    //            for (int j = 0; j < allRegions.Count; j++) {
+    //                Region otherRegion = allRegions[j];
+    //                if (currRegion.id != otherRegion.id) {
+    //                    if (otherRegion.tilesInRegion.Count > currRegion.tilesInRegion.Count) {
+    //                        if (otherRegion.tilesInRegion.Count - currRegion.tilesInRegion.Count >= currRegion.tilesInRegion.Count * 1.5f) {
+    //                            hasBigGaps = true;
+    //                            break;
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+
+    //        if (hasBigGaps) {
+                
+    //        } else {
+    //            break;
+    //        }
+    //    }
+    //}
+    //private void AddTilesToRegion(Region region, int tilesToAdd) {
+
+    //}
     #endregion
 }
 

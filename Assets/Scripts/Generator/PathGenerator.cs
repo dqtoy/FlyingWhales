@@ -85,15 +85,15 @@ public class PathGenerator : MonoBehaviour {
 		if(startingTile == null || destinationTile == null){
 			return null;
 		}
-        if(startingTile.tileTag != destinationTile.tileTag) {
-            return null;
-        }
+        //if(startingTile.tileTag != destinationTile.tileTag) {
+        //    return null;
+        //}
 
 //        bool isStartingTileRoad = startingTile.isRoad;
 //        bool isDestinationTileRoad = destinationTile.isRoad;
 
-        bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
-        bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
+        //bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
+        //bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
 
 //		if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
 //			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 

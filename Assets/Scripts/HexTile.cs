@@ -121,6 +121,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
+    public List<HexTile> PassableNeighbours { get { return AllNeighbours.Where(o => o.isPassable).ToList(); } }
     //public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
 
     public List<HexTile> sameTagNeighbours;
@@ -391,6 +392,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void SetTag(int tag) {
         this.tileTag = tag;
+    }
+    public bool CanBuildLandmarkHere() {
+        if (this.hasLandmark || !this.isPassable) {
+            return false;
+        }
+        if (this.PassableNeighbours.Where(x => x.hasLandmark).Any()) {
+            return false; //check if this tile has any neighbours that have landmarks
+        }
+        //if (this.region.outerTiles.Contains(this)) {
+        //    return false; //exclude outer tiles of region
+        //}
+        //if (!this.region.IsPartOfMainIsland(this)) {
+        //    return false;
+        //}
+        return true;
     }
     #endregion
 
@@ -1022,7 +1038,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        } 
+        }
         ShowHexTileInfo();
         //if (_landmarkOnTile != null) {
         //	if(_landmarkOnTile.owner != null) { //landmark is occupied

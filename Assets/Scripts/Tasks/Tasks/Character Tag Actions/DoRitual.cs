@@ -44,9 +44,9 @@ public class DoRitual : CharacterTask {
 	}
 
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.RITUAL_STONES){
-			return true;
-		}
+		//if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.RITUAL_STONES){
+		//	return true;
+		//}
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){

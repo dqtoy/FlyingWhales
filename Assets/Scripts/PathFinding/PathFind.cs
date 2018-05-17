@@ -83,14 +83,6 @@ namespace PathFind {
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
                             continue;
                         }
-                        //if (n.AllNeighbourRoadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR).Count() > 0 && n.id != start.id && n.id != destination.id) {
-                        //    //current node has adjacent roads, check if it is a neighbour of start or destination
-                        //    //if it is, allow the path
-                        //    //else skip this node
-                        //    if (!start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
-                        //        continue;
-                        //    }
-                        //}
 
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
@@ -138,18 +130,7 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
-                } 
-                //else if (pathfindingMode == PATHFINDING_MODE.AVATAR) {
-                //    foreach (Node n in path.LastStep.AvatarTiles) {
-                //        if (n.tileTag != start.tileTag) {
-                //            continue;
-                //        }
-                //        d = distance(path.LastStep, n);
-                //        newPath = path.AddStep(n, d);
-                //        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                //    }
-                //} 
-                else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP) {
+                } else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP) {
                     //if(data == null) {
                     //    throw new Exception("No faction data is provided for pathfinding!");
                     //}
@@ -200,6 +181,44 @@ namespace PathFind {
                         //if (n.tileTag != start.tileTag) {
                         //    continue;
                         //}
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else if (pathfindingMode == PATHFINDING_MODE.PASSABLE) {
+                    foreach (Node n in path.LastStep.PassableNeighbours) {
+                        //if (n.tileTag != start.tileTag) {
+                        //    continue;
+                        //}
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else if (pathfindingMode == PATHFINDING_MODE.PASSABLE_REGION_ONLY) {
+                    foreach (Node n in path.LastStep.PassableNeighbours) {
+                        if (data == null) {
+                            throw new Exception("There is no provided data!");
+                        } else if (data is Region) {
+                            if (n.region.id != (data as Region).id) {
+                                continue; //skip tiles that are not part of the region
+                            }
+                        }
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else if (pathfindingMode == PATHFINDING_MODE.REGION_ISLAND_CONNECTION) {
+                    foreach (Node n in path.LastStep.AllNeighbours) {
+                        if (data == null) {
+                            throw new Exception("There is no provided data!");
+                        } else if (data is Region) {
+                            if (n.region.id != (data as Region).id) {
+                                continue; //skip tiles that are not part of the region
+                            }
+                            if ((data as Region).outerTiles.Contains(n)) {
+                                continue; //skip tiles that are outer tiles of the region
+                            }
+                        }
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);

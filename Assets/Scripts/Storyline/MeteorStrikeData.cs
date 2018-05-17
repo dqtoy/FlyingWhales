@@ -25,9 +25,9 @@ public class MeteorStrikeData : StorylineData {
 		List<Region> targetRegions = new List<Region> ();
 		for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
 			Region currRegion = GridMap.Instance.allRegions [i];
-			if(currRegion.centerOfMass.landmarkOnTile != null && currRegion.centerOfMass.landmarkOnTile.owner != null && currRegion.centerOfMass.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CRATER){
-				targetRegions.Add (currRegion);
-			}
+			//if(currRegion.centerOfMass.landmarkOnTile != null && currRegion.centerOfMass.landmarkOnTile.owner != null && currRegion.centerOfMass.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CRATER){
+			//	targetRegions.Add (currRegion);
+			//}
 		}
 		if(targetRegions.Count <= 0){
 			return false;
@@ -49,7 +49,7 @@ public class MeteorStrikeData : StorylineData {
 		BaseLandmark landmark = chosenRegion.centerOfMass.landmarkOnTile;
 		Settlement settlement = landmark as Settlement;
 		settlement.tileLocation.RuinStructureOnTile (false);
-		settlement.ChangeLandmarkType (LANDMARK_TYPE.CRATER);
+		//settlement.ChangeLandmarkType (LANDMARK_TYPE.CRATER);
 
 		Log meteorCrashLog = new Log(GameManager.Instance.Today(), "Quests", "MeteorStrike", "meteor_crash");
 		meteorCrashLog.AddToFillers(landmark, landmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);

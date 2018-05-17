@@ -317,9 +317,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
         RACE civiliansRace = RACE.NONE;
-        if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-            civiliansRace = RACE.GOBLIN;
-        } else {
+        //if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+        //    civiliansRace = RACE.GOBLIN;
+        //} else {
             if (ownerOfRegion != null) {
                 civiliansRace = ownerOfRegion.race;
             } else {
@@ -328,7 +328,7 @@ public class BaseLandmark : ILocation, TaskCreator {
                     civiliansRace = RACE.ELVES;
                 }
             }
-        }
+        //}
         AdjustCivilians(civiliansRace, civilians);
     }
     public void AdjustCivilians(RACE race, int amount, Character culprit = null) {

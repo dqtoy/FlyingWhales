@@ -16,6 +16,7 @@ public class LandmarkData {
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
     public List<ObjectSpawnLandmark> initialObjects;
+    public List<PASSABLE_TYPE> possibleSpawnPoints;
 
     private WeightedDictionary<string> _itemWeights;
 

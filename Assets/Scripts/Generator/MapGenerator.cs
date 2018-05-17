@@ -73,15 +73,19 @@ public class MapGenerator : MonoBehaviour {
         //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
         //st.Stop();
 
-        //if (landmarkGenerationFailed) {
-        //    //reset
-        //    Debug.LogWarning("Landmark generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //} else {
-        //    Debug.Log(string.Format("Landmark Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        //}
+        
+        st.Start();
+        bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateFactionLandmarks();
+        st.Stop();
+        if (landmarkGenerationFailed) {
+            //reset
+            Debug.LogWarning("Landmark generation ran into a problem, reloading scene...");
+            Messenger.Cleanup();
+            ReloadScene();
+            return;
+        } else {
+            Debug.Log(string.Format("Landmark Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        }
 
         //st.Start();
         //bool roadGenerationFailed = !RoadManager.Instance.GenerateRoads();
