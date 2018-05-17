@@ -36,7 +36,7 @@ public class PathfindingManager : MonoBehaviour {
         mainGraph.nodeSize = 0.5f;
         mainGraph.collision.use2D = true;
         mainGraph.collision.type = ColliderType.Sphere;
-        mainGraph.collision.diameter = 1f;
+        mainGraph.collision.diameter = 0.8f;
         mainGraph.collision.mask = LayerMask.GetMask("Unpassable");
         RescanGrid();
     }

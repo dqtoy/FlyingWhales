@@ -54,32 +54,32 @@ public class Settlement : BaseLandmark {
     #region Overrides
     public override void Initialize (){
 		base.Initialize ();
-		if (_specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-            ////When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
-            //AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
-            GenerateGoblinCampTechnologies();
-        }
+		//if (_specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+  //          ////When spawned at the start of World Generation, a Goblin Camp also starts with a random number of civilians between 10 to 30 Goblins.
+  //          //AdjustCivilians(RACE.GOBLIN, Random.Range(10, 31));
+  //          GenerateGoblinCampTechnologies();
+  //      }
     }
 	public override void DestroyLandmark (bool putRuinStructure){
 		base.DestroyLandmark (putRuinStructure);
 		tileLocation.RuinStructureOnTile (!putRuinStructure);
-		if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
-			DestroyCrater ();
-		}
+		//if(_specificLandmarkType == LANDMARK_TYPE.CRATER){
+		//	DestroyCrater ();
+		//}
 	}
     public override void OccupyLandmark(Faction faction) {
         base.OccupyLandmark(faction);
         faction.AddSettlement(this);
-        if (specificLandmarkType == LANDMARK_TYPE.KINGS_CASTLE) {
-            //Create structures on location
-            //tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
-            //tileLocation.region.ReColorBorderTiles(faction.factionColor);
-            _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
-            tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
-            landmarkObject.UpdateName();
-            //tileLocation.emptyCityGO.SetActive(false);
-            //_producingPopulationFor = GetRaceBasedOnProportion();
-        }
+        //if (specificLandmarkType == LANDMARK_TYPE.KINGS_CASTLE) {
+        //    //Create structures on location
+        //    //tileLocation.region.HighlightRegionTiles(faction.factionColor, 69f / 255f);
+        //    //tileLocation.region.ReColorBorderTiles(faction.factionColor);
+        //    _landmarkName = RandomNameGenerator.Instance.GenerateCityName(faction.race);
+        //    tileLocation.CreateStructureOnTile(faction, STRUCTURE_TYPE.CITY);
+        //    landmarkObject.UpdateName();
+        //    //tileLocation.emptyCityGO.SetActive(false);
+        //    //_producingPopulationFor = GetRaceBasedOnProportion();
+        //}
     }
     public override void UnoccupyLandmark() {
         base.UnoccupyLandmark();
@@ -363,7 +363,7 @@ public class Settlement : BaseLandmark {
 		Messenger.RemoveListener ("Psytoxinated", ListenPsytoxinated);
 		Messenger.RemoveListener ("Unpsytoxinated", ListenUnpsytoxinated);
 		LandmarkManager.Instance.craterLandmark = null;
-		ChangeLandmarkType (LANDMARK_TYPE.TOWN);
+		//ChangeLandmarkType (LANDMARK_TYPE.TOWN);
 		Initialize ();
 	}
 	public void ListenPsytoxinated(){

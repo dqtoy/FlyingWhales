@@ -509,14 +509,14 @@ public class RoadManager : MonoBehaviour {
             }
 
             GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
-            if(roadGO != null) {
+            if (roadGO != null) {
                 currTile.SetTileAsRoad(true, roadType, roadGO);
                 if (currTile.roadType == ROAD_TYPE.MINOR) {
                     currTile.SetRoadColor(roadGO, Color.gray);
                     currTile.SetRoadState(false);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
                     currTile.SetRoadColor(roadGO, Color.white);
-                    currTile.SetRoadState(false); 
+                    currTile.SetRoadState(false);
                 }
             }
             currTile.SetPassableState(true);
@@ -653,6 +653,15 @@ public class RoadManager : MonoBehaviour {
         }
         bestPath = nearestPath;
         return nearestLandmark;
+    }
+
+    public void GenerateTilePassableTypes() {
+        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+            HexTile currTile = GridMap.Instance.hexTiles[i];
+            if (currTile.isPassable) {
+                currTile.DeterminePassableType();
+            }
+        }
     }
 }
 

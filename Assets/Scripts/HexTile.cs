@@ -55,7 +55,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
-    //[SerializeField] private SpriteRenderer _tileColorSprite;
     [SerializeField] private GameObject _highlightGO;
     [SerializeField] internal Transform UIParent;
     [SerializeField] private Transform resourceParent;
@@ -99,13 +98,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("Fog Of War Objects")]
     [SerializeField] private SpriteRenderer FOWSprite;
     [SerializeField] private SpriteRenderer minimapFOWSprite;
-    //[SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
 
     [Space(10)]
     [Header("Road Objects")]
     private List<GameObject> roadGOs = new List<GameObject>();
     [SerializeField] private List<HexRoads> roads;
     [SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
+
+    private PASSABLE_TYPE _passableType;
 
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
@@ -119,14 +119,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
-    public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
-    public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
+    //public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
+    //public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
     public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
     public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
     public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
-    public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
+    public List<HexTile> PassableNeighbours { get { return AllNeighbours.Where(o => o.isPassable).ToList(); } }
+    //public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
 
     public List<HexTile> sameTagNeighbours;
 
@@ -148,9 +149,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject centerPiece {
         get { return this._centerPiece; }
     }
-    //public SpriteRenderer kingdomColorSprite {
-    //    get { return this._tileColorSprite; }
-    //}
     public GameObject highlightGO {
         get { return this._highlightGO; }
     }
@@ -199,6 +197,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool isCorrupted {
         get { return _isCorrupted; }
+    }
+    public PASSABLE_TYPE passableType {
+        get { return _passableType; }
     }
     public bool canBeCorrupted {
         get { return _canBeCorrupted; }
@@ -422,6 +423,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetTag(int tag) {
         this.tileTag = tag;
     }
+    public bool CanBuildLandmarkHere() {
+        if (this.hasLandmark || !this.isPassable) {
+            return false;
+        }
+        if (this.PassableNeighbours.Where(x => x.hasLandmark).Any()) {
+            return false; //check if this tile has any neighbours that have landmarks
+        }
+        //if (this.region.outerTiles.Contains(this)) {
+        //    return false; //exclude outer tiles of region
+        //}
+        //if (!this.region.IsPartOfMainIsland(this)) {
+        //    return false;
+        //}
+        return true;
+    }
     #endregion
 
     #region Pathfinding
@@ -609,26 +625,36 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     internal void UpdateSortingOrder() {
         int sortingOrder = spriteRenderer.sortingOrder;
-        if (elevationType == ELEVATION.MOUNTAIN) {
-            centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
-        } else {
-            centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
+        //if (elevationType == ELEVATION.MOUNTAIN) {
+        //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
+        //} else {
+        //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
+        //}
+        int centerPieceSortingOrder = (int)GridMap.Instance.height - yCoordinate;
+        //SpriteRenderer mainRenderer = centerPiece.GetComponent<SpriteRenderer>();
+        //mainRenderer.sortingOrder = centerPieceSortingOrder;
+        SpriteRenderer[] children = centerPiece.GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < children.Length; i++) {
+            SpriteRenderer currRenderer = children[i];
+            //if (currRenderer != mainRenderer) {
+                currRenderer.sortingOrder = centerPieceSortingOrder;
+            //}
         }
 
-        SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
-        for (int i = 0; i < resourcesSprites.Length; i++) {
-            resourcesSprites[i].sortingOrder = sortingOrder + 57;
-        }
+        //SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
+        //for (int i = 0; i < resourcesSprites.Length; i++) {
+        //    resourcesSprites[i].sortingOrder = sortingOrder + 57;
+        //}
 
         //kingdomColorSprite.spriteRenderer.sortingOrder = sortingOrder + 3;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
 
-        topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        //topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction) {
         switch (direction) {
@@ -963,22 +989,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Passability
-    //public void LoadPassableObject() {
-    //    GameObject impassablePrefab = 
-    //    GameObject impassableGO = GameObject.Instantiate(Biomes.Instance.)
-    //}
     public void SetPassableState(bool state) {
         _isPassable = state;
         _centerPiece.SetActive(!state);
         unpassableGO.SetActive(!state);
-        //UpdatePassableVisuals();
-    }
-    private void UpdatePassableVisuals() {
-        //SetCenterSprite(Biomes.Instance.GetCenterPieceSprite(this));
-        if (!_isPassable) {
-            
+        if (!state) {
+            _passableType = PASSABLE_TYPE.UNPASSABLE;
         }
-        
+        //UpdatePassableVisuals();
     }
     public void SetPassableObject(object obj) {
         if (obj == null) {
@@ -991,8 +1009,55 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             GameObject centerObj = GameObject.Instantiate(obj as Object, centerPiece.transform) as GameObject;
             centerObj.transform.localPosition = Vector3.zero;
             centerObj.transform.localScale = Vector3.one;
+            SpriteRenderer[] children = centerObj.GetComponentsInChildren<SpriteRenderer>();
+            for (int i = 0; i < children.Length; i++) {
+                SpriteRenderer currChild = children[i];
+                currChild.sortingLayerName = "TileDetails";
+            }
             SetCenterSprite(null);
         }
+    }
+    public void DeterminePassableType() {
+        _passableType = GetPassableType();
+    }
+    public PASSABLE_TYPE GetPassableType() {
+        PassableTileData data = GetPassableTileData();
+        if (data.adjacentTiles.Count == 2 
+            || (data.adjacentTiles.Count == 1 && data.adjacentTiles[0].tiles.Count <= 2 && data.unadjacentTiles.Count == 1)) {
+            //minor bottleneck (connected to 2 unadjacent pairs of either 1 or 2 adjacent passable tiles)
+            return PASSABLE_TYPE.MINOR_BOTTLENECK;
+        } else if (data.unadjacentTiles.Count == 2) {
+            //major bottleneck (connected to 2 unadjacent passable tiles)
+            return PASSABLE_TYPE.MAJOR_BOTTLENECK;
+        } else if (data.IsDeadEnd()) {
+            if (data.HasNumberOfUnadjacentTiles(1) || data.HasNumberOfAdjacentTiles(2)) {
+                return PASSABLE_TYPE.MAJOR_DEADEND;
+            } else if (data.HasNumberOfAdjacentTiles(3)) {
+                return PASSABLE_TYPE.MINOR_DEADEND;
+            }
+            throw new System.Exception("Cannot Get Dead End Type!");
+        }  else if (data.unadjacentTiles.Count == 3) {
+            //crossroad (connected to 3 unadjacent passable tiles)
+            return PASSABLE_TYPE.CROSSROAD;
+        } else if (data.TotalPassableNeighbours(this) >= 4) {
+            //wide open (connected to 4o to 6 passable tiles)
+            return PASSABLE_TYPE.WIDE_OPEN;
+        } else {
+            //open (the rest)
+            return PASSABLE_TYPE.OPEN;
+        }
+    }
+    private PassableTileData GetPassableTileData() {
+        return new PassableTileData(this);
+    }
+    public bool IsBottleneck() {
+        return _passableType == PASSABLE_TYPE.MAJOR_BOTTLENECK || _passableType == PASSABLE_TYPE.MINOR_BOTTLENECK;
+    }
+    public bool IsDeadEnd() {
+        return _passableType == PASSABLE_TYPE.MAJOR_DEADEND || _passableType == PASSABLE_TYPE.MINOR_DEADEND;
+    }
+    public bool IsBorderTileOfRegion() {
+        return region.outerTiles.Contains(this);
     }
     #endregion
 
@@ -1003,18 +1068,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        } 
-        //else {
-        //    ShowHexTileInfo();
-        //}
-		//if (_landmarkOnTile != null) {
-		//	if(_landmarkOnTile.owner != null) { //landmark is occupied
-		//		if (isHabitable) {
-		//			this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
-		//		}
-		//	}
-		//} 
-		if(Input.GetMouseButtonDown(0)){
+        }
+        ShowHexTileInfo();
+        //if (_landmarkOnTile != null) {
+        //	if(_landmarkOnTile.owner != null) { //landmark is occupied
+        //		if (isHabitable) {
+        //			this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
+        //		}
+        //	}
+        //} 
+        if (Input.GetMouseButtonDown(0)){
 			LeftClick ();
 		}else if(Input.GetMouseButtonDown(1)){
 			RightClick ();
@@ -1145,19 +1208,61 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         Debug.Log(text);
     }
     private void ShowHexTileInfo() {
-        if (_charactersAtLocation.Count > 0) {
-            string text = string.Empty;
-            text += "Characters in tile: ";
-            for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currObj = _charactersAtLocation[i];
-                if (currObj is Party) {
-                    text += "\n" + ((Party)currObj).name;
-                } else if (currObj is Character) {
-                    text += "\n" + ((Character)currObj).name;
-                }
-            }
-            UIManager.Instance.ShowSmallInfo(text);
-        }
+        //if (_charactersAtLocation.Count > 0) {
+        //    string text = string.Empty;
+        //    text += "Characters in tile: ";
+        //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //        ICombatInitializer currObj = _charactersAtLocation[i];
+        //        if (currObj is Party) {
+        //            text += "\n" + ((Party)currObj).name;
+        //        } else if (currObj is Character) {
+        //            text += "\n" + ((Character)currObj).name;
+        //        }
+        //    }
+        //    UIManager.Instance.ShowSmallInfo(text);
+        //}
+        //PassableTileData data = GetPassableTileData();
+        //string text = this.name + " Adjacent Tile Collections: ";
+        //for (int i = 0; i < data.adjacentTiles.Count; i++) {
+        //    TileCollection currCollection = data.adjacentTiles[i];
+        //    text += "\n " + i.ToString() + " - ";
+        //    for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //        text += currCollection.tiles[j].name + "/";
+        //    }
+        //}
+        //text += "\n" + this.name + " Unadjacent Tile Collections: ";
+        //for (int i = 0; i < data.unadjacentTiles.Count; i++) {
+        //    TileCollection currCollection = data.unadjacentTiles[i];
+        //    text += "\n " + i.ToString() + " - ";
+        //    for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //        text += currCollection.tiles[j].name + "/";
+        //    }
+        //}
+        //PassableTileData data = GetPassableTileData();
+        //string text = this.tileName + " - " + GetPassableType().ToString();
+        //if (data.adjacentTiles.Count > 0) {
+        //    text += "\n Adjacent Data: ";
+        //    for (int i = 0; i < data.adjacentTiles.Count; i++) {
+        //        TileCollection currCollection = data.adjacentTiles[i];
+        //        text += "\n Collection " + i.ToString() + ": ";
+        //        for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //            HexTile currTile = currCollection.tiles[j];
+        //            text += "\n- " + currTile.tileName;
+        //        }
+        //    }
+        //}
+        //if (data.unadjacentTiles.Count > 0) {
+        //    text += "\n Unadjacent Data: ";
+        //    for (int i = 0; i < data.unadjacentTiles.Count; i++) {
+        //        TileCollection currCollection = data.unadjacentTiles[i];
+        //        text += "\n Collection " + i.ToString() + ": ";
+        //        for (int j = 0; j < currCollection.tiles.Count; j++) {
+        //            HexTile currTile = currCollection.tiles[j];
+        //            text += "\n- " + currTile.tileName;
+        //        }
+        //    }
+        //}
+        UIManager.Instance.ShowSmallInfo(this.tileName + " - " + _passableType.ToString());
     }
     private void ShowLandmarkInfo() {
         string text = string.Empty;

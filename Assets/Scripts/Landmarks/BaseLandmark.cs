@@ -153,7 +153,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _charactersAtLocation = new List<ICombatInitializer>();
 		_itemsInLandmark = new List<Item> ();
 		_characterTraces = new Dictionary<Character, GameDate> ();
-        _totalDurability = landmarkData.durability;
+        _totalDurability = landmarkData.hitPoints;
 		_currDurability = _totalDurability;
         _objects = new List<IObject>();
         _nextCorruptedTilesToCheck = new List<HexTile>();
@@ -349,9 +349,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
         RACE civiliansRace = RACE.NONE;
-        if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-            civiliansRace = RACE.GOBLIN;
-        } else {
+        //if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+        //    civiliansRace = RACE.GOBLIN;
+        //} else {
             if (ownerOfRegion != null) {
                 civiliansRace = ownerOfRegion.race;
             } else {
@@ -360,7 +360,7 @@ public class BaseLandmark : ILocation, TaskCreator {
                     civiliansRace = RACE.ELVES;
                 }
             }
-        }
+        //}
         AdjustCivilians(civiliansRace, civilians);
     }
     public void AdjustCivilians(RACE race, int amount, Character culprit = null) {
