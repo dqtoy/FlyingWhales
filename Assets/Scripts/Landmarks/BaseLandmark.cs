@@ -152,7 +152,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _charactersAtLocation = new List<ICombatInitializer>();
 		_itemsInLandmark = new List<Item> ();
 		_characterTraces = new Dictionary<Character, GameDate> ();
-        _totalDurability = landmarkData.durability;
+        _totalDurability = landmarkData.hitPoints;
 		_currDurability = _totalDurability;
         _objects = new List<IObject>();
         _nextCorruptedTilesToCheck = new Queue<HexTile>();

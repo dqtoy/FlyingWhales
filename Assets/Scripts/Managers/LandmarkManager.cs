@@ -296,7 +296,7 @@ public class LandmarkManager : MonoBehaviour {
             for (int i = 0; i < kvp.Value; i++) {
                 List<HexTile> tilesToChooseFrom = elligibleTiles.Where(x => data.possibleSpawnPoints.Contains(x.passableType)).ToList();
                 if (tilesToChooseFrom.Count <= 0) {
-                    Debug.LogError("There are no more tiles in " + tribeRegion.name + " to build a " + landmarkType.ToString(), tribeRegion.centerOfMass);
+                    //Debug.LogError("There are no more tiles in " + tribeRegion.name + " to build a " + landmarkType.ToString(), tribeRegion.centerOfMass);
                     return false;
                 }
                 HexTile chosenTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
@@ -327,20 +327,20 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    private WeightedDictionary<LANDMARK_TYPE> GetLandmarkAppearanceWeights(Region region) {
-        WeightedDictionary<LANDMARK_TYPE> landmarkAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
-        for (int i = 0; i < landmarkData.Count; i++) {
-            LandmarkData currData = landmarkData[i];
-            if (currData.onOccupiedOnly && !region.isOwned) {
-                continue; //skip
-            }
-            if (currData.isUnique && HasLandmarkOfType(currData.landmarkType)) {
-                continue; //skip
-            }
-            landmarkAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
-        }
-        return landmarkAppearanceWeights;
-    }
+    //private WeightedDictionary<LANDMARK_TYPE> GetLandmarkAppearanceWeights(Region region) {
+    //    WeightedDictionary<LANDMARK_TYPE> landmarkAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
+    //    for (int i = 0; i < landmarkData.Count; i++) {
+    //        LandmarkData currData = landmarkData[i];
+    //        if (currData.onOccupiedOnly && !region.isOwned) {
+    //            continue; //skip
+    //        }
+    //        if (currData.isUnique && HasLandmarkOfType(currData.landmarkType)) {
+    //            continue; //skip
+    //        }
+    //        //landmarkAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
+    //    }
+    //    return landmarkAppearanceWeights;
+    //}
     public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
