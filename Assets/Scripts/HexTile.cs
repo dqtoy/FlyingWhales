@@ -134,6 +134,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private bool _hasScheduledCombatCheck = false;
 
     private Dictionary<BaseLandmark, string> _landmarkDirection = new Dictionary<BaseLandmark, string>();
+    public BaseLandmark landmarkNeighbor = null;
 
     #region getters/setters
     public string locationName {
@@ -1661,13 +1662,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     public bool CanThisTileBeCorrupted() {
-        if(_landmarkDirection.Count > 0) {
-            foreach (BaseLandmark landmark in _landmarkDirection.Keys) {
-                if (landmark.IsDirectionBlocked(_landmarkDirection[landmark])) {
-                    return false;
-                }
-            }
+        if(landmarkNeighbor != null && (!landmarkNeighbor.tileLocation.isCorrupted || !landmarkNeighbor.tileLocation.canBeCorrupted)) {
+            return false;
         }
+        //if(_landmarkDirection.Count > 0) {
+        //    foreach (BaseLandmark landmark in _landmarkDirection.Keys) {
+        //        if (landmark.IsDirectionBlocked(_landmarkDirection[landmark])) {
+        //            return false;
+        //        }
+        //    }
+        //}
         return true;
     }
     public void SetCanBeCorrupted(bool state) {
