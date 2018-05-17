@@ -410,21 +410,21 @@ public class Region : IHasNeighbours<Region> {
     #endregion
 
     #region Corruption
-    public void LandmarkStartedCorruption(BaseLandmark corruptedLandmark) {
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark landmark = landmarks[i];
-            if(corruptedLandmark.id != landmark.id && !landmark.tileLocation.isCorrupted) {
-                landmark.ALandmarkHasStartedCorruption(corruptedLandmark);
-            }
-        }
-    }
-    public void LandmarkStoppedCorruption(BaseLandmark corruptedLandmark) {
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark landmark = landmarks[i];
-            if (corruptedLandmark.id != landmark.id && !landmark.tileLocation.isCorrupted) {
-                landmark.ALandmarkHasStoppedCorruption(corruptedLandmark);
-            }
-        }
-    }
+    //public void LandmarkStartedCorruption(BaseLandmark corruptedLandmark) {
+    //    for (int i = 0; i < landmarks.Count; i++) {
+    //        BaseLandmark landmark = landmarks[i];
+    //        if(corruptedLandmark.id != landmark.id && !landmark.tileLocation.isCorrupted) {
+    //            landmark.ALandmarkHasStartedCorruption(corruptedLandmark);
+    //        }
+    //    }
+    //}
+    //public void LandmarkStoppedCorruption(BaseLandmark corruptedLandmark) {
+    //    for (int i = 0; i < landmarks.Count; i++) {
+    //        BaseLandmark landmark = landmarks[i];
+    //        if (corruptedLandmark.id != landmark.id && !landmark.tileLocation.isCorrupted) {
+    //            landmark.ALandmarkHasStoppedCorruption(corruptedLandmark);
+    //        }
+    //    }
+    //}
     #endregion
 }

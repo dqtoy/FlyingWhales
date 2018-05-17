@@ -35,11 +35,12 @@ public class LandmarkManager : MonoBehaviour {
         newLandmark.GenerateDiagonalLeftTiles();
         newLandmark.GenerateDiagonalRightTiles();
         newLandmark.GenerateHorizontalTiles();
-        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
-        //    location.AllNeighbours[i].landmarkNeighbor = newLandmark;
-        //}
+        newLandmark.GenerateWallTiles();
+        for (int i = 0; i < location.AllNeighbours.Count; i++) {
+            location.AllNeighbours[i].SetCanBeCorrupted(false);
+        }
         //ConstructLandmarkObjects(landmarkData, newLandmark);
-//		AddInitialLandmarkItems (newLandmark);
+        //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
     public void ConstructAllLandmarkObjects() {

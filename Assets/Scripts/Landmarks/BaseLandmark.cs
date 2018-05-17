@@ -38,15 +38,16 @@ public class BaseLandmark : ILocation, TaskCreator {
     private bool _hasScheduledCombatCheck = false;
     private Dictionary<RESOURCE, int> _resourceInventory;
     private HexTile _currentCorruptedTileToCheck;
-    private Queue<HexTile> _nextCorruptedTilesToCheck;
+    private List<HexTile> _nextCorruptedTilesToCheck;
     private bool _hasBeenCorrupted;
-    //private List<HexTile> _diagonalRightTiles;
-    //private List<HexTile> _diagonalLeftTiles;
-    //private List<HexTile> _horizontalTiles;
-    private int _diagonalLeftBlocked;
-    private int _diagonalRightBlocked;
-    private int _horizontalBlocked;
-    private Dictionary<BaseLandmark, string> _blockedLandmarkDirection;
+    private List<HexTile> _diagonalRightTiles;
+    private List<HexTile> _diagonalLeftTiles;
+    private List<HexTile> _horizontalTiles;
+    private List<HexTile> _wallTiles;
+    //private int _diagonalLeftBlocked;
+    //private int _diagonalRightBlocked;
+    //private int _horizontalBlocked;
+    //private Dictionary<BaseLandmark, string> _blockedLandmarkDirection;
 
     #region getters/setters
     public int id {
@@ -124,15 +125,15 @@ public class BaseLandmark : ILocation, TaskCreator {
     public List<IObject> objects {
         get { return _objects; }
     }
-    public int diagonalLeftBlocked {
-        get { return _diagonalLeftBlocked; }
-    }
-    public int diagonalRightBlocked {
-        get { return _diagonalRightBlocked; }
-    }
-    public int horizontalBlocked {
-        get { return _horizontalBlocked; }
-    }
+    //public int diagonalLeftBlocked {
+    //    get { return _diagonalLeftBlocked; }
+    //}
+    //public int diagonalRightBlocked {
+    //    get { return _diagonalRightBlocked; }
+    //}
+    //public int horizontalBlocked {
+    //    get { return _horizontalBlocked; }
+    //}
     #endregion
 
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
@@ -155,15 +156,19 @@ public class BaseLandmark : ILocation, TaskCreator {
         _totalDurability = landmarkData.durability;
 		_currDurability = _totalDurability;
         _objects = new List<IObject>();
-        _nextCorruptedTilesToCheck = new Queue<HexTile>();
+        _nextCorruptedTilesToCheck = new List<HexTile>();
         _hasBeenCorrupted = false;
-        //_diagonalLeftTiles = new List<HexTile>();
-        //_diagonalRightTiles = new List<HexTile>();
-        //_horizontalTiles = new List<HexTile>();
-        _diagonalLeftBlocked = 0;
-        _diagonalRightBlocked = 0;
-        _horizontalBlocked = 0;
-        _blockedLandmarkDirection = new Dictionary<BaseLandmark, string>();
+        _diagonalLeftTiles = new List<HexTile>();
+        _diagonalRightTiles = new List<HexTile>();
+        _horizontalTiles = new List<HexTile>();
+        _wallTiles = new List<HexTile>();
+        //_diagonalLeftBlocked = 0;
+        //_diagonalRightBlocked = 0;
+        //_horizontalBlocked = 0;
+        //_blockedLandmarkDirection = new Dictionary<BaseLandmark, string>();
+        Messenger.AddListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
+        //Messenger.AddListener<BaseLandmark>("StopCorruption", ALandmarkHasStoppedCorruption);
+
         //TODO: Add Landmark invisible object to advertise move to action
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
@@ -1123,24 +1128,32 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (state) {
             if (!_hasBeenCorrupted) {
                 _hasBeenCorrupted = true;
-                _nextCorruptedTilesToCheck.Enqueue(tileLocation);
+                _nextCorruptedTilesToCheck.Add(tileLocation);
             }
-            _diagonalLeftBlocked = 0;
-            _diagonalRightBlocked = 0;
-            _horizontalBlocked = 0;
-            tileLocation.region.LandmarkStartedCorruption(this);
+            //_diagonalLeftBlocked = 0;
+            //_diagonalRightBlocked = 0;
+            //_horizontalBlocked = 0;
+            //tileLocation.region.LandmarkStartedCorruption(this);
+            PutWallDown();
             Messenger.AddListener(Signals.DAY_END, DoCorruption);
+            Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
+            if (Messenger.eventTable.ContainsKey("StartCorruption")) {
+                Messenger.Broadcast<BaseLandmark>("StartCorruption", this);
+            }
         } else {
             StopSpreadCorruption();
         }
     }
     private void StopSpreadCorruption() {
-        tileLocation.region.LandmarkStoppedCorruption(this);
+        //tileLocation.region.LandmarkStoppedCorruption(this);
         Messenger.RemoveListener(Signals.DAY_END, DoCorruption);
+        //Messenger.Broadcast<BaseLandmark>("StopCorruption", this);
     }
     private void DoCorruption() {
         if(_nextCorruptedTilesToCheck.Count > 0) {
-            _currentCorruptedTileToCheck = _nextCorruptedTilesToCheck.Dequeue();
+            int index = UnityEngine.Random.Range(0, _nextCorruptedTilesToCheck.Count);
+            _currentCorruptedTileToCheck = _nextCorruptedTilesToCheck[index];
+            _nextCorruptedTilesToCheck.RemoveAt(index);
             SpreadCorruption(_currentCorruptedTileToCheck);
         } else {
             StopSpreadCorruption();
@@ -1153,9 +1166,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         for (int i = 0; i < originTile.AllNeighbours.Count; i++) {
             HexTile neighbor = originTile.AllNeighbours[i];
             if (neighbor.canBeCorrupted) {
-                if (!neighbor.isCorrupted && neighbor.region.id == originTile.region.id && neighbor.CanThisTileBeCorrupted()) {
+                if (!neighbor.isCorrupted) { //neighbor.region.id == originTile.region.id && neighbor.CanThisTileBeCorrupted()
                     neighbor.SetCorruption(true);
-                    _nextCorruptedTilesToCheck.Enqueue(neighbor);
+                    _nextCorruptedTilesToCheck.Add(neighbor);
                 }
                 //if(neighbor.landmarkNeighbor != null && !neighbor.landmarkNeighbor.tileLocation.isCorrupted) {
                 //    neighbor.landmarkNeighbor.CreateWall();
@@ -1167,136 +1180,177 @@ public class BaseLandmark : ILocation, TaskCreator {
             //}
         }
     }
-    public void AdjustDiagonalLeftBlocked(int amount) {
-        _diagonalLeftBlocked += amount;
-        if(_diagonalLeftBlocked < 0) {
-            _diagonalLeftBlocked = 0;
-        }
-    }
-    public void AdjustDiagonalRightBlocked(int amount) {
-        _diagonalRightBlocked += amount;
-        if (_diagonalRightBlocked < 0) {
-            _diagonalRightBlocked = 0;
-        }
-    }
-    public void AdjustHorizontalBlocked(int amount) {
-        _horizontalBlocked += amount;
-        if (_horizontalBlocked < 0) {
-            _horizontalBlocked = 0;
-        }
-    }
-    public void AdjustDirectionBlocked(string direction, int amount) {
-        if(direction == "diagonalleft") {
-            AdjustDiagonalLeftBlocked(amount);
-        }else if (direction == "diagonalright") {
-            AdjustDiagonalRightBlocked(amount);
-        }else if (direction == "horizontal") {
-            AdjustHorizontalBlocked(amount);
-        }
-    }
+    //public void AdjustDiagonalLeftBlocked(int amount) {
+    //    _diagonalLeftBlocked += amount;
+    //    if(_diagonalLeftBlocked < 0) {
+    //        _diagonalLeftBlocked = 0;
+    //    }
+    //}
+    //public void AdjustDiagonalRightBlocked(int amount) {
+    //    _diagonalRightBlocked += amount;
+    //    if (_diagonalRightBlocked < 0) {
+    //        _diagonalRightBlocked = 0;
+    //    }
+    //}
+    //public void AdjustHorizontalBlocked(int amount) {
+    //    _horizontalBlocked += amount;
+    //    if (_horizontalBlocked < 0) {
+    //        _horizontalBlocked = 0;
+    //    }
+    //}
+    //public void AdjustDirectionBlocked(string direction, int amount) {
+    //    if(direction == "diagonalleft") {
+    //        AdjustDiagonalLeftBlocked(amount);
+    //    }else if (direction == "diagonalright") {
+    //        AdjustDiagonalRightBlocked(amount);
+    //    }else if (direction == "horizontal") {
+    //        AdjustHorizontalBlocked(amount);
+    //    }
+    //}
     public void ALandmarkHasStartedCorruption(BaseLandmark corruptedLandmark) {
+        Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
+
         int corruptedX = corruptedLandmark.tileLocation.xCoordinate;
         int corruptedY = corruptedLandmark.tileLocation.yCoordinate;
 
         string direction = "horizontal";
         //if same column, the wall is automatically horizontal, if not, enter here
-        int chance = UnityEngine.Random.Range(0, 2);
         if (tileLocation.xCoordinate != corruptedX) {
-            if (tileLocation.xCoordinate < corruptedX) {
-                if(tileLocation.yCoordinate == corruptedY) {
-                    if(_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-                        direction = "diagonalright";
-                    }else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-                        direction = "diagonalleft";
-                    } else {
-                        if (chance == 0) {
-                            direction = "diagonalleft";
-                        } else {
-                            direction = "diagonalright";
-                        }
-                    }
-                } else {
-                    if(tileLocation.yCoordinate < corruptedY) {
-                        if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
-                            direction = "diagonalleft";
-                        } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
-                            direction = "horizontal";
-                        } else {
-                            if (chance == 0) {
-                                direction = "diagonalleft";
-                            }
-                        }
-                    } else {
-                        if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
-                            direction = "diagonalright";
-                        } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
-                            direction = "horizontal";
-                        } else {
-                            if (chance == 0) {
-                                direction = "diagonalright";
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (tileLocation.yCoordinate == corruptedY) {
-                    if (_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-                        direction = "diagonalright";
-                    } else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-                        direction = "diagonalleft";
-                    } else {
-                        if (chance == 0) {
-                            direction = "diagonalleft";
-                        } else {
-                            direction = "diagonalright";
-                        }
-                    }
-                } else {
-                    if (tileLocation.yCoordinate < corruptedY) {
-                        if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
-                            direction = "diagonalright";
-                        } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
-                            direction = "horizontal";
-                        } else {
-                            if (chance == 0) {
-                                direction = "diagonalright";
-                            }
-                        }
-                    } else {
-                        if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
-                            direction = "diagonalleft";
-                        } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
-                            direction = "horizontal";
-                        } else {
-                            if (chance == 0) {
-                                direction = "diagonalleft";
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            if (_horizontalBlocked > 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-                direction = "diagonalright";
-            } else if (_horizontalBlocked > 0 && _diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-                direction = "diagonalleft";
-            } else if (_horizontalBlocked <= 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked > 0) {
-                direction = "horizontal";
-            } else {
+            if (tileLocation.yCoordinate == corruptedY) {
+                int chance = UnityEngine.Random.Range(0, 2);
                 if (chance == 0) {
                     direction = "diagonalleft";
                 } else {
                     direction = "diagonalright";
                 }
+            } else if (tileLocation.yCoordinate < corruptedY) {
+                if (tileLocation.xCoordinate < corruptedX) {
+                    direction = "diagonalleft";
+                } else {
+                    direction = "diagonalright";
+                }
+            } else {
+                if (tileLocation.xCoordinate < corruptedX) {
+                    direction = "diagonalright";
+                } else {
+                    direction = "diagonalleft";
+                }
             }
         }
-        AdjustDirectionBlocked(direction, 1);
-        _blockedLandmarkDirection.Add(corruptedLandmark, direction);
+        PutWallUp(direction);
+        // if (tileLocation.xCoordinate != corruptedX) {
+        //    if (tileLocation.xCoordinate < corruptedX) {
+        //        if(tileLocation.yCoordinate == corruptedY) {
+        //            if(_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
+        //                direction = "diagonalright";
+        //            }else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
+        //                direction = "diagonalleft";
+        //            } else {
+        //                if (chance == 0) {
+        //                    direction = "diagonalleft";
+        //                } else {
+        //                    direction = "diagonalright";
+        //                }
+        //            }
+        //        } else {
+        //            if(tileLocation.yCoordinate < corruptedY) {
+        //                if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
+        //                    direction = "diagonalleft";
+        //                } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
+        //                    direction = "horizontal";
+        //                } else {
+        //                    if (chance == 0) {
+        //                        direction = "diagonalleft";
+        //                    }
+        //                }
+        //            } else {
+        //                if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
+        //                    direction = "diagonalright";
+        //                } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
+        //                    direction = "horizontal";
+        //                } else {
+        //                    if (chance == 0) {
+        //                        direction = "diagonalright";
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    } else {
+        //        if (tileLocation.yCoordinate == corruptedY) {
+        //            if (_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
+        //                direction = "diagonalright";
+        //            } else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
+        //                direction = "diagonalleft";
+        //            } else {
+        //                if (chance == 0) {
+        //                    direction = "diagonalleft";
+        //                } else {
+        //                    direction = "diagonalright";
+        //                }
+        //            }
+        //        } else {
+        //            if (tileLocation.yCoordinate < corruptedY) {
+        //                if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
+        //                    direction = "diagonalright";
+        //                } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
+        //                    direction = "horizontal";
+        //                } else {
+        //                    if (chance == 0) {
+        //                        direction = "diagonalright";
+        //                    }
+        //                }
+        //            } else {
+        //                if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
+        //                    direction = "diagonalleft";
+        //                } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
+        //                    direction = "horizontal";
+        //                } else {
+        //                    if (chance == 0) {
+        //                        direction = "diagonalleft";
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //} else {
+        //    if (_horizontalBlocked > 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
+        //        direction = "diagonalright";
+        //    } else if (_horizontalBlocked > 0 && _diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
+        //        direction = "diagonalleft";
+        //    } else if (_horizontalBlocked <= 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked > 0) {
+        //        direction = "horizontal";
+        //    } else {
+        //        if (chance == 0) {
+        //            direction = "diagonalleft";
+        //        } else {
+        //            direction = "diagonalright";
+        //        }
+        //    }
+        //}
+        //AdjustDirectionBlocked(direction, 1);
+        //_blockedLandmarkDirection.Add(corruptedLandmark, direction);
     }
-    public void ALandmarkHasStoppedCorruption(BaseLandmark corruptedLandmark) {
-        string direction = _blockedLandmarkDirection[corruptedLandmark];
-        AdjustDirectionBlocked(direction, -1);
-        _blockedLandmarkDirection.Remove(corruptedLandmark);
+    //public void ALandmarkHasStoppedCorruption(BaseLandmark corruptedLandmark) {
+    //    string direction = _blockedLandmarkDirection[corruptedLandmark];
+    //    AdjustDirectionBlocked(direction, -1);
+    //    _blockedLandmarkDirection.Remove(corruptedLandmark);
+    //}
+
+    private void PutWallUp(string direction) {
+        List<HexTile> wallTiles = _horizontalTiles;
+        if(direction == "diagonalleft") {
+            wallTiles = _diagonalLeftTiles;
+        } else if (direction == "diagonalright") {
+            wallTiles = _diagonalRightTiles;
+        }
+        for (int i = 0; i < wallTiles.Count; i++) {
+            wallTiles[i].SetCanBeCorrupted(false);
+        }
+    }
+    private void PutWallDown() {
+        for (int i = 0; i < _wallTiles.Count; i++) {
+            _wallTiles[i].SetCanBeCorrupted(true);
+        }
     }
     #endregion
 
@@ -1313,36 +1367,45 @@ public class BaseLandmark : ILocation, TaskCreator {
         AddTileRecursivelyByDirection(HEXTILE_DIRECTION.EAST, tileLocation);
         AddTileRecursivelyByDirection(HEXTILE_DIRECTION.WEST, tileLocation);
     }
+    public void GenerateWallTiles() {
+        _wallTiles.AddRange(_diagonalLeftTiles);
+        _wallTiles.AddRange(_diagonalRightTiles);
+        _wallTiles.AddRange(_horizontalTiles);
+        _wallTiles.AddRange(tileLocation.AllNeighbours);
+    }
     private void AddTileRecursivelyByDirection(HEXTILE_DIRECTION direction, HexTile originTile) {
         if (originTile.tileLocation.neighbourDirections.ContainsKey(direction)) {
-            HexTile directionTile = originTile.tileLocation.neighbourDirections[direction];
-            if(directionTile.region.id == originTile.region.id && directionTile.landmarkOnTile == null) {
-                string strDirection = "diagonalleft";
+            if (!originTile.tileLocation.neighbourDirections[direction].neighbourDirections.ContainsKey(direction)) {
+                return;
+            }
+            HexTile directionTile = originTile.tileLocation.neighbourDirections[direction].neighbourDirections[direction];
+            if(directionTile.landmarkOnTile == null) { //directionTile.region.id == originTile.region.id
+                //string strDirection = "diagonalleft";
                 if (direction == HEXTILE_DIRECTION.NORTH_WEST || direction == HEXTILE_DIRECTION.SOUTH_EAST) {
-                    //_diagonalLeftTiles.Add(directionTile);
-                }else if (direction == HEXTILE_DIRECTION.NORTH_EAST || direction == HEXTILE_DIRECTION.SOUTH_WEST) {
-                    //_diagonalRightTiles.Add(directionTile);
-                    strDirection = "diagonalright";
+                    _diagonalLeftTiles.Add(directionTile);
+                } else if (direction == HEXTILE_DIRECTION.NORTH_EAST || direction == HEXTILE_DIRECTION.SOUTH_WEST) {
+                    _diagonalRightTiles.Add(directionTile);
+                    //strDirection = "diagonalright";
                 } else if (direction == HEXTILE_DIRECTION.EAST || direction == HEXTILE_DIRECTION.WEST) {
-                    //_horizontalTiles.Add(directionTile);
-                    strDirection = "horizontal";
+                    _horizontalTiles.Add(directionTile);
+                    //strDirection = "horizontal";
                 }
-                directionTile.landmarkDirection.Add(this, strDirection);
-                AddTileRecursivelyByDirection(direction, directionTile);
+                //directionTile.landmarkDirection.Add(this, strDirection);
+                //AddTileRecursivelyByDirection(direction, directionTile);
             }
         }
     }
-    public bool IsDirectionBlocked(string direction) {
-        if (!tileLocation.isCorrupted) {
-            if(direction == "diagonalleft") {
-                return _diagonalLeftBlocked > 0;
-            }else if (direction == "diagonalright") {
-                return _diagonalRightBlocked > 0;
-            } else if (direction == "horizontal") {
-                return _horizontalBlocked > 0;
-            }
-        }
-        return false;
-    }
+    //public bool IsDirectionBlocked(string direction) {
+    //    if (!tileLocation.isCorrupted) {
+    //        if(direction == "diagonalleft") {
+    //            return _diagonalLeftBlocked > 0;
+    //        }else if (direction == "diagonalright") {
+    //            return _diagonalRightBlocked > 0;
+    //        } else if (direction == "horizontal") {
+    //            return _horizontalBlocked > 0;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 }
