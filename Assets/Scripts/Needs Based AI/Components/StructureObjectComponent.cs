@@ -37,7 +37,6 @@ public class StructureObjectComponent : ObjectComponent {
                 }
             }
         }
-        
         ObjectState defaultState = iobject.GetState(nextStateName);
         iobject.ChangeState(defaultState);
     }
@@ -129,6 +128,14 @@ public class StructureObjectComponent : ObjectComponent {
             //    ObjectState state = iobject.GetState(unsealedOrEmpty);
             //    iobject.ChangeState(state);
             //}
+        }
+    }
+    #endregion
+
+    #region Garrison
+    public void ReduceCooldown(IObject obj) {
+        if (obj is Garrison) {
+            (obj as Garrison).AdjustCooldown(-1);
         }
     }
     #endregion
