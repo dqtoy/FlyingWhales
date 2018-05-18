@@ -32,7 +32,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool isOccupied = false;
     [SerializeField] private bool _isPassable = false;
     private bool _isCorrupted = false;
-    private bool _canBeCorrupted = true;
 
     [Space(10)]
     [Header("Pathfinding")]
@@ -135,6 +134,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     private Dictionary<BaseLandmark, string> _landmarkDirection = new Dictionary<BaseLandmark, string>();
     public BaseLandmark landmarkNeighbor = null;
+    private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
+    public BaseLandmark corruptedLandmark = null;
 
     #region getters/setters
     public string locationName {
@@ -201,8 +202,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public PASSABLE_TYPE passableType {
         get { return _passableType; }
     }
-    public bool canBeCorrupted {
-        get { return _canBeCorrupted; }
+    public int uncorruptibleLandmarkNeighbors {
+        get { return _uncorruptibleLandmarkNeighbors; }
     }
     public Dictionary<BaseLandmark, string> landmarkDirection {
         get { return _landmarkDirection; }
@@ -1662,7 +1663,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     public bool CanThisTileBeCorrupted() {
-        if(landmarkNeighbor != null && (!landmarkNeighbor.tileLocation.isCorrupted || !landmarkNeighbor.tileLocation.canBeCorrupted)) {
+        if(landmarkNeighbor != null && (!landmarkNeighbor.tileLocation.isCorrupted || landmarkNeighbor.tileLocation.uncorruptibleLandmarkNeighbors > 0)) {
             return false;
         }
         //if(_landmarkDirection.Count > 0) {
@@ -1674,8 +1675,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
         return true;
     }
-    public void SetCanBeCorrupted(bool state) {
-        _canBeCorrupted = state;
+    public void SetUncorruptibleLandmarkNeighbors(int amount) {
+        _uncorruptibleLandmarkNeighbors = amount;
+    }
+    public void AdjustUncorruptibleLandmarkNeighbors(int amount) {
+        _uncorruptibleLandmarkNeighbors += amount;
+        if(_uncorruptibleLandmarkNeighbors < 0) {
+            _uncorruptibleLandmarkNeighbors = 0;
+        }
+        if(_uncorruptibleLandmarkNeighbors > 1 && _landmarkOnTile != null) {
+            _uncorruptibleLandmarkNeighbors = 1;
+        }
     }
     #endregion
 }

@@ -17,6 +17,8 @@ public class PathFindingThread : Multithread {
 	private PATHFINDING_MODE _pathfindingMode;
 	//private CitizenAvatar _citizenAvatar;
     private CharacterAvatar _characterAvatar;
+    private BaseLandmark _landmark;
+
     private object _data;
 
 	//public PathFindingThread(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data){
@@ -36,7 +38,14 @@ public class PathFindingThread : Multithread {
         this._characterAvatar = characterAvatar;
         this._data = data;
     }
-
+    public PathFindingThread(BaseLandmark landmark, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data) {
+        receivedPath = new List<HexTile>();
+        this._startingTile = startingTile;
+        this._destinationTile = destinationTile;
+        this._pathfindingMode = pathfindingMode;
+        this._landmark = landmark;
+        this._data = data;
+    }
     #region Overrides
     public override void DoMultithread() {
         base.DoMultithread();
@@ -87,11 +96,11 @@ public class PathFindingThread : Multithread {
 	}
 
 	public void ReturnPath(){
-        //if(_citizenAvatar != null) {
-        //    this._citizenAvatar.ReceivePath(receivedPath);
-        //} else {
+        if (_landmark != null) {
+            this._landmark.ReceivePath(receivedPath);
+        } else {
             this._characterAvatar.ReceivePath(receivedPath, this);
-        //}
-		
-	}
+        }
+
+    }
 }

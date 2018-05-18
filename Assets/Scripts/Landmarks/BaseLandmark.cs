@@ -44,6 +44,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     private List<HexTile> _diagonalLeftTiles;
     private List<HexTile> _horizontalTiles;
     private List<HexTile> _wallTiles;
+    private string _wallDirection;
+    public bool hasAdjacentCorruptedLandmark;
     //private int _diagonalLeftBlocked;
     //private int _diagonalRightBlocked;
     //private int _horizontalBlocked;
@@ -125,6 +127,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public List<IObject> objects {
         get { return _objects; }
     }
+    public List<HexTile> wallTiles {
+        get { return _wallTiles; }
+    }
     //public int diagonalLeftBlocked {
     //    get { return _diagonalLeftBlocked; }
     //}
@@ -162,11 +167,13 @@ public class BaseLandmark : ILocation, TaskCreator {
         _diagonalRightTiles = new List<HexTile>();
         _horizontalTiles = new List<HexTile>();
         _wallTiles = new List<HexTile>();
+        _wallDirection = string.Empty;
+        hasAdjacentCorruptedLandmark = false;
         //_diagonalLeftBlocked = 0;
         //_diagonalRightBlocked = 0;
         //_horizontalBlocked = 0;
         //_blockedLandmarkDirection = new Dictionary<BaseLandmark, string>();
-        Messenger.AddListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
+        //Messenger.AddListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
         //Messenger.AddListener<BaseLandmark>("StopCorruption", ALandmarkHasStoppedCorruption);
 
         //TODO: Add Landmark invisible object to advertise move to action
@@ -1126,6 +1133,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     #region Corruption
     public void ToggleCorruption(bool state) {
         if (state) {
+            LandmarkManager.Instance.corruptedLandmarksCount++;
             if (!_hasBeenCorrupted) {
                 _hasBeenCorrupted = true;
                 _nextCorruptedTilesToCheck.Add(tileLocation);
@@ -1136,15 +1144,31 @@ public class BaseLandmark : ILocation, TaskCreator {
             //tileLocation.region.LandmarkStartedCorruption(this);
             PutWallDown();
             Messenger.AddListener(Signals.DAY_END, DoCorruption);
-            Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
-            if (Messenger.eventTable.ContainsKey("StartCorruption")) {
-                Messenger.Broadcast<BaseLandmark>("StartCorruption", this);
-            }
+            //if (Messenger.eventTable.ContainsKey("StartCorruption")) {
+            //    Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
+            //    Messenger.Broadcast<BaseLandmark>("StartCorruption", this);
+            //}
         } else {
+            LandmarkManager.Instance.corruptedLandmarksCount--;
             StopSpreadCorruption();
         }
     }
     private void StopSpreadCorruption() {
+        if (!hasAdjacentCorruptedLandmark && LandmarkManager.Instance.corruptedLandmarksCount > 1) {
+            HexTile chosenTile = null;
+            int range = 3;
+            while(chosenTile == null) {
+                List<HexTile> tilesToCheck = tileLocation.GetTilesInRange(range, true);
+                for (int i = 0; i < tilesToCheck.Count; i++) {
+                    if (tilesToCheck[i].corruptedLandmark != null && tilesToCheck[i].corruptedLandmark.id != this.id) {
+                        chosenTile = tilesToCheck[i];
+                        break;
+                    }
+                }
+                range++;
+            }
+            PathGenerator.Instance.CreatePath(this, this.tileLocation, chosenTile, PATHFINDING_MODE.UNRESTRICTED);
+        }
         //tileLocation.region.LandmarkStoppedCorruption(this);
         Messenger.RemoveListener(Signals.DAY_END, DoCorruption);
         //Messenger.Broadcast<BaseLandmark>("StopCorruption", this);
@@ -1163,17 +1187,22 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (!originTile.CanThisTileBeCorrupted()) {
             return;
         }
+        originTile.corruptedLandmark = this;
         for (int i = 0; i < originTile.AllNeighbours.Count; i++) {
             HexTile neighbor = originTile.AllNeighbours[i];
-            if (neighbor.canBeCorrupted) {
+            if (neighbor.uncorruptibleLandmarkNeighbors <= 0) {
                 if (!neighbor.isCorrupted) { //neighbor.region.id == originTile.region.id && neighbor.CanThisTileBeCorrupted()
                     neighbor.SetCorruption(true);
+                    neighbor.corruptedLandmark = this;
                     _nextCorruptedTilesToCheck.Add(neighbor);
                 }
                 //if(neighbor.landmarkNeighbor != null && !neighbor.landmarkNeighbor.tileLocation.isCorrupted) {
                 //    neighbor.landmarkNeighbor.CreateWall();
                 //}
-            } 
+                if (originTile.corruptedLandmark.id != neighbor.corruptedLandmark.id) {
+                    originTile.corruptedLandmark.hasAdjacentCorruptedLandmark = true;
+                }
+            }
             //else {
                 //if cannot be corrupted it means that it has a landmark still owned by a kingdom
                 //neighbor.landmarkOnTile.CreateWall();
@@ -1208,36 +1237,42 @@ public class BaseLandmark : ILocation, TaskCreator {
     //    }
     //}
     public void ALandmarkHasStartedCorruption(BaseLandmark corruptedLandmark) {
-        Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
+        //Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
 
-        int corruptedX = corruptedLandmark.tileLocation.xCoordinate;
-        int corruptedY = corruptedLandmark.tileLocation.yCoordinate;
+        //int corruptedX = corruptedLandmark.tileLocation.xCoordinate;
+        //int corruptedY = corruptedLandmark.tileLocation.yCoordinate;
 
-        string direction = "horizontal";
-        //if same column, the wall is automatically horizontal, if not, enter here
-        if (tileLocation.xCoordinate != corruptedX) {
-            if (tileLocation.yCoordinate == corruptedY) {
-                int chance = UnityEngine.Random.Range(0, 2);
-                if (chance == 0) {
-                    direction = "diagonalleft";
-                } else {
-                    direction = "diagonalright";
-                }
-            } else if (tileLocation.yCoordinate < corruptedY) {
-                if (tileLocation.xCoordinate < corruptedX) {
-                    direction = "diagonalleft";
-                } else {
-                    direction = "diagonalright";
-                }
-            } else {
-                if (tileLocation.xCoordinate < corruptedX) {
-                    direction = "diagonalright";
-                } else {
-                    direction = "diagonalleft";
-                }
-            }
-        }
-        PutWallUp(direction);
+        //string direction = "horizontal";
+        ////if same column, the wall is automatically horizontal, if not, enter here
+        //if (tileLocation.xCoordinate != corruptedX) {
+        //    if (tileLocation.yCoordinate == corruptedY) {
+        //        int chance = UnityEngine.Random.Range(0, 2);
+        //        if (chance == 0) {
+        //            direction = "diagonalleft";
+        //        } else {
+        //            direction = "diagonalright";
+        //        }
+        //    } else if (tileLocation.yCoordinate < corruptedY) {
+        //        if (tileLocation.xCoordinate < corruptedX) {
+        //            direction = "diagonalleft";
+        //        } else {
+        //            direction = "diagonalright";
+        //        }
+        //    } else {
+        //        if (tileLocation.xCoordinate < corruptedX) {
+        //            direction = "diagonalright";
+        //        } else {
+        //            direction = "diagonalleft";
+        //        }
+        //    }
+        //}
+        //int chance = UnityEngine.Random.Range(0, 3);
+        //if (chance == 0) {
+        //    direction = "diagonalleft";
+        //} else {
+        //    direction = "diagonalright";
+        //}
+        PutWallUp();
         // if (tileLocation.xCoordinate != corruptedX) {
         //    if (tileLocation.xCoordinate < corruptedX) {
         //        if(tileLocation.yCoordinate == corruptedY) {
@@ -1336,20 +1371,50 @@ public class BaseLandmark : ILocation, TaskCreator {
     //    _blockedLandmarkDirection.Remove(corruptedLandmark);
     //}
 
-    private void PutWallUp(string direction) {
-        List<HexTile> wallTiles = _horizontalTiles;
-        if(direction == "diagonalleft") {
-            wallTiles = _diagonalLeftTiles;
-        } else if (direction == "diagonalright") {
-            wallTiles = _diagonalRightTiles;
-        }
-        for (int i = 0; i < wallTiles.Count; i++) {
-            wallTiles[i].SetCanBeCorrupted(false);
+    public void PutWallUp() {
+        //_wallDirection = direction;
+        //List<HexTile> wallTiles = _horizontalTiles;
+        //if(direction == "diagonalleft") {
+        //    wallTiles = _diagonalLeftTiles;
+        //} else if (direction == "diagonalright") {
+        //    wallTiles = _diagonalRightTiles;
+        //}
+        //for (int i = 0; i < wallTiles.Count; i++) {
+        //    wallTiles[i].AdjustUncorruptibleLandmarkNeighbors(1);
+        //}
+        for (int i = 0; i < _wallTiles.Count; i++) {
+            _wallTiles[i].AdjustUncorruptibleLandmarkNeighbors(1);
         }
     }
     private void PutWallDown() {
         for (int i = 0; i < _wallTiles.Count; i++) {
-            _wallTiles[i].SetCanBeCorrupted(true);
+            _wallTiles[i].AdjustUncorruptibleLandmarkNeighbors(-1);
+        }
+        //for (int i = 0; i < tileLocation.AllNeighbours.Count; i++) {
+        //    tileLocation.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(-1);
+        //}
+        //if(_wallDirection != string.Empty) {
+        //    List<HexTile> wallTiles = _horizontalTiles;
+        //    if (_wallDirection == "diagonalleft") {
+        //        wallTiles = _diagonalLeftTiles;
+        //    } else if (_wallDirection == "diagonalright") {
+        //        wallTiles = _diagonalRightTiles;
+        //    }
+        //    for (int i = 0; i < wallTiles.Count; i++) {
+        //        wallTiles[i].AdjustUncorruptibleLandmarkNeighbors(-1);
+        //    }
+        //    _wallDirection = string.Empty;
+        //}
+    }
+    public void ReceivePath(List<HexTile> pathTiles) {
+        if(pathTiles != null) {
+            ConnectCorruption(pathTiles);
+        }
+    }
+    private void ConnectCorruption(List<HexTile> pathTiles) {
+        for (int i = 0; i < pathTiles.Count; i++) {
+            pathTiles[i].SetUncorruptibleLandmarkNeighbors(0);
+            pathTiles[i].SetCorruption(true);
         }
     }
     #endregion
@@ -1368,10 +1433,11 @@ public class BaseLandmark : ILocation, TaskCreator {
         AddTileRecursivelyByDirection(HEXTILE_DIRECTION.WEST, tileLocation);
     }
     public void GenerateWallTiles() {
-        _wallTiles.AddRange(_diagonalLeftTiles);
-        _wallTiles.AddRange(_diagonalRightTiles);
-        _wallTiles.AddRange(_horizontalTiles);
-        _wallTiles.AddRange(tileLocation.AllNeighbours);
+        //_wallTiles.AddRange(_diagonalLeftTiles);
+        //_wallTiles.AddRange(_diagonalRightTiles);
+        //_wallTiles.AddRange(_horizontalTiles);
+        //_wallTiles.AddRange(tileLocation.AllNeighbours);
+        _wallTiles = tileLocation.GetTilesInRange(2);
     }
     private void AddTileRecursivelyByDirection(HEXTILE_DIRECTION direction, HexTile originTile) {
         if (originTile.tileLocation.neighbourDirections.ContainsKey(direction)) {
