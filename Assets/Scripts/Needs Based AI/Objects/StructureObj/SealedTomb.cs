@@ -17,7 +17,7 @@ public class SealedTomb : StructureObj {
     #endregion
 
     public SealedTomb() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.SEALED_TOMB;
+        //_specificObjectType = SPECIFIC_OBJECT_TYPE.SEALED_TOMB;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
         SetEnchantmentValue(100);
         //Create Character

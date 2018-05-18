@@ -5,7 +5,7 @@ using UnityEngine;
 public class DankShelter : StructureObj {
 
 	public DankShelter() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.DANK_SHELTER;
+        //_specificObjectType = SPECIFIC_OBJECT_TYPE.DANK_SHELTER;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

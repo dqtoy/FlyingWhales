@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WildPigs : StructureObj {
+public class HuntingGrounds : StructureObj {
 
-	public WildPigs() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.WILD_PIGS;
+	public HuntingGrounds() : base() {
+        _specificObjectType = SPECIFIC_OBJECT_TYPE.HUNTING_GROUNDS;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 
     #region Overrides
     public override IObject Clone() {
-        WildPigs clone = new WildPigs();
+        HuntingGrounds clone = new HuntingGrounds();
         SetCommonData(clone);
         return clone;
     }

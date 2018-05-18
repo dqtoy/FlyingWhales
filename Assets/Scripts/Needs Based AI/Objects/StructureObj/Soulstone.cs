@@ -5,7 +5,7 @@ using UnityEngine;
 public class Soulstone : StructureObj {
 
 	public Soulstone() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.SOULSTONE;
+        //_specificObjectType = SPECIFIC_OBJECT_TYPE.SOULSTONE;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

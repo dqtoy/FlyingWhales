@@ -200,21 +200,21 @@ public class LandmarkInfoUI : UIMenu {
             }
         }
 
-        text += "\n[b]Objects: [/b] ";
-        if (currentlyShowingLandmark.objects.Count > 0) {
-            for (int i = 0; i < currentlyShowingLandmark.objects.Count; i++) {
-                IObject currObj = currentlyShowingLandmark.objects[i];
-                if (!currObj.isInvisible) {
-                    text += "\n" + currObj.objectName + " (" + currObj.currentState.stateName + ")";
-                    if(currObj.objectType == OBJECT_TYPE.STRUCTURE) {
-                        StructureObj structure = currObj as StructureObj;
-                        text += " (" + structure.currentHP + "/" + structure.maxHP + ")";
-                    }
-                }
-            }
-        } else {
-            text += "NONE";
-        }
+        //text += "\n[b]Objects: [/b] ";
+        //if (currentlyShowingLandmark.objects.Count > 0) {
+        //    for (int i = 0; i < currentlyShowingLandmark.objects.Count; i++) {
+        //        IObject currObj = currentlyShowingLandmark.objects[i];
+        //        if (!currObj.isInvisible) {
+        //            text += "\n" + currObj.objectName + " (" + currObj.currentState.stateName + ")";
+        //            if(currObj.objectType == OBJECT_TYPE.STRUCTURE) {
+        //                StructureObj structure = currObj as StructureObj;
+        //                text += " (" + structure.currentHP + "/" + structure.maxHP + ")";
+        //            }
+        //        }
+        //    }
+        //} else {
+        //    text += "NONE";
+        //}
 
         text += "\n[b]Technologies: [/b] ";
         List<TECHNOLOGY> availableTech = currentlyShowingLandmark.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();

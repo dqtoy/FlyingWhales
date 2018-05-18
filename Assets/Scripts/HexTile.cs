@@ -345,6 +345,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
+            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(landmarkType) as StructureObj);
         }
         return _landmarkOnTile;
     }
@@ -424,13 +425,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetTag(int tag) {
         this.tileTag = tag;
     }
-    public bool CanBuildLandmarkHere() {
+    public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data) {
         if (this.hasLandmark || !this.isPassable) {
-            return false;
+            return false; //this tile is not passable or already has a landmark
         }
-        if (this.PassableNeighbours.Where(x => x.hasLandmark).Any()) {
-            return false; //check if this tile has any neighbours that have landmarks
+        if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
+            if (this.PassableNeighbours.Where(x => x.hasLandmark).Any()) {
+                return false; //check if this tile has any neighbours that are not fortifications
+            }
+        } else {
+            if (this.PassableNeighbours.Where(x => x.hasLandmark).Any()) {
+                return false; //check if this tile has any neighbours that have landmarks
+            }
         }
+        if (!data.possibleSpawnPoints.Contains(this.passableType)) {
+            return false; //check if this tiles' passable type meets the types the landmark can spawn on
+        }
+        
         //if (this.region.outerTiles.Contains(this)) {
         //    return false; //exclude outer tiles of region
         //}
@@ -1070,7 +1081,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
-        ShowHexTileInfo();
+        //ShowHexTileInfo();
         //if (_landmarkOnTile != null) {
         //	if(_landmarkOnTile.owner != null) { //landmark is occupied
         //		if (isHabitable) {

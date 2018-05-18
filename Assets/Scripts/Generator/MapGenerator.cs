@@ -12,7 +12,9 @@ public class MapGenerator : MonoBehaviour {
     }
 
     internal void InitializeWorld() {
+        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        loadingWatch.Start();
 
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
@@ -54,6 +56,8 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.DivideOuterGridRegions();
 
         UIManager.Instance.InitializeUI();
+
+        ObjectManager.Instance.Initialize();
 
         st.Start();
         bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions();
@@ -104,8 +108,8 @@ public class MapGenerator : MonoBehaviour {
         PathfindingManager.Instance.CreateGrid();
 
         //FactionManager.Instance.OccupyLandmarksInFactionRegions();
-        ObjectManager.Instance.Initialize();
-        LandmarkManager.Instance.ConstructAllLandmarkObjects();
+        //ObjectManager.Instance.Initialize();
+        //LandmarkManager.Instance.ConstructAllLandmarkObjects();
 
         LandmarkManager.Instance.GenerateMaterials();
 
@@ -126,6 +130,8 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.SchedulePrisonerConversion();
         //CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
+        loadingWatch.Stop();
+        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
     }
 
     internal void ReloadScene() {

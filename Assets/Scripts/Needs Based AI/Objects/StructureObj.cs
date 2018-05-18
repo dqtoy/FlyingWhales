@@ -201,6 +201,7 @@ public class StructureObj : IObject {
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
         clone._maxHP = this.maxHP;
+        clone._currentHP = this.maxHP;
         clone._onHPReachedZero = this._onHPReachedZero;
         clone._onHPReachedFull = this._onHPReachedFull;
         clone._madeOf = this._madeOf;

@@ -23,9 +23,9 @@ public class BuildAction : CharacterAction {
     }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
-        if (!_isStructureInLandmark) {
-            _isStructureInLandmark = _state.obj.objectLocation.AddObject(_structureObject);
-        }
+        //if (!_isStructureInLandmark) {
+        //    _isStructureInLandmark = _state.obj.objectLocation.AddObject(_structureObject);
+        //}
 
         ActionSuccess();
         GiveReward(NEEDS.FULLNESS, character);

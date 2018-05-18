@@ -46,56 +46,56 @@ public class LandmarkManager : MonoBehaviour {
         //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
-    public void ConstructAllLandmarkObjects() {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
-            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
-            BaseLandmarkData baseData = LandmarkManager.Instance.GetBaseLandmarkData(LandmarkManager.Instance.GetBaseLandmarkType(currLandmark.specificLandmarkType));
-            ConstructLandmarkObjects(baseData, data, currLandmark);
-        }
-    }
-    public void ConstructLandmarkObjects(BaseLandmarkData baseData, LandmarkData data, BaseLandmark landmark) {
-        IObject createdObject = null;
-        for (int i = 0; i < baseData.initialObjects.Count; i++) {
-            createdObject = ObjectManager.Instance.CreateNewObject(baseData.initialObjects[i].name, landmark);
-            if (createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
-                if(createdObject.currentState.stateName.Equals("Under Construction")) {
-                    ObjectState defaultOrEmptyState = createdObject.GetState("Default");
-                    if (defaultOrEmptyState == null) {
-                        defaultOrEmptyState = createdObject.GetState("Empty");
-                    }
-                    createdObject.ChangeState(defaultOrEmptyState);
-                }
-                StructureObj structure = createdObject as StructureObj;
-                structure.SetHP(100);
-                structure.SetIsMadeOf(RESOURCE.OAK);
-            }
-        }
-        ObjectManager.Instance.CreateNewObject("Landmark Object", landmark);
-        for (int i = 0; i < data.initialObjects.Count; i++) {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if(chance < data.initialObjects[i].spawnChance) {
-                createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].obj.name, landmark);
-            } else {
-                if(data.initialObjects[i].fallbackObject != null) {
-                    createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].fallbackObject.name, landmark);
-                }
-            }
-            if (createdObject != null && createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
-                if (createdObject.currentState.stateName.Equals("Under Construction")) {
-                    ObjectState defaultOrEmptyState = createdObject.GetState("Default");
-                    if (defaultOrEmptyState == null) {
-                        defaultOrEmptyState = createdObject.GetState("Empty");
-                    }
-                    createdObject.ChangeState(defaultOrEmptyState);
-                }
-                StructureObj structure = createdObject as StructureObj;
-                structure.SetHP(100);
-                structure.SetIsMadeOf(RESOURCE.OAK);
-            }
-        }
-    }
+    //public void ConstructAllLandmarkObjects() {
+    //    List<BaseLandmark> allLandmarks = GetAllLandmarks();
+    //    for (int i = 0; i < allLandmarks.Count; i++) {
+    //        BaseLandmark currLandmark = allLandmarks[i];
+    //        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
+    //        BaseLandmarkData baseData = LandmarkManager.Instance.GetBaseLandmarkData(LandmarkManager.Instance.GetBaseLandmarkType(currLandmark.specificLandmarkType));
+    //        ConstructLandmarkObjects(baseData, data, currLandmark);
+    //    }
+    //}
+    //public void ConstructLandmarkObjects(BaseLandmarkData baseData, LandmarkData data, BaseLandmark landmark) {
+    //    IObject createdObject = null;
+    //    for (int i = 0; i < baseData.initialObjects.Count; i++) {
+    //        createdObject = ObjectManager.Instance.CreateNewObject(baseData.initialObjects[i].name);
+    //        if (createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
+    //            if(createdObject.currentState.stateName.Equals("Under Construction")) {
+    //                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
+    //                if (defaultOrEmptyState == null) {
+    //                    defaultOrEmptyState = createdObject.GetState("Empty");
+    //                }
+    //                createdObject.ChangeState(defaultOrEmptyState);
+    //            }
+    //            StructureObj structure = createdObject as StructureObj;
+    //            structure.SetHP(100);
+    //            structure.SetIsMadeOf(RESOURCE.OAK);
+    //        }
+    //    }
+    //    ObjectManager.Instance.CreateNewObject("Landmark Object");
+    //    for (int i = 0; i < data.initialObjects.Count; i++) {
+    //        int chance = UnityEngine.Random.Range(0, 100);
+    //        if(chance < data.initialObjects[i].spawnChance) {
+    //            createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].obj.name);
+    //        } else {
+    //            if(data.initialObjects[i].fallbackObject != null) {
+    //                createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].fallbackObject.name);
+    //            }
+    //        }
+    //        if (createdObject != null && createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
+    //            if (createdObject.currentState.stateName.Equals("Under Construction")) {
+    //                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
+    //                if (defaultOrEmptyState == null) {
+    //                    defaultOrEmptyState = createdObject.GetState("Empty");
+    //                }
+    //                createdObject.ChangeState(defaultOrEmptyState);
+    //            }
+    //            StructureObj structure = createdObject as StructureObj;
+    //            structure.SetHP(100);
+    //            structure.SetIsMadeOf(RESOURCE.OAK);
+    //        }
+    //    }
+    //}
     /*
      Occupy a specified landmark.
          */
@@ -172,6 +172,32 @@ public class LandmarkManager : MonoBehaviour {
 
     //    return true;
     //}
+    public void GeneratePlayerLandmarks(Region chosenRegion) {
+        //generate landmarks owned by the player in the empty region
+        //Create Demonic Portal on the tile nearest to the center of the region
+        HexTile tileToUse = null;
+        LandmarkData demonicPortalData = GetLandmarkData(LANDMARK_TYPE.DEMONIC_PORTAL);
+        if (chosenRegion.centerOfMass.isPassable && demonicPortalData.possibleSpawnPoints.Contains(chosenRegion.centerOfMass.passableType)) {
+            tileToUse = chosenRegion.centerOfMass;
+        } else {
+            float nearestDistance = 9999f;
+            List<HexTile> passableTilesInRegion = chosenRegion.tilesInRegion.Where(x => x.isPassable && x.id != chosenRegion.centerOfMass.id && demonicPortalData.possibleSpawnPoints.Contains(x.passableType)).ToList();
+            for (int i = 0; i < passableTilesInRegion.Count; i++) {
+                HexTile currTile = passableTilesInRegion[i];
+                float distance = currTile.GetDistanceTo(chosenRegion.centerOfMass);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    tileToUse = currTile;
+                }
+            }
+        }
+
+        if (tileToUse != null) {
+            CreateNewLandmarkOnTile(tileToUse, LANDMARK_TYPE.DEMONIC_PORTAL);
+        } else {
+            throw new System.Exception("Cannot create Demonic Portal for Player!");
+        }
+    }
     public bool GenerateFactionLandmarks() {
         for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
             Tribe currTribe = FactionManager.Instance.allTribes[i];
@@ -191,8 +217,8 @@ public class LandmarkManager : MonoBehaviour {
         Dictionary<LANDMARK_TYPE, int> landmarkSettings = new Dictionary<LANDMARK_TYPE, int>();
         AddWealthSettings(wealthLvl, landmarkSettings);
         AddPopulationSettings(populationLvl, landmarkSettings, tribe);
-        AddMightSettings(mightLvl, landmarkSettings);
         AddNeedSettings(needLvl, landmarkSettings);
+        AddMightSettings(mightLvl, landmarkSettings);
         return landmarkSettings;
     }
     private void AddWealthSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
@@ -240,16 +266,16 @@ public class LandmarkManager : MonoBehaviour {
     private void AddMightSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
         switch (level) {
             case LEVEL.HIGH:
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 4);
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 3);
+                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 8);
+                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 5);
                 break;
             case LEVEL.AVERAGE:
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 3);
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 2);
+                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 6);
+                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 4);
                 break;
             case LEVEL.LOW:
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 2);
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 1);
+                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 4);
+                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 3);
                 break;
             default:
                 break;
@@ -291,14 +317,14 @@ public class LandmarkManager : MonoBehaviour {
     }
     private bool GenerateLandmarksForFaction(Dictionary<LANDMARK_TYPE, int> landmarkSettings, Tribe tribe) {
         Region tribeRegion = tribe.ownedRegions[0];
-        List<HexTile> elligibleTiles = tribeRegion.tilesInRegion.Where(x => x.CanBuildLandmarkHere()).ToList();
         string log = "Created " + landmarkSettings.Sum(x => x.Value).ToString() + " landmarks on " + tribeRegion.name;
         foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarkSettings) {
             LANDMARK_TYPE landmarkType = kvp.Key;
             LandmarkData data = GetLandmarkData(landmarkType);
             log += "\n" + landmarkType.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
-                List<HexTile> tilesToChooseFrom = elligibleTiles.Where(x => data.possibleSpawnPoints.Contains(x.passableType)).ToList();
+                List<HexTile> tilesToChooseFrom = tribeRegion.tilesInRegion.Where(x => x.CanBuildLandmarkHere(landmarkType, data)).ToList();
+                //List<HexTile> tilesToChooseFrom = elligibleTiles.Where(x => ).ToList();
                 if (tilesToChooseFrom.Count <= 0) {
                     //Debug.LogError("There are no more tiles in " + tribeRegion.name + " to build a " + landmarkType.ToString(), tribeRegion.centerOfMass);
                     return false;
@@ -306,8 +332,8 @@ public class LandmarkManager : MonoBehaviour {
                 HexTile chosenTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
                 CreateNewLandmarkOnTile(chosenTile, landmarkType);
                 //remove the tiles within 1 range of the chosen tile from elligible tiles
-                elligibleTiles.Remove(chosenTile);
-                Utilities.ListRemoveRange(elligibleTiles, chosenTile.GetTilesInRange(1));
+                //elligibleTiles.Remove(chosenTile);
+                //Utilities.ListRemoveRange(elligibleTiles, chosenTile.GetTilesInRange(1));
             }
         }
         Debug.Log(log, tribeRegion.centerOfMass);

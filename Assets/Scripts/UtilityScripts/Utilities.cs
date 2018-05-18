@@ -977,16 +977,16 @@ public class Utilities : MonoBehaviour {
         }
     }
     public static RESOURCE GetResourceTypeByObjectType(SPECIFIC_OBJECT_TYPE objectType) {
-        switch (objectType) {
-            case SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES:
-            return RESOURCE.ELF_CIVILIAN;
-            case SPECIFIC_OBJECT_TYPE.HUMAN_RESIDENCES:
-            return RESOURCE.HUMAN_CIVILIAN;
-            case SPECIFIC_OBJECT_TYPE.OAK_WOODS:
-            return RESOURCE.OAK;
-            case SPECIFIC_OBJECT_TYPE.IRON_MINE:
-            return RESOURCE.IRON;
-        }
+        //switch (objectType) {
+        //    case SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES:
+        //    return RESOURCE.ELF_CIVILIAN;
+        //    case SPECIFIC_OBJECT_TYPE.HUMAN_RESIDENCES:
+        //    return RESOURCE.HUMAN_CIVILIAN;
+        //    case SPECIFIC_OBJECT_TYPE.OAK_WOODS:
+        //    return RESOURCE.OAK;
+        //    case SPECIFIC_OBJECT_TYPE.IRON_MINE:
+        //    return RESOURCE.IRON;
+        //}
         return RESOURCE.NONE;
     }
 #endregion

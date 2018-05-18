@@ -37,19 +37,30 @@ public class ActionThread : Multithread {
         string actionLog = _character.name + "'s Action Advertisements: ";
         for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
             BaseLandmark landmark = _character.currentRegion.landmarks[i];
-            for (int j = 0; j < landmark.objects.Count; j++) {
-                IObject iobject = landmark.objects[j];
-                if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-                    for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-                        CharacterAction action = iobject.currentState.actions[k];
-                        if (action.MeetsRequirements(_character, landmark)) { //Filter
-                            float advertisement = action.GetTotalAdvertisementValue(_character);
-                            actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
-                            PutToChoices(action, advertisement);
-                        }
+            IObject iobject = landmark.landmarkObj;
+            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+                    CharacterAction action = iobject.currentState.actions[k];
+                    if (action.MeetsRequirements(_character, landmark)) { //Filter
+                        float advertisement = action.GetTotalAdvertisementValue(_character);
+                        actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
+                        PutToChoices(action, advertisement);
                     }
                 }
             }
+            //for (int j = 0; j < landmark.objects.Count; j++) {
+            //    IObject iobject = landmark.objects[j];
+            //    if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+            //        for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+            //            CharacterAction action = iobject.currentState.actions[k];
+            //            if (action.MeetsRequirements(_character, landmark)) { //Filter
+            //                float advertisement = action.GetTotalAdvertisementValue(_character);
+            //                actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
+            //                PutToChoices(action, advertisement);
+            //            }
+            //        }
+            //    }
+            //}
         }
         //Debug.Log(actionLog);
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
