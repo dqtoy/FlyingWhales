@@ -139,7 +139,17 @@ public class PathGenerator : MonoBehaviour {
         MultiThreadPool.Instance.AddToThreadPool(newThread);
         return newThread;
     }
-
+    public PathFindingThread CreatePath(BaseLandmark landmark, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
+        if (startingTile == null || destinationTile == null) {
+            return null;
+        }
+        if (startingTile.tileTag != destinationTile.tileTag) {
+            return null;
+        }
+        PathFindingThread newThread = new PathFindingThread(landmark, startingTile, destinationTile, pathfindingMode, data);
+        MultiThreadPool.Instance.AddToThreadPool(newThread);
+        return newThread;
+    }
     /*
 	 * Counts the number of hex tiles between two input tiles
 	 * */

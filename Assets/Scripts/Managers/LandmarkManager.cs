@@ -17,11 +17,13 @@ public class LandmarkManager : MonoBehaviour {
 
     public List<BaseLandmarkData> baseLandmarkData;
     public List<LandmarkData> landmarkData;
+    public int corruptedLandmarksCount;
 
 	//Crater
 	public BaseLandmark craterLandmark;
     private void Awake() {
         Instance = this;
+        corruptedLandmarksCount = 0;
     }
 
     /*
@@ -31,14 +33,15 @@ public class LandmarkManager : MonoBehaviour {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
-        newLandmark.tileLocation.SetCanBeCorrupted(false);
-        newLandmark.GenerateDiagonalLeftTiles();
-        newLandmark.GenerateDiagonalRightTiles();
-        newLandmark.GenerateHorizontalTiles();
+        newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
+        //newLandmark.GenerateDiagonalLeftTiles();
+        //newLandmark.GenerateDiagonalRightTiles();
+        //newLandmark.GenerateHorizontalTiles();
         newLandmark.GenerateWallTiles();
-        for (int i = 0; i < location.AllNeighbours.Count; i++) {
-            location.AllNeighbours[i].SetCanBeCorrupted(false);
-        }
+        newLandmark.PutWallUp();
+        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
+        //    location.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(1);
+        //}
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
