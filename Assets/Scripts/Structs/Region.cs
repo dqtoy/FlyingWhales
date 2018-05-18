@@ -668,6 +668,11 @@ public class Region : IHasNeighbours<Region> {
                 List<HexTile> chosenTilePath = PathGenerator.Instance.GetPath(chosenTile, this.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
                 List<HexTile> otherRegionPath = PathGenerator.Instance.GetPath(tileFromOtherRegion, chosenRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
 
+                if (chosenTilePath == null || otherRegionPath == null) {
+                    tilesToChooseFrom.Remove(chosenTile);
+                    continue;
+                }
+
                 List<HexTile> tilesToFlatten = new List<HexTile>();
                 if (chosenTile.AllNeighbours.Where(x => x.region.id == chosenTile.region.id && x.isPassable).Any()) {
                     //if the chosen tile is not surrounded by unpassable tiles (it's own region only)

@@ -65,9 +65,9 @@ public class MapGenerator : MonoBehaviour {
 
         ObjectManager.Instance.Initialize();
 
-        st.Start();
         Region playerRegion = null;
-        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions(playerRegion);
+        st.Start();
+        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
         st.Stop();
 
         if (factionGenerationFailed) {
@@ -180,7 +180,7 @@ public class MapGenerator : MonoBehaviour {
 
         //return;
         RoadManager.Instance.GenerateTilePassableTypes();
-        GridMap.Instance.BottleneckBorders();
+        //GridMap.Instance.BottleneckBorders();
 
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
