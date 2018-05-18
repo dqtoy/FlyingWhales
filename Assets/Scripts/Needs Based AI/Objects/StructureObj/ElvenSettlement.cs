@@ -33,11 +33,17 @@ public class ElvenSettlement : StructureObj {
             }
         }
     }
-    public override void OnAddToLandmark(BaseLandmark newLocation) {
-        base.OnAddToLandmark(newLocation);
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(newLocation.specificLandmarkType);
-        //int numOfCivilians = UnityEngine.Random.Range(data.minCivilians, data.maxCivilians + 1);
-        //_resourceInventory[RESOURCE.HUMAN_CIVILIAN] = numOfCivilians;
+    //public override void OnAddToLandmark(BaseLandmark newLocation) {
+    //    base.OnAddToLandmark(newLocation);
+    //    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(newLocation.specificLandmarkType);
+    //    //int numOfCivilians = UnityEngine.Random.Range(data.minCivilians, data.maxCivilians + 1);
+    //    //_resourceInventory[RESOURCE.HUMAN_CIVILIAN] = numOfCivilians;
+    //}
+    #endregion
+
+    #region Resource Inventory
+    public override RESOURCE GetMainResource() {
+        return RESOURCE.ELF_CIVILIAN;
     }
     #endregion
 }

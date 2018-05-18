@@ -192,6 +192,9 @@ public class StructureObj : IObject {
         //}
         return total;
     }
+    public virtual RESOURCE GetMainResource() {
+        return RESOURCE.NONE;
+    }
     #endregion
 
     #region Utilities
