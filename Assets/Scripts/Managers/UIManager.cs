@@ -492,7 +492,7 @@ public class UIManager : MonoBehaviour {
     public void StartCorruption() {
         if(settlementInfoUI.currentlyShowingLandmark != null) {
             settlementInfoUI.currentlyShowingLandmark.tileLocation.SetUncorruptibleLandmarkNeighbors(0);
-            settlementInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true);
+            settlementInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true, settlementInfoUI.currentlyShowingLandmark);
         }
     }
     //public void ToggleResourceIcons() {

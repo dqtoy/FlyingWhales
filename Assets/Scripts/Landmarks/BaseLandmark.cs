@@ -1194,13 +1194,11 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (!originTile.CanThisTileBeCorrupted()) {
             return;
         }
-        originTile.corruptedLandmark = this;
         for (int i = 0; i < originTile.AllNeighbours.Count; i++) {
             HexTile neighbor = originTile.AllNeighbours[i];
             if (neighbor.uncorruptibleLandmarkNeighbors <= 0) {
                 if (!neighbor.isCorrupted) { //neighbor.region.id == originTile.region.id && neighbor.CanThisTileBeCorrupted()
-                    neighbor.SetCorruption(true);
-                    neighbor.corruptedLandmark = this;
+                    neighbor.SetCorruption(true, this);
                     _nextCorruptedTilesToCheck.Add(neighbor);
                 }
                 //if(neighbor.landmarkNeighbor != null && !neighbor.landmarkNeighbor.tileLocation.isCorrupted) {
@@ -1421,7 +1419,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     private void ConnectCorruption(List<HexTile> pathTiles) {
         for (int i = 0; i < pathTiles.Count; i++) {
             pathTiles[i].SetUncorruptibleLandmarkNeighbors(0);
-            pathTiles[i].SetCorruption(true);
+            pathTiles[i].SetCorruption(true, this);
         }
     }
     #endregion

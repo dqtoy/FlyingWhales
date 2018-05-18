@@ -1664,9 +1664,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Corruption
-    public void SetCorruption(bool state) {
+    public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
+            if (_isCorrupted) {
+                corruptedLandmark = landmark;
+            }
             this._corruptionHighlightGO.SetActive(_isCorrupted);
             if (landmarkOnTile != null) {
                 landmarkOnTile.ToggleCorruption(_isCorrupted);
