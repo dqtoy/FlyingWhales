@@ -46,6 +46,21 @@ public class LandmarkManager : MonoBehaviour {
         //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
+    public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
+        BaseLandmark newLandmark = location.LoadLandmark(landmark);
+        //newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
+        //newLandmark.GenerateDiagonalLeftTiles();
+        //newLandmark.GenerateDiagonalRightTiles();
+        //newLandmark.GenerateHorizontalTiles();
+        //newLandmark.GenerateWallTiles();
+        //newLandmark.PutWallUp();
+        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
+        //    location.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(1);
+        //}
+        //ConstructLandmarkObjects(landmarkData, newLandmark);
+        //		AddInitialLandmarkItems (newLandmark);
+        return newLandmark;
+    }
     //public void ConstructAllLandmarkObjects() {
     //    List<BaseLandmark> allLandmarks = GetAllLandmarks();
     //    for (int i = 0; i < allLandmarks.Count; i++) {
@@ -429,7 +444,7 @@ public class LandmarkManager : MonoBehaviour {
      Generate Materials
          */
     public void GenerateMaterials() {
-        List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isHabitable && !x.isRoad)); //Get tiles that aren't water and are not habitable
+        List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isRoad)); //Get tiles that aren't water and are not habitable,  && !x.isHabitable
         //Tiles that are within 2 tiles of a habitable tile, cannot have resources
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];

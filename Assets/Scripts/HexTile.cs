@@ -14,7 +14,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int tileTag;
     public string tileName;
     private Region _region;
-    private MATERIAL _materialOnTile = MATERIAL.NONE;
     [System.NonSerialized] public SpriteRenderer spriteRenderer;
 
     [Space(10)]
@@ -27,7 +26,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     [Space(10)]
     [Header("Booleans")]
-    public bool isHabitable = false;
     public bool isRoad = false;
     public bool isOccupied = false;
     [SerializeField] private bool _isPassable = false;
@@ -91,7 +89,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Minimap Objects")]
     [SerializeField] private SpriteRenderer minimapHexSprite;
-    private Color biomeColor;
+    //private Color biomeColor;
 
     [Space(10)]
     [Header("Fog Of War Objects")]
@@ -132,8 +130,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     private bool _hasScheduledCombatCheck = false;
 
-    private Dictionary<BaseLandmark, string> _landmarkDirection = new Dictionary<BaseLandmark, string>();
-    public BaseLandmark landmarkNeighbor = null;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     public BaseLandmark corruptedLandmark = null;
 
@@ -181,9 +177,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public LOCATION_IDENTIFIER locIdentifier {
         get { return LOCATION_IDENTIFIER.HEXTILE; }
     }
-    public MATERIAL materialOnTile {
-        get { return _materialOnTile; }
-    }
     public bool isOuterTileOfRegion {
         get { return this.region.outerTiles.Contains(this); }
     }
@@ -207,9 +200,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public int uncorruptibleLandmarkNeighbors {
         get { return _uncorruptibleLandmarkNeighbors; }
-    }
-    public Dictionary<BaseLandmark, string> landmarkDirection {
-        get { return _landmarkDirection; }
     }
     #endregion
 
@@ -358,6 +348,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (_landmarkOnTile != null) {
             SetPassableState(true);
             _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(landmarkType) as StructureObj);
+        }
+        return _landmarkOnTile;
+    }
+    public BaseLandmark LoadLandmark(BaseLandmark landmark) {
+        GameObject landmarkGO = null;
+        //Create Landmark Game Object on tile
+        landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        landmarkGO.transform.localPosition = Vector3.zero;
+        landmarkGO.transform.localScale = Vector3.one;
+        _landmarkOnTile = landmark;
+        if (landmarkGO != null) {
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+        }
+        _region.AddLandmarkToRegion(_landmarkOnTile);
+        if (_landmarkOnTile != null) {
+            SetPassableState(true);
+            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(_landmarkOnTile.specificLandmarkType) as StructureObj);
         }
         return _landmarkOnTile;
     }
@@ -601,7 +608,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType, GameObject roadGO) {
         roadGOs.Add(roadGO);
-        if (this.isHabitable || this.hasLandmark) {
+        if (this.hasLandmark) {//this.isHabitable
             if (isRoad) {
                 if (_roadType == ROAD_TYPE.NONE) {
                     _roadType = roadType;
@@ -1318,71 +1325,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             text += "NONE";
         }
 
-        //        text += "[b]Tile:[/b] " + this.name + "\n";
-        //        text += "[b]Connections:[/b] " + this.landmarkOnTile.connections.Count.ToString();
-        //        for (int i = 0; i < this.landmarkOnTile.connections.Count; i++) {
-        //            object currConnection = this.landmarkOnTile.connections[i];
-        //            if(currConnection is Region) {
-        //                text += "\n Region - " + ((Region)currConnection).centerOfMass.name;
-        //            } else {
-        //                text += "\n " + currConnection.ToString() + " - " + ((BaseLandmark)currConnection).location.name;
-        //            }
-        //        }
-        //        if (this.landmarkOnTile.owner != null) {
-        //            text += "\n[b]Owner:[/b] " + this.landmarkOnTile.owner.name + "/" + this.landmarkOnTile.owner.race.ToString();
-        //            text += "\n[b]Total Population: [/b] " + this.landmarkOnTile.totalPopulation.ToString();
-        //            text += "\n[b]Civilian Population: [/b] " + this.landmarkOnTile.civiliansWithReserved.ToString();
-        //            text += "\n[b]Population Growth: [/b] " + (this.landmarkOnTile.totalPopulation * this.landmarkOnTile.location.region.populationGrowth).ToString();
-        ////            text += "\n[b]Characters: [/b] ";
-        ////            if (landmarkOnTile.charactersOnLandmark.Count > 0) {
-        ////                for (int i = 0; i < landmarkOnTile.charactersOnLandmark.Count; i++) {
-        ////                    Character currChar = landmarkOnTile.charactersOnLandmark[i];
-        ////                    text += "\n" + currChar.name + " - " + currChar.characterClass.className + "/" + currChar.role.roleType.ToString();
-        ////                    if (currChar.currentQuest != null) {
-        ////                        text += " " + currChar.currentQuest.questType.ToString();
-        ////                    }
-        ////                }
-        ////            } else {
-        ////                text += "NONE";
-        ////            }
-
-        //            text += "\n[b]Character Caps: [/b] ";
-        //            for (int i = 0; i < LandmarkManager.Instance.characterProductionWeights.Count; i++) {
-        //                CharacterProductionWeight currWweight = LandmarkManager.Instance.characterProductionWeights[i];
-        //                bool isCapReached = false;
-        //                for (int j = 0; j < currWweight.productionCaps.Count; j++) {
-        //                    CharacterProductionCap cap = currWweight.productionCaps[j];
-        //                    if(cap.IsCapReached(currWweight.role, this.landmarkOnTile.owner)) {
-        //                        isCapReached = true;
-        //                        break;
-        //                    }
-        //                }
-        //                text += "\n" + currWweight.role.ToString() + " - " + isCapReached.ToString();
-        //            }
-
-        //            text += "\n[b]Active Quests: [/b] ";
-        //            if (landmarkOnTile.owner.internalQuestManager.activeQuests.Count > 0) {
-        //                for (int i = 0; i < landmarkOnTile.owner.internalQuestManager.activeQuests.Count; i++) {
-        //                    OldQuest.Quest currQuest = landmarkOnTile.owner.internalQuestManager.activeQuests[i];
-        //                    text += "\n" + currQuest.GetType().ToString();
-        //                }
-        //            } else {
-        //                text += "NONE";
-        //            }
-        //        }
-        //        text += "\n[b]Technologies: [/b] ";
-        //        List<TECHNOLOGY> availableTech = this.landmarkOnTile.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
-        //        if (availableTech.Count > 0) {
-        //            for (int i = 0; i < availableTech.Count; i++) {
-        //                TECHNOLOGY currTech = availableTech[i];
-        //                text += currTech.ToString();
-        //                if(i + 1 != availableTech.Count) {
-        //                    text += ", ";
-        //                }
-        //            }
-        //        } else {
-        //            text += "NONE";
-        //        }
         UIManager.Instance.ShowSmallInfo(text);
     }
     private void HideSmallInfoWindow() {
@@ -1667,7 +1609,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Materials
     public void SetMaterialOnTile(MATERIAL material) {
-        _materialOnTile = material;
+        //_materialOnTile = material;
         //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
         //resource.transform.localPosition = Vector3.zero;
         //resource.transform.localScale = Vector3.one;
@@ -1689,9 +1631,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     public bool CanThisTileBeCorrupted() {
-        if(landmarkNeighbor != null && (!landmarkNeighbor.tileLocation.isCorrupted || landmarkNeighbor.tileLocation.uncorruptibleLandmarkNeighbors > 0)) {
-            return false;
-        }
+        //if(landmarkNeighbor != null && (!landmarkNeighbor.tileLocation.isCorrupted || landmarkNeighbor.tileLocation.uncorruptibleLandmarkNeighbors > 0)) {
+        //    return false;
+        //}
         //if(_landmarkDirection.Count > 0) {
         //    foreach (BaseLandmark landmark in _landmarkDirection.Keys) {
         //        if (landmark.IsDirectionBlocked(_landmarkDirection[landmark])) {
