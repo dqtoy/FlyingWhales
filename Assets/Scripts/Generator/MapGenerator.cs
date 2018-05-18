@@ -25,7 +25,9 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
         Biomes.Instance.LoadPassableObjects();
+
         
+
         st.Start();
         bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
@@ -39,10 +41,14 @@ public class MapGenerator : MonoBehaviour {
             Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
         }
 
-        st.Start();
-        Biomes.Instance.DetermineIslands();
-        st.Stop();
-        Debug.Log(string.Format("Island Connections took {0} ms to complete", st.ElapsedMilliseconds));
+        //Biomes.Instance.UpdateTileVisuals();
+        //Biomes.Instance.GenerateTileBiomeDetails();
+        //return;
+
+        //st.Start();
+        //Biomes.Instance.DetermineIslands();
+        //st.Stop();
+        //Debug.Log(string.Format("Island Connections took {0} ms to complete", st.ElapsedMilliseconds));
 
         //RoadManager.Instance.FlattenRoads();
         //Biomes.Instance.LoadElevationSprites();
@@ -50,7 +56,7 @@ public class MapGenerator : MonoBehaviour {
 
         //return;
         RoadManager.Instance.GenerateTilePassableTypes();
-        GridMap.Instance.BottleneckBorders();
+        //GridMap.Instance.BottleneckBorders();
 
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();

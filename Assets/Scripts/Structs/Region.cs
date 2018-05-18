@@ -31,10 +31,6 @@ public class Region : IHasNeighbours<Region> {
     //Ownership
     private Faction _owner;
 
-    //Islands
-    private Dictionary<HexTile, RegionIsland> _islands;
-    private RegionIsland _mainIsland;
-
     #region getters/sertters
     internal int id {
         get { return this._id; }
@@ -440,11 +436,11 @@ public class Region : IHasNeighbours<Region> {
     #region Islands
     public void DetermineRegionIslands() {
         List<HexTile> passableTilesInRegion = tilesInRegion.Where(x => x.isPassable).ToList();
-        _islands = new Dictionary<HexTile, RegionIsland>();
+        Dictionary<HexTile, RegionIsland> islands = new Dictionary<HexTile, RegionIsland>();
         for (int i = 0; i < passableTilesInRegion.Count; i++) {
             HexTile currTile = passableTilesInRegion[i];
             RegionIsland island = new RegionIsland(currTile);
-            _islands.Add(currTile, island);
+            islands.Add(currTile, island);
         }
 
         Queue<HexTile> tileQueue = new Queue<HexTile>();
@@ -455,13 +451,13 @@ public class Region : IHasNeighbours<Region> {
             } else {
                 currTile = tileQueue.Dequeue();
             }
-            RegionIsland islandOfCurrTile = _islands[currTile];
+            RegionIsland islandOfCurrTile = islands[currTile];
             List<HexTile> neighbours = currTile.AllNeighbours;
             for (int i = 0; i < neighbours.Count; i++) {
                 HexTile currNeighbour = neighbours[i];
                 if (currNeighbour.isPassable && passableTilesInRegion.Contains(currNeighbour)) {
-                    RegionIsland islandOfNeighbour = _islands[currNeighbour];
-                    MergeIslands(islandOfCurrTile, islandOfNeighbour, _islands);
+                    RegionIsland islandOfNeighbour = islands[currNeighbour];
+                    MergeIslands(islandOfCurrTile, islandOfNeighbour, islands);
                     tileQueue.Enqueue(currNeighbour);
                 }
             }
@@ -469,12 +465,20 @@ public class Region : IHasNeighbours<Region> {
         }
 
         List<RegionIsland> allIslands = new List<RegionIsland>();
-        foreach (KeyValuePair<HexTile, RegionIsland> kvp in _islands) {
+        foreach (KeyValuePair<HexTile, RegionIsland> kvp in islands) {
             if (!allIslands.Contains(kvp.Value)) {
                 allIslands.Add(kvp.Value);
+                //Color islandColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                //for (int i = 0; i < kvp.Value.tilesInIsland.Count; i++) {
+                //    HexTile currTile = kvp.Value.tilesInIsland[i];
+                //    currTile.highlightGO.SetActive(true);
+                //    if (currTile.id != kvp.Value.mainTile.id) {
+                //        currTile.highlightGO.GetComponent<SpriteRenderer>().color = islandColor;
+                //    }
+                //}
             }
         }
-        ConnectIslands(allIslands, _islands);
+        ConnectIslands(allIslands, islands);
         //allIslands = allIslands.OrderByDescending(x => x.tilesInIsland.Count).ToList();
         //_mainIsland = allIslands[0];
     }
@@ -497,11 +501,68 @@ public class Region : IHasNeighbours<Region> {
     //    return false;
     //}
     private void ConnectIslands(List<RegionIsland> islands, Dictionary<HexTile, RegionIsland> islandsDict) {
+        int previousIslandsCount = islands.Count;
+        while (islands.Count > 1) {
+            RegionIsland currIsland = islands[0];
+            ConnectToNearestIsland(currIsland, islandsDict, islands);
+            if (islands.Count == previousIslandsCount) {
+                for (int i = 0; i < currIsland.tilesInIsland.Count; i++) {
+                    HexTile currTile = currIsland.tilesInIsland[i];
+                    currTile.highlightGO.SetActive(true);
+                    if (currTile.id != currIsland.mainTile.id) {
+                        currTile.highlightGO.GetComponent<SpriteRenderer>().color = Color.black;
+                    }
+                }
+                for (int i = 0; i < islands.Count; i++) {
+                    RegionIsland otherIsland = islands[i];
+                    if (otherIsland != currIsland) {
+                        for (int j = 0; j < otherIsland.tilesInIsland.Count; j++) {
+                            HexTile currTile = otherIsland.tilesInIsland[j];
+                            currTile.highlightGO.SetActive(true);
+                            if (currTile.id != currIsland.mainTile.id) {
+                                currTile.highlightGO.GetComponent<SpriteRenderer>().color = Color.red;
+                            }
+                        }
+                    }
+                }
+                throw new System.Exception(currIsland.mainTile.name + "'s island could not connect to another island!");
+            } else {
+                RevalidateIslands(islands, islandsDict);
+                previousIslandsCount = islands.Count;
+            }
+        }
+        //for (int i = 0; i < islands.Count; i++) {
+        //    RegionIsland currIsland = islands[i];
+        //    if (currIsland.tilesInIsland.Count > 0) {
+        //        ConnectToNearestIsland(currIsland, islandsDict, islands);
+        //    }
+        //}
+    }
+    private void RevalidateIslands(List<RegionIsland> islands, Dictionary<HexTile, RegionIsland> islandsDict) {
+        List<RegionIsland> islandsToRemove = new List<RegionIsland>();
         for (int i = 0; i < islands.Count; i++) {
             RegionIsland currIsland = islands[i];
-            if (currIsland.tilesInIsland.Count > 0) {
-                ConnectToNearestIsland(currIsland, islandsDict, islands);
+            if (currIsland.tilesInIsland.Count == 0) {
+                continue;
             }
+            for (int j = 0; j < islands.Count; j++) {
+                RegionIsland otherIsland = islands[j];
+                if (otherIsland.tilesInIsland.Count == 0) {
+                    continue;
+                }
+                if (currIsland != otherIsland) {
+                    if (AreIslandsConnected(currIsland, otherIsland)) {
+                        MergeIslands(currIsland, otherIsland, islandsDict);
+                        if (!islandsToRemove.Contains(otherIsland)) {
+                            islandsToRemove.Add(otherIsland);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < islandsToRemove.Count; i++) {
+            islands.Remove(islandsToRemove[i]);
         }
     }
     private void ConnectToNearestIsland(RegionIsland originIsland, Dictionary<HexTile, RegionIsland> islandsDict, List<RegionIsland> islands) {
@@ -511,7 +572,7 @@ public class Region : IHasNeighbours<Region> {
 
         for (int i = 0; i < islands.Count; i++) {
             RegionIsland otherIsland = islands[i];
-            if (otherIsland != originIsland && otherIsland.tilesInIsland.Count > 0) {
+            if (otherIsland != originIsland) {
                 if (!AreIslandsConnected(originIsland, otherIsland)) {
                     List<HexTile> path = PathGenerator.Instance.GetPath(originIsland.mainTile, otherIsland.mainTile, PATHFINDING_MODE.REGION_ISLAND_CONNECTION, this);
                     if (path != null && path.Count < nearestDistance) {
@@ -525,16 +586,18 @@ public class Region : IHasNeighbours<Region> {
 
         if (nearestPath != null) {
             MergeIslands(originIsland, nearestIsland, islandsDict);
-            List<HexTile> tilesToFlatten = new List<HexTile>();
-            for (int i = 0; i < nearestPath.Count; i++) {
-                HexTile currTile = nearestPath[i];
-                if (!originIsland.tilesInIsland.Contains(currTile)) {
-                    //only flattern tiles that is not part of the island, meaning the unpassable tiles in between the regions islands
-                    tilesToFlatten.Add(currTile);
-                }
-            }
-            //islands.Remove(nearestIsland);
-            FlattenTiles(tilesToFlatten);
+            //List<HexTile> tilesToFlatten = new List<HexTile>();
+            //for (int i = 0; i < nearestPath.Count; i++) {
+            //    HexTile currTile = nearestPath[i];
+            //    if (!originIsland.tilesInIsland.Contains(currTile)) {
+            //        //only flattern tiles that is not part of the island, meaning the unpassable tiles in between the regions islands
+            //        tilesToFlatten.Add(currTile);
+            //    }
+            //}
+            islands.Remove(nearestIsland);
+            FlattenTiles(nearestPath);
+            originIsland.AddTileToIsland(nearestPath);
+
         }
     }
     private bool AreIslandsConnected(RegionIsland island1, RegionIsland island2) {
@@ -556,6 +619,98 @@ public class Region : IHasNeighbours<Region> {
         }
     }
     #endregion
+
+    public void WallOffRegion() {
+        for (int i = 0; i < outerTiles.Count; i++) {
+            HexTile currTile = outerTiles[i];
+            //currTile.SetElevation(ELEVATION.MOUNTAIN);
+            if (currTile.isPassable && currTile.IsAdjacentToOtherRegion()) {
+                currTile.SetPassableState(false);
+            }
+        }
+    }
+    public void ConnectToOtherRegions() {
+        string log = this.name + "(" + this.centerOfMass.name + ")" + " connection summary";
+        int connectionsToCreate = UnityEngine.Random.Range(2, adjacentRegions.Count + 1);
+        List<Region> elligibleRegions = new List<Region>();
+        //check if this region is already connected to it's adjacentRegions
+        for (int i = 0; i < adjacentRegions.Count; i++) {
+            Region adjacentRegion = adjacentRegions[i];
+            if (PathGenerator.Instance.GetPath(this.centerOfMass, adjacentRegion.centerOfMass, PATHFINDING_MODE.PASSABLE) != null) {
+                //the 2 regions are already connected
+                connectionsToCreate--;
+            } else {
+                elligibleRegions.Add(adjacentRegion);
+            }
+        }
+        for (int i = 0; i < connectionsToCreate; i++) {
+            int tilesToClear = UnityEngine.Random.Range(2, 5);
+            Region chosenRegion = elligibleRegions[UnityEngine.Random.Range(0, elligibleRegions.Count)];
+            //choose from tiles in region that are adjacent to the chosen region and tiles that do not have passable neighbours that are outer tiles
+            List<HexTile> tilesToChooseFrom = outerTiles.Where(x => x.IsAdjacentWithRegion(chosenRegion) && !x.PassableNeighbours.Where(y => y.isOuterTileOfRegion).Any()).ToList();
+            if (tilesToClear > tilesToChooseFrom.Count) {
+                tilesToClear = tilesToChooseFrom.Count;
+            }
+            int tilesCleared = 0;
+            log += "\n" + this.centerOfMass.name + "'s region is connecting to " + chosenRegion.centerOfMass.name + "'s region " + tilesToClear.ToString();
+            while (tilesCleared != tilesToClear) {
+                if (tilesToChooseFrom.Count == 0) {
+                    break;
+                }
+                HexTile chosenTile = tilesToChooseFrom[UnityEngine.Random.Range(0, tilesToChooseFrom.Count)];
+                List<HexTile> neighboursFromOtherRegion = chosenTile.AllNeighbours.Where(x => x.region.id == chosenRegion.id && !x.PassableNeighbours.Where(y => y.isOuterTileOfRegion).Any()).ToList();
+                if (neighboursFromOtherRegion.Count == 0) {
+                    tilesToChooseFrom.Remove(chosenTile);
+                    continue;
+                }
+                HexTile tileFromOtherRegion = neighboursFromOtherRegion[UnityEngine.Random.Range(0, neighboursFromOtherRegion.Count)];
+
+                List<HexTile> chosenTilePath = PathGenerator.Instance.GetPath(chosenTile, this.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
+                List<HexTile> otherRegionPath = PathGenerator.Instance.GetPath(tileFromOtherRegion, chosenRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
+
+                List<HexTile> tilesToFlatten = new List<HexTile>();
+                if (chosenTile.AllNeighbours.Where(x => x.region.id == chosenTile.region.id && x.isPassable).Any()) {
+                    //if the chosen tile is not surrounded by unpassable tiles (it's own region only)
+                    tilesToFlatten.Add(chosenTile);
+                } else {
+                    for (int k = 0; k < chosenTilePath.Count; k++) {
+                        HexTile currTile = chosenTilePath[k];
+                        if (!currTile.isPassable) {
+                            tilesToFlatten.Add(currTile);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                if (tileFromOtherRegion.AllNeighbours.Where(x => x.region.id == tileFromOtherRegion.region.id && x.isPassable).Any()) {
+                    //if the tileFromOtherRegion is not surrounded by unpassable tiles (it's own region only)
+                    tilesToFlatten.Add(tileFromOtherRegion);
+                } else {
+                    for (int k = 0; k < otherRegionPath.Count; k++) {
+                        HexTile currTile = otherRegionPath[k];
+                        if (!currTile.isPassable) {
+                            tilesToFlatten.Add(currTile);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                FlattenTiles(tilesToFlatten);
+                log += "\n     - Used " + chosenTile.name + " to " + tileFromOtherRegion.name;
+                //chosenTile.SetElevation(ELEVATION.PLAIN);
+                //chosenTile.SetPassableState(true);
+                //tileFromOtherRegion.SetElevation(ELEVATION.PLAIN);
+                //tileFromOtherRegion.SetPassableState(true);
+                tilesToChooseFrom.Remove(chosenTile);
+                Utilities.ListRemoveRange(tilesToChooseFrom, chosenTile.AllNeighbours);
+                tilesCleared++;
+            }
+            
+            elligibleRegions.Remove(chosenRegion);
+        }
+        Debug.Log(log);
+    }
 
     #region Corruption
     //public void LandmarkStartedCorruption(BaseLandmark corruptedLandmark) {

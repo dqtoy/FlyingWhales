@@ -31,17 +31,20 @@ namespace PathFind {
 				double d;
 				Path<Node> newPath;
                 if (pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION) {
-                    foreach (Node n in path.LastStep.RegionConnectionTiles) {
+                    foreach (Node n in path.LastStep.AllNeighbours) {
                         if (n.region.id != region1.id && n.region.id != region2.id) {
                             //path cannot pass through other regions
                             continue;
                         }
-                        if (n.AllNeighbourRoadTiles.Count > 0 && n.id != start.id && n.id != destination.id) {
-                            //current node has adjacent roads, check if it is a neighbour of start or destination
-                            //if it is, allow the path
-                            //else skip this node
-                            continue;
+                        if (n.isOuterTileOfRegion && n.id != start.id && n.id != destination.id && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
+                            continue; //skip tiles that are outer tiles of the region, that is not the start or the destination tile
                         }
+                        //if (n.AllNeighbourRoadTiles.Count > 0 && n.id != start.id && n.id != destination.id) {
+                        //    //current node has adjacent roads, check if it is a neighbour of start or destination
+                        //    //if it is, allow the path
+                        //    //else skip this node
+                        //    continue;
+                        //}
 
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
@@ -215,8 +218,8 @@ namespace PathFind {
                             if (n.region.id != (data as Region).id) {
                                 continue; //skip tiles that are not part of the region
                             }
-                            if ((data as Region).outerTiles.Contains(n)) {
-                                continue; //skip tiles that are outer tiles of the region
+                            if ((data as Region).outerTiles.Contains(n) && n.id != start.id && n.id != destination.id && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
+                                continue; //skip tiles that are outer tiles of the region, that is not the start or the destination tile
                             }
                         }
                         d = distance(path.LastStep, n);
