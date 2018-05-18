@@ -60,7 +60,8 @@ public class MapGenerator : MonoBehaviour {
         ObjectManager.Instance.Initialize();
 
         st.Start();
-        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions();
+        Region playerRegion = null;
+        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions(playerRegion);
         st.Stop();
 
         if (factionGenerationFailed) {
@@ -104,14 +105,14 @@ public class MapGenerator : MonoBehaviour {
         //} else {
         //    Debug.Log(string.Format("Road Generation took {0} ms to complete", st.ElapsedMilliseconds));
         //}
-
+        LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.CreateGrid();
 
         //FactionManager.Instance.OccupyLandmarksInFactionRegions();
         //ObjectManager.Instance.Initialize();
         //LandmarkManager.Instance.ConstructAllLandmarkObjects();
 
-        LandmarkManager.Instance.GenerateMaterials();
+        //LandmarkManager.Instance.GenerateMaterials();
 
         //RoadManager.Instance.FlattenRoads();
         //Biomes.Instance.GenerateTileTags();
@@ -129,6 +130,68 @@ public class MapGenerator : MonoBehaviour {
         //StorylineManager.Instance.GenerateStoryLines();
         //CharacterManager.Instance.SchedulePrisonerConversion();
         //CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
+        CameraMove.Instance.UpdateMinimapTexture();
+        loadingWatch.Stop();
+        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
+    }
+
+    internal void LoadWorld(Save save) {
+        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
+        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        loadingWatch.Start();
+
+        GridMap.Instance.GenerateGrid();
+        CameraMove.Instance.CalculateCameraBounds();
+        Minimap.Instance.Initialize();
+        ObjectPoolManager.Instance.InitializeObjectPools();
+        CameraMove.Instance.SetWholemapCameraValues();
+        EquatorGenerator.Instance.GenerateEquator();
+        Biomes.Instance.GenerateElevation();
+        Biomes.Instance.GenerateBiome();
+        Biomes.Instance.LoadPassableObjects();
+
+        st.Start();
+        bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
+        st.Stop();
+
+        if (regionGenerationFailed) {
+            Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+            Messenger.Cleanup();
+            ReloadScene();
+            return;
+        } else {
+            Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        }
+
+        st.Start();
+        Biomes.Instance.DetermineIslands();
+        st.Stop();
+        Debug.Log(string.Format("Island Connections took {0} ms to complete", st.ElapsedMilliseconds));
+
+        //RoadManager.Instance.FlattenRoads();
+        //Biomes.Instance.LoadElevationSprites();
+        //Biomes.Instance.GenerateTileBiomeDetails();
+
+        //return;
+        RoadManager.Instance.GenerateTilePassableTypes();
+        GridMap.Instance.BottleneckBorders();
+
+        GridMap.Instance.GenerateOuterGrid();
+        GridMap.Instance.DivideOuterGridRegions();
+
+        UIManager.Instance.InitializeUI();
+
+        ObjectManager.Instance.Initialize();
+
+        //Load all landmarks
+        
+        PathfindingManager.Instance.CreateGrid();
+
+        Biomes.Instance.UpdateTileVisuals();
+        Biomes.Instance.GenerateTileBiomeDetails();
+
+        GameManager.Instance.StartProgression();
+
         CameraMove.Instance.UpdateMinimapTexture();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));

@@ -77,9 +77,9 @@ namespace PathFind {
                             continue;
                         }
 
-                        if (n.isHabitable && n.id != start.id && n.id != destination.id) {
-                            continue;
-                        }
+                        //if (n.isHabitable && n.id != start.id && n.id != destination.id) {
+                        //    continue;
+                        //}
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
                             continue;
                         }
@@ -111,9 +111,9 @@ namespace PathFind {
                         if (n.tileTag != start.tileTag) {
                             continue;
                         }
-                        if (n.isHabitable && n.id != start.id && n.id != destination.id) {
-                            continue;
-                        }
+                        //if (n.isHabitable && n.id != start.id && n.id != destination.id) {
+                        //    continue;
+                        //}
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
                             continue;
                         }

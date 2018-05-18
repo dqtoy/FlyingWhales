@@ -128,7 +128,7 @@ public class FactionManager : MonoBehaviour {
      Generate the initital factions,
      races are specified in the inspector (inititalRaces)
      */
-    public bool GenerateInitialFactions() {
+    public bool GenerateInitialFactions(Region playerRegion) {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> elligibleRegions = new List<Region>(GridMap.Instance.allRegions);
@@ -145,8 +145,7 @@ public class FactionManager : MonoBehaviour {
                 return false;
             }
         }
-
-        LandmarkManager.Instance.GeneratePlayerLandmarks(elligibleRegions[0]);
+        playerRegion = elligibleRegions[0];
         return true;
 
 

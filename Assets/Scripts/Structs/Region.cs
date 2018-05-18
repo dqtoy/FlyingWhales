@@ -151,11 +151,11 @@ public class Region : IHasNeighbours<Region> {
     internal void SetCenterOfMass(HexTile newCenter) {
         if (_centerOfMass != null) {
             //_centerOfMass.RemoveLandmarkOnTile();
-            _centerOfMass.isHabitable = false;
+            //_centerOfMass.isHabitable = false;
             //_centerOfMass.emptyCityGO.SetActive(false);
         }
         _centerOfMass = newCenter;
-        _centerOfMass.isHabitable = true;
+        //_centerOfMass.isHabitable = true;
         //_centerOfMass.emptyCityGO.SetActive (true);
         //_centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.TOWN);
     }

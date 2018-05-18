@@ -14,7 +14,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int tileTag;
     public string tileName;
     private Region _region;
-    private MATERIAL _materialOnTile = MATERIAL.NONE;
     [System.NonSerialized] public SpriteRenderer spriteRenderer;
 
     [Space(10)]
@@ -27,7 +26,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     [Space(10)]
     [Header("Booleans")]
-    public bool isHabitable = false;
     public bool isRoad = false;
     public bool isOccupied = false;
     [SerializeField] private bool _isPassable = false;
@@ -91,7 +89,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Minimap Objects")]
     [SerializeField] private SpriteRenderer minimapHexSprite;
-    private Color biomeColor;
+    //private Color biomeColor;
 
     [Space(10)]
     [Header("Fog Of War Objects")]
@@ -178,9 +176,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public LOCATION_IDENTIFIER locIdentifier {
         get { return LOCATION_IDENTIFIER.HEXTILE; }
-    }
-    public MATERIAL materialOnTile {
-        get { return _materialOnTile; }
     }
     public bool hasLandmark {
         get { return _landmarkOnTile != null; }
@@ -341,6 +336,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (_landmarkOnTile != null) {
             SetPassableState(true);
             _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(landmarkType) as StructureObj);
+        }
+        return _landmarkOnTile;
+    }
+    public BaseLandmark LoadLandmark(BaseLandmark landmark) {
+        GameObject landmarkGO = null;
+        //Create Landmark Game Object on tile
+        landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        landmarkGO.transform.localPosition = Vector3.zero;
+        landmarkGO.transform.localScale = Vector3.one;
+        _landmarkOnTile = landmark;
+        if (landmarkGO != null) {
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+        }
+        _region.AddLandmarkToRegion(_landmarkOnTile);
+        if (_landmarkOnTile != null) {
+            SetPassableState(true);
+            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(_landmarkOnTile.specificLandmarkType) as StructureObj);
         }
         return _landmarkOnTile;
     }
@@ -584,7 +596,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType, GameObject roadGO) {
         roadGOs.Add(roadGO);
-        if (this.isHabitable || this.hasLandmark) {
+        if (this.hasLandmark) {//this.isHabitable
             if (isRoad) {
                 if (_roadType == ROAD_TYPE.NONE) {
                     _roadType = roadType;
@@ -1585,7 +1597,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Materials
     public void SetMaterialOnTile(MATERIAL material) {
-        _materialOnTile = material;
+        //_materialOnTile = material;
         //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
         //resource.transform.localPosition = Vector3.zero;
         //resource.transform.localScale = Vector3.one;
