@@ -27,7 +27,18 @@ public class StructureObjectComponent : ObjectComponent {
 
     #region General
     public void Repaired(IObject iobject) {
-        ObjectState defaultState = iobject.GetState("Default");
+        string nextStateName = "Default";
+        if (iobject is StructureObj) {
+            //On hitpoints check, when switching from Ruined, check Resource Count to determine whether to switch to Default or Depleted state
+            StructureObj obj = (iobject as StructureObj);
+            if (obj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT || obj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT) {
+                if (obj.resourceInventory[obj.GetMainResource()] <= 0) {
+                    nextStateName = "Depleted";
+                }
+            }
+        }
+        
+        ObjectState defaultState = iobject.GetState(nextStateName);
         iobject.ChangeState(defaultState);
     }
     public void Destroyed(IObject iobject) {
