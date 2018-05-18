@@ -38,14 +38,12 @@ public class BaseLandmark : ILocation, TaskCreator {
     //protected List<IObject> _objects;
     private bool _hasScheduledCombatCheck = false;
     private Dictionary<RESOURCE, int> _resourceInventory;
-    private HexTile _currentCorruptedTileToCheck;
     private List<HexTile> _nextCorruptedTilesToCheck;
     private bool _hasBeenCorrupted;
     private List<HexTile> _diagonalRightTiles;
     private List<HexTile> _diagonalLeftTiles;
     private List<HexTile> _horizontalTiles;
     private List<HexTile> _wallTiles;
-    private string _wallDirection;
     public bool hasAdjacentCorruptedLandmark;
     //private int _diagonalLeftBlocked;
     //private int _diagonalRightBlocked;
@@ -171,7 +169,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         _diagonalRightTiles = new List<HexTile>();
         _horizontalTiles = new List<HexTile>();
         _wallTiles = new List<HexTile>();
-        _wallDirection = string.Empty;
         hasAdjacentCorruptedLandmark = false;
         //_diagonalLeftBlocked = 0;
         //_diagonalRightBlocked = 0;
@@ -1183,9 +1180,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     private void DoCorruption() {
         if(_nextCorruptedTilesToCheck.Count > 0) {
             int index = UnityEngine.Random.Range(0, _nextCorruptedTilesToCheck.Count);
-            _currentCorruptedTileToCheck = _nextCorruptedTilesToCheck[index];
+            HexTile currentCorruptedTileToCheck = _nextCorruptedTilesToCheck[index];
             _nextCorruptedTilesToCheck.RemoveAt(index);
-            SpreadCorruption(_currentCorruptedTileToCheck);
+            SpreadCorruption(currentCorruptedTileToCheck);
         } else {
             StopSpreadCorruption();
         }
