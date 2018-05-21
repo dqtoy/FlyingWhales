@@ -16,7 +16,7 @@ public class MapGenerator : MonoBehaviour {
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
 
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
@@ -26,19 +26,19 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
 
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Biomes...");
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Biomes...");
 
         Biomes.Instance.GenerateBiome();
         Biomes.Instance.LoadPassableObjects();
 
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
 
         st.Start();
         bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
 
         if (regionGenerationFailed) {
-            Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+            //Debug.LogWarning("Region generation ran into a problem, reloading scene...");
             Messenger.Cleanup();
             ReloadScene();
             return;
@@ -70,7 +70,7 @@ public class MapGenerator : MonoBehaviour {
 
         ObjectManager.Instance.Initialize();
 
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Factions...");
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Factions...");
 
         Region playerRegion = null;
         st.Start();
@@ -91,7 +91,7 @@ public class MapGenerator : MonoBehaviour {
         //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
         //st.Stop();
 
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Landmarks...");
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Landmarks...");
         st.Start();
         bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateFactionLandmarks();
         st.Stop();

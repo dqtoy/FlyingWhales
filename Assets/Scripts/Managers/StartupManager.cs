@@ -5,7 +5,7 @@ public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
 
 	void Start(){
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
         DataConstructor.Instance.InitializeData();
         ECS.CombatManager.Instance.Initialize();
         EncounterPartyManager.Instance.Initialize ();
@@ -13,7 +13,7 @@ public class StartupManager : MonoBehaviour {
 		ProductionManager.Instance.Initialize ();
 		TaskManager.Instance.Initialize ();
 
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
         this.mapGenerator.InitializeWorld ();
 	}
 }
