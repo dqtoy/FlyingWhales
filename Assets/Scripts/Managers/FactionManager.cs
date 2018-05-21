@@ -128,10 +128,11 @@ public class FactionManager : MonoBehaviour {
      Generate the initital factions,
      races are specified in the inspector (inititalRaces)
      */
-    public bool GenerateInitialFactions(ref Region playerRegion) {
+    public void GenerateInitialFactions(ref Region playerRegion) {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
-        List<Region> elligibleRegions = new List<Region>(GridMap.Instance.allRegions);
+        Dictionary<List<Region>, FACTION_SIZE> initialFactions = new Dictionary<List<Region>, FACTION_SIZE>();
+        List<Region> elligibleRegions = new List<Region>();
 
         RACE[] races = new RACE[] { RACE.HUMANS, RACE.ELVES };
 
@@ -139,14 +140,36 @@ public class FactionManager : MonoBehaviour {
         //int numOfTribes = Random.Range(2, 6);
         //5 regions will be owned by five different kingdoms. The other region will contain the Player's Demonic Portal.
         int numOfTribes = 5;
-        for (int i = 0; i < numOfTribes; i++) {
-            RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
-            if (!CreateInitialFaction(FACTION_SIZE.SMALL, elligibleRegions, chosenRace, 1)) {
-                return false;
+        FACTION_SIZE size = FACTION_SIZE.SMALL;
+        while (initialFactions.Count <= 0) {
+            elligibleRegions.Clear();
+            elligibleRegions.AddRange(GridMap.Instance.allRegions);
+            for (int i = 0; i < numOfTribes; i++) {
+                List<Region> chosenRegions = GetFactionRegions(size, elligibleRegions, 1);
+                if (chosenRegions != null) {
+                    initialFactions.Add(chosenRegions, size);
+                } else {
+                    initialFactions.Clear();
+                    break;
+                }
             }
         }
+
+        foreach (KeyValuePair<List<Region>, FACTION_SIZE> initialFactionSetup in initialFactions) {
+            RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
+            Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
+            newFaction.GenerateBonusTech(initialFactionSetup.Value);
+            for (int i = 0; i < initialFactionSetup.Key.Count; i++) {
+                Region currRegion = initialFactionSetup.Key[i];
+                currRegion.SetOwner(newFaction);
+                newFaction.OwnRegion(currRegion);
+                currRegion.ReColorBorderTiles(newFaction.factionColor);
+                currRegion.HighlightRegionTiles(newFaction.factionColor, 69f / 255f);
+            }
+        }
+        
         playerRegion = elligibleRegions[0];
-        return true;
+        //return true;
 
 
         //InitialTribeSetting initialTribes = _initialTribes[Random.Range(0, _initialTribes.Count)]; //Choose a random tribe setup
@@ -167,16 +190,15 @@ public class FactionManager : MonoBehaviour {
         //}
         //return true;
     }
-    private bool CreateInitialFaction(FACTION_SIZE size, List<Region> elligibleRegions, RACE chosenRace, int numOfRegions = 0) {
+    private List<Region> GetFactionRegions(FACTION_SIZE size, List<Region> elligibleRegions, int numOfRegions = 0) {
         int numOfRegionsForCurrentFaction = numOfRegions;
         if (numOfRegions == 0) {
             numOfRegionsForCurrentFaction = GetInitialVillageCount(size);
         }
-        Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
-        newFaction.GenerateBonusTech(size);
         Region initialRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
         List<Region> chosenRegions = new List<Region>();
         chosenRegions.Add(initialRegion);
+        elligibleRegions.Remove(initialRegion);
 
         while (chosenRegions.Count != numOfRegionsForCurrentFaction) {
             List<Region> choices = new List<Region>();
@@ -185,7 +207,7 @@ public class FactionManager : MonoBehaviour {
                 Region currChosenRegion = chosenRegions[i];
                 for (int j = 0; j < currChosenRegion.adjacentRegions.Count; j++) {
                     Region currAdjacentRegion = currChosenRegion.adjacentRegions[j];
-                    if (!chosenRegions.Contains(currAdjacentRegion) && !currAdjacentRegion.isOwned && !choices.Contains(currAdjacentRegion)) {
+                    if (!chosenRegions.Contains(currAdjacentRegion) && elligibleRegions.Contains(currAdjacentRegion) && !choices.Contains(currAdjacentRegion)) {
                         choices.Add(currAdjacentRegion);
                     }
                 }
@@ -193,20 +215,13 @@ public class FactionManager : MonoBehaviour {
             if (choices.Count > 0) {
                 Region chosenRegion = choices[Random.Range(0, choices.Count)];
                 chosenRegions.Add(chosenRegion);
+                elligibleRegions.Remove(chosenRegion);
             } else {
-                return false;
+                return null;
             }
         }
-
-        for (int i = 0; i < chosenRegions.Count; i++) {
-            Region currRegion = chosenRegions[i];
-            elligibleRegions.Remove(currRegion);
-            currRegion.SetOwner(newFaction);
-            newFaction.OwnRegion(currRegion);
-            currRegion.ReColorBorderTiles(newFaction.factionColor);
-            currRegion.HighlightRegionTiles(newFaction.factionColor, 69f / 255f);
-        }
-        return true;
+        return chosenRegions;
+       
     }
     public void GenerateFactionCharacters() {
         for (int i = 0; i < allTribes.Count; i++) {

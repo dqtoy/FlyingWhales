@@ -34,17 +34,17 @@ public class MapGenerator : MonoBehaviour {
         //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
 
         st.Start();
-        bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
+        GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
 
-        if (regionGenerationFailed) {
-            //Debug.LogWarning("Region generation ran into a problem, reloading scene...");
-            Messenger.Cleanup();
-            ReloadScene();
-            return;
-        } else {
-            Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        }
+        //if (regionGenerationFailed) {
+        //    //Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //} else {
+        //    Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        //}
 
         //Biomes.Instance.UpdateTileVisuals();
         //Biomes.Instance.GenerateTileBiomeDetails();
@@ -74,18 +74,18 @@ public class MapGenerator : MonoBehaviour {
 
         Region playerRegion = null;
         st.Start();
-        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
+        FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
         st.Stop();
 
-        if (factionGenerationFailed) {
-            //reset
-            Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
-            Messenger.Cleanup();
-            ReloadScene();
-            return;
-        } else {
-            Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        }
+        //if (factionGenerationFailed) {
+        //    //reset
+        //    Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //} else {
+        //    Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        //}
 
         //st.Start();
         //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
@@ -164,17 +164,17 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.LoadPassableObjects();
 
         st.Start();
-        bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
+        GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
 
-        if (regionGenerationFailed) {
-            Debug.LogWarning("Region generation ran into a problem, reloading scene...");
-            Messenger.Cleanup();
-            ReloadScene();
-            return;
-        } else {
-            Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        }
+        //if (regionGenerationFailed) {
+        //    Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //} else {
+        //    Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        //}
 
         st.Start();
         Biomes.Instance.DetermineIslands();
