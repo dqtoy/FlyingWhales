@@ -519,7 +519,7 @@ public class RoadManager : MonoBehaviour {
                     currTile.SetRoadState(false);
                 }
             }
-            currTile.SetPassableState(true);
+            //currTile.SetPassableState(true);
         }
     }
     public void ConnectLandmarkToLandmark(BaseLandmark landmark1, BaseLandmark landmark2) {

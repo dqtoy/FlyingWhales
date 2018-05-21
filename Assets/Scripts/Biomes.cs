@@ -112,6 +112,17 @@ public class Biomes : MonoBehaviour {
             }
             //currentHexTile.UpdateSortingOrder();
         }
+        for (int i = 0; i < GridMap.Instance.outerGridList.Count; i++) {
+            HexTile currentHexTile = GridMap.Instance.outerGridList[i];
+            object centerObj = GetCenterObject(currentHexTile);
+            currentHexTile.SetPassableObject(centerObj);
+            //if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+            //    currentHexTile.SetPassableState(true);
+            //} else {
+                currentHexTile.SetPassableState(false);
+            //}
+            //currentHexTile.UpdateSortingOrder();
+        }
     }
     //internal void LoadElevationSprites() {
     //    for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {

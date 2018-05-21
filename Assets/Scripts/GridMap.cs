@@ -340,42 +340,40 @@ public class GridMap : MonoBehaviour {
             }
         }
 
-        ////check if all tiles have a region
-        //for (int i = 0; i < allHexTiles.Count; i++) {
-        //    HexTile currHexTile = allHexTiles[i];
-        //    if (currHexTile.region == null) {
-        //        throw new System.Exception(currHexTile.name + "'s region is null!");
-        //    }
-        //}
-
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
             currRegion.RevalidateCenterOfMass();
             currRegion.CheckForAdjacency();
-            //currRegion.ComputeNaturalResourceLevel();
+            currRegion.WallOffRegion();
+            currRegion.DetermineRegionIslands();
+        }
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            currRegion.ConnectToOtherRegions();
+            //currRegion.DetermineRegionIslands();
         }
         return true;
     }
-    public void BottleneckBorders() {
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            for (int j = 0; j < currRegion.outerTiles.Count; j++) {
-                HexTile currBorderTile = currRegion.outerTiles[j];
-                if (currBorderTile.isPassable && !currBorderTile.IsBottleneck()) {
-                    List<HexTile> borderNeighbours = currBorderTile.AllNeighbours.Where(x => x.IsBorderTileOfRegion()).ToList();
-                    if (!currBorderTile.AllNeighbours.Where(x => x.IsBottleneck()).Any()) {
-                        //this tile has no border neighbours that are bottlenecks or dead ends, make this tile unpassable
-                        currBorderTile.SetPassableState(false);
-                        //make passable neighbours recompute their passable type
-                        List<HexTile> passableNeighbours = currBorderTile.AllNeighbours.Where(x => x.isPassable).ToList();
-                        passableNeighbours.ForEach(x => x.DeterminePassableType());
-                    }
-                }
-            }
-            currRegion.LogPassableTiles();
-            currRegion.DetermineRegionIslands();
-        }
-    }
+    //public void BottleneckBorders() {
+    //    for (int i = 0; i < allRegions.Count; i++) {
+    //        Region currRegion = allRegions[i];
+    //        for (int j = 0; j < currRegion.outerTiles.Count; j++) {
+    //            HexTile currBorderTile = currRegion.outerTiles[j];
+    //            if (currBorderTile.isPassable && !currBorderTile.IsBottleneck()) {
+    //                List<HexTile> borderNeighbours = currBorderTile.AllNeighbours.Where(x => x.IsBorderTileOfRegion()).ToList();
+    //                if (!currBorderTile.AllNeighbours.Where(x => x.IsBottleneck()).Any()) {
+    //                    //this tile has no border neighbours that are bottlenecks or dead ends, make this tile unpassable
+    //                    currBorderTile.SetPassableState(false);
+    //                    //make passable neighbours recompute their passable type
+    //                    List<HexTile> passableNeighbours = currBorderTile.AllNeighbours.Where(x => x.isPassable).ToList();
+    //                    passableNeighbours.ForEach(x => x.DeterminePassableType());
+    //                }
+    //            }
+    //        }
+    //        currRegion.LogPassableTiles();
+    //        currRegion.DetermineRegionIslands();
+    //    }
+    //}
     //private void NormalizeRegions() {
     //    List<Region> orderedRegions = allRegions.OrderBy(x => x.tilesInRegion.Count).ToList();
     //    while (true) {

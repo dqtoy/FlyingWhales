@@ -120,7 +120,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
     public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
     public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
-    public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
+    //public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> PassableNeighbours { get { return AllNeighbours.Where(o => o.isPassable).ToList(); } }
@@ -177,6 +177,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public LOCATION_IDENTIFIER locIdentifier {
         get { return LOCATION_IDENTIFIER.HEXTILE; }
     }
+    public bool isOuterTileOfRegion {
+        get { return this.region.outerTiles.Contains(this); }
+    }
     public bool hasLandmark {
         get { return _landmarkOnTile != null; }
     }
@@ -212,6 +215,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         List<HexTile> neighbors = this.AllNeighbours;
         for (int i = 0; i < neighbors.Count; i++) {
             if (neighbors[i].region.id == region.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    internal bool IsAdjacentToOtherRegion() {
+        List<HexTile> neighbors = this.AllNeighbours;
+        for (int i = 0; i < neighbors.Count; i++) {
+            if (neighbors[i].region.id != this.region.id) {
                 return true;
             }
         }
@@ -1088,7 +1100,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
-        //ShowHexTileInfo();
+        ShowHexTileInfo();
         //if (_landmarkOnTile != null) {
         //	if(_landmarkOnTile.owner != null) { //landmark is occupied
         //		if (isHabitable) {
@@ -1281,7 +1293,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //        }
         //    }
         //}
-        UIManager.Instance.ShowSmallInfo(this.tileName + " - " + _passableType.ToString());
+        UIManager.Instance.ShowSmallInfo(this.name + " - " + _isPassable.ToString());
     }
     private void ShowLandmarkInfo() {
         string text = string.Empty;
