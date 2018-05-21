@@ -449,11 +449,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return false; //this tile is not passable or already has a landmark
         }
         if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
-            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(this)).Any()) {
+            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
                 return false; //check if this tile has any neighbours that are not fortifications
             }
         } else {
-            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(this)).Any()) {
+            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
                 return false; //check if this tile has any neighbours that have landmarks
             }
         }
