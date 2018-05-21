@@ -16,6 +16,8 @@ public class MapGenerator : MonoBehaviour {
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
+
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
@@ -23,9 +25,13 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.SetWholemapCameraValues();
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
+
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Biomes...");
+
         Biomes.Instance.GenerateBiome();
         Biomes.Instance.LoadPassableObjects();
-        
+
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
         st.Start();
         bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
@@ -59,9 +65,10 @@ public class MapGenerator : MonoBehaviour {
 
         ObjectManager.Instance.Initialize();
 
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Factions...");
         st.Start();
         Region playerRegion = null;
-        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions(playerRegion);
+        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
         st.Stop();
 
         if (factionGenerationFailed) {
@@ -78,7 +85,7 @@ public class MapGenerator : MonoBehaviour {
         //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
         //st.Stop();
 
-        
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Landmarks...");
         st.Start();
         bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateFactionLandmarks();
         st.Stop();

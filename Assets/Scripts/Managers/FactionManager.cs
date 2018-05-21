@@ -128,7 +128,7 @@ public class FactionManager : MonoBehaviour {
      Generate the initital factions,
      races are specified in the inspector (inititalRaces)
      */
-    public bool GenerateInitialFactions(Region playerRegion) {
+    public bool GenerateInitialFactions(ref Region playerRegion) {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> elligibleRegions = new List<Region>(GridMap.Instance.allRegions);
