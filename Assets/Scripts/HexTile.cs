@@ -444,16 +444,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetTag(int tag) {
         this.tileTag = tag;
     }
-    public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data) {
-        if (this.hasLandmark || !this.isPassable) {
+    public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data, Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated) {
+        if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
             return false; //this tile is not passable or already has a landmark
         }
         if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
-            if (this.PassableNeighbours.Where(x => x.hasLandmark).Any()) {
+            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(this)).Any()) {
                 return false; //check if this tile has any neighbours that are not fortifications
             }
         } else {
-            if (this.PassableNeighbours.Where(x => x.hasLandmark).Any()) {
+            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(this)).Any()) {
                 return false; //check if this tile has any neighbours that have landmarks
             }
         }
