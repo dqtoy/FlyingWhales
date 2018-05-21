@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using BayatGames.SaveGameFree;
 
 public class UIManager : MonoBehaviour {
 
@@ -931,5 +932,21 @@ public class UIManager : MonoBehaviour {
     //    questsSummaryLbl.text = questSummary;
     //    questsSummaryLbl.ResizeCollider();
     //}
+    #endregion
+
+    #region Save
+    public void Save() {
+        Save savefile = new Save();
+        savefile.hextiles = new List<HextileSave>();
+        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+            if(GridMap.Instance.hexTiles[i].landmarkOnTile != null) {
+                HextileSave hextileSave = new HextileSave();
+                hextileSave.SaveTile(GridMap.Instance.hexTiles[i]);
+                savefile.hextiles.Add(hextileSave);
+            }
+        }
+        SaveGame.Save<Save>("SavedFile1", savefile);
+        LevelLoaderManager.Instance.LoadLevel("MainMenu");
+    } 
     #endregion
 }

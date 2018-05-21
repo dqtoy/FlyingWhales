@@ -187,6 +187,14 @@ public class GridMap : MonoBehaviour {
     #endregion
 
     #region Grid Utilities
+    internal HexTile GetHexTile(int xCoordinate, int yCoordinate) {
+        for (int i = 0; i < hexTiles.Count; i++) {
+            if (xCoordinate == hexTiles[i].xCoordinate && yCoordinate == hexTiles[i].yCoordinate) {
+                return hexTiles[i];
+            }
+        }
+        return null;
+    }
     internal GameObject GetHex(string hexName) {
         for (int i = 0; i < listHexes.Count; i++) {
             if (hexName == listHexes[i].name) {

@@ -133,7 +133,6 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.UpdateTileVisuals();
         Biomes.Instance.GenerateTileBiomeDetails();
         
-        
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
@@ -195,8 +194,10 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.InitializeUI();
 
         ObjectManager.Instance.Initialize();
+        //Load Initial Factions
 
         //Load all landmarks
+        LandmarkManager.Instance.LoadAllLandmarksFromSave(save);
         
         PathfindingManager.Instance.CreateGrid();
 

@@ -37,7 +37,7 @@ public class MainMenuManager : MonoBehaviour {
     public void LoadGame() {
         Save save = SaveGame.Load<Save>(_saveFiles[0].Name);
         SaveManager.Instance.currentSave = save;
-        LevelLoaderManager.Instance.LoadLevel("Main");
+        //LevelLoaderManager.Instance.LoadLevel("Main");
     }
 
     public void PlayGame() {

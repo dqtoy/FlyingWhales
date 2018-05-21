@@ -232,6 +232,12 @@ public class LandmarkManager : MonoBehaviour {
         }
         //return true;
     }
+    public void LoadAllLandmarksFromSave(Save save) {
+        for (int i = 0; i < save.hextiles.Count; i++) {
+            HexTile currentTile = GridMap.Instance.GetHexTile(save.hextiles[i].xCoordinate, save.hextiles[i].yCoordinate);
+            LoadLandmarkOnTile(currentTile, save.hextiles[i].landmark);
+        }
+    }
     private Dictionary<LANDMARK_TYPE, int> GetLandmarkSettings(LEVEL wealthLvl, LEVEL populationLvl, LEVEL mightLvl, LEVEL needLvl, Tribe tribe) {
         Dictionary<LANDMARK_TYPE, int> landmarkSettings = new Dictionary<LANDMARK_TYPE, int>();
         AddWealthSettings(wealthLvl, landmarkSettings);
