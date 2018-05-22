@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#define WORLD_CREATION_TOOL
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using PathFind;
@@ -1094,38 +1096,39 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Monobehaviour Functions
     private void OnMouseOver() {
-		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+#if WORLD_CREATION_TOOL
+
+#else
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
 			return;
 		}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
         ShowHexTileInfo();
-        //if (_landmarkOnTile != null) {
-        //	if(_landmarkOnTile.owner != null) { //landmark is occupied
-        //		if (isHabitable) {
-        //			this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 127f / 255f);
-        //		}
-        //	}
-        //} 
         if (Input.GetMouseButtonDown(0)){
 			LeftClick ();
 		}else if(Input.GetMouseButtonDown(1)){
 			RightClick ();
 		}
-	}
-	private void OnMouseExit() {
-		_hoverHighlightGO.SetActive(false);
-		if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
-			return;
-		}
-		//if (_landmarkOnTile != null && isHabitable) {
-		//	if (_landmarkOnTile.owner != null) {
-		//		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
-		//	}
-		//}
-		HideSmallInfoWindow();
-	}
+#endif
+    }
+    private void OnMouseExit() {
+#if WORLD_CREATION_TOOL
+        
+#else
+        _hoverHighlightGO.SetActive(false);
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+            return;
+        }
+        //if (_landmarkOnTile != null && isHabitable) {
+        //	if (_landmarkOnTile.owner != null) {
+        //		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
+        //	}
+        //}
+        HideSmallInfoWindow();
+#endif
+    }
     private void LeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             if (UIManager.Instance.IsConsoleShowing()) {
@@ -1175,9 +1178,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //    }
     //    character.specificLocation.RemoveCharacterFromLocation(character);
     //}
-    #endregion
+#endregion
 
-    #region For Testing
+#region For Testing
     [Space(10)]
     [Header("For Testing")]
     [SerializeField] private int range = 0;
@@ -1333,9 +1336,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public override string ToString() {
         return this.tileName;
     }
-    #endregion
+#endregion
 
-	#region Characters
+#region Characters
 	public void AddCharacterToLocation(ICombatInitializer character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
@@ -1419,9 +1422,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
 		return count;
 	}
-	#endregion
+#endregion
 
-    #region Combat
+#region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
         //Messenger.AddListener(Signals.DAY_START, CheckForCombat);
@@ -1605,9 +1608,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             currItem.ContinueDailyAction();
         }
     }
-    #endregion
+#endregion
 
-    #region Materials
+#region Materials
     public void SetMaterialOnTile(MATERIAL material) {
         //_materialOnTile = material;
         //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
@@ -1615,9 +1618,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //resource.transform.localScale = Vector3.one;
         region.AddTileWithMaterial(this);
     }
-    #endregion
+#endregion
 
-    #region Corruption
+#region Corruption
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
@@ -1655,5 +1658,5 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
-    #endregion
+#endregion
 }
