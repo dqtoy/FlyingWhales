@@ -187,6 +187,14 @@ public class GridMap : MonoBehaviour {
     #endregion
 
     #region Grid Utilities
+    internal HexTile GetHexTile(int xCoordinate, int yCoordinate) {
+        for (int i = 0; i < hexTiles.Count; i++) {
+            if (xCoordinate == hexTiles[i].xCoordinate && yCoordinate == hexTiles[i].yCoordinate) {
+                return hexTiles[i];
+            }
+        }
+        return null;
+    }
     internal GameObject GetHex(string hexName) {
         for (int i = 0; i < listHexes.Count; i++) {
             if (hexName == listHexes[i].name) {
@@ -279,19 +287,34 @@ public class GridMap : MonoBehaviour {
      * regions. Refer to https://gamedev.stackexchange.com/questions/57213/generate-equal-regions-in-a-hex-map 
      * for the logic used.
      * */
-    public bool GenerateRegions(int numOfRegions, int refinementLevel) {
-        List<HexTile> allHexTiles = new List<HexTile>(hexTiles);
-        Utilities.Shuffle(allHexTiles);
-        List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles.Where(x => (x.xCoordinate > 1 && x.xCoordinate < width - 1) && (x.yCoordinate < height - 2 && x.yCoordinate > 2)));
+    public void GenerateRegions(int numOfRegions, int refinementLevel) {
         HexTile[] initialCenters = new HexTile[numOfRegions];
-        allRegions = new List<Region>();
-        for (int i = 0; i < numOfRegions; i++) {
-            if (possibleCenterTiles.Count <= 0) {
-                //throw new System.Exception("All tiles have been used up!");
-                return false;
+        List<HexTile> allHexTiles = new List<HexTile>(hexTiles);
+        List<HexTile> chosenTiles = new List<HexTile>();
+        
+        while(chosenTiles.Count <= 0) {
+            Utilities.Shuffle(allHexTiles);
+            List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles.Where(x => (x.xCoordinate > 1 && x.xCoordinate < width - 1) && (x.yCoordinate < height - 2 && x.yCoordinate > 2)));
+            for (int i = 0; i < numOfRegions; i++) {
+                if (possibleCenterTiles.Count <= 0) {
+                    //throw new System.Exception("All tiles have been used up!");
+                    chosenTiles.Clear();
+                    break;
+                } else {
+                    HexTile chosenHexTile = possibleCenterTiles[Random.Range(0, possibleCenterTiles.Count)];
+                    possibleCenterTiles.Remove(chosenHexTile);
+                    chosenTiles.Add(chosenHexTile);
+                    foreach (HexTile hex in chosenHexTile.GetTilesInRange(5)) {
+                        possibleCenterTiles.Remove(hex);
+                    }
+                }
             }
-            HexTile chosenHexTile = possibleCenterTiles[Random.Range(0, possibleCenterTiles.Count)];
-            possibleCenterTiles.Remove(chosenHexTile);
+        }
+       
+
+        allRegions = new List<Region>();
+        for (int i = 0; i < chosenTiles.Count; i++) {
+            HexTile chosenHexTile = chosenTiles[i];
             allHexTiles.Remove(chosenHexTile);
             initialCenters[i] = chosenHexTile;
             Region newRegion = new Region(chosenHexTile);
@@ -300,9 +323,6 @@ public class GridMap : MonoBehaviour {
             //centerOfMassColor.a = 75.6f / 255f;
             //chosenHexTile.SetTileHighlightColor(centerOfMassColor);
             //chosenHexTile.ShowTileHighlight();
-            foreach (HexTile hex in chosenHexTile.GetTilesInRange(5)) {
-                possibleCenterTiles.Remove(hex);
-            }
         }
         Debug.Log("Successfully got " + initialCenters.Length.ToString() + " center of masses!");
 
@@ -352,7 +372,7 @@ public class GridMap : MonoBehaviour {
             currRegion.ConnectToOtherRegions();
             //currRegion.DetermineRegionIslands();
         }
-        return true;
+        //return true;
     }
     //public void BottleneckBorders() {
     //    for (int i = 0; i < allRegions.Count; i++) {

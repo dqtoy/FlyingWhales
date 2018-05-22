@@ -3,5 +3,5 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Save {
-    public HextileSave[] hextiles;
+    public List<HextileSave> hextiles;
 }

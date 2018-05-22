@@ -16,6 +16,8 @@ public class MapGenerator : MonoBehaviour {
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
+
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
@@ -23,23 +25,26 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.SetWholemapCameraValues();
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
+
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Biomes...");
+
         Biomes.Instance.GenerateBiome();
         Biomes.Instance.LoadPassableObjects();
 
-        
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
 
         st.Start();
-        bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
+        GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
 
-        if (regionGenerationFailed) {
-            Debug.LogWarning("Region generation ran into a problem, reloading scene...");
-            Messenger.Cleanup();
-            ReloadScene();
-            return;
-        } else {
-            Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        }
+        //if (regionGenerationFailed) {
+        //    //Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //} else {
+        //    Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        //}
 
         //Biomes.Instance.UpdateTileVisuals();
         //Biomes.Instance.GenerateTileBiomeDetails();
@@ -65,38 +70,40 @@ public class MapGenerator : MonoBehaviour {
 
         ObjectManager.Instance.Initialize();
 
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Factions...");
+
         Region playerRegion = null;
         st.Start();
-        bool factionGenerationFailed = !FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
+        FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
         st.Stop();
 
-        if (factionGenerationFailed) {
-            //reset
-            Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
-            Messenger.Cleanup();
-            ReloadScene();
-            return;
-        } else {
-            Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        }
+        //if (factionGenerationFailed) {
+        //    //reset
+        //    Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //} else {
+        //    Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        //}
 
         //st.Start();
         //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
         //st.Stop();
 
-        
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Landmarks...");
         st.Start();
-        bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateFactionLandmarks();
+        LandmarkManager.Instance.GenerateFactionLandmarks();
         st.Stop();
-        if (landmarkGenerationFailed) {
-            //reset
-            Debug.LogWarning("Landmark generation ran into a problem, reloading scene...");
-            Messenger.Cleanup();
-            ReloadScene();
-            return;
-        } else {
-            Debug.Log(string.Format("Landmark Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        }
+        //if (landmarkGenerationFailed) {
+        //    //reset
+        //    Debug.LogWarning("Landmark generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //} else {
+        //    Debug.Log(string.Format("Landmark Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        //}
 
         //st.Start();
         //bool roadGenerationFailed = !RoadManager.Instance.GenerateRoads();
@@ -125,7 +132,6 @@ public class MapGenerator : MonoBehaviour {
         //GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.UpdateTileVisuals();
         Biomes.Instance.GenerateTileBiomeDetails();
-        
         
 
         GameManager.Instance.StartProgression();
@@ -157,17 +163,17 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.LoadPassableObjects();
 
         st.Start();
-        bool regionGenerationFailed = !GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
+        GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
 
-        if (regionGenerationFailed) {
-            Debug.LogWarning("Region generation ran into a problem, reloading scene...");
-            Messenger.Cleanup();
-            ReloadScene();
-            return;
-        } else {
-            Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        }
+        //if (regionGenerationFailed) {
+        //    Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+        //    Messenger.Cleanup();
+        //    ReloadScene();
+        //    return;
+        //} else {
+        //    Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
+        //}
 
         st.Start();
         Biomes.Instance.DetermineIslands();
@@ -188,8 +194,10 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.InitializeUI();
 
         ObjectManager.Instance.Initialize();
+        //Load Initial Factions
 
         //Load all landmarks
+        LandmarkManager.Instance.LoadAllLandmarksFromSave(save);
         
         PathfindingManager.Instance.CreateGrid();
 

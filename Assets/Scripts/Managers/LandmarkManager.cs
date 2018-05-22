@@ -213,7 +213,7 @@ public class LandmarkManager : MonoBehaviour {
             throw new System.Exception("Cannot create Demonic Portal for Player!");
         }
     }
-    public bool GenerateFactionLandmarks() {
+    public void GenerateFactionLandmarks() {
         for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
             Tribe currTribe = FactionManager.Instance.allTribes[i];
             LEVEL wealth = LEVEL.HIGH;
@@ -222,11 +222,21 @@ public class LandmarkManager : MonoBehaviour {
             LEVEL needProviders = LEVEL.HIGH;
             LEVEL characters = LEVEL.HIGH;
             Dictionary<LANDMARK_TYPE, int> landmarkSettings = GetLandmarkSettings(wealth, population, might, needProviders, currTribe);
-            if (!GenerateLandmarksForFaction(landmarkSettings, currTribe)) {
-                return false;
+            Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = null;
+            while (landmarksToBeCreated == null) {
+                landmarksToBeCreated = GenerateLandmarksForFaction(landmarkSettings, currTribe);
+            }
+            foreach (KeyValuePair<HexTile, LANDMARK_TYPE> kvp in landmarksToBeCreated) {
+                CreateNewLandmarkOnTile(kvp.Key, kvp.Value);
             }
         }
-        return true;
+        //return true;
+    }
+    public void LoadAllLandmarksFromSave(Save save) {
+        for (int i = 0; i < save.hextiles.Count; i++) {
+            HexTile currentTile = GridMap.Instance.GetHexTile(save.hextiles[i].xCoordinate, save.hextiles[i].yCoordinate);
+            LoadLandmarkOnTile(currentTile, save.hextiles[i].landmark);
+        }
     }
     private Dictionary<LANDMARK_TYPE, int> GetLandmarkSettings(LEVEL wealthLvl, LEVEL populationLvl, LEVEL mightLvl, LEVEL needLvl, Tribe tribe) {
         Dictionary<LANDMARK_TYPE, int> landmarkSettings = new Dictionary<LANDMARK_TYPE, int>();
@@ -330,29 +340,31 @@ public class LandmarkManager : MonoBehaviour {
             return LEVEL.HIGH;
         }
     }
-    private bool GenerateLandmarksForFaction(Dictionary<LANDMARK_TYPE, int> landmarkSettings, Tribe tribe) {
+    private Dictionary<HexTile, LANDMARK_TYPE> GenerateLandmarksForFaction(Dictionary<LANDMARK_TYPE, int> landmarkSettings, Tribe tribe) {
         Region tribeRegion = tribe.ownedRegions[0];
+        Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = new Dictionary<HexTile, LANDMARK_TYPE>();
         string log = "Created " + landmarkSettings.Sum(x => x.Value).ToString() + " landmarks on " + tribeRegion.name;
         foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarkSettings) {
             LANDMARK_TYPE landmarkType = kvp.Key;
             LandmarkData data = GetLandmarkData(landmarkType);
             log += "\n" + landmarkType.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
-                List<HexTile> tilesToChooseFrom = tribeRegion.tilesInRegion.Where(x => x.CanBuildLandmarkHere(landmarkType, data)).ToList();
+                List<HexTile> tilesToChooseFrom = tribeRegion.tilesInRegion.Where(x => x.CanBuildLandmarkHere(landmarkType, data, landmarksToBeCreated)).ToList();
                 //List<HexTile> tilesToChooseFrom = elligibleTiles.Where(x => ).ToList();
                 if (tilesToChooseFrom.Count <= 0) {
                     //Debug.LogError("There are no more tiles in " + tribeRegion.name + " to build a " + landmarkType.ToString(), tribeRegion.centerOfMass);
-                    return false;
+                    return null;
                 }
                 HexTile chosenTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
-                CreateNewLandmarkOnTile(chosenTile, landmarkType);
+                landmarksToBeCreated.Add(chosenTile, landmarkType);
+                //CreateNewLandmarkOnTile(chosenTile, landmarkType);
                 //remove the tiles within 1 range of the chosen tile from elligible tiles
                 //elligibleTiles.Remove(chosenTile);
                 //Utilities.ListRemoveRange(elligibleTiles, chosenTile.GetTilesInRange(1));
             }
         }
         Debug.Log(log, tribeRegion.centerOfMass);
-        return true;
+        return landmarksToBeCreated;
     }
 
   //  /*

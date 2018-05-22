@@ -8,43 +8,44 @@ using System.Collections.Generic;
 using System.Linq;
 using ECS;
 
+//[System.Serializable]
 public class BaseLandmark : ILocation, TaskCreator {
-    protected int _id;
-    protected HexTile _location;
-    protected LANDMARK_TYPE _specificLandmarkType;
-    protected List<BaseLandmark> _connections;
-    protected bool _canBeOccupied; //can the landmark be occupied?
-    protected bool _isOccupied;
-    protected string _landmarkName;
-    protected Faction _owner;
-    protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
-	protected int _reservedCivilians;
-    protected List<Character> _charactersWithHomeOnLandmark;
-    protected Dictionary<RACE, int> _civiliansByRace;
+    [SerializeField] protected int _id;
+    [SerializeField] protected HexTile _location;
+    [SerializeField] protected LANDMARK_TYPE _specificLandmarkType;
+    [SerializeField] protected List<BaseLandmark> _connections;
+    [SerializeField] protected bool _canBeOccupied; //can the landmark be occupied?
+    [SerializeField] protected bool _isOccupied;
+    [SerializeField] protected string _landmarkName;
+    [SerializeField] protected Faction _owner;
+    [SerializeField] protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
+    [SerializeField] protected int _reservedCivilians;
+    [SerializeField] protected List<Character> _charactersWithHomeOnLandmark;
+    [SerializeField] protected Dictionary<RACE, int> _civiliansByRace;
     //protected int _currDurability;
-	//protected int _totalDurability;
-    protected List<TECHNOLOGY> _technologiesOnLandmark;
-    protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
-    protected LandmarkObject _landmarkObject;
-	protected List<Character> _prisoners; //list of prisoners on landmark
-    protected List<Log> _history;
-	protected int _combatHistoryID;
-	protected Dictionary<int, Combat> _combatHistory;
-    protected List<ICombatInitializer> _charactersAtLocation;
-	protected List<Item> _itemsInLandmark;
-	protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
-    protected List<LANDMARK_TAG> _landmarkTags;
-    protected StructureObj _landmarkObj;
+    //protected int _totalDurability;
+    [SerializeField] protected List<TECHNOLOGY> _technologiesOnLandmark;
+    [SerializeField] protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
+    [SerializeField] protected LandmarkObject _landmarkObject;
+    [SerializeField] protected List<Character> _prisoners; //list of prisoners on landmark
+    [SerializeField] protected List<Log> _history;
+    [SerializeField] protected int _combatHistoryID;
+    [SerializeField] protected Dictionary<int, Combat> _combatHistory;
+    [SerializeField] protected List<ICombatInitializer> _charactersAtLocation;
+    [SerializeField] protected List<Item> _itemsInLandmark;
+    [SerializeField] protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
+    [SerializeField] protected List<LANDMARK_TAG> _landmarkTags;
+    [SerializeField] protected StructureObj _landmarkObj;
     //protected List<IObject> _objects;
-    private bool _hasScheduledCombatCheck = false;
-    private Dictionary<RESOURCE, int> _resourceInventory;
-    private List<HexTile> _nextCorruptedTilesToCheck;
-    private bool _hasBeenCorrupted;
-    private List<HexTile> _diagonalRightTiles;
-    private List<HexTile> _diagonalLeftTiles;
-    private List<HexTile> _horizontalTiles;
-    private List<HexTile> _wallTiles;
-    public bool hasAdjacentCorruptedLandmark;
+    [SerializeField] private bool _hasScheduledCombatCheck = false;
+    [SerializeField] private Dictionary<RESOURCE, int> _resourceInventory;
+    [SerializeField] private List<HexTile> _nextCorruptedTilesToCheck;
+    [SerializeField] private bool _hasBeenCorrupted;
+    [SerializeField] private List<HexTile> _diagonalRightTiles;
+    [SerializeField] private List<HexTile> _diagonalLeftTiles;
+    [SerializeField] private List<HexTile> _horizontalTiles;
+    [SerializeField] private List<HexTile> _wallTiles;
+    [SerializeField] public bool hasAdjacentCorruptedLandmark;
     //private int _diagonalLeftBlocked;
     //private int _diagonalRightBlocked;
     //private int _horizontalBlocked;
