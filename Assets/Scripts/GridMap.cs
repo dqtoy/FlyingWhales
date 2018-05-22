@@ -39,7 +39,17 @@ public class GridMap : MonoBehaviour {
 	internal float mapWidth;
 	internal float mapHeight;
 
-	void Awake(){
+    #region getters/setters
+    public List<HexTile> allTiles {
+        get {
+            List<HexTile> tiles = new List<HexTile>(hexTiles);
+            tiles.AddRange(outerGridList);
+            return tiles;
+        }
+    }
+    #endregion
+
+    void Awake(){
 		Instance = this;
 //		ConvertInitialResourceSetupToDictionary ();
 	}

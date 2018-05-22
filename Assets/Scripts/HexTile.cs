@@ -309,9 +309,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     }
     internal void AddBiomeDetailToTile(GameObject detailPrefab) {
-        GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
-        detailGO.transform.localScale = Vector3.one;
-        detailGO.transform.localPosition = Vector3.zero;
+        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(biomeDetailParentGO);
+        if (children != null) {
+            for (int i = 0; i < children.Length; i++) {
+                Transform currChild = children[i];
+                GameObject.Destroy(currChild.gameObject);
+            }
+        }
+        if (detailPrefab != null) {
+            GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
+            detailGO.transform.localScale = Vector3.one;
+            detailGO.transform.localPosition = Vector3.zero;
+        }
     }
     internal void SetBiomeDetailState(bool state) {
         biomeDetailParentGO.SetActive(state);
@@ -663,7 +672,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //} else {
         //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
         //}
+#if !WORLD_CREATION_TOOL
         int centerPieceSortingOrder = (int)GridMap.Instance.height - yCoordinate;
+#else
+        int centerPieceSortingOrder = (int)worldcreator.WorldCreatorManager.Instance.height - yCoordinate;
+#endif
+
         //SpriteRenderer mainRenderer = centerPiece.GetComponent<SpriteRenderer>();
         //mainRenderer.sortingOrder = centerPieceSortingOrder;
         SpriteRenderer[] children = centerPiece.GetComponentsInChildren<SpriteRenderer>();
@@ -838,9 +852,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         botLeftOutline.SetActive(state);
         botRightOutline.SetActive(state);
     }
-    #endregion
+    public void HighlightTile(Color color) {
+        _highlightGO.SetActive(true);
+        _highlightGO.GetComponent<SpriteRenderer>().color = color;
+    }
+    public void UnHighlightTile() {
+        _highlightGO.SetActive(false);
+    }
+#endregion
 
-    #region Structures Functions
+#region Structures Functions
     internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
 
@@ -902,9 +923,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool HasStructure() {
         return _structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
     }
-    #endregion
+#endregion
 
-    #region Fog of War Functions
+#region Fog of War Functions
     internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
         //if (!KingdomManager.Instance.useFogOfWar) {
         //    fowState = FOG_OF_WAR_STATE.VISIBLE;
@@ -971,9 +992,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         FOWSprite.gameObject.SetActive(true);
         //minimapFOWSprite.gameObject.SetActive(true);
     }
-    #endregion
+#endregion
 
-    #region Tile Functions
+#region Tile Functions
     public void DisableColliders() {
         this.GetComponent<Collider2D>().enabled = false;
         Collider[] colliders = this.GetComponentsInChildren<Collider>();
@@ -1019,9 +1040,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-    #endregion
+#endregion
 
-    #region Passability
+#region Passability
     public void SetPassableState(bool state) {
         _isPassable = state;
         _centerPiece.SetActive(!state);
@@ -1032,8 +1053,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //UpdatePassableVisuals();
     }
     public void SetPassableObject(object obj) {
+        SetCenterSprite(null);
+        Transform[] existingChildren = Utilities.GetComponentsInDirectChildren<Transform>(centerPiece);
+        if (existingChildren != null) {
+            for (int i = 0; i < existingChildren.Length; i++) {
+                Transform currChild = existingChildren[i];
+                GameObject.Destroy(currChild.gameObject);
+            }
+        }
+
         if (obj == null) {
-            SetCenterSprite(null);
+            //SetCenterSprite(null);
             return;
         }
         if (obj is Sprite) {
@@ -1092,9 +1122,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool IsBorderTileOfRegion() {
         return region.outerTiles.Contains(this);
     }
-    #endregion
+#endregion
 
-    #region Monobehaviour Functions
+#region Monobehaviour Functions
     private void OnMouseOver() {
 #if WORLD_CREATION_TOOL
 

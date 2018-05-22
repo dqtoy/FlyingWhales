@@ -29,7 +29,7 @@ public class MapGenerator : MonoBehaviour {
         //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Biomes...");
 
         Biomes.Instance.GenerateBiome();
-        Biomes.Instance.LoadPassableObjects();
+        Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
         //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
 
@@ -67,7 +67,6 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.DivideOuterGridRegions();
 
         UIManager.Instance.InitializeUI();
-
         ObjectManager.Instance.Initialize();
 
         //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Factions...");
@@ -130,8 +129,8 @@ public class MapGenerator : MonoBehaviour {
         //RoadManager.Instance.FlattenRoads();
         //Biomes.Instance.GenerateTileTags();
         //GridMap.Instance.GenerateNeighboursWithSameTag();
-        Biomes.Instance.UpdateTileVisuals();
-        Biomes.Instance.GenerateTileBiomeDetails();
+        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
         
 
         GameManager.Instance.StartProgression();
@@ -160,7 +159,7 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        Biomes.Instance.LoadPassableObjects();
+        Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
         st.Start();
         GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
@@ -201,8 +200,8 @@ public class MapGenerator : MonoBehaviour {
         
         PathfindingManager.Instance.CreateGrid();
 
-        Biomes.Instance.UpdateTileVisuals();
-        Biomes.Instance.GenerateTileBiomeDetails();
+        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         GameManager.Instance.StartProgression();
 
