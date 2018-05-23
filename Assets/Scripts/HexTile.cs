@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using PathFind;
 using System.Linq;
-using Panda;
 using ECS;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
@@ -378,9 +377,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Tile Utilities
     public bool HasNeighbourThatIsLandmark() {
         return AllNeighbours.Where(x => x.hasLandmark).Any();
-    }
-    public PandaBehaviour GetBehaviourTree() {
-        return this.GetComponent<PandaBehaviour>();
     }
     /*
 	 * Returns all Hex tiles gameobjects within a radius
