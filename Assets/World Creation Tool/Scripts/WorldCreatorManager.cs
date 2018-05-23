@@ -18,6 +18,7 @@ namespace worldcreator {
         public int height;
 
         public EDIT_MODE currentMode;
+        public SELECTION_MODE selectionMode;
         public UnitSelectionComponent selectionComponent;
 
         private void Awake() {
@@ -80,6 +81,9 @@ namespace worldcreator {
         public void SetEditMode(EDIT_MODE editMode) {
             currentMode = editMode;
         }
+        public void SetSelectionMode(SELECTION_MODE selectionMode) {
+            this.selectionMode = selectionMode;
+        }
         #endregion
 
         #region Biome Edit
@@ -136,6 +140,10 @@ namespace worldcreator {
         FACTION,
         REGION,
         LANDMARKS
+    }
+    public enum SELECTION_MODE {
+        RECTANGLE,
+        TILE
     }
 }
 

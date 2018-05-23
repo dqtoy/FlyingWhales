@@ -19,4 +19,5 @@ public static class Signals {
     public static string ROLE_CHANGED = "OnCharacterRoleChanged"; //Parameters (Character characterThatChangedRole)
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)
+    public static string TILE_CLICKED = "OnTileClicked"; //Parameters (HexTile clickedTile)
 }

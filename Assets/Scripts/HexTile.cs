@@ -860,9 +860,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void UnHighlightTile() {
         _highlightGO.SetActive(false);
     }
-#endregion
+    #endregion
 
-#region Structures Functions
+    #region Structures Functions
     internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
 
@@ -924,9 +924,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool HasStructure() {
         return _structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
     }
-#endregion
+    #endregion
 
-#region Fog of War Functions
+    #region Fog of War Functions
     internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
         //if (!KingdomManager.Instance.useFogOfWar) {
         //    fowState = FOG_OF_WAR_STATE.VISIBLE;
@@ -993,9 +993,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         FOWSprite.gameObject.SetActive(true);
         //minimapFOWSprite.gameObject.SetActive(true);
     }
-#endregion
+    #endregion
 
-#region Tile Functions
+    #region Tile Functions
     public void DisableColliders() {
         this.GetComponent<Collider2D>().enabled = false;
         Collider[] colliders = this.GetComponentsInChildren<Collider>();
@@ -1041,9 +1041,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-#endregion
+    #endregion
 
-#region Passability
+    #region Passability
     public void SetPassableState(bool state) {
         _isPassable = state;
         _centerPiece.SetActive(!state);
@@ -1123,12 +1123,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool IsBorderTileOfRegion() {
         return region.outerTiles.Contains(this);
     }
-#endregion
+    #endregion
 
-#region Monobehaviour Functions
+    #region Monobehaviour Functions
     private void OnMouseOver() {
 #if WORLD_CREATION_TOOL
-
+        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+            if (Input.GetMouseButton(0)) {
+                Messenger.Broadcast<HexTile>(Signals.TILE_CLICKED, this);
+            }
+        }
 #else
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
 			return;
@@ -1209,9 +1213,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //    }
     //    character.specificLocation.RemoveCharacterFromLocation(character);
     //}
-#endregion
+    #endregion
 
-#region For Testing
+    #region For Testing
     [Space(10)]
     [Header("For Testing")]
     [SerializeField] private int range = 0;
@@ -1367,9 +1371,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public override string ToString() {
         return this.tileName;
     }
-#endregion
+    #endregion
 
-#region Characters
+    #region Characters
 	public void AddCharacterToLocation(ICombatInitializer character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
@@ -1453,9 +1457,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
 		return count;
 	}
-#endregion
+    #endregion
 
-#region Combat
+    #region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
         //Messenger.AddListener(Signals.DAY_START, CheckForCombat);
@@ -1639,9 +1643,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             currItem.ContinueDailyAction();
         }
     }
-#endregion
+    #endregion
 
-#region Materials
+    #region Materials
     public void SetMaterialOnTile(MATERIAL material) {
         //_materialOnTile = material;
         //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
@@ -1649,9 +1653,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //resource.transform.localScale = Vector3.one;
         region.AddTileWithMaterial(this);
     }
-#endregion
+    #endregion
 
-#region Corruption
+    #region Corruption
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
@@ -1689,5 +1693,5 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
-#endregion
+    #endregion
 }

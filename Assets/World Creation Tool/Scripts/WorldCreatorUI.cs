@@ -122,6 +122,12 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(true);
         }
+        public void OnClickRectangleSelection() {
+            WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.RECTANGLE);
+        }
+        public void OnClickTileSelection() {
+            WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.TILE);
+        }
         #endregion
 
         #region Edit Biomes Menu
