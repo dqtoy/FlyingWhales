@@ -90,7 +90,7 @@ namespace worldcreator {
             }
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
-                Biomes.Instance.UpdateTileVisuals(currTile);
+                Biomes.Instance.UpdateTileVisuals(currTile, true);
                 Biomes.Instance.GenerateTileBiomeDetails(currTile);
                 Biomes.Instance.LoadPassableObjects(currTile);
             }
@@ -99,7 +99,7 @@ namespace worldcreator {
         public void SetBiomes(HexTile tile, BIOMES biome, bool updateVisuals = true) {
             tile.SetBiome(biome);
             if (updateVisuals) {
-                Biomes.Instance.UpdateTileVisuals(tile);
+                Biomes.Instance.UpdateTileVisuals(tile, true);
                 Biomes.Instance.GenerateTileBiomeDetails(tile);
                 Biomes.Instance.LoadPassableObjects(tile);
             }
@@ -114,7 +114,7 @@ namespace worldcreator {
             }
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
-                Biomes.Instance.UpdateTileVisuals(currTile);
+                Biomes.Instance.UpdateTileVisuals(currTile, true);
                 Biomes.Instance.GenerateTileBiomeDetails(currTile);
                 Biomes.Instance.LoadPassableObjects(currTile);
             }
@@ -122,7 +122,7 @@ namespace worldcreator {
         public void SetElevation(HexTile tile, ELEVATION elevation, bool updateVisuals = true) {
             tile.SetElevation(elevation);
             if (updateVisuals) {
-                Biomes.Instance.UpdateTileVisuals(tile);
+                Biomes.Instance.UpdateTileVisuals(tile, true);
                 Biomes.Instance.GenerateTileBiomeDetails(tile);
                 Biomes.Instance.LoadPassableObjects(tile);
             }
