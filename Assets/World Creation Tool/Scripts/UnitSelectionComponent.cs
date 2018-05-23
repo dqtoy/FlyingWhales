@@ -53,7 +53,7 @@ namespace worldcreator {
                     HexTile currTile = WorldCreatorManager.Instance.hexTiles[i];
                     if (IsWithinSelectionBounds(currTile.gameObject)) {
                         highlightedTiles.Add(currTile);
-                        currTile.HighlightTile(Color.gray);
+                        currTile.HighlightTile(Color.gray, 128f/255f);
                     }
                 }
             } 

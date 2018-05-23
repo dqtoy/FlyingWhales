@@ -34,6 +34,7 @@ namespace worldcreator {
         [Space(10)]
         [Header("Edit Elevation Menu")]
         [SerializeField] private GameObject editElevationMenuGO;
+        [SerializeField] private Dropdown elevationDropDown;
 
         [Space(10)]
         [Header("Edit Faction Menu")]
@@ -128,6 +129,14 @@ namespace worldcreator {
             BIOMES chosenBiome = (BIOMES) Enum.Parse(typeof(BIOMES), biomesDropDown.options[biomesDropDown.value].text);
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
             WorldCreatorManager.Instance.SetBiomes(selectedTiles, chosenBiome);
+        }
+        #endregion
+
+        #region Edit Elevation Menu
+        public void OnClickEditElevationApply() {
+            ELEVATION chosenElevation = (ELEVATION)Enum.Parse(typeof(ELEVATION), elevationDropDown.options[elevationDropDown.value].text);
+            List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
+            WorldCreatorManager.Instance.SetElevation(selectedTiles, chosenElevation);
         }
         #endregion
 

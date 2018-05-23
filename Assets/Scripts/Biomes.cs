@@ -241,9 +241,9 @@ public class Biomes : MonoBehaviour {
     }
 
     internal void AddBiomeDetailToTile(HexTile tile) {
-        if(tile.elevationType != ELEVATION.PLAIN) {
-            return;
-        }
+        //if(tile.elevationType != ELEVATION.PLAIN) {
+        //    return;
+        //}
         GameObject biomeDetailToUse = null;
         //Sprite centerSpriteToUse = null;
         switch (tile.biomeType) {

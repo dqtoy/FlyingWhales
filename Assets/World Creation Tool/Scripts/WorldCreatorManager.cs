@@ -105,6 +105,29 @@ namespace worldcreator {
             }
         }
         #endregion
+
+        #region Elevation Edit
+        public void SetElevation(List<HexTile> tiles, ELEVATION elevation) {
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile currTile = tiles[i];
+                SetElevation(currTile, elevation, false);
+            }
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile currTile = tiles[i];
+                Biomes.Instance.UpdateTileVisuals(currTile);
+                Biomes.Instance.GenerateTileBiomeDetails(currTile);
+                Biomes.Instance.LoadPassableObjects(currTile);
+            }
+        }
+        public void SetElevation(HexTile tile, ELEVATION elevation, bool updateVisuals = true) {
+            tile.SetElevation(elevation);
+            if (updateVisuals) {
+                Biomes.Instance.UpdateTileVisuals(tile);
+                Biomes.Instance.GenerateTileBiomeDetails(tile);
+                Biomes.Instance.LoadPassableObjects(tile);
+            }
+        }
+        #endregion
     }
 
     public enum EDIT_MODE {

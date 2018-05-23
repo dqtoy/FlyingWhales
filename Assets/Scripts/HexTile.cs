@@ -852,7 +852,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         botLeftOutline.SetActive(state);
         botRightOutline.SetActive(state);
     }
-    public void HighlightTile(Color color) {
+    public void HighlightTile(Color color, float alpha) {
+        color.a = alpha;
         _highlightGO.SetActive(true);
         _highlightGO.GetComponent<SpriteRenderer>().color = color;
     }
