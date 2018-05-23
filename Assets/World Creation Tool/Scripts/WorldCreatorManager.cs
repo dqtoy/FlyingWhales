@@ -21,8 +21,11 @@ namespace worldcreator {
         public SELECTION_MODE selectionMode;
         public UnitSelectionComponent selectionComponent;
 
+        private List<Region> _allRegions;
+
         private void Awake() {
             Instance = this;
+            _allRegions = new List<Region>();
         }
 
         #region Grid Generation
@@ -68,6 +71,7 @@ namespace worldcreator {
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
+            CreateNewRegion(hexTiles);
             //mapWidth = listHexes[listHexes.Count - 1].transform.position.x;
             //mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -83,6 +87,18 @@ namespace worldcreator {
         }
         public void SetSelectionMode(SELECTION_MODE selectionMode) {
             this.selectionMode = selectionMode;
+        }
+        #endregion
+
+        #region Region Editing
+        public void CreateNewRegion(List<HexTile> tiles) {
+            HexTile center = Utilities.GetCenterTile(tiles, map, width, height);
+            Region newRegion = new Region(center);
+            _allRegions.Add(newRegion);
+            for (int i = 0; i < _allRegions.Count; i++) {
+                Region currRegion = _allRegions[i];
+                currRegion.CheckForAdjacency();
+            }
         }
         #endregion
 
