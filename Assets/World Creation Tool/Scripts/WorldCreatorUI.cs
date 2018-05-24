@@ -25,6 +25,8 @@ namespace worldcreator {
         [Space(10)]
         [Header("Toolbar")]
         [SerializeField] private GameObject toolbarGO;
+        [SerializeField] private Toggle rectangleSelectionBtn;
+        [SerializeField] private Toggle tileSelectionBtn;
 
         [Space(10)]
         [Header("Edit Biome Menu")]
@@ -43,10 +45,17 @@ namespace worldcreator {
         [Space(10)]
         [Header("Edit Regions Menu")]
         [SerializeField] private GameObject editRegionsMenuGO;
+        [SerializeField] private EditRegionsMenu _editRegionsMenu;
 
         [Space(10)]
         [Header("Edit Landmarks Menu")]
         [SerializeField] private GameObject editLandmarksMenuGO;
+
+        #region getters/setters
+        public EditRegionsMenu editRegionsMenu {
+            get { return _editRegionsMenu; }
+        }
+        #endregion
 
         private void Awake() {
             Instance = this;
@@ -89,6 +98,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+            tileSelectionBtn.interactable = true;
         }
         public void OnClickEditElevation() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.ELEVATION);
@@ -97,6 +107,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+            tileSelectionBtn.interactable = true;
         }
         public void OnClickEditRegions() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.REGION);
@@ -105,6 +116,8 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(true);
             editLandmarksMenuGO.SetActive(false);
+            rectangleSelectionBtn.isOn = true;
+            tileSelectionBtn.interactable = false;
         }
         public void OnClickEditFactions() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.FACTION);
@@ -113,6 +126,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(true);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+            tileSelectionBtn.interactable = true;
         }
         public void OnClickEditLandmarks() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.LANDMARKS);
@@ -121,6 +135,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(true);
+            tileSelectionBtn.interactable = true;
         }
         public void OnClickRectangleSelection() {
             WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.RECTANGLE);

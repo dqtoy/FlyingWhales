@@ -23,7 +23,6 @@ public class Region : IHasNeighbours<Region> {
                                            //private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
 
     private List<HexTile> _outerTiles;
-    private List<SpriteRenderer> regionBorderLines;
 
     //Roads
     private List<HexTile> _roadTilesInRegion;
@@ -83,6 +82,7 @@ public class Region : IHasNeighbours<Region> {
     internal int numOfCharactersInLandmarks {
         get { return _landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
     }
+    public List<SpriteRenderer> regionBorderLines { get; private set; }
     #endregion
 
     public List<Region> ValidTiles {
@@ -172,9 +172,14 @@ public class Region : IHasNeighbours<Region> {
      * also populate regionBorderLines.
      * </summary>
      * */
-    internal void CheckForAdjacency() {
+    internal void UpdateAdjacency() {
         _outerTiles = new List<HexTile>();
         _adjacentRegions = new List<Region>();
+        if (regionBorderLines != null) {
+            for (int i = 0; i < regionBorderLines.Count; i++) {
+                regionBorderLines[i].gameObject.SetActive(false);
+            }
+        }
         regionBorderLines = new List<SpriteRenderer>();
         for (int i = 0; i < _tilesInRegion.Count; i++) {
             HexTile currTile = _tilesInRegion[i];
@@ -240,6 +245,12 @@ public class Region : IHasNeighbours<Region> {
             tile.SetRegion(this);
         }
     }
+    internal void AddTile(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            AddTile(currTile);
+        }
+    }
     internal void AddOuterGridTile(HexTile tile) {
         if (!_outerGridTilesInRegion.Contains(tile)) {
             _outerGridTilesInRegion.Add(tile);
@@ -258,7 +269,7 @@ public class Region : IHasNeighbours<Region> {
     /*
      Highlight all tiles in the region.
          */
-    internal void HighlightRegionTiles(Color highlightColor, float highlightAlpha) {
+    internal void SetMinimapColor(Color highlightColor, float highlightAlpha) {
         Color color = highlightColor;
         color.a = highlightAlpha;
         Color fullColor = highlightColor;
@@ -274,6 +285,18 @@ public class Region : IHasNeighbours<Region> {
             //currentTile.kingdomColorSprite.color = color;
             //currentTile.kingdomColorSprite.gameObject.SetActive(true);
             currentTile.SetMinimapTileColor(fullColor);
+        }
+    }
+    internal void HighlightRegion(Color color, float alpha) {
+        for (int i = 0; i < _tilesInRegion.Count; i++) {
+            HexTile currTile = _tilesInRegion[i];
+            currTile.HighlightTile(color, alpha);
+        }
+    }
+    internal void UnhighlightRegion() {
+        for (int i = 0; i < _tilesInRegion.Count; i++) {
+            HexTile currTile = _tilesInRegion[i];
+            currTile.UnHighlightTile();
         }
     }
     internal void ReColorBorderTiles(Color color) {

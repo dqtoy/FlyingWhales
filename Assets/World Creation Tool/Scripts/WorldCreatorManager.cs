@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace worldcreator {
@@ -21,11 +22,11 @@ namespace worldcreator {
         public SELECTION_MODE selectionMode;
         public UnitSelectionComponent selectionComponent;
 
-        private List<Region> _allRegions;
+        public List<Region> allRegions { get; private set; }
 
         private void Awake() {
             Instance = this;
-            _allRegions = new List<Region>();
+            allRegions = new List<Region>();
         }
 
         #region Grid Generation
@@ -91,14 +92,42 @@ namespace worldcreator {
         #endregion
 
         #region Region Editing
+        public Region GetBiggestRegion(Region except) {
+            return allRegions.Where(x => x.id != except.id).OrderByDescending(x => x.tilesInRegion.Count).First();
+        }
         public void CreateNewRegion(List<HexTile> tiles) {
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile currTile = tiles[i];
+                if (currTile.region != null) {
+                    currTile.region.tilesInRegion.Remove(currTile);
+                    currTile.SetRegion(null);
+                }
+            }
+
             HexTile center = Utilities.GetCenterTile(tiles, map, width, height);
             Region newRegion = new Region(center);
-            _allRegions.Add(newRegion);
-            for (int i = 0; i < _allRegions.Count; i++) {
-                Region currRegion = _allRegions[i];
-                currRegion.CheckForAdjacency();
+            newRegion.AddTile(tiles);
+            allRegions.Add(newRegion);
+            for (int i = 0; i < allRegions.Count; i++) {
+                Region currRegion = allRegions[i];
+                currRegion.UpdateAdjacency();
             }
+            WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
+        }
+        public void DeleteRegion(Region regionToDelete) {
+            for (int i = 0; i < regionToDelete.regionBorderLines.Count; i++) {
+                SpriteRenderer currBorderLine = regionToDelete.regionBorderLines[i];
+                currBorderLine.gameObject.SetActive(false);
+            }
+            //Give tiles from region to delete to another region
+            Region regionToGiveTo = GetBiggestRegion(regionToDelete);
+            regionToGiveTo.AddTile(regionToDelete.tilesInRegion);
+            regionToDelete.UnhighlightRegion();
+            allRegions.Remove(regionToDelete);
+            for (int i = 0; i < allRegions.Count; i++) {
+                allRegions[i].UpdateAdjacency();
+            }
+            WorldCreatorUI.Instance.editRegionsMenu.OnRegionDeleted(regionToDelete);
         }
         #endregion
 

@@ -164,7 +164,7 @@ public class FactionManager : MonoBehaviour {
                 currRegion.SetOwner(newFaction);
                 newFaction.OwnRegion(currRegion);
                 currRegion.ReColorBorderTiles(newFaction.factionColor);
-                currRegion.HighlightRegionTiles(newFaction.factionColor, 69f / 255f);
+                currRegion.SetMinimapColor(newFaction.factionColor, 69f / 255f);
             }
         }
         

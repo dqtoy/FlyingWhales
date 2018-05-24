@@ -373,7 +373,7 @@ public class GridMap : MonoBehaviour {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
             currRegion.RevalidateCenterOfMass();
-            currRegion.CheckForAdjacency();
+            currRegion.UpdateAdjacency();
             currRegion.WallOffRegion();
             currRegion.DetermineRegionIslands();
         }

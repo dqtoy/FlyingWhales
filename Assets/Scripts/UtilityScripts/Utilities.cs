@@ -1304,4 +1304,34 @@ public class Utilities : MonoBehaviour {
         bounds.SetMinMax(min, max);
         return bounds;
     }
+
+    public static HexTile GetCenterTile(List<HexTile> tiles, HexTile[,] map, int width, int height) {
+        int maxXCoordinate = tiles.Max(x => x.xCoordinate);
+        int minXCoordinate = tiles.Min(x => x.xCoordinate);
+        int maxYCoordinate = tiles.Max(x => x.yCoordinate);
+        int minYCoordinate = tiles.Min(x => x.yCoordinate);
+
+        int midPointX = (minXCoordinate + maxXCoordinate) / 2;
+        int midPointY = (minYCoordinate + maxYCoordinate) / 2;
+
+        if (width - 2 >= midPointX) {
+            midPointX -= 2;
+        }
+        if (height - 2 >= midPointY) {
+            midPointY -= 2;
+        }
+        if (midPointX >= 2) {
+            midPointX += 2;
+        }
+        if (midPointY >= 2) {
+            midPointY += 2;
+        }
+        try {
+            HexTile newCenterOfMass = map[midPointX, midPointY];
+            return newCenterOfMass;
+        } catch {
+            throw new Exception("Cannot find center tile!");
+        }
+        
+    }
 }
