@@ -60,7 +60,7 @@ public class HextileInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n[b]Road Type:[/b] " + currentlyShowingHexTile.roadType.ToString ();;
+		//text += "\n[b]Road Type:[/b] " + currentlyShowingHexTile.roadType.ToString ();;
 
 		text += "\n[b]Characters: [/b] ";
 		if (currentlyShowingHexTile.charactersAtLocation.Count > 0) {

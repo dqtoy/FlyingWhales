@@ -178,12 +178,12 @@ public class GridMap : MonoBehaviour {
 
         outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
     }
-    public void GenerateNeighboursWithSameTag() {
-        for (int i = 0; i < listHexes.Count; i++) {
-            HexTile currHex = listHexes[i].GetComponent<HexTile>();
-            currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tileTag == currHex.tileTag).ToList();
-        }
-    }
+    //public void GenerateNeighboursWithSameTag() {
+    //    for (int i = 0; i < listHexes.Count; i++) {
+    //        HexTile currHex = listHexes[i].GetComponent<HexTile>();
+    //        currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tileTag == currHex.tileTag).ToList();
+    //    }
+    //}
     #endregion
 
     #region Grid Utilities

@@ -508,17 +508,17 @@ public class RoadManager : MonoBehaviour {
                 }
             }
 
-            GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
-            if (roadGO != null) {
-                currTile.SetTileAsRoad(true, roadType, roadGO);
-                if (currTile.roadType == ROAD_TYPE.MINOR) {
-                    currTile.SetRoadColor(roadGO, Color.gray);
-                    currTile.SetRoadState(false);
-                } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
-                    currTile.SetRoadColor(roadGO, Color.white);
-                    currTile.SetRoadState(false);
-                }
-            }
+            //GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
+            //if (roadGO != null) {
+            //    currTile.SetTileAsRoad(true, roadType, roadGO);
+            //    if (currTile.roadType == ROAD_TYPE.MINOR) {
+            //        currTile.SetRoadColor(roadGO, Color.gray);
+            //        currTile.SetRoadState(false);
+            //    } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
+            //        currTile.SetRoadColor(roadGO, Color.white);
+            //        currTile.SetRoadState(false);
+            //    }
+            //}
             //currTile.SetPassableState(true);
         }
     }
@@ -546,33 +546,33 @@ public class RoadManager : MonoBehaviour {
      * This will return a list of road tiles that are connected
      * to the provided hex tile using roads. Restricted within region
      * */
-    public List<HexTile> GetRoadTilesConnectedTo(HexTile destination, HexTile start, Region region) {
-        List<HexTile> connectedRoadTiles = new List<HexTile>();
-        List<HexTile> tilesToCheck = region.roadTilesInRegion.Where(x => x.roadType == ROAD_TYPE.MINOR)
-            .OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)).Take(50).ToList();
-        for (int i = 0; i < tilesToCheck.Count; i++) {
-            HexTile currTile = tilesToCheck[i];
-            if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.POINT_TO_POINT) != null) {
-                //There is a path from currTile to destination using roads
-                connectedRoadTiles.Add(currTile);
-            }
-        }
-        return connectedRoadTiles;
-    }
-    public List<HexTile> GetMinorRoadTilesConnectedTo(HexTile destination, HexTile start) {
-        List<HexTile> connectedRoadTiles = new List<HexTile>();
-        List<HexTile> tilesToCheck = _roadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR)
-            .OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)).Take(50).ToList();
+    //public List<HexTile> GetRoadTilesConnectedTo(HexTile destination, HexTile start, Region region) {
+    //    List<HexTile> connectedRoadTiles = new List<HexTile>();
+    //    List<HexTile> tilesToCheck = region.roadTilesInRegion.Where(x => x.roadType == ROAD_TYPE.MINOR)
+    //        .OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)).Take(50).ToList();
+    //    for (int i = 0; i < tilesToCheck.Count; i++) {
+    //        HexTile currTile = tilesToCheck[i];
+    //        if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.POINT_TO_POINT) != null) {
+    //            //There is a path from currTile to destination using roads
+    //            connectedRoadTiles.Add(currTile);
+    //        }
+    //    }
+    //    return connectedRoadTiles;
+    //}
+    //public List<HexTile> GetMinorRoadTilesConnectedTo(HexTile destination, HexTile start) {
+    //    List<HexTile> connectedRoadTiles = new List<HexTile>();
+    //    List<HexTile> tilesToCheck = _roadTiles.Where(x => x.roadType == ROAD_TYPE.MINOR)
+    //        .OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)).Take(50).ToList();
 
-        for (int i = 0; i < tilesToCheck.Count; i++) {
-            HexTile currTile = tilesToCheck[i];
-            if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.POINT_TO_POINT) != null) {
-                //There is a path from currTile to destination using roads
-                connectedRoadTiles.Add(currTile);
-            }
-        }
-        return connectedRoadTiles;
-    }
+    //    for (int i = 0; i < tilesToCheck.Count; i++) {
+    //        HexTile currTile = tilesToCheck[i];
+    //        if (!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.POINT_TO_POINT) != null) {
+    //            //There is a path from currTile to destination using roads
+    //            connectedRoadTiles.Add(currTile);
+    //        }
+    //    }
+    //    return connectedRoadTiles;
+    //}
     
     public Island MergeIslands(Island island1, Island island2, Dictionary<BaseLandmark, Island> islands) {
         if (island1 == island2) {
@@ -591,15 +591,15 @@ public class RoadManager : MonoBehaviour {
         if (!_roadTiles.Contains(tile)) {
             _roadTiles.Add(tile);
         }
-        if(tile.roadType == ROAD_TYPE.MAJOR) {
-            if (!_majorRoadTiles.Contains(tile)) {
-                _majorRoadTiles.Add(tile);
-            }
-        } else if (tile.roadType == ROAD_TYPE.MINOR) {
-            if (!_minorRoadTiles.Contains(tile)) {
-                _minorRoadTiles.Add(tile);
-            }
-        }
+        //if(tile.roadType == ROAD_TYPE.MAJOR) {
+        //    if (!_majorRoadTiles.Contains(tile)) {
+        //        _majorRoadTiles.Add(tile);
+        //    }
+        //} else if (tile.roadType == ROAD_TYPE.MINOR) {
+        //    if (!_minorRoadTiles.Contains(tile)) {
+        //        _minorRoadTiles.Add(tile);
+        //    }
+        //}
     }
     public void RemoveTileAsRoadTile(HexTile tile) {
         _roadTiles.Remove(tile);

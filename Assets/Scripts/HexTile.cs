@@ -96,11 +96,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer FOWSprite;
     [SerializeField] private SpriteRenderer minimapFOWSprite;
 
-    [Space(10)]
-    [Header("Road Objects")]
-    private List<GameObject> roadGOs = new List<GameObject>();
-    [SerializeField] private List<HexRoads> roads;
-    [SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
+    //[Space(10)]
+    //[Header("Road Objects")]
+    //private List<GameObject> roadGOs = new List<GameObject>();
+    //[SerializeField] private List<HexRoads> roads;
+    //[SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
 
     private PASSABLE_TYPE _passableType;
 
@@ -118,15 +118,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
     //public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
     //public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
-    public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
-    public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
+    //public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
+    //public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
     //public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> PassableNeighbours { get { return AllNeighbours.Where(o => o.isPassable).ToList(); } }
     //public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
 
-    public List<HexTile> sameTagNeighbours;
+    //public List<HexTile> sameTagNeighbours;
 
     private bool _hasScheduledCombatCheck = false;
 
@@ -159,9 +159,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject emptyCityGO {
         get { return this._emptyCityGO; }
     }
-    internal ROAD_TYPE roadType {
-        get { return _roadType; }
-    }
+    //internal ROAD_TYPE roadType {
+    //    get { return _roadType; }
+    //}
     public BaseLandmark landmarkOnTile {
         get { return _landmarkOnTile; }
     }
@@ -186,9 +186,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool isPassable {
         get { return _isPassable; }
     }
-    public bool roadState {
-        get { return roadGOs[0].activeInHierarchy; }
-    }
+    //public bool roadState {
+    //    get { return roadGOs[0].activeInHierarchy; }
+    //}
     public StructureObject structureObjOnTile {
         get { return _structureObjOnTile; }
     }
@@ -576,10 +576,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Roads
     public void HighlightRoad(Color color) {
-        for (int i = 0; i < roadGOs.Count; i++) {
-            GameObject currRoad = roadGOs[i];
-            SetRoadColor(currRoad, color);
-        }
+        //for (int i = 0; i < roadGOs.Count; i++) {
+        //    GameObject currRoad = roadGOs[i];
+        //    SetRoadColor(currRoad, color);
+        //}
     }
     public void SetRoadColor(GameObject roadToChange, Color color) {
         //roadToChange.spriteRenderer.color = color;
@@ -589,63 +589,63 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     public GameObject GetRoadGameObjectForDirection(HEXTILE_DIRECTION from, HEXTILE_DIRECTION to) {
-        if (from == HEXTILE_DIRECTION.NONE && to == HEXTILE_DIRECTION.NONE) {
-            return null;
-        }
-        if (from == HEXTILE_DIRECTION.NONE && to != HEXTILE_DIRECTION.NONE) {
-            //Show the directionGO of to
-            HexRoads roadToUse = roads.First(x => x.from == to);
-            return roadToUse.directionGO;
-        } else if (from != HEXTILE_DIRECTION.NONE && to == HEXTILE_DIRECTION.NONE) {
-            //Show the directionGO of from
-            HexRoads roadToUse = roads.First(x => x.from == from);
-            return roadToUse.directionGO;
-        } else {
-            List<RoadObject> availableRoads = roads.First(x => x.from == from).destinations;
-            return availableRoads.Where(x => x.to == to).First().roadObj;
-        }
-
+        return null;
+        //if (from == HEXTILE_DIRECTION.NONE && to == HEXTILE_DIRECTION.NONE) {
+        //    return null;
+        //}
+        //if (from == HEXTILE_DIRECTION.NONE && to != HEXTILE_DIRECTION.NONE) {
+        //    //Show the directionGO of to
+        //    HexRoads roadToUse = roads.First(x => x.from == to);
+        //    return roadToUse.directionGO;
+        //} else if (from != HEXTILE_DIRECTION.NONE && to == HEXTILE_DIRECTION.NONE) {
+        //    //Show the directionGO of from
+        //    HexRoads roadToUse = roads.First(x => x.from == from);
+        //    return roadToUse.directionGO;
+        //} else {
+        //    List<RoadObject> availableRoads = roads.First(x => x.from == from).destinations;
+        //    return availableRoads.Where(x => x.to == to).First().roadObj;
+        //}
     }
     public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType, GameObject roadGO) {
-        roadGOs.Add(roadGO);
-        if (this.hasLandmark) {//this.isHabitable
-            if (isRoad) {
-                if (_roadType == ROAD_TYPE.NONE) {
-                    _roadType = roadType;
-                }
-            } else {
-                _roadType = ROAD_TYPE.NONE;
-            }
-        } else {
-            this.isRoad = isRoad;
-            if (isRoad) {
-                if (_roadType == ROAD_TYPE.NONE) {
-                    _roadType = roadType;
-                }
-                region.AddTileAsRoad(this);
-                RoadManager.Instance.AddTileAsRoadTile(this);
-            } else {
-                _roadType = ROAD_TYPE.NONE;
-                region.RemoveTileAsRoad(this);
-                RoadManager.Instance.RemoveTileAsRoadTile(this);
-            }
-        }
+        //roadGOs.Add(roadGO);
+        //if (this.hasLandmark) {//this.isHabitable
+        //    if (isRoad) {
+        //        if (_roadType == ROAD_TYPE.NONE) {
+        //            _roadType = roadType;
+        //        }
+        //    } else {
+        //        _roadType = ROAD_TYPE.NONE;
+        //    }
+        //} else {
+        //    this.isRoad = isRoad;
+        //    if (isRoad) {
+        //        if (_roadType == ROAD_TYPE.NONE) {
+        //            _roadType = roadType;
+        //        }
+        //        region.AddTileAsRoad(this);
+        //        RoadManager.Instance.AddTileAsRoadTile(this);
+        //    } else {
+        //        _roadType = ROAD_TYPE.NONE;
+        //        region.RemoveTileAsRoad(this);
+        //        RoadManager.Instance.RemoveTileAsRoadTile(this);
+        //    }
+        //}
     }
     public void SetRoadState(bool state) {
-        for (int i = 0; i < roadGOs.Count; i++) {
-            GameObject road = roadGOs[i];
-            road.SetActive(state);
-        }
+        //for (int i = 0; i < roadGOs.Count; i++) {
+        //    GameObject road = roadGOs[i];
+        //    road.SetActive(state);
+        //}
     }
     public void ResetRoadsColors() {
-        Color color = Color.white;
-        if (this.roadType == ROAD_TYPE.MINOR) {
-            color = Color.gray;
-        }
-        for (int i = 0; i < roadGOs.Count; i++) {
-            GameObject currRoad = roadGOs[i];
-            SetRoadColor(currRoad, color);
-        }
+        //Color color = Color.white;
+        //if (this.roadType == ROAD_TYPE.MINOR) {
+        //    color = Color.gray;
+        //}
+        //for (int i = 0; i < roadGOs.Count; i++) {
+        //    GameObject currRoad = roadGOs[i];
+        //    SetRoadColor(currRoad, color);
+        //}
     }
     #endregion
 

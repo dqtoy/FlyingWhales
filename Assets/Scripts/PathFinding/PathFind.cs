@@ -91,25 +91,27 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
-                } else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
-                    foreach (Node n in path.LastStep.MajorRoadTiles) {
-                        if (n.tileTag != start.tileTag) {
-                            continue;
-                        }
-                        d = distance(path.LastStep, n);
-                        newPath = path.AddStep(n, d);
-                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                    }
-                } else if (pathfindingMode == PATHFINDING_MODE.MINOR_ROADS) {
-                    foreach (Node n in path.LastStep.MinorRoadTiles) {
-                        if (n.tileTag != start.tileTag) {
-                            continue;
-                        }
-                        d = distance(path.LastStep, n);
-                        newPath = path.AddStep(n, d);
-                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                    }
-                } else if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT) {
+                } 
+                //else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
+                //    foreach (Node n in path.LastStep.MajorRoadTiles) {
+                //        if (n.tileTag != start.tileTag) {
+                //            continue;
+                //        }
+                //        d = distance(path.LastStep, n);
+                //        newPath = path.AddStep(n, d);
+                //        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                //    }
+                //} else if (pathfindingMode == PATHFINDING_MODE.MINOR_ROADS) {
+                //    foreach (Node n in path.LastStep.MinorRoadTiles) {
+                //        if (n.tileTag != start.tileTag) {
+                //            continue;
+                //        }
+                //        d = distance(path.LastStep, n);
+                //        newPath = path.AddStep(n, d);
+                //        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                //    }
+                //} 
+                else if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT) {
                     foreach (Node n in path.LastStep.allNeighbourRoads) {
                         if (n.tileTag != start.tileTag) {
                             continue;

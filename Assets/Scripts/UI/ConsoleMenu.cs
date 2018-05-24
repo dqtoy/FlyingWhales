@@ -687,12 +687,12 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
             return;
         }
-        for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
-            HexTile currTile = GridMap.Instance.hexTiles[i];
-            if (currTile.isRoad) {
-                currTile.SetRoadState(!currTile.roadState);
-            }
-        }
+        //for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
+        //    HexTile currTile = GridMap.Instance.hexTiles[i];
+        //    if (currTile.isRoad) {
+        //        currTile.SetRoadState(!currTile.roadState);
+        //    }
+        //}
     }
     #endregion
 
