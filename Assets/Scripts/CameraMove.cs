@@ -1,6 +1,4 @@
-﻿#define WORLD_CREATION_TOOL
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class CameraMove : MonoBehaviour {
@@ -177,9 +175,9 @@ public class CameraMove : MonoBehaviour {
                 //}
                 previousCameraFOV = fov;
                 Camera.main.orthographicSize = fov;
+                nameplateCamera.orthographicSize = fov;
 #if !WORLD_CREATION_TOOL
                 resourceIconCamera.orthographicSize = fov;
-                nameplateCamera.orthographicSize = fov;
                 Minimap.Instance.UpdateCameraBorderScale();
 #endif
                 CalculateCameraBounds();

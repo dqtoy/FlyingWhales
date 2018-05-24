@@ -33,6 +33,7 @@ public class LandmarkManager : MonoBehaviour {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
+#if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         //newLandmark.GenerateDiagonalLeftTiles();
         //newLandmark.GenerateDiagonalRightTiles();
@@ -44,6 +45,7 @@ public class LandmarkManager : MonoBehaviour {
         //}
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
+#endif
         return newLandmark;
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
@@ -127,7 +129,7 @@ public class LandmarkManager : MonoBehaviour {
 		hexTile.landmarkOnTile.OccupyLandmark(occupant);
 	}
 
-    #region Landmark Generation
+#region Landmark Generation
     //public bool GenerateLandmarks() {
     //    List<BaseLandmark> createdLandmarks = new List<BaseLandmark>();
     //    List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles);
@@ -417,9 +419,9 @@ public class LandmarkManager : MonoBehaviour {
 		//}
 		//landmark.AddItemsInLandmark (items);
 	}
-    #endregion
+#endregion
 
-    #region ECS.Character Production
+#region ECS.Character Production
     /*
      Get the character role weights for a faction.
      This will not include roles that the faction has already reached the cap of.
@@ -449,9 +451,9 @@ public class LandmarkManager : MonoBehaviour {
         }
         return classes;
     }
-    #endregion
+#endregion
 
-    #region Material Generation
+#region Material Generation
     /*
      Generate Materials
          */
@@ -497,9 +499,9 @@ public class LandmarkManager : MonoBehaviour {
         //    Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
         //}
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
         LandmarkData landmarkData = GetLandmarkData(landmarkType);
         return landmarkData.baseLandmarkType;
@@ -609,5 +611,5 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarks;
     }
-    #endregion
+#endregion
 }

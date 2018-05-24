@@ -17,6 +17,7 @@ namespace worldcreator {
         public HexTile[,] map;
         public int width;
         public int height;
+        public GameObject landmarkItemPrefab;
 
         public EDIT_MODE currentMode;
         public SELECTION_MODE selectionMode;
@@ -96,18 +97,32 @@ namespace worldcreator {
             return allRegions.Where(x => x.id != except.id).OrderByDescending(x => x.tilesInRegion.Count).First();
         }
         public void CreateNewRegion(List<HexTile> tiles) {
+            List<Region> emptyRegions = new List<Region>();
+
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
                 if (currTile.region != null) {
-                    currTile.region.tilesInRegion.Remove(currTile);
+                    Region regionOfTile = currTile.region;
+                    regionOfTile.tilesInRegion.Remove(currTile);
+                    if (regionOfTile.tilesInRegion.Count == 0) {
+                        if (!emptyRegions.Contains(regionOfTile)) {
+                            emptyRegions.Add(regionOfTile);
+                        }
+                    }
+
                     currTile.SetRegion(null);
                 }
             }
-
+            
             HexTile center = Utilities.GetCenterTile(tiles, map, width, height);
             Region newRegion = new Region(center);
             newRegion.AddTile(tiles);
             allRegions.Add(newRegion);
+            for (int i = 0; i < emptyRegions.Count; i++) {
+                Region currEmptyRegion = emptyRegions[i];
+                DeleteRegion(currEmptyRegion);
+            }
+
             for (int i = 0; i < allRegions.Count; i++) {
                 Region currRegion = allRegions[i];
                 currRegion.UpdateAdjacency();
@@ -175,6 +190,17 @@ namespace worldcreator {
                 Biomes.Instance.GenerateTileBiomeDetails(tile);
                 Biomes.Instance.LoadPassableObjects(tile);
             }
+        }
+        #endregion
+
+        #region Landmark Edit
+        public void SpawnLandmark(List<HexTile> tiles, LANDMARK_TYPE landmarkType) {
+            for (int i = 0; i < tiles.Count; i++) {
+                SpawnLandmark(tiles[i], landmarkType);
+            }
+        }
+        public void SpawnLandmark(HexTile tile, LANDMARK_TYPE landmarkType) {
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
         }
         #endregion
     }

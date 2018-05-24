@@ -7,7 +7,7 @@ namespace worldcreator {
     public class UnitSelectionComponent : MonoBehaviour {
         bool isSelecting = false;
         Vector3 originDragPosition;
-        private List<HexTile> highlightedTiles = new List<HexTile>();
+        [SerializeField] private List<HexTile> highlightedTiles = new List<HexTile>();
 
         #region getters/setters
         public List<HexTile> selection {
@@ -16,7 +16,8 @@ namespace worldcreator {
         #endregion
 
         private void Awake() {
-            Messenger.AddListener<HexTile>(Signals.TILE_CLICKED, OnTileClicked);
+            Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnTileLeftClicked);
+            Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, OnTileRightClicked);
         }
 
         private void Update() {
@@ -34,6 +35,13 @@ namespace worldcreator {
 
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 UnhighlightSelectedTiles();
+            }
+
+            if (highlightedTiles != null) {
+                for (int i = 0; i < highlightedTiles.Count; i++) {
+                    HexTile currTile = highlightedTiles[i];
+                    currTile.HighlightTile(Color.gray, 128f/255f);
+                }
             }
         }
 
@@ -57,7 +65,7 @@ namespace worldcreator {
                 for (int i = 0; i < WorldCreatorManager.Instance.hexTiles.Count; i++) {
                     HexTile currTile = WorldCreatorManager.Instance.hexTiles[i];
                     if (IsWithinSelectionBounds(currTile.gameObject)) {
-                        highlightedTiles.Add(currTile);
+                        AddToHighlightedTiles(currTile);
                         currTile.HighlightTile(Color.gray, 128f/255f);
                     }
                 }
@@ -85,15 +93,21 @@ namespace worldcreator {
                 camera.WorldToViewportPoint(gameObject.transform.position));
         }
 
-        private void OnTileClicked(HexTile clickedTile) {
+        private void OnTileLeftClicked(HexTile clickedTile) {
             if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.TILE) {
                 //if (highlightedTiles.Contains(clickedTile)) {
                 //    highlightedTiles.Remove(clickedTile);
                 //    clickedTile.UnHighlightTile();
                 //} else {
-                    highlightedTiles.Add(clickedTile);
+                    AddToHighlightedTiles(clickedTile);
                     clickedTile.HighlightTile(Color.gray, 128f/255f);
                 //}
+            }
+        }
+        private void OnTileRightClicked(HexTile clickedTile) {
+            if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.TILE) {
+                highlightedTiles.Remove(clickedTile);
+                clickedTile.UnHighlightTile();
             }
         }
         private void UnhighlightSelectedTiles() {
@@ -103,6 +117,12 @@ namespace worldcreator {
                     currTile.UnHighlightTile();
                 }
                 highlightedTiles.Clear();
+            }
+        }
+
+        private void AddToHighlightedTiles(HexTile tile) {
+            if (!highlightedTiles.Contains(tile)) {
+                highlightedTiles.Add(tile);
             }
         }
     }
