@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BayatGames.SaveGameFree;
 using System.IO;
 using UnityEngine.SceneManagement;
 
@@ -11,20 +10,20 @@ public class MainMenuManager : MonoBehaviour {
     private FileInfo[] _saveFiles;
 
     void Awake() {
-        EncryptSaveFiles();    
+        EncryptSaveFiles();
     }
     void Start() {
         _saveFiles = GetSaveFiles();
         EnableDisableLoadButton();
     }
     private void EncryptSaveFiles() {
-        SaveGame.Encode = true;
+        //SaveGame.Encode = true;
     }
     private FileInfo[] GetSaveFiles() {
-        FileInfo[] saves = SaveGame.GetFiles();
-        if(saves.Length > 0) {
-            return saves;
-        }
+        //FileInfo[] saves = SaveGame.GetFiles();
+        //if(saves.Length > 0) {
+        //    return saves;
+        //}
         return null;
     }
     private void EnableDisableLoadButton() {
@@ -35,8 +34,8 @@ public class MainMenuManager : MonoBehaviour {
         }
     }
     public void LoadGame() {
-        Save save = SaveGame.Load<Save>(_saveFiles[0].Name);
-        SaveManager.Instance.currentSave = save;
+        //Save save = SaveGame.Load<Save>(_saveFiles[0].Name);
+        //SaveManager.Instance.currentSave = save;
         //LevelLoaderManager.Instance.LoadLevel("Main");
     }
 
