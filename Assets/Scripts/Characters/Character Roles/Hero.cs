@@ -42,6 +42,7 @@ public class Hero : CharacterRole {
         SetEnergy(1000);
         SetFun(600);
         SetPrestige(400);
+        UpdateHappiness();
 
         _character.onDailyAction += StartDepletion;
         //Messenger.AddListener("OnDayEnd", StartDepletion);

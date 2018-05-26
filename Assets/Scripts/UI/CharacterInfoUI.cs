@@ -162,12 +162,12 @@ public class CharacterInfoUI : UIMenu {
 		//} else {
 		//	text += "NONE";
 		//}
-        text += "\nCurrent Quest: ";
-        if (currentlyShowingCharacter.currentQuest != null) {
-            text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";
-        } else {
-            text += "NONE";
-        }
+        //text += "\nCurrent Quest: ";
+        //if (currentlyShowingCharacter.currentQuest != null) {
+        //    text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";
+        //} else {
+        //    text += "NONE";
+        //}
         //text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         //text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
 		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
@@ -175,6 +175,7 @@ public class CharacterInfoUI : UIMenu {
         if (currentlyShowingCharacter.role != null) {
             text += "\nFullness: " + currentlyShowingCharacter.role.fullness + ", Energy: " + currentlyShowingCharacter.role.energy;
             text += "\nFun: " + currentlyShowingCharacter.role.fun + ", Prestige: " + currentlyShowingCharacter.role.prestige;
+            text += "\nHappiness: " + currentlyShowingCharacter.role.happiness;
         }
         //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
         //            if (kvp.Value > 0) {

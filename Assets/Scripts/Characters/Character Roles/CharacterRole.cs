@@ -147,10 +147,14 @@ public class CharacterRole {
         _fullness = amount;
     }
     public void AdjustFullness(int amount) {
+        int previous = _fullness;
         _fullness += amount;
         _fullness = Mathf.Clamp(_fullness, _minFullness, _maxFullness);
+        if(previous != _fullness) {
+            UpdateHappiness();
+        }
 
-        if(_fullness <= 100 && !_isFamished) {
+        if (_fullness <= 100 && !_isFamished) {
             _isFamished = true;
             if (_isHungry) {
                 _isHungry = false;
@@ -185,8 +189,13 @@ public class CharacterRole {
         _energy = amount;
     }
     public void AdjustEnergy(int amount) {
+        int previous = _energy;
         _energy += amount;
         _energy = Mathf.Clamp(_energy, _minEnergy, _maxEnergy);
+        if (previous != _energy) {
+            UpdateHappiness();
+        }
+
 
         if (_energy <= 100 && !_isExhausted) {
             _isExhausted = true;
@@ -223,8 +232,13 @@ public class CharacterRole {
         _fun = amount;
     }
     public void AdjustFun(int amount) {
+        int previous = _fun;
         _fun += amount;
         _fun = Mathf.Clamp(_fun, _minFun, _maxFun);
+        if (previous != _fun) {
+            UpdateHappiness();
+        }
+
         if (_fun <= 100 && !_isDepressed) {
             _isDepressed = true;
             if (_isSad) {
@@ -260,8 +274,13 @@ public class CharacterRole {
         _prestige = amount;
     }
     public void AdjustPrestige(int amount) {
+        int previous = _prestige;
         _prestige += amount;
         _prestige = Mathf.Clamp(_prestige, _minPrestige, _maxPrestige);
+        if (previous != _prestige) {
+            UpdateHappiness();
+        }
+
         if (_prestige <= 100 && !_isInsecure) {
             _isInsecure = true;
             if (_isAnxious) {
@@ -293,16 +312,24 @@ public class CharacterRole {
         _faith = amount;
     }
     public void AdjustFaith(int amount) {
+        int previous = _faith;
         _faith += amount;
         _faith = Mathf.Clamp(_faith, _minFaith, _maxFaith);
+        if (previous != _faith) {
+            UpdateHappiness();
+        }
     }
 
     public void SetSafety(int amount) {
         _safety = amount;
     }
     public void AdjustSafety(int amount) {
+        int previous = _safety;
         _safety += amount;
         _safety = Mathf.Clamp(_safety, _minSafety, _maxSafety);
+        if (previous != _safety) {
+            UpdateHappiness();
+        }
     }
 
     public bool IsFull(NEEDS need) {
@@ -321,6 +348,13 @@ public class CharacterRole {
             return _prestige >= _maxPrestige;
         }
         return false;
+    }
+
+    public void UpdateHappiness() {
+        _happiness = CalculateFullnessImpact(_fullness) + CalculateEnergyImpact(_energy) + CalculateFunImpact(_fun)
+            + CalculatePrestigeImpact(_prestige) + CalculateSafetyImpact(_safety);
+
+        //TODO: Add Faith
     }
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction) {

@@ -28,6 +28,7 @@ public class Villain : CharacterRole {
         SetEnergy(1000);
         SetFun(600);
         SetPrestige(400);
+        UpdateHappiness();
 
         _character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;
         Messenger.AddListener("OnDayEnd", StartDepletion);

@@ -121,8 +121,8 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.CreateGrid();
 
-        //FactionManager.Instance.OccupyLandmarksInFactionRegions();
-        //ObjectManager.Instance.Initialize();
+        FactionManager.Instance.OccupyLandmarksInFactionRegions();
+        ObjectManager.Instance.Initialize();
         //LandmarkManager.Instance.ConstructAllLandmarkObjects();
 
         //LandmarkManager.Instance.GenerateMaterials();
@@ -136,7 +136,7 @@ public class MapGenerator : MonoBehaviour {
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
-        //CharacterManager.Instance.GenerateCharactersForTesting(1);
+        CharacterManager.Instance.GenerateCharactersForTesting(1);
         //FactionManager.Instance.GenerateFactionCharacters();
         //FactionManager.Instance.GenerateMonsters();
         //StorylineManager.Instance.GenerateStoryLines();
