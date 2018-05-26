@@ -30,6 +30,10 @@ public class LandmarkManager : MonoBehaviour {
      Create a new landmark on a specified tile.
      */
     public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
+        if (location.landmarkOnTile != null) {
+            //Destroy landmark on tile
+            DestroyLandmarkOnTile(location);
+        }
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
@@ -48,6 +52,13 @@ public class LandmarkManager : MonoBehaviour {
 #endif
         return newLandmark;
     }
+    public void DestroyLandmarkOnTile(HexTile tile) {
+        BaseLandmark landmarkOnTile = tile.landmarkOnTile;
+        tile.RemoveLandmarkOnTile();
+        tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
+        GameObject.Destroy(landmarkOnTile.landmarkObject.gameObject);
+    }
+
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
         //newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);

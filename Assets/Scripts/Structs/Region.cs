@@ -344,6 +344,9 @@ public class Region : IHasNeighbours<Region> {
             _landmarks.Add(landmark);
         }
     }
+    internal void RemoveLandmarkFromRegion(BaseLandmark landmark) {
+        _landmarks.Remove(landmark);
+    }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];

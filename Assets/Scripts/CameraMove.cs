@@ -15,6 +15,7 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private Camera resourceIconCamera;
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera _wholeMapCamera;
+    [SerializeField] private Camera uiCamera;
     //[SerializeField] private MinimapCamera _minimap;
 
     private float dampTime = 0.2f;
@@ -179,6 +180,8 @@ public class CameraMove : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
                 resourceIconCamera.orthographicSize = fov;
                 Minimap.Instance.UpdateCameraBorderScale();
+#else
+                uiCamera.orthographicSize = fov;
 #endif
                 CalculateCameraBounds();
             }

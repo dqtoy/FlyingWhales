@@ -50,7 +50,7 @@ namespace worldcreator {
         [Space(10)]
         [Header("Edit Landmarks Menu")]
         [SerializeField] private GameObject editLandmarksMenuGO;
-        [SerializeField] private Dropdown landmarksDropDown;
+        [SerializeField] private EditLandmarksMenu editLandmarksMenu;
 
         #region getters/setters
         public EditRegionsMenu editRegionsMenu {
@@ -60,7 +60,6 @@ namespace worldcreator {
 
         private void Awake() {
             Instance = this;
-            LoadLandmarksDropDown();
         }
 
         #region Main Menu
@@ -160,22 +159,6 @@ namespace worldcreator {
             ELEVATION chosenElevation = (ELEVATION)Enum.Parse(typeof(ELEVATION), elevationDropDown.options[elevationDropDown.value].text);
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
             WorldCreatorManager.Instance.SetElevation(selectedTiles, chosenElevation);
-        }
-        #endregion
-
-        #region Edit Landmarks Menu
-        private void LoadLandmarksDropDown() {
-            LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
-            List<string> options = new List<string>();
-            for (int i = 0; i < landmarkTypes.Length; i++) {
-                options.Add(landmarkTypes[i].ToString());
-            }
-            landmarksDropDown.AddOptions(options);
-        }
-        public void OnClickSpawnLandmark() {
-            LANDMARK_TYPE chosenLandmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), landmarksDropDown.options[landmarksDropDown.value].text);
-            List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
-            WorldCreatorManager.Instance.SpawnLandmark(selectedTiles, chosenLandmarkType);
         }
         #endregion
 

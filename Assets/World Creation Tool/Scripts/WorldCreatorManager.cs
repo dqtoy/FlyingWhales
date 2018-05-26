@@ -202,6 +202,14 @@ namespace worldcreator {
         public void SpawnLandmark(HexTile tile, LANDMARK_TYPE landmarkType) {
             LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
         }
+        public void DestroyLandmarks(List<HexTile> tiles) {
+            for (int i = 0; i < tiles.Count; i++) {
+                DestroyLandmarks(tiles[i]);
+            }
+        }
+        public void DestroyLandmarks(HexTile tile) {
+            LandmarkManager.Instance.DestroyLandmarkOnTile(tile);
+        }
         #endregion
     }
 
