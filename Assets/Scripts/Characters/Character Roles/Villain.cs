@@ -26,7 +26,7 @@ public class Villain : CharacterRole {
 
         SetFullness(1000);
         SetEnergy(1000);
-        SetJoy(600);
+        SetFun(600);
         SetPrestige(400);
 
         _character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;
@@ -47,8 +47,7 @@ public class Villain : CharacterRole {
     private void StartDepletion() {
         DepleteFullness();
         DepleteEnergy();
-        DepleteJoy();
-        DepletePrestige();
+        DepleteFun();
+        //DepletePrestige();
     }
-
 }

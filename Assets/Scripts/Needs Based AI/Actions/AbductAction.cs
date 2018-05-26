@@ -22,10 +22,7 @@ public class AbductAction : CharacterAction {
 
         structureResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
         if (structureResourceAmount > 0) {
-            GiveReward(NEEDS.FULLNESS, character);
-            GiveReward(NEEDS.ENERGY, character);
-            GiveReward(NEEDS.JOY, character);
-            GiveReward(NEEDS.PRESTIGE, character);
+            GiveAllReward(character);
 
             int minResourceAmount = this.actionData.minResourceGiven;
             int maxResourceAmount = this.actionData.maxResourceGiven;

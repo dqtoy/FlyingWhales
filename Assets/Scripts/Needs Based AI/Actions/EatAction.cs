@@ -11,10 +11,7 @@ public class EatAction : CharacterAction {
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         ActionSuccess();
-        GiveReward(NEEDS.FULLNESS, character);
-        GiveReward(NEEDS.ENERGY, character);
-        GiveReward(NEEDS.JOY, character);
-        GiveReward(NEEDS.PRESTIGE, character);
+        GiveAllReward(character);
         if (character.role.IsFull(NEEDS.FULLNESS)) {
             EndAction(character);
         }

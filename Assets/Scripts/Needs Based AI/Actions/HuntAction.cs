@@ -14,9 +14,8 @@ public class HuntAction : CharacterAction {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < actionData.successRate) {
             ActionSuccess();
-            GiveReward(NEEDS.FULLNESS, character);
-            GiveReward(NEEDS.ENERGY, character);
-            if(character.role.IsFull(NEEDS.FULLNESS)){
+            GiveAllReward(character);
+            if (character.role.IsFull(NEEDS.FULLNESS)){
                 EndAction(character);
             }
         } else {

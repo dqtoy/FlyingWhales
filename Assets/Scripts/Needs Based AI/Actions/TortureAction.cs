@@ -23,12 +23,9 @@ public class TortureAction : CharacterAction {
         //}
 
         if(_structure.GetTotalCivilians() > 0) {
-            GiveReward(NEEDS.FULLNESS, character);
-            GiveReward(NEEDS.PRESTIGE, character);
-            GiveReward(NEEDS.ENERGY, character);
-            GiveReward(NEEDS.JOY, character);
+            GiveAllReward(character);
             ActionSuccess();
-            if (character.role.IsFull(NEEDS.JOY)) {
+            if (character.role.IsFull(NEEDS.FUN)) {
                 EndAction(character);
             }
         } 

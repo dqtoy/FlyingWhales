@@ -90,6 +90,8 @@ public class CharacterAction {
     public void GenerateName() {
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
+
+    //Give specific provided need to a character
     public void GiveReward(NEEDS need, Character character) {
         switch (need) {
             case NEEDS.FULLNESS:
@@ -98,13 +100,29 @@ public class CharacterAction {
             case NEEDS.ENERGY:
             character.role.AdjustEnergy(_actionData.providedEnergy);
             break;
-            case NEEDS.JOY:
-            character.role.AdjustJoy(_actionData.providedJoy);
+            case NEEDS.FUN:
+            character.role.AdjustFun(_actionData.providedFun);
             break;
             case NEEDS.PRESTIGE:
             character.role.AdjustPrestige(_actionData.providedPrestige);
             break;
+            case NEEDS.FAITH:
+            character.role.AdjustFaith(_actionData.providedFaith);
+            break;
+            case NEEDS.SAFETY:
+            character.role.AdjustSafety(_actionData.providedSafety);
+            break;
         }
+    }
+
+    //Give all provided needs to the character regardless of the amount
+    public void GiveAllReward(Character character) {
+        character.role.AdjustFullness(_actionData.providedFullness);
+        character.role.AdjustEnergy(_actionData.providedEnergy);
+        character.role.AdjustFun(_actionData.providedFun);
+        character.role.AdjustPrestige(_actionData.providedPrestige);
+        character.role.AdjustFaith(_actionData.providedFaith);
+        character.role.AdjustSafety(_actionData.providedSafety);
     }
     public void SetCommonData(CharacterAction action) {
         if (this._filters != null) {
@@ -150,7 +168,7 @@ public class CharacterAction {
         return GetAdvertisementValue(character.role.energy, _actionData.advertisedEnergy);
     }
     private float GetJoyAdvertisementValue(Character character) {
-        return GetAdvertisementValue(character.role.joy, _actionData.advertisedJoy);
+        return GetAdvertisementValue(character.role.fun, _actionData.advertisedFun);
     }
     private float GetPrestigeAdvertisementValue(Character character) {
         return GetAdvertisementValue(character.role.prestige, _actionData.advertisedPrestige);

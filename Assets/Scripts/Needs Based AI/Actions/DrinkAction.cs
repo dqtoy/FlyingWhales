@@ -11,11 +11,8 @@ public class DrinkAction : CharacterAction {
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         ActionSuccess();
-        GiveReward(NEEDS.FULLNESS, character);
-        GiveReward(NEEDS.ENERGY, character);
-        GiveReward(NEEDS.JOY, character);
-        GiveReward(NEEDS.PRESTIGE, character);
-        if (character.role.IsFull(NEEDS.JOY)) {
+        GiveAllReward(character);
+        if (character.role.IsFull(NEEDS.FUN)) {
             EndAction(character);
         }
     }

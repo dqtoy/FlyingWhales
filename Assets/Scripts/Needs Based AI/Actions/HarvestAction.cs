@@ -21,10 +21,7 @@ public class HarvestAction : CharacterAction {
         base.PerformAction(character);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-        GiveReward(NEEDS.FULLNESS, character);
-        GiveReward(NEEDS.PRESTIGE, character);
-        GiveReward(NEEDS.ENERGY, character);
-        GiveReward(NEEDS.JOY, character);
+        GiveAllReward(character);
 
         int objectResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
         if (objectResourceAmount > 0 && !character.DoesSatisfiesPrerequisite(character.actionData.currentChainAction.prerequisite)) { //if object's resource count is still greater than 0 and character doesn't have the required resource amount yet

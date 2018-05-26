@@ -1325,8 +1325,10 @@ public enum ACTION_RESULT {
 public enum NEEDS {
     FULLNESS,
     ENERGY,
-    JOY,
+    FUN,
     PRESTIGE,
+    FAITH,
+    SAFETY,
 }
 
 public enum ACTION_FILTER_TYPE {

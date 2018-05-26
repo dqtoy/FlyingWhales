@@ -28,10 +28,7 @@ public class BuildAction : CharacterAction {
         //}
 
         ActionSuccess();
-        GiveReward(NEEDS.FULLNESS, character);
-        GiveReward(NEEDS.ENERGY, character);
-        GiveReward(NEEDS.JOY, character);
-        GiveReward(NEEDS.PRESTIGE, character);
+        GiveAllReward(character);
 
         //TODO: Resources
 

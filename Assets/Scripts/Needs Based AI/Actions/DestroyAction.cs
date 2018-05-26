@@ -28,9 +28,7 @@ public class DestroyAction : CharacterAction {
         int chance = UnityEngine.Random.Range(0, 100);
         if (chance < actionData.successRate) {
             ActionSuccess();
-            GiveReward(NEEDS.PRESTIGE, character);
-            GiveReward(NEEDS.ENERGY, character);
-            GiveReward(NEEDS.JOY, character);
+            GiveAllReward(character);
 
             _structure.AdjustHP(-_amountToReduce);
             if (_structure.isHPZero) {

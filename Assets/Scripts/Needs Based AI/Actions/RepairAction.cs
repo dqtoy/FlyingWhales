@@ -37,10 +37,7 @@ public class RepairAction : CharacterAction {
     }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
-        GiveReward(NEEDS.FULLNESS, character);
-        GiveReward(NEEDS.ENERGY, character);
-        GiveReward(NEEDS.JOY, character);
-        GiveReward(NEEDS.PRESTIGE, character);
+        GiveAllReward(character);
 
         character.characterObject.AdjustResource(_resourceNeeded, _resourceAmountToDecrease);
         _structure.AdjustHP(_amountToIncrease);

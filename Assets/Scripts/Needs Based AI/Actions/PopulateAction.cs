@@ -15,10 +15,7 @@ public class PopulateAction : CharacterAction {
         int characterResourceAmount = character.characterObject.resourceInventory[this.actionData.resourceGiven];
         if (characterResourceAmount > 0) { //if character's resource count is still greater than 0
             //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-            GiveReward(NEEDS.FULLNESS, character);
-            GiveReward(NEEDS.PRESTIGE, character);
-            GiveReward(NEEDS.ENERGY, character);
-            GiveReward(NEEDS.JOY, character);
+            GiveAllReward(character);
 
             int minResource = this.actionData.minResourceGiven;
             if (minResource > characterResourceAmount) {

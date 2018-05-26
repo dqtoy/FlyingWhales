@@ -42,9 +42,9 @@ public class ActionThread : Multithread {
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                     CharacterAction action = iobject.currentState.actions[k];
                     if (action.MeetsRequirements(_character, landmark)) { //Filter
-                        float advertisement = action.GetTotalAdvertisementValue(_character);
-                        actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
-                        PutToChoices(action, advertisement);
+                        float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
+                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
+                        PutToChoices(action, happinessIncrease);
                     }
                 }
             }

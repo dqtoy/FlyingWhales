@@ -11,10 +11,7 @@ public class IdleAction : CharacterAction {
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         ActionSuccess();
-        GiveReward(NEEDS.FULLNESS, character);
-        GiveReward(NEEDS.ENERGY, character);
-        GiveReward(NEEDS.JOY, character);
-        GiveReward(NEEDS.PRESTIGE, character);
+        GiveAllReward(character);
     }
     public override CharacterAction Clone(ObjectState state) {
         IdleAction idleAction = new IdleAction(state);

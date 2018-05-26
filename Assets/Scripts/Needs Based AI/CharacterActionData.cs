@@ -11,15 +11,20 @@ public struct CharacterActionData {
     public ActionFilterData[] filters;
 
     public int advertisedFullness;
-    public int advertisedJoy;
+    public int advertisedFun;
     public int advertisedEnergy;
     public int advertisedPrestige;
+    public int advertisedFaith;
+    public int advertisedSafety;
+
     public RESOURCE advertisedResource;
 
     public int providedFullness;
-    public int providedJoy;
+    public int providedFun;
     public int providedEnergy;
     public int providedPrestige;
+    public int providedFaith;
+    public int providedSafety;
 
     public int successRate;
     public int duration;
@@ -66,7 +71,7 @@ public class CharacterActionDrawer : PropertyDrawer {
         //float headersPosY = startPosY;
         //EditorGUI.indentLevel = -1;
         //EditorGUI.LabelField(new Rect(position.x, headersPosY, 50, 50), "Hunger");
-        //EditorGUI.LabelField(new Rect(position.x + 57, headersPosY, 50, 50), "Joy");
+        //EditorGUI.LabelField(new Rect(position.x + 57, headersPosY, 50, 50), "Fun");
         //EditorGUI.LabelField(new Rect(position.x + 100, headersPosY, 50, 50), "Energy");
         //EditorGUI.LabelField(new Rect(position.x + 150, headersPosY, 50, 50), "Prestige");
         //EditorGUI.indentLevel = 0;
@@ -76,14 +81,19 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.LabelField(advertisedLblRect, "Advertised", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;
         var aHungerRect = new Rect(position.x, advertisedLblRect.y + 16, position.width, 16);
-        var aJoyRect = new Rect(position.x, aHungerRect.y + 16, position.width, 16);
-        var aEnergyRect = new Rect(position.x, aJoyRect.y + 16, position.width, 16);
+        var aFunRect = new Rect(position.x, aHungerRect.y + 16, position.width, 16);
+        var aEnergyRect = new Rect(position.x, aFunRect.y + 16, position.width, 16);
         var aPrestigeRect = new Rect(position.x, aEnergyRect.y + 16, position.width, 16);
-        var aResourceRect = new Rect(position.x, aPrestigeRect.y + 16, position.width, 16);
+        var aFaithRect = new Rect(position.x, aPrestigeRect.y + 16, position.width, 16);
+        var aSafetyRect = new Rect(position.x, aFaithRect.y + 16, position.width, 16);
+        var aResourceRect = new Rect(position.x, aSafetyRect.y + 16, position.width, 16);
+
         EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedFullness"), new GUIContent("Fullness"));
-        EditorGUI.PropertyField(aJoyRect, property.FindPropertyRelative("advertisedJoy"), new GUIContent("Joy"));
+        EditorGUI.PropertyField(aFunRect, property.FindPropertyRelative("advertisedFun"), new GUIContent("Fun"));
         EditorGUI.PropertyField(aEnergyRect, property.FindPropertyRelative("advertisedEnergy"), new GUIContent("Energy"));
         EditorGUI.PropertyField(aPrestigeRect, property.FindPropertyRelative("advertisedPrestige"), new GUIContent("Prestige"));
+        EditorGUI.PropertyField(aFaithRect, property.FindPropertyRelative("advertisedFaith"), new GUIContent("Faith"));
+        EditorGUI.PropertyField(aSafetyRect, property.FindPropertyRelative("advertisedSafety"), new GUIContent("Safety"));
         EditorGUI.PropertyField(aResourceRect, property.FindPropertyRelative("advertisedResource"), new GUIContent("Resource"));
 
         EditorGUI.indentLevel--;
@@ -93,13 +103,19 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.LabelField(providedLblRect, "Provided", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;
         var pHungerRect = new Rect(position.x, providedLblRect.y + 16, position.width, 16);
-        var pJoyRect = new Rect(position.x, pHungerRect.y + 16, position.width, 16);
-        var pEnergyRect = new Rect(position.x, pJoyRect.y + 16, position.width, 16);
+        var pFunRect = new Rect(position.x, pHungerRect.y + 16, position.width, 16);
+        var pEnergyRect = new Rect(position.x, pFunRect.y + 16, position.width, 16);
         var pPrestigeRect = new Rect(position.x, pEnergyRect.y + 16, position.width, 16);
+        var pFaithRect = new Rect(position.x, pPrestigeRect.y + 16, position.width, 16);
+        var pSafetyRect = new Rect(position.x, pFaithRect.y + 16, position.width, 16);
+
         EditorGUI.PropertyField(pHungerRect, property.FindPropertyRelative("providedFullness"), new GUIContent("Fullness"));
-        EditorGUI.PropertyField(pJoyRect, property.FindPropertyRelative("providedJoy"), new GUIContent("Joy"));
+        EditorGUI.PropertyField(pFunRect, property.FindPropertyRelative("providedFun"), new GUIContent("Fun"));
         EditorGUI.PropertyField(pEnergyRect, property.FindPropertyRelative("providedEnergy"), new GUIContent("Energy"));
         EditorGUI.PropertyField(pPrestigeRect, property.FindPropertyRelative("providedPrestige"), new GUIContent("Prestige"));
+        EditorGUI.PropertyField(pFaithRect, property.FindPropertyRelative("providedFaith"), new GUIContent("Faith"));
+        EditorGUI.PropertyField(pSafetyRect, property.FindPropertyRelative("providedSafety"), new GUIContent("Safety"));
+
         EditorGUI.indentLevel--;
 
         SerializedProperty successFunctionProperty = property.FindPropertyRelative("successFunction");
