@@ -708,29 +708,40 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
         //topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
     }
-    internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction) {
+    internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
+        SpriteRenderer activatedBorder = null;
         switch (direction) {
             case HEXTILE_DIRECTION.NORTH_WEST:
                 topLeftBorder.gameObject.SetActive(true);
-                return topLeftBorder;
+                activatedBorder = topLeftBorder;
+                break;
             case HEXTILE_DIRECTION.NORTH_EAST:
                 topRightBorder.gameObject.SetActive(true);
-                return topRightBorder;
+                activatedBorder = topRightBorder;
+                break;
             case HEXTILE_DIRECTION.EAST:
                 rightBorder.gameObject.SetActive(true);
-                return rightBorder;
+                activatedBorder = rightBorder;
+                break;
             case HEXTILE_DIRECTION.SOUTH_EAST:
                 botRightBorder.gameObject.SetActive(true);
-                return botRightBorder;
+                activatedBorder = botRightBorder;
+                break;
             case HEXTILE_DIRECTION.SOUTH_WEST:
                 botLeftBorder.gameObject.SetActive(true);
-                return botLeftBorder;
+                activatedBorder = botLeftBorder;
+                break;
             case HEXTILE_DIRECTION.WEST:
                 leftBorder.gameObject.SetActive(true);
-                return leftBorder;
+                activatedBorder = leftBorder;
+                break;
             default:
-                return null;
+                break;
         }
+        if (activatedBorder != null) {
+            activatedBorder.color = color;
+        }
+        return activatedBorder;
     }
     internal void DeactivateCenterPiece() {
         if (this.biomeType == BIOMES.FOREST && this.elevationType == ELEVATION.PLAIN) {
@@ -1134,6 +1145,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private void OnMouseOver() {
 #if WORLD_CREATION_TOOL
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
             if (Input.GetMouseButton(0)) {
                 Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
             }
@@ -1158,7 +1170,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     private void OnMouseExit() {
 #if WORLD_CREATION_TOOL
-        
+        //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OUT, this);
+        //}
 #else
         _hoverHighlightGO.SetActive(false);
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {

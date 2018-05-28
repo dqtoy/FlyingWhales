@@ -73,7 +73,8 @@ namespace worldcreator {
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
-            CreateNewRegion(hexTiles);
+            List<Region> affectedRegions = new List<Region>();
+            CreateNewRegion(hexTiles, ref affectedRegions);
             //mapWidth = listHexes[listHexes.Count - 1].transform.position.x;
             //mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -93,24 +94,25 @@ namespace worldcreator {
         #endregion
 
         #region Region Editing
-        public Region GetBiggestRegion(Region except) {
-            return allRegions.Where(x => x.id != except.id).OrderByDescending(x => x.tilesInRegion.Count).First();
-        }
-        public void CreateNewRegion(List<HexTile> tiles) {
+        //public Region GetBiggestRegion(Region except) {
+        //    return allRegions.Where(x => x.id != except.id).OrderByDescending(x => x.tilesInRegion.Count).First();
+        //}
+        public Region CreateNewRegion(List<HexTile> tiles, ref List<Region> affectedRegions) {
             List<Region> emptyRegions = new List<Region>();
-
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
                 if (currTile.region != null) {
                     Region regionOfTile = currTile.region;
-                    regionOfTile.tilesInRegion.Remove(currTile);
+                    regionOfTile.RemoveTile(currTile);
                     if (regionOfTile.tilesInRegion.Count == 0) {
                         if (!emptyRegions.Contains(regionOfTile)) {
                             emptyRegions.Add(regionOfTile);
                         }
                     }
-
                     currTile.SetRegion(null);
+                    if (!affectedRegions.Contains(regionOfTile)) {
+                        affectedRegions.Add(regionOfTile);
+                    }
                 }
             }
             
@@ -118,31 +120,60 @@ namespace worldcreator {
             Region newRegion = new Region(center);
             newRegion.AddTile(tiles);
             allRegions.Add(newRegion);
+
+            //delete empty regions
             for (int i = 0; i < emptyRegions.Count; i++) {
                 Region currEmptyRegion = emptyRegions[i];
                 DeleteRegion(currEmptyRegion);
             }
 
+            //Re compute the center of masses of the regions that were affected
+            for (int i = 0; i < affectedRegions.Count; i++) {
+                Region currRegion = affectedRegions[i];
+                if (!emptyRegions.Contains(currRegion)) {
+                    currRegion.ReComputeCenterOfMass();
+                }
+            }
             for (int i = 0; i < allRegions.Count; i++) {
                 Region currRegion = allRegions[i];
                 currRegion.UpdateAdjacency();
             }
             WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
+            return newRegion;
+        }
+        public void ValidateRegions(List<Region> regions) {
+            for (int i = 0; i < regions.Count; i++) {
+                Region currRegion = regions[i];
+                //StartCoroutine(currRegion.GetIslands());
+                List<RegionIsland> islands = currRegion.GetIslands();
+                if (islands.Count > 1) {
+                    for (int j = 1; j < islands.Count; j++) {
+                        RegionIsland currIsland = islands[j];
+                        currRegion.RemoveTile(currIsland.tilesInIsland);
+                        List<Region> affectedRegions = new List<Region>();
+                        Region newRegion = CreateNewRegion(currIsland.tilesInIsland, ref affectedRegions);
+                    }
+                }
+            }
         }
         public void DeleteRegion(Region regionToDelete) {
             for (int i = 0; i < regionToDelete.regionBorderLines.Count; i++) {
                 SpriteRenderer currBorderLine = regionToDelete.regionBorderLines[i];
                 currBorderLine.gameObject.SetActive(false);
             }
+            if (regionToDelete.owner != null) {
+                regionToDelete.owner.UnownRegion(regionToDelete);
+            }
+
             //Give tiles from region to delete to another region
-            Region regionToGiveTo = GetBiggestRegion(regionToDelete);
+            Region regionToGiveTo = regionToDelete.adjacentRegions[UnityEngine.Random.Range(0, regionToDelete.adjacentRegions.Count)];
             regionToGiveTo.AddTile(regionToDelete.tilesInRegion);
             regionToDelete.UnhighlightRegion();
             allRegions.Remove(regionToDelete);
             for (int i = 0; i < allRegions.Count; i++) {
                 allRegions[i].UpdateAdjacency();
             }
-            WorldCreatorUI.Instance.editRegionsMenu.OnRegionDeleted(regionToDelete);
+            WorldCreatorUI.Instance.OnRegionDeleted(regionToDelete);
         }
         #endregion
 
@@ -211,6 +242,17 @@ namespace worldcreator {
             LandmarkManager.Instance.DestroyLandmarkOnTile(tile);
         }
         #endregion
+
+        #region Faction Edit
+        public void CreateNewFaction(RACE race) {
+            Faction createdFaction = FactionManager.Instance.CreateNewFaction(typeof(Tribe), race);
+            WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(createdFaction);
+        }
+        public void DeleteFaction(Faction faction) {
+            FactionManager.Instance.DeleteFaction(faction);
+            WorldCreatorUI.Instance.editFactionsMenu.OnFactionDeleted(faction);
+        }
+        #endregion
     }
 
     public enum EDIT_MODE {
@@ -222,7 +264,8 @@ namespace worldcreator {
     }
     public enum SELECTION_MODE {
         RECTANGLE,
-        TILE
+        TILE,
+        REGION
     }
 }
 

@@ -299,12 +299,23 @@ public class FactionManager : MonoBehaviour {
 			allTribes.Add ((Tribe)newFaction);
         } else if(factionType == typeof(Camp)) {
             newFaction = new Camp(race);
+        } else {
+            newFaction = new Faction(race, FACTION_TYPE.MAJOR);
         }
         allFactions.Add(newFaction);
+#if !WORLD_CREATION_TOOL
         CreateRelationshipsForNewFaction(newFaction);
-        FactionManager.Instance.UpdateFactionOrderBy();
+        UpdateFactionOrderBy();
+#endif
         //UIManager.Instance.UpdateFactionSummary();
         return newFaction;
+    }
+    public void DeleteFaction(Faction faction) {
+        for (int i = 0; i < faction.ownedRegions.Count; i++) {
+            Region currRegion = faction.ownedRegions[i];
+            currRegion.SetOwner(null);
+        }
+        allFactions.Remove(faction);
     }
     //private void CreateInitialResourceStructuresForFaction(Faction faction, Settlement settlement, Region region) {
     //    for (int i = 0; i < region.tilesWithMaterials.Count; i++) {

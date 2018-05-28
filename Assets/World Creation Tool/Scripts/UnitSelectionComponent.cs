@@ -13,11 +13,16 @@ namespace worldcreator {
         public List<HexTile> selection {
             get { return highlightedTiles; }
         }
+        public List<Region> selectedRegions {
+            get { return GetSelectedRegions(); }
+        }
         #endregion
 
         private void Awake() {
             Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnTileLeftClicked);
             Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, OnTileRightClicked);
+            Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
+            Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
         }
 
         private void Update() {
@@ -102,12 +107,46 @@ namespace worldcreator {
                     AddToHighlightedTiles(clickedTile);
                     clickedTile.HighlightTile(Color.gray, 128f/255f);
                 //}
+            } else if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.REGION) {
+                AddToHighlightedTiles(clickedTile.region.tilesInRegion);
+                clickedTile.region.HighlightRegion(Color.gray, 128f/255f);
             }
         }
         private void OnTileRightClicked(HexTile clickedTile) {
             if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.TILE) {
                 highlightedTiles.Remove(clickedTile);
                 clickedTile.UnHighlightTile();
+            } else if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.REGION) {
+                RemoveFromHighlightedTiles(clickedTile.region.tilesInRegion);
+                clickedTile.region.UnhighlightRegion();
+            }
+        }
+        private void OnHoverOverTile(HexTile tile) {
+            switch (WorldCreatorManager.Instance.selectionMode) {
+                case SELECTION_MODE.RECTANGLE:
+                case SELECTION_MODE.TILE:
+                    tile.HighlightTile(Color.grey, 128f/255f);
+                    break;
+                case SELECTION_MODE.REGION:
+                    tile.region.HighlightRegion(Color.grey, 128/255f);
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void OnHoverOutTile(HexTile tile) {
+            switch (WorldCreatorManager.Instance.selectionMode) {
+                case SELECTION_MODE.RECTANGLE:
+                case SELECTION_MODE.TILE:
+                    if (!selection.Contains(tile)) {
+                        tile.UnHighlightTile();
+                    }
+                    break;
+                case SELECTION_MODE.REGION:
+                    tile.region.UnhighlightRegion();
+                    break;
+                default:
+                    break;
             }
         }
         private void UnhighlightSelectedTiles() {
@@ -120,10 +159,37 @@ namespace worldcreator {
             }
         }
 
+        private void AddToHighlightedTiles(List<HexTile> tile) {
+            for (int i = 0; i < tile.Count; i++) {
+                HexTile currTile = tile[i];
+                AddToHighlightedTiles(currTile);
+            }
+        }
         private void AddToHighlightedTiles(HexTile tile) {
             if (!highlightedTiles.Contains(tile)) {
                 highlightedTiles.Add(tile);
             }
+        }
+
+        private void RemoveFromHighlightedTiles(List<HexTile> tile) {
+            for (int i = 0; i < tile.Count; i++) {
+                HexTile currTile = tile[i];
+                RemoveFromHighlightedTiles(currTile);
+            }
+        }
+        private void RemoveFromHighlightedTiles(HexTile tile) {
+            highlightedTiles.Remove(tile);
+        }
+
+        private List<Region> GetSelectedRegions() {
+            List<Region> regions = new List<Region>();
+            for (int i = 0; i < highlightedTiles.Count; i++) {
+                HexTile currTile = highlightedTiles[i];
+                if (!regions.Contains(currTile.region)) {
+                    regions.Add(currTile.region);
+                }
+            }
+            return regions;
         }
     }
 }

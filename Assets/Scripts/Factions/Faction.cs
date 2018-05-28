@@ -391,6 +391,9 @@ public class Faction {
         }
         return null;
     }
+    public override string ToString() {
+        return name;
+    }
     #endregion
 
     #region Relationships

@@ -44,7 +44,9 @@ namespace worldcreator {
         }
 
         public void CreateNewRegion() {
-            WorldCreatorManager.Instance.CreateNewRegion(WorldCreatorManager.Instance.selectionComponent.selection);
+            List<Region> affectedRegions = new List<Region>();
+            WorldCreatorManager.Instance.CreateNewRegion(WorldCreatorManager.Instance.selectionComponent.selection, ref affectedRegions);
+            WorldCreatorManager.Instance.ValidateRegions(affectedRegions);
         }
 
         private void UpdateItems() {

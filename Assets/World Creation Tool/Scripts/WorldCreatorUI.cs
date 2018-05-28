@@ -27,6 +27,7 @@ namespace worldcreator {
         [SerializeField] private GameObject toolbarGO;
         [SerializeField] private Toggle rectangleSelectionBtn;
         [SerializeField] private Toggle tileSelectionBtn;
+        [SerializeField] private Toggle regionSelectionBtn;
 
         [Space(10)]
         [Header("Edit Biome Menu")]
@@ -41,6 +42,7 @@ namespace worldcreator {
         [Space(10)]
         [Header("Edit Faction Menu")]
         [SerializeField] private GameObject editFactionMenuGO;
+        [SerializeField] private EditFactionsMenu _editFactionsMenu;
 
         [Space(10)]
         [Header("Edit Regions Menu")]
@@ -56,6 +58,10 @@ namespace worldcreator {
         public EditRegionsMenu editRegionsMenu {
             get { return _editRegionsMenu; }
         }
+        public EditFactionsMenu editFactionsMenu {
+            get { return _editFactionsMenu; }
+        }
+
         #endregion
 
         private void Awake() {
@@ -99,6 +105,9 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+
+            rectangleSelectionBtn.interactable = true;
+            regionSelectionBtn.interactable = true;
             tileSelectionBtn.interactable = true;
         }
         public void OnClickEditElevation() {
@@ -108,6 +117,9 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+
+            rectangleSelectionBtn.interactable = true;
+            regionSelectionBtn.interactable = true;
             tileSelectionBtn.interactable = true;
         }
         public void OnClickEditRegions() {
@@ -117,7 +129,10 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(true);
             editLandmarksMenuGO.SetActive(false);
+
+            rectangleSelectionBtn.interactable = true;
             rectangleSelectionBtn.isOn = true;
+            regionSelectionBtn.interactable = false;
             tileSelectionBtn.interactable = false;
         }
         public void OnClickEditFactions() {
@@ -127,7 +142,11 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(true);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
-            tileSelectionBtn.interactable = true;
+
+            tileSelectionBtn.interactable = false;
+            rectangleSelectionBtn.interactable = false;
+            regionSelectionBtn.interactable = true;
+            regionSelectionBtn.isOn = true;
         }
         public void OnClickEditLandmarks() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.LANDMARKS);
@@ -136,13 +155,20 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(true);
+
+            rectangleSelectionBtn.interactable = true;
+            regionSelectionBtn.interactable = true;
             tileSelectionBtn.interactable = true;
         }
+
         public void OnClickRectangleSelection() {
             WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.RECTANGLE);
         }
         public void OnClickTileSelection() {
             WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.TILE);
+        }
+        public void OnClickRegionSelection() {
+            WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.REGION);
         }
         #endregion
 
@@ -161,6 +187,11 @@ namespace worldcreator {
             WorldCreatorManager.Instance.SetElevation(selectedTiles, chosenElevation);
         }
         #endregion
+
+        public void OnRegionDeleted(Region deletedRegion) {
+            editRegionsMenu.OnRegionDeleted(deletedRegion);
+            editFactionsMenu.OnRegionDeleted(deletedRegion);
+        }
 
         #region Utilities
         public bool IsMouseOnUI() {

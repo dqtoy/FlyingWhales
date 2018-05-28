@@ -1326,11 +1326,13 @@ public class Utilities : MonoBehaviour {
         if (midPointY >= 2) {
             midPointY += 2;
         }
+        midPointX = Mathf.Max(0, midPointX);
+        midPointY = Mathf.Max(0, midPointY);
         try {
             HexTile newCenterOfMass = map[midPointX, midPointY];
             return newCenterOfMass;
         } catch {
-            throw new Exception("Cannot find center tile!");
+            throw new Exception("Cannot Recompute center. Computed new center is " + midPointX.ToString() + ", " + midPointY.ToString());
         }
         
     }

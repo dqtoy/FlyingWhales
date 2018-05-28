@@ -260,7 +260,7 @@ public class GridMap : MonoBehaviour {
                 if (currNeighbour.region != currTile.region) {
                     //Load Border For currTile
                     HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour, true);
-                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate, Color.white);
                     currTile.region.AddRegionBorderLineSprite(border);
 
                     if (GridMap.Instance.hexTiles.Contains(currNeighbour)) {
@@ -278,7 +278,7 @@ public class GridMap : MonoBehaviour {
                         } else if (borderTileToActivate == HEXTILE_DIRECTION.WEST) {
                             neighbourBorderTileToActivate = HEXTILE_DIRECTION.EAST;
                         }
-                        border = currNeighbour.ActivateBorder(neighbourBorderTileToActivate);
+                        border = currNeighbour.ActivateBorder(neighbourBorderTileToActivate, Color.white);
                         currNeighbour.region.AddRegionBorderLineSprite(border);
                     }
 
