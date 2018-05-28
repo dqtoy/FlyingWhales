@@ -12,6 +12,10 @@ namespace worldcreator {
 
         public EventSystem eventSystem;
 
+        public const float toolbarShowingPos = -493.6f;
+        public const float toolbarHiddenPos = -588f;
+
+
         [Header("World Generation")]
         [SerializeField] private GameObject mainMenuGO;
         [SerializeField] private GameObject gridSizeGO;
@@ -98,6 +102,19 @@ namespace worldcreator {
         #endregion
 
         #region Toolbar
+        public void ShowHideToolbar() {
+            if (Mathf.Approximately(toolbarGO.transform.localPosition.y, toolbarShowingPos)) {
+                //Hide
+                Vector3 newPos = toolbarGO.transform.localPosition;
+                newPos.y = toolbarHiddenPos;
+                toolbarGO.transform.localPosition = newPos;
+            } else {
+                //Show
+                Vector3 newPos = toolbarGO.transform.localPosition;
+                newPos.y = toolbarShowingPos;
+                toolbarGO.transform.localPosition = newPos;
+            }
+        }
         public void OnClickEditBiomes() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.BIOME);
             editBiomeMenuGO.SetActive(true);
@@ -169,6 +186,10 @@ namespace worldcreator {
         }
         public void OnClickRegionSelection() {
             WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.REGION);
+        }
+
+        public void OnClickSave() {
+
         }
         #endregion
 

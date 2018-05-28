@@ -39,6 +39,9 @@ namespace worldcreator {
         public void DeleteRegion() {
             WorldCreatorManager.Instance.DeleteRegion(region);
         }
+        public void EditRegion() {
+
+        }
         #endregion
     }
 }

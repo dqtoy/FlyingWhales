@@ -39,7 +39,7 @@ namespace worldcreator {
             }
 
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                UnhighlightSelectedTiles();
+                ClearSelectedTiles();
             }
 
             if (highlightedTiles != null) {
@@ -57,7 +57,7 @@ namespace worldcreator {
                 Utilities.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
                 Utilities.DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
 
-                UnhighlightSelectedTiles();
+                ClearSelectedTiles();
 
                 //RaycastHit2D[] hits = Physics2D.BoxCastAll(rect.min, Vector2.one, 0f, Vector2.right, 0f);
                 //for (int i = 0; i < hits.Length; i++) {
@@ -149,7 +149,7 @@ namespace worldcreator {
                     break;
             }
         }
-        private void UnhighlightSelectedTiles() {
+        public void ClearSelectedTiles() {
             if (highlightedTiles != null) {
                 for (int i = 0; i < highlightedTiles.Count; i++) {
                     HexTile currTile = highlightedTiles[i];

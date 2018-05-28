@@ -87,9 +87,11 @@ namespace worldcreator {
         }
         public void SetEditMode(EDIT_MODE editMode) {
             currentMode = editMode;
+            selectionComponent.ClearSelectedTiles();
         }
         public void SetSelectionMode(SELECTION_MODE selectionMode) {
             this.selectionMode = selectionMode;
+            selectionComponent.ClearSelectedTiles();
         }
         #endregion
 
