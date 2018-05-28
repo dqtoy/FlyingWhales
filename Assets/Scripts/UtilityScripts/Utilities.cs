@@ -1220,7 +1220,7 @@ public class Utilities : MonoBehaviour {
         Debug.Log("Dictionary: " + log);
     }
 
-#region Character Tags
+    #region Character Tags
 	public static int GetTagWorldGenChance(CHARACTER_TAG tag){
 		switch(tag){
 		case CHARACTER_TAG.HERBALIST:
@@ -1236,7 +1236,7 @@ public class Utilities : MonoBehaviour {
         return num % 2 == 0;
     }
 
-#region Character Relationship
+    #region Character Relationship
 	public static Dictionary<CHARACTER_RELATIONSHIP, CHARACTER_RELATIONSHIP_CATEGORY> charRelationshipCategory = new Dictionary<CHARACTER_RELATIONSHIP, CHARACTER_RELATIONSHIP_CATEGORY> () {
 		{CHARACTER_RELATIONSHIP.RIVAL, CHARACTER_RELATIONSHIP_CATEGORY.NEGATIVE},
 		{CHARACTER_RELATIONSHIP.FRIEND, CHARACTER_RELATIONSHIP_CATEGORY.POSITIVE},
@@ -1250,5 +1250,90 @@ public class Utilities : MonoBehaviour {
 		{CHARACTER_RELATIONSHIP.MENTOR, CHARACTER_RELATIONSHIP_CATEGORY.POSITIVE},
 		{CHARACTER_RELATIONSHIP.ACQUAINTANCE, CHARACTER_RELATIONSHIP_CATEGORY.NEUTRAL},
 	};
-#endregion
+    #endregion
+    static Texture2D _whiteTexture;
+    public static Texture2D WhiteTexture {
+        get {
+            if (_whiteTexture == null) {
+                _whiteTexture = new Texture2D(1, 1);
+                _whiteTexture.SetPixel(0, 0, Color.white);
+                _whiteTexture.Apply();
+            }
+
+            return _whiteTexture;
+        }
+    }
+
+    public static void DrawScreenRect(Rect rect, Color color) {
+        GUI.color = color;
+        GUI.DrawTexture(rect, WhiteTexture);
+        GUI.color = Color.white;
+    }
+
+    public static void DrawScreenRectBorder(Rect rect, float thickness, Color color) {
+        // Top
+        DrawScreenRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
+        // Left
+        DrawScreenRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
+        // Right
+        DrawScreenRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
+        // Bottom
+        DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
+    }
+
+    public static Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2) {
+        // Move origin from bottom left to top left
+        screenPosition1.y = Screen.height - screenPosition1.y;
+        screenPosition2.y = Screen.height - screenPosition2.y;
+        // Calculate corners
+        var topLeft = Vector3.Min(screenPosition1, screenPosition2);
+        var bottomRight = Vector3.Max(screenPosition1, screenPosition2);
+        // Create Rect
+        return Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
+    }
+
+    public static Bounds GetViewportBounds(Camera camera, Vector3 screenPosition1, Vector3 screenPosition2) {
+        var v1 = Camera.main.ScreenToViewportPoint(screenPosition1);
+        var v2 = Camera.main.ScreenToViewportPoint(screenPosition2);
+        var min = Vector3.Min(v1, v2);
+        var max = Vector3.Max(v1, v2);
+        min.z = camera.nearClipPlane;
+        max.z = camera.farClipPlane;
+
+        var bounds = new Bounds();
+        bounds.SetMinMax(min, max);
+        return bounds;
+    }
+
+    public static HexTile GetCenterTile(List<HexTile> tiles, HexTile[,] map, int width, int height) {
+        int maxXCoordinate = tiles.Max(x => x.xCoordinate);
+        int minXCoordinate = tiles.Min(x => x.xCoordinate);
+        int maxYCoordinate = tiles.Max(x => x.yCoordinate);
+        int minYCoordinate = tiles.Min(x => x.yCoordinate);
+
+        int midPointX = (minXCoordinate + maxXCoordinate) / 2;
+        int midPointY = (minYCoordinate + maxYCoordinate) / 2;
+
+        if (width - 2 >= midPointX) {
+            midPointX -= 2;
+        }
+        if (height - 2 >= midPointY) {
+            midPointY -= 2;
+        }
+        if (midPointX >= 2) {
+            midPointX += 2;
+        }
+        if (midPointY >= 2) {
+            midPointY += 2;
+        }
+        midPointX = Mathf.Max(0, midPointX);
+        midPointY = Mathf.Max(0, midPointY);
+        try {
+            HexTile newCenterOfMass = map[midPointX, midPointY];
+            return newCenterOfMass;
+        } catch {
+            throw new Exception("Cannot Recompute center. Computed new center is " + midPointX.ToString() + ", " + midPointY.ToString());
+        }
+        
+    }
 }

@@ -16,14 +16,13 @@ public class Region : IHasNeighbours<Region> {
     private List<Region> _adjacentRegionsViaRoad;
     private List<HexTile> _tilesWithMaterials; //The tiles inside the region that have materials
 
-    //private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
+    private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
 
     //Landmarks
     private List<BaseLandmark> _landmarks; //This contains all the landmarks in the region, except for it's city
                                            //private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
 
     private List<HexTile> _outerTiles;
-    private List<SpriteRenderer> regionBorderLines;
 
     //Roads
     private List<HexTile> _roadTilesInRegion;
@@ -81,8 +80,9 @@ public class Region : IHasNeighbours<Region> {
         get { return GetCharactersInRegion(); }
     }
     internal int numOfCharactersInLandmarks {
-        get { return _landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
+        get { return landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
     }
+    public List<SpriteRenderer> regionBorderLines { get; private set; }
     #endregion
 
     public List<Region> ValidTiles {
@@ -115,12 +115,21 @@ public class Region : IHasNeighbours<Region> {
         int midPointX = (minXCoordinate + maxXCoordinate) / 2;
         int midPointY = (minYCoordinate + maxYCoordinate) / 2;
 
+#if WORLD_CREATION_TOOL
+        if (worldcreator.WorldCreatorManager.Instance.width - 2 >= midPointX) {
+            midPointX -= 2;
+        }
+        if (worldcreator.WorldCreatorManager.Instance.height - 2 >= midPointY) {
+            midPointY -= 2;
+        }
+#else
         if (GridMap.Instance.width - 2 >= midPointX) {
             midPointX -= 2;
         }
         if (GridMap.Instance.height - 2 >= midPointY) {
             midPointY -= 2;
         }
+#endif
         if (midPointX >= 2) {
             midPointX += 2;
         }
@@ -128,7 +137,15 @@ public class Region : IHasNeighbours<Region> {
             midPointY += 2;
         }
         try {
+#if WORLD_CREATION_TOOL
+            HexTile newCenterOfMass = worldcreator.WorldCreatorManager.Instance.map[midPointX, midPointY];
+            if (!tilesInRegion.Contains(newCenterOfMass)) {
+                //the computed center of mass is not part of the region, get the closest tile instead
+                newCenterOfMass = tilesInRegion.OrderBy(x => x.GetDistanceTo(newCenterOfMass)).First();
+            }
+#else
             HexTile newCenterOfMass = GridMap.Instance.map[midPointX, midPointY];
+#endif
             SetCenterOfMass(newCenterOfMass);
         } catch {
             throw new Exception("Cannot Recompute center of mass for " + this.name + ". Current center is " + centerOfMass.name + ". Computed new center is " + midPointX.ToString() + ", " + midPointY.ToString());
@@ -155,15 +172,21 @@ public class Region : IHasNeighbours<Region> {
         //_centerOfMass.emptyCityGO.SetActive (true);
         //_centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.TOWN);
     }
-    #endregion
+#endregion
 
-    #region Ownership
+#region Ownership
     public void SetOwner(Faction owner) {
+        if (_owner != null) {
+            _owner.UnownRegion(this);
+        }
         _owner = owner;
+        if (_owner == null) {
+            ReColorBorderTiles(defaultBorderColor);
+        }
     }
-    #endregion
+#endregion
 
-    #region Adjacency Functions
+#region Adjacency Functions
     /*
      * <summary>
      * Check For Adjacent regions, this will populate the
@@ -172,9 +195,14 @@ public class Region : IHasNeighbours<Region> {
      * also populate regionBorderLines.
      * </summary>
      * */
-    internal void CheckForAdjacency() {
+    internal void UpdateAdjacency() {
         _outerTiles = new List<HexTile>();
         _adjacentRegions = new List<Region>();
+        if (regionBorderLines != null) {
+            for (int i = 0; i < regionBorderLines.Count; i++) {
+                regionBorderLines[i].gameObject.SetActive(false);
+            }
+        }
         regionBorderLines = new List<SpriteRenderer>();
         for (int i = 0; i < _tilesInRegion.Count; i++) {
             HexTile currTile = _tilesInRegion[i];
@@ -183,7 +211,9 @@ public class Region : IHasNeighbours<Region> {
                 if (currNeighbour.region != currTile.region) {
                     //Load Border For currTile
                     HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour);
-                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                    Color borderColor = _owner == null ? defaultBorderColor : _owner.factionColor;
+ 
+                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate, borderColor);
                     AddRegionBorderLineSprite(border);
 
                     if (!_outerTiles.Contains(currTile)) {
@@ -211,9 +241,9 @@ public class Region : IHasNeighbours<Region> {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Tile Functions
+#region Tile Functions
     //internal List<HexTile> GetTilesAdjacentOnlyTo(Region otherRegion) {
     //    List<HexTile> adjacentTiles = new List<HexTile>();
     //    for (int i = 0; i < _outerTiles.Count; i++) {
@@ -240,6 +270,25 @@ public class Region : IHasNeighbours<Region> {
             tile.SetRegion(this);
         }
     }
+    internal void AddTile(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            AddTile(currTile);
+        }
+    }
+    internal void RemoveTile(HexTile tile) {
+        _tilesInRegion.Remove(tile);
+        tile.SetRegion(null);
+        if (tile.hasLandmark) {
+            RemoveLandmarkFromRegion(tile.landmarkOnTile);
+        }
+    }
+    internal void RemoveTile(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            RemoveTile(currTile);
+        }
+    }
     internal void AddOuterGridTile(HexTile tile) {
         if (!_outerGridTilesInRegion.Contains(tile)) {
             _outerGridTilesInRegion.Add(tile);
@@ -258,7 +307,7 @@ public class Region : IHasNeighbours<Region> {
     /*
      Highlight all tiles in the region.
          */
-    internal void HighlightRegionTiles(Color highlightColor, float highlightAlpha) {
+    internal void SetMinimapColor(Color highlightColor, float highlightAlpha) {
         Color color = highlightColor;
         color.a = highlightAlpha;
         Color fullColor = highlightColor;
@@ -276,6 +325,22 @@ public class Region : IHasNeighbours<Region> {
             currentTile.SetMinimapTileColor(fullColor);
         }
     }
+    internal void HighlightRegion(Color color, float alpha) {
+        for (int i = 0; i < _tilesInRegion.Count; i++) {
+            HexTile currTile = _tilesInRegion[i];
+            if (currTile.id == centerOfMass.id) {
+                currTile.HighlightTile(Color.red, alpha);
+            } else {
+                currTile.HighlightTile(color, alpha);
+            }
+        }
+    }
+    internal void UnhighlightRegion() {
+        for (int i = 0; i < _tilesInRegion.Count; i++) {
+            HexTile currTile = _tilesInRegion[i];
+            currTile.UnHighlightTile();
+        }
+    }
     internal void ReColorBorderTiles(Color color) {
         Color fullColor = color;
         fullColor.a = 255f / 255f;
@@ -288,9 +353,9 @@ public class Region : IHasNeighbours<Region> {
             regionBorderLines.Add(sprite);
         }
     }
-    #endregion
+#endregion
 
-    #region Materials
+#region Materials
     public void AddTileWithMaterial(HexTile tile) {
         if (!_tilesWithMaterials.Contains(tile)) {
             _tilesWithMaterials.Add(tile);
@@ -313,13 +378,16 @@ public class Region : IHasNeighbours<Region> {
         }
         return count;
     }
-    #endregion
+#endregion
 
-    #region Landmark Functions
+#region Landmark Functions
     internal void AddLandmarkToRegion(BaseLandmark landmark) {
         if (!_landmarks.Contains(landmark)) {
             _landmarks.Add(landmark);
         }
+    }
+    internal void RemoveLandmarkFromRegion(BaseLandmark landmark) {
+        _landmarks.Remove(landmark);
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < landmarks.Count; i++) {
@@ -350,9 +418,9 @@ public class Region : IHasNeighbours<Region> {
         }
         return landmarksOfType;
     }
-    #endregion
+#endregion
 
-    #region Road Functions
+#region Road Functions
     /*
      Check if there are any landmarks in this region, 
      that are connected to any landmarks in another region.
@@ -400,9 +468,9 @@ public class Region : IHasNeighbours<Region> {
     internal void RemoveTileAsRoad(HexTile tile) {
         _roadTilesInRegion.Remove(tile);
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     private List<ECS.Character> GetCharactersInRegion() {
         List<ECS.Character> characters = new List<ECS.Character>();
         for (int i = 0; i < tilesInRegion.Count; i++) {
@@ -431,9 +499,50 @@ public class Region : IHasNeighbours<Region> {
         }
         Debug.Log(text, this.centerOfMass);
     }
-    #endregion
+#endregion
 
-    #region Islands
+#region Islands
+    public List<RegionIsland> GetIslands() {
+        List<HexTile> regionTiles = new List<HexTile>(tilesInRegion);
+        Dictionary<HexTile, RegionIsland> islands = new Dictionary<HexTile, RegionIsland>();
+        for (int i = 0; i < regionTiles.Count; i++) {
+            HexTile currTile = regionTiles[i];
+            RegionIsland island = new RegionIsland(currTile);
+            //yield return new WaitForSeconds(0.1f);
+            islands.Add(currTile, island);
+        }
+        Queue<HexTile> tileQueue = new Queue<HexTile>();
+        while (regionTiles.Count != 0) {
+            HexTile currTile;
+            if (tileQueue.Count <= 0) {
+                currTile = regionTiles[UnityEngine.Random.Range(0, regionTiles.Count)];
+            } else {
+                currTile = tileQueue.Dequeue();
+            }
+            RegionIsland islandOfCurrTile = islands[currTile];
+            List<HexTile> neighbours = currTile.AllNeighbours;
+            for (int i = 0; i < neighbours.Count; i++) {
+                HexTile currNeighbour = neighbours[i];
+                if (regionTiles.Contains(currNeighbour) && currNeighbour.region.id == this.id) {
+                    RegionIsland islandOfNeighbour = islands[currNeighbour];
+                    MergeIslands(islandOfCurrTile, islandOfNeighbour, islands);
+                    if (!tileQueue.Contains(currNeighbour)) {
+                        tileQueue.Enqueue(currNeighbour);
+                    }
+                    //yield return new WaitForSeconds(0.5f);
+                }
+            }
+            regionTiles.Remove(currTile);
+        }
+
+        List<RegionIsland> allIslands = new List<RegionIsland>();
+        foreach (KeyValuePair<HexTile, RegionIsland> kvp in islands) {
+            if (!allIslands.Contains(kvp.Value)) {
+                allIslands.Add(kvp.Value);
+            }
+        }
+        return allIslands;
+    }
     public void DetermineRegionIslands() {
         List<HexTile> passableTilesInRegion = tilesInRegion.Where(x => x.isPassable).ToList();
         Dictionary<HexTile, RegionIsland> islands = new Dictionary<HexTile, RegionIsland>();
@@ -618,7 +727,7 @@ public class Region : IHasNeighbours<Region> {
             currTile.PassableNeighbours.ForEach(x => x.DeterminePassableType());
         }
     }
-    #endregion
+#endregion
 
     public void WallOffRegion() {
         for (int i = 0; i < outerTiles.Count; i++) {
@@ -717,7 +826,7 @@ public class Region : IHasNeighbours<Region> {
         Debug.Log(log);
     }
 
-    #region Corruption
+#region Corruption
     //public void LandmarkStartedCorruption(BaseLandmark corruptedLandmark) {
     //    for (int i = 0; i < landmarks.Count; i++) {
     //        BaseLandmark landmark = landmarks[i];
@@ -734,12 +843,13 @@ public class Region : IHasNeighbours<Region> {
     //        }
     //    }
     //}
-    #endregion
+#endregion
 }
 
 public class RegionIsland {
     private HexTile _mainTile;
     private List<HexTile> _tilesInIsland;
+    private Color islandColor;
     //private List<HexTile> _outerTiles;
 
     public HexTile mainTile {
@@ -755,12 +865,14 @@ public class RegionIsland {
     public RegionIsland(HexTile tile) {
         _mainTile = tile;
         _tilesInIsland = new List<HexTile>();
+        islandColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         AddTileToIsland(tile);
     }
 
     public void AddTileToIsland(HexTile tile) {
         if (!_tilesInIsland.Contains(tile)) {
             _tilesInIsland.Add(tile);
+            //tile.HighlightTile(islandColor, 255f/255f);
         }
     }
     public void AddTileToIsland(List<HexTile> tiles) {

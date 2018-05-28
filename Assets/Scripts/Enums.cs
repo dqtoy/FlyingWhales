@@ -4,10 +4,10 @@
     X4
 }
 public enum BIOMES{
-	SNOW,
+    GRASSLAND,
+    SNOW,
 	TUNDRA,
 	DESERT,
-	GRASSLAND,
 	//WOODLAND,
 	FOREST,
 	BARE,
@@ -20,9 +20,9 @@ public enum EQUATOR_LINE{
 	DIAGONAL_RIGHT,
 }
 public enum ELEVATION{
-	MOUNTAIN,
+    PLAIN,
+    MOUNTAIN,
 	WATER,
-	PLAIN,
     TREES,
 }
 

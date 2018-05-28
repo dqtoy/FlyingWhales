@@ -30,9 +30,14 @@ public class LandmarkManager : MonoBehaviour {
      Create a new landmark on a specified tile.
      */
     public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
+        if (location.landmarkOnTile != null) {
+            //Destroy landmark on tile
+            DestroyLandmarkOnTile(location);
+        }
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
+#if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         //newLandmark.GenerateDiagonalLeftTiles();
         //newLandmark.GenerateDiagonalRightTiles();
@@ -44,8 +49,16 @@ public class LandmarkManager : MonoBehaviour {
         //}
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
+#endif
         return newLandmark;
     }
+    public void DestroyLandmarkOnTile(HexTile tile) {
+        BaseLandmark landmarkOnTile = tile.landmarkOnTile;
+        tile.RemoveLandmarkOnTile();
+        tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
+        GameObject.Destroy(landmarkOnTile.landmarkObject.gameObject);
+    }
+
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
         //newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
@@ -127,7 +140,7 @@ public class LandmarkManager : MonoBehaviour {
 		hexTile.landmarkOnTile.OccupyLandmark(occupant);
 	}
 
-    #region Landmark Generation
+#region Landmark Generation
     //public bool GenerateLandmarks() {
     //    List<BaseLandmark> createdLandmarks = new List<BaseLandmark>();
     //    List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles);
@@ -417,9 +430,9 @@ public class LandmarkManager : MonoBehaviour {
 		//}
 		//landmark.AddItemsInLandmark (items);
 	}
-    #endregion
+#endregion
 
-    #region ECS.Character Production
+#region ECS.Character Production
     /*
      Get the character role weights for a faction.
      This will not include roles that the faction has already reached the cap of.
@@ -449,9 +462,9 @@ public class LandmarkManager : MonoBehaviour {
         }
         return classes;
     }
-    #endregion
+#endregion
 
-    #region Material Generation
+#region Material Generation
     /*
      Generate Materials
          */
@@ -497,9 +510,9 @@ public class LandmarkManager : MonoBehaviour {
         //    Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
         //}
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
         LandmarkData landmarkData = GetLandmarkData(landmarkType);
         return landmarkData.baseLandmarkType;
@@ -609,5 +622,5 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarks;
     }
-    #endregion
+#endregion
 }
