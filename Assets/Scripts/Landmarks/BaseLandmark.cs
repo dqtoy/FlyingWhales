@@ -18,8 +18,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected bool _isOccupied;
     protected string _landmarkName;
     protected Faction _owner;
-    protected float _civilians; //This only contains the number of civilians (not including the characters) refer to totalPopulation to get the sum of the 2
-    protected int _reservedCivilians;
     protected List<Character> _charactersWithHomeOnLandmark;
     protected Dictionary<RACE, int> _civiliansByRace;
     //protected int _currDurability;
@@ -41,9 +39,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     private Dictionary<RESOURCE, int> _resourceInventory;
     private List<HexTile> _nextCorruptedTilesToCheck;
     private bool _hasBeenCorrupted;
-    private List<HexTile> _diagonalRightTiles;
-    private List<HexTile> _diagonalLeftTiles;
-    private List<HexTile> _horizontalTiles;
+    //private List<HexTile> _diagonalRightTiles;
+    //private List<HexTile> _diagonalLeftTiles;
+    //private List<HexTile> _horizontalTiles;
     private List<HexTile> _wallTiles;
     public bool hasAdjacentCorruptedLandmark;
     //private int _diagonalLeftBlocked;
@@ -152,7 +150,6 @@ public class BaseLandmark : ILocation, TaskCreator {
         _connections = new List<BaseLandmark>();
         _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         _owner = null; //landmark has no owner yet
-        _civilians = 0f;
         _charactersWithHomeOnLandmark = new List<Character>();
 		_prisoners = new List<Character>();
 		_history = new List<Log>();
@@ -166,9 +163,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         //_objects = new List<IObject>();
         _nextCorruptedTilesToCheck = new List<HexTile>();
         _hasBeenCorrupted = false;
-        _diagonalLeftTiles = new List<HexTile>();
-        _diagonalRightTiles = new List<HexTile>();
-        _horizontalTiles = new List<HexTile>();
+        //_diagonalLeftTiles = new List<HexTile>();
+        //_diagonalRightTiles = new List<HexTile>();
+        //_horizontalTiles = new List<HexTile>();
         _wallTiles = new List<HexTile>();
         hasAdjacentCorruptedLandmark = false;
         //_diagonalLeftBlocked = 0;
@@ -183,7 +180,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         ConstructCiviliansDictionary();
         GenerateCivilians();
         SpawnInitialLandmarkItems();
-        ConstructResourceInventory();
+        //ConstructResourceInventory();
     }
 
     #region Virtuals
@@ -1114,26 +1111,26 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Resource Inventory
-    public void ConstructResourceInventory() {
-        _resourceInventory = new Dictionary<RESOURCE, int>();
-        RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
-        for (int i = 0; i < allResources.Length; i++) {
-            if (allResources[i] != RESOURCE.NONE) {
-                _resourceInventory.Add(allResources[i], 0);
-            }
-        }
-    }
-    public void AdjustResource(RESOURCE resource, int amount) {
-        _resourceInventory[resource] += amount;
-    }
-    public void TransferResourceTo(RESOURCE resource, int amount, BaseLandmark target) {
-        AdjustResource(resource, -amount);
-        target.AdjustResource(resource, amount);
-    }
-    public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
-        AdjustResource(resource, -amount);
-        target.AdjustResource(resource, amount);
-    }
+    //public void ConstructResourceInventory() {
+    //    _resourceInventory = new Dictionary<RESOURCE, int>();
+    //    RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
+    //    for (int i = 0; i < allResources.Length; i++) {
+    //        if (allResources[i] != RESOURCE.NONE) {
+    //            _resourceInventory.Add(allResources[i], 0);
+    //        }
+    //    }
+    //}
+    //public void AdjustResource(RESOURCE resource, int amount) {
+    //    _resourceInventory[resource] += amount;
+    //}
+    //public void TransferResourceTo(RESOURCE resource, int amount, BaseLandmark target) {
+    //    AdjustResource(resource, -amount);
+    //    target.AdjustResource(resource, amount);
+    //}
+    //public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
+    //    AdjustResource(resource, -amount);
+    //    target.AdjustResource(resource, amount);
+    //}
     #endregion
 
     #region Corruption
@@ -1451,15 +1448,15 @@ public class BaseLandmark : ILocation, TaskCreator {
             HexTile directionTile = originTile.tileLocation.neighbourDirections[direction].neighbourDirections[direction];
             if(directionTile.landmarkOnTile == null) { //directionTile.region.id == originTile.region.id
                 //string strDirection = "diagonalleft";
-                if (direction == HEXTILE_DIRECTION.NORTH_WEST || direction == HEXTILE_DIRECTION.SOUTH_EAST) {
-                    _diagonalLeftTiles.Add(directionTile);
-                } else if (direction == HEXTILE_DIRECTION.NORTH_EAST || direction == HEXTILE_DIRECTION.SOUTH_WEST) {
-                    _diagonalRightTiles.Add(directionTile);
-                    //strDirection = "diagonalright";
-                } else if (direction == HEXTILE_DIRECTION.EAST || direction == HEXTILE_DIRECTION.WEST) {
-                    _horizontalTiles.Add(directionTile);
-                    //strDirection = "horizontal";
-                }
+                //if (direction == HEXTILE_DIRECTION.NORTH_WEST || direction == HEXTILE_DIRECTION.SOUTH_EAST) {
+                //    _diagonalLeftTiles.Add(directionTile);
+                //} else if (direction == HEXTILE_DIRECTION.NORTH_EAST || direction == HEXTILE_DIRECTION.SOUTH_WEST) {
+                //    _diagonalRightTiles.Add(directionTile);
+                //    //strDirection = "diagonalright";
+                //} else if (direction == HEXTILE_DIRECTION.EAST || direction == HEXTILE_DIRECTION.WEST) {
+                //    _horizontalTiles.Add(directionTile);
+                //    //strDirection = "horizontal";
+                //}
                 //directionTile.landmarkDirection.Add(this, strDirection);
                 //AddTileRecursivelyByDirection(direction, directionTile);
             }

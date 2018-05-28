@@ -121,7 +121,7 @@ public class CharacterActionDrawer : PropertyDrawer {
         SerializedProperty successFunctionProperty = property.FindPropertyRelative("successFunction");
         SerializedProperty failFunctionProperty = property.FindPropertyRelative("failFunction");
 
-        float successPosY = pEnergyRect.y + 40;
+        float successPosY = pSafetyRect.y + 40;
         var pSuccessFunctionRect = new Rect(position.x, successPosY, position.width, 100);
         EditorGUI.PropertyField(pSuccessFunctionRect, successFunctionProperty);
 

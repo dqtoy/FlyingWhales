@@ -60,6 +60,12 @@ public class CharacterRole {
     public int prestige {
         get { return _prestige; }
     }
+    public int faith {
+        get { return _faith; }
+    }
+    public int safety {
+        get { return _safety; }
+    }
     public int maxFullness {
         get { return _maxFullness; }
     }
@@ -71,6 +77,12 @@ public class CharacterRole {
     }
     public int maxPrestige {
         get { return _maxPrestige; }
+    }
+    public int maxFaith {
+        get { return _maxFaith; }
+    }
+    public int maxSafety {
+        get { return _maxSafety; }
     }
     public float happiness {
         get { return _happiness; }
@@ -308,6 +320,7 @@ public class CharacterRole {
             }
         }
     }
+
     public void SetFaith(int amount) {
         _faith = amount;
     }
@@ -352,9 +365,7 @@ public class CharacterRole {
 
     public void UpdateHappiness() {
         _happiness = CalculateFullnessImpact(_fullness) + CalculateEnergyImpact(_energy) + CalculateFunImpact(_fun)
-            + CalculatePrestigeImpact(_prestige) + CalculateSafetyImpact(_safety);
-
-        //TODO: Add Faith
+            + CalculatePrestigeImpact(_prestige) + CalculateFaithImpact(_faith) + CalculateSafetyImpact(_safety);
     }
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction) {
@@ -392,7 +403,7 @@ public class CharacterRole {
             case NEEDS.FAITH:
             currentAmount = _faith;
             advertisedAmount = action.actionData.advertisedFaith;
-            //calculateImpact = CalculateFullnessImpact;
+            calculateImpact = CalculateFaithImpact;
             break;
             case NEEDS.SAFETY:
             currentAmount = _safety;
@@ -428,7 +439,10 @@ public class CharacterRole {
         return (Mathf.Pow(value, 2f)) + 50f;
     }
 
-    //TODO: FAITH IMPACT CALCULATION
+    //Formula for calculation of happiness based on current faith, meaning what's the happiness equivalent given the faith
+    private float CalculateFaithImpact(int currentFaith) {
+        return (0.2f * (float) currentFaith) + 150f;
+    }
 
     //Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
     private float CalculateSafetyImpact(int currentSafety) {

@@ -451,8 +451,9 @@ namespace ECS {
             Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
             Messenger.AddListener(Signals.DAY_END, EverydayAction);
+            Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceFaith);
             //ConstructMaterialInventory();
-           
+
         }
 
 		private void AllocateStatPoints(int statAllocationBonus){
@@ -722,8 +723,9 @@ namespace ECS {
 				_isDead = true;
 				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
+                Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceFaith);
 
-				CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
+                CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
                 if (specificLocation == null) {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
@@ -2718,27 +2720,27 @@ namespace ECS {
 		public void SetIsDefeated(bool state){
 			_isDefeated = state;
 		}
-        public void AdjustCivilians(Dictionary<RACE, int> civilians) {
-            foreach (KeyValuePair<RACE, int> kvp in civilians) {
-                AdjustCivilians(kvp.Key, kvp.Value);
-            }
-        }
-        public void ReduceCivilians(Dictionary<RACE, int> civilians) {
-            foreach (KeyValuePair<RACE, int> kvp in civilians) {
-                AdjustCivilians(kvp.Key, -kvp.Value);
-            }
-        }
-        public void AdjustCivilians(RACE race, int amount) {
-            if (!_civiliansByRace.ContainsKey(race)) {
-                _civiliansByRace.Add(race, 0);
-            }
-            _civiliansByRace[race] += amount;
-            _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
-        }
-        public void TransferCivilians(BaseLandmark to, Dictionary<RACE, int> civilians) {
-            ReduceCivilians(civilians);
-            to.AdjustCivilians(civilians);
-        }
+        //public void AdjustCivilians(Dictionary<RACE, int> civilians) {
+        //    foreach (KeyValuePair<RACE, int> kvp in civilians) {
+        //        AdjustCivilians(kvp.Key, kvp.Value);
+        //    }
+        //}
+        //public void ReduceCivilians(Dictionary<RACE, int> civilians) {
+        //    foreach (KeyValuePair<RACE, int> kvp in civilians) {
+        //        AdjustCivilians(kvp.Key, -kvp.Value);
+        //    }
+        //}
+        //public void AdjustCivilians(RACE race, int amount) {
+        //    if (!_civiliansByRace.ContainsKey(race)) {
+        //        _civiliansByRace.Add(race, 0);
+        //    }
+        //    _civiliansByRace[race] += amount;
+        //    _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
+        //}
+        //public void TransferCivilians(BaseLandmark to, Dictionary<RACE, int> civilians) {
+        //    ReduceCivilians(civilians);
+        //    to.AdjustCivilians(civilians);
+        //}
         public STANCE GetCurrentStance() {
             //if (currentAction != null) {
             //    return currentAction.stance;
@@ -2919,6 +2921,18 @@ namespace ECS {
                 }
             }
             return false;
+        }
+        #endregion
+
+        #region Needs
+        private void CiviliansDiedReduceFaith(StructureObj whereCiviliansDied, int amount) {
+            if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
+                if (specificLocation.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(specificLocation.tileLocation)){
+                    int faithToReduce = amount * 5;
+                    this.role.AdjustFaith(-faithToReduce);
+                    Debug.Log(this.name + " has reduced its faith by " + faithToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
+                }
+            }
         }
         #endregion
 

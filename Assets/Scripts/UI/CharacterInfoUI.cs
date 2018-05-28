@@ -174,7 +174,7 @@ public class CharacterInfoUI : UIMenu {
 		//text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
         if (currentlyShowingCharacter.role != null) {
             text += "\nFullness: " + currentlyShowingCharacter.role.fullness + ", Energy: " + currentlyShowingCharacter.role.energy;
-            text += "\nFun: " + currentlyShowingCharacter.role.fun + ", Prestige: " + currentlyShowingCharacter.role.prestige;
+            text += "\nFun: " + currentlyShowingCharacter.role.fun + ", Faith: " + currentlyShowingCharacter.role.faith;
             text += "\nHappiness: " + currentlyShowingCharacter.role.happiness;
         }
         //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {

@@ -192,6 +192,16 @@ public class StructureObj : IObject {
         //}
         return total;
     }
+    public void CiviliansDeath(RACE race, int amount) {
+        RESOURCE civilianResource = RESOURCE.ELF_CIVILIAN;
+        switch (race) {
+            case RACE.HUMANS:
+            civilianResource = RESOURCE.HUMAN_CIVILIAN;
+            break;
+        }
+        AdjustResource(civilianResource, -amount);
+        Messenger.Broadcast<StructureObj, int>("CiviliansDeath", this, amount);
+    }
     public virtual RESOURCE GetMainResource() {
         return RESOURCE.NONE;
     }

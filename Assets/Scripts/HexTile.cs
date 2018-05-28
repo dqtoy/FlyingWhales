@@ -1,4 +1,4 @@
-﻿#define WORLD_CREATION_TOOL
+﻿//#define WORLD_CREATION_TOOL
 
 using UnityEngine;
 using System.Collections;
@@ -140,6 +140,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public string urlName {
         get { return "[url=" + this.id.ToString() + "_hextile]" + tileName + "[/url]"; }
+    }
+    public string coordinates {
+        get { return xCoordinate + ", " + yCoordinate; }
     }
     public Region region {
         get { return _region; }
