@@ -41,7 +41,7 @@ public class ActionThread : Multithread {
             if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                     CharacterAction action = iobject.currentState.actions[k];
-                    if (action.MeetsRequirements(_character, landmark)) { //Filter
+                    if (action.MeetsRequirements(_character, landmark) && action.CanBeDone()) { //Filter
                         float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
                         actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
                         PutToChoices(action, happinessIncrease);

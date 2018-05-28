@@ -23,11 +23,11 @@ public class IronMines : StructureObj {
         }
         if (_resourceInventory[resource] == 0) {
             if (_currentState.stateName == "Default") {
-                ObjectState emptyState = GetState("Depleted");
+                ObjectState emptyState = GetState("Empty");
                 ChangeState(emptyState);
             }
         } else {
-            if (_currentState.stateName == "Depleted") {
+            if (_currentState.stateName == "Empty") {
                 ObjectState occupiedState = GetState("Default");
                 ChangeState(occupiedState);
             }

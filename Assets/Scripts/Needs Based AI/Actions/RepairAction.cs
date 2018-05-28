@@ -51,5 +51,11 @@ public class RepairAction : CharacterAction {
         repairAction.Initialize();
         return repairAction;
     }
+    public override bool CanBeDone() {
+        if (_structure.isHPFull) {
+            return false;
+        }
+        return base.CanBeDone();
+    }
     #endregion
 }

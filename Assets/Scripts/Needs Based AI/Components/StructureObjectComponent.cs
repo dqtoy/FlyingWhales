@@ -105,7 +105,7 @@ public class StructureObjectComponent : ObjectComponent {
         if (iobject is StructureObj) {
             StructureObj structure = iobject as StructureObj;
             RESOURCE resource = Utilities.GetResourceTypeByObjectType(structure.specificObjectType);
-            string defaultOrDepleted = "Depleted";
+            string defaultOrDepleted = "Empty";
             if (structure.resourceInventory[resource] > 0) {
                 defaultOrDepleted = "Default";
             }
