@@ -101,7 +101,7 @@ public class LandmarkInfoUI : UIMenu {
 			text += "[b]Name:[/b] " + currentlyShowingLandmark.landmarkName + "\n";
 		}
 		text += "[b]Location:[/b] " + currentlyShowingLandmark.tileLocation.urlName;
-        text += "\n[b]Landmark Type:[/b] " + Utilities.NormalizeString(currentlyShowingLandmark.specificLandmarkType.ToString());
+        text += "\n[b]Landmark Type:[/b] " + currentlyShowingLandmark.landmarkObj.objectName + " (" + currentlyShowingLandmark.landmarkObj.currentState.stateName + ")";
         text += "\n[b]HP:[/b] " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
         text += "\n[b]Durability:[/b] " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
         text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();

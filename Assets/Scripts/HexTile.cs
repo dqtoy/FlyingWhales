@@ -1142,48 +1142,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Monobehaviour Functions
     private void OnMouseOver() {
-#if WORLD_CREATION_TOOL
-        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
-            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
-            if (Input.GetMouseButton(0)) {
-                Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
-            }
-            if (Input.GetMouseButton(1)) {
-                Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
-            }
-        }
-#else
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
-			return;
-		}
-        if (this.landmarkOnTile != null) {
-            _hoverHighlightGO.SetActive(true);
-        }
-        ShowHexTileInfo();
-        if (Input.GetMouseButtonDown(0)){
-			LeftClick ();
-		}else if(Input.GetMouseButtonDown(1)){
-			RightClick ();
-		}
-#endif
+        MouseOver();
     }
     private void OnMouseExit() {
-#if WORLD_CREATION_TOOL
-        //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
-            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OUT, this);
-        //}
-#else
-        _hoverHighlightGO.SetActive(false);
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
-            return;
-        }
-        //if (_landmarkOnTile != null && isHabitable) {
-        //	if (_landmarkOnTile.owner != null) {
-        //		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
-        //	}
-        //}
-        HideSmallInfoWindow();
-#endif
+        MouseExit();
     }
     private void LeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
@@ -1209,7 +1171,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		//}
 		UIManager.Instance.HidePlayerActions ();
     }
-	private void RightClick(){
+    private void RightClick(){
 		if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
             if (UIManager.Instance.IsConsoleShowing() && this.hasLandmark) {
                 UIManager.Instance.consoleUI.AddText(this.landmarkOnTile.landmarkName);
@@ -1224,25 +1186,50 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 //			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
 //		}
 	}
-    //private void OnTriggerEnter2D(Collider2D collision) {
-    //    if (!this._isPassable) {
-    //        return;
-    //    }
-    //    Debug.Log(collision.name + " entered " + this.name, this);
-    //    Character character = collision.gameObject.GetComponent<CharacterAIPath>().icon.character;
-    //    if (character.specificLocation != null) {
-    //        character.specificLocation.RemoveCharacterFromLocation(character);
-    //    }
-    //    AddCharacterToLocation(character);
-    //}
-    //private void OnTriggerExit2D(Collider2D collision) {
-    //    Debug.Log(collision.name + " exited " + this.name, this);
-    //    Character character = collision.gameObject.GetComponent<CharacterIcon>().character;
-    //    if (character.specificLocation == null) {
-    //        Debug.LogError(character.name + " has no specific location!", this);
-    //    }
-    //    character.specificLocation.RemoveCharacterFromLocation(character);
-    //}
+    public void MouseOver() {
+#if WORLD_CREATION_TOOL
+        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
+            if (Input.GetMouseButton(0)) {
+                Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
+            }
+            if (Input.GetMouseButton(1)) {
+                Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
+            }
+        }
+#else
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+            return;
+        }
+        if (this.landmarkOnTile != null) {
+            _hoverHighlightGO.SetActive(true);
+        }
+        ShowHexTileInfo();
+        if (Input.GetMouseButtonDown(0)) {
+            LeftClick();
+        } else if (Input.GetMouseButtonDown(1)) {
+            RightClick();
+        }
+#endif
+    }
+    public void MouseExit() {
+#if WORLD_CREATION_TOOL
+        //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OUT, this);
+        //}
+#else
+        _hoverHighlightGO.SetActive(false);
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+            return;
+        }
+        //if (_landmarkOnTile != null && isHabitable) {
+        //	if (_landmarkOnTile.owner != null) {
+        //		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
+        //	}
+        //}
+        HideSmallInfoWindow();
+#endif
+    }
     #endregion
 
     #region For Testing

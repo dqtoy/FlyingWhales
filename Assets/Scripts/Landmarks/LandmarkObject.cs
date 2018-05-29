@@ -70,4 +70,13 @@ public class LandmarkObject : MonoBehaviour {
 
     //    exploredGO.SetActive(_landmark.isExplored); //Activate explored GO based on isExplored boolean
     //}
+
+    #region Monobehaviour
+    private void OnMouseOver() {
+        _landmark.tileLocation.MouseOver();
+    }
+    private void OnMouseExit() {
+        _landmark.tileLocation.MouseExit();
+    }
+    #endregion
 }
