@@ -1,6 +1,4 @@
-﻿//#define WORLD_CREATION_TOOL
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using PathFind;
@@ -311,9 +309,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     }
     internal void AddBiomeDetailToTile(GameObject detailPrefab) {
-        GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
-        detailGO.transform.localScale = Vector3.one;
-        detailGO.transform.localPosition = Vector3.zero;
+        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(biomeDetailParentGO);
+        if (children != null) {
+            for (int i = 0; i < children.Length; i++) {
+                Transform currChild = children[i];
+                GameObject.Destroy(currChild.gameObject);
+            }
+        }
+        if (detailPrefab != null) {
+            GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
+            detailGO.transform.localScale = Vector3.one;
+            detailGO.transform.localPosition = Vector3.zero;
+        }
     }
     internal void SetBiomeDetailState(bool state) {
         biomeDetailParentGO.SetActive(state);
@@ -324,7 +331,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
+#if WORLD_CREATION_TOOL
+        landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
+#else
         landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+#endif
+
         landmarkGO.transform.localPosition = Vector3.zero;
         landmarkGO.transform.localScale = Vector3.one;
 
@@ -351,7 +363,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
+#if !WORLD_CREATION_TOOL
             _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(landmarkType) as StructureObj);
+#endif
         }
         return _landmarkOnTile;
     }
@@ -662,7 +676,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //} else {
         //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
         //}
+#if !WORLD_CREATION_TOOL
         int centerPieceSortingOrder = (int)GridMap.Instance.height - yCoordinate;
+#else
+        int centerPieceSortingOrder = (int)worldcreator.WorldCreatorManager.Instance.height - yCoordinate;
+#endif
+
         //SpriteRenderer mainRenderer = centerPiece.GetComponent<SpriteRenderer>();
         //mainRenderer.sortingOrder = centerPieceSortingOrder;
         SpriteRenderer[] children = centerPiece.GetComponentsInChildren<SpriteRenderer>();
@@ -688,29 +707,40 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
         //topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
     }
-    internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction) {
+    internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
+        SpriteRenderer activatedBorder = null;
         switch (direction) {
             case HEXTILE_DIRECTION.NORTH_WEST:
                 topLeftBorder.gameObject.SetActive(true);
-                return topLeftBorder;
+                activatedBorder = topLeftBorder;
+                break;
             case HEXTILE_DIRECTION.NORTH_EAST:
                 topRightBorder.gameObject.SetActive(true);
-                return topRightBorder;
+                activatedBorder = topRightBorder;
+                break;
             case HEXTILE_DIRECTION.EAST:
                 rightBorder.gameObject.SetActive(true);
-                return rightBorder;
+                activatedBorder = rightBorder;
+                break;
             case HEXTILE_DIRECTION.SOUTH_EAST:
                 botRightBorder.gameObject.SetActive(true);
-                return botRightBorder;
+                activatedBorder = botRightBorder;
+                break;
             case HEXTILE_DIRECTION.SOUTH_WEST:
                 botLeftBorder.gameObject.SetActive(true);
-                return botLeftBorder;
+                activatedBorder = botLeftBorder;
+                break;
             case HEXTILE_DIRECTION.WEST:
                 leftBorder.gameObject.SetActive(true);
-                return leftBorder;
+                activatedBorder = leftBorder;
+                break;
             default:
-                return null;
+                break;
         }
+        if (activatedBorder != null) {
+            activatedBorder.color = color;
+        }
+        return activatedBorder;
     }
     internal void DeactivateCenterPiece() {
         if (this.biomeType == BIOMES.FOREST && this.elevationType == ELEVATION.PLAIN) {
@@ -836,6 +866,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         rightOutline.SetActive(state);
         botLeftOutline.SetActive(state);
         botRightOutline.SetActive(state);
+    }
+    public void HighlightTile(Color color, float alpha) {
+        color.a = alpha;
+        _highlightGO.SetActive(true);
+        _highlightGO.GetComponent<SpriteRenderer>().color = color;
+    }
+    public void UnHighlightTile() {
+        _highlightGO.SetActive(false);
     }
     #endregion
 
@@ -1031,8 +1069,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //UpdatePassableVisuals();
     }
     public void SetPassableObject(object obj) {
+        SetCenterSprite(null);
+        Transform[] existingChildren = Utilities.GetComponentsInDirectChildren<Transform>(centerPiece);
+        if (existingChildren != null) {
+            for (int i = 0; i < existingChildren.Length; i++) {
+                Transform currChild = existingChildren[i];
+                GameObject.Destroy(currChild.gameObject);
+            }
+        }
+
         if (obj == null) {
-            SetCenterSprite(null);
+            //SetCenterSprite(null);
             return;
         }
         if (obj is Sprite) {
@@ -1096,7 +1143,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Monobehaviour Functions
     private void OnMouseOver() {
 #if WORLD_CREATION_TOOL
-
+        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
+            if (Input.GetMouseButton(0)) {
+                Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
+            }
+            if (Input.GetMouseButton(1)) {
+                Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
+            }
+        }
 #else
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
 			return;
@@ -1114,7 +1169,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     private void OnMouseExit() {
 #if WORLD_CREATION_TOOL
-        
+        //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OUT, this);
+        //}
 #else
         _hoverHighlightGO.SetActive(false);
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
@@ -1186,9 +1243,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //    }
     //    character.specificLocation.RemoveCharacterFromLocation(character);
     //}
-#endregion
+    #endregion
 
-#region For Testing
+    #region For Testing
     [Space(10)]
     [Header("For Testing")]
     [SerializeField] private int range = 0;
@@ -1344,9 +1401,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public override string ToString() {
         return this.tileName;
     }
-#endregion
+    #endregion
 
-#region Characters
+    #region Characters
 	public void AddCharacterToLocation(ICombatInitializer character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
@@ -1430,9 +1487,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
 		return count;
 	}
-#endregion
+    #endregion
 
-#region Combat
+    #region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
         //Messenger.AddListener(Signals.DAY_START, CheckForCombat);
@@ -1616,9 +1673,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             currItem.ContinueDailyAction();
         }
     }
-#endregion
+    #endregion
 
-#region Materials
+    #region Materials
     public void SetMaterialOnTile(MATERIAL material) {
         //_materialOnTile = material;
         //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
@@ -1626,9 +1683,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //resource.transform.localScale = Vector3.one;
         region.AddTileWithMaterial(this);
     }
-#endregion
+    #endregion
 
-#region Corruption
+    #region Corruption
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
@@ -1666,5 +1723,5 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
-#endregion
+    #endregion
 }
