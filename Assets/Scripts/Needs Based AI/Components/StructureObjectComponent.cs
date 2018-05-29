@@ -113,6 +113,18 @@ public class StructureObjectComponent : ObjectComponent {
             iobject.ChangeState(defaultState);
         }
     }
+    public void RepairedSettlement(IObject iobject) {
+        if (iobject is StructureObj) {
+            StructureObj structure = iobject as StructureObj;
+            RESOURCE resource = structure.GetMainResource();
+            string defaultOrDepleted = "Empty";
+            if (structure.resourceInventory[resource] > 0) {
+                defaultOrDepleted = "Training";
+            }
+            ObjectState defaultState = iobject.GetState(defaultOrDepleted);
+            iobject.ChangeState(defaultState);
+        }
+    }
     #endregion
 
     #region Sealed Tomb

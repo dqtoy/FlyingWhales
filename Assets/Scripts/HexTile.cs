@@ -1156,13 +1156,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
        
 		if(this.landmarkOnTile != null){
-            if (UIManager.Instance.settlementInfoUI.isWaitingForAttackTarget && !UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
-                //Attack landmark;
-                Debug.Log(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
-                UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
-                UIManager.Instance.settlementInfoUI.SetAttackButtonState(false);
-                UIManager.Instance.settlementInfoUI.SetActiveAttackButtonGO(false);
-                return;
+            if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null) {
+                if (UIManager.Instance.settlementInfoUI.isWaitingForAttackTarget && !UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
+                    if (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.CanAttack(this.landmarkOnTile)) {
+                        //Attack landmark;
+                        Debug.Log(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
+                        UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
+                        UIManager.Instance.settlementInfoUI.SetAttackButtonState(false);
+                        UIManager.Instance.settlementInfoUI.SetActiveAttackButtonGO(false);
+                        return;
+                    } else {
+                        Debug.Log("Cannot attack " + landmarkOnTile.landmarkName + "! Same faction!");
+                        return;
+                    }
+                }
             }
             UIManager.Instance.ShowLandmarkInfo (this.landmarkOnTile);
 		}

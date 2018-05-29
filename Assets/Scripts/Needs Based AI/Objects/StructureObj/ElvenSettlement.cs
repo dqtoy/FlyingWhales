@@ -33,6 +33,12 @@ public class ElvenSettlement : StructureObj {
             }
         }
     }
+    public override void StartState(ObjectState state) {
+        base.StartState(state);
+        if (state.stateName == "Training") {
+            ScheduleDoneTraining();
+        }
+    }
     public override void OnAddToLandmark(BaseLandmark newLocation) {
         base.OnAddToLandmark(newLocation);
         this.objectLocation.landmarkObject.SetIconActive(true);
@@ -42,6 +48,26 @@ public class ElvenSettlement : StructureObj {
     #region Resource Inventory
     public override RESOURCE GetMainResource() {
         return RESOURCE.ELF_CIVILIAN;
+    }
+    #endregion
+
+    #region Utilities
+    private void ScheduleDoneTraining() {
+        GameDate readyDate = GameManager.Instance.Today();
+        readyDate.AddDays(30);
+        SchedulingManager.Instance.AddEntry(readyDate, DoneTraining);
+    }
+    private void DoneTraining() {
+        if (_currentState.stateName == "Training") {
+            ObjectState readyState = GetState("Ready");
+            ChangeState(readyState);
+        }
+    }
+    public void CommenceTraining() {
+        if (_currentState.stateName == "Ready") {
+            ObjectState trainingState = GetState("Training");
+            ChangeState(trainingState);
+        }
     }
     #endregion
 }

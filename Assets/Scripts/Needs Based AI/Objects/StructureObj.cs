@@ -245,6 +245,14 @@ public class StructureObj : IObject {
             newArmy.SetTarget(targetLandmark);
         }
     }
+    public bool CanAttack(BaseLandmark landmark) {
+        if(this.objectLocation.owner != null && landmark.owner != null) {
+            if(this.objectLocation.owner.id == landmark.owner.id) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     //Gets the total number of civilians and multiply it with army percentage to get the army count needed to attack
     private int GetArmyTotal() {

@@ -110,7 +110,7 @@ public class LandmarkInfoUI : UIMenu {
         if (currentlyShowingLandmark.owner != null) {
             text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
             text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
-            text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.civilians.ToString() + "[/url]";
+            text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.landmarkObj.GetTotalCivilians().ToString() + "[/url]";
 			//text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
         }
 
@@ -381,7 +381,9 @@ public class LandmarkInfoUI : UIMenu {
     private void ShowAttackButton() {
         BaseLandmark landmark = currentlyShowingLandmark;
         if (!landmark.isAttackingAnotherLandmark) {
-            if (landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT || landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT) {
+            if ((landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT || landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT)
+                && landmark.landmarkObj.currentState.stateName == "Ready") {
+
                 attackButtonGO.SetActive(true);
             } else {
                 attackButtonGO.SetActive(false);

@@ -48,6 +48,9 @@ public class CharacterIcon : MonoBehaviour {
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, SetMovementState);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+
+        OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
+        SetMovementState(GameManager.Instance.isPaused);
     }
 
     public void SetTarget(ILocation target) {
