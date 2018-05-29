@@ -7,6 +7,8 @@ public class LandmarkInfoUI : UIMenu {
 
     private const int MAX_HISTORY_LOGS = 20;
 
+    public bool isWaitingForAttackTarget;
+
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
@@ -26,6 +28,11 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
 
+    [Space(10)]
+    [Header("Settlement")]
+    [SerializeField] private GameObject attackButtonGO;
+    [SerializeField] private ButtonToggle attackBtnToggle;
+
     private LogHistoryItem[] logHistoryItems;
 
     internal BaseLandmark currentlyShowingLandmark {
@@ -34,6 +41,7 @@ public class LandmarkInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
+        isWaitingForAttackTarget = false;
         Messenger.AddListener("UpdateUI", UpdateLandmarkInfo);
         //tweenPos.AddOnFinished(() => UpdateLandmarkInfo());
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
@@ -68,10 +76,12 @@ public class LandmarkInfoUI : UIMenu {
         StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
         UpdateLandmarkInfo();
         UpdateAllHistoryInfo();
+        ShowAttackButton();
     }
     public override void HideMenu() {
         base.HideMenu();
-		//HidePlayerActions();
+        SetAttackButtonState(false);
+        //HidePlayerActions();
     }
     public override void SetData(object data) {
         base.SetData(data);
@@ -92,6 +102,7 @@ public class LandmarkInfoUI : UIMenu {
 		}
 		text += "[b]Location:[/b] " + currentlyShowingLandmark.tileLocation.urlName;
         text += "\n[b]Landmark Type:[/b] " + Utilities.NormalizeString(currentlyShowingLandmark.specificLandmarkType.ToString());
+        text += "\n[b]HP:[/b] " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
         text += "\n[b]Durability:[/b] " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
         text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
 		text += "\n[b]Is Occupied:[/b] " + currentlyShowingLandmark.isOccupied.ToString();
@@ -365,4 +376,31 @@ public class LandmarkInfoUI : UIMenu {
     public void CenterOnLandmark() {
         currentlyShowingLandmark.CenterOnLandmark();
     }
+
+    #region Attack Landmark
+    private void ShowAttackButton() {
+        BaseLandmark landmark = currentlyShowingLandmark;
+        if (!landmark.isAttackingAnotherLandmark) {
+            if (landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT || landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT) {
+                attackButtonGO.SetActive(true);
+            } else {
+                attackButtonGO.SetActive(false);
+            }
+        } else {
+            attackButtonGO.SetActive(false);
+        }
+        SetAttackButtonState(false);
+    }
+    public void ToggleAttack() {
+        isWaitingForAttackTarget = !isWaitingForAttackTarget;
+        //attackBtnToggle.SetClickState(!attackBtnToggle.isClicked);
+    }
+    public void SetAttackButtonState(bool state) {
+        isWaitingForAttackTarget = state;
+        attackBtnToggle.SetClickState(state);
+    }
+    public void SetActiveAttackButtonGO(bool state) {
+        attackButtonGO.SetActive(state);
+    }
+    #endregion
 }

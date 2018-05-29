@@ -12,6 +12,12 @@ public class LandmarkObject : MonoBehaviour {
     [SerializeField] private GameObject exploredGO;
     [SerializeField] private SpriteRenderer iconSprite;
 
+    #region getters/setters
+    public BaseLandmark landmark {
+        get { return _landmark; }
+    }
+    #endregion
+
     public void SetLandmark(BaseLandmark landmark) {
         _landmark = landmark;
         UpdateName();
@@ -41,6 +47,11 @@ public class LandmarkObject : MonoBehaviour {
     public void SetBGState(bool state) {
         topSprite.enabled = state;
         botSprite.enabled = state;
+    }
+
+    //For Testing
+    public void SetIconActive(bool state) {
+        iconSprite.gameObject.SetActive(state);
     }
 
     //public void UpdateLandmarkVisual() {

@@ -11,6 +11,9 @@ public class CharacterManager : MonoBehaviour {
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
 
+    public GameObject armyIconPrefab;
+    public Transform armyIconsParent;
+
     public List<CharacterType> characterTypes;
     public List<Trait> traitSetup;
     private Dictionary<TRAIT, string> traitDictionary;

@@ -1135,8 +1135,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
             return;
         }
+       
 		if(this.landmarkOnTile != null){
-			UIManager.Instance.ShowLandmarkInfo (this.landmarkOnTile);
+            if (UIManager.Instance.settlementInfoUI.isWaitingForAttackTarget && !UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
+                //Attack landmark;
+                Debug.Log(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
+                UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
+                UIManager.Instance.settlementInfoUI.SetAttackButtonState(false);
+                UIManager.Instance.settlementInfoUI.SetActiveAttackButtonGO(false);
+                return;
+            }
+            UIManager.Instance.ShowLandmarkInfo (this.landmarkOnTile);
 		}
   //      else{
 		//	UIManager.Instance.ShowHexTileInfo (this);

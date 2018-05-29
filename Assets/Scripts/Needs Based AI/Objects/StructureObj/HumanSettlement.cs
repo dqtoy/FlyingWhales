@@ -7,7 +7,7 @@ public class HumanSettlement : StructureObj {
     public HumanSettlement() : base() {
         _specificObjectType = SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        _resourceInventory[RESOURCE.HUMAN_CIVILIAN] = 500;
+        _resourceInventory[RESOURCE.HUMAN_CIVILIAN] = 5000;
     }
 
     #region Overrides
@@ -33,17 +33,41 @@ public class HumanSettlement : StructureObj {
             }
         }
     }
-    //public override void OnAddToLandmark(BaseLandmark newLocation) {
-    //    base.OnAddToLandmark(newLocation);
-    //    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(newLocation.specificLandmarkType);
-    //    //int numOfCivilians = UnityEngine.Random.Range(data.minCivilians, data.maxCivilians + 1);
-    //    //_resourceInventory[RESOURCE.HUMAN_CIVILIAN] = numOfCivilians;
-    //}
+    public override void StartState(ObjectState state) {
+        base.StartState(state);
+        if(state.stateName == "Training") {
+            ScheduleDoneTraining();
+        }
+    }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        base.OnAddToLandmark(newLocation);
+        this.objectLocation.landmarkObject.SetIconActive(true);
+    }
     #endregion
 
     #region Resource Inventory
     public override RESOURCE GetMainResource() {
         return RESOURCE.HUMAN_CIVILIAN;
+    }
+    #endregion
+
+    #region Utilities
+    private void ScheduleDoneTraining() {
+        GameDate readyDate = GameManager.Instance.Today();
+        readyDate.AddDays(30);
+        SchedulingManager.Instance.AddEntry(readyDate, DoneTraining);
+    }
+    private void DoneTraining() {
+        if(_currentState.stateName == "Training") {
+            ObjectState readyState = GetState("Ready");
+            ChangeState(readyState);
+        }
+    }
+    public void CommenceTraining() {
+        if (_currentState.stateName == "Ready") {
+            ObjectState trainingState = GetState("Training");
+            ChangeState(trainingState);
+        }
     }
     #endregion
 }

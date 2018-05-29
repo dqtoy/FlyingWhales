@@ -48,8 +48,8 @@ public class GameManager : MonoBehaviour {
 
     private void Awake(){
 		Instance = this;
-		this.days = 1;
-		this.month = 1;
+		//this.days = 1;
+		//this.month = 1;
 		this.timeElapsed = 0f;
 	}
 

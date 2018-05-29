@@ -10,17 +10,17 @@ public class PathfindingManager : MonoBehaviour {
     [SerializeField] private AstarPath aStarPath;
 
     private GridGraph mainGraph;
-    private List<CharacterAIPath> _allAgents;
+    private List<AIPath> _allAgents;
 
     #region getters/setters
-    public List<CharacterAIPath> allAgents {
+    public List<AIPath> allAgents {
         get { return _allAgents; }
     }
     #endregion
 
     private void Awake() {
         Instance = this;
-        _allAgents = new List<CharacterAIPath>();
+        _allAgents = new List<AIPath>();
     }
 
     internal void CreateGrid() {
@@ -45,8 +45,11 @@ public class PathfindingManager : MonoBehaviour {
         AstarPath.active.Scan(mainGraph);
     }
 
-    public void AddAgent(CharacterAIPath agent) {
+    public void AddAgent(AIPath agent) {
         _allAgents.Add(agent);
+    }
+    public void RemoveAgent(AIPath agent) {
+        _allAgents.Remove(agent);
     }
 
     #region Monobehaviours

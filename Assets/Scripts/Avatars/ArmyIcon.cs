@@ -5,87 +5,55 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterIcon : MonoBehaviour {
+public class ArmyIcon : MonoBehaviour {
 
-    [SerializeField] private SpriteRenderer _icon;
+    [SerializeField] private UILabel _armyCountLbl;
     [SerializeField] private GameObject _avatarGO;
-    [SerializeField] private CharacterAIPath _aiPath;
-    [SerializeField] private SpriteRenderer _avatarSprite;
+    [SerializeField] private ArmyAIPath _aiPath;
     [SerializeField] private Animator _avatarAnimator;
     [SerializeField] private AIDestinationSetter _destinationSetter;
 
-    private Character _character;
+    private Army _army;
 
-    private ILocation _targetLocation;
+    private BaseLandmark _targetLandmark;
     private bool _isIdle;
     private string upOrDown = "Down";
     private string previousDir;
 
     #region getters/setters
-    public Character character {
-        get { return _character; }
+    public Army army {
+        get { return _army; }
     }
-    public CharacterAIPath aiPath {
+    public ArmyAIPath aiPath {
         get { return _aiPath; }
     }
-    public ILocation targetLocation {
-        get { return _targetLocation; }
+    public BaseLandmark targetLandmark {
+        get { return _targetLandmark; }
     }
     public AIDestinationSetter destinationSetter {
         get { return _destinationSetter; }
     }
     #endregion
 
-    public void SetCharacter(Character character) {
-        _character = character;
-        //UpdateColor();
-        this.name = _character.name + "'s Icon";
+    public void SetArmy(Army army) {
+        _army = army;
         _isIdle = true;
-        //if (_character.role != null) {
-        //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
-        //}
-        
-        Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
+
         Messenger.AddListener<bool>(Signals.PAUSED, SetMovementState);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
     }
 
-    public void SetTarget(ILocation target) {
-        //remove character from his/her specific location
-        if (character.specificLocation != null) {
-            character.specificLocation.RemoveCharacterFromLocation(character);
-        }
-        _targetLocation = target;
+    public void SetTarget(BaseLandmark target) {
+        _targetLandmark = target;
         if (target != null) {
             _destinationSetter.target = target.tileLocation.transform;
         } else {
             _destinationSetter.target = null;
         }
-        
-        //_aiPath.destination = _targetLocation.tileLocation.transform.position;
-        //_aiPath.SetRecalculatePathState(true);
     }
-
-    #region Visuals
-    private void UpdateColor() {
-        if (_character.role == null) {
-            return;
-        }
-        switch (_character.role.roleType) {
-            case CHARACTER_ROLE.HERO:
-                _icon.color = Color.blue;
-                break;
-            case CHARACTER_ROLE.VILLAIN:
-                _icon.color = Color.red;
-                break;
-            default:
-                break;
-        }
+    public void UpdateArmyCountLabel() {
+        _armyCountLbl.text = _army.armyCount.ToString();
     }
-    public void SetAvatarState(bool state) {
-        //_avatarGO.SetActive(state);
-    }
-    #endregion
 
     #region Speed
     private void SetMovementState(bool state) {
@@ -108,15 +76,6 @@ public class CharacterIcon : MonoBehaviour {
     }
     #endregion
 
-    private void OnRoleChanged(Character character) {
-        if (_character.id == character.id) {
-            //UpdateColor();
-            //if (_character.role != null) {
-            //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
-            //}
-        }
-    }
-
     public void SetPosition(Vector3 position) {
         this.transform.position = position;
     }
@@ -124,13 +83,13 @@ public class CharacterIcon : MonoBehaviour {
     public void SetActionOnTargetReached(Action action) {
         _aiPath.SetActionOnTargetReached(action);
     }
-
+    
     #region Monobehaviours
     private void LateUpdate() {
         //Debug.Log(_aiPath.velocity);
         Vector3 newPos = _aiPath.transform.localPosition;
-        newPos.y += 0.38f;
-        newPos.x += 0.02f;
+        newPos.y += 0.36f;
+        //newPos.x += 0.02f;
         _avatarGO.transform.localPosition = newPos;
     }
     void FixedUpdate() {
@@ -150,6 +109,15 @@ public class CharacterIcon : MonoBehaviour {
         } else {
             Idle(upOrDown);
         }
+    }
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.tag == "Landmark") {
+            _army.CollidedWithLandmark(other.GetComponent<LandmarkObject>().landmark);
+        }
+    }
+    private void OnDestroy() {
+        SetTarget(null);
+        PathfindingManager.Instance.RemoveAgent(_aiPath);
     }
     #endregion
 
