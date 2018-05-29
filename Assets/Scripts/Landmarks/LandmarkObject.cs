@@ -11,6 +11,7 @@ public class LandmarkObject : MonoBehaviour {
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;
     [SerializeField] private SpriteRenderer iconSprite;
+    [SerializeField] private UI2DSprite progressBarSprite;
 
     #region getters/setters
     public BaseLandmark landmark {
@@ -47,6 +48,10 @@ public class LandmarkObject : MonoBehaviour {
     public void SetBGState(bool state) {
         topSprite.enabled = state;
         botSprite.enabled = state;
+    }
+
+    public void UpdateProgressBar() {
+        progressBarSprite.fillAmount = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
     }
 
     //For Testing
