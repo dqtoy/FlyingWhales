@@ -70,6 +70,7 @@ namespace worldcreator {
                 }
             }
             hexTiles.ForEach(o => o.FindNeighbours(map));
+            //CameraMove.Instance.SetWholemapCameraValues();
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
