@@ -31,7 +31,6 @@ public class CharacterAction {
     public CharacterAction(ObjectState state, ACTION_TYPE actionType) {
         _state = state;
         _needsSpecificTarget = false;
-        _isHalted = false;
         _actionData.actionType = actionType;
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
