@@ -14,7 +14,7 @@ public class FactionManager : MonoBehaviour {
     //public List<QuestTypeSetup> questTypeSetups;
 
     public List<Faction> allFactions = new List<Faction>();
-	public List<Tribe> allTribes = new List<Tribe>();
+	public List<Tribe> allTribes { get { return allFactions.Where(x => x is Tribe).Select(x => x as Tribe).ToList(); } }
     public List<Faction> orderedFactions = new List<Faction>();
 
     //public List<OldQuest.Quest> allQuests = new List<OldQuest.Quest>();
