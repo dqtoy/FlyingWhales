@@ -117,12 +117,18 @@ public class CharacterIcon : MonoBehaviour {
     #endregion
 
     #region Speed
-    private void SetMovementState(bool state) {
+    public void SetMovementState(bool state) {
+        if (_character.actionData.isHalted) {
+            return;
+        }
         if (state) {
             _aiPath.maxSpeed = 0f;
         }
     }
-    private void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
+    public void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
+        if (_character.actionData.isHalted) {
+            return;
+        }
         switch (speed) {
             case PROGRESSION_SPEED.X1:
                 _aiPath.maxSpeed = 1;

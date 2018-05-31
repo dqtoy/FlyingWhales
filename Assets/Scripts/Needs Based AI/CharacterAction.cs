@@ -38,6 +38,7 @@ public class CharacterAction {
     #region Virtuals
     public virtual void Initialize() {}
     public virtual void OnChooseAction() {}
+    public virtual void OnFirstEncounter(Character character) {}
     public virtual void PerformAction(Character character) {}
     public virtual void ActionSuccess() {
         if (_actionData.successFunction != null) {
