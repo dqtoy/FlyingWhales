@@ -6,9 +6,9 @@ using ECS;
 
 [System.Serializable]
 public class CharacterObj : IObject {
-    [SerializeField] private OBJECT_TYPE _objectType;
-    [SerializeField] private bool _isInvisible;
-    [SerializeField] private List<ObjectState> _states;
+    private OBJECT_TYPE _objectType;
+    private bool _isInvisible;
+    private List<ObjectState> _states;
     private Dictionary<RESOURCE, int> _resourceInventory;
 
     private Character _character;
@@ -17,6 +17,9 @@ public class CharacterObj : IObject {
     private BaseLandmark _objectLocation;
 
     #region getters/setters
+    public Character character {
+        get { return _character; }
+    }
     public string objectName {
         get { return _objectName; }
     }
@@ -35,6 +38,9 @@ public class CharacterObj : IObject {
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
     }
+    public ILocation specificLocation {
+        get { return _character.specificLocation; }
+    }
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
     }
@@ -45,6 +51,7 @@ public class CharacterObj : IObject {
 
 
     public CharacterObj(Character character) {
+        _objectType = OBJECT_TYPE.CHARACTER;
         _character = character;
         ConstructResourceInventory();
     }
@@ -59,6 +66,12 @@ public class CharacterObj : IObject {
     }
     public void SetObjectLocation(BaseLandmark newLocation) {
         _objectLocation = newLocation;
+    }
+    public void SetIsInvisible(bool state) {
+        _isInvisible = state;
+    }
+    public void SetCharacter(Character character) {
+        _character = character;
     }
     public void ChangeState(ObjectState state) {
         if (_currentState != null) {

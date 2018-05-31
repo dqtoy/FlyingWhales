@@ -47,7 +47,7 @@ public class ActionData {
         this.currentChainAction = chainAction;
         SetCurrentAction(action);
         action.OnChooseAction();
-        _character.GoToLocation(action.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
+        _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
 
     }
     public void DetachActionData() {
@@ -77,9 +77,10 @@ public class ActionData {
     }
 
     private void PerformCurrentAction() {
-        if (!isWaiting && !_character.isIdle) {
+        if (!isWaiting && !_character.isIdle && _character.icon.targetLocation == null) {
             if (!isDone && currentAction != null) {
-                if (_character.specificLocation != null && _character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK && _character.specificLocation == currentAction.state.obj.objectLocation) {
+                ILocation characterLocation = _character.specificLocation;
+                if (characterLocation != null && characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
                     //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                     if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
                         CharacterAction newAction = currentAction.state.obj.currentState.GetActionInState(currentAction);
@@ -93,6 +94,10 @@ public class ActionData {
                     currentAction.PerformAction(_character);
                     if (currentAction.actionData.duration > 0) {
                         AdjustCurrentDay(1);
+                    }
+                } else {
+                    if(currentAction.actionType == ACTION_TYPE.ATTACK) {
+                        _character.GoToLocation(currentAction.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
                     }
                 }
                 //else {

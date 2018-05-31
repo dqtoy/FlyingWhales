@@ -10,142 +10,89 @@ namespace ECS{
 	}
 
 	public class Combat : Multithread {
-
-        public float updateIntervals = 0f;
-
 //		public Dictionary<SIDES, List<ECS.Character>> allCharactersAndSides;
 		internal List<ECS.Character> charactersSideA;
 		internal List<ECS.Character> charactersSideB;
 		internal List<ECS.Character> deadCharacters;
 		internal List<ECS.Character> faintedCharacters;
 		internal List<ECS.Character> fledCharacters;
-		internal List<ECS.Character> sideAPrisoners;
-		internal List<ECS.Character> sideBPrisoners;
-		internal ECS.Character[] characterSideACopy;
-		internal ECS.Character[] characterSideBCopy;
+		internal List<ECS.Character> characterSideACopy;
+		internal List<ECS.Character> characterSideBCopy;
 
 		internal SIDES winningSide;
 		internal SIDES losingSide;
 
-		internal Party sideAParty;
-		internal Party sideBParty;
-
 		internal List<string> resultsLog;
-		internal ICombatInitializer attacker;
-        internal ICombatInitializer defender;
         internal ILocation location;
 		internal bool isDone;
+        internal bool hasStarted;
 
-		public Combat(ICombatInitializer attacker, ICombatInitializer defender, ILocation location){
+		public Combat(ILocation location){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
 			this.charactersSideA = new List<ECS.Character> ();
 			this.charactersSideB = new List<ECS.Character> ();
-			this.deadCharacters = new List<ECS.Character> ();
+            this.characterSideACopy = new List<ECS.Character>();
+            this.characterSideBCopy = new List<ECS.Character>();
+            this.deadCharacters = new List<ECS.Character> ();
 			this.faintedCharacters = new List<ECS.Character> ();
 			this.fledCharacters = new List<Character> ();
-			this.sideAPrisoners = null;
-			this.sideBPrisoners = null;
-			this.sideAParty = null;
-			this.sideBParty = null;
 			this.location = location;
 			this.isDone = false;
+            this.hasStarted = false;
 
 			this.resultsLog = new List<string> ();
-			this.attacker = attacker;
-            this.defender = defender;
-
-			if(attacker != null && attacker.faction == null && (attacker.currentAction != null)){
-				//attacker.currentAction.EndTask (TASK_STATUS.CANCEL);
-			}
-
-			if(defender != null && defender.faction == null && (defender.currentAction != null)){
-				//defender.currentAction.EndTask (TASK_STATUS.CANCEL);
-			}
 //			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
 		}
 
         #region ECS.Character Management
         //Add a character to a side
         internal void AddCharacter(SIDES side, ECS.Character character) {
+            int rowNumber = 1;
             if (side == SIDES.A) {
-				if(character.party == null){
-					this.charactersSideA.Add(character);
-					sideAPrisoners = character.prisoners;
-				}else{
-					this.charactersSideA.AddRange(character.party.partyMembers);
-					sideAPrisoners = character.party.prisoners;
-				}
-
-				for (int i = 0; i < this.charactersSideA.Count; i++) {
-					this.charactersSideA [i].SetSide (side);
-					this.charactersSideA [i].currentCombat = this;
-				}
-//                this.charactersSideA.Add(character);
-//				for (int i = 0; i < character.followers.Count; i++) {
-//					this.charactersSideA.Add(character.followers[i]);
-//					character.followers[i].SetSide (side);
-//					character.followers[i].currentCombat = this;
-//				}
-				this.characterSideACopy = this.charactersSideA.ToArray ();
-
+                this.charactersSideA.Add(character);
+                this.characterSideACopy.Add(character);
+                character.SetRowNumber(1);
             } else {
-				if(character.party == null){
-					this.charactersSideB.Add(character);
-					sideBPrisoners = character.prisoners;
-				}else{
-					this.charactersSideB.AddRange(character.party.partyMembers);
-					sideBPrisoners = character.party.prisoners;
-				}
-
-				for (int i = 0; i < this.charactersSideB.Count; i++) {
-					this.charactersSideB [i].SetSide (side);
-					this.charactersSideB [i].currentCombat = this;
-				}
-
-//                this.charactersSideB.Add(character);
-//				for (int i = 0; i < character.followers.Count; i++) {
-//					this.charactersSideA.Add(character.followers[i]);
-//					character.followers[i].SetSide (side);
-//					character.followers[i].currentCombat = this;
-//				}
-				this.characterSideBCopy = this.charactersSideB.ToArray ();
+                this.charactersSideB.Add(character);
+                this.characterSideBCopy.Add(character);
+                rowNumber = 5;
             }
-//			character.SetSide (side);
-//			character.currentCombat = this;
-			if(CombatPrototypeUI.Instance != null){
+            character.SetSide(side);
+            character.currentCombat = this;
+            character.SetRowNumber(rowNumber);
+            character.actRate = character.agility * 5;
+            if(hasStarted && !isDone) {
+                string log = character.coloredUrlName + " joins the battle on Side " + side.ToString();
+                Debug.Log(log);
+                AddCombatLog(log, side);
+            }
+            if (CombatPrototypeUI.Instance != null){
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
 			}
         }
 		internal void AddCharacters(SIDES side, List<ECS.Character> characters) {
-			if (side == SIDES.A) {
+            int rowNumber = 1;
+            if (side == SIDES.A) {
 				this.charactersSideA.AddRange(characters);
-				this.characterSideACopy = this.charactersSideA.ToArray ();
-				if(characters[0].party != null){
-					sideAParty = characters [0].party;
-					sideAPrisoners = characters [0].party.prisoners;
-				}else{
-					for (int i = 0; i < characters.Count; i++) {
-						sideAPrisoners = characters [i].prisoners;
-					}
-				}
+				this.characterSideACopy.AddRange(characters);
+				
 			} else {
 				this.charactersSideB.AddRange(characters);
-				this.characterSideBCopy = this.charactersSideB.ToArray ();
-
-				if(characters[0].party != null){
-					sideBParty = characters [0].party;
-					sideBPrisoners = characters [0].party.prisoners;
-				}else{
-					for (int i = 0; i < characters.Count; i++) {
-						sideBPrisoners = characters [i].prisoners;
-					}
-				}
-			}
-			for (int i = 0; i < characters.Count; i++) {
+                this.characterSideBCopy.AddRange(characters);
+                rowNumber = 5;
+            }
+            for (int i = 0; i < characters.Count; i++) {
 				characters[i].SetSide (side);
 				characters[i].currentCombat = this;
-			}
-			if(CombatPrototypeUI.Instance != null){
+                characters[i].SetRowNumber(rowNumber);
+                characters[i].actRate = characters[i].agility * 5;
+                if (hasStarted && !isDone) {
+                    string log = characters[i].coloredUrlName + " joins the battle on Side " + side.ToString();
+                    Debug.Log(log);
+                    AddCombatLog(log, side);
+                }
+            }
+            if (CombatPrototypeUI.Instance != null){
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
 			}
 		}
@@ -197,18 +144,23 @@ namespace ECS{
         #endregion
         public void ReturnCombatResults(){
 			CombatManager.Instance.CombatResults(this);
-            if (attacker != null) {
-                attacker.ReturnCombatResults(this);
-            }
-            if (defender != null) {
-                defender.ReturnCombatResults(this);
-            }
+            //if (attacker != null) {
+            //    attacker.ReturnCombatResults(this);
+            //}
+            //if (defender != null) {
+            //    defender.ReturnCombatResults(this);
+            //}
 		}
 
         //This simulates the whole combat system
 		public void CombatSimulation(){
+            CombatManager.Instance.StartCoroutine(CombatSimulationCoroutine());
+        }
+
+        private IEnumerator CombatSimulationCoroutine() {
             ClearCombatLogs();
             AddCombatLog("Combat starts", SIDES.A);
+            hasStarted = true;
             string sideAChars = string.Empty;
             string sideBChars = string.Empty;
             for (int i = 0; i < charactersSideA.Count; i++) {
@@ -217,18 +169,17 @@ namespace ECS{
             for (int i = 0; i < charactersSideB.Count; i++) {
                 sideBChars += charactersSideB[i].name + "\n";
             }
-            Debug.Log("Side A : \n" + sideAChars);
-            Debug.Log("Side B : \n" + sideBChars);
-            Dictionary<ECS.Character, int> characterActivationWeights = new Dictionary<ECS.Character, int> ();
-            bool isInitial = true;
-			SetRowNumber (this.charactersSideA, 1);
-			SetRowNumber (this.charactersSideB, 5);
+            Debug.Log("Starting Side A : \n" + sideAChars);
+            Debug.Log("Starting Side B : \n" + sideBChars);
+            Dictionary<ECS.Character, int> characterActivationWeights = new Dictionary<ECS.Character, int>();
+            //SetRowNumber (this.charactersSideA, 1);
+            //SetRowNumber (this.charactersSideB, 5);
 
             int rounds = 1;
-			while(this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0){
+            while (this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0) {
                 Debug.Log("========== Round " + rounds.ToString() + " ==========");
-				ECS.Character characterThatWillAct = GetCharacterThatWillAct (characterActivationWeights, this.charactersSideA, this.charactersSideB, isInitial);
-				characterThatWillAct.EnableDisableSkills (this);
+                ECS.Character characterThatWillAct = GetCharacterThatWillAct(characterActivationWeights, this.charactersSideA, this.charactersSideB);
+                characterThatWillAct.EnableDisableSkills(this);
                 Debug.Log(characterThatWillAct.characterClass.className + " " + characterThatWillAct.name + " will act");
                 Debug.Log("Available Skills: ");
                 for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
@@ -238,38 +189,30 @@ namespace ECS{
                     }
                 }
 
-                Skill skillToUse = GetSkillToUse (characterThatWillAct);
-				if(skillToUse != null){
+                Skill skillToUse = GetSkillToUse(characterThatWillAct);
+                if (skillToUse != null) {
                     Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
-					characterThatWillAct.CureStatusEffects ();
-					ECS.Character targetCharacter = GetTargetCharacter (characterThatWillAct, skillToUse);
+                    characterThatWillAct.CureStatusEffects();
+                    ECS.Character targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
                     Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
-                    DoSkill (skillToUse, characterThatWillAct, targetCharacter);
-				}
-                if (isInitial) {
-                    isInitial = false;
+                    DoSkill(skillToUse, characterThatWillAct, targetCharacter);
                 }
-				if (CombatPrototypeUI.Instance != null) {
-					CombatPrototypeUI.Instance.UpdateCharacterSummary();
-				}
+                if (CombatPrototypeUI.Instance != null) {
+                    CombatPrototypeUI.Instance.UpdateCharacterSummary();
+                }
                 Debug.Log("========== End Round " + rounds.ToString() + " ==========");
                 rounds++;
-//              yield return new WaitForSeconds(updateIntervals);
+                yield return new WaitWhile(() => GameManager.Instance.isPaused == true);
+                yield return new WaitForSeconds(CombatManager.Instance.updateIntervals);
             }
-			if(this.charactersSideA.Count > 0){
-				winningSide = SIDES.A;
-				losingSide = SIDES.B;
-				if(sideBParty != null){
-					sideBParty.SetIsDefeated (true);
-				}
-			}else{
-				winningSide = SIDES.B;
-				losingSide = SIDES.A;
-				if(sideAParty != null){
-					sideAParty.SetIsDefeated (true);
-				}
-			}
-			AddCombatLog("Combat Ends", SIDES.A);
+            if (this.charactersSideA.Count > 0) {
+                winningSide = SIDES.A;
+                losingSide = SIDES.B;
+            } else {
+                winningSide = SIDES.B;
+                losingSide = SIDES.A;
+            }
+            AddCombatLog("Combat Ends", SIDES.A);
             sideAChars = string.Empty;
             sideBChars = string.Empty;
             for (int i = 0; i < charactersSideA.Count; i++) {
@@ -280,7 +223,7 @@ namespace ECS{
             }
             Debug.Log("Side A : \n" + sideAChars);
             Debug.Log("Side B : \n" + sideBChars);
-			isDone = true;
+            isDone = true;
         }
 
 		//Set row number to a list of characters
@@ -291,27 +234,16 @@ namespace ECS{
 		}
 
 		//Return a character that will act from a pool of characters based on their act rate
-		private ECS.Character GetCharacterThatWillAct(Dictionary<ECS.Character, int> characterActivationWeights, List<ECS.Character> charactersSideA, List<ECS.Character> charactersSideB, bool isInitial){
+		private ECS.Character GetCharacterThatWillAct(Dictionary<ECS.Character, int> characterActivationWeights, List<ECS.Character> charactersSideA, List<ECS.Character> charactersSideB){
 			characterActivationWeights.Clear();
-			if(isInitial){
-				for (int i = 0; i < charactersSideA.Count; i++) {
-					charactersSideA[i].actRate = charactersSideA [i].agility * 5;
-					characterActivationWeights.Add (charactersSideA [i], charactersSideA[i].actRate);
-				}
-				for (int i = 0; i < charactersSideB.Count; i++) {
-					charactersSideB[i].actRate = charactersSideB [i].agility * 5;
-					characterActivationWeights.Add (charactersSideB [i], charactersSideB[i].actRate);
-				}
-			}else{
-				for (int i = 0; i < charactersSideA.Count; i++) {
-					characterActivationWeights.Add (charactersSideA [i], charactersSideA[i].actRate);
-				}
-				for (int i = 0; i < charactersSideB.Count; i++) {
-					characterActivationWeights.Add (charactersSideB [i], charactersSideB[i].actRate);
-				}
-			}
+            for (int i = 0; i < charactersSideA.Count; i++) {
+                characterActivationWeights.Add(charactersSideA[i], charactersSideA[i].actRate);
+            }
+            for (int i = 0; i < charactersSideB.Count; i++) {
+                characterActivationWeights.Add(charactersSideB[i], charactersSideB[i].actRate);
+            }
 
-			ECS.Character chosenCharacter = Utilities.PickRandomElementWithWeights<ECS.Character>(characterActivationWeights);
+            ECS.Character chosenCharacter = Utilities.PickRandomElementWithWeights<ECS.Character>(characterActivationWeights);
 			foreach (ECS.Character character in characterActivationWeights.Keys) {
 				character.actRate += character.baseAgility;
 			}
@@ -1036,12 +968,12 @@ namespace ECS{
 		#endregion
 
 		public ECS.Character GetAliveCharacterByID(int id){
-			for (int i = 0; i < this.characterSideACopy.Length; i++) {
+			for (int i = 0; i < this.characterSideACopy.Count; i++) {
 				if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id){
 					return this.characterSideACopy [i];
 				}
 			}
-			for (int i = 0; i < this.characterSideBCopy.Length; i++) {
+			for (int i = 0; i < this.characterSideBCopy.Count; i++) {
 				if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id){
 					return this.characterSideBCopy [i];
 				}
@@ -1049,29 +981,29 @@ namespace ECS{
 			return null;
 		}
 
-        public ICombatInitializer GetOpposingCharacters(ECS.Character character) {
-            if (attacker is ECS.Character) {
-                if ((attacker as Character).id == character.id) {
-                    return defender;
-                }
-            } else if (attacker is Party) {
-                if ((attacker as Party).partyMembers.Contains(character)) {
-                    return defender;
-                }
-            }
+        //public ICombatInitializer GetOpposingCharacters(ECS.Character character) {
+        //    if (attacker is ECS.Character) {
+        //        if ((attacker as Character).id == character.id) {
+        //            return defender;
+        //        }
+        //    } else if (attacker is Party) {
+        //        if ((attacker as Party).partyMembers.Contains(character)) {
+        //            return defender;
+        //        }
+        //    }
 
-            if (defender is ECS.Character) {
-                if ((defender as Character).id == character.id) {
-                    return attacker;
-                }
-            } else if (defender is Party) {
-                if ((defender as Party).partyMembers.Contains(character)) {
-                    return attacker;
-                }
-            }
+        //    if (defender is ECS.Character) {
+        //        if ((defender as Character).id == character.id) {
+        //            return attacker;
+        //        }
+        //    } else if (defender is Party) {
+        //        if ((defender as Party).partyMembers.Contains(character)) {
+        //            return attacker;
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 }
 

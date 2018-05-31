@@ -444,8 +444,8 @@ namespace ECS {
 			combatHistory = new Dictionary<int, Combat> ();
 			//_combatHistoryID = 0;
 
-            _characterObject = new CharacterObj(this);
-
+            _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
+            _characterObject.SetCharacter(this);
             //ConstructResourceInventory();
 
             Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
@@ -659,6 +659,7 @@ namespace ECS {
 			this._currentHP = amount;
 		}
 		private string GetFaintOrDeath(){
+            return "die";
 			WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
 			int faintWeight = 100;
 			int dieWeight = 50;
@@ -2073,6 +2074,11 @@ namespace ECS {
                 HexTile tile = collide.gameObject.GetComponent<HexTile>();
                 if (tile != null) {
                     return tile;
+                } else {
+                    LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
+                    if (landmarkObject != null) {
+                        return landmarkObject.landmark.tileLocation;
+                    }
                 }
                 return null;
             }
@@ -2459,7 +2465,7 @@ namespace ECS {
         }
         public void CenterOnCharacter() {
             if (!this.isDead) {
-                CameraMove.Instance.CenterCameraOn(this.icon.aiPath.gameObject);
+                CameraMove.Instance.CenterCameraOn(specificLocation.tileLocation.gameObject);
             }
         }
 		//Death of this character if he/she is in the region specified

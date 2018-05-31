@@ -209,6 +209,15 @@ public class CameraMove : MonoBehaviour {
 		}
 
         ConstrainCameraBounds();
+
+        //if (Input.GetMouseButtonDown(0)) {
+        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit hit;
+
+        //    if (Physics.Raycast(ray, out hit, 100)) {
+        //        Debug.Log(hit.transform.gameObject.name);
+        //    }
+        //}
     }
 
     public void ConstrainCameraBounds() {

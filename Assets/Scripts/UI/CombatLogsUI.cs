@@ -46,7 +46,7 @@ public class CombatLogsUI : UIMenu {
     }
 	private void SideACharacters(){
 		string text = string.Empty;
-		for (int i = 0; i < _currentlyShowingCombat.characterSideACopy.Length; i++) {
+		for (int i = 0; i < _currentlyShowingCombat.characterSideACopy.Count; i++) {
 			if(i > 0){
 				text += "\n";
 			}
@@ -59,7 +59,7 @@ public class CombatLogsUI : UIMenu {
 	}
 	private void SideBCharacters(){
 		string text = string.Empty;
-		for (int i = 0; i < _currentlyShowingCombat.characterSideBCopy.Length; i++) {
+		for (int i = 0; i < _currentlyShowingCombat.characterSideBCopy.Count; i++) {
 			if(i > 0){
 				text += "\n";
 			}

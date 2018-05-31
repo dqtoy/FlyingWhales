@@ -10,6 +10,7 @@ public interface IObject {
     ObjectState currentState { get; }
     bool isInvisible { get; }
     BaseLandmark objectLocation { get; }
+    ILocation specificLocation { get; }
     RESOURCE madeOf { get; }
     Dictionary<RESOURCE, int> resourceInventory { get; }
 

@@ -384,7 +384,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (_landmarkOnTile != null) {
             SetPassableState(true);
 #if !WORLD_CREATION_TOOL
-            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(landmarkType) as StructureObj);
+            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString())) as StructureObj);
 #endif
         }
         return _landmarkOnTile;
@@ -443,7 +443,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
-            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(_landmarkOnTile.specificLandmarkType) as StructureObj);
+            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
         }
         return _landmarkOnTile;
     }
@@ -1218,7 +1218,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private void OnMouseExit() {
         MouseExit();
     }
-    private void LeftClick() {
+    void OnMouseDown() {
+        LeftClick();
+    }
+    public void LeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             if (UIManager.Instance.IsConsoleShowing()) {
                 UIManager.Instance.consoleUI.AddText(this.name);
@@ -1283,12 +1286,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
-        ShowHexTileInfo();
-        if (Input.GetMouseButtonDown(0)) {
-            LeftClick();
-        } else if (Input.GetMouseButtonDown(1)) {
-            RightClick();
-        }
+        //ShowHexTileInfo();
+        //if (Input.GetMouseButtonDown(0)) {
+        //    LeftClick();
+        //} else if (Input.GetMouseButtonDown(1)) {
+        //    RightClick();
+        //}
 #endif
     }
     public void MouseExit() {
@@ -1717,7 +1720,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return groups;
     }
     public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
-        Combat combat = new Combat(combatant1, combatant2, this);
+        Combat combat = new Combat(this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
         if (combatant1 is Party) {

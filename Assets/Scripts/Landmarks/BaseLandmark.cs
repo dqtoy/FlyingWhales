@@ -841,7 +841,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         return groups;
     }
     public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
-        Combat combat = new Combat(combatant1, combatant2, this);
+        Combat combat = new Combat(this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
         string combatant1Name = string.Empty;

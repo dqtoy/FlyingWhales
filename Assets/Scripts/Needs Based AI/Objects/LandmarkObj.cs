@@ -32,6 +32,9 @@ public class LandmarkObj : IObject {
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
     }
+    public ILocation specificLocation {
+        get { return objectLocation; }
+    }
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
     }
