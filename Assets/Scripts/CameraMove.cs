@@ -186,7 +186,9 @@ public class CameraMove : MonoBehaviour {
 #endif
                 CalculateCameraBounds();
             }
-            mouseObj.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (mouseObj != null) {
+                mouseObj.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            }
 		}
 
 #if WORLD_CREATION_TOOL
