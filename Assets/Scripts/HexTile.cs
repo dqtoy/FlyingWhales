@@ -1129,7 +1129,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetPassableState(bool state) {
         _isPassable = state;
         _centerPiece.SetActive(!state);
+#if WORLD_CREATION_TOOL
+        unpassableGO.SetActive(false);
+#else
         unpassableGO.SetActive(!state);
+#endif
         if (!state) {
             _passableType = PASSABLE_TYPE.UNPASSABLE;
         }
@@ -1205,9 +1209,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool IsBorderTileOfRegion() {
         return region.outerTiles.Contains(this);
     }
-    #endregion
+#endregion
 
-    #region Monobehaviour Functions
+#region Monobehaviour Functions
     private void OnMouseOver() {
         MouseOver();
     }
@@ -1262,6 +1266,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	}
     public void MouseOver() {
 #if WORLD_CREATION_TOOL
+        Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
             if (Input.GetMouseButton(0)) {
@@ -1304,9 +1309,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         HideSmallInfoWindow();
 #endif
     }
-    #endregion
+#endregion
 
-    #region For Testing
+#region For Testing
     [Space(10)]
     [Header("For Testing")]
     [SerializeField] private int range = 0;
@@ -1462,9 +1467,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public override string ToString() {
         return this.tileName;
     }
-    #endregion
+#endregion
 
-    #region Characters
+#region Characters
 	public void AddCharacterToLocation(ICombatInitializer character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
@@ -1548,9 +1553,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
 		return count;
 	}
-    #endregion
+#endregion
 
-    #region Combat
+#region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
         //Messenger.AddListener(Signals.DAY_START, CheckForCombat);
@@ -1734,9 +1739,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             currItem.ContinueDailyAction();
         }
     }
-    #endregion
+#endregion
 
-    #region Materials
+#region Materials
     public void SetMaterialOnTile(MATERIAL material) {
         //_materialOnTile = material;
         //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
@@ -1744,9 +1749,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //resource.transform.localScale = Vector3.one;
         region.AddTileWithMaterial(this);
     }
-    #endregion
+#endregion
 
-    #region Corruption
+#region Corruption
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
@@ -1784,5 +1789,5 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
-    #endregion
+#endregion
 }
