@@ -21,6 +21,12 @@ public class ResourceLandmark : BaseLandmark {
         _materialData = MaterialManager.Instance.materialsLookup[_materialOnLandmark];
 		_landmarkName = Utilities.NormalizeString(_materialOnLandmark.ToString ());
     }
+    public ResourceLandmark(HexTile location, LandmarkSaveData data) : base(location, data) {
+        _canBeOccupied = true;
+        _materialOnLandmark = Utilities.ConvertLandmarkTypeToMaterial(specificLandmarkType);
+        _materialData = MaterialManager.Instance.materialsLookup[_materialOnLandmark];
+        _landmarkName = Utilities.NormalizeString(_materialOnLandmark.ToString());
+    }
 
     #region Ownership
     public override void OccupyLandmark(Faction faction) {

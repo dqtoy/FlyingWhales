@@ -146,24 +146,19 @@ public class BaseLandmark : ILocation, TaskCreator {
     //}
     #endregion
 
-    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        _id = Utilities.SetID(this);
-        _location = location;
-        _specificLandmarkType = specificLandmarkType;
+    public BaseLandmark() {
         _connections = new List<BaseLandmark>();
-        _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         _owner = null; //landmark has no owner yet
         _charactersWithHomeOnLandmark = new List<Character>();
-		_prisoners = new List<Character>();
-		_history = new List<Log>();
-		_combatHistory = new Dictionary<int, Combat>();
-		_combatHistoryID = 0;
+        _prisoners = new List<Character>();
+        _history = new List<Log>();
+        _combatHistory = new Dictionary<int, Combat>();
+        _combatHistoryID = 0;
         _charactersAtLocation = new List<ICombatInitializer>();
-		_itemsInLandmark = new List<Item> ();
-		_characterTraces = new Dictionary<Character, GameDate> ();
+        _itemsInLandmark = new List<Item>();
+        _characterTraces = new Dictionary<Character, GameDate>();
         //_totalDurability = landmarkData.hitPoints;
-		//_currDurability = _totalDurability;
+        //_currDurability = _totalDurability;
         //_objects = new List<IObject>();
         _nextCorruptedTilesToCheck = new List<HexTile>();
         _hasBeenCorrupted = false;
@@ -179,12 +174,31 @@ public class BaseLandmark : ILocation, TaskCreator {
         //Messenger.AddListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
         //Messenger.AddListener<BaseLandmark>("StopCorruption", ALandmarkHasStoppedCorruption);
 
+        //ConstructResourceInventory();
+    }
+    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this(){
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+        _id = Utilities.SetID(this);
+        _location = location;
+        _specificLandmarkType = specificLandmarkType;
+        _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
         ConstructCiviliansDictionary();
         GenerateCivilians();
         SpawnInitialLandmarkItems();
-        //ConstructResourceInventory();
+    }
+    public BaseLandmark(HexTile location, LandmarkSaveData data) : this(){
+        _id = Utilities.SetID(this, data.landmarkID);
+        _specificLandmarkType = data.landmarkType;
+        _landmarkName = data.landmarkName;
+
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+        ConstructTags(landmarkData);
+        ConstructTechnologiesDictionary();
+        ConstructCiviliansDictionary();
+        //GenerateCivilians();
+        SpawnInitialLandmarkItems();
     }
 
     #region Virtuals

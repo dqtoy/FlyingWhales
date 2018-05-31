@@ -125,6 +125,23 @@ public class Faction {
 		MaterialPreferences ();
     }
 
+    public Faction(FactionSaveData data) {
+        _id = Utilities.SetID(this, data.factionID);
+        SetRace(data.factionRace);
+        _name = data.factionName;
+        _factionType = data.factionType;
+        _factionSize = FACTION_SIZE.SMALL;
+        factionColor = data.factionColor;
+        _characters = new List<ECS.Character>();
+        _ownedLandmarks = new List<BaseLandmark>();
+        _ownedRegions = new List<Region>();
+        _settlements = new List<Settlement>();
+        ConstructInititalTechnologies();
+        _relationships = new Dictionary<Faction, FactionRelationship>();
+        _warmongering = 0;
+        _landmarkInfo = new List<BaseLandmark>();
+        MaterialPreferences();
+    }
     public void SetRace(RACE race) {
         _race = race;
     }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -15,11 +17,11 @@ namespace worldcreator {
         public const float toolbarShowingPos = -493.6f;
         public const float toolbarHiddenPos = -588f;
 
-
         [Header("World Generation")]
         [SerializeField] private GameObject mainMenuGO;
         [SerializeField] private GameObject gridSizeGO;
         [SerializeField] private Button generateBtn;
+        [SerializeField] private Button goBackToMainBtn;
         [SerializeField] private InputField widthField;
         [SerializeField] private InputField heightField;
         [SerializeField] private GameObject loadingGO;
@@ -58,6 +60,18 @@ namespace worldcreator {
         [SerializeField] private GameObject editLandmarksMenuGO;
         [SerializeField] private EditLandmarksMenu editLandmarksMenu;
 
+        [Space(10)]
+        [Header("Saving")]
+        [SerializeField] private GameObject saveMenuGO;
+        [SerializeField] private GameObject saveItemPrefab;
+        [SerializeField] private GameObject saveFieldsGO;
+        [SerializeField] private ScrollRect savesScrollView;
+        [SerializeField] private InputField saveNameField;
+
+        [Space(10)]
+        [Header("Message Box")]
+        [SerializeField] private MessageBox _messageBox;
+
         #region getters/setters
         public EditRegionsMenu editRegionsMenu {
             get { return _editRegionsMenu; }
@@ -65,11 +79,14 @@ namespace worldcreator {
         public EditFactionsMenu editFactionsMenu {
             get { return _editFactionsMenu; }
         }
-
+        public MessageBox messageBox {
+            get { return _messageBox; }
+        }
         #endregion
 
         private void Awake() {
             Instance = this;
+            LoadSaveFiles();
         }
 
         #region Main Menu
@@ -77,11 +94,19 @@ namespace worldcreator {
             gridSizeGO.SetActive(true);
             mainMenuGO.SetActive(false);
         }
+        public void OnClickEditWorld() {
+            ShowLoadingMenu();
+        }
+        public void OnClickBackToStart() {
+            gridSizeGO.SetActive(false);
+            mainMenuGO.SetActive(true);
+        }
         public void OnClickGenerateGrid() {
             StartCoroutine(WorldCreatorManager.Instance.GenerateGrid(Int32.Parse(widthField.text), Int32.Parse(heightField.text)));
             generateBtn.interactable = false;
             widthField.interactable = false;
             heightField.interactable = false;
+            goBackToMainBtn.interactable = false;
             //gridSizeGO.SetActive(false);
         }
         public void UpdateLoading(float progress, string text) {
@@ -95,6 +120,7 @@ namespace worldcreator {
             generateBtn.interactable = true;
             gridSizeGO.SetActive(false);
             toolbarGO.SetActive(true);
+            loadingGO.SetActive(false);
             OnClickEditBiomes();
             WorldCreatorManager.Instance.EnableSelection();
             CameraMove.Instance.CalculateCameraBounds();
@@ -148,9 +174,9 @@ namespace worldcreator {
             editLandmarksMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
-            rectangleSelectionBtn.isOn = true;
+            //rectangleSelectionBtn.isOn = true;
             regionSelectionBtn.interactable = false;
-            tileSelectionBtn.interactable = false;
+            tileSelectionBtn.interactable = true;
         }
         public void OnClickEditFactions() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.FACTION);
@@ -187,10 +213,6 @@ namespace worldcreator {
         public void OnClickRegionSelection() {
             WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.REGION);
         }
-
-        public void OnClickSave() {
-
-        }
         #endregion
 
         #region Edit Biomes Menu
@@ -206,6 +228,78 @@ namespace worldcreator {
             ELEVATION chosenElevation = (ELEVATION)Enum.Parse(typeof(ELEVATION), elevationDropDown.options[elevationDropDown.value].text);
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
             WorldCreatorManager.Instance.SetElevation(selectedTiles, chosenElevation);
+        }
+        #endregion
+
+        #region Saving
+        private void LoadSaveFiles() {
+            Directory.CreateDirectory(WorldCreatorManager.Instance.savePath);
+            DirectoryInfo info = new DirectoryInfo(WorldCreatorManager.Instance.savePath);
+            FileInfo[] files = info.GetFiles();
+            for (int i = 0; i < files.Length; i++) {
+                FileInfo currInfo = files[i];
+                GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, savesScrollView.content.transform);
+                saveItemGO.GetComponent<SaveItem>().SetSave(currInfo.Name);
+            }
+        }
+        public void OnFileSaved(string newFile) {
+            if (!HasSaveEntry(newFile)) {
+                GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, savesScrollView.content.transform);
+                SaveItem item = saveItemGO.GetComponent<SaveItem>();
+                item.SetSave(newFile);
+                item.UpdateFormat(false);
+            }
+        }
+        public void ShowSavesMenu() {
+            saveMenuGO.SetActive(true);
+            saveFieldsGO.SetActive(true);
+            SaveItem[] saves = Utilities.GetComponentsInDirectChildren<SaveItem>(savesScrollView.content.gameObject);
+            for (int i = 0; i < saves.Length; i++) {
+                saves[i].UpdateFormat(false);
+            }
+        }
+        public void HideSaveMenu() {
+            saveMenuGO.SetActive(false);
+        }
+        public void ShowSaveConfirmation(string fileName = "") {
+            if (string.IsNullOrEmpty(fileName)) {
+                fileName = saveNameField.text + WorldCreatorManager.Instance.saveFileExt;
+            }
+            if (Utilities.DoesFileExist(WorldCreatorManager.Instance.savePath + fileName)) {
+                UnityAction yesAction = new UnityAction(() => WorldCreatorManager.Instance.SaveWorld(fileName));
+                _messageBox.ShowMessageBox(MESSAGE_BOX.YES_NO, "Overwrite save", "Do you want to overwrite save file " + fileName + "?", yesAction);
+            } else {
+                WorldCreatorManager.Instance.SaveWorld(fileName);
+            }
+        }
+        private bool HasSaveEntry(string saveName) {
+            SaveItem[] saves = Utilities.GetComponentsInDirectChildren<SaveItem>(savesScrollView.content.gameObject);
+            for (int i = 0; i < saves.Length; i++) {
+                if (saves[i].saveName.Equals(saveName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
+
+        #region Loading
+        public void ShowLoadingMenu() {
+            saveMenuGO.SetActive(true);
+            saveFieldsGO.SetActive(false);
+            SaveItem[] saves = Utilities.GetComponentsInDirectChildren<SaveItem>(savesScrollView.content.gameObject);
+            for (int i = 0; i < saves.Length; i++) {
+                saves[i].UpdateFormat(true);
+            }
+        }
+        public void ShowLoadConfirmation(string fileName) {
+            UnityAction yesAction = new UnityAction(() => OnConfirmLoad(fileName));
+            _messageBox.ShowMessageBox(MESSAGE_BOX.YES_NO, "Load save", "Do you want to load save file " + fileName + "?", yesAction);
+        }
+        private void OnConfirmLoad(string fileName) {
+            HideSaveMenu();
+            mainMenuGO.SetActive(false);
+            WorldCreatorManager.Instance.LoadWorld(fileName);
         }
         #endregion
 

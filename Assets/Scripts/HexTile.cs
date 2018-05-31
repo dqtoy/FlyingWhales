@@ -6,22 +6,25 @@ using System.Linq;
 using ECS;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
-    [Header("General Tile Details")]
-    public int id;
-    public int xCoordinate;
-    public int yCoordinate;
-    public int tileTag;
-    public string tileName;
+
+    public HexTileData data;
+
+    //[Header("General Tile Details")]
+    //public int id;
+    //public int xCoordinate;
+    //public int yCoordinate;
+    //public int tileTag;
+    //public string tileName;
     private Region _region;
     [System.NonSerialized] public SpriteRenderer spriteRenderer;
 
-    [Space(10)]
-    [Header("Biome Settings")]
-    public float elevationNoise;
-    public float moistureNoise;
-    public float temperature;
-    public BIOMES biomeType;
-    public ELEVATION elevationType;
+    //[Space(10)]
+    //[Header("Biome Settings")]
+    //public float elevationNoise;
+    //public float moistureNoise;
+    //public float temperature;
+    //public BIOMES biomeType;
+    //public ELEVATION elevationType;
 
     [Space(10)]
     [Header("Booleans")]
@@ -133,6 +136,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark corruptedLandmark = null;
 
     #region getters/setters
+    public int id { get { return data.id; } }
+    public int xCoordinate { get { return data.xCoordinate; } }
+    public int yCoordinate { get { return data.yCoordinate; } }
+    public int tileTag { get { return data.tileTag; } }
+    public string tileName { get { return data.tileName; } }
+    public float elevationNoise { get { return data.elevationNoise; } }
+    public float moistureNoise { get { return data.moistureNoise; } }
+    public float temperature { get { return data.temperature; } }
+    public BIOMES biomeType { get { return data.biomeType; } }
+    public ELEVATION elevationType { get { return data.elevationType; } }
+
     public string locationName {
         get { return tileName + "(" + xCoordinate + ", " + yCoordinate + ")"; }
     }
@@ -206,12 +220,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     public void Initialize() {
+        //data = new HexTileData();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
     #region Region Functions
     internal void SetRegion(Region region) {
         _region = region;
+        if (region == null) {
+            data.regionID = -1;
+        } else {
+            data.regionID = region.id;
+        }
     }
     internal bool IsAdjacentWithRegion(Region region) {
         List<HexTile> neighbors = this.AllNeighbours;
@@ -235,7 +255,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Elevation Functions
     internal void SetElevation(ELEVATION elevationType) {
-        this.elevationType = elevationType;
+        data.elevationType = elevationType;
     }
     public void UpdateLedgesAndOutlines() {
         if (neighbourDirections == null) {
@@ -299,7 +319,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Biome Functions
     internal void SetBiome(BIOMES biome) {
-        biomeType = biome;
+        data.biomeType = biome;
         //if(elevationType == ELEVATION.WATER) {
         //    SetMinimapTileColor(new Color(64f/255f, 164f/255f, 223f/255f));
         //} else {
@@ -365,6 +385,47 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             SetPassableState(true);
 #if !WORLD_CREATION_TOOL
             _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString())) as StructureObj);
+#endif
+        }
+        return _landmarkOnTile;
+    }
+    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LandmarkSaveData data) {
+        GameObject landmarkGO = null;
+        //Create Landmark Game Object on tile
+#if WORLD_CREATION_TOOL
+        landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
+#else
+        landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+#endif
+
+        landmarkGO.transform.localPosition = Vector3.zero;
+        landmarkGO.transform.localScale = Vector3.one;
+
+        switch (baseLandmarkType) {
+            case BASE_LANDMARK_TYPE.SETTLEMENT:
+                _landmarkOnTile = new Settlement(this, data);
+                break;
+            case BASE_LANDMARK_TYPE.RESOURCE:
+                _landmarkOnTile = new ResourceLandmark(this, data);
+                break;
+            case BASE_LANDMARK_TYPE.DUNGEON:
+                _landmarkOnTile = new DungeonLandmark(this, data);
+                break;
+            case BASE_LANDMARK_TYPE.LAIR:
+                _landmarkOnTile = new LairLandmark(this, data);
+                break;
+            default:
+                _landmarkOnTile = new BaseLandmark(this, data);
+                break;
+        }
+        if (landmarkGO != null) {
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+        }
+        _region.AddLandmarkToRegion(_landmarkOnTile);
+        if (_landmarkOnTile != null) {
+            SetPassableState(true);
+#if !WORLD_CREATION_TOOL
+            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(_landmarkOnTile.specificLandmarkType) as StructureObj);
 #endif
         }
         return _landmarkOnTile;
@@ -457,7 +518,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return Vector3.Distance(this.transform.position, targetHextile.transform.position);
     }
     public void SetTag(int tag) {
-        this.tileTag = tag;
+        data.tileTag = tag;
     }
     public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data, Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated) {
         if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
@@ -524,7 +585,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
         for (int i = 0; i < neighbours.Count; i++) {
             HexTile currNeighbour = neighbours[i];
-            _neighbourDirections.Add(GetNeighbourDirection(currNeighbour, isForOuterGrid), currNeighbour);
+            if (currNeighbour == null) {
+                continue;
+            }
+            HEXTILE_DIRECTION dir = GetNeighbourDirection(currNeighbour, isForOuterGrid);
+            if (dir != HEXTILE_DIRECTION.NONE) {
+                _neighbourDirections.Add(dir, currNeighbour);
+            }
         }
     }
     internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour, bool isForOuterGrid = false) {
@@ -1062,7 +1129,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetPassableState(bool state) {
         _isPassable = state;
         _centerPiece.SetActive(!state);
+#if WORLD_CREATION_TOOL
+        unpassableGO.SetActive(false);
+#else
         unpassableGO.SetActive(!state);
+#endif
         if (!state) {
             _passableType = PASSABLE_TYPE.UNPASSABLE;
         }
@@ -1138,9 +1209,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool IsBorderTileOfRegion() {
         return region.outerTiles.Contains(this);
     }
-    #endregion
+#endregion
 
-    #region Monobehaviour Functions
+#region Monobehaviour Functions
     private void OnMouseOver() {
         MouseOver();
     }
@@ -1198,6 +1269,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	}
     public void MouseOver() {
 #if WORLD_CREATION_TOOL
+        Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
             if (Input.GetMouseButton(0)) {
@@ -1240,9 +1312,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         HideSmallInfoWindow();
 #endif
     }
-    #endregion
+#endregion
 
-    #region For Testing
+#region For Testing
     [Space(10)]
     [Header("For Testing")]
     [SerializeField] private int range = 0;
@@ -1398,9 +1470,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public override string ToString() {
         return this.tileName;
     }
-    #endregion
+#endregion
 
-    #region Characters
+#region Characters
 	public void AddCharacterToLocation(ICombatInitializer character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
@@ -1484,9 +1556,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		}
 		return count;
 	}
-    #endregion
+#endregion
 
-    #region Combat
+#region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
         //Messenger.AddListener(Signals.DAY_START, CheckForCombat);
@@ -1670,9 +1742,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             currItem.ContinueDailyAction();
         }
     }
-    #endregion
+#endregion
 
-    #region Materials
+#region Materials
     public void SetMaterialOnTile(MATERIAL material) {
         //_materialOnTile = material;
         //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
@@ -1680,9 +1752,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //resource.transform.localScale = Vector3.one;
         region.AddTileWithMaterial(this);
     }
-    #endregion
+#endregion
 
-    #region Corruption
+#region Corruption
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
@@ -1720,5 +1792,5 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
-    #endregion
+#endregion
 }

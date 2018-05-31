@@ -13,6 +13,8 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private SpriteRenderer _avatarSprite;
     [SerializeField] private Animator _avatarAnimator;
     [SerializeField] private AIDestinationSetter _destinationSetter;
+    //[SerializeField] private LineRenderer lineRenderer;
+    //[SerializeField] private Seeker seeker;
 
     private Character _character;
 
@@ -64,10 +66,25 @@ public class CharacterIcon : MonoBehaviour {
         } else {
             _destinationSetter.target = null;
         }
-        
+
         //_aiPath.destination = _targetLocation.tileLocation.transform.position;
         //_aiPath.SetRecalculatePathState(true);
+        _aiPath.SetRecalculatePathState(true);
     }
+
+    public void SetTarget(Vector3 target) {
+        _aiPath.destination = target;
+        _aiPath.SetRecalculatePathState(true);
+    }
+    public void SetTarget(GameObject obj) {
+        if (obj != null) {
+            _destinationSetter.target = obj.transform;
+        } else {
+            _destinationSetter.target = null;
+        }
+        _aiPath.SetRecalculatePathState(true);
+    }
+
 
     #region Visuals
     private void UpdateColor() {
@@ -135,6 +152,15 @@ public class CharacterIcon : MonoBehaviour {
         newPos.y += 0.38f;
         newPos.x += 0.02f;
         _avatarGO.transform.localPosition = newPos;
+        //aiPath.isStopped = true;
+        //Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //SetTarget(CameraMove.Instance.mouseObj);
+        //Path path = seeker.GetCurrentPath();
+        //if (path != null) {
+        //    List<Vector3> vectorPath = path.vectorPath;
+        //    lineRenderer.positionCount = vectorPath.Count;
+        //    lineRenderer.SetPositions(vectorPath.ToArray());
+        //}
     }
     void FixedUpdate() {
         //Debug.Log(_aiPath.velocity);
