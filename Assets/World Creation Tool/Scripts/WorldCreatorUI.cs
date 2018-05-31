@@ -174,9 +174,9 @@ namespace worldcreator {
             editLandmarksMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
-            rectangleSelectionBtn.isOn = true;
+            //rectangleSelectionBtn.isOn = true;
             regionSelectionBtn.interactable = false;
-            tileSelectionBtn.interactable = false;
+            tileSelectionBtn.interactable = true;
         }
         public void OnClickEditFactions() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.FACTION);
