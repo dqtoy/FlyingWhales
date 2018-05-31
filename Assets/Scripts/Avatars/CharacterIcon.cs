@@ -63,13 +63,13 @@ public class CharacterIcon : MonoBehaviour {
         _targetLocation = target;
         if (target != null) {
             _destinationSetter.target = target.tileLocation.transform;
+            _aiPath.SetRecalculatePathState(true);
         } else {
             _destinationSetter.target = null;
         }
 
         //_aiPath.destination = _targetLocation.tileLocation.transform.position;
         //_aiPath.SetRecalculatePathState(true);
-        _aiPath.SetRecalculatePathState(true);
     }
 
     public void SetTarget(Vector3 target) {
@@ -79,10 +79,10 @@ public class CharacterIcon : MonoBehaviour {
     public void SetTarget(GameObject obj) {
         if (obj != null) {
             _destinationSetter.target = obj.transform;
+            _aiPath.SetRecalculatePathState(true);
         } else {
             _destinationSetter.target = null;
         }
-        _aiPath.SetRecalculatePathState(true);
     }
 
 
@@ -108,12 +108,18 @@ public class CharacterIcon : MonoBehaviour {
     #endregion
 
     #region Speed
-    private void SetMovementState(bool state) {
+    public void SetMovementState(bool state) {
+        if (_character.actionData.isHalted) {
+            return;
+        }
         if (state) {
             _aiPath.maxSpeed = 0f;
         }
     }
-    private void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
+    public void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
+        if (_character.actionData.isHalted) {
+            return;
+        }
         switch (speed) {
             case PROGRESSION_SPEED.X1:
                 _aiPath.maxSpeed = 1;

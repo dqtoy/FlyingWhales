@@ -11,15 +11,24 @@ public class ActionData {
     public int currentDay;
     public bool isDone;
     public bool isWaiting; //is still waiting from other thread?
+
     private CharacterActionAdvertisement[] choices;
     private ActionThread actionThread;
+    private bool _isNotFirstEncounter;
+    private bool _isHalted;
 
+    #region getters/setters
+    public bool isHalted {
+        get { return _isHalted; }
+    }
+    #endregion  
     public ActionData(Character character) {
         Reset();
         _character = character;
         choices = new CharacterActionAdvertisement[3];
         actionThread = new ActionThread(_character);
         _character.onDailyAction += PerformCurrentAction;
+        _isHalted = false;
         //Messenger.AddListener(Signals.DAY_END, PerformCurrentAction);
 
     }
@@ -30,6 +39,7 @@ public class ActionData {
         this.currentDay = 0;
         this.isDone = false;
         this.isWaiting = false;
+        this._isNotFirstEncounter = false;
     }
 
     public void SetSpecificTarget(object target) {
@@ -75,10 +85,19 @@ public class ActionData {
     public void SetIsDone(bool state) {
         this.isDone = state;
     }
+    public void SetIsHalted(bool state) {
+        _isHalted = state;
+        if (state) {
+            _character.icon.aiPath.maxSpeed = 0f;
+        }
+    }
 
     private void PerformCurrentAction() {
         if (!isWaiting && !_character.isIdle && _character.icon.targetLocation == null) {
-            if (!isDone && currentAction != null) {
+            if (!isDone && currentAction != null){
+                if (_isHalted) {
+                    return;
+                }
                 ILocation characterLocation = _character.specificLocation;
                 if (characterLocation != null && characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
                     //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
@@ -90,6 +109,10 @@ public class ActionData {
                             EndAction();
                             return;
                         }
+                    }
+                    if (!_isNotFirstEncounter) {
+                        currentAction.OnFirstEncounter(_character);
+                        _isNotFirstEncounter = true;
                     }
                     currentAction.PerformAction(_character);
                     if (currentAction.actionData.duration > 0) {

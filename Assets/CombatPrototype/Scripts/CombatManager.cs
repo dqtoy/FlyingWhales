@@ -116,7 +116,12 @@ namespace ECS {
                 Character currDeadCharacter = combat.deadCharacters[i];
                 currDeadCharacter.Death ();
 			}
-
+            for (int i = 0; i < combat.charactersSideA.Count; i++) {
+                Character character = combat.charactersSideA[i];
+                character.actionData.SetIsHalted(false);
+                character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
+                character.icon.SetMovementState(GameManager.Instance.isPaused);
+            }
 			//Prisoner or Leave to Die
 			//List<ECS.Character> winningCharacters = null;
 			//int leaveToDieWeight = 100;
