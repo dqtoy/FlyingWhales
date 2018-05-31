@@ -39,6 +39,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     private Dictionary<RESOURCE, int> _resourceInventory;
     private List<HexTile> _nextCorruptedTilesToCheck;
     private bool _hasBeenCorrupted;
+    protected bool _isAttackingAnotherLandmark;
     //private List<HexTile> _diagonalRightTiles;
     //private List<HexTile> _diagonalLeftTiles;
     //private List<HexTile> _horizontalTiles;
@@ -122,11 +123,14 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public Dictionary<Character, GameDate> characterTraces {
 		get { return _characterTraces; }
 	}
-    public IObject landmarkObj {
+    public StructureObj landmarkObj {
         get { return _landmarkObj; }
     }
     public List<HexTile> wallTiles {
         get { return _wallTiles; }
+    }
+    public bool isAttackingAnotherLandmark {
+        get { return _isAttackingAnotherLandmark; }
     }
     //public List<IObject> objects {
     //    get { return _objects; }
@@ -910,6 +914,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     public override string ToString() {
         return this.landmarkName;
     }
+    public void SetIsAttackingAnotherLandmarkState(bool state) {
+        _isAttackingAnotherLandmark = state;
+    }
     #endregion
 
     #region Prisoner
@@ -1092,7 +1099,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     #region Objects
     public void SetObject(StructureObj obj) {
         _landmarkObj = obj;
-        obj.SetObjectLocation(this);
+        obj.OnAddToLandmark(this);
     }
     //public bool AddObject(IObject obj) {
     //    if (!_objects.Contains(obj)) {

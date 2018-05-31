@@ -37,7 +37,7 @@ public class ActionThread : Multithread {
         string actionLog = _character.name + "'s Action Advertisements: ";
         for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
             BaseLandmark landmark = _character.currentRegion.landmarks[i];
-            IObject iobject = landmark.landmarkObj;
+            StructureObj iobject = landmark.landmarkObj;
             if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                     CharacterAction action = iobject.currentState.actions[k];

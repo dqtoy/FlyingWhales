@@ -1209,6 +1209,58 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Monobehaviour Functions
     private void OnMouseOver() {
+        MouseOver();
+    }
+    private void OnMouseExit() {
+        MouseExit();
+    }
+    private void LeftClick() {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+            if (UIManager.Instance.IsConsoleShowing()) {
+                UIManager.Instance.consoleUI.AddText(this.name);
+            }
+            return;
+        }
+       
+		if(this.landmarkOnTile != null){
+            if(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null) {
+                if (UIManager.Instance.settlementInfoUI.isWaitingForAttackTarget && !UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
+                    if (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.CanAttack(this.landmarkOnTile)) {
+                        //Attack landmark;
+                        Debug.Log(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
+                        UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
+                        UIManager.Instance.settlementInfoUI.SetAttackButtonState(false);
+                        UIManager.Instance.settlementInfoUI.SetActiveAttackButtonGO(false);
+                        return;
+                    } else {
+                        Debug.Log("Cannot attack " + landmarkOnTile.landmarkName + "! Same faction!");
+                        return;
+                    }
+                }
+            }
+            UIManager.Instance.ShowLandmarkInfo (this.landmarkOnTile);
+		}
+  //      else{
+		//	UIManager.Instance.ShowHexTileInfo (this);
+		//}
+		UIManager.Instance.HidePlayerActions ();
+    }
+    private void RightClick(){
+		if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
+            if (UIManager.Instance.IsConsoleShowing() && this.hasLandmark) {
+                UIManager.Instance.consoleUI.AddText(this.landmarkOnTile.landmarkName);
+            }
+            return;
+		}
+		UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
+
+//		if(this.landmarkOnTile == null){
+//			UIManager.Instance.ShowPlayerActions (this);
+//		}else{
+//			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
+//		}
+	}
+    public void MouseOver() {
 #if WORLD_CREATION_TOOL
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
@@ -1221,20 +1273,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 #else
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
-			return;
-		}
+            return;
+        }
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
         ShowHexTileInfo();
-        if (Input.GetMouseButtonDown(0)){
-			LeftClick ();
-		}else if(Input.GetMouseButtonDown(1)){
-			RightClick ();
-		}
+        if (Input.GetMouseButtonDown(0)) {
+            LeftClick();
+        } else if (Input.GetMouseButtonDown(1)) {
+            RightClick();
+        }
 #endif
     }
-    private void OnMouseExit() {
+    public void MouseExit() {
 #if WORLD_CREATION_TOOL
         //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OUT, this);
@@ -1252,55 +1304,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         HideSmallInfoWindow();
 #endif
     }
-    private void LeftClick() {
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
-            if (UIManager.Instance.IsConsoleShowing()) {
-                UIManager.Instance.consoleUI.AddText(this.name);
-            }
-            return;
-        }
-		if(this.landmarkOnTile != null){
-			UIManager.Instance.ShowLandmarkInfo (this.landmarkOnTile);
-		}
-  //      else{
-		//	UIManager.Instance.ShowHexTileInfo (this);
-		//}
-		UIManager.Instance.HidePlayerActions ();
-    }
-	private void RightClick(){
-		if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
-            if (UIManager.Instance.IsConsoleShowing() && this.hasLandmark) {
-                UIManager.Instance.consoleUI.AddText(this.landmarkOnTile.landmarkName);
-            }
-            return;
-		}
-		UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
-
-//		if(this.landmarkOnTile == null){
-//			UIManager.Instance.ShowPlayerActions (this);
-//		}else{
-//			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
-//		}
-	}
-    //private void OnTriggerEnter2D(Collider2D collision) {
-    //    if (!this._isPassable) {
-    //        return;
-    //    }
-    //    Debug.Log(collision.name + " entered " + this.name, this);
-    //    Character character = collision.gameObject.GetComponent<CharacterAIPath>().icon.character;
-    //    if (character.specificLocation != null) {
-    //        character.specificLocation.RemoveCharacterFromLocation(character);
-    //    }
-    //    AddCharacterToLocation(character);
-    //}
-    //private void OnTriggerExit2D(Collider2D collision) {
-    //    Debug.Log(collision.name + " exited " + this.name, this);
-    //    Character character = collision.gameObject.GetComponent<CharacterIcon>().character;
-    //    if (character.specificLocation == null) {
-    //        Debug.LogError(character.name + " has no specific location!", this);
-    //    }
-    //    character.specificLocation.RemoveCharacterFromLocation(character);
-    //}
     #endregion
 
     #region For Testing

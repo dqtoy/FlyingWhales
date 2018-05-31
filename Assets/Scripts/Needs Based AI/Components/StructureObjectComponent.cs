@@ -33,7 +33,7 @@ public class StructureObjectComponent : ObjectComponent {
             StructureObj obj = (iobject as StructureObj);
             if (obj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT || obj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT) {
                 if (obj.resourceInventory[obj.GetMainResource()] <= 0) {
-                    nextStateName = "Depleted";
+                    nextStateName = "Empty";
                 }
             }
         }
@@ -104,10 +104,22 @@ public class StructureObjectComponent : ObjectComponent {
     public void RepairedResourceStructure(IObject iobject) {
         if (iobject is StructureObj) {
             StructureObj structure = iobject as StructureObj;
-            RESOURCE resource = Utilities.GetResourceTypeByObjectType(structure.specificObjectType);
+            RESOURCE resource = structure.GetMainResource();
             string defaultOrDepleted = "Empty";
             if (structure.resourceInventory[resource] > 0) {
                 defaultOrDepleted = "Default";
+            }
+            ObjectState defaultState = iobject.GetState(defaultOrDepleted);
+            iobject.ChangeState(defaultState);
+        }
+    }
+    public void RepairedSettlement(IObject iobject) {
+        if (iobject is StructureObj) {
+            StructureObj structure = iobject as StructureObj;
+            RESOURCE resource = structure.GetMainResource();
+            string defaultOrDepleted = "Empty";
+            if (structure.resourceInventory[resource] > 0) {
+                defaultOrDepleted = "Training";
             }
             ObjectState defaultState = iobject.GetState(defaultOrDepleted);
             iobject.ChangeState(defaultState);

@@ -414,7 +414,7 @@ public class FactionManager : MonoBehaviour {
                 Region currRegion = currTribe.ownedRegions[j];
                 for (int k = 0; k < currRegion.landmarks.Count; k++) {
                     BaseLandmark currLandmark = currRegion.landmarks[k];
-                    if (currLandmark is Settlement && !currLandmark.isOccupied) {
+                    if (!currLandmark.isOccupied) { //currLandmark is Settlement &&
                         currLandmark.OccupyLandmark(currTribe);
                     }
                 }

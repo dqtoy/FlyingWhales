@@ -142,11 +142,12 @@ public class StructureObj : IObject {
         //When hp reaches 0 or 100 a function will be called
         int previousHP = _currentHP;
         _currentHP += amount;
-        _currentHP = Mathf.Clamp(_currentHP, 0, 100);
+        _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
+        this.objectLocation.landmarkObject.UpdateProgressBar();
         if (previousHP != _currentHP) {
             if (_currentHP == 0 && _onHPReachedZero != null) {
                 _onHPReachedZero.Invoke(this);
-            } else if (_currentHP == 100 && _onHPReachedFull != null) {
+            } else if (_currentHP == maxHP && _onHPReachedFull != null) {
                 _onHPReachedFull.Invoke(this);
             }
         }
@@ -231,6 +232,31 @@ public class StructureObj : IObject {
     }
     public void SetIsMadeOf(RESOURCE resource) {
         _madeOf = resource;
+    }
+    #endregion
+
+
+    #region Attack Landmark
+    public void AttackLandmark(BaseLandmark targetLandmark) {
+        int armyCount = GetArmyTotal();
+        if(armyCount > 0) {
+            this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
+            Army newArmy = new Army(this.objectLocation, armyCount);
+            newArmy.SetTarget(targetLandmark);
+        }
+    }
+    public bool CanAttack(BaseLandmark landmark) {
+        if(this.objectLocation.owner != null && landmark.owner != null) {
+            if(this.objectLocation.owner.id == landmark.owner.id) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Gets the total number of civilians and multiply it with army percentage to get the army count needed to attack
+    private int GetArmyTotal() {
+        return Mathf.CeilToInt((0.25f * (float) GetTotalCivilians()));
     }
     #endregion
 }

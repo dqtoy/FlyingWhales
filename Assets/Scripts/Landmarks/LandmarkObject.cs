@@ -11,6 +11,13 @@ public class LandmarkObject : MonoBehaviour {
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;
     [SerializeField] private SpriteRenderer iconSprite;
+    [SerializeField] private UI2DSprite progressBarSprite;
+
+    #region getters/setters
+    public BaseLandmark landmark {
+        get { return _landmark; }
+    }
+    #endregion
 
     public void SetLandmark(BaseLandmark landmark) {
         _landmark = landmark;
@@ -43,6 +50,15 @@ public class LandmarkObject : MonoBehaviour {
         botSprite.enabled = state;
     }
 
+    public void UpdateProgressBar() {
+        progressBarSprite.fillAmount = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
+    }
+
+    //For Testing
+    public void SetIconActive(bool state) {
+        iconSprite.gameObject.SetActive(state);
+    }
+
     //public void UpdateLandmarkVisual() {
     //    if (_landmark.isHidden) {
     //        Color color = Color.white;
@@ -59,4 +75,13 @@ public class LandmarkObject : MonoBehaviour {
 
     //    exploredGO.SetActive(_landmark.isExplored); //Activate explored GO based on isExplored boolean
     //}
+
+    #region Monobehaviour
+    private void OnMouseOver() {
+        _landmark.tileLocation.MouseOver();
+    }
+    private void OnMouseExit() {
+        _landmark.tileLocation.MouseExit();
+    }
+    #endregion
 }
