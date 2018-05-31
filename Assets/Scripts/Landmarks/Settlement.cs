@@ -51,6 +51,15 @@ public class Settlement : BaseLandmark {
 //		ConstructNeededMaterials ();
     }
 
+    public Settlement(HexTile location, LandmarkSaveData data): base(location, data) {
+        _canBeOccupied = true;
+        //_questBoard = new List<Quest>();
+        _ownedLandmarks = new List<BaseLandmark>();
+        //_materialWeights = new WeightedDictionary<MATERIAL>();
+        //_producingPopulationFor = RACE.NONE;
+        //		ConstructNeededMaterials ();
+    }
+
     #region Overrides
     public override void Initialize (){
 		base.Initialize ();

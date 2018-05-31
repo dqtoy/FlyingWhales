@@ -14,6 +14,9 @@ public class Tribe : Faction {
     public Tribe(RACE race) : base(race, FACTION_TYPE.MAJOR) {
 
     }
+    public Tribe(FactionSaveData data) : base(data) {
+
+    }
 
     public void SetSuccessor(ECS.Character successor) {
         _successor = successor;

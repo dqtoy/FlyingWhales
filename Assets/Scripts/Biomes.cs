@@ -381,14 +381,14 @@ public class Biomes : MonoBehaviour {
 			float elevationNoise = Mathf.PerlinNoise((nx + elevationRand) * elevationFrequency, (ny + elevationRand) * elevationFrequency);
 			ELEVATION elevationType = GetElevationType(elevationNoise);
 
-            currTile.elevationNoise = elevationNoise;
+            currTile.data.elevationNoise = elevationNoise;
             currTile.SetElevation (elevationType);
-            currTile.moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
+            currTile.data.moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
 
 			int distanceToEquator = Mathf.Abs (xy [1] - equatorY);
 			float tempGradient = 1.23f / GridMap.Instance.height;
-			GridMap.Instance.listHexes [i].GetComponent<HexTile>().temperature = distanceToEquator * tempGradient;
-			GridMap.Instance.listHexes[i].GetComponent<HexTile>().temperature += (Mathf.PerlinNoise((nx + temperatureRand) * tempFrequency, (ny + temperatureRand) * tempFrequency)) * 0.6f;
+            currTile.data.temperature = distanceToEquator * tempGradient;
+            currTile.data.temperature += (Mathf.PerlinNoise((nx + temperatureRand) * tempFrequency, (ny + temperatureRand) * tempFrequency)) * 0.6f;
 		}
 	}
 
@@ -495,7 +495,7 @@ public class Biomes : MonoBehaviour {
 
 			if(elevationType == ELEVATION.WATER){
 				if(moisture <= 0.3f) {
-					currentHexTile.biomeType = BIOMES.BARE;
+					currentHexTile.data.biomeType = BIOMES.BARE;
 					Sprite bareSpriteToUse = _bareTiles [Random.Range (0, _bareTiles.Length)];
 					currentHexTile.SetBaseSprite (bareSpriteToUse);
 				}

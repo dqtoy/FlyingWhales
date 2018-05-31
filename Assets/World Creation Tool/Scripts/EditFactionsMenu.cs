@@ -36,7 +36,7 @@ namespace worldcreator {
             WorldCreatorManager.Instance.CreateNewFaction(chosenRace);
         }
 
-        private void UpdateItems() {
+        public void UpdateItems() {
             foreach (KeyValuePair<Faction, FactionEditorItem> kvp in items) {
                 FactionEditorItem currItemGO = kvp.Value;
                 currItemGO.UpdateInfo();

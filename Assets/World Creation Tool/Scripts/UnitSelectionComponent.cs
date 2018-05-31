@@ -29,7 +29,7 @@ namespace worldcreator {
         }
 
         public void OnDragStart() {
-            ClearSelectedTiles();
+            //ClearSelectedTiles();
             dragStartTile = null;
             isSelecting = true;
             originDragMousePosition = Input.mousePosition;
@@ -39,7 +39,7 @@ namespace worldcreator {
                 HexTile hitTile = hit.collider.GetComponent<HexTile>();
                 if (hitTile != null) {
                     dragStartTile = hitTile;
-                    Debug.Log("Drag Started " + dragStartTile.name);
+                    //Debug.Log("Drag Started " + dragStartTile.name);
                 }
             }
         }
@@ -51,25 +51,25 @@ namespace worldcreator {
                     HexTile hitTile = hit.collider.GetComponent<HexTile>();
                     if (dragStartTile == null) {
                         dragStartTile = hitTile;
-                        Debug.Log("Drag Started " + dragStartTile.name);
+                        //Debug.Log("Drag Started " + dragStartTile.name);
                         return;
                     }
                     
-                    Debug.Log("Dragging on " + hitTile.name);
+                    //Debug.Log("Dragging on " + hitTile.name);
                     if (hitTile != null && hitTile.id != dragStartTile.id) {
                         ClearSelectedTiles();
                         List<HexTile> selected = GetSelection(dragStartTile, hitTile);
                         for (int i = 0; i < selected.Count; i++) {
                             HexTile currTile = selected[i];
                             currTile.HighlightTile(Color.gray, 128f/255f);
-                            highlightedTiles.Add(currTile);
+                            AddToHighlightedTiles(currTile);
                         }
                     }
                 }
             }
         }
         public void OnDragEnd() {
-            Debug.Log("Drag Ended");
+            //Debug.Log("Drag Ended");
             isSelecting = false;
         }
         //public void Drag(BaseEventData data) {
@@ -109,9 +109,10 @@ namespace worldcreator {
                 Utilities.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
                 Utilities.DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
                 Dragging();
+                //List<HexTile> selectedTiles = new List<HexTile>(highlightedTiles);
                 //ClearSelectedTiles();
-                //for (int i = 0; i < WorldCreatorManager.Instance.hexTiles.Count; i++) {
-                //    HexTile currTile = WorldCreatorManager.Instance.hexTiles[i];
+                //for (int i = 0; i < selectedTiles.Count; i++) {
+                //    HexTile currTile = selectedTiles[i];
                 //    if (IsWithinSelectionBounds(currTile.gameObject)) {
                 //        AddToHighlightedTiles(currTile);
                 //        currTile.HighlightTile(Color.gray, 128f/255f);

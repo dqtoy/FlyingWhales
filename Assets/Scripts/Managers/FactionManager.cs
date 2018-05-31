@@ -157,7 +157,7 @@ public class FactionManager : MonoBehaviour {
 
         foreach (KeyValuePair<List<Region>, FACTION_SIZE> initialFactionSetup in initialFactions) {
             RACE chosenRace = races[Random.Range(0, races.Length)]; //Randomize the race of each Tribe (Human or Elves) and their technologies.
-            Faction newFaction = CreateNewFaction(typeof(Tribe), chosenRace);
+            Faction newFaction = CreateNewFaction(chosenRace);
             newFaction.GenerateBonusTech(initialFactionSetup.Value);
             for (int i = 0; i < initialFactionSetup.Key.Count; i++) {
                 Region currRegion = initialFactionSetup.Key[i];
@@ -292,16 +292,34 @@ public class FactionManager : MonoBehaviour {
 			character.EquipItem (item);
 		}
 	}
-    public Faction CreateNewFaction(System.Type factionType, RACE race) {
-        Faction newFaction = null;
-        if (factionType == typeof(Tribe)) {
-            newFaction = new Tribe(race);
-			allTribes.Add ((Tribe)newFaction);
-        } else if(factionType == typeof(Camp)) {
-            newFaction = new Camp(race);
-        } else {
-            newFaction = new Faction(race, FACTION_TYPE.MAJOR);
-        }
+    public Faction CreateNewFaction(RACE race) {
+        Faction newFaction = new Tribe(race);
+   //     if (factionType == typeof(Tribe)) {
+   //         newFaction = new Tribe(race);
+			//allTribes.Add ((Tribe)newFaction);
+   //     } else if(factionType == typeof(Camp)) {
+   //         newFaction = new Camp(race);
+   //     } else {
+   //         newFaction = new Faction(race, FACTION_TYPE.MAJOR);
+   //     }
+        allFactions.Add(newFaction);
+#if !WORLD_CREATION_TOOL
+        CreateRelationshipsForNewFaction(newFaction);
+        UpdateFactionOrderBy();
+#endif
+        //UIManager.Instance.UpdateFactionSummary();
+        return newFaction;
+    }
+    public Faction CreateNewFaction(FactionSaveData data) {
+        Faction newFaction = new Tribe(data);
+        //     if (factionType == typeof(Tribe)) {
+        //         newFaction = new Tribe(race);
+        //allTribes.Add ((Tribe)newFaction);
+        //     } else if(factionType == typeof(Camp)) {
+        //         newFaction = new Camp(race);
+        //     } else {
+        //         newFaction = new Faction(race, FACTION_TYPE.MAJOR);
+        //     }
         allFactions.Add(newFaction);
 #if !WORLD_CREATION_TOOL
         CreateRelationshipsForNewFaction(newFaction);

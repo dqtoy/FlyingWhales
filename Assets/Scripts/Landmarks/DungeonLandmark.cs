@@ -9,6 +9,9 @@ public class DungeonLandmark : BaseLandmark {
     public DungeonLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         _canBeOccupied = false;
     }
+    public DungeonLandmark(HexTile location, LandmarkSaveData data) : base(location, data) {
+        _canBeOccupied = false;
+    }
 
     #region Encounterables
     public override void Initialize() {

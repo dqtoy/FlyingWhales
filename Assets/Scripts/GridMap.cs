@@ -80,11 +80,11 @@ public class GridMap : MonoBehaviour {
                 hex.name = x + "," + y;
                 HexTile currHex = hex.GetComponent<HexTile>();
                 hexTiles.Add(currHex);
-                currHex.id = id;
-				currHex.tileName = RandomNameGenerator.Instance.GetTileName();
-                currHex.xCoordinate = x;
-                currHex.yCoordinate = y;
                 currHex.Initialize();
+                currHex.data.id = id;
+				currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
+                currHex.data.xCoordinate = x;
+                currHex.data.yCoordinate = y;
                 listHexes.Add(hex);
                 map[x, y] = hex.GetComponent<HexTile>();
                 id++;
@@ -130,10 +130,11 @@ public class GridMap : MonoBehaviour {
                 hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                 HexTile currHex = hex.GetComponent<HexTile>();
-                currHex.tileName = hex.name;
-                currHex.xCoordinate = x;
-                currHex.yCoordinate = y;
                 currHex.Initialize();
+                currHex.data.tileName = hex.name;
+                currHex.data.xCoordinate = x;
+                currHex.data.yCoordinate = y;
+                
                 outerGrid[x, y] = currHex;
                 outerGridList.Add(currHex);
 

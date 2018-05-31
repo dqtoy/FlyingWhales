@@ -102,11 +102,35 @@ public class Region : IHasNeighbours<Region> {
         _landmarks = new List<BaseLandmark>();
         _tilesWithMaterials = new List<HexTile>();
         AddTile(_centerOfMass);
-        //regionColor = UnityEngine.Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
     }
 
-    #region Center Of Mass Functions
-    internal void ReComputeCenterOfMass() {
+    public Region(HexTile centerOfMass, List<HexTile> tilesInRegion, RegionSaveData data) {
+        _id = Utilities.SetID(this, data.regionID);
+        _name = data.regionName;
+        _tilesInRegion = new List<HexTile>();
+        _outerGridTilesInRegion = new List<HexTile>();
+        _adjacentRegionsViaRoad = new List<Region>();
+        _roadTilesInRegion = new List<HexTile>();
+        _landmarks = new List<BaseLandmark>();
+        _tilesWithMaterials = new List<HexTile>();
+        SetCenterOfMass(centerOfMass);
+        AddTile(tilesInRegion);
+    }
+    public Region(HexTile centerOfMass, List<HexTile> tilesInRegion) {
+        _id = Utilities.SetID(this);
+        _name = RandomNameGenerator.Instance.GetRegionName();
+        _tilesInRegion = new List<HexTile>();
+        _outerGridTilesInRegion = new List<HexTile>();
+        _adjacentRegionsViaRoad = new List<Region>();
+        _roadTilesInRegion = new List<HexTile>();
+        _landmarks = new List<BaseLandmark>();
+        _tilesWithMaterials = new List<HexTile>();
+        SetCenterOfMass(centerOfMass);
+        AddTile(tilesInRegion);
+    }
+
+        #region Center Of Mass Functions
+        internal void ReComputeCenterOfMass() {
         int maxXCoordinate = _tilesInRegion.Max(x => x.xCoordinate);
         int minXCoordinate = _tilesInRegion.Min(x => x.xCoordinate);
         int maxYCoordinate = _tilesInRegion.Max(x => x.yCoordinate);

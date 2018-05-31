@@ -52,6 +52,34 @@ public class LandmarkManager : MonoBehaviour {
 #endif
         return newLandmark;
     }
+    public BaseLandmark CreateNewLandmarkOnTile(LandmarkSaveData saveData) {
+#if !WORLD_CREATION_TOOL
+        HexTile location = GridMap.Instance.map[saveData.locationCoordinates.X, saveData.locationCoordinates.Y];
+#else
+        HexTile location = worldcreator.WorldCreatorManager.Instance.map[saveData.locationCoordinates.X, saveData.locationCoordinates.Y];
+#endif
+        if (location.landmarkOnTile != null) {
+            //Destroy landmark on tile
+            DestroyLandmarkOnTile(location);
+        }
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
+        BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
+        BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, saveData);
+#if !WORLD_CREATION_TOOL
+        newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
+        //newLandmark.GenerateDiagonalLeftTiles();
+        //newLandmark.GenerateDiagonalRightTiles();
+        //newLandmark.GenerateHorizontalTiles();
+        newLandmark.GenerateWallTiles();
+        newLandmark.PutWallUp();
+        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
+        //    location.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(1);
+        //}
+        //ConstructLandmarkObjects(landmarkData, newLandmark);
+        //		AddInitialLandmarkItems (newLandmark);
+#endif
+        return newLandmark;
+    }
     public void DestroyLandmarkOnTile(HexTile tile) {
         BaseLandmark landmarkOnTile = tile.landmarkOnTile;
         tile.RemoveLandmarkOnTile();
@@ -612,7 +640,11 @@ public class LandmarkManager : MonoBehaviour {
     }
     public List<BaseLandmark> GetAllLandmarks(List<Region> regions = null) {
         List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
+#if WORLD_CREATION_TOOL
+        List<Region> choices = worldcreator.WorldCreatorManager.Instance.allRegions;
+#else
         List<Region> choices = GridMap.Instance.allRegions;
+#endif
         if (regions != null) {
             choices = regions;
         }

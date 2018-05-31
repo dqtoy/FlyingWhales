@@ -66,6 +66,24 @@ public class Utilities : MonoBehaviour {
         }
         return 0;
 	}
+    public static int SetID<T>(T obj, int idToUse) {
+        if (obj is Region) {
+            lastRegionID = idToUse;
+        } else if (obj is Log) {
+            lastLogID = idToUse;
+        } else if (obj is BaseLandmark) {
+            lastLandmarkID = idToUse;
+        } else if (obj is Faction) {
+            lastFactionID = idToUse;
+        } else if (obj is ECS.Character) {
+            lastCharacterID = idToUse;
+        } else if (obj is Quest) {
+            lastQuestID = idToUse;
+        } else if (obj is ECS.Item) {
+            lastItemID = idToUse;
+        }
+        return idToUse;
+    }
 
     public static Color GetColorForFaction() {
         Color chosenColor = factionColorCycle[lastFactionColorIndex];
