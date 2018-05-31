@@ -425,7 +425,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (_landmarkOnTile != null) {
             SetPassableState(true);
 #if !WORLD_CREATION_TOOL
-            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(_landmarkOnTile.specificLandmarkType) as StructureObj);
+            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
 #endif
         }
         return _landmarkOnTile;
