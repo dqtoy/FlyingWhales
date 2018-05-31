@@ -16,6 +16,7 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera _wholeMapCamera;
     [SerializeField] private Camera uiCamera;
+    public GameObject mouseObj;
     //[SerializeField] private MinimapCamera _minimap;
 
     private float dampTime = 0.2f;
@@ -185,6 +186,7 @@ public class CameraMove : MonoBehaviour {
 #endif
                 CalculateCameraBounds();
             }
+            mouseObj.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		}
 
 #if WORLD_CREATION_TOOL
