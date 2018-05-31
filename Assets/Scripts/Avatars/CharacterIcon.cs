@@ -55,9 +55,11 @@ public class CharacterIcon : MonoBehaviour {
         SetMovementState(GameManager.Instance.isPaused);
     }
 
-    public void SetTarget(ILocation target) {
-        _targetLocation = target;
+	public void SetTarget(ILocation target) {
         if (target != null) {
+            if (_targetLocation == target) {
+                return;
+            }
             //remove character from his/her specific location
             if (character.specificLocation != null) {
                 character.specificLocation.RemoveCharacterFromLocation(character);
@@ -67,17 +69,24 @@ public class CharacterIcon : MonoBehaviour {
         } else {
             _destinationSetter.target = null;
         }
+        _targetLocation = target;
 
         //_aiPath.destination = _targetLocation.tileLocation.transform.position;
         //_aiPath.SetRecalculatePathState(true);
     }
 
     public void SetTarget(Vector3 target) {
+        if (_aiPath.destination == target) {
+            return;
+        }
         _aiPath.destination = target;
         _aiPath.RecalculatePath();
     }
     public void SetTargetGO(GameObject obj) {
         if (obj != null) {
+            //if (obj.transform == _destinationSetter.target) {
+            //    return;
+            //}
             _destinationSetter.target = obj.transform;
             _aiPath.RecalculatePath();
         } else {

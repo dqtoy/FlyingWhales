@@ -197,7 +197,7 @@ namespace worldcreator {
         }
         public void SetEditMode(EDIT_MODE editMode) {
             currentMode = editMode;
-            selectionComponent.ClearSelectedTiles();
+            //selectionComponent.ClearSelectedTiles();
         }
         public void SetSelectionMode(SELECTION_MODE selectionMode) {
             this.selectionMode = selectionMode;
@@ -418,7 +418,27 @@ namespace worldcreator {
                 saveName += saveFileExt;
             }
             SaveGame.Save<WorldSaveData>(savePath + saveName, worldData);
+            StartCoroutine(CaptureScreenshot(saveName));
             WorldCreatorUI.Instance.OnFileSaved(saveName);
+        }
+        IEnumerator CaptureScreenshot(string fileName) {
+            CameraMove.Instance.uiCamera.gameObject.SetActive(false);
+            fileName = fileName.Replace(saveFileExt, "");
+            yield return new WaitForEndOfFrame();
+
+            string path = Application.persistentDataPath + "/Saves/"
+                    + fileName + ".png";
+
+            Texture2D screenImage = new Texture2D(Screen.width, Screen.height);
+            //Get Image from screen
+            screenImage.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            screenImage.Apply();
+            //Convert to png
+            byte[] imageBytes = screenImage.EncodeToPNG();
+
+            //Save image to file
+            System.IO.File.WriteAllBytes(path, imageBytes);
+            CameraMove.Instance.uiCamera.gameObject.SetActive(true);
         }
         public void LoadWorld(string saveName) {
             WorldSaveData data = GetWorldData(saveName);
