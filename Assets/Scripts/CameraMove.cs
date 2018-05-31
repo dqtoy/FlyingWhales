@@ -15,7 +15,7 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private Camera resourceIconCamera;
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera _wholeMapCamera;
-    [SerializeField] private Camera uiCamera;
+    [SerializeField] private Camera _uiCamera;
     public GameObject mouseObj;
     //[SerializeField] private MinimapCamera _minimap;
 
@@ -51,6 +51,9 @@ public class CameraMove : MonoBehaviour {
 //}
     public Camera wholeMapCamera {
         get { return _wholeMapCamera; }
+    }
+    public Camera uiCamera {
+        get { return _uiCamera; }
     }
     public float currentFOV {
         get { return Camera.main.orthographicSize; }
@@ -182,7 +185,7 @@ public class CameraMove : MonoBehaviour {
                 resourceIconCamera.orthographicSize = fov;
                 Minimap.Instance.UpdateCameraBorderScale();
 #else
-                uiCamera.orthographicSize = fov;
+                _uiCamera.orthographicSize = fov;
 #endif
                 CalculateCameraBounds();
             }

@@ -220,6 +220,7 @@ namespace worldcreator {
             BIOMES chosenBiome = (BIOMES) Enum.Parse(typeof(BIOMES), biomesDropDown.options[biomesDropDown.value].text);
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
             WorldCreatorManager.Instance.SetBiomes(selectedTiles, chosenBiome);
+            WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
         #endregion
 
@@ -228,6 +229,7 @@ namespace worldcreator {
             ELEVATION chosenElevation = (ELEVATION)Enum.Parse(typeof(ELEVATION), elevationDropDown.options[elevationDropDown.value].text);
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
             WorldCreatorManager.Instance.SetElevation(selectedTiles, chosenElevation);
+            WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
         #endregion
 
@@ -238,8 +240,10 @@ namespace worldcreator {
             FileInfo[] files = info.GetFiles();
             for (int i = 0; i < files.Length; i++) {
                 FileInfo currInfo = files[i];
-                GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, savesScrollView.content.transform);
-                saveItemGO.GetComponent<SaveItem>().SetSave(currInfo.Name);
+                if (currInfo.Name.Contains(WorldCreatorManager.Instance.saveFileExt)) {
+                    GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, savesScrollView.content.transform);
+                    saveItemGO.GetComponent<SaveItem>().SetSave(currInfo.Name);
+                }
             }
         }
         public void OnFileSaved(string newFile) {
