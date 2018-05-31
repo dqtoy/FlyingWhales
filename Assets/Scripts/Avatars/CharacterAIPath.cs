@@ -10,14 +10,10 @@ public class CharacterAIPath : AIPath {
 
     [SerializeField] private CharacterIcon _icon;
     private Action onTargetReachedAction;
-    private bool _shouldRecalculatePath = false;
 
     #region getters/setters
     public CharacterIcon icon {
         get { return _icon; }
-    }
-    protected override bool shouldRecalculatePath {
-        get { return _shouldRecalculatePath; }
     }
     #endregion
 
@@ -36,8 +32,8 @@ public class CharacterAIPath : AIPath {
     }
     #endregion
 
-    public void SetRecalculatePathState(bool state) {
-        _shouldRecalculatePath = state;
+    public void RecalculatePath() {
+        SearchPath();
     }
 
     public void SetActionOnTargetReached(Action action) {

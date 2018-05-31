@@ -13,8 +13,8 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private SpriteRenderer _avatarSprite;
     [SerializeField] private Animator _avatarAnimator;
     [SerializeField] private AIDestinationSetter _destinationSetter;
-    //[SerializeField] private LineRenderer lineRenderer;
-    //[SerializeField] private Seeker seeker;
+    [SerializeField] private LineRenderer lineRenderer;
+    [SerializeField] private Seeker seeker;
 
     private Character _character;
 
@@ -63,7 +63,7 @@ public class CharacterIcon : MonoBehaviour {
         _targetLocation = target;
         if (target != null) {
             _destinationSetter.target = target.tileLocation.transform;
-            _aiPath.SetRecalculatePathState(true);
+            _aiPath.RecalculatePath();
         } else {
             _destinationSetter.target = null;
         }
@@ -74,12 +74,12 @@ public class CharacterIcon : MonoBehaviour {
 
     public void SetTarget(Vector3 target) {
         _aiPath.destination = target;
-        _aiPath.SetRecalculatePathState(true);
+        _aiPath.RecalculatePath();
     }
     public void SetTarget(GameObject obj) {
         if (obj != null) {
             _destinationSetter.target = obj.transform;
-            _aiPath.SetRecalculatePathState(true);
+            _aiPath.RecalculatePath();
         } else {
             _destinationSetter.target = null;
         }
@@ -162,7 +162,7 @@ public class CharacterIcon : MonoBehaviour {
         //Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //SetTarget(CameraMove.Instance.mouseObj);
         //Path path = seeker.GetCurrentPath();
-        //if (path != null) {
+        //if (path != null && path.vectorPath.Count > 0) {
         //    List<Vector3> vectorPath = path.vectorPath;
         //    lineRenderer.positionCount = vectorPath.Count;
         //    lineRenderer.SetPositions(vectorPath.ToArray());
