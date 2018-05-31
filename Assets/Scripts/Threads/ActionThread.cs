@@ -43,7 +43,7 @@ public class ActionThread : Multithread {
                     CharacterAction action = iobject.currentState.actions[k];
                     if (action.MeetsRequirements(_character, landmark) && action.CanBeDone()) { //Filter
                         float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
-                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
+                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
                         PutToChoices(action, happinessIncrease);
                     }
                 }
@@ -193,7 +193,7 @@ public class ActionThread : Multithread {
         int chosenIndex = Utilities.rng.Next(0, maxChoice);
         CharacterAction chosenAction = choices[chosenIndex].action;
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
-            Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
+            Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.specificLocation.locationName + ")");
         }
         //Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
         return chosenAction;

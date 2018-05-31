@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterObjectComponent : ObjectComponent {
-    public CharacterObj characterObject;
+    public bool isInvisible;
 
-    #region getters/setters
-    public override string name {
-        get { return characterObject.objectName; }
+    public void CopyDataToCharacterObject(CharacterObj characterObject) {
+        characterObject.SetIsInvisible(isInvisible);
     }
-    #endregion
 }

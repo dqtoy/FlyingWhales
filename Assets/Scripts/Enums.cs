@@ -1308,6 +1308,8 @@ public enum ACTION_TYPE {
     ABDUCT,
     DISPEL,
     PRAY,
+    ATTACK,
+    JOIN_BATTLE,
 }
 
 public enum OBJECT_TYPE {

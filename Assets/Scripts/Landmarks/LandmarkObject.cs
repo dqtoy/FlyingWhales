@@ -83,5 +83,8 @@ public class LandmarkObject : MonoBehaviour {
     private void OnMouseExit() {
         _landmark.tileLocation.MouseExit();
     }
+    private void OnMouseDown() {
+        _landmark.tileLocation.LeftClick();
+    }
     #endregion
 }

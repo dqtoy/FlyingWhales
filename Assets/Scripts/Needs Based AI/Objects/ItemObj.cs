@@ -31,6 +31,9 @@ public class ItemObj : IObject {
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
     }
+    public ILocation specificLocation {
+        get { return objectLocation; }
+    }
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return null; }
     }

@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ECS;
 
 public class CharacterInfoUI : UIMenu {
 
     private const int MAX_HISTORY_LOGS = 20;
+    public bool isWaitingForAttackTarget;
 
     [Space(10)]
     [Header("Content")]
@@ -33,6 +35,11 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
 
+    [Space(10)]
+    [Header("Character")]
+    [SerializeField] private GameObject attackButtonGO;
+    [SerializeField] private ButtonToggle attackBtnToggle;
+
     private LogHistoryItem[] logHistoryItems;
 
 	private ECS.Character _activeCharacter;
@@ -47,6 +54,7 @@ public class CharacterInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
+        isWaitingForAttackTarget = false;
         Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
@@ -140,7 +148,7 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-        text += "\nSpecific Location: " + currentlyShowingCharacter.specificLocation.locationName;
+        text += "\nSpecific Location: " + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
         text += "\nCurrent Action: ";
         if (currentlyShowingCharacter.currentAction != null) {
             text += currentlyShowingCharacter.currentAction.actionData.actionName.ToString() + " ";
@@ -401,9 +409,25 @@ public class CharacterInfoUI : UIMenu {
         return (isShowing && currentlyShowingCharacter == character);
     }
 
-	
-//	public void OnClickCloseBtn(){
-////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-//		HideMenu ();
-//	}
+    #region Attack Character
+    private void ShowAttackButton() {
+        attackButtonGO.SetActive(true);
+        SetAttackButtonState(false);
+    }
+    public void ToggleAttack() {
+        isWaitingForAttackTarget = !isWaitingForAttackTarget;
+    }
+    public void SetAttackButtonState(bool state) {
+        isWaitingForAttackTarget = state;
+        attackBtnToggle.SetClickState(state);
+    }
+    public void SetActiveAttackButtonGO(bool state) {
+        attackButtonGO.SetActive(state);
+    }
+    #endregion
+
+    //	public void OnClickCloseBtn(){
+    ////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+    //		HideMenu ();
+    //	}
 }

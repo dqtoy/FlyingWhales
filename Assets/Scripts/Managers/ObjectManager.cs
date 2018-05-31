@@ -60,7 +60,7 @@ public class ObjectManager : MonoBehaviour {
         }
         for (int i = 0; i < characterObjectComponents.Count; i++) {
             CharacterObjectComponent currComp = characterObjectComponents[i];
-            CharacterObj characterObject = characterObjectComponents[i].characterObject;
+            CharacterObj characterObject = ConvertComponentToCharacterObject(currComp);
             SetInitialDataOfObjects(currComp, characterObject, characterObjectComponents[i].gameObject.name);
             _characterObjects.Add(characterObject);
             _allObjects.Add(characterObject);
@@ -169,30 +169,35 @@ public class ObjectManager : MonoBehaviour {
     }
 
     public IObject CreateNewObject(OBJECT_TYPE objType, string objectName) {
-        IObject reference = GetReference(objType, objectName);
-        if (reference != null) {
-            IObject newObj = reference.Clone();
-            //location.AddObject(newObj);
-            return newObj;
+        if(objType == OBJECT_TYPE.STRUCTURE) {
+            return GetNewStructureObject(objectName);
+        }else if (objType == OBJECT_TYPE.CHARACTER) {
+            return GetNewCharacterObject(objectName);
         }
+        //IObject reference = GetReference(objType, objectName);
+        //if (reference != null) {
+        //    IObject newObj = reference.Clone();
+        //    //location.AddObject(newObj);
+        //    return newObj;
+        //}
         return null;
     }
-    public IObject CreateNewObject(string objectName) {
-        return CreateNewObject(GetObjectType(objectName), objectName);
-    }
-    public IObject CreateNewObject(LANDMARK_TYPE landmarkType) {
-        string objectName = Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString());
-        return CreateNewObject(objectName);
-    }
-    private IObject GetReference(OBJECT_TYPE objType, string objectName) {
-        for (int i = 0; i < _allObjects.Count; i++) {
-            IObject currObject = _allObjects[i];
-            if (currObject.objectType == objType && currObject.objectName.Equals(objectName)) {
-                return currObject;
-            }
-        }
-        return null;
-    }
+    //public IObject CreateNewObject(string objectName) {
+    //    return CreateNewObject(GetObjectType(objectName), objectName);
+    //}
+    //public IObject CreateNewObject(LANDMARK_TYPE landmarkType) {
+    //    string objectName = Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString());
+    //    return CreateNewObject(objectName);
+    //}
+    //private IObject GetReference(OBJECT_TYPE objType, string objectName) {
+    //    for (int i = 0; i < _allObjects.Count; i++) {
+    //        IObject currObject = _allObjects[i];
+    //        if (currObject.objectType == objType && currObject.objectName.Equals(objectName)) {
+    //            return currObject;
+    //        }
+    //    }
+    //    return null;
+    //}
     public OBJECT_TYPE GetObjectType(string objectName) {
         for (int i = 0; i < _allObjects.Count; i++) {
             IObject currObject = _allObjects[i];
@@ -233,6 +238,8 @@ public class ObjectManager : MonoBehaviour {
                 return new AbductAction(state);
             case ACTION_TYPE.PRAY:
                 return new PrayAction(state);
+            case ACTION_TYPE.ATTACK:
+            return new AttackAction(state);
         }
         return null;
     }
@@ -279,10 +286,23 @@ public class ObjectManager : MonoBehaviour {
         component.CopyDataToStructureObject(structureObj);
         return structureObj;
     }
+    public CharacterObj ConvertComponentToCharacterObject(CharacterObjectComponent component) {
+        CharacterObj characterObj = new CharacterObj(null);
+        component.CopyDataToCharacterObject(characterObj);
+        return characterObj;
+    }
     public StructureObj GetNewStructureObject(string name) {
         for (int i = 0; i < _structureObjects.Count; i++) {
             if(_structureObjects[i].objectName == name) {
                 return _structureObjects[i].Clone() as StructureObj;
+            }
+        }
+        return null;
+    }
+    public CharacterObj GetNewCharacterObject(string name) {
+        for (int i = 0; i < _characterObjects.Count; i++) {
+            if (_characterObjects[i].objectName == name) {
+                return _characterObjects[i].Clone() as CharacterObj;
             }
         }
         return null;
