@@ -890,7 +890,8 @@ namespace ECS{
 			RemoveCharacter(targetCharacter);
 			fledCharacters.Add (targetCharacter);
 			targetCharacter.SetIsDefeated (true);
-			AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
+            CombatManager.Instance.CharacterContinuesAction(targetCharacter);
+            AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
 

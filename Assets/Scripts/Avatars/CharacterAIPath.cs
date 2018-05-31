@@ -27,7 +27,7 @@ public class CharacterAIPath : AIPath {
         if (_icon.targetLocation is BaseLandmark) {
             _icon.targetLocation.AddCharacterToLocation(_icon.character);
         }
-        _icon.destinationSetter.target = null;
+        _icon.SetTarget(null);
         //SetRecalculatePathState(false);
     }
     #endregion

@@ -56,12 +56,12 @@ public class CharacterIcon : MonoBehaviour {
     }
 
     public void SetTarget(ILocation target) {
-        //remove character from his/her specific location
-        if (character.specificLocation != null) {
-            character.specificLocation.RemoveCharacterFromLocation(character);
-        }
         _targetLocation = target;
         if (target != null) {
+            //remove character from his/her specific location
+            if (character.specificLocation != null) {
+                character.specificLocation.RemoveCharacterFromLocation(character);
+            }
             _destinationSetter.target = target.tileLocation.transform;
             _aiPath.RecalculatePath();
         } else {
@@ -76,7 +76,7 @@ public class CharacterIcon : MonoBehaviour {
         _aiPath.destination = target;
         _aiPath.RecalculatePath();
     }
-    public void SetTarget(GameObject obj) {
+    public void SetTargetGO(GameObject obj) {
         if (obj != null) {
             _destinationSetter.target = obj.transform;
             _aiPath.RecalculatePath();

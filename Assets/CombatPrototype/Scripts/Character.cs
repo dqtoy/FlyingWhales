@@ -812,6 +812,8 @@ namespace ECS {
                     Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
                 }
 
+                GameObject.Destroy(_icon.gameObject);
+
                 Debug.Log(this.name + " died!");
             }
 		}
@@ -1382,7 +1384,7 @@ namespace ECS {
 				STATUS_EFFECT statusEffect = statusEffects [i];
 				int chance = Utilities.rng.Next (0, 100);
 				if (chance < 15) {
-					CombatManager.Instance.combat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+					this.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 					RemoveStatusEffect (statusEffect);
 					i--;
 				}
@@ -1395,7 +1397,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
-								CombatManager.Instance.combat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+                                this.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;

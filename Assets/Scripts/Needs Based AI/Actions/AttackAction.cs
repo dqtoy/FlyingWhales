@@ -4,7 +4,7 @@ using UnityEngine;
 using ECS;
 
 public class AttackAction : CharacterAction {
-    Character _character;
+    CharacterObj _characterObj;
     public AttackAction(ObjectState state) : base(state, ACTION_TYPE.ATTACK) {
 
     }
@@ -12,8 +12,7 @@ public class AttackAction : CharacterAction {
     public override void Initialize() {
         base.Initialize();
         if(_state.obj.objectType == OBJECT_TYPE.CHARACTER) {
-            CharacterObj characterObj = _state.obj as CharacterObj;
-            _character = characterObj.character;
+            _characterObj = _state.obj as CharacterObj;
         }
     }
     public override void OnFirstEncounter(Character character) {
@@ -34,14 +33,14 @@ public class AttackAction : CharacterAction {
     #endregion
     private void StartEncounter(Character enemy) {
         enemy.actionData.SetIsHalted(true);
-        _character.actionData.SetIsHalted(true);
+        _characterObj.character.actionData.SetIsHalted(true);
 
         StartCombatWith(enemy);
     }
     private void StartCombatWith(Character enemy) {
-        Combat combat = new Combat(_character.specificLocation);
+        Combat combat = new Combat(_characterObj.character.specificLocation);
         combat.AddCharacter(SIDES.A, enemy);
-        combat.AddCharacter(SIDES.B, _character);
+        combat.AddCharacter(SIDES.B, _characterObj.character);
         combat.CombatSimulation();
     }
 }

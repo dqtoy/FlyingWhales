@@ -118,9 +118,7 @@ namespace ECS {
 			}
             for (int i = 0; i < combat.charactersSideA.Count; i++) {
                 Character character = combat.charactersSideA[i];
-                character.actionData.SetIsHalted(false);
-                character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
-                character.icon.SetMovementState(GameManager.Instance.isPaused);
+                CharacterContinuesAction(character);
             }
 			//Prisoner or Leave to Die
 			//List<ECS.Character> winningCharacters = null;
@@ -373,6 +371,14 @@ namespace ECS {
                 }
             }
             return combatRooms;
+        }
+        public void CharacterContinuesAction(Character character) {
+            character.actionData.SetIsHalted(false);
+            character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
+            character.icon.SetMovementState(GameManager.Instance.isPaused);
+            if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
+                character.actionData.EndAction();
+            }
         }
         #endregion
     }
