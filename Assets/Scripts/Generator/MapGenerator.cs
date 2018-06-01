@@ -12,12 +12,16 @@ public class MapGenerator : MonoBehaviour {
     }
 
     internal void InitializeWorld() {
+        StartCoroutine(InitializeWorldCoroutine());
+    }
+
+    private IEnumerator InitializeWorldCoroutine() {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
-        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
-
+        LevelLoaderManager.UpdateLoadingInfo("Generating Map...");
+        yield return null;
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
@@ -26,13 +30,13 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
 
-        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Biomes...");
-
+        LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
+        yield return null;
         Biomes.Instance.GenerateBiome();
         Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
-        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
-
+        LevelLoaderManager.UpdateLoadingInfo("Generating Regions...");
+        yield return null;
         st.Start();
         GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
@@ -69,8 +73,8 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.InitializeUI();
         ObjectManager.Instance.Initialize();
 
-        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Factions...");
-
+        LevelLoaderManager.UpdateLoadingInfo("Generating Factions...");
+        yield return null;
         Region playerRegion = null;
         st.Start();
         FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
@@ -90,7 +94,8 @@ public class MapGenerator : MonoBehaviour {
         //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
         //st.Stop();
 
-        //LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Landmarks...");
+        LevelLoaderManager.UpdateLoadingInfo("Generating Landmarks...");
+        yield return null;
         st.Start();
         LandmarkManager.Instance.GenerateFactionLandmarks();
         st.Stop();
@@ -121,6 +126,9 @@ public class MapGenerator : MonoBehaviour {
         PathfindingManager.Instance.CreateGrid();
 
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
+
+        LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
+        yield return null;
         ObjectManager.Instance.Initialize();
         //LandmarkManager.Instance.ConstructAllLandmarkObjects();
 
@@ -131,7 +139,7 @@ public class MapGenerator : MonoBehaviour {
         //GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
-        
+
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
@@ -144,70 +152,7 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.UpdateMinimapTexture();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
-    }
-
-    internal void LoadWorld(Save save) {
-        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
-        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
-        loadingWatch.Start();
-
-        GridMap.Instance.GenerateGrid();
-        CameraMove.Instance.CalculateCameraBounds();
-        Minimap.Instance.Initialize();
-        ObjectPoolManager.Instance.InitializeObjectPools();
-        CameraMove.Instance.SetWholemapCameraValues();
-        EquatorGenerator.Instance.GenerateEquator();
-        Biomes.Instance.GenerateElevation();
-        Biomes.Instance.GenerateBiome();
-        Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
-
-        st.Start();
-        GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
-        st.Stop();
-
-        //if (regionGenerationFailed) {
-        //    Debug.LogWarning("Region generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //} else {
-        //    Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        //}
-
-        st.Start();
-        Biomes.Instance.DetermineIslands();
-        st.Stop();
-        Debug.Log(string.Format("Island Connections took {0} ms to complete", st.ElapsedMilliseconds));
-
-        //RoadManager.Instance.FlattenRoads();
-        //Biomes.Instance.LoadElevationSprites();
-        //Biomes.Instance.GenerateTileBiomeDetails();
-
-        //return;
-        RoadManager.Instance.GenerateTilePassableTypes();
-        //GridMap.Instance.BottleneckBorders();
-
-        GridMap.Instance.GenerateOuterGrid();
-        GridMap.Instance.DivideOuterGridRegions();
-
-        UIManager.Instance.InitializeUI();
-
-        ObjectManager.Instance.Initialize();
-        //Load Initial Factions
-
-        //Load all landmarks
-        LandmarkManager.Instance.LoadAllLandmarksFromSave(save);
-        
-        PathfindingManager.Instance.CreateGrid();
-
-        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
-
-        GameManager.Instance.StartProgression();
-
-        CameraMove.Instance.UpdateMinimapTexture();
-        loadingWatch.Stop();
-        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
+        LevelLoaderManager.SetLoadingState(false);
     }
 
     internal void ReloadScene() {
