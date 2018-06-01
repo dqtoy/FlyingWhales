@@ -187,7 +187,9 @@ public class CameraMove : MonoBehaviour {
 #else
                 _uiCamera.orthographicSize = fov;
 #endif
-                CalculateCameraBounds();
+                if (GameManager.Instance.gameHasStarted) {
+                    CalculateCameraBounds();
+                }
             }
             if (mouseObj != null) {
                 mouseObj.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);

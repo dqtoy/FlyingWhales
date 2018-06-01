@@ -24,10 +24,12 @@ public class LevelLoaderManager : MonoBehaviour {
 
     IEnumerator LoadLevelAsynchronously(string sceneName) {
         _progress = 0f;
-        loaderGO.SetActive(true);
+        SetLoadingState(true);
+        UpdateLoadingInfo("Loading " + sceneName + "...");
+        yield return null;
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         asyncOperation.allowSceneActivation = false;
-        UpdateLoadingInfo("Loading Scene...");
+        
         while (asyncOperation.progress < 0.9f) {
             _progress = 0.5f * asyncOperation.progress / 0.9f;
             UpdateLoadingBar(_progress);
@@ -44,17 +46,21 @@ public class LevelLoaderManager : MonoBehaviour {
             }
             UpdateLoadingBar(_progress);
         }
-        UpdateLoadingInfo("Loading Complete...");
-        loaderGO.SetActive(false);
         asyncOperation.allowSceneActivation = true;
-    }
-
-    public void UpdateLoadingInfo(string info) {
-        loaderInfoText.text = info;
     }
 
     public void UpdateLoadingBar(float amount) {
         loaderText.text = (100f * amount).ToString("F0") + " %";
         loaderProgressBar.value = amount;
+    }
+    public static void UpdateLoadingInfo(string info) {
+        if(LevelLoaderManager.Instance != null) {
+            LevelLoaderManager.Instance.loaderInfoText.text = info;
+        }
+    }
+    public static void SetLoadingState(bool state) {
+        if (LevelLoaderManager.Instance != null) {
+            LevelLoaderManager.Instance.loaderGO.SetActive(state);
+        } 
     }
 }

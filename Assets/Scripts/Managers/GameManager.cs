@@ -26,31 +26,19 @@ public class GameManager : MonoBehaviour {
     private const float X4_SPEED = 0.3f;
 
     private float timeElapsed;
+    private bool _gameHasStarted;
 
-    #region For Testing
-    [ContextMenu("Print Event Table")]
-    public void PrintEventTable() {
-        Messenger.PrintEventTable();
+    #region getters/setters
+    public bool gameHasStarted {
+        get { return _gameHasStarted; }
     }
-
-    //[SerializeField] private HexTile center;
-    //[SerializeField] private int range;
-    //[ContextMenu("Get Tiles In Range")]
-    //public void GetTilesTester() {
-    //    List<HexTile> tiles = GridMap.Instance.GetTilesInRange(center, range);
-    //    StartCoroutine(SelectSlowly(tiles));
-    //    //UnityEditor.Selection.objects = tiles.Select(x => x.gameObject).ToArray();
-    //    //for (int i = 0; i < tiles.Count; i++) {
-    //    //    Debug.Log(tiles[i].name);
-    //    //}
-    //}
     #endregion
-
     private void Awake(){
 		Instance = this;
 		//this.days = 1;
 		//this.month = 1;
 		this.timeElapsed = 0f;
+        _gameHasStarted = false;
 	}
 
 	private void FixedUpdate(){
@@ -73,6 +61,7 @@ public class GameManager : MonoBehaviour {
         //Messenger.Broadcast("UpdateUI");
         SetPausedState(false);
 		SchedulingManager.Instance.StartScheduleCalls ();
+        _gameHasStarted = true;
 	}
 
     public GameDate Today() {
@@ -139,4 +128,23 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 	}
+
+    #region For Testing
+    [ContextMenu("Print Event Table")]
+    public void PrintEventTable() {
+        Messenger.PrintEventTable();
+    }
+
+    //[SerializeField] private HexTile center;
+    //[SerializeField] private int range;
+    //[ContextMenu("Get Tiles In Range")]
+    //public void GetTilesTester() {
+    //    List<HexTile> tiles = GridMap.Instance.GetTilesInRange(center, range);
+    //    StartCoroutine(SelectSlowly(tiles));
+    //    //UnityEditor.Selection.objects = tiles.Select(x => x.gameObject).ToArray();
+    //    //for (int i = 0; i < tiles.Count; i++) {
+    //    //    Debug.Log(tiles[i].name);
+    //    //}
+    //}
+    #endregion
 }
