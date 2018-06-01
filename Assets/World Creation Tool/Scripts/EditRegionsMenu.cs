@@ -27,6 +27,9 @@ namespace worldcreator {
                 }
             }
         }
+        public void OnRegionEdited() {
+            UpdateItems();
+        }
         public void OnRegionDeleted(Region deletedRegion) {
             RegionEditorItem item = GetRegionItem(deletedRegion);
             GameObject.Destroy(item.gameObject);

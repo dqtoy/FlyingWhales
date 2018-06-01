@@ -292,6 +292,45 @@ namespace worldcreator {
             WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
             return newRegion;
         }
+        public void AddTilesToRegion(List<HexTile> tiles, Region region) {
+            List<Region> emptyRegions = new List<Region>();
+            List<Region> affectedRegions = new List<Region>();
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile currTile = tiles[i];
+                if (currTile.region != null && currTile.region.id != region.id) {
+                    Region regionOfTile = currTile.region;
+                    regionOfTile.RemoveTile(currTile);
+                    if (regionOfTile.tilesInRegion.Count == 0) {
+                        if (!emptyRegions.Contains(regionOfTile)) {
+                            emptyRegions.Add(regionOfTile);
+                        }
+                    }
+                    if (!affectedRegions.Contains(regionOfTile)) {
+                        affectedRegions.Add(regionOfTile);
+                    }
+                    region.AddTile(currTile);
+                }
+            }
+
+            //delete empty regions
+            for (int i = 0; i < emptyRegions.Count; i++) {
+                Region currEmptyRegion = emptyRegions[i];
+                DeleteRegion(currEmptyRegion);
+            }
+
+            //Re compute the center of masses of the regions that were affected
+            for (int i = 0; i < affectedRegions.Count; i++) {
+                Region currRegion = affectedRegions[i];
+                if (!emptyRegions.Contains(currRegion)) {
+                    currRegion.ReComputeCenterOfMass();
+                }
+            }
+            for (int i = 0; i < allRegions.Count; i++) {
+                Region currRegion = allRegions[i];
+                currRegion.UpdateAdjacency();
+            }
+            WorldCreatorUI.Instance.editRegionsMenu.OnRegionEdited();
+        }
         public void ValidateRegions(List<Region> regions) {
             for (int i = 0; i < regions.Count; i++) {
                 Region currRegion = regions[i];
