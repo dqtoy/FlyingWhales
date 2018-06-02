@@ -686,11 +686,13 @@ namespace ECS {
                     this.currentCombat.CharacterFainted(this);
                 }
 			}else if(pickedWeight == "die"){
-				if(this.currentCombat == null){
-					Death ();
-				}else{
-					this.currentCombat.CharacterDeath (this);
-				}
+                this.currentCombat.CharacterDeath(this);
+                Death();
+    //            if (this.currentCombat == null){
+				//	Death ();
+				//}else{
+				//	this.currentCombat.CharacterDeath (this);
+				//}
 			}
 		}
 		//When character will faint
@@ -813,6 +815,7 @@ namespace ECS {
                 }
 
                 GameObject.Destroy(_icon.gameObject);
+                _icon = null;
 
                 Debug.Log(this.name + " died!");
             }
@@ -2071,15 +2074,17 @@ namespace ECS {
             if (_specificLocation != null) {
                 return _specificLocation;
             } else {
-                Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 5f, LayerMask.GetMask("Hextiles"));
-                //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
-                HexTile tile = collide.gameObject.GetComponent<HexTile>();
-                if (tile != null) {
-                    return tile;
-                } else {
-                    LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
-                    if (landmarkObject != null) {
-                        return landmarkObject.landmark.tileLocation;
+                if (_icon != null) {
+                    Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 5f, LayerMask.GetMask("Hextiles"));
+                    //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
+                    HexTile tile = collide.gameObject.GetComponent<HexTile>();
+                    if (tile != null) {
+                        return tile;
+                    } else {
+                        LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
+                        if (landmarkObject != null) {
+                            return landmarkObject.landmark.tileLocation;
+                        }
                     }
                 }
                 return null;

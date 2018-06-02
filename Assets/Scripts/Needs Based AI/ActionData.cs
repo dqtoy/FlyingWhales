@@ -62,8 +62,8 @@ public class ActionData {
     }
     public void DetachActionData() {
         Reset();
-        _character = null;
         _character.onDailyAction -= PerformCurrentAction;
+        _character = null;
         //Messenger.RemoveListener(Signals.DAY_END, PerformCurrentAction);
     }
 
@@ -110,14 +110,7 @@ public class ActionData {
                             return;
                         }
                     }
-                    if (!_isNotFirstEncounter) {
-                        currentAction.OnFirstEncounter(_character);
-                        _isNotFirstEncounter = true;
-                    }
-                    currentAction.PerformAction(_character);
-                    if (currentAction.actionData.duration > 0) {
-                        AdjustCurrentDay(1);
-                    }
+                    DoAction();
                 } else {
                     if(currentAction.actionType == ACTION_TYPE.ATTACK) {
                         _character.GoToLocation(currentAction.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
@@ -141,6 +134,16 @@ public class ActionData {
                     LookForAction();
                 }
             }
+        }
+    }
+    public void DoAction() {
+        if (!_isNotFirstEncounter) {
+            currentAction.OnFirstEncounter(_character);
+            _isNotFirstEncounter = true;
+        }
+        currentAction.PerformAction(_character);
+        if (currentAction.actionData.duration > 0) {
+            AdjustCurrentDay(1);
         }
     }
 

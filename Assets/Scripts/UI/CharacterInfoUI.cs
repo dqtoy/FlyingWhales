@@ -103,13 +103,13 @@ public class CharacterInfoUI : UIMenu {
             //if (previousCharacter.avatar != null) {
             //    previousCharacter.avatar.SetHighlightState(false);
             //}
-            previousCharacter.icon.SetAvatarState(false);
+            //previousCharacter.icon.SetAvatarState(false);
         }
         base.SetData(data);
         //if (currentlyShowingCharacter.avatar != null) {
         //    currentlyShowingCharacter.avatar.SetHighlightState(true);
         //}
-        currentlyShowingCharacter.icon.SetAvatarState(true);
+        //currentlyShowingCharacter.icon.SetAvatarState(true);
         historyScrollView.ResetPosition();
         if (isShowing) {
             UpdateCharacterInfo();

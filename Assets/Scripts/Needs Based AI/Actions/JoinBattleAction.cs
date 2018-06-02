@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class AttackAction : CharacterAction {
+public class JoinBattleAction : CharacterAction {
     CharacterObj _characterObj;
 
     #region getters/setters
@@ -11,13 +11,13 @@ public class AttackAction : CharacterAction {
         get { return _characterObj; }
     }
     #endregion
-    public AttackAction(ObjectState state) : base(state, ACTION_TYPE.ATTACK) {
+    public JoinBattleAction(ObjectState state) : base(state, ACTION_TYPE.JOIN_BATTLE) {
 
     }
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        if(_state.obj.objectType == OBJECT_TYPE.CHARACTER) {
+        if (_state.obj.objectType == OBJECT_TYPE.CHARACTER) {
             _characterObj = _state.obj as CharacterObj;
         }
     }
@@ -41,13 +41,9 @@ public class AttackAction : CharacterAction {
         enemy.actionData.SetIsHalted(true);
         _characterObj.character.actionData.SetIsHalted(true);
 
-        StartCombatWith(enemy);
+        JoinCombatWith(enemy);
     }
-    private void StartCombatWith(Character enemy) {
-        Combat combat = new Combat(_characterObj.character.specificLocation);
-        combat.AddCharacter(SIDES.A, enemy);
-        combat.AddCharacter(SIDES.B, _characterObj.character);
-        //MultiThreadPool.Instance.AddToThreadPool(combat);
-        combat.CombatSimulation();
+    private void JoinCombatWith(Character friend) {
+        friend.currentCombat.AddCharacter(friend.currentSide, _characterObj.character);
     }
 }

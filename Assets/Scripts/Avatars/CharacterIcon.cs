@@ -195,6 +195,38 @@ public class CharacterIcon : MonoBehaviour {
             Idle(upOrDown);
         }
     }
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(_character.actionData.currentAction != null) {
+            if (other.tag == "Character" && _character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
+                AttackAction attackAction = _character.actionData.currentAction as AttackAction;
+                CharacterIcon enemy = other.GetComponent<CharacterIcon>();
+                if(attackAction.characterObj.character.id == enemy.character.id) {
+                    _character.actionData.DoAction();
+                }
+            }
+        }
+    }
+    private void OnMouseDown() {
+        MouseDown();
+    }
+    private void MouseDown() {
+        if (UIManager.Instance.IsMouseOnUI()) {
+            return;
+        }
+        if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
+            if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction.id != _character.faction.id) { //TODO: Change this checker to relationship status checking instead of just faction
+                CharacterAction attackAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
+                UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
+                return;
+            }
+        }
+        UIManager.Instance.ShowCharacterInfo(_character);
+    }
+    private void OnDestroy() {
+        SetTarget(null);
+        PathfindingManager.Instance.RemoveAgent(_aiPath);
+    }
     #endregion
 
     #region Animation

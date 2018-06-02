@@ -224,6 +224,7 @@ namespace ECS{
             Debug.Log("Side A : \n" + sideAChars);
             Debug.Log("Side B : \n" + sideBChars);
             isDone = true;
+            ReturnCombatResults();
         }
 
 		//Set row number to a list of characters
@@ -921,7 +922,7 @@ namespace ECS{
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
 		internal void CharacterDeath(ECS.Character character){
 			RemoveCharacter (character);
-			deadCharacters.Add (character);
+			//deadCharacters.Add (character);
 			character.SetIsDefeated (true);
 			AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
 		}
