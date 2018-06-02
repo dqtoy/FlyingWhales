@@ -42,10 +42,6 @@ namespace worldcreator {
                 currItemGO.UpdateInfo();
             }
         }
-
-        public void OnAssignRegion() {
-            UpdateItems();
-        }
         public void OnRegionDeleted(Region deletedRegion) {
             UpdateItems();
         }

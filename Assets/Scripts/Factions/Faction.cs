@@ -105,7 +105,7 @@ public class Faction {
     public Faction(RACE race, FACTION_TYPE factionType) {
 		this._id = Utilities.SetID<Faction>(this);
         SetRace(race);
-        _name = RandomNameGenerator.Instance.GenerateKingdomName(race);
+        SetName(RandomNameGenerator.Instance.GenerateKingdomName(race));
         _factionType = factionType;
         _factionSize = FACTION_SIZE.SMALL;
         _emblem = FactionManager.Instance.GenerateFactionEmblem(this);
@@ -128,7 +128,7 @@ public class Faction {
     public Faction(FactionSaveData data) {
         _id = Utilities.SetID(this, data.factionID);
         SetRace(data.factionRace);
-        _name = data.factionName;
+        SetName(data.factionName);
         _factionType = data.factionType;
         _factionSize = FACTION_SIZE.SMALL;
         factionColor = data.factionColor;
@@ -273,6 +273,9 @@ public class Faction {
     #endregion
 
     #region Utilities
+    public void SetName(string name) {
+        _name = name;
+    }
     public List<Faction> GetMajorFactionsWithRelationshipStatus(List<RELATIONSHIP_STATUS> relStatuses) {
         List<Faction> factionsWithStatus = new List<Faction>();
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {

@@ -7,11 +7,12 @@ using UnityEngine.UI;
 namespace worldcreator {
     public class FactionEditorItem : MonoBehaviour {
 
-        [SerializeField] private Text factionNameLbl;
+        [SerializeField] private InputField factionNameField;
         [SerializeField] private Text factionRegionsLbl;
         [SerializeField] private Dropdown raceDropdown;
         [SerializeField] private Button deleteBtn;
         [SerializeField] private Button assignBtn;
+        [SerializeField] private Button unassignBtn;
 
         private Faction _faction;
 
@@ -46,13 +47,11 @@ namespace worldcreator {
             string currOption = raceDropdown.options[raceIndex].text;
             return (RACE)System.Enum.Parse(typeof(RACE), currOption);
         }
-
         public void UpdateInfo() {
-            factionNameLbl.text = _faction.name;
+            factionNameField.text = _faction.name;
             factionRegionsLbl.text = _faction.ownedRegions.Count.ToString();
             raceDropdown.value = GetRaceIndex(_faction.race);
         }
-
         public void AssignFaction() {
             for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selectedRegions.Count; i++) {
                 Region currRegion = WorldCreatorManager.Instance.selectionComponent.selectedRegions[i];
@@ -60,25 +59,42 @@ namespace worldcreator {
                 _faction.OwnRegion(currRegion);
                 currRegion.ReColorBorderTiles(_faction.factionColor);
             }
-            WorldCreatorUI.Instance.editFactionsMenu.OnAssignRegion();
+            WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
         }
-
         public void DeleteFaction() {
             WorldCreatorManager.Instance.DeleteFaction(_faction);
+        }
+        public void UnassignFaction() {
+            for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selectedRegions.Count; i++) {
+                Region currRegion = WorldCreatorManager.Instance.selectionComponent.selectedRegions[i];
+                if (currRegion.owner != null && currRegion.owner.id == _faction.id) {
+                    currRegion.SetOwner(null);
+                }
+            }
+            WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
         }
 
         private void Update() {
             if (WorldCreatorManager.Instance.selectionComponent.selection.Count > 0) {
                 assignBtn.interactable = true;
+                unassignBtn.interactable = true;
             } else {
                 assignBtn.interactable = false;
+                unassignBtn.interactable = false;
             }
         }
 
+        #region Info Editing
         public void OnRaceChange(int raceIndex) {
             RACE newRace = GetRaceFromIndex(raceIndex);
             _faction.SetRace(newRace);
             UpdateInfo();
         }
+        public void OnChangeFactionName() {
+            string newName = factionNameField.text;
+            _faction.SetName(newName);
+        }
+        #endregion
+
     }
 }

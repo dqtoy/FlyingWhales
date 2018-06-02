@@ -184,12 +184,12 @@ public class CameraMove : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
                 resourceIconCamera.orthographicSize = fov;
                 Minimap.Instance.UpdateCameraBorderScale();
-#else
-                _uiCamera.orthographicSize = fov;
-#endif
                 if (GameManager.Instance.gameHasStarted) {
                     CalculateCameraBounds();
                 }
+#else
+                _uiCamera.orthographicSize = fov;
+#endif
             }
             if (mouseObj != null) {
                 mouseObj.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
