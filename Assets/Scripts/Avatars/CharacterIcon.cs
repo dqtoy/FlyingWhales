@@ -195,17 +195,7 @@ public class CharacterIcon : MonoBehaviour {
             Idle(upOrDown);
         }
     }
-    private void OnTriggerEnter2D(Collider2D other) {
-        if(_character.actionData.currentAction != null) {
-            if (other.tag == "Character" && _character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
-                AttackAction attackAction = _character.actionData.currentAction as AttackAction;
-                CharacterIcon enemy = other.GetComponent<CharacterIcon>();
-                if(attackAction.characterObj.character.id == enemy.character.id) {
-                    _character.actionData.DoAction();
-                }
-            }
-        }
-    }
+    
     private void OnMouseDown() {
         MouseDown();
     }

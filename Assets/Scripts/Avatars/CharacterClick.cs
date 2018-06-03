@@ -27,4 +27,15 @@ public class CharacterClick : MonoBehaviour {
         }
         UIManager.Instance.ShowCharacterInfo(icon.character);
     }
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (icon.character.actionData.currentAction != null) {
+            if (other.tag == "Character" && icon.character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
+                AttackAction attackAction = icon.character.actionData.currentAction as AttackAction;
+                CharacterIcon enemy = other.GetComponent<CharacterIcon>();
+                if (attackAction.characterObj.character.id == enemy.character.id) {
+                    icon.character.actionData.DoAction();
+                }
+            }
+        }
+    }
 }

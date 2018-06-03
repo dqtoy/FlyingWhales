@@ -37,13 +37,16 @@ public class JoinBattleAction : CharacterAction {
         return attackAction;
     }
     #endregion
-    private void StartEncounter(Character enemy) {
-        enemy.actionData.SetIsHalted(true);
+    private void StartEncounter(Character friend) {
         _characterObj.character.actionData.SetIsHalted(true);
 
-        JoinCombatWith(enemy);
+        JoinCombatWith(friend);
     }
     private void JoinCombatWith(Character friend) {
-        friend.currentCombat.AddCharacter(friend.currentSide, _characterObj.character);
+        if(friend.currentCombat != null) {
+            friend.currentCombat.AddCharacter(friend.currentSide, _characterObj.character);
+        } else {
+            CombatManager.Instance.CharacterContinuesAction(_characterObj.character);
+        }
     }
 }
