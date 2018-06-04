@@ -41,7 +41,9 @@ public class ElvenSettlement : StructureObj {
     }
     public override void OnAddToLandmark(BaseLandmark newLocation) {
         base.OnAddToLandmark(newLocation);
-        this.objectLocation.landmarkObject.SetIconActive(true);
+        if (this.objectLocation.landmarkObject != null) {
+            this.objectLocation.landmarkObject.SetIconActive(true);
+        }
     }
     #endregion
 

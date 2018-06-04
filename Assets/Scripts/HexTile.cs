@@ -354,12 +354,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
 #else
-        landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        if (this.region.owner != null && this.region.owner.race == RACE.ELVES) {
+            if (landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || landmarkType == LANDMARK_TYPE.IRON_MINES || landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
+                GameObject obj = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
+                GameObject.Instantiate(obj, structureParentGO.transform);
+            } else {
+                landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+            }
+        } else {
+            landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        }
 #endif
-
-        landmarkGO.transform.localPosition = Vector3.zero;
-        landmarkGO.transform.localScale = Vector3.one;
-
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
                 _landmarkOnTile = new Settlement(this, landmarkType);
@@ -378,6 +383,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 break;
         }
         if (landmarkGO != null) {
+            landmarkGO.transform.localPosition = Vector3.zero;
+            landmarkGO.transform.localScale = Vector3.one;
             _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
         }
         _region.AddLandmarkToRegion(_landmarkOnTile);
