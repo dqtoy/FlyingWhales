@@ -9,6 +9,7 @@ using UnityEngine;
 public class DefinesManager : MonoBehaviour {
 
     public string[] mainSceneDefines;
+    public string[] mainMenuSceneDefines;
     public string[] worldCreationDefines;
 
     private void Awake() {
@@ -23,6 +24,11 @@ public class DefinesManager : MonoBehaviour {
             } else if (activeScene.Equals("WorldCreationTool")) {
                 for (int i = 0; i < worldCreationDefines.Length; i++) {
                     string currDefine = worldCreationDefines[i];
+                    defines += currDefine + ";";
+                }
+            } else if (activeScene.Equals("MainMenu")) {
+                for (int i = 0; i < mainMenuSceneDefines.Length; i++) {
+                    string currDefine = mainMenuSceneDefines[i];
                     defines += currDefine + ";";
                 }
             }
