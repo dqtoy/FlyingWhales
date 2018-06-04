@@ -23,17 +23,17 @@ public class CameraMove : MonoBehaviour {
 	private Vector3 velocity = Vector3.zero;
 	private Transform target;
 
-	//default camera bounds when fov is at minimum
-	const float minMIN_X = 12.5f;
-	const float minMAX_X = 189.5f;
-	const float minMIN_Y = 6.5f;
-	const float minMAX_Y = 143.5f;
+	////default camera bounds when fov is at minimum
+	//const float minMIN_X = 12.5f;
+	//const float minMAX_X = 189.5f;
+	//const float minMIN_Y = 6.5f;
+	//const float minMAX_Y = 143.5f;
 
-	//default camera bounds when fov is at maximum
-	const float maxMIN_X = 44f;
-	const float maxMAX_X = 158f;
-	const float maxMIN_Y = 24.5f;
-	const float maxMAX_Y = 126f;
+	////default camera bounds when fov is at maximum
+	//const float maxMIN_X = 44f;
+	//const float maxMAX_X = 158f;
+	//const float maxMIN_Y = 24.5f;
+	//const float maxMAX_Y = 126f;
 
 	const float MIN_Z = -10f;
 	const float MAX_Z = -10f;
@@ -42,6 +42,11 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] internal float MAX_X;
     [SerializeField] internal float MIN_Y;
     [SerializeField] internal float MAX_Y;
+
+    [SerializeField] private float minXUIAdjustment;
+    [SerializeField] private float maxXUIAdjustment;
+    [SerializeField] private float minYUIAdjustment;
+    [SerializeField] private float maxYUIAdjustment;
 
     private float previousCameraFOV;
 
@@ -65,10 +70,10 @@ public class CameraMove : MonoBehaviour {
 
     void Awake(){
 		Instance = this;
-		MIN_X = minMIN_X;
-		MAX_X = minMAX_X;
-		MIN_Y = minMIN_Y;
-		MAX_Y = minMAX_Y;
+		//MIN_X = minMIN_X;
+		//MAX_X = minMAX_X;
+		//MIN_Y = minMIN_Y;
+		//MAX_Y = minMAX_Y;
 	}
 
 
@@ -115,22 +120,30 @@ public class CameraMove : MonoBehaviour {
          minY = vertExtent - mapY / 2.0f;
          maxY = mapY / 2.0f - vertExtent;
 
-        //MIN_X = minX - 2.5f;
-        //MAX_X = maxX + 15f;
-        //MIN_Y = minY - 4.5f;
-        //MAX_Y = maxY + 3f;
-
         float halfOfHexagon = (256f / 2f) / 100f;
-
-        MIN_X = minX - (halfOfHexagon * 1.8f);
 #if WORLD_CREATION_TOOL
-        MAX_X = maxX + (halfOfHexagon * 1.8f);
+        if (Utilities.IsEven(worldcreator.WorldCreatorManager.Instance.height -1)) {
 #else
-        MAX_X = maxX + (halfOfHexagon * 9.5f);
+        if (Utilities.IsEven((int)GridMap.Instance.height - 1)) {
 #endif
+            MIN_X = (minX - halfOfHexagon) - minXUIAdjustment;
+            MAX_X = (maxX + (halfOfHexagon * 2f)) + maxXUIAdjustment;
+        } else {
+            MIN_X = (minX - (halfOfHexagon * 2f)) - minXUIAdjustment;
+            MAX_X = (maxX + halfOfHexagon) + maxXUIAdjustment;
+        }
+        MIN_Y = (minY - (halfOfHexagon * 2f)) - minYUIAdjustment;
+        MAX_Y = (maxY + (halfOfHexagon / 2f)) + maxYUIAdjustment;
 
-        MIN_Y = minY - (halfOfHexagon * 2f);
-        MAX_Y = maxY + halfOfHexagon;
+        //        MIN_X = minX - (halfOfHexagon * 1.8f);
+        //#if WORLD_CREATION_TOOL
+        //        MAX_X = maxX + (halfOfHexagon * 1.8f);
+        //#else
+        //        MAX_X = maxX + (halfOfHexagon * 9.5f);
+        //#endif
+
+        //        MIN_Y = minY - (halfOfHexagon * 2f);
+        //        MAX_Y = maxY + halfOfHexagon;
 
         //MIN_X = minX;
         //MAX_X = maxX;
@@ -143,7 +156,7 @@ public class CameraMove : MonoBehaviour {
         //MAX_Y = maxY - 0.5f;
     }
 
-	void Update () {
+    void Update () {
 		float xAxisValue = Input.GetAxis("Horizontal");
 		float zAxisValue = Input.GetAxis("Vertical");
 #if WORLD_CREATION_TOOL

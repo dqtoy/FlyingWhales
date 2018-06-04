@@ -257,11 +257,11 @@ public class LandmarkManager : MonoBehaviour {
     public void GenerateFactionLandmarks() {
         for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
             Tribe currTribe = FactionManager.Instance.allTribes[i];
-            LEVEL wealth = LEVEL.HIGH;
-            LEVEL population = LEVEL.HIGH;
-            LEVEL might = LEVEL.HIGH;
-            LEVEL needProviders = LEVEL.HIGH;
-            LEVEL characters = LEVEL.HIGH;
+            LEVEL wealth = RandomizeLevel(25, 60, 15);
+            LEVEL population = RandomizeLevel(25, 60, 15);
+            LEVEL needProviders = RandomizeLevel(25, 60, 15);
+            LEVEL might = RandomizeLevel(25, 60, 15);
+            LEVEL characters = RandomizeLevel(25, 60, 15);
             Dictionary<LANDMARK_TYPE, int> landmarkSettings = GetLandmarkSettings(wealth, population, might, needProviders, currTribe);
             Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = null;
             while (landmarksToBeCreated == null) {
