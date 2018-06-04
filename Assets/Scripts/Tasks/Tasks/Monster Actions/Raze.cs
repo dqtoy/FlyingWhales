@@ -41,15 +41,15 @@ public class Raze : CharacterTask {
 		}
 	}
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
-			if(character.faction == null){
-				return true;
-			}else{
-                if (location.HasHostilitiesWith(character.faction)) {
-                    return true;
-				}
-			}
-		}
+		//if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
+		//	if(character.faction == null){
+		//		return true;
+		//	}else{
+  //              if (location.HasHostilitiesWith(character.faction)) {
+  //                  return true;
+		//		}
+		//	}
+		//}
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
@@ -73,9 +73,9 @@ public class Raze : CharacterTask {
             if (currLandmark.HasHostilitiesWith(character.faction)) {
                 weight += 100; //Landmark is owned by a hostile faction: 100
             }
-            if (currLandmark.civilians > 0) {
-                weight += 30; //Landmark has civilians: +30
-            }
+            //if (currLandmark.civilians > 0) {
+            //    weight += 30; //Landmark has civilians: +30
+            //}
             if (weight > 0) {
                 _landmarkWeights.AddElement(currLandmark, weight);
             }

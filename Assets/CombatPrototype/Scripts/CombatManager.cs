@@ -2,30 +2,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ECS {
     public class CombatManager : MonoBehaviour {
-
         public static CombatManager Instance = null;
+
+        [NonSerialized] public float updateIntervals = 0f;
+        public int numOfCombatActionPerDay;
+
+        public Combat combat;
 
         public CharacterSetup[] baseCharacters;
 		public Color[] characterColors;
-//		public AttributeSkill[] attributeSkills;
-		public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>> ();
+		public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills;
 
-		private List<Color> unusedColors = new List<Color>();
-		private List<Color> usedColors = new List<Color>();
-		public Combat combat;
-
+		private List<Color> unusedColors;
+		private List<Color> usedColors;
         private Dictionary<ICombatInitializer, CombatRoom> _combatRooms;
-
-        public float updateIntervals = 0f;
 
         private void Awake() {
             Instance = this;
         }
 		internal void Initialize(){
             ConstructBaseCharacters();
+            weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
+            unusedColors = new List<Color>();
+            usedColors = new List<Color>();
             //ConstructCharacterColors ();
             //			ConstructAttributeSkills ();
             //NewCombat();
@@ -116,13 +119,15 @@ namespace ECS {
    //             Character currDeadCharacter = combat.deadCharacters[i];
    //             currDeadCharacter.Death ();
 			//}
-            for (int i = 0; i < combat.charactersSideA.Count; i++) {
-                Character character = combat.charactersSideA[i];
+            while(combat.charactersSideA.Count > 0) {
+                Character character = combat.charactersSideA[0];
                 CharacterContinuesAction(character);
+                combat.RemoveCharacter(SIDES.A, character);
             }
-            for (int i = 0; i < combat.charactersSideB.Count; i++) {
-                Character character = combat.charactersSideB[i];
+            while (combat.charactersSideB.Count > 0) {
+                Character character = combat.charactersSideB[0];
                 CharacterContinuesAction(character);
+                combat.RemoveCharacter(SIDES.B, character);
             }
             //Prisoner or Leave to Die
             //List<ECS.Character> winningCharacters = null;
@@ -380,9 +385,17 @@ namespace ECS {
             character.actionData.SetIsHalted(false);
             character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
             character.icon.SetMovementState(GameManager.Instance.isPaused);
-            if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || character.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
-                character.actionData.EndAction();
+            if (character.actionData.currentAction != null) {
+                if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || character.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
+                    character.actionData.EndAction();
+                }
             }
+        }
+        public SIDES GetOppositeSide(SIDES side) {
+            if(side == SIDES.A) {
+                return SIDES.B;
+            }
+            return SIDES.A;
         }
         #endregion
     }

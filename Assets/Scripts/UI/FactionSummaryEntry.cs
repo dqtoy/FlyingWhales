@@ -23,7 +23,7 @@ public class FactionSummaryEntry : MonoBehaviour {
         _bgSprite.color = faction.factionColor;
 
         villagesLbl.text = faction.settlements.Count.ToString();
-        populationLbl.text = faction.totalPopulation.ToString();
+        //populationLbl.text = faction.totalPopulation.ToString();
         charactersLbl.text = faction.characters.Count.ToString();
     }
 

@@ -178,14 +178,7 @@ public class Invade : CharacterTask {
 		}
 		return false;
 	}
-	private void KillCivilians(){
-		int civiliansInLandmark = _landmarkToAttack.civilians;
-		if(civiliansInLandmark > 0){
-			int civilianCasualtiesPercentage = UnityEngine.Random.Range (15, 51);
-			int civilianCasualties = (int)(((float)civilianCasualtiesPercentage / 100f) * (float)civiliansInLandmark);
-			_landmarkToAttack.ReduceCivilians (civilianCasualties);
-		}
-	}
+	
 	private void ChangeLandmarkOwnership(){
 		if(_canChangeOwnership){
 			if(_landmarkToAttack is Settlement || _landmarkToAttack is ResourceLandmark){

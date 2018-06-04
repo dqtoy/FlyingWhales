@@ -21,7 +21,7 @@ public class DrinkBloodState : State {
         string chosenAct = TaskManager.Instance.drinkBloodActions.PickRandomElementGivenWeights();
         switch (chosenAct) {
             case "drink":
-                KillCivilianAndDrinkBlood();
+                //KillCivilianAndDrinkBlood();
                 parentTask.EndTask(TASK_STATUS.SUCCESS);
                 return;
             case "caught":
@@ -34,19 +34,6 @@ public class DrinkBloodState : State {
         }
     }
 
-    private void KillCivilianAndDrinkBlood() {
-        BaseLandmark targetLocation = (parentTask.targetLocation as BaseLandmark);
-        if (targetLocation.civilians > 0) {
-            RACE[] races = targetLocation.civiliansByRace.Keys.Where(x => targetLocation.civiliansByRace[x] > 0).ToArray();
-            RACE chosenRace = races[UnityEngine.Random.Range(0, races.Length)];
-            targetLocation.AdjustCivilians(chosenRace, -1, _assignedCharacter);
-            Log killLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "kill");
-            killLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            killLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace).ToLower(), LOG_IDENTIFIER.OTHER);
-            targetLocation.AddHistory(killLog);
-            _assignedCharacter.AddHistory(killLog);
-        }
-    }
     private void Caught() {
         Log caughtLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "DrinkBlood", "caught");
         caughtLog.AddToFillers(_assignedCharacter, _assignedCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

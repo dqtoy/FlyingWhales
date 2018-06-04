@@ -58,9 +58,9 @@ public class Faction {
     public Sprite emblemBG {
         get { return _emblemBG; }
     }
-    public int totalPopulation {
-        get { return settlements.Sum(x => x.totalPopulation); }
-    }
+    //public int totalPopulation {
+    //    get { return settlements.Sum(x => x.totalPopulation); }
+    //}
     public List<Settlement> settlements {
         get { return _settlements; }
     }
@@ -327,9 +327,9 @@ public class Faction {
             if (highestPopulationSettlement == null) {
                 highestPopulationSettlement = settlement;
             } else {
-                if (settlement.civilians > highestPopulationSettlement.civilians) {
-                    highestPopulationSettlement = settlement;
-                }
+                //if (settlement.civilians > highestPopulationSettlement.civilians) {
+                //    highestPopulationSettlement = settlement;
+                //}
             }
         }
         return highestPopulationSettlement;

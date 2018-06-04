@@ -36,6 +36,12 @@ public class AttackAction : CharacterAction {
         attackAction.Initialize();
         return attackAction;
     }
+    public override bool CanBeDoneBy(Character character) {
+        if(character.faction.id == _characterObj.character.faction.id) {
+            return false;
+        }
+        return base.CanBeDoneBy(character);
+    }
     #endregion
     private void StartEncounter(Character enemy) {
         enemy.actionData.SetIsHalted(true);
@@ -44,10 +50,17 @@ public class AttackAction : CharacterAction {
         StartCombatWith(enemy);
     }
     private void StartCombatWith(Character enemy) {
-        Combat combat = new Combat(_characterObj.character.specificLocation);
-        combat.AddCharacter(SIDES.A, enemy);
-        combat.AddCharacter(SIDES.B, _characterObj.character);
-        //MultiThreadPool.Instance.AddToThreadPool(combat);
-        combat.CombatSimulation();
+        //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
+        if (_characterObj.character.currentCombat == null) {
+            Combat combat = new Combat(_characterObj.character.specificLocation);
+            combat.AddCharacter(SIDES.A, enemy);
+            combat.AddCharacter(SIDES.B, _characterObj.character);
+            //MultiThreadPool.Instance.AddToThreadPool(combat);
+            combat.CombatSimulation();
+        } else {
+            SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(_characterObj.character.currentSide);
+            _characterObj.character.currentCombat.AddCharacter(sideToJoin, enemy);
+        }
+       
     }
 }

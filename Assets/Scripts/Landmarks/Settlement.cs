@@ -31,12 +31,12 @@ public class Settlement : BaseLandmark {
     public List<BaseLandmark> ownedLandmarks {
         get { return _ownedLandmarks; }
     }
-	public override int totalPopulation {
-		get { return civilians + CharactersCount() + this._ownedLandmarks.Sum(x => x.civilians); }
-	}
-    public List<MATERIAL> availableMaterials {
-        get { return _ownedLandmarks.Where(x => x is ResourceLandmark && x.civilians >= x.GetMinimumCivilianRequirement()).Select(x => (x as ResourceLandmark).materialOnLandmark).ToList(); }
-    }
+	//public override int totalPopulation {
+	//	get { return civilians + CharactersCount() + this._ownedLandmarks.Sum(x => x.civilians); }
+	//}
+    //public List<MATERIAL> availableMaterials {
+    //    get { return _ownedLandmarks.Where(x => x is ResourceLandmark && x.civilians >= x.GetMinimumCivilianRequirement()).Select(x => (x as ResourceLandmark).materialOnLandmark).ToList(); }
+    //}
 	public int numOfPsytoxinated {
 		get { return _numOfPsytoxinated; }
 	}
@@ -97,18 +97,18 @@ public class Settlement : BaseLandmark {
     #endregion
 
     #region Characters
-    public ECS.Character CreateNewFollower() {
-        if (this.civilians <= 0) {
-            throw new System.Exception(this.landmarkName + " no longer has any more civilians for creating a follower!");
-        }
-        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this);
-        CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-        ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.FOLLOWER, Utilities.NormalizeString(chosenClass.ToString()));
-        newFollower.SetFollowerState(true);
-		newFollower.AssignInitialTags ();
-        CharacterManager.Instance.EquipCharacterWithBestGear(this, newFollower);
-        return newFollower;
-    }
+  //  public ECS.Character CreateNewFollower() {
+  //      if (this.civilians <= 0) {
+  //          throw new System.Exception(this.landmarkName + " no longer has any more civilians for creating a follower!");
+  //      }
+  //      WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(this);
+  //      CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+  //      ECS.Character newFollower = CreateNewCharacter(CHARACTER_ROLE.FOLLOWER, Utilities.NormalizeString(chosenClass.ToString()));
+  //      newFollower.SetFollowerState(true);
+		//newFollower.AssignInitialTags ();
+  //      CharacterManager.Instance.EquipCharacterWithBestGear(this, newFollower);
+  //      return newFollower;
+  //  }
     ///*
     // Does the settlement have the required technology
     // to produce a class?
@@ -145,16 +145,7 @@ public class Settlement : BaseLandmark {
     //    //}
     //    //return false;
     //}
-    public bool CanProduceRole(CHARACTER_ROLE roleType) {
-        TrainingRole trainingRole = ProductionManager.Instance.trainingRolesLookup[roleType];
-        if (trainingRole.production.civilianCost <= civilians) {
-            return true;
-        }
-        //if (trainingRole.production.civilianCost <= civilians && trainingRole.production.foodCost <= GetTotalFoodCount()) {
-        //    return true;
-        //}
-        return false;
-    }
+   
     public void SetHead(ECS.Character head) {
         _headOfSettlement = head;
         if(_owner.leader != null) {
@@ -209,15 +200,15 @@ public class Settlement : BaseLandmark {
      structure and the minimum required civilians of his faction.
          */
     public bool HasAccessToMaterial(MATERIAL material) {
-        for (int i = 0; i < _ownedLandmarks.Count; i++) {
-            BaseLandmark currLandmark = _ownedLandmarks[i];
-            if (currLandmark is ResourceLandmark) {
-                ResourceLandmark currResLandmark = currLandmark as ResourceLandmark;
-                if (currResLandmark.materialOnLandmark == material && currResLandmark.civilians >= GetMinimumCivilianRequirement()) {
-                    return true;
-                }
-            }
-        }
+        //for (int i = 0; i < _ownedLandmarks.Count; i++) {
+        //    BaseLandmark currLandmark = _ownedLandmarks[i];
+        //    if (currLandmark is ResourceLandmark) {
+        //        ResourceLandmark currResLandmark = currLandmark as ResourceLandmark;
+        //        if (currResLandmark.materialOnLandmark == material && currResLandmark.civilians >= GetMinimumCivilianRequirement()) {
+        //            return true;
+        //        }
+        //    }
+        //}
         return false;
     }
     public MATERIAL GetMaterialFor(PRODUCTION_TYPE productionType) {
@@ -260,55 +251,6 @@ public class Settlement : BaseLandmark {
     public void RemoveLandmarkAsOwned(BaseLandmark landmark) {
         _ownedLandmarks.Remove(landmark);
     }
-    #endregion
-
-    #region Items
-    /*
-     Produce an item for a character.
-     This will automatically reduce the materials used in the settlement,
-     and the gold of the character.
-         */
-    public ECS.Item ProduceItemForCharacter(EQUIPMENT_TYPE specificItem, ECS.Character character) {
-        ITEM_TYPE itemType = Utilities.GetItemTypeOfEquipment(specificItem);
-        MATERIAL matToUse = GetMaterialForItem(itemType, specificItem, character);
-        if(matToUse != MATERIAL.NONE) {
-            character.AdjustGold(-ItemManager.Instance.GetGoldCostOfItem(itemType, matToUse));
-            return ItemManager.Instance.CreateNewItemInstance(matToUse, specificItem);
-        }
-        return null;
-    }
-    private MATERIAL GetMaterialForItem(ITEM_TYPE itemType, EQUIPMENT_TYPE equipmentType, ECS.Character character) {
-        List<MATERIAL> elligibleMaterials = new List<MATERIAL>();
-        List<MATERIAL> preferredMaterials = new List<MATERIAL>();
-        if (itemType == ITEM_TYPE.ARMOR) {
-            elligibleMaterials = ProductionManager.Instance.armorMaterials;
-            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.ARMOR].prioritizedMaterials;
-        } else if (itemType == ITEM_TYPE.WEAPON) {
-			elligibleMaterials = ProductionManager.Instance.weaponMaterials;
-            preferredMaterials = _owner.productionPreferences[PRODUCTION_TYPE.WEAPON].prioritizedMaterials;
-        }
-        for (int i = 0; i < preferredMaterials.Count; i++) {
-            MATERIAL currMat = preferredMaterials[i];
-            if (elligibleMaterials.Contains(currMat)) { //check if the curr preferred material is elligible for the item type
-                int goldCost = ItemManager.Instance.GetGoldCostOfItem(itemType, currMat);
-                if (HasAccessToMaterial(currMat) && character.gold >= goldCost) {
-                    //check if this settlement has enough resources to make the item
-                    return currMat;
-                }
-            }
-        }
-        return MATERIAL.NONE;
-    }
-    //private int GetCostToProduceItem(ITEM_TYPE itemType, EQUIPMENT_TYPE equipmentType) {
-    //    if (itemType == ITEM_TYPE.ARMOR) {
-    //        ArmorProduction productionDetails = ProductionManager.Instance.GetArmorProduction((ARMOR_TYPE)equipmentType);
-    //        return productionDetails.production.resourceCost;
-    //    } else if (itemType == ITEM_TYPE.WEAPON) {
-    //        WeaponProduction productionDetails = ProductionManager.Instance.GetWeaponProduction((WEAPON_TYPE)equipmentType);
-    //        return productionDetails.production.resourceCost;
-    //    }
-    //    return 0;
-    //}
     #endregion
 
 	#region Save Landmark

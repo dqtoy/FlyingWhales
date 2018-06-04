@@ -59,6 +59,9 @@ public class CharacterAction {
     public virtual bool CanBeDone() {
         return true;
     }
+    public virtual bool CanBeDoneBy(Character character) {
+        return true;
+    }
     public virtual void EndAction(Character character) {
         character.actionData.EndAction();
     }

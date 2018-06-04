@@ -86,9 +86,11 @@ public class ActionData {
         this.isDone = state;
     }
     public void SetIsHalted(bool state) {
-        _isHalted = state;
-        if (state) {
-            _character.icon.aiPath.maxSpeed = 0f;
+        if (_isHalted != state) {
+            _isHalted = state;
+            if (state) {
+                _character.icon.aiPath.maxSpeed = 0f;
+            }
         }
     }
 
@@ -99,22 +101,31 @@ public class ActionData {
                     return;
                 }
                 ILocation characterLocation = _character.specificLocation;
-                if (characterLocation != null && characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
-                    //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
-                    if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
-                        CharacterAction newAction = currentAction.state.obj.currentState.GetActionInState(currentAction);
-                        if(newAction != null) {
-                            AssignAction(newAction);
-                        } else {
+                if (characterLocation != null && currentAction.state.obj.specificLocation != null) {
+                    if(characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
+                        //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
+                        if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
+                            CharacterAction newAction = currentAction.state.obj.currentState.GetActionInState(currentAction);
+                            if (newAction != null) {
+                                AssignAction(newAction);
+                            } else {
+                                EndAction();
+                                return;
+                            }
+                        }
+                        DoAction();
+                    }
+                } else {
+                    if (currentAction.state.obj.specificLocation != null) {
+                        if (currentAction.actionType == ACTION_TYPE.ATTACK) {
+                            _character.GoToLocation(currentAction.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                        }
+                    } else {
+                        if(currentAction.state.obj.currentState.stateName == "Dead") { //if object is dead
                             EndAction();
-                            return;
                         }
                     }
-                    DoAction();
-                } else {
-                    if(currentAction.actionType == ACTION_TYPE.ATTACK) {
-                        _character.GoToLocation(currentAction.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
-                    }
+                    
                 }
                 //else {
                 //    Debug.Log(_character.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
@@ -128,10 +139,10 @@ public class ActionData {
                             AssignAction(currentChainAction.parentChainAction.action, currentChainAction.parentChainAction);
                         }
                     } else {
-                        LookForAction();
+                        //LookForAction();
                     }
                 } else {
-                    LookForAction();
+                    //LookForAction();
                 }
             }
         }

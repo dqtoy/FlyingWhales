@@ -28,25 +28,36 @@ public class JoinBattleAction : CharacterAction {
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         ActionSuccess();
-        //What happens when performing attack
+        //What happens when performing join battle
     }
     public override CharacterAction Clone(ObjectState state) {
-        AttackAction attackAction = new AttackAction(state);
-        SetCommonData(attackAction);
-        attackAction.Initialize();
-        return attackAction;
+        JoinBattleAction joinBattleAction = new JoinBattleAction(state);
+        SetCommonData(joinBattleAction);
+        joinBattleAction.Initialize();
+        return joinBattleAction;
+    }
+    public override bool CanBeDone() {
+        if(_characterObj.character.currentCombat == null) {
+            return false;
+        }
+        return base.CanBeDone();
+    }
+    public override bool CanBeDoneBy(Character character) {
+        if (character.faction.id != _characterObj.character.faction.id) {
+            return false;
+        }
+        return base.CanBeDoneBy(character);
     }
     #endregion
     private void StartEncounter(Character friend) {
-        _characterObj.character.actionData.SetIsHalted(true);
-
-        JoinCombatWith(friend);
+        friend.actionData.SetIsHalted(true);
+        FriendWillJoinCombat(friend);
     }
-    private void JoinCombatWith(Character friend) {
-        if(friend.currentCombat != null) {
-            friend.currentCombat.AddCharacter(friend.currentSide, _characterObj.character);
+    private void FriendWillJoinCombat(Character friend) {
+        if(_characterObj.character.currentCombat != null) {
+            _characterObj.character.currentCombat.AddCharacter(_characterObj.character.currentSide, friend);
         } else {
-            CombatManager.Instance.CharacterContinuesAction(_characterObj.character);
+            CombatManager.Instance.CharacterContinuesAction(friend);
         }
     }
 }

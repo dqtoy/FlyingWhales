@@ -8,40 +8,28 @@ public class SettlementInfoClick : MonoBehaviour {
 	void Start(){
 		lbl = GetComponent<UILabel> ();
 	}
-	void Update(){
-		if(isHovering){
-			string url = lbl.GetUrlAtPosition (UICamera.lastWorldPosition);
-			if (!string.IsNullOrEmpty (url)) {
-				if(url == "civilians"){
-					string hoverText = string.Empty;
-					foreach (RACE race in UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.civiliansByRace.Keys) {
-						if (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.civiliansByRace[race] > 0){
-							hoverText += "[b]" + race.ToString() + "[/b] - " + UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.civiliansByRace[race].ToString() + "\n";
-						}
-					}
-					hoverText.TrimEnd ('\n');
-					UIManager.Instance.ShowSmallInfo (hoverText);
-					return;
-				}
-//				else if(url == "itemchest"){
-//					ItemChest itemChest = (ItemChest)UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkEncounterable;
-//					if(itemChest.itemsInChest.Count > 0){
-//						string hoverText = string.Empty;
-//						for (int i = 0; i < itemChest.itemsInChest.Count; i++) {
-//							hoverText += itemChest.itemsInChest[i].nameWithQuality + "\n";
-//						}
-//						hoverText.TrimEnd ('\n');
-//						UIManager.Instance.ShowSmallInfo (hoverText);
-//						return;
-//					}
-//				}
-			}
+	//void Update(){
+	//	if(isHovering){
+	//		string url = lbl.GetUrlAtPosition (UICamera.lastWorldPosition);
+	//		if (!string.IsNullOrEmpty (url)) {
+	//			if(url == "civilians"){
+	//				string hoverText = string.Empty;
+	//				foreach (RACE race in UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.civiliansByRace.Keys) {
+	//					if (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.civiliansByRace[race] > 0){
+	//						hoverText += "[b]" + race.ToString() + "[/b] - " + UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.civiliansByRace[race].ToString() + "\n";
+	//					}
+	//				}
+	//				hoverText.TrimEnd ('\n');
+	//				UIManager.Instance.ShowSmallInfo (hoverText);
+	//				return;
+	//			}
+	//		}
 
-			if(UIManager.Instance.smallInfoGO.activeSelf){
-				UIManager.Instance.HideSmallInfo ();
-			}
-		}
-	}
+	//		if(UIManager.Instance.smallInfoGO.activeSelf){
+	//			UIManager.Instance.HideSmallInfo ();
+	//		}
+	//	}
+	//}
 	void OnClick(){
 		string url = lbl.GetUrlAtPosition (UICamera.lastWorldPosition);
 		if (!string.IsNullOrEmpty (url)) {
@@ -98,11 +86,11 @@ public class SettlementInfoClick : MonoBehaviour {
         }
 	}
 
-	void OnHover(bool isOver){
-		isHovering = isOver;
-		if(!isOver){
-			UIManager.Instance.HideSmallInfo ();
-		}
-	}
+	//void OnHover(bool isOver){
+	//	isHovering = isOver;
+	//	if(!isOver){
+	//		UIManager.Instance.HideSmallInfo ();
+	//	}
+	//}
 
 }

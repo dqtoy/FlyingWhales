@@ -19,7 +19,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected string _landmarkName;
     protected Faction _owner;
     protected List<Character> _charactersWithHomeOnLandmark;
-    protected Dictionary<RACE, int> _civiliansByRace;
+    //protected Dictionary<RACE, int> _civiliansByRace;
     //protected int _currDurability;
     //protected int _totalDurability;
     protected List<TECHNOLOGY> _technologiesOnLandmark;
@@ -78,15 +78,15 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Faction owner {
         get { return _owner; }
     }
-    public virtual int totalPopulation {
-		get { return civilians + CharactersCount(); }
-    }
-	public int civilians {
-		get { return _civiliansByRace.Sum(x => x.Value); }
-    }
-    public Dictionary<RACE, int> civiliansByRace {
-        get { return _civiliansByRace; }
-    }
+  //  public virtual int totalPopulation {
+		//get { return civilians + CharactersCount(); }
+  //  }
+	//public int civilians {
+	//	get { return _civiliansByRace.Sum(x => x.Value); }
+ //   }
+ //   public Dictionary<RACE, int> civiliansByRace {
+ //       get { return _civiliansByRace; }
+ //   }
     public Dictionary<TECHNOLOGY, bool> technologies {
         get { return _technologies; }
     }
@@ -184,8 +184,8 @@ public class BaseLandmark : ILocation, TaskCreator {
         _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
-        ConstructCiviliansDictionary();
-        GenerateCivilians();
+        //ConstructCiviliansDictionary();
+        //GenerateCivilians();
         SpawnInitialLandmarkItems();
     }
     public BaseLandmark(HexTile location, LandmarkSaveData data) : this(){
@@ -196,7 +196,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
         ConstructTechnologiesDictionary();
-        ConstructCiviliansDictionary();
+        //ConstructCiviliansDictionary();
         //GenerateCivilians();
         SpawnInitialLandmarkItems();
     }
@@ -357,73 +357,73 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Population
-    private void ConstructCiviliansDictionary() {
-        _civiliansByRace = new Dictionary<RACE, int>();
-        RACE[] allRaces = Utilities.GetEnumValues<RACE>();
-        for (int i = 0; i < allRaces.Length; i++) {
-            RACE currRace = allRaces[i];
-            if(currRace != RACE.NONE) {
-                _civiliansByRace.Add(currRace, 0);
-            }
-        }
-    }
-    private void GenerateCivilians() {
-        Faction ownerOfRegion = tileLocation.region.owner;
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        //int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
-        RACE civiliansRace = RACE.NONE;
-        //if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-        //    civiliansRace = RACE.GOBLIN;
-        //} else {
-            if (ownerOfRegion != null) {
-                civiliansRace = ownerOfRegion.race;
-            } else {
-                civiliansRace = RACE.HUMANS;
-                if (Random.Range(0, 2) == 1) {
-                    civiliansRace = RACE.ELVES;
-                }
-            }
-        //}
-        AdjustCivilians(civiliansRace, civilians);
-    }
-    public void AdjustCivilians(RACE race, int amount, Character culprit = null) {
-        _civiliansByRace[race] += amount;
-        _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
-		if(culprit != null){
-			QuestManager.Instance.CreateHuntQuest (culprit);
-		}
-    }
-    public void AdjustCivilians(Dictionary<RACE, int> civilians) {
-        foreach (KeyValuePair<RACE, int> kvp in civilians) {
-            AdjustCivilians(kvp.Key, kvp.Value);
-        }
-    }
-    public Dictionary<RACE, int> ReduceCivilians(int amount) {
-        Dictionary<RACE, int> reducedCivilians = new Dictionary<RACE, int>();
-        for (int i = 0; i < Mathf.Abs(amount); i++) {
-            RACE chosenRace = GetRaceBasedOnProportion();
-            AdjustCivilians(chosenRace, -1);
-            if (reducedCivilians.ContainsKey(chosenRace)) {
-                reducedCivilians[chosenRace] += 1;
-            } else {
-                reducedCivilians.Add(chosenRace, 1);
-            }
-        }
-        return reducedCivilians;
-    }
-	public void KillAllCivilians(){
-		RACE[] races = _civiliansByRace.Keys.ToArray ();
-		for (int i = 0; i < races.Length; i++) {
-			_civiliansByRace [races [i]] = 0;
-		}
-	}
-    protected RACE GetRaceBasedOnProportion() {
-        WeightedDictionary<RACE> raceDict = new WeightedDictionary<RACE>(_civiliansByRace);
-        if (raceDict.GetTotalOfWeights() > 0) {
-            return raceDict.PickRandomElementGivenWeights();
-        }
-        throw new System.Exception("Cannot get race to produce!");
-    }
+    //   private void ConstructCiviliansDictionary() {
+    //       _civiliansByRace = new Dictionary<RACE, int>();
+    //       RACE[] allRaces = Utilities.GetEnumValues<RACE>();
+    //       for (int i = 0; i < allRaces.Length; i++) {
+    //           RACE currRace = allRaces[i];
+    //           if(currRace != RACE.NONE) {
+    //               _civiliansByRace.Add(currRace, 0);
+    //           }
+    //       }
+    //   }
+    //   private void GenerateCivilians() {
+    //       Faction ownerOfRegion = tileLocation.region.owner;
+    //       LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+    //       //int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
+    //       RACE civiliansRace = RACE.NONE;
+    //       //if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
+    //       //    civiliansRace = RACE.GOBLIN;
+    //       //} else {
+    //           if (ownerOfRegion != null) {
+    //               civiliansRace = ownerOfRegion.race;
+    //           } else {
+    //               civiliansRace = RACE.HUMANS;
+    //               if (Random.Range(0, 2) == 1) {
+    //                   civiliansRace = RACE.ELVES;
+    //               }
+    //           }
+    //       //}
+    //       AdjustCivilians(civiliansRace, civilians);
+    //   }
+    //   public void AdjustCivilians(RACE race, int amount, Character culprit = null) {
+    //       _civiliansByRace[race] += amount;
+    //       _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
+    //	if(culprit != null){
+    //		QuestManager.Instance.CreateHuntQuest (culprit);
+    //	}
+    //   }
+    //   public void AdjustCivilians(Dictionary<RACE, int> civilians) {
+    //       foreach (KeyValuePair<RACE, int> kvp in civilians) {
+    //           AdjustCivilians(kvp.Key, kvp.Value);
+    //       }
+    //   }
+    //   public Dictionary<RACE, int> ReduceCivilians(int amount) {
+    //       Dictionary<RACE, int> reducedCivilians = new Dictionary<RACE, int>();
+    //       for (int i = 0; i < Mathf.Abs(amount); i++) {
+    //           RACE chosenRace = GetRaceBasedOnProportion();
+    //           AdjustCivilians(chosenRace, -1);
+    //           if (reducedCivilians.ContainsKey(chosenRace)) {
+    //               reducedCivilians[chosenRace] += 1;
+    //           } else {
+    //               reducedCivilians.Add(chosenRace, 1);
+    //           }
+    //       }
+    //       return reducedCivilians;
+    //   }
+    //public void KillAllCivilians(){
+    //	RACE[] races = _civiliansByRace.Keys.ToArray ();
+    //	for (int i = 0; i < races.Length; i++) {
+    //		_civiliansByRace [races [i]] = 0;
+    //	}
+    //}
+    //   protected RACE GetRaceBasedOnProportion() {
+    //       WeightedDictionary<RACE> raceDict = new WeightedDictionary<RACE>(_civiliansByRace);
+    //       if (raceDict.GetTotalOfWeights() > 0) {
+    //           return raceDict.PickRandomElementGivenWeights();
+    //       }
+    //       throw new System.Exception("Cannot get race to produce!");
+    //   }
     #endregion
 
     #region Characters
@@ -431,13 +431,13 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, bool reduceCivilians = true, bool determineAction = true) {
-        RACE raceOfChar = GetRaceBasedOnProportion();
+    public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
+        //RACE raceOfChar = GetRaceBasedOnProportion();
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
         newCharacter.SetHome(this);
-        if (reduceCivilians) {
-            AdjustCivilians(raceOfChar, -1);
-        }
+        //if (reduceCivilians) {
+        //    AdjustCivilians(raceOfChar, -1);
+        //}
         newCharacter.CreateIcon();
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter);
@@ -456,38 +456,39 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool reduceCivilians = true, bool determineAction = true) {
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
+    //public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
+    //    Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
         
-        newCharacter.SetHome(this);
-        if (reduceCivilians) {
-            AdjustCivilians(raceOfChar, -1);
-        }
-        if (owner != null) {
-            newCharacter.SetFaction(owner);
-            owner.AddNewCharacter(newCharacter);
-        }
-        newCharacter.CreateIcon();
-        AddCharacterToLocation(newCharacter);
-        AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.icon.SetPosition(this.tileLocation.transform.position);
-        if (determineAction) {
-            newCharacter.DetermineAction();
-        }
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
-        return newCharacter;
-    }
+    //    newCharacter.SetHome(this);
+    //    //if (reduceCivilians) {
+    //    //    AdjustCivilians(raceOfChar, -1);
+    //    //}
+    //    if (owner != null) {
+    //        newCharacter.SetFaction(owner);
+    //        owner.AddNewCharacter(newCharacter);
+    //    }
+    //    newCharacter.CreateIcon();
+    //    AddCharacterToLocation(newCharacter);
+    //    AddCharacterHomeOnLandmark(newCharacter);
+    //    newCharacter.icon.SetPosition(this.tileLocation.transform.position);
+    //    if (determineAction) {
+    //        newCharacter.DetermineAction();
+    //    }
+    //    Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+    //    return newCharacter;
+    //}
+
     /*
      Create a new character, given a character setup name.
          */
     public Character CreateNewCharacter(RACE raceOfChar, string setupName, bool reduceCivilians = true, bool determineAction = true) {
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, 0, _owner);
-        //        newCharacter.AssignRole(charRole);
+        //newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
-        if (reduceCivilians) {
-            AdjustCivilians(raceOfChar, -1);
-        }
+        //if (reduceCivilians) {
+        //    AdjustCivilians(raceOfChar, -1);
+        //}
         if (_owner != null) {
             _owner.AddNewCharacter(newCharacter);
         }

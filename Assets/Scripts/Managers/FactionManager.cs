@@ -228,9 +228,7 @@ public class FactionManager : MonoBehaviour {
             Tribe currTribe = allTribes[i];
             for (int j = 0; j < currTribe.settlements.Count; j++) {
                 Settlement currSettlement = currTribe.settlements[j];
-                if (currSettlement.civilians > 0) {
-                    CreateInititalFactionCharacters(currTribe, currSettlement);
-                }
+                CreateInititalFactionCharacters(currTribe, currSettlement);
             }
             //CreateChieftainForFaction(currTribe);
         }
@@ -276,7 +274,7 @@ public class FactionManager : MonoBehaviour {
         for (int i = 0; i < numOfCharacters; i++) {
             CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
 			CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-			ECS.Character newChar = settlement.CreateNewCharacter(chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
+			ECS.Character newChar = settlement.CreateNewCharacter(faction.race, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
 			//Initial Character tags
 			newChar.AssignInitialTags();
             CharacterManager.Instance.EquipCharacterWithBestGear(settlement, newChar);
@@ -486,13 +484,14 @@ public class FactionManager : MonoBehaviour {
         if (orderBy == ORDER_BY.CITIES) {
             orderedFactions = majorFactions.OrderBy(x => x.settlements.Count).ToList();
             orderedFactions.AddRange(minorFactions.OrderBy(x => x.settlements.Count));
-        } else if (orderBy == ORDER_BY.POPULATION) {
-            orderedFactions = majorFactions.OrderBy(x => x.totalPopulation).ToList();
-            orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalPopulation));
         } else if (orderBy == ORDER_BY.CHARACTERS) {
             orderedFactions = majorFactions.OrderBy(x => x.characters.Count).ToList();
             orderedFactions.AddRange(minorFactions.OrderBy(x => x.characters.Count));
         }
+        //else if (orderBy == ORDER_BY.POPULATION) {
+        //    orderedFactions = majorFactions.OrderBy(x => x.totalPopulation).ToList();
+        //    orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalPopulation));
+        //} 
         //UIManager.Instance.UpdateFactionSummary();
     }
     public Faction GetFactionBasedOnID(int id) {
