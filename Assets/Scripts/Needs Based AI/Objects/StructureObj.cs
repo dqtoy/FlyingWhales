@@ -146,7 +146,9 @@ public class StructureObj : IObject {
         int previousHP = _currentHP;
         _currentHP += amount;
         _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
-        this.objectLocation.landmarkObject.UpdateProgressBar();
+        if (this.objectLocation.landmarkObject != null) {
+            this.objectLocation.landmarkObject.UpdateProgressBar();
+        }
         if (previousHP != _currentHP) {
             if (_currentHP == 0 && _onHPReachedZero != null) {
                 _onHPReachedZero.Invoke(this);
