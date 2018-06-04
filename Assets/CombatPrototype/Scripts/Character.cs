@@ -814,6 +814,9 @@ namespace ECS {
                     Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
                 }
 
+                ObjectState deadState = _characterObject.GetState("Dead");
+                _characterObject.ChangeState(deadState);
+
                 GameObject.Destroy(_icon.gameObject);
                 _icon = null;
 
@@ -2625,11 +2628,11 @@ namespace ECS {
             //Check if this character is a follower
             if (this.isFollower) {
                 //if this character is
-                if (this.faction != null) {
-                    //Set this character as a civilian of the nearest settlement of his/her faction
-                    Settlement settlement = GetNearestSettlementFromFaction();
-                    settlement.AdjustCivilians(this.raceSetting.race, 1);
-                }
+                //if (this.faction != null) {
+                //    //Set this character as a civilian of the nearest settlement of his/her faction
+                //    Settlement settlement = GetNearestSettlementFromFaction();
+                //    settlement.AdjustCivilians(this.raceSetting.race, 1);
+                //}
             } else {
                 //if not, make this character decide for itself again
                 location.AddCharacterToLocation(this);

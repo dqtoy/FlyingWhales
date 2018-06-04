@@ -109,7 +109,7 @@ public class LandmarkInfoUI : UIMenu {
 
         if (currentlyShowingLandmark.owner != null) {
             text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
-            text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
+            //text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
             text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.landmarkObj.GetTotalCivilians().ToString() + "[/url]";
 			//text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
         }
@@ -197,18 +197,18 @@ public class LandmarkInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-        if (currentlyShowingLandmark is Settlement) {
-            Settlement currSettlement = currentlyShowingLandmark as Settlement;
-            text += "\n[b]Materials: [/b] ";
-            if (currSettlement.availableMaterials.Count > 0) {
-                for (int i = 0; i < currSettlement.availableMaterials.Count; i++) {
-                    MATERIAL currMat = currSettlement.availableMaterials[i];
-                    text += "\n" + currMat.ToString();
-                }
-            } else {
-                text += "NONE";
-            }
-        }
+        //if (currentlyShowingLandmark is Settlement) {
+        //    Settlement currSettlement = currentlyShowingLandmark as Settlement;
+        //    text += "\n[b]Materials: [/b] ";
+        //    if (currSettlement.availableMaterials.Count > 0) {
+        //        for (int i = 0; i < currSettlement.availableMaterials.Count; i++) {
+        //            MATERIAL currMat = currSettlement.availableMaterials[i];
+        //            text += "\n" + currMat.ToString();
+        //        }
+        //    } else {
+        //        text += "NONE";
+        //    }
+        //}
 
         //text += "\n[b]Objects: [/b] ";
         //if (currentlyShowingLandmark.objects.Count > 0) {

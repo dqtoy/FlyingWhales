@@ -39,25 +39,25 @@ public class DrinkBlood : CharacterTask {
 	//	_assignedCharacter.DestroyAvatar();
 	//}
 	public override bool CanBeDone (Character character, ILocation location){
-		if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
-			return true;
-		}
+		//if(location.tileLocation.landmarkOnTile != null && location.tileLocation.landmarkOnTile.owner != null && location.tileLocation.landmarkOnTile.civilians > 0){
+		//	return true;
+		//}
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){
         //check if there are any landmarks in region and adjacent regions that have civilians
-        List<Region> regionsToCheck = new List<Region>();
-        regionsToCheck.Add(character.specificLocation.tileLocation.region);
-        regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegions);
-        for (int i = 0; i < regionsToCheck.Count; i++) {
-            Region currRegion = regionsToCheck[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.civilians > 0) {
-                    return true;
-                }
-            }
-        }
+        //List<Region> regionsToCheck = new List<Region>();
+        //regionsToCheck.Add(character.specificLocation.tileLocation.region);
+        //regionsToCheck.AddRange(character.specificLocation.tileLocation.region.adjacentRegions);
+        //for (int i = 0; i < regionsToCheck.Count; i++) {
+        //    Region currRegion = regionsToCheck[i];
+        //    for (int j = 0; j < currRegion.landmarks.Count; j++) {
+        //        BaseLandmark currLandmark = currRegion.landmarks[j];
+        //        if (currLandmark.civilians > 0) {
+        //            return true;
+        //        }
+        //    }
+        //}
         return base.AreConditionsMet (character);
 	}
     public override int GetSelectionWeight(Character character) {
@@ -72,7 +72,7 @@ public class DrinkBlood : CharacterTask {
             Region currRegion = regionsToCheck[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.civilians > 0) {
+                //if (currLandmark.civilians > 0) {
                     int weight = 100;//All landmarks with civilians in current and adjacent regions: 100
                     if (currLandmark.owner != null && currLandmark.owner == character.faction) {
                         weight += 100;//Landmark owned by a different faction: +100
@@ -81,7 +81,7 @@ public class DrinkBlood : CharacterTask {
                         weight -= 50;
                     }
                     _landmarkWeights.AddElement(currLandmark, weight);
-                }
+                //}
             }
         }
         LogTargetWeights(_landmarkWeights);

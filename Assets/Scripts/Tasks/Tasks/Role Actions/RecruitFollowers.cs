@@ -47,8 +47,8 @@ public class RecruitFollowers : CharacterTask {
 		if(_currentState != null){
 			_currentState.PerformStateAction ();
 		}
-		if (_targetLandmark == null || _targetLandmark.civilians <= 0 || (_assignedCharacter.party != null && _assignedCharacter.party.isFull)) {
-			EndTaskSuccess ();
+		if (_targetLandmark == null || (_assignedCharacter.party != null && _assignedCharacter.party.isFull)) { //|| _targetLandmark.civilians <= 0 
+            EndTaskSuccess ();
 			return;
 		}
 		if(_daysLeft == 0){
@@ -58,14 +58,14 @@ public class RecruitFollowers : CharacterTask {
 		ReduceDaysLeft(1);
 	}
 	public override bool CanBeDone (Character character, ILocation location){
-		if(character.specificLocation != null && character.specificLocation == location){
-            BaseLandmark landmarkOnTile = location.tileLocation.landmarkOnTile;
-            if (landmarkOnTile != null && landmarkOnTile.owner != null && landmarkOnTile.civilians > 0 && character.faction != null){
-				if(!location.HasHostilitiesWith(character.faction)){
-					return true;
-				}
-			}
-		}
+		//if(character.specificLocation != null && character.specificLocation == location){
+  //          BaseLandmark landmarkOnTile = location.tileLocation.landmarkOnTile;
+  //          if (landmarkOnTile != null && landmarkOnTile.owner != null && landmarkOnTile.civilians > 0 && character.faction != null){
+		//		if(!location.HasHostilitiesWith(character.faction)){
+		//			return true;
+		//		}
+		//	}
+		//}
 		return base.CanBeDone (character, location);
 	}
 	public override bool AreConditionsMet (Character character){

@@ -240,6 +240,8 @@ public class ObjectManager : MonoBehaviour {
                 return new PrayAction(state);
             case ACTION_TYPE.ATTACK:
             return new AttackAction(state);
+            case ACTION_TYPE.JOIN_BATTLE:
+            return new JoinBattleAction(state);
         }
         return null;
     }

@@ -10,7 +10,7 @@ public class UpgradeGear : CharacterTask {
 	public UpgradeGear(TaskCreator createdBy, int defaultDaysLeft = -1, STANCE stance = STANCE.NEUTRAL) : base(createdBy, TASK_TYPE.UPGRADE_GEAR, stance, defaultDaysLeft) {
 		_states = new Dictionary<STATE, State> {
 			{ STATE.MOVE, new MoveState (this) },
-			{ STATE.PURCHASE, new PurchaseState (this, "Equipment") }
+			//{ STATE.PURCHASE, new PurchaseState (this, "Equipment") }
 		};
     }
     #region overrides

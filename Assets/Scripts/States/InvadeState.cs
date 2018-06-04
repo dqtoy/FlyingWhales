@@ -15,7 +15,7 @@ public class InvadeState : State {
 	#endregion
 
 	private void Invade(){
-		KillCivilians ();
+		//KillCivilians ();
 		ChangeLandmarkOwnership ();
 	}
 	private bool AreThereStillHostileInLandmark(){
@@ -56,14 +56,6 @@ public class InvadeState : State {
 			}
 		}
 		return false;
-	}
-	private void KillCivilians(){
-		int civiliansInLandmark = _targetLandmark.civilians;
-		if(civiliansInLandmark > 0){
-			int civilianCasualtiesPercentage = UnityEngine.Random.Range (15, 51);
-			int civilianCasualties = (int)(((float)civilianCasualtiesPercentage / 100f) * (float)civiliansInLandmark);
-			_targetLandmark.ReduceCivilians (civilianCasualties);
-		}
 	}
 	private void ChangeLandmarkOwnership(){
 		if(_parentTask is Invade && !((Invade)_parentTask).canChangeOwnership){

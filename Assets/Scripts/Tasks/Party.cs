@@ -214,7 +214,7 @@ public class Party: IEncounterable, ICombatInitializer {
 				////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
 				//throw new Exception(member.name + " cannot find a settlement from his/her faction!");
                 //will go back to the nearest settlement of their faction
-                settlement.AdjustCivilians(member.raceSetting.race, 1);
+                //settlement.AdjustCivilians(member.raceSetting.race, 1);
             }
         } else {
             if (!forDeath) { //If the member was removed from party, but did not die
@@ -262,7 +262,7 @@ public class Party: IEncounterable, ICombatInitializer {
                     ////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
                     //throw new Exception(currPrisoner.name + " cannot find a settlement from his/her faction!");
                     //convert them to civilians of the nearest settlement of their faction
-                    settlement.AdjustCivilians(currPrisoner.raceSetting.race, 1);
+                    //settlement.AdjustCivilians(currPrisoner.raceSetting.race, 1);
                 }
             } else {
                 //if they are not followers
@@ -507,10 +507,6 @@ public class Party: IEncounterable, ICombatInitializer {
         }
         _civiliansByRace[race] += amount;
         _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
-    }
-    public void TransferCivilians(BaseLandmark to, Dictionary<RACE, int> civilians) {
-        ReduceCivilians(civilians);
-        to.AdjustCivilians(civilians);
     }
     public STANCE GetCurrentStance() {
         if (currentAction != null) {

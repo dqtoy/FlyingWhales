@@ -35,12 +35,12 @@ public class MeteorStrikeData : StorylineData {
 		Region chosenRegion = targetRegions[UnityEngine.Random.Range(0, targetRegions.Count)];
 
 		//Step 2 - Destroy All Life in Region
-		for (int i = 0; i < chosenRegion.landmarks.Count; i++) {
-			BaseLandmark currLandmark = chosenRegion.landmarks [i];
-			if(currLandmark.civilians > 0){
-				currLandmark.KillAllCivilians ();
-			}
-		}
+		//for (int i = 0; i < chosenRegion.landmarks.Count; i++) {
+		//	BaseLandmark currLandmark = chosenRegion.landmarks [i];
+		//	if(currLandmark.civilians > 0){
+		//		currLandmark.KillAllCivilians ();
+		//	}
+		//}
 		if(Messenger.eventTable.ContainsKey("RegionDeath")){
 			Messenger.Broadcast<Region> ("RegionDeath", chosenRegion);
 		}

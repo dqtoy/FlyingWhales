@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour {
             speed = X4_SPEED;
         }
 		this.progressionSpeed = speed;
-        ECS.CombatManager.Instance.updateIntervals = this.progressionSpeed / 5f;
+        ECS.CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) ECS.CombatManager.Instance.numOfCombatActionPerDay;
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
 

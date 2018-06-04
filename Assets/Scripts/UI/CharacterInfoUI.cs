@@ -8,6 +8,7 @@ public class CharacterInfoUI : UIMenu {
 
     private const int MAX_HISTORY_LOGS = 20;
     public bool isWaitingForAttackTarget;
+    public bool isWaitingForJoinBattleTarget;
 
     [Space(10)]
     [Header("Content")]
@@ -39,6 +40,8 @@ public class CharacterInfoUI : UIMenu {
     [Header("Character")]
     [SerializeField] private GameObject attackButtonGO;
     [SerializeField] private ButtonToggle attackBtnToggle;
+    [SerializeField] private GameObject joinBattleButtonGO;
+    [SerializeField] private ButtonToggle joinBattleBtnToggle;
 
     private LogHistoryItem[] logHistoryItems;
 
@@ -411,18 +414,47 @@ public class CharacterInfoUI : UIMenu {
 
     #region Attack Character
     private void ShowAttackButton() {
-        attackButtonGO.SetActive(true);
+        SetActiveAttackButtonGO(true);
         SetAttackButtonState(false);
     }
     public void ToggleAttack() {
         isWaitingForAttackTarget = !isWaitingForAttackTarget;
+        if (isWaitingForAttackTarget) {
+            SetJoinBattleButtonState(false);
+        }
     }
     public void SetAttackButtonState(bool state) {
         isWaitingForAttackTarget = state;
         attackBtnToggle.SetClickState(state);
+        if (isWaitingForAttackTarget) {
+            SetJoinBattleButtonState(false);
+        }
     }
     public void SetActiveAttackButtonGO(bool state) {
         attackButtonGO.SetActive(state);
+    }
+    #endregion
+
+    #region Join Battle Character
+    private void ShowJoinBattleButton() {
+        SetActiveJoinBattleButtonGO(true);
+        SetJoinBattleButtonState(false);
+    }
+    public void ToggleJoinBattle() {
+        isWaitingForJoinBattleTarget = !isWaitingForJoinBattleTarget;
+        if (isWaitingForJoinBattleTarget) {
+            SetAttackButtonState(false);
+        }
+    }
+    public void SetJoinBattleButtonState(bool state) {
+        isWaitingForJoinBattleTarget = state;
+        joinBattleBtnToggle.SetClickState(state);
+        if (isWaitingForJoinBattleTarget) {
+            SetAttackButtonState(false);
+        }
+    }
+    public void SetActiveJoinBattleButtonGO(bool state) {
+        joinBattleButtonGO.SetActive(state);
     }
     #endregion
 
