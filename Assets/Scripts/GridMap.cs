@@ -206,10 +206,10 @@ public class GridMap : MonoBehaviour {
         }
         return null;
     }
-    internal GameObject GetHex(string hexName) {
-        for (int i = 0; i < listHexes.Count; i++) {
-            if (hexName == listHexes[i].name) {
-                return listHexes[i];
+    internal GameObject GetHex(string hexName, List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            if (hexName == tiles[i].name) {
+                return tiles[i].gameObject;
             }
         }
         return null;

@@ -88,12 +88,11 @@ public class Biomes : MonoBehaviour {
 		Instance = this;
 	}
 
-	internal void GenerateBiome(){
+	internal void GenerateBiome(List<HexTile> tiles){
 		//CalculateNewTemperature();
-		for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
-			GameObject currentHexTileGO = GridMap.Instance.listHexes[i];
-			HexTile currentHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-            BIOMES biomeForTile = GetBiomeSimple(currentHexTileGO);
+		for(int i = 0; i < tiles.Count; i++){
+            HexTile currentHexTile = tiles[i];
+            BIOMES biomeForTile = GetBiomeSimple(currentHexTile.gameObject);
             SetBiomeForTile(biomeForTile, currentHexTile);
             //SetElevationSpriteForTile(currentHexTile);
             //currentHexTile.SetPassableState(false);
@@ -354,10 +353,10 @@ public class Biomes : MonoBehaviour {
 			currentHexTile.DeactivateCenterPiece();
 		}
 	}
-	internal void GenerateElevation(){
-		CalculateElevationAndMoisture();
+	internal void GenerateElevation(List<HexTile> tiles, int mapWidth, int mapHeight) {
+		CalculateElevationAndMoisture(tiles, mapWidth, mapHeight);
 	}
-	private void CalculateElevationAndMoisture(){
+	private void CalculateElevationAndMoisture(List<HexTile> tiles, int mapWidth, int mapHeight){
         float elevationFrequency = 19.1f; //14.93f;//2.66f;
         float moistureFrequency = 12.34f; //3.34f;//2.94f;
 		float tempFrequency = 2.64f;//2.4f;
@@ -369,14 +368,14 @@ public class Biomes : MonoBehaviour {
 		string[] splittedNameEq = EquatorGenerator.Instance.listEquator[0].name.Split(new char[]{','});
 		int equatorY = int.Parse (splittedNameEq [1]);
 
-		for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
-            HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+		for(int i = 0; i < tiles.Count; i++){
+            HexTile currTile = tiles[i];
 
-            string[] splittedName = GridMap.Instance.listHexes[i].name.Split(new char[]{','});
+            string[] splittedName = currTile.name.Split(new char[]{','});
 			int[] xy = {int.Parse(splittedName[0]), int.Parse(splittedName[1])};
 
-			float nx = ((float)xy[0]/GridMap.Instance.width);
-			float ny = ((float)xy[1]/GridMap.Instance.height);
+			float nx = ((float)xy[0]/mapWidth);
+			float ny = ((float)xy[1]/mapHeight);
 
 			float elevationNoise = Mathf.PerlinNoise((nx + elevationRand) * elevationFrequency, (ny + elevationRand) * elevationFrequency);
 			ELEVATION elevationType = GetElevationType(elevationNoise);
@@ -386,7 +385,7 @@ public class Biomes : MonoBehaviour {
             currTile.data.moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
 
 			int distanceToEquator = Mathf.Abs (xy [1] - equatorY);
-			float tempGradient = 1.23f / GridMap.Instance.height;
+			float tempGradient = 1.23f / mapHeight;
             currTile.data.temperature = distanceToEquator * tempGradient;
             currTile.data.temperature += (Mathf.PerlinNoise((nx + temperatureRand) * tempFrequency, (ny + temperatureRand) * tempFrequency)) * 0.6f;
 		}

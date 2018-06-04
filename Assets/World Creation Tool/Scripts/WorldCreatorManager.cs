@@ -35,7 +35,7 @@ namespace worldcreator {
         }
 
         #region Grid Generation
-        public IEnumerator GenerateGrid(int width, int height) {
+        public IEnumerator GenerateGrid(int width, int height, bool randomize) {
             this.width = width;
             this.height = height;
             float newX = xOffset * (width / 2);
@@ -74,6 +74,11 @@ namespace worldcreator {
                 }
             }
             hexTiles.ForEach(o => o.FindNeighbours(map));
+            if (randomize) {
+                EquatorGenerator.Instance.GenerateEquator(width, height, hexTiles);
+                Biomes.Instance.GenerateElevation(hexTiles, width, height);
+                Biomes.Instance.GenerateBiome(hexTiles);
+            }
             //CameraMove.Instance.SetWholemapCameraValues();
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);

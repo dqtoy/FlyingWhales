@@ -24,6 +24,7 @@ namespace worldcreator {
         [SerializeField] private Button goBackToMainBtn;
         [SerializeField] private InputField widthField;
         [SerializeField] private InputField heightField;
+        [SerializeField] private Toggle randomizeWorldToggle;
         [SerializeField] private GameObject loadingGO;
         [SerializeField] private Slider loadingSlider;
         [SerializeField] private Text loadingTxt;
@@ -102,7 +103,8 @@ namespace worldcreator {
             mainMenuGO.SetActive(true);
         }
         public void OnClickGenerateGrid() {
-            StartCoroutine(WorldCreatorManager.Instance.GenerateGrid(Int32.Parse(widthField.text), Int32.Parse(heightField.text)));
+            StartCoroutine(WorldCreatorManager.Instance.GenerateGrid(Int32.Parse(widthField.text), Int32.Parse(heightField.text), randomizeWorldToggle.isOn));
+            randomizeWorldToggle.interactable = false;
             generateBtn.interactable = false;
             widthField.interactable = false;
             heightField.interactable = false;

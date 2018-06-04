@@ -27,12 +27,12 @@ public class MapGenerator : MonoBehaviour {
         Minimap.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
-        EquatorGenerator.Instance.GenerateEquator();
-        Biomes.Instance.GenerateElevation();
+        EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
+        Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
         yield return null;
-        Biomes.Instance.GenerateBiome();
+        Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
         Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Regions...");
