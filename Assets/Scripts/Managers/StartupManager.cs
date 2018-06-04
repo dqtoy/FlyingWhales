@@ -15,7 +15,14 @@ public class StartupManager : MonoBehaviour {
 		TaskManager.Instance.Initialize ();
 
         LevelLoaderManager.UpdateLoadingInfo("Initializing World...");
-        this.mapGenerator.InitializeWorld();
+        if (WorldConfigManager.Instance == null || WorldConfigManager.Instance.loadedData == null) {
+            Debug.Log("Generating random world...");
+            this.mapGenerator.InitializeWorld();
+        } else {
+            Debug.Log("Loading world from data...");
+            this.mapGenerator.InitializeWorld(WorldConfigManager.Instance.loadedData);
+        }
+        
         //if (SaveManager.Instance == null) {
         //    this.mapGenerator.InitializeWorld();
         //} else {

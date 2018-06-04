@@ -190,6 +190,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public BaseLandmark(HexTile location, LandmarkSaveData data) : this(){
         _id = Utilities.SetID(this, data.landmarkID);
+        _location = location;
         _specificLandmarkType = data.landmarkType;
         _landmarkName = data.landmarkName;
 

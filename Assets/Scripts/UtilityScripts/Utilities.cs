@@ -36,6 +36,9 @@ public class Utilities : MonoBehaviour {
         }
     }
 
+    public static string worldConfigsSavePath { get { return Application.persistentDataPath + "/Saves/"; } }
+    public static string worldConfigFileExt { get { return ".worldConfig"; } }
+
 
 
     /*

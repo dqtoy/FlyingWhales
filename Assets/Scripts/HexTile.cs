@@ -139,7 +139,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int id { get { return data.id; } }
     public int xCoordinate { get { return data.xCoordinate; } }
     public int yCoordinate { get { return data.yCoordinate; } }
-    public int tileTag { get { return data.tileTag; } }
+    //public int tileTag { get { return data.tileTag; } }
     public string tileName { get { return data.tileName; } }
     public float elevationNoise { get { return data.elevationNoise; } }
     public float moistureNoise { get { return data.moistureNoise; } }
@@ -356,8 +356,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         if (this.region.owner != null && this.region.owner.race == RACE.ELVES) {
             if (landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || landmarkType == LANDMARK_TYPE.IRON_MINES || landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
-                GameObject obj = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
-                GameObject.Instantiate(obj, structureParentGO.transform);
+                GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
+                GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
+                if (landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
+                    obj.transform.localScale = new Vector2(1.5f, 1.5f);
+                }
             } else {
                 landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
             }
@@ -402,11 +405,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
 #else
-        landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        if (this.region.owner != null && this.region.owner.race == RACE.ELVES) {
+            if (data.landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || data.landmarkType == LANDMARK_TYPE.IRON_MINES || data.landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
+                GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(data.landmarkType, this.region.owner.race);
+                GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
+                if (data.landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
+                    obj.transform.localScale = new Vector2(1.5f, 1.5f);
+                }
+            } else {
+                landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+            }
+        } else {
+            landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        }
 #endif
-
-        landmarkGO.transform.localPosition = Vector3.zero;
-        landmarkGO.transform.localScale = Vector3.one;
 
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
@@ -426,6 +438,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 break;
         }
         if (landmarkGO != null) {
+            landmarkGO.transform.localPosition = Vector3.zero;
+            landmarkGO.transform.localScale = Vector3.one;
             _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
         }
         _region.AddLandmarkToRegion(_landmarkOnTile);
@@ -524,9 +538,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     internal float GetDistanceTo(HexTile targetHextile) {
         return Vector3.Distance(this.transform.position, targetHextile.transform.position);
     }
-    public void SetTag(int tag) {
-        data.tileTag = tag;
-    }
+    //public void SetTag(int tag) {
+    //    data.tileTag = tag;
+    //}
     public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data, Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated) {
         if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
             return false; //this tile is not passable or already has a landmark
@@ -1290,6 +1304,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
             }
         }
+        //ShowHexTileInfo();
 #else
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
@@ -1387,61 +1402,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         Debug.Log(text);
     }
     private void ShowHexTileInfo() {
-        //if (_charactersAtLocation.Count > 0) {
-        //    string text = string.Empty;
-        //    text += "Characters in tile: ";
-        //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
-        //        ICombatInitializer currObj = _charactersAtLocation[i];
-        //        if (currObj is Party) {
-        //            text += "\n" + ((Party)currObj).name;
-        //        } else if (currObj is Character) {
-        //            text += "\n" + ((Character)currObj).name;
-        //        }
-        //    }
-        //    UIManager.Instance.ShowSmallInfo(text);
-        //}
-        //PassableTileData data = GetPassableTileData();
-        //string text = this.name + " Adjacent Tile Collections: ";
-        //for (int i = 0; i < data.adjacentTiles.Count; i++) {
-        //    TileCollection currCollection = data.adjacentTiles[i];
-        //    text += "\n " + i.ToString() + " - ";
-        //    for (int j = 0; j < currCollection.tiles.Count; j++) {
-        //        text += currCollection.tiles[j].name + "/";
-        //    }
-        //}
-        //text += "\n" + this.name + " Unadjacent Tile Collections: ";
-        //for (int i = 0; i < data.unadjacentTiles.Count; i++) {
-        //    TileCollection currCollection = data.unadjacentTiles[i];
-        //    text += "\n " + i.ToString() + " - ";
-        //    for (int j = 0; j < currCollection.tiles.Count; j++) {
-        //        text += currCollection.tiles[j].name + "/";
-        //    }
-        //}
-        //PassableTileData data = GetPassableTileData();
-        //string text = this.tileName + " - " + GetPassableType().ToString();
-        //if (data.adjacentTiles.Count > 0) {
-        //    text += "\n Adjacent Data: ";
-        //    for (int i = 0; i < data.adjacentTiles.Count; i++) {
-        //        TileCollection currCollection = data.adjacentTiles[i];
-        //        text += "\n Collection " + i.ToString() + ": ";
-        //        for (int j = 0; j < currCollection.tiles.Count; j++) {
-        //            HexTile currTile = currCollection.tiles[j];
-        //            text += "\n- " + currTile.tileName;
-        //        }
-        //    }
-        //}
-        //if (data.unadjacentTiles.Count > 0) {
-        //    text += "\n Unadjacent Data: ";
-        //    for (int i = 0; i < data.unadjacentTiles.Count; i++) {
-        //        TileCollection currCollection = data.unadjacentTiles[i];
-        //        text += "\n Collection " + i.ToString() + ": ";
-        //        for (int j = 0; j < currCollection.tiles.Count; j++) {
-        //            HexTile currTile = currCollection.tiles[j];
-        //            text += "\n- " + currTile.tileName;
-        //        }
-        //    }
-        //}
-        UIManager.Instance.ShowSmallInfo(this.name + " - " + _isPassable.ToString());
+        UIManager.Instance.ShowSmallInfo(this.name + " - " + this.passableType.ToString());
     }
     private void ShowLandmarkInfo() {
         string text = string.Empty;

@@ -113,9 +113,9 @@ namespace PathFind {
                 //} 
                 else if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT) {
                     foreach (Node n in path.LastStep.allNeighbourRoads) {
-                        if (n.tileTag != start.tileTag) {
-                            continue;
-                        }
+                        //if (n.tileTag != start.tileTag) {
+                        //    continue;
+                        //}
                         //if (n.isHabitable && n.id != start.id && n.id != destination.id) {
                         //    continue;
                         //}
@@ -128,9 +128,9 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
                     foreach (Node n in path.LastStep.allNeighbourRoads) {
-                        if (n.tileTag != start.tileTag) {
-                            continue;
-                        }
+                        //if (n.tileTag != start.tileTag) {
+                        //    continue;
+                        //}
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);

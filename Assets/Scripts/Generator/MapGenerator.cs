@@ -14,6 +14,9 @@ public class MapGenerator : MonoBehaviour {
     internal void InitializeWorld() {
         StartCoroutine(InitializeWorldCoroutine());
     }
+    internal void InitializeWorld(WorldSaveData data) {
+        StartCoroutine(InitializeWorldCoroutine(data));
+    }
 
     private IEnumerator InitializeWorldCoroutine() {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
@@ -149,6 +152,78 @@ public class MapGenerator : MonoBehaviour {
         //StorylineManager.Instance.GenerateStoryLines();
         //CharacterManager.Instance.SchedulePrisonerConversion();
         //CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
+        CameraMove.Instance.UpdateMinimapTexture();
+        loadingWatch.Stop();
+        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
+        LevelLoaderManager.SetLoadingState(false);
+    }
+
+    private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
+        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
+        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        loadingWatch.Start();
+
+        LevelLoaderManager.UpdateLoadingInfo("Loading Map...");
+        yield return null;
+        GridMap.Instance.GenerateGrid(data);
+        CameraMove.Instance.CalculateCameraBounds();
+        Minimap.Instance.Initialize();
+        ObjectPoolManager.Instance.InitializeObjectPools();
+        CameraMove.Instance.SetWholemapCameraValues();
+        //EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
+        //Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
+
+        //LevelLoaderManager.UpdateLoadingInfo("Loading Biomes...");
+        //yield return null;
+        
+
+        LevelLoaderManager.UpdateLoadingInfo("Loading Regions...");
+        yield return null;
+        st.Start();
+        GridMap.Instance.LoadRegions(data);
+        st.Stop();
+
+        GridMap.Instance.GenerateOuterGrid();
+        GridMap.Instance.DivideOuterGridRegions();
+
+        Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
+
+        RoadManager.Instance.GenerateTilePassableTypes();
+
+        UIManager.Instance.InitializeUI();
+        ObjectManager.Instance.Initialize();
+
+        LevelLoaderManager.UpdateLoadingInfo("Loading Factions...");
+        yield return null;
+        st.Start();
+        FactionManager.Instance.LoadFactions(data);
+        st.Stop();
+
+        GridMap.Instance.OccupyRegions(data);
+
+        LevelLoaderManager.UpdateLoadingInfo("Loading Landmarks...");
+        yield return null;
+        st.Start();
+        LandmarkManager.Instance.LoadLandmarks(data);
+        st.Stop();
+
+        
+        //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
+        PathfindingManager.Instance.CreateGrid();
+
+        //FactionManager.Instance.OccupyLandmarksInFactionRegions();
+
+        LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
+        yield return null;
+
+        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
+
+
+        GameManager.Instance.StartProgression();
+        LandmarkManager.Instance.InitializeLandmarks();
+        //CharacterManager.Instance.GenerateCharactersForTesting(2);
+
         CameraMove.Instance.UpdateMinimapTexture();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
