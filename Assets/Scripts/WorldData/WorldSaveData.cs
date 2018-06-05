@@ -10,6 +10,7 @@ public class WorldSaveData {
     public List<RegionSaveData> regionsData;
     public List<FactionSaveData> factionsData;
     public List<LandmarkSaveData> landmarksData;
+    public byte[] pathfindingSettings;
 
     private Dictionary<int, HexTileData> tileDictionary;
 
@@ -49,6 +50,13 @@ public class WorldSaveData {
             landmarksData.Add(landmarkData);
         }
     }
+    public void OccupyPathfindingSettings(HexTile[,] map, int width, int height) {
+        PathfindingManager.Instance.CreateGrid(map, width, height);
+        Pathfinding.Serialization.SerializeSettings settings = new Pathfinding.Serialization.SerializeSettings();
+        //Save node info, and output nice JSON
+        settings.nodes = true;
+        pathfindingSettings = AstarPath.active.data.SerializeGraphs(settings);
+    }
 
     public void ConstructTileDictionary() {
         tileDictionary = new Dictionary<int, HexTileData>();
@@ -80,4 +88,6 @@ public class WorldSaveData {
         }
         return null;
     }
+
+    
 }

@@ -25,9 +25,15 @@ namespace worldcreator {
         public SELECTION_MODE selectionMode;
         public UnitSelectionComponent selectionComponent;
 
+        [Space(10)]
+        [Header("Outer Grid")]
+        public List<HexTile> outerGridList;
+        public HexTile[,] outerGrid;
+        [SerializeField] private Transform _borderParent;
+        public int _borderThickness;
+
         public List<Region> allRegions { get; private set; }
         
-
         private void Awake() {
             Instance = this;
             allRegions = new List<Region>();
@@ -83,6 +89,7 @@ namespace worldcreator {
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
             CreateNewRegion(hexTiles);
+            GenerateOuterGrid();
             //mapWidth = listHexes[listHexes.Count - 1].transform.position.x;
             //mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -130,8 +137,104 @@ namespace worldcreator {
             LoadFactions(data);
             LoadLandmarks(data);
             OccupyRegions(data);
+            GenerateOuterGrid();
+            //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
+        }
+        internal void GenerateOuterGrid() {
+            int newWidth = (int)width + (_borderThickness * 2);
+            int newHeight = (int)height + (_borderThickness * 2);
+
+            float newX = xOffset * (int)(newWidth / 2);
+            float newY = yOffset * (int)(newHeight / 2);
+
+            outerGridList = new List<HexTile>();
+            outerGrid = new HexTile[newWidth, newHeight];
+            //if((int)width % 2 != 0) {
+            //    //odd
+            //    newX += xOffset / 2f;
+            //}
+            //if ((int)height % 2 != 0) {
+            //    //odd
+            //    newY += yOffset / 2f;
+            //}
+            _borderParent.transform.localPosition = new Vector2(-newX, -newY);
+            for (int x = 0; x < newWidth; x++) {
+                for (int y = 0; y < newHeight; y++) {
+                    if ((x >= _borderThickness && x < newWidth - _borderThickness) && (y >= _borderThickness && y < newHeight - _borderThickness)) {
+                        continue;
+                    }
+                    float xPosition = x * xOffset;
+
+                    float yPosition = y * yOffset;
+                    if (y % 2 == 1) {
+                        xPosition += xOffset / 2;
+                    }
+
+                    GameObject hex = GameObject.Instantiate(goHex) as GameObject;
+                    hex.transform.parent = _borderParent.transform;
+                    hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+                    hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
+                    HexTile currHex = hex.GetComponent<HexTile>();
+                    currHex.Initialize();
+                    currHex.data.tileName = hex.name;
+                    currHex.data.xCoordinate = x;
+                    currHex.data.yCoordinate = y;
+
+                    outerGrid[x, y] = currHex;
+                    outerGridList.Add(currHex);
+
+                    //int xToCopy = Mathf.Clamp(x, 0, (int)width - 1);
+                    //int yToCopy = Mathf.Clamp(y, 0, (int)height - 1);
+
+                    //int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
+                    //int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
+                    int xToCopy = x - _borderThickness;
+                    int yToCopy = y - _borderThickness;
+                    if (x < _borderThickness && y - _borderThickness >= 0 && y < height) { //if border thickness is 2 (0 and 1)
+                                                                                           //left border
+                        xToCopy = 0;
+                        yToCopy = y - _borderThickness;
+                    } else if (x >= _borderThickness && x <= width && y < _borderThickness) {
+                        //bottom border
+                        xToCopy = x - _borderThickness;
+                        yToCopy = 0;
+                    } else if (x > width && (y - _borderThickness >= 0 && y - _borderThickness <= height - 1)) {
+                        //right border
+                        xToCopy = (int)width - 1;
+                        yToCopy = y - _borderThickness;
+                    } else if (x >= _borderThickness && x <= width && y - _borderThickness >= height) {
+                        //top border
+                        xToCopy = x - _borderThickness;
+                        yToCopy = (int)height - 1;
+                    } else {
+                        //corners
+                        xToCopy = x;
+                        yToCopy = y;
+                        xToCopy = Mathf.Clamp(xToCopy, 0, (int)width - 1);
+                        yToCopy = Mathf.Clamp(yToCopy, 0, (int)height - 1);
+                    }
+
+                    HexTile hexToCopy = map[xToCopy, yToCopy];
+
+                    hex.name = x + "," + y + "(Border) Copied from " + hexToCopy.name;
+
+                    currHex.SetElevation(hexToCopy.elevationType);
+                    Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
+                    Biomes.Instance.AddBiomeDetailToTile(currHex);
+                    Biomes.Instance.SetElevationSpriteForTile(currHex);
+                    hexToCopy.region.AddOuterGridTile(currHex);
+
+
+                    currHex.DisableColliders();
+                    currHex.unpassableGO.GetComponent<PolygonCollider2D>().enabled = true;
+                    currHex.unpassableGO.SetActive(true);
+                    //currHex.HideFogOfWarObjects();
+                }
+            }
+
+            outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
         }
         private void LoadRegions(WorldSaveData data) {
             for (int i = 0; i < data.regionsData.Count; i++) {
@@ -456,12 +559,13 @@ namespace worldcreator {
             worldData.OccupyRegionData(allRegions);
             worldData.OccupyFactionData(FactionManager.Instance.allFactions);
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
-            //Debug.Log(Application.persistentDataPath);
+            worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {
                 saveName += Utilities.worldConfigFileExt;
             }
             SaveGame.Save<WorldSaveData>(Utilities.worldConfigsSavePath + saveName, worldData);
             StartCoroutine(CaptureScreenshot(saveName));
+            //PathfindingManager.Instance.ClearGraphs();
             WorldCreatorUI.Instance.OnFileSaved(saveName);
         }
         IEnumerator CaptureScreenshot(string fileName) {

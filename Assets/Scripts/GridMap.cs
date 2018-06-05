@@ -56,8 +56,8 @@ public class GridMap : MonoBehaviour {
 
     #region Grid Generation
     internal void GenerateGrid() {
-        float newX = xOffset * (width / 2);
-        float newY = yOffset * (height / 2);
+        float newX = xOffset * ((int)width / 2);
+        float newY = yOffset * ((int)height / 2);
         this.transform.localPosition = new Vector2(-newX, -newY);
         //CameraMove.Instance.minimapCamera.transform.position
         map = new HexTile[(int)width, (int)height];
@@ -98,8 +98,8 @@ public class GridMap : MonoBehaviour {
     internal void GenerateGrid(WorldSaveData data) {
         this.width = data.width;
         this.height = data.height;
-        float newX = xOffset * (width / 2);
-        float newY = yOffset * (height / 2);
+        float newX = xOffset * ((int)width / 2);
+        float newY = yOffset * ((int)height / 2);
         this.transform.localPosition = new Vector2(-newX, -newY);
         map = new HexTile[(int)width, (int)height];
         hexTiles = new List<HexTile>();
@@ -142,19 +142,19 @@ public class GridMap : MonoBehaviour {
         int newWidth = (int)width + (_borderThickness * 2);
         int newHeight = (int)height + (_borderThickness * 2);
 
-        float newX = xOffset * (newWidth / 2);
-        float newY = yOffset * (newHeight / 2);
+        float newX = xOffset * (int)(newWidth / 2);
+        float newY = yOffset * (int)(newHeight / 2);
 
         outerGridList = new List<HexTile>();
         outerGrid = new HexTile[newWidth, newHeight];
-        if(width % 2 != 0) {
-            //odd
-            newX += xOffset / 2f;
-        }
-        if (height % 2 != 0) {
-            //odd
-            newY += yOffset / 2f;
-        }
+        //if((int)width % 2 != 0) {
+        //    //odd
+        //    newX += xOffset / 2f;
+        //}
+        //if ((int)height % 2 != 0) {
+        //    //odd
+        //    newY += yOffset / 2f;
+        //}
         _borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {

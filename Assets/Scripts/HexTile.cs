@@ -625,12 +625,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         int thisXCoordinate = this.xCoordinate;
         int thisYCoordinate = this.yCoordinate;
         if (isForOuterGrid) {
+#if WORLD_CREATION_TOOL
+            if (!worldcreator.WorldCreatorManager.Instance.outerGridList.Contains(neighbour)) {
+                thisXCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
+                thisYCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
+            }
+#else
             if (!GridMap.Instance.outerGridList.Contains(neighbour)) {
                 thisXCoordinate -= GridMap.Instance._borderThickness;
                 thisYCoordinate -= GridMap.Instance._borderThickness;
             }
+#endif
+
         }
-        Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
+            Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
                     (neighbour.yCoordinate - thisYCoordinate));
         if (thisYCoordinate % 2 == 0) { //even
             if (difference.X == -1 && difference.Y == 1) {
@@ -675,9 +683,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return HEXTILE_DIRECTION.NONE;
     }
-    #endregion
+#endregion
 
-    #region Roads
+#region Roads
     public void HighlightRoad(Color color) {
         //for (int i = 0; i < roadGOs.Count; i++) {
         //    GameObject currRoad = roadGOs[i];
@@ -750,9 +758,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    SetRoadColor(currRoad, color);
         //}
     }
-    #endregion
+#endregion
 
-    #region Tile Visuals
+#region Tile Visuals
     internal void SetSortingOrder(int sortingOrder) {
         spriteRenderer.sortingOrder = sortingOrder;
         UpdateSortingOrder();
@@ -963,9 +971,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void UnHighlightTile() {
         _highlightGO.SetActive(false);
     }
-    #endregion
+#endregion
 
-    #region Structures Functions
+#region Structures Functions
     internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
 
@@ -1027,9 +1035,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool HasStructure() {
         return _structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
     }
-    #endregion
+#endregion
 
-    #region Fog of War Functions
+#region Fog of War Functions
     internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
         //if (!KingdomManager.Instance.useFogOfWar) {
         //    fowState = FOG_OF_WAR_STATE.VISIBLE;
@@ -1096,9 +1104,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         FOWSprite.gameObject.SetActive(true);
         //minimapFOWSprite.gameObject.SetActive(true);
     }
-    #endregion
+#endregion
 
-    #region Tile Functions
+#region Tile Functions
     public void DisableColliders() {
         this.GetComponent<Collider2D>().enabled = false;
         Collider[] colliders = this.GetComponentsInChildren<Collider>();
@@ -1144,17 +1152,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-    #endregion
+#endregion
 
-    #region Passability
+#region Passability
     public void SetPassableState(bool state) {
         _isPassable = state;
         _centerPiece.SetActive(!state);
-#if WORLD_CREATION_TOOL
-        unpassableGO.SetActive(false);
-#else
+//#if WORLD_CREATION_TOOL
+//        unpassableGO.SetActive(false);
+//#else
         unpassableGO.SetActive(!state);
-#endif
+//#endif
         if (!state) {
             _passableType = PASSABLE_TYPE.UNPASSABLE;
         }
@@ -1366,12 +1374,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         ResetTile();
     }
 
-#if UNITY_EDITOR
-    [ContextMenu("Select Neighbours")]
-    public void SelectAllTilesInRegion() {
-        UnityEditor.Selection.objects = this.AllNeighbours.Select(x => x.gameObject).ToArray();
-    }
-#endif
+//#if UNITY_EDITOR
+//    [ContextMenu("Select Neighbours")]
+//    public void SelectAllTilesInRegion() {
+//        UnityEditor.Selection.objects = this.AllNeighbours.Select(x => x.gameObject).ToArray();
+//    }
+//#endif
     [ContextMenu("Load Border Lines")]
     public void LoadBorderLinesForTesting() {
         HexTile currTile = this;

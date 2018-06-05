@@ -23,9 +23,9 @@ public class PathfindingManager : MonoBehaviour {
         _allAgents = new List<AIPath>();
     }
 
-    internal void CreateGrid() {
+    internal void CreateGrid(HexTile[,] map, int width, int height) {
         //GameObject planeGO = GameObject.Instantiate(planePrefab, mapGenerator.transform) as GameObject;
-        HexTile topCornerHexTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1];
+        HexTile topCornerHexTile = map[width - 1, height - 1];
         float xSize = (topCornerHexTile.transform.localPosition.x + 4f);
         float zSize = (topCornerHexTile.transform.localPosition.y + 4f);
 
@@ -40,7 +40,14 @@ public class PathfindingManager : MonoBehaviour {
         mainGraph.collision.mask = LayerMask.GetMask("Unpassable");
         RescanGrid();
     }
-
+    public void LoadSettings(byte[] bytes) {
+        AstarPath.active.data.DeserializeGraphs(bytes);
+        //mainGraph = AstarPath.active.graphs[0] as GridGraph;
+        //RescanGrid();
+    }
+    public void ClearGraphs() {
+        aStarPath.data.RemoveGraph(mainGraph);
+    }
     public void RescanGrid() {
         AstarPath.active.Scan(mainGraph);
     }
@@ -53,10 +60,12 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     #region Monobehaviours
+#if !WORLD_CREATION_TOOL
     private void Update() {
         for (int i = 0; i < _allAgents.Count; i++) {
             _allAgents[i].UpdateMe();
         }
     }
+#endif
     #endregion
 }

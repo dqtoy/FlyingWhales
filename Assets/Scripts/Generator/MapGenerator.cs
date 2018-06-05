@@ -126,7 +126,7 @@ public class MapGenerator : MonoBehaviour {
         //    Debug.Log(string.Format("Road Generation took {0} ms to complete", st.ElapsedMilliseconds));
         //}
         LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
-        PathfindingManager.Instance.CreateGrid();
+        PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
 
@@ -207,9 +207,10 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.LoadLandmarks(data);
         st.Stop();
 
-        
+
         //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
-        PathfindingManager.Instance.CreateGrid();
+        PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
+        //PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, GridMap.Instance.width, GridMap.Instance.height);
 
         //FactionManager.Instance.OccupyLandmarksInFactionRegions();
 
