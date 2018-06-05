@@ -21,13 +21,13 @@ public class LocalizationManager : MonoBehaviour {
 	}
 
 	void Awake(){
-		if(Instance == null){
-			Instance = this;
-		}else if (Instance != this){
-			Destroy (this.gameObject);
-		}
-		DontDestroyOnLoad (this.gameObject);
-	}
+        if (Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        } else {
+            Destroy(this.gameObject);
+        }
+    }
 	internal void Initialize(){
 		this.language = Utilities.defaultLanguage;
 		this.filePath = Application.streamingAssetsPath + "/" + this.language.ToString();
