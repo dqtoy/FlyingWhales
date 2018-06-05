@@ -7,7 +7,11 @@ public class SaveManager : MonoBehaviour {
     public Save currentSave;
 
     private void Awake() {
-        Instance = this;
-        DontDestroyOnLoad(Instance);
+        if (Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        } else {
+            Destroy(this.gameObject);
+        }
     }
 }
