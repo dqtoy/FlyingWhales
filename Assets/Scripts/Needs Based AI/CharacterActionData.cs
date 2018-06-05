@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -42,10 +44,11 @@ public struct CharacterActionData {
     public List<IPrerequisite> prerequisites;
 }
 
-    //public void SetActionName(string name) {
-    //    this.actionName = name;
-    //}
+//public void SetActionName(string name) {
+//    this.actionName = name;
+//}
 
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
     private bool enableSuccessRate, enableDuration, enableResourceGiven, enableResourceNeeded;
@@ -344,3 +347,4 @@ public class CharacterActionDrawer : PropertyDrawer {
     }
     #endregion
 }
+#endif
