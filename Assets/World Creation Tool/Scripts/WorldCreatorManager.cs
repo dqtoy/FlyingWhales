@@ -26,8 +26,7 @@ namespace worldcreator {
         public UnitSelectionComponent selectionComponent;
 
         public List<Region> allRegions { get; private set; }
-        public string savePath { get { return Application.persistentDataPath + "/Saves/"; } }
-        public string saveFileExt { get { return ".worldConfig"; } }
+        
 
         private void Awake() {
             Instance = this;
@@ -63,7 +62,7 @@ namespace worldcreator {
                     hexTiles.Add(currHex);
                     currHex.Initialize();
                     currHex.data.id = id;
-                    //currHex.tileName = RandomNameGenerator.Instance.GetTileName();
+                    currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
                     currHex.data.xCoordinate = x;
                     currHex.data.yCoordinate = y;
                     //listHexes.Add(hex);
@@ -458,16 +457,16 @@ namespace worldcreator {
             worldData.OccupyFactionData(FactionManager.Instance.allFactions);
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             //Debug.Log(Application.persistentDataPath);
-            if (!saveName.Contains(saveFileExt)) {
-                saveName += saveFileExt;
+            if (!saveName.Contains(Utilities.worldConfigFileExt)) {
+                saveName += Utilities.worldConfigFileExt;
             }
-            SaveGame.Save<WorldSaveData>(savePath + saveName, worldData);
+            SaveGame.Save<WorldSaveData>(Utilities.worldConfigsSavePath + saveName, worldData);
             StartCoroutine(CaptureScreenshot(saveName));
             WorldCreatorUI.Instance.OnFileSaved(saveName);
         }
         IEnumerator CaptureScreenshot(string fileName) {
             CameraMove.Instance.uiCamera.gameObject.SetActive(false);
-            fileName = fileName.Replace(saveFileExt, "");
+            fileName = fileName.Replace(Utilities.worldConfigFileExt, "");
             yield return new WaitForEndOfFrame();
 
             string path = Application.persistentDataPath + "/Saves/"
@@ -494,11 +493,11 @@ namespace worldcreator {
 
         public WorldSaveData GetWorldData(string saveName) {
             FileInfo saveFile = GetSaveFile(saveName);
-            return SaveGame.Load<WorldSaveData>(savePath + saveName);
+            return SaveGame.Load<WorldSaveData>(Utilities.worldConfigsSavePath + saveName);
         }
         public FileInfo GetSaveFile(string saveName) {
-            Directory.CreateDirectory(savePath);
-            DirectoryInfo info = new DirectoryInfo(savePath);
+            Directory.CreateDirectory(Utilities.worldConfigsSavePath);
+            DirectoryInfo info = new DirectoryInfo(Utilities.worldConfigsSavePath);
             FileInfo[] files = info.GetFiles();
             for (int i = 0; i < files.Length; i++) {
                 FileInfo fileInfo = files[i];

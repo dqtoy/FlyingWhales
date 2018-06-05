@@ -95,6 +95,49 @@ public class GridMap : MonoBehaviour {
         mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
         //listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
     }
+    internal void GenerateGrid(WorldSaveData data) {
+        this.width = data.width;
+        this.height = data.height;
+        float newX = xOffset * (width / 2);
+        float newY = yOffset * (height / 2);
+        this.transform.localPosition = new Vector2(-newX, -newY);
+        map = new HexTile[(int)width, (int)height];
+        hexTiles = new List<HexTile>();
+        int totalTiles = (int)width * (int)height;
+        int id = 0;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                float xPosition = x * xOffset;
+
+                float yPosition = y * yOffset;
+                if (y % 2 == 1) {
+                    xPosition += xOffset / 2;
+                }
+
+                GameObject hex = GameObject.Instantiate(goHex) as GameObject;
+                hex.transform.parent = this.transform;
+                hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+                hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
+                hex.name = x + "," + y;
+                HexTile currHex = hex.GetComponent<HexTile>();
+                hexTiles.Add(currHex);
+                currHex.Initialize();
+                currHex.data = data.GetTileData(id);
+                map[x, y] = currHex;
+                id++;
+            }
+        }
+        hexTiles.ForEach(o => o.FindNeighbours(map));
+        //Biomes.Instance.UpdateTileVisuals(hexTiles);
+        //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
+        //Biomes.Instance.LoadPassableObjects(hexTiles);
+
+        //LoadRegions(data);
+        //LoadFactions(data);
+        //LoadLandmarks(data);
+        //OccupyRegions(data);
+
+    }
     internal void GenerateOuterGrid() {
         int newWidth = (int)width + (_borderThickness * 2);
         int newHeight = (int)height + (_borderThickness * 2);
@@ -385,6 +428,58 @@ public class GridMap : MonoBehaviour {
         }
         //return true;
     }
+    public void LoadRegions(WorldSaveData data) {
+        allRegions = new List<Region>();
+        for (int i = 0; i < data.regionsData.Count; i++) {
+            RegionSaveData currData = data.regionsData[i];
+            HexTile centerTile = null;
+            List<HexTile> regionTiles = GetRegionTiles(currData, ref centerTile);
+            LoadRegion(regionTiles, centerTile, currData);
+        }
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            currRegion.UpdateAdjacency();
+        }
+    }
+    private List<HexTile> GetRegionTiles(RegionSaveData regionData, ref HexTile centerTile) {
+        List<int> tileIDs = new List<int>(regionData.tileData);
+        List<HexTile> regionTiles = new List<HexTile>();
+        for (int i = 0; i < hexTiles.Count; i++) {
+            HexTile currTile = hexTiles[i];
+            if (tileIDs.Contains(currTile.id)) {
+                regionTiles.Add(currTile);
+                tileIDs.Remove(currTile.id);
+                if (currTile.id == regionData.centerTileID) {
+                    centerTile = currTile;
+                }
+                if (tileIDs.Count == 0) {
+                    break;
+                }
+            }
+        }
+        return regionTiles;
+    }
+    private Region LoadRegion(List<HexTile> tiles, HexTile centerTile, RegionSaveData data) {
+        Region newRegion = new Region(centerTile, tiles, data);
+        newRegion.AddTile(tiles);
+        allRegions.Add(newRegion);
+
+        //WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
+        return newRegion;
+    }
+    public void OccupyRegions(WorldSaveData data) {
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            RegionSaveData regionData = data.GetRegionData(currRegion.id);
+            if (regionData.owner != -1) {
+                Faction owner = FactionManager.Instance.GetFactionBasedOnID(regionData.owner);
+                owner.OwnRegion(currRegion);
+                currRegion.SetOwner(owner);
+                currRegion.ReColorBorderTiles(owner.factionColor);
+                currRegion.SetMinimapColor(owner.factionColor, 69f / 255f);
+            }
+        }
+    }
     //public void BottleneckBorders() {
     //    for (int i = 0; i < allRegions.Count; i++) {
     //        Region currRegion = allRegions[i];
@@ -426,7 +521,7 @@ public class GridMap : MonoBehaviour {
     //        }
 
     //        if (hasBigGaps) {
-                
+
     //        } else {
     //            break;
     //        }

@@ -173,32 +173,32 @@ namespace worldcreator {
             }
         }
         private void OnHoverOverTile(HexTile tile) {
-            //switch (WorldCreatorManager.Instance.selectionMode) {
-            //    case SELECTION_MODE.RECTANGLE:
-            //    case SELECTION_MODE.TILE:
-            //        tile.HighlightTile(Color.grey, 128f/255f);
-            //        break;
-            //    case SELECTION_MODE.REGION:
-            //        tile.region.HighlightRegion(Color.grey, 128/255f);
-            //        break;
-            //    default:
-            //        break;
-            //}
+            switch (WorldCreatorManager.Instance.selectionMode) {
+                case SELECTION_MODE.RECTANGLE:
+                case SELECTION_MODE.TILE:
+                    tile.HighlightTile(Color.grey, 128f/255f);
+                    break;
+                case SELECTION_MODE.REGION:
+                    tile.region.HighlightRegion(Color.grey, 128/255f);
+                    break;
+                default:
+                    break;
+            }
         }
         private void OnHoverOutTile(HexTile tile) {
-            //switch (WorldCreatorManager.Instance.selectionMode) {
-            //    case SELECTION_MODE.RECTANGLE:
-            //    case SELECTION_MODE.TILE:
-            //        if (!selection.Contains(tile)) {
-            //            tile.UnHighlightTile();
-            //        }
-            //        break;
-            //    case SELECTION_MODE.REGION:
-            //        tile.region.UnhighlightRegion();
-            //        break;
-            //    default:
-            //        break;
-            //}
+            switch (WorldCreatorManager.Instance.selectionMode) {
+                case SELECTION_MODE.RECTANGLE:
+                case SELECTION_MODE.TILE:
+                    if (!selection.Contains(tile)) {
+                        tile.UnHighlightTile();
+                    }
+                    break;
+                case SELECTION_MODE.REGION:
+                    tile.region.UnhighlightRegion();
+                    break;
+                default:
+                    break;
+            }
         }
         public void ClearSelectedTiles() {
             if (highlightedTiles != null) {

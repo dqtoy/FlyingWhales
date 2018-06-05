@@ -124,6 +124,14 @@ public class FactionManager : MonoBehaviour {
     }
 
     #region Faction Generation
+    public void LoadFactions(WorldSaveData data) {
+        if (data.factionsData != null) {
+            for (int i = 0; i < data.factionsData.Count; i++) {
+                FactionSaveData currData = data.factionsData[i];
+                Faction currFaction = CreateNewFaction(currData);
+            }
+        }
+    }
     /*
      Generate the initital factions,
      races are specified in the inspector (inititalRaces)

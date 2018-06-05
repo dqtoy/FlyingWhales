@@ -13,8 +13,8 @@ namespace worldcreator {
         public string saveName;
 
         public void SetSave(string saveName) {
-            if (!saveName.Contains(WorldCreatorManager.Instance.saveFileExt)) {
-                saveName += WorldCreatorManager.Instance.saveFileExt;
+            if (!saveName.Contains(Utilities.worldConfigFileExt)) {
+                saveName += Utilities.worldConfigFileExt;
             }
             this.saveName = saveName;
             saveNameLbl.text = saveName;

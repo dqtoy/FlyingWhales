@@ -26,6 +26,14 @@ public class LandmarkManager : MonoBehaviour {
         corruptedLandmarksCount = 0;
     }
 
+    public void LoadLandmarks(WorldSaveData data) {
+        if (data.landmarksData != null) {
+            for (int i = 0; i < data.landmarksData.Count; i++) {
+                LandmarkSaveData landmarkData = data.landmarksData[i];
+                CreateNewLandmarkOnTile(landmarkData);
+            }
+        }
+    }
     /*
      Create a new landmark on a specified tile.
      */

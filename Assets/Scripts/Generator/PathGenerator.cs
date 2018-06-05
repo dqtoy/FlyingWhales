@@ -132,9 +132,9 @@ public class PathGenerator : MonoBehaviour {
         if (startingTile == null || destinationTile == null) {
             return null;
         }
-        if (startingTile.tileTag != destinationTile.tileTag) {
-            return null;
-        }
+        //if (startingTile.tileTag != destinationTile.tileTag) {
+        //    return null;
+        //}
         PathFindingThread newThread = new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, data);
         MultiThreadPool.Instance.AddToThreadPool(newThread);
         return newThread;
@@ -143,9 +143,9 @@ public class PathGenerator : MonoBehaviour {
         if (startingTile == null || destinationTile == null) {
             return null;
         }
-        if (startingTile.tileTag != destinationTile.tileTag) {
-            return null;
-        }
+        //if (startingTile.tileTag != destinationTile.tileTag) {
+        //    return null;
+        //}
         PathFindingThread newThread = new PathFindingThread(landmark, startingTile, destinationTile, pathfindingMode, data);
         MultiThreadPool.Instance.AddToThreadPool(newThread);
         return newThread;

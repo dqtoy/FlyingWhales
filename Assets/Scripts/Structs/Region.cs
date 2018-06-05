@@ -94,14 +94,14 @@ public class Region : IHasNeighbours<Region> {
     public Region(HexTile centerOfMass) {
         _id = Utilities.SetID(this);
         _name = RandomNameGenerator.Instance.GetRegionName();
-        SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
         _adjacentRegionsViaRoad = new List<Region>();
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
         _tilesWithMaterials = new List<HexTile>();
-        AddTile(_centerOfMass);
+        AddTile(centerOfMass);
+        SetCenterOfMass(centerOfMass);
     }
 
     public Region(HexTile centerOfMass, List<HexTile> tilesInRegion, RegionSaveData data) {
@@ -113,8 +113,8 @@ public class Region : IHasNeighbours<Region> {
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
         _tilesWithMaterials = new List<HexTile>();
-        SetCenterOfMass(centerOfMass);
         AddTile(tilesInRegion);
+        SetCenterOfMass(centerOfMass);
     }
     public Region(HexTile centerOfMass, List<HexTile> tilesInRegion) {
         _id = Utilities.SetID(this);
@@ -125,12 +125,12 @@ public class Region : IHasNeighbours<Region> {
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
         _tilesWithMaterials = new List<HexTile>();
-        SetCenterOfMass(centerOfMass);
         AddTile(tilesInRegion);
+        SetCenterOfMass(centerOfMass);
     }
 
-        #region Center Of Mass Functions
-        internal void ReComputeCenterOfMass() {
+     #region Center Of Mass Functions
+    internal void ReComputeCenterOfMass() {
         int maxXCoordinate = _tilesInRegion.Max(x => x.xCoordinate);
         int minXCoordinate = _tilesInRegion.Min(x => x.xCoordinate);
         int maxYCoordinate = _tilesInRegion.Max(x => x.yCoordinate);
@@ -174,7 +174,6 @@ public class Region : IHasNeighbours<Region> {
         } catch {
             throw new Exception("Cannot Recompute center of mass for " + this.name + ". Current center is " + centerOfMass.name + ". Computed new center is " + midPointX.ToString() + ", " + midPointY.ToString());
         }
-        
     }
     internal void RevalidateCenterOfMass() {
         if (_centerOfMass.elevationType != ELEVATION.PLAIN) {
@@ -190,6 +189,9 @@ public class Region : IHasNeighbours<Region> {
             //_centerOfMass.RemoveLandmarkOnTile();
             //_centerOfMass.isHabitable = false;
             //_centerOfMass.emptyCityGO.SetActive(false);
+        }
+        if (!tilesInRegion.Contains(newCenter)) {
+            throw new Exception("Setting center of region as a tile that is not included in region! Center tile to set is: " + newCenter.name);
         }
         _centerOfMass = newCenter;
         //_centerOfMass.isHabitable = true;

@@ -237,12 +237,12 @@ namespace worldcreator {
 
         #region Saving
         private void LoadSaveFiles() {
-            Directory.CreateDirectory(WorldCreatorManager.Instance.savePath);
-            DirectoryInfo info = new DirectoryInfo(WorldCreatorManager.Instance.savePath);
+            Directory.CreateDirectory(Utilities.worldConfigsSavePath);
+            DirectoryInfo info = new DirectoryInfo(Utilities.worldConfigsSavePath);
             FileInfo[] files = info.GetFiles();
             for (int i = 0; i < files.Length; i++) {
                 FileInfo currInfo = files[i];
-                if (currInfo.Name.Contains(WorldCreatorManager.Instance.saveFileExt)) {
+                if (currInfo.Name.Contains(Utilities.worldConfigFileExt)) {
                     GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, savesScrollView.content.transform);
                     saveItemGO.GetComponent<SaveItem>().SetSave(currInfo.Name);
                 }
@@ -269,9 +269,9 @@ namespace worldcreator {
         }
         public void ShowSaveConfirmation(string fileName = "") {
             if (string.IsNullOrEmpty(fileName)) {
-                fileName = saveNameField.text + WorldCreatorManager.Instance.saveFileExt;
+                fileName = saveNameField.text + Utilities.worldConfigFileExt;
             }
-            if (Utilities.DoesFileExist(WorldCreatorManager.Instance.savePath + fileName)) {
+            if (Utilities.DoesFileExist(Utilities.worldConfigsSavePath + fileName)) {
                 UnityAction yesAction = new UnityAction(() => WorldCreatorManager.Instance.SaveWorld(fileName));
                 _messageBox.ShowMessageBox(MESSAGE_BOX.YES_NO, "Overwrite save", "Do you want to overwrite save file " + fileName + "?", yesAction);
             } else {
