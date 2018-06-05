@@ -1,17 +1,20 @@
-﻿#if UNITY_EDITOR
+﻿
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
 [ExecuteInEditMode]
+#endif
 public class DefinesManager : MonoBehaviour {
 
     public string[] mainSceneDefines;
     public string[] mainMenuSceneDefines;
     public string[] worldCreationDefines;
 
+#if UNITY_EDITOR
     private void Awake() {
         if (!EditorApplication.isPlaying) { //only do this when scene is not playing!
             string activeScene = EditorSceneManager.GetActiveScene().name;
@@ -36,5 +39,6 @@ public class DefinesManager : MonoBehaviour {
             Debug.Log("Set Defines to: " + defines);
         }
     }
-}
 #endif
+}
+
