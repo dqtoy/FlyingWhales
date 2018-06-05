@@ -120,14 +120,14 @@ public class CameraMove : MonoBehaviour {
          minY = vertExtent - mapY / 2.0f;
          maxY = mapY / 2.0f - vertExtent;
 
-        float halfOfHexagon = (256f / 2f) / 100f;
+        float halfOfHexagon = (256f / 2f) / 100f; //1.28
 #if WORLD_CREATION_TOOL
         if (Utilities.IsEven(worldcreator.WorldCreatorManager.Instance.height -1)) {
 #else
         if (Utilities.IsEven((int)GridMap.Instance.height - 1)) {
 #endif
-            MIN_X = (minX - halfOfHexagon) - minXUIAdjustment;
-            MAX_X = (maxX + (halfOfHexagon * 2f)) + maxXUIAdjustment;
+            MIN_X = (minX - halfOfHexagon * 2f) - minXUIAdjustment;
+            MAX_X = (maxX + (halfOfHexagon * 2f)) + (maxXUIAdjustment / (maxFOV/Camera.main.orthographicSize));
         } else {
             MIN_X = (minX - (halfOfHexagon * 2f)) - minXUIAdjustment;
             MAX_X = (maxX + halfOfHexagon) + maxXUIAdjustment;
