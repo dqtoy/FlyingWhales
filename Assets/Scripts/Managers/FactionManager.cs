@@ -236,7 +236,7 @@ public class FactionManager : MonoBehaviour {
             Tribe currTribe = allTribes[i];
             for (int j = 0; j < currTribe.settlements.Count; j++) {
                 Settlement currSettlement = currTribe.settlements[j];
-                CreateInititalFactionCharacters(currTribe, currSettlement);
+                CreateInitialFactionCharacters(currTribe, currSettlement);
             }
             //CreateChieftainForFaction(currTribe);
         }
@@ -275,7 +275,7 @@ public class FactionManager : MonoBehaviour {
     /*
      Initital tribes should have a chieftain and a village head.
          */
-    private void CreateInititalFactionCharacters(Faction faction, Settlement settlement) {
+    private void CreateInitialFactionCharacters(Faction faction, Settlement settlement) {
         int numOfCharacters = Random.Range(1, 3); //Generate 1 to 3 characters in each Village with civilians, limit class based on technologies known by its Faction.
         WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(settlement);
         WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
