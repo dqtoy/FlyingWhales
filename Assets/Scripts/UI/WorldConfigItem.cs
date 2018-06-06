@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class WorldConfigItem : MonoBehaviour {
-    [SerializeField] private UITexture worldScreenshot;
-    [SerializeField] private UILabel worldConfigName;
+    [SerializeField] private Image worldScreenshot;
+    [SerializeField] private TextMeshProUGUI worldConfigName;
 
     private FileInfo file;
     private string fileName;
@@ -16,7 +18,8 @@ public class WorldConfigItem : MonoBehaviour {
         fileName = file.Name.Replace(Utilities.worldConfigFileExt, "");
         worldConfigName.text = fileName;
         Texture2D worldConfigTexture = IMG2Sprite.LoadTexture(Utilities.worldConfigsSavePath + fileName + ".png");
-        worldScreenshot.mainTexture = worldConfigTexture;
+        Sprite newSprite = Sprite.Create(worldConfigTexture, new Rect(0, 0, worldConfigTexture.width, worldConfigTexture.height), new Vector2(0.5f, 0.5f));
+        worldScreenshot.sprite = newSprite;
         //worldScreenshot.MakePixelPerfect();
     }
 

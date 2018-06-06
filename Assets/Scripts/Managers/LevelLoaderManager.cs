@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class LevelLoaderManager : MonoBehaviour {
     public static LevelLoaderManager Instance;
 
     [SerializeField] private GameObject loaderGO;
-    [SerializeField] private UIProgressBar loaderProgressBar;
-    [SerializeField] private UILabel loaderText;
-    [SerializeField] private UILabel loaderInfoText;
+    [SerializeField] private TextMeshProUGUI loaderInfoText;
 
     private float _progress;
 
@@ -55,8 +54,8 @@ public class LevelLoaderManager : MonoBehaviour {
     }
 
     public void UpdateLoadingBar(float amount) {
-        loaderText.text = (100f * amount).ToString("F0") + " %";
-        loaderProgressBar.value = amount;
+        //loaderText.text = (100f * amount).ToString("F0") + " %";
+        //loaderProgressBar.value = amount;
     }
     public static void UpdateLoadingInfo(string info) {
         if(LevelLoaderManager.Instance != null) {
