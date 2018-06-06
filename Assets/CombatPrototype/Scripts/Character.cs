@@ -65,6 +65,9 @@ namespace ECS {
         //Character Icon
         private CharacterIcon _icon;
 
+        //Character Portrait
+        private PortraitSettings _portraitSettings;
+
 		private Color _characterColor;
 		private string _characterColorCode;
 		private bool _isDead;
@@ -410,6 +413,9 @@ namespace ECS {
 			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData(this);
             _actionQueue = new CharacterActionQueue<CharacterAction>();
+            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(gender);
+            //GameObject portrait = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, UIManager.Instance.transform);
+            //portrait.GetComponent<CharacterPortrait>().GeneratePortrait(_portraitSettings);
 			previousActions = new Dictionary<CharacterTask, string> ();
 			//actionWeights = new WeightedDictionary<CharacterTask> ();
             _actionData = new ActionData(this);

@@ -28,6 +28,15 @@ public class CharacterManager : MonoBehaviour {
 	public Sprite banditSprite;
 	public Sprite chieftainSprite;
 
+    [Header("Character Portrait Assets")]
+    public List<Sprite> maleHairSprites;
+    public List<Sprite> femaleHairSprites;
+    public List<Sprite> noseSprites;
+    public List<Sprite> mouthSprites;
+    public List<Sprite> eyeSprites;
+    public List<Sprite> eyeBrowSprites;
+    public List<Color> hairColors;
+
     #region getters/setters
     //public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
     //    get { return citizenAgeTable.Where(x => x.Value.Any()).ToDictionary(x => x.Key, v => v.Value); }
@@ -463,5 +472,23 @@ public class CharacterManager : MonoBehaviour {
 		}
 		return null;
 	}
-	#endregion
+    #endregion
+
+    #region Character Portraits
+    public PortraitSettings GenerateRandomPortrait(GENDER gender) {
+        PortraitSettings ps = new PortraitSettings();
+        ps.gender = gender;
+        ps.eyesIndex = Random.Range(0, eyeSprites.Count);
+        ps.eyeBrowIndex = Random.Range(0, eyeBrowSprites.Count);
+        List<Sprite> hairsToUse = maleHairSprites;
+        if (gender == GENDER.FEMALE) {
+            hairsToUse = femaleHairSprites;
+        }
+        ps.hairIndex = Random.Range(0, hairsToUse.Count);
+        ps.noseIndex = Random.Range(0, noseSprites.Count);
+        ps.mouthIndex = Random.Range(0, mouthSprites.Count);
+        ps.hairColor = hairColors[Random.Range(0, hairColors.Count)];
+        return ps;
+    }
+    #endregion
 }
