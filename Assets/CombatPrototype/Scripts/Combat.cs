@@ -51,7 +51,6 @@ namespace ECS{
             if (side == SIDES.A) {
                 this.charactersSideA.Add(character);
                 this.characterSideACopy.Add(character);
-                character.SetRowNumber(1);
             } else {
                 this.charactersSideB.Add(character);
                 this.characterSideBCopy.Add(character);
@@ -75,7 +74,6 @@ namespace ECS{
             if (side == SIDES.A) {
 				this.charactersSideA.AddRange(characters);
 				this.characterSideACopy.AddRange(characters);
-				
 			} else {
 				this.charactersSideB.AddRange(characters);
                 this.characterSideBCopy.AddRange(characters);

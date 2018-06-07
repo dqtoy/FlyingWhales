@@ -146,7 +146,7 @@ public class MapGenerator : MonoBehaviour {
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
-        //CharacterManager.Instance.GenerateCharactersForTesting(2);
+        //CharacterManager.Instance.GenerateCharactersForTesting(1);
         FactionManager.Instance.GenerateFactionCharacters();
         //FactionManager.Instance.GenerateMonsters();
         //StorylineManager.Instance.GenerateStoryLines();
@@ -210,9 +210,9 @@ public class MapGenerator : MonoBehaviour {
 
         //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
-        //PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, GridMap.Instance.width, GridMap.Instance.height);
+        PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int) GridMap.Instance.width, (int) GridMap.Instance.height);
 
-        //FactionManager.Instance.OccupyLandmarksInFactionRegions();
+        FactionManager.Instance.OccupyLandmarksInFactionRegions();
 
         LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
         yield return null;
@@ -223,7 +223,7 @@ public class MapGenerator : MonoBehaviour {
 
         GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
-        //CharacterManager.Instance.GenerateCharactersForTesting(2);
+        CharacterManager.Instance.GenerateCharactersForTesting(1);
 
         CameraMove.Instance.UpdateMinimapTexture();
         loadingWatch.Stop();

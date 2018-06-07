@@ -56,6 +56,15 @@ public class AttackAction : CharacterAction {
             combat.AddCharacter(SIDES.A, enemy);
             combat.AddCharacter(SIDES.B, _characterObj.character);
             //MultiThreadPool.Instance.AddToThreadPool(combat);
+
+            Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
+            combatLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
+            combatLog.AddToFillers(_characterObj.character, _characterObj.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+            enemy.AddHistory(combatLog);
+            _characterObj.character.AddHistory(combatLog);
+            Debug.Log("Starting combat between " + enemy.name + " and  " + _characterObj.character.name);
             combat.CombatSimulation();
         } else {
             SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(_characterObj.character.currentSide);
