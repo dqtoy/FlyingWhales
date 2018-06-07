@@ -101,20 +101,18 @@ public class ActionData {
                     return;
                 }
                 ILocation characterLocation = _character.specificLocation;
-                if (characterLocation != null && currentAction.state.obj.specificLocation != null) {
-                    if(characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
-                        //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
-                        if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
-                            CharacterAction newAction = currentAction.state.obj.currentState.GetActionInState(currentAction);
-                            if (newAction != null) {
-                                AssignAction(newAction);
-                            } else {
-                                EndAction();
-                                return;
-                            }
+                if (characterLocation != null && currentAction.state.obj.specificLocation != null && characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
+                    //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
+                    if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
+                        CharacterAction newAction = currentAction.state.obj.currentState.GetActionInState(currentAction);
+                        if (newAction != null) {
+                            AssignAction(newAction);
+                        } else {
+                            EndAction();
+                            return;
                         }
-                        DoAction();
                     }
+                    DoAction();
                 } else {
                     if (currentAction.state.obj.specificLocation != null) {
                         if (currentAction.actionType == ACTION_TYPE.ATTACK) {
