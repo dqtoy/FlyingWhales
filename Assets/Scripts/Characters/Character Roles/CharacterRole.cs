@@ -434,7 +434,7 @@ public class CharacterRole {
     }
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
     private float CalculateFullnessImpact(int currentFullness) {
-        return (Mathf.Pow (-1.007f, ((float)-currentFullness))) + (float)_maxFullness;
+        return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
     }
 
     //Formula for calculation of happiness based on current energy, meaning what's the happiness equivalent given the energy
