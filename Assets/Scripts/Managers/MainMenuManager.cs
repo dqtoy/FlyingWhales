@@ -15,6 +15,7 @@ public class MainMenuManager : MonoBehaviour {
     [SerializeField] private GameObject worldConfigsMenuGO;
     [SerializeField] private GameObject worldConfigPrefab;
     [SerializeField] private GameObject worldConfigContent;
+    [SerializeField] private ContentSorter worldConfigContentSorter;
 
     public void OnClickPlayGame() {
         //PlayGame();
