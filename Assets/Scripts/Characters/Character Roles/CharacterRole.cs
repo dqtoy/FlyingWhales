@@ -321,6 +321,9 @@ public class CharacterRole {
         }
     }
 
+    public void DepleteFaith() {
+        AdjustFaith(-2);
+    }
     public void SetFaith(int amount) {
         _faith = amount;
     }
@@ -356,9 +359,9 @@ public class CharacterRole {
             case NEEDS.PRESTIGE:
             return _prestige >= _maxPrestige;
             case NEEDS.FAITH:
-            return _prestige >= _maxPrestige;
+            return _faith >= _maxFaith;
             case NEEDS.SAFETY:
-            return _prestige >= _maxPrestige;
+            return _safety >= _maxSafety;
         }
         return false;
     }
@@ -378,75 +381,87 @@ public class CharacterRole {
         float happinessIncrease = 0f;
         int advertisedAmount = 0;
         int currentAmount = 0;
+        int maxAmount = 0;
         CalculateImpact calculateImpact = null;
         switch (need) {
             case NEEDS.FULLNESS:
             currentAmount = _fullness;
+            maxAmount = _maxFullness;
             advertisedAmount = action.actionData.advertisedFullness;
             calculateImpact = CalculateFullnessImpact;
             break;
             case NEEDS.ENERGY:
             currentAmount = _energy;
+            maxAmount = _maxEnergy;
             advertisedAmount = action.actionData.advertisedEnergy;
             calculateImpact = CalculateEnergyImpact;
             break;
             case NEEDS.FUN:
             currentAmount = _fun;
+            maxAmount = _maxFun;
             advertisedAmount = action.actionData.advertisedFun;
             calculateImpact = CalculateFunImpact;
             break;
             case NEEDS.PRESTIGE:
             currentAmount = _prestige;
+            maxAmount = _maxPrestige;
             advertisedAmount = action.actionData.advertisedPrestige;
             calculateImpact = CalculatePrestigeImpact;
             break;
             case NEEDS.FAITH:
             currentAmount = _faith;
+            maxAmount = _maxFaith;
             advertisedAmount = action.actionData.advertisedFaith;
             calculateImpact = CalculateFaithImpact;
             break;
             case NEEDS.SAFETY:
             currentAmount = _safety;
+            maxAmount = _maxSafety;
             advertisedAmount = action.actionData.advertisedSafety;
             calculateImpact = CalculateSafetyImpact;
             break;
         }
         int futureAmount = currentAmount + advertisedAmount;
         if(calculateImpact != null) {
-            happinessIncrease = calculateImpact(futureAmount) - calculateImpact(currentAmount);
+            if(futureAmount > maxAmount) {
+                futureAmount = maxAmount;
+            }
+            float futureImpact = calculateImpact(futureAmount);
+            float currentImpact = calculateImpact(currentAmount);
+            happinessIncrease = futureImpact - currentImpact;
         }
         return happinessIncrease;
     }
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
     private float CalculateFullnessImpact(int currentFullness) {
-        return (Mathf.Pow (-1.007f, (float)-currentFullness)) + (float)_maxFullness;
+        return (Mathf.Pow (-1.007f, ((float)-currentFullness))) + (float)_maxFullness;
     }
 
     //Formula for calculation of happiness based on current energy, meaning what's the happiness equivalent given the energy
     private float CalculateEnergyImpact(int currentEnergy) {
-        return (-0.4f * (float) -currentEnergy) + 350f;
+        return (-0.4f * ((float) -currentEnergy)) + 350f;
     }
 
     //Formula for calculation of happiness based on current fun, meaning what's the happiness equivalent given the fun
     private float CalculateFunImpact(int currentFun) {
-        float value = 0.022f * (float)currentFun;
+        float value = 0.022f * ((float)currentFun);
         return (Mathf.Pow(value, 2f)) + 50f;
     }
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(int currentPrestige) {
-        float value = 0.03f * (float) currentPrestige;
+        float value = 0.03f * ((float) currentPrestige);
         return (Mathf.Pow(value, 2f)) + 50f;
     }
 
     //Formula for calculation of happiness based on current faith, meaning what's the happiness equivalent given the faith
     private float CalculateFaithImpact(int currentFaith) {
-        return (0.2f * (float) currentFaith) + 150f;
+        return (0.2f * ((float) currentFaith)) + 150f;
     }
 
     //Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
     private float CalculateSafetyImpact(int currentSafety) {
-        return (0.2f * (float)currentSafety) + 150f;
+        return (0.2f * ((float)currentSafety)) + 150f;
     }
     
     #endregion

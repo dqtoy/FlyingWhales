@@ -38,7 +38,7 @@ public class Hero : CharacterRole {
 
 		//_defaultRoleTask = _roleTasks [1];
 
-        SetFullness(1000);
+        SetFullness(-1000);
         SetEnergy(1000);
         SetFun(600);
         SetPrestige(400);
@@ -66,6 +66,7 @@ public class Hero : CharacterRole {
         DepleteFullness();
         DepleteEnergy();
         DepleteFun();
+        DepleteFaith();
         //DepletePrestige();
     }
 }
