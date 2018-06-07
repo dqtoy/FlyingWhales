@@ -157,7 +157,7 @@ public class ActionData {
     }
 
     private void LookForAction() {
-        //isWaiting = true;
-        //MultiThreadPool.Instance.AddToThreadPool(actionThread);
+        isWaiting = true;
+        MultiThreadPool.Instance.AddToThreadPool(actionThread);
     }
 }
