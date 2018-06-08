@@ -435,7 +435,7 @@ public class CharacterRole {
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
     private float CalculateFullnessImpact(int currentFullness) {
         //return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
-        float result = Mathf.Pow(1.007f, (float) -currentFullness);
+        float result = (Mathf.Pow(1.007f, (float) -currentFullness)) + 20f;
         if (currentFullness < 0) { result *= -1f; }
         return result;
     }
@@ -450,7 +450,7 @@ public class CharacterRole {
 
     //Formula for calculation of happiness based on current fun, meaning what's the happiness equivalent given the fun
     private float CalculateFunImpact(int currentFun) {
-        float value = 0.024f * ((float)currentFun);
+        float value = 0.018f * ((float)currentFun);
         float result = (Mathf.Pow(value, 2f)) + 50f;
         if (currentFun < 0) { result *= -1f; }
         return result;
@@ -458,8 +458,8 @@ public class CharacterRole {
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(int currentPrestige) {
-        float value = 0.03f * ((float) -currentPrestige);
-        float result = (Mathf.Pow(value, 2f)) + 50f;
+        float value = 0.024f * ((float) -currentPrestige);
+        float result = Mathf.Pow(value, 2f);
         if (currentPrestige < 0) { result *= -1f; }
         return result;
     }
