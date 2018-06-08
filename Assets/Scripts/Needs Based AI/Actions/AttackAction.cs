@@ -67,6 +67,9 @@ public class AttackAction : CharacterAction {
             Debug.Log("Starting combat between " + enemy.name + " and  " + _characterObj.character.name);
             combat.CombatSimulation();
         } else {
+            if(enemy.currentCombat != null && enemy.currentCombat == _characterObj.character.currentCombat) {
+                return;
+            }
             SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(_characterObj.character.currentSide);
             _characterObj.character.currentCombat.AddCharacter(sideToJoin, enemy);
         }

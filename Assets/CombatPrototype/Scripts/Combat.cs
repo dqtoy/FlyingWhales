@@ -47,27 +47,29 @@ namespace ECS{
         #region ECS.Character Management
         //Add a character to a side
         internal void AddCharacter(SIDES side, ECS.Character character) {
-            int rowNumber = 1;
-            if (side == SIDES.A) {
-                this.charactersSideA.Add(character);
-                this.characterSideACopy.Add(character);
-            } else {
-                this.charactersSideB.Add(character);
-                this.characterSideBCopy.Add(character);
-                rowNumber = 5;
+            if(!this.charactersSideA.Contains(character) && !this.charactersSideB.Contains(character)) {
+                int rowNumber = 1;
+                if (side == SIDES.A) {
+                    this.charactersSideA.Add(character);
+                    this.characterSideACopy.Add(character);
+                } else {
+                    this.charactersSideB.Add(character);
+                    this.characterSideBCopy.Add(character);
+                    rowNumber = 5;
+                }
+                character.SetSide(side);
+                character.currentCombat = this;
+                character.SetRowNumber(rowNumber);
+                character.actRate = character.agility * 5;
+                if (hasStarted && !isDone) {
+                    string log = character.coloredUrlName + " joins the battle on Side " + side.ToString();
+                    Debug.Log(log);
+                    AddCombatLog(log, side);
+                }
+                if (CombatPrototypeUI.Instance != null) {
+                    CombatPrototypeUI.Instance.UpdateCharactersList(side);
+                }
             }
-            character.SetSide(side);
-            character.currentCombat = this;
-            character.SetRowNumber(rowNumber);
-            character.actRate = character.agility * 5;
-            if(hasStarted && !isDone) {
-                string log = character.coloredUrlName + " joins the battle on Side " + side.ToString();
-                Debug.Log(log);
-                AddCombatLog(log, side);
-            }
-            if (CombatPrototypeUI.Instance != null){
-				CombatPrototypeUI.Instance.UpdateCharactersList(side);
-			}
         }
 		internal void AddCharacters(SIDES side, List<ECS.Character> characters) {
             int rowNumber = 1;
