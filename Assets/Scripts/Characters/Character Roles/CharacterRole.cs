@@ -434,34 +434,50 @@ public class CharacterRole {
     }
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
     private float CalculateFullnessImpact(int currentFullness) {
-        return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
+        //return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
+        float result = Mathf.Pow(1.007f, (float) -currentFullness);
+        if (currentFullness < 0) { result *= -1f; }
+        return result;
     }
 
     //Formula for calculation of happiness based on current energy, meaning what's the happiness equivalent given the energy
     private float CalculateEnergyImpact(int currentEnergy) {
-        return (-0.4f * ((float) -currentEnergy)) + 350f;
+        //return (-0.4f * ((float) -currentEnergy)) + 350f;
+        float result = (-0.4f * ((float) currentEnergy)) + 350f;
+        if (currentEnergy < 0) { result *= -1f; }
+        return result;
     }
 
     //Formula for calculation of happiness based on current fun, meaning what's the happiness equivalent given the fun
     private float CalculateFunImpact(int currentFun) {
         float value = 0.022f * ((float)currentFun);
-        return (Mathf.Pow(value, 2f)) + 50f;
+        float result = (Mathf.Pow(value, 2f)) + 50f;
+        if (currentFun < 0) { result *= -1f; }
+        return result;
     }
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(int currentPrestige) {
         float value = 0.03f * ((float) currentPrestige);
-        return (Mathf.Pow(value, 2f)) + 50f;
+        float result = (Mathf.Pow(value, 2f)) + 50f;
+        if (currentPrestige < 0) { result *= -1f; }
+        return result;
     }
 
     //Formula for calculation of happiness based on current faith, meaning what's the happiness equivalent given the faith
     private float CalculateFaithImpact(int currentFaith) {
-        return (0.2f * ((float) currentFaith)) + 150f;
+        //return (0.2f * ((float) currentFaith)) + 150f;
+        float result = (-0.2f * ((float) currentFaith)) + 210f;
+        if (currentFaith < 0) { result *= -1f; }
+        return result;
     }
 
     //Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
     private float CalculateSafetyImpact(int currentSafety) {
-        return (0.2f * ((float)currentSafety)) + 150f;
+        //return (0.2f * ((float)currentSafety)) + 150f;
+        float result = (-0.2f * ((float) currentSafety)) + 210f;
+        if (currentSafety < 0) { result *= -1f; }
+        return result;
     }
     
     #endregion
