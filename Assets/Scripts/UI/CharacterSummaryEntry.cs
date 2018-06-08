@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.EventSystems;
 
-public class CharacterSummaryEntry : MonoBehaviour {
+public class CharacterSummaryEntry : MonoBehaviour, IPointerClickHandler {
 
     private ECS.Character _character;
 
-    [SerializeField] private UI2DSprite bgSprite;
-    [SerializeField] private UILabel characterNameLbl;
-    [SerializeField] private UILabel factionNameLbl;
-    [SerializeField] private UILabel raceLbl;
-    [SerializeField] private UILabel roleLbl;
+    [SerializeField] private Image bgSprite;
+    [SerializeField] private TextMeshProUGUI characterNameLbl;
+    [SerializeField] private TextMeshProUGUI factionNameLbl;
+    [SerializeField] private TextMeshProUGUI raceLbl;
+    [SerializeField] private TextMeshProUGUI roleLbl;
 
     #region getters/setters
     public ECS.Character character {
@@ -34,7 +37,7 @@ public class CharacterSummaryEntry : MonoBehaviour {
         roleLbl.text = Utilities.NormalizeString(character.role.roleType.ToString());
     }
 
-    private void OnClick() {
+    public void OnPointerClick(PointerEventData eventData) {
         UIManager.Instance.ShowCharacterInfo(_character);
     }
 

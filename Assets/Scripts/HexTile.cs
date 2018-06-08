@@ -151,7 +151,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         get { return tileName + "(" + xCoordinate + ", " + yCoordinate + ")"; }
     }
     public string urlName {
-        get { return "[url=" + this.id.ToString() + "_hextile]" + tileName + "[/url]"; }
+        get { return "<link=" + '"' + this.id.ToString() + '"' + "_hextile>" + tileName + "</link>"; }
     }
     public string coordinates {
         get { return xCoordinate + ", " + yCoordinate; }
@@ -1260,14 +1260,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         if (this.landmarkOnTile != null) {
-            if (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark != null) {
-                if (UIManager.Instance.settlementInfoUI.isWaitingForAttackTarget && !UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
-                    if (UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.CanAttack(this.landmarkOnTile)) {
+            if (UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark != null) {
+                if (UIManager.Instance.landmarkInfoUI.isWaitingForAttackTarget && !UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
+                    if (UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.CanAttack(this.landmarkOnTile)) {
                         //Attack landmark;
-                        Debug.Log(UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
-                        UIManager.Instance.settlementInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
-                        UIManager.Instance.settlementInfoUI.SetAttackButtonState(false);
-                        UIManager.Instance.settlementInfoUI.SetActiveAttackButtonGO(false);
+                        Debug.Log(UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
+                        UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
+                        UIManager.Instance.landmarkInfoUI.SetAttackButtonState(false);
+                        UIManager.Instance.landmarkInfoUI.SetActiveAttackButtonGO(false);
                         return;
                     } else {
                         Debug.Log("Cannot attack " + landmarkOnTile.landmarkName + "! Same faction!");
@@ -1320,7 +1320,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
-        //ShowHexTileInfo();
+        ShowHexTileInfo();
         //if (Input.GetMouseButtonDown(0)) {
         //    LeftClick();
         //} else if (Input.GetMouseButtonDown(1)) {
@@ -1335,6 +1335,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
 #else
         _hoverHighlightGO.SetActive(false);
+        HideSmallInfoWindow();
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
@@ -1343,7 +1344,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
         //	}
         //}
-        HideSmallInfoWindow();
+        
 #endif
     }
 #endregion

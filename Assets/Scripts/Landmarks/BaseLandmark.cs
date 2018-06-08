@@ -61,7 +61,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 		get { return _landmarkName; }
 	}
 	public string urlName {
-		get { return "[url=" + this._id.ToString() + "_landmark]" + _landmarkName + "[/url]"; }
+		get { return "<link=" + '"' + this._id.ToString() + "_landmark" + '"' + ">" + _landmarkName + "</link>"; }
 	}
     public LANDMARK_TYPE specificLandmarkType {
         get { return _specificLandmarkType; }

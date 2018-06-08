@@ -122,16 +122,16 @@ namespace ECS {
 			get { return this._name; }
 		}
 		public string coloredName{
-			get { return "[" + this._characterColorCode + "]" + this._name + "[-]"; }
+			get { return "<color=" + '"' + this._characterColorCode + '"' + ">" + this._name; }
 		}
 		public string urlName{
-			get { return "[url=" + this._id.ToString() + "_character]" + this._name + "[/url]"; }
+			get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
 		}
 		public string coloredUrlName{
-			get { return "[url=" + this._id.ToString() + "_character]" + "[" + this._characterColorCode + "]" + this._name + "[-]" + "[/url]"; }
+			get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
 		}
 		public string prisonerName{
-			get { return "[url=" + this._id.ToString() + "_prisoner]" + this._name + "[/url]"; }
+			get { return "<link=" + '"' + this._id.ToString() + "_prisoner" + '"' + ">" + this._name + "</link>"; }
 		}
 		public int id {
             get { return _id; }
@@ -383,6 +383,9 @@ namespace ECS {
         }
         public bool isIdle {
             get { return _isIdle; }
+        }
+        public PortraitSettings portraitSettings {
+            get { return _portraitSettings; }
         }
         #endregion
 

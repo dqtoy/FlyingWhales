@@ -361,7 +361,7 @@ public class Utilities : MonoBehaviour {
 					//		objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
 					//	}
 					//}
-					wordToReplace = "[url=" + i.ToString() + "][b]" + objectLog[i].value + "[/b][/url]";
+					wordToReplace = "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
 					break;
 				}
 			}

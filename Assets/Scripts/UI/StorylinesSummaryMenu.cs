@@ -34,7 +34,7 @@ public class StorylinesSummaryMenu : UIMenu {
         storylineInfoLbl.text = info;
         var v3 = Input.mousePosition;
         v3.z = 10.0f;
-        v3 = UIManager.Instance.uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+        //v3 = UIManager.Instance.uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
         storylineInfoGO.transform.position = new Vector3(storylineInfoGO.transform.position.x, v3.y, v3.z);
     }
 

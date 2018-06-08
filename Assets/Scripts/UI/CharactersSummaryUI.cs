@@ -2,24 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 
 public class CharactersSummaryUI : UIMenu {
 
     private Action sortingAction;
 
     [SerializeField] private GameObject characterEntryPrefab;
-    [SerializeField] private UIGrid characterEntriesGrid;
-    [SerializeField] private UIEventTrigger nameHeaderTrigger;
-    [SerializeField] private UIEventTrigger factionHeaderTrigger;
-    [SerializeField] private UIEventTrigger raceHeaderTrigger;
-    [SerializeField] private UIEventTrigger roleHeaderTrigger;
+    [SerializeField] private ScrollRect charactersScrollRect;
+    //[SerializeField] private UIEventTrigger nameHeaderTrigger;
+    //[SerializeField] private UIEventTrigger factionHeaderTrigger;
+    //[SerializeField] private UIEventTrigger raceHeaderTrigger;
+    //[SerializeField] private UIEventTrigger roleHeaderTrigger;
 
     private List<CharacterSummaryEntry> characterEntries;
 
-    public override void ShowMenu() {
-        base.ShowMenu();
-        StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
-    }
+    //public override void ShowMenu() {
+    //    base.ShowMenu();
+    //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
+    //}
 
     internal override void Initialize() {
         base.Initialize();
@@ -28,20 +29,20 @@ public class CharactersSummaryUI : UIMenu {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
         sortingAction = () => OrderByName();
-        EventDelegate.Set(nameHeaderTrigger.onClick, () => SetSortingAction(OrderByName));
-        EventDelegate.Set(factionHeaderTrigger.onClick, () => SetSortingAction(OrderByFaction));
-        EventDelegate.Set(raceHeaderTrigger.onClick, () => SetSortingAction(OrderByRace));
-        EventDelegate.Set(roleHeaderTrigger.onClick, () => SetSortingAction(OrderByRole));
+        //EventDelegate.Set(nameHeaderTrigger.onClick, () => SetSortingAction(OrderByName));
+        //EventDelegate.Set(factionHeaderTrigger.onClick, () => SetSortingAction(OrderByFaction));
+        //EventDelegate.Set(raceHeaderTrigger.onClick, () => SetSortingAction(OrderByRace));
+        //EventDelegate.Set(roleHeaderTrigger.onClick, () => SetSortingAction(OrderByRole));
     }
 
     private void AddCharacterEntry(ECS.Character character) {
         if (character.role.roleType != CHARACTER_ROLE.FOLLOWER) {
-            GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, characterEntriesGrid.transform);
+            GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);
             newEntryGO.transform.localScale = Vector3.one;
             CharacterSummaryEntry newEntry = newEntryGO.GetComponent<CharacterSummaryEntry>();
             newEntry.SetCharacter(character);
             characterEntries.Add(newEntry);
-            characterEntriesGrid.Reposition();
+            //characterEntriesGrid.Reposition();
         }
         sortingAction();
     }
@@ -82,36 +83,36 @@ public class CharactersSummaryUI : UIMenu {
             CharacterSummaryEntry currEntry = characterEntries[i];
             currEntry.OnOrderByName();
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
-        }
+        //if (this.gameObject.activeInHierarchy) {
+        //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
+        //}
     }
     private void OrderByFaction() {
         for (int i = 0; i < characterEntries.Count; i++) {
             CharacterSummaryEntry currEntry = characterEntries[i];
             currEntry.OnOrderByFaction();
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
-        }
+        //if (this.gameObject.activeInHierarchy) {
+        //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
+        //}
     }
     private void OrderByRace() {
         for (int i = 0; i < characterEntries.Count; i++) {
             CharacterSummaryEntry currEntry = characterEntries[i];
             currEntry.OnOrderByRace();
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
-        }
+        //if (this.gameObject.activeInHierarchy) {
+        //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
+        //}
     }
     private void OrderByRole() {
         for (int i = 0; i < characterEntries.Count; i++) {
             CharacterSummaryEntry currEntry = characterEntries[i];
             currEntry.OnOrderByRole();
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
-        }
+        //if (this.gameObject.activeInHierarchy) {
+        //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
+        //}
     }
     #endregion
 

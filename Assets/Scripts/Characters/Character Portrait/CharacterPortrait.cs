@@ -31,11 +31,15 @@ public class CharacterPortrait : MonoBehaviour {
 
         nose.sprite = CharacterManager.Instance.noseSprites[settings.noseIndex];
         mouth.sprite = CharacterManager.Instance.mouthSprites[settings.mouthIndex];
+        HairSettings chosenHairSettings;
         if (settings.gender == GENDER.FEMALE) {
-            hair.sprite = CharacterManager.Instance.femaleHairSprites[settings.hairIndex];
+            chosenHairSettings = CharacterManager.Instance.femaleHairSettings[settings.hairIndex];
         } else {
-            hair.sprite = CharacterManager.Instance.maleHairSprites[settings.hairIndex];
+            chosenHairSettings = CharacterManager.Instance.maleHairSettings[settings.hairIndex];
         }
+        hair.sprite = chosenHairSettings.hairVisual;
+        hair.transform.localPosition = chosenHairSettings.hairPosition;
+
         hair.color = settings.hairColor;
     }
 }

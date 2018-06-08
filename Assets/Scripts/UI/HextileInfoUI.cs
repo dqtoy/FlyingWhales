@@ -2,14 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine.UI;
 
 public class HextileInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private UILabel hexTileInfoLbl;
-    [SerializeField] private UIScrollView infoScrollView;
+    [SerializeField] private TextMeshProUGUI hexTileInfoLbl;
+    [SerializeField] private ScrollRect infoScrollView;
 
     internal HexTile currentlyShowingHexTile {
         get { return _data as HexTile; }
@@ -18,7 +20,7 @@ public class HextileInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateHexTileInfo);
-        tweenPos.AddOnFinished(() => UpdateHexTileInfo());
+        //tweenPos.AddOnFinished(() => UpdateHexTileInfo());
     }
 
     public override void OpenMenu() {
@@ -42,27 +44,27 @@ public class HextileInfoUI : UIMenu {
             return;
         }
         string text = string.Empty;
-        text += "[b]Name:[/b] " + currentlyShowingHexTile.tileName;
-		text += "\n[b]Biome:[/b] " + currentlyShowingHexTile.biomeType.ToString();
-		text += "\n[b]Elevation:[/b] " + currentlyShowingHexTile.elevationType.ToString ();
+        text += "<b>Name:</b> " + currentlyShowingHexTile.tileName;
+		text += "\n<b>Biome:</b> " + currentlyShowingHexTile.biomeType.ToString();
+		text += "\n<b>Elevation:</b> " + currentlyShowingHexTile.elevationType.ToString ();
 
-        text += "\n[b]Landmark Name:[/b] ";
+        text += "\n<b>Landmark Name:</b> ";
 		if(currentlyShowingHexTile.landmarkOnTile != null){
 			text += currentlyShowingHexTile.landmarkOnTile.landmarkName;
 		}else{
 			text += "NONE";
 		}
 
-		text += "\n[b]Base Landmark Type:[/b] ";
+		text += "\n<b>Base Landmark Type:</b> ";
 		if(currentlyShowingHexTile.landmarkOnTile != null){
 			text += currentlyShowingHexTile.landmarkOnTile.urlName;
 		}else{
 			text += "NONE";
 		}
 
-		//text += "\n[b]Road Type:[/b] " + currentlyShowingHexTile.roadType.ToString ();;
+		//text += "\n<b>Road Type:</b> " + currentlyShowingHexTile.roadType.ToString ();;
 
-		text += "\n[b]Characters: [/b] ";
+		text += "\n<b>Characters: </b> ";
 		if (currentlyShowingHexTile.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingHexTile.charactersAtLocation.Count; i++) {
 				if (currentlyShowingHexTile.charactersAtLocation[i] is ECS.Character) {
@@ -85,7 +87,6 @@ public class HextileInfoUI : UIMenu {
 			text += "NONE";
 		}
         hexTileInfoLbl.text = text;
-        infoScrollView.ResetPosition();
     }
 
 //	public void OnClickCloseBtn(){

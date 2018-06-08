@@ -56,8 +56,8 @@ public class GameManager : MonoBehaviour {
 
 	[ContextMenu("Start Progression")]
 	public void StartProgression(){
-		UIManager.Instance.SetProgressionSpeed1X();
-		UIManager.Instance.x1Btn.SetAsClicked();
+		//UIManager.Instance.SetProgressionSpeed1X();
+		//UIManager.Instance.x1Btn.SetAsClicked();
         //Messenger.Broadcast("UpdateUI");
         SetPausedState(false);
 		SchedulingManager.Instance.StartScheduleCalls ();
