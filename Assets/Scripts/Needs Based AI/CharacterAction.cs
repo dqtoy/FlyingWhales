@@ -110,7 +110,7 @@ public class CharacterAction {
             case NEEDS.PRESTIGE:
             character.role.AdjustPrestige(_actionData.providedPrestige);
             break;
-            case NEEDS.FAITH:
+            case NEEDS.SANITY:
             character.role.AdjustSanity(_actionData.providedSanity);
             break;
             case NEEDS.SAFETY:

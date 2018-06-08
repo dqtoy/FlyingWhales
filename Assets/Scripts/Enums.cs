@@ -1329,7 +1329,7 @@ public enum NEEDS {
     ENERGY,
     FUN,
     PRESTIGE,
-    FAITH,
+    SANITY,
     SAFETY,
 }
 

@@ -13,7 +13,7 @@ public class PrayAction : CharacterAction {
         base.PerformAction(character);
         ActionSuccess();
         GiveAllReward(character);
-        if (character.role.IsFull(NEEDS.FAITH)) {
+        if (character.role.IsFull(NEEDS.SANITY)) {
             EndAction(character);
         }
     }

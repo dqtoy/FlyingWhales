@@ -358,7 +358,7 @@ public class CharacterRole {
             return _fun >= _maxFun;
             case NEEDS.PRESTIGE:
             return _prestige >= _maxPrestige;
-            case NEEDS.FAITH:
+            case NEEDS.SANITY:
             return _sanity >= _maxSanity;
             case NEEDS.SAFETY:
             return _safety >= _maxSafety;
@@ -373,7 +373,7 @@ public class CharacterRole {
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction) {
         return GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction)
-            + GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.FAITH, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction);
+            + GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.SANITY, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction);
     }
 
     delegate float CalculateImpact(int currentNeed);
@@ -408,7 +408,7 @@ public class CharacterRole {
             advertisedAmount = action.actionData.advertisedPrestige;
             calculateImpact = CalculatePrestigeImpact;
             break;
-            case NEEDS.FAITH:
+            case NEEDS.SANITY:
             currentAmount = _sanity;
             maxAmount = _maxSanity;
             advertisedAmount = action.actionData.advertisedSanity;
