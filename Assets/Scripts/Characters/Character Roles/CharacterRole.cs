@@ -17,9 +17,9 @@ public class CharacterRole {
 	protected CharacterTask _defaultRoleTask;
 	protected bool _cancelsAllOtherTasks;
 	protected bool _isRemoved;
-    protected int _fullness, _energy, _fun, _prestige, _faith, _safety;
-    protected int _maxFullness, _maxEnergy, _maxFun, _maxPrestige, _maxFaith, _maxSafety;
-    protected int _minFullness, _minEnergy, _minFun, _minPrestige, _minFaith, _minSafety;
+    protected int _fullness, _energy, _fun, _prestige, _sanity, _safety;
+    protected int _maxFullness, _maxEnergy, _maxFun, _maxPrestige, _maxSanity, _maxSafety;
+    protected int _minFullness, _minEnergy, _minFun, _minPrestige, _minSanity, _minSafety;
     protected bool _isHungry, _isFamished, _isTired, _isExhausted, _isSad, _isDepressed, _isAnxious, _isInsecure;
     protected float _happiness;
 
@@ -60,8 +60,8 @@ public class CharacterRole {
     public int prestige {
         get { return _prestige; }
     }
-    public int faith {
-        get { return _faith; }
+    public int sanity {
+        get { return _sanity; }
     }
     public int safety {
         get { return _safety; }
@@ -78,8 +78,8 @@ public class CharacterRole {
     public int maxPrestige {
         get { return _maxPrestige; }
     }
-    public int maxFaith {
-        get { return _maxFaith; }
+    public int maxSanity {
+        get { return _maxSanity; }
     }
     public int maxSafety {
         get { return _maxSafety; }
@@ -102,14 +102,14 @@ public class CharacterRole {
         _maxEnergy = 1000;
         _maxFun = 1000;
         _maxPrestige = 1000;
-        _maxFaith = 1000;
+        _maxSanity = 1000;
         _maxSafety = 1000;
 
         _minFullness = -1000;
         _minEnergy = -1000;
         _minFun = -1000;
         _minPrestige = -1000;
-        _minFaith = -1000;
+        _minSanity = -1000;
         _minSafety = -1000;
     }
 
@@ -280,7 +280,7 @@ public class CharacterRole {
     }
 
     public void DepletePrestige() {
-        AdjustPrestige(-1);
+        AdjustPrestige(-7);
     }
     public void SetPrestige(int amount) {
         _prestige = amount;
@@ -321,17 +321,17 @@ public class CharacterRole {
         }
     }
 
-    public void DepleteFaith() {
-        AdjustFaith(-2);
+    public void DepleteSanity() {
+        AdjustSanity(-2);
     }
-    public void SetFaith(int amount) {
-        _faith = amount;
+    public void SetSanity(int amount) {
+        _sanity = amount;
     }
-    public void AdjustFaith(int amount) {
-        int previous = _faith;
-        _faith += amount;
-        _faith = Mathf.Clamp(_faith, _minFaith, _maxFaith);
-        if (previous != _faith) {
+    public void AdjustSanity(int amount) {
+        int previous = _sanity;
+        _sanity += amount;
+        _sanity = Mathf.Clamp(_sanity, _minSanity, _maxSanity);
+        if (previous != _sanity) {
             UpdateHappiness();
         }
     }
@@ -359,7 +359,7 @@ public class CharacterRole {
             case NEEDS.PRESTIGE:
             return _prestige >= _maxPrestige;
             case NEEDS.FAITH:
-            return _faith >= _maxFaith;
+            return _sanity >= _maxSanity;
             case NEEDS.SAFETY:
             return _safety >= _maxSafety;
         }
@@ -368,7 +368,7 @@ public class CharacterRole {
 
     public void UpdateHappiness() {
         _happiness = CalculateFullnessImpact(_fullness) + CalculateEnergyImpact(_energy) + CalculateFunImpact(_fun)
-            + CalculatePrestigeImpact(_prestige) + CalculateFaithImpact(_faith) + CalculateSafetyImpact(_safety);
+            + CalculatePrestigeImpact(_prestige) + CalculateSanityImpact(_sanity) + CalculateSafetyImpact(_safety);
     }
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction) {
@@ -409,10 +409,10 @@ public class CharacterRole {
             calculateImpact = CalculatePrestigeImpact;
             break;
             case NEEDS.FAITH:
-            currentAmount = _faith;
-            maxAmount = _maxFaith;
-            advertisedAmount = action.actionData.advertisedFaith;
-            calculateImpact = CalculateFaithImpact;
+            currentAmount = _sanity;
+            maxAmount = _maxSanity;
+            advertisedAmount = action.actionData.advertisedSanity;
+            calculateImpact = CalculateSanityImpact;
             break;
             case NEEDS.SAFETY:
             currentAmount = _safety;
@@ -464,11 +464,11 @@ public class CharacterRole {
         return result;
     }
 
-    //Formula for calculation of happiness based on current faith, meaning what's the happiness equivalent given the faith
-    private float CalculateFaithImpact(int currentFaith) {
-        //return (0.2f * ((float) currentFaith)) + 150f;
-        float result = (-0.2f * ((float) currentFaith)) + 210f;
-        if (currentFaith < 0) { result *= -1f; }
+    //Formula for calculation of happiness based on current sanity, meaning what's the happiness equivalent given the sanity
+    private float CalculateSanityImpact(int currentSanity) {
+        //return (0.2f * ((float) currentSanity)) + 150f;
+        float result = (-0.2f * ((float) currentSanity)) + 210f;
+        if (currentSanity < 0) { result *= -1f; }
         return result;
     }
 
