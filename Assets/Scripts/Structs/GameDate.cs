@@ -42,31 +42,29 @@ public struct GameDate {
 		this.year += amount;
 	}
 
-	public void SetDate(int month, int day, int year){
+	public void SetDate(int month, int day, int year, int hour){
 		this.month = month;
 		this.day = day;
 		this.year = year;
+        this.hour = hour;
 	}
 	public void SetDate(GameDate gameDate){
 		this.month = gameDate.month;
 		this.day = gameDate.day;
 		this.year = gameDate.year;
+        this.hour = gameDate.hour;
 	}
-	public bool IsSameDate(int month, int day, int year){
-		if(this.month == month && this.day == day && this.year == year){
+	public bool IsSameDate(int month, int day, int year, int hour){
+		if(this.month == month && this.day == day && this.year == year && this.hour == hour){
 			return true;
 		}
 		return false;
 	}
 	public bool IsSameDate(GameDate gameDate){
-		if(this.month == gameDate.month && this.day == gameDate.day && this.year == gameDate.year){
+		if(this.month == gameDate.month && this.day == gameDate.day && this.year == gameDate.year && this.hour == gameDate.hour) {
 			return true;
 		}
 		return false;
-	}
-
-	public void SetDay(int day){
-		this.day = day;
 	}
 
 	public string ToStringDate(){
