@@ -1253,9 +1253,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void LeftClick() {
 #if !WORLD_CREATION_TOOL
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
-            if (UIManager.Instance.IsConsoleShowing()) {
-                UIManager.Instance.consoleUI.AddText(this.name);
-            }
+            //if (UIManager.Instance.IsConsoleShowing()) {
+            //    UIManager.Instance.consoleUI.AddText(this.name);
+            //}
             return;
         }
 
@@ -1285,9 +1285,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     private void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
-            if (UIManager.Instance.IsConsoleShowing() && this.hasLandmark) {
-                UIManager.Instance.consoleUI.AddText(this.landmarkOnTile.landmarkName);
-            }
+            //if (UIManager.Instance.IsConsoleShowing() && this.hasLandmark) {
+            //    UIManager.Instance.consoleUI.AddText(this.landmarkOnTile.landmarkName);
+            //}
             return;
         }
         UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
