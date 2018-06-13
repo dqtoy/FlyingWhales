@@ -1,28 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
+using TMPro;
+using UnityEngine.UI;
 
-public class LogHistoryItem : MonoBehaviour {
+public class LogHistoryItem : MonoBehaviour, ILogItem {
 
-    [SerializeField] private UILabel logLbl;
-    [SerializeField] private UILabel dateLbl;
-    [SerializeField] private UI2DSprite logBG;
+    [SerializeField] private TextMeshProUGUI logLbl;
+    [SerializeField] private TextMeshProUGUI dateLbl;
+    [SerializeField] private Image logBG;
 
-    private Log _thisLog;
+    private Log _log;
 
     #region getters/setters
-    public Log thisLog {
-        get { return _thisLog; }
+    public Log log {
+        get { return _log; }
     }
     #endregion
 
     public void SetLog(Log log) {
         this.name = log.id.ToString();
-        _thisLog = log;
+        _log = log;
         dateLbl.text = Utilities.NormalizeString(log.month.ToString()) + " " + log.day + ", " + log.year;
-        if (_thisLog.fillers.Count > 0) {
-            this.logLbl.text = Utilities.LogReplacer(_thisLog);
+        if (_log.fillers.Count > 0) {
+            this.logLbl.text = Utilities.LogReplacer(_log);
         } else {
-            this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_thisLog.category, _thisLog.file, _thisLog.key);
+            this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
         }
     }
 

@@ -1,34 +1,96 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
+using TMPro;
 
-public class EventLabel : MonoBehaviour {
+public class EventLabel : MonoBehaviour, IPointerClickHandler {
 
-	[SerializeField] private GameObject logItem;
+    [SerializeField] private ILogItem logItem;
+	[SerializeField] private TextMeshProUGUI text;
 
-	void OnClick(){
-		UILabel lbl = GetComponent<UILabel>();
-		string url = lbl.GetUrlAtPosition(UICamera.lastWorldPosition);
+    private void Awake() {
+        if (text == null) {
+            text = gameObject.GetComponent<TextMeshProUGUI>();
+        }
+    }
 
-		if (!string.IsNullOrEmpty (url)) {
-			int indexToUse = int.Parse (url);
-            LogFiller lf = new LogFiller();
-            if(logItem.GetComponent<NotificationItem>() != null) {
-                lf = logItem.GetComponent<NotificationItem>().thisLog.fillers[indexToUse];
-            } else if (logItem.GetComponent<LogHistoryItem>() != null) {
-                lf = logItem.GetComponent<LogHistoryItem>().thisLog.fillers[indexToUse];
-            }
+    public void OnPointerClick(PointerEventData eventData) {
+        //Debug.Log("OnPointerEnter()");
+        int linkIndex = TMP_TextUtilities.FindIntersectingLink(text, Input.mousePosition, null);
+        if (linkIndex != -1) {
+            TMP_LinkInfo linkInfo = text.textInfo.linkInfo[linkIndex];
+            if (logItem == null) {
+                string linkText = linkInfo.GetLinkID();
+                string id = linkText.Substring(0, linkText.IndexOf('_'));
+                int idToUse = int.Parse(id);
+                if (linkText.Contains("_faction")) {
+                    Faction faction = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction;
+                    if (faction != null) {
+                        UIManager.Instance.ShowFactionInfo(faction);
+                    }
+                } else if (linkText.Contains("_landmark")) {
+                    if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home.id == idToUse) {
+                        UIManager.Instance.ShowLandmarkInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
+                    }
+                } else if (linkText.Contains("_party")) {
+                    Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
+                    if (party != null) {
+                        UIManager.Instance.ShowCharacterInfo(party.partyLeader);
+                    }
+                } else if (linkText.Contains("_character")) {
+                    ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.GetFollowerByID(idToUse);
+                    if (character != null) {
+                        UIManager.Instance.ShowCharacterInfo(character);
+                    }
+                }
+            } else {
+                int indexToUse = int.Parse(linkInfo.GetLinkID());
+                LogFiller lf = logItem.log.fillers[indexToUse];
 
-            if (lf.obj != null) {
-                if (lf.obj is ECS.Character) {
-                    UIManager.Instance.ShowCharacterInfo(lf.obj as ECS.Character);
-                } else if (lf.obj is Party) {
-                    UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
-                } else if (lf.obj is BaseLandmark) {
-                    UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
-                } else if (lf.obj is ECS.Combat) {
-                    UIManager.Instance.ShowCombatLog(lf.obj as ECS.Combat);
+                if (lf.obj != null) {
+                    if (lf.obj is ECS.Character) {
+                        UIManager.Instance.ShowCharacterInfo(lf.obj as ECS.Character);
+                    } else if (lf.obj is Party) {
+                        UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
+                    } else if (lf.obj is BaseLandmark) {
+                        UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
+                    } else if (lf.obj is ECS.Combat) {
+                        UIManager.Instance.ShowCombatLog(lf.obj as ECS.Combat);
+                    }
                 }
             }
-		}
-	}
+            
+        }
+    }
+
+    //public void OnPointerClick(PointerEventData data) {
+        
+    //}
+
+	//void OnClick(){
+	//	UILabel lbl = GetComponent<UILabel>();
+	//	string url = lbl.GetUrlAtPosition(UICamera.lastWorldPosition);
+
+	//	if (!string.IsNullOrEmpty (url)) {
+	//		int indexToUse = int.Parse (url);
+ //           LogFiller lf = new LogFiller();
+ //           if(logItem.GetComponent<NotificationItem>() != null) {
+ //               lf = logItem.GetComponent<NotificationItem>().thisLog.fillers[indexToUse];
+ //           } else if (logItem.GetComponent<LogHistoryItem>() != null) {
+ //               lf = logItem.GetComponent<LogHistoryItem>().thisLog.fillers[indexToUse];
+ //           }
+
+ //           if (lf.obj != null) {
+ //               if (lf.obj is ECS.Character) {
+ //                   UIManager.Instance.ShowCharacterInfo(lf.obj as ECS.Character);
+ //               } else if (lf.obj is Party) {
+ //                   UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
+ //               } else if (lf.obj is BaseLandmark) {
+ //                   UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
+ //               } else if (lf.obj is ECS.Combat) {
+ //                   UIManager.Instance.ShowCombatLog(lf.obj as ECS.Combat);
+ //               }
+ //           }
+	//	}
+	//}
 }

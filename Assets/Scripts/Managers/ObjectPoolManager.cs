@@ -16,6 +16,7 @@ public class ObjectPoolManager : MonoBehaviour {
     //[SerializeField] private GameObject[] monsterAvatarPrefabs;
     //[SerializeField] private GameObject[] agentPrefabs;
     [SerializeField] internal GameObject[] otherPrefabs;
+    [SerializeField] private GameObject UIObjectPoolParent;
 
     private void Awake() {
         Instance = this;
@@ -23,15 +24,10 @@ public class ObjectPoolManager : MonoBehaviour {
     }
 
     internal void InitializeObjectPools() {
-        GameObject UIObjectPoolParent = new GameObject("EZ Object Pools UI Container");
-        UIObjectPoolParent.transform.parent = UIManager.Instance.transform;
-        UIObjectPoolParent.transform.localScale = Vector3.one;
-        UIObjectPoolParent.transform.localPosition = Vector3.zero;
-
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
             EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 500, true, true, false);
-            newUIPool.transform.SetParent(UIObjectPoolParent.transform);
+            newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
         }
 
         //for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
@@ -84,7 +80,7 @@ public class ObjectPoolManager : MonoBehaviour {
         } else {
             if(objectPoolToUse.TryGetNextObject(Vector3.zero, rotation, out instantiatedObj)) {
                 if(parent != null) {
-                    instantiatedObj.transform.SetParent(parent);
+                    instantiatedObj.transform.SetParent(parent, false);
                 }
                 instantiatedObj.transform.localPosition = position;
             }

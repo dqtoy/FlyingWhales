@@ -724,7 +724,7 @@ public class FactionManager : MonoBehaviour {
 				ECS.Character character = (ECS.Character)data;
 				declareWarLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             declareWarLog.AddToFillers(character.currLocation.region.centerOfMass.landmarkOnTile, character.currLocation.region.centerOfMass.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-				UIManager.Instance.ShowNotification(declareWarLog);
+				//UIManager.Instance.ShowNotification(declareWarLog);
 			}
         } 
    //     else {
@@ -819,13 +819,13 @@ public class FactionManager : MonoBehaviour {
         Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_help_friend");
         declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
         declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.FACTION_2);
-        UIManager.Instance.ShowNotification(declareWarLog);
+        //UIManager.Instance.ShowNotification(declareWarLog);
     }
     private void ShowBetrayalLog(Faction faction, Faction enemy) {
         Log declareWarLog = new Log(GameManager.Instance.Today(), "General", "Faction", "declare_war_betrayal");
         declareWarLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
         declareWarLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.FACTION_2);
-        UIManager.Instance.ShowNotification(declareWarLog);
+        //UIManager.Instance.ShowNotification(declareWarLog);
     }
     private WeightedDictionary<ALLY_WAR_REACTION> GetAllyWarReaction(Faction faction, Faction friend, Faction enemy) {
         WeightedDictionary<ALLY_WAR_REACTION> actionWeights = new WeightedDictionary<ALLY_WAR_REACTION>();

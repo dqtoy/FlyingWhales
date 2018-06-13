@@ -2,16 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine.UI;
 
 public class FactionInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private UILabel factionInfoLbl;
-    [SerializeField] private UILabel relationshipsLbl;
-    [SerializeField] private UIScrollView infoScrollView;
-    [SerializeField] private UIScrollView relationshipsScrollView;
+    [SerializeField] private TextMeshProUGUI factionInfoLbl;
+    [SerializeField] private TextMeshProUGUI relationshipsLbl;
+    [SerializeField] private ScrollRect infoScrollView;
+    [SerializeField] private ScrollRect relationshipsScrollView;
 
     internal Faction currentlyShowingFaction {
         get { return _data as Faction; }
@@ -20,7 +22,7 @@ public class FactionInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener("UpdateUI", UpdateFactionInfo);
-        tweenPos.AddOnFinished(() => UpdateFactionInfo());
+        //tweenPos.AddOnFinished(() => UpdateFactionInfo());
     }
 
     public override void OpenMenu() {
@@ -40,12 +42,12 @@ public class FactionInfoUI : UIMenu {
             return;
         }
         string text = string.Empty;
-        text += "[b]ID:[/b] " + currentlyShowingFaction.id.ToString();
-        text += "\n[b]Name:[/b] " + currentlyShowingFaction.name;
-		text += "\n[b]Race:[/b] " + currentlyShowingFaction.race.ToString();
-		text += "\n[b]Faction Type:[/b] " + currentlyShowingFaction.factionType.ToString();
-		text += "\n[b]Faction Size:[/b] " + currentlyShowingFaction.factionSize.ToString();
-		text += "\n[b]Owned Landmarks: [/b] ";
+        text += "<b>ID:</b> " + currentlyShowingFaction.id.ToString();
+        text += "\n<b>Name:</b> " + currentlyShowingFaction.name;
+		text += "\n<b>Race:</b> " + currentlyShowingFaction.race.ToString();
+		text += "\n<b>Faction Type:</b> " + currentlyShowingFaction.factionType.ToString();
+		text += "\n<b>Faction Size:</b> " + currentlyShowingFaction.factionSize.ToString();
+		text += "\n<b>Owned Landmarks: </b> ";
         List<BaseLandmark> ownedLandmarks = currentlyShowingFaction.GetAllOwnedLandmarks();
         if (ownedLandmarks.Count > 0){
 			for (int i = 0; i < ownedLandmarks.Count; i++) {
@@ -56,7 +58,7 @@ public class FactionInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n[b]Initial Technologies: [/b] ";
+		text += "\n<b>Initial Technologies: </b> ";
 		if (currentlyShowingFaction.initialTechnologies.Count > 0) {
 			text += "\n";
 			for (int i = 0; i < currentlyShowingFaction.initialTechnologies.Count; i++) {
@@ -70,7 +72,7 @@ public class FactionInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n[b]Characters: [/b] ";
+		text += "\n<b>Characters: </b> ";
 		if (currentlyShowingFaction.characters.Count > 0) {
 			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
 				ECS.Character currChar = currentlyShowingFaction.characters[i];
@@ -88,7 +90,7 @@ public class FactionInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n[b]Production Preferences: [/b] ";
+		text += "\n<b>Production Preferences: </b> ";
 		foreach (PRODUCTION_TYPE prodType in currentlyShowingFaction.productionPreferences.Keys) {
 			text += "\n" + prodType.ToString ();
 			for (int i = 0; i < currentlyShowingFaction.productionPreferences[prodType].prioritizedMaterials.Count; i++) {
@@ -97,11 +99,10 @@ public class FactionInfoUI : UIMenu {
 		}
 			
         factionInfoLbl.text = text;
-        infoScrollView.UpdatePosition();
 
         //Relationships
         string relationshipText = string.Empty;
-        relationshipText += "\n[b]Relationships:[/b] ";
+        relationshipText += "\n<b>Relationships:</b> ";
         if (currentlyShowingFaction.relationships.Count > 0) {
             foreach (KeyValuePair<Faction, FactionRelationship> kvp in currentlyShowingFaction.relationships) {
                 relationshipText += "\n " + kvp.Key.factionType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.relationshipStatus.ToString();
@@ -111,7 +112,6 @@ public class FactionInfoUI : UIMenu {
         }
 
         relationshipsLbl.text = relationshipText;
-        relationshipsScrollView.UpdatePosition();
     }
 //	public void OnClickCloseBtn(){
 ////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();

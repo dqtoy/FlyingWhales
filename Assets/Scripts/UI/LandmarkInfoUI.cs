@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine.UI;
 
 public class LandmarkInfoUI : UIMenu {
 
@@ -12,26 +14,21 @@ public class LandmarkInfoUI : UIMenu {
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private UILabel settlementInfoLbl;
-	[SerializeField] private UILabel settlementHistoryInfoLbl;
-	[SerializeField] private GameObject expandBtnGO;
-	[SerializeField] private GameObject exploreBtnGO;
-    [SerializeField] private GameObject buildStructureBtnGO;
-    [SerializeField] private UIScrollView infoScrollView;
+    [SerializeField] private TextMeshProUGUI landmarkInfoLbl;
+    [SerializeField] private ScrollRect infoScrollView;
 	
 
     [Space(10)]
     [Header("Logs")]
     [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private UITable logHistoryTable;
-    [SerializeField] private UIScrollView historyScrollView;
+    [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
 
     [Space(10)]
     [Header("Settlement")]
     [SerializeField] private GameObject attackButtonGO;
-    [SerializeField] private ButtonToggle attackBtnToggle;
+    [SerializeField] private Toggle attackBtnToggle;
 
     private LogHistoryItem[] logHistoryItems;
 
@@ -49,13 +46,11 @@ public class LandmarkInfoUI : UIMenu {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, logHistoryTable.transform);
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
             newLogItem.name = "-1";
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);
-            logHistoryTable.Reposition();
-            historyScrollView.ResetPosition();
         }
         for (int i = 0; i < logHistoryItems.Length; i++) {
             logHistoryItems[i].gameObject.SetActive(false);
@@ -65,7 +60,7 @@ public class LandmarkInfoUI : UIMenu {
     public override void OpenMenu() {
         base.OpenMenu();
         //RepositionHistoryScrollView();
-        StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
+        //StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
         //UpdateLandmarkInfo();
         //UpdateAllHistoryInfo();
     }
@@ -73,7 +68,7 @@ public class LandmarkInfoUI : UIMenu {
     public override void ShowMenu() {
         base.ShowMenu();
         //RepositionHistoryScrollView();
-        StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
+        //StartCoroutine(UIManager.Instance.RepositionScrollView(infoScrollView));
         UpdateLandmarkInfo();
         UpdateAllHistoryInfo();
         ShowAttackButton();
@@ -85,7 +80,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     public override void SetData(object data) {
         base.SetData(data);
-		UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).tileLocation);
+        UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).tileLocation);
         //ShowPlayerActions();
         if (isShowing) {
             UpdateLandmarkInfo();
@@ -98,23 +93,23 @@ public class LandmarkInfoUI : UIMenu {
         }
         string text = string.Empty;
 		if (currentlyShowingLandmark.landmarkName != string.Empty) {
-			text += "[b]Name:[/b] " + currentlyShowingLandmark.landmarkName + "\n";
+			text += "<b>Name:</b> " + currentlyShowingLandmark.landmarkName + "\n";
 		}
-		text += "[b]Location:[/b] " + currentlyShowingLandmark.tileLocation.urlName;
-        text += "\n[b]Landmark Type:[/b] " + currentlyShowingLandmark.landmarkObj.objectName + " (" + currentlyShowingLandmark.landmarkObj.currentState.stateName + ")";
-        text += "\n[b]HP:[/b] " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
-        text += "\n[b]Durability:[/b] " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
-        text += "\n[b]Can Be Occupied:[/b] " + currentlyShowingLandmark.canBeOccupied.ToString();
-		text += "\n[b]Is Occupied:[/b] " + currentlyShowingLandmark.isOccupied.ToString();
+		text += "<b>Location:</b> " + currentlyShowingLandmark.tileLocation.urlName;
+        text += "\n<b>Landmark Type:</b> " + currentlyShowingLandmark.landmarkObj.objectName + " (" + currentlyShowingLandmark.landmarkObj.currentState.stateName + ")";
+        text += "\n<b>HP:</b> " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
+        text += "\n<b>Durability:</b> " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
+        text += "\n<b>Can Be Occupied:</b> " + currentlyShowingLandmark.canBeOccupied.ToString();
+		text += "\n<b>Is Occupied:</b> " + currentlyShowingLandmark.isOccupied.ToString();
 
         if (currentlyShowingLandmark.owner != null) {
-            text += "\n[b]Owner:[/b] " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
-            //text += "\n[b]Regional Population: [/b] " + currentlyShowingLandmark.totalPopulation.ToString();
-            text += "\n[b]Settlement Population: [/b] " + "[url=civilians]" + currentlyShowingLandmark.landmarkObj.GetTotalCivilians().ToString() + "[/url]";
-			//text += "\n[b]Population Growth: [/b] " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
+            text += "\n<b>Owner:</b> " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
+            //text += "\n<b>Regional Population: </b> " + currentlyShowingLandmark.totalPopulation.ToString();
+            text += "\n<b>Settlement Population: </b> " + "<link=civilians>" + currentlyShowingLandmark.landmarkObj.GetTotalCivilians().ToString() + "</link>";
+			//text += "\n<b>Population Growth: </b> " + (currentlyShowingLandmark.totalPopulation * currentlyShowingLandmark.tileLocation.region.populationGrowth).ToString();
         }
 
-        text += "\n[b]Connections: [/b] ";
+        text += "\n<b>Connections: </b> ";
         if (currentlyShowingLandmark.connections.Count > 0) {
             for (int i = 0; i < currentlyShowingLandmark.connections.Count; i++) {
                 BaseLandmark connection = currentlyShowingLandmark.connections[i];
@@ -124,7 +119,7 @@ public class LandmarkInfoUI : UIMenu {
             text += "NONE";
         }
 
-        text += "\n[b]Characters At Landmark: [/b] ";
+        text += "\n<b>Characters At Landmark: </b> ";
         if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
                 object currObject = currentlyShowingLandmark.charactersAtLocation[i];
@@ -154,7 +149,7 @@ public class LandmarkInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
-        text += "\n[b]Characters At Tile: [/b] ";
+        text += "\n<b>Characters At Tile: </b> ";
 		if (currentlyShowingLandmark.tileLocation.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.tileLocation.charactersAtLocation.Count; i++) {
 				object currObject = currentlyShowingLandmark.tileLocation.charactersAtLocation[i];
@@ -178,7 +173,7 @@ public class LandmarkInfoUI : UIMenu {
             text += "NONE";
         }
 
-		text += "\n[b]Prisoners:[/b] ";
+		text += "\n<b>Prisoners:</b> ";
 		if(currentlyShowingLandmark.prisoners.Count > 0){
 			for (int i = 0; i < currentlyShowingLandmark.prisoners.Count; i++) {
 				ECS.Character prisoner = currentlyShowingLandmark.prisoners [i];
@@ -188,7 +183,7 @@ public class LandmarkInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n[b]Traces:[/b] ";
+		text += "\n<b>Traces:</b> ";
 		if(currentlyShowingLandmark.characterTraces.Count > 0){
 			foreach (ECS.Character character in currentlyShowingLandmark.characterTraces.Keys) {
 				text += "\n" + character.urlName + ", " + currentlyShowingLandmark.characterTraces[character].ToStringDate();
@@ -199,7 +194,7 @@ public class LandmarkInfoUI : UIMenu {
 
         //if (currentlyShowingLandmark is Settlement) {
         //    Settlement currSettlement = currentlyShowingLandmark as Settlement;
-        //    text += "\n[b]Materials: [/b] ";
+        //    text += "\n<b>Materials: </b> ";
         //    if (currSettlement.availableMaterials.Count > 0) {
         //        for (int i = 0; i < currSettlement.availableMaterials.Count; i++) {
         //            MATERIAL currMat = currSettlement.availableMaterials[i];
@@ -210,7 +205,7 @@ public class LandmarkInfoUI : UIMenu {
         //    }
         //}
 
-        //text += "\n[b]Objects: [/b] ";
+        //text += "\n<b>Objects: </b> ";
         //if (currentlyShowingLandmark.objects.Count > 0) {
         //    for (int i = 0; i < currentlyShowingLandmark.objects.Count; i++) {
         //        IObject currObj = currentlyShowingLandmark.objects[i];
@@ -226,7 +221,7 @@ public class LandmarkInfoUI : UIMenu {
         //    text += "NONE";
         //}
 
-        text += "\n[b]Technologies: [/b] ";
+        text += "\n<b>Technologies: </b> ";
         List<TECHNOLOGY> availableTech = currentlyShowingLandmark.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
         if (availableTech.Count > 0) {
             for (int i = 0; i < availableTech.Count; i++) {
@@ -240,7 +235,7 @@ public class LandmarkInfoUI : UIMenu {
             text += "NONE";
         }
 
-		text += "\n[b]Items: [/b] ";
+		text += "\n<b>Items: </b> ";
 		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
 				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
@@ -250,8 +245,7 @@ public class LandmarkInfoUI : UIMenu {
 			text += "NONE";
 		}
        
-        settlementInfoLbl.text = text;
-        infoScrollView.UpdatePosition();
+        landmarkInfoLbl.text = text;
 
 		//UpdateHistoryInfo ();
     }
@@ -278,10 +272,10 @@ public class LandmarkInfoUI : UIMenu {
                 currItem.gameObject.SetActive(false);
             }
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-            StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        }
+        //if (this.gameObject.activeInHierarchy) {
+        //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+        //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        //}
     }
     //private void RepositionHistoryScrollView() {
     //    for (int i = 0; i < logHistoryItems.Length; i++) {
@@ -297,8 +291,8 @@ public class LandmarkInfoUI : UIMenu {
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            if (currItem.thisLog != null) {
-                if (currItem.thisLog.id == log.id) {
+            if (currItem.log != null) {
+                if (currItem.log.id == log.id) {
                     return true;
                 }
             }
@@ -395,11 +389,11 @@ public class LandmarkInfoUI : UIMenu {
     }
     public void ToggleAttack() {
         isWaitingForAttackTarget = !isWaitingForAttackTarget;
-        //attackBtnToggle.SetClickState(!attackBtnToggle.isClicked);
+        attackBtnToggle.isOn = !attackBtnToggle.isOn;
     }
     public void SetAttackButtonState(bool state) {
         isWaitingForAttackTarget = state;
-        attackBtnToggle.SetClickState(state);
+        attackBtnToggle.isOn = state;
     }
     public void SetActiveAttackButtonGO(bool state) {
         attackButtonGO.SetActive(state);

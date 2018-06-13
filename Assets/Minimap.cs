@@ -9,10 +9,10 @@ public class Minimap : MonoBehaviour {
 
     public bool isDragging = false;
 
-    [SerializeField] private UITexture minimapTexture;
-    [SerializeField] private Camera minimapCamera;
+    [SerializeField] private RawImage minimapTexture;
+    //[SerializeField] private Camera minimapCamera;
     [SerializeField] private RectTransform minimapTransform;
-    [SerializeField] private UIWidget cameraBordersWidget;
+    [SerializeField] private RectTransform cameraBorders;
 
     private float minX;
     private float maxX;
@@ -28,23 +28,23 @@ public class Minimap : MonoBehaviour {
 
     internal void Initialize() {
         //Compute the magic numbers
-        float minimapMaxXBounds = minimapTexture.width / 2f;
-        float minimapMaxYBounds = minimapTexture.height / 2f;
+        float minimapMaxXBounds = minimapTexture.rectTransform.rect.width / 2f;
+        float minimapMaxYBounds = minimapTexture.rectTransform.rect.height / 2f;
 
         HexTile topRightHexTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1];
         xMagicNum = minimapMaxXBounds / topRightHexTile.transform.position.x;
         yMagicNum = minimapMaxYBounds / topRightHexTile.transform.position.y;
     }
 
-    public void OnClickMinimap() {
-        Vector2 localPoint;
-        //This returns a screen point relative to the size of the image, with 0,0 at the center of the image and half of the width and height as the left, right, top and bottom bounds
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, minimapCamera, out localPoint);
-        //Debug.Log(localPoint);
-        Vector3 targetPos = new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f);
-        CameraMove.Instance.CenterCameraOn(null);
-        CameraMove.Instance.MoveMainCamera(targetPos);
-    }
+    //public void OnClickMinimap() {
+    //    Vector2 localPoint;
+    //    //This returns a screen point relative to the size of the image, with 0,0 at the center of the image and half of the width and height as the left, right, top and bottom bounds
+    //    RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, minimapCamera, out localPoint);
+    //    //Debug.Log(localPoint);
+    //    Vector3 targetPos = new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f);
+    //    CameraMove.Instance.CenterCameraOn(null);
+    //    CameraMove.Instance.MoveMainCamera(targetPos);
+    //}
 
     public void OnPointerClickWithBaseData(BaseEventData data) {
         isDragging = true;
@@ -52,14 +52,14 @@ public class Minimap : MonoBehaviour {
         CameraMove.Instance.MoveMainCamera(GetLocalCursorPoint(ped));
     }
 
-    void OnDrag() {
-        isDragging = true;
-        OnClickMinimap();
-    }
+    //void OnDrag() {
+    //    isDragging = true;
+    //    OnClickMinimap();
+    //}
 
-    void OnDragEnd() {
-        isDragging = false;
-    }
+    //void OnDragEnd() {
+    //    isDragging = false;
+    //}
 
     public void OnDragFinish(BaseEventData data) {
         isDragging = false;
@@ -74,20 +74,21 @@ public class Minimap : MonoBehaviour {
 
     private void Update() {
         ComputeBounds();
-        //Vector3 mainCameraPosInWorld = CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(Camera.main.transform.position);
-        //RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, mainCameraPosInWorld, )
+        //Vector3 mainCameraPosInWorld = RectTransformUtility.WorldToScreenPoint(CameraMove.Instance.wholeMapCamera, Camera.main.transform.position);
+        //Vector2 newPos;
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, mainCameraPosInWorld, CameraMove.Instance.uiCamera, out newPos);
         Vector3 newPos = Camera.main.transform.position;
         newPos.x *= xMagicNum;
         newPos.y *= yMagicNum;
 
-        cameraBordersWidget.transform.localPosition = newPos;
+        cameraBorders.transform.localPosition = newPos;
 
-        ConstrainBounds();
+        //ConstrainBounds();
     }
 
     public void UpdateCameraBorderScale() {
         float newScale = CameraMove.Instance.currentFOV / CameraMove.Instance.maxFOV;
-        cameraBordersWidget.transform.localScale = new Vector3(newScale, newScale, 1f);
+        cameraBorders.transform.localScale = new Vector3(newScale, newScale, 1f);
         ComputeBounds();
     }
     
@@ -96,8 +97,8 @@ public class Minimap : MonoBehaviour {
         float minimapTextureWidth = minimapTransform.rect.width;
         float minimapTextureHeight = minimapTransform.rect.height;
 
-        float cameraBordersWidth = cameraBordersWidget.width * cameraBordersWidget.transform.localScale.x;
-        float cameraBordersHeight = cameraBordersWidget.height * cameraBordersWidget.transform.localScale.y;
+        float cameraBordersWidth = cameraBorders.sizeDelta.x * cameraBorders.transform.localScale.x;
+        float cameraBordersHeight = cameraBorders.sizeDelta.y * cameraBorders.transform.localScale.y;
 
         maxX = (minimapTextureWidth - cameraBordersWidth) / 2f;
         minX = maxX * -1f;
@@ -106,9 +107,9 @@ public class Minimap : MonoBehaviour {
     }
 
     private void ConstrainBounds() {
-        cameraBordersWidget.transform.localPosition = new Vector3(
-            Mathf.Clamp(cameraBordersWidget.transform.localPosition.x, minX, maxX),
-            Mathf.Clamp(cameraBordersWidget.transform.localPosition.y, minY, maxY),
-            cameraBordersWidget.transform.localPosition.z);
+        cameraBorders.transform.localPosition = new Vector3(
+            Mathf.Clamp(cameraBorders.transform.localPosition.x, minX, maxX),
+            Mathf.Clamp(cameraBorders.transform.localPosition.y, minY, maxY),
+            cameraBorders.transform.localPosition.z);
     }
 }

@@ -43,7 +43,7 @@ public class StorylineManager : MonoBehaviour {
 				}
             }
         }
-        UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
+        //UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
     }
 
 	public StorylineData GetStorylineData(STORYLINE storyline){
@@ -58,7 +58,7 @@ public class StorylineManager : MonoBehaviour {
 	public void AddStoryline(StorylineData storylineData){
 		if(storylineData.InitialStorylineSetup()){
 			activeStorylines.Add(storylineData);
-			UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
+			//UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
 		}
 	}
 	#endregion

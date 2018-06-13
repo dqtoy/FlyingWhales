@@ -29,8 +29,8 @@ public class CharacterManager : MonoBehaviour {
 	public Sprite chieftainSprite;
 
     [Header("Character Portrait Assets")]
-    public List<Sprite> maleHairSprites;
-    public List<Sprite> femaleHairSprites;
+    public List<HairSettings> maleHairSettings;
+    public List<HairSettings> femaleHairSettings;
     public List<Sprite> noseSprites;
     public List<Sprite> mouthSprites;
     public List<Sprite> eyeSprites;
@@ -480,9 +480,9 @@ public class CharacterManager : MonoBehaviour {
         ps.gender = gender;
         ps.eyesIndex = Random.Range(0, eyeSprites.Count);
         ps.eyeBrowIndex = Random.Range(0, eyeBrowSprites.Count);
-        List<Sprite> hairsToUse = maleHairSprites;
+        List<HairSettings> hairsToUse = maleHairSettings;
         if (gender == GENDER.FEMALE) {
-            hairsToUse = femaleHairSprites;
+            hairsToUse = femaleHairSettings;
         }
         ps.hairIndex = Random.Range(0, hairsToUse.Count);
         ps.noseIndex = Random.Range(0, noseSprites.Count);

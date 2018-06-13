@@ -258,7 +258,7 @@ public class CameraMove : MonoBehaviour {
                 nameplateCamera.orthographicSize = fov;
 #if !WORLD_CREATION_TOOL
                 resourceIconCamera.orthographicSize = fov;
-                Minimap.Instance.UpdateCameraBorderScale();
+                //Minimap.Instance.UpdateCameraBorderScale();
                 if (GameManager.Instance.gameHasStarted) {
                     CalculateCameraBounds();
                 }
@@ -276,8 +276,9 @@ public class CameraMove : MonoBehaviour {
             Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)) {
 #else
         if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) || Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow) ||
-			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)
-            || Minimap.Instance.isDragging) {
+			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D))
+            //|| Minimap.Instance.isDragging) 
+            {
 #endif
             //reset target when player pushes a button to pan the camera
             target = null;
