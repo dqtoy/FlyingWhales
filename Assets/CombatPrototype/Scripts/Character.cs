@@ -456,7 +456,7 @@ namespace ECS {
 
             Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
-            Messenger.AddListener(Signals.DAY_END, EverydayAction);
+            Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             //ConstructMaterialInventory();
 

@@ -46,11 +46,11 @@ public class ObjectState {
 
     #region Utilities
     public void OnStartState() {
-        Messenger.AddListener("OnDayEnd", EverydayEffect);
+        Messenger.AddListener(Signals.HOUR_ENDED, EverydayEffect);
         _object.StartState(this);
     }
     public void OnEndState() {
-        Messenger.RemoveListener("OnDayEnd", EverydayEffect);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayEffect);
         _object.EndState(this);
     }
     public void EverydayEffect() {

@@ -47,19 +47,19 @@ public class Hero : CharacterRole {
         UpdateHappiness();
 
         _character.onDailyAction += StartDepletion;
-        //Messenger.AddListener("OnDayEnd", StartDepletion);
+        //Messenger.AddListener(Signals.HOUR_ENDED, StartDepletion);
     }
 
     #region Overrides
     public override void DeathRole() {
         base.DeathRole();
         _character.onDailyAction -= StartDepletion;
-        //Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        //Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     public override void ChangedRole() {
         base.ChangedRole();
         _character.onDailyAction -= StartDepletion;
-        //Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        //Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     #endregion
 

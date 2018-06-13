@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 	public int month;
 	public int days;
 	public int year;
+    public int hour;
 
     public PROGRESSION_SPEED currProgressionSpeed;
 
@@ -44,12 +45,12 @@ public class GameManager : MonoBehaviour {
 	private void FixedUpdate(){
 		if (!isPaused) {
             if (this.timeElapsed == 0f) {
-                this.DayStarted();
+                this.HourStarted();
             }
 			this.timeElapsed += Time.deltaTime * 1f;
 			if(this.timeElapsed >= this.progressionSpeed){
 				this.timeElapsed = 0f;
-				this.DayEnded ();
+				this.HourEnded ();
 			}
 		}
 	}
@@ -65,13 +66,13 @@ public class GameManager : MonoBehaviour {
 	}
 
     public GameDate Today() {
-        return new GameDate(this.month, this.days, this.year);
+        return new GameDate(this.month, this.days, this.year, this.hour);
     }
     public GameDate EndOfTheMonth() {
-        return new GameDate(this.month, daysInMonth[this.month], this.year);
+        return new GameDate(this.month, daysInMonth[this.month], this.year, this.hour);
     }
 	public GameDate FirstDayOfTheMonth() {
-		return new GameDate(this.month, 1, this.year);
+		return new GameDate(this.month, 1, this.year, this.hour);
 	}
 
 	public void TogglePause(){
@@ -99,34 +100,38 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
 
-    public void DayStarted() {
-        Messenger.Broadcast(Signals.DAY_START);
+    public void HourStarted() {
+        Messenger.Broadcast(Signals.HOUR_STARTED);
     }
 
     /*
      * Function that triggers daily actions
      * */
-    public void DayEnded(){
+    public void HourEnded(){
         ////Messenger.Broadcast("CitizenTurnActions");
         //Messenger.Broadcast("CityEverydayActions");
 
-        Messenger.Broadcast(Signals.DAY_END);
+        Messenger.Broadcast(Signals.HOUR_ENDED);
         ////BehaviourTreeManager.Instance.Tick ();
         ////EventManager.Instance.onUpdateUI.Invoke();
         Messenger.Broadcast("UpdateUI");
 
-        this.days += 1;
-		if (days > daysInMonth[this.month]) {
-			this.days = 1;
-			this.month += 1;
-            if (Messenger.eventTable.ContainsKey("OnMonthEnd")) {
-                Messenger.Broadcast("OnMonthEnd");
+        this.hour += 1;
+        if(this.hour > 48) {
+            this.hour = 1;
+            this.days += 1;
+            if (days > daysInMonth[this.month]) {
+                this.days = 1;
+                this.month += 1;
+                if (Messenger.eventTable.ContainsKey("OnMonthEnd")) {
+                    Messenger.Broadcast("OnMonthEnd");
+                }
+                if (this.month > 12) {
+                    this.month = 1;
+                    this.year += 1;
+                }
             }
-			if (this.month > 12) {
-				this.month = 1;
-				this.year += 1;
-			}
-		}
+        }
 	}
 
     #region For Testing

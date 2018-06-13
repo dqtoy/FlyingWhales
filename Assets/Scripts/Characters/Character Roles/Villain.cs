@@ -38,11 +38,11 @@ public class Villain : CharacterRole {
     #region Overrides
     public override void DeathRole() {
         base.DeathRole();
-        Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     public override void ChangedRole() {
         base.ChangedRole();
-        Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     #endregion
 

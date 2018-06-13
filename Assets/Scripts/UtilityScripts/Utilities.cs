@@ -621,31 +621,6 @@ public class Utilities : MonoBehaviour {
 		}
 		return words;
 	}
-
-	public static GameDate GetNewDateAfterNumberOfDays(int month, int day, int year, int numOfDaysElapsed){
-		GameDate newDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        newDate.SetDate(month, day, year);
-        newDate.AddDays(numOfDaysElapsed);
-
-  //      int newDay = day;
-  //      int newMonth = month;
-  //      int newYear = year;
-
-  //      for (int i = 0; i < numOfDaysElapsed; i++) {
-  //          newDay += 1;
-  //          if (newDay > GameManager.daysInMonth[newMonth]) {
-  //              newDay = 1;
-  //              newMonth += 1;
-  //              if (newMonth > 12) {
-  //                  newMonth = 1;
-  //                  newYear += 1;
-  //              }
-  //          }
-  //      }
-		//DateTime newDate = new DateTime (newYear, newMonth, newDay);
-		//inputDate = inputDate.AddDays (numOfDaysElapsed);
-		return newDate;
-	}
 	public static string[] SplitAndKeepDelimiters(string s, params char[] delimiters){
 		var parts = new List<string>();
 		if (!string.IsNullOrEmpty(s))

@@ -104,7 +104,7 @@ public class UIManager : MonoBehaviour {
     }
 
 	void Start(){
-        //Messenger.AddListener(Signals.DAY_END, CheckForKingdomExpire);
+        //Messenger.AddListener(Signals.HOUR_ENDED, CheckForKingdomExpire);
         Messenger.AddListener("UpdateUI", UpdateUI);
         //EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
         //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
@@ -201,7 +201,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     private void UpdateUI(){
-        dateLbl.text = GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString ();
+        dateLbl.text = GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString ()
+            + " (Tick " + GameManager.Instance.hour + ")";
   //      KingdomManager.Instance.UpdateKingdomList();
 		//UpdateAllianceSummary ();
   //      if (currentlyShowingKingdom != null) {

@@ -29,7 +29,7 @@ public class ActionData {
         actionThread = new ActionThread(_character);
         _character.onDailyAction += PerformCurrentAction;
         _isHalted = false;
-        //Messenger.AddListener(Signals.DAY_END, PerformCurrentAction);
+        //Messenger.AddListener(Signals.HOUR_ENDED, PerformCurrentAction);
 
     }
 
@@ -64,7 +64,7 @@ public class ActionData {
         Reset();
         _character.onDailyAction -= PerformCurrentAction;
         _character = null;
-        //Messenger.RemoveListener(Signals.DAY_END, PerformCurrentAction);
+        //Messenger.RemoveListener(Signals.HOUR_ENDED, PerformCurrentAction);
     }
 
     public void EndAction() {
