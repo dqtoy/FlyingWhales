@@ -14,6 +14,9 @@ public class Minimap : MonoBehaviour {
     [SerializeField] private RectTransform minimapTransform;
     [SerializeField] private RectTransform cameraBorders;
 
+    public float maxWidth;
+    public float maxHeight;
+
     private float minX;
     private float maxX;
     private float minY;
@@ -54,7 +57,7 @@ public class Minimap : MonoBehaviour {
         PointerEventData ped = (PointerEventData)data;
         Vector2 localPoint = GetLocalCursorPoint(ped);
         //Debug.Log(localPoint);
-        CameraMove.Instance.MoveMainCamera(localPoint);
+        CameraMove.Instance.MoveMainCamera(new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f));
         //OnClickMinimap();
     }
 

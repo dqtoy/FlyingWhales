@@ -86,7 +86,15 @@ public class CameraMove : MonoBehaviour {
         HexTile topTile = GridMap.Instance.map[0, (int)GridMap.Instance.height - 1];
         float newSize = topTile.transform.position.y + 3;
         wholeMapCamera.orthographicSize = newSize;
-        minimapTexture = new RenderTexture(wholeMapCamera.pixelWidth, wholeMapCamera.pixelHeight, 16, RenderTextureFormat.ARGB32);
+
+        HexTile topCornerHexTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1];
+        float xSize = Mathf.FloorToInt(topCornerHexTile.transform.localPosition.x + 4f) * 3;
+        float zSize = Mathf.FloorToInt(topCornerHexTile.transform.localPosition.y + 4f) * 3;
+
+        int width = (int)Mathf.Min(xSize, Minimap.Instance.maxWidth);
+        int height = (int)Mathf.Min(zSize, Minimap.Instance.maxHeight);
+
+        minimapTexture = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
         minimapTexture.Create();
         wholeMapCamera.targetTexture = minimapTexture;
         //wholeMapCamera.activeTexture.width = ;
