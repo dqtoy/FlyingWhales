@@ -253,7 +253,7 @@ public class CharacterIcon : MonoBehaviour {
         }
     }
     private string GetUpDown() {
-        if (_aiPath.velocity.y <= 0f) {
+        if (_aiPath.velocity.y <= 0.1f) {
             return "Down";
         } else {
             return "Up";

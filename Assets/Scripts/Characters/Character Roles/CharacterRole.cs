@@ -347,6 +347,11 @@ public class CharacterRole {
             UpdateHappiness();
         }
     }
+    public void UpdateSafety() {
+        float hpPercent = (float) character.currentHP / (float) character.maxHP;
+        int newSafety = (int)((hpPercent * (_maxSafety - _minSafety)) + _minSafety);
+        SetSafety(newSafety);
+    }
 
     public bool IsFull(NEEDS need) {
         switch (need) {

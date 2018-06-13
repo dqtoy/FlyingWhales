@@ -8,6 +8,11 @@ public class DrinkAction : CharacterAction {
 
     }
     #region Overrides
+    public override void OnFirstEncounter(Character character) {
+        base.OnFirstEncounter(character);
+        //Add history log
+        character.AssignTag(CHARACTER_TAG.DRUNK);
+    }
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         ActionSuccess();

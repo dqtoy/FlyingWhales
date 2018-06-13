@@ -1196,6 +1196,7 @@ public enum CHARACTER_TAG{
     DEPRESSED,
     ANXIOUS,
     INSECURE,
+    DRUNK,
 }
 
 public enum PRODUCTION_TYPE{

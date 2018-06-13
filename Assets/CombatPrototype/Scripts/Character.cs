@@ -655,11 +655,18 @@ namespace ECS {
 		}
 		//Adjust current HP based on specified paramater, but HP must not go below 0
 		internal void AdjustHP(int amount){
+            int previous = this._currentHP;
 			this._currentHP += amount;
 			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
-			if(this._currentHP == 0){
-				FaintOrDeath ();
-			}
+            if(previous != this._currentHP) {
+                if(_role != null) {
+                    _role.UpdateSafety();
+                }
+                if (this._currentHP == 0) {
+                    FaintOrDeath();
+                }
+            }
+
 		}
 		internal void SetHP(int amount){
 			this._currentHP = amount;
@@ -1820,6 +1827,9 @@ namespace ECS {
                 break;
             case CHARACTER_TAG.INSECURE:
                 charTag = new Insecure(this);
+                break;
+            case CHARACTER_TAG.DRUNK:
+                charTag = new Drunk(this);
                 break;
             }
 			if(charTag != null){

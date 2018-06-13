@@ -43,7 +43,7 @@ public class Hero : CharacterRole {
         SetFun(600);
         SetPrestige(0);
         SetSanity(1000);
-        SetSafety(1000);
+        UpdateSafety();
         UpdateHappiness();
 
         _character.onDailyAction += StartDepletion;

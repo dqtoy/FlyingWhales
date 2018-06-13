@@ -127,6 +127,10 @@ public class CharacterAction {
         character.role.AdjustPrestige(_actionData.providedPrestige);
         character.role.AdjustSanity(_actionData.providedSanity);
         character.role.AdjustSafety(_actionData.providedSafety);
+        if(_actionData.hpRecoveredPercentage != 0f && character.currentHP < character.maxHP) {
+            float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) character.maxHP;
+            character.AdjustHP((int)hpRecovery);
+        }
     }
     public void SetCommonData(CharacterAction action) {
         if (this._filters != null) {

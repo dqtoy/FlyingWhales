@@ -30,6 +30,7 @@ public struct CharacterActionData {
 
     public int successRate;
     public int duration;
+    public float hpRecoveredPercentage;
 
     public RESOURCE resourceGiven;
     public int minResourceGiven;
@@ -51,7 +52,7 @@ public struct CharacterActionData {
 #if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
-    private bool enableSuccessRate, enableDuration, enableResourceGiven, enableResourceNeeded;
+    private bool enableSuccessRate, enableResourceGiven, enableResourceNeeded;
     private SerializedProperty filtersProp;
     private float filtersHeight;
 
@@ -132,20 +133,28 @@ public class CharacterActionDrawer : PropertyDrawer {
         var pFailFunctionRect = new Rect(position.x, failPosY, position.width, 100);
         EditorGUI.PropertyField(pFailFunctionRect, failFunctionProperty);
 
+        float durationYPos = failPosY + pFailFunctionRect.height;
+        var durationRect = new Rect(position.x, durationYPos, position.width, 16);
+        EditorGUI.PropertyField(durationRect, property.FindPropertyRelative("duration"));
+
+        float hpRecoveredYPos = durationYPos + durationRect.height;
+        var hpRecoveredRect = new Rect(position.x, hpRecoveredYPos, position.width, 16);
+        EditorGUI.PropertyField(hpRecoveredRect, property.FindPropertyRelative("hpRecoveredPercentage"));
+
         ACTION_TYPE actionType = (ACTION_TYPE)property.FindPropertyRelative("actionType").enumValueIndex;
 
         enableSuccessRate = HasSuccessRate(actionType);
-        enableDuration = HasDuration(actionType);
+        //enableDuration = HasDuration(actionType);
         enableResourceGiven = GivesResource(actionType);
         enableResourceNeeded = NeedResource(actionType);
 
-        float defaultSuccessRateYPos = failPosY + pFailFunctionRect.height;
-        float defaultDurationYPos = failPosY + pFailFunctionRect.height + 16;
-        float defaultResourceGivenYPos = failPosY + pFailFunctionRect.height + 32;
-        float defaultResourceNeededYPos = failPosY + pFailFunctionRect.height + 48;
+        float defaultSuccessRateYPos = hpRecoveredYPos + hpRecoveredRect.height;
+        //float defaultDurationYPos = failPosY + pFailFunctionRect.height + 16;
+        float defaultResourceGivenYPos = hpRecoveredYPos + hpRecoveredRect.height + 16;
+        float defaultResourceNeededYPos = hpRecoveredYPos + hpRecoveredRect.height + 32;
 
         float successRateYPos = defaultSuccessRateYPos;
-        float durationYPos = defaultDurationYPos;
+        //float durationYPos = defaultDurationYPos;
         float resourceGivenYPos = defaultResourceGivenYPos;
         float resourceNeededYPos = defaultResourceNeededYPos;
 
@@ -157,23 +166,23 @@ public class CharacterActionDrawer : PropertyDrawer {
         }
 
         //Duration
-        if (enableDuration) {
-            if (!enableSuccessRate) {
-                durationYPos = defaultSuccessRateYPos;
-            }
-            LoadDurationField(durationYPos, position, property, label);
-        } else {
-            property.FindPropertyRelative("duration").intValue = 0;
-        }
+        //if (enableDuration) {
+        //    if (!enableSuccessRate) {
+        //        durationYPos = defaultSuccessRateYPos;
+        //    }
+        //    LoadDurationField(durationYPos, position, property, label);
+        //} else {
+        //    property.FindPropertyRelative("duration").intValue = 0;
+        //}
 
         //Resource Given
         if (enableResourceGiven) {
-            if (!enableDuration) {
-                resourceGivenYPos = defaultDurationYPos;
+            //if (!enableDuration) {
+            //    resourceGivenYPos = defaultDurationYPos;
                 if (!enableSuccessRate) {
                     resourceGivenYPos = defaultSuccessRateYPos;
                 }
-            }
+            //}
             LoadResourceGivenField(resourceGivenYPos, position, property, label);
         } else {
             property.FindPropertyRelative("resourceGiven").enumValueIndex = 0;
@@ -185,12 +194,12 @@ public class CharacterActionDrawer : PropertyDrawer {
         if (enableResourceNeeded) {
             if (!enableResourceGiven) {
                 resourceNeededYPos = defaultResourceGivenYPos;
-                if (!enableDuration) {
-                    resourceNeededYPos = defaultDurationYPos;
+                //if (!enableDuration) {
+                //    resourceNeededYPos = defaultDurationYPos;
                     if (!enableSuccessRate) {
                         resourceNeededYPos = defaultSuccessRateYPos;
                     }
-                }
+                //}
             }
             LoadNeedsResourceField(resourceNeededYPos, position, property, label);
         } else {
@@ -203,12 +212,12 @@ public class CharacterActionDrawer : PropertyDrawer {
             filtersYPos = defaultResourceNeededYPos;
             if (!enableResourceGiven) {
                 filtersYPos = defaultResourceGivenYPos;
-                if (!enableDuration) {
-                    filtersYPos = defaultDurationYPos;
+                //if (!enableDuration) {
+                //    filtersYPos = defaultDurationYPos;
                     if (!enableSuccessRate) {
                         filtersYPos = defaultSuccessRateYPos;
                     }
-                }
+                //}
             }
         }
         filtersYPos += 16;
@@ -243,12 +252,13 @@ public class CharacterActionDrawer : PropertyDrawer {
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
         float modifier = 25;
         modifier += filtersHeight / 5;
+        modifier += 5;
         if (enableSuccessRate) {
             modifier += 2;
         }
-        if (enableDuration) {
-            modifier += 2;
-        }
+        ////if (enableDuration) {
+        ////    modifier += 2;
+        ////}
         if (enableResourceGiven) {
             modifier += 3;
         }
@@ -273,6 +283,7 @@ public class CharacterActionDrawer : PropertyDrawer {
         EditorGUI.PropertyField(durationRect, property.FindPropertyRelative("duration"));
         //EditorGUI.indentLevel = 0;
     }
+
     private void LoadResourceGivenField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
         //EditorGUI.indentLevel = -7;
         var resourceGivenRect = new Rect(position.x, yPos, position.width, 16);
@@ -306,24 +317,25 @@ public class CharacterActionDrawer : PropertyDrawer {
         }
     }
     private bool HasDuration(ACTION_TYPE actionType) {
-        switch (actionType) {
-            case ACTION_TYPE.HUNT:
-                return true;
-            case ACTION_TYPE.DESTROY:
-                return true;
-            case ACTION_TYPE.BUILD:
-                return true;
-            case ACTION_TYPE.REPAIR:
-                return true;
-            case ACTION_TYPE.IDLE:
-                return true;
-            case ACTION_TYPE.TORTURE:
-                return true;
-            case ACTION_TYPE.ABDUCT:
-                return true;
-            default:
-                return false;
-        }
+        return true;
+        //switch (actionType) {
+        //    case ACTION_TYPE.HUNT:
+        //        return true;
+        //    case ACTION_TYPE.DESTROY:
+        //        return true;
+        //    case ACTION_TYPE.BUILD:
+        //        return true;
+        //    case ACTION_TYPE.REPAIR:
+        //        return true;
+        //    case ACTION_TYPE.IDLE:
+        //        return true;
+        //    case ACTION_TYPE.TORTURE:
+        //        return true;
+        //    case ACTION_TYPE.ABDUCT:
+        //        return true;
+        //    default:
+        //        return false;
+        //}
     }
     private bool GivesResource(ACTION_TYPE actionType) {
         switch (actionType) {
