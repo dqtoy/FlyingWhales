@@ -14,6 +14,9 @@ public class Minimap : MonoBehaviour {
     [SerializeField] private RectTransform minimapTransform;
     [SerializeField] private RectTransform cameraBorders;
 
+    public float maxWidth;
+    public float maxHeight;
+
     private float minX;
     private float maxX;
     private float minY;
@@ -34,12 +37,15 @@ public class Minimap : MonoBehaviour {
         HexTile topRightHexTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1];
         xMagicNum = minimapMaxXBounds / topRightHexTile.transform.position.x;
         yMagicNum = minimapMaxYBounds / topRightHexTile.transform.position.y;
+
+        minimapTexture.texture = CameraMove.Instance.minimapTexture;
+        minimapTexture.SetNativeSize();
     }
 
     //public void OnClickMinimap() {
     //    Vector2 localPoint;
     //    //This returns a screen point relative to the size of the image, with 0,0 at the center of the image and half of the width and height as the left, right, top and bottom bounds
-    //    RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, minimapCamera, out localPoint);
+    //    RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, CameraMove.Instance.uiCamera, out localPoint);
     //    //Debug.Log(localPoint);
     //    Vector3 targetPos = new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f);
     //    CameraMove.Instance.CenterCameraOn(null);
@@ -49,7 +55,10 @@ public class Minimap : MonoBehaviour {
     public void OnPointerClickWithBaseData(BaseEventData data) {
         isDragging = true;
         PointerEventData ped = (PointerEventData)data;
-        CameraMove.Instance.MoveMainCamera(GetLocalCursorPoint(ped));
+        Vector2 localPoint = GetLocalCursorPoint(ped);
+        //Debug.Log(localPoint);
+        CameraMove.Instance.MoveMainCamera(new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f));
+        //OnClickMinimap();
     }
 
     //void OnDrag() {
@@ -83,7 +92,7 @@ public class Minimap : MonoBehaviour {
 
         cameraBorders.transform.localPosition = newPos;
 
-        //ConstrainBounds();
+        ConstrainBounds();
     }
 
     public void UpdateCameraBorderScale() {

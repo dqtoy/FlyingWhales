@@ -86,7 +86,7 @@ namespace EZObjectPools
                 if (instantiateImmediate)
                     pool.InstantiatePool();
 
-                g.transform.parent = Marker.transform;
+                g.transform.SetParent(Marker.transform);
 
                 return pool;
             }
@@ -246,7 +246,7 @@ namespace EZObjectPools
         GameObject NewActiveObject()
         {
             GameObject g = (GameObject)Instantiate(Template);
-            g.transform.parent = transform;
+            g.transform.SetParent(transform);
 
             PooledObject p = g.GetComponent<PooledObject>();
 

@@ -169,10 +169,14 @@ public class Region : IHasNeighbours<Region> {
             }
 #else
             HexTile newCenterOfMass = GridMap.Instance.map[midPointX, midPointY];
+            if (!tilesInRegion.Contains(newCenterOfMass)) {
+                //the computed center of mass is not part of the region, get the closest tile instead
+                newCenterOfMass = tilesInRegion.OrderBy(x => x.GetDistanceTo(newCenterOfMass)).First();
+            }
 #endif
             SetCenterOfMass(newCenterOfMass);
-        } catch {
-            throw new Exception("Cannot Recompute center of mass for " + this.name + ". Current center is " + centerOfMass.name + ". Computed new center is " + midPointX.ToString() + ", " + midPointY.ToString());
+        } catch (Exception e) {
+            throw new Exception(e.Message + " Cannot Recompute center of mass for " + this.name + ". Current center is " + centerOfMass.name + ". Computed new center is " + midPointX.ToString() + ", " + midPointY.ToString());
         }
     }
     internal void RevalidateCenterOfMass() {

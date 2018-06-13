@@ -5,7 +5,7 @@ using TMPro;
 
 public class EventLabel : MonoBehaviour, IPointerClickHandler {
 
-    [SerializeField] private ILogItem logItem;
+    [SerializeField] private LogItem logItem;
 	[SerializeField] private TextMeshProUGUI text;
 
     private void Awake() {
@@ -41,6 +41,12 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                     ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.GetFollowerByID(idToUse);
                     if (character != null) {
                         UIManager.Instance.ShowCharacterInfo(character);
+                    }
+                } else if (linkText.Contains("_combat")) {
+                    if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null) {
+                        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory.ContainsKey(idToUse)) {
+                            UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory[idToUse]);
+                        }
                     }
                 }
             } else {

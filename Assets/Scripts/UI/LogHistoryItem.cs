@@ -3,23 +3,15 @@ using System.Collections;
 using TMPro;
 using UnityEngine.UI;
 
-public class LogHistoryItem : MonoBehaviour, ILogItem {
+public class LogHistoryItem : LogItem {
 
     [SerializeField] private TextMeshProUGUI logLbl;
     [SerializeField] private TextMeshProUGUI dateLbl;
     [SerializeField] private Image logBG;
 
-    private Log _log;
-
-    #region getters/setters
-    public Log log {
-        get { return _log; }
-    }
-    #endregion
-
-    public void SetLog(Log log) {
-        this.name = log.id.ToString();
-        _log = log;
+    public new void SetLog(Log log) {
+        base.SetLog(log);
+        //this.name = log.id.ToString();
         dateLbl.text = Utilities.NormalizeString(log.month.ToString()) + " " + log.day + ", " + log.year;
         if (_log.fillers.Count > 0) {
             this.logLbl.text = Utilities.LogReplacer(_log);
