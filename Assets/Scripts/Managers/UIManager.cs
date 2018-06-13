@@ -3,15 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using TMPro;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class UIManager : MonoBehaviour {
 
-	public static UIManager Instance = null;
+    public static UIManager Instance = null;
 
     public delegate void OnAddNewBattleLog();
     public OnAddNewBattleLog onAddNewBattleLog;
 
-    public UICamera uiCamera;
+    public Camera uiCamera;
+    [SerializeField] private EventSystem eventSystem;
 
     [SerializeField] UIMenu[] allMenus;
 
@@ -21,29 +25,32 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Main UI Objects")]
-    public GameObject smallInfoGO;
+    [SerializeField] private GameObject mainUIGO;
 
-	[Space(10)]
+
+    [Space(10)]
     [Header("Date Objects")]
-    public ButtonGroupItem pauseBtn;
-	public ButtonGroupItem x1Btn;
-	public ButtonGroupItem x2Btn;
-	public ButtonGroupItem x4Btn;
-    public UILabel dateLbl;
+    [SerializeField] private ToggleGroup speedToggleGroup;
+    [SerializeField] private Toggle pauseBtn;
+    [SerializeField] private Toggle x1Btn;
+    [SerializeField] private Toggle x2Btn;
+    [SerializeField] private Toggle x4Btn;
+    [SerializeField] private TextMeshProUGUI dateLbl;
 
     [Space(10)]
-    [Header("Miscellaneous")]
-    public UILabel smallInfoLbl;
+    [Header("Small Info")]
+    public GameObject smallInfoGO;
+    public TextMeshProUGUI smallInfoLbl;
 
-    [Space(10)]
-    [Header("Minimap")]
-    [SerializeField] private GameObject minimapGO;
-    [SerializeField] private GameObject minimapTextureGO;
+    //[Space(10)]
+    //[Header("Minimap")]
+    //[SerializeField] private GameObject minimapGO;
+    //[SerializeField] private GameObject minimapTextureGO;
 
-    [Space(10)]
-    [Header("Notification Area")]
-    [SerializeField] private UITable notificationParent;
-    [SerializeField] private UIScrollView notificationScrollView;
+    //[Space(10)]
+    //[Header("Notification Area")]
+    //[SerializeField] private UITable notificationParent;
+    //[SerializeField] private UIScrollView notificationScrollView;
 
     [Space(10)]
     [Header("World Info Menu")]
@@ -54,9 +61,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject worldInfoQuestsBtn;
     [SerializeField] private GameObject worldInfoStorylinesBtn;
 
-    [Space(10)]
-    [Header("Faction Summary Menu")]
-    [SerializeField] private FactionSummaryUI factionSummaryUI;
+    //[Space(10)]
+    //[Header("Faction Summary Menu")]
+    //[SerializeField] private FactionSummaryUI factionSummaryUI;
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
@@ -65,7 +72,7 @@ public class UIManager : MonoBehaviour {
 
 
     public delegate void OnPauseEventExpiration(bool state);
-	public OnPauseEventExpiration onPauseEventExpiration;
+    public OnPauseEventExpiration onPauseEventExpiration;
 
     [Space(10)]
     [Header("Font Sizes")]
@@ -74,49 +81,47 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int TOOLTIP_FONT_SIZE = 18;
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
-    private const int KINGDOM_EXPIRY_DAYS = 30;
+    internal List<object> eventLogsQueue = new List<object>();
 
-	internal List<object> eventLogsQueue = new List<object> ();
+    //internal string warAllianceState = string.Empty;
 
-	internal string warAllianceState = string.Empty;
-
-    private List<NotificationItem> notificationItemsThatCanBeReused;
+    //private List<NotificationItem> notificationItemsThatCanBeReused;
     //private List<Log> logHistory;
-	//private bool isShowKingdomHistoryOnly;
+    //private bool isShowKingdomHistoryOnly;
 
     private List<UIMenuSettings> _menuHistory;
 
     #region getters/setters
-    internal GameObject minimapTexture {
-        get { return minimapTextureGO; }
-    }
+    //internal GameObject minimapTexture {
+    //    get { return minimapTextureGO; }
+    //}
     internal List<UIMenuSettings> menuHistory {
         get { return _menuHistory; }
     }
     #endregion
 
-    void Awake(){
-		Instance = this;
+    void Awake() {
+        Instance = this;
         //logHistory = new List<Log>();
-        notificationItemsThatCanBeReused = new List<NotificationItem>();
+        //notificationItemsThatCanBeReused = new List<NotificationItem>();
         _menuHistory = new List<UIMenuSettings>();
         //kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
     }
 
-	void Start(){
-        //Messenger.AddListener(Signals.HOUR_ENDED, CheckForKingdomExpire);
+    void Start() {
+        //Messenger.AddListener(Signals.DAY_END, CheckForKingdomExpire);
         Messenger.AddListener("UpdateUI", UpdateUI);
         //EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
         //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
         //EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
         NormalizeFontSizes();
         ToggleBorders();
-        toggleBordersBtn.SetClickState(true);
-		//isShowKingdomHistoryOnly = false;
-  //      PopulateHistoryTable();
-		//PopulateCityHistoryTable ();
+        //toggleBordersBtn.SetClickState(true);
+        //isShowKingdomHistoryOnly = false;
+        //      PopulateHistoryTable();
+        //PopulateCityHistoryTable ();
         //UpdateUI();
-	}
+    }
 
     internal void InitializeUI() {
         for (int i = 0; i < allMenus.Length; i++) {
@@ -125,28 +130,28 @@ public class UIManager : MonoBehaviour {
     }
 
     private void Update() {
+        uiCamera.orthographicSize = Screen.width /2;
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             if (GameManager.Instance.allowConsole) {
                 ToggleConsole();
             }
         }
-        if (!consoleUI.isShowing) {
-            if (Input.GetKeyDown(KeyCode.Space)) {
-                if (GameManager.Instance.isPaused) {
-                    Unpause();
-                    if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
-                        SetProgressionSpeed1X();
-                    } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
-                        SetProgressionSpeed2X();
-                    } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
-                        SetProgressionSpeed4X();
-                    }
-                } else {
-                    Pause();
-                }
-            }
-        }
-  
+        //if (!consoleUI.isShowing) {
+        //if (Input.GetKeyDown(KeyCode.Space)) {
+        //    if (GameManager.Instance.isPaused) {
+        //        if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+        //            SetProgressionSpeed1X(true);
+        //        } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+        //            SetProgressionSpeed2X(true);
+        //        } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+        //            SetProgressionSpeed4X(true);
+        //        }
+        //    } else {
+        //        Pause(true);
+        //    }
+        //}
+        //}
+
         //if (Input.GetMouseButton(0)) {
         //    UITexture uiTexture = minimapTextureGO.GetComponent<UITexture>();
         //    uiTexture.material.SetTexture("_MainTex", uiTexture.mainTexture);
@@ -170,99 +175,77 @@ public class UIManager : MonoBehaviour {
 
     #region Font Utilities
     private void NormalizeFontSizes() {
-        UILabel[] allLabels = this.GetComponentsInChildren<UILabel>(true);
+        TextMeshProUGUI[] allLabels = this.GetComponentsInChildren<TextMeshProUGUI>(true);
         //Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
         for (int i = 0; i < allLabels.Length; i++) {
             NormalizeFontSizeOfLabel(allLabels[i]);
         }
     }
-    private void NormalizeFontSizeOfLabel(UILabel lbl) {
+    private void NormalizeFontSizeOfLabel(TextMeshProUGUI lbl) {
         string lblName = lbl.name;
-        UILabel.Overflow overflowMethod = UILabel.Overflow.ClampContent;
+
+        TextOverflowModes overflowMethod = TextOverflowModes.Truncate;
         if (lblName.Contains("HEADER")) {
             lbl.fontSize = HEADER_FONT_SIZE;
-            overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = TextOverflowModes.Truncate;
         } else if (lblName.Contains("BODY")) {
             lbl.fontSize = BODY_FONT_SIZE;
-            overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = TextOverflowModes.Truncate;
         } else if (lblName.Contains("TOOLTIP")) {
             lbl.fontSize = TOOLTIP_FONT_SIZE;
-            overflowMethod = UILabel.Overflow.ResizeHeight;
+            overflowMethod = TextOverflowModes.Overflow;
         } else if (lblName.Contains("SMALLEST")) {
             lbl.fontSize = SMALLEST_FONT_SIZE;
-            overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = TextOverflowModes.Truncate;
         }
 
         if (!lblName.Contains("NO")) {
-            lbl.overflowMethod = overflowMethod;
+            lbl.overflowMode = overflowMethod;
         }
 
     }
     #endregion
 
-    private void UpdateUI(){
-        dateLbl.text = GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString ()
-            + " (Tick " + GameManager.Instance.hour + ")";
-  //      KingdomManager.Instance.UpdateKingdomList();
-		//UpdateAllianceSummary ();
-  //      if (currentlyShowingKingdom != null) {
-  //          UpdateKingdomInfo();
-  //      }
-
-		//if (eventLogsGO.activeSelf) {
-		//	if (currentlyShowingLogObject != null) {
-		//		ShowEventLogs (currentlyShowingLogObject);
-		//	}
-		//}
-
-  //      if (allKingdomEventsGO.activeSelf) {
-  //          if (currentlyShowingKingdom != null) {
-  //              if (kingdomCurrentEventsGO.activeSelf) {
-  //                  ShowKingdomCurrentEvents();
-  //              } else if (kingdomHistoryGO.activeSelf) {
-  //                  ShowKingdomPastEvents();
-  //              }
-  //          }
-  //      }
-  //      if (relationshipsGO.activeSelf) {
-  //          if (currentlyShowingKingdom != null) {
-  //              ShowKingRelationships();
-  //          }
-  //      }
-        
-  //      if (kingdomCitiesGO.activeSelf) {
-  //          if (currentlyShowingKingdom != null) {
-  //              ShowKingdomCities();
-  //          }
-  //      }
-
-  //      if (createKingdomGO.activeSelf) {
-  //          UpdateCreateKingdomErrorMessage();
-  //      }
-	}
+    private void UpdateUI() {
+        dateLbl.SetText(GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString());
+    }
 
     #region World Controls
-    public void SetProgressionSpeed1X() {
-        Unpause();
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
-        x1Btn.SetAsClicked();
-    }
-    public void SetProgressionSpeed2X() {
-        Unpause();
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
-        x2Btn.SetAsClicked();
-    }
-    public void SetProgressionSpeed4X() {
-        Unpause();
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
-        x4Btn.SetAsClicked();
-    }
-    public void Pause() {
-        GameManager.Instance.SetPausedState(true);
-        pauseBtn.SetAsClicked();
-        if (onPauseEventExpiration != null) {
-            onPauseEventExpiration(true);
+    public void SetProgressionSpeed1X(bool state) {
+        if (state) {
+            x1Btn.isOn = true;
+            speedToggleGroup.NotifyToggleOn(x1Btn);
+            GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
+            Unpause();
         }
+    }
+    public void SetProgressionSpeed2X(bool state) {
+        if (state) {
+            x2Btn.isOn = true;
+            speedToggleGroup.NotifyToggleOn(x2Btn);
+            GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
+            Unpause();
+        }
+    }
+    public void SetProgressionSpeed4X(bool state) {
+        if (state) {
+            x4Btn.isOn = true;
+            speedToggleGroup.NotifyToggleOn(x4Btn);
+            GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
+            Unpause();
+        }
+    }
+    public void Pause(bool state) {
+        if (state) {
+            pauseBtn.isOn = true;
+            speedToggleGroup.NotifyToggleOn(pauseBtn);
+            GameManager.Instance.SetPausedState(true);
+            //pauseBtn.SetAsClicked();
+            if (onPauseEventExpiration != null) {
+                onPauseEventExpiration(true);
+            }
+        }
+
     }
     private void Unpause() {
         GameManager.Instance.SetPausedState(false);
@@ -278,21 +261,21 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-	#region coroutines
-	public IEnumerator RepositionGrid(UIGrid thisGrid){
-		yield return null;
-		if(thisGrid != null && this.gameObject.activeSelf){
-			thisGrid.Reposition ();
-		}
-		yield return null;
-	}
-	public IEnumerator RepositionTable(UITable thisTable){
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-		thisTable.Reposition ();
-	}
-	public IEnumerator RepositionScrollView(UIScrollView thisScrollView, bool keepScrollPosition = false){
-		yield return new WaitForEndOfFrame();
+    #region coroutines
+    public IEnumerator RepositionGrid(UIGrid thisGrid) {
+        yield return null;
+        if (thisGrid != null && this.gameObject.activeSelf) {
+            thisGrid.Reposition();
+        }
+        yield return null;
+    }
+    public IEnumerator RepositionTable(UITable thisTable) {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        thisTable.Reposition();
+    }
+    public IEnumerator RepositionScrollView(UIScrollView thisScrollView, bool keepScrollPosition = false) {
+        yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         if (keepScrollPosition) {
             thisScrollView.UpdatePosition();
@@ -303,14 +286,14 @@ public class UIManager : MonoBehaviour {
         yield return new WaitForEndOfFrame();
         thisScrollView.UpdateScrollbars();
     }
-	public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
-		float elapsedTime = 0f;
-		while (elapsedTime < lerpTime) {
-			progBar.value = Mathf.Lerp(progBar.value, targetValue, (elapsedTime/lerpTime));
-			elapsedTime += Time.deltaTime;
-			yield return null;
-		}
-	}
+    public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime) {
+        float elapsedTime = 0f;
+        while (elapsedTime < lerpTime) {
+            progBar.value = Mathf.Lerp(progBar.value, targetValue, (elapsedTime/lerpTime));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
     #endregion
 
     #region Tooltips
@@ -318,106 +301,106 @@ public class UIManager : MonoBehaviour {
         smallInfoLbl.text = info;
 
         var v3 = Input.mousePosition;
-        v3.z = 10.0f;
-        v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-        v3.y -= 0.15f;
+        //v3.z = 10.0f;
+        //v3 = uiCamera.ScreenToWorldPoint(v3);
+        //v3.y -= 0.15f;
 
         //Bounds uiCameraBounds = uiCamera.GetComponent<Camera>().bound
 
-        if (v3.y <= 0f) {
-            v3 = Input.mousePosition;
-            v3.z = 10.0f;
-            v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-            v3.y += 0.1f;
-        }
-        if (v3.x >= -13.8f) {
-            v3 = Input.mousePosition;
-            v3.z = 10.0f;
-            v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-            v3.x -= 0.2f;
-        }
+        //if (v3.y <= 0f) {
+        //    v3 = Input.mousePosition;
+        //    v3.z = 10.0f;
+        //    v3 = uiCamera.ScreenToWorldPoint(v3);
+        //    v3.y += 0.1f;
+        //}
+        //if (v3.x >= -13.8f) {
+        //    v3 = Input.mousePosition;
+        //    v3.z = 10.0f;
+        //    v3 = uiCamera.ScreenToWorldPoint(v3);
+        //    v3.x -= 0.2f;
+        //}
 
         smallInfoGO.transform.position = v3;
         smallInfoGO.SetActive(true);
     }
     public void HideSmallInfo() {
         smallInfoGO.SetActive(false);
-        smallInfoGO.transform.parent = this.transform;
+        //smallInfoGO.transform.parent = this.transform;
     }
     #endregion
 
     #region Notifications Area
     //public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif, bool addLogToHistory = true) {
-//      if (addLogToHistory) {
-//          AddLogToLogHistory(log);
-//      }
-        //if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
-        //    //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
-        //    return;
-        //}
-        //if (notificationItemsThatCanBeReused.Count > 0) {
-        //    NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
-        //    itemToUse.SetLog(log);
-        //    RemoveNotificationItemFromReuseList(itemToUse);
-        //    itemToUse.gameObject.SetActive(true);
-        //} else {
-        //    GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
-        //    notifGO.transform.localScale = Vector3.one;
-        //    notifGO.GetComponent<NotificationItem>().SetLog(log);
-        //}
-        ////notificationParent.AddChild(notifGO.transform);
-        //RepositionNotificationTable();
-        ////notificationScrollView.UpdatePosition();
-        ////notificationParent.Reposition();
-        //notificationScrollView.UpdatePosition();
+    //      if (addLogToHistory) {
+    //          AddLogToLogHistory(log);
+    //      }
+    //if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
+    //    //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
+    //    return;
+    //}
+    //if (notificationItemsThatCanBeReused.Count > 0) {
+    //    NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
+    //    itemToUse.SetLog(log);
+    //    RemoveNotificationItemFromReuseList(itemToUse);
+    //    itemToUse.gameObject.SetActive(true);
+    //} else {
+    //    GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
+    //    notifGO.transform.localScale = Vector3.one;
+    //    notifGO.GetComponent<NotificationItem>().SetLog(log);
+    //}
+    ////notificationParent.AddChild(notifGO.transform);
+    //RepositionNotificationTable();
+    ////notificationScrollView.UpdatePosition();
+    ////notificationParent.Reposition();
+    //notificationScrollView.UpdatePosition();
 
     //}
-    public void ShowNotification(Log log, bool addLogToHistory = true) {
-//        if (addLogToHistory) {
-//            AddLogToLogHistory(log);
-//        }
-        //if (kingdomsThatShouldShowNotif != null) {
-        //    if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
-        //        //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
-        //        return;
-        //    }
-        //}
-        if (notificationItemsThatCanBeReused.Count > 0) {
-            NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
-            itemToUse.SetLog(log);
-            RemoveNotificationItemFromReuseList(itemToUse);
-            itemToUse.gameObject.SetActive(true);
-        } else {
-            GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
-            notifGO.transform.localScale = Vector3.one;
-            notifGO.GetComponent<NotificationItem>().SetLog(log);
-        }
-        //notificationParent.AddChild(notifGO.transform);
-        RepositionNotificationTable();
-        //notificationScrollView.UpdatePosition();
-        //notificationParent.Reposition();
-        notificationScrollView.UpdatePosition();
+    //    public void ShowNotification(Log log, bool addLogToHistory = true) {
+    ////        if (addLogToHistory) {
+    ////            AddLogToLogHistory(log);
+    ////        }
+    //        //if (kingdomsThatShouldShowNotif != null) {
+    //        //    if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
+    //        //        //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
+    //        //        return;
+    //        //    }
+    //        //}
+    //        if (notificationItemsThatCanBeReused.Count > 0) {
+    //            NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
+    //            itemToUse.SetLog(log);
+    //            RemoveNotificationItemFromReuseList(itemToUse);
+    //            itemToUse.gameObject.SetActive(true);
+    //        } else {
+    //            GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
+    //            notifGO.transform.localScale = Vector3.one;
+    //            notifGO.GetComponent<NotificationItem>().SetLog(log);
+    //        }
+    //        //notificationParent.AddChild(notifGO.transform);
+    //        RepositionNotificationTable();
+    //        //notificationScrollView.UpdatePosition();
+    //        //notificationParent.Reposition();
+    //        notificationScrollView.UpdatePosition();
 
-    }
-    internal void AddNotificationItemToReuseList(NotificationItem item) {
-        if (!notificationItemsThatCanBeReused.Contains(item)) {
-            notificationItemsThatCanBeReused.Add(item);
-        }
-    }
-    internal void RemoveNotificationItemFromReuseList(NotificationItem item) {
-        notificationItemsThatCanBeReused.Remove(item);
-    }
-    public void RemoveAllNotifications() {
-        List<Transform> children = notificationParent.GetChildList();
-        for (int i = 0; i < children.Count; i++) {
-            ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
-        }
-    }
-    public void RepositionNotificationTable() {
-        StartCoroutine(RepositionTable(notificationParent));
-        //StartCoroutine(RepositionGrid(notificationParent));
-        //StartCoroutine(RepositionScrollView(notificationParent.GetComponentInParent<UIScrollView>()));
-    }
+    //    }
+    //internal void AddNotificationItemToReuseList(NotificationItem item) {
+    //    if (!notificationItemsThatCanBeReused.Contains(item)) {
+    //        notificationItemsThatCanBeReused.Add(item);
+    //    }
+    //}
+    //internal void RemoveNotificationItemFromReuseList(NotificationItem item) {
+    //    notificationItemsThatCanBeReused.Remove(item);
+    //}
+    //public void RemoveAllNotifications() {
+    //    List<Transform> children = notificationParent.GetChildList();
+    //    for (int i = 0; i < children.Count; i++) {
+    //        ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
+    //    }
+    //}
+    //public void RepositionNotificationTable() {
+    //    StartCoroutine(RepositionTable(notificationParent));
+    //    //StartCoroutine(RepositionGrid(notificationParent));
+    //    //StartCoroutine(RepositionScrollView(notificationParent.GetComponentInParent<UIScrollView>()));
+    //}
     #endregion
 
     #region World History
@@ -451,33 +434,34 @@ public class UIManager : MonoBehaviour {
     public void ToggleObject(GameObject objectToToggle) {
         objectToToggle.SetActive(!objectToToggle.activeSelf);
     }
- 
+
     /*
 	 * Checker for if the mouse is currently
 	 * over a UI Object
 	 * */
     public bool IsMouseOnUI() {
-        if (uiCamera != null) {
-            if (Minimap.Instance.isDragging) {
-                return true;
-            }
-            if (UICamera.hoveredObject != null && (UICamera.hoveredObject.layer == LayerMask.NameToLayer("UI") || UICamera.hoveredObject.layer == LayerMask.NameToLayer("PlayerActions"))) {
-                return true;
-            }
-        }
-        return false;
+        return eventSystem.IsPointerOverGameObject();
+        //if (uiCamera != null) {
+        //if (Minimap.Instance.isDragging) {
+        //    return true;
+        //}
+        //if (UICamera.hoveredObject != null && (UICamera.hoveredObject.layer == LayerMask.NameToLayer("UI") || UICamera.hoveredObject.layer == LayerMask.NameToLayer("PlayerActions"))) {
+        //    return true;
+        //}
+        //}
+        //return false;
     }
     #endregion
 
     #region Object Pooling
-   /*
-    * Use this to instantiate UI Objects, so that the program can normalize it's
-    * font sizes.
-    * */
+    /*
+     * Use this to instantiate UI Objects, so that the program can normalize it's
+     * font sizes.
+     * */
     internal GameObject InstantiateUIObject(string prefabObjName, Transform parent) {
         //GameObject go = GameObject.Instantiate (prefabObj, parent) as GameObject;
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabObjName, Vector3.zero, Quaternion.identity, parent);
-        UILabel[] goLbls = go.GetComponentsInChildren<UILabel>(true);
+        TextMeshProUGUI[] goLbls = go.GetComponentsInChildren<TextMeshProUGUI>(true);
         for (int i = 0; i < goLbls.Length; i++) {
             NormalizeFontSizeOfLabel(goLbls[i]);
         }
@@ -491,9 +475,9 @@ public class UIManager : MonoBehaviour {
         CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
     }
     public void StartCorruption() {
-        if(settlementInfoUI.currentlyShowingLandmark != null) {
-            settlementInfoUI.currentlyShowingLandmark.tileLocation.SetUncorruptibleLandmarkNeighbors(0);
-            settlementInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true, settlementInfoUI.currentlyShowingLandmark);
+        if (landmarkInfoUI.currentlyShowingLandmark != null) {
+            landmarkInfoUI.currentlyShowingLandmark.tileLocation.SetUncorruptibleLandmarkNeighbors(0);
+            landmarkInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true, landmarkInfoUI.currentlyShowingLandmark);
         }
     }
     //public void ToggleResourceIcons() {
@@ -507,35 +491,36 @@ public class UIManager : MonoBehaviour {
     //}
     #endregion
 
-    #region Settlement Info
+    #region Landmark Info
     [Space(10)]
-    [Header("Settlement Info")]
-    [SerializeField] internal LandmarkInfoUI settlementInfoUI;
+    [Header("Landmark Info")]
+    [SerializeField] internal LandmarkInfoUI landmarkInfoUI;
     public void ShowLandmarkInfo(BaseLandmark landmark) {
-		if(factionInfoUI.isShowing){
-			factionInfoUI.HideMenu ();
-		}
-		if(characterInfoUI.isShowing){
-			characterInfoUI.HideMenu ();
-		}
-		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideMenu ();
-		}
+        HideMainUI();
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.HideMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.HideMenu();
+        }
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.HideMenu();
+        }
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-		if(partyinfoUI.isShowing){
-			partyinfoUI.HideMenu ();
-		}
-        settlementInfoUI.SetData(landmark);
-        settlementInfoUI.OpenMenu();
+        //if(partyinfoUI.isShowing){
+        //	partyinfoUI.HideMenu ();
+        //}
+        landmarkInfoUI.SetData(landmark);
+        landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
-//		playerActionsUI.ShowPlayerActionsUI ();
+        //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateLandmarkInfo() {
-		if(settlementInfoUI.isShowing){
-			settlementInfoUI.UpdateLandmarkInfo();
-		}
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.UpdateLandmarkInfo();
+        }
     }
     #endregion
 
@@ -543,125 +528,136 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Faction Info")]
     [SerializeField] internal FactionInfoUI factionInfoUI;
-	public void ShowFactionInfo(Faction faction) {
-		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideMenu ();
-		}
-		if(characterInfoUI.isShowing){
-			characterInfoUI.HideMenu ();
-		}
-		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideMenu ();
-		}
+    public void ShowFactionInfo(Faction faction) {
+        HideMainUI();
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.HideMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.HideMenu();
+        }
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.HideMenu();
+        }
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-		if(partyinfoUI.isShowing){
-			partyinfoUI.HideMenu ();
-		}
+        //if(partyinfoUI.isShowing){
+        //	partyinfoUI.HideMenu ();
+        //}
         factionInfoUI.SetData(faction);
         factionInfoUI.OpenMenu();
-//		playerActionsUI.ShowPlayerActionsUI ();
-	}
-	public void UpdateFactionInfo() {
-		if (factionInfoUI.isShowing) {
-			factionInfoUI.UpdateFactionInfo ();
-		}
-	}
+        //		playerActionsUI.ShowPlayerActionsUI ();
+    }
+    public void UpdateFactionInfo() {
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.UpdateFactionInfo();
+        }
+    }
     #endregion
+
+    private void HideMainUI() {
+        mainUIGO.SetActive(false);
+    }
+
+    public void ShowMainUI() {
+        mainUIGO.SetActive(true);
+    }
 
     #region Character Info
     [Space(10)]
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
-	public void ShowCharacterInfo(ECS.Character character) {
-		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideMenu ();
-		}
-		if(factionInfoUI.isShowing){
-			factionInfoUI.HideMenu ();
-		}
-		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideMenu ();
-		}
+    public void ShowCharacterInfo(ECS.Character character) {
+        HideMainUI();
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.HideMenu();
+        }
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.HideMenu();
+        }
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.HideMenu();
+        }
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-		if(partyinfoUI.isShowing){
-			partyinfoUI.HideMenu ();
-		}
+        //if(partyinfoUI.isShowing){
+        //	partyinfoUI.HideMenu ();
+        //}
         characterInfoUI.SetData(character);
         characterInfoUI.OpenMenu();
         character.CenterOnCharacter();
-//		playerActionsUI.ShowPlayerActionsUI ();
-	}
-	public void UpdateCharacterInfo() {
-		if (characterInfoUI.isShowing) {
-			characterInfoUI.UpdateCharacterInfo ();
-		}
-	}
+        //		playerActionsUI.ShowPlayerActionsUI ();
+    }
+    public void UpdateCharacterInfo() {
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.UpdateCharacterInfo();
+        }
+    }
     #endregion
 
     #region HexTile Info
     [Space(10)]
     [Header("HexTile Info")]
     [SerializeField] internal HextileInfoUI hexTileInfoUI;
-	public void ShowHexTileInfo(HexTile hexTile) {
-		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideMenu ();
-		}
-		if(factionInfoUI.isShowing){
-			factionInfoUI.HideMenu ();
-		}
-		if(characterInfoUI.isShowing){
-			characterInfoUI.HideMenu ();
-		}
+    public void ShowHexTileInfo(HexTile hexTile) {
+        HideMainUI();
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.HideMenu();
+        }
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.HideMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.HideMenu();
+        }
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-		if(partyinfoUI.isShowing){
-			partyinfoUI.HideMenu ();
-		}
+        //if(partyinfoUI.isShowing){
+        //	partyinfoUI.HideMenu ();
+        //}
         hexTileInfoUI.SetData(hexTile);
         hexTileInfoUI.OpenMenu();
-//		playerActionsUI.ShowPlayerActionsUI ();
-	}
-	public void UpdateHexTileInfo() {
-		if (hexTileInfoUI.isShowing) {
-			hexTileInfoUI.UpdateHexTileInfo ();
-		}
-	}
+        //		playerActionsUI.ShowPlayerActionsUI ();
+    }
+    public void UpdateHexTileInfo() {
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.UpdateHexTileInfo();
+        }
+    }
     #endregion
 
-	#region Party Info
-	[Space(10)]
-	[Header("Party Info")]
-	[SerializeField] internal PartyInfoUI partyinfoUI;
-	public void ShowPartyInfo(Party party) {
-		if(settlementInfoUI.isShowing){
-			settlementInfoUI.HideMenu ();
-		}
-		if(factionInfoUI.isShowing){
-			factionInfoUI.HideMenu ();
-		}
-		if(characterInfoUI.isShowing){
-			characterInfoUI.HideMenu ();
-		}
-		//if (questInfoUI.isShowing) {
-		//	questInfoUI.HideMenu();
-		//}
-		if(hexTileInfoUI.isShowing){
-			hexTileInfoUI.HideMenu ();
-		}
+    #region Party Info
+    [Space(10)]
+    [Header("Party Info")]
+    [SerializeField] internal PartyInfoUI partyinfoUI;
+    public void ShowPartyInfo(Party party) {
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.HideMenu();
+        }
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.HideMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.HideMenu();
+        }
+        //if (questInfoUI.isShowing) {
+        //	questInfoUI.HideMenu();
+        //}
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.HideMenu();
+        }
         partyinfoUI.SetData(party);
         partyinfoUI.OpenMenu();
-	}
-	public void UpdatePartyInfo() {
-		if (partyinfoUI.isShowing) {
-			partyinfoUI.UpdatePartyInfo ();
-		}
-	}
-	#endregion
+    }
+    public void UpdatePartyInfo() {
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.UpdatePartyInfo();
+        }
+    }
+    #endregion
 
 
     //#region Faction Summary
@@ -683,70 +679,70 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Player Actions")]
     [SerializeField] internal PlayerActionsUI playerActionsUI;
-	public void ShowPlayerActions(ILocation location){
-//		playerActionsUI.transform.parent = location.tileLocation.UIParent;
-		playerActionsUI.ShowPlayerActionsUI(location);
-		playerActionsUI.Reposition ();
-	}
-	public void HidePlayerActions() {
-		playerActionsUI.HidePlayerActionsUI();
-	}
+    public void ShowPlayerActions(ILocation location) {
+        //		playerActionsUI.transform.parent = location.tileLocation.UIParent;
+        playerActionsUI.ShowPlayerActionsUI(location);
+        playerActionsUI.Reposition();
+    }
+    public void HidePlayerActions() {
+        playerActionsUI.HidePlayerActionsUI();
+    }
     #endregion
 
-  //  #region Quest Info
-  //  [Space(10)]
-  //  [Header("Quest Info")]
-  //  [SerializeField] internal QuestInfoUI questInfoUI;
-  //  public void ShowQuestInfo(OldQuest.Quest quest) {
-  //      if (settlementInfoUI.isShowing) {
-  //          settlementInfoUI.HideMenu();
-  //      }
-  //      if (factionInfoUI.isShowing) {
-  //          factionInfoUI.HideMenu();
-  //      }
-  //      if (characterInfoUI.isShowing) {
-  //          characterInfoUI.HideMenu();
-  //      }
-  //      if (hexTileInfoUI.isShowing) {
-  //          hexTileInfoUI.HideMenu();
-  //      }
-		//if(partyinfoUI.isShowing){
-		//	partyinfoUI.HideMenu ();
-		//}
-  //      questInfoUI.SetData(quest);
-  //      questInfoUI.OpenMenu();
-  //      //		playerActionsUI.ShowPlayerActionsUI ();
-  //  }
-  //  public void UpdateQuestInfo() {
-  //      if (questInfoUI.isShowing) {
-  //          questInfoUI.UpdateQuestInfo();
-  //      }
-  //  }
-  //  #endregion
+    //  #region Quest Info
+    //  [Space(10)]
+    //  [Header("Quest Info")]
+    //  [SerializeField] internal QuestInfoUI questInfoUI;
+    //  public void ShowQuestInfo(OldQuest.Quest quest) {
+    //      if (settlementInfoUI.isShowing) {
+    //          settlementInfoUI.HideMenu();
+    //      }
+    //      if (factionInfoUI.isShowing) {
+    //          factionInfoUI.HideMenu();
+    //      }
+    //      if (characterInfoUI.isShowing) {
+    //          characterInfoUI.HideMenu();
+    //      }
+    //      if (hexTileInfoUI.isShowing) {
+    //          hexTileInfoUI.HideMenu();
+    //      }
+    //if(partyinfoUI.isShowing){
+    //	partyinfoUI.HideMenu ();
+    //}
+    //      questInfoUI.SetData(quest);
+    //      questInfoUI.OpenMenu();
+    //      //		playerActionsUI.ShowPlayerActionsUI ();
+    //  }
+    //  public void UpdateQuestInfo() {
+    //      if (questInfoUI.isShowing) {
+    //          questInfoUI.UpdateQuestInfo();
+    //      }
+    //  }
+    //  #endregion
 
-  //  #region Quest Logs
-  //  [Space(10)]
-  //  [Header("Quest Logs")]
-  //  [SerializeField] internal QuestLogsUI questLogUI;
-  //  public void ShowQuestLog(OldQuest.Quest quest) {
-		//if(combatLogUI.isShowing){
-		//	combatLogUI.HideCombatLogs ();
-		//}
-  //      questLogUI.ShowQuestLogs(quest);
-  //      questLogUI.UpdateQuestLogs();
-  //  }
-  //  public void UpdateQuestLogs() {
-  //      if (questLogUI.isShowing) {
-  //          questLogUI.UpdateQuestLogs();
-  //      }
-  //  }
-  //  #endregion
+    //  #region Quest Logs
+    //  [Space(10)]
+    //  [Header("Quest Logs")]
+    //  [SerializeField] internal QuestLogsUI questLogUI;
+    //  public void ShowQuestLog(OldQuest.Quest quest) {
+    //if(combatLogUI.isShowing){
+    //	combatLogUI.HideCombatLogs ();
+    //}
+    //      questLogUI.ShowQuestLogs(quest);
+    //      questLogUI.UpdateQuestLogs();
+    //  }
+    //  public void UpdateQuestLogs() {
+    //      if (questLogUI.isShowing) {
+    //          questLogUI.UpdateQuestLogs();
+    //      }
+    //  }
+    //  #endregion
 
     #region Menu History
     public void AddMenuToQueue(UIMenu menu, object data) {
         UIMenuSettings latestSetting = _menuHistory.ElementAtOrDefault(0);
-        if(latestSetting != null) {
-            if(latestSetting.menu == menu && latestSetting.data == data) {
+        if (latestSetting != null) {
+            if (latestSetting.menu == menu && latestSetting.data == data) {
                 //the menu settings to be added are the same as the latest one, ignore.
                 return;
             }
@@ -810,7 +806,8 @@ public class UIManager : MonoBehaviour {
     [Header("Console")]
     [SerializeField] internal ConsoleMenu consoleUI;
     public bool IsConsoleShowing() {
-        return consoleUI.isShowing;
+        return false;
+        //return consoleUI.isShowing;
     }
     public void ToggleConsole() {
         if (consoleUI.isShowing) {
@@ -827,17 +824,17 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-	#region Combat History Logs
+    #region Combat History Logs
     [Space(10)]
     [Header("Combat History")]
-	[SerializeField] internal CombatLogsUI combatLogUI;
-	public void ShowCombatLog(ECS.Combat combat) {
-		//if(questLogUI.isShowing){
-		//	questLogUI.HideQuestLogs ();
-		//}
-		combatLogUI.ShowCombatLogs(combat);
-		combatLogUI.UpdateCombatLogs();
-	}
+    [SerializeField] internal CombatLogsUI combatLogUI;
+    public void ShowCombatLog(ECS.Combat combat) {
+        //if(questLogUI.isShowing){
+        //	questLogUI.HideQuestLogs ();
+        //}
+        combatLogUI.ShowCombatLogs(combat);
+        combatLogUI.UpdateCombatLogs();
+    }
     #endregion
 
     #region Quests Summary
@@ -850,7 +847,7 @@ public class UIManager : MonoBehaviour {
         HideStorylinesSummary();
         worldInfoQuestsSelectedGO.SetActive(true);
         questsSummaryGO.SetActive(true);
-		UpdateQuestsSummary();
+        UpdateQuestsSummary();
     }
     public void HideQuestsSummary() {
         worldInfoQuestsSelectedGO.SetActive(false);
@@ -875,7 +872,7 @@ public class UIManager : MonoBehaviour {
             }
         }
         questsSummaryLbl.text = questSummary;
-		questsSummaryLbl.ResizeCollider ();
+        questsSummaryLbl.ResizeCollider();
     }
     #endregion
 
@@ -889,7 +886,7 @@ public class UIManager : MonoBehaviour {
         HideQuestsSummary();
         worldInfoStorylinesSelectedGO.SetActive(true);
         storylinesSummaryMenu.ShowMenu();
-		StartCoroutine(RepositionTable (storylinesSummaryMenu.storyTable));
+        StartCoroutine(RepositionTable(storylinesSummaryMenu.storyTable));
         //UpdateQuestsSummary();
     }
     public void HideStorylinesSummary() {
@@ -949,6 +946,6 @@ public class UIManager : MonoBehaviour {
         //}
         //SaveGame.Save<Save>("SavedFile1", savefile);
         //LevelLoaderManager.Instance.LoadLevel("MainMenu");
-    } 
+    }
     #endregion
 }

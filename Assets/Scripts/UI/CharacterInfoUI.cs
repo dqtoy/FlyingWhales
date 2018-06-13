@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ECS;
+using TMPro;
+using UnityEngine.UI;
 
 public class CharacterInfoUI : UIMenu {
 
@@ -13,47 +15,47 @@ public class CharacterInfoUI : UIMenu {
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private UILabel generalInfoLbl;
-	[SerializeField] private UILabel statInfoLbl;
-	[SerializeField] private UILabel traitInfoLbl;
-	[SerializeField] private UILabel followersLbl;
-	[SerializeField] private UILabel equipmentInfoLbl;
-	[SerializeField] private UILabel inventoryInfoLbl;
-	[SerializeField] private UILabel relationshipsLbl;
-	[SerializeField] private UILabel historyLbl;
+    [SerializeField] private CharacterPortrait characterPortrait;
+    [SerializeField] private TextMeshProUGUI basicInfoLbl;
+    [SerializeField] private TextMeshProUGUI generalInfoLbl;
+    [SerializeField] private TextMeshProUGUI statInfoLbl;
+    [SerializeField] private TextMeshProUGUI traitInfoLbl;
+    //[SerializeField] private TextMeshProUGUI followersLbl;
+    [SerializeField] private TextMeshProUGUI equipmentInfoLbl;
+    [SerializeField] private TextMeshProUGUI inventoryInfoLbl;
+    [SerializeField] private TextMeshProUGUI relationshipsLbl;
+    //[SerializeField] private TextMeshProUGUI historyLbl;
 
-	[SerializeField] private UIScrollView followersScrollView;
-    [SerializeField] private UIScrollView equipmentScrollView;
-	[SerializeField] private UIScrollView inventoryScrollView;
-    [SerializeField] private UIScrollView relationshipsScrollView;
+    //[SerializeField] private ScrollRect followersScrollView;
+    [SerializeField] private ScrollRect equipmentScrollView;
+    [SerializeField] private ScrollRect inventoryScrollView;
+    [SerializeField] private ScrollRect relationshipsScrollView;
 
     [Space(10)]
     [Header("Logs")]
-    [SerializeField]
-    private GameObject logHistoryPrefab;
-    [SerializeField] private UITable logHistoryTable;
-    [SerializeField] private UIScrollView historyScrollView;
+    [SerializeField] private GameObject logHistoryPrefab;
+    [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
 
     [Space(10)]
     [Header("Character")]
     [SerializeField] private GameObject attackButtonGO;
-    [SerializeField] private ButtonToggle attackBtnToggle;
+    [SerializeField] private Toggle attackBtnToggle;
     [SerializeField] private GameObject joinBattleButtonGO;
-    [SerializeField] private ButtonToggle joinBattleBtnToggle;
+    [SerializeField] private Toggle joinBattleBtnToggle;
 
     private LogHistoryItem[] logHistoryItems;
 
-	private ECS.Character _activeCharacter;
+    private ECS.Character _activeCharacter;
 
     internal ECS.Character currentlyShowingCharacter {
         get { return _data as ECS.Character; }
     }
 
-	internal ECS.Character activeCharacter{
-		get { return _activeCharacter; }
-	}
+    internal ECS.Character activeCharacter {
+        get { return _activeCharacter; }
+    }
 
     internal override void Initialize() {
         base.Initialize();
@@ -63,13 +65,11 @@ public class CharacterInfoUI : UIMenu {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, logHistoryTable.transform);
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
             //newLogItem.name = "-1";
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);
-            logHistoryTable.Reposition();
-            historyScrollView.ResetPosition();
         }
         for (int i = 0; i < logHistoryItems.Length; i++) {
             logHistoryItems[i].gameObject.SetActive(false);
@@ -113,46 +113,55 @@ public class CharacterInfoUI : UIMenu {
         //    currentlyShowingCharacter.avatar.SetHighlightState(true);
         //}
         //currentlyShowingCharacter.icon.SetAvatarState(true);
-        historyScrollView.ResetPosition();
+        //historyScrollView.ResetPosition();
         if (isShowing) {
             UpdateCharacterInfo();
         }
     }
 
-	public void UpdateCharacterInfo(){
-		if(currentlyShowingCharacter == null) {
-			return;
-		}
-		UpdateGeneralInfo();
-		UpdateStatInfo ();
-		UpdateTraitInfo	();
-		UpdateFollowersInfo ();
-		UpdateEquipmentInfo ();
-		UpdateInventoryInfo ();
-		UpdateRelationshipInfo ();
-		//UpdateAllHistoryInfo ();
-	}
-    public void UpdateGeneralInfo() {
+    public void UpdateCharacterInfo() {
+        if (currentlyShowingCharacter == null) {
+            return;
+        }
+        UpdatePortrait();
+        UpdateBasicInfo();
+        UpdateGeneralInfo();
+        UpdateStatInfo();
+        UpdateTraitInfo();
+        //UpdateFollowersInfo ();
+        UpdateEquipmentInfo();
+        UpdateInventoryInfo();
+        UpdateRelationshipInfo();
+        //UpdateAllHistoryInfo ();
+    }
+    private void UpdatePortrait() {
+        characterPortrait.GeneratePortrait(currentlyShowingCharacter.portraitSettings);
+    }
+    private void UpdateBasicInfo() {
         string text = string.Empty;
-        text += currentlyShowingCharacter.id;
-        text += "\n" + currentlyShowingCharacter.name;
-		text += "\n" + Utilities.GetNormalizedSingularRace (currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString (currentlyShowingCharacter.gender.ToString ());
-		if(currentlyShowingCharacter.characterClass != null && currentlyShowingCharacter.characterClass.className != "Classless"){
-			text += " " + currentlyShowingCharacter.characterClass.className;
-		}
-		if(currentlyShowingCharacter.role != null){
-			text += " (" + currentlyShowingCharacter.role.roleType.ToString() + ")";
-		}
+        text += "<b>Name: </b>" + currentlyShowingCharacter.name;
+        text += "\n<b>Race: </b>" + Utilities.GetNormalizedSingularRace(currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString(currentlyShowingCharacter.gender.ToString());
+        if (currentlyShowingCharacter.characterClass != null && currentlyShowingCharacter.characterClass.className != "Classless") {
+            text += "\n<b>Class: </b> " + currentlyShowingCharacter.characterClass.className;
+        }
+        if (currentlyShowingCharacter.role != null) {
+            text += "\n<b>Role: </b>" + currentlyShowingCharacter.role.roleType.ToString();
+        }
 
-		text += "\nFaction: " + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
-        text += ",    Village: ";
+        text += "\n<b>Faction: </b>" + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
+        text += "\n<b>Village: </b>";
         if (currentlyShowingCharacter.home != null) {
             text += currentlyShowingCharacter.home.urlName;
         } else {
             text += "NONE";
         }
-        text += "\nSpecific Location: " + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
-        text += "\nCurrent Action: ";
+        basicInfoLbl.text = text;
+    }
+    public void UpdateGeneralInfo() {
+        string text = string.Empty;
+        //text += currentlyShowingCharacter.id;
+        text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
+        text += "\n<b>Current Action: </b>";
         if (currentlyShowingCharacter.currentAction != null) {
             text += currentlyShowingCharacter.currentAction.actionData.actionName.ToString() + " ";
             //for (int i = 0; i < currentlyShowingCharacter.currentAction.alignments.Count; i++) {
@@ -165,14 +174,14 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
-		//text += "\nCurrent State: ";
-		//if (currentlyShowingCharacter.currentAction != null) {
-		//	if(currentlyShowingCharacter.currentAction.currentState != null){
-		//		text += currentlyShowingCharacter.currentAction.currentState.stateName;
-		//	}
-		//} else {
-		//	text += "NONE";
-		//}
+        //text += "\nCurrent State: ";
+        //if (currentlyShowingCharacter.currentAction != null) {
+        //	if(currentlyShowingCharacter.currentAction.currentState != null){
+        //		text += currentlyShowingCharacter.currentAction.currentState.stateName;
+        //	}
+        //} else {
+        //	text += "NONE";
+        //}
         //text += "\nCurrent Quest: ";
         //if (currentlyShowingCharacter.currentQuest != null) {
         //    text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";
@@ -181,12 +190,12 @@ public class CharacterInfoUI : UIMenu {
         //}
         //text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         //text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
-		//text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
-		//text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
+        //text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
+        //text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
         if (currentlyShowingCharacter.role != null) {
-            text += "\nFullness: " + currentlyShowingCharacter.role.fullness + ", Energy: " + currentlyShowingCharacter.role.energy + ", Fun: " + currentlyShowingCharacter.role.fun;
-            text += "\nSanity: " + currentlyShowingCharacter.role.sanity + ", Prestige: " + currentlyShowingCharacter.role.prestige + ", Safety: " + currentlyShowingCharacter.role.safety;
-            text += "\nHappiness: " + currentlyShowingCharacter.role.happiness;
+            text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy + ", <b>Fun: </b>" + currentlyShowingCharacter.role.fun;
+            text += "\n<b>Sanity: </b>" + currentlyShowingCharacter.role.sanity + ", <b>Prestige: </b>" + currentlyShowingCharacter.role.prestige + ", <b>Safety: </b>" + currentlyShowingCharacter.role.safety;
+            text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
         }
         //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
         //            if (kvp.Value > 0) {
@@ -204,158 +213,155 @@ public class CharacterInfoUI : UIMenu {
         //		}
 
         generalInfoLbl.text = text;
-//        infoScrollView.ResetPosition();
+        //        infoScrollView.ResetPosition();
 
     }
 
-	private void UpdateStatInfo(){
-		string text = string.Empty;
-		text += "\n<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
-		text += "\nHP: " + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
-		text += "\nStr: " + currentlyShowingCharacter.strength.ToString();
-		text += "\nInt: " + currentlyShowingCharacter.intelligence.ToString();
-		text += "\nAgi: " + currentlyShowingCharacter.agility.ToString();
-		statInfoLbl.text = text;
-	}
-	private void UpdateTraitInfo(){
-		string text = string.Empty;
-		text += "[b]TRAITS AND TAGS[/b]";
-		if(currentlyShowingCharacter.traits.Count > 0 || currentlyShowingCharacter.tags.Count > 0){
-			for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
-				Trait trait = currentlyShowingCharacter.traits [i];
-				if(i > 0){
-					text += ", ";
-				}
-				text += trait.traitName;
-			}
-			if(currentlyShowingCharacter.traits.Count > 0){
-				text += ", ";
-			}
-			for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
-				CharacterTag tag = currentlyShowingCharacter.tags [i];
-				if(i > 0){
-					text += ", ";
-				}
-				text += tag.tagName;
-			}
-		}else{
-			text += "\nNONE";
-		}
-		traitInfoLbl.text = text;
-	}
-	private void UpdateFollowersInfo(){
-		string text = string.Empty;
-		if(currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.partyLeader.id == currentlyShowingCharacter.id){
-			for (int i = 0; i < currentlyShowingCharacter.party.followers.Count; i++) {
-				ECS.Character follower = currentlyShowingCharacter.party.followers [i];
-				if(i > 0){
-					text += "\n";
-				}
-				text += follower.urlName;
-			}
-		}else{
-			text += "NONE";
-		}
-		followersLbl.text = text;
-		followersScrollView.UpdatePosition ();
-	}
+    private void UpdateStatInfo() {
+        string text = string.Empty;
+        text += "<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+        text += "\n<b>Str: </b>" + currentlyShowingCharacter.strength.ToString();
+        text += "\n<b>Int: </b>" + currentlyShowingCharacter.intelligence.ToString();
+        text += "\n<b>Agi: </b>" + currentlyShowingCharacter.agility.ToString();
+        statInfoLbl.text = text;
+    }
+    private void UpdateTraitInfo() {
+        string text = string.Empty;
+        if (currentlyShowingCharacter.traits.Count > 0 || currentlyShowingCharacter.tags.Count > 0) {
+            for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
+                Trait trait = currentlyShowingCharacter.traits[i];
+                if (i > 0) {
+                    text += ", ";
+                }
+                text += trait.traitName;
+            }
+            if (currentlyShowingCharacter.traits.Count > 0) {
+                text += ", ";
+            }
+            for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
+                CharacterTag tag = currentlyShowingCharacter.tags[i];
+                if (i > 0) {
+                    text += ", ";
+                }
+                text += tag.tagName;
+            }
+        } else {
+            text += "\nNONE";
+        }
+        traitInfoLbl.text = text;
+    }
+    //private void UpdateFollowersInfo(){
+    //	string text = string.Empty;
+    //	if(currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.partyLeader.id == currentlyShowingCharacter.id){
+    //		for (int i = 0; i < currentlyShowingCharacter.party.followers.Count; i++) {
+    //			ECS.Character follower = currentlyShowingCharacter.party.followers [i];
+    //			if(i > 0){
+    //				text += "\n";
+    //			}
+    //			text += follower.urlName;
+    //		}
+    //	}else{
+    //		text += "NONE";
+    //	}
+    //	followersLbl.text = text;
+    //}
 
-	private void UpdateEquipmentInfo(){
-		string text = string.Empty;
-		if(currentlyShowingCharacter.equippedItems.Count > 0){
-			for (int i = 0; i < currentlyShowingCharacter.equippedItems.Count; i++) {
-				ECS.Item item = currentlyShowingCharacter.equippedItems [i];
-				if(i > 0){
-					text += "\n";
-				}
-				text += item.itemName;
-				if(item is ECS.Weapon){
-					ECS.Weapon weapon = (ECS.Weapon)item;
-					if(weapon.bodyPartsAttached.Count > 0){
-						text += " (";
-						for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
-							if(j > 0){
-								text += ", ";
-							}
-							text += weapon.bodyPartsAttached [j].name;
-						}
-						text += ")";
-					}
-				}else if(item is ECS.Armor){
-					ECS.Armor armor = (ECS.Armor)item;
-					text += " (" + armor.bodyPartAttached.name + ")";
-				}
-			}
-		}else{
-			text += "NONE";
-		}
-		equipmentInfoLbl.text = text;
-		equipmentScrollView.UpdatePosition ();
-	}
+    private void UpdateEquipmentInfo() {
+        string text = string.Empty;
+        if (currentlyShowingCharacter.equippedItems.Count > 0) {
+            for (int i = 0; i < currentlyShowingCharacter.equippedItems.Count; i++) {
+                ECS.Item item = currentlyShowingCharacter.equippedItems[i];
+                if (i > 0) {
+                    text += "\n";
+                }
+                text += item.itemName;
+                if (item is ECS.Weapon) {
+                    ECS.Weapon weapon = (ECS.Weapon)item;
+                    if (weapon.bodyPartsAttached.Count > 0) {
+                        text += " (";
+                        for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
+                            if (j > 0) {
+                                text += ", ";
+                            }
+                            text += weapon.bodyPartsAttached[j].name;
+                        }
+                        text += ")";
+                    }
+                } else if (item is ECS.Armor) {
+                    ECS.Armor armor = (ECS.Armor)item;
+                    text += " (" + armor.bodyPartAttached.name + ")";
+                }
+            }
+        } else {
+            text += "NONE";
+        }
+        equipmentInfoLbl.text = text;
+        //equipmentScrollView.UpdatePosition ();
+    }
 
-	private void UpdateInventoryInfo(){
-		string text = string.Empty;
+    private void UpdateInventoryInfo() {
+        string text = string.Empty;
         foreach (RESOURCE resource in currentlyShowingCharacter.characterObject.resourceInventory.Keys) {
             text += resource.ToString() + ": " + currentlyShowingCharacter.characterObject.resourceInventory[resource];
             text += "\n";
         }
-		//if(currentlyShowingCharacter.inventory.Count > 0) {
-		//	for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
-		//		ECS.Item item = currentlyShowingCharacter.inventory [i];
-		//		if(i > 0){
-		//			text += "\n";
-		//		}
-		//		text += item.itemName;
-		//	}
-		//}else{
-		//	text += "NONE";
-		//}
-		inventoryInfoLbl.text = text;
-		inventoryScrollView.UpdatePosition ();
-	}
+        //if(currentlyShowingCharacter.inventory.Count > 0) {
+        //	for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
+        //		ECS.Item item = currentlyShowingCharacter.inventory [i];
+        //		if(i > 0){
+        //			text += "\n";
+        //		}
+        //		text += item.itemName;
+        //	}
+        //}else{
+        //	text += "NONE";
+        //}
+        inventoryInfoLbl.text = text;
+        //inventoryScrollView.UpdatePosition ();
+    }
 
-	private void UpdateRelationshipInfo(){
-		string text = string.Empty;
-		if (currentlyShowingCharacter.relationships.Count > 0) {
-			bool isFirst = true;
-			foreach (KeyValuePair<ECS.Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
-				if(!isFirst){
-					text += "\n";
-				}else{
-					isFirst = false;
-				}
-				text += kvp.Key.role.roleType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
-				if (kvp.Value.character1.id == kvp.Key.id) {
-					if(kvp.Value.relationshipStatus.Count > 0){
-						text += "(";
-						for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
-							if(i > 0){
-								text += ",";
-							}
-							text += kvp.Value.relationshipStatus [i].character1Relationship.ToString ();
-						}
-						text += ")";
-					}
-				} else if (kvp.Value.character2.id == kvp.Key.id) {
-					if(kvp.Value.relationshipStatus.Count > 0){
-						text += "(";
-						for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
-							if(i > 0){
-								text += ",";
-							}
-							text += kvp.Value.relationshipStatus [i].character2Relationship.ToString ();
-						}
-						text += ")";
-					}
-				}
-			}
-		} else {
-			text += "NONE";
-		}
+    private void UpdateRelationshipInfo() {
+        string text = string.Empty;
+        if (currentlyShowingCharacter.relationships.Count > 0) {
+            bool isFirst = true;
+            foreach (KeyValuePair<ECS.Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
+                if (!isFirst) {
+                    text += "\n";
+                } else {
+                    isFirst = false;
+                }
+                text += kvp.Key.role.roleType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
+                if (kvp.Value.character1.id == kvp.Key.id) {
+                    if (kvp.Value.relationshipStatus.Count > 0) {
+                        text += "(";
+                        for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
+                            if (i > 0) {
+                                text += ",";
+                            }
+                            text += kvp.Value.relationshipStatus[i].character1Relationship.ToString();
+                        }
+                        text += ")";
+                    }
+                } else if (kvp.Value.character2.id == kvp.Key.id) {
+                    if (kvp.Value.relationshipStatus.Count > 0) {
+                        text += "(";
+                        for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
+                            if (i > 0) {
+                                text += ",";
+                            }
+                            text += kvp.Value.relationshipStatus[i].character2Relationship.ToString();
+                        }
+                        text += ")";
+                    }
+                }
+            }
+        } else {
+            text += "NONE";
+        }
 
-		relationshipsLbl.text = text;
-		relationshipsScrollView.UpdatePosition();
-	}
+        relationshipsLbl.text = text;
+        //relationshipsScrollView.UpdatePosition();
+    }
 
     #region History
     private void UpdateHistory(object obj) {
@@ -380,16 +386,16 @@ public class CharacterInfoUI : UIMenu {
                 currItem.gameObject.SetActive(false);
             }
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-            StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        }
+        //if (this.gameObject.activeInHierarchy) {
+        //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+        //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        //}
     }
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            if (currItem.thisLog != null) {
-                if (currItem.thisLog.id == log.id) {
+            if (currItem.log != null) {
+                if (currItem.log.id == log.id) {
                     return true;
                 }
             }
@@ -401,7 +407,7 @@ public class CharacterInfoUI : UIMenu {
     public void CenterCameraOnCharacter() {
         GameObject centerOn = null;
         if (currentlyShowingCharacter.avatar != null) {
-			centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
+            centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
         } else {
             centerOn = currentlyShowingCharacter.currLocation.gameObject;
         }
@@ -425,7 +431,7 @@ public class CharacterInfoUI : UIMenu {
     }
     public void SetAttackButtonState(bool state) {
         isWaitingForAttackTarget = state;
-        attackBtnToggle.SetClickState(state);
+        attackBtnToggle.isOn = state;
         if (isWaitingForAttackTarget) {
             SetJoinBattleButtonState(false);
         }
@@ -448,7 +454,7 @@ public class CharacterInfoUI : UIMenu {
     }
     public void SetJoinBattleButtonState(bool state) {
         isWaitingForJoinBattleTarget = state;
-        joinBattleBtnToggle.SetClickState(state);
+        joinBattleBtnToggle.isOn = state;
         if (isWaitingForJoinBattleTarget) {
             SetAttackButtonState(false);
         }
