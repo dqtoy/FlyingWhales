@@ -13,21 +13,22 @@ public class SchedulingManager : MonoBehaviour {
 		Instance = this;
 	}
 	public void StartScheduleCalls(){
-		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		Messenger.AddListener (Signals.DAY_END, CheckSchedule);
+		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, GameManager.Instance.hour);
+		Messenger.AddListener (Signals.HOUR_ENDED, CheckSchedule);
 	}
 	private void CheckSchedule(){
 		this.checkGameDate.month = GameManager.Instance.month;
 		this.checkGameDate.day = GameManager.Instance.days;
 		this.checkGameDate.year = GameManager.Instance.year;
+        this.checkGameDate.hour = GameManager.Instance.hour;
 		if(this.schedules.ContainsKey(this.checkGameDate)){
 			DoAsScheduled (this.schedules [this.checkGameDate]);
 			RemoveEntry (this.checkGameDate);
 		}
 	}
 
-	internal void AddEntry(int month, int day, int year, Action act){
-		GameDate gameDate = new GameDate (month, day, year);
+	internal void AddEntry(int month, int day, int year, int hour, Action act){
+		GameDate gameDate = new GameDate (month, day, year, hour);
 		if(this.schedules.ContainsKey(gameDate)){
 			this.schedules [gameDate].Add (act);
 		}else{
@@ -48,8 +49,8 @@ public class SchedulingManager : MonoBehaviour {
 	internal void RemoveEntry(GameDate gameDate){
 		this.schedules.Remove (gameDate);
 	}
-	internal void RemoveSpecificEntry(int month, int day, int year, Action act){
-		GameDate gameDate = new GameDate (month, day, year);
+	internal void RemoveSpecificEntry(int month, int day, int year, int hour, Action act){
+		GameDate gameDate = new GameDate (month, day, year, hour);
 		if(this.schedules.ContainsKey(gameDate)){
 			List<Action> acts = this.schedules[gameDate];
 			for (int i = 0; i < acts.Count; i++) {

@@ -385,8 +385,8 @@ namespace ECS {
             character.actionData.SetIsHalted(false);
             character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
             character.icon.SetMovementState(GameManager.Instance.isPaused);
-            if (character.actionData.currentAction != null) {
-                if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || character.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
+            if (character.currentAction != null) {
+                if (character.currentAction.actionType == ACTION_TYPE.ATTACK || character.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
                     character.actionData.EndAction();
                 }
             }

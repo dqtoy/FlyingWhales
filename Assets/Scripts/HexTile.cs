@@ -1542,11 +1542,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #region Combat
     public void ScheduleCombatCheck() {
         //_hasScheduledCombatCheck = true;
-        //Messenger.AddListener(Signals.DAY_START, CheckForCombat);
+        //Messenger.AddListener(Signals.HOUR_STARTED, CheckForCombat);
     }
     public void UnScheduleCombatCheck() {
         //_hasScheduledCombatCheck = false;
-        //Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
+        //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForCombat);
     }
     /*
      Check this location for encounters, start if any.

@@ -28,7 +28,7 @@ public class Villain : CharacterRole {
         SetEnergy(1000);
         SetFun(600);
         SetPrestige(400);
-        SetFaith(1000);
+        SetSanity(1000);
         UpdateHappiness();
 
         //_character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;
@@ -38,11 +38,11 @@ public class Villain : CharacterRole {
     #region Overrides
     public override void DeathRole() {
         base.DeathRole();
-        Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     public override void ChangedRole() {
         base.ChangedRole();
-        Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     #endregion
 

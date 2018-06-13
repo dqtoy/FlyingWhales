@@ -110,8 +110,8 @@ public class CharacterAction {
             case NEEDS.PRESTIGE:
             character.role.AdjustPrestige(_actionData.providedPrestige);
             break;
-            case NEEDS.FAITH:
-            character.role.AdjustFaith(_actionData.providedFaith);
+            case NEEDS.SANITY:
+            character.role.AdjustSanity(_actionData.providedSanity);
             break;
             case NEEDS.SAFETY:
             character.role.AdjustSafety(_actionData.providedSafety);
@@ -125,7 +125,7 @@ public class CharacterAction {
         character.role.AdjustEnergy(_actionData.providedEnergy);
         character.role.AdjustFun(_actionData.providedFun);
         character.role.AdjustPrestige(_actionData.providedPrestige);
-        character.role.AdjustFaith(_actionData.providedFaith);
+        character.role.AdjustSanity(_actionData.providedSanity);
         character.role.AdjustSafety(_actionData.providedSafety);
     }
     public void SetCommonData(CharacterAction action) {

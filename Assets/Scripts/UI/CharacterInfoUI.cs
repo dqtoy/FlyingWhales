@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ECS;
-using TMPro;
-using UnityEngine.UI;
 
 public class CharacterInfoUI : UIMenu {
 
@@ -15,26 +13,26 @@ public class CharacterInfoUI : UIMenu {
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private CharacterPortrait characterPortrait;
-    [SerializeField] private TextMeshProUGUI basicInfoLbl;
-    [SerializeField] private TextMeshProUGUI generalInfoLbl;
-	[SerializeField] private TextMeshProUGUI statInfoLbl;
-	[SerializeField] private TextMeshProUGUI traitInfoLbl;
-	//[SerializeField] private TextMeshProUGUI followersLbl;
-	[SerializeField] private TextMeshProUGUI equipmentInfoLbl;
-	[SerializeField] private TextMeshProUGUI inventoryInfoLbl;
-	[SerializeField] private TextMeshProUGUI relationshipsLbl;
-	//[SerializeField] private TextMeshProUGUI historyLbl;
+    [SerializeField] private UILabel generalInfoLbl;
+	[SerializeField] private UILabel statInfoLbl;
+	[SerializeField] private UILabel traitInfoLbl;
+	[SerializeField] private UILabel followersLbl;
+	[SerializeField] private UILabel equipmentInfoLbl;
+	[SerializeField] private UILabel inventoryInfoLbl;
+	[SerializeField] private UILabel relationshipsLbl;
+	[SerializeField] private UILabel historyLbl;
 
-	//[SerializeField] private ScrollRect followersScrollView;
-    [SerializeField] private ScrollRect equipmentScrollView;
-	[SerializeField] private ScrollRect inventoryScrollView;
-    [SerializeField] private ScrollRect relationshipsScrollView;
+	[SerializeField] private UIScrollView followersScrollView;
+    [SerializeField] private UIScrollView equipmentScrollView;
+	[SerializeField] private UIScrollView inventoryScrollView;
+    [SerializeField] private UIScrollView relationshipsScrollView;
 
     [Space(10)]
     [Header("Logs")]
-    [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private ScrollRect historyScrollView;
+    [SerializeField]
+    private GameObject logHistoryPrefab;
+    [SerializeField] private UITable logHistoryTable;
+    [SerializeField] private UIScrollView historyScrollView;
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
 
@@ -65,11 +63,13 @@ public class CharacterInfoUI : UIMenu {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, logHistoryTable.transform);
             newLogItem.name = "-1";
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);
+            logHistoryTable.Reposition();
+            historyScrollView.ResetPosition();
         }
         for (int i = 0; i < logHistoryItems.Length; i++) {
             logHistoryItems[i].gameObject.SetActive(false);
@@ -113,7 +113,7 @@ public class CharacterInfoUI : UIMenu {
         //    currentlyShowingCharacter.avatar.SetHighlightState(true);
         //}
         //currentlyShowingCharacter.icon.SetAvatarState(true);
-        //historyScrollView.ResetPosition();
+        historyScrollView.ResetPosition();
         if (isShowing) {
             UpdateCharacterInfo();
         }
@@ -123,45 +123,36 @@ public class CharacterInfoUI : UIMenu {
 		if(currentlyShowingCharacter == null) {
 			return;
 		}
-        UpdatePortrait();
-        UpdateBasicInfo();
 		UpdateGeneralInfo();
 		UpdateStatInfo ();
 		UpdateTraitInfo	();
-		//UpdateFollowersInfo ();
+		UpdateFollowersInfo ();
 		UpdateEquipmentInfo ();
 		UpdateInventoryInfo ();
 		UpdateRelationshipInfo ();
 		//UpdateAllHistoryInfo ();
 	}
-    private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(currentlyShowingCharacter.portraitSettings);
-    }
-    private void UpdateBasicInfo() {
+    public void UpdateGeneralInfo() {
         string text = string.Empty;
-        text += "<b>Name: </b>" + currentlyShowingCharacter.name;
-        text += "\n<b>Race: </b>" + Utilities.GetNormalizedSingularRace(currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString(currentlyShowingCharacter.gender.ToString());
-        if (currentlyShowingCharacter.characterClass != null && currentlyShowingCharacter.characterClass.className != "Classless") {
-            text += "\n<b>Class: </b> " + currentlyShowingCharacter.characterClass.className;
-        }
-        if (currentlyShowingCharacter.role != null) {
-            text += "\n<b>Role: </b>" + currentlyShowingCharacter.role.roleType.ToString();
-        }
+        text += currentlyShowingCharacter.id;
+        text += "\n" + currentlyShowingCharacter.name;
+		text += "\n" + Utilities.GetNormalizedSingularRace (currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString (currentlyShowingCharacter.gender.ToString ());
+		if(currentlyShowingCharacter.characterClass != null && currentlyShowingCharacter.characterClass.className != "Classless"){
+			text += " " + currentlyShowingCharacter.characterClass.className;
+		}
+		if(currentlyShowingCharacter.role != null){
+			text += " (" + currentlyShowingCharacter.role.roleType.ToString() + ")";
+		}
 
-        text += "\n<b>Faction: </b>" + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
-        text += "\n<b>Village: </b>";
+		text += "\nFaction: " + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
+        text += ",    Village: ";
         if (currentlyShowingCharacter.home != null) {
             text += currentlyShowingCharacter.home.urlName;
         } else {
             text += "NONE";
         }
-        basicInfoLbl.text = text;
-    }
-    public void UpdateGeneralInfo() {
-        string text = string.Empty;
-        //text += currentlyShowingCharacter.id;
-        text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
-        text += "\n<b>Current Action: </b>";
+        text += "\nSpecific Location: " + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
+        text += "\nCurrent Action: ";
         if (currentlyShowingCharacter.currentAction != null) {
             text += currentlyShowingCharacter.currentAction.actionData.actionName.ToString() + " ";
             //for (int i = 0; i < currentlyShowingCharacter.currentAction.alignments.Count; i++) {
@@ -193,9 +184,9 @@ public class CharacterInfoUI : UIMenu {
 		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
 		//text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
         if (currentlyShowingCharacter.role != null) {
-            text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy;
-            text += "\n<b>Fun: </b>" + currentlyShowingCharacter.role.fun + ", <b>Faith: </b>" + currentlyShowingCharacter.role.faith;
-            text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
+            text += "\nFullness: " + currentlyShowingCharacter.role.fullness + ", Energy: " + currentlyShowingCharacter.role.energy + ", Fun: " + currentlyShowingCharacter.role.fun;
+            text += "\nSanity: " + currentlyShowingCharacter.role.sanity + ", Prestige: " + currentlyShowingCharacter.role.prestige + ", Safety: " + currentlyShowingCharacter.role.safety;
+            text += "\nHappiness: " + currentlyShowingCharacter.role.happiness;
         }
         //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
         //            if (kvp.Value > 0) {
@@ -219,14 +210,16 @@ public class CharacterInfoUI : UIMenu {
 
 	private void UpdateStatInfo(){
 		string text = string.Empty;
-		text += "\n<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
-		text += "\n<b>Str: </b>" + currentlyShowingCharacter.strength.ToString();
-		text += "\n<b>Int: </b>" + currentlyShowingCharacter.intelligence.ToString();
-		text += "\n<b>Agi: </b>" + currentlyShowingCharacter.agility.ToString();
+		text += "[b]STATS[/b]";
+		text += "\nHP: " + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+		text += "\nStr: " + currentlyShowingCharacter.strength.ToString();
+		text += "\nInt: " + currentlyShowingCharacter.intelligence.ToString();
+		text += "\nAgi: " + currentlyShowingCharacter.agility.ToString();
 		statInfoLbl.text = text;
 	}
 	private void UpdateTraitInfo(){
 		string text = string.Empty;
+		text += "[b]TRAITS AND TAGS[/b]";
 		if(currentlyShowingCharacter.traits.Count > 0 || currentlyShowingCharacter.tags.Count > 0){
 			text += "\n";
 			for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
@@ -251,21 +244,22 @@ public class CharacterInfoUI : UIMenu {
 		}
 		traitInfoLbl.text = text;
 	}
-	//private void UpdateFollowersInfo(){
-	//	string text = string.Empty;
-	//	if(currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.partyLeader.id == currentlyShowingCharacter.id){
-	//		for (int i = 0; i < currentlyShowingCharacter.party.followers.Count; i++) {
-	//			ECS.Character follower = currentlyShowingCharacter.party.followers [i];
-	//			if(i > 0){
-	//				text += "\n";
-	//			}
-	//			text += follower.urlName;
-	//		}
-	//	}else{
-	//		text += "NONE";
-	//	}
-	//	followersLbl.text = text;
-	//}
+	private void UpdateFollowersInfo(){
+		string text = string.Empty;
+		if(currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.partyLeader.id == currentlyShowingCharacter.id){
+			for (int i = 0; i < currentlyShowingCharacter.party.followers.Count; i++) {
+				ECS.Character follower = currentlyShowingCharacter.party.followers [i];
+				if(i > 0){
+					text += "\n";
+				}
+				text += follower.urlName;
+			}
+		}else{
+			text += "NONE";
+		}
+		followersLbl.text = text;
+		followersScrollView.UpdatePosition ();
+	}
 
 	private void UpdateEquipmentInfo(){
 		string text = string.Empty;
@@ -297,7 +291,7 @@ public class CharacterInfoUI : UIMenu {
 			text += "NONE";
 		}
 		equipmentInfoLbl.text = text;
-		//equipmentScrollView.UpdatePosition ();
+		equipmentScrollView.UpdatePosition ();
 	}
 
 	private void UpdateInventoryInfo(){
@@ -318,7 +312,7 @@ public class CharacterInfoUI : UIMenu {
 		//	text += "NONE";
 		//}
 		inventoryInfoLbl.text = text;
-		//inventoryScrollView.UpdatePosition ();
+		inventoryScrollView.UpdatePosition ();
 	}
 
 	private void UpdateRelationshipInfo(){
@@ -361,7 +355,7 @@ public class CharacterInfoUI : UIMenu {
 		}
 
 		relationshipsLbl.text = text;
-		//relationshipsScrollView.UpdatePosition();
+		relationshipsScrollView.UpdatePosition();
 	}
 
     #region History
@@ -386,16 +380,16 @@ public class CharacterInfoUI : UIMenu {
                 currItem.gameObject.SetActive(false);
             }
         }
-        //if (this.gameObject.activeInHierarchy) {
-        //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-        //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        //}
+        if (this.gameObject.activeInHierarchy) {
+            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+            StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+        }
     }
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            if (currItem.log != null) {
-                if (currItem.log.id == log.id) {
+            if (currItem.thisLog != null) {
+                if (currItem.thisLog.id == log.id) {
                     return true;
                 }
             }

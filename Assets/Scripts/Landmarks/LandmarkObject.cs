@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public class LandmarkObject : MonoBehaviour {
 
     private BaseLandmark _landmark;
 
     [SerializeField] private GameObject nameplateGO;
-    [SerializeField] private UILabel landmarkLbl;
+    [SerializeField] private TextMeshProUGUI landmarkLbl;
     [SerializeField] private SpriteRenderer topSprite;
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;

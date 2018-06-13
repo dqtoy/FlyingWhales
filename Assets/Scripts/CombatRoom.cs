@@ -22,7 +22,7 @@ public class CombatRoom {
         _location = location;
         AddCombatant(combatant1);
         AddCombatant(combatant2);
-        Messenger.AddListener(Signals.DAY_START, CheckForCombat);
+        Messenger.AddListener(Signals.HOUR_STARTED, CheckForCombat);
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
 
@@ -47,7 +47,7 @@ public class CombatRoom {
         if (_combatants.Count == 0) {
             //ClearCombatRoom();
             //There are no more combatants in this room
-            Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
+            Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForCombat);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
     }
@@ -61,7 +61,7 @@ public class CombatRoom {
     //        }
     //    }
     //    _combatants.Clear();
-    //    Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
+    //    Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForCombat);
     //    Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     //}
 

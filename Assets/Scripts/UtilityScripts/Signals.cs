@@ -5,6 +5,8 @@ public static class Signals {
 
     public static string OBTAIN_ITEM = "OnObtainItem"; //Parameters (Character characterThatObtainedItem, Item obtainedItem)
     public static string DAY_END = "OnDayEnd";
+    public static string HOUR_STARTED = "OnHourStart";
+    public static string HOUR_ENDED = "OnHourEnd";
     public static string DAY_START = "OnDayStart";
     public static string FOUND_ITEM = "OnItemFound"; //Parameters (Character characterThatFoundItem, Item foundItem)
     public static string FOUND_TRACE = "OnTraceFound"; //Parameters (Character characterThatFoundTrace, string traceFound)

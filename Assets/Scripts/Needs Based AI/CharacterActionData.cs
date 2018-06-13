@@ -16,7 +16,7 @@ public struct CharacterActionData {
     public int advertisedFun;
     public int advertisedEnergy;
     public int advertisedPrestige;
-    public int advertisedFaith;
+    public int advertisedSanity;
     public int advertisedSafety;
 
     public RESOURCE advertisedResource;
@@ -25,7 +25,7 @@ public struct CharacterActionData {
     public int providedFun;
     public int providedEnergy;
     public int providedPrestige;
-    public int providedFaith;
+    public int providedSanity;
     public int providedSafety;
 
     public int successRate;
@@ -87,15 +87,15 @@ public class CharacterActionDrawer : PropertyDrawer {
         var aFunRect = new Rect(position.x, aHungerRect.y + 16, position.width, 16);
         var aEnergyRect = new Rect(position.x, aFunRect.y + 16, position.width, 16);
         var aPrestigeRect = new Rect(position.x, aEnergyRect.y + 16, position.width, 16);
-        var aFaithRect = new Rect(position.x, aPrestigeRect.y + 16, position.width, 16);
-        var aSafetyRect = new Rect(position.x, aFaithRect.y + 16, position.width, 16);
+        var aSanityRect = new Rect(position.x, aPrestigeRect.y + 16, position.width, 16);
+        var aSafetyRect = new Rect(position.x, aSanityRect.y + 16, position.width, 16);
         var aResourceRect = new Rect(position.x, aSafetyRect.y + 16, position.width, 16);
 
         EditorGUI.PropertyField(aHungerRect, property.FindPropertyRelative("advertisedFullness"), new GUIContent("Fullness"));
         EditorGUI.PropertyField(aFunRect, property.FindPropertyRelative("advertisedFun"), new GUIContent("Fun"));
         EditorGUI.PropertyField(aEnergyRect, property.FindPropertyRelative("advertisedEnergy"), new GUIContent("Energy"));
         EditorGUI.PropertyField(aPrestigeRect, property.FindPropertyRelative("advertisedPrestige"), new GUIContent("Prestige"));
-        EditorGUI.PropertyField(aFaithRect, property.FindPropertyRelative("advertisedFaith"), new GUIContent("Faith"));
+        EditorGUI.PropertyField(aSanityRect, property.FindPropertyRelative("advertisedSanity"), new GUIContent("Sanity"));
         EditorGUI.PropertyField(aSafetyRect, property.FindPropertyRelative("advertisedSafety"), new GUIContent("Safety"));
         EditorGUI.PropertyField(aResourceRect, property.FindPropertyRelative("advertisedResource"), new GUIContent("Resource"));
 
@@ -109,14 +109,14 @@ public class CharacterActionDrawer : PropertyDrawer {
         var pFunRect = new Rect(position.x, pHungerRect.y + 16, position.width, 16);
         var pEnergyRect = new Rect(position.x, pFunRect.y + 16, position.width, 16);
         var pPrestigeRect = new Rect(position.x, pEnergyRect.y + 16, position.width, 16);
-        var pFaithRect = new Rect(position.x, pPrestigeRect.y + 16, position.width, 16);
-        var pSafetyRect = new Rect(position.x, pFaithRect.y + 16, position.width, 16);
+        var pSanityRect = new Rect(position.x, pPrestigeRect.y + 16, position.width, 16);
+        var pSafetyRect = new Rect(position.x, pSanityRect.y + 16, position.width, 16);
 
         EditorGUI.PropertyField(pHungerRect, property.FindPropertyRelative("providedFullness"), new GUIContent("Fullness"));
         EditorGUI.PropertyField(pFunRect, property.FindPropertyRelative("providedFun"), new GUIContent("Fun"));
         EditorGUI.PropertyField(pEnergyRect, property.FindPropertyRelative("providedEnergy"), new GUIContent("Energy"));
         EditorGUI.PropertyField(pPrestigeRect, property.FindPropertyRelative("providedPrestige"), new GUIContent("Prestige"));
-        EditorGUI.PropertyField(pFaithRect, property.FindPropertyRelative("providedFaith"), new GUIContent("Faith"));
+        EditorGUI.PropertyField(pSanityRect, property.FindPropertyRelative("providedSanity"), new GUIContent("Sanity"));
         EditorGUI.PropertyField(pSafetyRect, property.FindPropertyRelative("providedSafety"), new GUIContent("Safety"));
 
         EditorGUI.indentLevel--;

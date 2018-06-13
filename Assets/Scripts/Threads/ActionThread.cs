@@ -163,42 +163,47 @@ public class ActionThread : Multithread {
             advertisement = allChoices[i].advertisement;
             if (choices[0].action == null) {
                 choices[0].Set(action, advertisement);
-            } else if (choices[1].action == null) {
-                choices[1].Set(action, advertisement);
-            } else if (choices[2].action == null) {
-                choices[2].Set(action, advertisement);
             } else {
-                if (choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
-                    if (advertisement > choices[0].advertisement) {
-                        choices[0].Set(action, advertisement);
-                    }
-                } else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
-                    if (advertisement > choices[1].advertisement) {
-                        choices[1].Set(action, advertisement);
-                    }
-                } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
-                    if (advertisement > choices[2].advertisement) {
-                        choices[2].Set(action, advertisement);
-                    }
+                if (advertisement > choices[0].advertisement) {
+                    choices[0].Set(action, advertisement);
                 }
             }
+            //if (choices[0].action == null) {
+            //    choices[0].Set(action, advertisement);
+            //} else if (choices[1].action == null) {
+            //    choices[1].Set(action, advertisement);
+            //} else if (choices[2].action == null) {
+            //    choices[2].Set(action, advertisement);
+            //} else {
+            //    if (choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
+            //        if (advertisement > choices[0].advertisement) {
+            //            choices[0].Set(action, advertisement);
+            //        }
+            //    } else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
+            //        if (advertisement > choices[1].advertisement) {
+            //            choices[1].Set(action, advertisement);
+            //        }
+            //    } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
+            //        if (advertisement > choices[2].advertisement) {
+            //            choices[2].Set(action, advertisement);
+            //        }
+            //    }
+            //}
         }
-       
-        int maxChoice = 3;
-        if (choices[1].action == null) {
-            maxChoice = 1;
-        } else if (choices[2].action == null) {
-            maxChoice = 2;
-        }
-        int chosenIndex = Utilities.rng.Next(0, maxChoice);
+
+        //int maxChoice = 3;
+        //if (choices[1].action == null) {
+        //    maxChoice = 1;
+        //} else if (choices[2].action == null) {
+        //    maxChoice = 2;
+        //}
+        int chosenIndex = 0; //Utilities.rng.Next(0, maxChoice);
         CharacterAction chosenAction = choices[chosenIndex].action;
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
             Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.specificLocation.locationName + ")");
         }
         //Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
         return chosenAction;
-        //AssignAction(chosenAction);
-        //_character.GoToLocation(chosenAction.state.obj.objectLocation, PATHFINDING_MODE.USE_ROADS);
     }
 
     private void RemoveActionFromChoices(CharacterAction action) {

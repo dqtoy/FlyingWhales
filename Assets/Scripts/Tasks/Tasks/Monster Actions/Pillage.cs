@@ -42,7 +42,7 @@ public class Pillage : CharacterTask {
     }
 //    public override void TaskCancel() {
 //        base.TaskCancel();
-//        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
+//        //Messenger.RemoveListener(Signals.HOUR_ENDED, DoPillage);
 //        _assignedCharacter.DestroyAvatar();
 ////		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 ////			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;
@@ -51,7 +51,7 @@ public class Pillage : CharacterTask {
 //    }
 //    public override void TaskFail() {
 //        base.TaskFail();
-//        //Messenger.RemoveListener(Signals.DAY_END, DoPillage);
+//        //Messenger.RemoveListener(Signals.HOUR_ENDED, DoPillage);
 //        _assignedCharacter.DestroyAvatar();
 ////		if (_target.location.region.centerOfMass.landmarkOnTile.isOccupied){
 ////			Settlement settlement = (Settlement)_target.location.region.centerOfMass.landmarkOnTile;

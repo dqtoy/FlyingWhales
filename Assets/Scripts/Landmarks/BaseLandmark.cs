@@ -664,11 +664,11 @@ public class BaseLandmark : ILocation, TaskCreator {
     #region Combat
     public void ScheduleCombatCheck() {
         _hasScheduledCombatCheck = true;
-        Messenger.AddListener(Signals.DAY_START, CheckForCombat);
+        Messenger.AddListener(Signals.HOUR_STARTED, CheckForCombat);
     }
     public void UnScheduleCombatCheck() {
         _hasScheduledCombatCheck = false;
-        Messenger.RemoveListener(Signals.DAY_START, CheckForCombat);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForCombat);
     }
     /*
      Check this location for encounters, start if any.
@@ -1169,7 +1169,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             //_horizontalBlocked = 0;
             //tileLocation.region.LandmarkStartedCorruption(this);
             PutWallDown();
-            Messenger.AddListener(Signals.DAY_END, DoCorruption);
+            Messenger.AddListener(Signals.HOUR_ENDED, DoCorruption);
             //if (Messenger.eventTable.ContainsKey("StartCorruption")) {
             //    Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
             //    Messenger.Broadcast<BaseLandmark>("StartCorruption", this);
@@ -1196,7 +1196,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             PathGenerator.Instance.CreatePath(this, this.tileLocation, chosenTile, PATHFINDING_MODE.UNRESTRICTED);
         }
         //tileLocation.region.LandmarkStoppedCorruption(this);
-        Messenger.RemoveListener(Signals.DAY_END, DoCorruption);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, DoCorruption);
         //Messenger.Broadcast<BaseLandmark>("StopCorruption", this);
     }
     private void DoCorruption() {

@@ -41,24 +41,25 @@ public class Hero : CharacterRole {
         SetFullness(1000);
         SetEnergy(1000);
         SetFun(600);
-        SetPrestige(400);
-        SetFaith(1000);
+        SetPrestige(0);
+        SetSanity(1000);
+        SetSafety(1000);
         UpdateHappiness();
 
         _character.onDailyAction += StartDepletion;
-        //Messenger.AddListener("OnDayEnd", StartDepletion);
+        //Messenger.AddListener(Signals.HOUR_ENDED, StartDepletion);
     }
 
     #region Overrides
     public override void DeathRole() {
         base.DeathRole();
         _character.onDailyAction -= StartDepletion;
-        //Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        //Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     public override void ChangedRole() {
         base.ChangedRole();
         _character.onDailyAction -= StartDepletion;
-        //Messenger.RemoveListener("OnDayEnd", StartDepletion);
+        //Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
     }
     #endregion
 
@@ -66,6 +67,7 @@ public class Hero : CharacterRole {
         DepleteFullness();
         DepleteEnergy();
         DepleteFun();
-        //DepletePrestige();
+        DepleteSanity();
+        DepletePrestige();
     }
 }

@@ -459,8 +459,8 @@ namespace ECS {
 
             Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
-            Messenger.AddListener(Signals.DAY_END, EverydayAction);
-            Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceFaith);
+            Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
+            Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             //ConstructMaterialInventory();
 
         }
@@ -735,7 +735,7 @@ namespace ECS {
 				_isDead = true;
 				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
-                Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceFaith);
+                Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
@@ -2950,12 +2950,12 @@ namespace ECS {
         #endregion
 
         #region Needs
-        private void CiviliansDiedReduceFaith(StructureObj whereCiviliansDied, int amount) {
+        private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
             if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
                 if (specificLocation.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(specificLocation.tileLocation)){
-                    int faithToReduce = amount * 5;
-                    this.role.AdjustFaith(-faithToReduce);
-                    Debug.Log(this.name + " has reduced its faith by " + faithToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
+                    int sanityToReduce = amount * 5;
+                    this.role.AdjustSanity(-sanityToReduce);
+                    Debug.Log(this.name + " has reduced its sanity by " + sanityToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
                 }
             }
         }
