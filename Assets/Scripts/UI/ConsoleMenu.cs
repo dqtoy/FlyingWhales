@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using ECS;
+using TMPro;
+using UnityEngine.UI;
 
 public class ConsoleMenu : UIMenu {
 
@@ -12,11 +14,11 @@ public class ConsoleMenu : UIMenu {
     private List<string> commandHistory;
     private int currentHistoryIndex;
 
-    [SerializeField] private UILabel consoleLbl;
-    [SerializeField] private UIInput consoleInputField;
+    [SerializeField] private Text consoleLbl;
+    [SerializeField] private InputField consoleInputField;
 
     [SerializeField] private GameObject commandHistoryGO;
-    [SerializeField] private UILabel commandHistoryLbl;
+    [SerializeField] private Text commandHistoryLbl;
 
     internal override void Initialize() {
         commandHistory = new List<string>();
@@ -47,13 +49,13 @@ public class ConsoleMenu : UIMenu {
         isShowing = true;
         this.gameObject.SetActive(true);
         ClearCommandField();
-        consoleInputField.isSelected = true;
+        consoleInputField.Select();
     }
 
     public void HideConsole() {
         isShowing = false;
         this.gameObject.SetActive(false);
-        consoleInputField.isSelected = false;
+        //consoleInputField.foc = false;
         HideCommandHistory();
         ClearCommandHistory();
     }
@@ -70,7 +72,6 @@ public class ConsoleMenu : UIMenu {
     private void HideCommandHistory() {
         commandHistoryGO.SetActive(false);
     }
-
     public void SubmitCommand() {
         string command = consoleLbl.text;
         string[] words = command.Split(' ');
@@ -90,15 +91,18 @@ public class ConsoleMenu : UIMenu {
     }
     private void AddErrorMessage(string errorMessage) {
         errorMessage += ". Use /help for a list of commands";
-        commandHistoryLbl.text += "[FF0000]" + errorMessage + "[-]\n";
+        commandHistoryLbl.text += "<color=#FF0000>" + errorMessage + "</color>\n";
         ShowCommandHistory();
     }
     private void AddSuccessMessage(string successMessage) {
-        commandHistoryLbl.text += "[00FF00]" + successMessage + "[-]\n";
+        commandHistoryLbl.text += "<color=#00FF00>" + successMessage + "</color>\n";
         ShowCommandHistory();
     }
 
     private void Update() {
+        if (isShowing && consoleInputField.text != "" && Input.GetKeyDown(KeyCode.Return)) {
+            SubmitCommand();
+        }
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
             int newIndex = currentHistoryIndex - 1;
             string command = commandHistory.ElementAtOrDefault(newIndex);
@@ -152,7 +156,7 @@ public class ConsoleMenu : UIMenu {
         AddSuccessMessage(log);
     }
     public void AddText(string text) {
-        consoleInputField.value += " " + text;
+        consoleInputField.text += " " + text;
     }
     #endregion
 

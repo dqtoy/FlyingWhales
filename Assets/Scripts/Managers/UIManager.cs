@@ -806,8 +806,8 @@ public class UIManager : MonoBehaviour {
     [Header("Console")]
     [SerializeField] internal ConsoleMenu consoleUI;
     public bool IsConsoleShowing() {
-        return false;
-        //return consoleUI.isShowing;
+        //return false;
+        return consoleUI.isShowing;
     }
     public void ToggleConsole() {
         if (consoleUI.isShowing) {
