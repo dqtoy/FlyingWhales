@@ -66,7 +66,7 @@ public class CharacterInfoUI : UIMenu {
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
             GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            newLogItem.name = "-1";
+            //newLogItem.name = "-1";
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);
@@ -190,7 +190,7 @@ public class CharacterInfoUI : UIMenu {
         //}
         //text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
         //text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
-		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
+		//text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
 		//text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
         if (currentlyShowingCharacter.role != null) {
             text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy;
@@ -219,7 +219,7 @@ public class CharacterInfoUI : UIMenu {
 
 	private void UpdateStatInfo(){
 		string text = string.Empty;
-		text += "\n<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+		text += "<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
 		text += "\n<b>Str: </b>" + currentlyShowingCharacter.strength.ToString();
 		text += "\n<b>Int: </b>" + currentlyShowingCharacter.intelligence.ToString();
 		text += "\n<b>Agi: </b>" + currentlyShowingCharacter.agility.ToString();
@@ -228,7 +228,6 @@ public class CharacterInfoUI : UIMenu {
 	private void UpdateTraitInfo(){
 		string text = string.Empty;
 		if(currentlyShowingCharacter.traits.Count > 0 || currentlyShowingCharacter.tags.Count > 0){
-			text += "\n";
 			for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
 				Trait trait = currentlyShowingCharacter.traits [i];
 				if(i > 0){
@@ -371,9 +370,10 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateAllHistoryInfo() {
+        List<Log> characterHistory = new List<Log>(currentlyShowingCharacter.history.OrderBy(x => x.id));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
+            Log currLog = characterHistory.ElementAtOrDefault(i);
             if (currLog != null) {
                 currItem.SetLog(currLog);
                 currItem.gameObject.SetActive(true);

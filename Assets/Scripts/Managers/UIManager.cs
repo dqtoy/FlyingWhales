@@ -825,6 +825,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
 	#region Combat History Logs
+    [Space(10)]
+    [Header("Combat History")]
 	[SerializeField] internal CombatLogsUI combatLogUI;
 	public void ShowCombatLog(ECS.Combat combat) {
 		//if(questLogUI.isShowing){

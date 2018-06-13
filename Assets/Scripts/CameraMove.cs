@@ -23,6 +23,8 @@ public class CameraMove : MonoBehaviour {
 	private Vector3 velocity = Vector3.zero;
 	private Transform target;
 
+    public RenderTexture minimapTexture;
+
 	////default camera bounds when fov is at minimum
 	//const float minMIN_X = 12.5f;
 	//const float minMAX_X = 189.5f;
@@ -84,6 +86,11 @@ public class CameraMove : MonoBehaviour {
         HexTile topTile = GridMap.Instance.map[0, (int)GridMap.Instance.height - 1];
         float newSize = topTile.transform.position.y + 3;
         wholeMapCamera.orthographicSize = newSize;
+        minimapTexture = new RenderTexture(wholeMapCamera.pixelWidth, wholeMapCamera.pixelHeight, 16, RenderTextureFormat.ARGB32);
+        minimapTexture.Create();
+        wholeMapCamera.targetTexture = minimapTexture;
+        //wholeMapCamera.activeTexture.width = ;
+        //wholeMapCamera.activeTexture.height =;
         //HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
         //wholeMapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, wholeMapCamera.transform.localPosition.y, -186);
     }

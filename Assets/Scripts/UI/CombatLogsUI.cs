@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using TMPro;
+using UnityEngine.UI;
 
 public class CombatLogsUI : UIMenu {
 
-    [SerializeField] private UILabel combatLogsLbl;
-	[SerializeField] private UILabel sideALbl;
-	[SerializeField] private UILabel sideBLbl;
+    [SerializeField] private TextMeshProUGUI combatLogsLbl;
+	[SerializeField] private TextMeshProUGUI sideALbl;
+	[SerializeField] private TextMeshProUGUI sideBLbl;
 
-    [SerializeField] private UIScrollView logsScrollView;
-	[SerializeField] private UIScrollView sideAScrollView;
-	[SerializeField] private UIScrollView sideBScrollView;
+    [SerializeField] private ScrollRect logsScrollView;
+	[SerializeField] private ScrollRect sideAScrollView;
+	[SerializeField] private ScrollRect sideBScrollView;
 
 	private ECS.Combat _currentlyShowingCombat;
 
@@ -21,7 +23,7 @@ public class CombatLogsUI : UIMenu {
 		_currentlyShowingCombat = combat;
         isShowing = true;
         this.gameObject.SetActive(true);
-        logsScrollView.ResetPosition();
+        //logsScrollView.ResetPosition();
     }
 
 	public void HideCombatLogs() {
@@ -42,7 +44,7 @@ public class CombatLogsUI : UIMenu {
         }
 		text += "[-]";
 		combatLogsLbl.text = text;
-        logsScrollView.UpdatePosition();
+        //logsScrollView.UpdatePosition();
     }
 	private void SideACharacters(){
 		string text = string.Empty;
@@ -55,7 +57,7 @@ public class CombatLogsUI : UIMenu {
 			text += currLog;
 		}
 		sideALbl.text = text;
-		sideAScrollView.ResetPosition();
+		//sideAScrollView.ResetPosition();
 	}
 	private void SideBCharacters(){
 		string text = string.Empty;
@@ -68,6 +70,6 @@ public class CombatLogsUI : UIMenu {
 			text += currLog;
 		}
 		sideBLbl.text = text;
-		sideBScrollView.ResetPosition();
+		//sideBScrollView.ResetPosition();
 	}
 }

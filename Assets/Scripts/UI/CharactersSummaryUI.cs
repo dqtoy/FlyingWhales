@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
+using System.Linq;
 
 public class CharactersSummaryUI : UIMenu {
 
@@ -15,7 +16,7 @@ public class CharactersSummaryUI : UIMenu {
     //[SerializeField] private UIEventTrigger raceHeaderTrigger;
     //[SerializeField] private UIEventTrigger roleHeaderTrigger;
 
-    private List<CharacterSummaryEntry> characterEntries;
+    private Dictionary<ECS.Character, CharacterSummaryEntry> characterEntries;
 
     //public override void ShowMenu() {
     //    base.ShowMenu();
@@ -24,7 +25,7 @@ public class CharactersSummaryUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        characterEntries = new List<CharacterSummaryEntry>();
+        characterEntries = new Dictionary<ECS.Character, CharacterSummaryEntry>();
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
@@ -41,7 +42,7 @@ public class CharactersSummaryUI : UIMenu {
             newEntryGO.transform.localScale = Vector3.one;
             CharacterSummaryEntry newEntry = newEntryGO.GetComponent<CharacterSummaryEntry>();
             newEntry.SetCharacter(character);
-            characterEntries.Add(newEntry);
+            characterEntries.Add(character, newEntry);
             //characterEntriesGrid.Reposition();
         }
         sortingAction();
@@ -49,20 +50,21 @@ public class CharactersSummaryUI : UIMenu {
     private void RemoveCharacterEntry(ECS.Character character) {
         CharacterSummaryEntry characterEntry = GetCharacterEntry(character);
         if (characterEntry != null) {
-            characterEntries.Remove(characterEntry);
+            characterEntries.Remove(character);
             ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
         }
         sortingAction();
     }
 
     private CharacterSummaryEntry GetCharacterEntry(ECS.Character character) {
-        for (int i = 0; i < characterEntries.Count; i++) {
-            CharacterSummaryEntry currEntry = characterEntries[i];
-            if (currEntry.character.id == character.id) {
-                return currEntry;
-            }
-        }
-        return null;
+        return characterEntries[character];
+        //for (int i = 0; i < characterEntries.Count; i++) {
+        //    CharacterSummaryEntry currEntry = characterEntries[i];
+        //    if (currEntry.character.id == character.id) {
+        //        return currEntry;
+        //    }
+        //}
+        //return null;
     }
 
     private void UpdateCharacterEntry(ECS.Character character) {
@@ -78,38 +80,70 @@ public class CharactersSummaryUI : UIMenu {
         sortingAction = () => action();
         sortingAction();
     }
+    public void OnClickOrderByName() {
+        SetSortingAction(() => OrderByName());
+    }
+    public void OnClickOrderByFaction() {
+        SetSortingAction(() => OrderByFaction());
+    }
+    public void OnClickOrderByRace() {
+        SetSortingAction(() => OrderByRace());
+    }
+    public void OnClickOrderByRole() {
+        SetSortingAction(() => OrderByRole());
+    }
     private void OrderByName() {
-        for (int i = 0; i < characterEntries.Count; i++) {
-            CharacterSummaryEntry currEntry = characterEntries[i];
-            currEntry.OnOrderByName();
+        int index = 0;
+        foreach (KeyValuePair<ECS.Character, CharacterSummaryEntry> kvp in characterEntries.OrderBy(x => x.Key.name)) {
+            kvp.Value.transform.SetSiblingIndex(index);
+            index++;
         }
+        //for (int i = 0; i < characterEntries.Count; i++) {
+        //    CharacterSummaryEntry currEntry = characterEntries[i];
+        //    currEntry.OnOrderByName();
+        //}
         //if (this.gameObject.activeInHierarchy) {
         //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
         //}
     }
     private void OrderByFaction() {
-        for (int i = 0; i < characterEntries.Count; i++) {
-            CharacterSummaryEntry currEntry = characterEntries[i];
-            currEntry.OnOrderByFaction();
+        int index = 0;
+        foreach (KeyValuePair<ECS.Character, CharacterSummaryEntry> kvp in characterEntries.OrderBy(x => x.Key.faction.name)) {
+            kvp.Value.transform.SetSiblingIndex(index);
+            index++;
         }
+        //for (int i = 0; i < characterEntries.Count; i++) {
+        //    CharacterSummaryEntry currEntry = characterEntries[i];
+        //    currEntry.OnOrderByFaction();
+        //}
         //if (this.gameObject.activeInHierarchy) {
         //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
         //}
     }
     private void OrderByRace() {
-        for (int i = 0; i < characterEntries.Count; i++) {
-            CharacterSummaryEntry currEntry = characterEntries[i];
-            currEntry.OnOrderByRace();
+        int index = 0;
+        foreach (KeyValuePair<ECS.Character, CharacterSummaryEntry> kvp in characterEntries.OrderBy(x => x.Key.raceSetting.race.ToString())) {
+            kvp.Value.transform.SetSiblingIndex(index);
+            index++;
         }
+        //for (int i = 0; i < characterEntries.Count; i++) {
+        //    CharacterSummaryEntry currEntry = characterEntries[i];
+        //    currEntry.OnOrderByRace();
+        //}
         //if (this.gameObject.activeInHierarchy) {
         //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
         //}
     }
     private void OrderByRole() {
-        for (int i = 0; i < characterEntries.Count; i++) {
-            CharacterSummaryEntry currEntry = characterEntries[i];
-            currEntry.OnOrderByRole();
+        int index = 0;
+        foreach (KeyValuePair<ECS.Character, CharacterSummaryEntry> kvp in characterEntries.OrderBy(x => x.Key.role.ToString())) {
+            kvp.Value.transform.SetSiblingIndex(index);
+            index++;
         }
+        //for (int i = 0; i < characterEntries.Count; i++) {
+        //    CharacterSummaryEntry currEntry = characterEntries[i];
+        //    currEntry.OnOrderByRole();
+        //}
         //if (this.gameObject.activeInHierarchy) {
         //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
         //}

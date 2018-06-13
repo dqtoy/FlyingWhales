@@ -47,7 +47,7 @@ public class LandmarkInfoUI : UIMenu {
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
             GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            newLogItem.name = "-1";
+            //newLogItem.name = "-1";
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);
@@ -257,9 +257,10 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     private void UpdateAllHistoryInfo() {
+        List<Log> landmarkHistory = new List<Log>(currentlyShowingLandmark.history.OrderBy(x => x.id));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = currentlyShowingLandmark.history.ElementAtOrDefault(i);
+            Log currLog = landmarkHistory.ElementAtOrDefault(i);
             if (currLog != null) {
                 currItem.SetLog(currLog);
                 currItem.gameObject.SetActive(true);

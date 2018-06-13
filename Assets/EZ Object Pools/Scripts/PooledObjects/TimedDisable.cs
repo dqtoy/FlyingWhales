@@ -18,7 +18,7 @@ public class TimedDisable : PooledObject
             timer += Time.deltaTime;
 
             if (timer > DisableTime) {
-                transform.parent = ParentPool.transform;
+                transform.SetParent(ParentPool.transform);
                 SendObjectBackToPool();
                 //gameObject.SetActive(false);
             }
