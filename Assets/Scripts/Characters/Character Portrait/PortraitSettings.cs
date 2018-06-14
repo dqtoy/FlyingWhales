@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PortraitSettings {
 
-    public GENDER gender;
+    //public GENDER gender;
     public int eyesIndex;
     public int eyeBrowIndex;
     public int hairIndex;
