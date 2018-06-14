@@ -7,11 +7,11 @@ public class StorylineManager : MonoBehaviour {
 
     public static StorylineManager Instance = null;
 
-    [SerializeField]
-    private StorylineBoolDictionary storylineStore = StorylineBoolDictionary.New<StorylineBoolDictionary>();
-    private Dictionary<STORYLINE, bool> storylineDict {
-        get { return storylineStore.dictionary; }
-    }
+    //[SerializeField]
+    //private StorylineBoolDictionary storylineStore = StorylineBoolDictionary.New<StorylineBoolDictionary>();
+    //private Dictionary<STORYLINE, bool> storylineDict {
+    //    get { return storylineStore.dictionary; }
+    //}
 
     public List<StorylineData> activeStorylines;
 
@@ -22,27 +22,27 @@ public class StorylineManager : MonoBehaviour {
 
 	#region Utilities
     public void GenerateStoryLines() {
-        foreach (KeyValuePair<STORYLINE, bool> kvp in storylineDict) {
-            StorylineData createdData = null;
-            if (kvp.Value) { //is the current storyline enabled?
-                switch (kvp.Key) {
-                    case STORYLINE.THE_LOST_HEIR:
-                        createdData = new TheLostHeirData();
-                        //TriggerLostHeir();
-                        break;
-					case STORYLINE.INIMICAL_INCANTATIONS:
-					createdData = new InimicalIncantationsData();
-						break;
-                    default:
-                        break;
-                }
-            }
-            if (createdData != null) {
-				if(createdData.InitialStorylineSetup()){
-					activeStorylines.Add(createdData);
-				}
-            }
-        }
+    //    foreach (KeyValuePair<STORYLINE, bool> kvp in storylineDict) {
+    //        StorylineData createdData = null;
+    //        if (kvp.Value) { //is the current storyline enabled?
+    //            switch (kvp.Key) {
+    //                case STORYLINE.THE_LOST_HEIR:
+    //                    createdData = new TheLostHeirData();
+    //                    //TriggerLostHeir();
+    //                    break;
+				//	case STORYLINE.INIMICAL_INCANTATIONS:
+				//	createdData = new InimicalIncantationsData();
+				//		break;
+    //                default:
+    //                    break;
+    //            }
+    //        }
+    //        if (createdData != null) {
+				//if(createdData.InitialStorylineSetup()){
+				//	activeStorylines.Add(createdData);
+				//}
+    //        }
+    //    }
         //UIManager.Instance.storylinesSummaryMenu.PopulateStorylinesTable();
     }
 
