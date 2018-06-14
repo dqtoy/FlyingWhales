@@ -6,10 +6,8 @@ using UnityEngine.UI;
 public class CharacterPortrait : MonoBehaviour {
 
     [Header("Eyes")]
-    [SerializeField] private Image leftEye;
-    [SerializeField] private Image rightEye;
-    [SerializeField] private Image leftEyeBrow;
-    [SerializeField] private Image rightEyeBrow;
+    [SerializeField] private Image eyes;
+    [SerializeField] private Image eyebrows;
     
     [Header("Nose")]
     [SerializeField] private Image nose;
@@ -19,27 +17,33 @@ public class CharacterPortrait : MonoBehaviour {
 
     [Header("Hair")]
     [SerializeField] private Image hair;
+    [SerializeField] private Image hairBack;
 
     public void GeneratePortrait(PortraitSettings settings) {
         Sprite eyeSprite = CharacterManager.Instance.eyeSprites[settings.eyesIndex];
-        leftEye.sprite = eyeSprite;
-        rightEye.sprite = eyeSprite;
+        eyes.sprite = eyeSprite;
 
         Sprite eyeBrowSprite = CharacterManager.Instance.eyeBrowSprites[settings.eyeBrowIndex];
-        leftEyeBrow.sprite = eyeBrowSprite;
-        rightEyeBrow.sprite = eyeBrowSprite;
+        eyebrows.sprite = eyeBrowSprite;
 
         nose.sprite = CharacterManager.Instance.noseSprites[settings.noseIndex];
         mouth.sprite = CharacterManager.Instance.mouthSprites[settings.mouthIndex];
-        HairSettings chosenHairSettings;
-        if (settings.gender == GENDER.FEMALE) {
-            chosenHairSettings = CharacterManager.Instance.femaleHairSettings[settings.hairIndex];
+        //HairSettings chosenHairSettings;
+        //if (settings.gender == GENDER.FEMALE) {
+        //    chosenHairSettings = CharacterManager.Instance.femaleHairSettings[settings.hairIndex];
+        //} else {
+        //    chosenHairSettings = CharacterManager.Instance.maleHairSettings[settings.hairIndex];
+        //}
+        HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[settings.hairIndex];
+        hair.sprite = chosenHairSettings.hairSprite;
+        if (chosenHairSettings.hairBackSprite == null) {
+            hairBack.sprite = chosenHairSettings.hairSprite;
         } else {
-            chosenHairSettings = CharacterManager.Instance.maleHairSettings[settings.hairIndex];
+            hairBack.sprite = chosenHairSettings.hairBackSprite;
         }
-        hair.sprite = chosenHairSettings.hairVisual;
-        hair.transform.localPosition = chosenHairSettings.hairPosition;
+        //hair.transform.localPosition = chosenHairSettings.hairPosition;
 
         hair.color = settings.hairColor;
+        hairBack.color = settings.hairColor;
     }
 }
