@@ -105,6 +105,7 @@ public class UIManager : MonoBehaviour {
         //logHistory = new List<Log>();
         //notificationItemsThatCanBeReused = new List<NotificationItem>();
         _menuHistory = new List<UIMenuSettings>();
+        Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
         //kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
     }
 
@@ -129,27 +130,33 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    private void Update() {
-        uiCamera.orthographicSize = Screen.width /2;
+    private void FixedUpdate() {
+        //uiCamera.orthographicSize = Screen.width /2;
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             if (GameManager.Instance.allowConsole) {
                 ToggleConsole();
             }
         }
+        UpdateSpeedToggles(GameManager.Instance.isPaused);
         //if (!consoleUI.isShowing) {
-        //if (Input.GetKeyDown(KeyCode.Space)) {
-        //    if (GameManager.Instance.isPaused) {
-        //        if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
-        //            SetProgressionSpeed1X(true);
-        //        } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
-        //            SetProgressionSpeed2X(true);
-        //        } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
-        //            SetProgressionSpeed4X(true);
+        //    if (Input.GetKeyDown(KeyCode.Space)) {
+        //        if (pauseBtn.isOn) {
+        //            if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+        //                x1Btn.isOn = true;
+        //                //speedToggleGroup.NotifyToggleOn(x1Btn);
+        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+        //                x2Btn.isOn = true;
+        //                //speedToggleGroup.NotifyToggleOn(x2Btn);
+        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+        //                x4Btn.isOn = true;
+        //                //speedToggleGroup.NotifyToggleOn(x4Btn);
+        //            }
+        //        } else {
+        //            //Pause(true);
+        //            pauseBtn.isOn = true;
+        //            //speedToggleGroup.NotifyToggleOn(pauseBtn);
         //        }
-        //    } else {
-        //        Pause(true);
         //    }
-        //}
         //}
 
         //if (Input.GetMouseButton(0)) {
@@ -211,41 +218,41 @@ public class UIManager : MonoBehaviour {
     }
 
     #region World Controls
-    public void SetProgressionSpeed1X(bool state) {
-        if (state) {
-            x1Btn.isOn = true;
-            speedToggleGroup.NotifyToggleOn(x1Btn);
-            GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
-            Unpause();
-        }
-    }
-    public void SetProgressionSpeed2X(bool state) {
-        if (state) {
-            x2Btn.isOn = true;
-            speedToggleGroup.NotifyToggleOn(x2Btn);
-            GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
-            Unpause();
-        }
-    }
-    public void SetProgressionSpeed4X(bool state) {
-        if (state) {
-            x4Btn.isOn = true;
-            speedToggleGroup.NotifyToggleOn(x4Btn);
-            GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
-            Unpause();
-        }
-    }
-    public void Pause(bool state) {
-        if (state) {
+    private void UpdateSpeedToggles(bool isPaused) {
+        if (isPaused) {
             pauseBtn.isOn = true;
             speedToggleGroup.NotifyToggleOn(pauseBtn);
-            GameManager.Instance.SetPausedState(true);
-            //pauseBtn.SetAsClicked();
-            if (onPauseEventExpiration != null) {
-                onPauseEventExpiration(true);
+        } else {
+            if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+                x1Btn.isOn = true;
+                speedToggleGroup.NotifyToggleOn(x1Btn);
+            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+                x2Btn.isOn = true;
+                speedToggleGroup.NotifyToggleOn(x2Btn);
+            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+                x4Btn.isOn = true;
+                speedToggleGroup.NotifyToggleOn(x4Btn);
             }
         }
+        }
 
+    public void SetProgressionSpeed1X() {
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
+        Unpause();
+    }
+    public void SetProgressionSpeed2X() {
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
+        Unpause();
+    }
+    public void SetProgressionSpeed4X() {
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
+        Unpause();
+    }
+    public void Pause() {
+        GameManager.Instance.SetPausedState(true);
+        if (onPauseEventExpiration != null) {
+            onPauseEventExpiration(true);
+        }
     }
     private void Unpause() {
         GameManager.Instance.SetPausedState(false);

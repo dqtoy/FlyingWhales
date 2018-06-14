@@ -53,6 +53,26 @@ public class GameManager : MonoBehaviour {
 				this.HourEnded ();
 			}
 		}
+
+        if (!UIManager.Instance.IsConsoleShowing()) {
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                if (isPaused) {
+                    //unpause, and set progression speed to previous speed
+                    //if (currProgressionSpeed == PROGRESSION_SPEED.X1) {
+                    //    x1Btn.isOn = true;
+                    //} else if (currProgressionSpeed == PROGRESSION_SPEED.X2) {
+                    //    x2Btn.isOn = true;
+                    //} else if (currProgressionSpeed == PROGRESSION_SPEED.X4) {
+                    //    x4Btn.isOn = true;
+                    //}
+                    SetProgressionSpeed(currProgressionSpeed);
+                    SetPausedState(false);
+                } else {
+                    //pause
+                    SetPausedState(true);
+                }
+            }
+        }
 	}
 
 	[ContextMenu("Start Progression")]
@@ -75,11 +95,12 @@ public class GameManager : MonoBehaviour {
 		return new GameDate(this.month, 1, this.year, this.hour);
 	}
 
-	public void TogglePause(){
-		this.isPaused = !this.isPaused;
-	}
+	//public void TogglePause(){
+	//	this.isPaused = !this.isPaused;
+	//}
 
 	public void SetPausedState(bool isPaused){
+        //Debug.Log("Set paused state to " + isPaused);
 		this.isPaused = isPaused;
         Messenger.Broadcast(Signals.PAUSED, isPaused);
 	}
@@ -89,6 +110,7 @@ public class GameManager : MonoBehaviour {
      * */
 	public void SetProgressionSpeed(PROGRESSION_SPEED progSpeed){
         currProgressionSpeed = progSpeed;
+        //Debug.Log("Set progression speed to " + progSpeed.ToString());
         float speed = X1_SPEED;
         if (progSpeed == PROGRESSION_SPEED.X2) {
             speed = X2_SPEED;
