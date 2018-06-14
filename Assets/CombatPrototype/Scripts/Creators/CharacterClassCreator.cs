@@ -29,6 +29,10 @@ namespace ECS {
 			EditorGUILayout.PropertyField(allowedWeaponType, true);
 			serializedObject.ApplyModifiedProperties ();
 
+            SerializedProperty skillsPerLevel = serializedObject.FindProperty("skillsPerLevel");
+            EditorGUILayout.PropertyField(skillsPerLevel, true);
+            serializedObject.ApplyModifiedProperties();
+
             if (GUILayout.Button("Create ECS.Character Class")) {
                 SaveCharacterClass();
             }
@@ -51,6 +55,18 @@ namespace ECS {
             }
         }
         private void SaveCharacterClassJson(ClassComponent characterClass, string path) {
+            if(characterClass.skillsPerLevelNames == null) {
+                characterClass.skillsPerLevelNames = new List<string[]>();
+            } else {
+                characterClass.skillsPerLevelNames.Clear();
+            }
+            for (int i = 0; i < characterClass.skillsPerLevel.Count; i++) {
+                string[] skillNames = new string[characterClass.skillsPerLevel[i].list.Count];
+                for (int j = 0; j < characterClass.skillsPerLevel[i].list.Count; j++) {
+                    skillNames[j] = characterClass.skillsPerLevel[i].list[j].name;
+                }
+                characterClass.skillsPerLevelNames.Add(skillNames);
+            }
             string jsonString = JsonUtility.ToJson(characterClass);
             System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
             writer.WriteLine(jsonString);

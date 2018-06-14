@@ -11,7 +11,8 @@ namespace ECS{
 		public int bonusStrength;
 		public int bonusIntelligence;
 		public int bonusAgility;
-		public int bonusMaxHP;
+        public int bonusVitality;
+        public int bonusMaxHP;
 		public int bonusDodgeRate;
 		public int bonusParryRate;
 		public int bonusBlockRate;
@@ -114,6 +115,7 @@ namespace ECS{
             item.bonusStrength = bonusStrength;
             item.bonusIntelligence = bonusIntelligence;
             item.bonusAgility = bonusAgility;
+            item.bonusVitality = bonusVitality;
             item.bonusMaxHP = bonusMaxHP;
             item.bonusDodgeRate = bonusDodgeRate;
             item.bonusParryRate = bonusParryRate;

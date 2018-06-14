@@ -11,7 +11,8 @@ namespace ECS{
 		public int bonusStrength;
 		public int bonusIntelligence;
 		public int bonusAgility;
-		public int bonusMaxHP;
+        public int bonusVitality;
+        public int bonusMaxHP;
 		public int bonusDodgeRate;
 		public int bonusParryRate;
 		public int bonusBlockRate;

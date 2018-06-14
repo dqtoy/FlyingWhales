@@ -31,8 +31,9 @@ namespace ECS {
 			itemComponent.bonusActRate = EditorGUILayout.IntField("Bonus Act Rate: ", itemComponent.bonusActRate);
 			itemComponent.bonusStrength = EditorGUILayout.IntField("Bonus Strength: ", itemComponent.bonusStrength);
 			itemComponent.bonusIntelligence = EditorGUILayout.IntField("Bonus Intelligence: ", itemComponent.bonusIntelligence);
-			itemComponent.bonusAgility = EditorGUILayout.IntField("Bonus Agility: ",itemComponent. bonusAgility);
-			itemComponent.bonusMaxHP = EditorGUILayout.IntField("Bonus Max HP: ", itemComponent.bonusMaxHP);
+			itemComponent.bonusAgility = EditorGUILayout.IntField("Bonus Agility: ",itemComponent.bonusAgility);
+            itemComponent.bonusVitality = EditorGUILayout.IntField("Bonus Vitality: ", itemComponent.bonusVitality);
+            itemComponent.bonusMaxHP = EditorGUILayout.IntField("Bonus Max HP: ", itemComponent.bonusMaxHP);
 			itemComponent.bonusDodgeRate = EditorGUILayout.IntField("Bonus Dodge Rate: ", itemComponent.bonusDodgeRate);
 			itemComponent.bonusParryRate = EditorGUILayout.IntField("Bonus Parry Rate: ", itemComponent.bonusParryRate);
 			itemComponent.bonusBlockRate = EditorGUILayout.IntField("Bonus Block Rate: ", itemComponent.bonusBlockRate);

@@ -65,7 +65,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, int statAllocationBonus = 0, Faction faction = null) {
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, Faction faction = null) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -74,7 +74,7 @@ public class CharacterManager : MonoBehaviour {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + className + "!");
             return null;
         }
-		ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
+		ECS.Character newCharacter = new ECS.Character(setup);
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
@@ -84,11 +84,11 @@ public class CharacterManager : MonoBehaviour {
         allCharacters.Add(newCharacter);
         return newCharacter;
     }
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, ECS.CharacterSetup setup, int statAllocationBonus = 0) {
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, ECS.CharacterSetup setup) {
 		if (setup == null) {
 			return null;
 		}
-		ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
+		ECS.Character newCharacter = new ECS.Character(setup);
 		newCharacter.AssignRole(charRole);
         allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
@@ -97,13 +97,13 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given filename.
          */
-    public ECS.Character CreateNewCharacter(string fileName, int statAllocationBonus = 0, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(string fileName, Faction faction = null) {
         ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(fileName);
         if (setup == null) {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + fileName + "!");
             return null;
         }
-        ECS.Character newCharacter = new ECS.Character(setup, statAllocationBonus);
+        ECS.Character newCharacter = new ECS.Character(setup);
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
@@ -119,7 +119,9 @@ public class CharacterManager : MonoBehaviour {
         string path = Utilities.dataPath + "CharacterClasses/";
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
-            CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
+            ClassComponent classComponent = JsonUtility.FromJson<ClassComponent>(System.IO.File.ReadAllText(classes[i]));
+            CharacterClass currentClass = new CharacterClass();
+            currentClass.SetData(classComponent);
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }

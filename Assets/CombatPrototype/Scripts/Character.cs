@@ -34,17 +34,25 @@ namespace ECS {
 		[SerializeField] private int _strength;
 		[SerializeField] private int _intelligence;
 		[SerializeField] private int _agility;
-		[SerializeField] private int _currentRow;
+        [SerializeField] private int _vitality;
+        [SerializeField] private int _currentRow;
 		private SIDES _currentSide;
 		private int _baseMaxHP;
 		private int _baseStrength;
 		private int _baseIntelligence;
 		private int _baseAgility;
-		private int _fixedMaxHP;
-		private StatsModifierPercentage _statsModifierPercentage;
+        private int _baseVitality;
+        private int _fixedMaxHP;
+        private int _bonusStrength;
+        private int _bonusIntelligence;
+        private int _bonusAgility;
+        private int _bonusVitality;
+        private int _level;
+        private int _experience;
+        private int _maxExperience;
 
-		//Skills
-		private List<Skill> _skills;
+        //Skills
+        private List<Skill> _skills;
 
 		[NonSerialized] private CharacterClass _characterClass;
 		private RaceSetting _raceSetting;
@@ -222,24 +230,30 @@ namespace ECS {
             get { return _isFollower; }
         }
 		public int strength {
-			get { return _strength + (int)((float)_strength * _statsModifierPercentage.strPercentage); }
+			get { return _strength + _bonusStrength; }
 		}
 		public int baseStrength {
 			get { return _baseStrength; }
 		}
 		public int intelligence {
-			get { return _intelligence + (int)((float)_intelligence * _statsModifierPercentage.intPercentage); }
+			get { return _intelligence + _bonusIntelligence; }
 		}
 		public int baseIntelligence {
 			get { return _baseIntelligence; }
 		}
 		public int agility {
-			get { return _agility + (int)((float)_agility * _statsModifierPercentage.agiPercentage); }
+			get { return _agility + _bonusAgility; }
 		}
 		public int baseAgility {
 			get { return _baseAgility; }
 		}
-		public int currentHP{
+        public int vitality {
+            get { return _vitality + _bonusVitality; }
+        }
+        public int baseVitality {
+            get { return _baseVitality; }
+        }
+        public int currentHP{
 			get { return this._currentHP; }
 		}
 		public int maxHP {
@@ -247,9 +261,6 @@ namespace ECS {
 		}
 		public int baseMaxHP {
 			get { return _baseMaxHP; }
-		}
-		public StatsModifierPercentage statsModifierPercentage {
-			get { return _statsModifierPercentage; }
 		}
 		public int dodgeRate {
 			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
@@ -282,7 +293,7 @@ namespace ECS {
 			get { return this._history; }
 		}
 		public float characterPower{
-			get { return (float)_currentHP + (float)((_strength + _intelligence + _agility) * 2) + _equippedWeaponPower;}
+			get { return (float)_currentHP + (float)((strength + intelligence + agility) * 2) + _equippedWeaponPower;}
 		}
 		public float equippedWeaponPower{
 			get { return _equippedWeaponPower; }
@@ -387,9 +398,12 @@ namespace ECS {
         public PortraitSettings portraitSettings {
             get { return _portraitSettings; }
         }
+        public int level {
+            get { return _level; }
+        }
         #endregion
 
-        public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
+        public Character(CharacterSetup baseSetup) {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
@@ -413,27 +427,20 @@ namespace ECS {
 			_history = new List<Log> ();
 			_followers = new List<Character> ();
 			_isFollowerOf = null;
-			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData(this);
             _actionQueue = new CharacterActionQueue<CharacterAction>();
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(gender);
-            //GameObject portrait = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, UIManager.Instance.transform);
-            //portrait.GetComponent<CharacterPortrait>().GeneratePortrait(_portraitSettings);
 			previousActions = new Dictionary<CharacterTask, string> ();
-			//actionWeights = new WeightedDictionary<CharacterTask> ();
             _actionData = new ActionData(this);
-            //_resourceInventory = new Dictionary<RESOURCE, int>();
+            _level = 0;
+            _experience = 0;
 
 			GenerateRaceTags ();
             GenerateSetupTags(baseSetup);
 
-            AllocateStatPoints (statAllocationBonus);
-
+            AllocateStatPoints (10);
+            LevelUp();
             //GenerateTraits();
-
-			_strength = _baseStrength;
-			_agility = _baseAgility;
-			_intelligence = _baseIntelligence;
 			_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
 
 			_equippedItems = new List<Item> ();
@@ -441,13 +448,8 @@ namespace ECS {
 			_skills = GetGeneralSkills();
 			_skills.AddRange (GetBodyPartSkills ());
 
-			AdjustMaxHP (_baseMaxHP);
-
             EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
-
-//          _maxHP = _baseMaxHP;
-//          _currentHP = maxHP;
 
 			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
@@ -465,39 +467,39 @@ namespace ECS {
 
         }
 
-		private void AllocateStatPoints(int statAllocationBonus){
-			_baseMaxHP = _raceSetting.baseHP;
-			_baseStrength = _raceSetting.baseStr;
-			_baseAgility = _raceSetting.baseAgi;
-			_baseIntelligence = _raceSetting.baseInt;
+		private void AllocateStatPoints(int statAllocation){
+            _baseStrength = 0;
+            _baseIntelligence = 0;
+            _baseAgility = 0;
+            _baseVitality = 0;
 
 			WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
 			statWeights.AddElement ("strength", _raceSetting.strWeightAllocation);
 			statWeights.AddElement ("intelligence", _raceSetting.intWeightAllocation);
 			statWeights.AddElement ("agility", _raceSetting.agiWeightAllocation);
-			statWeights.AddElement ("hp", _raceSetting.hpWeightAllocation);
+			statWeights.AddElement ("vitality", _raceSetting.hpWeightAllocation);
 
 			if(statWeights.GetTotalOfWeights() > 0){
 				string chosenStat = string.Empty;
-				int totalStatAllocation = _raceSetting.statAllocationPoints + statAllocationBonus;
-				for (int i = 0; i < totalStatAllocation; i++) {
+				for (int i = 0; i < statAllocation; i++) {
 					chosenStat = statWeights.PickRandomElementGivenWeights ();
 					if (chosenStat == "strength") {
-						_baseStrength += 5;
+						_baseStrength += 1;
 					}else if (chosenStat == "intelligence") {
-						_baseIntelligence += 5;
+						_baseIntelligence += 1;
 					}else if (chosenStat == "agility") {
-						_baseAgility += 5;
-					}else if (chosenStat == "hp") {
-						_baseMaxHP += 50;
+						_baseAgility += 1;
+					}else if (chosenStat == "vitality") {
+						_baseVitality += 1;
 					}
 				}
 			}
 
-			_baseMaxHP += (int)((float)_baseMaxHP * (_characterClass.hpPercentage / 100f));
-			_baseStrength += (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
-			_baseAgility += (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
-			_baseIntelligence += (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
+			//_baseMaxHP += (int)((float)_baseMaxHP * (_characterClass.hpPercentage / 100f));
+			//_baseStrength += (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
+			//_baseAgility += (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
+			//_baseIntelligence += (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
+            
 		}
 		//Check if the body parts of this character has the attribute necessary and quantity
 		internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
@@ -553,17 +555,17 @@ namespace ECS {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
 
-				for (int j = 0; j < skill.skillRequirements.Length; j++) {
-					SkillRequirement skillRequirement = skill.skillRequirements [j];
-					if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-						skill.isEnabled = false;
-						break;
-					}
-				}
-				if(!skill.isEnabled){
-					continue;
-				}
-				if(skill is AttackSkill){
+                for (int j = 0; j < skill.skillRequirements.Length; j++) {
+                    SkillRequirement skillRequirement = skill.skillRequirements[j];
+                    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                        skill.isEnabled = false;
+                        break;
+                    }
+                }
+                if (!skill.isEnabled) {
+                    continue;
+                }
+                if (skill is AttackSkill){
 					isAttackInRange = combat.HasTargetInRangeForSkill (skill, this);
 					if(!isAttackInRange){
 						isAllAttacksInRange = false;
@@ -579,6 +581,33 @@ namespace ECS {
 					}
 				}
 			}
+            for (int i = 0; i < _level; i++) {
+                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                    Skill skill = _characterClass.skillsPerLevel[i][j];
+                    skill.isEnabled = true;
+
+                    //Check for allowed weapon types
+
+                    for (int k = 0; k < skill.skillRequirements.Length; k++) {
+                        SkillRequirement skillRequirement = skill.skillRequirements[k];
+                        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                            skill.isEnabled = false;
+                            break;
+                        }
+                    }
+                    if (!skill.isEnabled) {
+                        continue;
+                    }
+                    if (skill is AttackSkill) {
+                        isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                        if (!isAttackInRange) {
+                            isAllAttacksInRange = false;
+                            skill.isEnabled = false;
+                            continue;
+                        }
+                    }
+                }
+            }
 
 
 			for (int i = 0; i < this._skills.Count; i++) {
@@ -903,7 +932,15 @@ namespace ECS {
 					return true;
 				}
 			}
-			return false;
+            for (int i = 0; i < _level; i++) {
+                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                    Skill skill = _characterClass.skillsPerLevel[i][j];
+                    if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART) {
+                        return true;
+                    }
+                }
+            }
+            return false;
 		}
 		internal bool HasActivatableWeaponSkill(){
 			for (int i = 0; i < this._skills.Count; i++) {
@@ -912,7 +949,15 @@ namespace ECS {
 					return true;
 				}
 			}
-			return false;
+            for (int i = 0; i < _level; i++) {
+                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                    Skill skill = _characterClass.skillsPerLevel[i][j];
+                    if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON) {
+                        return true;
+                    }
+                }
+            }
+            return false;
 		}
 		#endregion
 
@@ -1381,16 +1426,17 @@ namespace ECS {
 			return null;
 		}
         private void AddItemBonuses(Item item) {
-            AdjustMaxHP(item.bonusMaxHP);
-            this._strength += item.bonusStrength;
-            this._intelligence += item.bonusIntelligence;
-            this._agility += item.bonusAgility;
+            //AdjustMaxHP(item.bonusMaxHP);
+            AdjustBonusStrength(item.bonusStrength);
+            AdjustBonusIntelligence(item.bonusIntelligence);
+            AdjustBonusAgility(item.bonusAgility);
+            AdjustBonusVitality(item.bonusVitality);
         }
         private void RemoveItemBonuses(Item item) {
-            AdjustMaxHP(-item.bonusMaxHP);
-            this._strength -= item.bonusStrength;
-            this._intelligence -= item.bonusIntelligence;
-            this._agility -= item.bonusAgility;
+            //AdjustMaxHP(-item.bonusMaxHP);
+            AdjustBonusStrength(-item.bonusStrength);
+            AdjustBonusIntelligence(-item.bonusIntelligence);
+            AdjustBonusVitality(-item.bonusVitality);
         }
         #endregion
 
@@ -1465,15 +1511,6 @@ namespace ECS {
 			return allBodyPartSkills;
 		}
 		#endregion
-
-		#region Stats
-		internal void SetAgility (int amount){
-			this._agility = amount;
-		}
-		internal void AdjustAgility (int amount){
-			this._agility += amount;
-		}        
-        #endregion
 
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
@@ -1639,12 +1676,10 @@ namespace ECS {
 		public void AddTrait(Trait trait){
 			trait.AssignCharacter(this);
 			_traits.Add(trait);
-			AddTraitBonuses (trait);
 		}
 		public void RemoveTrait(Trait trait){
 			trait.AssignCharacter(null);
 			_traits.Remove(trait);
-			RemoveTraitBonuses (trait);
 		}
         private TRAIT GenerateCharismaTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
@@ -1723,20 +1758,6 @@ namespace ECS {
 				}
 			}
 			return false;
-		}
-		private void AddTraitBonuses(Trait trait){
-			_statsModifierPercentage.intPercentage += trait.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage += trait.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage += trait.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage += trait.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
-		}
-		private void RemoveTraitBonuses(Trait trait){
-			_statsModifierPercentage.intPercentage -= trait.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage -= trait.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage -= trait.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage -= trait.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
 		}
         #endregion
 
@@ -1852,13 +1873,11 @@ namespace ECS {
         }
 		public void AddCharacterTag(CharacterTag tag){
 			_tags.Add(tag);
-			AddCharacterTagBonuses (tag);
 			tag.Initialize ();
 		}
 		public bool RemoveCharacterTag(CharacterTag tag){
 			if(_tags.Remove(tag)){
 				tag.OnRemoveTag();
-				RemoveCharacterTagBonuses (tag);
 				return true;
 			}
 			return false;
@@ -1872,20 +1891,6 @@ namespace ECS {
             }
 			return false;
         }
-        private void AddCharacterTagBonuses(CharacterTag tag){
-			_statsModifierPercentage.intPercentage += tag.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage += tag.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage += tag.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage += tag.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
-		}
-		private void RemoveCharacterTagBonuses(CharacterTag tag){
-			_statsModifierPercentage.intPercentage -= tag.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage -= tag.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage -= tag.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage -= tag.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
-		}
 		public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false, bool includeParty = false){
 			if(!includeParty){
 				return DoesHaveTags (this, tagsToHave, mustHaveAll);
@@ -2193,14 +2198,10 @@ namespace ECS {
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-        internal void AdjustMaxHP(int amount) {
-            this._fixedMaxHP += amount;
-            //			this._maxHP = this._maxHP + (int)((float)this._maxHP * _statsModifierPercentage.hpPercentage);
-            RecomputeMaxHP();
-        }
         private void RecomputeMaxHP() {
+            this._fixedMaxHP = 10 + (Mathf.CeilToInt(100f * ((Mathf.Pow((float)_level, 1.1f)) / 1.3f)));
             int previousMaxHP = this._maxHP;
-            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * _statsModifierPercentage.hpPercentage);
+            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * ((float)vitality / 100f));
             if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
                 this._currentHP = this._maxHP;
             }
@@ -2968,6 +2969,40 @@ namespace ECS {
                     Debug.Log(this.name + " has reduced its sanity by " + sanityToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
                 }
             }
+        }
+        #endregion
+
+        #region RPG
+        public void LevelUp() {
+            _level += 1;
+            _strength += _baseStrength;
+            _agility += _baseAgility;
+            _intelligence += _baseIntelligence;
+            _vitality += _baseVitality;
+            RecomputeMaxHP();
+            RecomputeMaxExperience();
+        }
+        public void AdjustBonusStrength(int amount) {
+            _bonusStrength += amount;
+        }
+        public void AdjustBonusAgility(int amount) {
+            _bonusAgility += amount;
+        }
+        public void AdjustBonusIntelligence(int amount) {
+            _bonusIntelligence += amount;
+        }
+        public void AdjustBonusVitality(int amount) {
+            _bonusVitality += amount;
+        }
+        public void AdjustExperience(int amount) {
+            _experience += amount;
+            if(_experience >= _maxExperience) {
+                _experience = 0;
+                LevelUp();
+            }
+        }
+        private void RecomputeMaxExperience() {
+            _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
         }
         #endregion
 

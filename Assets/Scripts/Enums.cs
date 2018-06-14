@@ -1400,3 +1400,8 @@ public enum LEVEL {
     AVERAGE,
     LOW
 }
+
+public enum ELEMENT {
+    NONE,
+    FIRE,
+}

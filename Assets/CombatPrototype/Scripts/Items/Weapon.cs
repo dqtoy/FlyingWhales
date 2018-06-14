@@ -50,7 +50,7 @@ namespace ECS{
                 List<Skill> weaponTypeSkills = SkillManager.Instance.weaponTypeSkills[weaponType];
                 for (int i = 0; i < weaponTypeSkills.Count; i++) {
                     Skill newSkill = weaponTypeSkills[i].CreateNewCopy();
-                    newSkill.weapon = this;
+                    //newSkill.weapon = this;
                     _skills.Add(newSkill);
                 }
             }
@@ -58,13 +58,13 @@ namespace ECS{
             for (int i = 0; i < attackSkills.Count; i++) {
                 string skillName = attackSkills[i];
                 AttackSkill currSkill = (AttackSkill)SkillManager.Instance.CreateNewSkillInstance(skillName);
-                currSkill.weapon = this;
+                //currSkill.weapon = this;
                 _skills.Add(currSkill);
             }
             for (int i = 0; i < healSkills.Count; i++) {
                 string skillName = healSkills[i];
                 HealSkill currSkill = (HealSkill)SkillManager.Instance.CreateNewSkillInstance(skillName);
-                currSkill.weapon = this;
+                //currSkill.weapon = this;
                 _skills.Add(currSkill);
             }
         }

@@ -412,49 +412,49 @@ namespace ECS{
 		//Returns activation weight of a certain skill that is already modified
 		private int GetActivationWeightOfSkill(ECS.Character sourceCharacter, Skill skill){
 			int activationWeight = skill.activationWeight;
-			if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
-				activationWeight *= ((int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f));
-			}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.MISSING_HEALTH){
-				int missingHealth = sourceCharacter.maxHP - sourceCharacter.currentHP;
-				int weight = (int)(((float)missingHealth / (float)sourceCharacter.maxHP) * 100f);
-				activationWeight *=  (weight > 0f ? weight : 1);
-			}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
-				int highestMissingHealth = 0;
-				ECS.Character chosenCharacter = null;
-				if(sourceCharacter.currentSide == SIDES.A){
-					for (int j = 0; j < charactersSideA.Count; j++) {
-						ECS.Character character = charactersSideA [j];
-						int missingHealth = character.maxHP - character.currentHP;
-						if(chosenCharacter == null){
-							highestMissingHealth = missingHealth;
-							chosenCharacter = character;
-						}else{
-							if(missingHealth > highestMissingHealth){
-								highestMissingHealth = missingHealth;
-								chosenCharacter = character;
-							}
-						}
-					}
-				}else{
-					for (int j = 0; j < charactersSideB.Count; j++) {
-						ECS.Character character = charactersSideB [j];
-						int missingHealth = character.maxHP - character.currentHP;
-						if(chosenCharacter == null){
-							highestMissingHealth = missingHealth;
-							chosenCharacter = character;
-						}else{
-							if(missingHealth > highestMissingHealth){
-								highestMissingHealth = missingHealth;
-								chosenCharacter = character;
-							}
-						}
-					}
-				}
-				if(chosenCharacter != null){
-					int weight = (int)((((float)highestMissingHealth / (float)chosenCharacter.maxHP) * 100f) * 2f);
-					activationWeight *= (weight > 0f ? weight : 1);
-				}
-			}
+			//if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
+			//	activationWeight *= ((int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f));
+			//}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.MISSING_HEALTH){
+			//	int missingHealth = sourceCharacter.maxHP - sourceCharacter.currentHP;
+			//	int weight = (int)(((float)missingHealth / (float)sourceCharacter.maxHP) * 100f);
+			//	activationWeight *=  (weight > 0f ? weight : 1);
+			//}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
+			//	int highestMissingHealth = 0;
+			//	ECS.Character chosenCharacter = null;
+			//	if(sourceCharacter.currentSide == SIDES.A){
+			//		for (int j = 0; j < charactersSideA.Count; j++) {
+			//			ECS.Character character = charactersSideA [j];
+			//			int missingHealth = character.maxHP - character.currentHP;
+			//			if(chosenCharacter == null){
+			//				highestMissingHealth = missingHealth;
+			//				chosenCharacter = character;
+			//			}else{
+			//				if(missingHealth > highestMissingHealth){
+			//					highestMissingHealth = missingHealth;
+			//					chosenCharacter = character;
+			//				}
+			//			}
+			//		}
+			//	}else{
+			//		for (int j = 0; j < charactersSideB.Count; j++) {
+			//			ECS.Character character = charactersSideB [j];
+			//			int missingHealth = character.maxHP - character.currentHP;
+			//			if(chosenCharacter == null){
+			//				highestMissingHealth = missingHealth;
+			//				chosenCharacter = character;
+			//			}else{
+			//				if(missingHealth > highestMissingHealth){
+			//					highestMissingHealth = missingHealth;
+			//					chosenCharacter = character;
+			//				}
+			//			}
+			//		}
+			//	}
+			//	if(chosenCharacter != null){
+			//		int weight = (int)((((float)highestMissingHealth / (float)chosenCharacter.maxHP) * 100f) * 2f);
+			//		activationWeight *= (weight > 0f ? weight : 1);
+			//	}
+			//}
 			return activationWeight;
 		}
 		//Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
@@ -489,26 +489,17 @@ namespace ECS{
 				for (int i = 0; i < sourceCharacter.skills.Count; i++) {
 					Skill skill = sourceCharacter.skills [i];
 					if(skill is AttackSkill){
-						if(sourceCharacter.currentSide == SIDES.A){
-							for (int j = 0; j < this.charactersSideB.Count; j++) {
-								ECS.Character targetCharacter = this.charactersSideB [j];
-								int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-								if(skill.range >= rowDistance){
-									return true;
-								}
-							}
-						}else{
-							for (int j = 0; j < this.charactersSideA.Count; j++) {
-								ECS.Character targetCharacter = this.charactersSideA [j];
-								int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-								if(skill.range >= rowDistance){
-									return true;
-								}
-							}
-						}
-						return false;
+                        return HasTargetInRangeForSkill(skill, sourceCharacter);
 					}
 				}
+                for (int i = 0; i < sourceCharacter.level; i++) {
+                    for (int j = 0; j < sourceCharacter.characterClass.skillsPerLevel[i].Length; j++) {
+                        Skill skill = sourceCharacter.characterClass.skillsPerLevel[i][j];
+                        if (skill is AttackSkill) {
+                            return HasTargetInRangeForSkill(skill, sourceCharacter);
+                        }
+                    }
+                }
 			}
 			return true;
 		}
@@ -602,7 +593,7 @@ namespace ECS{
 			DEFEND_TYPE defendType = CanTargetCharacterDefend (sourceCharacter, targetCharacter);
 			if(defendType == DEFEND_TYPE.NONE){
 				//Successfully hits the target character
-				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter, attackSkill.weapon);
+				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter); //, attackSkill.weapon
 			}else{
 				//Target character has defend successfully and will roll for counter attack
 				if(defendType == DEFEND_TYPE.DODGE){
@@ -621,229 +612,251 @@ namespace ECS{
 			//Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
 			if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
 				targetCharacter = sourceCharacter;
-				string log = sourceCharacter.coloredUrlName + " is so confused that " + (sourceCharacter.gender == GENDER.MALE ? "he" : "she") + " targeted " 
+				string confusedLog = sourceCharacter.coloredUrlName + " is so confused that " + (sourceCharacter.gender == GENDER.MALE ? "he" : "she") + " targeted " 
 					+ (sourceCharacter.gender == GENDER.MALE ? "himself" : "herself");
-				AddCombatLog (log , sourceCharacter.currentSide);
+				AddCombatLog (confusedLog, sourceCharacter.currentSide);
 			}
-			if(attackSkill.attackType != ATTACK_TYPE.STATUS){
-				string log = string.Empty;
-				float weaponPower = 0f;
-				float damageRange = 5f;
+            string log = string.Empty;
+            float weaponPower = 0f;
+            float damageRange = 5f;
 
-				BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
-				if (chosenBodyPart == null) {
-					Debug.LogError ("NO MORE BODY PARTS!");
-					return;
-				}
-				Armor armor = chosenBodyPart.GetArmor ();
-				log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
+            BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
+            if (chosenBodyPart == null) {
+                Debug.LogError("NO MORE BODY PARTS!");
+                return;
+            }
+            Armor armor = chosenBodyPart.GetArmor();
+            log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
-				if(weapon != null) {
-					damageRange = weapon.damageRange;
-					weaponPower = weapon.weaponPower;
+            if (weapon != null) {
+                damageRange = weapon.damageRange;
+                weaponPower = weapon.weaponPower;
 
-					//reduce weapon durability by durability cost of skill
-					weapon.AdjustDurability(-attackSkill.durabilityCost);
-					log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
-			
-				}else{
-					log += ".";
-				}
+                log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
 
-				int damage = (int)(weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
-				int computedDamageRange = (int)((float)damage * (damageRange / 100f));
-				int minDamageRange = damage - computedDamageRange;
-				int maxDamageRange = damage + computedDamageRange;
-				damage = Utilities.rng.Next ((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
+            } else {
+                log += ".";
+            }
 
-				if(armor != null){
-					if(attackSkill.attackType != ATTACK_TYPE.PIERCE){
-						int damageNullChance = Utilities.rng.Next (0, 100);
-						if(damageNullChance < armor.damageNullificationChance){
-							log += " The attack was fully absorbed by the " + armor.itemName + ".";
-							return;
-						}
-						damage -= (int)((float)damage * (armor.baseDamageMitigation / 100f));
-					}else{
-						damage -= (int)((float)damage * ((armor.baseDamageMitigation / 2f) / 100f));
-					}
-					if(armor.ineffectiveAttackTypes.Contains(attackSkill.attackType)){
-						damage -= (int)((float)damage * 0.2f);
-					}
-					if(armor.effectiveAttackTypes.Contains(attackSkill.attackType)){
-						damage += (int)((float)damage * 0.2f);
-					}
-					armor.AdjustDurability (-attackSkill.durabilityDamage);
-				}
-				log += "(" + damage.ToString () + ")";
+            int damage = (int) (weaponPower + sourceCharacter.strength); //To be changed
+            int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
+            int minDamageRange = damage - computedDamageRange;
+            int maxDamageRange = damage + computedDamageRange;
+            damage = Utilities.rng.Next((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
 
-				DealDamageToBodyPart (attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
+            log += "(" + damage.ToString() + ")";
 
-				AddCombatLog (log, sourceCharacter.currentSide);
+            DealDamageToBodyPart(attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
 
-				targetCharacter.AdjustHP (-damage);
-			} else {
-				string log = sourceCharacter.coloredUrlName + " used " + attackSkill.skillName.ToLower () + " on " + targetCharacter.coloredUrlName + ".";
-				int chance = Utilities.rng.Next (0, 100);
-				if (attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0) {
-					for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
-						int value = attackSkill.statusEffectRates [i].ratePercentage;
-						if(chance < value){
-							targetCharacter.AddStatusEffect (attackSkill.statusEffectRates [i].statusEffect);
-							log += " " + StatusEffectLog (sourceCharacter, targetCharacter, attackSkill.statusEffectRates [i].statusEffect);
-						}
-					}
-				}
-				AddCombatLog (log, sourceCharacter.currentSide);
-			}
+            AddCombatLog(log, sourceCharacter.currentSide);
+
+            targetCharacter.AdjustHP(-damage);
+
+            //if (attackSkill.attackType != ATTACK_TYPE.STATUS) {
+            //    string log = string.Empty;
+            //    float weaponPower = 0f;
+            //    float damageRange = 5f;
+
+            //    BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
+            //    if (chosenBodyPart == null) {
+            //        Debug.LogError("NO MORE BODY PARTS!");
+            //        return;
+            //    }
+            //    Armor armor = chosenBodyPart.GetArmor();
+            //    log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
+
+            //    if (weapon != null) {
+            //        damageRange = weapon.damageRange;
+            //        weaponPower = weapon.weaponPower;
+
+            //        //reduce weapon durability by durability cost of skill
+            //        weapon.AdjustDurability(-attackSkill.durabilityCost);
+            //        log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
+
+            //    } else {
+            //        log += ".";
+            //    }
+
+            //    int damage = (int) (weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
+            //    int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
+            //    int minDamageRange = damage - computedDamageRange;
+            //    int maxDamageRange = damage + computedDamageRange;
+            //    damage = Utilities.rng.Next((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
+
+            //    if (armor != null) {
+            //        if (attackSkill.attackType != ATTACK_TYPE.PIERCE) {
+            //            int damageNullChance = Utilities.rng.Next(0, 100);
+            //            if (damageNullChance < armor.damageNullificationChance) {
+            //                log += " The attack was fully absorbed by the " + armor.itemName + ".";
+            //                return;
+            //            }
+            //            damage -= (int) ((float) damage * (armor.baseDamageMitigation / 100f));
+            //        } else {
+            //            damage -= (int) ((float) damage * ((armor.baseDamageMitigation / 2f) / 100f));
+            //        }
+            //        if (armor.ineffectiveAttackTypes.Contains(attackSkill.attackType)) {
+            //            damage -= (int) ((float) damage * 0.2f);
+            //        }
+            //        if (armor.effectiveAttackTypes.Contains(attackSkill.attackType)) {
+            //            damage += (int) ((float) damage * 0.2f);
+            //        }
+            //        armor.AdjustDurability(-attackSkill.durabilityDamage);
+            //    }
+            //    log += "(" + damage.ToString() + ")";
+
+            //    DealDamageToBodyPart(attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
+
+            //    AddCombatLog(log, sourceCharacter.currentSide);
+
+            //    targetCharacter.AdjustHP(-damage);
+            //} else {
+            //    string log = sourceCharacter.coloredUrlName + " used " + attackSkill.skillName.ToLower() + " on " + targetCharacter.coloredUrlName + ".";
+            //    int chance = Utilities.rng.Next(0, 100);
+            //    if (attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0) {
+            //        for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
+            //            int value = attackSkill.statusEffectRates[i].ratePercentage;
+            //            if (chance < value) {
+            //                targetCharacter.AddStatusEffect(attackSkill.statusEffectRates[i].statusEffect);
+            //                log += " " + StatusEffectLog(sourceCharacter, targetCharacter, attackSkill.statusEffectRates[i].statusEffect);
+            //            }
+            //        }
+            //    }
+            //    AddCombatLog(log, sourceCharacter.currentSide);
+            //}
         }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
 		private void DealDamageToBodyPart(AttackSkill attackSkill, ECS.Character targetCharacter, ECS.Character sourceCharacter, BodyPart chosenBodyPart, ref string log){
-			int chance = Utilities.rng.Next (0, 100);
+			//int chance = Utilities.rng.Next (0, 100);
 
-			if(attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0){
-				for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
-					int value = attackSkill.statusEffectRates[i].ratePercentage;
-					if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.INJURED){
-						if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
-							value += 7;
-//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and crushes " + targetCharacter.name
-//							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ", injuring it.";
-						}else{
-//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and injures " + targetCharacter.name
-//							+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
-						}
+//			if(attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0){
+//				for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
+//					int value = attackSkill.statusEffectRates[i].ratePercentage;
+//					if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.INJURED){
+//						if(attackSkill.attackType == ATTACK_TYPE.CRUSH){
+//							value += 7;
+//						}else{
+//						}
 
-					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BLEEDING){
-						if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
-							value += 10;
-//							log = sourceCharacter.name + " used " + attackSkill.skillName + " and pierces " + targetCharacter.name + 
-//								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", causing it to bleed.";
-						}else{
-//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and causes " + targetCharacter.name
-//								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + " to bleed.";
-						}
-					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.DECAPITATED){
-						if(attackSkill.attackType == ATTACK_TYPE.SLASH){
-							value += 5;
-//							log = sourceCharacter.name + " used " + attackSkill.skillName + " and slashes " + targetCharacter.name + 
-//								"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ", decapitating it.";
-						}else{
-//							log = sourceCharacter.name + " used " + attackSkill.skillName.ToLower () + " and decapitates " + targetCharacter.name
-//								+ "'s " + chosenBodyPart.bodyPart.ToString ().ToLower () + ".";
-						}
-					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BURNING){
-						if(attackSkill.attackType == ATTACK_TYPE.MAGIC){
-							value += 5;
-						}
-//						log = sourceCharacter.name + " used " + attackSkill.skillName + " and burns " + targetCharacter.name + 
-//							"'s " + chosenBodyPart.bodyPart.ToString().ToLower() + ".";
-					}
+//					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BLEEDING){
+//						if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
+//							value += 10;
+//						}else{
+//						}
+//					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.DECAPITATED){
+//						if(attackSkill.attackType == ATTACK_TYPE.SLASH){
+//							value += 5;
+//						}else{
+//						}
+//					}else if(attackSkill.statusEffectRates[i].statusEffect == STATUS_EFFECT.BURNING){
+//						if(attackSkill.attackType == ATTACK_TYPE.MAGIC){
+//							value += 5;
+//						}
+//					}
 
-					if(chance < value){
-						chosenBodyPart.AddStatusEffect(attackSkill.statusEffectRates[i].statusEffect);
-						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (attackSkill.statusEffectRates[i].statusEffect);
-//						AddCombatLog (log);
-					}
-				}
-			}else{
-				if (attackSkill.attackType == ATTACK_TYPE.CRUSH){
-					if(chance < 7){
-						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.INJURED);
-						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
+//					if(chance < value){
+//						chosenBodyPart.AddStatusEffect(attackSkill.statusEffectRates[i].statusEffect);
+//						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (attackSkill.statusEffectRates[i].statusEffect);
+////						AddCombatLog (log);
+//					}
+//				}
+//			}else{
+//				if (attackSkill.attackType == ATTACK_TYPE.CRUSH){
+//					if(chance < 7){
+//						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.INJURED);
+//						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.INJURED);
 
-						int logChance = Utilities.rng.Next (0, 2);
-						if(logChance == 0){
-							string[] predicate = new string[]{ "battered", "crippled", "mangled", "brokened" };
-							log += " " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate[Utilities.rng.Next(0, predicate.Length)] + "!";
-						}else{
-							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
-							if(secondaryBodPart != null){
-								log += " " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + " makes a crunching noise!";
-							}
-						}
+//						int logChance = Utilities.rng.Next (0, 2);
+//						if(logChance == 0){
+//							string[] predicate = new string[]{ "battered", "crippled", "mangled", "brokened" };
+//							log += " " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " is " + predicate[Utilities.rng.Next(0, predicate.Length)] + "!";
+//						}else{
+//							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
+//							if(secondaryBodPart != null){
+//								log += " " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + " makes a crunching noise!";
+//							}
+//						}
 
-					}
-				}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
-					if(chance < 10){
-						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BLEEDING);
-						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
+//					}
+//				}else if(attackSkill.attackType == ATTACK_TYPE.PIERCE){
+//					if(chance < 10){
+//						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BLEEDING);
+//						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BLEEDING);
 
-						int logChance = Utilities.rng.Next (0, 2);
-						if(logChance == 0){
-							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
-							if(secondaryBodPart != null){
-								string[] adjective = new string[]{ "deep", "light", "painful", "fresh", "deadly" };
-								string[] noun = new string[]{ "gash", "wound", "lesion", "tear" };
+//						int logChance = Utilities.rng.Next (0, 2);
+//						if(logChance == 0){
+//							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
+//							if(secondaryBodPart != null){
+//								string[] adjective = new string[]{ "deep", "light", "painful", "fresh", "deadly" };
+//								string[] noun = new string[]{ "gash", "wound", "lesion", "tear" };
 
-								log += " A " + adjective[Utilities.rng.Next(0, adjective.Length)] + " " + noun[Utilities.rng.Next(0, noun.Length)] + " forms near " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + ".";
-							}
-						}else{
-							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
-							if(secondaryBodPart != null){
-								log += " Blood erupts from " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + "!";
-							}
-						}
-					}
-				}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
-					if (chosenBodyPart.HasAttribute (IBodyPart.ATTRIBUTE.NONDECAPITATABLE)){
-						return;
-					}
-					if(chance < 5){
-						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.DECAPITATED);
-						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
+//								log += " A " + adjective[Utilities.rng.Next(0, adjective.Length)] + " " + noun[Utilities.rng.Next(0, noun.Length)] + " forms near " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + ".";
+//							}
+//						}else{
+//							SecondaryBodyPart secondaryBodPart = chosenBodyPart.GetRandomSecondaryBodyPart ();
+//							if(secondaryBodPart != null){
+//								log += " Blood erupts from " + targetCharacter.coloredUrlName + "'s " + secondaryBodPart.name.ToLower() + "!";
+//							}
+//						}
+//					}
+//				}else if(attackSkill.attackType == ATTACK_TYPE.SLASH){
+//					if (chosenBodyPart.HasAttribute (IBodyPart.ATTRIBUTE.NONDECAPITATABLE)){
+//						return;
+//					}
+//					if(chance < 5){
+//						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.DECAPITATED);
+//						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.DECAPITATED);
 
-						string[] verb = new string[]{ "severed", "decapitated", "sliced off", "lopped off" };
-						log += targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb[Utilities.rng.Next(0, verb.Length)] + " by the attack!";
+//						string[] verb = new string[]{ "severed", "decapitated", "sliced off", "lopped off" };
+//						log += targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " has been " + verb[Utilities.rng.Next(0, verb.Length)] + " by the attack!";
 
-						int logChance = Utilities.rng.Next (0, 2);
-						if(logChance == 0){
-							log += " It drops to the floor lifelessly.";
-						}else{
-							log += " It flew away!";
-						}
+//						int logChance = Utilities.rng.Next (0, 2);
+//						if(logChance == 0){
+//							log += " It drops to the floor lifelessly.";
+//						}else{
+//							log += " It flew away!";
+//						}
 
-						string allWeaponDropped = string.Empty;
-						for (int i = 0; i < targetCharacter.equippedItems.Count; i++) {
-							Item item = targetCharacter.equippedItems [i];
-							if(item is Weapon){
-								Weapon weapon = (Weapon)item;
-								for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
-									if(weapon.bodyPartsAttached[j].statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
-										if(allWeaponDropped != string.Empty){
-											allWeaponDropped += ", ";
-										}
-										allWeaponDropped += item.itemName;
-										targetCharacter.ThrowItem (item);
-										break;
-									}
-								}
-							}
-						}
-						if(allWeaponDropped != string.Empty){
-							log += " " + targetCharacter.coloredUrlName + " drops " + allWeaponDropped + ".";
-						}
+//						string allWeaponDropped = string.Empty;
+//						for (int i = 0; i < targetCharacter.equippedItems.Count; i++) {
+//							Item item = targetCharacter.equippedItems [i];
+//							if(item is Weapon){
+//								Weapon weapon = (Weapon)item;
+//								for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
+//									if(weapon.bodyPartsAttached[j].statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
+//										if(allWeaponDropped != string.Empty){
+//											allWeaponDropped += ", ";
+//										}
+//										allWeaponDropped += item.itemName;
+//										targetCharacter.ThrowItem (item);
+//										break;
+//									}
+//								}
+//							}
+//						}
+//						if(allWeaponDropped != string.Empty){
+//							log += " " + targetCharacter.coloredUrlName + " drops " + allWeaponDropped + ".";
+//						}
 
-						//If body part is essential, instant death to the character
-						if (chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
-							CheckBodyPart (chosenBodyPart.name, targetCharacter);
-						}
-					}
-				}else if(attackSkill.attackType == ATTACK_TYPE.MAGIC){
-					if(chance < 5){
-						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BURNING);
-						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
-						int logChance = Utilities.rng.Next (0, 2);
-						if(logChance == 0){
-							log += " A burnt smell emanates from " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + "!";
-						}else{
-							string[] verb = new string[]{ "charred", "burning", "roasting" };
-							log += " " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " is " + verb[Utilities.rng.Next(0, verb.Length)] + "!";
-						}
-					}
-				}
-			}
+//						//If body part is essential, instant death to the character
+//						if (chosenBodyPart.importance == IBodyPart.IMPORTANCE.ESSENTIAL){
+//							CheckBodyPart (chosenBodyPart.name, targetCharacter);
+//						}
+//					}
+//				}else if(attackSkill.attackType == ATTACK_TYPE.MAGIC){
+//					if(chance < 5){
+//						chosenBodyPart.AddStatusEffect(STATUS_EFFECT.BURNING);
+//						chosenBodyPart.ApplyStatusEffectOnSecondaryBodyParts (STATUS_EFFECT.BURNING);
+//						int logChance = Utilities.rng.Next (0, 2);
+//						if(logChance == 0){
+//							log += " A burnt smell emanates from " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + "!";
+//						}else{
+//							string[] verb = new string[]{ "charred", "burning", "roasting" };
+//							log += " " + targetCharacter.coloredUrlName + "'s " + chosenBodyPart.name.ToLower() + " is " + verb[Utilities.rng.Next(0, verb.Length)] + "!";
+//						}
+//					}
+//				}
+//			}
         }
 
 

@@ -14,6 +14,9 @@ namespace ECS{
 		public int blockRate;
 
 		public List<WEAPON_TYPE> allowedWeaponTypes;
+        public List<TextAssetListWrapper> skillsPerLevel;
+
+        public List<string[]> skillsPerLevelNames;
 //		public void AddSkillOfType(SKILL_TYPE skillType, Skill skillToAdd) {
 //			switch (skillType) {
 //			case SKILL_TYPE.ATTACK:
@@ -37,6 +40,6 @@ namespace ECS{
 //			}
 //			this._skills.Add (skillToAdd);
 //		}
-	}
+    }
 
 }
