@@ -53,7 +53,9 @@ public class GameManager : MonoBehaviour {
 				this.HourEnded ();
 			}
 		}
+	}
 
+    private void Update() {
         if (!UIManager.Instance.IsConsoleShowing()) {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (isPaused) {
@@ -73,9 +75,9 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-	}
+    }
 
-	[ContextMenu("Start Progression")]
+    [ContextMenu("Start Progression")]
 	public void StartProgression(){
 		//UIManager.Instance.SetProgressionSpeed1X();
 		//UIManager.Instance.x1Btn.SetAsClicked();

@@ -777,21 +777,21 @@ public class Biomes : MonoBehaviour {
    //     }
    // }
 
-    [ContextMenu("DisableAllFogOfWarSprites")]
-    public void DisableAllFogOfWarSprites() {
-        for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
-            HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-            currTile.HideFogOfWarObjects();
-        }
-    }
+    //[ContextMenu("DisableAllFogOfWarSprites")]
+    //public void DisableAllFogOfWarSprites() {
+    //    for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+    //        HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+    //        currTile.HideFogOfWarObjects();
+    //    }
+    //}
 
-    [ContextMenu("EnableAllFogOfWarSprites")]
-    public void EnableAllFogOfWarSprites() {
-        for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
-            HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-            currTile.ShowFogOfWarObjects();
-        }
-    }
+    //[ContextMenu("EnableAllFogOfWarSprites")]
+    //public void EnableAllFogOfWarSprites() {
+    //    for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+    //        HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+    //        currTile.ShowFogOfWarObjects();
+    //    }
+    //}
 
     #region Utilities
     public Sprite GetCenterPieceSprite(HexTile tile) {

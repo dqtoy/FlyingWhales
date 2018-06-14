@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharacterPortrait : MonoBehaviour {
+public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
+
+    private ECS.Character _character;
 
     [Header("Eyes")]
     [SerializeField] private Image eyes;
@@ -19,22 +22,23 @@ public class CharacterPortrait : MonoBehaviour {
     [SerializeField] private Image hair;
     [SerializeField] private Image hairBack;
 
-    public void GeneratePortrait(PortraitSettings settings) {
-        Sprite eyeSprite = CharacterManager.Instance.eyeSprites[settings.eyesIndex];
+    public void GeneratePortrait(ECS.Character character) {
+        _character = character;
+        Sprite eyeSprite = CharacterManager.Instance.eyeSprites[character.portraitSettings.eyesIndex];
         eyes.sprite = eyeSprite;
 
-        Sprite eyeBrowSprite = CharacterManager.Instance.eyeBrowSprites[settings.eyeBrowIndex];
+        Sprite eyeBrowSprite = CharacterManager.Instance.eyeBrowSprites[character.portraitSettings.eyeBrowIndex];
         eyebrows.sprite = eyeBrowSprite;
 
-        nose.sprite = CharacterManager.Instance.noseSprites[settings.noseIndex];
-        mouth.sprite = CharacterManager.Instance.mouthSprites[settings.mouthIndex];
+        nose.sprite = CharacterManager.Instance.noseSprites[character.portraitSettings.noseIndex];
+        mouth.sprite = CharacterManager.Instance.mouthSprites[character.portraitSettings.mouthIndex];
         //HairSettings chosenHairSettings;
         //if (settings.gender == GENDER.FEMALE) {
         //    chosenHairSettings = CharacterManager.Instance.femaleHairSettings[settings.hairIndex];
         //} else {
         //    chosenHairSettings = CharacterManager.Instance.maleHairSettings[settings.hairIndex];
         //}
-        HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[settings.hairIndex];
+        HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[character.portraitSettings.hairIndex];
         hair.sprite = chosenHairSettings.hairSprite;
         if (chosenHairSettings.hairBackSprite == null) {
             hairBack.sprite = chosenHairSettings.hairSprite;
@@ -43,7 +47,11 @@ public class CharacterPortrait : MonoBehaviour {
         }
         //hair.transform.localPosition = chosenHairSettings.hairPosition;
 
-        hair.color = settings.hairColor;
-        hairBack.color = settings.hairColor;
+        hair.color = character.portraitSettings.hairColor;
+        hairBack.color = character.portraitSettings.hairColor;
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        UIManager.Instance.ShowCharacterInfo(_character);
     }
 }

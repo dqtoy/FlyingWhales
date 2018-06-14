@@ -130,7 +130,7 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         //uiCamera.orthographicSize = Screen.width /2;
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             if (GameManager.Instance.allowConsole) {

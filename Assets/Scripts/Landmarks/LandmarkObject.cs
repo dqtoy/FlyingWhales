@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class LandmarkObject : MonoBehaviour {
 
@@ -12,7 +14,8 @@ public class LandmarkObject : MonoBehaviour {
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;
     [SerializeField] private SpriteRenderer iconSprite;
-    [SerializeField] private UI2DSprite progressBarSprite;
+    [SerializeField] private Slider hpProgressBar;
+    [SerializeField] private ScrollRect charactersScrollView;
 
     #region getters/setters
     public BaseLandmark landmark {
@@ -27,12 +30,19 @@ public class LandmarkObject : MonoBehaviour {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_landmark.specificLandmarkType);
         if (data.landmarkObjectSprite != null) {
             iconSprite.sprite = data.landmarkObjectSprite;
-            iconSprite.gameObject.SetActive(true);
+            //iconSprite.gameObject.SetActive(true);
         } else {
-            iconSprite.gameObject.SetActive(false);
+            //iconSprite.gameObject.SetActive(false);
         }
+
         //}
         //UpdateLandmarkVisual();
+        ////For Testing of portrait visibility, remove after testing
+        //CharacterPortrait[] portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(charactersScrollView.content.gameObject);
+        //for (int i = 0; i < portraits.Length; i++) {
+        //    CharacterPortrait currPortrait = portraits[i];
+        //    currPortrait.GeneratePortrait(CharacterManager.Instance.GenerateRandomPortrait(GENDER.FEMALE));
+        //}
     }
 
     public void UpdateName() {
@@ -46,18 +56,35 @@ public class LandmarkObject : MonoBehaviour {
         }
     }
 
-    public void SetBGState(bool state) {
-        topSprite.enabled = state;
-        botSprite.enabled = state;
+    public void SetIconState(bool state) {
+        //topSprite.enabled = state;
+        //botSprite.enabled = state;
+        iconSprite.gameObject.SetActive(state);
     }
 
     public void UpdateProgressBar() {
-        progressBarSprite.fillAmount = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
+        hpProgressBar.value = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
     }
 
-    //For Testing
-    public void SetIconActive(bool state) {
-        iconSprite.gameObject.SetActive(state);
+    ////For Testing
+    //public void SetIconActive(bool state) {
+    //    iconSprite.gameObject.SetActive(state);
+    //}
+
+    public void OnCharacterEnteredLandmark(ECS.Character character) {
+        //add character portrait to grid
+        CharacterPortrait portrait = character.icon.characterPortrait;
+        portrait.transform.SetParent(charactersScrollView.content.transform);
+        portrait.transform.localScale = Vector3.one;
+        (portrait.transform as RectTransform).sizeDelta = new Vector2(65, 65);
+        portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        portrait.gameObject.SetActive(true);
+        character.icon.gameObject.SetActive(false);
+    }
+    public void OnCharacterExitedLandmark(ECS.Character character) {
+        //remove character portrait from grid
+        character.icon.ReclaimPortrait();
+        character.icon.gameObject.SetActive(true);
     }
 
     //public void UpdateLandmarkVisual() {

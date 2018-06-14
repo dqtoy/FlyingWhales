@@ -39,12 +39,12 @@ public class ElvenSettlement : StructureObj {
             ScheduleDoneTraining();
         }
     }
-    public override void OnAddToLandmark(BaseLandmark newLocation) {
-        base.OnAddToLandmark(newLocation);
-        if (this.objectLocation.landmarkObject != null) {
-            this.objectLocation.landmarkObject.SetIconActive(true);
-        }
-    }
+    //public override void OnAddToLandmark(BaseLandmark newLocation) {
+    //    base.OnAddToLandmark(newLocation);
+    //    if (this.objectLocation.landmarkVisual != null) {
+    //        this.objectLocation.landmarkVisual.SetIconActive(true);
+    //    }
+    //}
     #endregion
 
     #region Resource Inventory

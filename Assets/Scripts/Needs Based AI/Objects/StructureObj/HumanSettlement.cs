@@ -39,10 +39,10 @@ public class HumanSettlement : StructureObj {
             ScheduleDoneTraining();
         }
     }
-    public override void OnAddToLandmark(BaseLandmark newLocation) {
-        base.OnAddToLandmark(newLocation);
-        this.objectLocation.landmarkObject.SetIconActive(true);
-    }
+    //public override void OnAddToLandmark(BaseLandmark newLocation) {
+    //    base.OnAddToLandmark(newLocation);
+    //    this.objectLocation.landmarkVisual.SetIconActive(true);
+    //}
     #endregion
 
     #region Resource Inventory

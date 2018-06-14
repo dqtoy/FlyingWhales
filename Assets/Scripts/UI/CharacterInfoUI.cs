@@ -135,7 +135,7 @@ public class CharacterInfoUI : UIMenu {
         //UpdateAllHistoryInfo ();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(currentlyShowingCharacter.portraitSettings);
+        characterPortrait.GeneratePortrait(currentlyShowingCharacter);
     }
     private void UpdateBasicInfo() {
         string text = string.Empty;

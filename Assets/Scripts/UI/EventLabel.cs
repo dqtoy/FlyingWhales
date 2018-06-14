@@ -38,7 +38,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                         UIManager.Instance.ShowCharacterInfo(party.partyLeader);
                     }
                 } else if (linkText.Contains("_character")) {
-                    ECS.Character character = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.GetFollowerByID(idToUse);
+                    ECS.Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
                     if (character != null) {
                         UIManager.Instance.ShowCharacterInfo(character);
                     }

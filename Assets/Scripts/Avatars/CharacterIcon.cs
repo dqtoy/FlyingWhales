@@ -16,6 +16,8 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private Seeker seeker;
 
+    public CharacterPortrait characterPortrait { get; private set; }
+
     private Character _character;
 
     private ILocation _targetLocation;
@@ -46,7 +48,12 @@ public class CharacterIcon : MonoBehaviour {
         //if (_character.role != null) {
         //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
         //}
-        
+
+        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
+        characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
+        characterPortrait.GeneratePortrait(character);
+        portraitGO.SetActive(false);
+
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, SetMovementState);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -113,6 +120,10 @@ public class CharacterIcon : MonoBehaviour {
     }
     public void SetAvatarState(bool state) {
         //_avatarGO.SetActive(state);
+    }
+    public void ReclaimPortrait() {
+        characterPortrait.transform.SetParent(this.transform);
+        characterPortrait.gameObject.SetActive(false);
     }
     #endregion
 

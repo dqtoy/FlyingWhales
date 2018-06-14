@@ -93,10 +93,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer minimapHexSprite;
     //private Color biomeColor;
 
-    [Space(10)]
-    [Header("Fog Of War Objects")]
-    [SerializeField] private SpriteRenderer FOWSprite;
-    [SerializeField] private SpriteRenderer minimapFOWSprite;
+    //[Space(10)]
+    //[Header("Fog Of War Objects")]
+    //[SerializeField] private SpriteRenderer FOWSprite;
+    //[SerializeField] private SpriteRenderer minimapFOWSprite;
 
     //[Space(10)]
     //[Header("Road Objects")]
@@ -354,19 +354,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
 #else
-        if (this.region.owner != null && this.region.owner.race == RACE.ELVES) {
-            if (landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || landmarkType == LANDMARK_TYPE.IRON_MINES || landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
-                GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
-                GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
-                if (landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
-                    obj.transform.localScale = new Vector2(1.5f, 1.5f);
-                }
-            } else {
-                landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-            }
-        } else {
-            landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-        }
+        landmarkGO = CreateLandmarkObject(landmarkType);
 #endif
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
@@ -405,19 +393,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
 #else
-        if (this.region.owner != null && this.region.owner.race == RACE.ELVES) {
-            if (data.landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || data.landmarkType == LANDMARK_TYPE.IRON_MINES || data.landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
-                GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(data.landmarkType, this.region.owner.race);
-                GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
-                if (data.landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
-                    obj.transform.localScale = new Vector2(1.5f, 1.5f);
-                }
-            } else {
-                landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-            }
-        } else {
-            landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-        }
+        landmarkGO = CreateLandmarkObject(data.landmarkType);
 #endif
 
         switch (baseLandmarkType) {
@@ -450,6 +426,28 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #endif
         }
         return _landmarkOnTile;
+    }
+    private GameObject CreateLandmarkObject(LANDMARK_TYPE landmarkType) {
+        if (this.region.owner != null && this.region.owner.race == RACE.ELVES) {
+            if (landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || landmarkType == LANDMARK_TYPE.IRON_MINES || landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
+                GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
+                GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
+                if (landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
+                    obj.transform.localScale = new Vector2(1.5f, 1.5f);
+                }
+                GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+                landmarkGO.GetComponent<LandmarkObject>().SetIconState(false);
+                return landmarkGO;
+            } else {
+                GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+                landmarkGO.GetComponent<LandmarkObject>().SetIconState(true);
+                return landmarkGO;
+            }
+        } else {
+            GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+            landmarkGO.GetComponent<LandmarkObject>().SetIconState(true);
+            return landmarkGO;
+        }
     }
     public BaseLandmark LoadLandmark(BaseLandmark landmark) {
         GameObject landmarkGO = null;
@@ -982,7 +980,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
         if (structureType == STRUCTURE_TYPE.CITY) {
             structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
-            _landmarkOnTile.landmarkObject.SetBGState(false);
+            _landmarkOnTile.landmarkVisual.SetIconState(false);
         }
 
         _structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
@@ -1037,74 +1035,74 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     #endregion
 
-    #region Fog of War Functions
-    internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
-        //if (!KingdomManager.Instance.useFogOfWar) {
-        //    fowState = FOG_OF_WAR_STATE.VISIBLE;
-        //}
-        //_currFogOfWarState = fowState;
-        Color newColor = FOWSprite.color;
-        //Color minimapColor = minimapFOWSprite.color;
-        switch (fowState) {
-            case FOG_OF_WAR_STATE.VISIBLE:
-                newColor.a = 0f / 255f;
-                //if (isHabitable && isOccupied) {
-                //    minimapColor = ownedByCity.kingdom.kingdomColor;
-                //} else {
-                //    minimapColor = biomeColor;
-                //}
-                //if ((isHabitable && isOccupied) || isLair) {
-                //    ShowNamePlate();
-                //}
-                if (isOccupied) {
-                    ShowStructures();
-                }
-                UIParent.gameObject.SetActive(true);
-                //                ShowAllCitizensOnTile();
-                break;
-            case FOG_OF_WAR_STATE.SEEN:
-                newColor.a = 128f / 255f;
-                //if (isHabitable && isOccupied) {
-                //    minimapColor = ownedByCity.kingdom.kingdomColor;
-                //} else {
-                //    minimapColor = biomeColor;
-                //}
-                //if ((isHabitable && isOccupied) || isLair) {
-                //    ShowNamePlate();
-                //}
-                if (isOccupied) {
-                    ShowStructures();
-                }
-                UIParent.gameObject.SetActive(true);
-                //                HideAllCitizensOnTile();
-                break;
-            case FOG_OF_WAR_STATE.HIDDEN:
-                newColor.a = 255f / 255f;
-                //minimapColor = Color.black;
-                //if ((isHabitable && isOccupied) || isLair) {
-                //    HideNamePlate();
-                //}
-                if (isOccupied) {
-                    HideStructures();
-                }
-                UIParent.gameObject.SetActive(false);
-                //                HideAllCitizensOnTile();
-                break;
-            default:
-                break;
-        }
-        FOWSprite.color = newColor;
-        //minimapFOWSprite.color = minimapColor;
-    }
-    internal void HideFogOfWarObjects() {
-        FOWSprite.gameObject.SetActive(false);
-        //minimapFOWSprite.gameObject.SetActive(false);
-    }
-    internal void ShowFogOfWarObjects() {
-            FOWSprite.gameObject.SetActive(true);
-            //minimapFOWSprite.gameObject.SetActive(true);
-        }
-    #endregion
+    //#region Fog of War Functions
+    //internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
+    //    //if (!KingdomManager.Instance.useFogOfWar) {
+    //    //    fowState = FOG_OF_WAR_STATE.VISIBLE;
+    //    //}
+    //    //_currFogOfWarState = fowState;
+    //    Color newColor = FOWSprite.color;
+    //    //Color minimapColor = minimapFOWSprite.color;
+    //    switch (fowState) {
+    //        case FOG_OF_WAR_STATE.VISIBLE:
+    //            newColor.a = 0f / 255f;
+    //            //if (isHabitable && isOccupied) {
+    //            //    minimapColor = ownedByCity.kingdom.kingdomColor;
+    //            //} else {
+    //            //    minimapColor = biomeColor;
+    //            //}
+    //            //if ((isHabitable && isOccupied) || isLair) {
+    //            //    ShowNamePlate();
+    //            //}
+    //            if (isOccupied) {
+    //                ShowStructures();
+    //            }
+    //            UIParent.gameObject.SetActive(true);
+    //            //                ShowAllCitizensOnTile();
+    //            break;
+    //        case FOG_OF_WAR_STATE.SEEN:
+    //            newColor.a = 128f / 255f;
+    //            //if (isHabitable && isOccupied) {
+    //            //    minimapColor = ownedByCity.kingdom.kingdomColor;
+    //            //} else {
+    //            //    minimapColor = biomeColor;
+    //            //}
+    //            //if ((isHabitable && isOccupied) || isLair) {
+    //            //    ShowNamePlate();
+    //            //}
+    //            if (isOccupied) {
+    //                ShowStructures();
+    //            }
+    //            UIParent.gameObject.SetActive(true);
+    //            //                HideAllCitizensOnTile();
+    //            break;
+    //        case FOG_OF_WAR_STATE.HIDDEN:
+    //            newColor.a = 255f / 255f;
+    //            //minimapColor = Color.black;
+    //            //if ((isHabitable && isOccupied) || isLair) {
+    //            //    HideNamePlate();
+    //            //}
+    //            if (isOccupied) {
+    //                HideStructures();
+    //            }
+    //            UIParent.gameObject.SetActive(false);
+    //            //                HideAllCitizensOnTile();
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //    FOWSprite.color = newColor;
+    //    //minimapFOWSprite.color = minimapColor;
+    //}
+    //internal void HideFogOfWarObjects() {
+    //    FOWSprite.gameObject.SetActive(false);
+    //    //minimapFOWSprite.gameObject.SetActive(false);
+    //}
+    //internal void ShowFogOfWarObjects() {
+    //        FOWSprite.gameObject.SetActive(true);
+    //        //minimapFOWSprite.gameObject.SetActive(true);
+    //    }
+    //#endregion
 
     #region Tile Functions
     public void DisableColliders() {

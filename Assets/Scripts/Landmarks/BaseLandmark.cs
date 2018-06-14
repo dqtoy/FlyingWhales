@@ -24,7 +24,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     //protected int _totalDurability;
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
-    protected LandmarkObject _landmarkObject;
+    protected LandmarkObject _landmarkVisual;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
     protected int _combatHistoryID;
@@ -90,8 +90,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Dictionary<TECHNOLOGY, bool> technologies {
         get { return _technologies; }
     }
-    public LandmarkObject landmarkObject {
-        get { return _landmarkObject; }
+    public LandmarkObject landmarkVisual {
+        get { return _landmarkVisual; }
     }
 	public List<Character> prisoners {
 		get { return _prisoners; }
@@ -596,6 +596,7 @@ public class BaseLandmark : ILocation, TaskCreator {
                 Character currChar = character as Character;
 				this.tileLocation.RemoveCharacterFromLocation(currChar);
                 currChar.SetSpecificLocation(this);
+                _landmarkVisual.OnCharacterEnteredLandmark(currChar);
             } else if (character is Party) {
                 Party currParty = character as Party;
 				this.tileLocation.RemoveCharacterFromLocation(currParty);
@@ -611,6 +612,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (character is Character) {
             Character currChar = character as Character;
 			currChar.SetSpecificLocation(null);
+            _landmarkVisual.OnCharacterExitedLandmark(currChar);
         } else if (character is Party) {
             Party currParty = character as Party;
 			currParty.SetSpecificLocation(null);
@@ -886,8 +888,8 @@ public class BaseLandmark : ILocation, TaskCreator {
 
     #region Utilities
     public void SetLandmarkObject(LandmarkObject obj) {
-        _landmarkObject = obj;
-        _landmarkObject.SetLandmark(this);
+        _landmarkVisual = obj;
+        _landmarkVisual.SetLandmark(this);
     }
     internal int GetTechnologyCount() {
         int count = 0;

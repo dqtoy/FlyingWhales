@@ -92,7 +92,7 @@ public class LandmarkManager : MonoBehaviour {
         BaseLandmark landmarkOnTile = tile.landmarkOnTile;
         tile.RemoveLandmarkOnTile();
         tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
-        GameObject.Destroy(landmarkOnTile.landmarkObject.gameObject);
+        GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
     }
 
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {

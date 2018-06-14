@@ -29,6 +29,7 @@ public class CharacterManager : MonoBehaviour {
 	public Sprite chieftainSprite;
 
     [Header("Character Portrait Assets")]
+    public GameObject characterPortraitPrefab;
     public List<HairSetting> hairSettings;
     public List<Sprite> noseSprites;
     public List<Sprite> mouthSprites;
