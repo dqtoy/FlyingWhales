@@ -214,7 +214,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     private void UpdateUI() {
-        dateLbl.SetText(GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString());
+        dateLbl.SetText(GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString()
+            + " (Tick " + GameManager.Instance.hour + ")");
     }
 
     #region World Controls
