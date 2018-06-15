@@ -65,7 +65,7 @@ public class MeteorStrikeData : StorylineData {
 		Messenger.AddListener ("Unpsytoxinated", settlement.ListenUnpsytoxinated);
 
 		ECS.CharacterSetup charSetup = ECS.CombatManager.Instance.GetBaseCharacterSetup("Dehkbrug");
-		ECS.Character nihvram = CharacterManager.Instance.CreateNewCharacter(charSetup.optionalRole, charSetup);
+		ECS.Character nihvram = CharacterManager.Instance.CreateNewCharacter(charSetup.optionalRole, Utilities.GetRandomGender(), charSetup);
 		nihvram.SetCharacterColor (Color.red);
 		nihvram.SetName ("Nihvram");
 

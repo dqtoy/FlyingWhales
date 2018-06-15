@@ -85,6 +85,8 @@ namespace worldcreator {
                 Biomes.Instance.GenerateBiome(hexTiles);
             }
             //CameraMove.Instance.SetWholemapCameraValues();
+            DataConstructor.Instance.InitializeData();
+            ECS.CombatManager.Instance.Initialize();
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
@@ -133,6 +135,8 @@ namespace worldcreator {
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
 
+            DataConstructor.Instance.InitializeData();
+            ECS.CombatManager.Instance.Initialize();
             LoadRegions(data);
             LoadFactions(data);
             LoadLandmarks(data);

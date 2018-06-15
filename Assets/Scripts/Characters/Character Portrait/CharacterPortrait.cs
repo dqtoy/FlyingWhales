@@ -24,34 +24,43 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 
     public void GeneratePortrait(ECS.Character character) {
         _character = character;
-        Sprite eyeSprite = CharacterManager.Instance.eyeSprites[character.portraitSettings.eyesIndex];
-        eyes.sprite = eyeSprite;
+        SetEyes(character.portraitSettings.eyesIndex);
+        SetEyebrows(character.portraitSettings.eyesIndex);
+        SetNose(character.portraitSettings.noseIndex);
+        SetMouth(character.portraitSettings.mouthIndex);
+        SetHair(character.portraitSettings.hairIndex);
+        SetHairColor(character.portraitSettings.hairColor);
+    }
 
-        Sprite eyeBrowSprite = CharacterManager.Instance.eyeBrowSprites[character.portraitSettings.eyeBrowIndex];
-        eyebrows.sprite = eyeBrowSprite;
+    public void OnPointerClick(PointerEventData eventData) {
+        UIManager.Instance.ShowCharacterInfo(_character);
+    }
 
-        nose.sprite = CharacterManager.Instance.noseSprites[character.portraitSettings.noseIndex];
-        mouth.sprite = CharacterManager.Instance.mouthSprites[character.portraitSettings.mouthIndex];
-        //HairSettings chosenHairSettings;
-        //if (settings.gender == GENDER.FEMALE) {
-        //    chosenHairSettings = CharacterManager.Instance.femaleHairSettings[settings.hairIndex];
-        //} else {
-        //    chosenHairSettings = CharacterManager.Instance.maleHairSettings[settings.hairIndex];
-        //}
-        HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[character.portraitSettings.hairIndex];
+    public void SetHair(int index) {
+        HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[index];
         hair.sprite = chosenHairSettings.hairSprite;
         if (chosenHairSettings.hairBackSprite == null) {
             hairBack.sprite = chosenHairSettings.hairSprite;
         } else {
             hairBack.sprite = chosenHairSettings.hairBackSprite;
         }
-        //hair.transform.localPosition = chosenHairSettings.hairPosition;
-
-        hair.color = character.portraitSettings.hairColor;
-        hairBack.color = character.portraitSettings.hairColor;
     }
-
-    public void OnPointerClick(PointerEventData eventData) {
-        UIManager.Instance.ShowCharacterInfo(_character);
+    public void SetEyes(int index) {
+        Sprite eyeSprite = CharacterManager.Instance.eyeSprites[index];
+        eyes.sprite = eyeSprite;
+    }
+    public void SetEyebrows(int index) {
+        Sprite eyeBrowSprite = CharacterManager.Instance.eyeBrowSprites[index];
+        eyebrows.sprite = eyeBrowSprite;
+    }
+    public void SetNose(int index) {
+        nose.sprite = CharacterManager.Instance.noseSprites[index];
+    }
+    public void SetMouth(int index) {
+        mouth.sprite = CharacterManager.Instance.mouthSprites[index];
+    }
+    public void SetHairColor(Color hairColor) {
+        hair.color = hairColor;
+        hairBack.color = hairColor;
     }
 }

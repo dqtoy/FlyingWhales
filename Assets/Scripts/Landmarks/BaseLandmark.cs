@@ -434,7 +434,7 @@ public class BaseLandmark : ILocation, TaskCreator {
          */
     public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
         //RACE raceOfChar = GetRaceBasedOnProportion();
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, 0, _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), 0, _owner);
         newCharacter.SetHome(this);
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
@@ -450,7 +450,6 @@ public class BaseLandmark : ILocation, TaskCreator {
                 newCharacter.DetermineAction();
             }
         }
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
     /*
@@ -483,7 +482,7 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a character setup name.
          */
     public Character CreateNewCharacter(RACE raceOfChar, string setupName, bool reduceCivilians = true, bool determineAction = true) {
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, 0, _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, Utilities.GetRandomGender(), 0, _owner);
         //newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);

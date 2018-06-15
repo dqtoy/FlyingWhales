@@ -62,6 +62,11 @@ namespace worldcreator {
         [SerializeField] private EditLandmarksMenu editLandmarksMenu;
 
         [Space(10)]
+        [Header("Edit Characters Menu")]
+        [SerializeField] private GameObject editCharactersMenuGO;
+        [SerializeField] private EditCharactersMenu editCharactersMenu;
+
+        [Space(10)]
         [Header("Saving")]
         [SerializeField] private GameObject saveMenuGO;
         [SerializeField] private GameObject saveItemPrefab;
@@ -150,6 +155,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+            editCharactersMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -162,6 +168,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+            editCharactersMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -187,6 +194,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(true);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
+            editCharactersMenuGO.SetActive(false);
 
             tileSelectionBtn.interactable = false;
             rectangleSelectionBtn.interactable = false;
@@ -200,6 +208,19 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(true);
+            editCharactersMenuGO.SetActive(false);
+
+            rectangleSelectionBtn.interactable = true;
+            regionSelectionBtn.interactable = true;
+            tileSelectionBtn.interactable = true;
+        }
+        public void OnClickEditCharacters() {
+            editBiomeMenuGO.SetActive(false);
+            editElevationMenuGO.SetActive(false);
+            editFactionMenuGO.SetActive(false);
+            editRegionsMenuGO.SetActive(false);
+            editLandmarksMenuGO.SetActive(false);
+            editCharactersMenuGO.SetActive(true);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;

@@ -51,7 +51,7 @@ namespace ECS {
          * Create a new character given a base character setup.
          * */
         internal ECS.Character CreateNewCharacter(CharacterSetup baseCharacter) {
-            return new ECS.Character(baseCharacter);
+            return new ECS.Character(baseCharacter, Utilities.GetRandomGender());
         }
 
 		private void ConstructCharacterColors(){

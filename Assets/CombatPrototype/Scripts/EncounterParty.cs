@@ -21,7 +21,7 @@ public class EncounterParty : MonoBehaviour {
 	internal List<ECS.Character> GetAllCharacters(DungeonLandmark originLandmark = null){
 		List<ECS.Character> characters = new List<ECS.Character> ();
 		for (int i = 0; i < _characterSetups.Count; i++) {
-			ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(_characterSetups[i].optionalRole, _characterSetups[i]);
+			ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(_characterSetups[i].optionalRole, Utilities.GetRandomGender(), _characterSetups[i]);
 			newCharacter.SetCharacterColor (Color.red);
 			if(originLandmark != null){
                 if (newCharacter.raceSetting.tags.Contains(CHARACTER_TAG.NESTING)) {

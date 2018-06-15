@@ -389,11 +389,11 @@ namespace ECS {
         }
         #endregion
 
-        public Character(CharacterSetup baseSetup, int statAllocationBonus = 0) {
+        public Character(CharacterSetup baseSetup, GENDER gender, int statAllocationBonus = 0) {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
-			_gender = Utilities.GetRandomGender();
+			_gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _traits = new List<Trait> ();
 			_tags = new List<CharacterTag> ();
@@ -451,11 +451,14 @@ namespace ECS {
 
 			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
-			//_combatHistoryID = 0;
+            //_combatHistoryID = 0;
 
+#if !WORLD_CREATION_TOOL
             _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
             _characterObject.SetCharacter(this);
             //ConstructResourceInventory();
+#endif
+
 
             Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
