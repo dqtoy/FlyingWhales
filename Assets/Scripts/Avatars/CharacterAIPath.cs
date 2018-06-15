@@ -6,8 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterAIPath : AIPath {
 
+public class CharacterAIPath : AIPath {
     [SerializeField] private CharacterIcon _icon;
     private Action onTargetReachedAction;
 
@@ -56,6 +56,10 @@ public class CharacterAIPath : AIPath {
     }
     #endregion
 
-
-
+    #region Context Menus
+    [ContextMenu("Log Remaining Distance")]
+    public void LogRemainingDistance() {
+        Debug.Log("Remaining distance of " + _icon.name + " to " + _icon.targetLocation.locationName + " is " + remainingDistance);
+    }
+    #endregion
 }

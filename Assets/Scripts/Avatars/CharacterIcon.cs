@@ -11,6 +11,7 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private GameObject _avatarGO;
     [SerializeField] private CharacterAIPath _aiPath;
     [SerializeField] private SpriteRenderer _avatarSprite;
+    [SerializeField] private GameObject _characterVisualGO;
     [SerializeField] private Animator _avatarAnimator;
     [SerializeField] private AIDestinationSetter _destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
@@ -24,6 +25,9 @@ public class CharacterIcon : MonoBehaviour {
     private bool _isIdle;
     private string upOrDown = "Down";
     private string previousDir;
+
+    private Vector3 normalScale;
+    private bool shouldScaleUp = false;
 
     #region getters/setters
     public Character character {
@@ -42,6 +46,7 @@ public class CharacterIcon : MonoBehaviour {
 
     public void SetCharacter(Character character) {
         _character = character;
+        normalScale = _avatarGO.transform.localScale;
         //UpdateColor();
         this.name = _character.name + "'s Icon";
         _isIdle = true;
@@ -68,8 +73,9 @@ public class CharacterIcon : MonoBehaviour {
                 return;
             }
             //remove character from his/her specific location
-            if (character.specificLocation != null) {
+            if (character.specificLocation != null && character.specificLocation is BaseLandmark) {
                 character.specificLocation.RemoveCharacterFromLocation(character);
+                shouldScaleUp = true;
             }
             _destinationSetter.target = target.tileLocation.transform;
             _aiPath.RecalculatePath();
@@ -77,7 +83,6 @@ public class CharacterIcon : MonoBehaviour {
             _destinationSetter.target = null;
         }
         _targetLocation = target;
-
         //_aiPath.destination = _targetLocation.tileLocation.transform.position;
         //_aiPath.SetRecalculatePathState(true);
     }
@@ -188,8 +193,7 @@ public class CharacterIcon : MonoBehaviour {
         //    lineRenderer.SetPositions(vectorPath.ToArray());
         //}
     }
-    void FixedUpdate() {
-        //Debug.Log(_aiPath.velocity);
+    private void FixedUpdate() {
         if (_aiPath.velocity != Vector3.zero) {
             if (GetLeftRight() == "Left") {
                 if (_avatarAnimator.transform.localScale.x < 0f) {
@@ -205,8 +209,29 @@ public class CharacterIcon : MonoBehaviour {
         } else {
             Idle(upOrDown);
         }
+        if (targetLocation != null && _avatarGO.transform.localScale != Vector3.zero) {
+            //Debug.Log("Remaining Distance: " + _aiPath.remainingDistance);
+            if (_aiPath.remainingDistance < 1.5f) {
+                //Debug.Log("Shrink!");
+                Vector3 newScale = _avatarGO.transform.localScale;
+                newScale.x -= 0.02f;
+                newScale.y -= 0.02f;
+                iTween.ScaleUpdate(_avatarGO.gameObject, newScale, Time.deltaTime * _aiPath.maxSpeed);
+                //_avatarGO.transform.localScale = Vector3.Lerp(_avatarGO.transform.localScale, newScale, );
+            }
+        }
+        if (shouldScaleUp) {
+            Vector3 newScale = _avatarGO.transform.localScale;
+            newScale.x += 0.02f;
+            newScale.y += 0.02f;
+            newScale.x = Mathf.Min(newScale.x, normalScale.x);
+            newScale.y = Mathf.Min(newScale.y, normalScale.y);
+            iTween.ScaleUpdate(_avatarGO.gameObject, newScale, Time.deltaTime * _aiPath.maxSpeed);
+            if (newScale.x == normalScale.x && newScale.y == normalScale.y) {
+                shouldScaleUp = false;
+            }
+        }
     }
-    
     private void OnMouseDown() {
         MouseDown();
     }
