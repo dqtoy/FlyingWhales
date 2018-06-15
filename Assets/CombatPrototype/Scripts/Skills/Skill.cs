@@ -11,7 +11,7 @@ namespace ECS {
 		public SKILL_CATEGORY skillCategory;
         //public ACTIVATION_WEIGHT_TYPE actWeightType;
         public int activationWeight;
-        public float accuracy;
+        //public float accuracy;
         public int range;
 		public bool isEnabled;
         public SkillRequirement[] skillRequirements;
@@ -47,7 +47,7 @@ namespace ECS {
 			skill.skillCategory = this.skillCategory;
 			//skill.actWeightType = this.actWeightType;
 			skill.activationWeight = this.activationWeight;
-			skill.accuracy = this.accuracy;
+			//skill.accuracy = this.accuracy;
 			skill.range = this.range;
 			skill.isEnabled = this.isEnabled;
             Array.Copy(this.allowedWeaponTypes, skill.allowedWeaponTypes, this.allowedWeaponTypes.Length);

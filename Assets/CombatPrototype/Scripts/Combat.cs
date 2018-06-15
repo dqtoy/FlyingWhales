@@ -513,14 +513,15 @@ namespace ECS{
 		}
 		//ECS.Character will do the skill specified, but its success will be determined by the skill's accuracy
 		private void DoSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
-			int chance = Utilities.rng.Next (0,100);
-			if(chance < skill.accuracy){
-				//Successful
-				SuccessfulSkill(skill, sourceCharacter, targetCharacter);
-			}else{
-				//Fail
-				FailedSkill(skill, sourceCharacter, targetCharacter);
-			}
+            SuccessfulSkill(skill, sourceCharacter, targetCharacter);
+   //         int chance = Utilities.rng.Next (0,100);
+			//if(chance < skill.accuracy){
+			//	//Successful
+			//	SuccessfulSkill(skill, sourceCharacter, targetCharacter);
+			//}else{
+			//	//Fail
+			//	FailedSkill(skill, sourceCharacter, targetCharacter);
+			//}
 		}
 
 		//Go here if skill is accurate and is successful

@@ -10,7 +10,7 @@ namespace ECS{
 		public string description;
 		//public ACTIVATION_WEIGHT_TYPE actWeightType;
 		public int activationWeight;
-		public float accuracy;
+		//public float accuracy;
 		public int range;
 
 

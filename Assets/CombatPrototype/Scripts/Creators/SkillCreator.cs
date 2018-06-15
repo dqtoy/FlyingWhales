@@ -22,7 +22,7 @@ namespace ECS {
 			//skillComponent.actWeightType = (ACTIVATION_WEIGHT_TYPE)EditorGUILayout.EnumPopup("Activation Weight Type: ", skillComponent.actWeightType);
 			skillComponent.activationWeight = EditorGUILayout.IntField("Activation Weight: ", skillComponent.activationWeight);
 			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
-			skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
+			//skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
 
             switch (skillComponent.skillType) {
                 case SKILL_TYPE.ATTACK:
@@ -135,7 +135,7 @@ namespace ECS {
 			newSkill.description = skillComponent.description;
 			//newSkill.actWeightType = skillComponent.actWeightType;
 			newSkill.activationWeight = skillComponent.activationWeight;
-			newSkill.accuracy = skillComponent.accuracy;
+			//newSkill.accuracy = skillComponent.accuracy;
 			newSkill.range = skillComponent.range;
 			newSkill.skillRequirements = skillComponent.skillRequirements;
             newSkill.allowedWeaponTypes = skillComponent.allowedWeaponTypes;
