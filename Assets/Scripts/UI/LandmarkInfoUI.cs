@@ -239,7 +239,7 @@ public class LandmarkInfoUI : UIMenu {
 		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
 				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
-				text += "\n" + item.nameWithQuality + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
+				text += "\n" + item.itemName + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
 			}
 		} else {
 			text += "NONE";

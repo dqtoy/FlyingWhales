@@ -976,17 +976,17 @@ public class BaseLandmark : ILocation, TaskCreator {
                 } else if (createdItem.itemName.Contains("Weapon")) {
                     createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
                 }
-                QUALITY equipmentQuality = GetEquipmentQuality();
-                if (createdItem.itemType == ITEM_TYPE.ARMOR) {
-                    ((Armor)createdItem).SetQuality(equipmentQuality);
-                } else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
-                    ((Weapon)createdItem).SetQuality(equipmentQuality);
-                }
+                //QUALITY equipmentQuality = GetEquipmentQuality();
+                //if (createdItem.itemType == ITEM_TYPE.ARMOR) {
+                //    ((Armor)createdItem).SetQuality(equipmentQuality);
+                //} else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
+                //    ((Weapon)createdItem).SetQuality(equipmentQuality);
+                //}
             } else {
                 //only set as unlimited if not from loot chest, since gear from loot chests are not unlimited
                 createdItem.SetIsUnlimited(currItemData.isUnlimited);
             }
-            createdItem.SetExploreWeight(currItemData.exploreWeight);
+            //createdItem.SetExploreWeight(currItemData.exploreWeight);
             AddItemInLandmark(createdItem);
         }
     }
@@ -1027,27 +1027,28 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
-    private WeightedDictionary<Item> GetExploreItemWeights() {
-        WeightedDictionary<Item> itemWeights = new WeightedDictionary<Item>();
-        for (int i = 0; i < _itemsInLandmark.Count; i++) {
-            Item currItem = _itemsInLandmark[i];
-            itemWeights.AddElement(currItem, currItem.exploreWeight);
-        }
-        return itemWeights;
-    }
+    //private WeightedDictionary<Item> GetExploreItemWeights() {
+    //    WeightedDictionary<Item> itemWeights = new WeightedDictionary<Item>();
+    //    for (int i = 0; i < _itemsInLandmark.Count; i++) {
+    //        Item currItem = _itemsInLandmark[i];
+    //        itemWeights.AddElement(currItem, currItem.exploreWeight);
+    //    }
+    //    return itemWeights;
+    //}
 
-	public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
-		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
-		item.exploreWeight = exploreWeight;
-		item.isUnlimited = isUnlimited;
-		AddItemInLandmark (item);
-	}
-	public void SpawnItemInLandmark(Item item, int exploreWeight, bool isUnlimited){
-		Item newItem = item.CreateNewCopy();
-		newItem.exploreWeight = exploreWeight;
-		newItem.isUnlimited = isUnlimited;
-		AddItemInLandmark (newItem);
-	}
+	//public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
+	//	Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
+	//	item.exploreWeight = exploreWeight;
+	//	item.isUnlimited = isUnlimited;
+	//	AddItemInLandmark (item);
+	//}
+
+	//public void SpawnItemInLandmark(Item item, int exploreWeight, bool isUnlimited){
+	//	Item newItem = item.CreateNewCopy();
+    //  newItem.exploreWeight = exploreWeight;
+	//	newItem.isUnlimited = isUnlimited;
+	//	AddItemInLandmark (newItem);
+	//}
 	public Item SpawnItemInLandmark(string itemName){
 		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
 		AddItemInLandmark (item);

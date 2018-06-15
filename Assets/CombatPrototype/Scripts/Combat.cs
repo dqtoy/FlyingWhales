@@ -556,27 +556,27 @@ namespace ECS{
 		}
 
 		//Get DEFEND_TYPE for the attack skill, if DEFEND_TYPE is NONE, then target character has not defend successfully, therefore, the target character will be damaged
-		private DEFEND_TYPE CanTargetCharacterDefend(ECS.Character sourceCharacter, ECS.Character targetCharacter){
-			if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
-				return DEFEND_TYPE.NONE;
-			}
-			int dodgeChance = Utilities.rng.Next (0, 100);
-			if(dodgeChance < targetCharacter.dodgeRate){
-				return DEFEND_TYPE.DODGE;
-			}else{
-				int parryChance = Utilities.rng.Next (0, 100);
-				if(parryChance < targetCharacter.parryRate){
-					return DEFEND_TYPE.PARRY;
-				}else{
-					int blockChance = Utilities.rng.Next (0, 100);
-					if(blockChance < targetCharacter.blockRate){
-						return DEFEND_TYPE.BLOCK;
-					}else{
-						return DEFEND_TYPE.NONE;
-					}
-				}
-			}
-		}
+		//private DEFEND_TYPE CanTargetCharacterDefend(ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		//	if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
+		//		return DEFEND_TYPE.NONE;
+		//	}
+		//	int dodgeChance = Utilities.rng.Next (0, 100);
+		//	if(dodgeChance < targetCharacter.dodgeRate){
+		//		return DEFEND_TYPE.DODGE;
+		//	}else{
+		//		int parryChance = Utilities.rng.Next (0, 100);
+		//		if(parryChance < targetCharacter.parryRate){
+		//			return DEFEND_TYPE.PARRY;
+		//		}else{
+		//			int blockChance = Utilities.rng.Next (0, 100);
+		//			if(blockChance < targetCharacter.blockRate){
+		//				return DEFEND_TYPE.BLOCK;
+		//			}else{
+		//				return DEFEND_TYPE.NONE;
+		//			}
+		//		}
+		//	}
+		//}
 
 		private void CounterAttack(ECS.Character character){
 			//TODO: Counter attack
@@ -590,21 +590,22 @@ namespace ECS{
 		#region Attack Skill
 		private void AttackSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
 			AttackSkill attackSkill = (AttackSkill)skill;
-			DEFEND_TYPE defendType = CanTargetCharacterDefend (sourceCharacter, targetCharacter);
-			if(defendType == DEFEND_TYPE.NONE){
-				//Successfully hits the target character
-				HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter); //, attackSkill.weapon
-			}else{
-				//Target character has defend successfully and will roll for counter attack
-				if(defendType == DEFEND_TYPE.DODGE){
-					AddCombatLog(targetCharacter.coloredUrlName + " dodged " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
-				} else if(defendType == DEFEND_TYPE.BLOCK){
-					AddCombatLog(targetCharacter.coloredUrlName + " blocked " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
-				} else if(defendType == DEFEND_TYPE.PARRY){
-					AddCombatLog(targetCharacter.coloredUrlName + " parried " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
-				}
-				CounterAttack(targetCharacter);
-			}
+            HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter); //, attackSkill.weapon
+   //         DEFEND_TYPE defendType = CanTargetCharacterDefend (sourceCharacter, targetCharacter);
+			//if(defendType == DEFEND_TYPE.NONE){
+			//	//Successfully hits the target character
+			//	HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter); //, attackSkill.weapon
+			//}else{
+			//	//Target character has defend successfully and will roll for counter attack
+			//	if(defendType == DEFEND_TYPE.DODGE){
+			//		AddCombatLog(targetCharacter.coloredUrlName + " dodged " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+			//	} else if(defendType == DEFEND_TYPE.BLOCK){
+			//		AddCombatLog(targetCharacter.coloredUrlName + " blocked " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+			//	} else if(defendType == DEFEND_TYPE.PARRY){
+			//		AddCombatLog(targetCharacter.coloredUrlName + " parried " + sourceCharacter.coloredUrlName + "'s " + attackSkill.skillName.ToLower() + ".", targetCharacter.currentSide);
+			//	}
+			//	CounterAttack(targetCharacter);
+			//}
 		}
 			
 		//Hits the target with an attack skill
@@ -629,7 +630,7 @@ namespace ECS{
             log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
             if (weapon != null) {
-                damageRange = weapon.damageRange;
+                damageRange = ItemManager.Instance.weaponTypeData[weapon.weaponType].damageRange;
                 weaponPower = weapon.weaponPower;
 
                 log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";

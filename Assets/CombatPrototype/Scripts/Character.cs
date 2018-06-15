@@ -262,15 +262,15 @@ namespace ECS {
 		public int baseMaxHP {
 			get { return _baseMaxHP; }
 		}
-		public int dodgeRate {
-			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
-		}
-		public int parryRate {
-			get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
-		}
-		public int blockRate {
-			get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
-		}
+		//public int dodgeRate {
+		//	get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
+		//}
+		//public int parryRate {
+		//	get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
+		//}
+		//public int blockRate {
+		//	get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
+		//}
 		public Color characterColor {
 			get { return _characterColor; }
 		}
@@ -882,32 +882,32 @@ namespace ECS {
 		internal void AddBodyPart(BodyPart bodyPart) {
 			bodyParts.Add(bodyPart);
 		}
-		internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
-			List<IBodyPart> allBodyParts = new List<IBodyPart>();
-			for (int i = 0; i < bodyParts.Count; i++) {
-				BodyPart currBodyPart = bodyParts[i];
-				allBodyParts.Add(currBodyPart);
-				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-					allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
-				}
-			}
-			for (int i = 0; i < allBodyParts.Count; i++) {
-				IBodyPart currBodyPart = allBodyParts[i];
-				bool meetsRequirements = true;
-				//check if currBodyPart meets the weapons requirements
-				for (int j = 0; j < weapon.equipRequirements.Count; j++) {
-					IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
-					if (!currBodyPart.HasUnusedAttribute(currReq)) {
-						meetsRequirements = false;
-						break;
-					}
-				}
-				if (meetsRequirements) {
-					return currBodyPart;
-				}
-			}
-			return null;
-		}
+		//internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
+		//	List<IBodyPart> allBodyParts = new List<IBodyPart>();
+		//	for (int i = 0; i < bodyParts.Count; i++) {
+		//		BodyPart currBodyPart = bodyParts[i];
+		//		allBodyParts.Add(currBodyPart);
+		//		for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+		//			allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
+		//		}
+		//	}
+		//	for (int i = 0; i < allBodyParts.Count; i++) {
+		//		IBodyPart currBodyPart = allBodyParts[i];
+		//		bool meetsRequirements = true;
+		//		//check if currBodyPart meets the weapons requirements
+		//		for (int j = 0; j < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
+		//			IBodyPart.ATTRIBUTE currReq = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
+		//			if (!currBodyPart.HasUnusedAttribute(currReq)) {
+		//				meetsRequirements = false;
+		//				break;
+		//			}
+		//		}
+		//		if (meetsRequirements) {
+		//			return currBodyPart;
+		//		}
+		//	}
+		//	return null;
+		//}
 		internal IBodyPart GetBodyPartForArmor(Armor armor) {
 			IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
 			for (int i = 0; i < bodyParts.Count; i++) {
@@ -979,7 +979,7 @@ namespace ECS {
 			}
             Log obtainLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "obtain_item");
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+            obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
 			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 (specificLocation as BaseLandmark).AddHistory(obtainLog);
@@ -994,7 +994,7 @@ namespace ECS {
 			}
 			item.SetPossessor (null);
 			this._inventory.Remove (item);
-			item.exploreWeight = 15;
+			//item.exploreWeight = 15;
 			if(addInLandmark){
 				ILocation location = specificLocation;
 				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
@@ -1058,7 +1058,7 @@ namespace ECS {
 			if(ItemManager.Instance.allItems.ContainsKey(itemName)){
 				if (itemType == ITEM_TYPE.WEAPON) {
 					Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
-					weapon.ConstructSkillsList ();
+					//weapon.ConstructSkillsList ();
 					TryEquipWeapon(weapon);
 				} else if (itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
@@ -1070,7 +1070,7 @@ namespace ECS {
             if (ItemManager.Instance.allItems.ContainsKey(itemName)) {
                 if (itemType.ToLower() == "weapon") {
                     Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
-                    weapon.ConstructSkillsList();
+                    //weapon.ConstructSkillsList();
                     TryEquipWeapon(weapon);
                 }
                 else if (itemType.ToLower() == "armor") {
@@ -1096,7 +1096,7 @@ namespace ECS {
             if (hasEquipped) {
                 Log equipLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "equip_item");
                 equipLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                equipLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+                equipLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
                 AddHistory(equipLog);
             }
             return hasEquipped;
@@ -1128,8 +1128,8 @@ namespace ECS {
 		}
 		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipWeapon(Weapon weapon){
-			for (int j = 0; j < weapon.equipRequirements.Count; j++) {
-				IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
+			for (int j = 0; j < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
+				IBodyPart.ATTRIBUTE currReq = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
 				if(!AttachWeaponToBodyPart(weapon, currReq)){
 					DetachWeaponFromBodyParts (weapon);
 					return false;
@@ -1142,16 +1142,16 @@ namespace ECS {
 			}
 			AddEquippedItem(newWeapon);
 			newWeapon.SetPossessor (this);
-			newWeapon.ResetDurability();
+			//newWeapon.ResetDurability();
 //			weapon.SetOwner(this);
 			if(newWeapon.owner == null){
 				OwnItem (newWeapon);
 			}
 			_equippedWeaponPower += newWeapon.weaponPower;
 
-			for (int i = 0; i < newWeapon.skills.Count; i++) {
-				this._skills.Add (newWeapon.skills [i]);
-			}
+			//for (int i = 0; i < newWeapon.skills.Count; i++) {
+			//	this._skills.Add (newWeapon.skills [i]);
+			//}
 
 			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
 			//StreamingAssetsUI.Instance.UpdateCharacterSummary(this);
@@ -1172,8 +1172,8 @@ namespace ECS {
 			return false;
 		}
 		private void DetachWeaponFromBodyParts(Weapon weapon){
-			for (int i = 0; i < weapon.equipRequirements.Count; i++) {
-				IBodyPart.ATTRIBUTE req = weapon.equipRequirements [i];
+			for (int i = 0; i < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; i++) {
+				IBodyPart.ATTRIBUTE req = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[i];
 				for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
 					if(weapon.bodyPartsAttached[j].DettachItem(weapon, req)){
 						break;
@@ -1184,9 +1184,9 @@ namespace ECS {
 		//Unequips weapon of a character
 		private void UnequipWeapon(Weapon weapon) {
 			DetachWeaponFromBodyParts (weapon);
-			for (int i = 0; i < weapon.skills.Count; i++) {
-				this._skills.Remove (weapon.skills [i]);
-			}
+			//for (int i = 0; i < weapon.skills.Count; i++) {
+			//	this._skills.Remove (weapon.skills [i]);
+			//}
 			_equippedWeaponPower -= weapon.weaponPower;
 		}
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
@@ -1204,7 +1204,7 @@ namespace ECS {
 			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(newArmor);
 			newArmor.SetPossessor (this);
-			newArmor.ResetDurability();
+			//newArmor.ResetDurability();
 //			armor.SetOwner(this);
 			if(newArmor.owner == null){
 				OwnItem (newArmor);
@@ -1272,23 +1272,23 @@ namespace ECS {
 			}
 			return weapons;
 		}
-		internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
-			for (int i = 0; i < equippedItems.Count; i++) {
-				Item currItem = equippedItems[i];
-				if(currItem.itemType == ITEM_TYPE.ARMOR) {
-					Armor armor = (Armor)currItem;
-					if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-						return true;
-					}
-				} else if (currItem.itemType == ITEM_TYPE.WEAPON) {
-					Weapon weapon = (Weapon)currItem;
-					if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
+		//internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
+		//	for (int i = 0; i < equippedItems.Count; i++) {
+		//		Item currItem = equippedItems[i];
+		//		if(currItem.itemType == ITEM_TYPE.ARMOR) {
+		//			Armor armor = (Armor)currItem;
+		//			if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
+		//				return true;
+		//			}
+		//		} else if (currItem.itemType == ITEM_TYPE.WEAPON) {
+		//			Weapon weapon = (Weapon)currItem;
+		//			if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
+		//				return true;
+		//			}
+		//		}
+		//	}
+		//	return false;
+		//}
         internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType) {
             for (int i = 0; i < equippedItems.Count; i++) {
                 Item currItem = equippedItems[i];
@@ -1427,16 +1427,16 @@ namespace ECS {
 		}
         private void AddItemBonuses(Item item) {
             //AdjustMaxHP(item.bonusMaxHP);
-            AdjustBonusStrength(item.bonusStrength);
-            AdjustBonusIntelligence(item.bonusIntelligence);
-            AdjustBonusAgility(item.bonusAgility);
-            AdjustBonusVitality(item.bonusVitality);
+            //AdjustBonusStrength(item.bonusStrength);
+            //AdjustBonusIntelligence(item.bonusIntelligence);
+            //AdjustBonusAgility(item.bonusAgility);
+            //AdjustBonusVitality(item.bonusVitality);
         }
         private void RemoveItemBonuses(Item item) {
             //AdjustMaxHP(-item.bonusMaxHP);
-            AdjustBonusStrength(-item.bonusStrength);
-            AdjustBonusIntelligence(-item.bonusIntelligence);
-            AdjustBonusVitality(-item.bonusVitality);
+            //AdjustBonusStrength(-item.bonusStrength);
+            //AdjustBonusIntelligence(-item.bonusIntelligence);
+            //AdjustBonusVitality(-item.bonusVitality);
         }
         #endregion
 

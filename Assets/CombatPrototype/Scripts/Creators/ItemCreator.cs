@@ -28,26 +28,26 @@ namespace ECS {
 				break;
 			}
 
-			itemComponent.bonusActRate = EditorGUILayout.IntField("Bonus Act Rate: ", itemComponent.bonusActRate);
-			itemComponent.bonusStrength = EditorGUILayout.IntField("Bonus Strength: ", itemComponent.bonusStrength);
-			itemComponent.bonusIntelligence = EditorGUILayout.IntField("Bonus Intelligence: ", itemComponent.bonusIntelligence);
-			itemComponent.bonusAgility = EditorGUILayout.IntField("Bonus Agility: ",itemComponent.bonusAgility);
-            itemComponent.bonusVitality = EditorGUILayout.IntField("Bonus Vitality: ", itemComponent.bonusVitality);
-            itemComponent.bonusMaxHP = EditorGUILayout.IntField("Bonus Max HP: ", itemComponent.bonusMaxHP);
-			itemComponent.bonusDodgeRate = EditorGUILayout.IntField("Bonus Dodge Rate: ", itemComponent.bonusDodgeRate);
-			itemComponent.bonusParryRate = EditorGUILayout.IntField("Bonus Parry Rate: ", itemComponent.bonusParryRate);
-			itemComponent.bonusBlockRate = EditorGUILayout.IntField("Bonus Block Rate: ", itemComponent.bonusBlockRate);
-			itemComponent.durability = EditorGUILayout.IntField("Durability :", itemComponent.durability);
-			itemComponent.cost = EditorGUILayout.IntField("Cost :", itemComponent.cost);
-            itemComponent.exploreWeight = EditorGUILayout.IntField("Explore Weight :", itemComponent.exploreWeight);
-            itemComponent.collectChance = EditorGUILayout.IntField("Collect Chance :", itemComponent.collectChance);
+            //itemComponent.bonusActRate = EditorGUILayout.IntField("Bonus Act Rate: ", itemComponent.bonusActRate);
+            //itemComponent.bonusStrength = EditorGUILayout.IntField("Bonus Strength: ", itemComponent.bonusStrength);
+            //itemComponent.bonusIntelligence = EditorGUILayout.IntField("Bonus Intelligence: ", itemComponent.bonusIntelligence);
+            //itemComponent.bonusAgility = EditorGUILayout.IntField("Bonus Agility: ",itemComponent.bonusAgility);
+            //         itemComponent.bonusVitality = EditorGUILayout.IntField("Bonus Vitality: ", itemComponent.bonusVitality);
+            //         itemComponent.bonusMaxHP = EditorGUILayout.IntField("Bonus Max HP: ", itemComponent.bonusMaxHP);
+            //itemComponent.bonusDodgeRate = EditorGUILayout.IntField("Bonus Dodge Rate: ", itemComponent.bonusDodgeRate);
+            //itemComponent.bonusParryRate = EditorGUILayout.IntField("Bonus Parry Rate: ", itemComponent.bonusParryRate);
+            //itemComponent.bonusBlockRate = EditorGUILayout.IntField("Bonus Block Rate: ", itemComponent.bonusBlockRate);
+            //itemComponent.durability = EditorGUILayout.IntField("Durability :", itemComponent.durability);
+            //itemComponent.cost = EditorGUILayout.IntField("Cost :", itemComponent.cost);
+            //         itemComponent.exploreWeight = EditorGUILayout.IntField("Explore Weight :", itemComponent.exploreWeight);
+            //         itemComponent.collectChance = EditorGUILayout.IntField("Collect Chance :", itemComponent.collectChance);
             itemComponent.isUnlimited = EditorGUILayout.Toggle("Is Unlimited :", itemComponent.isUnlimited);
             itemComponent.isObtainable = EditorGUILayout.Toggle("Is Obtainable :", itemComponent.isObtainable);
             itemComponent.interactString = EditorGUILayout.TextField("Interaction text: ", itemComponent.interactString);
 
-			SerializedProperty statusEffectResistance = serializedObject.FindProperty("statusEffectResistances");
-			EditorGUILayout.PropertyField(statusEffectResistance, true);
-			serializedObject.ApplyModifiedProperties ();
+			//SerializedProperty statusEffectResistance = serializedObject.FindProperty("statusEffectResistances");
+			//EditorGUILayout.PropertyField(statusEffectResistance, true);
+			//serializedObject.ApplyModifiedProperties ();
 
             if (GUILayout.Button("Save Item")) {
 				SaveItem(itemComponent.itemName);
@@ -56,44 +56,44 @@ namespace ECS {
 
         private void ShowWeaponFields() {
 			itemComponent.weaponType = (WEAPON_TYPE)EditorGUILayout.EnumPopup("Weapon Type: ", itemComponent.weaponType);
-			itemComponent.weaponMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.weaponMaterial);
-			itemComponent.weaponQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.weaponQuality);
+			//itemComponent.weaponMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.weaponMaterial);
+			//itemComponent.weaponQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.weaponQuality);
 			itemComponent.weaponPower = EditorGUILayout.FloatField("Weapon Power: ", itemComponent.weaponPower);
 
-			SerializedProperty weaponAttribute = serializedObject.FindProperty("weaponAttributes");
-			EditorGUILayout.PropertyField(weaponAttribute, true);
-			serializedObject.ApplyModifiedProperties ();
+			//SerializedProperty weaponAttribute = serializedObject.FindProperty("weaponAttributes");
+			//EditorGUILayout.PropertyField(weaponAttribute, true);
+			//serializedObject.ApplyModifiedProperties ();
 
-            SerializedProperty equipRequirements = serializedObject.FindProperty("equipRequirements");
-            EditorGUILayout.PropertyField(equipRequirements, true);
-            serializedObject.ApplyModifiedProperties();
+   //         SerializedProperty equipRequirements = serializedObject.FindProperty("equipRequirements");
+   //         EditorGUILayout.PropertyField(equipRequirements, true);
+   //         serializedObject.ApplyModifiedProperties();
 
-			serializedObject.FindProperty("itemComponent");
-			itemComponent.skillsFoldout = EditorGUILayout.Foldout(itemComponent.skillsFoldout, "Skills");
+			//serializedObject.FindProperty("itemComponent");
+			//itemComponent.skillsFoldout = EditorGUILayout.Foldout(itemComponent.skillsFoldout, "Skills");
 
-			if (itemComponent.skillsFoldout && itemComponent.skills != null) {
-				EditorGUI.indentLevel++;
-				for (int i = 0; i < itemComponent.skills.Count; i++) {
-					SerializedProperty currSkill = serializedObject.FindProperty("_skills").GetArrayElementAtIndex(i);
-					EditorGUILayout.PropertyField(currSkill, true);
-				}
-				serializedObject.ApplyModifiedProperties();
-				EditorGUI.indentLevel--;
-			}
+			//if (itemComponent.skillsFoldout && itemComponent.skills != null) {
+			//	EditorGUI.indentLevel++;
+			//	for (int i = 0; i < itemComponent.skills.Count; i++) {
+			//		SerializedProperty currSkill = serializedObject.FindProperty("_skills").GetArrayElementAtIndex(i);
+			//		EditorGUILayout.PropertyField(currSkill, true);
+			//	}
+			//	serializedObject.ApplyModifiedProperties();
+			//	EditorGUI.indentLevel--;
+			//}
 
 			//Add Skill Area
-			GUILayout.Space(10);
-			GUILayout.BeginVertical(EditorStyles.helpBox);
-			GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
-			itemComponent.skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", itemComponent.skillTypeToAdd);
-			List<string> choices = GetAllSkillsOfType(SKILL_CATEGORY.WEAPON, itemComponent.skillTypeToAdd);
-			itemComponent.skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", itemComponent.skillToAddIndex, choices.ToArray());
-			GUI.enabled = choices.Count > 0;
-			if (GUILayout.Button("Add Skill")) {
-				AddSkillToList(choices[itemComponent.skillToAddIndex]);
-			}
-			GUI.enabled = true;
-			GUILayout.EndHorizontal();
+			//GUILayout.Space(10);
+			//GUILayout.BeginVertical(EditorStyles.helpBox);
+			//GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
+			//itemComponent.skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", itemComponent.skillTypeToAdd);
+			//List<string> choices = GetAllSkillsOfType(SKILL_CATEGORY.WEAPON, itemComponent.skillTypeToAdd);
+			//itemComponent.skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", itemComponent.skillToAddIndex, choices.ToArray());
+			//GUI.enabled = choices.Count > 0;
+			//if (GUILayout.Button("Add Skill")) {
+			//	AddSkillToList(choices[itemComponent.skillToAddIndex]);
+			//}
+			//GUI.enabled = true;
+			//GUILayout.EndHorizontal();
         }
 
         private void ShowArmorFields() {
@@ -150,19 +150,19 @@ namespace ECS {
 			newItem.itemType = itemComponent.itemType;
 			newItem.itemName = itemComponent.itemName;
 			newItem.description = itemComponent.description;
-			newItem.bonusActRate = itemComponent.bonusActRate;
-			newItem.bonusStrength = itemComponent.bonusStrength;
-			newItem.bonusIntelligence = itemComponent.bonusIntelligence;
-			newItem.bonusAgility = itemComponent.bonusAgility;
-			newItem.bonusMaxHP = itemComponent.bonusMaxHP;
-			newItem.bonusDodgeRate = itemComponent.bonusDodgeRate;
-			newItem.bonusParryRate = itemComponent.bonusParryRate;
-			newItem.bonusBlockRate = itemComponent.bonusBlockRate;
-			newItem.durability = itemComponent.durability;
-			newItem.cost = itemComponent.cost;
-			newItem.exploreWeight = itemComponent.exploreWeight;
-			newItem.collectChance = itemComponent.collectChance;
-			newItem.isUnlimited = itemComponent.isUnlimited;
+            //newItem.bonusActRate = itemComponent.bonusActRate;
+            //newItem.bonusStrength = itemComponent.bonusStrength;
+            //newItem.bonusIntelligence = itemComponent.bonusIntelligence;
+            //newItem.bonusAgility = itemComponent.bonusAgility;
+            //newItem.bonusMaxHP = itemComponent.bonusMaxHP;
+            //newItem.bonusDodgeRate = itemComponent.bonusDodgeRate;
+            //newItem.bonusParryRate = itemComponent.bonusParryRate;
+            //newItem.bonusBlockRate = itemComponent.bonusBlockRate;
+            //newItem.durability = itemComponent.durability;
+            //newItem.cost = itemComponent.cost;
+            //newItem.exploreWeight = itemComponent.exploreWeight;
+            //newItem.collectChance = itemComponent.collectChance;
+            newItem.isUnlimited = itemComponent.isUnlimited;
             newItem._isObtainable = itemComponent.isObtainable;
             newItem.interactString = itemComponent.interactString;
         }
@@ -172,14 +172,14 @@ namespace ECS {
 			SetCommonData(weapon);
 
 			weapon.weaponType = itemComponent.weaponType;
-			weapon.material = itemComponent.weaponMaterial;
-			weapon.quality = itemComponent.weaponQuality;
+			//weapon.material = itemComponent.weaponMaterial;
+			//weapon.quality = itemComponent.weaponQuality;
 			weapon.weaponPower = itemComponent.weaponPower;
-			weapon.attributes = itemComponent.weaponAttributes;
-			weapon.equipRequirements = itemComponent.equipRequirements;
-			for (int i = 0; i < itemComponent.skills.Count; i++) {
-				weapon.AddSkill (itemComponent.skills [i]);
-			}
+			//weapon.attributes = itemComponent.weaponAttributes;
+			//weapon.equipRequirements = itemComponent.equipRequirements;
+			//for (int i = 0; i < itemComponent.skills.Count; i++) {
+			//	weapon.AddSkill (itemComponent.skills [i]);
+			//}
 
             SaveJson(weapon, path);
         }
@@ -214,42 +214,42 @@ namespace ECS {
         }
         #endregion
 
-		#region Skills
-		private List<string> GetAllSkillsOfType(SKILL_CATEGORY category, SKILL_TYPE skillType) {
-			List<string> allSkillsOfType = new List<string>();
-			string path = Utilities.dataPath + "Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
-			foreach (string file in Directory.GetFiles(path, "*.json")) {
-				allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
-			}
-			return allSkillsOfType;
-		}
-		private void AddSkillToList(string skillName) {
-			string path = Utilities.dataPath + "Skills/" + itemComponent.itemType.ToString() + "/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
-			string dataAsJson = File.ReadAllText(path);
-			switch (itemComponent.skillTypeToAdd) {
-			case SKILL_TYPE.ATTACK:
-				AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-				itemComponent.AddSkill(attackSkill);
-				break;
-			case SKILL_TYPE.HEAL:
-				HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-				itemComponent.AddSkill(healSkill);
-				break;
-			case SKILL_TYPE.OBTAIN_ITEM:
-				ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-				itemComponent.AddSkill(obtainSkill);
-				break;
-			case SKILL_TYPE.FLEE:
-				FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
-				itemComponent.AddSkill(fleeSkill);
-				break;
-			case SKILL_TYPE.MOVE:
-				MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-				itemComponent.AddSkill(moveSkill);
-				break;
-			}
-		}
-		#endregion
+        #region Skills
+        private List<string> GetAllSkillsOfType(SKILL_CATEGORY category, SKILL_TYPE skillType) {
+            List<string> allSkillsOfType = new List<string>();
+            string path = Utilities.dataPath + "Skills/" + category.ToString() + "/" + skillType.ToString() + "/";
+            foreach (string file in Directory.GetFiles(path, "*.json")) {
+                allSkillsOfType.Add(Path.GetFileNameWithoutExtension(file));
+            }
+            return allSkillsOfType;
+        }
+        //private void AddSkillToList(string skillName) {
+        //	string path = Utilities.dataPath + "Skills/" + itemComponent.itemType.ToString() + "/" + itemComponent.skillTypeToAdd.ToString() + "/" + skillName + ".json";
+        //	string dataAsJson = File.ReadAllText(path);
+        //	switch (itemComponent.skillTypeToAdd) {
+        //	case SKILL_TYPE.ATTACK:
+        //		AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
+        //		itemComponent.AddSkill(attackSkill);
+        //		break;
+        //	case SKILL_TYPE.HEAL:
+        //		HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
+        //		itemComponent.AddSkill(healSkill);
+        //		break;
+        //	case SKILL_TYPE.OBTAIN_ITEM:
+        //		ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
+        //		itemComponent.AddSkill(obtainSkill);
+        //		break;
+        //	case SKILL_TYPE.FLEE:
+        //		FleeSkill fleeSkill = JsonUtility.FromJson<FleeSkill>(dataAsJson);
+        //		itemComponent.AddSkill(fleeSkill);
+        //		break;
+        //	case SKILL_TYPE.MOVE:
+        //		MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+        //		itemComponent.AddSkill(moveSkill);
+        //		break;
+        //	}
+        //}
+        #endregion
     }
 }
 #endif
