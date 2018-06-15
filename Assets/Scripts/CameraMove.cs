@@ -12,7 +12,7 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private float _minFov;
 	[SerializeField] private float _maxFov;
 	[SerializeField] private float sensitivity;
-    [SerializeField] private Camera resourceIconCamera;
+    //[SerializeField] private Camera resourceIconCamera;
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera _wholeMapCamera;
     [SerializeField] private Camera _uiCamera;
@@ -272,7 +272,7 @@ public class CameraMove : MonoBehaviour {
                 Camera.main.orthographicSize = fov;
                 nameplateCamera.orthographicSize = fov;
 #if !WORLD_CREATION_TOOL
-                resourceIconCamera.orthographicSize = fov;
+                //resourceIconCamera.orthographicSize = fov;
                 //Minimap.Instance.UpdateCameraBorderScale();
                 if (GameManager.Instance.gameHasStarted) {
                     CalculateCameraBounds();

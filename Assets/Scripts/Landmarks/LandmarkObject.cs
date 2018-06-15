@@ -8,7 +8,6 @@ public class LandmarkObject : MonoBehaviour {
 
     private BaseLandmark _landmark;
 
-    [SerializeField] private GameObject nameplateGO;
     [SerializeField] private TextMeshProUGUI landmarkLbl;
     [SerializeField] private SpriteRenderer topSprite;
     [SerializeField] private SpriteRenderer botSprite;
