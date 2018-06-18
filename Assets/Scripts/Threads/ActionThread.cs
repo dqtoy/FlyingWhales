@@ -43,6 +43,9 @@ public class ActionThread : Multithread {
                     CharacterAction action = iobject.currentState.actions[k];
                     if (action.MeetsRequirements(_character, landmark) && action.CanBeDone() && action.CanBeDoneBy(_character)) { //Filter
                         float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
+                        if(action.state.obj.objectType == OBJECT_TYPE.STRUCTURE && action.state.obj.objectLocation.id == _character.home.id) {
+                            happinessIncrease *= _character.actionData.homeMultiplier;
+                        }
                         actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
                         PutToChoices(action, happinessIncrease);
                     }

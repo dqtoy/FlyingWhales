@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
 	public int days;
 	public int year;
     public int hour;
+    public int hoursPerDay;
 
     public PROGRESSION_SPEED currProgressionSpeed;
 
@@ -91,10 +92,10 @@ public class GameManager : MonoBehaviour {
         return new GameDate(this.month, this.days, this.year, this.hour);
     }
     public GameDate EndOfTheMonth() {
-        return new GameDate(this.month, daysInMonth[this.month], this.year, this.hour);
+        return new GameDate(this.month, daysInMonth[this.month], this.year, this.hoursPerDay);
     }
 	public GameDate FirstDayOfTheMonth() {
-		return new GameDate(this.month, 1, this.year, this.hour);
+		return new GameDate(this.month, 1, this.year, 1);
 	}
 
 	//public void TogglePause(){
@@ -141,7 +142,7 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast("UpdateUI");
 
         this.hour += 1;
-        if(this.hour > 48) {
+        if(this.hour > hoursPerDay) {
             this.hour = 1;
             this.days += 1;
             if (days > daysInMonth[this.month]) {

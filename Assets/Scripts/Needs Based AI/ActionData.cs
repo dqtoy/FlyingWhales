@@ -16,12 +16,18 @@ public class ActionData {
     private ActionThread actionThread;
     private bool _isNotFirstEncounter;
     private bool _isHalted;
+    private float _homeMultiplier;
+    private bool _hasDoneActionAtHome;
 
     #region getters/setters
     public bool isHalted {
         get { return _isHalted; }
     }
-    #endregion  
+    public float homeMultiplier {
+        get { return _homeMultiplier; }
+    }
+    #endregion
+
     public ActionData(Character character) {
         Reset();
         _character = character;
@@ -29,8 +35,10 @@ public class ActionData {
         actionThread = new ActionThread(_character);
         _character.onDailyAction += PerformCurrentAction;
         _isHalted = false;
+        _homeMultiplier = 1f;
+        _hasDoneActionAtHome = false;
         //Messenger.AddListener(Signals.HOUR_ENDED, PerformCurrentAction);
-
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
     }
 
     public void Reset() {
@@ -59,6 +67,10 @@ public class ActionData {
         action.OnChooseAction();
         _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
 
+        if(action.state.obj.objectType == OBJECT_TYPE.STRUCTURE && action.state.obj.objectLocation.id == _character.home.id) {
+            _homeMultiplier = 1f;
+            _hasDoneActionAtHome = true;
+        }
     }
     public void DetachActionData() {
         Reset();
@@ -159,5 +171,18 @@ public class ActionData {
     private void LookForAction() {
         isWaiting = true;
         MultiThreadPool.Instance.AddToThreadPool(actionThread);
+    }
+
+    //Checks if the character has already done an action in his home settlement
+    private void CheckDoneActionHome() {
+        if (_hasDoneActionAtHome) {
+            _hasDoneActionAtHome = false;
+        } else {
+            _homeMultiplier += 0.25f;
+        }
+
+        GameDate newDate = GameManager.Instance.Today();
+        newDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(newDate.month, GameManager.daysInMonth[newDate.month], newDate.year, newDate.hour, () => CheckDoneActionHome());
     }
 }
