@@ -55,14 +55,14 @@ namespace ECS{
                     classInfoLbl.text += ", ";
                 }
             }
-            classInfoLbl.text += "\n";
-            classInfoLbl.text += "[b]Strength %:[/b] " + character.characterClass.strPercentage.ToString() + "\n";
-			classInfoLbl.text += "[b]Intelligence %:[/b] " + character.characterClass.intPercentage.ToString() + "\n";
-			classInfoLbl.text += "[b]Agility %:[/b] " + character.characterClass.agiPercentage.ToString() + "\n";
-			classInfoLbl.text += "[b]HP %:[/b] " + character.characterClass.hpPercentage.ToString() + "\n";
-            classInfoLbl.text += "[b]Dodge Rate:[/b] " + character.characterClass.dodgeRate.ToString() + "\n";
-            classInfoLbl.text += "[b]Parry Rate:[/b] " + character.characterClass.parryRate.ToString() + "\n";
-            classInfoLbl.text += "[b]Block Rate:[/b] " + character.characterClass.blockRate.ToString();
+            //classInfoLbl.text += "\n";
+            classInfoLbl.text += "[b]Strength %:[/b] " + character.characterClass.strWeightAllocation.ToString() + "\n";
+            classInfoLbl.text += "[b]Intelligence %:[/b] " + character.characterClass.intWeightAllocation.ToString() + "\n";
+            classInfoLbl.text += "[b]Agility %:[/b] " + character.characterClass.agiWeightAllocation.ToString() + "\n";
+            classInfoLbl.text += "[b]Vitality %:[/b] " + character.characterClass.vitWeightAllocation.ToString() + "\n";
+            //         classInfoLbl.text += "[b]Dodge Rate:[/b] " + character.characterClass.dodgeRate.ToString() + "\n";
+            //         classInfoLbl.text += "[b]Parry Rate:[/b] " + character.characterClass.parryRate.ToString() + "\n";
+            //         classInfoLbl.text += "[b]Block Rate:[/b] " + character.characterClass.blockRate.ToString();
 
             bodyPartsInfoLbl.text = string.Empty;
             bodyPartsInfoLbl.text += "[b]Body Parts:[/b]";
