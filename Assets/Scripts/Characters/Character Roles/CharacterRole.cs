@@ -486,6 +486,9 @@ public class CharacterRole {
     }
     private float GetDistanceModifier(HexTile from, HexTile to) {
         int distance = PathGenerator.Instance.GetDistanceBetweenTwoTiles(from, to);
+        if(distance == 99999) {
+            return 1f;
+        }
         if (distance > 10) {
             return 0.5f;
         }else if (distance > 5) {
