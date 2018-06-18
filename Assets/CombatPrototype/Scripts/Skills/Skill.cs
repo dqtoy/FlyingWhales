@@ -27,7 +27,7 @@ namespace ECS {
                 //newAttackSkill.statusEffectRates = attackSkill.statusEffectRates;
                 newAttackSkill.power = attackSkill.power;
                 newAttackSkill.spCost = attackSkill.spCost;
-                Array.Copy(attackSkill.elements, newAttackSkill.elements, attackSkill.elements.Length);
+                newAttackSkill.element = attackSkill.element;
 				SetCommonData (newAttackSkill);
 				return newAttackSkill;
 			} else if(this is HealSkill){

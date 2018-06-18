@@ -1405,3 +1405,22 @@ public enum ELEMENT {
     NONE,
     FIRE,
 }
+
+public enum MONSTER_TYPE {
+    SLIME,
+    BEAST,
+    FLORAL,
+    INSECT,
+    HUMANOID,
+    DEMON,
+}
+
+public enum MONSTER_CATEGORY {
+    NORMAL,
+    BOSS,
+}
+
+public enum ATTACK_CATEGORY {
+    PHYSICAL,
+    MAGICAL,
+}

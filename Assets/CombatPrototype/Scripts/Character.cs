@@ -474,10 +474,10 @@ namespace ECS {
             _baseVitality = 0;
 
 			WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
-			statWeights.AddElement ("strength", _raceSetting.strWeightAllocation);
-			statWeights.AddElement ("intelligence", _raceSetting.intWeightAllocation);
-			statWeights.AddElement ("agility", _raceSetting.agiWeightAllocation);
-			statWeights.AddElement ("vitality", _raceSetting.hpWeightAllocation);
+			statWeights.AddElement ("strength", (int) _characterClass.strWeightAllocation);
+			statWeights.AddElement ("intelligence", (int) _characterClass.intWeightAllocation);
+			statWeights.AddElement ("agility", (int) _characterClass.agiWeightAllocation);
+			statWeights.AddElement ("vitality", (int) _characterClass.vitWeightAllocation);
 
 			if(statWeights.GetTotalOfWeights() > 0){
 				string chosenStat = string.Empty;

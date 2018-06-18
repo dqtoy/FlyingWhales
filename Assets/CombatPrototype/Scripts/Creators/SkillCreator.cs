@@ -68,9 +68,8 @@ namespace ECS {
         }
 
         private void ShowAttackSkillFields() {
-            SerializedProperty serializedProperty = serializedObject.FindProperty("elements");
-            EditorGUILayout.PropertyField(serializedProperty, true);
-            serializedObject.ApplyModifiedProperties();
+            skillComponent.attackCategory = (ATTACK_CATEGORY) EditorGUILayout.EnumPopup("Attack Category: ", skillComponent.attackCategory);
+            skillComponent.element = (ELEMENT) EditorGUILayout.EnumPopup("Element: ", skillComponent.element);
 
             //skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
             //skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
@@ -147,7 +146,8 @@ namespace ECS {
 
             newSkill.power = skillComponent.power;
             newSkill.spCost = skillComponent.spCost;
-            newSkill.elements = skillComponent.elements;
+            newSkill.attackCategory = skillComponent.attackCategory;
+            newSkill.element = skillComponent.element;
 
             SaveJson(newSkill, path);
         }

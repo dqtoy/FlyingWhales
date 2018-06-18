@@ -17,15 +17,15 @@ namespace ECS {
 			}
             GUILayout.Label("Class Creator ", EditorStyles.boldLabel);
             currCharacterClass.className = EditorGUILayout.TextField("Class Name: ", currCharacterClass.className);
-			currCharacterClass.strPercentage = EditorGUILayout.FloatField("Strength Percentage: ", currCharacterClass.strPercentage);
-			currCharacterClass.intPercentage = EditorGUILayout.FloatField("Intelligence Percentage: ", currCharacterClass.intPercentage);
-			currCharacterClass.agiPercentage = EditorGUILayout.FloatField("Agility Percentage: ", currCharacterClass.agiPercentage);
-			currCharacterClass.hpPercentage = EditorGUILayout.FloatField("HP Percentage: ", currCharacterClass.hpPercentage);
-            currCharacterClass.dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", currCharacterClass.dodgeRate);
-            currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
-            currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);
+            currCharacterClass.strWeightAllocation = EditorGUILayout.FloatField("Strength Weight Allocation: ", currCharacterClass.strWeightAllocation);
+            currCharacterClass.intWeightAllocation = EditorGUILayout.FloatField("Intelligence Weight Allocation: ", currCharacterClass.intWeightAllocation);
+            currCharacterClass.agiWeightAllocation = EditorGUILayout.FloatField("Agility Weight Allocation: ", currCharacterClass.agiWeightAllocation);
+            currCharacterClass.vitWeightAllocation = EditorGUILayout.FloatField("Vitality Weight Allocation: ", currCharacterClass.vitWeightAllocation);
+            //currCharacterClass.dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", currCharacterClass.dodgeRate);
+            //currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
+            //currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);
 
-			SerializedProperty allowedWeaponType = serializedObject.FindProperty("allowedWeaponTypes");
+            SerializedProperty allowedWeaponType = serializedObject.FindProperty("allowedWeaponTypes");
 			EditorGUILayout.PropertyField(allowedWeaponType, true);
 			serializedObject.ApplyModifiedProperties ();
 

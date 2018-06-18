@@ -7,6 +7,7 @@ namespace ECS {
         public int power;
         public int spCost;
 
-        public ELEMENT[] elements;
+        public ATTACK_CATEGORY attackCategory;
+        public ELEMENT element;
     }
 }

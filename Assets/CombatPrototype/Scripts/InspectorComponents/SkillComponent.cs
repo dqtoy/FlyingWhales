@@ -17,7 +17,8 @@ namespace ECS{
         //Attack Skill Fields
         public int power;
         public int spCost;
-		public ELEMENT[] elements;
+        public ATTACK_CATEGORY attackCategory;
+        public ELEMENT element;
 
 
 		//Heal Skill Fields

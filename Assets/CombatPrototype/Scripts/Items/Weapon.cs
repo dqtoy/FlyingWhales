@@ -8,6 +8,7 @@ namespace ECS{
 		//public MATERIAL material;
 		//public QUALITY quality;
 		public float weaponPower;
+        public ELEMENT element;
 		//public float damageRange;
 		//public List<IBodyPart.ATTRIBUTE> attributes;
         //public List<IBodyPart.ATTRIBUTE> equipRequirements;
