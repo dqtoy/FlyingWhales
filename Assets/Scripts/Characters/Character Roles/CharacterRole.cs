@@ -463,7 +463,7 @@ public class CharacterRole {
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(int currentPrestige) {
-        float value = 0.024f * ((float) -currentPrestige);
+        float value = 0.024f * ((float) currentPrestige);
         float result = Mathf.Pow(value, 2f);
         if (currentPrestige < 0) { result *= -1f; }
         return result;
