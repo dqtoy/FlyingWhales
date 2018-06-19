@@ -9,6 +9,7 @@ namespace ECS{
 		public float intWeightAllocation;
 		public float agiWeightAllocation;
 		public float vitWeightAllocation;
+        public float hpModifier;
 		//public int dodgeRate;
 		//public int parryRate;
 		//public int blockRate;
