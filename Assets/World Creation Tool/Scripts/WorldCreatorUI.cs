@@ -360,6 +360,12 @@ namespace worldcreator {
         }
         #endregion
 
+        #region Character Editors
+        public void OnPortraitTemplatesChanged() {
+            editCharactersMenu.OnPortraitTemplatesChanged();
+        }
+        #endregion
+
         #region Utilities
         public bool IsMouseOnUI() {
             return eventSystem.IsPointerOverGameObject();

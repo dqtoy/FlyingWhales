@@ -37,8 +37,10 @@ public class ActionData {
         _isHalted = false;
         _homeMultiplier = 1f;
         _hasDoneActionAtHome = false;
+#if !WORLD_CREATION_TOOL
         //Messenger.AddListener(Signals.HOUR_ENDED, PerformCurrentAction);
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
+#endif
     }
 
     public void Reset() {

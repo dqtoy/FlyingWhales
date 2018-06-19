@@ -3002,25 +3002,30 @@ namespace ECS {
         }
         #endregion
 
-        private void GenerateRoamingBehaviour() {
-            List<Region> exclude = new List<Region>();
-            exclude.Add(this.specificLocation.tileLocation.region);
-            exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
-            List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
-            Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
-            for (int i = 0; i < allSettlements.Count; i++) {
-                BaseLandmark currLandmark = allSettlements[i];
-                List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
-                if (allPaths.Count > 0) {
-                    choices.Add(currLandmark, allPaths);
-                }
-            }
-            if (choices.Count > 0) {
-                BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
-                List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
-                List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
-                //TODO: queue go to location of each landmark in path
-            }
+        //private void GenerateRoamingBehaviour() {
+        //    List<Region> exclude = new List<Region>();
+        //    exclude.Add(this.specificLocation.tileLocation.region);
+        //    exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
+        //    List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
+        //    Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
+        //    for (int i = 0; i < allSettlements.Count; i++) {
+        //        BaseLandmark currLandmark = allSettlements[i];
+        //        List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
+        //        if (allPaths.Count > 0) {
+        //            choices.Add(currLandmark, allPaths);
+        //        }
+        //    }
+        //    if (choices.Count > 0) {
+        //        BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
+        //        List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
+        //        List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
+        //        //TODO: queue go to location of each landmark in path
+        //    }
+        //}
+        #region Portrait Settings
+        public void SetPortraitSettings(PortraitSettings settings) {
+            _portraitSettings = settings;
         }
+        #endregion
     }
 }

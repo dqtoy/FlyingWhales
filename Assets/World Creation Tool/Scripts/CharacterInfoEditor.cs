@@ -1,7 +1,9 @@
-﻿using ECS;
+﻿using BayatGames.SaveGameFree;
+using ECS;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,17 +14,9 @@ public class CharacterInfoEditor : MonoBehaviour {
 
     private Character _character;
 
+    [Header("Portrait Settings")]
     [SerializeField] private CharacterPortrait portrait;
-
-    [Header("Portrait Editor")]
-    [SerializeField] private Stepper headStepper;
-    [SerializeField] private Stepper hairStepper;
-    [SerializeField] private Stepper eyesStepper;
-    [SerializeField] private Stepper noseStepper;
-    [SerializeField] private Stepper mouthStepper;
-    [SerializeField] private Stepper eyebrowsStepper;
-    [SerializeField] private ColorPickerControl hairColorPicker;
-    [SerializeField] private Image hairColorImage;
+    [SerializeField] private Dropdown templatesDropdown;
 
     [Header("Basic Info")]
     [SerializeField] private InputField nameField;
@@ -37,79 +31,55 @@ public class CharacterInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown charactersRelationshipDropdown;
     [SerializeField] private Button createRelationshipBtn;
 
+    public Dictionary<string, PortraitSettings> portraitTemplates;
+
     #region Monobehaviours
     private void Awake() {
         Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
         Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
 
-        SetStepperValues();
+        LoadTemplateChoices();
         LoadDropdownOptions();
     }
     #endregion
 
     public void ShowCharacterInfo(Character character) {
         _character = character;
-        portrait.GeneratePortrait(character);
-        this.gameObject.SetActive(true);
-
-        UpdatePortraitControls();
+        portrait.GeneratePortrait(_character);
+        //UpdatePortraitControls();
         UpdateBasicInfo();
         LoadRelationships();
         LoadCharacters();
+        this.gameObject.SetActive(true);
     }
     public void Close() {
         this.gameObject.SetActive(false);
     }
 
     #region Portrait Editor
-    private void SetStepperValues() {
-        headStepper.maximum = CharacterManager.Instance.headSprites.Count - 1;
-        hairStepper.maximum = CharacterManager.Instance.hairSettings.Count - 1;
-        eyesStepper.maximum = CharacterManager.Instance.eyeSprites.Count - 1;
-        noseStepper.maximum = CharacterManager.Instance.noseSprites.Count - 1;
-        mouthStepper.maximum = CharacterManager.Instance.mouthSprites.Count - 1;
-        eyebrowsStepper.maximum = CharacterManager.Instance.eyeBrowSprites.Count - 1;
+    public void LoadTemplateChoices() {
+        portraitTemplates = new Dictionary<string, PortraitSettings>();
+        Directory.CreateDirectory(Utilities.portraitsSavePath);
+        DirectoryInfo info = new DirectoryInfo(Utilities.portraitsSavePath);
+        FileInfo[] files = info.GetFiles("*" + Utilities.portraitFileExt);
+        for (int i = 0; i < files.Length; i++) {
+            FileInfo currInfo = files[i];
+            portraitTemplates.Add(currInfo.Name, SaveGame.Load<PortraitSettings>(currInfo.FullName));
+        }
+        templatesDropdown.ClearOptions();
+        templatesDropdown.AddOptions(portraitTemplates.Keys.ToList());
     }
-    private void UpdatePortraitControls() {
-        headStepper.SetStepperValue(_character.portraitSettings.headIndex);
-        hairStepper.SetStepperValue(_character.portraitSettings.hairIndex);
-        eyesStepper.SetStepperValue(_character.portraitSettings.eyesIndex);
-        noseStepper.SetStepperValue(_character.portraitSettings.noseIndex);
-        mouthStepper.SetStepperValue(_character.portraitSettings.mouthIndex);
-        eyebrowsStepper.SetStepperValue(_character.portraitSettings.eyeBrowIndex);
-        hairColorImage.color = _character.portraitSettings.hairColor;
-        hairColorPicker.CurrentColor = _character.portraitSettings.hairColor;
-    }
-    public void ShowHairColorPicker() {
-        hairColorPicker.ShowMenu();
-    }
-    public void UpdateHair(int index) {
-        portrait.SetHair(index);
-        _character.portraitSettings.hairIndex = index;
-    }
-    public void UpdateHead(int index) {
-        portrait.SetHead(index);
-        _character.portraitSettings.headIndex = index;
-    }
-    public void UpdateEyes(int index) {
-        portrait.SetEyes(index);
-        _character.portraitSettings.eyesIndex = index;
-    }
-    public void UpdateNose(int index) {
-        portrait.SetNose(index);
-        _character.portraitSettings.noseIndex = index;
-    }
-    public void UpdateMouth(int index) {
-        portrait.SetMouth(index);
-        _character.portraitSettings.mouthIndex = index;
-    }
-    public void UpdateEyebrows(int index) {
-        portrait.SetEyebrows(index);
-        _character.portraitSettings.eyeBrowIndex = index;
-    }
-    public void UpdateHairColor(Color color) {
-        portrait.SetHairColor(color);
-        _character.portraitSettings.hairColor = color;
+    //public void OnValueChangedPortraitTemplate(int choice) {
+    //    string chosenTemplateName = templatesDropdown.options[choice].text;
+    //    PortraitSettings chosenSettings = portraitTemplates[chosenTemplateName];
+    //    _character.SetPortraitSettings(chosenSettings);
+    //    portrait.GeneratePortrait(_character);
+    //}
+    public void ApplyPortraitTemplate() {
+        string chosenTemplateName = templatesDropdown.options[templatesDropdown.value].text;
+        PortraitSettings chosenSettings = portraitTemplates[chosenTemplateName];
+        _character.SetPortraitSettings(chosenSettings);
+        portrait.GeneratePortrait(_character);
     }
     #endregion
 

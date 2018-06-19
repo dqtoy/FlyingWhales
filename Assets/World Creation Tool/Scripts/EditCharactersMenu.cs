@@ -63,5 +63,8 @@ public class EditCharactersMenu : MonoBehaviour {
     private void ShowCharacterInfoEditor(Character character) {
         characterInfoEditor.ShowCharacterInfo(character);
     }
+    public void OnPortraitTemplatesChanged() {
+        characterInfoEditor.LoadTemplateChoices();
+    }
     #endregion
 }

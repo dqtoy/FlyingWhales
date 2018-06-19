@@ -108,6 +108,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         }
         SaveGame.Save<PortraitSettings>(Utilities.portraitsSavePath + saveName, portraitSettings);
         worldcreator.WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Success", "Successfully saved template!");
+        worldcreator.WorldCreatorUI.Instance.OnPortraitTemplatesChanged();
     }
     public void LoadPortrait() {
         string path = EditorUtility.OpenFilePanel("Choose template", Utilities.portraitsSavePath, Utilities.portraitFileExt.Remove(0, 1));
