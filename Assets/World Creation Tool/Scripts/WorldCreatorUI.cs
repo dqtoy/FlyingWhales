@@ -82,6 +82,10 @@ namespace worldcreator {
         [Header("Small Character Info")]
         [SerializeField] private SmallCharacterInfo smallCharacterInfo;
 
+        [Space(10)]
+        [Header("Character Portrait Editor")]
+        [SerializeField] private CharacterPortraitEditor portraitEditor;
+
         #region getters/setters
         public EditRegionsMenu editRegionsMenu {
             get { return _editRegionsMenu; }
@@ -103,6 +107,7 @@ namespace worldcreator {
         public void OnClickCreateWorld() {
             gridSizeGO.SetActive(true);
             mainMenuGO.SetActive(false);
+            portraitEditor.HideMenu();
         }
         public void OnClickEditWorld() {
             ShowLoadingMenu();
@@ -330,6 +335,7 @@ namespace worldcreator {
         private void OnConfirmLoad(string fileName) {
             HideSaveMenu();
             mainMenuGO.SetActive(false);
+            portraitEditor.HideMenu();
             WorldCreatorManager.Instance.LoadWorld(fileName);
         }
         #endregion
@@ -347,6 +353,12 @@ namespace worldcreator {
             editRegionsMenu.OnRegionDeleted(deletedRegion);
             editFactionsMenu.OnRegionDeleted(deletedRegion);
         }
+
+        #region Portrait Editor
+        public void ShowPortraitEditor() {
+            portraitEditor.ShowMenu();
+        }
+        #endregion
 
         #region Utilities
         public bool IsMouseOnUI() {

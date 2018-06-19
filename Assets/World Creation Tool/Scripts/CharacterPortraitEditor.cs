@@ -24,7 +24,9 @@ public class CharacterPortraitEditor : MonoBehaviour {
     [SerializeField] private InputField fileNameField;
 
     private void Start() {
-        portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+        if (portraitSettings == null) {
+            portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+        }
         SetStepperValues();
         UpdateVisuals();
         UpdatePortraitControls();
@@ -83,9 +85,12 @@ public class CharacterPortraitEditor : MonoBehaviour {
         portrait.SetHairColor(color);
         portraitSettings.hairColor = color;
     }
-
     public void OnClickSave() {
         string saveName = fileNameField.text;
+        if (string.IsNullOrEmpty(saveName)) {
+            worldcreator.WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Error", "Please enter a filename!");
+            return;
+        }
         if (!saveName.Contains(Utilities.portraitFileExt)) {
             saveName += Utilities.portraitFileExt;
         }
@@ -103,6 +108,21 @@ public class CharacterPortraitEditor : MonoBehaviour {
         }
         SaveGame.Save<PortraitSettings>(Utilities.portraitsSavePath + saveName, portraitSettings);
         worldcreator.WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Success", "Successfully saved template!");
+    }
+    public void LoadPortrait() {
+        string path = EditorUtility.OpenFilePanel("Choose template", Utilities.portraitsSavePath, Utilities.portraitFileExt.Remove(0, 1));
+        if (path.Length != 0) {
+            portraitSettings = SaveGame.Load<PortraitSettings>(path);
+            UpdateVisuals();
+            UpdatePortraitControls();
+        }
+    }
+
+    public void ShowMenu() {
+        this.gameObject.SetActive(true);
+    }
+    public void HideMenu() {
+        this.gameObject.SetActive(false);
     }
     #endregion
 }
