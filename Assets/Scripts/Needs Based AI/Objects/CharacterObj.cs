@@ -36,7 +36,12 @@ public class CharacterObj : IObject {
         get { return _isInvisible; }
     }
     public BaseLandmark objectLocation {
-        get { return _objectLocation; }
+        get {
+            if(specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                return specificLocation as BaseLandmark;
+            }
+            return _objectLocation;
+        }
     }
     public ILocation specificLocation {
         get { return _character.specificLocation; }

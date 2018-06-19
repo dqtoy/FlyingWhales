@@ -677,22 +677,22 @@ namespace ECS {
 		}
 		private string GetFaintOrDeath(){
             return "die";
-			WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
-			int faintWeight = 100;
-			int dieWeight = 50;
-			if(HasTrait(TRAIT.GRITTY)){
-				faintWeight += 50;
-			}
-			if(HasTrait(TRAIT.ROBUST)){
-				faintWeight += 50;
-			}
-			if(HasTrait(TRAIT.FRAGILE)){
-				dieWeight += 50;
-			}
-			faintDieDict.AddElement ("faint", 100);
-			faintDieDict.AddElement ("die", 50);
+			//WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
+			//int faintWeight = 100;
+			//int dieWeight = 50;
+			//if(HasTrait(TRAIT.GRITTY)){
+			//	faintWeight += 50;
+			//}
+			//if(HasTrait(TRAIT.ROBUST)){
+			//	faintWeight += 50;
+			//}
+			//if(HasTrait(TRAIT.FRAGILE)){
+			//	dieWeight += 50;
+			//}
+			//faintDieDict.AddElement ("faint", 100);
+			//faintDieDict.AddElement ("die", 50);
 
-			return faintDieDict.PickRandomElementGivenWeights ();
+			//return faintDieDict.PickRandomElementGivenWeights ();
 		}
 		internal void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();

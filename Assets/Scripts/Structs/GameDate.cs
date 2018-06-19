@@ -16,25 +16,32 @@ public struct GameDate {
 
     public void AddHours(int amount) {
         this.hour += amount;
-        while (this.hour > 48) {
-			this.hour -= 48;
+        while (this.hour > GameManager.Instance.hoursPerDay) {
+			this.hour -= GameManager.Instance.hoursPerDay;
             AddDays(1);
         }
     }
 
 	public void AddDays(int amount){
 		this.day += amount;
+        int count = 0;
 		while (this.day > GameManager.daysInMonth[this.month]) {
 			this.day -= GameManager.daysInMonth [this.month];
-			AddMonths (1);
+            count++;
 		}
-	} 
+        if(count > 0) {
+            AddMonths(count);
+        }
+    } 
 
 	public void AddMonths(int amount){
 		this.month += amount;
 		while (this.month > 12) {
 			this.month -= 12;
             AddYears(1);
+        }
+        if(this.day > GameManager.daysInMonth[this.month]) {
+            this.day = GameManager.daysInMonth[this.month];
         }
 	}
 

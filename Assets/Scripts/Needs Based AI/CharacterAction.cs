@@ -38,7 +38,22 @@ public class CharacterAction {
     #region Virtuals
     public virtual void Initialize() {}
     public virtual void OnChooseAction() {}
-    public virtual void OnFirstEncounter(Character character) {}
+    public virtual void OnFirstEncounter(Character character) {
+        if(state.obj.objectLocation != null) {
+            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+            arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            arriveLog.AddToFillers(state.obj.objectLocation, state.obj.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+            character.AddHistory(arriveLog);
+        } else {
+            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+            arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            arriveLog.AddToFillers(state.obj.specificLocation.tileLocation, state.obj.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
+            arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+            character.AddHistory(arriveLog);
+        }
+
+    }
     public virtual void PerformAction(Character character) {}
     public virtual void ActionSuccess() {
         if (_actionData.successFunction != null) {

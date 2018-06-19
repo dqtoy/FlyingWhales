@@ -377,8 +377,8 @@ public class CharacterRole {
     }
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction) {
-        return GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction)
-            + GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.SANITY, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction);
+        return (GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction)
+            + GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.SANITY, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction)) * GetDistanceModifier(_character.specificLocation.tileLocation, characterAction.state.obj.specificLocation.tileLocation);
     }
 
     delegate float CalculateImpact(int currentNeed);
@@ -463,7 +463,7 @@ public class CharacterRole {
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(int currentPrestige) {
-        float value = 0.024f * ((float) -currentPrestige);
+        float value = 0.024f * ((float) currentPrestige);
         float result = Mathf.Pow(value, 2f);
         if (currentPrestige < 0) { result *= -1f; }
         return result;
@@ -484,6 +484,17 @@ public class CharacterRole {
         if (currentSafety < 0) { result *= -1f; }
         return result;
     }
-    
+    private float GetDistanceModifier(HexTile from, HexTile to) {
+        int distance = PathGenerator.Instance.GetDistanceBetweenTwoTiles(from, to);
+        if(distance == 99999) {
+            return 1f;
+        }
+        if (distance > 10) {
+            return 0.5f;
+        }else if (distance > 5) {
+            return 0.8f;
+        }
+        return 1f;
+    }
     #endregion
 }
