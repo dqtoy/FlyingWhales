@@ -50,6 +50,13 @@ namespace ECS {
         private int _level;
         private int _experience;
         private int _maxExperience;
+        private int _bonusPDef;
+        private int _bonusMDef;
+        private float _bonusPDefPercent;
+        private float _bonusMDefPercent;
+        private Dictionary<ELEMENT, float> _elementalWeaknesses;
+        private Dictionary<ELEMENT, float> _elementalResistance;
+
 
         //Skills
         private List<Skill> _skills;
@@ -262,16 +269,16 @@ namespace ECS {
 		public int baseMaxHP {
 			get { return _baseMaxHP; }
 		}
-		//public int dodgeRate {
-		//	get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
-		//}
-		//public int parryRate {
-		//	get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
-		//}
-		//public int blockRate {
-		//	get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
-		//}
-		public Color characterColor {
+        //public int dodgeRate {
+        //	get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
+        //}
+        //public int parryRate {
+        //	get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
+        //}
+        //public int blockRate {
+        //	get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
+        //}
+        public Color characterColor {
 			get { return _characterColor; }
 		}
 		public string characterColorCode {
@@ -401,6 +408,12 @@ namespace ECS {
         public int level {
             get { return _level; }
         }
+        public Dictionary<ELEMENT, float> elementalWeaknesses {
+            get { return _elementalWeaknesses; }
+        }
+        public Dictionary<ELEMENT, float> elementalResistance {
+            get { return _elementalResistance; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup) {
@@ -434,8 +447,10 @@ namespace ECS {
             _actionData = new ActionData(this);
             _level = 0;
             _experience = 0;
+            _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+            _elementalResistance = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
 
-			GenerateRaceTags ();
+            GenerateRaceTags();
             GenerateSetupTags(baseSetup);
 
             AllocateStatPoints (10);
@@ -1426,6 +1441,13 @@ namespace ECS {
 			return null;
 		}
         private void AddItemBonuses(Item item) {
+            if(item.itemType == ITEM_TYPE.ARMOR) {
+                Armor armor = (Armor) item;
+                _bonusPDef += armor.pDef;
+                _bonusMDef += armor.mDef;
+                _bonusPDefPercent += (armor.prefix.bonusPDefPercent + armor.suffix.bonusPDefPercent);
+                _bonusMDefPercent += (armor.prefix.bonusMDefPercent + armor.suffix.bonusMDefPercent);
+            }
             //AdjustMaxHP(item.bonusMaxHP);
             //AdjustBonusStrength(item.bonusStrength);
             //AdjustBonusIntelligence(item.bonusIntelligence);
@@ -1433,6 +1455,13 @@ namespace ECS {
             //AdjustBonusVitality(item.bonusVitality);
         }
         private void RemoveItemBonuses(Item item) {
+            if (item.itemType == ITEM_TYPE.ARMOR) {
+                Armor armor = (Armor) item;
+                _bonusPDef -= armor.pDef;
+                _bonusMDef -= armor.mDef;
+                _bonusPDefPercent -= (armor.prefix.bonusPDefPercent + armor.suffix.bonusPDefPercent);
+                _bonusMDefPercent -= (armor.prefix.bonusMDefPercent + armor.suffix.bonusMDefPercent);
+            }
             //AdjustMaxHP(-item.bonusMaxHP);
             //AdjustBonusStrength(-item.bonusStrength);
             //AdjustBonusIntelligence(-item.bonusIntelligence);
@@ -3001,8 +3030,22 @@ namespace ECS {
                 LevelUp();
             }
         }
+        public void AdjustElementalWeakness(ELEMENT element, float amount) {
+            _elementalWeaknesses[element] += amount;
+        }
+        public void AdjustElementalResistance(ELEMENT element, float amount) {
+            _elementalResistance[element] += amount;
+        }
         private void RecomputeMaxExperience() {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
+        }
+        public int GetPDef(Character enemy) {
+            float levelDiff = (float) (enemy.level - level);
+            return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 100f)));
+        }
+        public int GetMDef(Character enemy) {
+            float levelDiff = (float) (enemy.level - level);
+            return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 100f)));
         }
         #endregion
 

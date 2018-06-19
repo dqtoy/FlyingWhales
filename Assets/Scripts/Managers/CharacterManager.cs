@@ -18,7 +18,7 @@ public class CharacterManager : MonoBehaviour {
     public List<Trait> traitSetup;
     private Dictionary<TRAIT, string> traitDictionary;
     private Dictionary<string, CharacterClass> _classesDictionary;
-
+    private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> allCharacters;
 
 	public Sprite heroSprite;
@@ -43,6 +43,9 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> classesDictionary {
         get { return _classesDictionary; }
     }
+    public Dictionary<ELEMENT, float> elementsChanceDictionary {
+        get { return _elementsChanceDictionary; }
+    }
     #endregion
 
     private void Awake() {
@@ -53,6 +56,7 @@ public class CharacterManager : MonoBehaviour {
     public void Initialize() {
         ConstructTraitDictionary();
         ConstructAllClasses();
+        ConstructElementChanceDictionary();
     }
 
     #region ECS.Character Types
@@ -490,6 +494,16 @@ public class CharacterManager : MonoBehaviour {
         ps.mouthIndex = Random.Range(0, mouthSprites.Count);
         ps.hairColor = hairColors[Random.Range(0, hairColors.Count)];
         return ps;
+    }
+    #endregion
+
+    #region Elements
+    private void ConstructElementChanceDictionary() {
+        _elementsChanceDictionary = new Dictionary<ELEMENT, float>();
+        ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
+        for (int i = 0; i < elements.Length; i++) {
+            _elementsChanceDictionary.Add(elements[i], 0f);
+        }
     }
     #endregion
 }

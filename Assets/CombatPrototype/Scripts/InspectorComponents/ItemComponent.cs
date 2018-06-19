@@ -23,13 +23,17 @@ namespace ECS{
         public bool isUnlimited;
         public bool isObtainable;
         public string interactString;
-		//public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
+        //public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
-		//Weapon Fields
-		public WEAPON_TYPE weaponType;
-		//public MATERIAL weaponMaterial;
-		//public QUALITY weaponQuality;
-		public float weaponPower;
+        //Weapon Fields
+        public float weaponPower;
+        public WEAPON_TYPE weaponType;
+        public WEAPON_PREFIX weaponPrefix;
+        public WEAPON_SUFFIX weaponSuffix;
+        public ELEMENT element;
+        //public MATERIAL weaponMaterial;
+        //public QUALITY weaponQuality;
+
 		//public List<IBodyPart.ATTRIBUTE> equipRequirements = new List<IBodyPart.ATTRIBUTE>();
 		//public List<IBodyPart.ATTRIBUTE> weaponAttributes = new List<IBodyPart.ATTRIBUTE>();
 		//public List<Skill> _skills = new List<Skill> ();
@@ -63,13 +67,17 @@ namespace ECS{
 		//Armor Fields
 		public ARMOR_TYPE armorType;
 		public string armorBodyType;
-		public MATERIAL armorMaterial;
-		public QUALITY armorQuality;
-		public float baseDamageMitigation;
-		public float damageNullificationChance;
-		public List<ATTACK_TYPE> ineffectiveAttackTypes;
-		public List<ATTACK_TYPE> effectiveAttackTypes;
-		public List<IBodyPart.ATTRIBUTE> armorAttributes = new List<IBodyPart.ATTRIBUTE>();
-	}
+        public int pDef;
+        public int mDef;
+        public ARMOR_PREFIX armorPrefix;
+        public ARMOR_SUFFIX armorSuffix;
+        //public MATERIAL armorMaterial;
+        //public QUALITY armorQuality;
+        //public float baseDamageMitigation;
+        //public float damageNullificationChance;
+        //public List<ATTACK_TYPE> ineffectiveAttackTypes;
+        //public List<ATTACK_TYPE> effectiveAttackTypes;
+        //public List<IBodyPart.ATTRIBUTE> armorAttributes = new List<IBodyPart.ATTRIBUTE>();
+    }
 
 }

@@ -59,52 +59,60 @@ namespace ECS {
 			//itemComponent.weaponMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.weaponMaterial);
 			//itemComponent.weaponQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.weaponQuality);
 			itemComponent.weaponPower = EditorGUILayout.FloatField("Weapon Power: ", itemComponent.weaponPower);
+            itemComponent.weaponPrefix = (WEAPON_PREFIX) EditorGUILayout.EnumPopup("Prefix: ", itemComponent.weaponPrefix);
+            itemComponent.weaponSuffix = (WEAPON_SUFFIX) EditorGUILayout.EnumPopup("Suffix: ", itemComponent.weaponSuffix);
+            itemComponent.element = (ELEMENT) EditorGUILayout.EnumPopup("Element: ", itemComponent.element);
 
-			//SerializedProperty weaponAttribute = serializedObject.FindProperty("weaponAttributes");
-			//EditorGUILayout.PropertyField(weaponAttribute, true);
-			//serializedObject.ApplyModifiedProperties ();
+            //SerializedProperty weaponAttribute = serializedObject.FindProperty("weaponAttributes");
+            //EditorGUILayout.PropertyField(weaponAttribute, true);
+            //serializedObject.ApplyModifiedProperties ();
 
-   //         SerializedProperty equipRequirements = serializedObject.FindProperty("equipRequirements");
-   //         EditorGUILayout.PropertyField(equipRequirements, true);
-   //         serializedObject.ApplyModifiedProperties();
+            //         SerializedProperty equipRequirements = serializedObject.FindProperty("equipRequirements");
+            //         EditorGUILayout.PropertyField(equipRequirements, true);
+            //         serializedObject.ApplyModifiedProperties();
 
-			//serializedObject.FindProperty("itemComponent");
-			//itemComponent.skillsFoldout = EditorGUILayout.Foldout(itemComponent.skillsFoldout, "Skills");
+            //serializedObject.FindProperty("itemComponent");
+            //itemComponent.skillsFoldout = EditorGUILayout.Foldout(itemComponent.skillsFoldout, "Skills");
 
-			//if (itemComponent.skillsFoldout && itemComponent.skills != null) {
-			//	EditorGUI.indentLevel++;
-			//	for (int i = 0; i < itemComponent.skills.Count; i++) {
-			//		SerializedProperty currSkill = serializedObject.FindProperty("_skills").GetArrayElementAtIndex(i);
-			//		EditorGUILayout.PropertyField(currSkill, true);
-			//	}
-			//	serializedObject.ApplyModifiedProperties();
-			//	EditorGUI.indentLevel--;
-			//}
+            //if (itemComponent.skillsFoldout && itemComponent.skills != null) {
+            //	EditorGUI.indentLevel++;
+            //	for (int i = 0; i < itemComponent.skills.Count; i++) {
+            //		SerializedProperty currSkill = serializedObject.FindProperty("_skills").GetArrayElementAtIndex(i);
+            //		EditorGUILayout.PropertyField(currSkill, true);
+            //	}
+            //	serializedObject.ApplyModifiedProperties();
+            //	EditorGUI.indentLevel--;
+            //}
 
-			//Add Skill Area
-			//GUILayout.Space(10);
-			//GUILayout.BeginVertical(EditorStyles.helpBox);
-			//GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
-			//itemComponent.skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", itemComponent.skillTypeToAdd);
-			//List<string> choices = GetAllSkillsOfType(SKILL_CATEGORY.WEAPON, itemComponent.skillTypeToAdd);
-			//itemComponent.skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", itemComponent.skillToAddIndex, choices.ToArray());
-			//GUI.enabled = choices.Count > 0;
-			//if (GUILayout.Button("Add Skill")) {
-			//	AddSkillToList(choices[itemComponent.skillToAddIndex]);
-			//}
-			//GUI.enabled = true;
-			//GUILayout.EndHorizontal();
+            //Add Skill Area
+            //GUILayout.Space(10);
+            //GUILayout.BeginVertical(EditorStyles.helpBox);
+            //GUILayout.Label("Add Skills ", EditorStyles.boldLabel);
+            //itemComponent.skillTypeToAdd = (SKILL_TYPE)EditorGUILayout.EnumPopup("Skill Type To Add: ", itemComponent.skillTypeToAdd);
+            //List<string> choices = GetAllSkillsOfType(SKILL_CATEGORY.WEAPON, itemComponent.skillTypeToAdd);
+            //itemComponent.skillToAddIndex = EditorGUILayout.Popup("Skill To Add: ", itemComponent.skillToAddIndex, choices.ToArray());
+            //GUI.enabled = choices.Count > 0;
+            //if (GUILayout.Button("Add Skill")) {
+            //	AddSkillToList(choices[itemComponent.skillToAddIndex]);
+            //}
+            //GUI.enabled = true;
+            //GUILayout.EndHorizontal();
         }
 
         private void ShowArmorFields() {
 			itemComponent.armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup("Armor Type: ", itemComponent.armorType);
 			itemComponent.armorBodyType = EditorGUILayout.TextField("Body Armor Type: ", itemComponent.armorBodyType);
-			itemComponent.armorMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.armorMaterial);
-			itemComponent.armorQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.armorQuality);
-			itemComponent.baseDamageMitigation = EditorGUILayout.FloatField("Base Damage Mitigation: ", itemComponent.baseDamageMitigation);
-			itemComponent.damageNullificationChance = EditorGUILayout.FloatField("Damage Nullification: ", itemComponent.damageNullificationChance);
+            itemComponent.pDef = EditorGUILayout.IntField("PDef: ", itemComponent.pDef);
+            itemComponent.mDef = EditorGUILayout.IntField("MDef: ", itemComponent.mDef);
+            itemComponent.armorPrefix = (ARMOR_PREFIX) EditorGUILayout.EnumPopup("Prefix: ", itemComponent.armorPrefix);
+            itemComponent.armorSuffix = (ARMOR_SUFFIX) EditorGUILayout.EnumPopup("Suffix: ", itemComponent.armorSuffix);
 
-			SerializedProperty ineffectiveAttackType = serializedObject.FindProperty("ineffectiveAttackTypes");
+            //itemComponent.armorMaterial = (MATERIAL)EditorGUILayout.EnumPopup("Material: ", itemComponent.armorMaterial);
+            //itemComponent.armorQuality = (QUALITY)EditorGUILayout.EnumPopup("Quality: ", itemComponent.armorQuality);
+            //itemComponent.baseDamageMitigation = EditorGUILayout.FloatField("Base Damage Mitigation: ", itemComponent.baseDamageMitigation);
+            //itemComponent.damageNullificationChance = EditorGUILayout.FloatField("Damage Nullification: ", itemComponent.damageNullificationChance);
+
+            SerializedProperty ineffectiveAttackType = serializedObject.FindProperty("ineffectiveAttackTypes");
 			EditorGUILayout.PropertyField(ineffectiveAttackType, true);
 			serializedObject.ApplyModifiedProperties ();
 
@@ -175,11 +183,14 @@ namespace ECS {
 			//weapon.material = itemComponent.weaponMaterial;
 			//weapon.quality = itemComponent.weaponQuality;
 			weapon.weaponPower = itemComponent.weaponPower;
-			//weapon.attributes = itemComponent.weaponAttributes;
-			//weapon.equipRequirements = itemComponent.equipRequirements;
-			//for (int i = 0; i < itemComponent.skills.Count; i++) {
-			//	weapon.AddSkill (itemComponent.skills [i]);
-			//}
+            weapon.element = itemComponent.element;
+            weapon.SetPrefix(itemComponent.weaponPrefix);
+            weapon.SetSuffix(itemComponent.weaponSuffix);
+            //weapon.attributes = itemComponent.weaponAttributes;
+            //weapon.equipRequirements = itemComponent.equipRequirements;
+            //for (int i = 0; i < itemComponent.skills.Count; i++) {
+            //	weapon.AddSkill (itemComponent.skills [i]);
+            //}
 
             SaveJson(weapon, path);
         }
@@ -190,15 +201,19 @@ namespace ECS {
 
 			armor.armorType = itemComponent.armorType;
 			armor.armorBodyType = itemComponent.armorBodyType;
-			armor.material = itemComponent.armorMaterial;
-			armor.quality = itemComponent.armorQuality;
-			armor.baseDamageMitigation = itemComponent.baseDamageMitigation;
-			armor.damageNullificationChance = itemComponent.damageNullificationChance;
-			armor.ineffectiveAttackTypes = itemComponent.ineffectiveAttackTypes;
-			armor.effectiveAttackTypes = itemComponent.effectiveAttackTypes;
-			armor.attributes = itemComponent.armorAttributes;
+            armor.pDef = itemComponent.pDef;
+            armor.mDef = itemComponent.mDef;
+            armor.SetPrefix(itemComponent.armorPrefix);
+            armor.SetSuffix(itemComponent.armorSuffix);
+            //armor.material = itemComponent.armorMaterial;
+            //armor.quality = itemComponent.armorQuality;
+            //armor.baseDamageMitigation = itemComponent.baseDamageMitigation;
+            //armor.damageNullificationChance = itemComponent.damageNullificationChance;
+            //armor.ineffectiveAttackTypes = itemComponent.ineffectiveAttackTypes;
+            //armor.effectiveAttackTypes = itemComponent.effectiveAttackTypes;
+            //armor.attributes = itemComponent.armorAttributes;
 
-			SaveJson(armor, path);
+            SaveJson(armor, path);
 		}
 		private void Save(string path){
 			Item item = new Item ();

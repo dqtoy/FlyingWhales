@@ -116,12 +116,12 @@ namespace ECS{
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
                     itemsInfoLbl.text += ", Body part: " + armor.bodyPartAttached.name;
-                    for (int j = 0; j < armor.attributes.Count; j++) {
-                        itemsInfoLbl.text += armor.attributes[j].ToString();
-                        if(j + 1 < armor.attributes.Count) {
-                            itemsInfoLbl.text += ", ";
-                        }
-                    }
+                    //for (int j = 0; j < armor.attributes.Count; j++) {
+                    //    itemsInfoLbl.text += armor.attributes[j].ToString();
+                    //    if(j + 1 < armor.attributes.Count) {
+                    //        itemsInfoLbl.text += ", ";
+                    //    }
+                    //}
                 } else if(currItem.itemType == ITEM_TYPE.WEAPON) {
                     Weapon weapon = (Weapon)currItem;
 					itemsInfoLbl.text += ", Body part:";

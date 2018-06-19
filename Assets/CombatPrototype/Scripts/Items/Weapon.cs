@@ -4,43 +4,69 @@ using System.Collections.Generic;
 
 namespace ECS{
 	public class Weapon : Item {
-		public WEAPON_TYPE weaponType;
-		//public MATERIAL material;
-		//public QUALITY quality;
-		public float weaponPower;
-        public ELEMENT element;
+		private WEAPON_TYPE _weaponType;
+        //public MATERIAL material;
+        //public QUALITY quality;
+        private float _weaponPower;
+        private WEAPON_PREFIX _prefix;
+        private WEAPON_SUFFIX _suffix;
+        private ELEMENT _element;
 		//public float damageRange;
 		//public List<IBodyPart.ATTRIBUTE> attributes;
         //public List<IBodyPart.ATTRIBUTE> equipRequirements;
 		internal List<IBodyPart> bodyPartsAttached = new List<IBodyPart>();
 
-		//public List<string> attackSkills = new List<string>();
-		//public List<string> healSkills = new List<string>();
+        //public List<string> attackSkills = new List<string>();
+        //public List<string> healSkills = new List<string>();
 
-		//private List<Skill> _skills;
+        //private List<Skill> _skills;
 
-		//#region getters/setters
-		//public List<Skill> skills {
-		//	get { return _skills; }
-		//}
-		//#endregion
+        #region getters/setters
+        public WEAPON_TYPE weaponType {
+            get { return _weaponType; }
+            set { _weaponType = value; }
+        }
+        public float weaponPower {
+            get { return _weaponPower; }
+            set { _weaponPower = value; }
+        }
+        public WeaponPrefix prefix {
+            get { return ItemManager.Instance.weaponPrefixes[_prefix]; }
+        }
+        public WeaponSuffix suffix {
+            get { return ItemManager.Instance.weaponSuffixes[_suffix]; }
+        }
+        public ELEMENT element {
+            get { return _element; }
+            set { _element = value; }
+        }
+        public float attackPower {
+            get { return (_weaponPower + prefix.flatModifier) * (1f + (prefix.percentModifier / 100f)); }
+        }
+        #endregion
 
-//		public Weapon(){
-//			ConstructAllSkillsList ();
-//		}
+        public void SetPrefix(WEAPON_PREFIX prefix) {
+            _prefix = prefix;
+        }
+        public void SetSuffix(WEAPON_SUFFIX suffix) {
+            _suffix = suffix;
+        }
+        //		public Weapon(){
+        //			ConstructAllSkillsList ();
+        //		}
 
-//		public void AddSkill(Skill skillToAdd) {
-//			if(skillToAdd is AttackSkill){
-//				attackSkills.Add(skillToAdd.skillName);
-//			}else if(skillToAdd is HealSkill){
-//				healSkills.Add(skillToAdd.skillName);
-//			}
-////			switch (skillToAdd) {
-////			case SKILL_TYPE.ATTACK:
-////				attackSkills.Add(skillToAdd.skillName);
-////				break;
-////			}
-//		}
+        //		public void AddSkill(Skill skillToAdd) {
+        //			if(skillToAdd is AttackSkill){
+        //				attackSkills.Add(skillToAdd.skillName);
+        //			}else if(skillToAdd is HealSkill){
+        //				healSkills.Add(skillToAdd.skillName);
+        //			}
+        ////			switch (skillToAdd) {
+        ////			case SKILL_TYPE.ATTACK:
+        ////				attackSkills.Add(skillToAdd.skillName);
+        ////				break;
+        ////			}
+        //		}
 
         /*
          This is for the main game that uses the SkillManager to create skills.
@@ -77,6 +103,9 @@ namespace ECS{
             //copy.material = material;
             //copy.quality = quality;
             copy.weaponPower = weaponPower;
+            copy._prefix = _prefix;
+            copy._suffix = _suffix;
+            copy.element = element;
 			//copy.damageRange = damageRange;
    //         copy.attributes = new List<IBodyPart.ATTRIBUTE>(attributes);
    //         copy.equipRequirements = new List<IBodyPart.ATTRIBUTE>(equipRequirements);

@@ -1424,3 +1424,19 @@ public enum ATTACK_CATEGORY {
     PHYSICAL,
     MAGICAL,
 }
+
+public enum WEAPON_PREFIX {
+    NONE,
+}
+
+public enum WEAPON_SUFFIX {
+    NONE,
+}
+
+public enum ARMOR_PREFIX {
+    NONE,
+}
+
+public enum ARMOR_SUFFIX {
+    NONE,
+}

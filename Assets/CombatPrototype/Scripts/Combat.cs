@@ -621,7 +621,12 @@ namespace ECS{
             string log = string.Empty;
             float weaponPower = 0f;
             float damageRange = 5f;
-
+            int statMod = sourceCharacter.strength;
+            int def = targetCharacter.GetPDef(sourceCharacter);
+            if(attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
+                statMod = sourceCharacter.intelligence;
+                def = targetCharacter.GetMDef(sourceCharacter);
+            }
             BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
             if (chosenBodyPart == null) {
                 Debug.LogError("NO MORE BODY PARTS!");
@@ -639,12 +644,32 @@ namespace ECS{
             } else {
                 log += ".";
             }
-
-            int damage = (int) (weaponPower + sourceCharacter.strength); //To be changed
+            float weaponAttack = weapon.attackPower;
+            int finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
+            int damage = (int) (finalAttack * attackSkill.power); //To be changed and add crit
             int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
             int minDamageRange = damage - computedDamageRange;
             int maxDamageRange = damage + computedDamageRange;
             damage = Utilities.rng.Next((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
+
+            //Reduce damage by defense of target
+            damage -= def;
+
+            //Calculate elemental weakness and resistance
+            //Use element of skill if it has one, if not, use weapon element instead if it has one
+            ELEMENT elementUsed = ELEMENT.NONE;
+            if(attackSkill.element != ELEMENT.NONE) {
+                elementUsed = attackSkill.element;
+            } else {
+                if(weapon.element != ELEMENT.NONE) {
+                    elementUsed = weapon.element;
+                }
+            }
+            float elementalDiff = targetCharacter.elementalWeaknesses[elementUsed] - targetCharacter.elementalResistance[elementUsed];
+            float elementModifier = 1f + ((elementalDiff < 0f ? 0f : elementalDiff) / 100f);
+
+            //Calculate total damage
+            damage = (int) ((float) damage * elementModifier);
 
             log += "(" + damage.ToString() + ")";
 
@@ -997,6 +1022,10 @@ namespace ECS{
 			}
 			return null;
 		}
+
+        private int GetFinalAttack(int stat, int level, float weaponAttack) {
+            return (int) (((weaponAttack + stat) * (1f + (stat / 2f))) * (1f + ((float) level / 100f)));
+        }
 
         //public ICombatInitializer GetOpposingCharacters(ECS.Character character) {
         //    if (attacker is ECS.Character) {

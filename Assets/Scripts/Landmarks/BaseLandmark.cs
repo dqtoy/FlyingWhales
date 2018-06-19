@@ -963,32 +963,26 @@ public class BaseLandmark : ILocation, TaskCreator {
 
     #region Items
     private void SpawnInitialLandmarkItems() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
-        for (int i = 0; i < data.itemData.Length; i++) {
-            LandmarkItemData currItemData = data.itemData[i];
-            Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
-            if (ItemManager.Instance.IsLootChest(createdItem)) {
-                //chosen item is a loot crate, generate a random item
-                string[] words = createdItem.itemName.Split(' ');
-                int tier = System.Int32.Parse(words[1]);
-                if (createdItem.itemName.Contains("Armor")) {
-                    createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
-                } else if (createdItem.itemName.Contains("Weapon")) {
-                    createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
-                }
-                //QUALITY equipmentQuality = GetEquipmentQuality();
-                //if (createdItem.itemType == ITEM_TYPE.ARMOR) {
-                //    ((Armor)createdItem).SetQuality(equipmentQuality);
-                //} else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
-                //    ((Weapon)createdItem).SetQuality(equipmentQuality);
-                //}
-            } else {
-                //only set as unlimited if not from loot chest, since gear from loot chests are not unlimited
-                createdItem.SetIsUnlimited(currItemData.isUnlimited);
-            }
-            //createdItem.SetExploreWeight(currItemData.exploreWeight);
-            AddItemInLandmark(createdItem);
-        }
+        //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
+        //for (int i = 0; i < data.itemData.Length; i++) {
+        //    LandmarkItemData currItemData = data.itemData[i];
+        //    Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
+        //    if (ItemManager.Instance.IsLootChest(createdItem)) {
+        //        //chosen item is a loot crate, generate a random item
+        //        string[] words = createdItem.itemName.Split(' ');
+        //        int tier = System.Int32.Parse(words[1]);
+        //        if (createdItem.itemName.Contains("Armor")) {
+        //            createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
+        //        } else if (createdItem.itemName.Contains("Weapon")) {
+        //            createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
+        //        }
+        //    } else {
+        //        //only set as unlimited if not from loot chest, since gear from loot chests are not unlimited
+        //        createdItem.SetIsUnlimited(currItemData.isUnlimited);
+        //    }
+        //    //createdItem.SetExploreWeight(currItemData.exploreWeight);
+        //    AddItemInLandmark(createdItem);
+        //}
     }
     private QUALITY GetEquipmentQuality() {
         int crudeChance = 30;
