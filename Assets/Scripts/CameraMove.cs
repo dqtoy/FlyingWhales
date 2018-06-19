@@ -16,7 +16,6 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera _wholeMapCamera;
     [SerializeField] private Camera _uiCamera;
-    public GameObject mouseObj;
     //[SerializeField] private MinimapCamera _minimap;
 
     private float dampTime = 0.2f;
@@ -280,9 +279,6 @@ public class CameraMove : MonoBehaviour {
 #else
                 _uiCamera.orthographicSize = fov;
 #endif
-            }
-            if (mouseObj != null) {
-                mouseObj.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             }
 		}
 
