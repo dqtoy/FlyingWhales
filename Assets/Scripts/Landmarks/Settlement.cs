@@ -148,22 +148,22 @@ public class Settlement : BaseLandmark {
    
     public void SetHead(ECS.Character head) {
         _headOfSettlement = head;
-        if(_owner.leader != null) {
-            if(_headOfSettlement.GetRelationshipWith(_owner.leader) == null) {
-                //Create Relationship between the head of the settlement and the leader of the faction that owns the settlement
-                CharacterManager.Instance.CreateNewRelationshipBetween(_owner.leader, _headOfSettlement);
-            }
-        }
+        //if(_owner.leader != null) {
+        //    if(_headOfSettlement.GetRelationshipWith(_owner.leader) == null) {
+        //        //Create Relationship between the head of the settlement and the leader of the faction that owns the settlement
+        //        CharacterManager.Instance.CreateNewRelationshipBetween(_owner.leader, _headOfSettlement);
+        //    }
+        //}
 
-        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
-            ECS.Character otherCharacter = _charactersWithHomeOnLandmark[i];
-            if(_headOfSettlement.id != otherCharacter.id) {
-                if(_headOfSettlement.GetRelationshipWith(otherCharacter) == null) {
-                    //Village Elders will have relationship with the characters within their village.
-                    CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, otherCharacter);
-                }
-            }
-        }
+        //for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
+        //    ECS.Character otherCharacter = _charactersWithHomeOnLandmark[i];
+        //    if(_headOfSettlement.id != otherCharacter.id) {
+        //        if(_headOfSettlement.GetRelationshipWith(otherCharacter) == null) {
+        //            //Village Elders will have relationship with the characters within their village.
+        //            CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, otherCharacter);
+        //        }
+        //    }
+        //}
     }
     /*
      Make a character consider this landmark as it's home.
@@ -171,14 +171,13 @@ public class Settlement : BaseLandmark {
     public override void AddCharacterHomeOnLandmark(ECS.Character character) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
-            //Add new relationship with head of the settlement
-            if(_headOfSettlement != null) {
-                if (character.GetRelationshipWith(_headOfSettlement) == null) {
-                    //Village Elders will have relationship with the characters within their village.
-                    CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, character);
-                }
-            }
-            
+            ////Add new relationship with head of the settlement
+            //if(_headOfSettlement != null) {
+            //    if (character.GetRelationshipWith(_headOfSettlement) == null) {
+            //        //Village Elders will have relationship with the characters within their village.
+            //        CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, character);
+            //    }
+            //}
         }
     }
     public List<ECS.Character> GetCharactersCreatedInSettlement(CHARACTER_ROLE charRole) {

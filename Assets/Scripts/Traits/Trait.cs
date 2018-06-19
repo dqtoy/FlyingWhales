@@ -137,11 +137,11 @@ public class Trait{
  //   }
  //   #endregion
 
-    #region International Incidents
-    internal virtual WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType, FactionRelationship rel, Faction aggressor) {
-        return null;
-    }
-    #endregion
+    //#region International Incidents
+    //internal virtual WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType, FactionRelationship rel, Faction aggressor) {
+    //    return null;
+    //}
+    //#endregion
 
     #region War
     internal virtual WeightedDictionary<ALLY_WAR_REACTION> GetAllyReactionWeight(Faction friend, Faction enemy) {

@@ -19,7 +19,9 @@ public class MessageBox : MonoBehaviour {
         messageLbl.text = windowMessage;
         if (mode == MESSAGE_BOX.YES_NO) {
             yesNoGO.SetActive(true);
+            okGO.SetActive(false);
         } else if (mode == MESSAGE_BOX.OK) {
+            yesNoGO.SetActive(false);
             okGO.SetActive(true);
         }
         yesBtn.onClick.RemoveAllListeners();

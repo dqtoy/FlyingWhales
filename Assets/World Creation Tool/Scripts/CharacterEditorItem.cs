@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharacterEditorItem : MonoBehaviour {
+public class CharacterEditorItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     private ECS.Character _character;
 
@@ -23,5 +24,12 @@ public class CharacterEditorItem : MonoBehaviour {
     public void SetEditAction(UnityAction action) {
         editBtn.onClick.RemoveAllListeners();
         editBtn.onClick.AddListener(action);
+    }
+    public void OnPointerEnter(PointerEventData eventData) {
+        worldcreator.WorldCreatorUI.Instance.ShowSmallCharacterInfo(_character);
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        worldcreator.WorldCreatorUI.Instance.HideSmallCharacterInfo();
     }
 }

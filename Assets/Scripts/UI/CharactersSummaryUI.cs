@@ -37,14 +37,14 @@ public class CharactersSummaryUI : UIMenu {
     }
 
     private void AddCharacterEntry(ECS.Character character) {
-        if (character.role.roleType != CHARACTER_ROLE.FOLLOWER) {
+        //if (character.role.roleType != CHARACTER_ROLE.FOLLOWER) {
             GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);
             newEntryGO.transform.localScale = Vector3.one;
             CharacterSummaryEntry newEntry = newEntryGO.GetComponent<CharacterSummaryEntry>();
             newEntry.SetCharacter(character);
             characterEntries.Add(character, newEntry);
             //characterEntriesGrid.Reposition();
-        }
+        //}
         sortingAction();
     }
     private void RemoveCharacterEntry(ECS.Character character) {

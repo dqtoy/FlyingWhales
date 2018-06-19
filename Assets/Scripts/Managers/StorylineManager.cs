@@ -117,7 +117,7 @@ public class StorylineManager : MonoBehaviour {
         //TODO: Add storyline triggers when a character interacts with a specific item
         switch (item.itemName) {
             case "Vampire Coffin":
-                AwakenAncientVampire(item, location, interacter);
+                //AwakenAncientVampire(item, location, interacter);
                 break;
             default:
                 break;
@@ -125,38 +125,38 @@ public class StorylineManager : MonoBehaviour {
     }
     #endregion
 
-    #region Ancient Vampire
-    private void AwakenAncientVampire(ECS.Item item, BaseLandmark location, ECS.Character interacter) {
-        ECS.Character ancientVampire = (location as DungeonLandmark).SpawnAncientVampire();
-        AncientVampireAwakened(location, ancientVampire);
-        ////Get the ancient vampire at the location
-        //ECS.Character ancientVampire = null;
-        //for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-        //    ECS.Character currCharacter = location.charactersAtLocation[i].mainCharacter;
-        //    if (currCharacter.role.roleType == CHARACTER_ROLE.ANCIENT_VAMPIRE) {
-        //        ancientVampire = currCharacter;
-        //        break;
-        //    }
-        //}
-        //if (ancientVampire == null) {
-        //    throw new System.Exception("There is no ancient vampire at " + location.locationName);
-        //}
-        //if (ancientVampire.currentTask.taskType != TASK_TYPE.HIBERNATE) {
-        //    throw new System.Exception("Vampire is not hibernating!");
-        //}
+    //#region Ancient Vampire
+    //private void AwakenAncientVampire(ECS.Item item, BaseLandmark location, ECS.Character interacter) {
+    //    ECS.Character ancientVampire = (location as DungeonLandmark).SpawnAncientVampire();
+    //    AncientVampireAwakened(location, ancientVampire);
+    //    ////Get the ancient vampire at the location
+    //    //ECS.Character ancientVampire = null;
+    //    //for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+    //    //    ECS.Character currCharacter = location.charactersAtLocation[i].mainCharacter;
+    //    //    if (currCharacter.role.roleType == CHARACTER_ROLE.ANCIENT_VAMPIRE) {
+    //    //        ancientVampire = currCharacter;
+    //    //        break;
+    //    //    }
+    //    //}
+    //    //if (ancientVampire == null) {
+    //    //    throw new System.Exception("There is no ancient vampire at " + location.locationName);
+    //    //}
+    //    //if (ancientVampire.currentTask.taskType != TASK_TYPE.HIBERNATE) {
+    //    //    throw new System.Exception("Vampire is not hibernating!");
+    //    //}
 
-        //AncientVampireAwakened(location, ancientVampire);
+    //    //AncientVampireAwakened(location, ancientVampire);
 
-        ////end the hibernation of the ancient vampire
-        //ancientVampire.currentTask.EndTask(TASK_STATUS.SUCCESS);
-    }
-    public void AncientVampireAwakened(BaseLandmark location, ECS.Character ancientVampire) {
-        location.RemoveItemInLandmark("Vampire Coffin");
-        Log awakenLog = new Log(GameManager.Instance.Today(), "Quests", "AncientVampire", "awaken");
-        awakenLog.AddToFillers(ancientVampire, ancientVampire.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        ancientVampire.AddHistory(awakenLog);
-        location.AddHistory(awakenLog);
-        //(ancientVampire.role as AncientVampire).OnAwakened();
-    }
-    #endregion
+    //    ////end the hibernation of the ancient vampire
+    //    //ancientVampire.currentTask.EndTask(TASK_STATUS.SUCCESS);
+    //}
+    //public void AncientVampireAwakened(BaseLandmark location, ECS.Character ancientVampire) {
+    //    location.RemoveItemInLandmark("Vampire Coffin");
+    //    Log awakenLog = new Log(GameManager.Instance.Today(), "Quests", "AncientVampire", "awaken");
+    //    awakenLog.AddToFillers(ancientVampire, ancientVampire.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //    ancientVampire.AddHistory(awakenLog);
+    //    location.AddHistory(awakenLog);
+    //    //(ancientVampire.role as AncientVampire).OnAwakened();
+    //}
+    //#endregion
 }

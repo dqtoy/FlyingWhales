@@ -393,7 +393,7 @@ namespace ECS {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
-			_gender = gender;
+            _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _traits = new List<Trait> ();
 			_tags = new List<CharacterTag> ();
@@ -416,7 +416,7 @@ namespace ECS {
 			_statsModifierPercentage = new StatsModifierPercentage ();
             _questData = new QuestData(this);
             _actionQueue = new CharacterActionQueue<CharacterAction>();
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(gender);
+            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
             //GameObject portrait = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, UIManager.Instance.transform);
             //portrait.GetComponent<CharacterPortrait>().GeneratePortrait(_portraitSettings);
 			previousActions = new Dictionary<CharacterTask, string> ();
@@ -458,8 +458,6 @@ namespace ECS {
             _characterObject.SetCharacter(this);
             //ConstructResourceInventory();
 #endif
-
-
             Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
             Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
@@ -1483,54 +1481,56 @@ namespace ECS {
             bool wasRoleChanged = false;
 			if(_role != null){
 				_role.ChangedRole ();
+#if !WORLD_CREATION_TOOL
                 Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
                 roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 AddHistory(roleChangeLog);
+#endif
                 wasRoleChanged = true;
             }
 			switch (role) {
-		        case CHARACTER_ROLE.CHIEFTAIN:
-			        _role = new Chieftain(this);
-			        break;
-		        case CHARACTER_ROLE.VILLAGE_HEAD:
-			        _role = new VillageHead(this);
-			        break;
-		        case CHARACTER_ROLE.WARLORD:
-			        _role = new Warlord(this);
-			        break;
+		        //case CHARACTER_ROLE.CHIEFTAIN:
+			       // _role = new Chieftain(this);
+			       // break;
+		        //case CHARACTER_ROLE.VILLAGE_HEAD:
+			       // _role = new VillageHead(this);
+			       // break;
+		        //case CHARACTER_ROLE.WARLORD:
+			       // _role = new Warlord(this);
+			       // break;
 		        case CHARACTER_ROLE.HERO:
 			        _role = new Hero(this);
 			        break;
-                case CHARACTER_ROLE.WORKER:
-                    _role = new Worker(this);
-                    break;
-		        case CHARACTER_ROLE.TAMED_BEAST:
-			        _role = new TamedBeast(this);
-			        break;
-                case CHARACTER_ROLE.ANCIENT_VAMPIRE:
-                    _role = new AncientVampire(this);
-                    break;
-		        case CHARACTER_ROLE.CRATER_BEAST:
-			        _role = new CraterBeast(this);
-			        break;
-		        case CHARACTER_ROLE.SLYX:
-			        _role = new Slyx(this);
-			        break;
+          //      case CHARACTER_ROLE.WORKER:
+          //          _role = new Worker(this);
+          //          break;
+		        //case CHARACTER_ROLE.TAMED_BEAST:
+			       // _role = new TamedBeast(this);
+			       // break;
+          //      case CHARACTER_ROLE.ANCIENT_VAMPIRE:
+          //          _role = new AncientVampire(this);
+          //          break;
+		        //case CHARACTER_ROLE.CRATER_BEAST:
+			       // _role = new CraterBeast(this);
+			       // break;
+		        //case CHARACTER_ROLE.SLYX:
+			       // _role = new Slyx(this);
+			       // break;
 		        case CHARACTER_ROLE.VILLAIN:
 			        _role = new Villain(this);
 			        break;
-                case CHARACTER_ROLE.FOLLOWER:
-                    _role = new Follower(this);
-                    break;
-                case CHARACTER_ROLE.HERMIT:
-                    _role = new Hermit(this);
-                    break;
-                case CHARACTER_ROLE.BANDIT:
-                    _role = new Bandit(this);
-                    break;
-                case CHARACTER_ROLE.BEAST:
-                    _role = new Beast(this);
-                    break;
+                //case CHARACTER_ROLE.FOLLOWER:
+                //    _role = new Follower(this);
+                //    break;
+                //case CHARACTER_ROLE.HERMIT:
+                //    _role = new Hermit(this);
+                //    break;
+                //case CHARACTER_ROLE.BANDIT:
+                //    _role = new Bandit(this);
+                //    break;
+                //case CHARACTER_ROLE.BEAST:
+                //    _role = new Beast(this);
+                //    break;
                 default:
 		            break;
 			}
@@ -1546,15 +1546,16 @@ namespace ECS {
 
 //			AssignRole(role);
 			if(_raceSetting.tags.Contains(CHARACTER_TAG.SAPIENT)){
-				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.WORKER;
+				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.HERO;
 				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
 				if (characterRoleProductionDictionary.GetTotalOfWeights () > 0) {
 					roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights ();
 				}
 				AssignRole(roleToCreate);
-			}else{
-				AssignRole (CHARACTER_ROLE.TAMED_BEAST);
 			}
+   //         else{
+			//	AssignRole (CHARACTER_ROLE.TAMED_BEAST);
+			//}
 		}
 		#endregion
 
@@ -2386,6 +2387,22 @@ namespace ECS {
         #endregion
 
         #region Utilities
+        public void ChangeGender(GENDER gender) {
+            _gender = gender;
+            Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
+        }
+        public void ChangeRace(RACE race) {
+            //TODO: Change data as needed
+            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(_characterClass.className, race);
+            _characterClass = setup.characterClass.CreateNewCopy();
+            _raceSetting = setup.raceSetting.CreateNewCopy();
+        }
+        public void ChangeClass(string className) {
+            //TODO: Change data as needed
+            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className, _raceSetting.race);
+            _characterClass = setup.characterClass.CreateNewCopy();
+            _raceSetting = setup.raceSetting.CreateNewCopy();
+        }
 		public void SetName(string newName){
 			_name = newName;
 		}
@@ -2527,13 +2544,16 @@ namespace ECS {
         public void AddNewRelationship(Character relWith, Relationship relationship) {
             if (!_relationships.ContainsKey(relWith)) {
                 _relationships.Add(relWith, relationship);
+                Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_CREATED, relationship);
             } else {
                 throw new Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
             }
         }
         public void RemoveRelationshipWith(Character relWith) {
             if (_relationships.ContainsKey(relWith)) {
+                Relationship rel = _relationships[relWith];
                 _relationships.Remove(relWith);
+                Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_REMOVED, rel);
             }
         }
         public Relationship GetRelationshipWith(Character character) {
@@ -2541,6 +2561,14 @@ namespace ECS {
                 return _relationships[character];
             }
             return null;
+        }
+        public bool AlreadyHasRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
+            foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
+                if (kvp.Value.HasStatus(relStat)) {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
 

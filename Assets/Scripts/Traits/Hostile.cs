@@ -4,23 +4,23 @@ using System.Collections.Generic;
 
 public class Hostile : Trait {
 
-    #region International Incidents
-    internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType,
-        FactionRelationship rel, Faction aggressor) {
-        WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
-        actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 5); //Add 5 Weight to Declare War
+    //#region International Incidents
+    //internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType,
+    //    FactionRelationship rel, Faction aggressor) {
+    //    WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
+    //    actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 5); //Add 5 Weight to Declare War
 
-        Relationship chieftainRel = CharacterManager.Instance.GetRelationshipBetween(_ownerOfTrait, aggressor.leader);
-        if (chieftainRel != null) {
-            if (chieftainRel.totalValue < 0) {
-                //Add 1 Weight to Declare per Negative Opinion the Chieftain has towards the other Chieftain (if they have a relationship)
-                actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, Mathf.Abs(chieftainRel.totalValue));
-            }
-        }
+    //    Relationship chieftainRel = CharacterManager.Instance.GetRelationshipBetween(_ownerOfTrait, aggressor.leader);
+    //    if (chieftainRel != null) {
+    //        if (chieftainRel.totalValue < 0) {
+    //            //Add 1 Weight to Declare per Negative Opinion the Chieftain has towards the other Chieftain (if they have a relationship)
+    //            actionWeights.AddWeightToElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, Mathf.Abs(chieftainRel.totalValue));
+    //        }
+    //    }
 
-        return actionWeights;
-    }
-    #endregion
+    //    return actionWeights;
+    //}
+    //#endregion
 
     // internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
     //     Kingdom sourceKingdom = ownerOfTrait.city.kingdom;

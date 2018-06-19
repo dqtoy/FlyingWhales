@@ -20,7 +20,7 @@ public class EditCharactersMenu : MonoBehaviour {
     #region Monobehaviours
     private void Awake() {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, OnCreateNewCharacter);
-        PopulateClassDropdown();
+        PopulateDropdowns();
     }
     #endregion
 
@@ -40,22 +40,22 @@ public class EditCharactersMenu : MonoBehaviour {
         CharacterEditorItem characterItem = characterItemGO.GetComponent<CharacterEditorItem>();
         characterItem.SetCharacter(newCharacter);
         characterItem.SetEditAction(() => ShowCharacterInfoEditor(newCharacter));
+        if (characterInfoEditor.gameObject.activeSelf) {
+            characterInfoEditor.LoadCharacters();
+        }
     }
     #endregion
 
     #region Dropdown Data
-    private void PopulateClassDropdown() {
+    private void PopulateDropdowns() {
         classDropdown.ClearOptions();
-        List<string> choices = new List<string>();
-        string path = Utilities.dataPath + "CharacterClasses/";
-        string[] classes = System.IO.Directory.GetFiles(path, "*.json");
-        for (int i = 0; i < classes.Length; i++) {
-            ECS.CharacterClass currentClass = JsonUtility.FromJson<ECS.CharacterClass>(System.IO.File.ReadAllText(classes[i]));
-            choices.Add(currentClass.className);
-        }
-        classDropdown.AddOptions(choices);
-
-        
+        raceDropdown.ClearOptions();
+        genderDropdown.ClearOptions();
+        roleDropdown.ClearOptions();
+        classDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
+        raceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
+        genderDropdown.AddOptions(Utilities.GetEnumChoices<GENDER>());
+        roleDropdown.AddOptions(Utilities.GetEnumChoices<CHARACTER_ROLE>());
     }
     #endregion
 

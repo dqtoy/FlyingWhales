@@ -258,19 +258,19 @@ public class MustHaveItem : TaskFilter {
 
 public class MustBeRelationship : TaskFilter {
 
-	//private CHARACTER_RELATIONSHIP _relationshipStatus;
+    private CHARACTER_RELATIONSHIP _relationshipStatus;
 
-	public MustBeRelationship(CHARACTER_RELATIONSHIP relationshipStatus) {
-		//_relationshipStatus = relationshipStatus;
-	}
+    public MustBeRelationship(CHARACTER_RELATIONSHIP relationshipStatus) {
+        _relationshipStatus = relationshipStatus;
+    }
 
 	#region overrides
 	public override bool MeetsRequirements(Character character) {
 		Relationship relationship = character.GetRelationshipWith (_character2);
-		if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
-			return true;
-		}
-		return false;
+        if (relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)) {
+            return true;
+        }
+        return false;
 	}
 	#endregion
 }

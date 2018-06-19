@@ -4,21 +4,21 @@ using System.Collections.Generic;
 
 public class Opportunist : Trait {
 
-    #region International Incidents
-    internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType, 
-        FactionRelationship rel, Faction aggressor) {
-        if (rel.relationshipStatus == RELATIONSHIP_STATUS.NEUTRAL) {
-            WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
-            int relativeStr = rel.factionLookup[_ownerOfTrait.faction.id].relativeStrength;
-            if (relativeStr > 0) {
-                actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 2 * relativeStr); //Check Relative Strength, add 2 Weight to Declare War for each Positive Point of Relative Strength
-            }
-            return actionWeights;
-        }
+    //#region International Incidents
+    //internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType, 
+    //    FactionRelationship rel, Faction aggressor) {
+    //    if (rel.relationshipStatus == RELATIONSHIP_STATUS.NEUTRAL) {
+    //        WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
+    //        int relativeStr = rel.factionLookup[_ownerOfTrait.faction.id].relativeStrength;
+    //        if (relativeStr > 0) {
+    //            actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 2 * relativeStr); //Check Relative Strength, add 2 Weight to Declare War for each Positive Point of Relative Strength
+    //        }
+    //        return actionWeights;
+    //    }
 
-        return null;
-    }
-    #endregion
+    //    return null;
+    //}
+    //#endregion
 
     //  internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
     //      Kingdom sourceKingdom = ownerOfTrait.city.kingdom;

@@ -78,6 +78,10 @@ namespace worldcreator {
         [Header("Message Box")]
         [SerializeField] private MessageBox _messageBox;
 
+        [Space(10)]
+        [Header("Small Character Info")]
+        [SerializeField] private SmallCharacterInfo smallCharacterInfo;
+
         #region getters/setters
         public EditRegionsMenu editRegionsMenu {
             get { return _editRegionsMenu; }
@@ -327,6 +331,15 @@ namespace worldcreator {
             HideSaveMenu();
             mainMenuGO.SetActive(false);
             WorldCreatorManager.Instance.LoadWorld(fileName);
+        }
+        #endregion
+
+        #region Small Character Info
+        public void ShowSmallCharacterInfo(ECS.Character character) {
+            smallCharacterInfo.ShowCharacterInfo(character);
+        }
+        public void HideSmallCharacterInfo() {
+            smallCharacterInfo.HideSmallCharacterInfo();
         }
         #endregion
 

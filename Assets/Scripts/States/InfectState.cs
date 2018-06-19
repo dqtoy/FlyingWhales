@@ -31,18 +31,18 @@ public class InfectState : State {
 				for (int j = 0; j < party.partyMembers.Count; j++) {
 					ECS.Character character = party.partyMembers [j];
 					if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-						if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
-							continue;
-						}
+						//if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
+						//	continue;
+						//}
 						InfectPsytoxin (character);
 					}
 				}
 			}else if(_targetLandmark.charactersAtLocation[i] is ECS.Character){
 				ECS.Character character = (ECS.Character) _targetLandmark.charactersAtLocation[i];
 				if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-					if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
-						continue;
-					}
+					//if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
+					//	continue;
+					//}
 					InfectPsytoxin (character);
 				}
 			}

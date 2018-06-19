@@ -154,14 +154,14 @@ public class Faction {
          */
     public virtual void SetLeader(ECS.Character leader) {
         _leader = leader;
-		if(_leader != null){
-			List<ECS.Character> villageHeads = GetCharactersOfType(CHARACTER_ROLE.VILLAGE_HEAD);
-			for (int i = 0; i < villageHeads.Count; i++) {
-				ECS.Character currHead = villageHeads[i];
-				//leaders have relationships with their Village heads and vise versa.
-				CharacterManager.Instance.CreateNewRelationshipBetween(leader, currHead);
-			}
-		}
+		//if(_leader != null){
+		//	List<ECS.Character> villageHeads = GetCharactersOfType(CHARACTER_ROLE.VILLAGE_HEAD);
+		//	for (int i = 0; i < villageHeads.Count; i++) {
+		//		ECS.Character currHead = villageHeads[i];
+		//		//leaders have relationships with their Village heads and vise versa.
+		//		CharacterManager.Instance.CreateNewRelationshipBetween(leader, currHead);
+		//	}
+		//}
     }
     #endregion
 

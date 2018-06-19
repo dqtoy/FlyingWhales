@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 public class Pacifist : Trait {
 
-    #region International Incidents
-    internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType,
-        FactionRelationship rel, Faction aggressor) {
-        WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
-        actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 50); //Add 50 Weight to Do Nothing
-        return actionWeights;
-    }
-    #endregion
+    //#region International Incidents
+    //internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType,
+    //    FactionRelationship rel, Faction aggressor) {
+    //    WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
+    //    actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, 50); //Add 50 Weight to Do Nothing
+    //    return actionWeights;
+    //}
+    //#endregion
 
     //  internal override int GetWarOfConquestWeightModification(Kingdom otherKingdom) {
     //      Kingdom sourceKingdom = ownerOfTrait.city.kingdom;

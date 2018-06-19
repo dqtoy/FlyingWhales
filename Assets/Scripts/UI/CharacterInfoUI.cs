@@ -20,13 +20,9 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI generalInfoLbl;
     [SerializeField] private TextMeshProUGUI statInfoLbl;
     [SerializeField] private TextMeshProUGUI traitInfoLbl;
-    //[SerializeField] private TextMeshProUGUI followersLbl;
     [SerializeField] private TextMeshProUGUI equipmentInfoLbl;
     [SerializeField] private TextMeshProUGUI inventoryInfoLbl;
     [SerializeField] private TextMeshProUGUI relationshipsLbl;
-    //[SerializeField] private TextMeshProUGUI historyLbl;
-
-    //[SerializeField] private ScrollRect followersScrollView;
     [SerializeField] private ScrollRect equipmentScrollView;
     [SerializeField] private ScrollRect inventoryScrollView;
     [SerializeField] private ScrollRect relationshipsScrollView;
@@ -330,30 +326,30 @@ public class CharacterInfoUI : UIMenu {
                 } else {
                     isFirst = false;
                 }
-                text += kvp.Key.role.roleType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
-                if (kvp.Value.character1.id == kvp.Key.id) {
-                    if (kvp.Value.relationshipStatus.Count > 0) {
-                        text += "(";
-                        for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
-                            if (i > 0) {
-                                text += ",";
-                            }
-                            text += kvp.Value.relationshipStatus[i].character1Relationship.ToString();
-                        }
-                        text += ")";
-                    }
-                } else if (kvp.Value.character2.id == kvp.Key.id) {
-                    if (kvp.Value.relationshipStatus.Count > 0) {
-                        text += "(";
-                        for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
-                            if (i > 0) {
-                                text += ",";
-                            }
-                            text += kvp.Value.relationshipStatus[i].character2Relationship.ToString();
-                        }
-                        text += ")";
-                    }
-                }
+                //text += kvp.Key.role.roleType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
+                //if (kvp.Value.character1.id == kvp.Key.id) {
+                //    if (kvp.Value.relationshipStatus.Count > 0) {
+                //        text += "(";
+                //        for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
+                //            if (i > 0) {
+                //                text += ",";
+                //            }
+                //            text += kvp.Value.relationshipStatus[i].character1Relationship.ToString();
+                //        }
+                //        text += ")";
+                //    }
+                //} else if (kvp.Value.character2.id == kvp.Key.id) {
+                //    if (kvp.Value.relationshipStatus.Count > 0) {
+                //        text += "(";
+                //        for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
+                //            if (i > 0) {
+                //                text += ",";
+                //            }
+                //            text += kvp.Value.relationshipStatus[i].character2Relationship.ToString();
+                //        }
+                //        text += ")";
+                //    }
+                //}
             }
         } else {
             text += "NONE";
@@ -375,8 +371,8 @@ public class CharacterInfoUI : UIMenu {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = characterHistory.ElementAtOrDefault(i);
             if (currLog != null) {
-                currItem.SetLog(currLog);
                 currItem.gameObject.SetActive(true);
+                currItem.SetLog(currLog);
                 if (Utilities.IsEven(i)) {
                     currItem.SetLogColor(evenLogColor);
                 } else {

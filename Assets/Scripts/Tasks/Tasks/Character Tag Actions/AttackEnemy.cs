@@ -10,10 +10,10 @@ public class AttackEnemy : CharacterTask {
 		_specificTargetClassification = "character";
 		_needsSpecificTarget = true;
 		_alignments.Add (ACTION_ALIGNMENT.HOSTILE);
-		_filters = new TaskFilter[] {
-			new MustBeRelationship(CHARACTER_RELATIONSHIP.ENEMY),
-		};
-		_states = new Dictionary<STATE, State> {
+        _filters = new TaskFilter[] {
+            new MustBeRelationship(CHARACTER_RELATIONSHIP.ENEMY),
+        };
+        _states = new Dictionary<STATE, State> {
 			{STATE.MOVE, new MoveState(this)},
 			{STATE.ATTACK, new AttackState(this, null)}
 		};
@@ -75,25 +75,25 @@ public class AttackEnemy : CharacterTask {
 			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
 				Character targetCharacter = landmark.charactersAtLocation [j].mainCharacter;
 				Relationship relationship = character.GetRelationshipWith (targetCharacter);
-				if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
-					weight = 50;
-					if(targetCharacter.faction == null || character.faction == null){
-						weight += 50;
-					}else if(targetCharacter.faction.id != character.faction.id){
-						weight += 50;
-					}
-					if(relationship.HasCategory(CHARACTER_RELATIONSHIP_CATEGORY.POSITIVE)){
-						weight -= 20;
-					}
-					if(relationship.HasCategory(CHARACTER_RELATIONSHIP_CATEGORY.FAMILIAL)){
-						weight -= 20;
-					}
+				//if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
+				//	weight = 50;
+				//	if(targetCharacter.faction == null || character.faction == null){
+				//		weight += 50;
+				//	}else if(targetCharacter.faction.id != character.faction.id){
+				//		weight += 50;
+				//	}
+				//	if(relationship.HasCategory(CHARACTER_RELATIONSHIP_CATEGORY.POSITIVE)){
+				//		weight -= 20;
+				//	}
+				//	if(relationship.HasCategory(CHARACTER_RELATIONSHIP_CATEGORY.FAMILIAL)){
+				//		weight -= 20;
+				//	}
 
-					if(weight < 0){
-						weight = 0;
-					}
-					_characterWeights.AddElement (targetCharacter, weight);
-				}
+				//	if(weight < 0){
+				//		weight = 0;
+				//	}
+				//	_characterWeights.AddElement (targetCharacter, weight);
+				//}
 			}
 		}
 		LogTargetWeights(_characterWeights);

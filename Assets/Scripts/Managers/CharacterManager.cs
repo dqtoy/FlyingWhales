@@ -19,7 +19,7 @@ public class CharacterManager : MonoBehaviour {
     private Dictionary<TRAIT, string> traitDictionary;
     private Dictionary<string, CharacterClass> _classesDictionary;
 
-    private List<Character> allCharacters;
+    private List<Character> _allCharacters;
 
 	public Sprite heroSprite;
 	public Sprite villainSprite;
@@ -31,6 +31,7 @@ public class CharacterManager : MonoBehaviour {
     [Header("Character Portrait Assets")]
     public GameObject characterPortraitPrefab;
     public List<HairSetting> hairSettings;
+    public List<Sprite> headSprites;
     public List<Sprite> noseSprites;
     public List<Sprite> mouthSprites;
     public List<Sprite> eyeSprites;
@@ -44,11 +45,14 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> classesDictionary {
         get { return _classesDictionary; }
     }
+    public List<Character> allCharacters {
+        get { return _allCharacters; }
+    }
     #endregion
 
     private void Awake() {
         Instance = this;
-        allCharacters = new List<Character>();
+        _allCharacters = new List<Character>();
     }
 
     public void Initialize() {
@@ -82,7 +86,7 @@ public class CharacterManager : MonoBehaviour {
         if(charRole != CHARACTER_ROLE.NONE) {
             newCharacter.AssignRole(charRole);
         }
-        allCharacters.Add(newCharacter);
+        _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -92,7 +96,7 @@ public class CharacterManager : MonoBehaviour {
 		}
 		ECS.Character newCharacter = new ECS.Character(setup, gender, statAllocationBonus);
 		newCharacter.AssignRole(charRole);
-        allCharacters.Add(newCharacter);
+        _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
 	}
@@ -112,7 +116,7 @@ public class CharacterManager : MonoBehaviour {
         if (setup.optionalRole != CHARACTER_ROLE.NONE) {
             newCharacter.AssignRole(setup.optionalRole);
         }
-        allCharacters.Add(newCharacter);
+        _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -327,15 +331,10 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Relationships
-    /*
-     Create a new relationship between 2 characters,
-     then add add a reference to that relationship, to both of the characters.
-         */
-    public Relationship CreateNewRelationshipBetween(ECS.Character character1, ECS.Character character2) {
-        Relationship newRel = new Relationship(character1, character2);
-        character1.AddNewRelationship(character2, newRel);
-        character2.AddNewRelationship(character1, newRel);
-		return newRel;
+    public Relationship CreateNewRelationshipTowards(ECS.Character sourceCharacter, ECS.Character targetCharacter) {
+        Relationship newRel = new Relationship(sourceCharacter, targetCharacter);
+        sourceCharacter.AddNewRelationship(targetCharacter, newRel);
+        return newRel;
     }
     /*
      Utility Function for getting the relationship between 2 characters,
@@ -417,8 +416,8 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public Character GetCharacterByID(int id) {
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character currChar = allCharacters[i];
+        for (int i = 0; i < _allCharacters.Count; i++) {
+            Character currChar = _allCharacters[i];
             if (currChar.id == id) {
                 return currChar;
             }
@@ -426,8 +425,8 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     public Character GetCharacterByName(string name) {
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character currChar = allCharacters[i];
+        for (int i = 0; i < _allCharacters.Count; i++) {
+            Character currChar = _allCharacters[i];
             if (currChar.name.Equals(name)) {
                 return currChar;
             }
@@ -462,29 +461,25 @@ public class CharacterManager : MonoBehaviour {
 			return heroSprite;
 		case CHARACTER_ROLE.VILLAIN:
 			return villainSprite;
-		case CHARACTER_ROLE.HERMIT:
-			return hermitSprite;
-		case CHARACTER_ROLE.BEAST:
-			return beastSprite;
-		case CHARACTER_ROLE.BANDIT:
-			return banditSprite;
-		case CHARACTER_ROLE.CHIEFTAIN:
-			return chieftainSprite;
-		}
-		return null;
+                //case CHARACTER_ROLE.HERMIT:
+                //	return hermitSprite;
+                //case CHARACTER_ROLE.BEAST:
+                //	return beastSprite;
+                //case CHARACTER_ROLE.BANDIT:
+                //	return banditSprite;
+                //case CHARACTER_ROLE.CHIEFTAIN:
+                //	return chieftainSprite;
+        }
+        return null;
 	}
     #endregion
 
     #region Character Portraits
-    public PortraitSettings GenerateRandomPortrait(GENDER gender) {
+    public PortraitSettings GenerateRandomPortrait() {
         PortraitSettings ps = new PortraitSettings();
-        //ps.gender = gender;
+        ps.headIndex = Random.Range(0, headSprites.Count);
         ps.eyesIndex = Random.Range(0, eyeSprites.Count);
         ps.eyeBrowIndex = Random.Range(0, eyeBrowSprites.Count);
-        //List<HairSettings> hairsToUse = maleHairSettings;
-        //if (gender == GENDER.FEMALE) {
-        //    hairsToUse = femaleHairSettings;
-        //}
         ps.hairIndex = Random.Range(0, hairSettings.Count);
         ps.noseIndex = Random.Range(0, noseSprites.Count);
         ps.mouthIndex = Random.Range(0, mouthSprites.Count);

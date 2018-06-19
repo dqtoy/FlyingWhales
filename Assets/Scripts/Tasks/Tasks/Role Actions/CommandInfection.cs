@@ -34,10 +34,10 @@ public class CommandInfection : CharacterTask {
 			for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
 				if(character.specificLocation.charactersAtLocation[i] is Character){
 					Character currCharacter = character.specificLocation.charactersAtLocation[i] as Character;
-					if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
-						_chosenSlyx = currCharacter;
-						break;
-					}
+					//if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
+					//	_chosenSlyx = currCharacter;
+					//	break;
+					//}
 				}
 			}
 			//_targetLandmark = (BaseLandmark)_targetLocation;
@@ -59,9 +59,9 @@ public class CommandInfection : CharacterTask {
 				for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
 					if(character.specificLocation.charactersAtLocation[i] is Character){
 						Character currCharacter = (Character) character.specificLocation.charactersAtLocation[i];
-						if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
-							return true;
-						}
+						//if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
+						//	return true;
+						//}
 					}
 				}
 			}

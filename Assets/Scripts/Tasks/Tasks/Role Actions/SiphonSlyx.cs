@@ -26,9 +26,9 @@ public class SiphonSlyx : CharacterTask {
 			for (int i = 0; i < location.charactersAtLocation.Count; i++) {
 				if(location.charactersAtLocation[i] is ECS.Character){
 					ECS.Character currCharacter = (ECS.Character) location.charactersAtLocation[i];
-					if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
-						return true;
-					}
+					//if(currCharacter.role != null && currCharacter.role.roleType == CHARACTER_ROLE.SLYX){
+					//	return true;
+					//}
 				}
 			}
 		}

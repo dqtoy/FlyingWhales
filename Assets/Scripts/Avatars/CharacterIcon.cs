@@ -74,6 +74,7 @@ public class CharacterIcon : MonoBehaviour {
             }
             //remove character from his/her specific location
             if (character.specificLocation != null && character.specificLocation is BaseLandmark) {
+                _aiPath.transform.position = character.specificLocation.tileLocation.transform.position;
                 character.specificLocation.RemoveCharacterFromLocation(character);
                 shouldScaleUp = true;
             }
@@ -209,18 +210,23 @@ public class CharacterIcon : MonoBehaviour {
         } else {
             Idle(upOrDown);
         }
-        if (targetLocation != null && _avatarGO.transform.localScale != Vector3.zero) {
+        if (targetLocation != null && _avatarGO.transform.localScale != Vector3.zero && !GameManager.Instance.isPaused) {
             //Debug.Log("Remaining Distance: " + _aiPath.remainingDistance);
-            if (_aiPath.remainingDistance < 1.5f) {
+            if (_aiPath.remainingDistance < 1f) {
                 //Debug.Log("Shrink!");
                 Vector3 newScale = _avatarGO.transform.localScale;
                 newScale.x -= 0.02f;
                 newScale.y -= 0.02f;
+                newScale.x = Mathf.Max(0, newScale.x);
+                newScale.y = Mathf.Max(0, newScale.y);
                 iTween.ScaleUpdate(_avatarGO.gameObject, newScale, Time.deltaTime * _aiPath.maxSpeed);
                 //_avatarGO.transform.localScale = Vector3.Lerp(_avatarGO.transform.localScale, newScale, );
+                if (newScale.x == 0f && newScale.y == 0f) {
+                    _aiPath.transform.position = targetLocation.tileLocation.transform.position;
+                }
             }
         }
-        if (shouldScaleUp) {
+        if (shouldScaleUp && !GameManager.Instance.isPaused) {
             Vector3 newScale = _avatarGO.transform.localScale;
             newScale.x += 0.02f;
             newScale.y += 0.02f;

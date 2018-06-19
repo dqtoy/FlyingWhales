@@ -11,7 +11,7 @@ public class SeverePsytoxin : CharacterTag {
 		if(Messenger.eventTable.ContainsKey("Psytoxinated")){
 			Messenger.Broadcast ("Psytoxinated");
 		}
-		_character.AssignRole (CHARACTER_ROLE.SLYX);
+		//_character.AssignRole (CHARACTER_ROLE.SLYX);
 	}
 	public override void OnRemoveTag (){
 		base.OnRemoveTag ();

@@ -27,7 +27,7 @@ public class Successor : CharacterTag {
          */
     private void TriggerSuccession() {
         _characterToSucceed.faction.SetLeader(_character);
-        _character.AssignRole(CHARACTER_ROLE.CHIEFTAIN);
+        //_character.AssignRole(CHARACTER_ROLE.CHIEFTAIN);
         _character.RemoveCharacterTag(CHARACTER_TAG.SUCCESSOR);
     }
 }

@@ -444,12 +444,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.icon.SetPosition(this.tileLocation.transform.position);
-        if (charRole != CHARACTER_ROLE.FOLLOWER) {
-            //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-            if (determineAction) {
-                newCharacter.DetermineAction();
-            }
-        }
+        //if (charRole != CHARACTER_ROLE.FOLLOWER) {
+        //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+        //    if (determineAction) {
+        //        newCharacter.DetermineAction();
+        //    }
+        //}
         return newCharacter;
     }
     /*
@@ -496,12 +496,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.icon.SetPosition(this.tileLocation.transform.position);
-        if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
-            //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-            if (determineAction) {
-                newCharacter.DetermineAction();
-            }
-        }
+        //if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
+        //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+        //    if (determineAction) {
+        //        newCharacter.DetermineAction();
+        //    }
+        //}
         //UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }

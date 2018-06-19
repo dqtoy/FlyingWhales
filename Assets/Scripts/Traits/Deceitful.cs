@@ -4,23 +4,23 @@ using System.Collections.Generic;
 
 public class Deceitful : Trait {
 
-    #region International Incidents
-    internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType,
-        FactionRelationship rel, Faction aggressor) {
-        if (rel.relationshipStatus == RELATIONSHIP_STATUS.FRIENDLY) {
-            WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
-            actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, -50); //Subtract 50 Weight to Do Nothing
-            int relativeStr = rel.factionLookup[_ownerOfTrait.faction.id].relativeStrength;
-            if (relativeStr > 0) {
-                actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 3 * relativeStr); //Check Relative Strength, add 3 Weight to Declare War for each Positive Point of Relative Strength
-            }
+    //#region International Incidents
+    //internal override WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> GetInternationalIncidentReactionWeight(INTERNATIONAL_INCIDENT_TYPE incidentType,
+    //    FactionRelationship rel, Faction aggressor) {
+    //    if (rel.relationshipStatus == RELATIONSHIP_STATUS.FRIENDLY) {
+    //        WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION> actionWeights = new WeightedDictionary<INTERNATIONAL_INCIDENT_ACTION>();
+    //        actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DO_NOTHING, -50); //Subtract 50 Weight to Do Nothing
+    //        int relativeStr = rel.factionLookup[_ownerOfTrait.faction.id].relativeStrength;
+    //        if (relativeStr > 0) {
+    //            actionWeights.AddElement(INTERNATIONAL_INCIDENT_ACTION.DECLARE_WAR, 3 * relativeStr); //Check Relative Strength, add 3 Weight to Declare War for each Positive Point of Relative Strength
+    //        }
 
-            return actionWeights;
-        }
+    //        return actionWeights;
+    //    }
 
-        return null;
-    }
-    #endregion
+    //    return null;
+    //}
+    //#endregion
 
     #region War
     internal override WeightedDictionary<ALLY_WAR_REACTION> GetAllyReactionWeight(Faction friend, Faction enemy) {

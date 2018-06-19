@@ -124,25 +124,25 @@ namespace UnityEngine.UI.Extensions
         { }
 
 #if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            base.OnValidate();
+        //protected override void OnValidate()
+        //{
+        //    base.OnValidate();
 
-            if (WholeNumbers)
-            {
-                m_MinValue = Mathf.Round(m_MinValue);
-                m_MaxValue = Mathf.Round(m_MaxValue);
-            }
-            UpdateCachedReferences();
-            SetX(m_ValueX, false);
-            SetY(m_ValueY, false);
-            // Update rects since other things might affect them even if value didn't change.
-            UpdateVisuals();
+        //    if (WholeNumbers)
+        //    {
+        //        m_MinValue = Mathf.Round(m_MinValue);
+        //        m_MaxValue = Mathf.Round(m_MaxValue);
+        //    }
+        //    UpdateCachedReferences();
+        //    SetX(m_ValueX, false);
+        //    SetY(m_ValueY, false);
+        //    // Update rects since other things might affect them even if value didn't change.
+        //    UpdateVisuals();
 
-            var prefabType = UnityEditor.PrefabUtility.GetPrefabType(this);
-            if (prefabType != UnityEditor.PrefabType.Prefab && !Application.isPlaying)
-                CanvasUpdateRegistry.RegisterCanvasElementForLayoutRebuild(this);
-        }
+        //    var prefabType = UnityEditor.PrefabUtility.GetPrefabType(this);
+        //    if (prefabType != UnityEditor.PrefabType.Prefab && !Application.isPlaying)
+        //        CanvasUpdateRegistry.RegisterCanvasElementForLayoutRebuild(this);
+        //}
 
 #endif // if UNITY_EDITOR
 

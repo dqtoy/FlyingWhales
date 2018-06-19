@@ -238,48 +238,14 @@ namespace UnityEngine.UI.Extensions
             int newValue = Int32.Parse(value);
             newValue = Mathf.Clamp(newValue, minimum, maximum);
             this.value = newValue;
+            DisableAtExtremes(sides);
             onValueChanged.Invoke(this.value);
         }
-    }
-
-    [RequireComponent(typeof(Selectable))]
-    public class StepperSide : UIBehaviour, IPointerClickHandler, ISubmitHandler
-    {
-        Selectable button { get { return GetComponent<Selectable>(); } }
-
-        Stepper stepper { get { return GetComponentInParent<Stepper>(); } }
-
-        bool leftmost { get { return button == stepper.sides[0]; } }
-
-        protected StepperSide()
-        { }
-
-        public virtual void OnPointerClick(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-                return;
-
-            Press();
-        }
-
-        public virtual void OnSubmit(BaseEventData eventData)
-        {
-            Press();
-        }
-
-        private void Press()
-        {
-            if (!button.IsActive() || !button.IsInteractable())
-                return;
-
-            if (leftmost)
-            {
-                stepper.StepDown();
-            }
-            else
-            {
-                stepper.StepUp();
-            }
+        public void SetStepperValue(int value) {
+            value = Mathf.Clamp(value, minimum, maximum);
+            this.value = value;
+            DisableAtExtremes(sides);
+            onValueChanged.Invoke(this.value);
         }
     }
 }

@@ -8,6 +8,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 
     private ECS.Character _character;
 
+    [Header("Head")]
+    [SerializeField] private Image head;
+
     [Header("Eyes")]
     [SerializeField] private Image eyes;
     [SerializeField] private Image eyebrows;
@@ -24,6 +27,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 
     public void GeneratePortrait(ECS.Character character) {
         _character = character;
+        SetHead(character.portraitSettings.headIndex);
         SetEyes(character.portraitSettings.eyesIndex);
         SetEyebrows(character.portraitSettings.eyesIndex);
         SetNose(character.portraitSettings.noseIndex);
@@ -31,10 +35,24 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         SetHair(character.portraitSettings.hairIndex);
         SetHairColor(character.portraitSettings.hairColor);
     }
+    public void GeneratePortrait(PortraitSettings portraitSettings) {
+        SetHead(portraitSettings.headIndex);
+        SetEyes(portraitSettings.eyesIndex);
+        SetEyebrows(portraitSettings.eyesIndex);
+        SetNose(portraitSettings.noseIndex);
+        SetMouth(portraitSettings.mouthIndex);
+        SetHair(portraitSettings.hairIndex);
+        SetHairColor(portraitSettings.hairColor);
+    }
 
     public void OnPointerClick(PointerEventData eventData) {
-        UIManager.Instance.ShowCharacterInfo(_character);
+#if !WORLD_CREATION_TOOL
+        if (_character != null) {
+            UIManager.Instance.ShowCharacterInfo(_character);
+        }
+#endif
     }
+
 
     public void SetHair(int index) {
         HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[index];
@@ -44,6 +62,10 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         } else {
             hairBack.sprite = chosenHairSettings.hairBackSprite;
         }
+    }
+    public void SetHead(int index) {
+        Sprite headSprite = CharacterManager.Instance.headSprites[index];
+        head.sprite = headSprite;
     }
     public void SetEyes(int index) {
         Sprite eyeSprite = CharacterManager.Instance.eyeSprites[index];
@@ -62,5 +84,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
     public void SetHairColor(Color hairColor) {
         hair.color = hairColor;
         hairBack.color = hairColor;
+    }
+    public Color GetHairColor() {
+        return hair.color;
     }
 }

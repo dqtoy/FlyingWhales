@@ -262,8 +262,8 @@ public class LandmarkInfoUI : UIMenu {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = landmarkHistory.ElementAtOrDefault(i);
             if (currLog != null) {
-                currItem.SetLog(currLog);
                 currItem.gameObject.SetActive(true);
+                currItem.SetLog(currLog);
                 if (Utilities.IsEven(i)) {
                     currItem.SetLogColor(evenLogColor);
                 } else {
