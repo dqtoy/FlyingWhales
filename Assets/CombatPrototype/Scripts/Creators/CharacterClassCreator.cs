@@ -22,6 +22,7 @@ namespace ECS {
             currCharacterClass.agiWeightAllocation = EditorGUILayout.FloatField("Agility Weight Allocation: ", currCharacterClass.agiWeightAllocation);
             currCharacterClass.vitWeightAllocation = EditorGUILayout.FloatField("Vitality Weight Allocation: ", currCharacterClass.vitWeightAllocation);
             currCharacterClass.hpModifier = EditorGUILayout.FloatField("HP Modifier: ", currCharacterClass.hpModifier);
+            currCharacterClass.spModifier = EditorGUILayout.FloatField("SP Modifier: ", currCharacterClass.spModifier);
             //currCharacterClass.dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", currCharacterClass.dodgeRate);
             //currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
             //currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);

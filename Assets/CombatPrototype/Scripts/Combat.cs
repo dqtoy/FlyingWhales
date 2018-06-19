@@ -513,7 +513,13 @@ namespace ECS{
 		}
 		//ECS.Character will do the skill specified, but its success will be determined by the skill's accuracy
 		private void DoSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
+            //If skill is attack, reduce sp
+            if (skill.skillType == SKILL_TYPE.ATTACK) {
+                AttackSkill attackSkill = skill as AttackSkill;
+                sourceCharacter.AdjustSP(-attackSkill.spCost);
+            }
             SuccessfulSkill(skill, sourceCharacter, targetCharacter);
+
    //         int chance = Utilities.rng.Next (0,100);
 			//if(chance < skill.accuracy){
 			//	//Successful
@@ -590,7 +596,7 @@ namespace ECS{
 
 		#region Attack Skill
 		private void AttackSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
-			AttackSkill attackSkill = (AttackSkill)skill;
+			AttackSkill attackSkill = skill as AttackSkill;
             HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter); //, attackSkill.weapon
    //         DEFEND_TYPE defendType = CanTargetCharacterDefend (sourceCharacter, targetCharacter);
 			//if(defendType == DEFEND_TYPE.NONE){

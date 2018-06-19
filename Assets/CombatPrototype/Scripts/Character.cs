@@ -17,11 +17,11 @@ namespace ECS {
         public delegate void DailyAction();
         public DailyAction onDailyAction;
 
-        [SerializeField] private string _name;
+        private string _name;
         private int _id;
 		private GENDER _gender;
         //[System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
-        [System.NonSerialized] private List<Trait>	_traits;
+        [System.NonSerialized] private List<Trait> _traits;
         private List<TRAIT> _allTraits;
 		private List<CharacterTag>	_tags;
 		internal List<STATUS_EFFECT> statusEffects;
@@ -29,13 +29,13 @@ namespace ECS {
 		private const int MAX_FOLLOWERS = 4;
 
 		//Stats
-		[SerializeField] private int _currentHP;
-		[SerializeField] private int _maxHP;
-		[SerializeField] private int _strength;
-		[SerializeField] private int _intelligence;
-		[SerializeField] private int _agility;
-        [SerializeField] private int _vitality;
-        [SerializeField] private int _currentRow;
+		private int _currentHP;
+		private int _maxHP;
+		private int _strength;
+		private int _intelligence;
+		private int _agility;
+        private int _vitality;
+        private int _currentRow;
 		private SIDES _currentSide;
 		private int _baseMaxHP;
 		private int _baseStrength;
@@ -50,6 +50,8 @@ namespace ECS {
         private int _level;
         private int _experience;
         private int _maxExperience;
+        private int _sp;
+        private int _maxSP;
         private int _bonusPDef;
         private int _bonusMDef;
         private float _bonusPDefPercent;
@@ -61,21 +63,21 @@ namespace ECS {
         //Skills
         private List<Skill> _skills;
 
-		[NonSerialized] private CharacterClass _characterClass;
+		private CharacterClass _characterClass;
 		private RaceSetting _raceSetting;
 		private CharacterRole _role;
 		private Faction _faction;
 		private Party _party;
         private QuestData _questData;
-        private CharacterActionQueue<CharacterAction> _actionQueue;
+        //private CharacterActionQueue<CharacterAction> _actionQueue;
 		//private CharacterAction _currentAction;
         private ILocation _specificLocation;
 		private Region _currentRegion;
 		private CharacterAvatar _avatar;
 
-		[SerializeField] private List<BodyPart> _bodyParts;
-		[SerializeField] private List<Item> _equippedItems;
-		[SerializeField] private List<Item> _inventory;
+		private List<BodyPart> _bodyParts;
+		private List<Item> _equippedItems;
+		private List<Item> _inventory;
 
         //Character Icon
         private CharacterIcon _icon;
@@ -408,6 +410,18 @@ namespace ECS {
         public int level {
             get { return _level; }
         }
+        public int sp {
+            get { return _sp; }
+        }
+        public int maxSP {
+            get { return _maxSP; }
+        }
+        public int experience {
+            get { return _experience; }
+        }
+        public int maxExperience {
+            get { return _maxExperience; }
+        }
         public Dictionary<ELEMENT, float> elementalWeaknesses {
             get { return _elementalWeaknesses; }
         }
@@ -441,7 +455,7 @@ namespace ECS {
 			_followers = new List<Character> ();
 			_isFollowerOf = null;
             _questData = new QuestData(this);
-            _actionQueue = new CharacterActionQueue<CharacterAction>();
+            //_actionQueue = new CharacterActionQueue<CharacterAction>();
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(gender);
 			previousActions = new Dictionary<CharacterTask, string> ();
             _actionData = new ActionData(this);
@@ -566,6 +580,8 @@ namespace ECS {
 		internal void EnableDisableSkills(Combat combat){
 			bool isAllAttacksInRange = true;
 			bool isAttackInRange = false;
+
+            //Body part skills / general skills
 			for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
@@ -581,6 +597,11 @@ namespace ECS {
                     continue;
                 }
                 if (skill is AttackSkill){
+                    AttackSkill attackSkill = skill as AttackSkill;
+                    if(attackSkill.spCost > _sp) {
+                        skill.isEnabled = false;
+                        continue;
+                    }
 					isAttackInRange = combat.HasTargetInRangeForSkill (skill, this);
 					if(!isAttackInRange){
 						isAllAttacksInRange = false;
@@ -596,6 +617,8 @@ namespace ECS {
 					}
 				}
 			}
+
+            //Character class skills
             for (int i = 0; i < _level; i++) {
                 for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
                     Skill skill = _characterClass.skillsPerLevel[i][j];
@@ -614,6 +637,11 @@ namespace ECS {
                         continue;
                     }
                     if (skill is AttackSkill) {
+                        AttackSkill attackSkill = skill as AttackSkill;
+                        if (attackSkill.spCost > _sp) {
+                            skill.isEnabled = false;
+                            continue;
+                        }
                         isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
                         if (!isAttackInRange) {
                             isAllAttacksInRange = false;
@@ -2972,12 +3000,12 @@ namespace ECS {
         #endregion
 
         #region Action Queue
-        public void AddActionToQueue(CharacterAction action) {
-            _actionQueue.Enqueue(action);
-        }
-        public void InsertActionToQueue(CharacterAction action, int index) {
-            _actionQueue.Enqueue(action, index);
-        }
+        //public void AddActionToQueue(CharacterAction action) {
+        //    _actionQueue.Enqueue(action);
+        //}
+        //public void InsertActionToQueue(CharacterAction action, int index) {
+        //    _actionQueue.Enqueue(action, index);
+        //}
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
@@ -3003,13 +3031,31 @@ namespace ECS {
 
         #region RPG
         public void LevelUp() {
-            _level += 1;
-            _strength += _baseStrength;
-            _agility += _baseAgility;
-            _intelligence += _baseIntelligence;
-            _vitality += _baseVitality;
+            if(_level < CharacterManager.Instance.maxLevel) {
+                _level += 1;
+                _experience = 0;
+                _strength += _baseStrength;
+                _agility += _baseAgility;
+                _intelligence += _baseIntelligence;
+                _vitality += _baseVitality;
+                RecomputeMaxHP();
+                RecomputeMaxExperience();
+                RecomputeMaxSP();
+                //Reset to full health and sp
+                _currentHP = _maxHP;
+                _sp = _maxSP;
+            }
+        }
+        public void OnCharacterClassChange() {
+            AllocateStatPoints(10);
             RecomputeMaxHP();
-            RecomputeMaxExperience();
+            RecomputeMaxSP();
+            if(_currentHP > _maxHP) {
+                _currentHP = _maxHP;
+            }
+            if (_sp > _maxSP) {
+                _sp = _maxSP;
+            }
         }
         public void AdjustBonusStrength(int amount) {
             _bonusStrength += amount;
@@ -3026,7 +3072,6 @@ namespace ECS {
         public void AdjustExperience(int amount) {
             _experience += amount;
             if(_experience >= _maxExperience) {
-                _experience = 0;
                 LevelUp();
             }
         }
@@ -3036,8 +3081,15 @@ namespace ECS {
         public void AdjustElementalResistance(ELEMENT element, float amount) {
             _elementalResistance[element] += amount;
         }
+        public void AdjustSP(int amount) {
+            _sp += amount;
+            _sp = Mathf.Clamp(_sp, 0, _maxSP);
+        }
         private void RecomputeMaxExperience() {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
+        }
+        private void RecomputeMaxSP() {
+            _maxSP = Mathf.CeilToInt(_characterClass.spModifier * ((float) _level / 1.25f));
         }
         public int GetPDef(Character enemy) {
             float levelDiff = (float) (enemy.level - level);

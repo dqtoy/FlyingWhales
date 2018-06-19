@@ -19,7 +19,7 @@ namespace ECS {
 
         public Skill CreateNewCopy(){
 			if (this is AttackSkill) {
-				AttackSkill attackSkill = (AttackSkill)this;
+				AttackSkill attackSkill = this as AttackSkill;
 				AttackSkill newAttackSkill = new AttackSkill ();
                 //newAttackSkill.attackType = attackSkill.attackType;
                 //newAttackSkill.durabilityDamage = attackSkill.durabilityDamage;
@@ -31,7 +31,7 @@ namespace ECS {
 				SetCommonData (newAttackSkill);
 				return newAttackSkill;
 			} else if(this is HealSkill){
-				HealSkill healSkill = (HealSkill)this;
+				HealSkill healSkill = this as HealSkill;
 				HealSkill newHealSkill = new HealSkill ();
 				newHealSkill.healPower = healSkill.healPower;
 				//newHealSkill.durabilityCost = healSkill.durabilityCost;

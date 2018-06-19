@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace ECS {
-//    [System.Serializable]
     public class RaceSetting {
         public RACE race;
         public List<BodyPart> bodyParts;

@@ -14,6 +14,7 @@ public class CharacterManager : MonoBehaviour {
     public GameObject armyIconPrefab;
     public Transform armyIconsParent;
 
+    public int maxLevel;
     public List<CharacterType> characterTypes;
     public List<Trait> traitSetup;
     private Dictionary<TRAIT, string> traitDictionary;

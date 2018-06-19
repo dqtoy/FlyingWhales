@@ -10,6 +10,7 @@ namespace ECS {
         private float _agiWeightAllocation;
         private float _vitWeightAllocation;
         private float _hpModifier;
+        private float _spModifier;
         //private int _dodgeRate;
         //private int _parryRate;
         //private int _blockRate;
@@ -34,6 +35,9 @@ namespace ECS {
         }
         public float hpModifier {
             get { return _hpModifier; }
+        }
+        public float spModifier {
+            get { return _spModifier; }
         }
         //public int dodgeRate {
         //    get { return _dodgeRate; }
@@ -60,6 +64,7 @@ namespace ECS {
 			newClass._agiWeightAllocation = this._agiWeightAllocation;
 			newClass._vitWeightAllocation = this._vitWeightAllocation;
             newClass._hpModifier = this._hpModifier;
+            newClass._spModifier = this._spModifier;
             //newClass._dodgeRate = this._dodgeRate;
             //newClass._parryRate = this._parryRate;
             //newClass._blockRate = this._blockRate;
@@ -82,6 +87,7 @@ namespace ECS {
             this._agiWeightAllocation = classComponent.agiWeightAllocation;
             this._vitWeightAllocation = classComponent.vitWeightAllocation;
             this._hpModifier = classComponent.hpModifier;
+            this._spModifier = classComponent.spModifier;
             //this._dodgeRate = classComponent.dodgeRate;
             //this._parryRate = classComponent.parryRate;
             //this._blockRate = classComponent.blockRate;

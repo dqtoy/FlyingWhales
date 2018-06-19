@@ -10,11 +10,12 @@ namespace ECS{
 		public float agiWeightAllocation;
 		public float vitWeightAllocation;
         public float hpModifier;
-		//public int dodgeRate;
-		//public int parryRate;
-		//public int blockRate;
+        public float spModifier;
+        //public int dodgeRate;
+        //public int parryRate;
+        //public int blockRate;
 
-		public List<WEAPON_TYPE> allowedWeaponTypes;
+        public List<WEAPON_TYPE> allowedWeaponTypes;
         public List<TextAssetListWrapper> skillsPerLevel;
 
         public List<string[]> skillsPerLevelNames;
