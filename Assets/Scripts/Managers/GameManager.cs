@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void FixedUpdate(){
-		if (!isPaused) {
+		if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.HourStarted();
             }

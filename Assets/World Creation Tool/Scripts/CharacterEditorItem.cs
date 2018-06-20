@@ -70,7 +70,6 @@ namespace worldcreator {
             } else {
                 setLocationBtn.interactable = true;
             }
-
         }
         #endregion
 

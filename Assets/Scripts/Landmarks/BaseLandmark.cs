@@ -595,7 +595,9 @@ public class BaseLandmark : ILocation, TaskCreator {
                 Character currChar = character as Character;
 				this.tileLocation.RemoveCharacterFromLocation(currChar);
                 currChar.SetSpecificLocation(this);
+#if !WORLD_CREATION_TOOL
                 _landmarkVisual.OnCharacterEnteredLandmark(currChar);
+#endif
             } else if (character is Party) {
                 Party currParty = character as Party;
 				this.tileLocation.RemoveCharacterFromLocation(currParty);

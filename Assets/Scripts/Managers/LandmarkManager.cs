@@ -468,7 +468,11 @@ public class LandmarkManager : MonoBehaviour {
     public ILocation GetLocationBasedOnID(LOCATION_IDENTIFIER identifier, int id) {
         List<ILocation> choices;
         if (identifier == LOCATION_IDENTIFIER.HEXTILE) {
+#if WORLD_CREATION_TOOL
             choices = new List<ILocation>(worldcreator.WorldCreatorManager.Instance.hexTiles.Select(x => x as ILocation));
+#else
+            choices = new List<ILocation>(GridMap.Instance.hexTiles.Select(x => x as ILocation));
+#endif
         } else {
             choices = new List<ILocation>(GetAllLandmarks().Select(x => x as ILocation));
         }

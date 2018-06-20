@@ -67,10 +67,27 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Characters
+    public void LoadCharacters(WorldSaveData data) {
+        if (data.charactersData != null) {
+            for (int i = 0; i < data.charactersData.Count; i++) {
+                CharacterSaveData currData = data.charactersData[i];
+                ECS.Character currCharacter = CreateNewCharacter(currData);
+            }
+        }
+    }
+    public void LoadRelationships(WorldSaveData data) {
+        if (data.charactersData != null) {
+            for (int i = 0; i < data.charactersData.Count; i++) {
+                CharacterSaveData currData = data.charactersData[i];
+                ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
+                currCharacter.LoadRelationships(currData.relationshipsData);
+            }
+        }
+    }
     /*
      Create a new character, given a role, class and race.
          */
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, int statAllocationBonus = 0, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, int statAllocationBonus = 0, Faction faction = null) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -127,13 +144,25 @@ public class CharacterManager : MonoBehaviour {
         if (data.homeID != -1) {
             BaseLandmark homeLocation = LandmarkManager.Instance.GetLandmarkByID(data.homeID);
             newCharacter.SetHome(homeLocation);
+            homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         }
 
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
-            newCharacter.SetSpecificLocation(currentLocation);
+#if !WORLD_CREATION_TOOL
+            newCharacter.CreateIcon();
+            newCharacter.icon.SetPosition(currentLocation.tileLocation.transform.position);            
+#endif
+            if (currentLocation is BaseLandmark) {
+                currentLocation.AddCharacterToLocation(newCharacter);
+            }
+#if WORLD_CREATION_TOOL
+            else{
+                newCharacter.SetSpecificLocation(currentLocation);
+            }
+#endif
         }
-        
+
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;

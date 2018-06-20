@@ -103,8 +103,16 @@ public class CharacterInfoEditor : MonoBehaviour {
         roleField.value = Utilities.GetOptionIndex(roleField, _character.role.roleType.ToString());
         classField.value = Utilities.GetOptionIndex(classField, _character.characterClass.className);
         otherInfoLbl.text = string.Empty;
-        otherInfoLbl.text += "Home: " + _character.home.ToString();
-        otherInfoLbl.text += "\nLocation: " + _character.specificLocation.ToString();
+        if (_character.home == null) {
+            otherInfoLbl.text += "Home: NONE";
+        } else {
+            otherInfoLbl.text += "Home: " + _character.home.ToString();
+        }
+        if (_character.specificLocation == null) {
+            otherInfoLbl.text += "\nLocation: NONE";
+        } else {
+            otherInfoLbl.text += "\nLocation: " + _character.specificLocation.ToString();
+        }
     }
     public void SetName(string newName) {
         _character.SetName(newName);
