@@ -563,6 +563,7 @@ namespace worldcreator {
             worldData.OccupyRegionData(allRegions);
             worldData.OccupyFactionData(FactionManager.Instance.allFactions);
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
+            worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {
                 saveName += Utilities.worldConfigFileExt;

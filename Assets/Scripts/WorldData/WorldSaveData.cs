@@ -10,6 +10,7 @@ public class WorldSaveData {
     public List<RegionSaveData> regionsData;
     public List<FactionSaveData> factionsData;
     public List<LandmarkSaveData> landmarksData;
+    public List<CharacterSaveData> charactersData;
     public byte[] pathfindingSettings;
 
     private Dictionary<int, HexTileData> tileDictionary;
@@ -48,6 +49,14 @@ public class WorldSaveData {
             BaseLandmark currLandmark = landmarks[i];
             LandmarkSaveData landmarkData = new LandmarkSaveData(currLandmark);
             landmarksData.Add(landmarkData);
+        }
+    }
+    public void OccupyCharactersData(List<ECS.Character> characters) {
+        charactersData = new List<CharacterSaveData>();
+        for (int i = 0; i < characters.Count; i++) {
+            ECS.Character currCharacter = characters[i];
+            CharacterSaveData characterData = new CharacterSaveData(currCharacter);
+            charactersData.Add(characterData);
         }
     }
     public void OccupyPathfindingSettings(HexTile[,] map, int width, int height) {

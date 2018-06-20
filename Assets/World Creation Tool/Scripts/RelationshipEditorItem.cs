@@ -45,8 +45,22 @@ public class RelationshipEditorItem : MonoBehaviour, IPointerEnterHandler, IPoin
 
     public void AddRelationshipStatus() {
         CHARACTER_RELATIONSHIP relStat = (CHARACTER_RELATIONSHIP)Enum.Parse(typeof(CHARACTER_RELATIONSHIP), relationshipsDropdown.options[relationshipsDropdown.value].text);
-        _relationship.AddRelationshipStatus(relStat);
-        UpdateStatusSummary();
+        if (IsRelationshipStatusValid(relStat)) {
+            _relationship.AddRelationshipStatus(relStat);
+            UpdateStatusSummary();
+        } else {
+            worldcreator.WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid relationship", _relationship.targetCharacter.name + " cannot be " + _relationship.sourceCharacter.name + "'s " + relStat.ToString());
+        }
+    }
+    private bool IsRelationshipStatusValid(CHARACTER_RELATIONSHIP relStat) {
+        if (Utilities.IsRelationshipStatusUnique(relStat) && _relationship.sourceCharacter.AlreadyHasRelationshipStatus(relStat)) { //check if a relationship status is unique, and if the source character already has a relationship status of that type
+            return false;
+        }
+        Relationship targetRelWithSource = _relationship.targetCharacter.GetRelationshipWith(_relationship.sourceCharacter);
+        if (Utilities.IsRelationshipStatusMutuallyExclusive(relStat, _relationship, targetRelWithSource)) {
+            return false;
+        }
+        return true;
     }
     public void RemoveRelationshipStatus() {
         CHARACTER_RELATIONSHIP relStat = (CHARACTER_RELATIONSHIP)Enum.Parse(typeof(CHARACTER_RELATIONSHIP), relationshipsDropdown.options[relationshipsDropdown.value].text);

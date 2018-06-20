@@ -120,6 +120,10 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
+    public void RemoveCharacter(ECS.Character character) {
+        _allCharacters.Remove(character);
+        Messenger.Broadcast<ECS.Character>(Signals.CHARACTER_REMOVED, character);
+    }
     private void ConstructAllClasses() {
         _classesDictionary = new Dictionary<string, CharacterClass>();
         string path = Utilities.dataPath + "CharacterClasses/";

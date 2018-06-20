@@ -462,11 +462,13 @@ namespace ECS {
 			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
             Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
+            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+
             //ConstructMaterialInventory();
 
         }
 
-		private void AllocateStatPoints(int statAllocationBonus){
+        private void AllocateStatPoints(int statAllocationBonus){
 			_baseMaxHP = _raceSetting.baseHP;
 			_baseStrength = _raceSetting.baseStr;
 			_baseAgility = _raceSetting.baseAgi;

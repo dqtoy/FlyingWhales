@@ -20,6 +20,7 @@ public class EditCharactersMenu : MonoBehaviour {
     #region Monobehaviours
     private void Awake() {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, OnCreateNewCharacter);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
         PopulateDropdowns();
     }
     #endregion
@@ -43,6 +44,20 @@ public class EditCharactersMenu : MonoBehaviour {
         if (characterInfoEditor.gameObject.activeSelf) {
             characterInfoEditor.LoadCharacters();
         }
+    }
+    private void OnCharacterRemoved(Character characterToBeRemoved) {
+        CharacterEditorItem characterItem = GetCharacterItem(characterToBeRemoved);
+        GameObject.Destroy(characterItem.gameObject);
+    }
+    private CharacterEditorItem GetCharacterItem(ECS.Character character) {
+        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(charactersScrollView.content.gameObject);
+        for (int i = 0; i < children.Length; i++) {
+            CharacterEditorItem item = children[i].gameObject.GetComponent<CharacterEditorItem>();
+            if (item.character.id == character.id) {
+                return item;
+            }
+        }
+        return null;
     }
     #endregion
 
