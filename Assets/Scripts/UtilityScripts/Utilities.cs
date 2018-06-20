@@ -1154,27 +1154,33 @@ public class Utilities : MonoBehaviour {
                 || relationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER)) {
                 return true;
             }
-            if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
+            if (otherRelationship != null) {
+                if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
                 || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER)) {
-                return true;
+                    return true;
+                }
             }
         } else if (relStat == CHARACTER_RELATIONSHIP.BROTHER || relStat == CHARACTER_RELATIONSHIP.SISTER) {
             if (relationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || relationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || relationship.HasStatus(CHARACTER_RELATIONSHIP.SON)
                 || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
                 return true;
             }
-            if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON)
+            if (otherRelationship != null) {
+                if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON)
                 || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                return true;
+                    return true;
+                }
             }
         } else if (relStat == CHARACTER_RELATIONSHIP.HUSBAND || relStat == CHARACTER_RELATIONSHIP.WIFE) {
             if (relationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
                 || relationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
                 return true;
             }
-            if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
+            if (otherRelationship != null) {
+                if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
                 || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                return true;
+                    return true;
+                }
             }
         }
         return false;
