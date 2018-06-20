@@ -72,6 +72,11 @@ public class CharacterManager : MonoBehaviour {
             for (int i = 0; i < data.charactersData.Count; i++) {
                 CharacterSaveData currData = data.charactersData[i];
                 ECS.Character currCharacter = CreateNewCharacter(currData);
+                Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
+                if (characterFaction != null) {
+                    characterFaction.AddNewCharacter(currCharacter);
+                    currCharacter.SetFaction(characterFaction);
+                }
             }
         }
     }

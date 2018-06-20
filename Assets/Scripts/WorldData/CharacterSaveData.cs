@@ -13,6 +13,7 @@ public class CharacterSaveData {
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
     public int homeID;
+    public int factionID;
     public PortraitSettings portraitSettings;
     public List<RelationshipSaveData> relationshipsData;
 
@@ -23,16 +24,24 @@ public class CharacterSaveData {
         gender = character.gender;
         role = character.role.roleType;
         className = character.characterClass.className;
+
         if (character.specificLocation != null) {
             locationType = character.specificLocation.locIdentifier;
             locationID = character.specificLocation.id;
         } else {
             locationID = -1;
         }
+
         if (character.home != null) {
             homeID = character.home.id;
         } else {
             homeID = -1;
+        }
+
+        if (character.faction != null) {
+            factionID = character.faction.id;
+        } else {
+            factionID = -1;
         }
         
         portraitSettings = character.portraitSettings;

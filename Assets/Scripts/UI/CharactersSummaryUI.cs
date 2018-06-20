@@ -29,6 +29,7 @@ public class CharactersSummaryUI : UIMenu {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
+        Messenger.AddListener<ECS.Character>(Signals.FACTION_SET, UpdateCharacterEntry);
         sortingAction = () => OrderByName();
         //EventDelegate.Set(nameHeaderTrigger.onClick, () => SetSortingAction(OrderByName));
         //EventDelegate.Set(factionHeaderTrigger.onClick, () => SetSortingAction(OrderByFaction));
@@ -57,14 +58,10 @@ public class CharactersSummaryUI : UIMenu {
     }
 
     private CharacterSummaryEntry GetCharacterEntry(ECS.Character character) {
-        return characterEntries[character];
-        //for (int i = 0; i < characterEntries.Count; i++) {
-        //    CharacterSummaryEntry currEntry = characterEntries[i];
-        //    if (currEntry.character.id == character.id) {
-        //        return currEntry;
-        //    }
-        //}
-        //return null;
+        if (characterEntries.ContainsKey(character)) {
+            return characterEntries[character];
+        }
+        return null;
     }
 
     private void UpdateCharacterEntry(ECS.Character character) {

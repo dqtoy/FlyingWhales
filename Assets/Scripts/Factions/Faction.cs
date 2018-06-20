@@ -254,12 +254,12 @@ public class Faction {
     public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {
             _characters.Add(character);
-            FactionManager.Instance.UpdateFactionOrderBy();
+            //FactionManager.Instance.UpdateFactionOrderBy();
         }
     }
     public void RemoveCharacter(ECS.Character character) {
         _characters.Remove(character);
-        FactionManager.Instance.UpdateFactionOrderBy();
+        //FactionManager.Instance.UpdateFactionOrderBy();
     }
     public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
         List<ECS.Character> chars = new List<ECS.Character>();

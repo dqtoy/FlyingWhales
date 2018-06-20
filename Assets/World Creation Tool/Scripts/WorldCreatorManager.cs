@@ -271,6 +271,7 @@ namespace worldcreator {
                     Faction currFaction = FactionManager.Instance.CreateNewFaction(currData);
                     WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(currFaction);
                 }
+                WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
             }
         }
         private void OccupyRegions(WorldSaveData data) {
@@ -291,7 +292,13 @@ namespace worldcreator {
                 for (int i = 0; i < data.charactersData.Count; i++) {
                     CharacterSaveData currData = data.charactersData[i];
                     ECS.Character currCharacter = CharacterManager.Instance.CreateNewCharacter(currData);
+                    Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
+                    if (characterFaction != null) {
+                        characterFaction.AddNewCharacter(currCharacter);
+                        currCharacter.SetFaction(characterFaction);
+                    }
                 }
+                WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
             }
         }
         private void LoadRelationships(WorldSaveData data) {
@@ -570,6 +577,7 @@ namespace worldcreator {
         public void CreateNewFaction(RACE race) {
             Faction createdFaction = FactionManager.Instance.CreateNewFaction(race);
             WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(createdFaction);
+            WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
         }
         public void DeleteFaction(Faction faction) {
             FactionManager.Instance.DeleteFaction(faction);

@@ -9,6 +9,7 @@ namespace worldcreator {
 
         [SerializeField] private InputField factionNameField;
         [SerializeField] private Text factionRegionsLbl;
+        [SerializeField] private Text factionCharactersLbl;
         [SerializeField] private Dropdown raceDropdown;
         [SerializeField] private Button deleteBtn;
         [SerializeField] private Button assignBtn;
@@ -50,6 +51,7 @@ namespace worldcreator {
         public void UpdateInfo() {
             factionNameField.text = _faction.name;
             factionRegionsLbl.text = _faction.ownedRegions.Count.ToString();
+            factionCharactersLbl.text = _faction.characters.Count.ToString();
             raceDropdown.value = GetRaceIndex(_faction.race);
         }
         public void AssignFaction() {

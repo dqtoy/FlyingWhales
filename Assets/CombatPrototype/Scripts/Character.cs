@@ -2070,6 +2070,7 @@ namespace ECS {
         #region Faction
         public void SetFaction(Faction faction) {
 			_faction = faction;
+            Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
 		}
 		#endregion
 
