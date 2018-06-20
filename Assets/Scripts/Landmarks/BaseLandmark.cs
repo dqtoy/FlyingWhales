@@ -29,7 +29,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected List<Log> _history;
     protected int _combatHistoryID;
     protected Dictionary<int, Combat> _combatHistory;
-    protected List<ICombatInitializer> _charactersAtLocation;
+    protected List<Character> _charactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
@@ -102,7 +102,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public Dictionary<int, Combat> combatHistory {
 		get { return _combatHistory; }
 	}
-    public List<ICombatInitializer> charactersAtLocation {
+    public List<Character> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
 	public HexTile tileLocation{
@@ -154,7 +154,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
         _combatHistoryID = 0;
-        _charactersAtLocation = new List<ICombatInitializer>();
+        _charactersAtLocation = new List<Character>();
         _itemsInLandmark = new List<Item>();
         _characterTraces = new Dictionary<Character, GameDate>();
         //_totalDurability = landmarkData.hitPoints;
@@ -589,7 +589,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     #endregion
 
     #region Location
-    public void AddCharacterToLocation(ICombatInitializer character) {
+    public void AddCharacterToLocation(Character character) {
         if (!_charactersAtLocation.Contains(character)) {
             _charactersAtLocation.Add(character);
             if (character is Character) {
@@ -606,7 +606,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
-    public void RemoveCharacterFromLocation(ICombatInitializer character) {
+    public void RemoveCharacterFromLocation(Character character) {
         _charactersAtLocation.Remove(character);
         if (character is Character) {
             Character currChar = character as Character;
@@ -619,7 +619,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             UnScheduleCombatCheck();
         }
     }
-    public void ReplaceCharacterAtLocation(ICombatInitializer characterToReplace, ICombatInitializer characterToAdd) {
+    public void ReplaceCharacterAtLocation(Character characterToReplace, Character characterToAdd) {
         if (_charactersAtLocation.Contains(characterToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
@@ -689,36 +689,36 @@ public class BaseLandmark : ILocation, TaskCreator {
         ContinueDailyActions();
     }
     public void PairUpCombats() {
-        List<ICombatInitializer> combatInitializers = GetCharactersByCombatPriority();
+        List<Character> combatInitializers = GetCharactersByCombatPriority();
         if (combatInitializers != null) {
             for (int i = 0; i < combatInitializers.Count; i++) {
-                ICombatInitializer currInitializer = combatInitializers[i];
-                Debug.Log("Finding combat pair for " + currInitializer.mainCharacter.name);
+                Character currInitializer = combatInitializers[i];
+                Debug.Log("Finding combat pair for " + currInitializer.name);
                 if (currInitializer.isInCombat) {
                     continue; //this current group is already in combat, skip it
                 }
                 //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> combatGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (combatGroups.Count > 0) {
-                    ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
+                    Character chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
                     StartCombatBetween(currInitializer, chosenEnemy);
                     continue; //the attacking group has found an enemy! skip to the next group
                 }
 
                 //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> neutralGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (neutralGroups.Count > 0) {
-                    ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
+                    Character chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
                     StartCombatBetween(currInitializer, chosenEnemy);
                     continue; //the attacking group has found an enemy! skip to the next group
                 }
 
                 //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
-                List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> stealthGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (stealthGroups.Count > 0) {
                     //The chance of initiating combat is 35%
                     if (Random.Range(0, 100) < 35) {
-                        ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
+                        Character chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
                         StartCombatBetween(currInitializer, chosenEnemy);
                         continue; //the attacking group has found an enemy! skip to the next group
                     }
@@ -726,7 +726,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
-    public List<ICombatInitializer> GetCharactersByCombatPriority() {
+    public List<Character> GetCharactersByCombatPriority() {
         //if (_charactersAtLocation.Count <= 0) {
         //    return null;
         //}
@@ -735,7 +735,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currChar = _charactersAtLocation[i];
+            Character currChar = _charactersAtLocation[i];
             //if (currChar.currentAction != null && currChar.currentAction.combatPriority > 0) {
             //    return true;
             //}
@@ -744,9 +744,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool HasHostilities() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
+            Character currItem = _charactersAtLocation[i];
             for (int j = 0; j < _charactersAtLocation.Count; j++) {
-                ICombatInitializer otherItem = _charactersAtLocation[j];
+                Character otherItem = _charactersAtLocation[j];
                 if (currItem != otherItem) {
                     if (currItem.IsHostileWith(otherItem)) {
                         return true; //there are characters with hostilities
@@ -758,7 +758,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool HasHostileCharactersWith(Character character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
+            Character currItem = _charactersAtLocation[i];
             if (currItem == character) {
                 continue; //skip
             }
@@ -802,7 +802,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         if (!withFactionOnly) {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currItem = _charactersAtLocation[i];
+                Character currItem = _charactersAtLocation[i];
                 Faction factionOfItem = null;
                 if (currItem is Character) {
                     factionOfItem = (currItem as Character).faction;
@@ -824,10 +824,10 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return false;
     }
-    public List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
-        List<ICombatInitializer> groups = new List<ICombatInitializer>();
+    public List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null) {
+        List<Character> groups = new List<Character>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currGroup = _charactersAtLocation[i];
+            Character currGroup = _charactersAtLocation[i];
             if (notInCombatOnly) {
                 if (currGroup.isInCombat) {
                     continue; //skip
@@ -842,33 +842,36 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return groups;
     }
-    public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
+    public void StartCombatBetween(Character combatant1, Character combatant2) {
         Combat combat = new Combat(this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
-        string combatant1Name = string.Empty;
-        string combatant2Name = string.Empty;
-        if (combatant1 is Party) {
-            combatant1Name = (combatant1 as Party).name;
-            combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
-        } else {
-            combatant1Name = (combatant1 as Character).name;
-            combat.AddCharacter(SIDES.A, combatant1 as Character);
-        }
-        if (combatant2 is Party) {
-            combatant2Name = (combatant2 as Party).name;
-            combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
-        } else {
-            combatant2Name = (combatant2 as Character).name;
-            combat.AddCharacter(SIDES.B, combatant2 as Character);
-        }
+        string combatant1Name = combatant1.name;
+        string combatant2Name = combatant2.name;
+        combat.AddCharacter(SIDES.A, combatant1);
+        combat.AddCharacter(SIDES.B, combatant2);
+
+        //if (combatant1 is Party) {
+        //    combatant1Name = (combatant1 as Party).name;
+        //    combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
+        //} else {
+        //    combatant1Name = (combatant1 as Character).name;
+        //    combat.AddCharacter(SIDES.A, combatant1 as Character);
+        //}
+        //if (combatant2 is Party) {
+        //    combatant2Name = (combatant2 as Party).name;
+        //    combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
+        //} else {
+        //    combatant2Name = (combatant2 as Character).name;
+        //    combat.AddCharacter(SIDES.B, combatant2 as Character);
+        //}
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
         combatLog.AddToFillers(combatant1, combatant1Name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
         combatLog.AddToFillers(combatant2, combatant2Name, LOG_IDENTIFIER.TARGET_CHARACTER);
         AddHistory(combatLog);
-        combatant1.mainCharacter.AddHistory(combatLog);
-        combatant2.mainCharacter.AddHistory(combatLog);
+        combatant1.AddHistory(combatLog);
+        combatant2.AddHistory(combatLog);
         Debug.Log("Starting combat between " + combatant1Name + " and  " + combatant2Name);
 
         //this.specificLocation.SetCurrentCombat(combat);
@@ -876,7 +879,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public void ContinueDailyActions() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
+            Character currItem = _charactersAtLocation[i];
             if (!currItem.isInCombat) {
                 currItem.ContinueDailyAction();
             }

@@ -218,9 +218,9 @@ public class CharacterIcon : MonoBehaviour {
         PathfindingManager.Instance.RemoveAgent(_aiPath);
     }
     private void OnTriggerEnter2D(Collider2D other) {
-        if (_character.currentAction != null) {
-            if (other.tag == "Character" && _character.currentAction.actionType == ACTION_TYPE.ATTACK) {
-                AttackAction attackAction = _character.currentAction as AttackAction;
+        if (_character.actionData.currentAction != null) {
+            if (other.tag == "Character" && _character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
+                AttackAction attackAction = _character.actionData.currentAction as AttackAction;
                 CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
                 if (attackAction.characterObj.character.id == enemy.character.id) {
                     _character.actionData.DoAction();

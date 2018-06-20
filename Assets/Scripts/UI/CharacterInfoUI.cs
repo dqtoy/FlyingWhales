@@ -162,8 +162,8 @@ public class CharacterInfoUI : UIMenu {
         //text += currentlyShowingCharacter.id;
         text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
         text += "\n<b>Current Action: </b>";
-        if (currentlyShowingCharacter.currentAction != null) {
-            text += currentlyShowingCharacter.currentAction.actionData.actionName.ToString() + " ";
+        if (currentlyShowingCharacter.actionData.currentAction != null) {
+            text += currentlyShowingCharacter.actionData.currentAction.actionData.actionName.ToString() + " ";
             //for (int i = 0; i < currentlyShowingCharacter.currentAction.alignments.Count; i++) {
             //    ACTION_ALIGNMENT currAlignment = currentlyShowingCharacter.currentAction.alignments[i];
             //    text += currAlignment.ToString();

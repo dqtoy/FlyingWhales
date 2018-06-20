@@ -64,7 +64,7 @@ public class SearchState : State {
 		bool hasBeenFound = false;
 		string itemName = (string)searchingFor;
         for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
+			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i];
 			if (currCharacter.HasItem(itemName)) {
 				hasBeenFound = true;
                 //Each day while he is in Search State, if the character with the Heirloom Necklace is in the location then he would successfully perform the action and end the Search State.
@@ -89,7 +89,7 @@ public class SearchState : State {
 		bool hasBeenFound = false;
 		string tagName = (string)searchingFor;
 		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
+			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i];
 			if (currCharacter.HasTag(tagName, true)) {
 				hasBeenFound = true;
 				if (_afterFindingAction != null) {

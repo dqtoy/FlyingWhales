@@ -141,7 +141,7 @@ public class Invade : CharacterTask {
 
 	private bool AreThereStillHostileInLandmark(){
 		for (int i = 0; i < _landmarkToAttack.charactersAtLocation.Count; i++) {
-			ICombatInitializer character = _landmarkToAttack.charactersAtLocation [i];
+			Character character = _landmarkToAttack.charactersAtLocation [i];
 			if(character is Party){
 				Party party = (Party)character;
 				if(party.partyLeader.id != _assignedCharacter.id){

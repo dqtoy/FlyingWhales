@@ -7,7 +7,7 @@ using System;
 
 namespace ECS {
 //	[System.Serializable]
-	public class Character : TaskCreator, ICombatInitializer {
+	public class Character : TaskCreator {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
@@ -75,7 +75,7 @@ namespace ECS {
 		//private CharacterAction _currentAction;
         private ILocation _specificLocation;
 		private Region _currentRegion;
-		private CharacterAvatar _avatar;
+		//private CharacterAvatar _avatar;
 
 		private List<BodyPart> _bodyParts;
 		private List<Item> _equippedItems;
@@ -116,7 +116,7 @@ namespace ECS {
         private int _gold;
         private int _prestige;
 
-		private Action _currentFunction;
+		//private Action _currentFunction;
 		private bool _isInCombat;
 
         //When the character should have a next action it should do after it's current one.
@@ -191,9 +191,9 @@ namespace ECS {
         public QuestPhase currentQuestPhase {
             get { return _questData.GetQuestPhase(); }
         }
-        public CharacterAction currentAction {
-			get { return _actionData.currentAction; }
-		}
+        //public CharacterAction currentAction {
+        //    get { return _actionData.currentAction; }
+        //}
         public ILocation specificLocation {
             get {
     //            ILocation loc = null;
@@ -207,9 +207,9 @@ namespace ECS {
 		public Region currentRegion{
 			get { return (_party == null ? _currentRegion : _party.currentRegion); }
 		}
-		public CharacterAvatar avatar{
-			get { return _avatar; }
-		}
+		//public CharacterAvatar avatar{
+		//	get { return _avatar; }
+		//}
 		public List<BodyPart> bodyParts{
 			get { return this._bodyParts; }
 		}
@@ -324,20 +324,18 @@ namespace ECS {
 		public int prestige {
             get { return _prestige; }
 		}
-		public bool isDefeated {
-			get {
-				return _isDefeated; 
-			}
-		}
-        public int civilians {
-            get { 
-				if(_civiliansByRace == null){
-					return 0;
-				}
-				return _civiliansByRace.Sum(x => x.Value); 
-			}
-        }
-		public Dictionary<RACE, int> civiliansByRace{
+        //public bool isDefeated {
+        //	get { return _isDefeated; }
+        //}
+        //public int civilians {
+        //    get {
+        //        if (_civiliansByRace == null) {
+        //            return 0;
+        //        }
+        //        return _civiliansByRace.Sum(x => x.Value);
+        //    }
+        //}
+        public Dictionary<RACE, int> civiliansByRace{
 			get { return _civiliansByRace; }
 		}
 		public List<BaseLandmark> exploredLandmarks {
@@ -351,9 +349,9 @@ namespace ECS {
 				return _isInCombat; 
 			}
 		}
-		public Action currentFunction{
-			get { return _currentFunction; }
-		}
+		//public Action currentFunction{
+		//	get { return _currentFunction; }
+		//}
         public bool isFactionless {
             get { return faction == null; }
         }
@@ -369,13 +367,10 @@ namespace ECS {
         }
 		public Character isFollowerOf{
 			get { return _isFollowerOf; }
-		}
-		public Character mainCharacter{
-			get { return this; }
-		}
-		public int numOfCharacters{
-			get { return 1; }
-		}
+		} 
+		//public int numOfCharacters{
+		//	get { return 1; }
+		//}
 		public bool doesNotTakePrisoners{
 			get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
 		}
@@ -452,7 +447,7 @@ namespace ECS {
 			_isDead = false;
 			_isFainted = false;
 			_isPrisoner = false;
-			_isDefeated = false;
+			//_isDefeated = false;
 			_doesNotTakePrisoners = false;
 			_cannotBeTakenAsPrisoner = false;
             _isIdle = false;
@@ -817,7 +812,7 @@ namespace ECS {
 			}
 		}
 		//Character's death
-		internal void Death(ICombatInitializer killer = null){
+		internal void Death(Character killer = null){
 			if(!_isDead){
 				_isDead = true;
 				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
@@ -881,13 +876,13 @@ namespace ECS {
 				if(_isFollower){
 					SetFollowerState (false);
 				}
-                if (_avatar != null) {
-                    if (_avatar.mainCharacter.id == this.id) {
-                        DestroyAvatar();
-                    } else {
-                        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
-                    }
-                }
+                //if (_avatar != null) {
+                //    if (_avatar.mainCharacter.id == this.id) {
+                //        DestroyAvatar();
+                //    } else {
+                //        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
+                //    }
+                //}
 
                 if (_isPrisoner){
 					PrisonerDeath ();
@@ -2312,14 +2307,14 @@ namespace ECS {
 //                }
 //            }
         }
-		public void SetAvatar(CharacterAvatar avatar) {
-			_avatar = avatar;
-		}
-		public void DestroyAvatar() {
-			if(_avatar != null) {
-				_avatar.InstantDestroyAvatar();
-            }
-        }
+		//public void SetAvatar(CharacterAvatar avatar) {
+		//	_avatar = avatar;
+		//}
+		//public void DestroyAvatar() {
+		//	if(_avatar != null) {
+		//		_avatar.InstantDestroyAvatar();
+  //          }
+  //      }
 		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
             if (specificLocation == targetLocation) {
                 //action doer is already at the target location
@@ -2651,9 +2646,9 @@ namespace ECS {
                     ((BaseLandmark)_isPrisonerOf).AddHistory(becomePrisonerLog);
                 }
 
-                if (_avatar != null && _avatar.mainCharacter.id == this.id) {
-                    DestroyAvatar();
-                }
+                //if (_avatar != null && _avatar.mainCharacter.id == this.id) {
+                //    DestroyAvatar();
+                //}
 
                 Unfaint ();
 
@@ -2773,8 +2768,8 @@ namespace ECS {
 		}
 		#endregion
 
-		#region ICombatInitializer
-		public bool IsHostileWith(ICombatInitializer combatInitializer){
+		#region Character
+		public bool IsHostileWith(Character character){
             if (this.faction == null) {
                 return true; //this character has no faction
             }
@@ -2782,12 +2777,13 @@ namespace ECS {
             //    return true;
             //}
             //Check here if the combatInitializer is hostile with this character, if yes, return true
-            Faction factionOfEnemy = null;
-            if(combatInitializer is Character) {
-                factionOfEnemy = (combatInitializer as Character).faction;
-            }else if(combatInitializer is Party) {
-                factionOfEnemy = (combatInitializer as Party).faction;
-            }
+            Faction factionOfEnemy = character.faction;
+            
+            //if (combatInitializer is Character) {
+            //    factionOfEnemy = (combatInitializer as Character).faction;
+            //}else if(combatInitializer is Party) {
+            //    factionOfEnemy = (combatInitializer as Party).faction;
+            //}
             if(factionOfEnemy != null) {
                 if(factionOfEnemy.id == this.faction.id) {
                     return false; //characters are of same faction
@@ -2802,25 +2798,25 @@ namespace ECS {
             }
 			
 		}
-		public void ReturnCombatResults(Combat combat){
-            this.SetIsInCombat(false);
-			if (this.isDefeated) {
+		//public void ReturnCombatResults(Combat combat){
+  //          this.SetIsInCombat(false);
+		//	if (this.isDefeated) {
                 
-            } else{
-                //this character won the combat, continue his/her current action if any
-                if (currentFunction != null) {
-                    currentFunction();
-                    SetCurrentFunction(null);
-                }
-                //if (avatar != null && avatar.isMovementPaused) {
-                //    avatar.ResumeMovement();
-                //}
-			}
-            SetIsDefeated(false);
-        }
-		public void SetIsDefeated(bool state){
-			_isDefeated = state;
-		}
+  //          } else{
+  //              //this character won the combat, continue his/her current action if any
+  //              if (currentFunction != null) {
+  //                  currentFunction();
+  //                  SetCurrentFunction(null);
+  //              }
+  //              //if (avatar != null && avatar.isMovementPaused) {
+  //              //    avatar.ResumeMovement();
+  //              //}
+		//	}
+  //          SetIsDefeated(false);
+  //      }
+		//public void SetIsDefeated(bool state){
+		//	_isDefeated = state;
+		//}
         //public void AdjustCivilians(Dictionary<RACE, int> civilians) {
         //    foreach (KeyValuePair<RACE, int> kvp in civilians) {
         //        AdjustCivilians(kvp.Key, kvp.Value);
@@ -2861,39 +2857,39 @@ namespace ECS {
             //}
             return STANCE.NEUTRAL;
         }
-        public void ContinueDailyAction() {
-            if (!isInCombat) {
-                if (currentAction != null) {
-                    //if (avatar != null && avatar.isTravelling) {
-                    //    return;
-                    //}
-                    //currentAction.PerformTask();
-                }
-            }
-        }
-        public bool CanInitiateCombat() {
-            //if (currentAction.combatPriority > 0) {
-            //    return true;
-            //}
-            return false;
-        }
+        //public void ContinueDailyAction() {
+        //    if (!isInCombat) {
+        //        if (actionData.currentAction != null) {
+        //            //if (avatar != null && avatar.isTravelling) {
+        //            //    return;
+        //            //}
+        //            //currentAction.PerformTask();
+        //        }
+        //    }
+        //}
+        //public bool CanInitiateCombat() {
+        //    //if (currentAction.combatPriority > 0) {
+        //    //    return true;
+        //    //}
+        //    return false;
+        //}
         #endregion
 
 		#region Combat Handlers
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
 		}
-		public void SetCurrentFunction (Action function){
-			if(_party != null){
-				_party.SetCurrentFunction (() => function ());
-			}else{
-				_currentFunction = function;
-			}
-		}
-		#endregion
+        //public void SetCurrentFunction(Action function) {
+        //    if (_party != null) {
+        //        _party.SetCurrentFunction(() => function());
+        //    } else {
+        //        _currentFunction = function;
+        //    }
+        //}
+        #endregion
 
-		#region Landmarks
-		public void AddExploredLandmark(BaseLandmark landmark){
+        #region Landmarks
+        public void AddExploredLandmark(BaseLandmark landmark){
 			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
             //schedule removal of landmark after 6 months
             GameDate expiration = GameManager.Instance.Today();

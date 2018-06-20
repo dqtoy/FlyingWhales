@@ -20,7 +20,7 @@ public class InvadeState : State {
 	}
 	private bool AreThereStillHostileInLandmark(){
 		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			ICombatInitializer character = _targetLandmark.charactersAtLocation [i];
+			Character character = _targetLandmark.charactersAtLocation [i];
 			if(character is Party){
 				Party party = (Party)character;
 				if(party.partyLeader.id != _assignedCharacter.id){

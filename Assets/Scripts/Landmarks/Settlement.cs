@@ -285,7 +285,7 @@ public class Settlement : BaseLandmark {
 			for (int j = 0; j < adjacentRegion.landmarks.Count; j++) {
 				if(adjacentRegion.landmarks[j].charactersAtLocation.Count > 0){
 					for (int k = 0; k < adjacentRegion.landmarks[j].charactersAtLocation.Count; k++) {
-						ICombatInitializer combatInitializer = adjacentRegion.landmarks [j].charactersAtLocation [k];
+						Character combatInitializer = adjacentRegion.landmarks [j].charactersAtLocation [k];
 						if(combatInitializer is Party){
 							Party party = (Party)combatInitializer;
 							for (int l = 0; l < party.partyMembers.Count; l++) {

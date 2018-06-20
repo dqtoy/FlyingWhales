@@ -942,7 +942,7 @@ namespace ECS{
 			//TODO: ECS.Character flees
 			RemoveCharacter(targetCharacter);
 			fledCharacters.Add (targetCharacter);
-			targetCharacter.SetIsDefeated (true);
+			//targetCharacter.SetIsDefeated (true);
             CombatManager.Instance.CharacterContinuesAction(targetCharacter);
             AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
 		}
@@ -975,14 +975,14 @@ namespace ECS{
 		internal void CharacterDeath(ECS.Character character){
 			RemoveCharacter (character);
 			//deadCharacters.Add (character);
-			character.SetIsDefeated (true);
+			//character.SetIsDefeated (true);
 			AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
 		}
 
 		internal void CharacterFainted(ECS.Character character){
 			RemoveCharacter (character);
 			faintedCharacters.Add (character);
-			character.SetIsDefeated (true);
+			//character.SetIsDefeated (true);
 			AddCombatLog(character.coloredUrlName + " fainted!", character.currentSide);
 		}
 
@@ -1039,7 +1039,7 @@ namespace ECS{
             return (int) (((weaponAttack + stat) * (1f + (stat / 2f))) * (1f + ((float) level / 100f)));
         }
 
-        //public ICombatInitializer GetOpposingCharacters(ECS.Character character) {
+        //public Character GetOpposingCharacters(ECS.Character character) {
         //    if (attacker is ECS.Character) {
         //        if ((attacker as Character).id == character.id) {
         //            return defender;
