@@ -166,12 +166,14 @@ public class CharacterInfoEditor : MonoBehaviour {
         LoadCharacters();
     }
     public void OnRelationshipRemoved(Relationship removedRel) {
-        if (_character == null) {
+        if (_character == null || !this.gameObject.activeSelf) {
             return;
         }
         RelationshipEditorItem itemToRemove = GetRelationshipItem(removedRel);
-        GameObject.Destroy(itemToRemove.gameObject);
-        LoadCharacters();
+        if (itemToRemove != null) {
+            GameObject.Destroy(itemToRemove.gameObject);
+            LoadCharacters();
+        }
     }
     private RelationshipEditorItem GetRelationshipItem(Relationship rel) {
         RelationshipEditorItem[] children = Utilities.GetComponentsInDirectChildren<RelationshipEditorItem>(relationshipScrollView.content.gameObject);
