@@ -176,7 +176,7 @@ public class LandmarkManager : MonoBehaviour {
 		hexTile.landmarkOnTile.OccupyLandmark(occupant);
 	}
 
-#region Landmark Generation
+    #region Landmark Generation
     //public bool GenerateLandmarks() {
     //    List<BaseLandmark> createdLandmarks = new List<BaseLandmark>();
     //    List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles);
@@ -415,7 +415,6 @@ public class LandmarkManager : MonoBehaviour {
         Debug.Log(log, tribeRegion.centerOfMass);
         return landmarksToBeCreated;
     }
-
   //  /*
   //   Generate new landmarks (Lairs, Dungeons)
   //       */
@@ -466,9 +465,24 @@ public class LandmarkManager : MonoBehaviour {
 		//}
 		//landmark.AddItemsInLandmark (items);
 	}
-#endregion
+    public ILocation GetLocationBasedOnID(LOCATION_IDENTIFIER identifier, int id) {
+        List<ILocation> choices;
+        if (identifier == LOCATION_IDENTIFIER.HEXTILE) {
+            choices = new List<ILocation>(worldcreator.WorldCreatorManager.Instance.hexTiles.Select(x => x as ILocation));
+        } else {
+            choices = new List<ILocation>(GetAllLandmarks().Select(x => x as ILocation));
+        }
+        for (int i = 0; i < choices.Count; i++) {
+            ILocation currLocation = choices[i];
+            if (currLocation.id == id) {
+                return currLocation;
+            }
+        }
+        return null;
+    }
+    #endregion
 
-#region ECS.Character Production
+    #region ECS.Character Production
     /*
      Get the character role weights for a faction.
      This will not include roles that the faction has already reached the cap of.
@@ -498,9 +512,9 @@ public class LandmarkManager : MonoBehaviour {
         }
         return classes;
     }
-#endregion
+    #endregion
 
-#region Material Generation
+    #region Material Generation
     /*
      Generate Materials
          */
@@ -546,24 +560,19 @@ public class LandmarkManager : MonoBehaviour {
         //    Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
         //}
     }
-#endregion
+    #endregion
 
-#region Utilities
+    #region Utilities
     public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
         LandmarkData landmarkData = GetLandmarkData(landmarkType);
         return landmarkData.baseLandmarkType;
     }
     public BaseLandmark GetLandmarkByID(int id) {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.mainLandmark.id == id) {
-                return currRegion.mainLandmark;
-            }
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.id == id) {
-                    return currLandmark;
-                }
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            if (currLandmark.id == id) {
+                return currLandmark;
             }
         }
         return null;
@@ -662,5 +671,5 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarks;
     }
-#endregion
+    #endregion
 }

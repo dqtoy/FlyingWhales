@@ -121,10 +121,21 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public ECS.Character CreateNewCharacter(CharacterSaveData data) {
-        ECS.Character newCharacter = new ECS.Character(data);
+        ECS.Character newCharacter = new ECS.Character(data);        
+        newCharacter.AssignRole(data.role);
+
+        if (data.homeID != -1) {
+            BaseLandmark homeLocation = LandmarkManager.Instance.GetLandmarkByID(data.homeID);
+            newCharacter.SetHome(homeLocation);
+        }
+
+        if (data.locationID != -1) {
+            ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
+            newCharacter.SetSpecificLocation(currentLocation);
+        }
+        
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
-        newCharacter.AssignRole(data.role);
         return newCharacter;
     }
     public void RemoveCharacter(ECS.Character character) {

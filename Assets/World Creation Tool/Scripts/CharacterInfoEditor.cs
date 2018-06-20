@@ -24,6 +24,7 @@ public class CharacterInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown genderField;
     [SerializeField] private Dropdown roleField;
     [SerializeField] private Dropdown classField;
+    [SerializeField] private Text otherInfoLbl;
 
     [Header("Relationship Info")]
     [SerializeField] private GameObject relationshipItemPrefab;
@@ -95,12 +96,15 @@ public class CharacterInfoEditor : MonoBehaviour {
         roleField.AddOptions(Utilities.GetEnumChoices<CHARACTER_ROLE>());
         classField.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
     }
-    private void UpdateBasicInfo() {
+    public void UpdateBasicInfo() {
         nameField.text = _character.name;
         raceField.value = Utilities.GetOptionIndex(raceField, _character.raceSetting.race.ToString());
         genderField.value = Utilities.GetOptionIndex(genderField, _character.gender.ToString());
         roleField.value = Utilities.GetOptionIndex(roleField, _character.role.roleType.ToString());
         classField.value = Utilities.GetOptionIndex(classField, _character.characterClass.className);
+        otherInfoLbl.text = string.Empty;
+        otherInfoLbl.text += "Home: " + _character.home.ToString();
+        otherInfoLbl.text += "\nLocation: " + _character.specificLocation.ToString();
     }
     public void SetName(string newName) {
         _character.SetName(newName);

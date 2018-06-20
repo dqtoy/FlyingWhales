@@ -19,6 +19,9 @@ namespace worldcreator {
         public List<Region> selectedRegions {
             get { return GetSelectedRegions(); }
         }
+        public List<BaseLandmark> selectedLandmarks {
+            get { return GetSelectedLandmarks(); }
+        }
         #endregion
 
         private void Awake() {
@@ -241,6 +244,17 @@ namespace worldcreator {
                 }
             }
             return regions;
+        }
+
+        private List<BaseLandmark> GetSelectedLandmarks() {
+            List<BaseLandmark> landamrks = new List<BaseLandmark>();
+            for (int i = 0; i < highlightedTiles.Count; i++) {
+                HexTile currTile = highlightedTiles[i];
+                if (currTile.landmarkOnTile != null && !landamrks.Contains(currTile.landmarkOnTile)) {
+                    landamrks.Add(currTile.landmarkOnTile);
+                }
+            }
+            return landamrks;
         }
     }
 }

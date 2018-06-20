@@ -64,7 +64,7 @@ namespace worldcreator {
         [Space(10)]
         [Header("Edit Characters Menu")]
         [SerializeField] private GameObject editCharactersMenuGO;
-        [SerializeField] private EditCharactersMenu editCharactersMenu;
+        [SerializeField] private EditCharactersMenu _editCharactersMenu;
 
         [Space(10)]
         [Header("Saving")]
@@ -92,6 +92,9 @@ namespace worldcreator {
         }
         public EditFactionsMenu editFactionsMenu {
             get { return _editFactionsMenu; }
+        }
+        public EditCharactersMenu editCharactersMenu {
+            get { return _editCharactersMenu; }
         }
         public MessageBox messageBox {
             get { return _messageBox; }

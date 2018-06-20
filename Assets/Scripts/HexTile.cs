@@ -1451,7 +1451,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         UIManager.Instance.HideSmallInfo();
     }
     public override string ToString() {
-        return this.tileName;
+        return this.locationName;
     }
     #endregion
 
