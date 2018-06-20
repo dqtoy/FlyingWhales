@@ -1423,11 +1423,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if(_landmarkOnTile.charactersAtLocation.Count > 0) {
             for (int i = 0; i < _landmarkOnTile.charactersAtLocation.Count; i++) {
                 Character currObj = _landmarkOnTile.charactersAtLocation[i];
-                if (currObj is Party) {
-                    text += "\n" + ((Party)currObj).name;
-                } else if (currObj is Character) {
-                    text += "\n" + ((Character)currObj).name;
-                }
+                text += "\n" + currObj.name;
+                //if (currObj is Party) {
+                //    text += "\n" + ((Party)currObj).name;
+                //} else if (currObj is Character) {
+                //    text += "\n" + ((Character)currObj).name;
+                //}
             }
         } else {
             text += "NONE";
@@ -1437,11 +1438,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (_charactersAtLocation.Count > 0) {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
                 Character currObj = _charactersAtLocation[i];
-                if (currObj is Party) {
-                    text += "\n" + ((Party)currObj).name;
-                } else if (currObj is Character) {
-                    text += "\n" + ((Character)currObj).name;
-                }
+                text += "\n" + currObj.name;
+                //if (currObj is Party) {
+                //    text += "\n" + ((Party)currObj).name;
+                //} else if (currObj is Character) {
+                //    text += "\n" + ((Character)currObj).name;
+                //}
             }
         } else {
             text += "NONE";
@@ -1461,13 +1463,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	public void AddCharacterToLocation(Character character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
-			if(character is Character){
-                Character currChar = character as Character;
-                currChar.SetSpecificLocation(this);
-			}else if(character is Party){
-                Party currParty = character as Party;
-                currParty.SetSpecificLocation(this);
-			}
+            character.SetSpecificLocation(this);
+            //if (character is Character){
+            //  Character currChar = character as Character;
+            //  currChar.SetSpecificLocation(this);
+			//}else if(character is Party){
+            //  Party currParty = character as Party;
+            //  currParty.SetSpecificLocation(this);
+			//}
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
@@ -1475,13 +1478,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	}
 	public void RemoveCharacterFromLocation(Character character) {
 		_charactersAtLocation.Remove(character);
-		if(character is Character){
-            Character currChar = character as Character;
-            currChar.SetSpecificLocation(null);
-        } else if(character is Party){
-            Party currParty = character as Party;
-            currParty.SetSpecificLocation(null);
-		}
+        character.SetSpecificLocation(null);
+  //      if (character is Character){
+  //          Character currChar = character as Character;
+  //          currChar.SetSpecificLocation(null);
+  //      } else if(character is Party){
+  //          Party currParty = character as Party;
+  //          currParty.SetSpecificLocation(null);
+		//}
         if(_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();
         }
@@ -1491,13 +1495,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
             _charactersAtLocation.Remove(characterToReplace);
-            if (characterToAdd is Character) {
-                Character currChar = characterToAdd as Character;
-                currChar.SetSpecificLocation(this);
-            } else if (characterToAdd is Party) {
-                Party currParty = characterToAdd as Party;
-                currParty.SetSpecificLocation(this);
-            }
+            characterToAdd.SetSpecificLocation(this);
+            //if (characterToAdd is Character) {
+            //    Character currChar = characterToAdd as Character;
+            //    currChar.SetSpecificLocation(this);
+            //} else if (characterToAdd is Party) {
+            //    Party currParty = characterToAdd as Party;
+            //    currParty.SetSpecificLocation(this);
+            //}
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
@@ -1505,42 +1510,45 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Character){
-				if(((Character)_charactersAtLocation[i]).id == id){
-					return (Character)_charactersAtLocation [i];
-				}
-			}else if(_charactersAtLocation[i] is Party){
-				Party party = (Party)_charactersAtLocation [i];
-				for (int j = 0; j < party.partyMembers.Count; j++) {
-					if(party.partyMembers[j].id == id){
-						return party.partyMembers [j];
-					}
-				}
-			}
+            if (_charactersAtLocation[i].id == id) {
+                return _charactersAtLocation[i];
+            }
+            //if (_charactersAtLocation[i]	is Character){
+			//	if(((Character)_charactersAtLocation[i]).id == id){
+			//		return (Character)_charactersAtLocation [i];
+			//	}
+			//}else if(_charactersAtLocation[i] is Party){
+			//	Party party = (Party)_charactersAtLocation [i];
+			//	for (int j = 0; j < party.partyMembers.Count; j++) {
+			//		if(party.partyMembers[j].id == id){
+			//			return party.partyMembers [j];
+			//		}
+			//	}
+			//}
 		}
 		return null;
 	}
-	public Party GetPartyAtLocationByLeaderID(int id){
-		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Party){
-				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
-					return (Party)_charactersAtLocation [i];
-				}
-			}
-		}
-		return null;
-	}
-	public int CharactersCount(bool includeHostile = false){
-		    int count = 0;
-		    for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			    if(_charactersAtLocation[i]	is Party){
-				    count += ((Party)_charactersAtLocation [i]).partyMembers.Count;
-			    }else {
-				    count += 1;
-			    }
-		    }
-		    return count;
-	    }
+	//public Party GetPartyAtLocationByLeaderID(int id){
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+	//		if(_charactersAtLocation[i]	is Party){
+	//			if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
+	//				return (Party)_charactersAtLocation [i];
+	//			}
+	//		}
+	//	}
+	//	return null;
+	//}
+	//public int CharactersCount(bool includeHostile = false){
+	//	int count = 0;
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+	//		if(_charactersAtLocation[i]	is Party){
+	//			count += ((Party)_charactersAtLocation [i]).partyMembers.Count;
+	//		}else {
+	//			count += 1;
+	//		}
+	//	}
+	//	return count;
+	//}
     #endregion
 
     #region Combat
@@ -1637,12 +1645,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             if (currItem == character) {
                 continue; //skip
             }
-            Faction factionOfItem = null;
-            if (currItem is Character) {
-                factionOfItem = (currItem as Character).faction;
-            } else if (currItem is Party) {
-                factionOfItem = (currItem as Party).faction;
-            }
+            Faction factionOfItem = currItem.faction;
+            //if (currItem is Character) {
+            //    factionOfItem = (currItem as Character).faction;
+            //} else if (currItem is Party) {
+            //    factionOfItem = (currItem as Party).faction;
+            //}
             if (factionOfItem == null || character.faction == null) {
                 return true;
             } else {
@@ -1664,12 +1672,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (!withFactionOnly) { //only check characters if with faction only is false
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
                 Character currItem = _charactersAtLocation[i];
-                Faction factionOfItem = null;
-                if (currItem is Character) {
-                    factionOfItem = (currItem as Character).faction;
-                } else if (currItem is Party) {
-                    factionOfItem = (currItem as Party).faction;
-                }
+                Faction factionOfItem = currItem.faction;
+                //if (currItem is Character) {
+                //    factionOfItem = (currItem as Character).faction;
+                //} else if (currItem is Party) {
+                //    factionOfItem = (currItem as Party).faction;
+                //}
                 if (factionOfItem == null) {
                     return true;
                 } else {

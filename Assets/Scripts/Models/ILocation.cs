@@ -32,9 +32,9 @@ public interface ILocation {
     //bool CombatAtLocation();
     //Character GetCombatEnemy(Character combatInitializer);
     //void SetCurrentCombat(ECS.CombatPrototype combat);
-    int CharactersCount(bool includeHostile = false);
+    //int CharactersCount(bool includeHostile = false);
     void ContinueDailyActions();
 
 	ECS.Character GetCharacterAtLocationByID (int id, bool includeTraces = false);
-	Party GetPartyAtLocationByLeaderID (int id);
+	//Party GetPartyAtLocationByLeaderID (int id);
 }

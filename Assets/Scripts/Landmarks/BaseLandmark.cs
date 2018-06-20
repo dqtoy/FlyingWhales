@@ -519,18 +519,21 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
 	public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Character){
-				if(((Character)_charactersAtLocation[i]).id == id){
-					return (Character)_charactersAtLocation [i];
-				}
-			}else if(_charactersAtLocation[i] is Party){
-				Party party = (Party)_charactersAtLocation [i];
-				for (int j = 0; j < party.partyMembers.Count; j++) {
-					if(party.partyMembers[j].id == id){
-						return party.partyMembers [j];
-					}
-				}
-			}
+            if (_charactersAtLocation[i].id == id) {
+                return _charactersAtLocation[i];
+            }
+            //if (_charactersAtLocation[i]	is Character){
+			//	if(((Character)_charactersAtLocation[i]).id == id){
+			//		return (Character)_charactersAtLocation [i];
+			//	}
+			//}else if(_charactersAtLocation[i] is Party){
+			//	Party party = (Party)_charactersAtLocation [i];
+			//	for (int j = 0; j < party.partyMembers.Count; j++) {
+			//		if(party.partyMembers[j].id == id){
+			//			return party.partyMembers [j];
+			//		}
+			//	}
+			//}
 		}
 		if(includeTraces){
 			foreach (Character character in _characterTraces.Keys) {
@@ -541,16 +544,16 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
-	public Party GetPartyAtLocationByLeaderID(int id){
-		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Party){
-				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
-					return (Party)_charactersAtLocation [i];
-				}
-			}
-		}
-		return null;
-	}
+	//public Party GetPartyAtLocationByLeaderID(int id){
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+	//		if(_charactersAtLocation[i]	is Party){
+	//			if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
+	//				return (Party)_charactersAtLocation [i];
+	//			}
+	//		}
+	//	}
+	//	return null;
+	//}
 	public Character GetPrisonerByID(int id){
 		for (int i = 0; i < _prisoners.Count; i++) {
 			if (_prisoners [i].id == id){
@@ -576,31 +579,32 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     #endregion
 
-    #region Party
-    public List<Party> GetPartiesOnLandmark() {
-        List<Party> parties = new List<Party>();
-        for (int i = 0; i < _location.charactersAtLocation.Count; i++) {
-			if(_location.charactersAtLocation[i] is Party){
-				parties.Add((Party)_location.charactersAtLocation[i]);
-			}
-        }
-        return parties;
-    }
-    #endregion
+   // #region Party
+   // public List<Party> GetPartiesOnLandmark() {
+   //     List<Party> parties = new List<Party>();
+   //     for (int i = 0; i < _location.charactersAtLocation.Count; i++) {
+			//if(_location.charactersAtLocation[i] is Party){
+			//	parties.Add((Party)_location.charactersAtLocation[i]);
+			//}
+   //     }
+   //     return parties;
+   // }
+   // #endregion
 
     #region Location
     public void AddCharacterToLocation(Character character) {
         if (!_charactersAtLocation.Contains(character)) {
             _charactersAtLocation.Add(character);
-            if (character is Character) {
-                Character currChar = character as Character;
-				this.tileLocation.RemoveCharacterFromLocation(currChar);
-                currChar.SetSpecificLocation(this);
-            } else if (character is Party) {
-                Party currParty = character as Party;
-				this.tileLocation.RemoveCharacterFromLocation(currParty);
-                currParty.SetSpecificLocation(this);
-            }
+            character.SetSpecificLocation(this);
+    //        if (character is Character) {
+    //            Character currChar = character as Character;
+				//this.tileLocation.RemoveCharacterFromLocation(currChar);
+    //            currChar.SetSpecificLocation(this);
+    //        } else if (character is Party) {
+    //            Party currParty = character as Party;
+				//this.tileLocation.RemoveCharacterFromLocation(currParty);
+    //            currParty.SetSpecificLocation(this);
+    //        }
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
@@ -608,13 +612,14 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public void RemoveCharacterFromLocation(Character character) {
         _charactersAtLocation.Remove(character);
-        if (character is Character) {
-            Character currChar = character as Character;
-			currChar.SetSpecificLocation(null);
-        } else if (character is Party) {
-            Party currParty = character as Party;
-			currParty.SetSpecificLocation(null);
-        }
+        character.SetSpecificLocation(null);
+   //     if (character is Character) {
+   //         Character currChar = character as Character;
+			//currChar.SetSpecificLocation(null);
+   //     } else if (character is Party) {
+   //         Party currParty = character as Party;
+			//currParty.SetSpecificLocation(null);
+   //     }
         if (_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();
         }
@@ -624,41 +629,42 @@ public class BaseLandmark : ILocation, TaskCreator {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
             _charactersAtLocation.Remove(characterToReplace);
-            if (characterToAdd is Character) {
-                Character currChar = characterToAdd as Character;
-				this.tileLocation.RemoveCharacterFromLocation(currChar);
-                currChar.SetSpecificLocation(this);
-            } else if (characterToAdd is Party) {
-                Party currParty = characterToAdd as Party;
-				this.tileLocation.RemoveCharacterFromLocation(currParty);
-                currParty.SetSpecificLocation(this);
-            }
+            characterToAdd.SetSpecificLocation(this);
+    //        if (characterToAdd is Character) {
+    //            Character currChar = characterToAdd as Character;
+				//this.tileLocation.RemoveCharacterFromLocation(currChar);
+    //            currChar.SetSpecificLocation(this);
+    //        } else if (characterToAdd is Party) {
+    //            Party currParty = characterToAdd as Party;
+				//this.tileLocation.RemoveCharacterFromLocation(currParty);
+    //            currParty.SetSpecificLocation(this);
+    //        }
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
         }
     }
-    public int CharactersCount(bool includeHostile = false) {
-        int count = 0;
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if (includeHostile && this._owner != null) {
-				if(_charactersAtLocation[i].faction == null){
-					continue;
-				}else{
-					FactionRelationship fr = this._owner.GetRelationshipWith (_charactersAtLocation [i].faction);
-					if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-						continue;
-					}
-				}
-			}
-            if (_charactersAtLocation[i] is Party) {
-                count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
-            } else {
-                count += 1;
-            }
-        }
-        return count;
-    }
+   // public int CharactersCount(bool includeHostile = false) {
+   //     int count = 0;
+   //     for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			//if (includeHostile && this._owner != null) {
+			//	if(_charactersAtLocation[i].faction == null){
+			//		continue;
+			//	}else{
+			//		FactionRelationship fr = this._owner.GetRelationshipWith (_charactersAtLocation [i].faction);
+			//		if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+			//			continue;
+			//		}
+			//	}
+			//}
+   //         if (_charactersAtLocation[i] is Party) {
+   //             count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
+   //         } else {
+   //             count += 1;
+   //         }
+   //     }
+   //     return count;
+   // }
     #endregion
 
     #region Combat
@@ -762,12 +768,12 @@ public class BaseLandmark : ILocation, TaskCreator {
             if (currItem == character) {
                 continue; //skip
             }
-            Faction factionOfItem = null;
-            if (currItem is Character) {
-                factionOfItem = (currItem as Character).faction;
-            } else if (currItem is Party) {
-                factionOfItem = (currItem as Party).faction;
-            }
+            Faction factionOfItem = currItem.faction;
+            //if (currItem is Character) {
+            //    factionOfItem = (currItem as Character).faction;
+            //} else if (currItem is Party) {
+            //    factionOfItem = (currItem as Party).faction;
+            //}
             if (factionOfItem == null || character.faction == null) {
                 return true;
             } else {
@@ -803,12 +809,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (!withFactionOnly) {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
                 Character currItem = _charactersAtLocation[i];
-                Faction factionOfItem = null;
-                if (currItem is Character) {
-                    factionOfItem = (currItem as Character).faction;
-                } else if (currItem is Party) {
-                    factionOfItem = (currItem as Party).faction;
-                }
+                Faction factionOfItem = currItem.faction;
+                //if (currItem is Character) {
+                //    factionOfItem = (currItem as Character).faction;
+                //} else if (currItem is Party) {
+                //    factionOfItem = (currItem as Party).faction;
+                //}
                 if (factionOfItem == null || faction == null) {
                     return true;
                 } else {
@@ -878,12 +884,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         MultiThreadPool.Instance.AddToThreadPool(combat);
     }
     public void ContinueDailyActions() {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currItem = _charactersAtLocation[i];
-            if (!currItem.isInCombat) {
-                currItem.ContinueDailyAction();
-            }
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    Character currItem = _charactersAtLocation[i];
+        //    if (!currItem.isInCombat) {
+        //        currItem.ContinueDailyAction();
+        //    }
+        //}
     }
     #endregion
 

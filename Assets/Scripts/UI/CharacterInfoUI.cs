@@ -404,15 +404,15 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    public void CenterCameraOnCharacter() {
-        GameObject centerOn = null;
-        if (currentlyShowingCharacter.avatar != null) {
-            centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
-        } else {
-            centerOn = currentlyShowingCharacter.currLocation.gameObject;
-        }
-        CameraMove.Instance.CenterCameraOn(centerOn);
-    }
+    //public void CenterCameraOnCharacter() {
+    //    GameObject centerOn = null;
+    //    if (currentlyShowingCharacter.avatar != null) {
+    //        centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
+    //    } else {
+    //        centerOn = currentlyShowingCharacter.currLocation.gameObject;
+    //    }
+    //    CameraMove.Instance.CenterCameraOn(centerOn);
+    //}
 
     public bool IsCharacterInfoShowing(ECS.Character character) {
         return (isShowing && currentlyShowingCharacter == character);

@@ -104,9 +104,9 @@ public class Party: IEncounterable {
     //public Dictionary<MATERIAL, int> materialInventory {
     //    get { return _materialInventory; }
     //}
-    public CharacterAvatar avatar {
-        get { return _partyLeader.avatar; }
-    }
+    //public CharacterAvatar avatar {
+    //    get { return _partyLeader.avatar; }
+    //}
 	public bool isInCombat{
 		get { return _isInCombat; }
 	}
@@ -183,9 +183,9 @@ public class Party: IEncounterable {
             //CreateRelationshipsForNewMember(member);
 			if(member.id != _partyLeader.id){
 				_followers.Add (member);
-				if(_partyLeader.avatar != null){
-					_partyLeader.avatar.AddNewCharacter (member);
-				}
+				//if(_partyLeader.avatar != null){
+				//	_partyLeader.avatar.AddNewCharacter (member);
+				//}
 			}
             member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
@@ -202,9 +202,9 @@ public class Party: IEncounterable {
     public virtual void RemovePartyMember(ECS.Character member, bool forDeath = false) {
         _partyMembers.Remove(member);
 		_followers.Remove (member);
-        if(member.avatar != null) {
-			member.avatar.RemoveCharacter(member);
-        }
+   //     if(member.avatar != null) {
+			//member.avatar.RemoveCharacter(member);
+   //     }
 
         member.SetParty(null);
 		//member.SetCurrentTask(null);

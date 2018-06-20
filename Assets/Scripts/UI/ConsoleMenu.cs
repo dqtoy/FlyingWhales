@@ -142,11 +142,12 @@ public class ConsoleMenu : UIMenu {
                 log += "\n Room at " + currRoom.location.locationName + ": ";
                 for (int j = 0; j < currRoom.combatants.Count; j++) {
                     Character currCombatant = currRoom.combatants[j];
-                    if (currCombatant is Party) {
-                        log += "\n" + (currCombatant as Party).name;
-                    } else if (currCombatant is Character) {
-                        log += "\n" + (currCombatant as Character).name;
-                    }
+                    log += "\n" + currCombatant.name;
+                    //if (currCombatant is Party) {
+                    //    log += "\n" + (currCombatant as Party).name;
+                    //} else if (currCombatant is Character) {
+                    //    log += "\n" + (currCombatant as Character).name;
+                    //}
                 }
                 log += "\n";
             }
