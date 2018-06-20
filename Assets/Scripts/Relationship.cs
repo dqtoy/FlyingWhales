@@ -179,6 +179,11 @@ public class Relationship {
             _relationshipStatuses.Add(relStat);
         }
     }
+    public void AddRelationshipStatus(List<CHARACTER_RELATIONSHIP> relStat) {
+        for (int i = 0; i < relStat.Count; i++) {
+            AddRelationshipStatus(relStat[i]);
+        }
+    }
     public void RemoveRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
         _relationshipStatuses.Remove(relStat);
     }

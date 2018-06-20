@@ -103,6 +103,10 @@ namespace worldcreator {
             LoadSaveFiles();
         }
 
+        public void InitializeMenus() {
+            editCharactersMenu.Initialize();
+        }
+
         #region Main Menu
         public void OnClickCreateWorld() {
             gridSizeGO.SetActive(true);

@@ -389,83 +389,100 @@ namespace ECS {
         }
         #endregion
 
-        public Character(CharacterSetup baseSetup, GENDER gender, int statAllocationBonus = 0) {
+        public Character(CharacterSetup baseSetup, GENDER gender, int statAllocationBonus = 0) : this() {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
-            _traits = new List<Trait> ();
-			_tags = new List<CharacterTag> ();
             _relationships = new Dictionary<Character, Relationship>();
-			_exploredLandmarks = new List<BaseLandmark> ();
-			statusEffects = new List<STATUS_EFFECT>();
-			_isDead = false;
-			_isFainted = false;
-			_isPrisoner = false;
-			_isDefeated = false;
-			_doesNotTakePrisoners = false;
-			_cannotBeTakenAsPrisoner = false;
+            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+            GenerateSetupTags(baseSetup);
+            GenerateRaceTags();
+            AllocateStatPoints(statAllocationBonus);
+            EquipPreEquippedItems(baseSetup);
+
+            _strength = _baseStrength;
+            _agility = _baseAgility;
+            _intelligence = _baseIntelligence;
+            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+
+            _equippedItems = new List<Item>();
+            _inventory = new List<Item>();
+            _skills = GetGeneralSkills();
+            _skills.AddRange(GetBodyPartSkills());
+
+            AdjustMaxHP(_baseMaxHP);
+        }
+
+        public Character(CharacterSaveData data) : this(){
+            _id = Utilities.SetID(this, data.id);
+            CharacterSetup baseSetup = CombatManager.Instance.GetBaseCharacterSetup(data.className, data.race);
+            _characterClass = baseSetup.characterClass.CreateNewCopy();
+            _raceSetting = baseSetup.raceSetting.CreateNewCopy();
+            _gender = data.gender;
+            _name = data.name;
+            _traits = new List<Trait>();
+            _tags = new List<CharacterTag>();
+            //LoadRelationships(data.relationshipsData);
+            _portraitSettings = data.portraitSettings;
+            GenerateSetupTags(baseSetup);
+            GenerateRaceTags();
+            AllocateStatPoints(0); //TODO: change to what save data is
+            EquipPreEquippedItems(baseSetup);
+
+            _strength = _baseStrength;
+            _agility = _baseAgility;
+            _intelligence = _baseIntelligence;
+            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+
+            _equippedItems = new List<Item>();
+            _inventory = new List<Item>();
+            _skills = GetGeneralSkills();
+            _skills.AddRange(GetBodyPartSkills());
+
+            AdjustMaxHP(_baseMaxHP);
+        }
+
+        public Character() {
+            _traits = new List<Trait>();
+            _tags = new List<CharacterTag>();
+            _exploredLandmarks = new List<BaseLandmark>();
+            statusEffects = new List<STATUS_EFFECT>();
+            _isDead = false;
+            _isFainted = false;
+            _isPrisoner = false;
+            _isDefeated = false;
+            _doesNotTakePrisoners = false;
+            _cannotBeTakenAsPrisoner = false;
             _isIdle = false;
-			_traceInfo = new Dictionary<Character, List<string>> ();
-			_isPrisonerOf = null;
-			_prisoners = new List<Character> ();
-			_history = new List<Log> ();
-			_followers = new List<Character> ();
-			_isFollowerOf = null;
-			_statsModifierPercentage = new StatsModifierPercentage ();
+            _traceInfo = new Dictionary<Character, List<string>>();
+            _isPrisonerOf = null;
+            _prisoners = new List<Character>();
+            _history = new List<Log>();
+            _followers = new List<Character>();
+            _isFollowerOf = null;
+            _statsModifierPercentage = new StatsModifierPercentage();
             _questData = new QuestData(this);
             _actionQueue = new CharacterActionQueue<CharacterAction>();
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
-            //GameObject portrait = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, UIManager.Instance.transform);
-            //portrait.GetComponent<CharacterPortrait>().GeneratePortrait(_portraitSettings);
-			previousActions = new Dictionary<CharacterTask, string> ();
-			//actionWeights = new WeightedDictionary<CharacterTask> ();
+            previousActions = new Dictionary<CharacterTask, string>();
             _actionData = new ActionData(this);
-            //_resourceInventory = new Dictionary<RESOURCE, int>();
 
-			GenerateRaceTags ();
-            GenerateSetupTags(baseSetup);
+            
+            GetRandomCharacterColor();
 
-            AllocateStatPoints (statAllocationBonus);
-
-            //GenerateTraits();
-
-			_strength = _baseStrength;
-			_agility = _baseAgility;
-			_intelligence = _baseIntelligence;
-			_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-
-			_equippedItems = new List<Item> ();
-			_inventory = new List<Item> ();
-			_skills = GetGeneralSkills();
-			_skills.AddRange (GetBodyPartSkills ());
-
-			AdjustMaxHP (_baseMaxHP);
-
-            EquipPreEquippedItems (baseSetup);
-			GetRandomCharacterColor ();
-
-//          _maxHP = _baseMaxHP;
-//          _currentHP = maxHP;
-
-			currentCombat = null;
-			combatHistory = new Dictionary<int, Combat> ();
-            //_combatHistoryID = 0;
-
+            currentCombat = null;
+            combatHistory = new Dictionary<int, Combat>();
 #if !WORLD_CREATION_TOOL
             _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
             _characterObject.SetCharacter(this);
             //ConstructResourceInventory();
 #endif
-            Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
-			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
+            Messenger.AddListener<Region>("RegionDeath", RegionDeath);
+            Messenger.AddListener<List<Region>>("RegionPsytoxin", RegionPsytoxin);
             Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
-
-            //ConstructMaterialInventory();
-
         }
 
         private void AllocateStatPoints(int statAllocationBonus){
@@ -2571,6 +2588,17 @@ namespace ECS {
                 }
             }
             return false;
+        }
+        public void LoadRelationships(List<RelationshipSaveData> data) {
+            _relationships = new Dictionary<Character, Relationship>();
+            for (int i = 0; i < data.Count; i++) {
+                RelationshipSaveData currData = data[i];
+                Character otherCharacter = CharacterManager.Instance.GetCharacterByID(currData.targetCharacterID);
+                Relationship rel = new Relationship(this, otherCharacter);
+                rel.AddRelationshipStatus(currData.relationshipStatuses);
+                _relationships.Add(otherCharacter, rel);
+
+            }
         }
         #endregion
 

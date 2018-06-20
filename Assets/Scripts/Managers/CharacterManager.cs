@@ -120,6 +120,13 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
+    public ECS.Character CreateNewCharacter(CharacterSaveData data) {
+        ECS.Character newCharacter = new ECS.Character(data);
+        _allCharacters.Add(newCharacter);
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        newCharacter.AssignRole(data.role);
+        return newCharacter;
+    }
     public void RemoveCharacter(ECS.Character character) {
         _allCharacters.Remove(character);
         Messenger.Broadcast<ECS.Character>(Signals.CHARACTER_REMOVED, character);

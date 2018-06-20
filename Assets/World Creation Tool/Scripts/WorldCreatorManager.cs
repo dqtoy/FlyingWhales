@@ -85,6 +85,7 @@ namespace worldcreator {
                 Biomes.Instance.GenerateBiome(hexTiles);
             }
             //CameraMove.Instance.SetWholemapCameraValues();
+            WorldCreatorUI.Instance.InitializeMenus();
             DataConstructor.Instance.InitializeData();
             ECS.CombatManager.Instance.Initialize();
             Biomes.Instance.UpdateTileVisuals(hexTiles);
@@ -135,6 +136,7 @@ namespace worldcreator {
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
 
+            WorldCreatorUI.Instance.InitializeMenus();
             DataConstructor.Instance.InitializeData();
             ECS.CombatManager.Instance.Initialize();
             LoadRegions(data);
@@ -142,6 +144,8 @@ namespace worldcreator {
             LoadLandmarks(data);
             OccupyRegions(data);
             GenerateOuterGrid();
+            LoadCharacters(data);
+            LoadRelationships(data);
             //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -281,6 +285,23 @@ namespace worldcreator {
                 }
             }
             WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
+        }
+        private void LoadCharacters(WorldSaveData data) {
+            if (data.charactersData != null) {
+                for (int i = 0; i < data.charactersData.Count; i++) {
+                    CharacterSaveData currData = data.charactersData[i];
+                    ECS.Character currCharacter = CharacterManager.Instance.CreateNewCharacter(currData);
+                }
+            }
+        }
+        private void LoadRelationships(WorldSaveData data) {
+            if (data.charactersData != null) {
+                for (int i = 0; i < data.charactersData.Count; i++) {
+                    CharacterSaveData currData = data.charactersData[i];
+                    ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
+                    currCharacter.LoadRelationships(currData.relationshipsData);
+                }
+            }
         }
         private List<HexTile> GetRegionTiles(RegionSaveData regionData, ref HexTile centerTile) {
             List<int> tileIDs = new List<int>(regionData.tileData);

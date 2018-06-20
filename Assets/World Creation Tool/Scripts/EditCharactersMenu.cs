@@ -17,13 +17,11 @@ public class EditCharactersMenu : MonoBehaviour {
 
     [SerializeField] private CharacterInfoEditor characterInfoEditor;
 
-    #region Monobehaviours
-    private void Awake() {
+    public void Initialize () {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, OnCreateNewCharacter);
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
         PopulateDropdowns();
     }
-    #endregion
 
     #region Character Creation
     public void CreateNewCharacter() {
