@@ -629,9 +629,15 @@ namespace ECS{
             float damageRange = 5f;
             int statMod = sourceCharacter.strength;
             int def = targetCharacter.GetPDef(sourceCharacter);
+            float critDamage = 100f;
             if(attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
                 statMod = sourceCharacter.intelligence;
                 def = targetCharacter.GetMDef(sourceCharacter);
+            }
+            int critChance = Utilities.rng.Next(0, 100);
+            if(critChance < sourceCharacter.critChance) {
+                //CRITICAL HIT!
+                critDamage = 200f + sourceCharacter.critDamage;
             }
             BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
             if (chosenBodyPart == null) {
@@ -652,7 +658,7 @@ namespace ECS{
             }
             float weaponAttack = weapon.attackPower;
             int finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
-            int damage = (int) (finalAttack * attackSkill.power); //To be changed and add crit
+            int damage = (int) ((finalAttack * (attackSkill.power / 100f)) * (critDamage / 100f));
             int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
             int minDamageRange = damage - computedDamageRange;
             int maxDamageRange = damage + computedDamageRange;

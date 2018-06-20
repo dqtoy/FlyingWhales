@@ -56,6 +56,8 @@ namespace ECS {
         private int _bonusMDef;
         private float _bonusPDefPercent;
         private float _bonusMDefPercent;
+        private float _critChance;
+        private float _critDamage;
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
         private Dictionary<ELEMENT, float> _elementalResistance;
 
@@ -421,6 +423,12 @@ namespace ECS {
         }
         public int maxExperience {
             get { return _maxExperience; }
+        }
+        public float critChance {
+            get { return _critChance; }
+        }
+        public float critDamage {
+            get { return _critDamage; }
         }
         public Dictionary<ELEMENT, float> elementalWeaknesses {
             get { return _elementalWeaknesses; }
@@ -3084,6 +3092,13 @@ namespace ECS {
         public void AdjustSP(int amount) {
             _sp += amount;
             _sp = Mathf.Clamp(_sp, 0, _maxSP);
+        }
+        public void AdjustCritChance(float amount) {
+            _critChance += amount;
+            _critChance = Mathf.Clamp(_critChance, 0f, 100f);
+        }
+        public void AdjustCritDamage(float amount) {
+            _critDamage += amount;
         }
         private void RecomputeMaxExperience() {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
