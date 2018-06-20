@@ -120,14 +120,18 @@ namespace ECS {
    //             currDeadCharacter.Death ();
 			//}
             while(combat.charactersSideA.Count > 0) {
-                Character character = combat.charactersSideA[0];
-                CharacterContinuesAction(character);
-                combat.RemoveCharacter(SIDES.A, character);
+                if(combat.charactersSideA[0] is Character) {
+                    Character character = combat.charactersSideA[0] as Character;
+                    CharacterContinuesAction(character);
+                }
+                combat.RemoveCharacter(SIDES.A, combat.charactersSideA[0]);
             }
             while (combat.charactersSideB.Count > 0) {
-                Character character = combat.charactersSideB[0];
-                CharacterContinuesAction(character);
-                combat.RemoveCharacter(SIDES.B, character);
+                if (combat.charactersSideB[0] is Character) {
+                    Character character = combat.charactersSideB[0] as Character;
+                    CharacterContinuesAction(character);
+                }
+                combat.RemoveCharacter(SIDES.B, combat.charactersSideB[0]);
             }
             //Prisoner or Leave to Die
             //List<ECS.Character> winningCharacters = null;

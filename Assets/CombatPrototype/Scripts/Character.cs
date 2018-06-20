@@ -6,41 +6,40 @@ using System.IO;
 using System;
 
 namespace ECS {
-//	[System.Serializable]
-	public class Character : TaskCreator {
+    public class Character : TaskCreator, ICharacter {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
-		public delegate void OnImprisonCharacter();
-		public OnImprisonCharacter onImprisonCharacter;
+        public delegate void OnImprisonCharacter();
+        public OnImprisonCharacter onImprisonCharacter;
 
         public delegate void DailyAction();
         public DailyAction onDailyAction;
 
         private string _name;
         private int _id;
-		private GENDER _gender;
+        private GENDER _gender;
         //[System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
         [System.NonSerialized] private List<Trait> _traits;
         private List<TRAIT> _allTraits;
-		private List<CharacterTag>	_tags;
-		internal List<STATUS_EFFECT> statusEffects;
+        private List<CharacterTag> _tags;
+        internal List<STATUS_EFFECT> statusEffects;
         private Dictionary<Character, Relationship> _relationships;
-		private const int MAX_FOLLOWERS = 4;
+        private const int MAX_FOLLOWERS = 4;
 
-		//Stats
-		private int _currentHP;
-		private int _maxHP;
-		private int _strength;
-		private int _intelligence;
-		private int _agility;
+        //Stats
+        private int _currentHP;
+        private int _maxHP;
+        private int _strength;
+        private int _intelligence;
+        private int _agility;
         private int _vitality;
         private int _currentRow;
-		private SIDES _currentSide;
-		private int _baseMaxHP;
-		private int _baseStrength;
-		private int _baseIntelligence;
-		private int _baseAgility;
+        private SIDES _currentSide;
+        private int _baseMaxHP;
+        private int _baseStrength;
+        private int _baseIntelligence;
+        private int _baseAgility;
         private int _baseVitality;
         private int _fixedMaxHP;
         private int _bonusStrength;
@@ -65,21 +64,21 @@ namespace ECS {
         //Skills
         private List<Skill> _skills;
 
-		private CharacterClass _characterClass;
-		private RaceSetting _raceSetting;
-		private CharacterRole _role;
-		private Faction _faction;
-		private Party _party;
+        private CharacterClass _characterClass;
+        private RaceSetting _raceSetting;
+        private CharacterRole _role;
+        private Faction _faction;
+        private Party _party;
         private QuestData _questData;
         //private CharacterActionQueue<CharacterAction> _actionQueue;
-		//private CharacterAction _currentAction;
+        //private CharacterAction _currentAction;
         private ILocation _specificLocation;
-		private Region _currentRegion;
-		//private CharacterAvatar _avatar;
+        private Region _currentRegion;
+        //private CharacterAvatar _avatar;
 
-		private List<BodyPart> _bodyParts;
-		private List<Item> _equippedItems;
-		private List<Item> _inventory;
+        private List<BodyPart> _bodyParts;
+        private List<Item> _equippedItems;
+        private List<Item> _inventory;
 
         //Character Icon
         private CharacterIcon _icon;
@@ -87,43 +86,43 @@ namespace ECS {
         //Character Portrait
         private PortraitSettings _portraitSettings;
 
-		private Color _characterColor;
-		private string _characterColorCode;
-		private bool _isDead;
-		private bool _isFainted;
-		private bool _isPrisoner;
+        private Color _characterColor;
+        private string _characterColorCode;
+        private bool _isDead;
+        private bool _isFainted;
+        private bool _isPrisoner;
         private bool _isFollower;
-		private bool _isDefeated;
+        private bool _isDefeated;
         private bool _isIdle; //can't do action, needs will not deplete
-		private object _isPrisonerOf;
-		private BaseLandmark _home;
+        private object _isPrisonerOf;
+        private BaseLandmark _home;
         private BaseLandmark _lair;
-		private List<Log> _history;
-		//private int _combatHistoryID;
-		private List<Character> _prisoners;
-		private List<Character> _followers;
-		private Character _isFollowerOf;
-		private bool _doesNotTakePrisoners;
-		private bool _cannotBeTakenAsPrisoner;
+        private List<Log> _history;
+        //private int _combatHistoryID;
+        private List<Character> _prisoners;
+        private List<Character> _followers;
+        private Character _isFollowerOf;
+        private bool _doesNotTakePrisoners;
+        private bool _cannotBeTakenAsPrisoner;
 
         private Dictionary<RACE, int> _civiliansByRace;
 
-		internal int actRate;
-		internal Combat currentCombat;
-		internal Dictionary<int, Combat> combatHistory;
+        private Combat _currentCombat;
+        private int _actRate;
+        internal Dictionary<int, Combat> combatHistory;
 
-		private float _equippedWeaponPower;
+        private float _equippedWeaponPower;
         private int _gold;
         private int _prestige;
 
-		//private Action _currentFunction;
-		private bool _isInCombat;
+        //private Action _currentFunction;
+        private bool _isInCombat;
 
         //When the character should have a next action it should do after it's current one.
         //private CharacterTask nextTaskToDo;
-		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
-		private Dictionary<Character, List<string>> _traceInfo;
-		//private WeightedDictionary<CharacterTask> actionWeights;
+        private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
+        private Dictionary<Character, List<string>> _traceInfo;
+        //private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
         private CharacterObj _characterObject;
@@ -137,51 +136,51 @@ namespace ECS {
         public string firstName {
             get { return name.Split(' ')[0]; }
         }
-		public string name{
-			get { return this._name; }
-		}
-		public string coloredName{
-			get { return "<color=" + '"' + this._characterColorCode + '"' + ">" + this._name; }
-		}
-		public string urlName{
-			get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
-		}
-		public string coloredUrlName{
-			get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
-		}
-		public string prisonerName{
-			get { return "<link=" + '"' + this._id.ToString() + "_prisoner" + '"' + ">" + this._name + "</link>"; }
-		}
-		public int id {
+        public string name {
+            get { return this._name; }
+        }
+        public string coloredName {
+            get { return "<color=" + '"' + this._characterColorCode + '"' + ">" + this._name; }
+        }
+        public string urlName {
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
+        }
+        public string coloredUrlName {
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
+        }
+        public string prisonerName {
+            get { return "<link=" + '"' + this._id.ToString() + "_prisoner" + '"' + ">" + this._name + "</link>"; }
+        }
+        public int id {
             get { return _id; }
         }
-		public GENDER gender{
-			get { return _gender; }
-		}
-		public List<Trait> traits {
+        public GENDER gender {
+            get { return _gender; }
+        }
+        public List<Trait> traits {
             get { return _traits; }
         }
-		public List<CharacterTag> tags {
-			get { return _tags; }
-		}
-		public Dictionary<Character, Relationship> relationships {
+        public List<CharacterTag> tags {
+            get { return _tags; }
+        }
+        public Dictionary<Character, Relationship> relationships {
             get { return _relationships; }
         }
-		public CharacterClass characterClass{
-			get { return this._characterClass; }
-		}
-		public RaceSetting raceSetting {
-			get { return _raceSetting; }
-		}
-		public CharacterRole role {
-			get { return _role; }
-		}
-		public Faction faction {
-			get { return _faction; }
-		}
-		public Party party {
-			get { return _party; }
-		}
+        public CharacterClass characterClass {
+            get { return this._characterClass; }
+        }
+        public RaceSetting raceSetting {
+            get { return _raceSetting; }
+        }
+        public CharacterRole role {
+            get { return _role; }
+        }
+        public Faction faction {
+            get { return _faction; }
+        }
+        public Party party {
+            get { return _party; }
+        }
         public QuestData questData {
             get { return _questData; }
         }
@@ -196,83 +195,83 @@ namespace ECS {
         //}
         public ILocation specificLocation {
             get {
-    //            ILocation loc = null;
-				//loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
+                //            ILocation loc = null;
+                //loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
                 return GetSpecificLocation();
             }
         }
-		public HexTile currLocation{
-			get { return (this.specificLocation != null ? this.specificLocation.tileLocation : null); }
-		}
-		public Region currentRegion{
-			get { return (_party == null ? _currentRegion : _party.currentRegion); }
-		}
-		//public CharacterAvatar avatar{
-		//	get { return _avatar; }
-		//}
-		public List<BodyPart> bodyParts{
-			get { return this._bodyParts; }
-		}
-		public List<Item> equippedItems {
-			get { return this._equippedItems; }
-		}
-		public List<Item> inventory{
-			get { return this._inventory; }
-		}
-		public List<Skill> skills{
-			get { return this._skills; }
-		}
-		public int currentRow{
-			get { return this._currentRow; }
-		}
-		public SIDES currentSide{
-			get { return this._currentSide; }
-		}
-		public bool isDead{
-			get { return this._isDead; }
-		}
-		public bool isFainted{
-			get { return this._isFainted; }
-		}
-		public bool isPrisoner{
-			get { return this._isPrisoner; }
-		}
-		public bool isFollower {
+        public HexTile currLocation {
+            get { return (this.specificLocation != null ? this.specificLocation.tileLocation : null); }
+        }
+        public Region currentRegion {
+            get { return (_party == null ? _currentRegion : _party.currentRegion); }
+        }
+        //public CharacterAvatar avatar{
+        //	get { return _avatar; }
+        //}
+        public List<BodyPart> bodyParts {
+            get { return this._bodyParts; }
+        }
+        public List<Item> equippedItems {
+            get { return this._equippedItems; }
+        }
+        public List<Item> inventory {
+            get { return this._inventory; }
+        }
+        public List<Skill> skills {
+            get { return this._skills; }
+        }
+        public int currentRow {
+            get { return this._currentRow; }
+        }
+        public SIDES currentSide {
+            get { return this._currentSide; }
+        }
+        public bool isDead {
+            get { return this._isDead; }
+        }
+        public bool isFainted {
+            get { return this._isFainted; }
+        }
+        public bool isPrisoner {
+            get { return this._isPrisoner; }
+        }
+        public bool isFollower {
             get { return _isFollower; }
         }
-		public int strength {
-			get { return _strength + _bonusStrength; }
-		}
-		public int baseStrength {
-			get { return _baseStrength; }
-		}
-		public int intelligence {
-			get { return _intelligence + _bonusIntelligence; }
-		}
-		public int baseIntelligence {
-			get { return _baseIntelligence; }
-		}
-		public int agility {
-			get { return _agility + _bonusAgility; }
-		}
-		public int baseAgility {
-			get { return _baseAgility; }
-		}
+        public int strength {
+            get { return _strength + _bonusStrength; }
+        }
+        public int baseStrength {
+            get { return _baseStrength; }
+        }
+        public int intelligence {
+            get { return _intelligence + _bonusIntelligence; }
+        }
+        public int baseIntelligence {
+            get { return _baseIntelligence; }
+        }
+        public int agility {
+            get { return _agility + _bonusAgility; }
+        }
+        public int baseAgility {
+            get { return _baseAgility; }
+        }
         public int vitality {
             get { return _vitality + _bonusVitality; }
         }
         public int baseVitality {
             get { return _baseVitality; }
         }
-        public int currentHP{
-			get { return this._currentHP; }
-		}
-		public int maxHP {
-			get { return this._maxHP; }
-		}
-		public int baseMaxHP {
-			get { return _baseMaxHP; }
-		}
+        public int currentHP {
+            get { return this._currentHP; }
+        }
+        public int maxHP {
+            get { return this._maxHP; }
+        }
+        public int baseMaxHP {
+            get { return _baseMaxHP; }
+        }
         //public int dodgeRate {
         //	get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
         //}
@@ -283,47 +282,47 @@ namespace ECS {
         //	get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
         //}
         public Color characterColor {
-			get { return _characterColor; }
-		}
-		public string characterColorCode {
-			get { return _characterColorCode; }
-		}
-		public BaseLandmark home {
+            get { return _characterColor; }
+        }
+        public string characterColorCode {
+            get { return _characterColorCode; }
+        }
+        public BaseLandmark home {
             get { return _home; }
         }
-		public BaseLandmark lair {
+        public BaseLandmark lair {
             get { return _lair; }
         }
-		public float remainingHP { //Percentage of remaining HP this character has
-            get { return (float)currentHP / (float)maxHP; }
+        public float remainingHP { //Percentage of remaining HP this character has
+            get { return (float) currentHP / (float) maxHP; }
         }
-		public int remainingHPPercent {
-            get { return (int)(remainingHP * 100); }
+        public int remainingHPPercent {
+            get { return (int) (remainingHP * 100); }
         }
-		public List<Log> history{
-			get { return this._history; }
-		}
-		public float characterPower{
-			get { return (float)_currentHP + (float)((strength + intelligence + agility) * 2) + _equippedWeaponPower;}
-		}
-		public float equippedWeaponPower{
-			get { return _equippedWeaponPower; }
-		}
-		public List<Character> prisoners{
-			get { return this._prisoners; }
-		}
-		public List<Character> followers{
-			get { return this._followers; }
-		}
-		public object isPrisonerOf{
-			get { return this._isPrisonerOf; }
-		}
-		public int gold {
+        public List<Log> history {
+            get { return this._history; }
+        }
+        public float characterPower {
+            get { return (float) _currentHP + (float) ((strength + intelligence + agility) * 2) + _equippedWeaponPower; }
+        }
+        public float equippedWeaponPower {
+            get { return _equippedWeaponPower; }
+        }
+        public List<Character> prisoners {
+            get { return this._prisoners; }
+        }
+        public List<Character> followers {
+            get { return this._followers; }
+        }
+        public object isPrisonerOf {
+            get { return this._isPrisonerOf; }
+        }
+        public int gold {
             get { return _gold; }
         }
-		public int prestige {
+        public int prestige {
             get { return _prestige; }
-		}
+        }
         //public bool isDefeated {
         //	get { return _isDefeated; }
         //}
@@ -335,23 +334,23 @@ namespace ECS {
         //        return _civiliansByRace.Sum(x => x.Value);
         //    }
         //}
-        public Dictionary<RACE, int> civiliansByRace{
-			get { return _civiliansByRace; }
-		}
-		public List<BaseLandmark> exploredLandmarks {
-			get { return _exploredLandmarks; }
-		}
-		public bool isInCombat{
-			get {
-				if(_party != null){
-					return _party.isInCombat;
-				}
-				return _isInCombat; 
-			}
-		}
-		//public Action currentFunction{
-		//	get { return _currentFunction; }
-		//}
+        public Dictionary<RACE, int> civiliansByRace {
+            get { return _civiliansByRace; }
+        }
+        public List<BaseLandmark> exploredLandmarks {
+            get { return _exploredLandmarks; }
+        }
+        public bool isInCombat {
+            get {
+                if (_party != null) {
+                    return _party.isInCombat;
+                }
+                return _isInCombat;
+            }
+        }
+        //public Action currentFunction{
+        //	get { return _currentFunction; }
+        //}
         public bool isFactionless {
             get { return faction == null; }
         }
@@ -362,33 +361,33 @@ namespace ECS {
                 } else {
                     return Mathf.Max(0, MAX_FOLLOWERS - (party.partyMembers.Count - 1));
                 }
-                
+
             }
         }
-		public Character isFollowerOf{
-			get { return _isFollowerOf; }
-		} 
-		//public int numOfCharacters{
-		//	get { return 1; }
-		//}
-		public bool doesNotTakePrisoners{
-			get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
-		}
-		public bool characterDoesNotTakePrisoners{
-			get { return _doesNotTakePrisoners; }
-		}
-		public bool cannotBeTakenAsPrisoner{
-			get { return _cannotBeTakenAsPrisoner; }
-		}
-		public Dictionary<Character, List<string>> traceInfo{
-			get { return _traceInfo; }
-		}
-		public COMBAT_INTENT combatIntent{
-			get {
+        public Character isFollowerOf {
+            get { return _isFollowerOf; }
+        }
+        //public int numOfCharacters{
+        //	get { return 1; }
+        //}
+        public bool doesNotTakePrisoners {
+            get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
+        }
+        public bool characterDoesNotTakePrisoners {
+            get { return _doesNotTakePrisoners; }
+        }
+        public bool cannotBeTakenAsPrisoner {
+            get { return _cannotBeTakenAsPrisoner; }
+        }
+        public Dictionary<Character, List<string>> traceInfo {
+            get { return _traceInfo; }
+        }
+        public COMBAT_INTENT combatIntent {
+            get {
                 return COMBAT_INTENT.KILL; //TODO: Change this when task is changed to action
                 //return (_currentAction == null ? COMBAT_INTENT.DEFEAT : _currentAction.currentState.combatIntent);
             }
-		}
+        }
         public ActionData actionData {
             get { return _actionData; }
         }
@@ -430,6 +429,14 @@ namespace ECS {
         }
         public Dictionary<ELEMENT, float> elementalResistance {
             get { return _elementalResistance; }
+        }
+        public Combat currentCombat {
+            get { return _currentCombat; }
+            set { _currentCombat = value; }
+        }
+        public int actRate {
+            get { return _actRate; }
+            set { _actRate = value; }
         }
         #endregion
 
@@ -672,7 +679,7 @@ namespace ECS {
 							bool hasEnemyOnLeft = false;
 							if(combat.charactersSideA.Contains(this)){
 								for (int j = 0; j < combat.charactersSideB.Count; j++) {
-									Character enemy = combat.charactersSideB [j];
+									ICharacter enemy = combat.charactersSideB [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -680,7 +687,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < combat.charactersSideA.Count; j++) {
-									Character enemy = combat.charactersSideA [j];
+                                    ICharacter enemy = combat.charactersSideA [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -699,7 +706,7 @@ namespace ECS {
 							bool hasEnemyOnRight = false;
 							if(combat.charactersSideA.Contains(this)){
 								for (int j = 0; j < combat.charactersSideB.Count; j++) {
-									Character enemy = combat.charactersSideB [j];
+                                    ICharacter enemy = combat.charactersSideB [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -707,7 +714,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < combat.charactersSideA.Count; j++) {
-									Character enemy = combat.charactersSideA [j];
+                                    ICharacter enemy = combat.charactersSideA [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -723,16 +730,16 @@ namespace ECS {
 				}
 			}
 		}
-		//Changes row number of this character
-		internal void SetRowNumber(int rowNumber){
+        //Changes row number of this character
+        public void SetRowNumber(int rowNumber){
 			this._currentRow = rowNumber;
 		}
 		//Changes character's side
-		internal void SetSide(SIDES side){
+		public void SetSide(SIDES side){
 			this._currentSide = side;
 		}
-		//Adjust current HP based on specified paramater, but HP must not go below 0
-		internal void AdjustHP(int amount){
+        //Adjust current HP based on specified paramater, but HP must not go below 0
+        public void AdjustHP(int amount){
             int previous = this._currentHP;
 			this._currentHP += amount;
 			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
@@ -768,7 +775,7 @@ namespace ECS {
 
 			return faintDieDict.PickRandomElementGivenWeights ();
 		}
-		internal void FaintOrDeath(){
+		public void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
 				if(this.currentCombat == null){
@@ -3102,11 +3109,11 @@ namespace ECS {
         private void RecomputeMaxSP() {
             _maxSP = Mathf.CeilToInt(_characterClass.spModifier * ((float) _level / 1.25f));
         }
-        public int GetPDef(Character enemy) {
+        public int GetPDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);
             return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 100f)));
         }
-        public int GetMDef(Character enemy) {
+        public int GetMDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);
             return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 100f)));
         }

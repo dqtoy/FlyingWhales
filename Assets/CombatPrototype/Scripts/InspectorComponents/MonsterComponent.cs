@@ -7,6 +7,7 @@ public class MonsterComponent : MonoBehaviour {
     public string monsterName;
     public MONSTER_TYPE type;
     public MONSTER_CATEGORY category;
+    public int level;
     public int experienceDrop;
     public int maxHP;
     public int maxSP;
@@ -19,4 +20,5 @@ public class MonsterComponent : MonoBehaviour {
     public float critChance;
     public TextAssetListWrapper skills;
     public List<string> skillNames;
+    public List<ElementChance> elementChances;
 }

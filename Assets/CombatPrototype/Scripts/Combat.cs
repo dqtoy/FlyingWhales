@@ -10,14 +10,14 @@ namespace ECS{
 	}
 
 	public class Combat : Multithread {
-//		public Dictionary<SIDES, List<ECS.Character>> allCharactersAndSides;
-		internal List<ECS.Character> charactersSideA;
-		internal List<ECS.Character> charactersSideB;
-		internal List<ECS.Character> deadCharacters;
-		internal List<ECS.Character> faintedCharacters;
-		internal List<ECS.Character> fledCharacters;
-		internal List<ECS.Character> characterSideACopy;
-		internal List<ECS.Character> characterSideBCopy;
+//		public Dictionary<SIDES, List<ICharacter>> allCharactersAndSides;
+		internal List<ICharacter> charactersSideA;
+		internal List<ICharacter> charactersSideB;
+		internal List<ICharacter> deadCharacters;
+		internal List<ICharacter> faintedCharacters;
+		internal List<ICharacter> fledCharacters;
+		internal List<ICharacter> characterSideACopy;
+		internal List<ICharacter> characterSideBCopy;
 
 		internal SIDES winningSide;
 		internal SIDES losingSide;
@@ -28,25 +28,25 @@ namespace ECS{
         internal bool hasStarted;
 
 		public Combat(ILocation location){
-//			this.allCharactersAndSides = new Dictionary<SIDES, List<ECS.Character>> ();
-			this.charactersSideA = new List<ECS.Character> ();
-			this.charactersSideB = new List<ECS.Character> ();
-            this.characterSideACopy = new List<ECS.Character>();
-            this.characterSideBCopy = new List<ECS.Character>();
-            this.deadCharacters = new List<ECS.Character> ();
-			this.faintedCharacters = new List<ECS.Character> ();
-			this.fledCharacters = new List<Character> ();
+//			this.allCharactersAndSides = new Dictionary<SIDES, List<ICharacter>> ();
+			this.charactersSideA = new List<ICharacter> ();
+			this.charactersSideB = new List<ICharacter> ();
+            this.characterSideACopy = new List<ICharacter>();
+            this.characterSideBCopy = new List<ICharacter>();
+            this.deadCharacters = new List<ICharacter> ();
+			this.faintedCharacters = new List<ICharacter> ();
+			this.fledCharacters = new List<ICharacter> ();
 			this.location = location;
 			this.isDone = false;
             this.hasStarted = false;
 
 			this.resultsLog = new List<string> ();
-//			Messenger.AddListener<ECS.Character> ("CharacterDeath", CharacterDeath);
+//			Messenger.AddListener<ICharacter> ("CharacterDeath", CharacterDeath);
 		}
 
-        #region ECS.Character Management
+        #region ICharacter Management
         //Add a character to a side
-        internal void AddCharacter(SIDES side, ECS.Character character) {
+        internal void AddCharacter(SIDES side, ICharacter character) {
             if(!this.charactersSideA.Contains(character) && !this.charactersSideB.Contains(character)) {
                 int rowNumber = 1;
                 if (side == SIDES.A) {
@@ -71,7 +71,7 @@ namespace ECS{
                 }
             }
         }
-		internal void AddCharacters(SIDES side, List<ECS.Character> characters) {
+		internal void AddCharacters(SIDES side, List<ICharacter> characters) {
             int rowNumber = 1;
             if (side == SIDES.A) {
 				this.charactersSideA.AddRange(characters);
@@ -97,7 +97,7 @@ namespace ECS{
 			}
 		}
         //Remove a character from a side
-        internal void RemoveCharacter(SIDES side, ECS.Character character) {
+        internal void RemoveCharacter(SIDES side, ICharacter character) {
             if (side == SIDES.A) {
                 this.charactersSideA.Remove(character);
             } else {
@@ -109,7 +109,7 @@ namespace ECS{
 			}
         }
         //Remove character without specifying a side
-        internal void RemoveCharacter(ECS.Character character) {
+        internal void RemoveCharacter(ICharacter character) {
             if (this.charactersSideA.Remove(character)) {
 				character.currentCombat = null;
 				if (CombatPrototypeUI.Instance != null) {
@@ -123,7 +123,7 @@ namespace ECS{
 				}
             }
         }
-        internal List<ECS.Character> GetCharactersOnSide(SIDES side) {
+        internal List<ICharacter> GetCharactersOnSide(SIDES side) {
             if (side == SIDES.A) {
                 return charactersSideA;
             } else {
@@ -171,16 +171,22 @@ namespace ECS{
             }
             Debug.Log("Starting Side A : \n" + sideAChars);
             Debug.Log("Starting Side B : \n" + sideBChars);
-            Dictionary<ECS.Character, int> characterActivationWeights = new Dictionary<ECS.Character, int>();
+            Dictionary<ICharacter, int> characterActivationWeights = new Dictionary<ICharacter, int>();
             //SetRowNumber (this.charactersSideA, 1);
             //SetRowNumber (this.charactersSideB, 5);
 
             int rounds = 1;
             while (this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0) {
                 Debug.Log("========== Round " + rounds.ToString() + " ==========");
-                ECS.Character characterThatWillAct = GetCharacterThatWillAct(characterActivationWeights, this.charactersSideA, this.charactersSideB);
-                characterThatWillAct.EnableDisableSkills(this);
-                Debug.Log(characterThatWillAct.characterClass.className + " " + characterThatWillAct.name + " will act");
+                ICharacter characterThatWillAct = GetCharacterThatWillAct(characterActivationWeights, this.charactersSideA, this.charactersSideB);
+                Character actingCharacter = null;
+                if(characterThatWillAct is Character) {
+                    actingCharacter = characterThatWillAct as Character;
+                }
+                if (actingCharacter != null) {
+                    actingCharacter.EnableDisableSkills(this);
+                    Debug.Log(actingCharacter.characterClass.className + " " + characterThatWillAct.name + " will act");
+                }
                 Debug.Log("Available Skills: ");
                 for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
                     Skill currSkill = characterThatWillAct.skills[i];
@@ -192,8 +198,10 @@ namespace ECS{
                 Skill skillToUse = GetSkillToUse(characterThatWillAct);
                 if (skillToUse != null) {
                     Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
-                    characterThatWillAct.CureStatusEffects();
-                    ECS.Character targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
+                    if (actingCharacter != null) {
+                        actingCharacter.CureStatusEffects();
+                    }
+                    ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
                     Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
                     DoSkill(skillToUse, characterThatWillAct, targetCharacter);
                 }
@@ -228,14 +236,14 @@ namespace ECS{
         }
 
 		//Set row number to a list of characters
-		private void SetRowNumber(List<ECS.Character> characters, int rowNumber){
+		private void SetRowNumber(List<ICharacter> characters, int rowNumber){
 			for (int i = 0; i < characters.Count; i++) {
 				characters [i].SetRowNumber(rowNumber);
 			}
 		}
 
 		//Return a character that will act from a pool of characters based on their act rate
-		private ECS.Character GetCharacterThatWillAct(Dictionary<ECS.Character, int> characterActivationWeights, List<ECS.Character> charactersSideA, List<ECS.Character> charactersSideB){
+		private ICharacter GetCharacterThatWillAct(Dictionary<ICharacter, int> characterActivationWeights, List<ICharacter> charactersSideA, List<ICharacter> charactersSideB){
 			characterActivationWeights.Clear();
             for (int i = 0; i < charactersSideA.Count; i++) {
                 characterActivationWeights.Add(charactersSideA[i], charactersSideA[i].actRate);
@@ -244,8 +252,8 @@ namespace ECS{
                 characterActivationWeights.Add(charactersSideB[i], charactersSideB[i].actRate);
             }
 
-            ECS.Character chosenCharacter = Utilities.PickRandomElementWithWeights<ECS.Character>(characterActivationWeights);
-			foreach (ECS.Character character in characterActivationWeights.Keys) {
+            ICharacter chosenCharacter = Utilities.PickRandomElementWithWeights<ICharacter>(characterActivationWeights);
+			foreach (ICharacter character in characterActivationWeights.Keys) {
 				character.actRate += character.baseAgility;
 			}
 			chosenCharacter.actRate = chosenCharacter.agility * 5;
@@ -253,67 +261,67 @@ namespace ECS{
 		}
 
 		//Get a random character from the opposite side to be the target
-		private ECS.Character GetTargetCharacter(ECS.Character sourceCharacter, Skill skill){
-			List<ECS.Character> possibleTargets = new List<ECS.Character>();
+		private ICharacter GetTargetCharacter(ICharacter sourceCharacter, Skill skill){
+			List<ICharacter> possibleTargets = new List<ICharacter>();
 			if (skill is AttackSkill) {
-				List<ECS.Character> oppositeTargets = this.charactersSideB;
+				List<ICharacter> oppositeTargets = this.charactersSideB;
 				if(sourceCharacter.currentSide == SIDES.B){
 					oppositeTargets = this.charactersSideA;
 				}
 
-				int chance = Utilities.rng.Next(0, 100);
-				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
-					if(chance < 10){
-						if(sourceCharacter.currentSide == SIDES.A){
-							oppositeTargets = this.charactersSideA;
-						}else{
-							oppositeTargets = this.charactersSideB;
-						}
-					}
-				}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
-					if(chance < 20){
-						if(sourceCharacter.currentSide == SIDES.A){
-							oppositeTargets = this.charactersSideA;
-						}else{
-							oppositeTargets = this.charactersSideB;
-						}
-					}
-				}
+				//int chance = Utilities.rng.Next(0, 100);
+				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+				//	if(chance < 10){
+				//		if(sourceCharacter.currentSide == SIDES.A){
+				//			oppositeTargets = this.charactersSideA;
+				//		}else{
+				//			oppositeTargets = this.charactersSideB;
+				//		}
+				//	}
+				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+				//	if(chance < 20){
+				//		if(sourceCharacter.currentSide == SIDES.A){
+				//			oppositeTargets = this.charactersSideA;
+				//		}else{
+				//			oppositeTargets = this.charactersSideB;
+				//		}
+				//	}
+				//}
 
 				for (int i = 0; i < oppositeTargets.Count; i++) {
-					ECS.Character targetCharacter = oppositeTargets [i];
+					ICharacter targetCharacter = oppositeTargets [i];
 					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
 					if (skill.range >= rowDistance) {
 						possibleTargets.Add (targetCharacter);
 					}
 				}
 			} else if (skill is HealSkill) {
-				List<ECS.Character> sameTargets = this.charactersSideB;
+				List<ICharacter> sameTargets = this.charactersSideB;
 				if(sourceCharacter.currentSide == SIDES.A){
 					sameTargets = this.charactersSideA;
 				}
 
-				int chance = Utilities.rng.Next (0, 100);
-				if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
-					if(chance < 10){
-						if(sourceCharacter.currentSide == SIDES.B){
-							sameTargets = this.charactersSideA;
-						}else{
-							sameTargets = this.charactersSideB;
-						}
-					}
-				}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
-					if(chance < 20){
-						if(sourceCharacter.currentSide == SIDES.B){
-							sameTargets = this.charactersSideA;
-						}else{
-							sameTargets = this.charactersSideB;
-						}
-					}
-				}
+				//int chance = Utilities.rng.Next (0, 100);
+				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+				//	if(chance < 10){
+				//		if(sourceCharacter.currentSide == SIDES.B){
+				//			sameTargets = this.charactersSideA;
+				//		}else{
+				//			sameTargets = this.charactersSideB;
+				//		}
+				//	}
+				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+				//	if(chance < 20){
+				//		if(sourceCharacter.currentSide == SIDES.B){
+				//			sameTargets = this.charactersSideA;
+				//		}else{
+				//			sameTargets = this.charactersSideB;
+				//		}
+				//	}
+				//}
 
 				for (int i = 0; i < sameTargets.Count; i++) {
-					ECS.Character targetCharacter = sameTargets [i];
+					ICharacter targetCharacter = sameTargets [i];
 					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
 					if (skill.range >= rowDistance) {
 						possibleTargets.Add (targetCharacter);
@@ -321,7 +329,7 @@ namespace ECS{
 				}
 //				if (sourceCharacter.currentSide == SIDES.A) {
 //					for (int i = 0; i < this.charactersSideA.Count; i++) {
-//						ECS.Character targetCharacter = this.charactersSideA [i];
+//						ICharacter targetCharacter = this.charactersSideA [i];
 //						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
 //						if (skill.range >= rowDistance) {
 //							possibleTargets.Add (targetCharacter);
@@ -329,7 +337,7 @@ namespace ECS{
 //					}
 //				} else {
 //					for (int i = 0; i < this.charactersSideB.Count; i++) {
-//						ECS.Character targetCharacter = this.charactersSideB [i];
+//						ICharacter targetCharacter = this.charactersSideB [i];
 //						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
 //						if (skill.range >= rowDistance) {
 //							possibleTargets.Add (targetCharacter);
@@ -344,20 +352,20 @@ namespace ECS{
 		}
 
 		//Get Skill that the character will use based on activation weights, target character must be within skill range
-		private Skill GetSkillToUse(ECS.Character sourceCharacter){
+		private Skill GetSkillToUse(ICharacter sourceCharacter){
 			Dictionary<Skill, int> skillActivationWeights = new Dictionary<Skill, int> ();
 			Dictionary<object, int> categoryActivationWeights = new Dictionary<object, int> ();
 
 			//First step: pick from general skills or body part skill or weapon skill
 			int bodyPartWeight = 10;
-			if(sourceCharacter.HasActivatableWeaponSkill()){
-				categoryActivationWeights.Add("weapon", 100);
-			}else{
-				bodyPartWeight += 100;
-			}
-			if (sourceCharacter.HasActivatableBodyPartSkill ()) {
-				categoryActivationWeights.Add ("bodypart", bodyPartWeight);
-			}
+			//if(sourceCharacter.HasActivatableWeaponSkill()){
+			//	categoryActivationWeights.Add("weapon", 100);
+			//}else{
+			//	bodyPartWeight += 100;
+			//}
+			//if (sourceCharacter.HasActivatableBodyPartSkill ()) {
+			//	categoryActivationWeights.Add ("bodypart", bodyPartWeight);
+			//}
 
 			for (int i = 0; i < sourceCharacter.skills.Count; i++) {
 				Skill skill = sourceCharacter.skills [i];
@@ -410,7 +418,7 @@ namespace ECS{
 		}
 
 		//Returns activation weight of a certain skill that is already modified
-		private int GetActivationWeightOfSkill(ECS.Character sourceCharacter, Skill skill){
+		private int GetActivationWeightOfSkill(ICharacter sourceCharacter, Skill skill){
 			int activationWeight = skill.activationWeight;
 			//if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
 			//	activationWeight *= ((int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f));
@@ -420,10 +428,10 @@ namespace ECS{
 			//	activationWeight *=  (weight > 0f ? weight : 1);
 			//}else if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.ALLY_MISSING_HEALTH){
 			//	int highestMissingHealth = 0;
-			//	ECS.Character chosenCharacter = null;
+			//	ICharacter chosenCharacter = null;
 			//	if(sourceCharacter.currentSide == SIDES.A){
 			//		for (int j = 0; j < charactersSideA.Count; j++) {
-			//			ECS.Character character = charactersSideA [j];
+			//			ICharacter character = charactersSideA [j];
 			//			int missingHealth = character.maxHP - character.currentHP;
 			//			if(chosenCharacter == null){
 			//				highestMissingHealth = missingHealth;
@@ -437,7 +445,7 @@ namespace ECS{
 			//		}
 			//	}else{
 			//		for (int j = 0; j < charactersSideB.Count; j++) {
-			//			ECS.Character character = charactersSideB [j];
+			//			ICharacter character = charactersSideB [j];
 			//			int missingHealth = character.maxHP - character.currentHP;
 			//			if(chosenCharacter == null){
 			//				highestMissingHealth = missingHealth;
@@ -458,11 +466,11 @@ namespace ECS{
 			return activationWeight;
 		}
 		//Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
-		internal bool HasTargetInRangeForSkill(Skill skill, ECS.Character sourceCharacter){
+		internal bool HasTargetInRangeForSkill(Skill skill, ICharacter sourceCharacter){
 			if(skill is AttackSkill){
 				if(sourceCharacter.currentSide == SIDES.A){
 					for (int i = 0; i < this.charactersSideB.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideB [i];
+						ICharacter targetCharacter = this.charactersSideB [i];
 						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
 						if(skill.range >= rowDistance){
 							return true;
@@ -470,7 +478,7 @@ namespace ECS{
 					}
 				}else{
 					for (int i = 0; i < this.charactersSideA.Count; i++) {
-						ECS.Character targetCharacter = this.charactersSideA [i];
+						ICharacter targetCharacter = this.charactersSideA [i];
 						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
 						if(skill.range >= rowDistance){
 							return true;
@@ -484,7 +492,7 @@ namespace ECS{
 
 		}
 
-		internal bool HasTargetInRangeForSkill(SKILL_TYPE skillType, ECS.Character sourceCharacter){
+		internal bool HasTargetInRangeForSkill(SKILL_TYPE skillType, ICharacter sourceCharacter){
 			if(skillType == SKILL_TYPE.ATTACK){
 				for (int i = 0; i < sourceCharacter.skills.Count; i++) {
 					Skill skill = sourceCharacter.skills [i];
@@ -492,11 +500,14 @@ namespace ECS{
                         return HasTargetInRangeForSkill(skill, sourceCharacter);
 					}
 				}
-                for (int i = 0; i < sourceCharacter.level; i++) {
-                    for (int j = 0; j < sourceCharacter.characterClass.skillsPerLevel[i].Length; j++) {
-                        Skill skill = sourceCharacter.characterClass.skillsPerLevel[i][j];
-                        if (skill is AttackSkill) {
-                            return HasTargetInRangeForSkill(skill, sourceCharacter);
+                if (sourceCharacter is Character) {
+                    Character character = sourceCharacter as Character;
+                    for (int i = 0; i < character.level; i++) {
+                        for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
+                            Skill skill = character.characterClass.skillsPerLevel[i][j];
+                            if (skill is AttackSkill) {
+                                return HasTargetInRangeForSkill(skill, sourceCharacter);
+                            }
                         }
                     }
                 }
@@ -504,15 +515,15 @@ namespace ECS{
 			return true;
 		}
 		//Returns the row distance/difference of two characters
-		private int GetRowDistanceBetweenTwoCharacters(ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		private int GetRowDistanceBetweenTwoCharacters(ICharacter sourceCharacter, ICharacter targetCharacter){
 			int distance = targetCharacter.currentRow - sourceCharacter.currentRow;
 			if(distance < 0){
 				distance *= -1;
 			}
 			return distance;
 		}
-		//ECS.Character will do the skill specified, but its success will be determined by the skill's accuracy
-		private void DoSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		//ICharacter will do the skill specified, but its success will be determined by the skill's accuracy
+		private void DoSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter){
             //If skill is attack, reduce sp
             if (skill.skillType == SKILL_TYPE.ATTACK) {
                 AttackSkill attackSkill = skill as AttackSkill;
@@ -531,7 +542,7 @@ namespace ECS{
 		}
 
 		//Go here if skill is accurate and is successful
-		private void SuccessfulSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		private void SuccessfulSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter){
 			if (skill is AttackSkill) {
 				AttackSkill (skill, sourceCharacter, targetCharacter);
 			} else if (skill is HealSkill) {
@@ -546,7 +557,7 @@ namespace ECS{
 		}
 
 		//Skill is not accurate and therefore has failed to execute
-		private void FailedSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		private void FailedSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter){
 			//TODO: What happens when a skill has failed?
 			if(skill is FleeSkill){
 				AddCombatLog(sourceCharacter.coloredUrlName + " tried to flee but got tripped over and fell down!", sourceCharacter.currentSide);
@@ -563,7 +574,7 @@ namespace ECS{
 		}
 
 		//Get DEFEND_TYPE for the attack skill, if DEFEND_TYPE is NONE, then target character has not defend successfully, therefore, the target character will be damaged
-		//private DEFEND_TYPE CanTargetCharacterDefend(ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		//private DEFEND_TYPE CanTargetCharacterDefend(ICharacter sourceCharacter, ICharacter targetCharacter){
 		//	if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
 		//		return DEFEND_TYPE.NONE;
 		//	}
@@ -585,17 +596,17 @@ namespace ECS{
 		//	}
 		//}
 
-		private void CounterAttack(ECS.Character character){
+		private void CounterAttack(ICharacter character){
 			//TODO: Counter attack
 			AddCombatLog (character.coloredUrlName + " counterattacked!", character.currentSide);
 		}
 
-		private void InstantDeath(ECS.Character character){
+		private void InstantDeath(ICharacter character){
 			character.FaintOrDeath();
 		}
 
 		#region Attack Skill
-		private void AttackSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		private void AttackSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter){
 			AttackSkill attackSkill = skill as AttackSkill;
             HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter); //, attackSkill.weapon
    //         DEFEND_TYPE defendType = CanTargetCharacterDefend (sourceCharacter, targetCharacter);
@@ -616,14 +627,14 @@ namespace ECS{
 		}
 			
 		//Hits the target with an attack skill
-		private void HitTargetCharacter(AttackSkill attackSkill, ECS.Character sourceCharacter, ECS.Character targetCharacter, Weapon weapon = null){
+		private void HitTargetCharacter(AttackSkill attackSkill, ICharacter sourceCharacter, ICharacter targetCharacter, Weapon weapon = null){
 			//Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
-			if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
-				targetCharacter = sourceCharacter;
-				string confusedLog = sourceCharacter.coloredUrlName + " is so confused that " + (sourceCharacter.gender == GENDER.MALE ? "he" : "she") + " targeted " 
-					+ (sourceCharacter.gender == GENDER.MALE ? "himself" : "herself");
-				AddCombatLog (confusedLog, sourceCharacter.currentSide);
-			}
+			//if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
+			//	targetCharacter = sourceCharacter;
+			//	string confusedLog = sourceCharacter.coloredUrlName + " is so confused that " + (sourceCharacter.gender == GENDER.MALE ? "he" : "she") + " targeted " 
+			//		+ (sourceCharacter.gender == GENDER.MALE ? "himself" : "herself");
+			//	AddCombatLog (confusedLog, sourceCharacter.currentSide);
+			//}
             string log = string.Empty;
             float weaponPower = 0f;
             float damageRange = 5f;
@@ -765,7 +776,7 @@ namespace ECS{
         }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
-		private void DealDamageToBodyPart(AttackSkill attackSkill, ECS.Character targetCharacter, ECS.Character sourceCharacter, BodyPart chosenBodyPart, ref string log){
+		private void DealDamageToBodyPart(AttackSkill attackSkill, ICharacter targetCharacter, ICharacter sourceCharacter, BodyPart chosenBodyPart, ref string log){
 			//int chance = Utilities.rng.Next (0, 100);
 
 //			if(attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0){
@@ -899,7 +910,7 @@ namespace ECS{
         }
 
 
-		private string StatusEffectLog(ECS.Character sourceCharacter, ECS.Character targetCharacter, STATUS_EFFECT statusEffect){
+		private string StatusEffectLog(ICharacter sourceCharacter, ICharacter targetCharacter, STATUS_EFFECT statusEffect){
 			string log = string.Empty;
 			if(statusEffect == STATUS_EFFECT.CONFUSED){
 				string[] possibleLogs = new string[] {
@@ -913,7 +924,7 @@ namespace ECS{
 			return log;
 		}
 		//Returns a random body part of a character
-		private BodyPart GetRandomBodyPart(ECS.Character character){
+		private BodyPart GetRandomBodyPart(ICharacter character){
 			List<BodyPart> allBodyParts = character.bodyParts.Where(x => !x.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)).ToList();
 			if(allBodyParts.Count > 0){
 				return allBodyParts [Utilities.rng.Next (0, allBodyParts.Count)];
@@ -925,7 +936,7 @@ namespace ECS{
 		#endregion
 
 		#region Heal Skill
-		private void HealSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		private void HealSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter){
 			HealSkill healSkill = (HealSkill)skill;	
 			targetCharacter.AdjustHP (healSkill.healPower);
 			if(sourceCharacter == targetCharacter){
@@ -938,25 +949,27 @@ namespace ECS{
 		#endregion
 
 		#region Flee Skill
-		private void FleeSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
-			//TODO: ECS.Character flees
+		private void FleeSkill(ICharacter sourceCharacter, ICharacter targetCharacter){
+			//TODO: ICharacter flees
 			RemoveCharacter(targetCharacter);
 			fledCharacters.Add (targetCharacter);
 			//targetCharacter.SetIsDefeated (true);
-            CombatManager.Instance.CharacterContinuesAction(targetCharacter);
+            if(targetCharacter is Character) {
+                CombatManager.Instance.CharacterContinuesAction(targetCharacter as Character);
+            }
             AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
 
 		#region Obtain Item Skill
-		private void ObtainItemSkill(ECS.Character sourceCharacter, ECS.Character targetCharacter){
-			//TODO: ECS.Character obtains an item
+		private void ObtainItemSkill(ICharacter sourceCharacter, ICharacter targetCharacter){
+			//TODO: ICharacter obtains an item
 			AddCombatLog(targetCharacter.coloredUrlName + " obtained an item.", targetCharacter.currentSide);
 		}
 		#endregion
 
 		#region Move Skill
-		private void MoveSkill(Skill skill, ECS.Character sourceCharacter, ECS.Character targetCharacter){
+		private void MoveSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter){
 			if(skill.skillName == "MoveLeft"){
 				if (targetCharacter.currentRow != 1) {
 					targetCharacter.SetRowNumber(targetCharacter.currentRow - 1);
@@ -972,14 +985,14 @@ namespace ECS{
 		#endregion
 
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
-		internal void CharacterDeath(ECS.Character character){
+		internal void CharacterDeath(ICharacter character){
 			RemoveCharacter (character);
 			//deadCharacters.Add (character);
 			//character.SetIsDefeated (true);
 			AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
 		}
 
-		internal void CharacterFainted(ECS.Character character){
+		internal void CharacterFainted(ICharacter character){
 			RemoveCharacter (character);
 			faintedCharacters.Add (character);
 			//character.SetIsDefeated (true);
@@ -987,7 +1000,7 @@ namespace ECS{
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death
-		private void CheckBodyPart(string bodyPart, ECS.Character character){
+		private void CheckBodyPart(string bodyPart, ICharacter character){
 			for (int i = 0; i < character.bodyParts.Count; i++) {
 				BodyPart characterBodyPart = character.bodyParts [i];
 				if(characterBodyPart.name == bodyPart && !characterBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
@@ -1021,7 +1034,7 @@ namespace ECS{
 		}
 		#endregion
 
-		public ECS.Character GetAliveCharacterByID(int id){
+		public ICharacter GetAliveCharacterByID(int id){
 			for (int i = 0; i < this.characterSideACopy.Count; i++) {
 				if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id){
 					return this.characterSideACopy [i];
@@ -1039,8 +1052,8 @@ namespace ECS{
             return (int) (((weaponAttack + stat) * (1f + (stat / 2f))) * (1f + ((float) level / 100f)));
         }
 
-        //public Character GetOpposingCharacters(ECS.Character character) {
-        //    if (attacker is ECS.Character) {
+        //public Character GetOpposingCharacters(ICharacter character) {
+        //    if (attacker is ICharacter) {
         //        if ((attacker as Character).id == character.id) {
         //            return defender;
         //        }
@@ -1050,7 +1063,7 @@ namespace ECS{
         //        }
         //    }
 
-        //    if (defender is ECS.Character) {
+        //    if (defender is ICharacter) {
         //        if ((defender as Character).id == character.id) {
         //            return attacker;
         //        }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using ECS;
 
 public class CombatInfoClick : MonoBehaviour {
 	void OnClick(){
@@ -10,9 +11,14 @@ public class CombatInfoClick : MonoBehaviour {
 			int idToUse = int.Parse (id);
 			//Debug.Log("Clicked " + url);
 			if(url.Contains("_character")){
-				ECS.Character character = UIManager.Instance.combatLogUI.currentlyShowingCombat.GetAliveCharacterByID(idToUse);
-				if (character != null) {
-					UIManager.Instance.ShowCharacterInfo(character);
+				ICharacter ichar = UIManager.Instance.combatLogUI.currentlyShowingCombat.GetAliveCharacterByID(idToUse);
+				if (ichar != null) {
+                    if(ichar is Character) {
+                        Character character = ichar as Character;
+                        UIManager.Instance.ShowCharacterInfo(character);
+                    } else {
+                        //Show monster UI
+                    }
 				}
 			}
         }

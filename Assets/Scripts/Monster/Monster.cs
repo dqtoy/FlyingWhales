@@ -7,6 +7,7 @@ public class Monster {
     private string _name;
     private MONSTER_TYPE _type;
     private MONSTER_CATEGORY _category;
+    private int _level;
     private int _experienceDrop;
     private int _currentHP;
     private int _maxHP;
@@ -20,6 +21,9 @@ public class Monster {
     private float _hitChance;
     private float _critChance;
     private List<Skill> _skills;
+    private Dictionary<ELEMENT, float> _elementalWeaknesses;
+    private Dictionary<ELEMENT, float> _elementalResistance;
+
     //To add item drops and their chances
 
     #region getters/setters
@@ -33,6 +37,7 @@ public class Monster {
         newMonster._name = this._name;
         newMonster._type = this._type;
         newMonster._category = this._category;
+        newMonster._level = this._level;
         newMonster._experienceDrop = this._experienceDrop;
         newMonster._maxHP = this._maxHP;
         newMonster._maxSP = this._maxSP;
@@ -56,6 +61,7 @@ public class Monster {
         this._type = monsterComponent.type;
         this._category = monsterComponent.category;
         this._experienceDrop = monsterComponent.experienceDrop;
+        this._level = monsterComponent.level;
         this._maxHP = monsterComponent.maxHP;
         this._maxSP = monsterComponent.maxSP;
         this._attackPower = monsterComponent.attackPower;

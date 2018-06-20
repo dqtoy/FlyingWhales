@@ -18,6 +18,7 @@ public class MonsterCreator : Editor {
         monsterComponent.monsterName = EditorGUILayout.TextField("Name: ", monsterComponent.monsterName);
         monsterComponent.type = (MONSTER_TYPE) EditorGUILayout.EnumPopup("Type: ", monsterComponent.type);
         monsterComponent.category = (MONSTER_CATEGORY) EditorGUILayout.EnumPopup("Category: ", monsterComponent.category);
+        monsterComponent.level = EditorGUILayout.IntField("Level: ", monsterComponent.level);
         monsterComponent.maxHP = EditorGUILayout.IntField("Max HP: ", monsterComponent.maxHP);
         monsterComponent.maxSP = EditorGUILayout.IntField("Max SP: ", monsterComponent.maxSP);
         monsterComponent.attackPower = EditorGUILayout.IntField("Attack Power: ", monsterComponent.attackPower);
