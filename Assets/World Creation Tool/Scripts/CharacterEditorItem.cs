@@ -37,28 +37,40 @@ namespace worldcreator {
             CharacterManager.Instance.RemoveCharacter(_character);
         }
         public void SetLocation() {
-            List<BaseLandmark> choices = new List<BaseLandmark>(WorldCreatorManager.Instance.selectionComponent.selectedLandmarks);
-            BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
-            _character.SetSpecificLocation(chosenLandmark);
-            WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.UpdateBasicInfo();
+            List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection);
+            HexTile chosenTile = choices[Random.Range(0, choices.Count)];
+            if (chosenTile.landmarkOnTile != null) {
+                _character.SetSpecificLocation(chosenTile.landmarkOnTile);
+            } else {
+                _character.SetSpecificLocation(chosenTile);
+            }
+            if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
+                WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.UpdateBasicInfo();
+            }
         }
         public void SetHome() {
             List<BaseLandmark> choices = new List<BaseLandmark>(WorldCreatorManager.Instance.selectionComponent.selectedLandmarks);
             BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
             _character.SetHome(chosenLandmark);
-            WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.UpdateBasicInfo();
+            if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
+                WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.UpdateBasicInfo();
+            }
         }
 
         #region Monobehaviours
         private void Update() {
             if (WorldCreatorManager.Instance.selectionComponent.selectedLandmarks.Count == 0) {
-                setLocationBtn.interactable = false;
                 setHomeBtn.interactable = false;
             } else {
-                setLocationBtn.interactable = true;
                 setHomeBtn.interactable = true;
             }
-            
+
+            if (WorldCreatorManager.Instance.selectionComponent.selection.Count == 0) {
+                setLocationBtn.interactable = false;
+            } else {
+                setLocationBtn.interactable = true;
+            }
+
         }
         #endregion
 
