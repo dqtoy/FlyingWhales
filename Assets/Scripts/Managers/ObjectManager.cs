@@ -284,6 +284,12 @@ public class ObjectManager : MonoBehaviour {
             case SPECIFIC_OBJECT_TYPE.HUNTING_GROUNDS:
                 structureObj = new HuntingGrounds();
                 break;
+            case SPECIFIC_OBJECT_TYPE.ELVEN_HOUSES:
+                structureObj = new ElvenHouses();
+                break;
+            case SPECIFIC_OBJECT_TYPE.HUMAN_HOUSES:
+                structureObj = new HumanHouses();
+                break;
         }
         component.CopyDataToStructureObject(structureObj);
         return structureObj;

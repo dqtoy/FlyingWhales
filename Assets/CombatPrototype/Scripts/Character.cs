@@ -1538,6 +1538,9 @@ namespace ECS {
 		        case CHARACTER_ROLE.VILLAIN:
 			        _role = new Villain(this);
 			        break;
+                case CHARACTER_ROLE.CIVILIAN:
+                    _role = new Civilian(this);
+                    break;
                 //case CHARACTER_ROLE.FOLLOWER:
                 //    _role = new Follower(this);
                 //    break;

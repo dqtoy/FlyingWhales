@@ -892,6 +892,7 @@ public enum CHARACTER_ROLE {
 	//CRATER_BEAST,
 	//SLYX,
 	VILLAIN,
+    CIVILIAN,
     //FOLLOWER,
     //HERMIT,
     //BEAST,
@@ -1362,7 +1363,8 @@ public enum ACTION_FILTER_CONDITION {
 public enum ACTION_FILTER {
     HERO,
     VILLAIN,
-    RUINED
+    RUINED,
+    CIVILIAN
 }
 
 public enum SPECIFIC_OBJECT_TYPE {
@@ -1391,7 +1393,9 @@ public enum SPECIFIC_OBJECT_TYPE {
     INN,
     PUB,
     TEMPLE,
-    HUNTING_GROUNDS
+    HUNTING_GROUNDS,
+    ELVEN_HOUSES,
+    HUMAN_HOUSES,
 }
 
 public enum PREREQUISITE {
