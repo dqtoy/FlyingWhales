@@ -10,14 +10,13 @@ public class Area {
     public AREA_TYPE areaType { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
-
-    private Color _areaColor;
+    public Color areaColor { get; private set; }
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
         id = Utilities.SetID(this);
         name = RandomNameGenerator.Instance.GetRegionName();
         tiles = new List<HexTile>();
-        _areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //AddTile(coreTile);
@@ -42,6 +41,7 @@ public class Area {
             if (revalidateTiles) {
                 RevalidateTiles();
             }
+            Messenger.Broadcast(Signals.AREA_TILE_ADDED, this);
         }
     }
     public void RemoveTile(List<HexTile> tiles, bool revalidateTiles = true) {
@@ -58,6 +58,7 @@ public class Area {
         if (revalidateTiles) {
             RevalidateTiles();
         }
+        Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this);
     }
     private void RevalidateTiles() {
         List<HexTile> tilesToCheck = new List<HexTile>(tiles);
@@ -86,16 +87,16 @@ public class Area {
 #if WORLD_CREATION_TOOL
             if (!worldcreator.WorldCreatorManager.Instance.selectionComponent.selection.Contains(currTile)) {
                 if (currTile.id == coreTile.id) {
-                    currTile.HighlightTile(_areaColor, 255f/255f);
+                    currTile.HighlightTile(areaColor, 255f/255f);
                 } else {
-                    currTile.HighlightTile(_areaColor, 128f/255f);
+                    currTile.HighlightTile(areaColor, 128f/255f);
                 }
             }
 #else
             if (currTile.id == coreTile.id) {
-                currTile.HighlightTile(_areaColor, 255f/255f);
+                currTile.HighlightTile(areaColor, 255f/255f);
             } else {
-                currTile.HighlightTile(_areaColor, 128f/255f);
+                currTile.HighlightTile(areaColor, 128f/255f);
             }
 #endif
         }

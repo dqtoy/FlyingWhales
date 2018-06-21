@@ -38,6 +38,9 @@ namespace worldcreator {
             Instance = this;
             allRegions = new List<Region>();
         }
+        private void Update() {
+            HighlightAreas();
+        }
 
         #region Grid Generation
         public IEnumerator GenerateGrid(int width, int height, bool randomize) {
@@ -545,6 +548,18 @@ namespace worldcreator {
             }
         }
         public void SetElevation(HexTile tile, ELEVATION elevation, bool updateVisuals = true) {
+            if (elevation != ELEVATION.PLAIN) {
+                if (tile.areaOfTile != null) {
+                    if (tile.areaOfTile.coreTile.id == tile.id) {
+                        WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Elevation error", "Cannot change elevation of " + tile.tileName + " because it is a core tile of an area!");
+                        return;
+                    }
+                    tile.areaOfTile.RemoveTile(tile);
+                }
+                if (tile.landmarkOnTile != null) {
+                    LandmarkManager.Instance.DestroyLandmarkOnTile(tile);
+                }
+            }
             tile.SetElevation(elevation);
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile, true);
@@ -555,13 +570,15 @@ namespace worldcreator {
         #endregion
 
         #region Landmark Edit
-        public void SpawnLandmark(List<HexTile> tiles, LANDMARK_TYPE landmarkType) {
+        public List<BaseLandmark> SpawnLandmark(List<HexTile> tiles, LANDMARK_TYPE landmarkType) {
+            List<BaseLandmark> landmarks = new List<BaseLandmark>();
             for (int i = 0; i < tiles.Count; i++) {
-                SpawnLandmark(tiles[i], landmarkType);
+                landmarks.Add(SpawnLandmark(tiles[i], landmarkType));
             }
+            return landmarks;
         }
-        public void SpawnLandmark(HexTile tile, LANDMARK_TYPE landmarkType) {
-            LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
+        public BaseLandmark SpawnLandmark(HexTile tile, LANDMARK_TYPE landmarkType) {
+            return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
         }
         public void DestroyLandmarks(List<HexTile> tiles) {
             for (int i = 0; i < tiles.Count; i++) {
@@ -645,7 +662,22 @@ namespace worldcreator {
             }
             return null;
         }
-        #endregion        
+        #endregion
+
+        #region Areas
+        private void HighlightAreas() {
+            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                Area currArea = LandmarkManager.Instance.allAreas[i];
+                currArea.HighlightArea();
+            }
+        }
+        private void UnhighlightAreas() {
+            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                Area currArea = LandmarkManager.Instance.allAreas[i];
+                currArea.UnhighlightArea();
+            }
+        }
+        #endregion
     }
 
     public enum EDIT_MODE {

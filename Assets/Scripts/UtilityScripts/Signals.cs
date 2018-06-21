@@ -32,4 +32,6 @@ public static class Signals {
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
     public static string AREA_CREATED = "OnAreaCreated"; //Parameters (Area newArea)
     public static string AREA_DELETED = "OnAreaDeleted"; //Parameters (Area deletedArea)
+    public static string AREA_TILE_REMOVED = "OnAreaTileRemoved"; //Parameters (Area affectedArea)
+    public static string AREA_TILE_ADDED = "OnAreaTileAdded"; //Parameters (Area affectedArea)
 }

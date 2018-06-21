@@ -15,7 +15,7 @@ public class FactionInfoClick : MonoBehaviour {
 					UIManager.Instance.ShowCharacterInfo(character);
 				}
 			}else if(url.Contains("_landmark")){
-				BaseLandmark landmark = UIManager.Instance.factionInfoUI.currentlyShowingFaction.GetLandmarkByID(idToUse);
+				BaseLandmark landmark = LandmarkManager.Instance.GetLandmarkByID(idToUse);
 				if(landmark != null){
 					UIManager.Instance.ShowLandmarkInfo(landmark);
 				}

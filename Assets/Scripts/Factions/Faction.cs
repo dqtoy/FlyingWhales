@@ -39,7 +39,6 @@ public class Faction {
     }
 	public string urlName {
 		get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' +">" + this._name + "</link>"; }
-
     }
     public ECS.Character leader {
         get { return _leader; }
@@ -100,6 +99,9 @@ public class Faction {
 	}
     public List<BaseLandmark> landmarkInfo {
         get { return _landmarkInfo; }
+    }
+    public List<BaseLandmark> ownedLandmarks {
+        get { return _ownedLandmarks; }
     }
     #endregion
 
@@ -307,20 +309,6 @@ public class Faction {
         }
         return null;
     }
-    public BaseLandmark GetLandmarkByID(int id) {
-        for (int i = 0; i < _settlements.Count; i++) {
-            Settlement currSettlement = _settlements[i];
-			if (currSettlement.id == id) {
-				return currSettlement;
-			}
-            for (int j = 0; j < currSettlement.ownedLandmarks.Count; j++) {
-                if (currSettlement.ownedLandmarks[j].id == id) {
-                    return currSettlement.ownedLandmarks[j];
-                }
-            }
-        }
-        return null;
-    }
     public Settlement GetSettlementWithHighestPopulation() {
         Settlement highestPopulationSettlement = null;
         for (int i = 0; i < _settlements.Count; i++) {
@@ -345,39 +333,6 @@ public class Faction {
 		}
 		return false;
 	}
-	//public List<BaseLandmark> GetAllPossibleLandmarksToAttack(){
-	//	List<BaseLandmark> allPossibleLandmarksToAttack = new List<BaseLandmark> ();
-	//	for (int i = 0; i < _settlements.Count; i++) {
-	//		BaseLandmark settlement = _settlements[i];
-	//		for (int j = 0; j < settlement.tileLocation.region.landmarks.Count; j++) {
-	//			BaseLandmark regionLandmark = settlement.tileLocation.region.landmarks [j];
-	//			if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
-	//				FactionRelationship factionRel = GetRelationshipWith(regionLandmark.owner);
-	//				if (factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-	//					if (!_militaryManager.IsAlreadyBeingAttacked (regionLandmark)) {
-	//						allPossibleLandmarksToAttack.Add (regionLandmark);
-	//					}
-	//				}
-	//			}
-	//		}
-	//		for (int j = 0; j < settlement.tileLocation.region.connections.Count; j++) {
-	//			if(settlement.tileLocation.region.connections[j] is Region){
-	//				Region adjacentRegion = settlement.tileLocation.region.connections [j] as Region;
-	//				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
-	//					FactionRelationship factionRel = GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-	//					if (factionRel != null && factionRel.isAtWar) {
-	//						if (!_militaryManager.IsAlreadyBeingAttacked (adjacentRegion.centerOfMass.landmarkOnTile)) {
-	//							if (!allPossibleLandmarksToAttack.Contains (adjacentRegion.centerOfMass.landmarkOnTile)) {
-	//								allPossibleLandmarksToAttack.Add (adjacentRegion.centerOfMass.landmarkOnTile);
-	//							}
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-	//	return allPossibleLandmarksToAttack;
- //   }
     public bool IsHostileWith(Faction faction) {
         if(faction.id == this.id) {
             return false;
@@ -490,19 +445,19 @@ public class Faction {
     #endregion
 
     #region Landmarks
-    /*
-     This returns a list of all the owned landmarks
-     of this faction, this includes settlements as well.
-         */
-    public List<BaseLandmark> GetAllOwnedLandmarks() {
-        List<BaseLandmark> ownedLandmarks = new List<BaseLandmark>();
-        for (int i = 0; i < _settlements.Count; i++) {
-            Settlement currSettlement = _settlements[i];
-            ownedLandmarks.Add(currSettlement);
-            ownedLandmarks.AddRange(currSettlement.ownedLandmarks);
-        }
-        return ownedLandmarks;
-    }
+    ///*
+    // This returns a list of all the owned landmarks
+    // of this faction, this includes settlements as well.
+    //     */
+    //public List<BaseLandmark> GetAllOwnedLandmarks() {
+    //    List<BaseLandmark> ownedLandmarks = new List<BaseLandmark>();
+    //    for (int i = 0; i < _settlements.Count; i++) {
+    //        Settlement currSettlement = _settlements[i];
+    //        ownedLandmarks.Add(currSettlement);
+    //        ownedLandmarks.AddRange(currSettlement.ownedLandmarks);
+    //    }
+    //    return ownedLandmarks;
+    //}
     public BaseLandmark GetOwnedLandmarkOfType(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < _ownedLandmarks.Count; i++) {
             BaseLandmark currLandmark = _ownedLandmarks[i];

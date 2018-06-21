@@ -17,6 +17,8 @@ public class LandmarkManager : MonoBehaviour {
 
     public List<BaseLandmarkData> baseLandmarkData;
     public List<LandmarkData> landmarkData;
+    public List<AreaData> areaData;
+
     public int corruptedLandmarksCount;
 
     public List<Area> allAreas;
@@ -93,6 +95,13 @@ public class LandmarkManager : MonoBehaviour {
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
         BaseLandmark landmarkOnTile = tile.landmarkOnTile;
+        while(landmarkOnTile.charactersAtLocation.Count != 0) {
+            landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
+        }
+        while (landmarkOnTile.charactersWithHomeOnLandmark.Count != 0) {
+            landmarkOnTile.charactersWithHomeOnLandmark[0].SetHome(null);
+            landmarkOnTile.RemoveCharacterHomeOnLandmark(landmarkOnTile.charactersWithHomeOnLandmark[0]);
+        }
         tile.RemoveLandmarkOnTile();
         tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
         GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
@@ -681,6 +690,15 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Areas
+    public AreaData GetAreaData(AREA_TYPE areaType) {
+        for (int i = 0; i < areaData.Count; i++) {
+            AreaData currData = areaData[i];
+            if (currData.areaType == areaType) {
+                return currData;
+            }
+        }
+        throw new System.Exception("No area data for type " + areaType.ToString());
+    }
     public Area CreateNewArea(HexTile coreTile, AREA_TYPE areaType, List<HexTile> tiles = null) {
         Area newArea = new Area(coreTile, areaType);
         if (tiles == null) {

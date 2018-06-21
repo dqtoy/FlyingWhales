@@ -101,6 +101,9 @@ namespace worldcreator {
         public EditCharactersMenu editCharactersMenu {
             get { return _editCharactersMenu; }
         }
+        public EditAreasMenu editAreasMenu {
+            get { return _editAreasMenu; }
+        }
         public MessageBox messageBox {
             get { return _messageBox; }
         }

@@ -278,6 +278,7 @@ public class CameraMove : MonoBehaviour {
                 }
 #else
                 _uiCamera.orthographicSize = fov;
+                CalculateCameraBounds();
 #endif
             }
 		}

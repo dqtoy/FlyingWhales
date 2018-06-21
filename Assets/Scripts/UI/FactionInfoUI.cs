@@ -47,18 +47,18 @@ public class FactionInfoUI : UIMenu {
 		text += "\n<b>Race:</b> " + currentlyShowingFaction.race.ToString();
 		text += "\n<b>Faction Type:</b> " + currentlyShowingFaction.factionType.ToString();
 		text += "\n<b>Faction Size:</b> " + currentlyShowingFaction.factionSize.ToString();
-		text += "\n<b>Owned Landmarks: </b> ";
-        List<BaseLandmark> ownedLandmarks = currentlyShowingFaction.GetAllOwnedLandmarks();
-        if (ownedLandmarks.Count > 0){
-			for (int i = 0; i < ownedLandmarks.Count; i++) {
-				BaseLandmark landmark = ownedLandmarks [i];
-				text += "\n  - " + landmark.urlName + " (" + landmark.specificLandmarkType.ToString() + ")";
-			}
-		}else{
-			text += "NONE";
-		}
+        text += "\n<b>Owned Landmarks: </b> ";
+        List<BaseLandmark> ownedLandmarks = currentlyShowingFaction.ownedLandmarks;
+        if (ownedLandmarks.Count > 0) {
+            for (int i = 0; i < ownedLandmarks.Count; i++) {
+                BaseLandmark landmark = ownedLandmarks[i];
+                text += "\n  - " + landmark.urlName + " (" + landmark.specificLandmarkType.ToString() + ")";
+            }
+        } else {
+            text += "NONE";
+        }
 
-		text += "\n<b>Initial Technologies: </b> ";
+        text += "\n<b>Initial Technologies: </b> ";
 		if (currentlyShowingFaction.initialTechnologies.Count > 0) {
 			text += "\n";
 			for (int i = 0; i < currentlyShowingFaction.initialTechnologies.Count; i++) {

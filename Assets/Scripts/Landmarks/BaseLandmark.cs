@@ -144,6 +144,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     //public int horizontalBlocked {
     //    get { return _horizontalBlocked; }
     //}
+    public List<Character> charactersWithHomeOnLandmark {
+        get { return _charactersWithHomeOnLandmark; }
+    }
     #endregion
 
     public BaseLandmark() {
@@ -613,7 +616,9 @@ public class BaseLandmark : ILocation, TaskCreator {
         if (character is Character) {
             Character currChar = character as Character;
 			currChar.SetSpecificLocation(null);
+#if !WORLD_CREATION_TOOL
             _landmarkVisual.OnCharacterExitedLandmark(currChar);
+#endif
         } else if (character is Party) {
             Party currParty = character as Party;
 			currParty.SetSpecificLocation(null);

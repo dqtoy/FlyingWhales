@@ -13,21 +13,33 @@ namespace worldcreator {
         [SerializeField] private Text areaNameLbl;
         [SerializeField] private Text areaTilesLbl;
         [SerializeField] private Dropdown areaTypeDropdown;
+        [SerializeField] private Image areaColorSwatch;
+
+        #region getters/setters
+        public Area area {
+            get { return _area; }
+        }
+        #endregion
 
         #region Monobehaviours
         private void Awake() {
             LoadAreaTypeChoices();
+            Messenger.AddListener<Area>(Signals.AREA_TILE_ADDED, UpdateInfo);
+            Messenger.AddListener<Area>(Signals.AREA_TILE_REMOVED, UpdateInfo);
         }
         #endregion
 
         public void SetArea(Area area) {
             _area = area;
-            UpdateInfo();
+            UpdateInfo(area);
         }
-        private void UpdateInfo() {
-            areaNameLbl.text = _area.name;
-            areaTilesLbl.text = _area.tiles.Count.ToString();
-            areaTypeDropdown.value = Utilities.GetOptionIndex(areaTypeDropdown, _area.areaType.ToString());
+        private void UpdateInfo(Area area) {
+            if (_area.id == area.id) {
+                areaColorSwatch.color = area.areaColor;
+                areaNameLbl.text = area.name;
+                areaTilesLbl.text = area.tiles.Count.ToString();
+                areaTypeDropdown.value = Utilities.GetOptionIndex(areaTypeDropdown, area.areaType.ToString());
+            }
         }
 
         public void OnChangeAreaTypeDropdownValue(int choice) {
@@ -46,7 +58,7 @@ namespace worldcreator {
             List<HexTile> validSelectedTiles = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection
                 .Where(x => x.isPassable && x.areaOfTile == null));
             _area.AddTile(validSelectedTiles);
-            UpdateInfo();
+            //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
 
@@ -54,7 +66,7 @@ namespace worldcreator {
             List<HexTile> validSelectedTiles = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection
                 .Where(x => x.areaOfTile != null && x.areaOfTile.id == _area.id && _area.coreTile.id != x.id));
             _area.RemoveTile(validSelectedTiles);
-            UpdateInfo();
+            //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
 

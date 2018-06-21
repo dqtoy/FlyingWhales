@@ -16,7 +16,6 @@ namespace worldcreator {
         public void HideMenu() {
             Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, CreateNewArea);
             createNewAreaBtn.interactable = true;
-            UnhighlightAreas();
             this.gameObject.SetActive(false);
         }
         public void ShowMenu() {
@@ -27,11 +26,6 @@ namespace worldcreator {
         private void Awake() {
             LoadAreaTypeChoices();
             Messenger.AddListener<Area>(Signals.AREA_CREATED, OnAreaCreated);
-        }
-        private void Update() {
-            if (this.gameObject.activeSelf) {
-                HighlightAreas();
-            }
         }
         #endregion
 
@@ -70,18 +64,16 @@ namespace worldcreator {
             areaTypeDropdown.AddOptions(Utilities.GetEnumChoices<AREA_TYPE>());
         }
 
-        private void HighlightAreas() {
-            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                Area currArea = LandmarkManager.Instance.allAreas[i];
-                currArea.HighlightArea();
-            }
-        }
-        private void UnhighlightAreas() {
-            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                Area currArea = LandmarkManager.Instance.allAreas[i];
-                currArea.UnhighlightArea();
-            }
-        }
+        //public void UpdateAreaInfo(Area area) {
+        //    AreaEditorItem[] item = Utilities.GetComponentsInDirectChildren<AreaEditorItem>(areasScrollView.content.gameObject);
+        //    for (int i = 0; i < item.Length; i++) {
+        //        AreaEditorItem currItem = item[i];
+        //        if (currItem.area.id == area.id) {
+        //            currItem.UpdateInfo();
+        //            break;
+        //        }
+        //    }
+        //}
     }
 }
 

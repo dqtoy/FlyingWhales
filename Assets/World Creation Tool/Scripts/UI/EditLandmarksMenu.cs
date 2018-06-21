@@ -9,6 +9,8 @@ namespace worldcreator {
         [SerializeField] private Dropdown landmarksDropDown;
         [SerializeField] private Button destroyBtn;
 
+        private List<BaseLandmark> lastCreatedLandmarks;
+
         private void Awake() {
             LoadLandmarksDropDown();
         }
@@ -26,18 +28,40 @@ namespace worldcreator {
             LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
             List<string> options = new List<string>();
             for (int i = 0; i < landmarkTypes.Length; i++) {
-                options.Add(landmarkTypes[i].ToString());
+                LANDMARK_TYPE currType = landmarkTypes[i];
+                if (currType == LANDMARK_TYPE.GARRISON || currType == LANDMARK_TYPE.HOUSES) {
+                    options.Add(currType.ToString());
+                }
             }
             landmarksDropDown.AddOptions(options);
         }
+        
         public void OnClickSpawnLandmark() {
             LANDMARK_TYPE chosenLandmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), landmarksDropDown.options[landmarksDropDown.value].text);
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
-            WorldCreatorManager.Instance.SpawnLandmark(selectedTiles, chosenLandmarkType);
+            lastCreatedLandmarks = WorldCreatorManager.Instance.SpawnLandmark(selectedTiles, chosenLandmarkType);
+            OnSpawnLandmark(chosenLandmarkType);
         }
         public void OnClickDestroyLandmark() {
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
             WorldCreatorManager.Instance.DestroyLandmarks(selectedTiles);
+        }
+        private void OnSpawnLandmark(LANDMARK_TYPE landmarkType) {
+            switch (landmarkType) {
+                case LANDMARK_TYPE.HOUSES:
+                    WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Input Civilians", "Input number of civilians (per settlement)", SetHousesCivilians);
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void SetHousesCivilians(string civilians) {
+            int civiliansCount = Int32.Parse(civilians);
+            for (int i = 0; i < lastCreatedLandmarks.Count; i++) {
+                Settlement currSettlement = lastCreatedLandmarks[i] as Settlement;
+                currSettlement.SetCivilianCount(civiliansCount);
+            }
+            WorldCreatorUI.Instance.messageBox.HideMessageBox();
         }
         #endregion
     }
