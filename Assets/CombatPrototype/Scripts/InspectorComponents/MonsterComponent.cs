@@ -20,5 +20,6 @@ public class MonsterComponent : MonoBehaviour {
     public float critChance;
     public TextAssetListWrapper skills;
     public List<string> skillNames;
-    public List<ElementChance> elementChances;
+    public List<ElementChance> elementChanceWeaknesses;
+    public List<ElementChance> elementChanceResistances;
 }

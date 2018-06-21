@@ -385,6 +385,7 @@ namespace ECS{
                     }
                 } else if (sourceCharacter is Monster) {
                     Monster monster = sourceCharacter as Monster;
+                    weaponAttack = monster.attackPower;
                     for (int i = 0; i < monster.skills.Count; i++) {
                         Skill skill = monster.skills[i];
                         if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
@@ -508,7 +509,7 @@ namespace ECS{
             if (attackSkill.element != ELEMENT.NONE && battleTracker != null) {
                 if (battleTracker.tracker.ContainsKey(targetCharacter.name)) {
                     if (battleTracker.tracker[targetCharacter.name].elementalResistances.Contains(attackSkill.element)) {
-                        resistance = targetCharacter.elementalResistance[attackSkill.element];
+                        resistance = targetCharacter.elementalResistances[attackSkill.element];
                     }
                 }
             }
@@ -730,7 +731,7 @@ namespace ECS{
 		}
 			
 		//Hits the target with an attack skill
-		private void HitTargetCharacter(AttackSkill attackSkill, ICharacter sourceCharacter, ICharacter targetCharacter, Weapon weapon = null){
+		private void HitTargetCharacter(AttackSkill attackSkill, ICharacter sourceCharacter, ICharacter targetCharacter){
 			//Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
 			//if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
 			//	targetCharacter = sourceCharacter;
@@ -739,12 +740,21 @@ namespace ECS{
 			//	AddCombatLog (confusedLog, sourceCharacter.currentSide);
 			//}
             string log = string.Empty;
-            float weaponPower = 0f;
-            float damageRange = 5f;
+            Character attacker = null;
+            Weapon weapon = null;
+            float weaponAttack = 0f;
+            float damageRange = 0f;
             int statMod = sourceCharacter.strength;
             int def = targetCharacter.GetPDef(sourceCharacter);
             float critDamage = 100f;
-            if(attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
+            if (sourceCharacter is Character) {
+                attacker = sourceCharacter as Character;
+                weapon = attacker.equippedWeapon;
+                weaponAttack = weapon.attackPower;
+            } else if (sourceCharacter is Monster) {
+                weaponAttack = (sourceCharacter as Monster).attackPower;
+            }
+            if (attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
                 statMod = sourceCharacter.intelligence;
                 def = targetCharacter.GetMDef(sourceCharacter);
             }
@@ -763,14 +773,13 @@ namespace ECS{
 
             if (weapon != null) {
                 damageRange = ItemManager.Instance.weaponTypeData[weapon.weaponType].damageRange;
-                weaponPower = weapon.weaponPower;
 
                 log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
 
             } else {
                 log += ".";
             }
-            float weaponAttack = weapon.attackPower;
+
             int finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
             int damage = (int) ((finalAttack * (attackSkill.power / 100f)) * (critDamage / 100f));
             int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
@@ -787,12 +796,21 @@ namespace ECS{
             if(attackSkill.element != ELEMENT.NONE) {
                 elementUsed = attackSkill.element;
             } else {
-                if(weapon.element != ELEMENT.NONE) {
+                if(weapon != null && weapon.element != ELEMENT.NONE) {
                     elementUsed = weapon.element;
                 }
             }
-            float elementalDiff = targetCharacter.elementalWeaknesses[elementUsed] - targetCharacter.elementalResistance[elementUsed];
+            float elementalDiff = targetCharacter.elementalWeaknesses[elementUsed] - targetCharacter.elementalResistances[elementUsed];
             float elementModifier = 1f + ((elementalDiff < 0f ? 0f : elementalDiff) / 100f);
+            //Add elemental weakness and resist to sourceCharacter battle tracker
+            if(attacker != null) {
+                if(targetCharacter.elementalWeaknesses[elementUsed] > 0f) {
+                    attacker.battleTracker.AddEnemyElementalWeakness(targetCharacter.name, elementUsed);
+                }
+                if (targetCharacter.elementalResistances[elementUsed] > 0f) {
+                    attacker.battleTracker.AddEnemyElementalResistance(targetCharacter.name, elementUsed);
+                }
+            }
 
             //Calculate total damage
             damage = (int) ((float) damage * elementModifier);
@@ -804,79 +822,83 @@ namespace ECS{
             AddCombatLog(log, sourceCharacter.currentSide);
 
             targetCharacter.AdjustHP(-damage);
+            //Add previous actual damage
+            if (attacker != null) {
+                attacker.battleTracker.SetLastDamageDealt(targetCharacter.name, damage);
+            }
 
-            //if (attackSkill.attackType != ATTACK_TYPE.STATUS) {
-            //    string log = string.Empty;
-            //    float weaponPower = 0f;
-            //    float damageRange = 5f;
+                //if (attackSkill.attackType != ATTACK_TYPE.STATUS) {
+                //    string log = string.Empty;
+                //    float weaponPower = 0f;
+                //    float damageRange = 5f;
 
-            //    BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
-            //    if (chosenBodyPart == null) {
-            //        Debug.LogError("NO MORE BODY PARTS!");
-            //        return;
-            //    }
-            //    Armor armor = chosenBodyPart.GetArmor();
-            //    log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
+                //    BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);
+                //    if (chosenBodyPart == null) {
+                //        Debug.LogError("NO MORE BODY PARTS!");
+                //        return;
+                //    }
+                //    Armor armor = chosenBodyPart.GetArmor();
+                //    log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
-            //    if (weapon != null) {
-            //        damageRange = weapon.damageRange;
-            //        weaponPower = weapon.weaponPower;
+                //    if (weapon != null) {
+                //        damageRange = weapon.damageRange;
+                //        weaponPower = weapon.weaponPower;
 
-            //        //reduce weapon durability by durability cost of skill
-            //        weapon.AdjustDurability(-attackSkill.durabilityCost);
-            //        log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
+                //        //reduce weapon durability by durability cost of skill
+                //        weapon.AdjustDurability(-attackSkill.durabilityCost);
+                //        log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
 
-            //    } else {
-            //        log += ".";
-            //    }
+                //    } else {
+                //        log += ".";
+                //    }
 
-            //    int damage = (int) (weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
-            //    int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
-            //    int minDamageRange = damage - computedDamageRange;
-            //    int maxDamageRange = damage + computedDamageRange;
-            //    damage = Utilities.rng.Next((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
+                //    int damage = (int) (weaponPower + (attackSkill.attackType == ATTACK_TYPE.MAGIC ? sourceCharacter.intelligence : sourceCharacter.strength));
+                //    int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
+                //    int minDamageRange = damage - computedDamageRange;
+                //    int maxDamageRange = damage + computedDamageRange;
+                //    damage = Utilities.rng.Next((minDamageRange < 0 ? 0 : minDamageRange), maxDamageRange + 1);
 
-            //    if (armor != null) {
-            //        if (attackSkill.attackType != ATTACK_TYPE.PIERCE) {
-            //            int damageNullChance = Utilities.rng.Next(0, 100);
-            //            if (damageNullChance < armor.damageNullificationChance) {
-            //                log += " The attack was fully absorbed by the " + armor.itemName + ".";
-            //                return;
-            //            }
-            //            damage -= (int) ((float) damage * (armor.baseDamageMitigation / 100f));
-            //        } else {
-            //            damage -= (int) ((float) damage * ((armor.baseDamageMitigation / 2f) / 100f));
-            //        }
-            //        if (armor.ineffectiveAttackTypes.Contains(attackSkill.attackType)) {
-            //            damage -= (int) ((float) damage * 0.2f);
-            //        }
-            //        if (armor.effectiveAttackTypes.Contains(attackSkill.attackType)) {
-            //            damage += (int) ((float) damage * 0.2f);
-            //        }
-            //        armor.AdjustDurability(-attackSkill.durabilityDamage);
-            //    }
-            //    log += "(" + damage.ToString() + ")";
+                //    if (armor != null) {
+                //        if (attackSkill.attackType != ATTACK_TYPE.PIERCE) {
+                //            int damageNullChance = Utilities.rng.Next(0, 100);
+                //            if (damageNullChance < armor.damageNullificationChance) {
+                //                log += " The attack was fully absorbed by the " + armor.itemName + ".";
+                //                return;
+                //            }
+                //            damage -= (int) ((float) damage * (armor.baseDamageMitigation / 100f));
+                //        } else {
+                //            damage -= (int) ((float) damage * ((armor.baseDamageMitigation / 2f) / 100f));
+                //        }
+                //        if (armor.ineffectiveAttackTypes.Contains(attackSkill.attackType)) {
+                //            damage -= (int) ((float) damage * 0.2f);
+                //        }
+                //        if (armor.effectiveAttackTypes.Contains(attackSkill.attackType)) {
+                //            damage += (int) ((float) damage * 0.2f);
+                //        }
+                //        armor.AdjustDurability(-attackSkill.durabilityDamage);
+                //    }
+                //    log += "(" + damage.ToString() + ")";
 
-            //    DealDamageToBodyPart(attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
+                //    DealDamageToBodyPart(attackSkill, targetCharacter, sourceCharacter, chosenBodyPart, ref log);
 
-            //    AddCombatLog(log, sourceCharacter.currentSide);
+                //    AddCombatLog(log, sourceCharacter.currentSide);
 
-            //    targetCharacter.AdjustHP(-damage);
-            //} else {
-            //    string log = sourceCharacter.coloredUrlName + " used " + attackSkill.skillName.ToLower() + " on " + targetCharacter.coloredUrlName + ".";
-            //    int chance = Utilities.rng.Next(0, 100);
-            //    if (attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0) {
-            //        for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
-            //            int value = attackSkill.statusEffectRates[i].ratePercentage;
-            //            if (chance < value) {
-            //                targetCharacter.AddStatusEffect(attackSkill.statusEffectRates[i].statusEffect);
-            //                log += " " + StatusEffectLog(sourceCharacter, targetCharacter, attackSkill.statusEffectRates[i].statusEffect);
-            //            }
-            //        }
-            //    }
-            //    AddCombatLog(log, sourceCharacter.currentSide);
-            //}
-        }
+                //    targetCharacter.AdjustHP(-damage);
+                //} else {
+                //    string log = sourceCharacter.coloredUrlName + " used " + attackSkill.skillName.ToLower() + " on " + targetCharacter.coloredUrlName + ".";
+                //    int chance = Utilities.rng.Next(0, 100);
+                //    if (attackSkill.statusEffectRates != null && attackSkill.statusEffectRates.Count > 0) {
+                //        for (int i = 0; i < attackSkill.statusEffectRates.Count; i++) {
+                //            int value = attackSkill.statusEffectRates[i].ratePercentage;
+                //            if (chance < value) {
+                //                targetCharacter.AddStatusEffect(attackSkill.statusEffectRates[i].statusEffect);
+                //                log += " " + StatusEffectLog(sourceCharacter, targetCharacter, attackSkill.statusEffectRates[i].statusEffect);
+                //            }
+                //        }
+                //    }
+                //    AddCombatLog(log, sourceCharacter.currentSide);
+                //}
+            }
 
 		//This will select, deal damage, and apply status effect to a body part if possible 
 		private void DealDamageToBodyPart(AttackSkill attackSkill, ICharacter targetCharacter, ICharacter sourceCharacter, BodyPart chosenBodyPart, ref string log){
@@ -1137,17 +1159,30 @@ namespace ECS{
 		}
 		#endregion
 
-		public ICharacter GetAliveCharacterByID(int id){
+		public ICharacter GetAliveCharacterByID(int id, string type){
 			for (int i = 0; i < this.characterSideACopy.Count; i++) {
-				if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id){
-					return this.characterSideACopy [i];
-				}
+                if(type == "character") {
+                    if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id && this.characterSideACopy[i] is Character) {
+                        return this.characterSideACopy[i];
+                    }
+                } else if (type == "monster") {
+                    if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id && this.characterSideACopy[i] is Monster) {
+                        return this.characterSideACopy[i];
+                    }
+                }
+				
 			}
 			for (int i = 0; i < this.characterSideBCopy.Count; i++) {
-				if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id){
-					return this.characterSideBCopy [i];
-				}
-			}
+                if (type == "character") {
+                    if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id && this.characterSideBCopy[i] is Character) {
+                        return this.characterSideBCopy[i];
+                    }
+                } else if (type == "monster") {
+                    if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id && this.characterSideBCopy[i] is Monster) {
+                        return this.characterSideBCopy[i];
+                    }
+                }
+            }
 			return null;
 		}
 

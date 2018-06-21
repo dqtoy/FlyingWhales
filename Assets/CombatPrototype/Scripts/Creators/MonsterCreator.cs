@@ -33,6 +33,14 @@ public class MonsterCreator : Editor {
         EditorGUILayout.PropertyField(serializedProperty, true);
         serializedObject.ApplyModifiedProperties();
 
+        SerializedProperty elementChanceWeakness = serializedObject.FindProperty("elementChanceWeaknesses");
+        EditorGUILayout.PropertyField(elementChanceWeakness, true);
+        serializedObject.ApplyModifiedProperties();
+
+        SerializedProperty elementChanceResistance = serializedObject.FindProperty("elementChanceResistances");
+        EditorGUILayout.PropertyField(elementChanceResistance, true);
+        serializedObject.ApplyModifiedProperties();
+
         if (GUILayout.Button("Create Monster")) {
             SaveMonster();
         }

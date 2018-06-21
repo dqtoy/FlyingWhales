@@ -28,6 +28,7 @@ namespace ECS {
         private const int MAX_FOLLOWERS = 4;
 
         //Stats
+        private SIDES _currentSide;
         private int _currentHP;
         private int _maxHP;
         private int _strength;
@@ -35,7 +36,6 @@ namespace ECS {
         private int _agility;
         private int _vitality;
         private int _currentRow;
-        private SIDES _currentSide;
         private int _baseMaxHP;
         private int _baseStrength;
         private int _baseIntelligence;
@@ -58,7 +58,7 @@ namespace ECS {
         private float _critChance;
         private float _critDamage;
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
-        private Dictionary<ELEMENT, float> _elementalResistance;
+        private Dictionary<ELEMENT, float> _elementalResistances;
         private Weapon _equippedWeapon;
         private CharacterBattleTracker _battleTracker;
         private CharacterBattleOnlyTracker _battleOnlyTracker;
@@ -96,16 +96,17 @@ namespace ECS {
         private bool _isFollower;
         private bool _isDefeated;
         private bool _isIdle; //can't do action, needs will not deplete
+        private bool _doesNotTakePrisoners;
+        private bool _cannotBeTakenAsPrisoner;
         private object _isPrisonerOf;
         private BaseLandmark _home;
         private BaseLandmark _lair;
-        private List<Log> _history;
         //private int _combatHistoryID;
         private List<Character> _prisoners;
         private List<Character> _followers;
+        private List<Log> _history;
         private Character _isFollowerOf;
-        private bool _doesNotTakePrisoners;
-        private bool _cannotBeTakenAsPrisoner;
+
 
         //private Dictionary<RACE, int> _civiliansByRace;
 
@@ -429,8 +430,8 @@ namespace ECS {
         public Dictionary<ELEMENT, float> elementalWeaknesses {
             get { return _elementalWeaknesses; }
         }
-        public Dictionary<ELEMENT, float> elementalResistance {
-            get { return _elementalResistance; }
+        public Dictionary<ELEMENT, float> elementalResistances {
+            get { return _elementalResistances; }
         }
         public Combat currentCombat {
             get { return _currentCombat; }
@@ -483,7 +484,7 @@ namespace ECS {
             _level = 0;
             _experience = 0;
             _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-            _elementalResistance = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+            _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
             _battleTracker = new CharacterBattleTracker();
             _battleOnlyTracker = new CharacterBattleOnlyTracker();
 
@@ -764,7 +765,6 @@ namespace ECS {
                     FaintOrDeath();
                 }
             }
-
 		}
 		internal void SetHP(int amount){
 			this._currentHP = amount;
@@ -3103,7 +3103,7 @@ namespace ECS {
             _elementalWeaknesses[element] += amount;
         }
         public void AdjustElementalResistance(ELEMENT element, float amount) {
-            _elementalResistance[element] += amount;
+            _elementalResistances[element] += amount;
         }
         public void AdjustSP(int amount) {
             _sp += amount;

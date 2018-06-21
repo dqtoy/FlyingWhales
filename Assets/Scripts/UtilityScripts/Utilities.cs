@@ -22,6 +22,7 @@ public class Utilities : MonoBehaviour {
     public static int lastCharacterID = 0;
     public static int lastQuestID = 0;
     public static int lastItemID = 0;
+    public static int lastMonsterID = 0;
     public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
 
@@ -66,6 +67,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is ECS.Item) {
             lastItemID += 1;
             return lastItemID;
+        } else if (obj is Monster) {
+            lastMonsterID += 1;
+            return lastMonsterID;
         }
         return 0;
 	}

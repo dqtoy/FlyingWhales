@@ -11,8 +11,8 @@ public interface ICharacter {
     int strength { get; }
     int intelligence { get; }
     int agility { get; }
-    int level { get; }
     int baseAgility { get; } //Subject for removal
+    int level { get; }
     int currentHP { get; }
     int maxHP { get; }
     int currentRow { get; }
@@ -26,7 +26,7 @@ public interface ICharacter {
     GENDER gender { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
-    Dictionary<ELEMENT, float> elementalResistance { get; }
+    Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
 
