@@ -16,4 +16,17 @@ public class CharacterBattleOnlyTracker {
         lastDamageTaken = 0;
         consecutiveAttackMisses.Clear();
     }
+
+    public void AddAttackMiss(string skillName, int amount) {
+        if (consecutiveAttackMisses.ContainsKey(skillName)) {
+            consecutiveAttackMisses[skillName] += amount;
+        } else {
+            consecutiveAttackMisses.Add(skillName, amount);
+        }
+    }
+    public void ResetAttackMiss(string skillName) {
+        if (consecutiveAttackMisses.ContainsKey(skillName)) {
+            consecutiveAttackMisses[skillName] = 0;
+        }
+    }
 }

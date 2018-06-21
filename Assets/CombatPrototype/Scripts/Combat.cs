@@ -667,6 +667,7 @@ namespace ECS{
 				AddCombatLog(sourceCharacter.coloredUrlName + " tried to flee but got tripped over and fell down!", sourceCharacter.currentSide);
 //				CounterAttack (targetCharacter);
 			}else if(skill is AttackSkill){
+                sourceCharacter.battleOnlyTracker.AddAttackMiss(skill.skillName, 1);
 				AddCombatLog (sourceCharacter.coloredUrlName + " tried to " + skill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " but missed!", sourceCharacter.currentSide);
 			}else if(skill is HealSkill){
 				if(sourceCharacter == targetCharacter){
@@ -732,13 +733,17 @@ namespace ECS{
 			
 		//Hits the target with an attack skill
 		private void HitTargetCharacter(AttackSkill attackSkill, ICharacter sourceCharacter, ICharacter targetCharacter){
-			//Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
-			//if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
-			//	targetCharacter = sourceCharacter;
-			//	string confusedLog = sourceCharacter.coloredUrlName + " is so confused that " + (sourceCharacter.gender == GENDER.MALE ? "he" : "she") + " targeted " 
-			//		+ (sourceCharacter.gender == GENDER.MALE ? "himself" : "herself");
-			//	AddCombatLog (confusedLog, sourceCharacter.currentSide);
-			//}
+            //Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
+            //if(sourceCharacter.HasStatusEffect(STATUS_EFFECT.CONFUSED)){
+            //	targetCharacter = sourceCharacter;
+            //	string confusedLog = sourceCharacter.coloredUrlName + " is so confused that " + (sourceCharacter.gender == GENDER.MALE ? "he" : "she") + " targeted " 
+            //		+ (sourceCharacter.gender == GENDER.MALE ? "himself" : "herself");
+            //	AddCombatLog (confusedLog, sourceCharacter.currentSide);
+            //}
+
+            //Reset attack miss
+            sourceCharacter.battleOnlyTracker.ResetAttackMiss(attackSkill.skillName);
+
             string log = string.Empty;
             Character attacker = null;
             Weapon weapon = null;
@@ -821,7 +826,15 @@ namespace ECS{
 
             AddCombatLog(log, sourceCharacter.currentSide);
 
+            int previousCurrentHP = targetCharacter.currentHP;
             targetCharacter.AdjustHP(-damage);
+
+            //Add HP Lost
+            int lastDamageTaken = previousCurrentHP - targetCharacter.currentHP;
+            float hpLost = ((float) lastDamageTaken / (float) targetCharacter.maxHP) * 100f;
+            targetCharacter.battleOnlyTracker.hpLostPercent += hpLost;
+            targetCharacter.battleOnlyTracker.lastDamageTaken = lastDamageTaken;
+
             //Add previous actual damage
             if (attacker != null) {
                 attacker.battleTracker.SetLastDamageDealt(targetCharacter.name, damage);
