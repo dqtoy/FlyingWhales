@@ -11,6 +11,7 @@ public class WorldSaveData {
     public List<FactionSaveData> factionsData;
     public List<LandmarkSaveData> landmarksData;
     public List<CharacterSaveData> charactersData;
+    public List<AreaSaveData> areaData;
     public byte[] pathfindingSettings;
 
     private Dictionary<int, HexTileData> tileDictionary;
@@ -57,6 +58,14 @@ public class WorldSaveData {
             ECS.Character currCharacter = characters[i];
             CharacterSaveData characterData = new CharacterSaveData(currCharacter);
             charactersData.Add(characterData);
+        }
+    }
+    public void OccupyAreaData(List<Area> areas) {
+        areaData = new List<AreaSaveData>();
+        for (int i = 0; i < areas.Count; i++) {
+            Area currArea = areas[i];
+            AreaSaveData currData = new AreaSaveData(currArea);
+            areaData.Add(currData);
         }
     }
     public void OccupyPathfindingSettings(HexTile[,] map, int width, int height) {

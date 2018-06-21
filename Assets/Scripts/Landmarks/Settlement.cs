@@ -19,6 +19,9 @@ public class Settlement : BaseLandmark {
 	public int numOfPsytoxinated {
 		get { return _numOfPsytoxinated; }
 	}
+    public int civilianCount {
+        get { return _civilianCount; }
+    }
     #endregion
 
     public Settlement(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {

@@ -143,12 +143,13 @@ namespace worldcreator {
             DataConstructor.Instance.InitializeData();
             ECS.CombatManager.Instance.Initialize();
             LoadRegions(data);
-            LoadFactions(data);
-            LoadLandmarks(data);
+            FactionManager.Instance.LoadFactions(data);
+            LandmarkManager.Instance.LoadLandmarks(data);
+            LandmarkManager.Instance.LoadAreas(data);
             OccupyRegions(data);
             GenerateOuterGrid();
-            LoadCharacters(data);
-            LoadRelationships(data);
+            CharacterManager.Instance.LoadCharacters(data);
+            CharacterManager.Instance.LoadRelationships(data);
             //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -259,24 +260,24 @@ namespace worldcreator {
                 currRegion.UpdateAdjacency();
             }
         }
-        private void LoadLandmarks(WorldSaveData data) {
-            if (data.landmarksData != null) {
-                for (int i = 0; i < data.landmarksData.Count; i++) {
-                    LandmarkSaveData landmarkData = data.landmarksData[i];
-                    LandmarkManager.Instance.CreateNewLandmarkOnTile(landmarkData);
-                }
-            }
-        }
-        private void LoadFactions(WorldSaveData data) {
-            if (data.factionsData != null) {
-                for (int i = 0; i < data.factionsData.Count; i++) {
-                    FactionSaveData currData = data.factionsData[i];
-                    Faction currFaction = FactionManager.Instance.CreateNewFaction(currData);
-                    WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(currFaction);
-                }
-                WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
-            }
-        }
+        //private void LoadLandmarks(WorldSaveData data) {
+        //    if (data.landmarksData != null) {
+        //        for (int i = 0; i < data.landmarksData.Count; i++) {
+        //            LandmarkSaveData landmarkData = data.landmarksData[i];
+        //            LandmarkManager.Instance.CreateNewLandmarkOnTile(landmarkData);
+        //        }
+        //    }
+        //}
+        //private void LoadFactions(WorldSaveData data) {
+        //    if (data.factionsData != null) {
+        //        for (int i = 0; i < data.factionsData.Count; i++) {
+        //            FactionSaveData currData = data.factionsData[i];
+        //            Faction currFaction = FactionManager.Instance.CreateNewFaction(currData);
+        //            WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(currFaction);
+        //        }
+        //        WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
+        //    }
+        //}
         private void OccupyRegions(WorldSaveData data) {
             for (int i = 0; i < allRegions.Count; i++) {
                 Region currRegion = allRegions[i];
@@ -290,29 +291,29 @@ namespace worldcreator {
             }
             WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
         }
-        private void LoadCharacters(WorldSaveData data) {
-            if (data.charactersData != null) {
-                for (int i = 0; i < data.charactersData.Count; i++) {
-                    CharacterSaveData currData = data.charactersData[i];
-                    ECS.Character currCharacter = CharacterManager.Instance.CreateNewCharacter(currData);
-                    Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
-                    if (characterFaction != null) {
-                        characterFaction.AddNewCharacter(currCharacter);
-                        currCharacter.SetFaction(characterFaction);
-                    }
-                }
-                WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
-            }
-        }
-        private void LoadRelationships(WorldSaveData data) {
-            if (data.charactersData != null) {
-                for (int i = 0; i < data.charactersData.Count; i++) {
-                    CharacterSaveData currData = data.charactersData[i];
-                    ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
-                    currCharacter.LoadRelationships(currData.relationshipsData);
-                }
-            }
-        }
+        //private void LoadCharacters(WorldSaveData data) {
+        //    if (data.charactersData != null) {
+        //        for (int i = 0; i < data.charactersData.Count; i++) {
+        //            CharacterSaveData currData = data.charactersData[i];
+        //            ECS.Character currCharacter = CharacterManager.Instance.CreateNewCharacter(currData);
+        //            Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
+        //            if (characterFaction != null) {
+        //                characterFaction.AddNewCharacter(currCharacter);
+        //                currCharacter.SetFaction(characterFaction);
+        //            }
+        //        }
+        //        WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
+        //    }
+        //}
+        //private void LoadRelationships(WorldSaveData data) {
+        //    if (data.charactersData != null) {
+        //        for (int i = 0; i < data.charactersData.Count; i++) {
+        //            CharacterSaveData currData = data.charactersData[i];
+        //            ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
+        //            currCharacter.LoadRelationships(currData.relationshipsData);
+        //        }
+        //    }
+        //}
         private List<HexTile> GetRegionTiles(RegionSaveData regionData, ref HexTile centerTile) {
             List<int> tileIDs = new List<int>(regionData.tileData);
             List<HexTile> regionTiles = new List<HexTile>();
@@ -330,6 +331,14 @@ namespace worldcreator {
                 }
             }
             return regionTiles;
+        }
+        internal HexTile GetHexTile(int id) {
+            for (int i = 0; i < hexTiles.Count; i++) {
+                if (hexTiles[i].id == id) {
+                    return hexTiles[i];
+                }
+            }
+            return null;
         }
         #endregion
 
@@ -610,6 +619,7 @@ namespace worldcreator {
             worldData.OccupyFactionData(FactionManager.Instance.allFactions);
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
+            worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {
                 saveName += Utilities.worldConfigFileExt;

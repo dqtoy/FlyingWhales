@@ -78,6 +78,9 @@ public class CharacterManager : MonoBehaviour {
                     currCharacter.SetFaction(characterFaction);
                 }
             }
+#if WORLD_CREATION_TOOL
+            worldcreator.WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
+#endif
         }
     }
     public void LoadRelationships(WorldSaveData data) {

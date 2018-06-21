@@ -91,6 +91,10 @@ namespace worldcreator {
         [Header("Character Portrait Editor")]
         [SerializeField] private CharacterPortraitEditor portraitEditor;
 
+        [Space(10)]
+        [Header("Tile Info")]
+        [SerializeField] private TileInfoUI tileInfo;
+
         #region getters/setters
         public EditRegionsMenu editRegionsMenu {
             get { return _editRegionsMenu; }
@@ -116,6 +120,8 @@ namespace worldcreator {
 
         public void InitializeMenus() {
             editCharactersMenu.Initialize();
+            tileInfo.Initialize();
+            editAreasMenu.Initialize();
         }
 
         #region Main Menu

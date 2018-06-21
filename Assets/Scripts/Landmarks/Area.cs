@@ -12,6 +12,9 @@ public class Area {
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
 
+    public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
+    public int totalCivilians { get { return landmarks.Where(x => x is Settlement).Sum(x => (x as Settlement).civilianCount); } }
+
     public Area(HexTile coreTile, AREA_TYPE areaType) {
         id = Utilities.SetID(this);
         name = RandomNameGenerator.Instance.GetRegionName();
@@ -20,6 +23,19 @@ public class Area {
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //AddTile(coreTile);
+    }
+    public Area(AreaSaveData data) {
+        id = Utilities.SetID(this, data.areaID);
+        name = data.areaName;
+        tiles = new List<HexTile>();
+        areaColor = data.areaColor;
+        SetAreaType(data.areaType);
+#if WORLD_CREATION_TOOL
+        SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
+#else
+        SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
+#endif
+        AddTile(Utilities.GetTilesFromIDs(data.tileData));
     }
 
     #region Tile Management

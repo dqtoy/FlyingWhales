@@ -29,7 +29,7 @@ namespace worldcreator {
             List<string> options = new List<string>();
             for (int i = 0; i < landmarkTypes.Length; i++) {
                 LANDMARK_TYPE currType = landmarkTypes[i];
-                if (currType == LANDMARK_TYPE.GARRISON || currType == LANDMARK_TYPE.HOUSES) {
+                if (currType == LANDMARK_TYPE.GARRISON || currType == LANDMARK_TYPE.HUMAN_HOUSES || currType == LANDMARK_TYPE.ELVEN_HOUSES) {
                     options.Add(currType.ToString());
                 }
             }
@@ -48,7 +48,8 @@ namespace worldcreator {
         }
         private void OnSpawnLandmark(LANDMARK_TYPE landmarkType) {
             switch (landmarkType) {
-                case LANDMARK_TYPE.HOUSES:
+                case LANDMARK_TYPE.ELVEN_HOUSES:
+                case LANDMARK_TYPE.HUMAN_HOUSES:
                     WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Input Civilians", "Input number of civilians (per settlement)", SetHousesCivilians);
                     break;
                 default:

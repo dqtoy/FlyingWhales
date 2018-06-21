@@ -776,7 +776,8 @@ public enum LANDMARK_TYPE {
     PUB,
     TEMPLE,
     HUNTING_GROUNDS,
-    HOUSES
+    ELVEN_HOUSES,
+    HUMAN_HOUSES,
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,

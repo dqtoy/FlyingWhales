@@ -129,7 +129,13 @@ public class FactionManager : MonoBehaviour {
             for (int i = 0; i < data.factionsData.Count; i++) {
                 FactionSaveData currData = data.factionsData[i];
                 Faction currFaction = CreateNewFaction(currData);
+#if WORLD_CREATION_TOOL
+                worldcreator.WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(currFaction);
             }
+            worldcreator.WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
+#else
+            }
+#endif
         }
     }
     /*

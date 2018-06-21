@@ -39,6 +39,14 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
+    public void LoadAreas(WorldSaveData data) {
+        if (data.areaData != null) {
+            for (int i = 0; i < data.areaData.Count; i++) {
+                AreaSaveData areaData = data.areaData[i];
+                CreateNewArea(areaData);
+            }
+        }
+    }
     /*
      Create a new landmark on a specified tile.
      */
@@ -713,6 +721,12 @@ public class LandmarkManager : MonoBehaviour {
     public void RemoveArea(Area area) {
         allAreas.Remove(area);
         Messenger.Broadcast(Signals.AREA_DELETED, area);
+    }
+    public Area CreateNewArea(AreaSaveData data) {
+        Area newArea = new Area(data);
+        Messenger.Broadcast(Signals.AREA_CREATED, newArea);
+        allAreas.Add(newArea);
+        return newArea;
     }
     #endregion
 }

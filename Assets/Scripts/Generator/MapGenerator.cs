@@ -207,6 +207,7 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.LoadLandmarks(data);
         st.Stop();
 
+        LandmarkManager.Instance.LoadAreas(data);
 
         //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);

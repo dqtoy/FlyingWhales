@@ -21,13 +21,10 @@ namespace worldcreator {
         public void ShowMenu() {
             this.gameObject.SetActive(true);
         }
-
-        #region Monobehaviours
-        private void Awake() {
+        public void Initialize() {
             LoadAreaTypeChoices();
             Messenger.AddListener<Area>(Signals.AREA_CREATED, OnAreaCreated);
         }
-        #endregion
 
         public void StartNewAreaCreation() {
             Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, CreateNewArea);

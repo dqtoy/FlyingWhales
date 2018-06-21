@@ -241,6 +241,14 @@ public class GridMap : MonoBehaviour {
     #endregion
 
     #region Grid Utilities
+    internal HexTile GetHexTile(int id) {
+        for (int i = 0; i < hexTiles.Count; i++) {
+            if (hexTiles[i].id == id) {
+                return hexTiles[i];
+            }
+        }
+        return null;
+    }
     internal HexTile GetHexTile(int xCoordinate, int yCoordinate) {
         for (int i = 0; i < hexTiles.Count; i++) {
             if (xCoordinate == hexTiles[i].xCoordinate && yCoordinate == hexTiles[i].yCoordinate) {

@@ -1191,6 +1191,20 @@ public class Utilities : MonoBehaviour {
         }
         return false;
     }
+    public static List<HexTile> GetTilesFromIDs(List<int> ids) {
+        List<HexTile> tiles = new List<HexTile>();
+        for (int i = 0; i < ids.Count; i++) {
+            int currID = ids[i];
+#if WORLD_CREATION_TOOL
+            HexTile tile = worldcreator.WorldCreatorManager.Instance.GetHexTile(currID);
+            tiles.Add(tile);
+#else
+            HexTile tile = GridMap.Instance.GetHexTile(currID);
+            tiles.Add(tile);
+#endif
+        }
+        return tiles;
+    }
     #endregion
 
     #region Resources
