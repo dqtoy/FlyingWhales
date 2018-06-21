@@ -61,6 +61,7 @@ namespace ECS{
                 character.currentCombat = this;
                 character.SetRowNumber(rowNumber);
                 character.actRate = character.agility * 5;
+                character.battleOnlyTracker.Reset();
                 if (hasStarted && !isDone) {
                     string log = character.coloredUrlName + " joins the battle on Side " + side.ToString();
                     Debug.Log(log);
@@ -352,73 +353,175 @@ namespace ECS{
 		}
 
 		//Get Skill that the character will use based on activation weights, target character must be within skill range
-		private Skill GetSkillToUse(ICharacter sourceCharacter){
+		private Skill GetSkillToUse(ICharacter sourceCharacter, ICharacter targetCharacter = null){
 			Dictionary<Skill, int> skillActivationWeights = new Dictionary<Skill, int> ();
-			Dictionary<object, int> categoryActivationWeights = new Dictionary<object, int> ();
+            for (int i = 0; i < sourceCharacter.skills.Count; i++) { //These are general skills like move, flee, drink potion
+                Skill skill = sourceCharacter.skills[i];
+                if (skill.isEnabled) {
+                    skillActivationWeights.Add(skill, 1);
+                }
+            }
 
-			//First step: pick from general skills or body part skill or weapon skill
-			int bodyPartWeight = 10;
-			//if(sourceCharacter.HasActivatableWeaponSkill()){
-			//	categoryActivationWeights.Add("weapon", 100);
-			//}else{
-			//	bodyPartWeight += 100;
-			//}
-			//if (sourceCharacter.HasActivatableBodyPartSkill ()) {
-			//	categoryActivationWeights.Add ("bodypart", bodyPartWeight);
-			//}
+            if (sourceCharacter.battleOnlyTracker.lastDamageTaken < sourceCharacter.currentHP) { //sourceCharacter last damage taken must not be >= current health
+                float weaponAttack = 0f;
+                float missingHP = ((float) sourceCharacter.currentHP / (float) sourceCharacter.maxHP) * 100f;
+                int levelDiff = (sourceCharacter.level - targetCharacter.level) * 10;
+                if (sourceCharacter is Character) {
+                    Character character = sourceCharacter as Character;
+                    if (character.equippedWeapon != null) {//character must have a weapon
+                        weaponAttack = character.equippedWeapon.attackPower;
+                        for (int i = 0; i < character.level; i++) {
+                            for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
+                                Skill skill = character.characterClass.skillsPerLevel[i][j];
+                                if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
+                                    AttackSkill attackSkill = skill as AttackSkill;
+                                    float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff, character.battleTracker);
+                                    float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill, character.battleTracker);
+                                    float finalWeight = initialWeight * (specialModifier / 100f);
+                                    skillActivationWeights.Add(attackSkill, Mathf.CeilToInt(finalWeight));
+                                }
+                            }
+                        }
+                    }
+                } else if (sourceCharacter is Monster) {
+                    Monster monster = sourceCharacter as Monster;
+                    for (int i = 0; i < monster.skills.Count; i++) {
+                        Skill skill = monster.skills[i];
+                        if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
+                            AttackSkill attackSkill = skill as AttackSkill;
+                            float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff);
+                            float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill);
+                            float finalWeight = initialWeight * (specialModifier / 100f);
+                            skillActivationWeights.Add(attackSkill, Mathf.CeilToInt(finalWeight));
+                        }
+                    }
+                }
+            }
+            if (skillActivationWeights.Count > 0) {
+                Skill chosenSkill = Utilities.PickRandomElementWithWeights<Skill>(skillActivationWeights);
+                return chosenSkill;
+            }
+            return null;
 
-			for (int i = 0; i < sourceCharacter.skills.Count; i++) {
-				Skill skill = sourceCharacter.skills [i];
-				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.GENERAL){
-					int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
-					if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
-						activationWeight /= 2;
-					}else if(skill is FleeSkill){
-						activationWeight = 50 - (sourceCharacter.currentHP / ((int)(sourceCharacter.maxHP * 0.01f)));
-						if(activationWeight == 0){
-							activationWeight = 1;
-						}
-						activationWeight *= 2;
-					}
-					if(activationWeight > 0){
-						categoryActivationWeights.Add (skill, activationWeight);
-					}
-				}
-			}
-			if(categoryActivationWeights.Count > 0){
-				object chosenObject = Utilities.PickRandomElementWithWeights<object> (categoryActivationWeights);
-				if(chosenObject is string){
-					string chosenCategory = chosenObject.ToString ();
-					if(chosenCategory == "bodypart"){
-						for (int i = 0; i < sourceCharacter.skills.Count; i++) {
-							Skill skill = sourceCharacter.skills [i];
-							if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART && HasTargetInRangeForSkill(skill, sourceCharacter)){
-								int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
-								skillActivationWeights.Add (skill, activationWeight);
-							}
-						}
-					}else if(chosenCategory == "weapon"){
-						for (int i = 0; i < sourceCharacter.skills.Count; i++) {
-							Skill skill = sourceCharacter.skills [i];
-							if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON && HasTargetInRangeForSkill(skill, sourceCharacter)){
-								int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
-								skillActivationWeights.Add (skill, activationWeight);
-							}
-						}
-					}
-					if(skillActivationWeights.Count > 0){
-						Skill chosenSkill = Utilities.PickRandomElementWithWeights<Skill> (skillActivationWeights);
-						return chosenSkill;
-					}
-				}else{
-					return (Skill)chosenObject;
-				}
-			}
-			return null;
-		}
+            //Dictionary<object, int> categoryActivationWeights = new Dictionary<object, int> ();
 
-		//Returns activation weight of a certain skill that is already modified
-		private int GetActivationWeightOfSkill(ICharacter sourceCharacter, Skill skill){
+            ////First step: pick from general skills or body part skill or weapon skill
+            //int bodyPartWeight = 10;
+            ////if(sourceCharacter.HasActivatableWeaponSkill()){
+            ////	categoryActivationWeights.Add("weapon", 100);
+            ////}else{
+            ////	bodyPartWeight += 100;
+            ////}
+            ////if (sourceCharacter.HasActivatableBodyPartSkill ()) {
+            ////	categoryActivationWeights.Add ("bodypart", bodyPartWeight);
+            ////}
+
+            //for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+            //	Skill skill = sourceCharacter.skills [i];
+            //	if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.GENERAL){
+            //		int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
+            //		if(skill is MoveSkill && HasTargetInRangeForSkill(SKILL_TYPE.ATTACK, sourceCharacter)){
+            //			activationWeight /= 2;
+            //		}else if(skill is FleeSkill){
+            //			activationWeight = 50 - (sourceCharacter.currentHP / ((int)(sourceCharacter.maxHP * 0.01f)));
+            //			if(activationWeight == 0){
+            //				activationWeight = 1;
+            //			}
+            //			activationWeight *= 2;
+            //		}
+            //		if(activationWeight > 0){
+            //			categoryActivationWeights.Add (skill, activationWeight);
+            //		}
+            //	}
+            //}
+            //if(categoryActivationWeights.Count > 0){
+            //	object chosenObject = Utilities.PickRandomElementWithWeights<object> (categoryActivationWeights);
+            //	if(chosenObject is string){
+            //		string chosenCategory = chosenObject.ToString ();
+            //		if(chosenCategory == "bodypart"){
+            //			for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+            //				Skill skill = sourceCharacter.skills [i];
+            //				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART && HasTargetInRangeForSkill(skill, sourceCharacter)){
+            //					int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
+            //					skillActivationWeights.Add (skill, activationWeight);
+            //				}
+            //			}
+            //		}else if(chosenCategory == "weapon"){
+            //			for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+            //				Skill skill = sourceCharacter.skills [i];
+            //				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON && HasTargetInRangeForSkill(skill, sourceCharacter)){
+            //					int activationWeight = GetActivationWeightOfSkill (sourceCharacter, skill);
+            //					skillActivationWeights.Add (skill, activationWeight);
+            //				}
+            //			}
+            //		}
+            //		if(skillActivationWeights.Count > 0){
+            //			Skill chosenSkill = Utilities.PickRandomElementWithWeights<Skill> (skillActivationWeights);
+            //			return chosenSkill;
+            //		}
+            //	}else{
+            //		return (Skill)chosenObject;
+            //	}
+            //}
+            //return null;
+        }
+
+        private float GetSkillInitialWeight(ICharacter sourceCharacter, ICharacter targetCharacter, AttackSkill attackSkill, float weaponAttack, float missingHP, int levelDiff, CharacterBattleTracker battleTracker = null) {
+            int statUsed = attackSkill.attackCategory == ATTACK_CATEGORY.PHYSICAL ? sourceCharacter.strength : sourceCharacter.intelligence;
+            int finalAttack = GetFinalAttack(statUsed, sourceCharacter.level, weaponAttack);
+            float rawDamage = ((float) finalAttack * ((float) attackSkill.power / 100f)) * 1; //Subject to change: the *1 is the targets that will hit, this will change in the future
+
+            float modifier = GetModifier(sourceCharacter, targetCharacter, attackSkill, rawDamage, missingHP, levelDiff, battleTracker);
+            float spModifier = sourceCharacter.currentSP - attackSkill.spCost;
+            if (spModifier <= 0f) { spModifier = 1f; }
+            return (rawDamage * (1f + (modifier / 100f))) / spModifier;
+        }
+        private float GetModifier(ICharacter sourceCharacter, ICharacter targetCharacter, AttackSkill attackSkill, float rawDamage, float missingHP, int levelDiff, CharacterBattleTracker battleTracker = null) {
+            //Elemental Weakness
+            float elementalWeakness = 0f;
+            if (attackSkill.element != ELEMENT.NONE && battleTracker != null) {
+                if (battleTracker.tracker.ContainsKey(targetCharacter.name)) {
+                    if (battleTracker.tracker[targetCharacter.name].elementalWeaknesses.Contains(attackSkill.element)) {
+                        elementalWeakness = targetCharacter.elementalWeaknesses[attackSkill.element];
+                    }
+                }
+            }
+
+            //Missing HP from parameter
+            //Level Difference from parameter
+
+            //HP Lost
+            float hpLostPercent = sourceCharacter.battleOnlyTracker.hpLostPercent;
+
+            //Expected Value
+            float previousActualDamage = battleTracker != null && battleTracker.tracker.ContainsKey(targetCharacter.name) ? battleTracker.tracker[targetCharacter.name].lastDamageDealt : 0f;
+            float expectedValue = previousActualDamage / (rawDamage + previousActualDamage);
+
+            return elementalWeakness + missingHP + levelDiff + hpLostPercent + expectedValue;
+        }
+        private float GetSpecialModifier(ICharacter sourceCharacter, ICharacter targetCharacter, AttackSkill attackSkill, CharacterBattleTracker battleTracker = null) {
+            //Attack misses per skill
+            float attackMissPercent = (-33.4f) * (float)(sourceCharacter.battleOnlyTracker.consecutiveAttackMisses.ContainsKey(attackSkill.skillName) ? sourceCharacter.battleOnlyTracker.consecutiveAttackMisses[attackSkill.skillName] : 0);
+
+            //Elemental Resist
+            float resistance = 0f;
+            if (attackSkill.element != ELEMENT.NONE && battleTracker != null) {
+                if (battleTracker.tracker.ContainsKey(targetCharacter.name)) {
+                    if (battleTracker.tracker[targetCharacter.name].elementalResistances.Contains(attackSkill.element)) {
+                        resistance = targetCharacter.elementalResistance[attackSkill.element];
+                    }
+                }
+            }
+            float elementalResistance = (100f - resistance) / 100f;
+
+            //Will die next hit
+            float dieNextHit = sourceCharacter.currentHP - sourceCharacter.battleOnlyTracker.lastDamageTaken;
+
+            return attackMissPercent + resistance + elementalResistance + dieNextHit;
+        }
+
+        //Returns activation weight of a certain skill that is already modified
+        private int GetActivationWeightOfSkill(ICharacter sourceCharacter, Skill skill){
 			int activationWeight = skill.activationWeight;
 			//if(skill.actWeightType == ACTIVATION_WEIGHT_TYPE.CURRENT_HEALTH){
 			//	activationWeight *= ((int)(((float)sourceCharacter.currentHP / (float)sourceCharacter.maxHP) * 100f));

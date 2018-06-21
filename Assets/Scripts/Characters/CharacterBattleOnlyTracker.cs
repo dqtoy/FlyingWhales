@@ -1,0 +1,19 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+//This is only used during battles, all values will be reset every battle
+public class CharacterBattleOnlyTracker {
+    public float hpLostPercent;
+    public int lastDamageTaken;
+    public Dictionary<string, int> consecutiveAttackMisses;
+
+    public CharacterBattleOnlyTracker() {
+        consecutiveAttackMisses = new Dictionary<string, int>();
+    }
+    public void Reset() {
+        hpLostPercent = 0f;
+        lastDamageTaken = 0;
+        consecutiveAttackMisses.Clear();
+    }
+}

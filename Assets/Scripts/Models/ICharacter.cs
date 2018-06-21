@@ -17,12 +17,14 @@ public interface ICharacter {
     int maxHP { get; }
     int currentRow { get; }
     int id { get; }
+    int currentSP { get; }
     string coloredUrlName { get; }
     string name { get; }
     float critChance { get; }
     float critDamage { get; }
     bool isDead { get; }
     GENDER gender { get; }
+    CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistance { get; }
     List<Skill> skills { get; }

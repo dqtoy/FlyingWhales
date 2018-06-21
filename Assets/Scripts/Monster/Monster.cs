@@ -30,6 +30,9 @@ public class Monster {
     public string name {
         get { return _name; }
     }
+    public List<Skill> skills {
+        get { return _skills; }
+    }
     #endregion
 
     public Monster CreateNewCopy() {

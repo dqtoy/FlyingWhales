@@ -59,7 +59,9 @@ namespace ECS {
         private float _critDamage;
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
         private Dictionary<ELEMENT, float> _elementalResistance;
-
+        private Weapon _equippedWeapon;
+        private CharacterBattleTracker _battleTracker;
+        private CharacterBattleOnlyTracker _battleOnlyTracker;
 
         //Skills
         private List<Skill> _skills;
@@ -105,7 +107,7 @@ namespace ECS {
         private bool _doesNotTakePrisoners;
         private bool _cannotBeTakenAsPrisoner;
 
-        private Dictionary<RACE, int> _civiliansByRace;
+        //private Dictionary<RACE, int> _civiliansByRace;
 
         private Combat _currentCombat;
         private int _actRate;
@@ -334,9 +336,9 @@ namespace ECS {
         //        return _civiliansByRace.Sum(x => x.Value);
         //    }
         //}
-        public Dictionary<RACE, int> civiliansByRace {
-            get { return _civiliansByRace; }
-        }
+        //public Dictionary<RACE, int> civiliansByRace {
+        //    get { return _civiliansByRace; }
+        //}
         public List<BaseLandmark> exploredLandmarks {
             get { return _exploredLandmarks; }
         }
@@ -406,7 +408,7 @@ namespace ECS {
         public int level {
             get { return _level; }
         }
-        public int sp {
+        public int currentSP {
             get { return _sp; }
         }
         public int maxSP {
@@ -437,6 +439,15 @@ namespace ECS {
         public int actRate {
             get { return _actRate; }
             set { _actRate = value; }
+        }
+        public Weapon equippedWeapon {
+            get { return _equippedWeapon; }
+        }
+        public CharacterBattleTracker battleTracker {
+            get { return _battleTracker; }
+        }
+        public CharacterBattleOnlyTracker battleOnlyTracker {
+            get { return _battleOnlyTracker; }
         }
         #endregion
 
@@ -473,6 +484,8 @@ namespace ECS {
             _experience = 0;
             _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
             _elementalResistance = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+            _battleTracker = new CharacterBattleTracker();
+            _battleOnlyTracker = new CharacterBattleOnlyTracker();
 
             GenerateRaceTags();
             GenerateSetupTags(baseSetup);
@@ -1201,7 +1214,7 @@ namespace ECS {
 				OwnItem (newWeapon);
 			}
 			_equippedWeaponPower += newWeapon.weaponPower;
-
+            _equippedWeapon = newWeapon;
 			//for (int i = 0; i < newWeapon.skills.Count; i++) {
 			//	this._skills.Add (newWeapon.skills [i]);
 			//}
