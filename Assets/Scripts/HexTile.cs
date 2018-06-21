@@ -8,23 +8,9 @@ using ECS;
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     public HexTileData data;
-
-    //[Header("General Tile Details")]
-    //public int id;
-    //public int xCoordinate;
-    //public int yCoordinate;
-    //public int tileTag;
-    //public string tileName;
     private Region _region;
+    private Area _areaOfTile;
     [System.NonSerialized] public SpriteRenderer spriteRenderer;
-
-    //[Space(10)]
-    //[Header("Biome Settings")]
-    //public float elevationNoise;
-    //public float moistureNoise;
-    //public float temperature;
-    //public BIOMES biomeType;
-    //public ELEVATION elevationType;
 
     [Space(10)]
     [Header("Booleans")]
@@ -91,18 +77,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Minimap Objects")]
     [SerializeField] private SpriteRenderer minimapHexSprite;
-    //private Color biomeColor;
-
-    //[Space(10)]
-    //[Header("Fog Of War Objects")]
-    //[SerializeField] private SpriteRenderer FOWSprite;
-    //[SerializeField] private SpriteRenderer minimapFOWSprite;
-
-    //[Space(10)]
-    //[Header("Road Objects")]
-    //private List<GameObject> roadGOs = new List<GameObject>();
-    //[SerializeField] private List<HexRoads> roads;
-    //[SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
 
     private PASSABLE_TYPE _passableType;
 
@@ -118,17 +92,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
-    //public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
-    //public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => !o.hasLandmark).ToList(); } }
-    //public List<HexTile> MajorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
-    //public List<HexTile> MinorRoadTiles { get { return allNeighbourRoads.Where(o => o._roadType == ROAD_TYPE.MINOR).ToList(); } }
-    //public List<HexTile> RegionConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> PassableNeighbours { get { return AllNeighbours.Where(o => o.isPassable).ToList(); } }
-    //public List<HexTile> AvatarTiles { get { return NoWaterTiles; } }
-
-    //public List<HexTile> sameTagNeighbours;
 
     private bool _hasScheduledCombatCheck = false;
 
@@ -139,14 +105,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int id { get { return data.id; } }
     public int xCoordinate { get { return data.xCoordinate; } }
     public int yCoordinate { get { return data.yCoordinate; } }
-    //public int tileTag { get { return data.tileTag; } }
     public string tileName { get { return data.tileName; } }
     public float elevationNoise { get { return data.elevationNoise; } }
     public float moistureNoise { get { return data.moistureNoise; } }
     public float temperature { get { return data.temperature; } }
     public BIOMES biomeType { get { return data.biomeType; } }
     public ELEVATION elevationType { get { return data.elevationType; } }
-
+    public Area areaOfTile { get { return _areaOfTile; } }
     public string locationName {
         get { return tileName + "(" + xCoordinate + ", " + yCoordinate + ")"; }
     }
@@ -175,9 +140,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject emptyCityGO {
         get { return this._emptyCityGO; }
     }
-    //internal ROAD_TYPE roadType {
-    //    get { return _roadType; }
-    //}
     public BaseLandmark landmarkOnTile {
         get { return _landmarkOnTile; }
     }
@@ -202,9 +164,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool isPassable {
         get { return _isPassable; }
     }
-    //public bool roadState {
-    //    get { return roadGOs[0].activeInHierarchy; }
-    //}
     public StructureObject structureObjOnTile {
         get { return _structureObjOnTile; }
     }
@@ -220,7 +179,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     public void Initialize() {
-        //data = new HexTileData();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
@@ -536,9 +494,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     internal float GetDistanceTo(HexTile targetHextile) {
         return Vector3.Distance(this.transform.position, targetHextile.transform.position);
     }
-    //public void SetTag(int tag) {
-    //    data.tileTag = tag;
-    //}
     public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data, Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated) {
         if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
             return false; //this tile is not passable or already has a landmark
@@ -1035,75 +990,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     #endregion
 
-    //#region Fog of War Functions
-    //internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
-    //    //if (!KingdomManager.Instance.useFogOfWar) {
-    //    //    fowState = FOG_OF_WAR_STATE.VISIBLE;
-    //    //}
-    //    //_currFogOfWarState = fowState;
-    //    Color newColor = FOWSprite.color;
-    //    //Color minimapColor = minimapFOWSprite.color;
-    //    switch (fowState) {
-    //        case FOG_OF_WAR_STATE.VISIBLE:
-    //            newColor.a = 0f / 255f;
-    //            //if (isHabitable && isOccupied) {
-    //            //    minimapColor = ownedByCity.kingdom.kingdomColor;
-    //            //} else {
-    //            //    minimapColor = biomeColor;
-    //            //}
-    //            //if ((isHabitable && isOccupied) || isLair) {
-    //            //    ShowNamePlate();
-    //            //}
-    //            if (isOccupied) {
-    //                ShowStructures();
-    //            }
-    //            UIParent.gameObject.SetActive(true);
-    //            //                ShowAllCitizensOnTile();
-    //            break;
-    //        case FOG_OF_WAR_STATE.SEEN:
-    //            newColor.a = 128f / 255f;
-    //            //if (isHabitable && isOccupied) {
-    //            //    minimapColor = ownedByCity.kingdom.kingdomColor;
-    //            //} else {
-    //            //    minimapColor = biomeColor;
-    //            //}
-    //            //if ((isHabitable && isOccupied) || isLair) {
-    //            //    ShowNamePlate();
-    //            //}
-    //            if (isOccupied) {
-    //                ShowStructures();
-    //            }
-    //            UIParent.gameObject.SetActive(true);
-    //            //                HideAllCitizensOnTile();
-    //            break;
-    //        case FOG_OF_WAR_STATE.HIDDEN:
-    //            newColor.a = 255f / 255f;
-    //            //minimapColor = Color.black;
-    //            //if ((isHabitable && isOccupied) || isLair) {
-    //            //    HideNamePlate();
-    //            //}
-    //            if (isOccupied) {
-    //                HideStructures();
-    //            }
-    //            UIParent.gameObject.SetActive(false);
-    //            //                HideAllCitizensOnTile();
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //    FOWSprite.color = newColor;
-    //    //minimapFOWSprite.color = minimapColor;
-    //}
-    //internal void HideFogOfWarObjects() {
-    //    FOWSprite.gameObject.SetActive(false);
-    //    //minimapFOWSprite.gameObject.SetActive(false);
-    //}
-    //internal void ShowFogOfWarObjects() {
-    //        FOWSprite.gameObject.SetActive(true);
-    //        //minimapFOWSprite.gameObject.SetActive(true);
-    //    }
-    //#endregion
-
     #region Tile Functions
     public void DisableColliders() {
         this.GetComponent<Collider2D>().enabled = false;
@@ -1372,13 +1258,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void ForceResetTile() {
         ResetTile();
     }
-
-//#if UNITY_EDITOR
-//    [ContextMenu("Select Neighbours")]
-//    public void SelectAllTilesInRegion() {
-//        UnityEditor.Selection.objects = this.AllNeighbours.Select(x => x.gameObject).ToArray();
-//    }
-//#endif
     [ContextMenu("Load Border Lines")]
     public void LoadBorderLinesForTesting() {
         HexTile currTile = this;
@@ -1775,5 +1654,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 _uncorruptibleLandmarkNeighbors = 1;
             }
         }
+    #endregion
+
+    #region Areas
+    public void SetArea(Area area) {
+        _areaOfTile = area;
+    }
     #endregion
 }

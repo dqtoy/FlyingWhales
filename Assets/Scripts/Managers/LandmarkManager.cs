@@ -19,11 +19,14 @@ public class LandmarkManager : MonoBehaviour {
     public List<LandmarkData> landmarkData;
     public int corruptedLandmarksCount;
 
+    public List<Area> allAreas;
+
 	//Crater
 	public BaseLandmark craterLandmark;
     private void Awake() {
         Instance = this;
         corruptedLandmarksCount = 0;
+        allAreas = new List<Area>();
     }
 
     public void LoadLandmarks(WorldSaveData data) {
@@ -674,6 +677,24 @@ public class LandmarkManager : MonoBehaviour {
             allLandmarks.AddRange(currRegion.landmarks);
         }
         return allLandmarks;
+    }
+    #endregion
+
+    #region Areas
+    public Area CreateNewArea(HexTile coreTile, AREA_TYPE areaType, List<HexTile> tiles = null) {
+        Area newArea = new Area(coreTile, areaType);
+        if (tiles == null) {
+            newArea.AddTile(coreTile);
+        } else {
+            newArea.AddTile(tiles);
+        }
+        Messenger.Broadcast(Signals.AREA_CREATED, newArea);
+        allAreas.Add(newArea);
+        return newArea;
+    }
+    public void RemoveArea(Area area) {
+        allAreas.Remove(area);
+        Messenger.Broadcast(Signals.AREA_DELETED, area);
     }
     #endregion
 }

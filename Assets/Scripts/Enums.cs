@@ -91,7 +91,7 @@ public enum PATHFINDING_MODE{
     PASSABLE,
     PASSABLE_REGION_ONLY,
     REGION_ISLAND_CONNECTION,
-
+    AREA_ONLY,
 }
 
 public enum GENDER{
@@ -1413,4 +1413,9 @@ public enum LEVEL {
     HIGH,
     AVERAGE,
     LOW
+}
+
+public enum AREA_TYPE {
+    ELVEN_SETTLEMENT,
+    HUMAN_SETTLEMENT,
 }

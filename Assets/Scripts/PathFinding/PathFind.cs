@@ -39,12 +39,6 @@ namespace PathFind {
                         if (n.isOuterTileOfRegion && n.id != start.id && n.id != destination.id && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
                             continue; //skip tiles that are outer tiles of the region, that is not the start or the destination tile
                         }
-                        //if (n.AllNeighbourRoadTiles.Count > 0 && n.id != start.id && n.id != destination.id) {
-                        //    //current node has adjacent roads, check if it is a neighbour of start or destination
-                        //    //if it is, allow the path
-                        //    //else skip this node
-                        //    continue;
-                        //}
 
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
@@ -79,10 +73,6 @@ namespace PathFind {
                             //path cannot pass through other regions
                             continue;
                         }
-
-                        //if (n.isHabitable && n.id != start.id && n.id != destination.id) {
-                        //    continue;
-                        //}
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
                             continue;
                         }
@@ -91,34 +81,8 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
-                } 
-                //else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
-                //    foreach (Node n in path.LastStep.MajorRoadTiles) {
-                //        if (n.tileTag != start.tileTag) {
-                //            continue;
-                //        }
-                //        d = distance(path.LastStep, n);
-                //        newPath = path.AddStep(n, d);
-                //        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                //    }
-                //} else if (pathfindingMode == PATHFINDING_MODE.MINOR_ROADS) {
-                //    foreach (Node n in path.LastStep.MinorRoadTiles) {
-                //        if (n.tileTag != start.tileTag) {
-                //            continue;
-                //        }
-                //        d = distance(path.LastStep, n);
-                //        newPath = path.AddStep(n, d);
-                //        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                //    }
-                //} 
-                else if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT) {
+                } else if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT) {
                     foreach (Node n in path.LastStep.allNeighbourRoads) {
-                        //if (n.tileTag != start.tileTag) {
-                        //    continue;
-                        //}
-                        //if (n.isHabitable && n.id != start.id && n.id != destination.id) {
-                        //    continue;
-                        //}
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
                             continue;
                         }
@@ -136,9 +100,6 @@ namespace PathFind {
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP) {
-                    //if(data == null) {
-                    //    throw new Exception("No faction data is provided for pathfinding!");
-                    //}
                     Faction pathfinderFaction = (Faction)data;
                     foreach (Node n in path.LastStep.allNeighbourRoads) {
                         Faction tileFaction = n.region.owner;
@@ -183,18 +144,12 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.UNRESTRICTED) {
                     foreach (Node n in path.LastStep.AllNeighbours) {
-                        //if (n.tileTag != start.tileTag) {
-                        //    continue;
-                        //}
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.PASSABLE) {
                     foreach (Node n in path.LastStep.PassableNeighbours) {
-                        //if (n.tileTag != start.tileTag) {
-                        //    continue;
-                        //}
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
@@ -228,11 +183,22 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
+                } else if (pathfindingMode == PATHFINDING_MODE.AREA_ONLY) {
+                    foreach (Node n in path.LastStep.PassableNeighbours) {
+                        if (!(data is Area)) {
+                            throw new Exception("There is no provided data!");
+                        } else {
+                            Area area = data as Area;
+                            if (n.areaOfTile == null || n.areaOfTile.id != area.id) {
+                                continue; //skip
+                            }
+                        }
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
                 } else {
                     foreach (Node n in path.LastStep.ValidTiles) {
-                        //if (n.tileTag != start.tileTag) {
-                        //    continue;
-                        //}
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);

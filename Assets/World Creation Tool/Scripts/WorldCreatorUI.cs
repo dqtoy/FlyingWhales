@@ -67,6 +67,11 @@ namespace worldcreator {
         [SerializeField] private EditCharactersMenu _editCharactersMenu;
 
         [Space(10)]
+        [Header("Edit Areas Menu")]
+        [SerializeField] private GameObject editAreasMenuGO;
+        [SerializeField] private EditAreasMenu _editAreasMenu;
+
+        [Space(10)]
         [Header("Saving")]
         [SerializeField] private GameObject saveMenuGO;
         [SerializeField] private GameObject saveItemPrefab;
@@ -172,6 +177,7 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
+            _editAreasMenu.HideMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -185,6 +191,7 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
+            _editAreasMenu.HideMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -197,6 +204,7 @@ namespace worldcreator {
             editFactionMenuGO.SetActive(false);
             editRegionsMenuGO.SetActive(true);
             editLandmarksMenuGO.SetActive(false);
+            _editAreasMenu.HideMenu();
 
             rectangleSelectionBtn.interactable = true;
             //rectangleSelectionBtn.isOn = true;
@@ -211,6 +219,7 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
+            _editAreasMenu.HideMenu();
 
             tileSelectionBtn.interactable = false;
             rectangleSelectionBtn.interactable = false;
@@ -225,6 +234,7 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(true);
             editCharactersMenuGO.SetActive(false);
+            _editAreasMenu.HideMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -237,6 +247,20 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(true);
+            _editAreasMenu.HideMenu();
+
+            rectangleSelectionBtn.interactable = true;
+            regionSelectionBtn.interactable = true;
+            tileSelectionBtn.interactable = true;
+        }
+        public void OnClickEditAreas() {
+            editBiomeMenuGO.SetActive(false);
+            editElevationMenuGO.SetActive(false);
+            editFactionMenuGO.SetActive(false);
+            editRegionsMenuGO.SetActive(false);
+            editLandmarksMenuGO.SetActive(false);
+            editCharactersMenuGO.SetActive(false);
+            _editAreasMenu.ShowMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
