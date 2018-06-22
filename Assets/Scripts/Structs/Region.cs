@@ -160,14 +160,19 @@ public class Region : IHasNeighbours<Region> {
         if (midPointY >= 2) {
             midPointY += 2;
         }
+        
         try {
 #if WORLD_CREATION_TOOL
+            midPointX = Mathf.Clamp(midPointX, 0, worldcreator.WorldCreatorManager.Instance.width - 1);
+            midPointY = Mathf.Clamp(midPointY, 0, worldcreator.WorldCreatorManager.Instance.height - 1);
             HexTile newCenterOfMass = worldcreator.WorldCreatorManager.Instance.map[midPointX, midPointY];
             if (!tilesInRegion.Contains(newCenterOfMass)) {
                 //the computed center of mass is not part of the region, get the closest tile instead
                 newCenterOfMass = tilesInRegion.OrderBy(x => x.GetDistanceTo(newCenterOfMass)).First();
             }
 #else
+            midPointX = Mathf.Clamp(midPointX, 0, GridMap.Instance.width - 1);
+            midPointY = Mathf.Clamp(midPointY, 0, GridMap.Instance.height - 1);
             HexTile newCenterOfMass = GridMap.Instance.map[midPointX, midPointY];
             if (!tilesInRegion.Contains(newCenterOfMass)) {
                 //the computed center of mass is not part of the region, get the closest tile instead
@@ -358,11 +363,11 @@ public class Region : IHasNeighbours<Region> {
     internal void HighlightRegion(Color color, float alpha) {
         for (int i = 0; i < _tilesInRegion.Count; i++) {
             HexTile currTile = _tilesInRegion[i];
-            if (currTile.id == centerOfMass.id) {
-                currTile.HighlightTile(Color.red, alpha);
-            } else {
+            //if (currTile.id == centerOfMass.id) {
+            //    currTile.HighlightTile(Color.red, alpha);
+            //} else {
                 currTile.HighlightTile(color, alpha);
-            }
+            //}
         }
     }
     internal void UnhighlightRegion() {

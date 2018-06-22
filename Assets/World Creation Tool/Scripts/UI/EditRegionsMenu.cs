@@ -32,12 +32,17 @@ namespace worldcreator {
         }
         public void OnRegionDeleted(Region deletedRegion) {
             RegionEditorItem item = GetRegionItem(deletedRegion);
-            GameObject.Destroy(item.gameObject);
-            items.Remove(deletedRegion);
+            if (item != null) {
+                GameObject.Destroy(item.gameObject);
+                items.Remove(deletedRegion);
+            }
             UpdateItems();
 
             if (WorldCreatorManager.Instance.allRegions.Count == 1) {
-                items[WorldCreatorManager.Instance.allRegions[0]].SetDeleteButtonState(false);
+                Region region = WorldCreatorManager.Instance.allRegions[0];
+                if (items.ContainsKey(region)) {
+                    items[region].SetDeleteButtonState(false);
+                }
             } else {
                 foreach (KeyValuePair<Region, RegionEditorItem> kvp in items) {
                     RegionEditorItem currItemGO = kvp.Value;
@@ -68,7 +73,10 @@ namespace worldcreator {
 
         #region Utilities
         private RegionEditorItem GetRegionItem(Region region) {
-            return items[region];
+            if (items.ContainsKey(region)) {
+                return items[region];
+            }
+            return null;
         }
         #endregion
 

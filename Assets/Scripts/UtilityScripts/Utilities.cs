@@ -915,8 +915,9 @@ public class Utilities : MonoBehaviour {
         if (midPointY >= 2) {
             midPointY += 2;
         }
-        midPointX = Mathf.Max(0, midPointX);
-        midPointY = Mathf.Max(0, midPointY);
+        midPointX = Mathf.Clamp(midPointX, 0, width - 1);
+        midPointY = Mathf.Clamp(midPointY, 0, height - 1);
+
         try {
             HexTile newCenterOfMass = map[midPointX, midPointY];
             return newCenterOfMass;
