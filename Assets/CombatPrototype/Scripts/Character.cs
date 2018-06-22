@@ -551,6 +551,8 @@ namespace ECS {
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
         }
 
+        public void Initialize() { }
+
 		private void AllocateStatPoints(int statAllocation){
             _baseStrength = 0;
             _baseIntelligence = 0;

@@ -5,20 +5,19 @@ using UnityEngine;
 using ECS;
 
 [System.Serializable]
-public class CharacterObj : IObject, ICharacterObject {
+public class MonsterObj : IObject, ICharacterObject {
     private OBJECT_TYPE _objectType;
     private bool _isInvisible;
     private List<ObjectState> _states;
-    private Dictionary<RESOURCE, int> _resourceInventory;
 
-    private Character _character;
+    private Monster _monster;
     private string _objectName;
     [NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
 
     #region getters/setters
     public ICharacter character {
-        get { return _character; }
+        get { return _monster; }
     }
     public string objectName {
         get { return _objectName; }
@@ -36,29 +35,23 @@ public class CharacterObj : IObject, ICharacterObject {
         get { return _isInvisible; }
     }
     public BaseLandmark objectLocation {
-        get {
-            if(specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                return specificLocation as BaseLandmark;
-            }
-            return _objectLocation;
-        }
+        get { return _objectLocation; } //Subject for Change
     }
     public ILocation specificLocation {
-        get { return _character.specificLocation; }
-    }
-    public Dictionary<RESOURCE, int> resourceInventory {
-        get { return _resourceInventory; }
+        get { return objectLocation; }
     }
     public RESOURCE madeOf {
         get { return RESOURCE.NONE; }
     }
+    public Dictionary<RESOURCE, int> resourceInventory {
+        get { return null; }
+    }
     #endregion
 
 
-    public CharacterObj(Character character) {
-        _objectType = OBJECT_TYPE.CHARACTER;
-        _character = character;
-        ConstructResourceInventory();
+    public MonsterObj(Monster monster) {
+        _objectType = OBJECT_TYPE.MONSTER;
+        _monster = monster;
     }
 
     #region Interface Requirements
@@ -75,8 +68,8 @@ public class CharacterObj : IObject, ICharacterObject {
     public void SetIsInvisible(bool state) {
         _isInvisible = state;
     }
-    public void SetCharacter(Character character) {
-        _character = character;
+    public void SetMonster(Monster monster) {
+        _monster = monster;
     }
     public void ChangeState(ObjectState state) {
         if (_currentState != null) {
@@ -100,7 +93,7 @@ public class CharacterObj : IObject, ICharacterObject {
         return null;
     }
     public IObject Clone() {
-        CharacterObj clone = new CharacterObj(_character);
+        MonsterObj clone = new MonsterObj(_monster);
         clone.SetObjectName(this._objectName);
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;
@@ -118,45 +111,6 @@ public class CharacterObj : IObject, ICharacterObject {
     }
     public void OnAddToLandmark(BaseLandmark newLocation) {
         SetObjectLocation(newLocation);
-    }
-    #endregion
-
-    #region Resource Inventory
-    private void ConstructResourceInventory() {
-        _resourceInventory = new Dictionary<RESOURCE, int>();
-        RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
-        for (int i = 0; i < allResources.Length; i++) {
-            if (allResources[i] != RESOURCE.NONE) {
-                _resourceInventory.Add(allResources[i], 0);
-            }
-        }
-    }
-    public void AdjustResource(RESOURCE resource, int amount) {
-        _resourceInventory[resource] += amount;
-        if(_resourceInventory[resource] < 0) {
-            _resourceInventory[resource] = 0;
-        }
-    }
-    public void TransferResourceTo(RESOURCE resource, int amount, StructureObj target) {
-        AdjustResource(resource, -amount);
-        target.AdjustResource(resource, amount);
-    }
-    public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
-        AdjustResource(resource, -amount);
-        target.AdjustResource(resource, amount);
-    }
-    public void TransferResourceTo(RESOURCE resource, int amount, LandmarkObj target) {
-        AdjustResource(resource, -amount);
-        target.AdjustResource(resource, amount);
-    }
-    public int GetTotalCivilians() {
-        int total = 0;
-        foreach (KeyValuePair<RESOURCE, int> kvp in _resourceInventory) {
-            if (kvp.Key.ToString().Contains("CIVILIAN")) {
-                total += kvp.Value;
-            }
-        }
-        return total;
     }
     #endregion
 }

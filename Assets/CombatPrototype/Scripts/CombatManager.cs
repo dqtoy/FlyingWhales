@@ -109,7 +109,7 @@ namespace ECS {
 		}
 
 		internal void NewCombat(){
-			this.combat = new Combat (null);
+			this.combat = new Combat ();
 		}
 		public void StartCombat(){
 			this.combat.CombatSimulation ();

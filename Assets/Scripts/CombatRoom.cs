@@ -159,7 +159,7 @@ public class CombatRoom {
         return false;
     }
     private void StartCombatBetween(Character combatant1, Character combatant2) {
-        Combat combat = new Combat(_location);
+        Combat combat = new Combat();
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
         string combatant1Name = combatant1.name;

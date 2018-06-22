@@ -23,11 +23,11 @@ namespace ECS{
 		internal SIDES losingSide;
 
 		internal List<string> resultsLog;
-        internal ILocation location;
+        //internal ILocation location;
 		internal bool isDone;
         internal bool hasStarted;
 
-		public Combat(ILocation location){
+		public Combat(){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ICharacter>> ();
 			this.charactersSideA = new List<ICharacter> ();
 			this.charactersSideB = new List<ICharacter> ();
@@ -36,7 +36,7 @@ namespace ECS{
             this.deadCharacters = new List<ICharacter> ();
 			this.faintedCharacters = new List<ICharacter> ();
 			this.fledCharacters = new List<ICharacter> ();
-			this.location = location;
+			//this.location = location;
 			this.isDone = false;
             this.hasStarted = false;
 

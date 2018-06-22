@@ -1590,7 +1590,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return groups;
     }
     public void StartCombatBetween(Character combatant1, Character combatant2) {
-        Combat combat = new Combat(this);
+        Combat combat = new Combat();
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
         combat.AddCharacter(SIDES.A, combatant1);

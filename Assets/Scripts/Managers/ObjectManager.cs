@@ -11,12 +11,14 @@ public class ObjectManager : MonoBehaviour {
     [SerializeField] private List<ItemObjectComponent> itemObjectComponents;
     [SerializeField] private List<NPCObjectComponent> npcObjectComponents;
     [SerializeField] private List<LandmarkObjectComponent> landmarkObjectComponents;
+    [SerializeField] private List<MonsterObjectComponent> monsterObjectComponents;
 
     private List<StructureObj> _structureObjects;
     private List<CharacterObj> _characterObjects;
     private List<ItemObj> _itemObjects;
     private List<NPCObj> _npcObjects;
     private List<LandmarkObj> _landmarkObjects;
+    private List<MonsterObj> _monsterObjects;
     private List<IObject> _allObjects;
 
     #region getters/setters
@@ -35,6 +37,9 @@ public class ObjectManager : MonoBehaviour {
     public List<LandmarkObj> landmarkObjects {
         get { return _landmarkObjects; }
     }
+    public List<MonsterObj> monsterObjects {
+        get { return _monsterObjects; }
+    }
     public List<IObject> allObjects {
         get { return _allObjects; }
     }
@@ -51,6 +56,7 @@ public class ObjectManager : MonoBehaviour {
         _itemObjects = new List<ItemObj>();
         _npcObjects = new List<NPCObj>();
         _landmarkObjects = new List<LandmarkObj>();
+        _monsterObjects = new List<MonsterObj>();
         for (int i = 0; i < structureObjectComponents.Count; i++) {
             StructureObjectComponent currComp = structureObjectComponents[i];
             StructureObj structureObject = ConvertComponentToStructureObject(currComp);
@@ -86,6 +92,13 @@ public class ObjectManager : MonoBehaviour {
             landmarkObject.SetObjectName(landmarkObjectComponents[i].gameObject.name);
             _landmarkObjects.Add(landmarkObject);
             _allObjects.Add(landmarkObject);
+        }
+        for (int i = 0; i < monsterObjectComponents.Count; i++) {
+            MonsterObjectComponent currComp = monsterObjectComponents[i];
+            MonsterObj monsterObject = ConvertComponentToMonsterObject(currComp);
+            SetInitialDataOfObjects(currComp, monsterObject, monsterObjectComponents[i].gameObject.name);
+            _monsterObjects.Add(monsterObject);
+            _allObjects.Add(monsterObject);
         }
     }
     private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName = "") {
@@ -173,6 +186,8 @@ public class ObjectManager : MonoBehaviour {
             return GetNewStructureObject(objectName);
         }else if (objType == OBJECT_TYPE.CHARACTER) {
             return GetNewCharacterObject(objectName);
+        } else if (objType == OBJECT_TYPE.MONSTER) {
+            return GetNewMonsterObject(objectName);
         }
         //IObject reference = GetReference(objType, objectName);
         //if (reference != null) {
@@ -299,6 +314,11 @@ public class ObjectManager : MonoBehaviour {
         component.CopyDataToCharacterObject(characterObj);
         return characterObj;
     }
+    public MonsterObj ConvertComponentToMonsterObject(MonsterObjectComponent component) {
+        MonsterObj monsterObj = new MonsterObj(null);
+        component.CopyDataToCharacterObject(monsterObj);
+        return monsterObj;
+    }
     public StructureObj GetNewStructureObject(string name) {
         for (int i = 0; i < _structureObjects.Count; i++) {
             if(_structureObjects[i].objectName == name) {
@@ -311,6 +331,14 @@ public class ObjectManager : MonoBehaviour {
         for (int i = 0; i < _characterObjects.Count; i++) {
             if (_characterObjects[i].objectName == name) {
                 return _characterObjects[i].Clone() as CharacterObj;
+            }
+        }
+        return null;
+    }
+    public MonsterObj GetNewMonsterObject(string name) {
+        for (int i = 0; i < _monsterObjects.Count; i++) {
+            if (_monsterObjects[i].objectName == name) {
+                return _monsterObjects[i].Clone() as MonsterObj;
             }
         }
         return null;

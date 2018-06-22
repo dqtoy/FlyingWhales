@@ -25,6 +25,7 @@ public interface ICharacter {
     bool isDead { get; }
     GENDER gender { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
+    Faction faction { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
@@ -38,6 +39,7 @@ public interface ICharacter {
     void FaintOrDeath();
     void ResetToFullHP();
     void ResetToFullSP();
+    void Initialize();
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
 }

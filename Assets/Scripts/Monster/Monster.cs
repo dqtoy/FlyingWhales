@@ -34,6 +34,7 @@ public class Monster : ICharacter {
     private Color _characterColor;
     private Combat _currentCombat;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
+    private MonsterObj _monsterObj;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
 
@@ -104,6 +105,12 @@ public class Monster : ICharacter {
     public CharacterBattleOnlyTracker battleOnlyTracker {
         get { return _battleOnlyTracker; }
     }
+    public MonsterObj monsterObj {
+        get { return _monsterObj; }
+    }
+    public Faction faction {
+        get { return null; }
+    }
     public List<Skill> skills {
         get { return _skills; }
     }
@@ -116,14 +123,10 @@ public class Monster : ICharacter {
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
     }
+    //public ILocation specificLocation {
+    //    get { return _monsterObj.specificLocation; }
+    //}
     #endregion
-
-    public Monster() {
-        _id = Utilities.SetID(this);
-        _isDead = false;
-        _battleOnlyTracker = new CharacterBattleOnlyTracker();
-        SetCharacterColor(Color.red);
-    }
 
     public Monster CreateNewCopy() {
         Monster newMonster = new Monster();
@@ -193,10 +196,22 @@ public class Monster : ICharacter {
     }
     public void Death() {
         _isDead = true;
+        ObjectState deadState = _monsterObj.GetState("Dead");
+        _monsterObj.ChangeState(deadState);
     }
     #endregion
 
     #region Interface
+    public void Initialize() {
+        _id = Utilities.SetID(this);
+        _isDead = false;
+        _battleOnlyTracker = new CharacterBattleOnlyTracker();
+#if !WORLD_CREATION_TOOL
+        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+        _monsterObj.SetMonster(this);
+#endif
+        SetCharacterColor(Color.red);
+    }
     public void SetSide(SIDES side) {
         _currentSide = side;
     }

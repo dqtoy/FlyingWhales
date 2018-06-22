@@ -1337,6 +1337,7 @@ public enum OBJECT_TYPE {
     ITEM,
     NPC,
     LANDMARK,
+    MONSTER,
 }
 
 public enum ACTION_RESULT {

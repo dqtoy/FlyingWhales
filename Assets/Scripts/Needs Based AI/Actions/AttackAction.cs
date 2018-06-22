@@ -4,10 +4,10 @@ using UnityEngine;
 using ECS;
 
 public class AttackAction : CharacterAction {
-    CharacterObj _characterObj;
+    private ICharacterObject _characterObj;
 
     #region getters/setters
-    public CharacterObj characterObj {
+    public ICharacterObject characterObj {
         get { return _characterObj; }
     }
     #endregion
@@ -17,8 +17,8 @@ public class AttackAction : CharacterAction {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        if(_state.obj.objectType == OBJECT_TYPE.CHARACTER) {
-            _characterObj = _state.obj as CharacterObj;
+        if(_state.obj.objectType == OBJECT_TYPE.CHARACTER || _state.obj.objectType == OBJECT_TYPE.MONSTER) {
+            _characterObj = _state.obj as ICharacterObject;
         }
     }
     public override void OnFirstEncounter(Character character) {
@@ -37,22 +37,26 @@ public class AttackAction : CharacterAction {
         return attackAction;
     }
     public override bool CanBeDoneBy(Character character) {
-        if(character.faction.id == _characterObj.character.faction.id) {
-            return false;
+        if(_characterObj.character.faction != null) {
+            if (character.faction.id == _characterObj.character.faction.id) {
+                return false;
+            }
         }
         return base.CanBeDoneBy(character);
     }
     #endregion
     private void StartEncounter(Character enemy) {
         enemy.actionData.SetIsHalted(true);
-        _characterObj.character.actionData.SetIsHalted(true);
+        if(_characterObj.character is Character) {
+            (_characterObj.character as Character).actionData.SetIsHalted(true);
+        }
 
         StartCombatWith(enemy);
     }
     private void StartCombatWith(Character enemy) {
         //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
         if (_characterObj.character.currentCombat == null) {
-            Combat combat = new Combat(_characterObj.character.specificLocation);
+            Combat combat = new Combat();
             combat.AddCharacter(SIDES.A, enemy);
             combat.AddCharacter(SIDES.B, _characterObj.character);
             //MultiThreadPool.Instance.AddToThreadPool(combat);
@@ -63,7 +67,9 @@ public class AttackAction : CharacterAction {
             combatLog.AddToFillers(_characterObj.character, _characterObj.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
             enemy.AddHistory(combatLog);
-            _characterObj.character.AddHistory(combatLog);
+            if (_characterObj.character is Character) {
+                (_characterObj.character as Character).AddHistory(combatLog);
+            }
             Debug.Log("Starting combat between " + enemy.name + " and  " + _characterObj.character.name);
             combat.CombatSimulation();
         } else {
