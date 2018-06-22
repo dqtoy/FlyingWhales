@@ -14,11 +14,12 @@ public class CharacterManager : MonoBehaviour {
     public GameObject armyIconPrefab;
     public Transform armyIconsParent;
 
+    public int maxLevel;
     public List<CharacterType> characterTypes;
     public List<Trait> traitSetup;
     private Dictionary<TRAIT, string> traitDictionary;
     private Dictionary<string, CharacterClass> _classesDictionary;
-
+    private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
 
 	public Sprite heroSprite;
@@ -48,6 +49,9 @@ public class CharacterManager : MonoBehaviour {
     public List<Character> allCharacters {
         get { return _allCharacters; }
     }
+    public Dictionary<ELEMENT, float> elementsChanceDictionary {
+        get { return _elementsChanceDictionary; }
+    }
     #endregion
 
     private void Awake() {
@@ -58,6 +62,7 @@ public class CharacterManager : MonoBehaviour {
     public void Initialize() {
         ConstructTraitDictionary();
         ConstructAllClasses();
+        ConstructElementChanceDictionary();
     }
 
     #region ECS.Character Types
@@ -95,7 +100,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, int statAllocationBonus = 0, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -104,7 +109,7 @@ public class CharacterManager : MonoBehaviour {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + className + "!");
             return null;
         }
-		ECS.Character newCharacter = new ECS.Character(setup, gender, statAllocationBonus);
+		ECS.Character newCharacter = new ECS.Character(setup, gender);
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
@@ -115,26 +120,29 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, GENDER gender, ECS.CharacterSetup setup, int statAllocationBonus = 0) {
+
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, GENDER gender, ECS.CharacterSetup setup) {
 		if (setup == null) {
 			return null;
 		}
-		ECS.Character newCharacter = new ECS.Character(setup, gender, statAllocationBonus);
+		ECS.Character newCharacter = new ECS.Character(setup, gender);
 		newCharacter.AssignRole(charRole);
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
 	}
+
     /*
      Create a new character, given filename.
          */
-    public ECS.Character CreateNewCharacter(string fileName, GENDER gender, int statAllocationBonus = 0, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(string fileName, GENDER gender, Faction faction = null) {
         ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(fileName);
         if (setup == null) {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + fileName + "!");
             return null;
         }
-        ECS.Character newCharacter = new ECS.Character(setup, gender, statAllocationBonus);
+        ECS.Character newCharacter = new ECS.Character(setup, gender);
+
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
@@ -201,6 +209,8 @@ public class CharacterManager : MonoBehaviour {
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
+            //CharacterClass currentClass = new CharacterClass();
+            currentClass.ConstructSkills();
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }
@@ -457,10 +467,10 @@ public class CharacterManager : MonoBehaviour {
 
     #region Utilities
     public void EquipCharacterWithBestGear(Settlement village, ECS.Character character) {
-        MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
-        MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
-        EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
-        EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
+        //MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
+        //MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
+        //EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
+        //EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
     }
     private void EquipCharacterWithBestAvailableArmor(ECS.Character character, MATERIAL material, Settlement village) {
         foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
@@ -517,9 +527,10 @@ public class CharacterManager : MonoBehaviour {
 
         for (int i = 0; i < number; i++) {
             Settlement chosenSettlement = allOwnedSettlements[Random.Range(0, allOwnedSettlements.Count)];
-            WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
+            //WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
 
-            CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
             CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
             ECS.Character newChar = chosenSettlement.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
             //Initial Character tags
@@ -560,6 +571,16 @@ public class CharacterManager : MonoBehaviour {
         ps.mouthIndex = Random.Range(0, mouthSprites.Count);
         ps.hairColor = hairColors[Random.Range(0, hairColors.Count)];
         return ps;
+    }
+    #endregion
+
+    #region Elements
+    private void ConstructElementChanceDictionary() {
+        _elementsChanceDictionary = new Dictionary<ELEMENT, float>();
+        ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
+        for (int i = 0; i < elements.Length; i++) {
+            _elementsChanceDictionary.Add(elements[i], 0f);
+        }
     }
     #endregion
 }

@@ -24,6 +24,8 @@ public class Utilities : MonoBehaviour {
     public static int lastQuestID = 0;
     public static int lastItemID = 0;
     public static int lastAreaID = 0;
+    public static int lastMonsterID = 0;
+
     public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
 
@@ -42,8 +44,65 @@ public class Utilities : MonoBehaviour {
     public static string portraitsSavePath { get { return dataPath + "PortraitSettings/"; } }
     public static string portraitFileExt { get { return ".portraitSetting"; } }
 
-    #region Pathfinding
-    public static List<Point> EvenNeighbours {
+    /*
+	 * Set unique id
+	 * */
+    public static int SetID<T>(T obj){
+        if(obj is Region) {
+            lastRegionID += 1;
+            return lastRegionID;
+        } else if (obj is Log) {
+            lastLogID += 1;
+            return lastLogID;
+		} else if (obj is BaseLandmark) {
+            lastLandmarkID += 1;
+            return lastLandmarkID;
+		} else if (obj is Faction) {
+			lastFactionID += 1;
+			return lastFactionID;
+        } else if(obj is ECS.Character) {
+            lastCharacterID += 1;
+            return lastCharacterID;
+        } else if (obj is Quest) {
+            lastQuestID += 1;
+            return lastQuestID;
+        } else if (obj is ECS.Item) {
+            lastItemID += 1;
+            return lastItemID;
+        } else if (obj is Monster) {
+            lastMonsterID += 1;
+            return lastMonsterID;
+        } else if (obj is Area) {
+            lastAreaID += 1;
+            return lastAreaID;
+        }
+        return 0;
+	}
+    public static int SetID<T>(T obj, int idToUse) {
+        if (obj is Region) {
+            lastRegionID = idToUse;
+        } else if (obj is Log) {
+            lastLogID = idToUse;
+        } else if (obj is BaseLandmark) {
+            lastLandmarkID = idToUse;
+        } else if (obj is Faction) {
+            lastFactionID = idToUse;
+        } else if (obj is ECS.Character) {
+            lastCharacterID = idToUse;
+        } else if (obj is Quest) {
+            lastQuestID = idToUse;
+        } else if (obj is ECS.Item) {
+            lastItemID = idToUse;
+        } else if (obj is Monster) {
+            lastMonsterID = idToUse;
+        } else if (obj is Area) {
+            lastAreaID = idToUse;
+        }
+        return idToUse;
+    }
+
+#region Pathfinding
+	public static List<Point> EvenNeighbours {
 		get {
 			return new List<Point> {
 				new Point(-1, 1),
@@ -596,7 +655,7 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
-    #region Wighted Dictionary
+    #region Weighted Dictionary
     public static Dictionary<WEIGHTED_ACTION, int> MergeWeightedActionDictionaries(Dictionary<WEIGHTED_ACTION, int> dict1, Dictionary<WEIGHTED_ACTION, int> dict2) {
         Dictionary<WEIGHTED_ACTION, int> mergedDict = new Dictionary<WEIGHTED_ACTION, int>();
         foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in dict1) {
@@ -1000,57 +1059,7 @@ public class Utilities : MonoBehaviour {
 
         return returnArray;
     }
-    /*
-    * Set unique id
-    * */
-    public static int SetID<T>(T obj) {
-        if (obj is Region) {
-            lastRegionID += 1;
-            return lastRegionID;
-        } else if (obj is Log) {
-            lastLogID += 1;
-            return lastLogID;
-        } else if (obj is BaseLandmark) {
-            lastLandmarkID += 1;
-            return lastLandmarkID;
-        } else if (obj is Faction) {
-            lastFactionID += 1;
-            return lastFactionID;
-        } else if (obj is ECS.Character) {
-            lastCharacterID += 1;
-            return lastCharacterID;
-        } else if (obj is Quest) {
-            lastQuestID += 1;
-            return lastQuestID;
-        } else if (obj is ECS.Item) {
-            lastItemID += 1;
-            return lastItemID;
-        } else if (obj is Area) {
-            lastAreaID += 1;
-            return lastAreaID;
-        }
-        return 0;
-    }
-    public static int SetID<T>(T obj, int idToUse) {
-        if (obj is Region) {
-            lastRegionID = idToUse;
-        } else if (obj is Log) {
-            lastLogID = idToUse;
-        } else if (obj is BaseLandmark) {
-            lastLandmarkID = idToUse;
-        } else if (obj is Faction) {
-            lastFactionID = idToUse;
-        } else if (obj is ECS.Character) {
-            lastCharacterID = idToUse;
-        } else if (obj is Quest) {
-            lastQuestID = idToUse;
-        } else if (obj is ECS.Item) {
-            lastItemID = idToUse;
-        } else if (obj is Area) {
-            lastAreaID = idToUse;
-        }
-        return idToUse;
-    }
+
     public static int GetOptionIndex(Dropdown dropdown, string option) {
         for (int i = 0; i < dropdown.options.Count; i++) {
             if (dropdown.options[i].text.Equals(option)) {

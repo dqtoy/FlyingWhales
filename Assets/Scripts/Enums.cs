@@ -911,7 +911,8 @@ public enum CHARACTER_CLASS {
     BATTLEMAGE,
     ARCANIST,
     SCOUT,
-    NIGHTBLADE
+    NIGHTBLADE,
+    WARRIOR,
 }
 public enum CHARACTER_PRODUCTION_CAP {
     CITY_COUNT,
@@ -1420,8 +1421,46 @@ public enum LEVEL {
     AVERAGE,
     LOW
 }
-
 public enum AREA_TYPE {
     ELVEN_SETTLEMENT,
     HUMAN_SETTLEMENT,
+}
+public enum ELEMENT {
+    NONE,
+    FIRE,
+}
+
+public enum MONSTER_TYPE {
+    SLIME,
+    BEAST,
+    FLORAL,
+    INSECT,
+    HUMANOID,
+    DEMON,
+}
+
+public enum MONSTER_CATEGORY {
+    NORMAL,
+    BOSS,
+}
+
+public enum ATTACK_CATEGORY {
+    PHYSICAL,
+    MAGICAL,
+}
+
+public enum WEAPON_PREFIX {
+    NONE,
+}
+
+public enum WEAPON_SUFFIX {
+    NONE,
+}
+
+public enum ARMOR_PREFIX {
+    NONE,
+}
+
+public enum ARMOR_SUFFIX {
+    NONE,
 }
