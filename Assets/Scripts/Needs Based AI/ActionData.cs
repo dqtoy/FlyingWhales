@@ -75,9 +75,12 @@ public class ActionData {
         //    _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //}
 
-        if (action.state.obj.objectType == OBJECT_TYPE.STRUCTURE && action.state.obj.objectLocation.id == _character.home.id) {
-            _homeMultiplier = 1f;
-            _hasDoneActionAtHome = true;
+        if (action.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
+            Area areaOfStructure = action.state.obj.objectLocation.tileLocation.areaOfTile;
+            if (areaOfStructure != null && _character.home != null && areaOfStructure.id == _character.home.id) {
+                _homeMultiplier = 1f;
+                _hasDoneActionAtHome = true;
+            }
         }
     }
     public void DetachActionData() {
