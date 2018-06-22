@@ -632,14 +632,15 @@ namespace ECS {
 						skill.isEnabled = false;
 						continue;
 					}
-				}else if (skill is FleeSkill){
-//					skill.isEnabled = false;
-//					continue;
-					if(this.currentHP >= (this.maxHP / 2)){
-						skill.isEnabled = false;
-						continue;
-					}
 				}
+//                else if (skill is FleeSkill){
+////					skill.isEnabled = false;
+////					continue;
+//					if(this.currentHP >= (this.maxHP / 2)){
+//						skill.isEnabled = false;
+//						continue;
+//					}
+//				}
 			}
 
             //Character class skills
@@ -3129,6 +3130,12 @@ namespace ECS {
         public int GetMDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);
             return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 100f)));
+        }
+        public void ResetToFullHP() {
+            AdjustHP(_maxHP);
+        }
+        public void ResetToFullSP() {
+            AdjustSP(_maxSP);
         }
         #endregion
 

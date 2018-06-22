@@ -227,5 +227,11 @@ public class Monster : ICharacter {
     public int GetMDef(ICharacter enemy) {
         return _mDef;
     }
+    public void ResetToFullHP() {
+        AdjustHP(_maxHP);
+    }
+    public void ResetToFullSP() {
+        AdjustSP(_maxSP);
+    }
     #endregion
 }

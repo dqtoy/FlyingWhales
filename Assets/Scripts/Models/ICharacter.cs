@@ -36,6 +36,8 @@ public interface ICharacter {
     void AdjustSP(int amount);
     void AdjustHP(int amount);
     void FaintOrDeath();
+    void ResetToFullHP();
+    void ResetToFullSP();
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
 }
