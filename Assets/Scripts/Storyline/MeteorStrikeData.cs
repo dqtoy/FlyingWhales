@@ -69,7 +69,7 @@ public class MeteorStrikeData : StorylineData {
 		nihvram.SetCharacterColor (Color.red);
 		nihvram.SetName ("Nihvram");
 
-		nihvram.SetHome(settlement);
+		//nihvram.SetHome(settlement);
 		settlement.AddCharacterToLocation(nihvram);
 		nihvram.DetermineAction();
 

@@ -99,7 +99,7 @@ namespace ECS {
         private bool _doesNotTakePrisoners;
         private bool _cannotBeTakenAsPrisoner;
         private object _isPrisonerOf;
-        private BaseLandmark _home;
+        private Area _home;
         private BaseLandmark _lair;
         //private int _combatHistoryID;
         private List<Character> _prisoners;
@@ -290,7 +290,7 @@ namespace ECS {
         public string characterColorCode {
             get { return _characterColorCode; }
         }
-        public BaseLandmark home {
+        public Area home {
             get { return _home; }
         }
         public BaseLandmark lair {
@@ -895,10 +895,10 @@ namespace ECS {
                 //Remove ActionData
                 _actionData.DetachActionData();
 
-				if(_home != null){
-                    //Remove character home on landmark
-					_home.RemoveCharacterHomeOnLandmark (this);
-				}
+				//if(_home != null){
+    //                //Remove character home on landmark
+				//	_home.RemoveCharacterHomeOnLandmark (this);
+				//}
 
 				if(this._faction != null){
 					if(this._faction.leader != null && this._faction.leader.id == this.id) {
@@ -2534,7 +2534,7 @@ namespace ECS {
         public void SetFollowerState(bool state) {
             _isFollower = state;
         }
-		public void SetHome(BaseLandmark newHome) {
+		public void SetHome(Area newHome) {
             this._home = newHome;
         }
         public void SetLair(BaseLandmark newLair) {
@@ -2847,9 +2847,9 @@ namespace ECS {
 			BaseLandmark prison = (BaseLandmark)_isPrisonerOf;
 			Faction newFaction = prison.owner;
 			SetFaction (newFaction);
-			SetHome (prison);
+			SetHome (prison.tileLocation.areaOfTile);
 			prison.AddCharacterToLocation(this);
-			prison.AddCharacterHomeOnLandmark(this);
+			//prison.AddCharacterHomeOnLandmark(this);
 			ChangeRole ();
 			prison.owner.AddNewCharacter(this);
 

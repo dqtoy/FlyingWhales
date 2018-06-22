@@ -158,9 +158,9 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.AssignRole(data.role);
 
         if (data.homeID != -1) {
-            BaseLandmark homeLocation = LandmarkManager.Instance.GetLandmarkByID(data.homeID);
+            Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
             newCharacter.SetHome(homeLocation);
-            homeLocation.AddCharacterHomeOnLandmark(newCharacter);
+            //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         }
 
         if (data.locationID != -1) {

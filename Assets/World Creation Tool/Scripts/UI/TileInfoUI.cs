@@ -49,11 +49,11 @@ public class TileInfoUI : MonoBehaviour {
         if (landmark is Settlement) {
             info += "\nCivilians: " + (landmark as Settlement).civilianCount.ToString();
         }
-        info += "\nCharacters with homes here: ";
-        for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
-            ECS.Character currChar = landmark.charactersWithHomeOnLandmark[i];
-            info += "\n   - " + currChar.name;
-        }
+        //info += "\nCharacters with homes here: ";
+        //for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
+        //    ECS.Character currChar = landmark.charactersWithHomeOnLandmark[i];
+        //    info += "\n   - " + currChar.name;
+        //}
         info += "\nCharacters located here: ";
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
             ECS.Character currChar = landmark.charactersAtLocation[i] as ECS.Character;

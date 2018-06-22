@@ -18,7 +18,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     protected bool _isOccupied;
     protected string _landmarkName;
     protected Faction _owner;
-    protected List<Character> _charactersWithHomeOnLandmark;
+    //protected List<Character> _charactersWithHomeOnLandmark;
     //protected Dictionary<RACE, int> _civiliansByRace;
     //protected int _currDurability;
     //protected int _totalDurability;
@@ -144,15 +144,15 @@ public class BaseLandmark : ILocation, TaskCreator {
     //public int horizontalBlocked {
     //    get { return _horizontalBlocked; }
     //}
-    public List<Character> charactersWithHomeOnLandmark {
-        get { return _charactersWithHomeOnLandmark; }
-    }
+    //public List<Character> charactersWithHomeOnLandmark {
+    //    get { return _charactersWithHomeOnLandmark; }
+    //}
     #endregion
 
     public BaseLandmark() {
         _connections = new List<BaseLandmark>();
         _owner = null; //landmark has no owner yet
-        _charactersWithHomeOnLandmark = new List<Character>();
+        //_charactersWithHomeOnLandmark = new List<Character>();
         _prisoners = new List<Character>();
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
@@ -438,14 +438,14 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
         //RACE raceOfChar = GetRaceBasedOnProportion();
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), _owner);
-        newCharacter.SetHome(this);
+        newCharacter.SetHome(this.tileLocation.areaOfTile);
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
         //}
         newCharacter.CreateIcon();
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter);
-        this.AddCharacterHomeOnLandmark(newCharacter);
+        //this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.icon.SetPosition(this.tileLocation.transform.position);
         //if (charRole != CHARACTER_ROLE.FOLLOWER) {
         //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
@@ -488,7 +488,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, Utilities.GetRandomGender(), _owner);
         //newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
-        newCharacter.SetHome(this);
+        newCharacter.SetHome(this.tileLocation.areaOfTile);
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
         //}
@@ -497,7 +497,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         newCharacter.CreateIcon();
         this.AddCharacterToLocation(newCharacter);
-        this.AddCharacterHomeOnLandmark(newCharacter);
+        //this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.icon.SetPosition(this.tileLocation.transform.position);
         //if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
         //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
@@ -508,17 +508,17 @@ public class BaseLandmark : ILocation, TaskCreator {
         //UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
-    /*
-     Make a character consider this landmark as it's home.
-         */
-    public virtual void AddCharacterHomeOnLandmark(Character character) {
-        if (!_charactersWithHomeOnLandmark.Contains(character)) {
-            _charactersWithHomeOnLandmark.Add(character);
-        }
-    }
-    public void RemoveCharacterHomeOnLandmark(Character character) {
-        _charactersWithHomeOnLandmark.Remove(character);
-    }
+    ///*
+    // Make a character consider this landmark as it's home.
+    //     */
+    //public virtual void AddCharacterHomeOnLandmark(Character character) {
+    //    if (!_charactersWithHomeOnLandmark.Contains(character)) {
+    //        _charactersWithHomeOnLandmark.Add(character);
+    //    }
+    //}
+    //public void RemoveCharacterHomeOnLandmark(Character character) {
+    //    _charactersWithHomeOnLandmark.Remove(character);
+    //}
 	public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
             if (_charactersAtLocation[i].id == id) {

@@ -69,13 +69,13 @@ public class Rest : CharacterTask {
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null && character.currentHP < character.maxHP){
 			if(character.faction == null){
-				BaseLandmark home = character.home;
-				if(home == null){
-					home = character.lair;
-				}
-				if(home != null && location.tileLocation.landmarkOnTile.id == home.id){
-					return true;
-				}
+				//BaseLandmark home = character.home;
+				//if(home == null){
+				//	home = character.lair;
+				//}
+				//if(home != null && location.tileLocation.landmarkOnTile.id == home.id){
+				//	return true;
+				//}
 			}else{
 				if(location.tileLocation.landmarkOnTile is Settlement && location.tileLocation.landmarkOnTile.owner != null){
 					if(location.tileLocation.landmarkOnTile.owner.id == character.faction.id){
@@ -89,13 +89,13 @@ public class Rest : CharacterTask {
 	public override bool AreConditionsMet (Character character){
 		if(character.currentHP < character.maxHP){
 			if(character.faction == null){
-				BaseLandmark home = character.home;
-				if(home == null){
-					home = character.lair;
-				}
-				if(home != null){
-					return true;
-				}
+				//BaseLandmark home = character.home;
+				//if(home == null){
+				//	home = character.lair;
+				//}
+				//if(home != null){
+				//	return true;
+				//}
 			}else{
 				if(character.faction.settlements.Count > 0){
 					return true;
