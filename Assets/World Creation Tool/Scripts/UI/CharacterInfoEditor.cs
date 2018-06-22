@@ -93,18 +93,18 @@ namespace worldcreator {
             templatesDropdown.ClearOptions();
             templatesDropdown.AddOptions(portraitTemplates.Keys.ToList());
         }
-        //public void OnValueChangedPortraitTemplate(int choice) {
-        //    string chosenTemplateName = templatesDropdown.options[choice].text;
-        //    PortraitSettings chosenSettings = portraitTemplates[chosenTemplateName];
-        //    _character.SetPortraitSettings(chosenSettings);
-        //    portrait.GeneratePortrait(_character);
-        //}
-        public void ApplyPortraitTemplate() {
-            string chosenTemplateName = templatesDropdown.options[templatesDropdown.value].text;
+        public void OnValueChangedPortraitTemplate(int choice) {
+            string chosenTemplateName = templatesDropdown.options[choice].text;
             PortraitSettings chosenSettings = portraitTemplates[chosenTemplateName];
             _character.SetPortraitSettings(chosenSettings);
             portrait.GeneratePortrait(_character);
         }
+        //public void ApplyPortraitTemplate() {
+        //    string chosenTemplateName = templatesDropdown.options[templatesDropdown.value].text;
+        //    PortraitSettings chosenSettings = portraitTemplates[chosenTemplateName];
+        //    _character.SetPortraitSettings(chosenSettings);
+        //    portrait.GeneratePortrait(_character);
+        //}
         #endregion
 
         #region Basic Info
