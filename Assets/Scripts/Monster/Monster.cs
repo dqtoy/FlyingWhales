@@ -153,7 +153,7 @@ public class Monster : ICharacter {
     }
 
     public void SetData(MonsterComponent monsterComponent) {
-        this._name = monsterComponent.name;
+        this._name = monsterComponent.monsterName;
         this._type = monsterComponent.type;
         this._category = monsterComponent.category;
         this._experienceDrop = monsterComponent.experienceDrop;

@@ -112,17 +112,17 @@ namespace ECS {
             //itemComponent.baseDamageMitigation = EditorGUILayout.FloatField("Base Damage Mitigation: ", itemComponent.baseDamageMitigation);
             //itemComponent.damageNullificationChance = EditorGUILayout.FloatField("Damage Nullification: ", itemComponent.damageNullificationChance);
 
-            SerializedProperty ineffectiveAttackType = serializedObject.FindProperty("ineffectiveAttackTypes");
-			EditorGUILayout.PropertyField(ineffectiveAttackType, true);
-			serializedObject.ApplyModifiedProperties ();
+   //         SerializedProperty ineffectiveAttackType = serializedObject.FindProperty("ineffectiveAttackTypes");
+			//EditorGUILayout.PropertyField(ineffectiveAttackType, true);
+			//serializedObject.ApplyModifiedProperties ();
 
-			SerializedProperty effectiveAttackType = serializedObject.FindProperty("effectiveAttackTypes");
-			EditorGUILayout.PropertyField(effectiveAttackType, true);
-			serializedObject.ApplyModifiedProperties ();
+			//SerializedProperty effectiveAttackType = serializedObject.FindProperty("effectiveAttackTypes");
+			//EditorGUILayout.PropertyField(effectiveAttackType, true);
+			//serializedObject.ApplyModifiedProperties ();
 
-			SerializedProperty armorAttribute = serializedObject.FindProperty("armorAttributes");
-			EditorGUILayout.PropertyField(armorAttribute, true);
-			serializedObject.ApplyModifiedProperties ();
+			//SerializedProperty armorAttribute = serializedObject.FindProperty("armorAttributes");
+			//EditorGUILayout.PropertyField(armorAttribute, true);
+			//serializedObject.ApplyModifiedProperties ();
         }
 			
         #region Saving

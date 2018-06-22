@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace ECS{
 	public class Armor : Item {
-		private ARMOR_TYPE _armorType;
-        private string _armorBodyType;
-        private int _pDef;
-        private int _mDef;
-        private ARMOR_PREFIX _prefix;
-        private ARMOR_SUFFIX _suffix;
+        [SerializeField] private ARMOR_TYPE _armorType;
+        [SerializeField] private string _armorBodyType;
+        [SerializeField] private int _pDef;
+        [SerializeField] private int _mDef;
+        [SerializeField] private ARMOR_PREFIX _prefix;
+        [SerializeField] private ARMOR_SUFFIX _suffix;
         //public MATERIAL material;
         //public QUALITY quality;
         //public float baseDamageMitigation;
@@ -23,6 +23,12 @@ namespace ECS{
         public ARMOR_TYPE armorType {
             get { return _armorType; }
             set { _armorType = value; }
+        }
+        public ARMOR_PREFIX prefixType {
+            get { return _prefix; }
+        }
+        public ARMOR_SUFFIX suffixType {
+            get { return _suffix; }
         }
         public string armorBodyType {
             get { return _armorBodyType; }

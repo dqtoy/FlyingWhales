@@ -56,19 +56,21 @@ namespace ECS {
                 SaveCharacterClassJson(currCharacterClass, path);
             }
         }
-        private void SaveCharacterClassJson(ClassComponent characterClass, string path) {
-            if(characterClass.skillsPerLevelNames == null) {
-                characterClass.skillsPerLevelNames = new List<string[]>();
-            } else {
-                characterClass.skillsPerLevelNames.Clear();
-            }
-            for (int i = 0; i < characterClass.skillsPerLevel.Count; i++) {
-                string[] skillNames = new string[characterClass.skillsPerLevel[i].list.Count];
-                for (int j = 0; j < characterClass.skillsPerLevel[i].list.Count; j++) {
-                    skillNames[j] = characterClass.skillsPerLevel[i].list[j].name;
-                }
-                characterClass.skillsPerLevelNames.Add(skillNames);
-            }
+        private void SaveCharacterClassJson(ClassComponent classComponent, string path) {
+            CharacterClass characterClass = new CharacterClass();
+            characterClass.SetData(classComponent);
+            //if (classComponent.skillsPerLevelNames == null) {
+            //    classComponent.skillsPerLevelNames = new List<StringListWrapper>();
+            //} else {
+            //    classComponent.skillsPerLevelNames.Clear();
+            //}
+            //for (int i = 0; i < classComponent.skillsPerLevel.Count; i++) {
+            //    StringListWrapper skillNames = new StringListWrapper();
+            //    for (int j = 0; j < classComponent.skillsPerLevel[i].list.Count; j++) {
+            //        skillNames.list.Add(classComponent.skillsPerLevel[i].list[j].name);
+            //    }
+            //    classComponent.skillsPerLevelNames.Add(skillNames);
+            //}
             string jsonString = JsonUtility.ToJson(characterClass);
             System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
             writer.WriteLine(jsonString);

@@ -124,9 +124,9 @@ public class CharacterManager : MonoBehaviour {
         string path = Utilities.dataPath + "CharacterClasses/";
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
-            ClassComponent classComponent = JsonUtility.FromJson<ClassComponent>(System.IO.File.ReadAllText(classes[i]));
-            CharacterClass currentClass = new CharacterClass();
-            currentClass.SetData(classComponent);
+            CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
+            //CharacterClass currentClass = new CharacterClass();
+            currentClass.ConstructSkills();
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }
@@ -388,10 +388,10 @@ public class CharacterManager : MonoBehaviour {
 
     #region Utilities
     public void EquipCharacterWithBestGear(Settlement village, ECS.Character character) {
-        MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
-        MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
-        EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
-        EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
+        //MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
+        //MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
+        //EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
+        //EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
     }
     private void EquipCharacterWithBestAvailableArmor(ECS.Character character, MATERIAL material, Settlement village) {
         foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
@@ -448,9 +448,10 @@ public class CharacterManager : MonoBehaviour {
 
         for (int i = 0; i < number; i++) {
             Settlement chosenSettlement = allOwnedSettlements[Random.Range(0, allOwnedSettlements.Count)];
-            WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
+            //WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
 
-            CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
             CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
             ECS.Character newChar = chosenSettlement.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
             //Initial Character tags

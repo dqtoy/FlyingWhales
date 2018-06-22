@@ -112,15 +112,15 @@ public class ItemManager : MonoBehaviour {
 					ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
 					_allItems.Add (newWeapon.itemName, newWeapon);
 					allWeapons.Add (newWeapon.itemName, newWeapon);
-                    CreateWeaponPrefix(newWeapon.prefix.weaponPrefix);
-                    CreateWeaponSuffix(newWeapon.suffix.weaponSuffix);
+                    CreateWeaponPrefix(newWeapon.prefixType);
+                    CreateWeaponSuffix(newWeapon.suffixType);
                     break;
                 case ITEM_TYPE.ARMOR:
                     ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
                     _allItems.Add(newArmor.itemName, newArmor);
 					allArmors.Add (newArmor.itemName, newArmor);
-                    CreateArmorPrefix(newArmor.prefix.armorPrefix);
-                    CreateArmorSuffix(newArmor.suffix.armorSuffix);
+                    CreateArmorPrefix(newArmor.prefixType);
+                    CreateArmorSuffix(newArmor.suffixType);
                     break;
                 default:
 					ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
@@ -175,17 +175,16 @@ public class ItemManager : MonoBehaviour {
         if(!_weaponPrefixes.ContainsKey(prefix)) {
             switch (prefix) {
                 case WEAPON_PREFIX.NONE:
-                _weaponPrefixes[prefix] = new WeaponPrefix(prefix);
+                _weaponPrefixes.Add(prefix, new WeaponPrefix(prefix));
                 break;
             }
         }
-        
     }
     private void CreateWeaponSuffix(WEAPON_SUFFIX suffix) {
         if (!_weaponSuffixes.ContainsKey(suffix)) {
             switch (suffix) {
                 case WEAPON_SUFFIX.NONE:
-                _weaponSuffixes[suffix] = new WeaponSuffix(suffix);
+                _weaponSuffixes.Add(suffix, new WeaponSuffix(suffix));
                 break;
             }
         }
@@ -196,7 +195,7 @@ public class ItemManager : MonoBehaviour {
         if (!_armorPrefixes.ContainsKey(prefix)) {
             switch (prefix) {
                 case ARMOR_PREFIX.NONE:
-                _armorPrefixes[prefix] = new ArmorPrefix(prefix);
+                _armorPrefixes.Add(prefix, new ArmorPrefix(prefix));
                 break;
             }
         }
@@ -206,7 +205,7 @@ public class ItemManager : MonoBehaviour {
         if (!_armorSuffixes.ContainsKey(suffix)) {
             switch (suffix) {
                 case ARMOR_SUFFIX.NONE:
-                _armorSuffixes[suffix] = new ArmorSuffix(suffix);
+                _armorSuffixes.Add(suffix, new ArmorSuffix(suffix));
                 break;
             }
         }

@@ -18,7 +18,7 @@ namespace ECS{
         public List<WEAPON_TYPE> allowedWeaponTypes;
         public List<TextAssetListWrapper> skillsPerLevel;
 
-        public List<string[]> skillsPerLevelNames;
+        //public List<StringListWrapper> skillsPerLevelNames;
 //		public void AddSkillOfType(SKILL_TYPE skillType, Skill skillToAdd) {
 //			switch (skillType) {
 //			case SKILL_TYPE.ATTACK:

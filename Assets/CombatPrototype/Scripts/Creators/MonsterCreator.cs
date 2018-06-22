@@ -19,6 +19,7 @@ public class MonsterCreator : Editor {
         monsterComponent.type = (MONSTER_TYPE) EditorGUILayout.EnumPopup("Type: ", monsterComponent.type);
         monsterComponent.category = (MONSTER_CATEGORY) EditorGUILayout.EnumPopup("Category: ", monsterComponent.category);
         monsterComponent.level = EditorGUILayout.IntField("Level: ", monsterComponent.level);
+        monsterComponent.experienceDrop = EditorGUILayout.IntField("Exp Drop: ", monsterComponent.experienceDrop);
         monsterComponent.maxHP = EditorGUILayout.IntField("Max HP: ", monsterComponent.maxHP);
         monsterComponent.maxSP = EditorGUILayout.IntField("Max SP: ", monsterComponent.maxSP);
         monsterComponent.attackPower = EditorGUILayout.IntField("Attack Power: ", monsterComponent.attackPower);
@@ -68,8 +69,8 @@ public class MonsterCreator : Editor {
         } else {
             monsterComponent.skillNames.Clear();
         }
-        for (int i = 0; i < monsterComponent.skills.list.Count; i++) {
-            monsterComponent.skillNames.Add(monsterComponent.skills.list[i].name);
+        for (int i = 0; i < monsterComponent.skills.Count; i++) {
+            monsterComponent.skillNames.Add(monsterComponent.skills[i].name);
         }
         string jsonString = JsonUtility.ToJson(monsterComponent);
         System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);

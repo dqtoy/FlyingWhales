@@ -50,6 +50,7 @@ namespace ECS {
 			//skill.accuracy = this.accuracy;
 			skill.range = this.range;
 			skill.isEnabled = this.isEnabled;
+            skill.allowedWeaponTypes = new WEAPON_TYPE[this.allowedWeaponTypes.Length];
             Array.Copy(this.allowedWeaponTypes, skill.allowedWeaponTypes, this.allowedWeaponTypes.Length);
 			skill.skillRequirements = new SkillRequirement[this.skillRequirements.Length];
 			for (int i = 0; i < this.skillRequirements.Length; i++) {

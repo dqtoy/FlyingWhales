@@ -4,17 +4,19 @@ using System.Collections.Generic;
 
 namespace ECS {
     public class CharacterClass : EntityComponent {
-        private string _className;
-        private float _strWeightAllocation;
-        private float _intWeightAllocation;
-        private float _agiWeightAllocation;
-        private float _vitWeightAllocation;
-        private float _hpModifier;
-        private float _spModifier;
+        [SerializeField] private string _className;
+        [SerializeField] private float _strWeightAllocation;
+        [SerializeField] private float _intWeightAllocation;
+        [SerializeField] private float _agiWeightAllocation;
+        [SerializeField] private float _vitWeightAllocation;
+        [SerializeField] private float _hpModifier;
+        [SerializeField] private float _spModifier;
+        [SerializeField] private List<WEAPON_TYPE> _allowedWeaponTypes;
+        [SerializeField] private List<StringListWrapper> _skillsPerLevelNames;
+
         //private int _dodgeRate;
         //private int _parryRate;
         //private int _blockRate;
-        private List<WEAPON_TYPE> _allowedWeaponTypes;
         private List<Skill[]> _skillsPerLevel;
 
         #region getters/setters
@@ -92,13 +94,25 @@ namespace ECS {
             //this._parryRate = classComponent.parryRate;
             //this._blockRate = classComponent.blockRate;
             this._allowedWeaponTypes = new List<WEAPON_TYPE>(classComponent.allowedWeaponTypes);
-            this._skillsPerLevel = new List<Skill[]>();
-            for (int i = 0; i < classComponent.skillsPerLevelNames.Count; i++) {
-                Skill[] skillsArray = new Skill[classComponent.skillsPerLevelNames[i].Length];
-                for (int j = 0; j < classComponent.skillsPerLevelNames[i].Length; j++) {
-                    skillsArray[j] = SkillManager.Instance.allSkills[classComponent.skillsPerLevelNames[i][j]];
+            this._skillsPerLevelNames = new List<StringListWrapper>();
+            for (int i = 0; i < classComponent.skillsPerLevel.Count; i++) {
+                StringListWrapper skillNames = new StringListWrapper();
+                skillNames.list = new List<string>();
+                for (int j = 0; j < classComponent.skillsPerLevel[i].list.Count; j++) {
+                    skillNames.list.Add(classComponent.skillsPerLevel[i].list[j].name);
                 }
-                _skillsPerLevel.Add(skillsArray);
+                _skillsPerLevelNames.Add(skillNames);
+            }
+        }
+
+        public void ConstructSkills() {
+            _skillsPerLevel = new List<Skill[]>();
+            for (int i = 0; i < _skillsPerLevelNames.Count; i++) {
+                Skill[] skillArray = new Skill[_skillsPerLevelNames[i].list.Count];
+                for (int j = 0; j < _skillsPerLevelNames[i].list.Count; j++) {
+                    skillArray[j] = SkillManager.Instance.allSkills[_skillsPerLevelNames[i].list[j]];
+                }
+                _skillsPerLevel.Add(skillArray);
             }
         }
     }

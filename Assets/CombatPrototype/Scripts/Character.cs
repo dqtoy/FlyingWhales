@@ -499,7 +499,7 @@ namespace ECS {
 			_equippedItems = new List<Item> ();
 			_inventory = new List<Item> ();
 			_skills = GetGeneralSkills();
-			_skills.AddRange (GetBodyPartSkills ());
+			//_skills.AddRange (GetBodyPartSkills ());
 
             EquipPreEquippedItems (baseSetup);
 			GetRandomCharacterColor ();
@@ -632,53 +632,61 @@ namespace ECS {
 						skill.isEnabled = false;
 						continue;
 					}
-				}
-//                else if (skill is FleeSkill){
-////					skill.isEnabled = false;
-////					continue;
-//					if(this.currentHP >= (this.maxHP / 2)){
-//						skill.isEnabled = false;
-//						continue;
-//					}
-//				}
-			}
-
-            //Character class skills
-            for (int i = 0; i < _level; i++) {
-                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-                    Skill skill = _characterClass.skillsPerLevel[i][j];
-                    skill.isEnabled = true;
-
-                    //Check for allowed weapon types
-
-                    for (int k = 0; k < skill.skillRequirements.Length; k++) {
-                        SkillRequirement skillRequirement = skill.skillRequirements[k];
-                        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                            skill.isEnabled = false;
-                            break;
-                        }
-                    }
-                    if (!skill.isEnabled) {
+				} else if (skill is FleeSkill) {
+                    //					skill.isEnabled = false;
+                    //					continue;
+                    if (this.currentHP >= (this.maxHP / 2)) {
+                        skill.isEnabled = false;
                         continue;
-                    }
-                    if (skill is AttackSkill) {
-                        AttackSkill attackSkill = skill as AttackSkill;
-                        if (attackSkill.spCost > _sp) {
-                            skill.isEnabled = false;
-                            continue;
-                        }
-                        isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
-                        if (!isAttackInRange) {
-                            isAllAttacksInRange = false;
-                            skill.isEnabled = false;
-                            continue;
-                        }
                     }
                 }
             }
 
+            //Character class skills
+            if(_equippedWeapon != null) {
+                for (int i = 0; i < _level; i++) {
+                    for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                        Skill skill = _characterClass.skillsPerLevel[i][j];
+                        skill.isEnabled = true;
 
-			for (int i = 0; i < this._skills.Count; i++) {
+                        //Check for allowed weapon types
+                        for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
+                            if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+                                skill.isEnabled = false;
+                                continue;
+                            }
+                        }
+
+                        //for (int k = 0; k < skill.skillRequirements.Length; k++) {
+                        //    SkillRequirement skillRequirement = skill.skillRequirements[k];
+                        //    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                        //        skill.isEnabled = false;
+                        //        break;
+                        //    }
+                        //}
+                        //if (!skill.isEnabled) {
+                        //    continue;
+                        //}
+                        if (skill is AttackSkill) {
+                            AttackSkill attackSkill = skill as AttackSkill;
+                            if (attackSkill.spCost > _sp) {
+                                skill.isEnabled = false;
+                                continue;
+                            }
+                            isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                            if (!isAttackInRange) {
+                                isAllAttacksInRange = false;
+                                skill.isEnabled = false;
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+            for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
 				if(skill is MoveSkill){
 					skill.isEnabled = true;
@@ -2279,14 +2287,6 @@ namespace ECS {
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-        private void RecomputeMaxHP() {
-            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float)_level, 1.1f)) / 1.3f)));
-            int previousMaxHP = this._maxHP;
-            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * ((float)vitality / 100f));
-            if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
-                this._currentHP = this._maxHP;
-            }
-        }
         #endregion
 
         #region Avatar
@@ -3117,11 +3117,19 @@ namespace ECS {
         public void AdjustCritDamage(float amount) {
             _critDamage += amount;
         }
+        private void RecomputeMaxHP() {
+            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 1.1f)) / 1.3f)));
+            int previousMaxHP = this._maxHP;
+            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * ((float) vitality / 100f));
+            if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
+                this._currentHP = this._maxHP;
+            }
+        }
         private void RecomputeMaxExperience() {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
         }
         private void RecomputeMaxSP() {
-            _maxSP = Mathf.CeilToInt(_characterClass.spModifier * ((float) _level / 1.25f));
+            _maxSP = 10 + Mathf.CeilToInt(_characterClass.spModifier * ((float) _level / 1.25f));
         }
         public int GetPDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);

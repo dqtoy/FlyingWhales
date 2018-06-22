@@ -194,13 +194,13 @@ namespace ECS{
                 if (actingCharacter != null) {
                     actingCharacter.EnableDisableSkills(this);
                 }
-                Debug.Log("Available Skills: ");
-                for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
-                    Skill currSkill = characterThatWillAct.skills[i];
-                    if (currSkill.isEnabled) {
-                        Debug.Log(currSkill.skillName);
-                    }
-                }
+                //Debug.Log("Available Skills: ");
+                //for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
+                //    Skill currSkill = characterThatWillAct.skills[i];
+                //    if (currSkill.isEnabled) {
+                //        Debug.Log(currSkill.skillName);
+                //    }
+                //}
                 Skill skillToUse = GetSkillToUse(characterThatWillAct, targetCharacter);
                 if (skillToUse != null) {
                     Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
@@ -268,113 +268,121 @@ namespace ECS{
 
 		//Get a random character from the opposite side to be the target
 		private ICharacter GetTargetCharacter(ICharacter sourceCharacter, Skill skill){
-			List<ICharacter> possibleTargets = this.charactersSideB;
-            if (sourceCharacter.currentSide == SIDES.B) {
-                possibleTargets = this.charactersSideA;
+			List<ICharacter> possibleTargets = new List<ICharacter>();
+
+            if (skill is AttackSkill) {
+                List<ICharacter> oppositeTargets = this.charactersSideB;
+                if (sourceCharacter.currentSide == SIDES.B) {
+                    oppositeTargets = this.charactersSideA;
+                }
+                possibleTargets.AddRange(oppositeTargets);
+            } else {
+                possibleTargets.Add(sourceCharacter);
             }
 
+                //            if (skill is AttackSkill) {
+                //				List<ICharacter> oppositeTargets = this.charactersSideB;
+                //				if(sourceCharacter.currentSide == SIDES.B){
+                //					oppositeTargets = this.charactersSideA;
+                //				}
 
-//            if (skill is AttackSkill) {
-//				List<ICharacter> oppositeTargets = this.charactersSideB;
-//				if(sourceCharacter.currentSide == SIDES.B){
-//					oppositeTargets = this.charactersSideA;
-//				}
+                //				//int chance = Utilities.rng.Next(0, 100);
+                //				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+                //				//	if(chance < 10){
+                //				//		if(sourceCharacter.currentSide == SIDES.A){
+                //				//			oppositeTargets = this.charactersSideA;
+                //				//		}else{
+                //				//			oppositeTargets = this.charactersSideB;
+                //				//		}
+                //				//	}
+                //				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+                //				//	if(chance < 20){
+                //				//		if(sourceCharacter.currentSide == SIDES.A){
+                //				//			oppositeTargets = this.charactersSideA;
+                //				//		}else{
+                //				//			oppositeTargets = this.charactersSideB;
+                //				//		}
+                //				//	}
+                //				//}
 
-//				//int chance = Utilities.rng.Next(0, 100);
-//				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
-//				//	if(chance < 10){
-//				//		if(sourceCharacter.currentSide == SIDES.A){
-//				//			oppositeTargets = this.charactersSideA;
-//				//		}else{
-//				//			oppositeTargets = this.charactersSideB;
-//				//		}
-//				//	}
-//				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
-//				//	if(chance < 20){
-//				//		if(sourceCharacter.currentSide == SIDES.A){
-//				//			oppositeTargets = this.charactersSideA;
-//				//		}else{
-//				//			oppositeTargets = this.charactersSideB;
-//				//		}
-//				//	}
-//				//}
+                //				for (int i = 0; i < oppositeTargets.Count; i++) {
+                //					ICharacter targetCharacter = oppositeTargets [i];
+                //					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+                //					if (skill.range >= rowDistance) {
+                //						possibleTargets.Add (targetCharacter);
+                //					}
+                //				}
+                //			} else if (skill is HealSkill) {
+                //				List<ICharacter> sameTargets = this.charactersSideB;
+                //				if(sourceCharacter.currentSide == SIDES.A){
+                //					sameTargets = this.charactersSideA;
+                //				}
 
-//				for (int i = 0; i < oppositeTargets.Count; i++) {
-//					ICharacter targetCharacter = oppositeTargets [i];
-//					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-//					if (skill.range >= rowDistance) {
-//						possibleTargets.Add (targetCharacter);
-//					}
-//				}
-//			} else if (skill is HealSkill) {
-//				List<ICharacter> sameTargets = this.charactersSideB;
-//				if(sourceCharacter.currentSide == SIDES.A){
-//					sameTargets = this.charactersSideA;
-//				}
+                //				//int chance = Utilities.rng.Next (0, 100);
+                //				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+                //				//	if(chance < 10){
+                //				//		if(sourceCharacter.currentSide == SIDES.B){
+                //				//			sameTargets = this.charactersSideA;
+                //				//		}else{
+                //				//			sameTargets = this.charactersSideB;
+                //				//		}
+                //				//	}
+                //				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+                //				//	if(chance < 20){
+                //				//		if(sourceCharacter.currentSide == SIDES.B){
+                //				//			sameTargets = this.charactersSideA;
+                //				//		}else{
+                //				//			sameTargets = this.charactersSideB;
+                //				//		}
+                //				//	}
+                //				//}
 
-//				//int chance = Utilities.rng.Next (0, 100);
-//				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
-//				//	if(chance < 10){
-//				//		if(sourceCharacter.currentSide == SIDES.B){
-//				//			sameTargets = this.charactersSideA;
-//				//		}else{
-//				//			sameTargets = this.charactersSideB;
-//				//		}
-//				//	}
-//				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
-//				//	if(chance < 20){
-//				//		if(sourceCharacter.currentSide == SIDES.B){
-//				//			sameTargets = this.charactersSideA;
-//				//		}else{
-//				//			sameTargets = this.charactersSideB;
-//				//		}
-//				//	}
-//				//}
+                //				for (int i = 0; i < sameTargets.Count; i++) {
+                //					ICharacter targetCharacter = sameTargets [i];
+                //					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+                //					if (skill.range >= rowDistance) {
+                //						possibleTargets.Add (targetCharacter);
+                //					}
+                //				}
+                ////				if (sourceCharacter.currentSide == SIDES.A) {
+                ////					for (int i = 0; i < this.charactersSideA.Count; i++) {
+                ////						ICharacter targetCharacter = this.charactersSideA [i];
+                ////						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+                ////						if (skill.range >= rowDistance) {
+                ////							possibleTargets.Add (targetCharacter);
+                ////						}
+                ////					}
+                ////				} else {
+                ////					for (int i = 0; i < this.charactersSideB.Count; i++) {
+                ////						ICharacter targetCharacter = this.charactersSideB [i];
+                ////						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
+                ////						if (skill.range >= rowDistance) {
+                ////							possibleTargets.Add (targetCharacter);
+                ////						}
+                ////					}
+                ////				}
+                //			}else{
+                //				possibleTargets.Add (sourceCharacter);
+                //			}
 
-//				for (int i = 0; i < sameTargets.Count; i++) {
-//					ICharacter targetCharacter = sameTargets [i];
-//					int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-//					if (skill.range >= rowDistance) {
-//						possibleTargets.Add (targetCharacter);
-//					}
-//				}
-////				if (sourceCharacter.currentSide == SIDES.A) {
-////					for (int i = 0; i < this.charactersSideA.Count; i++) {
-////						ICharacter targetCharacter = this.charactersSideA [i];
-////						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-////						if (skill.range >= rowDistance) {
-////							possibleTargets.Add (targetCharacter);
-////						}
-////					}
-////				} else {
-////					for (int i = 0; i < this.charactersSideB.Count; i++) {
-////						ICharacter targetCharacter = this.charactersSideB [i];
-////						int rowDistance = GetRowDistanceBetweenTwoCharacters (sourceCharacter, targetCharacter);
-////						if (skill.range >= rowDistance) {
-////							possibleTargets.Add (targetCharacter);
-////						}
-////					}
-////				}
-//			}else{
-//				possibleTargets.Add (sourceCharacter);
-//			}
-
-			return possibleTargets [Utilities.rng.Next (0, possibleTargets.Count)];
+                return possibleTargets [Utilities.rng.Next (0, possibleTargets.Count)];
 		}
 
 		//Get Skill that the character will use based on activation weights, target character must be within skill range
 		private Skill GetSkillToUse(ICharacter sourceCharacter, ICharacter targetCharacter = null){
-			Dictionary<Skill, int> skillActivationWeights = new Dictionary<Skill, int> ();
+            Debug.Log("Available Skills: ");
+            Dictionary<Skill, int> skillActivationWeights = new Dictionary<Skill, int> ();
             for (int i = 0; i < sourceCharacter.skills.Count; i++) { //These are general skills like move, flee, drink potion
                 Skill skill = sourceCharacter.skills[i];
                 if (skill.isEnabled) {
+                    Debug.Log(skill.skillName);
                     skillActivationWeights.Add(skill, skill.activationWeight);
                 }
             }
 
             if (sourceCharacter.battleOnlyTracker.lastDamageTaken < sourceCharacter.currentHP) { //sourceCharacter last damage taken must not be >= current health
                 float weaponAttack = 0f;
-                float missingHP = ((float) sourceCharacter.currentHP / (float) sourceCharacter.maxHP) * 100f;
+                float missingHP = (1f - ((float) sourceCharacter.currentHP / (float) sourceCharacter.maxHP)) * 100f;
                 int levelDiff = (sourceCharacter.level - targetCharacter.level) * 10;
                 if (sourceCharacter is Character) {
                     Character character = sourceCharacter as Character;
@@ -384,6 +392,7 @@ namespace ECS{
                             for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
                                 Skill skill = character.characterClass.skillsPerLevel[i][j];
                                 if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
+                                    Debug.Log(skill.skillName);
                                     AttackSkill attackSkill = skill as AttackSkill;
                                     float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff, character.battleTracker);
                                     float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill, character.battleTracker);
@@ -399,6 +408,7 @@ namespace ECS{
                     for (int i = 0; i < monster.skills.Count; i++) {
                         Skill skill = monster.skills[i];
                         if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
+                            Debug.Log(skill.skillName);
                             AttackSkill attackSkill = skill as AttackSkill;
                             float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff);
                             float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill);
@@ -796,7 +806,7 @@ namespace ECS{
             }
 
             int finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
-            int damage = (int) ((finalAttack * (attackSkill.power / 100f)) * (critDamage / 100f));
+            int damage = (int) (((float)finalAttack * (attackSkill.power / 100f)) * (critDamage / 100f));
             int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
             int minDamageRange = damage - computedDamageRange;
             int maxDamageRange = damage + computedDamageRange;
@@ -1210,7 +1220,7 @@ namespace ECS{
 		}
 
         private int GetFinalAttack(int stat, int level, float weaponAttack) {
-            return (int) (((weaponAttack + stat) * (1f + (stat / 2f))) * (1f + ((float) level / 100f)));
+            return (int) (((weaponAttack + stat) * (1f + ((float)stat / 2f))) * (1f + ((float) level / 100f)));
         }
 
         //public Character GetOpposingCharacters(ICharacter character) {

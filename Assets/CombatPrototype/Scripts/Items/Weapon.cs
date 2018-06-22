@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace ECS{
 	public class Weapon : Item {
-		private WEAPON_TYPE _weaponType;
+		[SerializeField] private WEAPON_TYPE _weaponType;
         //public MATERIAL material;
         //public QUALITY quality;
-        private float _weaponPower;
-        private WEAPON_PREFIX _prefix;
-        private WEAPON_SUFFIX _suffix;
-        private ELEMENT _element;
+        [SerializeField] private float _weaponPower;
+        [SerializeField] private WEAPON_PREFIX _prefix;
+        [SerializeField] private WEAPON_SUFFIX _suffix;
+        [SerializeField] private ELEMENT _element;
 		//public float damageRange;
 		//public List<IBodyPart.ATTRIBUTE> attributes;
         //public List<IBodyPart.ATTRIBUTE> equipRequirements;
@@ -26,22 +26,28 @@ namespace ECS{
             get { return _weaponType; }
             set { _weaponType = value; }
         }
+        public ELEMENT element {
+            get { return _element; }
+            set { _element = value; }
+        }
+        public WEAPON_PREFIX prefixType {
+            get { return _prefix; }
+        }
+        public WEAPON_SUFFIX suffixType {
+            get { return _suffix; }
+        }
         public float weaponPower {
             get { return _weaponPower; }
             set { _weaponPower = value; }
+        }
+        public float attackPower {
+            get { return (_weaponPower + prefix.flatModifier) * (1f + (prefix.percentModifier / 100f)); }
         }
         public WeaponPrefix prefix {
             get { return ItemManager.Instance.weaponPrefixes[_prefix]; }
         }
         public WeaponSuffix suffix {
             get { return ItemManager.Instance.weaponSuffixes[_suffix]; }
-        }
-        public ELEMENT element {
-            get { return _element; }
-            set { _element = value; }
-        }
-        public float attackPower {
-            get { return (_weaponPower + prefix.flatModifier) * (1f + (prefix.percentModifier / 100f)); }
         }
         #endregion
 

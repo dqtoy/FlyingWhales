@@ -91,6 +91,7 @@ public class CharacterInfoUI : UIMenu {
         //RepositionHistoryScrollView();
         UpdateCharacterInfo();
         UpdateAllHistoryInfo();
+        SetAttackButtonState(false);
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -219,10 +220,14 @@ public class CharacterInfoUI : UIMenu {
 
     private void UpdateStatInfo() {
         string text = string.Empty;
-        text += "<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+        text += "<b>Lvl: </b>" + currentlyShowingCharacter.level.ToString() + "/" + CharacterManager.Instance.maxLevel.ToString();
+        text += ", <b>Exp: </b>" + currentlyShowingCharacter.experience.ToString() + "/" + currentlyShowingCharacter.maxExperience.ToString();
+        text += "\n<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+        text += ", <b>SP: </b>" + currentlyShowingCharacter.currentSP.ToString() + "/" + currentlyShowingCharacter.maxSP.ToString();
         text += "\n<b>Str: </b>" + currentlyShowingCharacter.strength.ToString();
-        text += "\n<b>Int: </b>" + currentlyShowingCharacter.intelligence.ToString();
+        text += ", <b>Int: </b>" + currentlyShowingCharacter.intelligence.ToString();
         text += "\n<b>Agi: </b>" + currentlyShowingCharacter.agility.ToString();
+        text += ", <b>Vit: </b>" + currentlyShowingCharacter.vitality.ToString();
         statInfoLbl.text = text;
     }
     private void UpdateTraitInfo() {

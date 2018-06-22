@@ -68,6 +68,8 @@ namespace ECS {
         }
 
         private void ShowAttackSkillFields() {
+            skillComponent.power = EditorGUILayout.IntField("Power: ", skillComponent.power);
+            skillComponent.spCost = EditorGUILayout.IntField("SP Cost: ", skillComponent.spCost);
             skillComponent.attackCategory = (ATTACK_CATEGORY) EditorGUILayout.EnumPopup("Attack Category: ", skillComponent.attackCategory);
             skillComponent.element = (ELEMENT) EditorGUILayout.EnumPopup("Element: ", skillComponent.element);
 
