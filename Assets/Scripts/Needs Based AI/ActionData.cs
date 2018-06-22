@@ -68,8 +68,14 @@ public class ActionData {
         SetCurrentAction(action);
         action.OnChooseAction();
         _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        //if (action.state.obj is CharacterObj) {
+        //    CharacterObj characterObj = action.state.obj as CharacterObj;
+        //    _character.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
+        //} else {
+        //    _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        //}
 
-        if(action.state.obj.objectType == OBJECT_TYPE.STRUCTURE && action.state.obj.objectLocation.id == _character.home.id) {
+        if (action.state.obj.objectType == OBJECT_TYPE.STRUCTURE && action.state.obj.objectLocation.id == _character.home.id) {
             _homeMultiplier = 1f;
             _hasDoneActionAtHome = true;
         }

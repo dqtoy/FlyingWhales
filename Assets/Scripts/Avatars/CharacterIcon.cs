@@ -210,58 +210,58 @@ public class CharacterIcon : MonoBehaviour {
         } else {
             Idle(upOrDown);
         }
-        if (targetLocation != null && _avatarGO.transform.localScale != Vector3.zero && !GameManager.Instance.isPaused) {
-            //Debug.Log("Remaining Distance: " + _aiPath.remainingDistance);
-            if (_aiPath.remainingDistance < 1f) {
-                //Debug.Log("Shrink!");
-                Vector3 newScale = _avatarGO.transform.localScale;
-                newScale.x -= 0.02f;
-                newScale.y -= 0.02f;
-                newScale.x = Mathf.Max(0, newScale.x);
-                newScale.y = Mathf.Max(0, newScale.y);
-                iTween.ScaleUpdate(_avatarGO.gameObject, newScale, Time.deltaTime * _aiPath.maxSpeed);
-                //_avatarGO.transform.localScale = Vector3.Lerp(_avatarGO.transform.localScale, newScale, );
-                if (newScale.x == 0f && newScale.y == 0f) {
-                    _aiPath.transform.position = targetLocation.tileLocation.transform.position;
-                }
-            }
-        }
-        if (shouldScaleUp && !GameManager.Instance.isPaused) {
-            Vector3 newScale = _avatarGO.transform.localScale;
-            newScale.x += 0.02f;
-            newScale.y += 0.02f;
-            newScale.x = Mathf.Min(newScale.x, normalScale.x);
-            newScale.y = Mathf.Min(newScale.y, normalScale.y);
-            iTween.ScaleUpdate(_avatarGO.gameObject, newScale, Time.deltaTime * _aiPath.maxSpeed);
-            if (newScale.x == normalScale.x && newScale.y == normalScale.y) {
-                shouldScaleUp = false;
-            }
-        }
+        //if (targetLocation != null && _avatarGO.transform.localScale != Vector3.zero && !GameManager.Instance.isPaused) {
+        //    //Debug.Log("Remaining Distance: " + _aiPath.remainingDistance);
+        //    if (_aiPath.remainingDistance < 1f) {
+        //        //Debug.Log("Shrink!");
+        //        Vector3 newScale = _avatarGO.transform.localScale;
+        //        newScale.x -= 0.02f;
+        //        newScale.y -= 0.02f;
+        //        newScale.x = Mathf.Max(0, newScale.x);
+        //        newScale.y = Mathf.Max(0, newScale.y);
+        //        iTween.ScaleUpdate(_avatarGO.gameObject, newScale, Time.deltaTime * _aiPath.maxSpeed);
+        //        //_avatarGO.transform.localScale = Vector3.Lerp(_avatarGO.transform.localScale, newScale, );
+        //        if (newScale.x == 0f && newScale.y == 0f) {
+        //            _aiPath.transform.position = targetLocation.tileLocation.transform.position;
+        //        }
+        //    }
+        //}
+        //if (shouldScaleUp && !GameManager.Instance.isPaused) {
+        //    Vector3 newScale = _avatarGO.transform.localScale;
+        //    newScale.x += 0.02f;
+        //    newScale.y += 0.02f;
+        //    newScale.x = Mathf.Min(newScale.x, normalScale.x);
+        //    newScale.y = Mathf.Min(newScale.y, normalScale.y);
+        //    iTween.ScaleUpdate(_avatarGO.gameObject, newScale, Time.deltaTime * _aiPath.maxSpeed);
+        //    if (newScale.x == normalScale.x && newScale.y == normalScale.y) {
+        //        shouldScaleUp = false;
+        //    }
+        //}
     }
-    private void OnMouseDown() {
-        MouseDown();
-    }
-    private void MouseDown() {
-        if (UIManager.Instance.IsMouseOnUI()) {
-            return;
-        }
-        if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-            if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction.id != _character.faction.id) { //TODO: Change this checker to relationship status checking instead of just faction
-                CharacterAction attackAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
-                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
-                UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
-                return;
-            }
-        } else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
-            CharacterAction joinBattleAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
-            if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
-                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(joinBattleAction);
-                UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
-                return;
-            }
-        }
-        UIManager.Instance.ShowCharacterInfo(_character);
-    }
+    //private void OnMouseDown() {
+    //    MouseDown();
+    //}
+    //private void MouseDown() {
+    //    if (UIManager.Instance.IsMouseOnUI()) {
+    //        return;
+    //    }
+    //    if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
+    //        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction.id != _character.faction.id) { //TODO: Change this checker to relationship status checking instead of just faction
+    //            CharacterAction attackAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+    //            UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
+    //            UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
+    //            return;
+    //        }
+    //    } else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
+    //        CharacterAction joinBattleAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
+    //        if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
+    //            UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(joinBattleAction);
+    //            UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
+    //            return;
+    //        }
+    //    }
+    //    UIManager.Instance.ShowCharacterInfo(_character);
+    //}
     private void OnDestroy() {
         SetTarget(null);
         PathfindingManager.Instance.RemoveAgent(_aiPath);

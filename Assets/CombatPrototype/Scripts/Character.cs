@@ -465,6 +465,9 @@ namespace ECS {
             GenerateSetupTags(baseSetup);
             GenerateRaceTags();
 
+            AllocateStatPoints(10);
+            LevelUp();
+
             EquipPreEquippedItems(baseSetup);
         }
 
@@ -483,7 +486,10 @@ namespace ECS {
 
             GenerateSetupTags(baseSetup);
             GenerateRaceTags();
-            
+
+            AllocateStatPoints(10);
+            LevelUp();
+
             EquipPreEquippedItems(baseSetup);
         }
 
@@ -512,6 +518,12 @@ namespace ECS {
             previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
             _actionData = new ActionData(this);
+
+            //RPG
+            _strength = 1;
+            _intelligence = 1;
+            _agility = 1;
+            _vitality = 1;
             _level = 0;
             _experience = 0;
             _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
@@ -521,17 +533,12 @@ namespace ECS {
             _equippedItems = new List<Item>();
             _inventory = new List<Item>();
 
-            AllocateStatPoints(10);
-            LevelUp();
-
             GetRandomCharacterColor();
 
 			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
 			//_combatHistoryID = 0;
 
-            currentCombat = null;
-            combatHistory = new Dictionary<int, Combat>();
 #if !WORLD_CREATION_TOOL
             _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
             _characterObject.SetCharacter(this);
@@ -2382,8 +2389,6 @@ namespace ECS {
                 _icon.SetActionOnTargetReached(doneAction);
                 _icon.SetTarget(targetLocation);
             }
-
-            return;
             //if (specificLocation == null) {
             //    throw new Exception("Specific location is null!");
             //}
@@ -2408,13 +2413,17 @@ namespace ECS {
 			//	}
 			//}
 		}
+        internal void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
+            _icon.SetActionOnTargetReached(doneAction);
+            _icon.SetTargetGO(locationGO);
+        }
         #endregion
 
         #region Icon
         /*
-         Create a new icon for this character.
-         Each character owns 1 icon.
-             */
+            Create a new icon for this character.
+            Each character owns 1 icon.
+                */
         public void CreateIcon() {
             GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
                 Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
