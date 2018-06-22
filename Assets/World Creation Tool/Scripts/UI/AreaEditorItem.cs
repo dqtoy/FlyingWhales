@@ -45,6 +45,7 @@ namespace worldcreator {
         public void OnChangeAreaTypeDropdownValue(int choice) {
             AREA_TYPE areaType = (AREA_TYPE)Enum.Parse(typeof(AREA_TYPE), areaTypeDropdown.options[choice].text);
             _area.SetAreaType(areaType);
+            ValidateLandmarks();
         }
 
         #region Dropdown Data
@@ -55,8 +56,18 @@ namespace worldcreator {
         #endregion
 
         public void AddTilesToArea() {
-            List<HexTile> validSelectedTiles = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection
-                .Where(x => x.isPassable && x.areaOfTile == null));
+            AreaData data = LandmarkManager.Instance.GetAreaData(_area.areaType);
+            List<HexTile> validSelectedTiles = new List<HexTile>();
+            for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
+                HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];
+                if (!currTile.isPassable || currTile.areaOfTile != null) {
+                    continue;//skip
+                }
+                if (currTile.landmarkOnTile != null && !data.allowedLandmarkTypes.Contains(currTile.landmarkOnTile.specificLandmarkType)) {
+                    continue;//skip
+                }
+                validSelectedTiles.Add(currTile);
+            }
             _area.AddTile(validSelectedTiles);
             //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
@@ -87,5 +98,19 @@ namespace worldcreator {
         //}
         //#endregion
 
+        private void ValidateLandmarks() {
+            AreaData data = LandmarkManager.Instance.GetAreaData(_area.areaType);
+            List<BaseLandmark> invalidLandmarks = new List<BaseLandmark>();
+            for (int i = 0; i < _area.landmarks.Count; i++) {
+                BaseLandmark landmark = _area.landmarks[i];
+                if (!data.allowedLandmarkTypes.Contains(landmark.specificLandmarkType)) {
+                    invalidLandmarks.Add(landmark);
+                }
+            }
+
+            for (int i = 0; i < invalidLandmarks.Count; i++) {
+                LandmarkManager.Instance.DestroyLandmarkOnTile(invalidLandmarks[i].tileLocation);
+            }
+        }
     }
 }

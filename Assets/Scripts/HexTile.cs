@@ -1189,10 +1189,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
-            if (Input.GetMouseButton(0)) {
+            if (Input.GetMouseButtonUp(0)) {
                 Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
             }
-            if (Input.GetMouseButton(1)) {
+            if (Input.GetMouseButtonUp(1)) {
                 Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
             }
         }
@@ -1659,6 +1659,33 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Areas
     public void SetArea(Area area) {
         _areaOfTile = area;
+    }
+    #endregion
+
+    #region Context Menu
+    public ContextMenuSettings GetContextMenuSettings() {
+        ContextMenuSettings settings = new ContextMenuSettings();
+        if (this.areaOfTile != null && landmarkOnTile == null) {
+            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Create Landmark");
+            settings.AddMenuItem(createLandmarkItem);
+
+            ContextMenuSettings createLandmarkSettings = new ContextMenuSettings();
+            createLandmarkItem.SetSubMenu(createLandmarkSettings);
+
+            AreaData data = LandmarkManager.Instance.GetAreaData(_areaOfTile.areaType);
+            for (int i = 0; i < data.allowedLandmarkTypes.Count; i++) {
+                LANDMARK_TYPE landmarkType = data.allowedLandmarkTypes[i];
+                ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
+                createLandmark.onClickAction = () => worldcreator.WorldCreatorUI.Instance.editLandmarksMenu.SpawnLandmark(landmarkType, this);
+                createLandmarkSettings.AddMenuItem(createLandmark);
+            }            
+        }
+        if (landmarkOnTile != null) {
+            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Destroy Landmark");
+            createLandmarkItem.onClickAction = () => worldcreator.WorldCreatorManager.Instance.DestroyLandmarks(this);
+            settings.AddMenuItem(createLandmarkItem);
+        }
+        return settings;
     }
     #endregion
 }

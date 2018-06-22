@@ -39,8 +39,26 @@ namespace worldcreator {
         public void OnClickSpawnLandmark() {
             LANDMARK_TYPE chosenLandmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), landmarksDropDown.options[landmarksDropDown.value].text);
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
-            lastCreatedLandmarks = WorldCreatorManager.Instance.SpawnLandmark(selectedTiles, chosenLandmarkType);
-            OnSpawnLandmark(chosenLandmarkType);
+            List<HexTile> validTiles = new List<HexTile>();
+            for (int i = 0; i < selectedTiles.Count; i++) {
+                HexTile currTile = selectedTiles[i];
+                if (currTile.areaOfTile != null) {
+                    AreaData data = LandmarkManager.Instance.GetAreaData(currTile.areaOfTile.areaType);
+                    if (!data.allowedLandmarkTypes.Contains(chosenLandmarkType)) {
+                        continue; //skip
+                    }
+                }
+                validTiles.Add(currTile);
+            }
+            lastCreatedLandmarks = WorldCreatorManager.Instance.SpawnLandmark(validTiles, chosenLandmarkType);
+            if (lastCreatedLandmarks.Count > 0) {
+                OnSpawnLandmark(chosenLandmarkType);
+            }
+        }
+        public void SpawnLandmark(LANDMARK_TYPE landmarkType, HexTile tile) {
+            lastCreatedLandmarks = new List<BaseLandmark>();
+            lastCreatedLandmarks.Add(WorldCreatorManager.Instance.SpawnLandmark(tile, landmarkType));
+            OnSpawnLandmark(landmarkType);
         }
         public void OnClickDestroyLandmark() {
             List<HexTile> selectedTiles = WorldCreatorManager.Instance.selectionComponent.selection;
