@@ -2236,7 +2236,7 @@ namespace ECS {
                 return _specificLocation;
             } else {
                 if (_icon != null) {
-                    Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 5f, LayerMask.GetMask("Hextiles"));
+                    Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 1f, LayerMask.GetMask("Hextiles"));
                     //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
                     HexTile tile = collide.gameObject.GetComponent<HexTile>();
                     if (tile != null) {
