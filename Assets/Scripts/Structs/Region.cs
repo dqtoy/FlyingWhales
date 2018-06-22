@@ -171,8 +171,8 @@ public class Region : IHasNeighbours<Region> {
                 newCenterOfMass = tilesInRegion.OrderBy(x => x.GetDistanceTo(newCenterOfMass)).First();
             }
 #else
-            midPointX = Mathf.Clamp(midPointX, 0, GridMap.Instance.width - 1);
-            midPointY = Mathf.Clamp(midPointY, 0, GridMap.Instance.height - 1);
+            midPointX = Mathf.Clamp(midPointX, 0, (int)GridMap.Instance.width - 1);
+            midPointY = Mathf.Clamp(midPointY, 0, (int)GridMap.Instance.height - 1);
             HexTile newCenterOfMass = GridMap.Instance.map[midPointX, midPointY];
             if (!tilesInRegion.Contains(newCenterOfMass)) {
                 //the computed center of mass is not part of the region, get the closest tile instead
