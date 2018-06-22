@@ -776,8 +776,6 @@ namespace ECS{
                 attacker = sourceCharacter as Character;
                 weapon = attacker.equippedWeapon;
                 weaponAttack = weapon.attackPower;
-            } else if (sourceCharacter is Monster) {
-                weaponAttack = (sourceCharacter as Monster).attackPower;
             }
             if (attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
                 statMod = sourceCharacter.intelligence;
@@ -805,7 +803,12 @@ namespace ECS{
                 log += ".";
             }
 
-            int finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
+            int finalAttack = 0;
+            if(sourceCharacter is Character) {
+                finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
+            } else if (sourceCharacter is Monster) {
+                finalAttack = (sourceCharacter as Monster).attackPower;
+            }
             int damage = (int) (((float)finalAttack * (attackSkill.power / 100f)) * (critDamage / 100f));
             int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
             int minDamageRange = damage - computedDamageRange;
