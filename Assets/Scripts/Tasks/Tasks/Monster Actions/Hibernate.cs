@@ -117,7 +117,7 @@ public class Hibernate : CharacterTask {
         _assignedCharacter.AddHistory(startLog);
 		_targetLandmark.AddHistory(startLog);
 
-		_assignedCharacter.SetHome (_targetLandmark);
+		//_assignedCharacter.SetHome (_targetLandmark);
 		ChangeStateTo (STATE.REST);
 	}
     //private void GoToTargetLocation() {

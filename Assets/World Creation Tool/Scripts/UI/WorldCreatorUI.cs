@@ -59,7 +59,7 @@ namespace worldcreator {
         [Space(10)]
         [Header("Edit Landmarks Menu")]
         [SerializeField] private GameObject editLandmarksMenuGO;
-        [SerializeField] private EditLandmarksMenu editLandmarksMenu;
+        [SerializeField] private EditLandmarksMenu _editLandmarksMenu;
 
         [Space(10)]
         [Header("Edit Characters Menu")]
@@ -95,12 +95,21 @@ namespace worldcreator {
         [Header("Tile Info")]
         [SerializeField] private TileInfoUI tileInfo;
 
+        [Space(10)]
+        [Header("Context Menu")]
+        public GameObject contextMenuPrefab;
+        public GameObject contextMenuItemPrefab;
+        public UIContextMenu contextMenu;
+
         #region getters/setters
         public EditRegionsMenu editRegionsMenu {
             get { return _editRegionsMenu; }
         }
         public EditFactionsMenu editFactionsMenu {
             get { return _editFactionsMenu; }
+        }
+        public EditLandmarksMenu editLandmarksMenu {
+            get { return _editLandmarksMenu; }
         }
         public EditCharactersMenu editCharactersMenu {
             get { return _editCharactersMenu; }
@@ -116,6 +125,13 @@ namespace worldcreator {
         private void Awake() {
             Instance = this;
             LoadSaveFiles();
+            Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
+            Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
+        }
+        private void Update() {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                HideContextMenu();
+            }
         }
 
         public void InitializeMenus() {
@@ -403,6 +419,31 @@ namespace worldcreator {
         #region Character Editors
         public void OnPortraitTemplatesChanged() {
             editCharactersMenu.OnPortraitTemplatesChanged();
+        }
+        #endregion
+
+        #region Context Menu
+        private void ShowContextMenu(HexTile tile) {
+            ContextMenuSettings settings = tile.GetContextMenuSettings();
+            if (settings.items.Count > 0) {
+                contextMenu.LoadSettings(settings);
+                contextMenu.gameObject.SetActive(true);
+                Vector2 pos;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
+
+                contextMenu.transform.position = (this.transform as RectTransform).TransformPoint(pos);
+            }
+            //Vector2 newPos;
+            //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, CameraMove.Instance.uiCamera, out newPos);
+            //contextMenu.transform.position = CameraMove.Instance.uiCamera.Sc;
+            //GameObject contextMenuGO = GameObject.Instantiate(contextMenuPrefab, this.transform);
+            //contextMenuGO.GetComponent<UIContextMenu>().LoadSettings(settings);
+        }
+        public void HideContextMenu() {
+            contextMenu.gameObject.SetActive(false);
+        }
+        public void HideContextMenu(HexTile tile) {
+            //HideContextMenu();
         }
         #endregion
 

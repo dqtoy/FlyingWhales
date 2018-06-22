@@ -22,7 +22,7 @@ public class GoHome : CharacterTask {
 			if(_assignedCharacter.faction == null) {
 				goToLocation.InitializeAction(((ECS.Character)_createdBy).lair);
 			} else {
-				goToLocation.InitializeAction(((ECS.Character)_createdBy).home);
+				//goToLocation.InitializeAction(((ECS.Character)_createdBy).home);
 			}
 		}
         

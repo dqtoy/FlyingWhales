@@ -146,9 +146,9 @@ public class CharacterInfoUI : UIMenu {
         }
 
         text += "\n<b>Faction: </b>" + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
-        text += "\n<b>Village: </b>";
+        text += "\n<b>Home Area: </b>";
         if (currentlyShowingCharacter.home != null) {
-            text += currentlyShowingCharacter.home.urlName;
+            text += currentlyShowingCharacter.home.name;
         } else {
             text += "NONE";
         }

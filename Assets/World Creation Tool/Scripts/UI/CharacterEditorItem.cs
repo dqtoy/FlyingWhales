@@ -49,9 +49,17 @@ namespace worldcreator {
             }
         }
         public void SetHome() {
-            List<BaseLandmark> choices = new List<BaseLandmark>(WorldCreatorManager.Instance.selectionComponent.selectedLandmarks);
-            BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
-            _character.SetHome(chosenLandmark);
+            List<Area> choices = new List<Area>();
+            for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
+                HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];
+                if (currTile.areaOfTile != null && !choices.Contains(currTile.areaOfTile)) {
+                    choices.Add(currTile.areaOfTile);
+                }
+            }
+            Area chosenArea = choices[Random.Range(0, choices.Count)];
+            _character.SetHome(chosenArea);
+            //BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
+            //_character.SetHome(chosenLandmark);
             if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
                 WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.UpdateBasicInfo();
             }
@@ -59,7 +67,7 @@ namespace worldcreator {
 
         #region Monobehaviours
         private void Update() {
-            if (WorldCreatorManager.Instance.selectionComponent.selectedLandmarks.Count == 0) {
+            if (WorldCreatorManager.Instance.selectionComponent.selectedAreas.Count == 0) {
                 setHomeBtn.interactable = false;
             } else {
                 setHomeBtn.interactable = true;

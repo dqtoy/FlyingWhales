@@ -142,7 +142,7 @@ namespace worldcreator {
             if (_character.home == null) {
                 otherInfoLbl.text += "Home: NONE";
             } else {
-                otherInfoLbl.text += "Home: " + _character.home.ToString();
+                otherInfoLbl.text += "Home: " + _character.home.name.ToString();
             }
             if (_character.specificLocation == null) {
                 otherInfoLbl.text += "\nLocation: NONE";

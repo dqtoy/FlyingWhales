@@ -57,33 +57,33 @@ public class Settlement : BaseLandmark {
     }
     #endregion
 
-    #region Characters
-    /*
-     Make a character consider this landmark as it's home.
-         */
-    public override void AddCharacterHomeOnLandmark(ECS.Character character) {
-        if (!_charactersWithHomeOnLandmark.Contains(character)) {
-            _charactersWithHomeOnLandmark.Add(character);
-            ////Add new relationship with head of the settlement
-            //if(_headOfSettlement != null) {
-            //    if (character.GetRelationshipWith(_headOfSettlement) == null) {
-            //        //Village Elders will have relationship with the characters within their village.
-            //        CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, character);
-            //    }
-            //}
-        }
-    }
-    public List<ECS.Character> GetCharactersCreatedInSettlement(CHARACTER_ROLE charRole) {
-        List<ECS.Character> characters = new List<ECS.Character>();
-        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
-            ECS.Character currChar = _charactersWithHomeOnLandmark[i];
-            if(currChar.role.roleType == charRole) {
-                characters.Add(currChar);
-            }
-        }
-        return characters;
-    }
-    #endregion
+    //#region Characters
+    ///*
+    // Make a character consider this landmark as it's home.
+    //     */
+    //public override void AddCharacterHomeOnLandmark(ECS.Character character) {
+    //    if (!_charactersWithHomeOnLandmark.Contains(character)) {
+    //        _charactersWithHomeOnLandmark.Add(character);
+    //        ////Add new relationship with head of the settlement
+    //        //if(_headOfSettlement != null) {
+    //        //    if (character.GetRelationshipWith(_headOfSettlement) == null) {
+    //        //        //Village Elders will have relationship with the characters within their village.
+    //        //        CharacterManager.Instance.CreateNewRelationshipBetween(_headOfSettlement, character);
+    //        //    }
+    //        //}
+    //    }
+    //}
+    //public List<ECS.Character> GetCharactersCreatedInSettlement(CHARACTER_ROLE charRole) {
+    //    List<ECS.Character> characters = new List<ECS.Character>();
+    //    for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
+    //        ECS.Character currChar = _charactersWithHomeOnLandmark[i];
+    //        if(currChar.role.roleType == charRole) {
+    //            characters.Add(currChar);
+    //        }
+    //    }
+    //    return characters;
+    //}
+    //#endregion
 
     #region Materials
     public MATERIAL GetMaterialFor(PRODUCTION_TYPE productionType) {

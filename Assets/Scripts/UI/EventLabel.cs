@@ -29,9 +29,11 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                         UIManager.Instance.ShowFactionInfo(faction);
                     }
                 } else if (linkText.Contains("_landmark")) {
-                    if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home.id == idToUse) {
-                        UIManager.Instance.ShowLandmarkInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
-                    }
+                    BaseLandmark landmark = LandmarkManager.Instance.GetLandmarkByID(idToUse);
+                    UIManager.Instance.ShowLandmarkInfo(landmark);
+                    //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home.id == idToUse) {
+                    //    UIManager.Instance.ShowLandmarkInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
+                    //}
                 } else if (linkText.Contains("_party")) {
                     Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
                     if (party != null) {

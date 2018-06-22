@@ -106,10 +106,10 @@ public class LandmarkManager : MonoBehaviour {
         while(landmarkOnTile.charactersAtLocation.Count != 0) {
             landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
         }
-        while (landmarkOnTile.charactersWithHomeOnLandmark.Count != 0) {
-            landmarkOnTile.charactersWithHomeOnLandmark[0].SetHome(null);
-            landmarkOnTile.RemoveCharacterHomeOnLandmark(landmarkOnTile.charactersWithHomeOnLandmark[0]);
-        }
+        //while (landmarkOnTile.charactersWithHomeOnLandmark.Count != 0) {
+        //    landmarkOnTile.charactersWithHomeOnLandmark[0].SetHome(null);
+        //    landmarkOnTile.RemoveCharacterHomeOnLandmark(landmarkOnTile.charactersWithHomeOnLandmark[0]);
+        //}
         tile.RemoveLandmarkOnTile();
         tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
         GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
@@ -727,6 +727,15 @@ public class LandmarkManager : MonoBehaviour {
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
         return newArea;
+    }
+    public Area GetAreaByID(int id) {
+        for (int i = 0; i < allAreas.Count; i++) {
+            Area area = allAreas[i];
+            if (area.id == id) {
+                return area;
+            }
+        }
+        return null;
     }
     #endregion
 }

@@ -22,6 +22,9 @@ namespace worldcreator {
         public List<BaseLandmark> selectedLandmarks {
             get { return GetSelectedLandmarks(); }
         }
+        public List<Area> selectedAreas {
+            get { return GetSelectedAreas(); }
+        }
         #endregion
 
         private void Awake() {
@@ -255,6 +258,17 @@ namespace worldcreator {
                 }
             }
             return landamrks;
+        }
+
+        private List<Area> GetSelectedAreas() {
+            List<Area> areas = new List<Area>();
+            for (int i = 0; i < highlightedTiles.Count; i++) {
+                HexTile currTile = highlightedTiles[i];
+                if (currTile.areaOfTile != null && !areas.Contains(currTile.areaOfTile)) {
+                    areas.Add(currTile.areaOfTile);
+                }
+            }
+            return areas;
         }
     }
 }
