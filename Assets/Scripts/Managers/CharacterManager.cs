@@ -171,16 +171,20 @@ public class CharacterManager : MonoBehaviour {
 #endif
         }
 
-        for (int i = 0; i < data.equipmentData.Count; i++) {
-            string equipmentName = data.equipmentData[i];
-            Item currItem = ItemManager.Instance.CreateNewItemInstance(equipmentName);
-            newCharacter.EquipItem(currItem);
+        if (data.equipmentData != null) {
+            for (int i = 0; i < data.equipmentData.Count; i++) {
+                string equipmentName = data.equipmentData[i];
+                Item currItem = ItemManager.Instance.CreateNewItemInstance(equipmentName);
+                newCharacter.EquipItem(currItem);
+            }
         }
 
-        for (int i = 0; i < data.inventoryData.Count; i++) {
-            string itemName = data.inventoryData[i];
-            Item currItem = ItemManager.Instance.CreateNewItemInstance(itemName);
-            newCharacter.PickupItem(currItem);
+        if (data.inventoryData != null) {
+            for (int i = 0; i < data.inventoryData.Count; i++) {
+                string itemName = data.inventoryData[i];
+                Item currItem = ItemManager.Instance.CreateNewItemInstance(itemName);
+                newCharacter.PickupItem(currItem);
+            }
         }
 
         _allCharacters.Add(newCharacter);
