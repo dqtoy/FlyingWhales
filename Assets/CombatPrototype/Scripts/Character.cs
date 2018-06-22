@@ -952,6 +952,7 @@ namespace ECS {
 			if(newItem.owner == null){
 				OwnItem (newItem);
 			}
+#if !WORLD_CREATION_TOOL
             Log obtainLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "obtain_item");
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
@@ -959,8 +960,8 @@ namespace ECS {
 			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 (specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
-
-            Messenger.Broadcast(Signals.OBTAIN_ITEM, this, newItem);
+#endif
+            Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
             newItem.OnItemPutInInventory(this);
         }
 		internal void ThrowItem(Item item, bool addInLandmark = true){
@@ -977,8 +978,8 @@ namespace ECS {
 					landmark.AddItemInLandmark(item);
 				}
 			}
-
-		}
+            Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
+        }
         internal void DropItem(Item item) {
             ThrowItem(item);
             ILocation location = specificLocation;
@@ -1069,10 +1070,13 @@ namespace ECS {
 				hasEquipped = TryEquipArmor(armor);
 			}
             if (hasEquipped) {
+#if !WORLD_CREATION_TOOL
                 Log equipLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "equip_item");
                 equipLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 equipLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
                 AddHistory(equipLog);
+#endif
+                Messenger.Broadcast(Signals.ITEM_EQUIPPED, item, this);
             }
             return hasEquipped;
 		}
@@ -1084,7 +1088,8 @@ namespace ECS {
 				UnequipArmor ((Armor)item);
 			}
 			RemoveEquippedItem(item);
-		}
+            Messenger.Broadcast(Signals.ITEM_UNEQUIPPED, item, this);
+        }
 		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
 		internal bool UnownItem(Item item){
 			if(item.owner.id == this._id){

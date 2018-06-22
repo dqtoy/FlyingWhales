@@ -40,13 +40,13 @@ public class MustHaveItems : QuestPhaseRequirement {
     }
     public override void ActivateRequirement(ECS.Character owner) {
         base.ActivateRequirement(owner);
-        Messenger.AddListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
+        Messenger.AddListener<ECS.Item, ECS.Character>(Signals.ITEM_OBTAINED, CheckIfRequirementMet);
     }
     public override void DeactivateRequirement() {
         base.DeactivateRequirement();
-        Messenger.RemoveListener<ECS.Character, ECS.Item>(Signals.OBTAIN_ITEM, CheckIfRequirementMet);
+        Messenger.RemoveListener<ECS.Item, ECS.Character>(Signals.ITEM_OBTAINED, CheckIfRequirementMet);
     }
-    protected void CheckIfRequirementMet(ECS.Character character, ECS.Item item) {
+    protected void CheckIfRequirementMet(ECS.Item item, ECS.Character character) {
         if (character.id == owner.id) {
             for (int i = 0; i < neededItems.Count; i++) {
                 string currNeededItem = neededItems[i];

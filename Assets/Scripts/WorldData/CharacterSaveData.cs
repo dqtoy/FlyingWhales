@@ -15,6 +15,8 @@ public class CharacterSaveData {
     public int homeID;
     public int factionID;
     public PortraitSettings portraitSettings;
+    public List<string> equipmentData;
+    public List<string> inventoryData;
     public List<RelationshipSaveData> relationshipsData;
 
     public CharacterSaveData(ECS.Character character) {
@@ -45,6 +47,19 @@ public class CharacterSaveData {
         }
         
         portraitSettings = character.portraitSettings;
+
+        equipmentData = new List<string>();
+        for (int i = 0; i < character.equippedItems.Count; i++) {
+            ECS.Item item = character.equippedItems[i];
+            equipmentData.Add(item.itemName);
+        }
+
+        inventoryData = new List<string>();
+        for (int i = 0; i < character.inventory.Count; i++) {
+            ECS.Item item = character.inventory[i];
+            inventoryData.Add(item.itemName);
+        }
+
         relationshipsData = new List<RelationshipSaveData>();
         foreach (KeyValuePair<ECS.Character, Relationship> kvp in character.relationships) {
             relationshipsData.Add(new RelationshipSaveData(kvp.Value));

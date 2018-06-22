@@ -14,8 +14,8 @@ public class ItemManager : MonoBehaviour {
     };
 
     private Dictionary<string, ECS.Item> _allItems;
-	private Dictionary<string, ECS.Weapon> allWeapons;
-	private Dictionary<string, ECS.Armor> allArmors;
+	private Dictionary<string, ECS.Weapon> _allWeapons;
+	private Dictionary<string, ECS.Armor> _allArmors;
 
     private Dictionary<WEAPON_TYPE, ECS.WeaponType> _weaponTypeData;
     private Dictionary<ARMOR_TYPE, ECS.ArmorType> _armorTypeData;
@@ -49,6 +49,12 @@ public class ItemManager : MonoBehaviour {
     public Dictionary<string, ECS.Item> allItems {
         get { return _allItems; }
     }
+    public Dictionary<string, ECS.Weapon> allWeapons {
+        get { return _allWeapons; }
+    }
+    public Dictionary<string, ECS.Armor> allArmors {
+        get { return _allArmors; }
+    }
     #endregion
 
     private void Awake() {
@@ -69,8 +75,8 @@ public class ItemManager : MonoBehaviour {
 	}
     private void ConstructItemsDictionary() {
         _allItems = new Dictionary<string, ECS.Item>();
-		allWeapons = new Dictionary<string, ECS.Weapon>();
-		allArmors = new Dictionary<string, ECS.Armor> ();
+		_allWeapons = new Dictionary<string, ECS.Weapon>();
+		_allArmors = new Dictionary<string, ECS.Armor> ();
         string path = Utilities.dataPath + "Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
@@ -90,7 +96,7 @@ public class ItemManager : MonoBehaviour {
                 case ITEM_TYPE.ARMOR:
                     ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
                     _allItems.Add(newArmor.itemName, newArmor);
-					allArmors.Add (newArmor.itemName, newArmor);
+					_allArmors.Add (newArmor.itemName, newArmor);
                     break;
                 default:
 					ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
@@ -145,7 +151,7 @@ public class ItemManager : MonoBehaviour {
 		for (int i = 0; i < armorTiersAsset.Count; i++) {
 			List<ECS.Armor> armorList = new List<ECS.Armor> ();
 			for (int j = 0; j < armorTiersAsset[i].list.Count; j++) {
-				armorList.Add (allArmors[armorTiersAsset [i].list [j].name]);
+				armorList.Add (_allArmors[armorTiersAsset [i].list [j].name]);
 			}
 			_armorTiers.Add (armorList);
 		}
@@ -231,9 +237,9 @@ public class ItemManager : MonoBehaviour {
 		return null;
 	}
 	internal ECS.Armor GetRandomArmor(){
-		int index = UnityEngine.Random.Range (0, allArmors.Count);
+		int index = UnityEngine.Random.Range (0, _allArmors.Count);
 		int count = 0;
-		foreach (ECS.Armor armor in allArmors.Values) {
+		foreach (ECS.Armor armor in _allArmors.Values) {
 			if(index == count){
 				return (ECS.Armor)CreateNewItemInstance (armor.itemName);
 			}else{

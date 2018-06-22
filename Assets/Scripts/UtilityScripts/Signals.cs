@@ -3,7 +3,6 @@ using System.Collections;
 
 public static class Signals {
 
-    public static string OBTAIN_ITEM = "OnObtainItem"; //Parameters (Character characterThatObtainedItem, Item obtainedItem)
     public static string DAY_END = "OnDayEnd";
     public static string HOUR_STARTED = "OnHourStart";
     public static string HOUR_ENDED = "OnHourEnd";
@@ -34,4 +33,8 @@ public static class Signals {
     public static string AREA_DELETED = "OnAreaDeleted"; //Parameters (Area deletedArea)
     public static string AREA_TILE_REMOVED = "OnAreaTileRemoved"; //Parameters (Area affectedArea)
     public static string AREA_TILE_ADDED = "OnAreaTileAdded"; //Parameters (Area affectedArea)
+    public static string ITEM_EQUIPPED = "OnItemEquipped"; //Parameters (Item equippedItem, ECS.Character character)
+    public static string ITEM_UNEQUIPPED = "OnItemUnequipped"; //Parameters (Item unequippedItem, ECS.Character character)
+    public static string ITEM_OBTAINED = "OnObtainItem"; //Parameters (Item obtainedItem, Character characterThatObtainedItem)
+    public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, ECS.Character character)
 }

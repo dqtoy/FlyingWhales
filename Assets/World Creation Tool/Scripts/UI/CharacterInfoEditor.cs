@@ -34,6 +34,17 @@ namespace worldcreator {
         [SerializeField] private Dropdown charactersRelationshipDropdown;
         [SerializeField] private Button createRelationshipBtn;
 
+        [Header("Equipment Info")]
+        [SerializeField] private GameObject itemEditorPrefab;
+        [SerializeField] private ScrollRect equipmentScrollView;
+        [SerializeField] private Dropdown equipmentChoicesDropdown;
+        [SerializeField] private Button addEquipmentBtn;
+
+        [Header("Inventory Info")]
+        [SerializeField] private ScrollRect inventoryScrollView;
+        [SerializeField] private Dropdown inventoryChoicesDropdown;
+        [SerializeField] private Button addInventoryBtn;
+
         public Dictionary<string, PortraitSettings> portraitTemplates;
 
         private void Awake() {
@@ -42,6 +53,8 @@ namespace worldcreator {
 
             LoadTemplateChoices();
             LoadDropdownOptions();
+            LoadEquipmentChoices();
+            LoadInventoryChoices();
         }
 
         public void ShowCharacterInfo(Character character) {
@@ -51,9 +64,19 @@ namespace worldcreator {
             UpdateBasicInfo();
             LoadRelationships();
             LoadCharacters();
+            LoadEquipment();
+            LoadInventory();
+            Messenger.AddListener<Item, Character>(Signals.ITEM_EQUIPPED, OnItemEquipped);
+            Messenger.AddListener<Item, Character>(Signals.ITEM_UNEQUIPPED, OnItemUnequipped);
+            Messenger.AddListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
+            Messenger.AddListener<Item, Character>(Signals.ITEM_THROWN, OnItemThrown);
             this.gameObject.SetActive(true);
         }
         public void Close() {
+            Messenger.RemoveListener<Item, Character>(Signals.ITEM_EQUIPPED, OnItemEquipped);
+            Messenger.RemoveListener<Item, Character>(Signals.ITEM_UNEQUIPPED, OnItemUnequipped);
+            Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
+            Messenger.RemoveListener<Item, Character>(Signals.ITEM_THROWN, OnItemThrown);
             this.gameObject.SetActive(false);
         }
 
@@ -217,6 +240,87 @@ namespace worldcreator {
             for (int i = 0; i < children.Length; i++) {
                 RelationshipEditorItem currItem = children[i];
                 if (currItem.relationship == rel) {
+                    return currItem;
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region Equipment Info
+        private void LoadEquipmentChoices() {
+            List<string> choices = new List<string>();
+            choices.AddRange(ItemManager.Instance.allWeapons.Keys);
+            choices.AddRange(ItemManager.Instance.allArmors.Keys);
+
+            equipmentChoicesDropdown.AddOptions(choices);
+        }
+        private void LoadEquipment() {
+            Utilities.DestroyChildren(equipmentScrollView.content);
+            for (int i = 0; i < _character.equippedItems.Count; i++) {
+                Item currItem = _character.equippedItems[i];
+                OnItemEquipped(currItem, _character);
+            }
+        }
+        public void AddEquipment() {
+            string chosenItem = equipmentChoicesDropdown.options[equipmentChoicesDropdown.value].text;
+            Item item = ItemManager.Instance.allItems[chosenItem].CreateNewCopy();
+            if (!_character.EquipItem(item)) {
+                WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Equipment error", "Cannot equip " + item.itemName);
+            }
+        }
+        private void OnItemEquipped(Item item, Character character) {
+            GameObject itemGO = GameObject.Instantiate(itemEditorPrefab, equipmentScrollView.content);
+            ItemEditorItem itemComp = itemGO.GetComponent<ItemEditorItem>();
+            itemComp.SetItem(item, character);
+            itemComp.SetDeleteItemAction(() => character.UnequipItem(item));
+        }
+        private void OnItemUnequipped(Item item, Character character) {
+            GameObject.Destroy(GetEquipmentEditorItem(item).gameObject);
+        }
+        private ItemEditorItem GetEquipmentEditorItem(Item item) {
+            ItemEditorItem[] children = Utilities.GetComponentsInDirectChildren<ItemEditorItem>(equipmentScrollView.content.gameObject);
+            for (int i = 0; i < children.Length; i++) {
+                ItemEditorItem currItem = children[i];
+                if (currItem.item == item) {
+                    return currItem;
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region Inventory Info
+        private void LoadInventoryChoices() {
+            List<string> choices = new List<string>(ItemManager.Instance.allItems.Keys);
+            inventoryChoicesDropdown.AddOptions(choices);
+        }
+        private void LoadInventory() {
+            Utilities.DestroyChildren(inventoryScrollView.content);
+            for (int i = 0; i < _character.inventory.Count; i++) {
+                Item currItem = _character.inventory[i];
+                OnItemObtained(currItem, _character);
+            }
+        }
+        public void AddInventory() {
+            string chosenItem = inventoryChoicesDropdown.options[inventoryChoicesDropdown.value].text;
+            Item item = ItemManager.Instance.allItems[chosenItem].CreateNewCopy();
+            _character.PickupItem(item);
+        }
+        private void OnItemObtained(Item item, Character character) {
+            GameObject itemGO = GameObject.Instantiate(itemEditorPrefab, inventoryScrollView.content);
+            ItemEditorItem itemComp = itemGO.GetComponent<ItemEditorItem>();
+            itemComp.SetItem(item, character);
+            itemComp.SetDeleteItemAction(() => _character.ThrowItem(item));
+        }
+        private void OnItemThrown(Item item, Character character) {
+            GameObject.Destroy(GetInventoryEditorItem(item).gameObject);
+        }
+        private ItemEditorItem GetInventoryEditorItem(Item item) {
+            ItemEditorItem[] children = Utilities.GetComponentsInDirectChildren<ItemEditorItem>(inventoryScrollView.content.gameObject);
+            for (int i = 0; i < children.Length; i++) {
+                ItemEditorItem currItem = children[i];
+                if (currItem.item == item) {
                     return currItem;
                 }
             }
