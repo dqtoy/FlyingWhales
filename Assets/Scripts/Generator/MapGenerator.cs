@@ -228,6 +228,8 @@ public class MapGenerator : MonoBehaviour {
         CharacterManager.Instance.LoadCharacters(data);
         CharacterManager.Instance.LoadRelationships(data);
 
+        MonsterManager.Instance.LoadMonsters(data);
+
         CameraMove.Instance.UpdateMinimapTexture();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));

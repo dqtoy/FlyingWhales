@@ -77,7 +77,7 @@ public class CharacterInfoUI : UIMenu {
         //if (currentlyShowingCharacter.avatar != null) {
         //    currentlyShowingCharacter.avatar.SetHighlightState(false);
         //}
-        currentlyShowingCharacter.icon.SetAvatarState(false);
+        //currentlyShowingCharacter.icon.SetAvatarState(false);
         _activeCharacter = null;
         base.HideMenu();
     }
@@ -302,8 +302,9 @@ public class CharacterInfoUI : UIMenu {
 
     private void UpdateInventoryInfo() {
         string text = string.Empty;
-        foreach (RESOURCE resource in currentlyShowingCharacter.characterObject.resourceInventory.Keys) {
-            text += resource.ToString() + ": " + currentlyShowingCharacter.characterObject.resourceInventory[resource];
+        CharacterObj obj = currentlyShowingCharacter.characterObject as CharacterObj;
+        foreach (RESOURCE resource in obj.resourceInventory.Keys) {
+            text += resource.ToString() + ": " + obj.resourceInventory[resource];
             text += "\n";
         }
         //if(currentlyShowingCharacter.inventory.Count > 0) {

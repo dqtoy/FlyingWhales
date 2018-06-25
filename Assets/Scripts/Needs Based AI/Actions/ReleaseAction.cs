@@ -30,5 +30,11 @@ public class ReleaseAction : CharacterAction {
         base.DoneDuration();
         //Go home: Get home tile > get house structure obj > Get go home action from state > assign action
     }
+    public override bool CanBeDone() {
+        if (!_characterObj.character.isPrisoner) {
+            return false;
+        }
+        return base.CanBeDone();
+    }
     #endregion
 }

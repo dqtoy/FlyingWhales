@@ -258,15 +258,24 @@ public class CharacterIcon : MonoBehaviour {
         PathfindingManager.Instance.RemoveAgent(_aiPath);
     }
     private void OnTriggerEnter2D(Collider2D other) {
+<<<<<<< Updated upstream
+        if (_character.actionData.currentAction != null) {
+            if (other.tag == "Character" && _character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
+                AttackAction attackAction = _character.actionData.currentAction as AttackAction;
+                CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
+                if (attackAction.characterObj.icharacter.id == enemy.character.id) {
+                    _character.actionData.DoAction();
+=======
         if (_character is Character) {
             Character thisCharacter = _character as Character;
             if (thisCharacter.actionData.currentAction != null) {
                 if (other.tag == "Character" && thisCharacter.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
                     AttackAction attackAction = thisCharacter.actionData.currentAction as AttackAction;
                     CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                if (attackAction.characterObj.character.id == enemy.character.id) {
+                    if (attackAction.characterObj.character.id == enemy.character.id) {
                         thisCharacter.actionData.DoAction();
                     }
+>>>>>>> Stashed changes
                 }
             }
         }

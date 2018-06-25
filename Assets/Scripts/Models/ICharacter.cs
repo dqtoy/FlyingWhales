@@ -32,6 +32,8 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
+    ICharacterObject characterObject { get; }
+    ILocation specificLocation { get; }
 
     //functions
     void SetSide(ECS.SIDES side);
@@ -44,4 +46,5 @@ public interface ICharacter {
     void Initialize();
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
+    void SetSpecificLocation(ILocation location);
 }

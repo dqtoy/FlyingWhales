@@ -11,6 +11,7 @@ public class WorldSaveData {
     public List<FactionSaveData> factionsData;
     public List<LandmarkSaveData> landmarksData;
     public List<CharacterSaveData> charactersData;
+    public List<MonsterSaveData> monstersData;
     public List<AreaSaveData> areaData;
     public byte[] pathfindingSettings;
 
@@ -66,6 +67,14 @@ public class WorldSaveData {
             Area currArea = areas[i];
             AreaSaveData currData = new AreaSaveData(currArea);
             areaData.Add(currData);
+        }
+    }
+    public void OccupyMonstersData(List<Monster> monsters) {
+        monstersData = new List<MonsterSaveData>();
+        for (int i = 0; i < monsters.Count; i++) {
+            Monster currMonster = monsters[i];
+            MonsterSaveData monsterData = new MonsterSaveData(currMonster);
+            monstersData.Add(monsterData);
         }
     }
     public void OccupyPathfindingSettings(HexTile[,] map, int width, int height) {
