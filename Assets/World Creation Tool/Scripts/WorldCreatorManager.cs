@@ -88,6 +88,7 @@ namespace worldcreator {
                 Biomes.Instance.GenerateBiome(hexTiles);
             }
             //CameraMove.Instance.SetWholemapCameraValues();
+            //ObjectManager.Instance.Initialize();
             WorldCreatorUI.Instance.InitializeMenus();
             DataConstructor.Instance.InitializeData();
             ECS.CombatManager.Instance.Initialize();
@@ -139,6 +140,7 @@ namespace worldcreator {
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableObjects(hexTiles);
 
+            //ObjectManager.Instance.Initialize();
             WorldCreatorUI.Instance.InitializeMenus();
             DataConstructor.Instance.InitializeData();
             ECS.CombatManager.Instance.Initialize();
@@ -150,6 +152,7 @@ namespace worldcreator {
             GenerateOuterGrid();
             CharacterManager.Instance.LoadCharacters(data);
             CharacterManager.Instance.LoadRelationships(data);
+            MonsterManager.Instance.LoadMonsters(data);
             //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -620,6 +623,7 @@ namespace worldcreator {
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
             worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);
+            worldData.OccupyMonstersData(MonsterManager.Instance.allMonsters);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {
                 saveName += Utilities.worldConfigFileExt;

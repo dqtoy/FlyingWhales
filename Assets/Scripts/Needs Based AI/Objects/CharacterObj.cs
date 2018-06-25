@@ -11,16 +11,16 @@ public class CharacterObj : IObject, ICharacterObject {
     private List<ObjectState> _states;
     private Dictionary<RESOURCE, int> _resourceInventory;
 
-    private Character _character;
+    private ICharacter _character;
     private string _objectName;
     [NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
 
     #region getters/setters
-    public ICharacter icharacter {
-        get { return _character; }
-    }
-    public Character character {
+    //public ICharacter icharacter {
+    //    get { return _character; }
+    //}
+    public ICharacter character {
         get { return _character; }
     }
     public string objectName {
@@ -58,7 +58,7 @@ public class CharacterObj : IObject, ICharacterObject {
     #endregion
 
 
-    public CharacterObj(Character character) {
+    public CharacterObj(ICharacter character) {
         _objectType = OBJECT_TYPE.CHARACTER;
         _character = character;
         ConstructResourceInventory();

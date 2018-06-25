@@ -3,5 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface ICharacterObject {
-    ICharacter icharacter { get; }
+    ICharacter character { get; }
+    ObjectState currentState { get; }
+
+    ObjectState GetState(string state);
+    void ChangeState(ObjectState state);
 }

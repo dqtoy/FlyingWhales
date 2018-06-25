@@ -39,9 +39,9 @@ public class RepairAction : CharacterAction {
         base.PerformAction(character);
         GiveAllReward(character);
 
-        character.characterObject.AdjustResource(_resourceNeeded, _resourceAmountToDecrease);
+        (character.characterObject as CharacterObj).AdjustResource(_resourceNeeded, _resourceAmountToDecrease);
         _structure.AdjustHP(_amountToIncrease);
-        if (_structure.isHPFull || character.characterObject.resourceInventory[_resourceNeeded] < _resourceAmountToDecrease) {
+        if (_structure.isHPFull || (character.characterObject as CharacterObj).resourceInventory[_resourceNeeded] < _resourceAmountToDecrease) {
             EndAction(character);
         }
     }

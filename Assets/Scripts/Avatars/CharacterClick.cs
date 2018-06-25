@@ -32,6 +32,9 @@ public class CharacterClick : MonoBehaviour {
                 return;
             }
         }
-        UIManager.Instance.ShowCharacterInfo(icon.character);
+        if (icon.character is ECS.Character) {
+            UIManager.Instance.ShowCharacterInfo(icon.character as ECS.Character);
+        }
+        
     }
 }

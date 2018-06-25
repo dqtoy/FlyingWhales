@@ -27,9 +27,12 @@ public class ReleaseAction : CharacterAction {
         return goHomeAction;
     }
     public override bool CanBeDone() {
-        if (!_characterObj.character.isPrisoner) {
-            return false;
+        if (!(_characterObj.character is ECS.Character)) {
+            if (!(_characterObj.character as ECS.Character).isPrisoner) {
+                return false;
+            }
         }
+        
         return base.CanBeDone();
     }
     #endregion

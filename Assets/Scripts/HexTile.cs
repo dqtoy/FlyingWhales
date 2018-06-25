@@ -1697,6 +1697,33 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             createLandmarkItem.onClickAction = () => worldcreator.WorldCreatorManager.Instance.DestroyLandmarks(this);
             settings.AddMenuItem(createLandmarkItem);
         }
+        if (this.isPassable && !MonsterManager.Instance.HasMonsterOnTile(this)) {
+            ContextMenuItemSettings spawnMonster = new ContextMenuItemSettings("Spawn Monster");
+            settings.AddMenuItem(spawnMonster);
+
+            ContextMenuSettings createMonsterSettings = new ContextMenuSettings();
+            spawnMonster.SetSubMenu(createMonsterSettings);
+
+            foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
+                ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
+                spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
+                createMonsterSettings.AddMenuItem(spawnMonsterItem);
+            }
+        } else if (MonsterManager.Instance.HasMonsterOnTile(this)) {
+            ContextMenuItemSettings removeMonster = new ContextMenuItemSettings("Remove Monsters");
+            removeMonster.onClickAction = () => MonsterManager.Instance.RemoveMonstersOnTile(this);
+            settings.AddMenuItem(removeMonster);
+
+            //ContextMenuSettings removeMonsterSettings = new ContextMenuSettings();
+            //removeMonster.SetSubMenu(removeMonsterSettings);
+
+            //foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
+            //    ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
+            //    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
+            //    removeMonsterSettings.AddMenuItem(spawnMonsterItem);
+            //}
+
+        }
         return settings;
     }
     #endregion

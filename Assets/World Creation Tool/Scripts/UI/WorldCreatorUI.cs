@@ -443,7 +443,7 @@ namespace worldcreator {
             contextMenu.gameObject.SetActive(false);
         }
         public void HideContextMenu(HexTile tile) {
-            //HideContextMenu();
+            HideContextMenu();
         }
         #endregion
 

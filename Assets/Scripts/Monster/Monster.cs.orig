@@ -34,11 +34,13 @@ public class Monster : ICharacter {
     private Color _characterColor;
     private Combat _currentCombat;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
-    private ICharacterObject _characterObject;
+    private MonsterObj _monsterObj;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private CharacterIcon _icon;
+    private CharacterObj _characterObject;
     private ILocation _specificLocation;
+
 
     #region getters/setters
     public string name {
@@ -106,6 +108,9 @@ public class Monster : ICharacter {
     public CharacterBattleOnlyTracker battleOnlyTracker {
         get { return _battleOnlyTracker; }
     }
+    public MonsterObj monsterObj {
+        get { return _monsterObj; }
+    }
     public Faction faction {
         get { return null; }
     }
@@ -121,7 +126,12 @@ public class Monster : ICharacter {
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
     }
-    public ICharacterObject characterObject {
+<<<<<<< Updated upstream
+    //public ILocation specificLocation {
+    //    get { return _monsterObj.specificLocation; }
+    //}
+=======
+    public CharacterObj characterObject {
         get { return _characterObject; }
     }
     public ILocation specificLocation {
@@ -130,6 +140,7 @@ public class Monster : ICharacter {
     public CharacterIcon icon {
         get { return _icon; }
     }
+>>>>>>> Stashed changes
     #endregion
 
     public Monster CreateNewCopy() {
@@ -148,10 +159,9 @@ public class Monster : ICharacter {
         newMonster._dodgeChance = this._dodgeChance;
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
-#if !WORLD_CREATION_TOOL
-        newMonster._characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        (newMonster._characterObject as MonsterObj).SetMonster(newMonster);
-#endif
+        newMonster._characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "MonsterObject") as CharacterObj;
+        //newMonster._characterObject.SetCharacter(this);
+
         newMonster._skills = new List<Skill>();
         for (int i = 0; i < this._skills.Count; i++) {
             newMonster._skills.Add(_skills[i].CreateNewCopy());
@@ -203,8 +213,8 @@ public class Monster : ICharacter {
     }
     public void Death() {
         _isDead = true;
-        ObjectState deadState = _characterObject.GetState("Dead");
-        _characterObject.ChangeState(deadState);
+        ObjectState deadState = _monsterObj.GetState("Dead");
+        _monsterObj.ChangeState(deadState);
     }
     #endregion
 
@@ -214,8 +224,8 @@ public class Monster : ICharacter {
         _isDead = false;
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
 #if !WORLD_CREATION_TOOL
-        _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        (_characterObject as MonsterObj).SetMonster(this);
+        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+        _monsterObj.SetMonster(this);
 #endif
         SetCharacterColor(Color.red);
     }

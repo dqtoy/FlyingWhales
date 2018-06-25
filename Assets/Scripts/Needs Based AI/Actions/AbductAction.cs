@@ -34,7 +34,7 @@ public class AbductAction : CharacterAction {
             }
 
             int resourceAmount = UnityEngine.Random.Range(minResourceAmount, maxResourceAmount + 1);
-            _structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character.characterObject);
+            //_structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character.characterObject);
             ActionSuccess();
         } else {
             EndAction(character);
