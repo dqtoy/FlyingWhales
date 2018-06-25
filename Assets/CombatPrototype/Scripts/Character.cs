@@ -70,6 +70,7 @@ namespace ECS {
         private RaceSetting _raceSetting;
         private CharacterRole _role;
         private Faction _faction;
+        private Faction _attackedByFaction;
         private Party _party;
         private QuestData _questData;
         //private CharacterActionQueue<CharacterAction> _actionQueue;
@@ -117,6 +118,7 @@ namespace ECS {
         private float _equippedWeaponPower;
         private int _gold;
         private int _prestige;
+        private int _numOfAttackers;
 
         //private Action _currentFunction;
         private bool _isInCombat;
@@ -180,6 +182,10 @@ namespace ECS {
         }
         public Faction faction {
             get { return _faction; }
+        }
+        public Faction attackedByFaction {
+            get { return _attackedByFaction; }
+            set { _attackedByFaction = value; }
         }
         public Party party {
             get { return _party; }
@@ -449,6 +455,10 @@ namespace ECS {
         }
         public CharacterBattleOnlyTracker battleOnlyTracker {
             get { return _battleOnlyTracker; }
+        }
+        public int numOfAttackers {
+            get { return _numOfAttackers; }
+            set { _numOfAttackers = value; }
         }
         #endregion
 

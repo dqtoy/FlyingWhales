@@ -37,7 +37,7 @@ public class CharacterAction {
 
     #region Virtuals
     public virtual void Initialize() {}
-    public virtual void OnChooseAction() {}
+    public virtual void OnChooseAction(ICharacter character) {}
     public virtual void OnFirstEncounter(Character character) {
         if(state.obj.objectLocation != null) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
@@ -80,6 +80,7 @@ public class CharacterAction {
     public virtual void EndAction(Character character) {
         character.actionData.EndAction();
     }
+    public virtual void DoneDuration() { }
     #endregion
 
     #region Filters

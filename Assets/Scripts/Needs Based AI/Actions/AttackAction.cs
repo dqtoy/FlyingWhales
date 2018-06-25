@@ -38,11 +38,26 @@ public class AttackAction : CharacterAction {
     }
     public override bool CanBeDoneBy(Character character) {
         if(_characterObj.icharacter.faction != null) {
-            if (character.faction.id == _characterObj.icharacter.faction.id) {
+            if (character.faction.id == _characterObj.icharacter.faction.id || (_characterObj.icharacter.attackedByFaction != null && _characterObj.icharacter.attackedByFaction.id != character.faction.id)) {
                 return false;
             }
         }
         return base.CanBeDoneBy(character);
+    }
+    public override void OnChooseAction(ICharacter character) {
+        _characterObj.icharacter.numOfAttackers++;
+        if(_characterObj.icharacter.attackedByFaction == null) {
+            _characterObj.icharacter.attackedByFaction = character.faction;
+        }
+        base.OnChooseAction(character);
+    }
+    public override void EndAction(Character character) {
+        _characterObj.icharacter.numOfAttackers--;
+        if (_characterObj.icharacter.numOfAttackers <= 0) {
+            _characterObj.icharacter.numOfAttackers = 0;
+            _characterObj.icharacter.attackedByFaction = null;
+        }
+        base.EndAction(character);
     }
     #endregion
     private void StartEncounter(Character enemy) {

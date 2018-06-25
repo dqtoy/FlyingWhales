@@ -5,7 +5,6 @@ using ECS;
 
 public interface ICharacter {
     //getters
-    Combat currentCombat { get; set; }
     SIDES currentSide { get; }
     int actRate { get; set; }
     int strength { get; }
@@ -18,6 +17,7 @@ public interface ICharacter {
     int currentRow { get; }
     int id { get; }
     int currentSP { get; }
+    int numOfAttackers { get; set; }
     string coloredUrlName { get; }
     string name { get; }
     float critChance { get; }
@@ -26,6 +26,8 @@ public interface ICharacter {
     GENDER gender { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
+    Faction attackedByFaction { get; set; }
+    Combat currentCombat { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }

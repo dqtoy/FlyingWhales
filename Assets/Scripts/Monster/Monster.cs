@@ -30,11 +30,13 @@ public class Monster : ICharacter {
     private int _currentSP;
     private int _actRate;
     private int _currentRow;
+    private int _numOfAttackers;
     private bool _isDead;
     private Color _characterColor;
     private Combat _currentCombat;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private MonsterObj _monsterObj;
+    private Faction _attackedByFaction;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
 
@@ -83,6 +85,10 @@ public class Monster : ICharacter {
     public int currentSP {
         get { return _currentSP; }
     }
+    public int numOfAttackers {
+        get { return _numOfAttackers; }
+        set { _numOfAttackers = value; }
+    }
     public float critChance {
         get { return _critChance; }
     }
@@ -110,6 +116,10 @@ public class Monster : ICharacter {
     }
     public Faction faction {
         get { return null; }
+    }
+    public Faction attackedByFaction {
+        get { return _attackedByFaction; }
+        set { _attackedByFaction = value; }
     }
     public List<Skill> skills {
         get { return _skills; }

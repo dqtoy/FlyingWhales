@@ -66,7 +66,7 @@ public class ActionData {
         }
         this.currentChainAction = chainAction;
         SetCurrentAction(action);
-        action.OnChooseAction();
+        action.OnChooseAction(_character);
         _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //if (action.state.obj is CharacterObj) {
         //    CharacterObj characterObj = action.state.obj as CharacterObj;
@@ -102,7 +102,8 @@ public class ActionData {
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
         if(this.currentDay >= currentAction.actionData.duration) {
-            EndAction();
+            currentAction.DoneDuration();
+            currentAction.EndAction(_character);
         }
     }
     public void SetIsDone(bool state) {
@@ -131,7 +132,7 @@ public class ActionData {
                         if (newAction != null) {
                             AssignAction(newAction);
                         } else {
-                            EndAction();
+                            currentAction.EndAction(_character);
                             return;
                         }
                     }
@@ -143,7 +144,7 @@ public class ActionData {
                         }
                     } else {
                         if(currentAction.state.obj.currentState.stateName == "Dead") { //if object is dead
-                            EndAction();
+                            currentAction.EndAction(_character);
                         }
                     }
                     
