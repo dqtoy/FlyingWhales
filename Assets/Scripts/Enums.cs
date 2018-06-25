@@ -1329,6 +1329,8 @@ public enum ACTION_TYPE {
     PRAY,
     ATTACK,
     JOIN_BATTLE,
+    GO_HOME,
+    RELEASE,
 }
 
 public enum OBJECT_TYPE {
