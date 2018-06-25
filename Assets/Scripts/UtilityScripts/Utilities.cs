@@ -1465,6 +1465,17 @@ public class Utilities : MonoBehaviour {
                 return ITEM_TYPE.WEAPON;
         }
     }
+    public static int GetStatByClass(ECS.Character character) {
+        switch (character.characterClass.className) {
+            case "Warrior":
+            case "Barbarian":
+                return character.strength;
+            case "Arcanist":
+            case "Mage":
+                return character.intelligence;
+        }
+        return 0;
+    }
     #endregion
 
     #region Character Tags

@@ -117,7 +117,7 @@ namespace ECS {
 
         private float _equippedWeaponPower;
         private int _gold;
-        private int _prestige;
+        //private int _prestige;
         private int _numOfAttackers;
 
         //private Action _currentFunction;
@@ -329,9 +329,9 @@ namespace ECS {
         public int gold {
             get { return _gold; }
         }
-        public int prestige {
-            get { return _prestige; }
-        }
+        //public int prestige {
+        //    get { return _prestige; }
+        //}
         //public bool isDefeated {
         //	get { return _isDefeated; }
         //}
@@ -459,6 +459,9 @@ namespace ECS {
         public int numOfAttackers {
             get { return _numOfAttackers; }
             set { _numOfAttackers = value; }
+        }
+        public float computedPower {
+            get { return GetAttackPower() + GetDefensePower(); }
         }
         #endregion
 
@@ -1472,10 +1475,10 @@ namespace ECS {
             _gold += amount;
             _gold = Mathf.Max(0, _gold);
         }
-        internal void AdjustPrestige(int amount) {
-            _prestige += amount;
-            _prestige = Mathf.Max(0, _prestige);
-        }
+        //internal void AdjustPrestige(int amount) {
+        //    _prestige += amount;
+        //    _prestige = Mathf.Max(0, _prestige);
+        //}
         /*
          Get the Item type that this character needs,
          this is mainly used for upgrading gear at a settlement.
@@ -3265,6 +3268,20 @@ namespace ECS {
         }
         public void ResetToFullSP() {
             AdjustSP(_maxSP);
+        }
+        private float GetAttackPower() {
+            float statUsed = (float)Utilities.GetStatByClass(this);
+            float weaponAttack = 0f;
+            if(_equippedWeapon != null) {
+                weaponAttack = _equippedWeapon.attackPower;
+            }
+            return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
+        }
+        private float GetDefensePower() {
+            return ((strength + currentHP + (vitality * 2f)) * (1f + (level / 100f))) * (1f + (agility / 100f));
+            //follow up questions : 
+            //sa formula merong pdef at mdef pero kelangan yun ng enemy parameter, papano yun since yung computation na ito ay para ma compute ang sariling power lang mismo?
+            //ano yung '(2XVIT) multiplied or added by prefix/suffix effect', wala namang ganun ang vitality.
         }
         #endregion
 
