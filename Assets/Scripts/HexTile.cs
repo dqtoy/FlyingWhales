@@ -357,6 +357,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         switch (baseLandmarkType) {
             case BASE_LANDMARK_TYPE.SETTLEMENT:
                 _landmarkOnTile = new Settlement(this, data);
+                (_landmarkOnTile as Settlement).SetCivilianCount(data.civilianCount);
                 break;
             case BASE_LANDMARK_TYPE.RESOURCE:
                 _landmarkOnTile = new ResourceLandmark(this, data);
