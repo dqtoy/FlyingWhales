@@ -22,6 +22,7 @@ public interface ICharacter {
     string name { get; }
     float critChance { get; }
     float critDamage { get; }
+    float computedPower { get; }
     bool isDead { get; }
     GENDER gender { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }

@@ -377,8 +377,35 @@ public class CharacterRole {
     }
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction) {
-        return (GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction)
+        float result = (GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction)
             + GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.SANITY, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction)) * GetDistanceModifier(_character.specificLocation.tileLocation, characterAction.state.obj.specificLocation.tileLocation);
+
+        if (characterAction.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
+            Area areaOfStructure = characterAction.state.obj.objectLocation.tileLocation.areaOfTile;
+            if (areaOfStructure != null && _character.home != null && areaOfStructure.id == _character.home.id) {
+                result *= _character.actionData.homeMultiplier;
+            }
+        }else if (characterAction.actionType == ACTION_TYPE.ATTACK) {
+            AttackAction attackAction = characterAction as AttackAction;
+            float myPower = _character.computedPower;
+            float enemyPower = attackAction.characterObj.icharacter.computedPower;
+            float powerDiff = enemyPower - myPower;
+            float powerDivisor = myPower;
+            if(powerDiff < 0f) {
+                powerDivisor = enemyPower;
+            }
+            float powerDiffPercent = (powerDiff / powerDivisor) * 100f;
+            if(powerDiffPercent > 20f) {
+                result = 0f;
+            }else if (powerDiffPercent >= -50f && powerDiffPercent < -20f) {
+                result *= 1.5f;
+            } else if (powerDiffPercent >= -75f && powerDiffPercent < -50f) {
+                result *= 0.5f;
+            } else if (powerDiffPercent < -75f) {
+                result *= 0.1f;
+            }
+        }
+        return result;
     }
 
     delegate float CalculateImpact(int currentNeed);
