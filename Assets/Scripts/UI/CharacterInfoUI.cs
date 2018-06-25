@@ -194,6 +194,7 @@ public class CharacterInfoUI : UIMenu {
             text += "\n<b>Sanity: </b>" + currentlyShowingCharacter.role.sanity + ", <b>Prestige: </b>" + currentlyShowingCharacter.role.prestige + ", <b>Safety: </b>" + currentlyShowingCharacter.role.safety;
             text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
         }
+        text += "\n<b>Computed Power: </b>" + currentlyShowingCharacter.computedPower;
         //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
         //            if (kvp.Value > 0) {
         //                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
