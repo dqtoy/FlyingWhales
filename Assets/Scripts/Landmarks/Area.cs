@@ -13,7 +13,7 @@ public class Area {
     public Color areaColor { get; private set; }
 
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
-    public int totalCivilians { get { return landmarks.Where(x => x is Settlement).Sum(x => (x as Settlement).civilianCount); } }
+    public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
         id = Utilities.SetID(this);

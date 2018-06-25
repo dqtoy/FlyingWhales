@@ -1,7 +1,9 @@
 ﻿using BayatGames.SaveGameFree;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -118,12 +120,14 @@ public class CharacterPortraitEditor : MonoBehaviour {
         worldcreator.WorldCreatorUI.Instance.OnPortraitTemplatesChanged();
     }
     public void LoadPortrait() {
+#if UNITY_EDITOR
         string path = EditorUtility.OpenFilePanel("Choose template", Utilities.portraitsSavePath, Utilities.portraitFileExt.Remove(0, 1));
         if (path.Length != 0) {
             portraitSettings = SaveGame.Load<PortraitSettings>(path);
             UpdateVisuals();
             UpdatePortraitControls();
         }
+#endif
     }
 
     public void ShowMenu() {

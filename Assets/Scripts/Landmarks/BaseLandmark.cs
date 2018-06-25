@@ -9,7 +9,7 @@ using System.Linq;
 using ECS;
 
 //[System.Serializable]
-public class BaseLandmark : ILocation, TaskCreator {
+public class BaseLandmark : ILocation {
     protected int _id;
     protected HexTile _location;
     protected LANDMARK_TYPE _specificLandmarkType;
@@ -49,6 +49,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     //private int _diagonalRightBlocked;
     //private int _horizontalBlocked;
     //private Dictionary<BaseLandmark, string> _blockedLandmarkDirection;
+    private int _civilianCount;
 
     #region getters/setters
     public int id {
@@ -147,6 +148,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     //public List<Character> charactersWithHomeOnLandmark {
     //    get { return _charactersWithHomeOnLandmark; }
     //}
+    public int civilianCount {
+        get { return _civilianCount; }
+    }
     #endregion
 
     public BaseLandmark() {
@@ -925,14 +929,14 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return count;
     }
-    internal int GetMinimumCivilianRequirement() {
-        if (this is ResourceLandmark) {
-            return 5;
-        }else if(this is Settlement) {
-            return 20;
-        }
-        return 0;
-    }
+    //internal int GetMinimumCivilianRequirement() {
+    //    if (this is ResourceLandmark) {
+    //        return 5;
+    //    }else if(this is Settlement) {
+    //        return 20;
+    //    }
+    //    return 0;
+    //}
 	internal void ChangeLandmarkType(LANDMARK_TYPE newLandmarkType){
 		_specificLandmarkType = newLandmarkType;
 		Initialize ();
@@ -1027,7 +1031,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             throw new System.Exception(this.landmarkName + " already has an instance of " + item.itemName);
         }
 		_itemsInLandmark.Add (item);
-		item.SetPossessor (this);
+		//item.SetPossessor (this);
         item.OnItemPlacedOnLandmark(this);
 	}
 	public void AddItemsInLandmark(List<Item> item){
@@ -1036,7 +1040,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public void RemoveItemInLandmark(Item item){
 		if(!item.isUnlimited){
 			_itemsInLandmark.Remove (item);
-			item.SetPossessor (null);
+			//item.SetPossessor (null);
 		}
 	}
     public void RemoveItemInLandmark(string itemName) {
@@ -1114,9 +1118,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     #region Tags
     private void ConstructTags(LandmarkData landmarkData) {
         _landmarkTags = new List<LANDMARK_TAG>(landmarkData.uniqueTags); //add unique tags
-        //add common tags from base landmark type
-        BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
-        _landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
+        ////add common tags from base landmark type
+        //BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
+        //_landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
     }
     #endregion
 
@@ -1519,5 +1523,11 @@ public class BaseLandmark : ILocation, TaskCreator {
     //    }
     //    return false;
     //}
+    #endregion
+
+    #region Civilians
+    public void SetCivilianCount(int count) {
+        _civilianCount = count;
+    }
     #endregion
 }

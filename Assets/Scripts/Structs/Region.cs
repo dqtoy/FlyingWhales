@@ -391,7 +391,7 @@ public class Region : IHasNeighbours<Region> {
     }
 #endregion
 
-#region Materials
+    #region Materials
     public void AddTileWithMaterial(HexTile tile) {
         if (!_tilesWithMaterials.Contains(tile)) {
             _tilesWithMaterials.Add(tile);
@@ -400,21 +400,21 @@ public class Region : IHasNeighbours<Region> {
     public void RemoveTileWithMaterial(HexTile tile) {
         _tilesWithMaterials.Remove(tile);
     }
-    internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material) {
-        int count = 0;
-        for (int i = 0; i < _landmarks.Count; i++) {
-            BaseLandmark currLandmark = _landmarks[i];
-            if (currLandmark is ResourceLandmark) {
-                ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
-                //check if the landmark has the material specified, and already has a structure built on it.
-                if (resourceLandmark.materialOnLandmark == material && resourceLandmark.tileLocation.HasStructure()) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-#endregion
+    //internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material) {
+    //    int count = 0;
+    //    for (int i = 0; i < _landmarks.Count; i++) {
+    //        BaseLandmark currLandmark = _landmarks[i];
+    //        if (currLandmark is ResourceLandmark) {
+    //            ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
+    //            //check if the landmark has the material specified, and already has a structure built on it.
+    //            if (resourceLandmark.materialOnLandmark == material && resourceLandmark.tileLocation.HasStructure()) {
+    //                count++;
+    //            }
+    //        }
+    //    }
+    //    return count;
+    //}
+    #endregion
 
 #region Landmark Functions
     internal void AddLandmarkToRegion(BaseLandmark landmark) {
@@ -444,16 +444,16 @@ public class Region : IHasNeighbours<Region> {
         }
         return landmarksOfType;
     }
-    public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
-        List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark currLandmark = landmarks[i];
-            if (LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType).baseLandmarkType == baseLandmarkType) {
-                landmarksOfType.Add(currLandmark);
-            }
-        }
-        return landmarksOfType;
-    }
+    //public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
+    //    List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
+    //    for (int i = 0; i < landmarks.Count; i++) {
+    //        BaseLandmark currLandmark = landmarks[i];
+    //        if (LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType).baseLandmarkType == baseLandmarkType) {
+    //            landmarksOfType.Add(currLandmark);
+    //        }
+    //    }
+    //    return landmarksOfType;
+    //}
 #endregion
 
 #region Road Functions

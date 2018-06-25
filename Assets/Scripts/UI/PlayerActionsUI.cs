@@ -71,147 +71,147 @@ public class PlayerActionsUI : MonoBehaviour {
 			return;
 		}
 		numOfShowingButtons = 0;
-		List<CharacterTask> tasksAvailable = character.GetAllPossibleTasks (this.location);
-		if(tasksAvailable.Count > 0){
-			if(tasksAvailable.Count > taskButtons.Count){
-				for (int i = 0; i < tasksAvailable.Count; i++) {
-					if(i < taskButtons.Count){
-						taskButtons [i].SetTask (tasksAvailable [i]);
-//						taskButtons [i].SetLocation (this.location);
-						taskButtons [i].gameObject.SetActive (true);
-						numOfShowingButtons++;
-					}else{
-						CreateButton (tasksAvailable [i]);
-						numOfShowingButtons++;
-					}
-				}
-			}else{
-				for (int i = 0; i < taskButtons.Count; i++) {
-					if(i < tasksAvailable.Count){
-						taskButtons [i].SetTask (tasksAvailable [i]);
-//						taskButtons [i].SetLocation (this.location);
-						taskButtons [i].gameObject.SetActive (true);
-						numOfShowingButtons++;
-					}else{
-						taskButtons [i].gameObject.SetActive (false);
-					}
-				}
-			}
-			this.gameObject.SetActive (true);
-			buttonsGrid.Reposition ();
-			UpdateGrid();
-		}else{
-			this.gameObject.SetActive (false);
-		}
+//		List<CharacterTask> tasksAvailable = character.GetAllPossibleTasks (this.location);
+//		if(tasksAvailable.Count > 0){
+//			if(tasksAvailable.Count > taskButtons.Count){
+//				for (int i = 0; i < tasksAvailable.Count; i++) {
+//					if(i < taskButtons.Count){
+//						taskButtons [i].SetTask (tasksAvailable [i]);
+////						taskButtons [i].SetLocation (this.location);
+//						taskButtons [i].gameObject.SetActive (true);
+//						numOfShowingButtons++;
+//					}else{
+//						CreateButton (tasksAvailable [i]);
+//						numOfShowingButtons++;
+//					}
+//				}
+//			}else{
+//				for (int i = 0; i < taskButtons.Count; i++) {
+//					if(i < tasksAvailable.Count){
+//						taskButtons [i].SetTask (tasksAvailable [i]);
+////						taskButtons [i].SetLocation (this.location);
+//						taskButtons [i].gameObject.SetActive (true);
+//						numOfShowingButtons++;
+//					}else{
+//						taskButtons [i].gameObject.SetActive (false);
+//					}
+//				}
+//			}
+		//	this.gameObject.SetActive (true);
+		//	buttonsGrid.Reposition ();
+		//	UpdateGrid();
+		//}else{
+		//	this.gameObject.SetActive (false);
+		//}
 	}
 
-	public void ShowSpecificTargets(CharacterTask task){
-        ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
-        specificNumOfShowingButtons = 0;
-		if(task.specificTargetClassification == "character"){
-			List<ECS.Character> characters = CharacterTargets (character, task);
-			if(characters.Count > 0){
-				if(characters.Count > specificTaskButtons.Count){
-					for (int i = 0; i < characters.Count; i++) {
-						if(i < specificTaskButtons.Count){
-							specificTaskButtons [i].SetTask (task);
-							specificTaskButtons [i].SetTarget (characters [i]);
-							specificTaskButtons [i].gameObject.SetActive (true);
-							specificNumOfShowingButtons++;
-						}else{
-							CreateSpecificButton (task, characters [i]);
-							specificNumOfShowingButtons++;
-						}
-					}
-				}else{
-					for (int i = 0; i < specificTaskButtons.Count; i++) {
-						if(i < characters.Count){
-							specificTaskButtons [i].SetTask (task);
-							specificTaskButtons [i].SetTarget (characters [i]);
-							specificTaskButtons [i].gameObject.SetActive (true);
-							specificNumOfShowingButtons++;
-						}else{
-							specificTaskButtons [i].gameObject.SetActive (false);
-						}
-					}
-				}
-				specificTargetsGO.SetActive (true);
-				specificButtonsGrid.Reposition ();
-				UpdateSpecificGrid();
-			}
-		} else if(task.specificTargetClassification == "item"){
-			//TODO: Item Targets
-		} else if (task.specificTargetClassification == "quest") {
-            //TODO: Quest Targets
-            List<Quest> availableQuests = QuestManager.Instance.GetAvailableQuestsForCharacter(character);
-            if (availableQuests.Count > 0) {
-                if (availableQuests.Count > specificTaskButtons.Count) {
-                    for (int i = 0; i < availableQuests.Count; i++) {
-                        if (i < specificTaskButtons.Count) {
-                            specificTaskButtons[i].SetTask(task);
-                            specificTaskButtons[i].SetTarget(availableQuests[i]);
-                            specificTaskButtons[i].gameObject.SetActive(true);
-                            specificNumOfShowingButtons++;
-                        } else {
-                            CreateSpecificButton(task, availableQuests[i]);
-                            specificNumOfShowingButtons++;
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < specificTaskButtons.Count; i++) {
-                        if (i < availableQuests.Count) {
-                            specificTaskButtons[i].SetTask(task);
-                            specificTaskButtons[i].SetTarget(availableQuests[i]);
-                            specificTaskButtons[i].gameObject.SetActive(true);
-                            specificNumOfShowingButtons++;
-                        } else {
-                            specificTaskButtons[i].gameObject.SetActive(false);
-                        }
-                    }
-                }
-                specificTargetsGO.SetActive(true);
-                specificButtonsGrid.Reposition();
-                UpdateSpecificGrid();
-            }
-        }
-    }
+	//public void ShowSpecificTargets(CharacterTask task){
+ //       ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+ //       specificNumOfShowingButtons = 0;
+	//	if(task.specificTargetClassification == "character"){
+	//		List<ECS.Character> characters = CharacterTargets (character, task);
+	//		if(characters.Count > 0){
+	//			if(characters.Count > specificTaskButtons.Count){
+	//				for (int i = 0; i < characters.Count; i++) {
+	//					if(i < specificTaskButtons.Count){
+	//						specificTaskButtons [i].SetTask (task);
+	//						specificTaskButtons [i].SetTarget (characters [i]);
+	//						specificTaskButtons [i].gameObject.SetActive (true);
+	//						specificNumOfShowingButtons++;
+	//					}else{
+	//						CreateSpecificButton (task, characters [i]);
+	//						specificNumOfShowingButtons++;
+	//					}
+	//				}
+	//			}else{
+	//				for (int i = 0; i < specificTaskButtons.Count; i++) {
+	//					if(i < characters.Count){
+	//						specificTaskButtons [i].SetTask (task);
+	//						specificTaskButtons [i].SetTarget (characters [i]);
+	//						specificTaskButtons [i].gameObject.SetActive (true);
+	//						specificNumOfShowingButtons++;
+	//					}else{
+	//						specificTaskButtons [i].gameObject.SetActive (false);
+	//					}
+	//				}
+	//			}
+	//			specificTargetsGO.SetActive (true);
+	//			specificButtonsGrid.Reposition ();
+	//			UpdateSpecificGrid();
+	//		}
+	//	} else if(task.specificTargetClassification == "item"){
+	//		//TODO: Item Targets
+	//	} else if (task.specificTargetClassification == "quest") {
+ //           //TODO: Quest Targets
+ //           List<Quest> availableQuests = QuestManager.Instance.GetAvailableQuestsForCharacter(character);
+ //           if (availableQuests.Count > 0) {
+ //               if (availableQuests.Count > specificTaskButtons.Count) {
+ //                   for (int i = 0; i < availableQuests.Count; i++) {
+ //                       if (i < specificTaskButtons.Count) {
+ //                           specificTaskButtons[i].SetTask(task);
+ //                           specificTaskButtons[i].SetTarget(availableQuests[i]);
+ //                           specificTaskButtons[i].gameObject.SetActive(true);
+ //                           specificNumOfShowingButtons++;
+ //                       } else {
+ //                           CreateSpecificButton(task, availableQuests[i]);
+ //                           specificNumOfShowingButtons++;
+ //                       }
+ //                   }
+ //               } else {
+ //                   for (int i = 0; i < specificTaskButtons.Count; i++) {
+ //                       if (i < availableQuests.Count) {
+ //                           specificTaskButtons[i].SetTask(task);
+ //                           specificTaskButtons[i].SetTarget(availableQuests[i]);
+ //                           specificTaskButtons[i].gameObject.SetActive(true);
+ //                           specificNumOfShowingButtons++;
+ //                       } else {
+ //                           specificTaskButtons[i].gameObject.SetActive(false);
+ //                       }
+ //                   }
+ //               }
+ //               specificTargetsGO.SetActive(true);
+ //               specificButtonsGrid.Reposition();
+ //               UpdateSpecificGrid();
+ //           }
+ //       }
+ //   }
 
-	private List<ECS.Character> CharacterTargets(ECS.Character assignedCharacter, CharacterTask task){
-		List<ECS.Character> characters = new List<ECS.Character> ();
-		BaseLandmark landmark = this.location as BaseLandmark;
-		for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-			ECS.Character character = landmark.charactersAtLocation [i];
-			if(!task.canTargetSelf && character.id == assignedCharacter.id){
-				continue;
-			}
-			if(task.CanMeetRequirements(character, assignedCharacter)){
-				characters.Add (character);
-			}
-		}
-		return characters;
-	}
+	//private List<ECS.Character> CharacterTargets(ECS.Character assignedCharacter, CharacterTask task){
+	//	List<ECS.Character> characters = new List<ECS.Character> ();
+	//	BaseLandmark landmark = this.location as BaseLandmark;
+	//	for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
+	//		ECS.Character character = landmark.charactersAtLocation [i];
+	//		if(!task.canTargetSelf && character.id == assignedCharacter.id){
+	//			continue;
+	//		}
+	//		if(task.CanMeetRequirements(character, assignedCharacter)){
+	//			characters.Add (character);
+	//		}
+	//	}
+	//	return characters;
+	//}
 
-    private void CreateButton(CharacterTask task){
-		GameObject characterTaskButton = GameObject.Instantiate (characterTaskButtonGO, buttonsGrid.transform) as GameObject;
-		characterTaskButton.transform.localScale = Vector3.one;
-		characterTaskButton.transform.localPosition = Vector3.zero;
+//    private void CreateButton(CharacterTask task){
+//		GameObject characterTaskButton = GameObject.Instantiate (characterTaskButtonGO, buttonsGrid.transform) as GameObject;
+//		characterTaskButton.transform.localScale = Vector3.one;
+//		characterTaskButton.transform.localPosition = Vector3.zero;
 
-		CharacterTaskButton taskButton = characterTaskButton.GetComponent<CharacterTaskButton> ();
-		taskButton.SetTask (task);
-//		taskButton.SetLocation (this.location);
-		taskButtons.Add (taskButton);
-	}
+//		CharacterTaskButton taskButton = characterTaskButton.GetComponent<CharacterTaskButton> ();
+//		taskButton.SetTask (task);
+////		taskButton.SetLocation (this.location);
+//		taskButtons.Add (taskButton);
+//	}
 
-	private void CreateSpecificButton(CharacterTask task, object target){
-		GameObject specificCharacterTaskButton = (GameObject)GameObject.Instantiate (specificCharacterTaskButtonGO, specificButtonsGrid.transform);
-		specificCharacterTaskButton.transform.localScale = Vector3.one;
-		specificCharacterTaskButton.transform.localPosition = Vector3.zero;
+	//private void CreateSpecificButton(CharacterTask task, object target){
+	//	GameObject specificCharacterTaskButton = (GameObject)GameObject.Instantiate (specificCharacterTaskButtonGO, specificButtonsGrid.transform);
+	//	specificCharacterTaskButton.transform.localScale = Vector3.one;
+	//	specificCharacterTaskButton.transform.localPosition = Vector3.zero;
 
-		SpecificCharacterTaskButton taskButton = specificCharacterTaskButton.GetComponent<SpecificCharacterTaskButton> ();
-		taskButton.SetTask (task);
-		taskButton.SetTarget (target);
-		specificTaskButtons.Add (taskButton);
-	}
+	//	SpecificCharacterTaskButton taskButton = specificCharacterTaskButton.GetComponent<SpecificCharacterTaskButton> ();
+	//	taskButton.SetTask (task);
+	//	taskButton.SetTarget (target);
+	//	specificTaskButtons.Add (taskButton);
+	//}
 
 	[ContextMenu("Update Grid")]
 	public void UpdateGrid(){

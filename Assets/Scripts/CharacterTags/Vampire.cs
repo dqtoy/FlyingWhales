@@ -8,9 +8,9 @@ public class Vampire : CharacterTag {
 		_statsModifierPercentage.strPercentage = 0.25f;
 		_statsModifierPercentage.agiPercentage = 0.25f;
 
-		_tagTasks.Add (new VampiricEmbrace (_character, 5));
-		_tagTasks.Add (new DrinkBlood (_character, 5));
-		_tagTasks.Add (new Hypnotize (_character, 5));
-		_tagTasks.Add (new Hibernate (_character));
+		//_tagTasks.Add (new VampiricEmbrace (_character, 5));
+		//_tagTasks.Add (new DrinkBlood (_character, 5));
+		//_tagTasks.Add (new Hypnotize (_character, 5));
+		//_tagTasks.Add (new Hibernate (_character));
 	}
 }

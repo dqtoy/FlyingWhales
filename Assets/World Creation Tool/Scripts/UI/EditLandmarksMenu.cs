@@ -77,8 +77,8 @@ namespace worldcreator {
         private void SetHousesCivilians(string civilians) {
             int civiliansCount = Int32.Parse(civilians);
             for (int i = 0; i < lastCreatedLandmarks.Count; i++) {
-                Settlement currSettlement = lastCreatedLandmarks[i] as Settlement;
-                currSettlement.SetCivilianCount(civiliansCount);
+                BaseLandmark currLandmark = lastCreatedLandmarks[i];
+                currLandmark.SetCivilianCount(civiliansCount);
             }
             WorldCreatorUI.Instance.messageBox.HideMessageBox();
         }

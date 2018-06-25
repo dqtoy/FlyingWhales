@@ -63,9 +63,6 @@ public class Utilities : MonoBehaviour {
         } else if(obj is ECS.Character) {
             lastCharacterID += 1;
             return lastCharacterID;
-        } else if (obj is Quest) {
-            lastQuestID += 1;
-            return lastQuestID;
         } else if (obj is ECS.Item) {
             lastItemID += 1;
             return lastItemID;
@@ -89,8 +86,6 @@ public class Utilities : MonoBehaviour {
             lastFactionID = idToUse;
         } else if (obj is ECS.Character) {
             lastCharacterID = idToUse;
-        } else if (obj is Quest) {
-            lastQuestID = idToUse;
         } else if (obj is ECS.Item) {
             lastItemID = idToUse;
         } else if (obj is Monster) {

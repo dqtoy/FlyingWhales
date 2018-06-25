@@ -22,7 +22,7 @@ public class FactionSummaryEntry : MonoBehaviour {
 
         _bgSprite.color = faction.factionColor;
 
-        villagesLbl.text = faction.settlements.Count.ToString();
+        //villagesLbl.text = faction.settlements.Count.ToString();
         //populationLbl.text = faction.totalPopulation.ToString();
         charactersLbl.text = faction.characters.Count.ToString();
     }
@@ -45,6 +45,6 @@ public class FactionSummaryEntry : MonoBehaviour {
     }
 
     public void CenterOnFaction() {
-		CameraMove.Instance.CenterCameraOn(_faction.settlements[0].tileLocation.gameObject);
+		//CameraMove.Instance.CenterCameraOn(_faction.settlements[0].tileLocation.gameObject);
     }
 }

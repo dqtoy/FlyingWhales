@@ -479,64 +479,64 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
 	#region Prisoner Conversion
-	public void SchedulePrisonerConversion(){
-		GameDate newSched = GameManager.Instance.Today ();
-		newSched.AddDays (7);
-		SchedulingManager.Instance.AddEntry (newSched, () => PrisonerConversion ());
-	}
-	private void PrisonerConversion(){
-		int allPrisonersWorldwide = FactionManager.Instance.allFactions.Sum (x => x.settlements.Sum (y => y.prisoners.Count));
-		if(allPrisonersWorldwide > 0){
-			int chance = UnityEngine.Random.Range (0, 100);
-			float value = (float)allPrisonersWorldwide * 0.2f;
+	//public void SchedulePrisonerConversion(){
+	//	GameDate newSched = GameManager.Instance.Today ();
+	//	newSched.AddDays (7);
+	//	SchedulingManager.Instance.AddEntry (newSched, () => PrisonerConversion ());
+	//}
+	//private void PrisonerConversion(){
+	//	int allPrisonersWorldwide = FactionManager.Instance.allFactions.Sum (x => x.settlements.Sum (y => y.prisoners.Count));
+	//	if(allPrisonersWorldwide > 0){
+	//		int chance = UnityEngine.Random.Range (0, 100);
+	//		float value = (float)allPrisonersWorldwide * 0.2f;
 
-			if(chance < value){
-				Faction faction = FactionManager.Instance.allFactions [UnityEngine.Random.Range (0, FactionManager.Instance.allFactions.Count)];
-				Settlement settlement = faction.settlements [UnityEngine.Random.Range (0, faction.settlements.Count)];
-				ECS.Character characterToBeConverted = settlement.prisoners [UnityEngine.Random.Range (0, settlement.prisoners.Count)];
-				characterToBeConverted.ConvertToFaction ();
-			}
-		}
+	//		if(chance < value){
+	//			Faction faction = FactionManager.Instance.allFactions [UnityEngine.Random.Range (0, FactionManager.Instance.allFactions.Count)];
+	//			Settlement settlement = faction.settlements [UnityEngine.Random.Range (0, faction.settlements.Count)];
+	//			ECS.Character characterToBeConverted = settlement.prisoners [UnityEngine.Random.Range (0, settlement.prisoners.Count)];
+	//			characterToBeConverted.ConvertToFaction ();
+	//		}
+	//	}
 
-		SchedulePrisonerConversion ();
-	}
+	//	SchedulePrisonerConversion ();
+	//}
     #endregion
 
     #region Utilities
-    public void EquipCharacterWithBestGear(Settlement village, ECS.Character character) {
-        //MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
-        //MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
-        //EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
-        //EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
-    }
-    private void EquipCharacterWithBestAvailableArmor(ECS.Character character, MATERIAL material, Settlement village) {
-        foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
-            TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)armorType);
-            if (village.HasTechnology(neededTech)) {
-                string armorName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
-                int armorQuantityToCreate = 1;
-                if (armorType == ARMOR_TYPE.BOOT || armorType == ARMOR_TYPE.BRACER) {
-                    armorQuantityToCreate = 2; //Create a pair of boots or bracer
-                }
-                for (int i = 0; i < armorQuantityToCreate; i++) {
-                    ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
-                    character.EquipItem(item);
-                }
-            }
-        }
-    }
-    private void EquipCharacterWithBestAvailableWeapon(ECS.Character character, MATERIAL material, Settlement village) {
-        for (int i = 0; i < character.characterClass.allowedWeaponTypes.Count; i++) {
-            WEAPON_TYPE weaponType = character.characterClass.allowedWeaponTypes[i];
-            TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)weaponType);
-            if (village.HasTechnology(neededTech)) {
-                string weaponName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(weaponType.ToString());
-                ECS.Item item = ItemManager.Instance.CreateNewItemInstance(weaponName);
-                character.EquipItem(item);
-                break;
-            }
-        }
-    }
+    //public void EquipCharacterWithBestGear(Settlement village, ECS.Character character) {
+    //    //MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
+    //    //MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
+    //    //EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
+    //    //EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
+    //}
+    //private void EquipCharacterWithBestAvailableArmor(ECS.Character character, MATERIAL material, Settlement village) {
+    //    foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
+    //        TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)armorType);
+    //        if (village.HasTechnology(neededTech)) {
+    //            string armorName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
+    //            int armorQuantityToCreate = 1;
+    //            if (armorType == ARMOR_TYPE.BOOT || armorType == ARMOR_TYPE.BRACER) {
+    //                armorQuantityToCreate = 2; //Create a pair of boots or bracer
+    //            }
+    //            for (int i = 0; i < armorQuantityToCreate; i++) {
+    //                ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
+    //                character.EquipItem(item);
+    //            }
+    //        }
+    //    }
+    //}
+    //private void EquipCharacterWithBestAvailableWeapon(ECS.Character character, MATERIAL material, Settlement village) {
+    //    for (int i = 0; i < character.characterClass.allowedWeaponTypes.Count; i++) {
+    //        WEAPON_TYPE weaponType = character.characterClass.allowedWeaponTypes[i];
+    //        TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)weaponType);
+    //        if (village.HasTechnology(neededTech)) {
+    //            string weaponName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(weaponType.ToString());
+    //            ECS.Item item = ItemManager.Instance.CreateNewItemInstance(weaponName);
+    //            character.EquipItem(item);
+    //            break;
+    //        }
+    //    }
+    //}
     public Character GetCharacterByID(int id) {
         for (int i = 0; i < _allCharacters.Count; i++) {
             Character currChar = _allCharacters[i];
@@ -556,23 +556,24 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     public void GenerateCharactersForTesting(int number) {
-        List<Settlement> allOwnedSettlements = new List<Settlement>();
-        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
-            allOwnedSettlements.AddRange(FactionManager.Instance.allTribes[i].settlements);
-        }
+        List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
+        //List<Settlement> allOwnedSettlements = new List<Settlement>();
+        //for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
+        //    allOwnedSettlements.AddRange(FactionManager.Instance.allTribes[i].settlements);
+        //}
         WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
 
         for (int i = 0; i < number; i++) {
-            Settlement chosenSettlement = allOwnedSettlements[Random.Range(0, allOwnedSettlements.Count)];
+            BaseLandmark chosenLandmark = allLandmarks[Random.Range(0, allLandmarks.Count)];
             //WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
 
             //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
             CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
             CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-            ECS.Character newChar = chosenSettlement.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
+            ECS.Character newChar = chosenLandmark.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
             //Initial Character tags
             newChar.AssignInitialTags();
-            CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);
+            //CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);
         }
     }
     #endregion

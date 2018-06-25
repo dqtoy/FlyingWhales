@@ -845,63 +845,63 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Quests Summary
-    [Space(10)]
-    [Header("Quests Summary")]
-    [SerializeField] private UILabel questsSummaryLbl;
-    [SerializeField] private GameObject questsSummaryGO;
-    public void ShowQuestsSummary() {
-        HideCharactersSummary();
-        HideStorylinesSummary();
-        worldInfoQuestsSelectedGO.SetActive(true);
-        questsSummaryGO.SetActive(true);
-        UpdateQuestsSummary();
-    }
-    public void HideQuestsSummary() {
-        worldInfoQuestsSelectedGO.SetActive(false);
-        questsSummaryGO.SetActive(false);
-    }
-    public void UpdateQuestsSummary() {
-        string questSummary = string.Empty;
-        questSummary += "[b]Available Quests: [/b]";
-        for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
-            Quest currentQuest = QuestManager.Instance.availableQuests[i];
-            if (!currentQuest.isDone) {
-                questSummary += "\n" + currentQuest.questURLName;
-                questSummary += "\n   Characters on Quest: ";
-                if (currentQuest.acceptedCharacters.Count > 0) {
-                    for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
-                        ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
-                        questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
-                    }
-                } else {
-                    questSummary += "NONE";
-                }
-            }
-        }
-        questsSummaryLbl.text = questSummary;
-        questsSummaryLbl.ResizeCollider();
-    }
-    #endregion
+    //#region Quests Summary
+    //[Space(10)]
+    //[Header("Quests Summary")]
+    //[SerializeField] private UILabel questsSummaryLbl;
+    //[SerializeField] private GameObject questsSummaryGO;
+    //public void ShowQuestsSummary() {
+    //    HideCharactersSummary();
+    //    HideStorylinesSummary();
+    //    worldInfoQuestsSelectedGO.SetActive(true);
+    //    questsSummaryGO.SetActive(true);
+    //    UpdateQuestsSummary();
+    //}
+    //public void HideQuestsSummary() {
+    //    worldInfoQuestsSelectedGO.SetActive(false);
+    //    questsSummaryGO.SetActive(false);
+    //}
+    //public void UpdateQuestsSummary() {
+    //    string questSummary = string.Empty;
+    //    //questSummary += "[b]Available Quests: [/b]";
+    //    //for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
+    //    //    Quest currentQuest = QuestManager.Instance.availableQuests[i];
+    //    //    if (!currentQuest.isDone) {
+    //    //        questSummary += "\n" + currentQuest.questURLName;
+    //    //        questSummary += "\n   Characters on Quest: ";
+    //    //        if (currentQuest.acceptedCharacters.Count > 0) {
+    //    //            for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
+    //    //                ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
+    //    //                questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
+    //    //            }
+    //    //        } else {
+    //    //            questSummary += "NONE";
+    //    //        }
+    //    //    }
+    //    //}
+    //    questsSummaryLbl.text = questSummary;
+    //    questsSummaryLbl.ResizeCollider();
+    //}
+    //#endregion
 
-    #region Storylines Summary
-    [Space(10)]
-    [Header("Storylines Summary")]
-    [SerializeField] private GameObject storylinesSummaryGO;
-    public StorylinesSummaryMenu storylinesSummaryMenu;
-    public void ShowStorylinesSummary() {
-        HideCharactersSummary();
-        HideQuestsSummary();
-        worldInfoStorylinesSelectedGO.SetActive(true);
-        storylinesSummaryMenu.ShowMenu();
-        StartCoroutine(RepositionTable(storylinesSummaryMenu.storyTable));
-        //UpdateQuestsSummary();
-    }
-    public void HideStorylinesSummary() {
-        worldInfoStorylinesSelectedGO.SetActive(false);
-        storylinesSummaryMenu.HideMenu();
-    }
-    #endregion
+    //#region Storylines Summary
+    //[Space(10)]
+    //[Header("Storylines Summary")]
+    //[SerializeField] private GameObject storylinesSummaryGO;
+    //public StorylinesSummaryMenu storylinesSummaryMenu;
+    //public void ShowStorylinesSummary() {
+    //    HideCharactersSummary();
+    //    HideQuestsSummary();
+    //    worldInfoStorylinesSelectedGO.SetActive(true);
+    //    storylinesSummaryMenu.ShowMenu();
+    //    StartCoroutine(RepositionTable(storylinesSummaryMenu.storyTable));
+    //    //UpdateQuestsSummary();
+    //}
+    //public void HideStorylinesSummary() {
+    //    worldInfoStorylinesSelectedGO.SetActive(false);
+    //    storylinesSummaryMenu.HideMenu();
+    //}
+    //#endregion
 
     #region Characters Summary
     [Space(10)]
@@ -909,8 +909,8 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject charactersSummaryGO;
     public CharactersSummaryUI charactersSummaryMenu;
     public void ShowCharactersSummary() {
-        HideQuestsSummary();
-        HideStorylinesSummary();
+        //HideQuestsSummary();
+        //HideStorylinesSummary();
         worldInfoCharactersSelectedGO.SetActive(true);
         charactersSummaryMenu.OpenMenu();
     }

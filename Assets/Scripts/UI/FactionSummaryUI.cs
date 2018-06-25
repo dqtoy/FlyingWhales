@@ -14,9 +14,9 @@ public class FactionSummaryUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         factionSummaryEntries = Utilities.GetComponentsInDirectChildren<FactionSummaryEntry>(_factionsGrid.gameObject);
-        EventDelegate.Add(orderBySettlements.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.CITIES));
-        EventDelegate.Add(orderByPopulation.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.POPULATION));
-        EventDelegate.Add(orderByCharacters.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.CHARACTERS));
+        //EventDelegate.Add(orderBySettlements.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.CITIES));
+        //EventDelegate.Add(orderByPopulation.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.POPULATION));
+        //EventDelegate.Add(orderByCharacters.onClick, () => FactionManager.Instance.SetOrderBy(ORDER_BY.CHARACTERS));
     }
 
     public override void OpenMenu() {

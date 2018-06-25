@@ -210,13 +210,13 @@ public class Party: IEncounterable {
 		//member.SetCurrentTask(null);
 		if(member.isFollower){
 			member.SetFollowerState (false);
-			Settlement settlement = member.GetNearestSettlementFromFaction();
-			if (settlement != null) {
-				////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
-				//throw new Exception(member.name + " cannot find a settlement from his/her faction!");
-                //will go back to the nearest settlement of their faction
-                //settlement.AdjustCivilians(member.raceSetting.race, 1);
-            }
+			//Settlement settlement = member.GetNearestSettlementFromFaction();
+			//if (settlement != null) {
+			//	////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
+			//	//throw new Exception(member.name + " cannot find a settlement from his/her faction!");
+   //             //will go back to the nearest settlement of their faction
+   //             //settlement.AdjustCivilians(member.raceSetting.race, 1);
+   //         }
         } else {
             if (!forDeath) { //If the member was removed from party, but did not die
                 this.specificLocation.AddCharacterToLocation(member);
@@ -258,13 +258,13 @@ public class Party: IEncounterable {
             ECS.Character currPrisoner = _prisoners[i];
             if (currPrisoner.isFollower) {
                 //if they are just followers
-                Settlement settlement = currPrisoner.GetNearestSettlementFromFaction();
-                if (settlement != null) {
-                    ////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
-                    //throw new Exception(currPrisoner.name + " cannot find a settlement from his/her faction!");
-                    //convert them to civilians of the nearest settlement of their faction
-                    //settlement.AdjustCivilians(currPrisoner.raceSetting.race, 1);
-                }
+                //Settlement settlement = currPrisoner.GetNearestSettlementFromFaction();
+                //if (settlement != null) {
+                //    ////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
+                //    //throw new Exception(currPrisoner.name + " cannot find a settlement from his/her faction!");
+                //    //convert them to civilians of the nearest settlement of their faction
+                //    //settlement.AdjustCivilians(currPrisoner.raceSetting.race, 1);
+                //}
             } else {
                 //if they are not followers
                 //let them decide again, since they were set free

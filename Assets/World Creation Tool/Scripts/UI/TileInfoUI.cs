@@ -46,9 +46,7 @@ public class TileInfoUI : MonoBehaviour {
         info = "\n<b>Landmark Info</b>";
         info += "\nLandmark Name: [" + landmark.id + "] " + landmark.landmarkName;
         info += "\nLandmark Type: " + landmark.specificLandmarkType.ToString();
-        if (landmark is Settlement) {
-            info += "\nCivilians: " + (landmark as Settlement).civilianCount.ToString();
-        }
+        info += "\nCivilians: " + landmark.civilianCount.ToString();
         //info += "\nCharacters with homes here: ";
         //for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
         //    ECS.Character currChar = landmark.charactersWithHomeOnLandmark[i];

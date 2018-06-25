@@ -14,9 +14,7 @@ public class LandmarkSaveData {
         landmarkName = landmark.landmarkName;
         locationCoordinates = new Point(landmark.tileLocation.xCoordinate, landmark.tileLocation.yCoordinate);
         landmarkType = landmark.specificLandmarkType;
-        if (landmark is Settlement) {
-            civilianCount = (landmark as Settlement).civilianCount;
-        }
+        civilianCount = landmark.civilianCount;
         
     }
 }

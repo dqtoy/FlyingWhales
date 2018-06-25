@@ -306,7 +306,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Landmarks
-    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
 #if WORLD_CREATION_TOOL
@@ -314,23 +314,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         landmarkGO = CreateLandmarkObject(landmarkType);
 #endif
-        switch (baseLandmarkType) {
-            case BASE_LANDMARK_TYPE.SETTLEMENT:
-                _landmarkOnTile = new Settlement(this, landmarkType);
-                break;
-            case BASE_LANDMARK_TYPE.RESOURCE:
-                _landmarkOnTile = new ResourceLandmark(this, landmarkType);
-                break;
-            case BASE_LANDMARK_TYPE.DUNGEON:
-                _landmarkOnTile = new DungeonLandmark(this, landmarkType);
-                break;
-            case BASE_LANDMARK_TYPE.LAIR:
-                _landmarkOnTile = new LairLandmark(this, landmarkType);
-                break;
-            default:
-                _landmarkOnTile = new BaseLandmark(this, landmarkType);
-                break;
-        }
+        _landmarkOnTile = new BaseLandmark(this, landmarkType);
+        //switch (baseLandmarkType) {
+        //    case BASE_LANDMARK_TYPE.SETTLEMENT:
+        //        _landmarkOnTile = new Settlement(this, landmarkType);
+        //        break;
+        //    case BASE_LANDMARK_TYPE.RESOURCE:
+        //        _landmarkOnTile = new ResourceLandmark(this, landmarkType);
+        //        break;
+        //    case BASE_LANDMARK_TYPE.DUNGEON:
+        //        _landmarkOnTile = new DungeonLandmark(this, landmarkType);
+        //        break;
+        //    case BASE_LANDMARK_TYPE.LAIR:
+        //        _landmarkOnTile = new LairLandmark(this, landmarkType);
+        //        break;
+        //    default:
+                
+        //        break;
+        //}
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
@@ -345,7 +346,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return _landmarkOnTile;
     }
-    public BaseLandmark CreateLandmarkOfType(BASE_LANDMARK_TYPE baseLandmarkType, LandmarkSaveData data) {
+    public BaseLandmark CreateLandmarkOfType(LandmarkSaveData data) {
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
 #if WORLD_CREATION_TOOL
@@ -353,25 +354,27 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         landmarkGO = CreateLandmarkObject(data.landmarkType);
 #endif
+        _landmarkOnTile = new BaseLandmark(this, data);
+        _landmarkOnTile.SetCivilianCount(data.civilianCount);
 
-        switch (baseLandmarkType) {
-            case BASE_LANDMARK_TYPE.SETTLEMENT:
-                _landmarkOnTile = new Settlement(this, data);
-                (_landmarkOnTile as Settlement).SetCivilianCount(data.civilianCount);
-                break;
-            case BASE_LANDMARK_TYPE.RESOURCE:
-                _landmarkOnTile = new ResourceLandmark(this, data);
-                break;
-            case BASE_LANDMARK_TYPE.DUNGEON:
-                _landmarkOnTile = new DungeonLandmark(this, data);
-                break;
-            case BASE_LANDMARK_TYPE.LAIR:
-                _landmarkOnTile = new LairLandmark(this, data);
-                break;
-            default:
-                _landmarkOnTile = new BaseLandmark(this, data);
-                break;
-        }
+        //switch (baseLandmarkType) {
+        //    case BASE_LANDMARK_TYPE.SETTLEMENT:
+        //        _landmarkOnTile = new Settlement(this, data);
+        //        (_landmarkOnTile as Settlement).SetCivilianCount(data.civilianCount);
+        //        break;
+        //    case BASE_LANDMARK_TYPE.RESOURCE:
+        //        _landmarkOnTile = new ResourceLandmark(this, data);
+        //        break;
+        //    case BASE_LANDMARK_TYPE.DUNGEON:
+        //        _landmarkOnTile = new DungeonLandmark(this, data);
+        //        break;
+        //    case BASE_LANDMARK_TYPE.LAIR:
+        //        _landmarkOnTile = new LairLandmark(this, data);
+        //        break;
+        //    default:
+        //        _landmarkOnTile = new BaseLandmark(this, data);
+        //        break;
+        //}
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;

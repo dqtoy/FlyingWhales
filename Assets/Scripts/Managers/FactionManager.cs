@@ -240,26 +240,26 @@ public class FactionManager : MonoBehaviour {
     public void GenerateFactionCharacters() {
         for (int i = 0; i < allTribes.Count; i++) {
             Tribe currTribe = allTribes[i];
-            for (int j = 0; j < currTribe.settlements.Count; j++) {
-                Settlement currSettlement = currTribe.settlements[j];
-                CreateInitialFactionCharacters(currTribe, currSettlement);
+            for (int j = 0; j < currTribe.ownedLandmarks.Count; j++) {
+                BaseLandmark currLandmark = currTribe.ownedLandmarks[j];
+                CreateInitialFactionCharacters(currTribe, currLandmark);
             }
             //CreateChieftainForFaction(currTribe);
         }
     }
-    private List<Region> GetElligibleRegionsForFaction(Faction faction) {
-        List<Region> elligibleRegions = new List<Region>();
-        for (int i = 0; i < faction.settlements.Count; i++) {
-			Region regionOfSettlement = faction.settlements[i].tileLocation.region;
-            for (int j = 0; j < regionOfSettlement.adjacentRegions.Count; j++) {
-                Region adjacentRegion = regionOfSettlement.adjacentRegions[j];
-                if (adjacentRegion.owner == null && !elligibleRegions.Contains(adjacentRegion)) {
-                    elligibleRegions.Add(adjacentRegion);
-                }
-            }
-        }
-        return elligibleRegions;
-    }
+   // private List<Region> GetElligibleRegionsForFaction(Faction faction) {
+   //     List<Region> elligibleRegions = new List<Region>();
+   //     for (int i = 0; i < faction.settlements.Count; i++) {
+			//Region regionOfSettlement = faction.settlements[i].tileLocation.region;
+   //         for (int j = 0; j < regionOfSettlement.adjacentRegions.Count; j++) {
+   //             Region adjacentRegion = regionOfSettlement.adjacentRegions[j];
+   //             if (adjacentRegion.owner == null && !elligibleRegions.Contains(adjacentRegion)) {
+   //                 elligibleRegions.Add(adjacentRegion);
+   //             }
+   //         }
+   //     }
+   //     return elligibleRegions;
+   // }
     private int GetInitialVillageCount(FACTION_SIZE size) {
         switch (size) {
             case FACTION_SIZE.SMALL:
@@ -281,7 +281,7 @@ public class FactionManager : MonoBehaviour {
     /*
      Initital tribes should have a chieftain and a village head.
          */
-    private void CreateInitialFactionCharacters(Faction faction, Settlement settlement) {
+    private void CreateInitialFactionCharacters(Faction faction, BaseLandmark landmark) {
         int numOfCharacters = Random.Range(1, 3); //Generate 1 to 3 characters in each Village with civilians, limit class based on technologies known by its Faction.
         //WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(settlement);
         WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
@@ -289,10 +289,10 @@ public class FactionManager : MonoBehaviour {
             //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
             CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
             CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-			ECS.Character newChar = settlement.CreateNewCharacter(faction.race, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
+			ECS.Character newChar = landmark.CreateNewCharacter(faction.race, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
 			//Initial Character tags
 			newChar.AssignInitialTags();
-            CharacterManager.Instance.EquipCharacterWithBestGear(settlement, newChar);
+            //CharacterManager.Instance.EquipCharacterWithBestGear(settlement, newChar);
         }
     }
 	private void EquipFullArmorSet(MATERIAL materialToUse, ECS.Character character){
@@ -318,7 +318,7 @@ public class FactionManager : MonoBehaviour {
         allFactions.Add(newFaction);
 #if !WORLD_CREATION_TOOL
         CreateRelationshipsForNewFaction(newFaction);
-        UpdateFactionOrderBy();
+        //UpdateFactionOrderBy();
 #endif
         //UIManager.Instance.UpdateFactionSummary();
         return newFaction;
@@ -336,7 +336,7 @@ public class FactionManager : MonoBehaviour {
         allFactions.Add(newFaction);
 #if !WORLD_CREATION_TOOL
         CreateRelationshipsForNewFaction(newFaction);
-        UpdateFactionOrderBy();
+        //UpdateFactionOrderBy();
 #endif
         //UIManager.Instance.UpdateFactionSummary();
         return newFaction;
@@ -491,24 +491,24 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    public void SetOrderBy(ORDER_BY orderBy) {
-        this.orderBy = orderBy;
-        UpdateFactionOrderBy();
-    }
-    public void UpdateFactionOrderBy() {
-        if (orderBy == ORDER_BY.CITIES) {
-            orderedFactions = majorFactions.OrderBy(x => x.settlements.Count).ToList();
-            orderedFactions.AddRange(minorFactions.OrderBy(x => x.settlements.Count));
-        } else if (orderBy == ORDER_BY.CHARACTERS) {
-            orderedFactions = majorFactions.OrderBy(x => x.characters.Count).ToList();
-            orderedFactions.AddRange(minorFactions.OrderBy(x => x.characters.Count));
-        }
-        //else if (orderBy == ORDER_BY.POPULATION) {
-        //    orderedFactions = majorFactions.OrderBy(x => x.totalPopulation).ToList();
-        //    orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalPopulation));
-        //} 
-        //UIManager.Instance.UpdateFactionSummary();
-    }
+    //public void SetOrderBy(ORDER_BY orderBy) {
+    //    this.orderBy = orderBy;
+    //    UpdateFactionOrderBy();
+    //}
+    //public void UpdateFactionOrderBy() {
+    //    if (orderBy == ORDER_BY.CITIES) {
+    //        orderedFactions = majorFactions.OrderBy(x => x.settlements.Count).ToList();
+    //        orderedFactions.AddRange(minorFactions.OrderBy(x => x.settlements.Count));
+    //    } else if (orderBy == ORDER_BY.CHARACTERS) {
+    //        orderedFactions = majorFactions.OrderBy(x => x.characters.Count).ToList();
+    //        orderedFactions.AddRange(minorFactions.OrderBy(x => x.characters.Count));
+    //    }
+    //    //else if (orderBy == ORDER_BY.POPULATION) {
+    //    //    orderedFactions = majorFactions.OrderBy(x => x.totalPopulation).ToList();
+    //    //    orderedFactions.AddRange(minorFactions.OrderBy(x => x.totalPopulation));
+    //    //} 
+    //    //UIManager.Instance.UpdateFactionSummary();
+    //}
     public Faction GetFactionBasedOnID(int id) {
         for (int i = 0; i < allFactions.Count; i++) {
             if (allFactions[i].id == id) {

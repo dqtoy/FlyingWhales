@@ -704,66 +704,18 @@ public enum ROAD_TYPE{
 	MINOR,
 	ALL,
 }
-public enum BASE_LANDMARK_TYPE {
-    NONE,
-    SETTLEMENT,
-    RESOURCE,
-    DUNGEON,
-    LAIR
-}
+//public enum BASE_LANDMARK_TYPE {
+//    NONE,
+//    SETTLEMENT,
+//    RESOURCE,
+//    DUNGEON,
+//    LAIR
+//}
 public enum LANDMARK_TAG {
     CAN_HUNT,
     CAN_SCAVENGE,
 }
 public enum LANDMARK_TYPE {
-    //CLAY,
-    //LIMESTONE,
-    //GRANITE,
-    //MARBLE,
-    //SILK,
-    //COTTON,
-    //FLAX,
-    //CORN,
-    //RICE,
-    //PIGMEAT,
-    //COWMEAT,
-    //GOATHIDE,
-    //DEERHIDE,
-    //BEHEMOTHHIDE,
-    //OAK,
-    //YEW,
-    //EBONY,
-    //IRON,
-    //COBALT,
-    //MITHRIL,
-    //   GOBLIN_CAMP,
-    //   ANCIENT_RUIN,
-    //   VAMPIRE_TOMB,
-    //   ANCIENT_REACTOR,
-    //   CAVE,
-    //   WILDLANDS,
-    //CITY,
-    //   PEASANT_HUT,
-    //CRATER,
-    //RITUAL_STONES,
-
-    //HAMLET,
-    //VILLAGE,
-    //TOWN,
-    //GOBLIN_CAMP,
-    //KINGS_CASTLE,
-    //WILDLANDS,
-    //CAVE,
-    //RITUAL_STONES,
-    //PEASANT_HUT,
-    //VAMPIRE_TOMB,
-    //ANCIENT_RUIN,
-    //ENCHANTED_GROVE,
-    //DARK_WOODS,
-    //MAGICAL_LAKE,
-    //MURKY_SWAMP,
-    //CRATER,
-
     DEMONIC_PORTAL,
     ELVEN_SETTLEMENT,
     HUMAN_SETTLEMENT,
@@ -778,6 +730,7 @@ public enum LANDMARK_TYPE {
     HUNTING_GROUNDS,
     ELVEN_HOUSES,
     HUMAN_HOUSES,
+    MONSTER_DEN
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,
@@ -1432,6 +1385,7 @@ public enum LEVEL {
 public enum AREA_TYPE {
     ELVEN_SETTLEMENT,
     HUMAN_SETTLEMENT,
+    WILDLANDS
 }
 public enum ELEMENT {
     NONE,

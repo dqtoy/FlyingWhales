@@ -13,8 +13,8 @@ public class CharacterRole {
     protected CHARACTER_ROLE _roleType;
     protected List<ACTION_ALIGNMENT> _allowedQuestAlignments;
     protected List<QUEST_TYPE> _allowedQuestTypes;
-	protected List<CharacterTask> _roleTasks;
-	protected CharacterTask _defaultRoleTask;
+	//protected List<CharacterTask> _roleTasks;
+	//protected CharacterTask _defaultRoleTask;
 	protected bool _cancelsAllOtherTasks;
 	protected bool _isRemoved;
     protected int _fullness, _energy, _fun, _prestige, _sanity, _safety;
@@ -36,12 +36,12 @@ public class CharacterRole {
     public List<QUEST_TYPE> allowedQuestTypes {
         get { return _allowedQuestTypes; }
     }
-	public List<CharacterTask> roleTasks {
-		get { return _roleTasks; }
-	}
-	public CharacterTask defaultRoleTask {
-		get { return _defaultRoleTask; }
-	}
+	//public List<CharacterTask> roleTasks {
+	//	get { return _roleTasks; }
+	//}
+	//public CharacterTask defaultRoleTask {
+	//	get { return _defaultRoleTask; }
+	//}
 	public bool cancelsAllOtherTasks {
 		get { return _cancelsAllOtherTasks; }
 	}
@@ -94,8 +94,8 @@ public class CharacterRole {
 		_cancelsAllOtherTasks = false;
 		_isRemoved = false;
         _allowedQuestTypes = new List<QUEST_TYPE>();
-		_roleTasks = new List<CharacterTask> ();
-		_roleTasks.Add (new RecruitFollowers (this._character, 5));
+		//_roleTasks = new List<CharacterTask> ();
+		//_roleTasks.Add (new RecruitFollowers (this._character, 5));
         _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
 
         _maxFullness = 1000;
@@ -124,32 +124,32 @@ public class CharacterRole {
 	#endregion
 
     #region Action Weights
-    public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
-		for (int i = 0; i < _roleTasks.Count; i++) {
-			CharacterTask currTask = _roleTasks[i];
-			if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
-				continue;
-			}
-			tasks.AddElement (currTask, currTask.GetSelectionWeight(_character));
-		}
-    }
+  //  public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
+		//for (int i = 0; i < _roleTasks.Count; i++) {
+		//	CharacterTask currTask = _roleTasks[i];
+		//	if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
+		//		continue;
+		//	}
+		//	tasks.AddElement (currTask, currTask.GetSelectionWeight(_character));
+		//}
+  //  }
     /*
      This is called once a characters _role variable is assigned
          */
     public virtual void OnAssignRole() { }
     #endregion
 
-	#region Role Tasks
-	public CharacterTask GetRoleTask(TASK_TYPE taskType){
-		for (int i = 0; i < _roleTasks.Count; i++) {
-			CharacterTask task = _roleTasks [i];
-			if(task.taskType == taskType){
-				return task;
-			}
-		}
-		return null;
-	}
-    #endregion
+	//#region Role Tasks
+	//public CharacterTask GetRoleTask(TASK_TYPE taskType){
+	//	for (int i = 0; i < _roleTasks.Count; i++) {
+	//		CharacterTask task = _roleTasks [i];
+	//		if(task.taskType == taskType){
+	//			return task;
+	//		}
+	//	}
+	//	return null;
+	//}
+    //#endregion
 
     #region Needs
     public void DepleteFullness() {

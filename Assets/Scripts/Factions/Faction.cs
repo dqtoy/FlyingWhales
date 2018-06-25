@@ -18,7 +18,7 @@ public class Faction {
     private Sprite _emblemBG;
     protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
-    protected List<Settlement> _settlements;
+    //protected List<Settlement> _settlements;
     protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
@@ -61,9 +61,9 @@ public class Faction {
     //public int totalPopulation {
     //    get { return settlements.Sum(x => x.totalPopulation); }
     //}
-    public List<Settlement> settlements {
-        get { return _settlements; }
-    }
+    //public List<Settlement> settlements {
+    //    get { return _settlements; }
+    //}
     public List<TECHNOLOGY> initialTechnologies {
         get { return _initialTechnologies; }
     }
@@ -117,7 +117,7 @@ public class Faction {
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
-        _settlements = new List<Settlement>();
+        //_settlements = new List<Settlement>();
         ConstructInititalTechnologies();
         //_activeQuests = new List<OldQuest.Quest>();
         //_internalQuestManager = new InternalQuestManager(this);
@@ -138,7 +138,7 @@ public class Faction {
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
-        _settlements = new List<Settlement>();
+        //_settlements = new List<Settlement>();
         ConstructInititalTechnologies();
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _warmongering = 0;
@@ -168,32 +168,32 @@ public class Faction {
     #endregion
 
     #region Settlements
-    public void AddSettlement(Settlement settlement) {
-        if (!_settlements.Contains(settlement)) {
-            _settlements.Add(settlement);
-            RecalculateFactionSize();
-            FactionManager.Instance.UpdateFactionOrderBy();
-        }
-    }
-    public void RemoveSettlement(Settlement settlement) {
-        _settlements.Remove(settlement);
-        RecalculateFactionSize();
-        FactionManager.Instance.UpdateFactionOrderBy();
-    }
+    //public void AddSettlement(Settlement settlement) {
+    //    if (!_settlements.Contains(settlement)) {
+    //        _settlements.Add(settlement);
+    //        RecalculateFactionSize();
+    //        FactionManager.Instance.UpdateFactionOrderBy();
+    //    }
+    //}
+    //public void RemoveSettlement(Settlement settlement) {
+    //    _settlements.Remove(settlement);
+    //    RecalculateFactionSize();
+    //    FactionManager.Instance.UpdateFactionOrderBy();
+    //}
     /*
      Recalculate the size of this faction given the 
      number of settlements it has.
          */
-    private void RecalculateFactionSize() {
-        int settlementCount = settlements.Count;
-        if (settlementCount < FactionManager.Instance.smallToMediumReq) {
-            _factionSize = FACTION_SIZE.SMALL;
-        } else if (settlementCount >= FactionManager.Instance.smallToMediumReq && settlementCount < FactionManager.Instance.mediumToLargeReq) {
-            _factionSize = FACTION_SIZE.MEDIUM;
-        } else if (settlementCount >= FactionManager.Instance.mediumToLargeReq) {
-            _factionSize = FACTION_SIZE.LARGE;
-        }
-    }
+    //private void RecalculateFactionSize() {
+    //    int settlementCount = settlements.Count;
+    //    if (settlementCount < FactionManager.Instance.smallToMediumReq) {
+    //        _factionSize = FACTION_SIZE.SMALL;
+    //    } else if (settlementCount >= FactionManager.Instance.smallToMediumReq && settlementCount < FactionManager.Instance.mediumToLargeReq) {
+    //        _factionSize = FACTION_SIZE.MEDIUM;
+    //    } else if (settlementCount >= FactionManager.Instance.mediumToLargeReq) {
+    //        _factionSize = FACTION_SIZE.LARGE;
+    //    }
+    //}
     #endregion
 
     #region Regions
@@ -309,20 +309,20 @@ public class Faction {
         }
         return null;
     }
-    public Settlement GetSettlementWithHighestPopulation() {
-        Settlement highestPopulationSettlement = null;
-        for (int i = 0; i < _settlements.Count; i++) {
-            Settlement settlement = _settlements[i];
-            if (highestPopulationSettlement == null) {
-                highestPopulationSettlement = settlement;
-            } else {
-                //if (settlement.civilians > highestPopulationSettlement.civilians) {
-                //    highestPopulationSettlement = settlement;
-                //}
-            }
-        }
-        return highestPopulationSettlement;
-	}
+ //   public Settlement GetSettlementWithHighestPopulation() {
+ //       Settlement highestPopulationSettlement = null;
+ //       for (int i = 0; i < _settlements.Count; i++) {
+ //           Settlement settlement = _settlements[i];
+ //           if (highestPopulationSettlement == null) {
+ //               highestPopulationSettlement = settlement;
+ //           } else {
+ //               //if (settlement.civilians > highestPopulationSettlement.civilians) {
+ //               //    highestPopulationSettlement = settlement;
+ //               //}
+ //           }
+ //       }
+ //       return highestPopulationSettlement;
+	//}
 	public bool IsAtWar(){
 		foreach (FactionRelationship factionRel in _relationships.Values) {
 			if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
@@ -400,21 +400,21 @@ public class Faction {
     #endregion
 
     #region Resources
-    internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material, Region exceptRegion = null) {
-        int count = 0;
-        for (int i = 0; i < settlements.Count; i++) {
-            Settlement currSettlement = settlements[i];
-			Region regionOfSettlement = currSettlement.tileLocation.region;
-            if(exceptRegion != null) {
-                if(regionOfSettlement.id == exceptRegion.id) {
-                    //Skip this region
-                    continue;
-                }
-            }
-            count += regionOfSettlement.GetActivelyHarvestedMaterialsOfType(material);
-        }
-        return count;
-    }
+   // internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material, Region exceptRegion = null) {
+   //     int count = 0;
+   //     for (int i = 0; i < settlements.Count; i++) {
+   //         Settlement currSettlement = settlements[i];
+			//Region regionOfSettlement = currSettlement.tileLocation.region;
+   //         if(exceptRegion != null) {
+   //             if(regionOfSettlement.id == exceptRegion.id) {
+   //                 //Skip this region
+   //                 continue;
+   //             }
+   //         }
+   //         count += regionOfSettlement.GetActivelyHarvestedMaterialsOfType(material);
+   //     }
+   //     return count;
+   // }
 	private void MaterialPreferences(){
 		List<MATERIAL> materialsList = (Utilities.GetEnumValues<MATERIAL>()).ToList();
 		materialsList.RemoveAt (0);

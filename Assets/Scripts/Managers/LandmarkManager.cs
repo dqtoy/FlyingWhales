@@ -15,7 +15,7 @@ public class LandmarkManager : MonoBehaviour {
 
     public int initialLandmarkCount;
 
-    public List<BaseLandmarkData> baseLandmarkData;
+    //public List<BaseLandmarkData> baseLandmarkData;
     public List<LandmarkData> landmarkData;
     public List<AreaData> areaData;
 
@@ -55,9 +55,9 @@ public class LandmarkManager : MonoBehaviour {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
         }
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, landmarkType);
+        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
+        //BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
+        BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
 #if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         //newLandmark.GenerateDiagonalLeftTiles();
@@ -83,9 +83,9 @@ public class LandmarkManager : MonoBehaviour {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
         }
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(baseLandmarkType, saveData);
+        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
+        //BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
+        BaseLandmark newLandmark = location.CreateLandmarkOfType(saveData);
 #if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         //newLandmark.GenerateDiagonalLeftTiles();
@@ -587,10 +587,10 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
-        LandmarkData landmarkData = GetLandmarkData(landmarkType);
-        return landmarkData.baseLandmarkType;
-    }
+    //public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
+    //    LandmarkData landmarkData = GetLandmarkData(landmarkType);
+    //    return landmarkData.baseLandmarkType;
+    //}
     public BaseLandmark GetLandmarkByID(int id) {
         List<BaseLandmark> allLandmarks = GetAllLandmarks();
         for (int i = 0; i < allLandmarks.Count; i++) {
@@ -641,44 +641,44 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarksOfType;
     }
-    public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
-        List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
-                    allLandmarksOfType.Add(currLandmark);
-                }
-            }
-        }
-        return allLandmarksOfType;
-    }
-    public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType, List<Region> except) {
-        List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if (except.Contains(currRegion)) {
-                continue; //skip
-            }
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
-                    allLandmarksOfType.Add(currLandmark);
-                }
-            }
-        }
-        return allLandmarksOfType;
-    }
-    public BaseLandmarkData GetBaseLandmarkData(BASE_LANDMARK_TYPE baseLandmarkType) {
-        for (int i = 0; i < baseLandmarkData.Count; i++) {
-            BaseLandmarkData currData = baseLandmarkData[i];
-            if (currData.baseLandmarkType == baseLandmarkType) {
-                return currData;
-            }
-        }
-        throw new System.Exception("There is no base landmark data for " + baseLandmarkType);
-    }
+    //public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
+    //    List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
+    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+    //        Region currRegion = GridMap.Instance.allRegions[i];
+    //        for (int j = 0; j < currRegion.landmarks.Count; j++) {
+    //            BaseLandmark currLandmark = currRegion.landmarks[j];
+    //            if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
+    //                allLandmarksOfType.Add(currLandmark);
+    //            }
+    //        }
+    //    }
+    //    return allLandmarksOfType;
+    //}
+    //public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType, List<Region> except) {
+    //    List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
+    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+    //        Region currRegion = GridMap.Instance.allRegions[i];
+    //        if (except.Contains(currRegion)) {
+    //            continue; //skip
+    //        }
+    //        for (int j = 0; j < currRegion.landmarks.Count; j++) {
+    //            BaseLandmark currLandmark = currRegion.landmarks[j];
+    //            if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
+    //                allLandmarksOfType.Add(currLandmark);
+    //            }
+    //        }
+    //    }
+    //    return allLandmarksOfType;
+    //}
+    //public BaseLandmarkData GetBaseLandmarkData(BASE_LANDMARK_TYPE baseLandmarkType) {
+    //    for (int i = 0; i < baseLandmarkData.Count; i++) {
+    //        BaseLandmarkData currData = baseLandmarkData[i];
+    //        if (currData.baseLandmarkType == baseLandmarkType) {
+    //            return currData;
+    //        }
+    //    }
+    //    throw new System.Exception("There is no base landmark data for " + baseLandmarkType);
+    //}
     public List<BaseLandmark> GetAllLandmarks(List<Region> regions = null) {
         List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
 #if WORLD_CREATION_TOOL

@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 namespace ECS {
-    public class Character : TaskCreator, ICharacter {
+    public class Character : ICharacter {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
@@ -72,7 +72,7 @@ namespace ECS {
         private Faction _faction;
         private Faction _attackedByFaction;
         private Party _party;
-        private QuestData _questData;
+        //private QuestData _questData;
         //private CharacterActionQueue<CharacterAction> _actionQueue;
         //private CharacterAction _currentAction;
         private ILocation _specificLocation;
@@ -132,8 +132,8 @@ namespace ECS {
         private ActionData _actionData;
         private ICharacterObject _characterObject;
 
-        //For Testing
-        public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
+        ////For Testing
+        //public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
 
         //private Dictionary<RESOURCE, int> _resourceInventory;
 
@@ -190,15 +190,15 @@ namespace ECS {
         public Party party {
             get { return _party; }
         }
-        public QuestData questData {
-            get { return _questData; }
-        }
-        public Quest currentQuest {
-            get { return _questData.activeQuest; }
-        }
-        public QuestPhase currentQuestPhase {
-            get { return _questData.GetQuestPhase(); }
-        }
+        //public QuestData questData {
+        //    get { return _questData; }
+        //}
+        //public Quest currentQuest {
+        //    get { return _questData.activeQuest; }
+        //}
+        //public QuestPhase currentQuestPhase {
+        //    get { return _questData.GetQuestPhase(); }
+        //}
         //public CharacterAction currentAction {
         //    get { return _actionData.currentAction; }
         //}
@@ -526,9 +526,9 @@ namespace ECS {
             _history = new List<Log>();
             _followers = new List<Character>();
             _isFollowerOf = null;
-            _questData = new QuestData(this);
+            //_questData = new QuestData(this);
             //_actionQueue = new CharacterActionQueue<CharacterAction>();
-            previousActions = new Dictionary<CharacterTask, string>();
+            //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
             _actionData = new ActionData(this);
 
@@ -875,9 +875,9 @@ namespace ECS {
 				if (_isFollower) {
 					SetFollowerState (false);
 				}
-                //Set Task to Fainted
-                Faint faintTask = new Faint(this);
-                faintTask.OnChooseTask(this)
+                ////Set Task to Fainted
+                //Faint faintTask = new Faint(this);
+                //faintTask.OnChooseTask(this)
 ;			}
 		}
 		internal void Unfaint(){
@@ -1094,7 +1094,7 @@ namespace ECS {
                 throw new Exception(this.name + " already has an instance of " + newItem.itemName);
             }
 			this._inventory.Add (newItem);
-			newItem.SetPossessor (this);
+			//newItem.SetPossessor (this);
 			if(newItem.owner == null){
 				OwnItem (newItem);
 			}
@@ -1114,7 +1114,7 @@ namespace ECS {
 			if(item.isEquipped){
 				UnequipItem (item);
 			}
-			item.SetPossessor (null);
+			//item.SetPossessor (null);
 			this._inventory.Remove (item);
 			//item.exploreWeight = 15;
 			if(addInLandmark){
@@ -1267,7 +1267,7 @@ namespace ECS {
 				newWeapon.isUnlimited = false;
 			}
 			AddEquippedItem(newWeapon);
-			newWeapon.SetPossessor (this);
+			//newWeapon.SetPossessor (this);
 			//newWeapon.ResetDurability();
 //			weapon.SetOwner(this);
 			if(newWeapon.owner == null){
@@ -1329,7 +1329,7 @@ namespace ECS {
 			bodyPartToEquip.AttachItem(newArmor, Utilities.GetNeededAttributeForArmor(newArmor));
 			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(newArmor);
-			newArmor.SetPossessor (this);
+			//newArmor.SetPossessor (this);
 			//newArmor.ResetDurability();
 //			armor.SetOwner(this);
 			if(newArmor.owner == null){
@@ -2319,13 +2319,13 @@ namespace ECS {
         /*
          Set a task that this character will accept next
              */
-        internal void SetTaskToDoNext(CharacterTask taskToDo) {
-            //nextTaskToDo = taskToDo;
-        }
-        private void LogActionWeights(WeightedDictionary<CharacterTask> actionWeights, CharacterTask chosenTask) {
-            actionWeights.LogDictionaryValues(this.name + " action weights!");
-            Debug.Log(this.name + "'s chosen task is " + chosenTask.taskType.ToString());
-        }
+        //internal void SetTaskToDoNext(CharacterTask taskToDo) {
+        //    //nextTaskToDo = taskToDo;
+        //}
+        //private void LogActionWeights(WeightedDictionary<CharacterTask> actionWeights, CharacterTask chosenTask) {
+        //    actionWeights.LogDictionaryValues(this.name + " action weights!");
+        //    Debug.Log(this.name + "'s chosen task is " + chosenTask.taskType.ToString());
+        //}
         #endregion
 
         #region Tags
@@ -2449,10 +2449,10 @@ namespace ECS {
         #endregion
 
         #region Task Management
-        public void SetCurrentQuest(Quest currentQuest) {
-            _questData.SetActiveQuest(currentQuest);
-            UIManager.Instance.UpdateCharacterInfo();
-        }
+        //public void SetCurrentQuest(Quest currentQuest) {
+        //    _questData.SetActiveQuest(currentQuest);
+        //    UIManager.Instance.UpdateCharacterInfo();
+        //}
 		//public void AddNewQuest(OldQuest.Quest quest) {
 		//	if (!_activeQuests.Contains(quest)) {
 		//		_activeQuests.Add(quest);
@@ -2488,40 +2488,40 @@ namespace ECS {
 		//	}
 		//	return quests;
 		//}
-		public List<CharacterTask> GetAllPossibleTasks(ILocation location){
-			List<CharacterTask> possibleTasks = new List<CharacterTask> ();
-            //Role Tasks
-			if(_role != null){
-				for (int i = 0; i < _role.roleTasks.Count; i++) {
-					CharacterTask currentTask = _role.roleTasks [i];
-					if(!currentTask.forGameOnly && currentTask.CanBeDone(this, location)){
-						possibleTasks.Add (currentTask);
-					}
-				}
-			}
-            //Tag tasks
-			if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {
-				for (int i = 0; i < _tags.Count; i++) {
-					for (int j = 0; j < _tags [i].tagTasks.Count; j++) {
-						CharacterTask currentTask = _tags [i].tagTasks [j];
-						if (!currentTask.forGameOnly && currentTask.CanBeDone (this, location)) {
-							possibleTasks.Add (currentTask);
-						}
-					}
-				}
-				//Quest Tasks
-				if (currentQuest != null) {
-					for (int i = 0; i < _questData.tasks.Count; i++) {
-						CharacterTask currentTask = _questData.tasks [i];
-						if (!currentTask.forGameOnly && !currentTask.isDone && currentTask.CanBeDone (this, location)) {
-							possibleTasks.Add (currentTask);
-						}
-					}
-				}
-			}
+		//public List<CharacterTask> GetAllPossibleTasks(ILocation location){
+		//	List<CharacterTask> possibleTasks = new List<CharacterTask> ();
+  //          //Role Tasks
+		//	if(_role != null){
+		//		for (int i = 0; i < _role.roleTasks.Count; i++) {
+		//			CharacterTask currentTask = _role.roleTasks [i];
+		//			if(!currentTask.forGameOnly && currentTask.CanBeDone(this, location)){
+		//				possibleTasks.Add (currentTask);
+		//			}
+		//		}
+		//	}
+  //          //Tag tasks
+		//	if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {
+		//		for (int i = 0; i < _tags.Count; i++) {
+		//			for (int j = 0; j < _tags [i].tagTasks.Count; j++) {
+		//				CharacterTask currentTask = _tags [i].tagTasks [j];
+		//				if (!currentTask.forGameOnly && currentTask.CanBeDone (this, location)) {
+		//					possibleTasks.Add (currentTask);
+		//				}
+		//			}
+		//		}
+		//		//Quest Tasks
+		//		if (currentQuest != null) {
+		//			for (int i = 0; i < _questData.tasks.Count; i++) {
+		//				CharacterTask currentTask = _questData.tasks [i];
+		//				if (!currentTask.forGameOnly && !currentTask.isDone && currentTask.CanBeDone (this, location)) {
+		//					possibleTasks.Add (currentTask);
+		//				}
+		//			}
+		//		}
+		//	}
 
-			return possibleTasks;
-		}
+		//	return possibleTasks;
+		//}
         #endregion
 
         #region Utilities
@@ -2576,31 +2576,31 @@ namespace ECS {
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
         }
-        public Settlement GetNearestNonHostileSettlement() {
-			if(faction != null){
-				List<Faction> nonHostileFactions = faction.GetMajorFactionsWithRelationshipStatus
-					(new List<RELATIONSHIP_STATUS>() { RELATIONSHIP_STATUS.FRIENDLY, RELATIONSHIP_STATUS.NEUTRAL });
+   //     public Settlement GetNearestNonHostileSettlement() {
+			//if(faction != null){
+			//	List<Faction> nonHostileFactions = faction.GetMajorFactionsWithRelationshipStatus
+			//		(new List<RELATIONSHIP_STATUS>() { RELATIONSHIP_STATUS.FRIENDLY, RELATIONSHIP_STATUS.NEUTRAL });
 
-				List<Settlement> settlements = new List<Settlement>();
-				nonHostileFactions.ForEach(x => settlements.AddRange(x.settlements));
-				settlements.AddRange(_faction.settlements); //Add the settlements of the faction that this character belongs to
+			//	List<Settlement> settlements = new List<Settlement>();
+			//	nonHostileFactions.ForEach(x => settlements.AddRange(x.settlements));
+			//	settlements.AddRange(_faction.settlements); //Add the settlements of the faction that this character belongs to
 
-				settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.tileLocation));
+			//	settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.tileLocation));
 
-				return settlements.First();
-			}
-			return null;
-        }
-        public Settlement GetNearestSettlementFromFaction() {
-            if(this.faction != null) {
-                List<Settlement> factionSettlements = new List<Settlement>(faction.settlements);
-                if (factionSettlements.Count > 0) {
-					factionSettlements.OrderBy(x => this.currLocation.GetDistanceTo(x.tileLocation)).ToList();
-                    return factionSettlements[0];
-                }
-            }
-            return null;
-        }
+			//	return settlements.First();
+			//}
+			//return null;
+   //     }
+     //   public Settlement GetNearestSettlementFromFaction() {
+     //       if(this.faction != null) {
+     //           List<Settlement> factionSettlements = new List<Settlement>(faction.settlements);
+     //           if (factionSettlements.Count > 0) {
+					//factionSettlements.OrderBy(x => this.currLocation.GetDistanceTo(x.tileLocation)).ToList();
+     //               return factionSettlements[0];
+     //           }
+     //       }
+     //       return null;
+     //   }
         public BaseLandmark GetNearestLandmarkWithoutHostiles() {
             Region currRegionLocation = specificLocation.tileLocation.region;
             List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.landmarks);
@@ -2640,16 +2640,16 @@ namespace ECS {
 
             return null;
         }
-        public bool HasRelevanceToQuest(BaseLandmark landmark) {
-            if (currentQuest != null) {
-                for (int i = 0; i < questData.tasks.Count; i++) {
-                    if (questData.tasks[i].targetLocation == landmark) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+        //public bool HasRelevanceToQuest(BaseLandmark landmark) {
+        //    if (currentQuest != null) {
+        //        for (int i = 0; i < questData.tasks.Count; i++) {
+        //            if (questData.tasks[i].targetLocation == landmark) {
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
         public void CenterOnCharacter() {
             if (!this.isDead) {
                 CameraMove.Instance.CenterCameraOn(specificLocation.tileLocation.gameObject);

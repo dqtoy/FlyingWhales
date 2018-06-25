@@ -6,7 +6,7 @@ public class CharacterTag {
 	protected ECS.Character _character;
 	protected string _tagName;
 	protected CHARACTER_TAG _tagType;
-	protected List<CharacterTask> _tagTasks;
+	//protected List<CharacterTask> _tagTasks;
 	protected StatsModifierPercentage _statsModifierPercentage;
 	protected bool _isRemoved;
 
@@ -20,9 +20,9 @@ public class CharacterTag {
 	public ECS.Character character{
 		get { return _character; }
 	}
-	public List<CharacterTask> tagTasks {
-		get { return _tagTasks; }
-	}
+	//public List<CharacterTask> tagTasks {
+	//	get { return _tagTasks; }
+	//}
 	public StatsModifierPercentage statsModifierPercentage {
 		get { return _statsModifierPercentage; }
 	}
@@ -35,22 +35,22 @@ public class CharacterTag {
 		_character = character;
 		_tagType = tagType;
 		_tagName = Utilities.NormalizeStringUpperCaseFirstLetters (_tagType.ToString ());
-		_tagTasks = new List<CharacterTask> ();
+		//_tagTasks = new List<CharacterTask> ();
 		_statsModifierPercentage = new StatsModifierPercentage ();
 		_isRemoved = false;
 	}
 
 	#region Virtuals
 	public virtual void Initialize(){}
-	public virtual void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> tasks) {
-		for (int i = 0; i < _tagTasks.Count; i++) {
-			CharacterTask currTask = _tagTasks[i];
-			if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
-				continue;
-			}
-			tasks.AddElement (currTask, currTask.GetSelectionWeight(_character));
-		}
-	}
+	//public virtual void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> tasks) {
+	//	for (int i = 0; i < _tagTasks.Count; i++) {
+	//		CharacterTask currTask = _tagTasks[i];
+	//		if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
+	//			continue;
+	//		}
+	//		tasks.AddElement (currTask, currTask.GetSelectionWeight(_character));
+	//	}
+	//}
     /*
      What should happen when a tag is removed
          */
@@ -60,13 +60,13 @@ public class CharacterTag {
     public virtual void PerformDailyAction() {}
 	#endregion
 
-    public CharacterTask GetTask(TASK_TYPE taskType) {
-        for (int i = 0; i < _tagTasks.Count; i++) {
-            CharacterTask currTask = _tagTasks[i];
-            if (currTask.taskType == taskType) {
-                return currTask;
-            }
-        }
-        return null;
-    }
+    //public CharacterTask GetTask(TASK_TYPE taskType) {
+    //    for (int i = 0; i < _tagTasks.Count; i++) {
+    //        CharacterTask currTask = _tagTasks[i];
+    //        if (currTask.taskType == taskType) {
+    //            return currTask;
+    //        }
+    //    }
+    //    return null;
+    //}
 }
