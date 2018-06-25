@@ -59,7 +59,7 @@ namespace worldcreator {
 
         public void ShowCharacterInfo(Character character) {
             _character = character;
-            portrait.GeneratePortrait(_character);
+            portrait.GeneratePortrait(_character, IMAGE_SIZE.X256);
             //UpdatePortraitControls();
             UpdateBasicInfo();
             LoadRelationships();
@@ -97,7 +97,7 @@ namespace worldcreator {
             string chosenTemplateName = templatesDropdown.options[choice].text;
             PortraitSettings chosenSettings = portraitTemplates[chosenTemplateName];
             _character.SetPortraitSettings(chosenSettings);
-            portrait.GeneratePortrait(_character);
+            portrait.GeneratePortrait(_character, IMAGE_SIZE.X256);
         }
         //public void ApplyPortraitTemplate() {
         //    string chosenTemplateName = templatesDropdown.options[templatesDropdown.value].text;

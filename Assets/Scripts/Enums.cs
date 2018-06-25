@@ -1419,6 +1419,11 @@ public enum PASSABLE_TYPE {
     OPEN
 }
 
+public enum IMAGE_SIZE {
+    X64,
+    X256,
+}
+
 public enum LEVEL {
     HIGH,
     AVERAGE,

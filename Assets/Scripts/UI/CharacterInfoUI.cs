@@ -132,7 +132,7 @@ public class CharacterInfoUI : UIMenu {
         //UpdateAllHistoryInfo ();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(currentlyShowingCharacter);
+        characterPortrait.GeneratePortrait(currentlyShowingCharacter, IMAGE_SIZE.X256);
     }
     private void UpdateBasicInfo() {
         string text = string.Empty;

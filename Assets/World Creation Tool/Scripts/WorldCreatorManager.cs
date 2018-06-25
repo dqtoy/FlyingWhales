@@ -38,6 +38,9 @@ namespace worldcreator {
             Instance = this;
             allRegions = new List<Region>();
         }
+        private void Start() {
+            DataConstructor.Instance.InitializeData();
+        }
         private void Update() {
             HighlightAreas();
         }
@@ -90,7 +93,7 @@ namespace worldcreator {
             //CameraMove.Instance.SetWholemapCameraValues();
             //ObjectManager.Instance.Initialize();
             WorldCreatorUI.Instance.InitializeMenus();
-            DataConstructor.Instance.InitializeData();
+            //DataConstructor.Instance.InitializeData();
             ECS.CombatManager.Instance.Initialize();
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
@@ -142,7 +145,7 @@ namespace worldcreator {
 
             //ObjectManager.Instance.Initialize();
             WorldCreatorUI.Instance.InitializeMenus();
-            DataConstructor.Instance.InitializeData();
+            //DataConstructor.Instance.InitializeData();
             ECS.CombatManager.Instance.Initialize();
             LoadRegions(data);
             FactionManager.Instance.LoadFactions(data);

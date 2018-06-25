@@ -19,6 +19,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
     [SerializeField] private Stepper noseStepper;
     [SerializeField] private Stepper mouthStepper;
     [SerializeField] private Stepper eyebrowsStepper;
+    [SerializeField] private Stepper bodyStepper;
     [SerializeField] private ColorPickerControl hairColorPicker;
     [SerializeField] private Image hairColorImage;
     [SerializeField] private InputField fileNameField;
@@ -34,15 +35,16 @@ public class CharacterPortraitEditor : MonoBehaviour {
 
     #region Portrait Editor
     private void UpdateVisuals() {
-        portrait.GeneratePortrait(portraitSettings);
+        portrait.GeneratePortrait(portraitSettings, IMAGE_SIZE.X256);
     }
     private void SetStepperValues() {
-        headStepper.maximum = CharacterManager.Instance.headSprites.Count - 1;
-        hairStepper.maximum = CharacterManager.Instance.hairSettings.Count - 1;
-        eyesStepper.maximum = CharacterManager.Instance.eyeSprites.Count - 1;
-        noseStepper.maximum = CharacterManager.Instance.noseSprites.Count - 1;
-        mouthStepper.maximum = CharacterManager.Instance.mouthSprites.Count - 1;
-        eyebrowsStepper.maximum = CharacterManager.Instance.eyeBrowSprites.Count - 1;
+        headStepper.maximum = CharacterManager.Instance.headSpriteCount - 1;
+        hairStepper.maximum = CharacterManager.Instance.hairSpriteCount - 1;
+        eyesStepper.maximum = CharacterManager.Instance.eyeSpriteCount - 1;
+        noseStepper.maximum = CharacterManager.Instance.noseSpriteCount - 1;
+        mouthStepper.maximum = CharacterManager.Instance.mouthSpriteCount - 1;
+        eyebrowsStepper.maximum = CharacterManager.Instance.eyebrowSpriteCount - 1;
+        bodyStepper.maximum = CharacterManager.Instance.bodySpriteCount - 1;
     }
     private void UpdatePortraitControls() {
         headStepper.SetStepperValue(portraitSettings.headIndex);
@@ -51,6 +53,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         noseStepper.SetStepperValue(portraitSettings.noseIndex);
         mouthStepper.SetStepperValue(portraitSettings.mouthIndex);
         eyebrowsStepper.SetStepperValue(portraitSettings.eyeBrowIndex);
+        bodyStepper.SetStepperValue(portraitSettings.bodyIndex);
         hairColorImage.color = portraitSettings.hairColor;
         hairColorPicker.CurrentColor = portraitSettings.hairColor;
     }
@@ -80,6 +83,10 @@ public class CharacterPortraitEditor : MonoBehaviour {
     public void UpdateEyebrows(int index) {
         portrait.SetEyebrows(index);
         portraitSettings.eyeBrowIndex = index;
+    }
+    public void UpdateBody(int index) {
+        portrait.SetBody(index);
+        portraitSettings.bodyIndex = index;
     }
     public void UpdateHairColor(Color color) {
         portrait.SetHairColor(color);

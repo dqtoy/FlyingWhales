@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 
     private ECS.Character _character;
+    private IMAGE_SIZE _imgSize;
+    private bool _ignoreSize;
+
 
     [Header("Head")]
     [SerializeField] private Image head;
@@ -25,8 +28,14 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
     [SerializeField] private Image hair;
     [SerializeField] private Image hairBack;
 
-    public void GeneratePortrait(ECS.Character character) {
+    [Header("Body")]
+    [SerializeField] private Image body;
+
+    public void GeneratePortrait(ECS.Character character, IMAGE_SIZE imgSize, bool ignoreSize = false) {
         _character = character;
+        _ignoreSize = ignoreSize;
+        SetImageSize(imgSize, ignoreSize);
+        SetBody(character.portraitSettings.bodyIndex);
         SetHead(character.portraitSettings.headIndex);
         SetEyes(character.portraitSettings.eyesIndex);
         SetEyebrows(character.portraitSettings.eyesIndex);
@@ -35,7 +44,10 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         SetHair(character.portraitSettings.hairIndex);
         SetHairColor(character.portraitSettings.hairColor);
     }
-    public void GeneratePortrait(PortraitSettings portraitSettings) {
+    public void GeneratePortrait(PortraitSettings portraitSettings, IMAGE_SIZE imgSize, bool ignoreSize = false) {
+        _ignoreSize = ignoreSize;
+        SetImageSize(imgSize, ignoreSize);
+        SetBody(portraitSettings.bodyIndex);
         SetHead(portraitSettings.headIndex);
         SetEyes(portraitSettings.eyesIndex);
         SetEyebrows(portraitSettings.eyesIndex);
@@ -70,31 +82,58 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 
 
     public void SetHair(int index) {
-        HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[index];
-        hair.sprite = chosenHairSettings.hairSprite;
-        if (chosenHairSettings.hairBackSprite == null) {
-            hairBack.sprite = chosenHairSettings.hairSprite;
-        } else {
-            hairBack.sprite = chosenHairSettings.hairBackSprite;
+        //HairSetting chosenHairSettings = CharacterManager.Instance.hairSettings[index];
+        Sprite hairSprite = CharacterManager.Instance.GetHairSprite(index, _imgSize);
+        hair.sprite = hairSprite;
+        hairBack.sprite = null;
+        if (!_ignoreSize) {
+            hair.SetNativeSize();
+            hairBack.SetNativeSize();
         }
+        //if (chosenHairSettings.hairBackSprite == null) {
+        //    hairBack.sprite = chosenHairSettings.hairSprite;
+        //} else {
+        //    hairBack.sprite = chosenHairSettings.hairBackSprite;
+        //}
     }
     public void SetHead(int index) {
-        Sprite headSprite = CharacterManager.Instance.headSprites[index];
+        Sprite headSprite = CharacterManager.Instance.GetHeadSprite(index, _imgSize);
         head.sprite = headSprite;
+        if (!_ignoreSize) {
+            head.SetNativeSize();
+        }
     }
     public void SetEyes(int index) {
-        Sprite eyeSprite = CharacterManager.Instance.eyeSprites[index];
+        Sprite eyeSprite = CharacterManager.Instance.GetEyeSprite(index, _imgSize);
         eyes.sprite = eyeSprite;
+        if (!_ignoreSize) {
+            eyes.SetNativeSize();
+        }
     }
     public void SetEyebrows(int index) {
-        Sprite eyeBrowSprite = CharacterManager.Instance.eyeBrowSprites[index];
+        Sprite eyeBrowSprite = CharacterManager.Instance.GetEyebrowSprite(index, _imgSize);
         eyebrows.sprite = eyeBrowSprite;
+        if (!_ignoreSize) {
+            eyebrows.SetNativeSize();
+        }
     }
     public void SetNose(int index) {
-        nose.sprite = CharacterManager.Instance.noseSprites[index];
+        nose.sprite = CharacterManager.Instance.GetNoseSprite(index, _imgSize);
+        if (!_ignoreSize) {
+            nose.SetNativeSize();
+        }
     }
     public void SetMouth(int index) {
-        mouth.sprite = CharacterManager.Instance.mouthSprites[index];
+        mouth.sprite = CharacterManager.Instance.GetMouthSprite(index, _imgSize);
+        if (!_ignoreSize) {
+            mouth.SetNativeSize();
+        }
+    }
+    public void SetBody(int index) {
+        body.sprite = CharacterManager.Instance.GetBodySprite(index, _imgSize);
+        if (!_ignoreSize) {
+            body.SetNativeSize();
+        }
     }
     public void SetHairColor(Color hairColor) {
         hair.color = hairColor;
@@ -102,5 +141,21 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
     }
     public Color GetHairColor() {
         return hair.color;
+    }
+
+    private void SetImageSize(IMAGE_SIZE imgSize, bool ignoreSize) {
+        _imgSize = imgSize;
+        if (!ignoreSize) {
+            switch (imgSize) {
+                case IMAGE_SIZE.X64:
+                    (this.transform as RectTransform).sizeDelta = new Vector2(64f, 64f);
+                    break;
+                case IMAGE_SIZE.X256:
+                    (this.transform as RectTransform).sizeDelta = new Vector2(256f, 256f);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
