@@ -16,7 +16,7 @@ public class MonsterObj : IObject, ICharacterObject {
     private BaseLandmark _objectLocation;
 
     #region getters/setters
-    public ICharacter character {
+    public ICharacter icharacter {
         get { return _monster; }
     }
     public string objectName {
