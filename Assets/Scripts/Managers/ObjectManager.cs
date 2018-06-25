@@ -254,9 +254,13 @@ public class ObjectManager : MonoBehaviour {
             case ACTION_TYPE.PRAY:
                 return new PrayAction(state);
             case ACTION_TYPE.ATTACK:
-            return new AttackAction(state);
+                return new AttackAction(state);
             case ACTION_TYPE.JOIN_BATTLE:
-            return new JoinBattleAction(state);
+                return new JoinBattleAction(state);
+            case ACTION_TYPE.GO_HOME:
+                return new GoHomeAction(state);
+            case ACTION_TYPE.RELEASE:
+                return new ReleaseAction(state);
         }
         return null;
     }

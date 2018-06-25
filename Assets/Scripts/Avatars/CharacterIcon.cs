@@ -271,7 +271,7 @@ public class CharacterIcon : MonoBehaviour {
             if (other.tag == "Character" && _character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
                 AttackAction attackAction = _character.actionData.currentAction as AttackAction;
                 CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                if (attackAction.characterObj.character.id == enemy.character.id) {
+                if (attackAction.characterObj.icharacter.id == enemy.character.id) {
                     _character.actionData.DoAction();
                 }
             }

@@ -17,7 +17,10 @@ public class CharacterObj : IObject, ICharacterObject {
     private BaseLandmark _objectLocation;
 
     #region getters/setters
-    public ICharacter character {
+    public ICharacter icharacter {
+        get { return _character; }
+    }
+    public Character character {
         get { return _character; }
     }
     public string objectName {
