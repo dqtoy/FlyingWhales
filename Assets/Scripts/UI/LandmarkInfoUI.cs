@@ -75,7 +75,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     public override void HideMenu() {
         base.HideMenu();
-        SetAttackButtonState(false);
+        //SetAttackButtonState(false);
         //HidePlayerActions();
     }
     public override void SetData(object data) {
@@ -380,25 +380,25 @@ public class LandmarkInfoUI : UIMenu {
     private void ShowAttackButton() {
         BaseLandmark landmark = currentlyShowingLandmark;
         if (!landmark.isAttackingAnotherLandmark) {
-            if ((landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT || landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT)
-                && landmark.landmarkObj.currentState.stateName == "Ready") {
-
+            if (landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.GARRISON && landmark.landmarkObj.currentState.stateName == "Ready") {
                 attackButtonGO.SetActive(true);
+                attackBtnToggle.isOn = false;
+                isWaitingForAttackTarget = false;
             } else {
                 attackButtonGO.SetActive(false);
             }
         } else {
             attackButtonGO.SetActive(false);
         }
-        SetAttackButtonState(false);
+        //SetAttackButtonState(false);
     }
     public void ToggleAttack() {
         isWaitingForAttackTarget = !isWaitingForAttackTarget;
-        attackBtnToggle.isOn = !attackBtnToggle.isOn;
+        //attackBtnToggle.isOn = !attackBtnToggle.isOn;
     }
-    public void SetAttackButtonState(bool state) {
+    public void SetWaitingForAttackState(bool state) {
         isWaitingForAttackTarget = state;
-        attackBtnToggle.isOn = state;
+        //attackBtnToggle.isOn = state; 
     }
     public void SetActiveAttackButtonGO(bool state) {
         attackButtonGO.SetActive(state);

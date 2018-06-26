@@ -144,13 +144,13 @@ public class StructureObjectComponent : ObjectComponent {
     }
     #endregion
 
-    #region Garrison
-    public void ReduceCooldown(IObject obj) {
-        if (obj is Garrison) {
-            (obj as Garrison).AdjustCooldown(-1);
-        }
-    }
-    #endregion
+    //#region Garrison
+    //public void ReduceCooldown(IObject obj) {
+    //    if (obj is Garrison) {
+    //        (obj as Garrison).AdjustCooldown(-1);
+    //    }
+    //}
+    //#endregion
 
     #region Monster Den
     public void ReduceSpawnCooldown(IObject obj) {

@@ -250,20 +250,26 @@ public class StructureObj : IObject {
 
     #region Attack Landmark
     public void AttackLandmark(BaseLandmark targetLandmark) {
-        int armyCount = GetArmyTotal();
-        if(armyCount > 0) {
-            this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
-            Army newArmy = new Army(this.objectLocation, armyCount);
-            newArmy.SetTarget(targetLandmark);
-        }
-    }
-    public bool CanAttack(BaseLandmark landmark) {
-        if(this.objectLocation.owner != null && landmark.owner != null) {
-            if(this.objectLocation.owner.id == landmark.owner.id) {
-                return false;
+        if (this is Garrison) {
+            int armyCount = (this as Garrison).armyStrength;
+            if (armyCount > 0) {
+                this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
+                Army newArmy = new Army(this.objectLocation, armyCount);
+                newArmy.SetTarget(targetLandmark);
             }
         }
-        return true;
+        
+    }
+    public bool CanAttack(BaseLandmark landmark) {
+        //if(this.objectLocation.owner != null && landmark.owner != null) {
+        //    if(this.objectLocation.owner.id == landmark.owner.id) {
+        //        return false;
+        //    }
+        //}
+        if (this is Garrison) {
+            return true;
+        }
+        return false;
     }
 
     //Gets the total number of civilians and multiply it with army percentage to get the army count needed to attack

@@ -1154,7 +1154,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                         //Attack landmark;
                         Debug.Log(UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
                         UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
-                        UIManager.Instance.landmarkInfoUI.SetAttackButtonState(false);
+                        UIManager.Instance.landmarkInfoUI.SetWaitingForAttackState(false);
                         UIManager.Instance.landmarkInfoUI.SetActiveAttackButtonGO(false);
                         return;
                     } else {
