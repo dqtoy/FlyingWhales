@@ -18,22 +18,22 @@ public class CharacterClick : MonoBehaviour {
             return;
         }
         if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-            CharacterAction attackAction = icon.character.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+            CharacterAction attackAction = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
             if (attackAction.CanBeDone() && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
                 UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
                 UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
                 return;
             }
         }else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
-            CharacterAction joinBattleAction = icon.character.characterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
+            CharacterAction joinBattleAction = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
             if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
                 UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(joinBattleAction);
                 UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
                 return;
             }
         }
-        if (icon.character is ECS.Character) {
-            UIManager.Instance.ShowCharacterInfo(icon.character as ECS.Character);
+        if (icon.icharacter is ECS.Character) {
+            UIManager.Instance.ShowCharacterInfo(icon.icharacter as ECS.Character);
         }
         
     }

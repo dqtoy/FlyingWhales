@@ -5,7 +5,7 @@ using UnityEngine;
 using ECS;
 
 [System.Serializable]
-public class CharacterObj : IObject, ICharacterObject {
+public class CharacterObj : ICharacterObject {
     private OBJECT_TYPE _objectType;
     private bool _isInvisible;
     private List<ObjectState> _states;

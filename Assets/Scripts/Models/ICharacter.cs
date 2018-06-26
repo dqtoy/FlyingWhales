@@ -22,6 +22,7 @@ public interface ICharacter {
     string name { get; }
     float critChance { get; }
     float critDamage { get; }
+    float computedPower { get; }
     bool isDead { get; }
     GENDER gender { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
@@ -32,7 +33,7 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
-    ICharacterObject characterObject { get; }
+    ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
 
     //functions

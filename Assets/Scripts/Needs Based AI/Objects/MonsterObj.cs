@@ -5,7 +5,7 @@ using UnityEngine;
 using ECS;
 
 [System.Serializable]
-public class MonsterObj : IObject, ICharacterObject {
+public class MonsterObj : ICharacterObject {
     private OBJECT_TYPE _objectType;
     private bool _isInvisible;
     private List<ObjectState> _states;
