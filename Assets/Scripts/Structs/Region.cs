@@ -76,7 +76,7 @@ public class Region : IHasNeighbours<Region> {
     internal List<HexTile> tilesWithMaterials {
         get { return _tilesWithMaterials; }
     }
-    internal List<ECS.Character> charactersInRegion {
+    internal List<ICharacter> charactersInRegion {
         get { return GetCharactersInRegion(); }
     }
     internal int numOfCharactersInLandmarks {
@@ -507,8 +507,8 @@ public class Region : IHasNeighbours<Region> {
 #endregion
 
 #region Utilities
-    private List<ECS.Character> GetCharactersInRegion() {
-        List<ECS.Character> characters = new List<ECS.Character>();
+    private List<ICharacter> GetCharactersInRegion() {
+        List<ICharacter> characters = new List<ICharacter>();
         for (int i = 0; i < tilesInRegion.Count; i++) {
             HexTile currTile = tilesInRegion[i];
             characters.AddRange(currTile.charactersAtLocation.Select(x => x));

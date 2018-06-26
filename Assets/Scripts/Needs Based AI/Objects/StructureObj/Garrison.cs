@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class Garrison : StructureObj {
 
-    public int cooldown;
+    //public int cooldown;
+
+    public int armyStrength { //Army Strength is 25% of the linked Settlement's Civilian Count
+        get { return this.objectLocation.tileLocation.areaOfTile == null ? 0 : (int)(this.objectLocation.tileLocation.areaOfTile.totalCivilians * 0.25f); }
+    }
 
     public Garrison() {
         _specificObjectType = SPECIFIC_OBJECT_TYPE.GARRISON;
@@ -17,24 +21,34 @@ public class Garrison : StructureObj {
         SetCommonData(clone);
         return clone;
     }
-    #endregion
-
-    public void AdjustCooldown(int adjustment) {
-        cooldown += adjustment;
-        if (cooldown == 0) {
-            if (_currentState.stateName == "Preparing") {
-                ObjectState readyState = GetState("Ready");
-                ChangeState(readyState);
-                ResetCooldown();
-            }
-        } else if (cooldown == 30) {
-            if (_currentState.stateName == "Ready") {
-                ObjectState preparingState = GetState("Preparing");
-                ChangeState(preparingState);
-            }
+    public override void StartState(ObjectState state) {
+        base.StartState(state);
+        if (state.stateName == "Corrupted") { //When state changes to Corrupted, add 100 Corruption Value.
+            //ScheduleDoneTraining();
+        }else if (state.stateName == "Training") {
+            ScheduleDoneTraining();
         }
     }
-    public void ResetCooldown() {
-        cooldown = 30;
+    #endregion
+
+    #region Utilities
+    private void ScheduleDoneTraining() {
+        GameDate readyDate = GameManager.Instance.Today();
+        readyDate.AddHours(5); // 1 week 336
+        SchedulingManager.Instance.AddEntry(readyDate, DoneTraining);
     }
+    private void DoneTraining() {
+        if (_currentState.stateName == "Training") {
+            ObjectState readyState = GetState("Ready");
+            ChangeState(readyState);
+        }
+    }
+    public void CommenceTraining() {
+        if (_currentState.stateName == "Ready") {
+            ObjectState trainingState = GetState("Training");
+            ChangeState(trainingState);
+        }
+    }
+    #endregion
+
 }

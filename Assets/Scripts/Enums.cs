@@ -1284,6 +1284,7 @@ public enum ACTION_TYPE {
     JOIN_BATTLE,
     GO_HOME,
     RELEASE,
+    CLEANSE,
 }
 
 public enum OBJECT_TYPE {
@@ -1353,7 +1354,7 @@ public enum SPECIFIC_OBJECT_TYPE {
     HUNTING_GROUNDS,
     ELVEN_HOUSES,
     HUMAN_HOUSES,
-    MONSTER_DEN,
+    MONSTER_DEN
 }
 
 public enum PREREQUISITE {
@@ -1386,7 +1387,8 @@ public enum LEVEL {
 public enum AREA_TYPE {
     ELVEN_SETTLEMENT,
     HUMAN_SETTLEMENT,
-    WILDLANDS
+    WILDLANDS,
+    DEMONIC_INTRUSION, //Player area
 }
 public enum ELEMENT {
     NONE,

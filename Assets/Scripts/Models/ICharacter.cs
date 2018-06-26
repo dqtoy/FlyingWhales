@@ -19,6 +19,7 @@ public interface ICharacter {
     int currentSP { get; }
     int numOfAttackers { get; set; }
     string coloredUrlName { get; }
+    string urlName { get; }
     string name { get; }
     float critChance { get; }
     float critDamage { get; }
@@ -36,6 +37,8 @@ public interface ICharacter {
     List<BodyPart> bodyParts { get; }
     ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
+    PortraitSettings portraitSettings { get; }
+    CharacterIcon icon { get; }
 
     //functions
     void SetSide(ECS.SIDES side);

@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class MonsterSaveData {
 
+    public int id;
     public string monsterName;
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
 
     public MonsterSaveData(Monster monster) {
+        id = monster.id;
         monsterName = monster.name;
         locationType = monster.specificLocation.locIdentifier;
         locationID = monster.specificLocation.id;

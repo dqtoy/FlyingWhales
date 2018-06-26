@@ -11,7 +11,9 @@ public class EnvelopContentUnityUI : MonoBehaviour {
 
     [ContextMenu("Execute")]
     public void Execute() {
-        StartCoroutine(Envelop());
+        if (this.gameObject.activeInHierarchy) {
+            StartCoroutine(Envelop());
+        }
     }
 
     private IEnumerator Envelop() {

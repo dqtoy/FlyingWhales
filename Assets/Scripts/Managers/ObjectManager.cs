@@ -123,7 +123,7 @@ public class ObjectManager : MonoBehaviour {
             }
             state.SetActions(newActions);
         }
-        iobject.SetStates(objComp.states);
+        iobject.SetStates(objComp.states, false);
     }
 
     private void ConstructPrerequisites(CharacterAction action) {
@@ -261,6 +261,9 @@ public class ObjectManager : MonoBehaviour {
                 return new GoHomeAction(state);
             case ACTION_TYPE.RELEASE:
                 return new ReleaseAction(state);
+            case ACTION_TYPE.CLEANSE:
+                return new CleanseAction(state);
+
         }
         return null;
     }
