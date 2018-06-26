@@ -37,7 +37,6 @@ public class Monster : ICharacter {
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private MonsterObj _monsterObj;
     private Faction _attackedByFaction;
-    private ICharacterObject _characterObject;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private CharacterIcon _icon;
@@ -135,8 +134,11 @@ public class Monster : ICharacter {
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
     }
-    public ICharacterObject characterObject {
-        get { return _characterObject; }
+    public ICharacterObject icharacterObject {
+        get { return _monsterObj; }
+    }
+    public MonsterObj monsterObj {
+        get { return _monsterObj; }
     }
     public ILocation specificLocation {
         get { return _specificLocation; }
@@ -163,8 +165,8 @@ public class Monster : ICharacter {
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
 #if !WORLD_CREATION_TOOL
-        newMonster._characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        (newMonster._characterObject as MonsterObj).SetMonster(newMonster);
+        newMonster._monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+        newMonster._monsterObj.SetMonster(newMonster);
 #endif
         newMonster._skills = new List<Skill>();
         for (int i = 0; i < this._skills.Count; i++) {
@@ -217,8 +219,8 @@ public class Monster : ICharacter {
     }
     public void Death() {
         _isDead = true;
-        ObjectState deadState = _characterObject.GetState("Dead");
-        _characterObject.ChangeState(deadState);
+        ObjectState deadState = _monsterObj.GetState("Dead");
+        _monsterObj.ChangeState(deadState);
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -242,8 +244,8 @@ public class Monster : ICharacter {
         _isDead = false;
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
 #if !WORLD_CREATION_TOOL
-        _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        (_characterObject as MonsterObj).SetMonster(this);
+        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+        _monsterObj.SetMonster(this);
 #endif
         SetCharacterColor(Color.red);
     }

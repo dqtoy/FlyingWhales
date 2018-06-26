@@ -388,7 +388,7 @@ public class CharacterRole {
         }else if (characterAction.actionType == ACTION_TYPE.ATTACK) {
             AttackAction attackAction = characterAction as AttackAction;
             float myPower = _character.computedPower;
-            float enemyPower = attackAction.characterObj.icharacter.computedPower;
+            float enemyPower = attackAction.icharacterObj.icharacter.computedPower;
             float powerDiff = enemyPower - myPower;
             float powerDivisor = myPower;
             if(powerDiff < 0f) {
@@ -397,11 +397,11 @@ public class CharacterRole {
             float powerDiffPercent = (powerDiff / powerDivisor) * 100f;
             if(powerDiffPercent > 20f) {
                 result = 0f;
-            }else if (powerDiffPercent >= -50f && powerDiffPercent < -20f) {
+            }else if (powerDiffPercent >= -51f && powerDiffPercent <= -20f) {
                 result *= 1.5f;
-            } else if (powerDiffPercent >= -75f && powerDiffPercent < -50f) {
+            } else if (powerDiffPercent >= -76f && powerDiffPercent <= -50f) {
                 result *= 0.5f;
-            } else if (powerDiffPercent < -75f) {
+            } else if (powerDiffPercent <= -75f) {
                 result *= 0.1f;
             }
         }

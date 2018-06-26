@@ -130,7 +130,7 @@ namespace ECS {
         //private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
-        private ICharacterObject _characterObject;
+        private CharacterObj _characterObject;
 
         ////For Testing
         //public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
@@ -400,7 +400,10 @@ namespace ECS {
         public ActionData actionData {
             get { return _actionData; }
         }
-        public ICharacterObject characterObject {
+        public ICharacterObject icharacterObject {
+            get { return _characterObject; }
+        }
+        public CharacterObj characterObject {
             get { return _characterObject; }
         }
         public CharacterIcon icon {
@@ -550,11 +553,11 @@ namespace ECS {
 
 			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
-			//_combatHistoryID = 0;
+            //_combatHistoryID = 0;
 
 #if !WORLD_CREATION_TOOL
             _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
-            (_characterObject as CharacterObj).SetCharacter(this);
+            _characterObject.SetCharacter(this);
             //ConstructResourceInventory();
 #endif
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
@@ -3132,7 +3135,7 @@ namespace ECS {
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-                if(resourcePrerequisite.resourceType != RESOURCE.NONE && (characterObject as CharacterObj).resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+                if(resourcePrerequisite.resourceType != RESOURCE.NONE && _characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
                     return true;
                 }
             }

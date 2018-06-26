@@ -33,7 +33,7 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
-    ICharacterObject characterObject { get; }
+    ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
 
     //functions
