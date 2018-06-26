@@ -30,6 +30,7 @@ public interface ICharacter {
     Faction faction { get; }
     Faction attackedByFaction { get; set; }
     Combat currentCombat { get; set; }
+    BaseLandmark homeLandmark { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
@@ -48,7 +49,11 @@ public interface ICharacter {
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
+    void EnableDisableSkills(Combat combat);
+    void SetSpecificLocation(ILocation location);
+    void SetHomeLandmark(BaseLandmark newHomeLandmark);
+    void GoHome();
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
-    void SetSpecificLocation(ILocation location);
+
 }

@@ -260,21 +260,6 @@ public class CharacterIcon : MonoBehaviour {
         SetTarget(null);
         PathfindingManager.Instance.RemoveAgent(_aiPath);
     }
-    private void OnTriggerEnter2D(Collider2D other) {
-        if (_icharacter is Character) {
-            Character thisCharacter = _icharacter as Character;
-            if (thisCharacter.actionData.currentAction != null) {
-                if (other.tag == "Character" && thisCharacter.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
-                    AttackAction attackAction = thisCharacter.actionData.currentAction as AttackAction;
-                    CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                if (attackAction.icharacterObj.icharacter.id == enemy.icharacter.id) {
-                        thisCharacter.actionData.DoAction();
-                    }
-                }
-            }
-        }
-        
-    }
     #endregion
 
     #region Animation

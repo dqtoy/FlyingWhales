@@ -150,8 +150,12 @@ public class CharacterManager : MonoBehaviour {
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
-        if(charRole != CHARACTER_ROLE.NONE) {
-            newCharacter.AssignRole(charRole);
+        if (setup.optionalRole == CHARACTER_ROLE.NONE) {
+            if (charRole != CHARACTER_ROLE.NONE) {
+                newCharacter.AssignRole(charRole);
+            }
+        } else {
+            newCharacter.AssignRole(setup.optionalRole);
         }
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
@@ -163,7 +167,13 @@ public class CharacterManager : MonoBehaviour {
 			return null;
 		}
 		ECS.Character newCharacter = new ECS.Character(setup, gender);
-		newCharacter.AssignRole(charRole);
+        if(setup.optionalRole == CHARACTER_ROLE.NONE) {
+            if(charRole != CHARACTER_ROLE.NONE) {
+                newCharacter.AssignRole(charRole);
+            }
+        } else {
+            newCharacter.AssignRole(setup.optionalRole);
+        }
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
