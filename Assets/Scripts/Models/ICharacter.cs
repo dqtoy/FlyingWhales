@@ -20,6 +20,7 @@ public interface ICharacter {
     int currentSP { get; }
     int numOfAttackers { get; set; }
     string coloredUrlName { get; }
+    string urlName { get; }
     string name { get; }
     float critChance { get; }
     float critDamage { get; }
@@ -30,12 +31,15 @@ public interface ICharacter {
     Faction faction { get; }
     Faction attackedByFaction { get; set; }
     Combat currentCombat { get; set; }
+    BaseLandmark homeLandmark { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
-    ICharacterObject characterObject { get; }
+    ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
+    PortraitSettings portraitSettings { get; }
+    CharacterIcon icon { get; }
 
     //functions
     void SetSide(ECS.SIDES side);
@@ -46,7 +50,11 @@ public interface ICharacter {
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
+    void EnableDisableSkills(Combat combat);
+    void SetSpecificLocation(ILocation location);
+    void SetHomeLandmark(BaseLandmark newHomeLandmark);
+    void GoHome();
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
-    void SetSpecificLocation(ILocation location);
+
 }

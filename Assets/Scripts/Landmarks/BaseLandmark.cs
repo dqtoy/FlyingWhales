@@ -29,7 +29,7 @@ public class BaseLandmark : ILocation {
     protected List<Log> _history;
     protected int _combatHistoryID;
     protected Dictionary<int, Combat> _combatHistory;
-    protected List<Character> _charactersAtLocation;
+    protected List<ICharacter> _charactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
@@ -103,7 +103,7 @@ public class BaseLandmark : ILocation {
 	public Dictionary<int, Combat> combatHistory {
 		get { return _combatHistory; }
 	}
-    public List<Character> charactersAtLocation {
+    public List<ICharacter> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
 	public HexTile tileLocation{
@@ -161,7 +161,7 @@ public class BaseLandmark : ILocation {
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
         _combatHistoryID = 0;
-        _charactersAtLocation = new List<Character>();
+        _charactersAtLocation = new List<ICharacter>();
         _itemsInLandmark = new List<Item>();
         _characterTraces = new Dictionary<Character, GameDate>();
         //_totalDurability = landmarkData.hitPoints;
@@ -523,33 +523,33 @@ public class BaseLandmark : ILocation {
     //public void RemoveCharacterHomeOnLandmark(Character character) {
     //    _charactersWithHomeOnLandmark.Remove(character);
     //}
-	public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
-		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            if (_charactersAtLocation[i].id == id) {
-                return _charactersAtLocation[i];
-            }
-            //if (_charactersAtLocation[i]	is Character){
-			//	if(((Character)_charactersAtLocation[i]).id == id){
-			//		return (Character)_charactersAtLocation [i];
-			//	}
-			//}else if(_charactersAtLocation[i] is Party){
-			//	Party party = (Party)_charactersAtLocation [i];
-			//	for (int j = 0; j < party.partyMembers.Count; j++) {
-			//		if(party.partyMembers[j].id == id){
-			//			return party.partyMembers [j];
-			//		}
-			//	}
-			//}
-		}
-		if(includeTraces){
-			foreach (Character character in _characterTraces.Keys) {
-				if(character.id == id){
-					return character;
-				}	
-			}
-		}
-		return null;
-	}
+	//public ICharacter GetCharacterAtLocationByID(int id, bool includeTraces = false){
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+ //           if (_charactersAtLocation[i].id == id) {
+ //               return _charactersAtLocation[i];
+ //           }
+ //           //if (_charactersAtLocation[i]	is Character){
+	//		//	if(((Character)_charactersAtLocation[i]).id == id){
+	//		//		return (Character)_charactersAtLocation [i];
+	//		//	}
+	//		//}else if(_charactersAtLocation[i] is Party){
+	//		//	Party party = (Party)_charactersAtLocation [i];
+	//		//	for (int j = 0; j < party.partyMembers.Count; j++) {
+	//		//		if(party.partyMembers[j].id == id){
+	//		//			return party.partyMembers [j];
+	//		//		}
+	//		//	}
+	//		//}
+	//	}
+	//	if(includeTraces){
+	//		foreach (Character character in _characterTraces.Keys) {
+	//			if(character.id == id){
+	//				return character;
+	//			}	
+	//		}
+	//	}
+	//	return null;
+	//}
 	//public Party GetPartyAtLocationByLeaderID(int id){
 	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
 	//		if(_charactersAtLocation[i]	is Party){
@@ -598,18 +598,18 @@ public class BaseLandmark : ILocation {
    // #endregion
 
     #region Location
-    public void AddCharacterToLocation(Character character) {
+    public void AddCharacterToLocation(ICharacter character) {
         if (!_charactersAtLocation.Contains(character)) {
             _charactersAtLocation.Add(character);
-            if (character is Character) {
-                Character currChar = character as Character;
-                this.tileLocation.RemoveCharacterFromLocation(currChar);
-                currChar.SetSpecificLocation(this);
-#if !WORLD_CREATION_TOOL
-                _landmarkVisual.OnCharacterEnteredLandmark(currChar);
-#endif
-            }
+            //if (character is Character) {
+            //Character currChar = character as Character;
+            this.tileLocation.RemoveCharacterFromLocation(character);
             character.SetSpecificLocation(this);
+#if !WORLD_CREATION_TOOL
+            _landmarkVisual.OnCharacterEnteredLandmark(character);
+#endif
+        }
+         //character.SetSpecificLocation(this);
     //        if (character is Character) {
     //            Character currChar = character as Character;
 				//this.tileLocation.RemoveCharacterFromLocation(currChar);
@@ -622,18 +622,18 @@ public class BaseLandmark : ILocation {
             //if (!_hasScheduledCombatCheck) {
             //    ScheduleCombatCheck();
             //}
-        }
+        //}
     }
-    public void RemoveCharacterFromLocation(Character character) {
+    public void RemoveCharacterFromLocation(ICharacter character) {
         _charactersAtLocation.Remove(character);
-        if (character is Character) {
-            Character currChar = character as Character;
-            currChar.SetSpecificLocation(null);
-#if !WORLD_CREATION_TOOL
-            _landmarkVisual.OnCharacterExitedLandmark(currChar);
-#endif
-        }
+        //if (character is Character) {
+        //Character currChar = character as Character;
         character.SetSpecificLocation(null);
+#if !WORLD_CREATION_TOOL
+        _landmarkVisual.OnCharacterExitedLandmark(character);
+#endif
+    //}
+        //character.SetSpecificLocation(null);
    //     if (character is Character) {
    //         Character currChar = character as Character;
 			//currChar.SetSpecificLocation(null);
@@ -646,7 +646,7 @@ public class BaseLandmark : ILocation {
         //}
     }
 
-    public void ReplaceCharacterAtLocation(Character characterToReplace, Character characterToAdd) {
+    public void ReplaceCharacterAtLocation(ICharacter characterToReplace, ICharacter characterToAdd) {
         if (_charactersAtLocation.Contains(characterToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
@@ -763,7 +763,7 @@ public class BaseLandmark : ILocation {
     }
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currChar = _charactersAtLocation[i];
+            ICharacter currChar = _charactersAtLocation[i];
             //if (currChar.currentAction != null && currChar.currentAction.combatPriority > 0) {
             //    return true;
             //}
@@ -771,43 +771,43 @@ public class BaseLandmark : ILocation {
         return false;
     }
     public bool HasHostilities() {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currItem = _charactersAtLocation[i];
-            for (int j = 0; j < _charactersAtLocation.Count; j++) {
-                Character otherItem = _charactersAtLocation[j];
-                if (currItem != otherItem) {
-                    if (currItem.IsHostileWith(otherItem)) {
-                        return true; //there are characters with hostilities
-                    }
-                }
-            }
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    ICharacter currItem = _charactersAtLocation[i];
+        //    for (int j = 0; j < _charactersAtLocation.Count; j++) {
+        //        ICharacter otherItem = _charactersAtLocation[j];
+        //        if (currItem != otherItem) {
+        //            if (currItem.IsHostileWith(otherItem)) {
+        //                return true; //there are characters with hostilities
+        //            }
+        //        }
+        //    }
+        //}
         return false;
     }
     public bool HasHostileCharactersWith(Character character) {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currItem = _charactersAtLocation[i];
-            if (currItem == character) {
-                continue; //skip
-            }
-            Faction factionOfItem = currItem.faction;
-            //if (currItem is Character) {
-            //    factionOfItem = (currItem as Character).faction;
-            //} else if (currItem is Party) {
-            //    factionOfItem = (currItem as Party).faction;
-            //}
-            if (factionOfItem == null || character.faction == null) {
-                return true;
-            } else {
-                if (factionOfItem.id == character.faction.id) {
-                    continue; //skip this item, since it has the same faction as the other faction
-                }
-                FactionRelationship rel = character.faction.GetRelationshipWith(factionOfItem);
-                if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                    return true;
-                }
-            }
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    Character currItem = _charactersAtLocation[i];
+        //    if (currItem == character) {
+        //        continue; //skip
+        //    }
+        //    Faction factionOfItem = currItem.faction;
+        //    //if (currItem is Character) {
+        //    //    factionOfItem = (currItem as Character).faction;
+        //    //} else if (currItem is Party) {
+        //    //    factionOfItem = (currItem as Party).faction;
+        //    //}
+        //    if (factionOfItem == null || character.faction == null) {
+        //        return true;
+        //    } else {
+        //        if (factionOfItem.id == character.faction.id) {
+        //            continue; //skip this item, since it has the same faction as the other faction
+        //        }
+        //        FactionRelationship rel = character.faction.GetRelationshipWith(factionOfItem);
+        //        if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+        //            return true;
+        //        }
+        //    }
+        //}
         return false;
     }
     public bool HasHostilitiesWith(Faction faction, bool withFactionOnly = false) {
@@ -829,44 +829,44 @@ public class BaseLandmark : ILocation {
             }
         }
         if (!withFactionOnly) {
-            for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                Character currItem = _charactersAtLocation[i];
-                Faction factionOfItem = currItem.faction;
-                //if (currItem is Character) {
-                //    factionOfItem = (currItem as Character).faction;
-                //} else if (currItem is Party) {
-                //    factionOfItem = (currItem as Party).faction;
-                //}
-                if (factionOfItem == null || faction == null) {
-                    return true;
-                } else {
-                    if (factionOfItem.id == faction.id) {
-                        continue; //skip this item, since it has the same faction as the other faction
-                    }
-                    FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
-                    if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                        return true;
-                    }
-                }
-            }
+            //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            //    Character currItem = _charactersAtLocation[i];
+            //    Faction factionOfItem = currItem.faction;
+            //    //if (currItem is Character) {
+            //    //    factionOfItem = (currItem as Character).faction;
+            //    //} else if (currItem is Party) {
+            //    //    factionOfItem = (currItem as Party).faction;
+            //    //}
+            //    if (factionOfItem == null || faction == null) {
+            //        return true;
+            //    } else {
+            //        if (factionOfItem.id == faction.id) {
+            //            continue; //skip this item, since it has the same faction as the other faction
+            //        }
+            //        FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
+            //        if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+            //            return true;
+            //        }
+            //    }
+            //}
         }
         return false;
     }
     public List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null) {
         List<Character> groups = new List<Character>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currGroup = _charactersAtLocation[i];
-            if (notInCombatOnly) {
-                if (currGroup.isInCombat) {
-                    continue; //skip
-                }
-            }
-            if (currGroup.GetCurrentStance() == stance) {
-                if (except != null && currGroup == except) {
-                    continue; //skip
-                }
-                groups.Add(currGroup);
-            }
+            //Character currGroup = _charactersAtLocation[i];
+            //if (notInCombatOnly) {
+            //    if (currGroup.isInCombat) {
+            //        continue; //skip
+            //    }
+            //}
+            //if (currGroup.GetCurrentStance() == stance) {
+            //    if (except != null && currGroup == except) {
+            //        continue; //skip
+            //    }
+            //    groups.Add(currGroup);
+            //}
         }
         return groups;
     }
@@ -1127,6 +1127,7 @@ public class BaseLandmark : ILocation {
     #region Objects
     public void SetObject(StructureObj obj) {
         _landmarkObj = obj;
+        //obj.SetObjectLocation(this);
         obj.OnAddToLandmark(this);
     }
     //public bool AddObject(IObject obj) {

@@ -101,7 +101,8 @@ namespace ECS {
         private bool _cannotBeTakenAsPrisoner;
         private object _isPrisonerOf;
         private Area _home;
-        private BaseLandmark _lair;
+        private BaseLandmark _homeLandmark;
+        //private BaseLandmark _lair;
         //private int _combatHistoryID;
         private List<Character> _prisoners;
         private List<Character> _followers;
@@ -122,18 +123,12 @@ namespace ECS {
 
         //private Action _currentFunction;
         private bool _isInCombat;
-
-        //When the character should have a next action it should do after it's current one.
-        //private CharacterTask nextTaskToDo;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         private Dictionary<Character, List<string>> _traceInfo;
         //private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
-        private ICharacterObject _characterObject;
-
-        ////For Testing
-        //public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
+        private CharacterObj _characterObject;
 
         //private Dictionary<RESOURCE, int> _resourceInventory;
 
@@ -151,7 +146,7 @@ namespace ECS {
             get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
         }
         public string coloredUrlName {
-            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
         }
         public string prisonerName {
             get { return "<link=" + '"' + this._id.ToString() + "_prisoner" + '"' + ">" + this._name + "</link>"; }
@@ -299,8 +294,8 @@ namespace ECS {
         public Area home {
             get { return _home; }
         }
-        public BaseLandmark lair {
-            get { return _lair; }
+        public BaseLandmark homeLandmark {
+            get { return _homeLandmark; }
         }
         public float remainingHP { //Percentage of remaining HP this character has
             get { return (float) currentHP / (float) maxHP; }
@@ -400,7 +395,10 @@ namespace ECS {
         public ActionData actionData {
             get { return _actionData; }
         }
-        public ICharacterObject characterObject {
+        public ICharacterObject icharacterObject {
+            get { return _characterObject; }
+        }
+        public CharacterObj characterObject {
             get { return _characterObject; }
         }
         public CharacterIcon icon {
@@ -550,11 +548,11 @@ namespace ECS {
 
 			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
-			//_combatHistoryID = 0;
+            //_combatHistoryID = 0;
 
 #if !WORLD_CREATION_TOOL
             _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
-            (_characterObject as CharacterObj).SetCharacter(this);
+            _characterObject.SetCharacter(this);
             //ConstructResourceInventory();
 #endif
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
@@ -647,7 +645,7 @@ namespace ECS {
 			return false;
 		}
 		//Enables or Disables skills based on skill requirements
-		internal void EnableDisableSkills(Combat combat){
+		public void EnableDisableSkills(Combat combat){
 			bool isAllAttacksInRange = true;
 			bool isAttackInRange = false;
 
@@ -656,16 +654,19 @@ namespace ECS {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
 
-                for (int j = 0; j < skill.skillRequirements.Length; j++) {
-                    SkillRequirement skillRequirement = skill.skillRequirements[j];
-                    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                        skill.isEnabled = false;
-                        break;
+                if(skill.skillRequirements != null) {
+                    for (int j = 0; j < skill.skillRequirements.Length; j++) {
+                        SkillRequirement skillRequirement = skill.skillRequirements[j];
+                        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                            skill.isEnabled = false;
+                            break;
+                        }
+                    }
+                    if (!skill.isEnabled) {
+                        continue;
                     }
                 }
-                if (!skill.isEnabled) {
-                    continue;
-                }
+
                 if (skill is AttackSkill){
                     AttackSkill attackSkill = skill as AttackSkill;
                     if(attackSkill.spCost > _sp) {
@@ -696,10 +697,12 @@ namespace ECS {
                         skill.isEnabled = true;
 
                         //Check for allowed weapon types
-                        for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
-                            if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
-                                skill.isEnabled = false;
-                                continue;
+                        if(skill.allowedWeaponTypes != null) {
+                            for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
+                                if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+                                    skill.isEnabled = false;
+                                    continue;
+                                }
                             }
                         }
 
@@ -1631,13 +1634,17 @@ namespace ECS {
 
 		#region Skills
 		private List<Skill> GetGeneralSkills(){
-			return SkillManager.Instance.generalSkills.Values.ToList();
+            List<Skill> allGeneralSkills = new List<Skill>();
+            foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
+                allGeneralSkills.Add(skill.CreateNewCopy());
+            }
+            return allGeneralSkills;
 		}
 		private List<Skill> GetBodyPartSkills(){
 			List<Skill> allBodyPartSkills = new List<Skill>();
-			foreach (string skillName in SkillManager.Instance.bodyPartSkills.Keys) {
+			foreach (Skill skill in SkillManager.Instance.bodyPartSkills.Values) {
 				bool requirementsPassed = true;
-				Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
+				//Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
 				for (int j = 0; j < skill.skillRequirements.Length; j++) {
 					if(!HasAttribute(skill.skillRequirements[j].attributeRequired, skill.skillRequirements[j].itemQuantity)){
 						requirementsPassed = false;
@@ -2394,7 +2401,7 @@ namespace ECS {
 		//		_avatar.InstantDestroyAvatar();
   //          }
   //      }
-		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
+		public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
             if (specificLocation == targetLocation) {
                 //action doer is already at the target location
                 if (doneAction != null) {
@@ -2428,9 +2435,12 @@ namespace ECS {
 			//	}
 			//}
 		}
-        internal void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
+        public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
             _icon.SetActionOnTargetReached(doneAction);
             _icon.SetTargetGO(locationGO);
+        }
+        public void GoHome() {
+            GoToLocation(_homeLandmark, PATHFINDING_MODE.USE_ROADS);
         }
         #endregion
 
@@ -2561,8 +2571,8 @@ namespace ECS {
 		public void SetHome(Area newHome) {
             this._home = newHome;
         }
-        public void SetLair(BaseLandmark newLair) {
-            this._lair = newLair;
+        public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+            this._homeLandmark = newHomeLandmark;
         }
 		public void SetDoesNotTakePrisoners(bool state) {
 			this._doesNotTakePrisoners = state;
@@ -3132,7 +3142,7 @@ namespace ECS {
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-                if(resourcePrerequisite.resourceType != RESOURCE.NONE && (characterObject as CharacterObj).resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+                if(resourcePrerequisite.resourceType != RESOURCE.NONE && _characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
                     return true;
                 }
             }
@@ -3242,7 +3252,7 @@ namespace ECS {
             _critDamage += amount;
         }
         private void RecomputeMaxHP() {
-            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 1.1f)) / 1.3f)));
+            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
             int previousMaxHP = this._maxHP;
             this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * ((float) vitality / 100f));
             if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {

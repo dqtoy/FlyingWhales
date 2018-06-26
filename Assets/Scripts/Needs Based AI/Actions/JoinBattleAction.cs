@@ -57,7 +57,7 @@ public class JoinBattleAction : CharacterAction {
         if(_characterObj.character.currentCombat != null) {
             _characterObj.character.currentCombat.AddCharacter(_characterObj.character.currentSide, friend);
         } else {
-            CombatManager.Instance.CharacterContinuesAction(friend);
+            CombatManager.Instance.CharacterContinuesAction(friend, false);
         }
     }
 }

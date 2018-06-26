@@ -13,6 +13,7 @@ namespace worldcreator {
         public static WorldCreatorUI Instance = null;
 
         public EventSystem eventSystem;
+        public Canvas canvas;
 
         public const float toolbarShowingPos = -493.6f;
         public const float toolbarHiddenPos = -588f;

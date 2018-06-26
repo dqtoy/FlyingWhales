@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
@@ -37,15 +38,19 @@ public class Monster : ICharacter {
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private MonsterObj _monsterObj;
     private Faction _attackedByFaction;
-    private ICharacterObject _characterObject;
+    private BaseLandmark _homeLandmark;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private CharacterIcon _icon;
     private ILocation _specificLocation;
+    private PortraitSettings _portraitSettings;
 
     #region getters/setters
     public string name {
         get { return _name; }
+    }
+    public string urlName {
+        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + this._name + "</link>"; }
     }
     public string coloredUrlName {
         get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
@@ -126,6 +131,9 @@ public class Monster : ICharacter {
         get { return _attackedByFaction; }
         set { _attackedByFaction = value; }
     }
+    public BaseLandmark homeLandmark {
+        get { return _homeLandmark; }
+    }
     public List<Skill> skills {
         get { return _skills; }
     }
@@ -138,14 +146,20 @@ public class Monster : ICharacter {
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
     }
-    public ICharacterObject characterObject {
-        get { return _characterObject; }
+    public ICharacterObject icharacterObject {
+        get { return _monsterObj; }
+    }
+    public MonsterObj monsterObj {
+        get { return _monsterObj; }
     }
     public ILocation specificLocation {
-        get { return _specificLocation; }
+        get { return GetSpecificLocation(); }
     }
     public CharacterIcon icon {
         get { return _icon; }
+    }
+    public PortraitSettings portraitSettings {
+        get { return _portraitSettings; }
     }
     #endregion
 
@@ -165,10 +179,11 @@ public class Monster : ICharacter {
         newMonster._dodgeChance = this._dodgeChance;
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
-#if !WORLD_CREATION_TOOL
-        newMonster._characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        (newMonster._characterObject as MonsterObj).SetMonster(newMonster);
-#endif
+        newMonster._portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+//#if !WORLD_CREATION_TOOL
+//        newMonster._monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+//        newMonster._monsterObj.SetMonster(newMonster);
+//#endif
         newMonster._skills = new List<Skill>();
         for (int i = 0; i < this._skills.Count; i++) {
             newMonster._skills.Add(_skills[i].CreateNewCopy());
@@ -220,8 +235,9 @@ public class Monster : ICharacter {
     }
     public void Death() {
         _isDead = true;
-        ObjectState deadState = _characterObject.GetState("Dead");
-        _characterObject.ChangeState(deadState);
+        ObjectState deadState = _monsterObj.GetState("Dead");
+        _monsterObj.ChangeState(deadState);
+        Messenger.Broadcast(Signals.MONSTER_DEATH, this);
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -231,6 +247,27 @@ public class Monster : ICharacter {
     private float GetDefensePower() {
         return ((float) (strength + intelligence + _pDef + _mDef + maxHP + (2 * vitality)) * (1f + ((float) level / 100f))) * (1f + ((float) agility / 100f));
     }
+    private List<Skill> GetGeneralSkills() {
+        List<Skill> allGeneralSkills = new List<Skill>();
+        foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
+            if(skill is FleeSkill) {
+                continue;
+            }
+            allGeneralSkills.Add(skill.CreateNewCopy());
+        }
+        return allGeneralSkills;
+    }
+    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
+        if (specificLocation == targetLocation) {
+            //action doer is already at the target location
+            if (doneAction != null) {
+                doneAction();
+            }
+        } else {
+            _icon.SetActionOnTargetReached(doneAction);
+            _icon.SetTarget(targetLocation);
+        }
+    }
     #endregion
 
     #region Interface
@@ -238,9 +275,24 @@ public class Monster : ICharacter {
         _id = Utilities.SetID(this);
         _isDead = false;
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
+        _bodyParts = new List<BodyPart>();
+        if(_skills == null) {
+            _skills = new List<Skill>();
+        }
+        _skills.AddRange(GetGeneralSkills());
 #if !WORLD_CREATION_TOOL
-        _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        (_characterObject as MonsterObj).SetMonster(this);
+        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+        _monsterObj.SetMonster(this);
+#endif
+        SetCharacterColor(Color.red);
+    }
+    public void Initialize(MonsterSaveData data) {
+        _id = Utilities.SetID(this, data.id);
+        _isDead = false;
+        _battleOnlyTracker = new CharacterBattleOnlyTracker();
+#if !WORLD_CREATION_TOOL
+        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+        _monsterObj.SetMonster(this);
 #endif
         SetCharacterColor(Color.red);
     }
@@ -282,6 +334,123 @@ public class Monster : ICharacter {
     }
     public void SetSpecificLocation(ILocation specificLocation) {
         _specificLocation = specificLocation;
+    }
+    private ILocation GetSpecificLocation() {
+        if (_specificLocation != null) {
+            return _specificLocation;
+        } else {
+            if (_icon != null) {
+                Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 1f, LayerMask.GetMask("Hextiles"));
+                //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
+                HexTile tile = collide.gameObject.GetComponent<HexTile>();
+                if (tile != null) {
+                    return tile;
+                } else {
+                    LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
+                    if (landmarkObject != null) {
+                        return landmarkObject.landmark.tileLocation;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+    public void EnableDisableSkills(Combat combat) {
+        bool isAllAttacksInRange = true;
+        bool isAttackInRange = false;
+
+        //Body part skills / general skills
+        for (int i = 0; i < this._skills.Count; i++) {
+            Skill skill = this._skills[i];
+            skill.isEnabled = true;
+
+            if (skill is AttackSkill) {
+                isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                if (!isAttackInRange) {
+                    isAllAttacksInRange = false;
+                    skill.isEnabled = false;
+                    continue;
+                }
+            } else if (skill is FleeSkill) {
+                if (this.currentHP >= (this.maxHP / 2)) {
+                    skill.isEnabled = false;
+                    continue;
+                }
+            }
+        }
+
+        for (int i = 0; i < this._skills.Count; i++) {
+            Skill skill = this._skills[i];
+            if (skill is MoveSkill) {
+                skill.isEnabled = true;
+                if (isAllAttacksInRange) {
+                    skill.isEnabled = false;
+                    continue;
+                }
+                if (skill.skillName == "MoveLeft") {
+                    if (this._currentRow == 1) {
+                        skill.isEnabled = false;
+                        continue;
+                    } else {
+                        bool hasEnemyOnLeft = false;
+                        if (combat.charactersSideA.Contains(this)) {
+                            for (int j = 0; j < combat.charactersSideB.Count; j++) {
+                                ICharacter enemy = combat.charactersSideB[j];
+                                if (enemy.currentRow < this._currentRow) {
+                                    hasEnemyOnLeft = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int j = 0; j < combat.charactersSideA.Count; j++) {
+                                ICharacter enemy = combat.charactersSideA[j];
+                                if (enemy.currentRow < this._currentRow) {
+                                    hasEnemyOnLeft = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasEnemyOnLeft) {
+                            skill.isEnabled = false;
+                            continue;
+                        }
+                    }
+                } else if (skill.skillName == "MoveRight") {
+                    if (this._currentRow == 5) {
+                        skill.isEnabled = false;
+                    } else {
+                        bool hasEnemyOnRight = false;
+                        if (combat.charactersSideA.Contains(this)) {
+                            for (int j = 0; j < combat.charactersSideB.Count; j++) {
+                                ICharacter enemy = combat.charactersSideB[j];
+                                if (enemy.currentRow > this._currentRow) {
+                                    hasEnemyOnRight = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int j = 0; j < combat.charactersSideA.Count; j++) {
+                                ICharacter enemy = combat.charactersSideA[j];
+                                if (enemy.currentRow > this._currentRow) {
+                                    hasEnemyOnRight = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasEnemyOnRight) {
+                            skill.isEnabled = false;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+        this._homeLandmark = newHomeLandmark;
+    }
+    public void GoHome() {
+        GoToLocation(_homeLandmark, PATHFINDING_MODE.USE_ROADS);
     }
     #endregion
 

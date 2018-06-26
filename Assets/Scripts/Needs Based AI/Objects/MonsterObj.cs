@@ -5,7 +5,7 @@ using UnityEngine;
 using ECS;
 
 [System.Serializable]
-public class MonsterObj : IObject, ICharacterObject {
+public class MonsterObj : ICharacterObject {
     private OBJECT_TYPE _objectType;
     private bool _isInvisible;
     private List<ObjectState> _states;
@@ -35,10 +35,16 @@ public class MonsterObj : IObject, ICharacterObject {
         get { return _isInvisible; }
     }
     public BaseLandmark objectLocation {
-        get { return _objectLocation; } //Subject for Change
+        get {
+            ILocation location = specificLocation;
+            if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                return location as BaseLandmark;
+            }
+            return _objectLocation;
+        }
     }
     public ILocation specificLocation {
-        get { return objectLocation; }
+        get { return _monster.specificLocation; }
     }
     public RESOURCE madeOf {
         get { return RESOURCE.NONE; }
@@ -55,9 +61,11 @@ public class MonsterObj : IObject, ICharacterObject {
     }
 
     #region Interface Requirements
-    public void SetStates(List<ObjectState> states) {
+    public void SetStates(List<ObjectState> states, bool autoChangeState = true) {
         _states = states;
-        ChangeState(states[0]);
+        if (autoChangeState) {
+            ChangeState(states[0]);
+        }
     }
     public void SetObjectName(string name) {
         _objectName = name;

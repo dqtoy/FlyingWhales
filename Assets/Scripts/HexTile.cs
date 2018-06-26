@@ -83,7 +83,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
 
-    protected List<Character> _charactersAtLocation = new List<Character>(); //List of characters/party on landmark
+    protected List<ICharacter> _charactersAtLocation = new List<ICharacter>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -146,7 +146,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject clickHighlightGO {
         get { return _clickHighlightGO; }
     }
-    public List<Character> charactersAtLocation {
+    public List<ICharacter> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
     public HexTile tileLocation {
@@ -1154,7 +1154,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                         //Attack landmark;
                         Debug.Log(UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
                         UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
-                        UIManager.Instance.landmarkInfoUI.SetAttackButtonState(false);
+                        UIManager.Instance.landmarkInfoUI.SetWaitingForAttackState(false);
                         UIManager.Instance.landmarkInfoUI.SetActiveAttackButtonGO(false);
                         return;
                     } else {
@@ -1295,43 +1295,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void LogScreenPosition() {
         Debug.Log(CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(this.transform.position));
     }
-    private void ShowHexTileInfo() {
-        UIManager.Instance.ShowSmallInfo(this.name + " - " + this.passableType.ToString());
-    }
-    private void ShowLandmarkInfo() {
-        string text = string.Empty;
-        text += "[b]Characters in landmark: [/b]";
-        if(_landmarkOnTile.charactersAtLocation.Count > 0) {
-            for (int i = 0; i < _landmarkOnTile.charactersAtLocation.Count; i++) {
-                Character currObj = _landmarkOnTile.charactersAtLocation[i];
-                text += "\n" + currObj.name;
-                //if (currObj is Party) {
-                //    text += "\n" + ((Party)currObj).name;
-                //} else if (currObj is Character) {
-                //    text += "\n" + ((Character)currObj).name;
-                //}
-            }
-        } else {
-            text += "NONE";
-        }
-        
-        text += "\n[b]Characters in tile: [/b]";
-        if (_charactersAtLocation.Count > 0) {
-            for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                Character currObj = _charactersAtLocation[i];
-                text += "\n" + currObj.name;
-                //if (currObj is Party) {
-                //    text += "\n" + ((Party)currObj).name;
-                //} else if (currObj is Character) {
-                //    text += "\n" + ((Character)currObj).name;
-                //}
-            }
-        } else {
-            text += "NONE";
-        }
-
-        UIManager.Instance.ShowSmallInfo(text);
-    }
     private void HideSmallInfoWindow() {
         UIManager.Instance.HideSmallInfo();
     }
@@ -1341,7 +1304,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Characters
-	public void AddCharacterToLocation(Character character) {
+	public void AddCharacterToLocation(ICharacter character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
             character.SetSpecificLocation(this);
@@ -1357,7 +1320,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
 	}
-	public void RemoveCharacterFromLocation(Character character) {
+	public void RemoveCharacterFromLocation(ICharacter character) {
 		_charactersAtLocation.Remove(character);
         character.SetSpecificLocation(null);
   //      if (character is Character){
@@ -1371,7 +1334,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             UnScheduleCombatCheck();
         }
 	}
-    public void ReplaceCharacterAtLocation(Character characterToReplace, Character characterToAdd) {
+    public void ReplaceCharacterAtLocation(ICharacter characterToReplace, ICharacter characterToAdd) {
         if (_charactersAtLocation.Contains(characterToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
@@ -1389,26 +1352,26 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
     }
-    public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
-		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            if (_charactersAtLocation[i].id == id) {
-                return _charactersAtLocation[i];
-            }
-            //if (_charactersAtLocation[i]	is Character){
-			//	if(((Character)_charactersAtLocation[i]).id == id){
-			//		return (Character)_charactersAtLocation [i];
-			//	}
-			//}else if(_charactersAtLocation[i] is Party){
-			//	Party party = (Party)_charactersAtLocation [i];
-			//	for (int j = 0; j < party.partyMembers.Count; j++) {
-			//		if(party.partyMembers[j].id == id){
-			//			return party.partyMembers [j];
-			//		}
-			//	}
-			//}
-		}
-		return null;
-	}
+ //   public ICharacter GetCharacterAtLocationByID(int id, bool includeTraces = false){
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+ //           if (_charactersAtLocation[i].id == id) {
+ //               return _charactersAtLocation[i];
+ //           }
+ //           //if (_charactersAtLocation[i]	is Character){
+	//		//	if(((Character)_charactersAtLocation[i]).id == id){
+	//		//		return (Character)_charactersAtLocation [i];
+	//		//	}
+	//		//}else if(_charactersAtLocation[i] is Party){
+	//		//	Party party = (Party)_charactersAtLocation [i];
+	//		//	for (int j = 0; j < party.partyMembers.Count; j++) {
+	//		//		if(party.partyMembers[j].id == id){
+	//		//			return party.partyMembers [j];
+	//		//		}
+	//		//	}
+	//		//}
+	//	}
+	//	return null;
+	//}
 	//public Party GetPartyAtLocationByLeaderID(int id){
 	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
 	//		if(_charactersAtLocation[i]	is Party){
@@ -1499,7 +1462,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currChar = _charactersAtLocation[i];
+            //Character currChar = _charactersAtLocation[i];
             //if (currChar.currentAction.combatPriority > 0) {
             //    return true;
             //}
@@ -1507,90 +1470,90 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return false;
     }
     public bool HasHostilities() {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currItem = _charactersAtLocation[i];
-            for (int j = 0; j < _charactersAtLocation.Count; j++) {
-                Character otherItem = _charactersAtLocation[j];
-                if(currItem != otherItem) {
-                    if (currItem.IsHostileWith(otherItem)) {
-                        return true; //there are characters with hostilities
-                    }
-                }
-            }
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    Character currItem = _charactersAtLocation[i];
+        //    for (int j = 0; j < _charactersAtLocation.Count; j++) {
+        //        Character otherItem = _charactersAtLocation[j];
+        //        if(currItem != otherItem) {
+        //            if (currItem.IsHostileWith(otherItem)) {
+        //                return true; //there are characters with hostilities
+        //            }
+        //        }
+        //    }
+        //}
         return false;
     }
     public bool HasHostileCharactersWith(Character character) {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currItem = _charactersAtLocation[i];
-            if (currItem == character) {
-                continue; //skip
-            }
-            Faction factionOfItem = currItem.faction;
-            //if (currItem is Character) {
-            //    factionOfItem = (currItem as Character).faction;
-            //} else if (currItem is Party) {
-            //    factionOfItem = (currItem as Party).faction;
-            //}
-            if (factionOfItem == null || character.faction == null) {
-                return true;
-            } else {
-                if (factionOfItem.id == character.faction.id) {
-                    continue; //skip this item, since it has the same faction as the other faction
-                }
-                FactionRelationship rel = character.faction.GetRelationshipWith(factionOfItem);
-                if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                    return true;
-                }
-            }
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    Character currItem = _charactersAtLocation[i];
+        //    if (currItem == character) {
+        //        continue; //skip
+        //    }
+        //    Faction factionOfItem = currItem.faction;
+        //    //if (currItem is Character) {
+        //    //    factionOfItem = (currItem as Character).faction;
+        //    //} else if (currItem is Party) {
+        //    //    factionOfItem = (currItem as Party).faction;
+        //    //}
+        //    if (factionOfItem == null || character.faction == null) {
+        //        return true;
+        //    } else {
+        //        if (factionOfItem.id == character.faction.id) {
+        //            continue; //skip this item, since it has the same faction as the other faction
+        //        }
+        //        FactionRelationship rel = character.faction.GetRelationshipWith(factionOfItem);
+        //        if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+        //            return true;
+        //        }
+        //    }
+        //}
         return false;
     }
     public bool HasHostilitiesWith(Faction faction, bool withFactionOnly = false) {
-        if(faction == null && _charactersAtLocation.Count > 0) {
-            return true; //the passed faction is null (factionless), if there are any characters on this tile
-        }
-        if (!withFactionOnly) { //only check characters if with faction only is false
-            for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                Character currItem = _charactersAtLocation[i];
-                Faction factionOfItem = currItem.faction;
-                //if (currItem is Character) {
-                //    factionOfItem = (currItem as Character).faction;
-                //} else if (currItem is Party) {
-                //    factionOfItem = (currItem as Party).faction;
-                //}
-                if (factionOfItem == null) {
-                    return true;
-                } else {
-                    if (factionOfItem.id == faction.id) {
-                        continue; //skip this item, since it has the same faction as the other faction
-                    }
-                    FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
-                    if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                        return true;
-                    }
-                }
-            }
-        }
+        //if(faction == null && _charactersAtLocation.Count > 0) {
+        //    return true; //the passed faction is null (factionless), if there are any characters on this tile
+        //}
+        //if (!withFactionOnly) { //only check characters if with faction only is false
+        //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //        Character currItem = _charactersAtLocation[i];
+        //        Faction factionOfItem = currItem.faction;
+        //        //if (currItem is Character) {
+        //        //    factionOfItem = (currItem as Character).faction;
+        //        //} else if (currItem is Party) {
+        //        //    factionOfItem = (currItem as Party).faction;
+        //        //}
+        //        if (factionOfItem == null) {
+        //            return true;
+        //        } else {
+        //            if (factionOfItem.id == faction.id) {
+        //                continue; //skip this item, since it has the same faction as the other faction
+        //            }
+        //            FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
+        //            if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //}
         
         return false;
     }
     public List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null) {
         List<Character> groups = new List<Character>();
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Character currGroup = _charactersAtLocation[i];
-            if (notInCombatOnly) {
-                if (currGroup.isInCombat) {
-                    continue; //skip
-                }
-            }
-            if(currGroup.GetCurrentStance() == stance) {
-                if (except != null && currGroup == except) {
-                    continue; //skip
-                }
-                groups.Add(currGroup);
-            }
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    Character currGroup = _charactersAtLocation[i];
+        //    if (notInCombatOnly) {
+        //        if (currGroup.isInCombat) {
+        //            continue; //skip
+        //        }
+        //    }
+        //    if(currGroup.GetCurrentStance() == stance) {
+        //        if (except != null && currGroup == except) {
+        //            continue; //skip
+        //        }
+        //        groups.Add(currGroup);
+        //    }
+        //}
         return groups;
     }
     public void StartCombatBetween(Character combatant1, Character combatant2) {
@@ -1709,7 +1672,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
             foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
                 ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
-                spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
+                if (landmarkOnTile != null) {
+                    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnLandmark(landmarkOnTile, kvp.Key);
+                } else {
+                    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
+                }
+                
                 createMonsterSettings.AddMenuItem(spawnMonsterItem);
             }
         } else if (MonsterManager.Instance.HasMonsterOnTile(this)) {

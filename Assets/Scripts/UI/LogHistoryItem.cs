@@ -19,9 +19,9 @@ public class LogHistoryItem : LogItem {
         } else {
             this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
         }
-        if (!this.gameObject.activeSelf) {
-            throw new System.Exception("Log Item is not active!");
-        }
+        //if (!this.gameObject.activeSelf) {
+        //    throw new System.Exception("Log Item is not active!");
+        //}
         envelopContent.Execute();
     }
 

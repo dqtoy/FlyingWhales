@@ -47,9 +47,11 @@ public class ItemObj : IObject {
     }
 
     #region Interface Requirements
-    public void SetStates(List<ObjectState> states) {
+    public void SetStates(List<ObjectState> states, bool autoChangeState = true) {
         _states = states;
-        ChangeState(states[0]);
+        if (autoChangeState) {
+            ChangeState(states[0]);
+        }
     }
     public void SetObjectName(string name) {
         _objectName = name;

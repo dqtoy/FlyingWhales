@@ -71,7 +71,6 @@ public class StructureObj : IObject {
         _objectType = OBJECT_TYPE.STRUCTURE;
         ConstructResourceInventory();
     }
-
     #region Virtuals
     public virtual IObject Clone() {
         StructureObj clone = new StructureObj();
@@ -101,9 +100,11 @@ public class StructureObj : IObject {
     #endregion
 
     #region Interface Requirements
-    public void SetStates(List<ObjectState> states) {
+    public void SetStates(List<ObjectState> states, bool autoChangeState = true) {
         _states = states;
-        ChangeState(states[0]);
+        if (autoChangeState) {
+            ChangeState(states[0]);
+        }
     }
     public void SetObjectName(string name) {
         _objectName = name;
@@ -124,9 +125,15 @@ public class StructureObj : IObject {
         _maxHP = amount;
     }
     public void SetObjectLocation(BaseLandmark newLocation) {
+        //if (this is MonsterDen) {
+        //    Debug.Log("Set object location to " + newLocation.ToString() + ". ST: " + StackTraceUtility.ExtractStackTrace());
+        //}
         _objectLocation = newLocation;
     }
     public void ChangeState(ObjectState state) {
+        //if (this is MonsterDen) {
+            //Debug.Log("Set state of " + GetType().ToString() + " to " + state.stateName + ". ST: " + StackTraceUtility.ExtractStackTrace());
+        //}
         if (_currentState != null) {
             _currentState.OnEndState();
         }
@@ -243,20 +250,26 @@ public class StructureObj : IObject {
 
     #region Attack Landmark
     public void AttackLandmark(BaseLandmark targetLandmark) {
-        int armyCount = GetArmyTotal();
-        if(armyCount > 0) {
-            this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
-            Army newArmy = new Army(this.objectLocation, armyCount);
-            newArmy.SetTarget(targetLandmark);
-        }
-    }
-    public bool CanAttack(BaseLandmark landmark) {
-        if(this.objectLocation.owner != null && landmark.owner != null) {
-            if(this.objectLocation.owner.id == landmark.owner.id) {
-                return false;
+        if (this is Garrison) {
+            int armyCount = (this as Garrison).armyStrength;
+            if (armyCount > 0) {
+                this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
+                Army newArmy = new Army(this.objectLocation, armyCount);
+                newArmy.SetTarget(targetLandmark);
             }
         }
-        return true;
+        
+    }
+    public bool CanAttack(BaseLandmark landmark) {
+        //if(this.objectLocation.owner != null && landmark.owner != null) {
+        //    if(this.objectLocation.owner.id == landmark.owner.id) {
+        //        return false;
+        //    }
+        //}
+        if (this is Garrison) {
+            return true;
+        }
+        return false;
     }
 
     //Gets the total number of civilians and multiply it with army percentage to get the army count needed to attack

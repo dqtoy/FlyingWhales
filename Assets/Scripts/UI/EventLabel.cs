@@ -50,7 +50,13 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                             UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory[idToUse]);
                         }
                     }
-                }
+                } 
+                //else if (linkText.Contains("_monster")) {
+                //        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory.ContainsKey(idToUse)) {
+                //            UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory[idToUse]);
+                //        }
+                //    }
+                //}
             } else {
                 int indexToUse = int.Parse(linkInfo.GetLinkID());
                 LogFiller lf = logItem.log.fillers[indexToUse];

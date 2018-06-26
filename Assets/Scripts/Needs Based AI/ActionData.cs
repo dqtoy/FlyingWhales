@@ -102,7 +102,7 @@ public class ActionData {
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
         if(this.currentDay >= currentAction.actionData.duration) {
-            currentAction.DoneDuration();
+            currentAction.DoneDuration(_character);
             currentAction.EndAction(_character);
         }
     }
@@ -175,8 +175,10 @@ public class ActionData {
             _isNotFirstEncounter = true;
         }
         currentAction.PerformAction(_character);
-        if (currentAction.actionData.duration > 0) {
-            AdjustCurrentDay(1);
+        if (!currentAction.actionData.isIndefinite) {
+            if (currentAction.actionData.duration > 0) {
+                AdjustCurrentDay(1);
+            }
         }
     }
 

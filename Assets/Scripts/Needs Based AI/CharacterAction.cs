@@ -80,7 +80,8 @@ public class CharacterAction {
     public virtual void EndAction(Character character) {
         character.actionData.EndAction();
     }
-    public virtual void DoneDuration() { }
+    public virtual void DoneDuration(Character character) { }
+    public virtual void SuccessEndAction(Character character) { }
     #endregion
 
     #region Filters

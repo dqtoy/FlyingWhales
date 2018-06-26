@@ -70,7 +70,7 @@ public class LandmarkObject : MonoBehaviour {
     //    iconSprite.gameObject.SetActive(state);
     //}
 
-    public void OnCharacterEnteredLandmark(ECS.Character character) {
+    public void OnCharacterEnteredLandmark(ICharacter character) {
         //add character portrait to grid
         CharacterPortrait portrait = character.icon.characterPortrait;
         portrait.transform.SetParent(charactersScrollView.content.transform);
@@ -80,7 +80,7 @@ public class LandmarkObject : MonoBehaviour {
         portrait.gameObject.SetActive(true);
         character.icon.gameObject.SetActive(false);
     }
-    public void OnCharacterExitedLandmark(ECS.Character character) {
+    public void OnCharacterExitedLandmark(ICharacter character) {
         //remove character portrait from grid
         character.icon.ReclaimPortrait();
         character.icon.gameObject.SetActive(true);

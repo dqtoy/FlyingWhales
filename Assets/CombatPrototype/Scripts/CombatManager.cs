@@ -123,7 +123,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideA[0];
                 if (icharacter is Character) {
                     Character character = icharacter as Character;
-                    CharacterContinuesAction(character);
+                    CharacterContinuesAction(character, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -133,7 +133,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideB[0];
                 if (icharacter is Character) {
                     Character character = icharacter as Character;
-                    CharacterContinuesAction(character);
+                    CharacterContinuesAction(character, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -389,12 +389,15 @@ namespace ECS {
             }
             return combatRooms;
         }
-        public void CharacterContinuesAction(Character character) {
+        public void CharacterContinuesAction(Character character, bool isActionSucess) {
             character.actionData.SetIsHalted(false);
             character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
             character.icon.SetMovementState(GameManager.Instance.isPaused);
             if (character.actionData.currentAction != null) {
                 if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || character.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
+                    if (isActionSucess) {
+                        character.actionData.currentAction.SuccessEndAction(character);
+                    }
                     character.actionData.currentAction.EndAction(character);
                 }
             }

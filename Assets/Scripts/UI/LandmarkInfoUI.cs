@@ -75,7 +75,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     public override void HideMenu() {
         base.HideMenu();
-        SetAttackButtonState(false);
+        //SetAttackButtonState(false);
         //HidePlayerActions();
     }
     public override void SetData(object data) {
@@ -122,30 +122,34 @@ public class LandmarkInfoUI : UIMenu {
         text += "\n<b>Characters At Landmark: </b> ";
         if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
-                object currObject = currentlyShowingLandmark.charactersAtLocation[i];
+                ICharacter currObject = currentlyShowingLandmark.charactersAtLocation[i];
                 if (currObject is ECS.Character) {
-					ECS.Character currChar = (ECS.Character)currObject;
-					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
-					if (currChar.actionData.currentAction != null) {
-						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
-						//	text += " (" + currQuest.urlName + ")";
-						//} else {
-							text += " (" + currChar.actionData.currentAction.actionData.actionName + ")";
-						//}
-                        //for (int j = 0; j < currChar.currentAction.alignments.Count; j++) {
-                        //    ACTION_ALIGNMENT currAlignment = currChar.currentAction.alignments[j];
-                        //    text += currAlignment.ToString();
-                        //    if (j + 1 < currChar.currentAction.alignments.Count) {
-                        //        text += ", ";
-                        //    }
-                        //}
-                    }
-				} else if (currObject is Party) {
-					Party currParty = (Party)currObject;
-					text += "\n" + currParty.urlNameWithRole + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
-				}
-			}
+                    ECS.Character currChar = (ECS.Character)currObject;
+                    text += "\n" + currChar.name + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+                } else if (currObject is Monster) {
+                    Monster monster = currObject as Monster;
+                    text += "\n" + monster.name;
+                }
+                //if (currChar.actionData.currentAction != null) {
+                //	//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+                //	//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
+                //	//	text += " (" + currQuest.urlName + ")";
+                //	//} else {
+                //		text += " (" + currChar.actionData.currentAction.actionData.actionName + ")";
+                //}
+                //for (int j = 0; j < currChar.currentAction.alignments.Count; j++) {
+                //    ACTION_ALIGNMENT currAlignment = currChar.currentAction.alignments[j];
+                //    text += currAlignment.ToString();
+                //    if (j + 1 < currChar.currentAction.alignments.Count) {
+                //        text += ", ";
+                //    }
+                //}
+                //}
+                //} else if (currObject is Party) {
+                //	Party currParty = (Party)currObject;
+                //	text += "\n" + currParty.urlNameWithRole + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
+                //}
+            }
 		} else {
 			text += "NONE";
 		}
@@ -376,25 +380,25 @@ public class LandmarkInfoUI : UIMenu {
     private void ShowAttackButton() {
         BaseLandmark landmark = currentlyShowingLandmark;
         if (!landmark.isAttackingAnotherLandmark) {
-            if ((landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT || landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT)
-                && landmark.landmarkObj.currentState.stateName == "Ready") {
-
+            if (landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.GARRISON && landmark.landmarkObj.currentState.stateName == "Ready") {
                 attackButtonGO.SetActive(true);
+                attackBtnToggle.isOn = false;
+                isWaitingForAttackTarget = false;
             } else {
                 attackButtonGO.SetActive(false);
             }
         } else {
             attackButtonGO.SetActive(false);
         }
-        SetAttackButtonState(false);
+        //SetAttackButtonState(false);
     }
     public void ToggleAttack() {
         isWaitingForAttackTarget = !isWaitingForAttackTarget;
-        attackBtnToggle.isOn = !attackBtnToggle.isOn;
+        //attackBtnToggle.isOn = !attackBtnToggle.isOn;
     }
-    public void SetAttackButtonState(bool state) {
+    public void SetWaitingForAttackState(bool state) {
         isWaitingForAttackTarget = state;
-        attackBtnToggle.isOn = state;
+        //attackBtnToggle.isOn = state; 
     }
     public void SetActiveAttackButtonGO(bool state) {
         attackButtonGO.SetActive(state);

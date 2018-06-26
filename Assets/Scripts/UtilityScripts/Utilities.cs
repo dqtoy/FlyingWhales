@@ -1514,6 +1514,18 @@ public class Utilities : MonoBehaviour {
             GameObject.Destroy(children[i].gameObject);
         }
     }
+    public static bool IsUIElementInsideScreen(RectTransform uiElement, Canvas canvas) {
+        Vector3[] objectCorners = new Vector3[4];
+        uiElement.GetWorldCorners(objectCorners);
+        Rect screenRect = Camera.main.pixelRect;
+        for (int i = 0; i < objectCorners.Length; i++) {
+            Vector3 currCorner = objectCorners[i];
+            if (!screenRect.Contains(currCorner)) {
+                return false;
+            }
+        }
+        return true;
+    }
     #endregion
 
 }

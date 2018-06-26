@@ -19,7 +19,7 @@ public class CharacterIcon : MonoBehaviour {
 
     public CharacterPortrait characterPortrait { get; private set; }
 
-    private ICharacter _character;
+    private ICharacter _icharacter;
 
     private ILocation _targetLocation;
     private bool _isIdle;
@@ -30,8 +30,8 @@ public class CharacterIcon : MonoBehaviour {
     private bool shouldScaleUp = false;
 
     #region getters/setters
-    public ICharacter character {
-        get { return _character; }
+    public ICharacter icharacter {
+        get { return _icharacter; }
     }
     public CharacterAIPath aiPath {
         get { return _aiPath; }
@@ -44,22 +44,25 @@ public class CharacterIcon : MonoBehaviour {
     }
     #endregion
 
-    public void SetCharacter(ICharacter character) {
-        _character = character;
+    public void SetCharacter(ICharacter icharacter) {
+        _icharacter = icharacter;
         normalScale = _avatarGO.transform.localScale;
         //UpdateColor();
-        this.name = _character.name + "'s Icon";
+        this.name = _icharacter.name + "'s Icon";
         _isIdle = true;
         //if (_character.role != null) {
         //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
         //}
 
-        if (_character is Character) {
-            GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
-            characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-            characterPortrait.GeneratePortrait(_character as Character, IMAGE_SIZE.X64);
-            portraitGO.SetActive(false);
+#if !WORLD_CREATION_TOOL
+        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
+        characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
+        characterPortrait.GeneratePortrait(_icharacter, IMAGE_SIZE.X64);
+        portraitGO.SetActive(false);
+#endif
 
+
+        if (_icharacter is Character) {
             Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
         }
         
@@ -77,8 +80,8 @@ public class CharacterIcon : MonoBehaviour {
             if (_targetLocation == target) {
                 return;
             }
-            if (_character is Character) {
-                Character thisCharacter = _character as Character;
+            if (_icharacter is Character) {
+                Character thisCharacter = _icharacter as Character;
                 //remove character from his/her specific location
                 if (thisCharacter.specificLocation != null && thisCharacter.specificLocation is BaseLandmark) {
                     _aiPath.transform.position = thisCharacter.specificLocation.tileLocation.transform.position;
@@ -126,7 +129,7 @@ public class CharacterIcon : MonoBehaviour {
 
     #region Speed
     public void SetMovementState(bool state) {
-        if (_character is Character && (_character as Character).actionData.isHalted) {
+        if (_icharacter is Character && (_icharacter as Character).actionData.isHalted) {
             return;
         }
         if (state) {
@@ -134,7 +137,7 @@ public class CharacterIcon : MonoBehaviour {
         }
     }
     public void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
-        if (_character is Character && (_character as Character).actionData.isHalted) {
+        if (_icharacter is Character && (_icharacter as Character).actionData.isHalted) {
             return;
         }
         switch (speed) {
@@ -152,7 +155,7 @@ public class CharacterIcon : MonoBehaviour {
     #endregion
 
     private void OnRoleChanged(Character character) {
-        if (_character.id == character.id) {
+        if (_icharacter is Character && _icharacter.id == character.id) {
             //UpdateColor();
             //if (_character.role != null) {
             //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
@@ -256,21 +259,6 @@ public class CharacterIcon : MonoBehaviour {
     private void OnDestroy() {
         SetTarget(null);
         PathfindingManager.Instance.RemoveAgent(_aiPath);
-    }
-    private void OnTriggerEnter2D(Collider2D other) {
-        if (_character is Character) {
-            Character thisCharacter = _character as Character;
-            if (thisCharacter.actionData.currentAction != null) {
-                if (other.tag == "Character" && thisCharacter.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
-                    AttackAction attackAction = thisCharacter.actionData.currentAction as AttackAction;
-                    CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                if (attackAction.characterObj.icharacter.id == enemy.character.id) {
-                        thisCharacter.actionData.DoAction();
-                    }
-                }
-            }
-        }
-        
     }
     #endregion
 
