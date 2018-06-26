@@ -59,6 +59,10 @@ public class AttackAction : CharacterAction {
         }
         base.EndAction(character);
     }
+    public override void SuccessEndAction(Character character) {
+        base.SuccessEndAction(character);
+        GiveAllReward(character);
+    }
     #endregion
     private void StartEncounter(Character enemy) {
         enemy.actionData.SetIsHalted(true);

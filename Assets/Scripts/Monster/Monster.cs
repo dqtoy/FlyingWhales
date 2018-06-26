@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
@@ -37,6 +38,7 @@ public class Monster : ICharacter {
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private MonsterObj _monsterObj;
     private Faction _attackedByFaction;
+    private BaseLandmark _homeLandmark;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private CharacterIcon _icon;
@@ -122,6 +124,9 @@ public class Monster : ICharacter {
         get { return _attackedByFaction; }
         set { _attackedByFaction = value; }
     }
+    public BaseLandmark homeLandmark {
+        get { return _homeLandmark; }
+    }
     public List<Skill> skills {
         get { return _skills; }
     }
@@ -141,7 +146,7 @@ public class Monster : ICharacter {
         get { return _monsterObj; }
     }
     public ILocation specificLocation {
-        get { return _specificLocation; }
+        get { return GetSpecificLocation(); }
     }
     public CharacterIcon icon {
         get { return _icon; }
@@ -236,6 +241,27 @@ public class Monster : ICharacter {
         //sa formula merong pdef at mdef pero kelangan yun ng enemy parameter, papano yun since yung computation na ito ay para ma compute ang sariling power lang mismo?
         //ano yung '(2XVIT) multiplied or added by prefix/suffix effect', wala namang ganun ang vitality.
     }
+    private List<Skill> GetGeneralSkills() {
+        List<Skill> allGeneralSkills = new List<Skill>();
+        foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
+            if(skill is FleeSkill) {
+                continue;
+            }
+            allGeneralSkills.Add(skill.CreateNewCopy());
+        }
+        return allGeneralSkills;
+    }
+    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
+        if (specificLocation == targetLocation) {
+            //action doer is already at the target location
+            if (doneAction != null) {
+                doneAction();
+            }
+        } else {
+            _icon.SetActionOnTargetReached(doneAction);
+            _icon.SetTarget(targetLocation);
+        }
+    }
     #endregion
 
     #region Interface
@@ -243,6 +269,11 @@ public class Monster : ICharacter {
         _id = Utilities.SetID(this);
         _isDead = false;
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
+        _bodyParts = new List<BodyPart>();
+        if(_skills == null) {
+            _skills = new List<Skill>();
+        }
+        _skills.AddRange(GetGeneralSkills());
 #if !WORLD_CREATION_TOOL
         _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
         _monsterObj.SetMonster(this);
@@ -287,6 +318,123 @@ public class Monster : ICharacter {
     }
     public void SetSpecificLocation(ILocation specificLocation) {
         _specificLocation = specificLocation;
+    }
+    private ILocation GetSpecificLocation() {
+        if (_specificLocation != null) {
+            return _specificLocation;
+        } else {
+            if (_icon != null) {
+                Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 1f, LayerMask.GetMask("Hextiles"));
+                //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
+                HexTile tile = collide.gameObject.GetComponent<HexTile>();
+                if (tile != null) {
+                    return tile;
+                } else {
+                    LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
+                    if (landmarkObject != null) {
+                        return landmarkObject.landmark.tileLocation;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+    public void EnableDisableSkills(Combat combat) {
+        bool isAllAttacksInRange = true;
+        bool isAttackInRange = false;
+
+        //Body part skills / general skills
+        for (int i = 0; i < this._skills.Count; i++) {
+            Skill skill = this._skills[i];
+            skill.isEnabled = true;
+
+            if (skill is AttackSkill) {
+                isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                if (!isAttackInRange) {
+                    isAllAttacksInRange = false;
+                    skill.isEnabled = false;
+                    continue;
+                }
+            } else if (skill is FleeSkill) {
+                if (this.currentHP >= (this.maxHP / 2)) {
+                    skill.isEnabled = false;
+                    continue;
+                }
+            }
+        }
+
+        for (int i = 0; i < this._skills.Count; i++) {
+            Skill skill = this._skills[i];
+            if (skill is MoveSkill) {
+                skill.isEnabled = true;
+                if (isAllAttacksInRange) {
+                    skill.isEnabled = false;
+                    continue;
+                }
+                if (skill.skillName == "MoveLeft") {
+                    if (this._currentRow == 1) {
+                        skill.isEnabled = false;
+                        continue;
+                    } else {
+                        bool hasEnemyOnLeft = false;
+                        if (combat.charactersSideA.Contains(this)) {
+                            for (int j = 0; j < combat.charactersSideB.Count; j++) {
+                                ICharacter enemy = combat.charactersSideB[j];
+                                if (enemy.currentRow < this._currentRow) {
+                                    hasEnemyOnLeft = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int j = 0; j < combat.charactersSideA.Count; j++) {
+                                ICharacter enemy = combat.charactersSideA[j];
+                                if (enemy.currentRow < this._currentRow) {
+                                    hasEnemyOnLeft = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasEnemyOnLeft) {
+                            skill.isEnabled = false;
+                            continue;
+                        }
+                    }
+                } else if (skill.skillName == "MoveRight") {
+                    if (this._currentRow == 5) {
+                        skill.isEnabled = false;
+                    } else {
+                        bool hasEnemyOnRight = false;
+                        if (combat.charactersSideA.Contains(this)) {
+                            for (int j = 0; j < combat.charactersSideB.Count; j++) {
+                                ICharacter enemy = combat.charactersSideB[j];
+                                if (enemy.currentRow > this._currentRow) {
+                                    hasEnemyOnRight = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int j = 0; j < combat.charactersSideA.Count; j++) {
+                                ICharacter enemy = combat.charactersSideA[j];
+                                if (enemy.currentRow > this._currentRow) {
+                                    hasEnemyOnRight = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasEnemyOnRight) {
+                            skill.isEnabled = false;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+        this._homeLandmark = newHomeLandmark;
+    }
+    public void GoHome() {
+        GoToLocation(_homeLandmark, PATHFINDING_MODE.USE_ROADS);
     }
     #endregion
 

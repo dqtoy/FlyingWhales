@@ -37,8 +37,16 @@ namespace ECS {
 				//newHealSkill.durabilityCost = healSkill.durabilityCost;
 				SetCommonData (newHealSkill);
 				return newHealSkill;
-			}
-			return null;
+            } else if (this is MoveSkill) {
+                MoveSkill newSkill = new MoveSkill();
+                SetCommonData(newSkill);
+                return newSkill;
+            } else if (this is FleeSkill) {
+                FleeSkill newSkill = new FleeSkill();
+                SetCommonData(newSkill);
+                return newSkill;
+            }
+            return null;
 		}
 		public void SetCommonData(Skill skill){
 			skill.skillType = this.skillType;
@@ -50,15 +58,18 @@ namespace ECS {
 			//skill.accuracy = this.accuracy;
 			skill.range = this.range;
 			skill.isEnabled = this.isEnabled;
-            skill.allowedWeaponTypes = new WEAPON_TYPE[this.allowedWeaponTypes.Length];
-            Array.Copy(this.allowedWeaponTypes, skill.allowedWeaponTypes, this.allowedWeaponTypes.Length);
-			skill.skillRequirements = new SkillRequirement[this.skillRequirements.Length];
-			for (int i = 0; i < this.skillRequirements.Length; i++) {
-				skill.skillRequirements [i] = new SkillRequirement ();
-				skill.skillRequirements [i].attributeRequired = this.skillRequirements [i].attributeRequired;
-				skill.skillRequirements [i].itemQuantity = this.skillRequirements [i].itemQuantity;
-			}
-
+            if(this.allowedWeaponTypes != null && this.allowedWeaponTypes.Length > 0) {
+                skill.allowedWeaponTypes = new WEAPON_TYPE[this.allowedWeaponTypes.Length];
+                Array.Copy(this.allowedWeaponTypes, skill.allowedWeaponTypes, this.allowedWeaponTypes.Length);
+            }
+            if(this.skillRequirements != null && this.skillRequirements.Length > 0) {
+                skill.skillRequirements = new SkillRequirement[this.skillRequirements.Length];
+                for (int i = 0; i < this.skillRequirements.Length; i++) {
+                    skill.skillRequirements[i] = new SkillRequirement();
+                    skill.skillRequirements[i].attributeRequired = this.skillRequirements[i].attributeRequired;
+                    skill.skillRequirements[i].itemQuantity = this.skillRequirements[i].itemQuantity;
+                }
+            }
 		}
     }
 }

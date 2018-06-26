@@ -35,10 +35,16 @@ public class MonsterObj : ICharacterObject {
         get { return _isInvisible; }
     }
     public BaseLandmark objectLocation {
-        get { return _objectLocation; } //Subject for Change
+        get {
+            ILocation location = specificLocation;
+            if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                return location as BaseLandmark;
+            }
+            return _objectLocation;
+        }
     }
     public ILocation specificLocation {
-        get { return objectLocation; }
+        get { return _monster.specificLocation; }
     }
     public RESOURCE madeOf {
         get { return RESOURCE.NONE; }

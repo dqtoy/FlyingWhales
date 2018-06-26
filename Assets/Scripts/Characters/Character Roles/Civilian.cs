@@ -1,28 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class Civilian : CharacterRole {
 
-    public Civilian(ECS.Character character) : base(character) {
+    public Civilian(Character character) : base(character) {
         _roleType = CHARACTER_ROLE.CIVILIAN;
-
-        //_allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
-        //    ACTION_ALIGNMENT.VILLAINOUS,
-        //    ACTION_ALIGNMENT.LAWFUL,
-        //    ACTION_ALIGNMENT.UNLAWFUL
-        //};
-
-        //_roleTasks.Add (new DoNothing (this._character));
-        //_roleTasks.Add (new Rest (this._character));
-        //_roleTasks.Add (new ExploreTile (this._character, 5));
-        //_roleTasks.Add (new UpgradeGear (this._character));
-        //_roleTasks.Add (new MoveTo (this._character));
-        //_roleTasks.Add (new TakeQuest (this._character));
-        //_roleTasks.Add (new Attack (this._character, 10));
-        //_roleTasks.Add (new Patrol (this._character, 10));
-
-        //_defaultRoleTask = _roleTasks [1];
 
         SetFullness(1000);
         SetEnergy(1000);
@@ -30,8 +14,5 @@ public class Civilian : CharacterRole {
         SetPrestige(400);
         SetSanity(1000);
         UpdateHappiness();
-
-        //_character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;
-        //_character.onDailyAction += StartDepletion;
     }
 }

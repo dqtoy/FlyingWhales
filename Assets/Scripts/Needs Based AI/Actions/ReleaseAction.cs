@@ -18,7 +18,6 @@ public class ReleaseAction : CharacterAction {
     public override void PerformAction(Character character) {
         base.PerformAction(character);
         ActionSuccess();
-        GiveAllReward(character);
     }
     public override CharacterAction Clone(ObjectState state) {
         ReleaseAction releaseAction = new ReleaseAction(state);
@@ -26,15 +25,20 @@ public class ReleaseAction : CharacterAction {
         releaseAction.Initialize();
         return releaseAction;
     }
-    public override void DoneDuration() {
-        base.DoneDuration();
-        //Go home: Get home tile > get house structure obj > Get go home action from state > assign action
-    }
-    public override bool CanBeDone() {
-        if (!_characterObj.character.isPrisoner) {
-            return false;
+    public override void DoneDuration(Character character) {
+        base.DoneDuration(character);
+        if(_characterObj.currentState.stateName == "Imprisoned") {
+            ObjectState aliveState = _characterObj.GetState("Alive");
+            _characterObj.ChangeState(aliveState);
         }
-        return base.CanBeDone();
+        GiveAllReward(character);
+        _characterObj.character.GoHome();
     }
+    //public override bool CanBeDone() {
+    //    if (!_characterObj.character.isPrisoner) {
+    //        return false;
+    //    }
+    //    return base.CanBeDone();
+    //}
     #endregion
 }

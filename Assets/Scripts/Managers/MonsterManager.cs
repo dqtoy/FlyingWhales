@@ -45,6 +45,7 @@ public class MonsterManager : MonoBehaviour {
     }
     public void SpawnMonsterOnTile(HexTile tile, string monsterName) {
         Monster newMonster = CreateNewMonster(monsterName);
+        newMonster.Initialize();
         newMonster.CreateIcon();
         newMonster.icon.SetPosition(tile.transform.position);
         newMonster.SetSpecificLocation(tile);
