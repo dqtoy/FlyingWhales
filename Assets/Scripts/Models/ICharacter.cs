@@ -10,6 +10,7 @@ public interface ICharacter {
     int strength { get; }
     int intelligence { get; }
     int agility { get; }
+    int vitality { get; }
     int baseAgility { get; } //Subject for removal
     int level { get; }
     int currentHP { get; }

@@ -66,6 +66,9 @@ public class Monster : ICharacter {
     public int intelligence {
         get { return 0; }
     }
+    public int vitality {
+        get { return 0; }
+    }
     public int agility {
         get { return _speed; }
     }
@@ -223,16 +226,10 @@ public class Monster : ICharacter {
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
         float weaponAttack = (float)attackPower;
-        return (weaponAttack * (1f + (agility / 100f))) * (1f + (level / 100f));
-        //return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
-        //papano computed power ng monster since walang stat sila
+        return (((weaponAttack + (float)strength) * (1f + ((float) strength / 100f))) * (1f + ((float) agility / 100f))) * (1f + ((float) level / 100f));
     }
     private float GetDefensePower() {
-        return (currentHP * (1f + (level / 100f))) * (1f + (agility / 100f));
-        //return ((strength + currentHP + (vitality * 2f)) * (1f + (level / 100f))) * (1f + (agility / 100f));
-        //follow up questions : 
-        //sa formula merong pdef at mdef pero kelangan yun ng enemy parameter, papano yun since yung computation na ito ay para ma compute ang sariling power lang mismo?
-        //ano yung '(2XVIT) multiplied or added by prefix/suffix effect', wala namang ganun ang vitality.
+        return ((float) (strength + intelligence + _pDef + _mDef + maxHP + (2 * vitality)) * (1f + ((float) level / 100f))) * (1f + ((float) agility / 100f));
     }
     #endregion
 
