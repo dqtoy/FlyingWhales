@@ -175,8 +175,10 @@ public class ActionData {
             _isNotFirstEncounter = true;
         }
         currentAction.PerformAction(_character);
-        if (currentAction.actionData.duration > 0) {
-            AdjustCurrentDay(1);
+        if (!currentAction.actionData.isIndefinite) {
+            if (currentAction.actionData.duration > 0) {
+                AdjustCurrentDay(1);
+            }
         }
     }
 
