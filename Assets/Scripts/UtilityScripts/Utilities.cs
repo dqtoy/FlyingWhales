@@ -69,8 +69,7 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Monster) {
             lastMonsterID += 1;
             return lastMonsterID;
-        } 
-        else if (obj is Area) {
+        } else if (obj is Area) {
             lastAreaID += 1;
             return lastAreaID;
         }
@@ -1514,6 +1513,18 @@ public class Utilities : MonoBehaviour {
         for (int i = 0; i < children.Length; i++) {
             GameObject.Destroy(children[i].gameObject);
         }
+    }
+    public static bool IsUIElementInsideScreen(RectTransform uiElement, Canvas canvas) {
+        Vector3[] objectCorners = new Vector3[4];
+        uiElement.GetWorldCorners(objectCorners);
+        Rect screenRect = Camera.main.pixelRect;
+        for (int i = 0; i < objectCorners.Length; i++) {
+            Vector3 currCorner = objectCorners[i];
+            if (!screenRect.Contains(currCorner)) {
+                return false;
+            }
+        }
+        return true;
     }
     #endregion
 

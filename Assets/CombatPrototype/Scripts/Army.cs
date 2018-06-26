@@ -87,6 +87,8 @@ public class Army {
             (_originLandmark.landmarkObj as HumanSettlement).CommenceTraining();
         } else if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT) {
             (_originLandmark.landmarkObj as ElvenSettlement).CommenceTraining();
+        } else if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.GARRISON) {
+            (_originLandmark.landmarkObj as Garrison).CommenceTraining();
         }
         GameObject.Destroy(_icon.gameObject);
     }

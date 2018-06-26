@@ -556,7 +556,7 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     public void GenerateCharactersForTesting(int number) {
-        List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
+        List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.owner != null).ToList();
         //List<Settlement> allOwnedSettlements = new List<Settlement>();
         //for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
         //    allOwnedSettlements.AddRange(FactionManager.Instance.allTribes[i].settlements);

@@ -143,8 +143,6 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
-
-        GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
         CharacterManager.Instance.GenerateCharactersForTesting(8);
         //FactionManager.Instance.GenerateFactionCharacters();
@@ -156,6 +154,11 @@ public class MapGenerator : MonoBehaviour {
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
+
+        //yield return new WaitForSeconds(1f);
+        //PlayerManager.Instance.ChooseStartingTile();
+
+        GameManager.Instance.StartProgression();
     }
 
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
@@ -221,8 +224,6 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
-
-        GameManager.Instance.StartProgression();
         LandmarkManager.Instance.InitializeLandmarks();
         //CharacterManager.Instance.GenerateCharactersForTesting(1);
         CharacterManager.Instance.LoadCharacters(data);
@@ -234,6 +235,9 @@ public class MapGenerator : MonoBehaviour {
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
+
+        //PlayerManager.Instance.ChooseStartingTile();
+        GameManager.Instance.StartProgression();
     }
 
     internal void ReloadScene() {

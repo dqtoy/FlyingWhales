@@ -30,6 +30,10 @@ public class GameManager : MonoBehaviour {
     private float timeElapsed;
     private bool _gameHasStarted;
 
+    [SerializeField] private Texture2D cursorTexture;
+    [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
+    [SerializeField] private Vector2 hotSpot = Vector2.zero;
+
     #region getters/setters
     public bool gameHasStarted {
         get { return _gameHasStarted; }
@@ -41,7 +45,8 @@ public class GameManager : MonoBehaviour {
 		//this.month = 1;
 		this.timeElapsed = 0f;
         _gameHasStarted = false;
-	}
+        Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
+    }
 
 	private void FixedUpdate(){
 		if (_gameHasStarted && !isPaused) {
