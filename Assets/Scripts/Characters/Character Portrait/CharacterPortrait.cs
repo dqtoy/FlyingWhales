@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 
-    private ECS.Character _character;
+    private ICharacter _character;
     private IMAGE_SIZE _imgSize;
     private bool _ignoreSize;
 
@@ -31,7 +31,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
     [Header("Body")]
     [SerializeField] private Image body;
 
-    public void GeneratePortrait(ECS.Character character, IMAGE_SIZE imgSize, bool ignoreSize = false) {
+    public void GeneratePortrait(ICharacter character, IMAGE_SIZE imgSize, bool ignoreSize = false) {
         _character = character;
         _ignoreSize = ignoreSize;
         SetImageSize(imgSize, ignoreSize);
@@ -61,21 +61,23 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 #if !WORLD_CREATION_TOOL
         if (_character != null) {
             if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-                CharacterAction attackAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+                CharacterAction attackAction = _character.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
                 if (attackAction.CanBeDone() && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
                     UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
                     UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
                     return;
                 }
             } else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
-                CharacterAction joinBattleAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
+                CharacterAction joinBattleAction = _character.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
                 if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
                     UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(joinBattleAction);
                     UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
                     return;
                 }
             }
-            UIManager.Instance.ShowCharacterInfo(_character);
+            if (_character is ECS.Character) {
+                UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
+            }
         }
 #endif
     }

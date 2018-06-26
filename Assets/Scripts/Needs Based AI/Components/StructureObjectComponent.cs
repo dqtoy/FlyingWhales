@@ -151,4 +151,12 @@ public class StructureObjectComponent : ObjectComponent {
         }
     }
     #endregion
+
+    #region Monster Den
+    public void ReduceSpawnCooldown(IObject obj) {
+        if (obj is MonsterDen) {
+            (obj as MonsterDen).ReduceSpawnCooldown(1);
+        }
+    }
+    #endregion
 }

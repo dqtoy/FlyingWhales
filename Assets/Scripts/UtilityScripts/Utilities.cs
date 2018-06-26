@@ -69,7 +69,8 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Monster) {
             lastMonsterID += 1;
             return lastMonsterID;
-        } else if (obj is Area) {
+        } 
+        else if (obj is Area) {
             lastAreaID += 1;
             return lastAreaID;
         }

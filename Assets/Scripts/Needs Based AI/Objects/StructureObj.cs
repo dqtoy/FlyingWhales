@@ -71,7 +71,6 @@ public class StructureObj : IObject {
         _objectType = OBJECT_TYPE.STRUCTURE;
         ConstructResourceInventory();
     }
-
     #region Virtuals
     public virtual IObject Clone() {
         StructureObj clone = new StructureObj();
@@ -101,9 +100,11 @@ public class StructureObj : IObject {
     #endregion
 
     #region Interface Requirements
-    public void SetStates(List<ObjectState> states) {
+    public void SetStates(List<ObjectState> states, bool autoChangeState = true) {
         _states = states;
-        ChangeState(states[0]);
+        if (autoChangeState) {
+            ChangeState(states[0]);
+        }
     }
     public void SetObjectName(string name) {
         _objectName = name;
@@ -124,9 +125,15 @@ public class StructureObj : IObject {
         _maxHP = amount;
     }
     public void SetObjectLocation(BaseLandmark newLocation) {
+        //if (this is MonsterDen) {
+        //    Debug.Log("Set object location to " + newLocation.ToString() + ". ST: " + StackTraceUtility.ExtractStackTrace());
+        //}
         _objectLocation = newLocation;
     }
     public void ChangeState(ObjectState state) {
+        //if (this is MonsterDen) {
+            //Debug.Log("Set state of " + GetType().ToString() + " to " + state.stateName + ". ST: " + StackTraceUtility.ExtractStackTrace());
+        //}
         if (_currentState != null) {
             _currentState.OnEndState();
         }

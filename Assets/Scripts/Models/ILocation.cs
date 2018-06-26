@@ -8,11 +8,11 @@ public interface ILocation {
 	LOCATION_IDENTIFIER locIdentifier { get; }
 	HexTile tileLocation { get; }
     string locationName { get; }
-    List<Character> charactersAtLocation { get; }
+    List<ICharacter> charactersAtLocation { get; }
 
-    void AddCharacterToLocation(Character character);
-	void RemoveCharacterFromLocation(Character character);
-    void ReplaceCharacterAtLocation(Character characterToReplace, Character characterToAdd);
+    void AddCharacterToLocation(ICharacter character);
+	void RemoveCharacterFromLocation(ICharacter character);
+    void ReplaceCharacterAtLocation(ICharacter characterToReplace, ICharacter characterToAdd);
 
     void ScheduleCombatCheck();
     void UnScheduleCombatCheck();
@@ -36,6 +36,6 @@ public interface ILocation {
     //int CharactersCount(bool includeHostile = false);
     void ContinueDailyActions();
 
-	ECS.Character GetCharacterAtLocationByID (int id, bool includeTraces = false);
+	//ICharacter GetCharacterAtLocationByID (int id, bool includeTraces = false);
 	//Party GetPartyAtLocationByLeaderID (int id);
 }

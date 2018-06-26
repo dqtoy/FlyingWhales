@@ -122,30 +122,34 @@ public class LandmarkInfoUI : UIMenu {
         text += "\n<b>Characters At Landmark: </b> ";
         if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
-                object currObject = currentlyShowingLandmark.charactersAtLocation[i];
+                ICharacter currObject = currentlyShowingLandmark.charactersAtLocation[i];
                 if (currObject is ECS.Character) {
-					ECS.Character currChar = (ECS.Character)currObject;
-					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
-					if (currChar.actionData.currentAction != null) {
-						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
-						//	text += " (" + currQuest.urlName + ")";
-						//} else {
-							text += " (" + currChar.actionData.currentAction.actionData.actionName + ")";
-						//}
-                        //for (int j = 0; j < currChar.currentAction.alignments.Count; j++) {
-                        //    ACTION_ALIGNMENT currAlignment = currChar.currentAction.alignments[j];
-                        //    text += currAlignment.ToString();
-                        //    if (j + 1 < currChar.currentAction.alignments.Count) {
-                        //        text += ", ";
-                        //    }
-                        //}
-                    }
-				} else if (currObject is Party) {
-					Party currParty = (Party)currObject;
-					text += "\n" + currParty.urlNameWithRole + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
-				}
-			}
+                    ECS.Character currChar = (ECS.Character)currObject;
+                    text += "\n" + currChar.name + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+                } else if (currObject is Monster) {
+                    Monster monster = currObject as Monster;
+                    text += "\n" + monster.name;
+                }
+                //if (currChar.actionData.currentAction != null) {
+                //	//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+                //	//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
+                //	//	text += " (" + currQuest.urlName + ")";
+                //	//} else {
+                //		text += " (" + currChar.actionData.currentAction.actionData.actionName + ")";
+                //}
+                //for (int j = 0; j < currChar.currentAction.alignments.Count; j++) {
+                //    ACTION_ALIGNMENT currAlignment = currChar.currentAction.alignments[j];
+                //    text += currAlignment.ToString();
+                //    if (j + 1 < currChar.currentAction.alignments.Count) {
+                //        text += ", ";
+                //    }
+                //}
+                //}
+                //} else if (currObject is Party) {
+                //	Party currParty = (Party)currObject;
+                //	text += "\n" + currParty.urlNameWithRole + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
+                //}
+            }
 		} else {
 			text += "NONE";
 		}

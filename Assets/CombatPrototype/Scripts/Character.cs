@@ -122,18 +122,12 @@ namespace ECS {
 
         //private Action _currentFunction;
         private bool _isInCombat;
-
-        //When the character should have a next action it should do after it's current one.
-        //private CharacterTask nextTaskToDo;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         private Dictionary<Character, List<string>> _traceInfo;
         //private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
         private CharacterObj _characterObject;
-
-        ////For Testing
-        //public Dictionary<CharacterTask, string> previousActions; //For testing, list of all the characters previous actions. TODO: Remove this after testing
 
         //private Dictionary<RESOURCE, int> _resourceInventory;
 

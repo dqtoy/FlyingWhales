@@ -32,6 +32,7 @@ public class ObjectState {
     public ObjectState Clone(IObject obj) {
         ObjectState clonedState = new ObjectState(obj);
         clonedState._stateName = this.stateName;
+        clonedState._everydayAction = this._everydayAction;
         clonedState._actions = new List<CharacterAction>();
         for (int i = 0; i < this.actions.Count; i++) {
             CharacterAction ogAction = this.actions[i];

@@ -41,10 +41,14 @@ public class Monster : ICharacter {
     private List<BodyPart> _bodyParts;
     private CharacterIcon _icon;
     private ILocation _specificLocation;
+    private PortraitSettings _portraitSettings;
 
     #region getters/setters
     public string name {
         get { return _name; }
+    }
+    public string urlName {
+        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + this._name + "</link>"; }
     }
     public string coloredUrlName {
         get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
@@ -146,6 +150,9 @@ public class Monster : ICharacter {
     public CharacterIcon icon {
         get { return _icon; }
     }
+    public PortraitSettings portraitSettings {
+        get { return _portraitSettings; }
+    }
     #endregion
 
     public Monster CreateNewCopy() {
@@ -164,10 +171,11 @@ public class Monster : ICharacter {
         newMonster._dodgeChance = this._dodgeChance;
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
-#if !WORLD_CREATION_TOOL
-        newMonster._monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        newMonster._monsterObj.SetMonster(newMonster);
-#endif
+        newMonster._portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+//#if !WORLD_CREATION_TOOL
+//        newMonster._monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+//        newMonster._monsterObj.SetMonster(newMonster);
+//#endif
         newMonster._skills = new List<Skill>();
         for (int i = 0; i < this._skills.Count; i++) {
             newMonster._skills.Add(_skills[i].CreateNewCopy());
@@ -221,6 +229,7 @@ public class Monster : ICharacter {
         _isDead = true;
         ObjectState deadState = _monsterObj.GetState("Dead");
         _monsterObj.ChangeState(deadState);
+        Messenger.Broadcast(Signals.MONSTER_DEATH, this);
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -241,6 +250,16 @@ public class Monster : ICharacter {
     #region Interface
     public void Initialize() {
         _id = Utilities.SetID(this);
+        _isDead = false;
+        _battleOnlyTracker = new CharacterBattleOnlyTracker();
+#if !WORLD_CREATION_TOOL
+        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
+        _monsterObj.SetMonster(this);
+#endif
+        SetCharacterColor(Color.red);
+    }
+    public void Initialize(MonsterSaveData data) {
+        _id = Utilities.SetID(this, data.id);
         _isDead = false;
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
 #if !WORLD_CREATION_TOOL

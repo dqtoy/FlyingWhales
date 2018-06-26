@@ -14,7 +14,7 @@ public interface IObject {
     RESOURCE madeOf { get; }
     Dictionary<RESOURCE, int> resourceInventory { get; }
 
-    void SetStates(List<ObjectState> states);
+    void SetStates(List<ObjectState> states, bool autoChangeState = true);
     void SetObjectName(string name);
     void ChangeState(ObjectState state);
     void StartState(ObjectState state);

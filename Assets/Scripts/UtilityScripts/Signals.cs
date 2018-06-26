@@ -14,6 +14,7 @@ public static class Signals {
     public static string ITEM_PLACED_INVENTORY = "OnItemPlacedAtInventory"; //Parameters (Item item, Character character)
     public static string CHARACTER_DEATH = "OnCharacterDied"; //Parameters (Character characterThatDied)
     public static string CHARACTER_KILLED = "OnCharacterKilled"; //Parameters (Character killer, Character characterThatDied)
+    public static string MONSTER_DEATH = "OnMonsterDied"; //Parameters (Monster monsterThatDied)
     public static string COLLIDED_WITH_CHARACTER = "OnCollideWithCharacter"; //Parameters (Character character1, Character character2)
     public static string HISTORY_ADDED = "OnHistoryAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     public static string CHARACTER_CREATED = "OnCharacterCreated"; //Parameters (Character createdCharacter)
