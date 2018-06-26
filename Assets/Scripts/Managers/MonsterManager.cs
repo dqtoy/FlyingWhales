@@ -66,15 +66,19 @@ public class MonsterManager : MonoBehaviour {
     }
     public Monster SpawnMonsterOnLandmark(BaseLandmark landmark, string monsterName) {
         Monster newMonster = CreateNewMonster(monsterName);
+#if !WORLD_CREATION_TOOL
         newMonster.CreateIcon();
         newMonster.icon.SetPosition(landmark.tileLocation.transform.position);
+#endif
         landmark.AddCharacterToLocation(newMonster);
         return newMonster;
     }
     public Monster SpawnMonsterOnLandmark(BaseLandmark landmark, MonsterSaveData data) {
         Monster newMonster = CreateNewMonster(data);
+#if !WORLD_CREATION_TOOL
         newMonster.CreateIcon();
         newMonster.icon.SetPosition(landmark.tileLocation.transform.position);
+#endif
         landmark.AddCharacterToLocation(newMonster);
         return newMonster;
     }

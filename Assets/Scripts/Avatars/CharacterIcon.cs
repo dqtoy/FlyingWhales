@@ -54,10 +54,13 @@ public class CharacterIcon : MonoBehaviour {
         //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
         //}
 
+#if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
         characterPortrait.GeneratePortrait(_icharacter, IMAGE_SIZE.X64);
         portraitGO.SetActive(false);
+#endif
+
 
         if (_icharacter is Character) {
             Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);

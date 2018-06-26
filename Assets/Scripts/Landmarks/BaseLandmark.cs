@@ -609,7 +609,7 @@ public class BaseLandmark : ILocation {
             _landmarkVisual.OnCharacterEnteredLandmark(character);
 #endif
         }
-         character.SetSpecificLocation(this);
+         //character.SetSpecificLocation(this);
     //        if (character is Character) {
     //            Character currChar = character as Character;
 				//this.tileLocation.RemoveCharacterFromLocation(currChar);

@@ -1672,7 +1672,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
             foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
                 ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
-                spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
+                if (landmarkOnTile != null) {
+                    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnLandmark(landmarkOnTile, kvp.Key);
+                } else {
+                    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
+                }
+                
                 createMonsterSettings.AddMenuItem(spawnMonsterItem);
             }
         } else if (MonsterManager.Instance.HasMonsterOnTile(this)) {

@@ -38,7 +38,7 @@ public class MonsterDen : StructureObj {
             AreaData areaData = LandmarkManager.Instance.GetAreaData(areaOfObj.areaType);
             if (areaData.possibleMonsterSpawns.Count > 0) {
                 TextAsset chosenMonster = areaData.possibleMonsterSpawns[Random.Range(0, areaData.possibleMonsterSpawns.Count)];
-                Monster spawnedMonster = MonsterManager.Instance.SpawnMonsterOnLandmark(this.objectLocation ,chosenMonster.name);
+                Monster spawnedMonster = MonsterManager.Instance.SpawnMonsterOnLandmark(this.objectLocation, chosenMonster.name);
                 BindMonsterToDen(spawnedMonster);
             }
         } else {
