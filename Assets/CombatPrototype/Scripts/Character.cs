@@ -3245,7 +3245,7 @@ namespace ECS {
             _critDamage += amount;
         }
         private void RecomputeMaxHP() {
-            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 1.1f)) / 1.3f)));
+            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
             int previousMaxHP = this._maxHP;
             this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * ((float) vitality / 100f));
             if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
