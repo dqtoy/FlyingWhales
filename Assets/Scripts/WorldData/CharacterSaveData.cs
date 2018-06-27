@@ -13,6 +13,7 @@ public class CharacterSaveData {
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
     public int homeID;
+    public int homeLandmarkID;
     public int factionID;
     public PortraitSettings portraitSettings;
     public List<string> equipmentData;
@@ -38,6 +39,12 @@ public class CharacterSaveData {
             homeID = character.home.id;
         } else {
             homeID = -1;
+        }
+
+        if (character.homeLandmark != null) {
+            homeLandmarkID = character.homeLandmark.id;
+        } else {
+            homeLandmarkID = -1;
         }
 
         if (character.faction != null) {

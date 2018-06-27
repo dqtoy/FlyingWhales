@@ -49,15 +49,16 @@ namespace worldcreator {
             }
         }
         public void SetHome() {
-            List<Area> choices = new List<Area>();
-            for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
-                HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];
-                if (currTile.areaOfTile != null && !choices.Contains(currTile.areaOfTile)) {
-                    choices.Add(currTile.areaOfTile);
-                }
-            }
-            Area chosenArea = choices[Random.Range(0, choices.Count)];
-            _character.SetHome(chosenArea);
+            List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection);
+            //for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
+            //    HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];
+            //    if (currTile.areaOfTile != null && !choices.Contains(currTile.areaOfTile)) {
+            //        choices.Add(currTile.areaOfTile);
+            //    }
+            //}
+            HexTile chosenTile = choices[Random.Range(0, choices.Count)];
+            _character.SetHome(chosenTile.areaOfTile);
+            _character.SetHomeLandmark(chosenTile.landmarkOnTile);
             //BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
             //_character.SetHome(chosenLandmark);
             if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
@@ -67,7 +68,7 @@ namespace worldcreator {
 
         #region Monobehaviours
         private void Update() {
-            if (WorldCreatorManager.Instance.selectionComponent.selectedAreas.Count == 0) {
+            if (WorldCreatorManager.Instance.selectionComponent.selectedAreas.Count == 0 || WorldCreatorManager.Instance.selectionComponent.selectedLandmarks.Count == 0) {
                 setHomeBtn.interactable = false;
             } else {
                 setHomeBtn.interactable = true;

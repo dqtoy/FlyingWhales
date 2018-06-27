@@ -226,6 +226,11 @@ public class CharacterManager : MonoBehaviour {
 #endif
         }
 
+        if (data.homeLandmarkID != -1) {
+            BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
+            newCharacter.SetHomeLandmark(homeLandmark);
+        }
+
         if (data.equipmentData != null) {
             for (int i = 0; i < data.equipmentData.Count; i++) {
                 string equipmentName = data.equipmentData[i];
