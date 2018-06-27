@@ -137,6 +137,7 @@ public class UIManager : MonoBehaviour {
             allMenus[i].Initialize();
         }
         popupMessageBox.Initialize();
+        Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
     }
 
     #region Font Utilities
@@ -898,6 +899,34 @@ public class UIManager : MonoBehaviour {
     //    questsSummaryLbl.text = questSummary;
     //    questsSummaryLbl.ResizeCollider();
     //}
+    #endregion
+
+    #region Context Menu
+    [Space(10)]
+    [Header("Context Menu")]
+    public GameObject contextMenuPrefab;
+    public GameObject contextMenuItemPrefab;
+    public UIContextMenu contextMenu;
+    private void ShowContextMenu(HexTile tile) {
+        if (PlayerManager.Instance.isChoosingStartingTile || landmarkInfoUI.isWaitingForAttackTarget) {
+            return;
+        }
+        ContextMenuSettings settings = tile.GetContextMenuSettings();
+        if (settings.items.Count > 0) {
+            contextMenu.LoadSettings(settings);
+            contextMenu.gameObject.SetActive(true);
+            Vector2 pos;
+            //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, eventSystem.camera, out pos);
+            contextMenu.transform.position = Input.mousePosition;
+        }
+        
+    }
+    public void HideContextMenu() {
+        contextMenu.gameObject.SetActive(false);
+    }
+    public void HideContextMenu(HexTile tile) {
+        HideContextMenu();
+    }
     #endregion
 
     #region Save

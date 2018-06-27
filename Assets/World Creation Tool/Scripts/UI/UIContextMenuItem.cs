@@ -23,7 +23,11 @@ public class UIContextMenuItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         onHoverOutAction = settings.onHoverExitAction;
         if (settings.onClickAction != null) {
             onClickAction = settings.onClickAction;
+#if WORLD_CREATION_TOOL
             onClickAction += worldcreator.WorldCreatorUI.Instance.HideContextMenu;
+#else
+            onClickAction += UIManager.Instance.HideContextMenu;
+#endif
         } else {
             onClickAction = null;
         }

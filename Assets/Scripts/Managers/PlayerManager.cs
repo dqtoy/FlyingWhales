@@ -35,4 +35,8 @@ public class PlayerManager : MonoBehaviour {
         UIManager.Instance.SetTimeControlsState(true);
         //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
     }
+
+    public void AddTileToPlayerArea(HexTile tile) {
+        player.playerArea.AddTile(tile);
+    }
 }
