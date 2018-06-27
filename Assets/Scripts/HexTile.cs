@@ -1705,9 +1705,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public ContextMenuSettings GetContextMenuSettings() {
         ContextMenuSettings settings = new ContextMenuSettings();
         if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.isPassable && IsAdjacentToPlayerArea()) {
-            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Purchase Tile");
-            createLandmarkItem.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
+            ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
+            purchaseTileItem.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
+            settings.AddMenuItem(purchaseTileItem);
+        }
+        if (this.areaOfTile != null && this.areaOfTile.id == PlayerManager.Instance.player.playerArea.id && this.landmarkOnTile == null) {
+            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Create Landmark");
+            ContextMenuSettings createLandmarkSettings = new ContextMenuSettings();
+            createLandmarkItem.SetSubMenu(createLandmarkSettings);
             settings.AddMenuItem(createLandmarkItem);
+
+            AreaData data = LandmarkManager.Instance.GetAreaData(AREA_TYPE.DEMONIC_INTRUSION);
+            for (int i = 0; i < data.allowedLandmarkTypes.Count; i++) {
+                LANDMARK_TYPE landmarkType = data.allowedLandmarkTypes[i];
+                if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+                    ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
+                    createLandmark.onClickAction = () => LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType);
+                    createLandmarkSettings.AddMenuItem(createLandmark);
+                }
+            }
         }
         return settings;
     }

@@ -130,56 +130,6 @@ public class LandmarkManager : MonoBehaviour {
         //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
-    //public void ConstructAllLandmarkObjects() {
-    //    List<BaseLandmark> allLandmarks = GetAllLandmarks();
-    //    for (int i = 0; i < allLandmarks.Count; i++) {
-    //        BaseLandmark currLandmark = allLandmarks[i];
-    //        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
-    //        BaseLandmarkData baseData = LandmarkManager.Instance.GetBaseLandmarkData(LandmarkManager.Instance.GetBaseLandmarkType(currLandmark.specificLandmarkType));
-    //        ConstructLandmarkObjects(baseData, data, currLandmark);
-    //    }
-    //}
-    //public void ConstructLandmarkObjects(BaseLandmarkData baseData, LandmarkData data, BaseLandmark landmark) {
-    //    IObject createdObject = null;
-    //    for (int i = 0; i < baseData.initialObjects.Count; i++) {
-    //        createdObject = ObjectManager.Instance.CreateNewObject(baseData.initialObjects[i].name);
-    //        if (createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
-    //            if(createdObject.currentState.stateName.Equals("Under Construction")) {
-    //                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
-    //                if (defaultOrEmptyState == null) {
-    //                    defaultOrEmptyState = createdObject.GetState("Empty");
-    //                }
-    //                createdObject.ChangeState(defaultOrEmptyState);
-    //            }
-    //            StructureObj structure = createdObject as StructureObj;
-    //            structure.SetHP(100);
-    //            structure.SetIsMadeOf(RESOURCE.OAK);
-    //        }
-    //    }
-    //    ObjectManager.Instance.CreateNewObject("Landmark Object");
-    //    for (int i = 0; i < data.initialObjects.Count; i++) {
-    //        int chance = UnityEngine.Random.Range(0, 100);
-    //        if(chance < data.initialObjects[i].spawnChance) {
-    //            createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].obj.name);
-    //        } else {
-    //            if(data.initialObjects[i].fallbackObject != null) {
-    //                createdObject = ObjectManager.Instance.CreateNewObject(data.initialObjects[i].fallbackObject.name);
-    //            }
-    //        }
-    //        if (createdObject != null && createdObject.objectType == OBJECT_TYPE.STRUCTURE) {
-    //            if (createdObject.currentState.stateName.Equals("Under Construction")) {
-    //                ObjectState defaultOrEmptyState = createdObject.GetState("Default");
-    //                if (defaultOrEmptyState == null) {
-    //                    defaultOrEmptyState = createdObject.GetState("Empty");
-    //                }
-    //                createdObject.ChangeState(defaultOrEmptyState);
-    //            }
-    //            StructureObj structure = createdObject as StructureObj;
-    //            structure.SetHP(100);
-    //            structure.SetIsMadeOf(RESOURCE.OAK);
-    //        }
-    //    }
-    //}
     /*
      Occupy a specified landmark.
          */

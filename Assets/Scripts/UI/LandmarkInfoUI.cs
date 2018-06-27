@@ -277,6 +277,9 @@ public class LandmarkInfoUI : UIMenu {
         if (currentlyShowingLandmark == null) {
             return;
         }
+        if (obj.objectLocation == null) {
+            return;
+        }
         if (obj.objectLocation.id == currentlyShowingLandmark.id) {
             if (newState.stateName.Equals("Ready")) {
                 SetActiveAttackButtonGO(true);

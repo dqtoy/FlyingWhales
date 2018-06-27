@@ -315,6 +315,9 @@ public class ObjectManager : MonoBehaviour {
             case SPECIFIC_OBJECT_TYPE.MONSTER_DEN:
                 structureObj = new MonsterDen();
                 break;
+            case SPECIFIC_OBJECT_TYPE.SNATCHER_DEMONS_LAIR:
+                structureObj = new SnatcherDemonsLair();
+                break;
         }
         component.CopyDataToStructureObject(structureObj);
         return structureObj;

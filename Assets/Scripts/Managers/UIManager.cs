@@ -121,6 +121,11 @@ public class UIManager : MonoBehaviour {
                 ToggleConsole();
             }
         }
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (contextMenu.gameObject.activeSelf) {
+                HideContextMenu();
+            }
+        }
         UpdateSpeedToggles(GameManager.Instance.isPaused);
     }
     #endregion
@@ -138,6 +143,7 @@ public class UIManager : MonoBehaviour {
         }
         popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
+        Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
     }
 
     #region Font Utilities
