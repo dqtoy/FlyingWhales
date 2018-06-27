@@ -134,16 +134,6 @@ public class LandmarkInfoUI : UIMenu {
             text += "NONE";
         }
 
-		text += "\n<b>Prisoners:</b> ";
-		if(currentlyShowingLandmark.prisoners.Count > 0){
-			for (int i = 0; i < currentlyShowingLandmark.prisoners.Count; i++) {
-				ECS.Character prisoner = currentlyShowingLandmark.prisoners [i];
-				text += "\n" + prisoner.prisonerName;
-			}
-		} else {
-			text += "NONE";
-		}
-
 		text += "\n<b>Traces:</b> ";
 		if(currentlyShowingLandmark.characterTraces.Count > 0){
 			foreach (ECS.Character character in currentlyShowingLandmark.characterTraces.Keys) {

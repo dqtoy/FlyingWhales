@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Civilian : CharacterRole {
+public class King : CharacterRole {
 
-    public Civilian(Character character) : base(character) {
-        _roleType = CHARACTER_ROLE.CIVILIAN;
+    public King(Character character) : base(character) {
+        _roleType = CHARACTER_ROLE.KING;
 
         SetFullness(1000);
         SetEnergy(1000);

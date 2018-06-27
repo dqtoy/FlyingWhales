@@ -39,6 +39,7 @@ public class Monster : ICharacter {
     private MonsterObj _monsterObj;
     private Faction _attackedByFaction;
     private BaseLandmark _homeLandmark;
+    private RaceSetting _raceSetting;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private CharacterIcon _icon;
@@ -274,8 +275,10 @@ public class Monster : ICharacter {
     public void Initialize() {
         _id = Utilities.SetID(this);
         _isDead = false;
+        CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(Utilities.NormalizeString(_type.ToString()) + " Classless");
+        _raceSetting = setup.raceSetting.CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
-        _bodyParts = new List<BodyPart>();
+        _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         if(_skills == null) {
             _skills = new List<Skill>();
         }

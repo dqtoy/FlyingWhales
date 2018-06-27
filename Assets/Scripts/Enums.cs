@@ -38,6 +38,7 @@ public enum RACE{
 	DRAGON,
 	DEHKBRUG,
     WOLF,
+    SLIME,
 }
 
 public enum PATH_DIRECTION{
@@ -841,6 +842,7 @@ public enum CHARACTER_ROLE {
 	//SLYX,
 	VILLAIN,
     CIVILIAN,
+    KING,
     //FOLLOWER,
     //HERMIT,
     //BEAST,

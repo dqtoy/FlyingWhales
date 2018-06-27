@@ -954,12 +954,10 @@ public class BaseLandmark : ILocation {
 
     #region Prisoner
     internal void AddPrisoner(Character character){
-		character.SetPrisoner (true, this);
 		_prisoners.Add (character);
 	}
 	internal void RemovePrisoner(Character character){
 		_prisoners.Remove (character);
-		character.SetPrisoner (false, null);
 	}
 	#endregion
 
