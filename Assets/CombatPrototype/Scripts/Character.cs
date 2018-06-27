@@ -3273,6 +3273,12 @@ namespace ECS {
             float levelDiff = (float) (enemy.level - level);
             return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 100f)));
         }
+        public int GetSelfPdef() {
+            return (int) ((float) _bonusPDef * (1f + (_bonusPDefPercent / 100f)));
+        }
+        public int GetSelfMdef() {
+            return (int) ((float) _bonusMDef * (1f + (_bonusMDefPercent / 100f)));
+        }
         public void ResetToFullHP() {
             AdjustHP(_maxHP);
         }
@@ -3288,7 +3294,7 @@ namespace ECS {
             return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
         }
         private float GetDefensePower() {
-            return ((strength + currentHP + (vitality * 2f)) * (1f + (level / 100f))) * (1f + (agility / 100f));
+            return ((float)(strength + intelligence + GetSelfPdef() + GetSelfMdef() + maxHP + (vitality * 2)) * (1f + (level / 100f))) * (1f + (agility / 100f));
             //follow up questions : 
             //sa formula merong pdef at mdef pero kelangan yun ng enemy parameter, papano yun since yung computation na ito ay para ma compute ang sariling power lang mismo?
             //ano yung '(2XVIT) multiplied or added by prefix/suffix effect', wala namang ganun ang vitality.
