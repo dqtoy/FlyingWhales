@@ -39,5 +39,6 @@ public static class Signals {
     public static string ITEM_OBTAINED = "OnObtainItem"; //Parameters (Item obtainedItem, Character characterThatObtainedItem)
     public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, ECS.Character character)
     public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, bool expires)
-    public static string HIDE_POPUP_MESSAGE = "HidePopupMessage"; 
+    public static string HIDE_POPUP_MESSAGE = "HidePopupMessage";
+    public static string GAME_LOADED = "OnGameLoaded";
 }

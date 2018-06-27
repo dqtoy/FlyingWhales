@@ -26,6 +26,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.UpdateLoadingInfo("Generating Map...");
         yield return null;
         GridMap.Instance.GenerateGrid();
+        CameraMove.Instance.Initialize();
         CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
@@ -155,10 +156,12 @@ public class MapGenerator : MonoBehaviour {
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
 
-        //yield return new WaitForSeconds(1f);
-        //PlayerManager.Instance.ChooseStartingTile();
+        Messenger.Broadcast(Signals.GAME_LOADED);
 
-        GameManager.Instance.StartProgression();
+        yield return new WaitForSeconds(1f);
+        PlayerManager.Instance.ChooseStartingTile();
+
+        //GameManager.Instance.StartProgression();
     }
 
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
@@ -169,6 +172,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.UpdateLoadingInfo("Loading Map...");
         yield return null;
         GridMap.Instance.GenerateGrid(data);
+        CameraMove.Instance.Initialize();
         CameraMove.Instance.CalculateCameraBounds();
         Minimap.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
@@ -178,7 +182,6 @@ public class MapGenerator : MonoBehaviour {
 
         //LevelLoaderManager.UpdateLoadingInfo("Loading Biomes...");
         //yield return null;
-        
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Regions...");
         yield return null;
@@ -236,8 +239,11 @@ public class MapGenerator : MonoBehaviour {
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
 
-        //PlayerManager.Instance.ChooseStartingTile();
-        GameManager.Instance.StartProgression();
+        Messenger.Broadcast(Signals.GAME_LOADED);
+
+        yield return new WaitForSeconds(1f);
+        PlayerManager.Instance.ChooseStartingTile();
+        //GameManager.Instance.StartProgression();
     }
 
     internal void ReloadScene() {

@@ -605,12 +605,6 @@ public enum LOG_IDENTIFIER{
     OTHER,
 }
 
-public enum FOG_OF_WAR_STATE {
-    HIDDEN,
-    VISIBLE,
-    SEEN
-}
-
 public enum LAIR {
 	LYCAN,
 //	STORM_WITCH,

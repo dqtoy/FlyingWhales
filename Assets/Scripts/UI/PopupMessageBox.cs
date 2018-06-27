@@ -12,7 +12,7 @@ public class PopupMessageBox : MonoBehaviour{
     [SerializeField] private TextMeshProUGUI messageLbl;
     [SerializeField] private TweenPosition tweenPosition;
 
-    private void Awake() {
+    public void Initialize() {
         Messenger.AddListener<string, bool>(Signals.SHOW_POPUP_MESSAGE, ShowMessage);
         Messenger.AddListener(Signals.HIDE_POPUP_MESSAGE, HideMessage);
     }

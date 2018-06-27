@@ -61,6 +61,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject worldInfoQuestsBtn;
     [SerializeField] private GameObject worldInfoStorylinesBtn;
 
+    [Space(10)]
+    [Header("Popup Message Box")]
+    [SerializeField] private PopupMessageBox popupMessageBox;
+
     //[Space(10)]
     //[Header("Faction Summary Menu")]
     //[SerializeField] private FactionSummaryUI factionSummaryUI;
@@ -128,6 +132,7 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
         }
+        popupMessageBox.Initialize();
     }
 
     private void Update() {

@@ -130,10 +130,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject highlightGO {
         get { return this._highlightGO; }
     }
-    public FOG_OF_WAR_STATE currFogOfWarState {
-        //get { return _currFogOfWarState; }
-        get { return FOG_OF_WAR_STATE.VISIBLE; }
-    }
     internal Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections {
         get { return _neighbourDirections; }
     }
@@ -1140,10 +1136,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void LeftClick() {
 #if !WORLD_CREATION_TOOL
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
-            //if (UIManager.Instance.IsConsoleShowing()) {
-            //    UIManager.Instance.consoleUI.AddText(this.name);
-            //}
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
+            return;
+        }
+        if (PlayerManager.Instance.isChoosingStartingTile) {
+            Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
             return;
         }
 
@@ -1165,27 +1162,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
             UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
         }
-        //      else{
-        //	UIManager.Instance.ShowHexTileInfo (this);
-        //}
         UIManager.Instance.HidePlayerActions();
 #endif
     }
     private void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
-            //if (UIManager.Instance.IsConsoleShowing() && this.hasLandmark) {
-            //    UIManager.Instance.consoleUI.AddText(this.landmarkOnTile.landmarkName);
-            //}
             return;
         }
         UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
-
-        //		if(this.landmarkOnTile == null){
-        //			UIManager.Instance.ShowPlayerActions (this);
-        //		}else{
-        //			UIManager.Instance.ShowPlayerActions (this.landmarkOnTile);
-        //		}
-
     }
 
     public void MouseOver() {
@@ -1202,7 +1186,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         //ShowHexTileInfo();
 #else
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+        if (UIManager.Instance.IsMouseOnUI()) {
             return;
         }
         if (this.landmarkOnTile != null) {
@@ -1224,7 +1208,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         _hoverHighlightGO.SetActive(false);
         HideSmallInfoWindow();
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE || UIManager.Instance.IsConsoleShowing()) {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
         //if (_landmarkOnTile != null && isHabitable) {

@@ -21,6 +21,7 @@ public class Player {
     #region Area
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
+        BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         SetPlayerArea(playerArea);
     }
     private void SetPlayerArea(Area area) {
