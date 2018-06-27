@@ -837,6 +837,8 @@ namespace ECS {
             if(_characterObject.currentState.stateName != "Imprisoned") {
                 ObjectState imprisonedState = _characterObject.GetState("Imprisoned");
                 _characterObject.ChangeState(imprisonedState);
+
+                SetIsIdle(true); //this makes the character not do any action, and needs are halted
                 //Do other things when imprisoned
             }
         }
@@ -1646,6 +1648,9 @@ namespace ECS {
                 case CHARACTER_ROLE.CIVILIAN:
                     _role = new Civilian(this);
                     break;
+                case CHARACTER_ROLE.KING:
+                    _role = new King(this);
+                break;
                 //case CHARACTER_ROLE.FOLLOWER:
                 //    _role = new Follower(this);
                 //    break;
@@ -2512,12 +2517,7 @@ namespace ECS {
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
         }
-		//public void SetDoesNotTakePrisoners(bool state) {
-		//	this._doesNotTakePrisoners = state;
-		//}
-		//public void SetCannotBeTakenAsPrisoner(bool state) {
-		//	this._cannotBeTakenAsPrisoner = state;
-		//}
+        //If true, character can't do daily action (onDailyAction), i.e. actions, needs
         public void SetIsIdle(bool state) {
             _isIdle = state;
         }

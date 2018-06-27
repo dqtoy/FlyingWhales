@@ -841,6 +841,7 @@ public enum CHARACTER_ROLE {
 	//SLYX,
 	VILLAIN,
     CIVILIAN,
+    KING,
     //FOLLOWER,
     //HERMIT,
     //BEAST,
