@@ -38,7 +38,10 @@ public static class Signals {
     public static string ITEM_UNEQUIPPED = "OnItemUnequipped"; //Parameters (Item unequippedItem, ECS.Character character)
     public static string ITEM_OBTAINED = "OnObtainItem"; //Parameters (Item obtainedItem, Character characterThatObtainedItem)
     public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, ECS.Character character)
-    public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, bool expires)
+    public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, MESSAGE_BOX_MODE mode, bool expires)
     public static string HIDE_POPUP_MESSAGE = "HidePopupMessage";
     public static string GAME_LOADED = "OnGameLoaded";
+    public static string STRUCTURE_STATE_CHANGED = "OnStructureStateChanged"; //Parameters (StructureObj obj, ObjectState newState)
+    public static string UPDATE_UI = "UpdateUI";
+    public static string LANDMARK_ATTACK_TARGET_SELECTED = "OnLandmarkAttackTargetSelected"; //Parameters (BaseLandmark target)
 }

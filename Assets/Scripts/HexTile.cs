@@ -1127,20 +1127,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Monobehaviour Functions
     private void OnMouseOver() {
         MouseOver();
+        if (Input.GetMouseButtonDown(0)) {
+            LeftClick();
+        }
+        if (Input.GetMouseButtonDown(1)) {
+            RightClick();
+        }
     }
     private void OnMouseExit() {
         MouseExit();
     }
-    void OnMouseDown() {
-        LeftClick();
+    private void OnMouseDown() {
+        //if (Input.GetMouseButtonDown(0)) {
+        //    LeftClick();
+        //}
+        //if (Input.GetMouseButtonDown(1)) {
+        //    RightClick();
+        //}
     }
     public void LeftClick() {
 #if !WORLD_CREATION_TOOL
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
+        Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
         if (PlayerManager.Instance.isChoosingStartingTile) {
-            Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
             return;
         }
 
@@ -1148,11 +1159,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             if (UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark != null) {
                 if (UIManager.Instance.landmarkInfoUI.isWaitingForAttackTarget && !UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
                     if (UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.CanAttack(this.landmarkOnTile)) {
-                        //Attack landmark;
-                        Debug.Log(UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
-                        UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
-                        UIManager.Instance.landmarkInfoUI.SetWaitingForAttackState(false);
-                        UIManager.Instance.landmarkInfoUI.SetActiveAttackButtonGO(false);
+                        Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Confirm attack of " + UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " at " + this.landmarkOnTile.landmarkName,
+                            MESSAGE_BOX_MODE.YES_NO, false);
+                        PopupMessageBox.Instance.SetYesAction(() => Messenger.Broadcast(Signals.LANDMARK_ATTACK_TARGET_SELECTED, this.landmarkOnTile));
+                        ////Attack landmark;
+                        //Debug.Log(UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
+                        //UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
+                        //UIManager.Instance.landmarkInfoUI.SetWaitingForAttackState(false);
+                        //UIManager.Instance.landmarkInfoUI.SetActiveAttackButtonGO(false);
+                        //Messenger.Broadcast(Signals.LANDMARK_ATTACK_TARGET_SELECTED, this.landmarkOnTile);
                         return;
                     } else {
                         Debug.Log("Cannot attack " + landmarkOnTile.landmarkName + "! Same faction!");
@@ -1165,11 +1180,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         UIManager.Instance.HidePlayerActions();
 #endif
     }
-    private void RightClick() {
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || UIManager.Instance.characterInfoUI.activeCharacter == null || this.landmarkOnTile == null) {
+    public void RightClick() {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
+        Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
+        if (landmarkOnTile != null) {
+            UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
+        }
     }
 
     public void MouseOver() {
@@ -1192,6 +1210,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
+        Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
         //ShowHexTileInfo();
         //if (Input.GetMouseButtonDown(0)) {
         //    LeftClick();
@@ -1211,12 +1230,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
+        Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
         //if (_landmarkOnTile != null && isHabitable) {
         //	if (_landmarkOnTile.owner != null) {
         //		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
         //	}
         //}
-        
+
 #endif
     }
     #endregion

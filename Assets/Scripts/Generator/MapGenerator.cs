@@ -217,7 +217,7 @@ public class MapGenerator : MonoBehaviour {
 
         //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
-        PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int) GridMap.Instance.width, (int) GridMap.Instance.height);
+        //PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int) GridMap.Instance.width, (int) GridMap.Instance.height);
 
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
 

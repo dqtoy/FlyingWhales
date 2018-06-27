@@ -1423,3 +1423,8 @@ public enum ARMOR_PREFIX {
 public enum ARMOR_SUFFIX {
     NONE,
 }
+
+public enum MESSAGE_BOX_MODE {
+    MESSAGE_ONLY,
+    YES_NO
+}

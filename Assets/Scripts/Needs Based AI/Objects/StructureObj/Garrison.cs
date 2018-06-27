@@ -34,7 +34,7 @@ public class Garrison : StructureObj {
     #region Utilities
     private void ScheduleDoneTraining() {
         GameDate readyDate = GameManager.Instance.Today();
-        readyDate.AddHours(5); // 1 week 336
+        readyDate.AddHours(336); // 1 week
         SchedulingManager.Instance.AddEntry(readyDate, DoneTraining);
     }
     private void DoneTraining() {

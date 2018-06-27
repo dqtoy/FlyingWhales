@@ -46,7 +46,7 @@ public class Army {
         }
     }
     public void CollidedWithLandmark(BaseLandmark landmark) {
-        if(landmark.id == _icon.targetLandmark.id) {
+        if(landmark.id != _icon.targetLandmark.id) {
             return;
         }
         if (_originLandmark.owner != null && landmark.owner != null) {
@@ -89,6 +89,8 @@ public class Army {
             (_originLandmark.landmarkObj as ElvenSettlement).CommenceTraining();
         } else if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.GARRISON) {
             (_originLandmark.landmarkObj as Garrison).CommenceTraining();
+        } else if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.DEMONIC_PORTAL) {
+            (_originLandmark.landmarkObj as DemonicPortal).CommenceTraining();
         }
         GameObject.Destroy(_icon.gameObject);
     }

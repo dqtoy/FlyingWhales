@@ -104,28 +104,32 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    void Awake() {
+    #region Monobehaviours
+    private void Awake() {
         Instance = this;
-        //logHistory = new List<Log>();
-        //notificationItemsThatCanBeReused = new List<NotificationItem>();
         _menuHistory = new List<UIMenuSettings>();
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
-        //kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
     }
-
-    void Start() {
-        //Messenger.AddListener(Signals.DAY_END, CheckForKingdomExpire);
-        Messenger.AddListener("UpdateUI", UpdateUI);
-        //EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
-        //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
-        //EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
+    private void Start() {
+        Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         NormalizeFontSizes();
         ToggleBorders();
-        //toggleBordersBtn.SetClickState(true);
-        //isShowKingdomHistoryOnly = false;
-        //      PopulateHistoryTable();
-        //PopulateCityHistoryTable ();
-        //UpdateUI();
+    }
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.BackQuote)) {
+            if (GameManager.Instance.allowConsole) {
+                ToggleConsole();
+            }
+        }
+        UpdateSpeedToggles(GameManager.Instance.isPaused);
+    }
+    #endregion
+
+    public void SetTimeControlsState(bool state) {
+        pauseBtn.interactable = state;
+        x1Btn.interactable = state;
+        x2Btn.interactable = state;
+        x4Btn.interactable = state;
     }
 
     internal void InitializeUI() {
@@ -133,56 +137,6 @@ public class UIManager : MonoBehaviour {
             allMenus[i].Initialize();
         }
         popupMessageBox.Initialize();
-    }
-
-    private void Update() {
-        //uiCamera.orthographicSize = Screen.width /2;
-        if (Input.GetKeyDown(KeyCode.BackQuote)) {
-            if (GameManager.Instance.allowConsole) {
-                ToggleConsole();
-            }
-        }
-        UpdateSpeedToggles(GameManager.Instance.isPaused);
-        //if (!consoleUI.isShowing) {
-        //    if (Input.GetKeyDown(KeyCode.Space)) {
-        //        if (pauseBtn.isOn) {
-        //            if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
-        //                x1Btn.isOn = true;
-        //                //speedToggleGroup.NotifyToggleOn(x1Btn);
-        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
-        //                x2Btn.isOn = true;
-        //                //speedToggleGroup.NotifyToggleOn(x2Btn);
-        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
-        //                x4Btn.isOn = true;
-        //                //speedToggleGroup.NotifyToggleOn(x4Btn);
-        //            }
-        //        } else {
-        //            //Pause(true);
-        //            pauseBtn.isOn = true;
-        //            //speedToggleGroup.NotifyToggleOn(pauseBtn);
-        //        }
-        //    }
-        //}
-
-        //if (Input.GetMouseButton(0)) {
-        //    UITexture uiTexture = minimapTextureGO.GetComponent<UITexture>();
-        //    uiTexture.material.SetTexture("_MainTex", uiTexture.mainTexture);
-        //    Texture2D tex = uiTexture.material.GetTexture("_MainTex") as Texture2D;
-        //    RaycastHit hit;
-        //    if (!Physics.Raycast(uiCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition), out hit))
-        //        return;
-
-        //    Debug.Log("Hit!: " + hit.collider.gameObject.name);
-
-        //    Vector3 pixelUV = minimapTextureGO.transform.InverseTransformPoint(hit.point);
-        //    pixelUV.x *= tex.width;
-        //    pixelUV.y *= tex.height;
-
-        //    tex.SetPixel((int)pixelUV.x, (int)pixelUV.y, Color.white);
-        //    tex.Apply();
-
-        //    Debug.Log("Hit Coordinates!: " + pixelUV.x.ToString() + "," + pixelUV.y.ToString());
-        //}
     }
 
     #region Font Utilities

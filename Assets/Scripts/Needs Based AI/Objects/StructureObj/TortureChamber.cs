@@ -20,7 +20,7 @@ public class TortureChamber : StructureObj {
         if (_resourceInventory[resource] < 0) {
             _resourceInventory[resource] = 0;
         }
-        if (GetTotalCivilians() == 0) {
+        if (this.objectLocation.civilianCount == 0) {
             if (_currentState.stateName == "Occupied") {
                 ObjectState emptyState = GetState("Empty");
                 ChangeState(emptyState);

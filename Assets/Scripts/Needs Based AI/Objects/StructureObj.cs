@@ -131,14 +131,12 @@ public class StructureObj : IObject {
         _objectLocation = newLocation;
     }
     public void ChangeState(ObjectState state) {
-        //if (this is MonsterDen) {
-            //Debug.Log("Set state of " + GetType().ToString() + " to " + state.stateName + ". ST: " + StackTraceUtility.ExtractStackTrace());
-        //}
         if (_currentState != null) {
             _currentState.OnEndState();
         }
         _currentState = state;
         _currentState.OnStartState();
+        Messenger.Broadcast(Signals.STRUCTURE_STATE_CHANGED, this, state);
     }
     public ObjectState GetState(string name) {
         for (int i = 0; i < _states.Count; i++) {
@@ -191,20 +189,20 @@ public class StructureObj : IObject {
         AdjustResource(resource, -amount);
         target.AdjustResource(resource, amount);
     }
-    public int GetTotalCivilians() {
-        int total = 0;
-        foreach(RESOURCE resource in _resourceInventory.Keys) {
-            if (resource.ToString().Contains("CIVILIAN")) {
-                total += _resourceInventory[resource];
-            }
-        }
-        //foreach (KeyValuePair<RESOURCE, int> kvp in _resourceInventory) {
-        //    if (kvp.Key.ToString().Contains("CIVILIAN")) {
-        //        total += kvp.Value;
-        //    }
-        //}
-        return total;
-    }
+    //public int GetTotalCivilians() {
+    //    int total = 0;
+    //    foreach(RESOURCE resource in _resourceInventory.Keys) {
+    //        if (resource.ToString().Contains("CIVILIAN")) {
+    //            total += _resourceInventory[resource];
+    //        }
+    //    }
+    //    //foreach (KeyValuePair<RESOURCE, int> kvp in _resourceInventory) {
+    //    //    if (kvp.Key.ToString().Contains("CIVILIAN")) {
+    //    //        total += kvp.Value;
+    //    //    }
+    //    //}
+    //    return total;
+    //}
     public void CiviliansDeath(RACE race, int amount) {
         RESOURCE civilianResource = RESOURCE.ELF_CIVILIAN;
         switch (race) {
@@ -250,15 +248,19 @@ public class StructureObj : IObject {
 
     #region Attack Landmark
     public void AttackLandmark(BaseLandmark targetLandmark) {
+        int armyCount = 0;
         if (this is Garrison) {
-            int armyCount = (this as Garrison).armyStrength;
-            if (armyCount > 0) {
-                this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
-                Army newArmy = new Army(this.objectLocation, armyCount);
-                newArmy.SetTarget(targetLandmark);
-            }
+            armyCount = (this as Garrison).armyStrength;
+        } else if (this is DemonicPortal) {
+            //armyCount = (this as DemonicPortal).armyStrength;
+            armyCount = 100;
         }
-        
+        if (armyCount > 0) {
+            this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
+            Army newArmy = new Army(this.objectLocation, armyCount);
+            newArmy.SetTarget(targetLandmark);
+        }
+
     }
     public bool CanAttack(BaseLandmark landmark) {
         //if(this.objectLocation.owner != null && landmark.owner != null) {
@@ -266,15 +268,15 @@ public class StructureObj : IObject {
         //        return false;
         //    }
         //}
-        if (this is Garrison) {
+        if (this is Garrison || this is DemonicPortal) {
             return true;
         }
         return false;
     }
 
     //Gets the total number of civilians and multiply it with army percentage to get the army count needed to attack
-    private int GetArmyTotal() {
-        return Mathf.CeilToInt((0.25f * (float) GetTotalCivilians()));
-    }
+    //private int GetArmyTotal() {
+    //    return Mathf.CeilToInt((0.25f * (float) GetTotalCivilians()));
+    //}
     #endregion
 }

@@ -30,7 +30,8 @@ public class GameManager : MonoBehaviour {
     private float timeElapsed;
     private bool _gameHasStarted;
 
-    [SerializeField] private Texture2D cursorTexture;
+    [SerializeField] private Texture2D defaultCursorTexture;
+    [SerializeField] private Texture2D targetCursorTexture;
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
     [SerializeField] private Vector2 hotSpot = Vector2.zero;
 
@@ -39,40 +40,30 @@ public class GameManager : MonoBehaviour {
         get { return _gameHasStarted; }
     }
     #endregion
-    private void Awake(){
-		Instance = this;
-		//this.days = 1;
-		//this.month = 1;
-		this.timeElapsed = 0f;
-        _gameHasStarted = false;
-        Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
-    }
 
-	private void FixedUpdate(){
-		if (_gameHasStarted && !isPaused) {
+    #region Monobehaviours
+    private void Awake() {
+        Instance = this;
+        this.timeElapsed = 0f;
+        _gameHasStarted = false;
+        SetCursorToDefault();
+    }
+    private void FixedUpdate() {
+        if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.HourStarted();
             }
-			this.timeElapsed += Time.deltaTime * 1f;
-			if(this.timeElapsed >= this.progressionSpeed){
-				this.timeElapsed = 0f;
-				this.HourEnded ();
-			}
-		}
-	}
-
+            this.timeElapsed += Time.deltaTime * 1f;
+            if (this.timeElapsed >= this.progressionSpeed) {
+                this.timeElapsed = 0f;
+                this.HourEnded();
+            }
+        }
+    }
     private void Update() {
-        if (!UIManager.Instance.IsConsoleShowing()) {
+        if (!UIManager.Instance.IsConsoleShowing() && !PlayerManager.Instance.isChoosingStartingTile) {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (isPaused) {
-                    //unpause, and set progression speed to previous speed
-                    //if (currProgressionSpeed == PROGRESSION_SPEED.X1) {
-                    //    x1Btn.isOn = true;
-                    //} else if (currProgressionSpeed == PROGRESSION_SPEED.X2) {
-                    //    x2Btn.isOn = true;
-                    //} else if (currProgressionSpeed == PROGRESSION_SPEED.X4) {
-                    //    x4Btn.isOn = true;
-                    //}
                     SetProgressionSpeed(currProgressionSpeed);
                     SetPausedState(false);
                 } else {
@@ -82,12 +73,11 @@ public class GameManager : MonoBehaviour {
             }
         }
     }
+    #endregion
+
 
     [ContextMenu("Start Progression")]
 	public void StartProgression(){
-		//UIManager.Instance.SetProgressionSpeed1X();
-		//UIManager.Instance.x1Btn.SetAsClicked();
-        //Messenger.Broadcast("UpdateUI");
         SetPausedState(false);
 		SchedulingManager.Instance.StartScheduleCalls ();
         _gameHasStarted = true;
@@ -102,17 +92,11 @@ public class GameManager : MonoBehaviour {
 	public GameDate FirstDayOfTheMonth() {
 		return new GameDate(this.month, 1, this.year, 1);
 	}
-
-	//public void TogglePause(){
-	//	this.isPaused = !this.isPaused;
-	//}
-
 	public void SetPausedState(bool isPaused){
         //Debug.Log("Set paused state to " + isPaused);
 		this.isPaused = isPaused;
         Messenger.Broadcast(Signals.PAUSED, isPaused);
 	}
-
     /*
      * Set day progression speed to 1x, 2x of 4x
      * */
@@ -129,22 +113,15 @@ public class GameManager : MonoBehaviour {
         ECS.CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) ECS.CombatManager.Instance.numOfCombatActionPerDay;
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
-
     public void HourStarted() {
         Messenger.Broadcast(Signals.HOUR_STARTED);
     }
-
     /*
      * Function that triggers daily actions
      * */
     public void HourEnded(){
-        ////Messenger.Broadcast("CitizenTurnActions");
-        //Messenger.Broadcast("CityEverydayActions");
-
         Messenger.Broadcast(Signals.HOUR_ENDED);
-        ////BehaviourTreeManager.Instance.Tick ();
-        ////EventManager.Instance.onUpdateUI.Invoke();
-        Messenger.Broadcast("UpdateUI");
+        Messenger.Broadcast(Signals.UPDATE_UI);
 
         this.hour += 1;
         if(this.hour > hoursPerDay) {
@@ -164,12 +141,20 @@ public class GameManager : MonoBehaviour {
         }
 	}
 
+    #region Cursor
+    public void SetCursorToDefault() {
+        Cursor.SetCursor(defaultCursorTexture, hotSpot, cursorMode);
+    }
+    public void SetCursorToTarget() {
+        Cursor.SetCursor(targetCursorTexture, hotSpot, cursorMode);
+    }
+    #endregion
+
     #region For Testing
     [ContextMenu("Print Event Table")]
     public void PrintEventTable() {
         Messenger.PrintEventTable();
     }
-
     //[SerializeField] private HexTile center;
     //[SerializeField] private int range;
     //[ContextMenu("Get Tiles In Range")]

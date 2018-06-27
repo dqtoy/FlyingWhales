@@ -70,7 +70,7 @@ public class StructureObjectComponent : ObjectComponent {
         if (iobject is StructureObj) {
             StructureObj structure = iobject as StructureObj;
             string occupiedOrEmpty = "Empty";
-            if (structure.GetTotalCivilians() > 0) {
+            if (structure.objectLocation.civilianCount > 0) {
                 occupiedOrEmpty = "Occupied";
             }
             ObjectState defaultState = iobject.GetState(occupiedOrEmpty);

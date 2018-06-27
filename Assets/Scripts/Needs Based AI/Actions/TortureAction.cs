@@ -22,7 +22,7 @@ public class TortureAction : CharacterAction {
         //    //if yes, 
         //}
 
-        if(_structure.GetTotalCivilians() > 0) {
+        if(_structure.objectLocation.civilianCount > 0) {
             GiveAllReward(character);
             ActionSuccess();
             if (character.role.IsFull(NEEDS.FUN)) {

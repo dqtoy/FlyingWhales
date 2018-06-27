@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Pathfinding;
 
 public class LandmarkObject : MonoBehaviour {
 
@@ -15,6 +16,10 @@ public class LandmarkObject : MonoBehaviour {
     [SerializeField] private SpriteRenderer iconSprite;
     [SerializeField] private Slider hpProgressBar;
     [SerializeField] private ScrollRect charactersScrollView;
+    [SerializeField] private AIPath aiPath;
+    [SerializeField] private Seeker seeker;
+    [SerializeField] private AIDestinationSetter destinationSetter;
+    [SerializeField] private LineRenderer lineRenderer;
 
     #region getters/setters
     public BaseLandmark landmark {
@@ -25,25 +30,11 @@ public class LandmarkObject : MonoBehaviour {
     public void SetLandmark(BaseLandmark landmark) {
         _landmark = landmark;
         UpdateName();
-        //if (_landmark.specificLandmarkType != LANDMARK_TYPE.TOWN) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_landmark.specificLandmarkType);
         if (data.landmarkObjectSprite != null) {
             iconSprite.sprite = data.landmarkObjectSprite;
-            //iconSprite.gameObject.SetActive(true);
-        } else {
-            //iconSprite.gameObject.SetActive(false);
         }
-
-        //}
-        //UpdateLandmarkVisual();
-        ////For Testing of portrait visibility, remove after testing
-        //CharacterPortrait[] portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(charactersScrollView.content.gameObject);
-        //for (int i = 0; i < portraits.Length; i++) {
-        //    CharacterPortrait currPortrait = portraits[i];
-        //    currPortrait.GeneratePortrait(CharacterManager.Instance.GenerateRandomPortrait(GENDER.FEMALE));
-        //}
     }
-
     public void UpdateName() {
         if (landmarkLbl != null) {
             //Landmark object is an empty city
@@ -54,22 +45,12 @@ public class LandmarkObject : MonoBehaviour {
             }
         }
     }
-
     public void SetIconState(bool state) {
-        //topSprite.enabled = state;
-        //botSprite.enabled = state;
         iconSprite.gameObject.SetActive(state);
     }
-
     public void UpdateProgressBar() {
         hpProgressBar.value = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
     }
-
-    ////For Testing
-    //public void SetIconActive(bool state) {
-    //    iconSprite.gameObject.SetActive(state);
-    //}
-
     public void OnCharacterEnteredLandmark(ICharacter character) {
         //add character portrait to grid
         CharacterPortrait portrait = character.icon.characterPortrait;
@@ -85,33 +66,47 @@ public class LandmarkObject : MonoBehaviour {
         character.icon.ReclaimPortrait();
         character.icon.gameObject.SetActive(true);
     }
-
-    //public void UpdateLandmarkVisual() {
-    //    if (_landmark.isHidden) {
-    //        Color color = Color.white;
-    //        color.a = 128f / 255f;
-    //        topSprite.color = color;
-    //        botSprite.color = color;
-    //    } else {
-    //        topSprite.color = Color.white;
-    //        botSprite.color = Color.white;
-    //    }
-    //    if(nameplateGO != null) {
-    //        nameplateGO.SetActive(!_landmark.isHidden);
-    //    }
-
-    //    exploredGO.SetActive(_landmark.isExplored); //Activate explored GO based on isExplored boolean
-    //}
-
+    public void DrawPathTo(BaseLandmark otherLandmark) {
+        if (destinationSetter.target != otherLandmark.tileLocation.transform) {
+            destinationSetter.target = otherLandmark.tileLocation.transform;
+            aiPath.SearchPath();
+        }
+    }
+    public void HidePathVisual() {
+        destinationSetter.target = null;
+        lineRenderer.positionCount = 0;
+        //lineRenderer.gameObject.SetActive(false);
+    }
     #region Monobehaviour
     private void OnMouseOver() {
         _landmark.tileLocation.MouseOver();
+        if (Input.GetMouseButtonDown(0)) {
+            _landmark.tileLocation.LeftClick();
+        }
+        if (Input.GetMouseButtonDown(1)) {
+            _landmark.tileLocation.RightClick();
+        }
     }
     private void OnMouseExit() {
         _landmark.tileLocation.MouseExit();
     }
-    private void OnMouseDown() {
-        _landmark.tileLocation.LeftClick();
+    //private void OnMouseDown() {
+    //    if (Input.GetMouseButtonDown(0)) {
+    //        _landmark.tileLocation.LeftClick();
+    //    }
+    //    if (Input.GetMouseButtonDown(1)) {
+    //        _landmark.tileLocation.RightClick();
+    //    }
+    //}
+    private void Update() {
+        if (destinationSetter.target != null) {
+            Path path = seeker.GetCurrentPath();
+            if (path != null && path.vectorPath.Count > 0) {
+                List<Vector3> vectorPath = path.vectorPath;
+                lineRenderer.positionCount = vectorPath.Count;
+                lineRenderer.SetPositions(vectorPath.ToArray());
+            }
+        }
     }
     #endregion
 }
