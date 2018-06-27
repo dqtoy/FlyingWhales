@@ -119,7 +119,7 @@ public class ActionData {
     }
 
     private void PerformCurrentAction() {
-        if (!isWaiting && !_character.isIdle && _character.icon.targetLocation == null) {
+        if (!isWaiting && _character.icon.targetLocation == null) {
             if (!isDone && currentAction != null){
                 if (_isHalted) {
                     return;

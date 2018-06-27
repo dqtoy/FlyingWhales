@@ -119,9 +119,6 @@ public class Party: IEncounterable {
 	public int numOfCharacters{
 		get { return _partyMembers.Count; }
 	}
-	public bool doesNotTakePrisoners{
-		get { return _partyLeader.characterDoesNotTakePrisoners; }
-	}
 	public Region currentRegion{
 		get { return _currentRegion; }
 	}
@@ -189,11 +186,6 @@ public class Party: IEncounterable {
 			}
             member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
-
-            if (!IsCharacterLeaderOfParty(member)) {
-                //member.SetCurrentTask(currentAction);
-                member.SetFollowerState(true);
-            }
         }
     }
     /*
@@ -208,28 +200,12 @@ public class Party: IEncounterable {
 
         member.SetParty(null);
 		//member.SetCurrentTask(null);
-		if(member.isFollower){
-			member.SetFollowerState (false);
-			//Settlement settlement = member.GetNearestSettlementFromFaction();
-			//if (settlement != null) {
-			//	////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
-			//	//throw new Exception(member.name + " cannot find a settlement from his/her faction!");
-   //             //will go back to the nearest settlement of their faction
-   //             //settlement.AdjustCivilians(member.raceSetting.race, 1);
-   //         }
-        } else {
-            if (!forDeath) { //If the member was removed from party, but did not die
-                this.specificLocation.AddCharacterToLocation(member);
-                Debug.Log(member.name + " has left the party of " + partyLeader.name);
-            }
-        }
 		if (_partyMembers.Count <= 0 || member.id == _partyLeader.id) {
             //JustDisbandParty ();
             DisbandParty();
         }
     }
 	public void AddPrisoner(ECS.Character character){
-		character.SetPrisoner (true, this);
 		_prisoners.Add (character);
 	}
 	public void RemovePrisoner(ECS.Character character){
@@ -256,22 +232,6 @@ public class Party: IEncounterable {
         for (int i = 0; i < _prisoners.Count; i++) {
             //check each of them
             ECS.Character currPrisoner = _prisoners[i];
-            if (currPrisoner.isFollower) {
-                //if they are just followers
-                //Settlement settlement = currPrisoner.GetNearestSettlementFromFaction();
-                //if (settlement != null) {
-                //    ////TODO: This will always throw with monter parties, since monsters don't have factions. Handle that.
-                //    //throw new Exception(currPrisoner.name + " cannot find a settlement from his/her faction!");
-                //    //convert them to civilians of the nearest settlement of their faction
-                //    //settlement.AdjustCivilians(currPrisoner.raceSetting.race, 1);
-                //}
-            } else {
-                //if they are not followers
-                //let them decide again, since they were set free
-                specificLocation.AddCharacterToLocation(currPrisoner);
-                //currPrisoner.SetSpecificLocation(specificLocation);
-                currPrisoner.DetermineAction();
-            }
         }
             
 		//_partyLeader.AdjustCivilians (_civiliansByRace);
@@ -450,22 +410,6 @@ public class Party: IEncounterable {
                     //    currentFunction();
                     //    SetCurrentFunction(null);
                     //}
-
-                    //check if he/she is not a prisoner
-                    if (partyLeader.isPrisonerOf == null) {
-                        //if he/she is not dead and is not a prisoner, it means that this party chose to flee combat
-                        //when a party chooses to flee, it's current task will be considered as cancelled, and it will return
-                        //to it's nearest non hostile location, and determine it's next action there
-                        //if (currentAction != null) {
-                        //    currentAction.EndTask(TASK_STATUS.CANCEL);
-                        //}
-                        BaseLandmark targetLocation = partyLeader.GetNearestLandmarkWithoutHostiles();
-                        if(targetLocation == null) {
-                            throw new Exception(this.name + " could not find a non hostile location to run to!");
-                        } else {
-                            partyLeader.GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => partyLeader.DetermineAction());
-                        }
-                    }
                 }
             } else {
                 //The party was defeated in combat, and no one survived, Disband this party.

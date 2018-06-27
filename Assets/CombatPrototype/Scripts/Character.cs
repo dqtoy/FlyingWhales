@@ -10,9 +10,6 @@ namespace ECS {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
-        public delegate void OnImprisonCharacter();
-        public OnImprisonCharacter onImprisonCharacter;
-
         public delegate void DailyAction();
         public DailyAction onDailyAction;
 
@@ -93,23 +90,13 @@ namespace ECS {
         private string _characterColorCode;
         private bool _isDead;
         private bool _isFainted;
-        private bool _isPrisoner;
-        private bool _isFollower;
         //private bool _isDefeated;
         private bool _isIdle; //can't do action, needs will not deplete
-        private bool _doesNotTakePrisoners;
-        private bool _cannotBeTakenAsPrisoner;
-        private object _isPrisonerOf;
         private Area _home;
         private BaseLandmark _homeLandmark;
         //private BaseLandmark _lair;
         //private int _combatHistoryID;
-        private List<Character> _prisoners;
-        private List<Character> _followers;
         private List<Log> _history;
-        private Character _isFollowerOf;
-
-
         //private Dictionary<RACE, int> _civiliansByRace;
 
         private Combat _currentCombat;
@@ -147,9 +134,6 @@ namespace ECS {
         }
         public string coloredUrlName {
             get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
-        }
-        public string prisonerName {
-            get { return "<link=" + '"' + this._id.ToString() + "_prisoner" + '"' + ">" + this._name + "</link>"; }
         }
         public int id {
             get { return _id; }
@@ -237,12 +221,6 @@ namespace ECS {
         public bool isFainted {
             get { return this._isFainted; }
         }
-        public bool isPrisoner {
-            get { return this._isPrisoner; }
-        }
-        public bool isFollower {
-            get { return _isFollower; }
-        }
         public int strength {
             get { return _strength + _bonusStrength; }
         }
@@ -312,15 +290,6 @@ namespace ECS {
         public float equippedWeaponPower {
             get { return _equippedWeaponPower; }
         }
-        public List<Character> prisoners {
-            get { return this._prisoners; }
-        }
-        public List<Character> followers {
-            get { return this._followers; }
-        }
-        public object isPrisonerOf {
-            get { return this._isPrisonerOf; }
-        }
         public int gold {
             get { return _gold; }
         }
@@ -368,21 +337,9 @@ namespace ECS {
 
             }
         }
-        public Character isFollowerOf {
-            get { return _isFollowerOf; }
-        }
         //public int numOfCharacters{
         //	get { return 1; }
         //}
-        public bool doesNotTakePrisoners {
-            get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
-        }
-        public bool characterDoesNotTakePrisoners {
-            get { return _doesNotTakePrisoners; }
-        }
-        public bool cannotBeTakenAsPrisoner {
-            get { return _cannotBeTakenAsPrisoner; }
-        }
         public Dictionary<Character, List<string>> traceInfo {
             get { return _traceInfo; }
         }
@@ -513,17 +470,10 @@ namespace ECS {
             _tags = new List<CharacterTag>();
             _isDead = false;
             _isFainted = false;
-            _isPrisoner = false;
             //_isDefeated = false;
-            _doesNotTakePrisoners = false;
-            _cannotBeTakenAsPrisoner = false;
             _isIdle = false;
             _traceInfo = new Dictionary<Character, List<string>>();
-            _isPrisonerOf = null;
-            _prisoners = new List<Character>();
             _history = new List<Log>();
-            _followers = new List<Character>();
-            _isFollowerOf = null;
             //_questData = new QuestData(this);
             //_actionQueue = new CharacterActionQueue<CharacterAction>();
             //previousActions = new Dictionary<CharacterTask, string>();
@@ -872,12 +822,6 @@ namespace ECS {
 				if (this._party != null) {
 					this._party.RemovePartyMember(this);
 				}
-//				if (this._isFollowerOf != null) {
-//					this._isFollowerOf.RemoveFollower(this);
-//				}
-				if (_isFollower) {
-					SetFollowerState (false);
-				}
                 ////Set Task to Fainted
                 //Faint faintTask = new Faint(this);
                 //faintTask.OnChooseTask(this)
@@ -889,6 +833,13 @@ namespace ECS {
 				SetHP (1);
 			}
 		}
+        public void Imprison() {
+            if(_characterObject.currentState.stateName != "Imprisoned") {
+                ObjectState imprisonedState = _characterObject.GetState("Imprisoned");
+                _characterObject.ChangeState(imprisonedState);
+                //Do other things when imprisoned
+            }
+        }
 		//Character's death
 		internal void Death(Character killer = null){
 			if(!_isDead){
@@ -944,16 +895,6 @@ namespace ECS {
                 } else {
 					this.specificLocation.RemoveCharacterFromLocation(this);
 				}
-
-//				if(this._isFollowerOf != null){
-//					this._isFollowerOf.RemoveFollower (this);
-//					if(this.specificLocation != null){
-//						this.specificLocation.RemoveCharacterFromLocation(this);
-//					}
-//				}
-				if(_isFollower){
-					SetFollowerState (false);
-				}
                 //if (_avatar != null) {
                 //    if (_avatar.mainCharacter.id == this.id) {
                 //        DestroyAvatar();
@@ -962,9 +903,9 @@ namespace ECS {
                 //    }
                 //}
 
-                if (_isPrisoner){
-					PrisonerDeath ();
-				}
+    //            if (_isPrisoner){
+				//	PrisonerDeath ();
+				//}
 				if(_role != null){
 					_role.DeathRole ();
 				}
@@ -2565,21 +2506,18 @@ namespace ECS {
             }
             return null;
         }
-        public void SetFollowerState(bool state) {
-            _isFollower = state;
-        }
 		public void SetHome(Area newHome) {
             this._home = newHome;
         }
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
         }
-		public void SetDoesNotTakePrisoners(bool state) {
-			this._doesNotTakePrisoners = state;
-		}
-		public void SetCannotBeTakenAsPrisoner(bool state) {
-			this._cannotBeTakenAsPrisoner = state;
-		}
+		//public void SetDoesNotTakePrisoners(bool state) {
+		//	this._doesNotTakePrisoners = state;
+		//}
+		//public void SetCannotBeTakenAsPrisoner(bool state) {
+		//	this._cannotBeTakenAsPrisoner = state;
+		//}
         public void SetIsIdle(bool state) {
             _isIdle = state;
         }
@@ -2680,7 +2618,7 @@ namespace ECS {
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
         }
         private void EverydayAction() {
-            if (!_isIdle) {
+            if (!_isIdle ) {
                 if (onDailyAction != null) {
                     onDailyAction();
                 }
@@ -2737,165 +2675,9 @@ namespace ECS {
             if (this._history.Count > 20) {
                 this._history.RemoveAt(0);
             }
-            //add logs to followers as well
-            for (int i = 0; i < followers.Count; i++) {
-                followers[i].AddHistory(log);
-            }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
         #endregion
-
-        #region Prisoner
-        internal void SetPrisoner(bool state, object prisonerOf){
-			_isPrisoner = state;
-			_isPrisonerOf = prisonerOf;
-			if(state){
-				if(this.specificLocation != null){
-					this.specificLocation.RemoveCharacterFromLocation (this);
-				}
-				string wardenName = string.Empty;
-				if(_isPrisonerOf is Party){
-					wardenName = ((Party)_isPrisonerOf).name;
-				}else if(_isPrisonerOf is Character){
-					wardenName = ((Character)_isPrisonerOf).name;
-				}else if(_isPrisonerOf is BaseLandmark){
-					wardenName = ((BaseLandmark)_isPrisonerOf).landmarkName;
-				}
-				if(wardenName == _name){
-					Debug.LogError (_name + " is a prisoner of " + wardenName + ". Can't be a prisoner of your ownself!");
-				}
-                Log becomePrisonerLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_prisoner");
-                becomePrisonerLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                becomePrisonerLog.AddToFillers(_isPrisonerOf, wardenName, LOG_IDENTIFIER.TARGET_CHARACTER);
-                AddHistory(becomePrisonerLog);
-
-                if (_isPrisonerOf is Character) {
-                    ((Character)_isPrisonerOf).AddHistory(becomePrisonerLog);
-                } else if (_isPrisonerOf is BaseLandmark) {
-                    ((BaseLandmark)_isPrisonerOf).AddHistory(becomePrisonerLog);
-                }
-
-                //if (_avatar != null && _avatar.mainCharacter.id == this.id) {
-                //    DestroyAvatar();
-                //}
-
-                Unfaint ();
-
-				if(onImprisonCharacter != null){
-					onImprisonCharacter ();
-				}
-			}
-		}
-		internal void AddActionOnImprison(OnImprisonCharacter onImprisonAction) {
-			onImprisonCharacter += onImprisonAction;
-		}
-		internal void RemoveActionOnImprison(OnImprisonCharacter onImprisonAction) {
-			onImprisonCharacter -= onImprisonAction;
-		}
-		internal void AddPrisoner(Character character){
-			if (this._party != null) {
-				this._party.AddPrisoner(character);
-			}else{
-				character.SetPrisoner (true, this);
-				_prisoners.Add (character);
-			}
-		}
-		internal void RemovePrisoner(Character character){
-			_prisoners.Remove (character);
-		}
-		internal void ReleasePrisoner(){
-			string wardenName = string.Empty;
-            ILocation location = null;
-            if (_isPrisonerOf is Party) {
-                Party prisonerOf = _isPrisonerOf as Party;
-                wardenName = prisonerOf.name;
-                prisonerOf.RemovePrisoner(this);
-                location = prisonerOf.specificLocation;
-            } else if (_isPrisonerOf is Character) {
-                Character prisonerOf = _isPrisonerOf as Character;
-                wardenName = prisonerOf.name;
-                prisonerOf.RemovePrisoner(this);
-                location = prisonerOf.specificLocation;
-            } else if (_isPrisonerOf is BaseLandmark) {
-                BaseLandmark prisonerOf = _isPrisonerOf as BaseLandmark;
-                wardenName = prisonerOf.landmarkName;
-                prisonerOf.RemovePrisoner(this);
-                location = prisonerOf;
-            }
-			this._specificLocation = location;
-
-            Log releasePrisonerLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "release_prisoner");
-            releasePrisonerLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-
-            AddHistory(releasePrisonerLog);
-            if (this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                BaseLandmark landmark = (BaseLandmark)this.specificLocation;
-                landmark.AddHistory(releasePrisonerLog);
-            }
-
-            //When this character is released from imprisonment
-            //Check if this character is a follower
-            if (this.isFollower) {
-                //if this character is
-                //if (this.faction != null) {
-                //    //Set this character as a civilian of the nearest settlement of his/her faction
-                //    Settlement settlement = GetNearestSettlementFromFaction();
-                //    settlement.AdjustCivilians(this.raceSetting.race, 1);
-                //}
-            } else {
-                //if not, make this character decide for itself again
-                location.AddCharacterToLocation(this);
-                DetermineAction();
-            }
-		}
-		internal void TransferPrisoner(object newPrisonerOf){
-			//Remove from previous prison
-			if(_isPrisonerOf is Party){
-				((Party)_isPrisonerOf).RemovePrisoner (this);
-			}else if(_isPrisonerOf is Character){
-				((Character)_isPrisonerOf).RemovePrisoner (this);
-			}else if(_isPrisonerOf is BaseLandmark){
-				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
-			}
-
-			//Add prisoner to new prison
-			if(newPrisonerOf is Party){
-				((Party)newPrisonerOf).AddPrisoner (this);
-			}else if(newPrisonerOf is Character){
-				((Character)newPrisonerOf).AddPrisoner (this);
-			}else if(newPrisonerOf is BaseLandmark){
-				((BaseLandmark)newPrisonerOf).AddPrisoner (this);
-			}
-		}
-		private void PrisonerDeath(){
-			if(_isPrisonerOf is Party){
-				((Party)_isPrisonerOf).RemovePrisoner (this);
-			}else if(_isPrisonerOf is Character){
-				((Character)_isPrisonerOf).RemovePrisoner (this);
-			}else if(_isPrisonerOf is BaseLandmark){
-				((BaseLandmark)_isPrisonerOf).RemovePrisoner (this);
-			}
-		}
-		public void ConvertToFaction(){
-            Faction previousFaction = this.faction;
-			BaseLandmark prison = (BaseLandmark)_isPrisonerOf;
-			Faction newFaction = prison.owner;
-			SetFaction (newFaction);
-			SetHome (prison.tileLocation.areaOfTile);
-			prison.AddCharacterToLocation(this);
-			//prison.AddCharacterHomeOnLandmark(this);
-			ChangeRole ();
-			prison.owner.AddNewCharacter(this);
-
-            // when a character from another Faction switches to another Faction, Landmark Information will also be transferred to his new Faction.
-            if (previousFaction != null) {
-                for (int i = 0; i < previousFaction.landmarkInfo.Count; i++) {
-                    BaseLandmark currLandmark = previousFaction.landmarkInfo[i];
-                    newFaction.AddLandmarkInfo(currLandmark);
-                }
-            }
-		}
-		#endregion
 
 		#region Character
 		public bool IsHostileWith(Character character){
@@ -2927,81 +2709,9 @@ namespace ECS {
             }
 			
 		}
-		//public void ReturnCombatResults(Combat combat){
-  //          this.SetIsInCombat(false);
-		//	if (this.isDefeated) {
-                
-  //          } else{
-  //              //this character won the combat, continue his/her current action if any
-  //              if (currentFunction != null) {
-  //                  currentFunction();
-  //                  SetCurrentFunction(null);
-  //              }
-  //              //if (avatar != null && avatar.isMovementPaused) {
-  //              //    avatar.ResumeMovement();
-  //              //}
-		//	}
-  //          SetIsDefeated(false);
-  //      }
-		//public void SetIsDefeated(bool state){
-		//	_isDefeated = state;
-		//}
-        //public void AdjustCivilians(Dictionary<RACE, int> civilians) {
-        //    foreach (KeyValuePair<RACE, int> kvp in civilians) {
-        //        AdjustCivilians(kvp.Key, kvp.Value);
-        //    }
-        //}
-        //public void ReduceCivilians(Dictionary<RACE, int> civilians) {
-        //    foreach (KeyValuePair<RACE, int> kvp in civilians) {
-        //        AdjustCivilians(kvp.Key, -kvp.Value);
-        //    }
-        //}
-        //public void AdjustCivilians(RACE race, int amount) {
-        //    if (!_civiliansByRace.ContainsKey(race)) {
-        //        _civiliansByRace.Add(race, 0);
-        //    }
-        //    _civiliansByRace[race] += amount;
-        //    _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
-        //}
-        //public void TransferCivilians(BaseLandmark to, Dictionary<RACE, int> civilians) {
-        //    ReduceCivilians(civilians);
-        //    to.AdjustCivilians(civilians);
-        //}
         public STANCE GetCurrentStance() {
-            //if (currentAction != null) {
-            //    return currentAction.stance;
-                //if (avatar != null && avatar.isTravelling) {
-                //    if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-                //        return STANCE.COMBAT;
-                //    }
-                //    return STANCE.NEUTRAL;
-                //}
-                //if (currentTask is Attack || currentTask is Defend || currentTask is Pillage || currentTask is HuntPrey) {
-                //    return STANCE.COMBAT;
-                //} else if (currentTask is Rest || currentTask is Hibernate || (currentTask is OldQuest.Quest && !(currentTask as OldQuest.Quest).isExpired) /*Forming Party*/ || currentTask is DoNothing) {
-                //    return STANCE.NEUTRAL;
-                //} else if (currentTask is ExploreTile) {
-                //    return STANCE.STEALTHY;
-                //}
-            //}
             return STANCE.NEUTRAL;
         }
-        //public void ContinueDailyAction() {
-        //    if (!isInCombat) {
-        //        if (actionData.currentAction != null) {
-        //            //if (avatar != null && avatar.isTravelling) {
-        //            //    return;
-        //            //}
-        //            //currentAction.PerformTask();
-        //        }
-        //    }
-        //}
-        //public bool CanInitiateCombat() {
-        //    //if (currentAction.combatPriority > 0) {
-        //    //    return true;
-        //    //}
-        //    return false;
-        //}
         #endregion
 
 		#region Combat Handlers
@@ -3028,22 +2738,6 @@ namespace ECS {
         private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
             _exploredLandmarks.Remove(landmark);
         }
-		#endregion
-
-		#region Followers
-		public void AddFollower(Character character){
-			if(!_followers.Contains(character)){
-				_followers.Add (character);
-				character._isFollowerOf = this;
-				character.SetFollowerState (true);
-			}
-		}
-		public void RemoveFollower(Character character){
-			if(_followers.Remove(character)){
-				character._isFollowerOf = null;
-				character.SetFollowerState (false);
-			}
-		}
 		#endregion
 
 		#region Psytoxin
