@@ -93,7 +93,7 @@ namespace ECS {
             //this._dodgeRate = classComponent.dodgeRate;
             //this._parryRate = classComponent.parryRate;
             //this._blockRate = classComponent.blockRate;
-            this._allowedWeaponTypes = new List<WEAPON_TYPE>(classComponent.allowedWeaponTypes);
+            this._allowedWeaponTypes = classComponent.allowedWeaponTypes;
             this._skillsPerLevelNames = new List<StringListWrapper>();
             for (int i = 0; i < classComponent.skillsPerLevel.Count; i++) {
                 StringListWrapper skillNames = new StringListWrapper();

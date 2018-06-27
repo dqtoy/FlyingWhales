@@ -38,6 +38,7 @@ public enum RACE{
 	DRAGON,
 	DEHKBRUG,
     WOLF,
+    SLIME,
 }
 
 public enum PATH_DIRECTION{
