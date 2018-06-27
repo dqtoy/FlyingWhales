@@ -7,6 +7,12 @@ public class Player {
     private int _corruption;
     private Area _playerArea;
 
+    #region getters/setters
+    public Area playerArea {
+        get { return _playerArea; }
+    }
+    #endregion
+
     public Player() {
         _corruption = 0;
         _playerArea = null;

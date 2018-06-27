@@ -1642,9 +1642,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetArea(Area area) {
         _areaOfTile = area;
     }
+    private bool IsAdjacentToPlayerArea() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile currNeighbour = AllNeighbours[i];
+            if (currNeighbour.areaOfTile != null && currNeighbour.areaOfTile.id == PlayerManager.Instance.player.playerArea.id) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Context Menu
+#if WORLD_CREATION_TOOL
     public ContextMenuSettings GetContextMenuSettings() {
         ContextMenuSettings settings = new ContextMenuSettings();
         if (this.areaOfTile != null && landmarkOnTile == null) {
@@ -1688,18 +1698,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             ContextMenuItemSettings removeMonster = new ContextMenuItemSettings("Remove Monsters");
             removeMonster.onClickAction = () => MonsterManager.Instance.RemoveMonstersOnTile(this);
             settings.AddMenuItem(removeMonster);
-
-            //ContextMenuSettings removeMonsterSettings = new ContextMenuSettings();
-            //removeMonster.SetSubMenu(removeMonsterSettings);
-
-            //foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
-            //    ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
-            //    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
-            //    removeMonsterSettings.AddMenuItem(spawnMonsterItem);
-            //}
-
         }
         return settings;
     }
+#else
+    public ContextMenuSettings GetContextMenuSettings() {
+        ContextMenuSettings settings = new ContextMenuSettings();
+        if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.isPassable && IsAdjacentToPlayerArea()) {
+            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Purchase Tile");
+            createLandmarkItem.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
+            settings.AddMenuItem(createLandmarkItem);
+        }
+        return settings;
+    }
+#endif
+
     #endregion
 }
