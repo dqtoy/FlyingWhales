@@ -42,16 +42,6 @@ public class UIManager : MonoBehaviour {
     public GameObject smallInfoGO;
     public TextMeshProUGUI smallInfoLbl;
 
-    //[Space(10)]
-    //[Header("Minimap")]
-    //[SerializeField] private GameObject minimapGO;
-    //[SerializeField] private GameObject minimapTextureGO;
-
-    //[Space(10)]
-    //[Header("Notification Area")]
-    //[SerializeField] private UITable notificationParent;
-    //[SerializeField] private UIScrollView notificationScrollView;
-
     [Space(10)]
     [Header("World Info Menu")]
     [SerializeField] private GameObject worldInfoCharactersSelectedGO;
@@ -65,15 +55,10 @@ public class UIManager : MonoBehaviour {
     [Header("Popup Message Box")]
     [SerializeField] private PopupMessageBox popupMessageBox;
 
-    //[Space(10)]
-    //[Header("Faction Summary Menu")]
-    //[SerializeField] private FactionSummaryUI factionSummaryUI;
-
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;
     public ButtonToggle corruptionBtn;
-
 
     public delegate void OnPauseEventExpiration(bool state);
     public OnPauseEventExpiration onPauseEventExpiration;
@@ -86,12 +71,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     internal List<object> eventLogsQueue = new List<object>();
-
-    //internal string warAllianceState = string.Empty;
-
-    //private List<NotificationItem> notificationItemsThatCanBeReused;
-    //private List<Log> logHistory;
-    //private bool isShowKingdomHistoryOnly;
 
     private List<UIMenuSettings> _menuHistory;
 

@@ -50,7 +50,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private GameObject _corruptionHighlightGO;
 
-
     [Space(10)]
     [Header("Tile Edges")]
     [SerializeField] private GameObject topLeftEdge;
@@ -1704,7 +1703,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
     public ContextMenuSettings GetContextMenuSettings() {
         ContextMenuSettings settings = new ContextMenuSettings();
-        if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.isPassable && IsAdjacentToPlayerArea()) {
+        if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.landmarkOnTile == null && this.isPassable && IsAdjacentToPlayerArea()) {
             ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
             purchaseTileItem.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
             settings.AddMenuItem(purchaseTileItem);
@@ -1720,7 +1719,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 LANDMARK_TYPE landmarkType = data.allowedLandmarkTypes[i];
                 if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
                     ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
-                    createLandmark.onClickAction = () => LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType);
+                    createLandmark.onClickAction = () => PlayerManager.Instance.CreatePlayerLandmarkOnTile(this, landmarkType);
                     createLandmarkSettings.AddMenuItem(createLandmark);
                 }
             }
@@ -1728,6 +1727,5 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return settings;
     }
 #endif
-
     #endregion
 }

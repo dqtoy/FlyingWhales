@@ -78,9 +78,10 @@ public class GameManager : MonoBehaviour {
 
     [ContextMenu("Start Progression")]
 	public void StartProgression(){
-        SetPausedState(false);
-		SchedulingManager.Instance.StartScheduleCalls ();
         _gameHasStarted = true;
+        //SetPausedState(false);
+        UIManager.Instance.SetProgressionSpeed1X();
+		SchedulingManager.Instance.StartScheduleCalls ();
 	}
 
     public GameDate Today() {
