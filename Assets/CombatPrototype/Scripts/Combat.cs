@@ -829,14 +829,22 @@ namespace ECS{
                     elementUsed = weapon.element;
                 }
             }
-            float elementalDiff = targetCharacter.elementalWeaknesses[elementUsed] - targetCharacter.elementalResistances[elementUsed];
+            float elementalWeakness = 0f;
+            float elementalResistance = 0f;
+            if (targetCharacter.elementalWeaknesses != null && targetCharacter.elementalWeaknesses.ContainsKey(elementUsed)) {
+                elementalWeakness = targetCharacter.elementalWeaknesses[elementUsed];
+            }
+            if (targetCharacter.elementalResistances != null && targetCharacter.elementalResistances.ContainsKey(elementUsed)) {
+                elementalResistance = targetCharacter.elementalResistances[elementUsed];
+            }
+            float elementalDiff = elementalWeakness - elementalResistance;
             float elementModifier = 1f + ((elementalDiff < 0f ? 0f : elementalDiff) / 100f);
             //Add elemental weakness and resist to sourceCharacter battle tracker
             if(attacker != null) {
-                if(targetCharacter.elementalWeaknesses[elementUsed] > 0f) {
+                if(elementalWeakness > 0f) {
                     attacker.battleTracker.AddEnemyElementalWeakness(targetCharacter.name, elementUsed);
                 }
-                if (targetCharacter.elementalResistances[elementUsed] > 0f) {
+                if (elementalResistance > 0f) {
                     attacker.battleTracker.AddEnemyElementalResistance(targetCharacter.name, elementUsed);
                 }
             }

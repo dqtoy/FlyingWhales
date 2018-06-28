@@ -175,8 +175,8 @@ public class CharacterIcon : MonoBehaviour {
     private void LateUpdate() {
         //Debug.Log(_aiPath.velocity);
         Vector3 newPos = _aiPath.transform.localPosition;
-        newPos.y += 0.38f;
-        newPos.x += 0.02f;
+        newPos.y += 0.5f;
+        //newPos.x += 0.02f;
         _avatarGO.transform.localPosition = newPos;
         //aiPath.isStopped = true;
         //Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

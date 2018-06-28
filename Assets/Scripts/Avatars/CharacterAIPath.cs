@@ -42,23 +42,23 @@ public class CharacterAIPath : AIPath {
         onTargetReachedAction = action;
     }
 
-    #region Monobehaviours
-    private void OnMouseDown() {
-        if (UIManager.Instance.IsMouseOnUI()) {
-            return;
-        }
-        if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-            if (icon.icharacter is Monster || UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction.id != icon.icharacter.faction.id) { //TODO: Change this checker to relationship status checking instead of just faction
-                CharacterAction attackAction = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
-                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
-                return;
-            }
-        }
-        if (icon.icharacter is Character) {
-            UIManager.Instance.ShowCharacterInfo(icon.icharacter as Character);
-        }
-    }
-    #endregion
+    //#region Monobehaviours
+    //private void OnMouseDown() {
+    //    if (UIManager.Instance.IsMouseOnUI()) {
+    //        return;
+    //    }
+    //    if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
+    //        if (icon.icharacter is Monster || UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction.id != icon.icharacter.faction.id) { //TODO: Change this checker to relationship status checking instead of just faction
+    //            CharacterAction attackAction = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+    //            UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
+    //            return;
+    //        }
+    //    }
+    //    if (icon.icharacter is Character) {
+    //        UIManager.Instance.ShowCharacterInfo(icon.icharacter as Character);
+    //    }
+    //}
+    //#endregion
 
     #region Context Menus
     [ContextMenu("Log Remaining Distance")]

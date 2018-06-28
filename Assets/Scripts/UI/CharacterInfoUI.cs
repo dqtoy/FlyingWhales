@@ -315,8 +315,8 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     public void SetAttackButtonState(bool state) {
-        isWaitingForAttackTarget = state;
         attackBtnToggle.isOn = state;
+        //isWaitingForAttackTarget = state;
         if (isWaitingForAttackTarget) {
             SetJoinBattleButtonState(false);
         }
