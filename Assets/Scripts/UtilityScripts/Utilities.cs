@@ -1072,8 +1072,8 @@ public class Utilities : MonoBehaviour {
             rels.Add(CHARACTER_RELATIONSHIP.FATHER);
             rels.Add(CHARACTER_RELATIONSHIP.BROTHER);
             rels.Add(CHARACTER_RELATIONSHIP.SON);
-            if (gender1 != GENDER.MALE) {
-                rels.Add(CHARACTER_RELATIONSHIP.LOVER);
+            rels.Add(CHARACTER_RELATIONSHIP.LOVER);
+            if (gender1 != GENDER.MALE) { //other gender is not a male
                 rels.Add(CHARACTER_RELATIONSHIP.HUSBAND);
             }
         } else {
@@ -1083,8 +1083,8 @@ public class Utilities : MonoBehaviour {
             rels.Add(CHARACTER_RELATIONSHIP.MOTHER);
             rels.Add(CHARACTER_RELATIONSHIP.SISTER);
             rels.Add(CHARACTER_RELATIONSHIP.DAUGHTER);
-            if (gender2 != GENDER.FEMALE) {
-                rels.Add(CHARACTER_RELATIONSHIP.LOVER);
+            rels.Add(CHARACTER_RELATIONSHIP.LOVER);
+            if (gender1 != GENDER.FEMALE) { //other gender is not a female
                 rels.Add(CHARACTER_RELATIONSHIP.WIFE);
             }
         }
