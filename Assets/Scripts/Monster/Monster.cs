@@ -40,6 +40,7 @@ public class Monster : ICharacter {
     private Faction _attackedByFaction;
     private BaseLandmark _homeLandmark;
     private RaceSetting _raceSetting;
+    private Region _currentRegion;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private CharacterIcon _icon;
@@ -134,6 +135,9 @@ public class Monster : ICharacter {
     }
     public BaseLandmark homeLandmark {
         get { return _homeLandmark; }
+    }
+    public Region currentRegion {
+        get { return _currentRegion; }
     }
     public List<Skill> skills {
         get { return _skills; }
@@ -236,6 +240,7 @@ public class Monster : ICharacter {
     }
     public void Death() {
         _isDead = true;
+        Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
         ObjectState deadState = _monsterObj.GetState("Dead");
         _monsterObj.ChangeState(deadState);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
@@ -288,6 +293,7 @@ public class Monster : ICharacter {
         _currentHP = _maxHP;
         _currentSP = _maxSP;
         SetCharacterColor(Color.red);
+        Messenger.AddListener<ActionThread>("LookForAction", AdvertiseSelf);
 #if !WORLD_CREATION_TOOL
         _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
         _monsterObj.SetMonster(this);
@@ -340,6 +346,9 @@ public class Monster : ICharacter {
     }
     public void SetSpecificLocation(ILocation specificLocation) {
         _specificLocation = specificLocation;
+        if (_specificLocation != null) {
+            _currentRegion = _specificLocation.tileLocation.region;
+        }
     }
     private ILocation GetSpecificLocation() {
         if (_specificLocation != null) {
@@ -457,6 +466,9 @@ public class Monster : ICharacter {
     }
     public void GoHome() {
         GoToLocation(_homeLandmark, PATHFINDING_MODE.USE_ROADS);
+    }
+    public void AdvertiseSelf(ActionThread actionThread) {
+        actionThread.AddToChoices(_monsterObj);
     }
     #endregion
 

@@ -477,6 +477,7 @@ namespace ECS {
             _relationships = new Dictionary<Character, Relationship>();
             _actionData = new ActionData(this);
 
+
             //RPG
             _strength = 1;
             _intelligence = 1;
@@ -507,6 +508,7 @@ namespace ECS {
             Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            Messenger.AddListener<ActionThread>("LookForAction", AdvertiseSelf);
         }
         public void Initialize() { }
 
@@ -842,7 +844,8 @@ namespace ECS {
 		internal void Death(Character killer = null){
 			if(!_isDead){
 				_isDead = true;
-				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
+                Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
+                Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
                 Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
 
@@ -2618,6 +2621,11 @@ namespace ECS {
                 if (onDailyAction != null) {
                     onDailyAction();
                 }
+            }
+        }
+        public void AdvertiseSelf(ActionThread actionThread) {
+            if(actionThread.character.id != this.id) {
+                actionThread.AddToChoices(_characterObject);
             }
         }
         #endregion

@@ -10,6 +10,13 @@ public class ActionThread : Multithread {
     private CharacterAction chosenAction;
     private List<CharacterActionAdvertisement> allChoices;
     private ChainAction chosenChainAction;
+    private string actionLog;
+
+    #region getters/setters
+    public Character character {
+        get { return _character; }
+    }
+    #endregion
 
     public ActionThread(Character character) {
         choices = new CharacterActionAdvertisement[3];
@@ -34,7 +41,7 @@ public class ActionThread : Multithread {
     private void LookForAction() {
         allChoices.Clear();
 
-        string actionLog = _character.name + "'s Action Advertisements: ";
+        actionLog = _character.name + "'s Action Advertisements: ";
         for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
             BaseLandmark landmark = _character.currentRegion.landmarks[i];
             StructureObj iobject = landmark.landmarkObj;
@@ -48,21 +55,10 @@ public class ActionThread : Multithread {
                     }
                 }
             }
-            //for (int j = 0; j < landmark.objects.Count; j++) {
-            //    IObject iobject = landmark.objects[j];
-            //    if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-            //        for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-            //            CharacterAction action = iobject.currentState.actions[k];
-            //            if (action.MeetsRequirements(_character, landmark)) { //Filter
-            //                float advertisement = action.GetTotalAdvertisementValue(_character);
-            //                actionLog += "\n" + action.actionData.actionName + " = " + advertisement + " (" + iobject.objectName + " at " + iobject.objectLocation.landmarkName + ")";
-            //                PutToChoices(action, advertisement);
-            //            }
-            //        }
-            //    }
-            //}
         }
-        //Debug.Log(actionLog);
+        if (Messenger.eventTable.ContainsKey("LookForAction")) {
+            Messenger.Broadcast<ActionThread>("LookForAction", this);
+        }
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
             Debug.Log(actionLog);
         }
@@ -211,6 +207,18 @@ public class ActionThread : Multithread {
             if(allChoices[i].action == action) {
                 allChoices.RemoveAt(i);
                 break;
+            }
+        }
+    }
+    public void AddToChoices(IObject iobject) {
+        if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+            for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+                CharacterAction action = iobject.currentState.actions[k];
+                if (action.MeetsRequirements(_character, null) && action.CanBeDone() && action.CanBeDoneBy(_character)) { //Filter
+                    float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
+                    actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
+                    PutToChoices(action, happinessIncrease);
+                }
             }
         }
     }
