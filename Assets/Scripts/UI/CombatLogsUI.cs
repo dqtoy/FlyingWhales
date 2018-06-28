@@ -38,12 +38,12 @@ public class CombatLogsUI : UIMenu {
 	}
 	private void CombatLogs() {
         string text = string.Empty;
-		text += "[000000]";
+		text += "<#000000>";
 		for (int i = 0; i < _currentlyShowingCombat.resultsLog.Count; i++) {
 			string currLog = _currentlyShowingCombat.resultsLog[i];
             text +=  "- " + currLog + "\n";
         }
-		text += "[-]";
+		//text += "[-]";
 		combatLogsLbl.text = text;
         //logsScrollView.UpdatePosition();
     }
