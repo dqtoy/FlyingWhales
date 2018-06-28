@@ -98,19 +98,19 @@ public class CharacterRole {
 		//_roleTasks.Add (new RecruitFollowers (this._character, 5));
         _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
 
-        _maxFullness = 1000;
-        _maxEnergy = 1000;
-        _maxFun = 1000;
-        _maxPrestige = 1000;
-        _maxSanity = 1000;
-        _maxSafety = 1000;
+        _maxFullness = 100;
+        _maxEnergy = 100;
+        _maxFun = 100;
+        _maxPrestige = 100;
+        _maxSanity = 100;
+        _maxSafety = 100;
 
-        _minFullness = -1000;
-        _minEnergy = -1000;
-        _minFun = -1000;
-        _minPrestige = -1000;
-        _minSanity = -1000;
-        _minSafety = -1000;
+        _minFullness = -100;
+        _minEnergy = -100;
+        _minFun = -100;
+        _minPrestige = -100;
+        _minSanity = -100;
+        _minSafety = -100;
     }
 
 
@@ -467,7 +467,7 @@ public class CharacterRole {
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
     private float CalculateFullnessImpact(int currentFullness) {
         //return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
-        float result = (Mathf.Pow(1.007f, (float) -currentFullness)) + 20f;
+        float result = (Mathf.Pow(1.04f, (float) -currentFullness)) + 30f;
         if (currentFullness < 0) { result *= -1f; }
         return result;
     }
@@ -475,31 +475,31 @@ public class CharacterRole {
     //Formula for calculation of happiness based on current energy, meaning what's the happiness equivalent given the energy
     private float CalculateEnergyImpact(int currentEnergy) {
         //return (-0.4f * ((float) -currentEnergy)) + 350f;
-        float result = (-0.4f * ((float) currentEnergy)) + 350f;
+        float result = (-0.15f * ((float) currentEnergy)) + 25f;
         if (currentEnergy < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current fun, meaning what's the happiness equivalent given the fun
     private float CalculateFunImpact(int currentFun) {
-        float value = 0.018f * ((float)currentFun);
-        float result = (Mathf.Pow(value, 2f)) + 50f;
+        float value = 0.06f * ((float)currentFun);
+        float result = (Mathf.Pow(value, 2f)) + 10f;
         if (currentFun < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(int currentPrestige) {
-        float value = 0.024f * ((float) currentPrestige);
-        float result = Mathf.Pow(value, 2f);
+        float value = 0.04f * ((float) currentPrestige);
+        float result = (Mathf.Pow(value, 2f)) + 15f;
         if (currentPrestige < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current sanity, meaning what's the happiness equivalent given the sanity
     private float CalculateSanityImpact(int currentSanity) {
-        float value = 0.015f * ((float)currentSanity);
-        float result = (Mathf.Pow(value, 2f)) + 100f;
+        float value = 0.075f * ((float)currentSanity);
+        float result = Mathf.Pow(value, 2f);
         if (currentSanity < 0) { result *= -1f; }
         return result;
     }
@@ -507,7 +507,7 @@ public class CharacterRole {
     //Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
     private float CalculateSafetyImpact(int currentSafety) {
         //return (0.2f * ((float)currentSafety)) + 150f;
-        float result = (-0.2f * ((float) currentSafety)) + 210f;
+        float result = (Mathf.Pow(1.045f, (float) -currentSafety)) + 5f;
         if (currentSafety < 0) { result *= -1f; }
         return result;
     }
