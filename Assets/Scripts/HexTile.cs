@@ -1313,7 +1313,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
             character.SetSpecificLocation(this);
-            //if (character is Character){
+            //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
             //  Character currChar = character as Character;
             //  currChar.SetSpecificLocation(this);
 			//}else if(character is Party){
@@ -1328,7 +1328,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	public void RemoveCharacterFromLocation(ICharacter character) {
 		_charactersAtLocation.Remove(character);
         character.SetSpecificLocation(null);
-  //      if (character is Character){
+  //      if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
   //          Character currChar = character as Character;
   //          currChar.SetSpecificLocation(null);
   //      } else if(character is Party){
@@ -1345,7 +1345,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
             _charactersAtLocation.Remove(characterToReplace);
             characterToAdd.SetSpecificLocation(this);
-            //if (characterToAdd is Character) {
+            //if (characterToAdd.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //    Character currChar = characterToAdd as Character;
             //    currChar.SetSpecificLocation(this);
             //} else if (characterToAdd is Party) {
@@ -1495,7 +1495,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //        continue; //skip
         //    }
         //    Faction factionOfItem = currItem.faction;
-        //    //if (currItem is Character) {
+        //    //if (currItem.icharacterType == ICHARACTER_TYPE.CHARACTER) {
         //    //    factionOfItem = (currItem as Character).faction;
         //    //} else if (currItem is Party) {
         //    //    factionOfItem = (currItem as Party).faction;
@@ -1522,7 +1522,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    for (int i = 0; i < _charactersAtLocation.Count; i++) {
         //        Character currItem = _charactersAtLocation[i];
         //        Faction factionOfItem = currItem.faction;
-        //        //if (currItem is Character) {
+        //        //if (currItem.icharacterType == ICHARACTER_TYPE.CHARACTER) {
         //        //    factionOfItem = (currItem as Character).faction;
         //        //} else if (currItem is Party) {
         //        //    factionOfItem = (currItem as Party).faction;
@@ -1699,7 +1699,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
                 for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
                     ICharacter currCharacter = this.landmarkOnTile.charactersAtLocation[i];
-                    if (currCharacter is Monster) {
+                    if (currCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
                         ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currCharacter.name);
                         despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterOnLandmark(landmarkOnTile, currCharacter as Monster);
                         despawnMonsterSettings.AddMenuItem(despawnMonsterItem);

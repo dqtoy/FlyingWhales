@@ -105,7 +105,7 @@ public class MonsterManager : MonoBehaviour {
     public bool HasMonsterOnLandmark(BaseLandmark landmark) {
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
             ICharacter currCharacter = landmark.charactersAtLocation[i];
-            if (currCharacter is Monster) {
+            if (currCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
                 return true;
             }
         }

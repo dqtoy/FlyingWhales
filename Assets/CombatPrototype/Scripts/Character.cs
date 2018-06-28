@@ -422,6 +422,9 @@ namespace ECS {
         public float computedPower {
             get { return GetAttackPower() + GetDefensePower(); }
         }
+        public ICHARACTER_TYPE icharacterType {
+            get { return ICHARACTER_TYPE.CHARACTER; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup, GENDER gender) : this() {
@@ -2703,7 +2706,7 @@ namespace ECS {
             //Check here if the combatInitializer is hostile with this character, if yes, return true
             Faction factionOfEnemy = character.faction;
             
-            //if (combatInitializer is Character) {
+            //if (combatInitializer.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //    factionOfEnemy = (combatInitializer as Character).faction;
             //}else if(combatInitializer is Party) {
             //    factionOfEnemy = (combatInitializer as Party).faction;

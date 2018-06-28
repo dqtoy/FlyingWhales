@@ -183,12 +183,12 @@ namespace ECS{
                 ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, null);
 
                 Character actingCharacter = null;
-                if(characterThatWillAct is Character) {
+                if(characterThatWillAct.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     actingCharacter = characterThatWillAct as Character;
                 }
                 Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act. (hp lost: " + characterThatWillAct.battleOnlyTracker.hpLostPercent
                     + ", last damage taken: " + characterThatWillAct.battleOnlyTracker.lastDamageTaken);
-                Debug.Log((targetCharacter is Character ? (targetCharacter as Character).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
+                Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as Character).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
                     + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
 
                 characterThatWillAct.EnableDisableSkills(this);
@@ -383,7 +383,7 @@ namespace ECS{
             float weaponAttack = 0f;
             float missingHP = (1f - ((float) sourceCharacter.currentHP / (float) sourceCharacter.maxHP)) * 100f;
             int levelDiff = (sourceCharacter.level - targetCharacter.level) * 10;
-            if (sourceCharacter is Character) {
+            if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 Character character = sourceCharacter as Character;
                 if (character.equippedWeapon != null && sourceCharacter.battleOnlyTracker.lastDamageTaken < sourceCharacter.currentHP) {//character must have a weapon and sourceCharacter last damage taken must not be >= current health
                     weaponAttack = character.equippedWeapon.attackPower;
@@ -403,7 +403,7 @@ namespace ECS{
                         }
                     }
                 }
-            } else if (sourceCharacter is Monster) {
+            } else if (sourceCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
                 Monster monster = sourceCharacter as Monster;
                 weaponAttack = monster.attackPower;
                 for (int i = 0; i < monster.skills.Count; i++) {
@@ -627,7 +627,7 @@ namespace ECS{
                         return HasTargetInRangeForSkill(skill, sourceCharacter);
 					}
 				}
-                if (sourceCharacter is Character) {
+                if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = sourceCharacter as Character;
                     for (int i = 0; i < character.level; i++) {
                         for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
@@ -777,7 +777,7 @@ namespace ECS{
             int statMod = sourceCharacter.strength;
             int def = targetCharacter.GetPDef(sourceCharacter);
             float critDamage = 100f;
-            if (sourceCharacter is Character) {
+            if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 attacker = sourceCharacter as Character;
                 weapon = attacker.equippedWeapon;
                 weaponAttack = weapon.attackPower;
@@ -809,9 +809,9 @@ namespace ECS{
             }
 
             int finalAttack = 0;
-            if(sourceCharacter is Character) {
+            if(sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
-            } else if (sourceCharacter is Monster) {
+            } else if (sourceCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
                 finalAttack = (sourceCharacter as Monster).attackPower;
             }
             int damage = (int) (((float)finalAttack * (attackSkill.power / 100f)) * (critDamage / 100f));
@@ -1128,7 +1128,7 @@ namespace ECS{
 			RemoveCharacter(targetCharacter);
 			fledCharacters.Add (targetCharacter);
 			//targetCharacter.SetIsDefeated (true);
-            if(targetCharacter is Character) {
+            if(targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 CombatManager.Instance.CharacterContinuesAction(targetCharacter as Character, false);
             }
             AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
@@ -1211,11 +1211,11 @@ namespace ECS{
 		public ICharacter GetAliveCharacterByID(int id, string type){
 			for (int i = 0; i < this.characterSideACopy.Count; i++) {
                 if(type == "character") {
-                    if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id && this.characterSideACopy[i] is Character) {
+                    if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id && this.characterSideACopy[i].icharacterType == ICHARACTER_TYPE.CHARACTER) {
                         return this.characterSideACopy[i];
                     }
                 } else if (type == "monster") {
-                    if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id && this.characterSideACopy[i] is Monster) {
+                    if (!this.characterSideACopy[i].isDead && this.characterSideACopy[i].id == id && this.characterSideACopy[i].icharacterType == ICHARACTER_TYPE.MONSTER) {
                         return this.characterSideACopy[i];
                     }
                 }
@@ -1223,11 +1223,11 @@ namespace ECS{
 			}
 			for (int i = 0; i < this.characterSideBCopy.Count; i++) {
                 if (type == "character") {
-                    if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id && this.characterSideBCopy[i] is Character) {
+                    if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id && this.characterSideBCopy[i].icharacterType == ICHARACTER_TYPE.CHARACTER) {
                         return this.characterSideBCopy[i];
                     }
                 } else if (type == "monster") {
-                    if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id && this.characterSideBCopy[i] is Monster) {
+                    if (!this.characterSideBCopy[i].isDead && this.characterSideBCopy[i].id == id && this.characterSideBCopy[i].icharacterType == ICHARACTER_TYPE.MONSTER) {
                         return this.characterSideBCopy[i];
                     }
                 }

@@ -601,7 +601,7 @@ public class BaseLandmark : ILocation {
     public void AddCharacterToLocation(ICharacter character) {
         if (!_charactersAtLocation.Contains(character)) {
             _charactersAtLocation.Add(character);
-            //if (character is Character) {
+            //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //Character currChar = character as Character;
             this.tileLocation.RemoveCharacterFromLocation(character);
             character.SetSpecificLocation(this);
@@ -610,7 +610,7 @@ public class BaseLandmark : ILocation {
 #endif
         }
          //character.SetSpecificLocation(this);
-    //        if (character is Character) {
+    //        if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
     //            Character currChar = character as Character;
 				//this.tileLocation.RemoveCharacterFromLocation(currChar);
     //            currChar.SetSpecificLocation(this);
@@ -626,7 +626,7 @@ public class BaseLandmark : ILocation {
     }
     public void RemoveCharacterFromLocation(ICharacter character) {
         _charactersAtLocation.Remove(character);
-        //if (character is Character) {
+        //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
         //Character currChar = character as Character;
         character.SetSpecificLocation(null);
 #if !WORLD_CREATION_TOOL
@@ -634,7 +634,7 @@ public class BaseLandmark : ILocation {
 #endif
     //}
         //character.SetSpecificLocation(null);
-   //     if (character is Character) {
+   //     if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
    //         Character currChar = character as Character;
 			//currChar.SetSpecificLocation(null);
    //     } else if (character is Party) {
@@ -652,7 +652,7 @@ public class BaseLandmark : ILocation {
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
             _charactersAtLocation.Remove(characterToReplace);
             characterToAdd.SetSpecificLocation(this);
-    //        if (characterToAdd is Character) {
+    //        if (characterToAdd.icharacterType == ICHARACTER_TYPE.CHARACTER) {
     //            Character currChar = characterToAdd as Character;
 				//this.tileLocation.RemoveCharacterFromLocation(currChar);
     //            currChar.SetSpecificLocation(this);
@@ -791,7 +791,7 @@ public class BaseLandmark : ILocation {
         //        continue; //skip
         //    }
         //    Faction factionOfItem = currItem.faction;
-        //    //if (currItem is Character) {
+        //    //if (currItem.icharacterType == ICHARACTER_TYPE.CHARACTER) {
         //    //    factionOfItem = (currItem as Character).faction;
         //    //} else if (currItem is Party) {
         //    //    factionOfItem = (currItem as Party).faction;
@@ -832,7 +832,7 @@ public class BaseLandmark : ILocation {
             //for (int i = 0; i < _charactersAtLocation.Count; i++) {
             //    Character currItem = _charactersAtLocation[i];
             //    Faction factionOfItem = currItem.faction;
-            //    //if (currItem is Character) {
+            //    //if (currItem.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //    //    factionOfItem = (currItem as Character).faction;
             //    //} else if (currItem is Party) {
             //    //    factionOfItem = (currItem as Party).faction;

@@ -66,7 +66,7 @@ public class AttackAction : CharacterAction {
     #endregion
     private void StartEncounter(Character enemy) {
         enemy.actionData.SetIsHalted(true);
-        if(_icharacterObj.icharacter is Character) {
+        if(_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             (_icharacterObj.icharacter as Character).actionData.SetIsHalted(true);
         }
 
@@ -86,7 +86,7 @@ public class AttackAction : CharacterAction {
             combatLog.AddToFillers(_icharacterObj.icharacter, _icharacterObj.icharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
             enemy.AddHistory(combatLog);
-            if (_icharacterObj.icharacter is Character) {
+            if (_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 (_icharacterObj.icharacter as Character).AddHistory(combatLog);
             }
             Debug.Log("Starting combat between " + enemy.name + " and  " + _icharacterObj.icharacter.name);
@@ -101,7 +101,7 @@ public class AttackAction : CharacterAction {
        
     }
     public bool CanBeDoneByTesting(Character character) {
-        if(_icharacterObj.icharacter is Character) {
+        if(_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             if (character.id == _icharacterObj.icharacter.id) {
                 return false;
             }

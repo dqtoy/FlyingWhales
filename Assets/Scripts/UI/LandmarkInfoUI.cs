@@ -107,7 +107,7 @@ public class LandmarkInfoUI : UIMenu {
                 if (currObject is ECS.Character) {
                     ECS.Character currChar = (ECS.Character)currObject;
                     text += "\n" + currChar.name + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-                } else if (currObject is Monster) {
+                } else if (currObject.icharacterType == ICHARACTER_TYPE.MONSTER) {
                     Monster monster = currObject as Monster;
                     text += "\n" + monster.name;
                 }
