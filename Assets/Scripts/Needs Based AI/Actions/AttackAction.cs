@@ -37,11 +37,11 @@ public class AttackAction : CharacterAction {
         return attackAction;
     }
     public override bool CanBeDoneBy(Character character) {
-        //if(_icharacterObj.icharacter.faction != null) {
-        //    if (character.faction.id == _icharacterObj.icharacter.faction.id || (_icharacterObj.icharacter.attackedByFaction != null && _icharacterObj.icharacter.attackedByFaction.id != character.faction.id)) {
-        //        return false;
-        //    }
-        //}
+        if (_icharacterObj.icharacter.faction != null) {
+            if (character.faction.id == _icharacterObj.icharacter.faction.id || (_icharacterObj.icharacter.attackedByFaction != null && _icharacterObj.icharacter.attackedByFaction.id != character.faction.id)) {
+                return false;
+            }
+        }
         return base.CanBeDoneBy(character);
     }
     public override void OnChooseAction(ICharacter character) {
@@ -99,5 +99,13 @@ public class AttackAction : CharacterAction {
             _icharacterObj.icharacter.currentCombat.AddCharacter(sideToJoin, enemy);
         }
        
+    }
+    public bool CanBeDoneByTesting(Character character) {
+        if(_icharacterObj.icharacter is Character) {
+            if (character.id == _icharacterObj.icharacter.id) {
+                return false;
+            }
+        }
+        return true;
     }
 }

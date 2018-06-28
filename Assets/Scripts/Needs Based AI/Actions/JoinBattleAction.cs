@@ -43,7 +43,7 @@ public class JoinBattleAction : CharacterAction {
         return base.CanBeDone();
     }
     public override bool CanBeDoneBy(Character character) {
-        if (character.faction.id != _characterObj.character.faction.id) {
+        if (character.faction == null || _characterObj.character.faction == null || character.faction.id != _characterObj.character.faction.id) {
             return false;
         }
         return base.CanBeDoneBy(character);

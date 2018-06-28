@@ -145,8 +145,8 @@ public class CharacterInfoUI : UIMenu {
             text += "NONE";
         }
         if (currentlyShowingCharacter.role != null) {
-            text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy + ", <b>Fun: </b>" + currentlyShowingCharacter.role.fun;
-            text += "\n<b>Sanity: </b>" + currentlyShowingCharacter.role.sanity + ", <b>Prestige: </b>" + currentlyShowingCharacter.role.prestige + ", <b>Safety: </b>" + currentlyShowingCharacter.role.safety;
+            text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness.ToString("F0") + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy.ToString("F0") + ", <b>Fun: </b>" + currentlyShowingCharacter.role.fun.ToString("F0");
+            text += "\n<b>Sanity: </b>" + currentlyShowingCharacter.role.sanity.ToString("F0") + ", <b>Prestige: </b>" + currentlyShowingCharacter.role.prestige.ToString("F0") + ", <b>Safety: </b>" + currentlyShowingCharacter.role.safety.ToString("F0");
             text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
         }
         text += "\n<b>Computed Power: </b>" + currentlyShowingCharacter.computedPower;

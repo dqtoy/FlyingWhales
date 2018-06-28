@@ -774,6 +774,13 @@ public class Utilities : MonoBehaviour {
     public static int GetTotalOfWeights<T>(Dictionary<T, int> weights) {
         return weights.Sum(x => x.Value);
     }
+    public static float GetTotalOfWeights<T>(Dictionary<T, float> weights) {
+        float totalOfAllWeights = 0f;
+        foreach (float weight in weights.Values) {
+            totalOfAllWeights += weight;
+        }
+        return totalOfAllWeights;
+    }
     public static string GetWeightsSummary<T>(Dictionary<T, int> weights, string title = "Weights Summary: ") {
         string actionWeightsSummary = title;
         foreach (KeyValuePair<T, int> kvp in weights) {

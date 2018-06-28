@@ -93,6 +93,8 @@ namespace ECS {
         private bool _isIdle; //can't do action, needs will not deplete
         private Area _home;
         private BaseLandmark _homeLandmark;
+        private StructureObj _homeStructure;
+
         //private BaseLandmark _lair;
         //private int _combatHistoryID;
         private List<Log> _history;
@@ -273,6 +275,9 @@ namespace ECS {
         }
         public BaseLandmark homeLandmark {
             get { return _homeLandmark; }
+        }
+        public StructureObj homeStructure {
+            get { return _homeStructure; }
         }
         public float remainingHP { //Percentage of remaining HP this character has
             get { return (float) currentHP / (float) maxHP; }
@@ -477,6 +482,7 @@ namespace ECS {
             _relationships = new Dictionary<Character, Relationship>();
             _actionData = new ActionData(this);
 
+
             //RPG
             _strength = 1;
             _intelligence = 1;
@@ -507,6 +513,7 @@ namespace ECS {
             Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            Messenger.AddListener<ActionThread>("LookForAction", AdvertiseSelf);
         }
         public void Initialize() { }
 
@@ -842,7 +849,8 @@ namespace ECS {
 		internal void Death(Character killer = null){
 			if(!_isDead){
 				_isDead = true;
-				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
+                Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
+                Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
                 Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
 
@@ -891,8 +899,10 @@ namespace ECS {
                         party.DisbandParty();
                     }
                 } else {
-					this.specificLocation.RemoveCharacterFromLocation(this);
-				}
+                    if(_specificLocation != null) {
+                        _specificLocation.RemoveCharacterFromLocation(this);
+                    }
+                }
                 //if (_avatar != null) {
                 //    if (_avatar.mainCharacter.id == this.id) {
                 //        DestroyAvatar();
@@ -900,8 +910,7 @@ namespace ECS {
                 //        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
                 //    }
                 //}
-
-    //            if (_isPrisoner){
+                //if (_isPrisoner){
 				//	PrisonerDeath ();
 				//}
 				if(_role != null){
@@ -2382,7 +2391,7 @@ namespace ECS {
             _icon.SetTargetGO(locationGO);
         }
         public void GoHome() {
-            GoToLocation(_homeLandmark, PATHFINDING_MODE.USE_ROADS);
+            GoToLocation(_homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
         }
         #endregion
 
@@ -2513,6 +2522,9 @@ namespace ECS {
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
         }
+        public void SetHomeStructure(StructureObj newHomeStructure) {
+            this._homeStructure = newHomeStructure;
+        }
         //If true, character can't do daily action (onDailyAction), i.e. actions, needs
         public void SetIsIdle(bool state) {
             _isIdle = state;
@@ -2618,6 +2630,11 @@ namespace ECS {
                 if (onDailyAction != null) {
                     onDailyAction();
                 }
+            }
+        }
+        public void AdvertiseSelf(ActionThread actionThread) {
+            if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.currentRegion.id) {
+                actionThread.AddToChoices(_characterObject);
             }
         }
         #endregion
@@ -2953,7 +2970,7 @@ namespace ECS {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
         }
         private void RecomputeMaxSP() {
-            _maxSP = 10 + Mathf.CeilToInt(_characterClass.spModifier * ((float) _level / 1.25f));
+            _maxSP = 10 + (Mathf.CeilToInt(_characterClass.spModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
         }
         public int GetPDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);
