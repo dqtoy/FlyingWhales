@@ -216,7 +216,7 @@ public class ActionThread : Multithread {
                 CharacterAction action = iobject.currentState.actions[k];
                 if (action.MeetsRequirements(_character, null) && action.CanBeDone() && action.CanBeDoneBy(_character)) { //Filter
                     float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
-                    actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
+                    actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + ")";
                     PutToChoices(action, happinessIncrease);
                 }
             }

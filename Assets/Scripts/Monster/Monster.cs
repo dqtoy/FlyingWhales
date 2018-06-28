@@ -241,6 +241,9 @@ public class Monster : ICharacter {
     public void Death() {
         _isDead = true;
         Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
+        if (_specificLocation != null) {
+            _specificLocation.RemoveCharacterFromLocation(this);
+        }
         ObjectState deadState = _monsterObj.GetState("Dead");
         _monsterObj.ChangeState(deadState);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);

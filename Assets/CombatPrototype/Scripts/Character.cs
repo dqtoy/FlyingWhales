@@ -894,8 +894,10 @@ namespace ECS {
                         party.DisbandParty();
                     }
                 } else {
-					this.specificLocation.RemoveCharacterFromLocation(this);
-				}
+                    if(_specificLocation != null) {
+                        _specificLocation.RemoveCharacterFromLocation(this);
+                    }
+                }
                 //if (_avatar != null) {
                 //    if (_avatar.mainCharacter.id == this.id) {
                 //        DestroyAvatar();
