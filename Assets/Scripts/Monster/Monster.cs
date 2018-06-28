@@ -39,6 +39,7 @@ public class Monster : ICharacter {
     private MonsterObj _monsterObj;
     private Faction _attackedByFaction;
     private BaseLandmark _homeLandmark;
+    private StructureObj _homeStructure;
     private RaceSetting _raceSetting;
     private Region _currentRegion;
     private SIDES _currentSide;
@@ -135,6 +136,9 @@ public class Monster : ICharacter {
     }
     public BaseLandmark homeLandmark {
         get { return _homeLandmark; }
+    }
+    public StructureObj homeStructure {
+        get { return _homeStructure; }
     }
     public Region currentRegion {
         get { return _currentRegion; }
@@ -468,10 +472,13 @@ public class Monster : ICharacter {
         this._homeLandmark = newHomeLandmark;
     }
     public void GoHome() {
-        GoToLocation(_homeLandmark, PATHFINDING_MODE.USE_ROADS);
+        GoToLocation(_homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
     }
     public void AdvertiseSelf(ActionThread actionThread) {
         actionThread.AddToChoices(_monsterObj);
+    }
+    public void SetHomeStructure(StructureObj newHomeStructure) {
+        this._homeStructure = newHomeStructure;
     }
     #endregion
 

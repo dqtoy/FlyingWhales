@@ -19,8 +19,9 @@ public class CharacterClick : MonoBehaviour {
             return;
         }
         if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-            CharacterAction attackAction = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
-            if (attackAction.CanBeDone() && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
+            CharacterAction action = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+            AttackAction attackAction = action as AttackAction;
+            if (attackAction.CanBeDoneByTesting(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
                 UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
                 UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
                 return;

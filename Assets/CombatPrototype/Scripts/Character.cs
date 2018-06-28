@@ -93,6 +93,8 @@ namespace ECS {
         private bool _isIdle; //can't do action, needs will not deplete
         private Area _home;
         private BaseLandmark _homeLandmark;
+        private StructureObj _homeStructure;
+
         //private BaseLandmark _lair;
         //private int _combatHistoryID;
         private List<Log> _history;
@@ -273,6 +275,9 @@ namespace ECS {
         }
         public BaseLandmark homeLandmark {
             get { return _homeLandmark; }
+        }
+        public StructureObj homeStructure {
+            get { return _homeStructure; }
         }
         public float remainingHP { //Percentage of remaining HP this character has
             get { return (float) currentHP / (float) maxHP; }
@@ -905,8 +910,7 @@ namespace ECS {
                 //        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
                 //    }
                 //}
-
-    //            if (_isPrisoner){
+                //if (_isPrisoner){
 				//	PrisonerDeath ();
 				//}
 				if(_role != null){
@@ -2387,7 +2391,7 @@ namespace ECS {
             _icon.SetTargetGO(locationGO);
         }
         public void GoHome() {
-            GoToLocation(_homeLandmark, PATHFINDING_MODE.USE_ROADS);
+            GoToLocation(_homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
         }
         #endregion
 
@@ -2518,6 +2522,9 @@ namespace ECS {
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
         }
+        public void SetHomeStructure(StructureObj newHomeStructure) {
+            this._homeStructure = newHomeStructure;
+        }
         //If true, character can't do daily action (onDailyAction), i.e. actions, needs
         public void SetIsIdle(bool state) {
             _isIdle = state;
@@ -2626,7 +2633,7 @@ namespace ECS {
             }
         }
         public void AdvertiseSelf(ActionThread actionThread) {
-            if(actionThread.character.id != this.id) {
+            if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.currentRegion.id) {
                 actionThread.AddToChoices(_characterObject);
             }
         }
