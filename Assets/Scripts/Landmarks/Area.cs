@@ -18,7 +18,7 @@ public class Area {
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
         id = Utilities.SetID(this);
-        name = RandomNameGenerator.Instance.GetRegionName();
+        SetName(RandomNameGenerator.Instance.GetRegionName());
         tiles = new List<HexTile>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetAreaType(areaType);
@@ -27,7 +27,7 @@ public class Area {
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
-        name = data.areaName;
+        SetName(data.areaName);
         tiles = new List<HexTile>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
@@ -37,6 +37,10 @@ public class Area {
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
+    }
+
+    public void SetName(string name) {
+        this.name = name;
     }
 
     #region Tile Management

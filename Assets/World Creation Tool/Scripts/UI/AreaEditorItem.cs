@@ -27,6 +27,9 @@ namespace worldcreator {
             Messenger.AddListener<Area>(Signals.AREA_TILE_ADDED, UpdateInfo);
             Messenger.AddListener<Area>(Signals.AREA_TILE_REMOVED, UpdateInfo);
         }
+        private void Update() {
+            areaNameLbl.text = area.name;
+        }
         #endregion
 
         public void SetArea(Area area) {

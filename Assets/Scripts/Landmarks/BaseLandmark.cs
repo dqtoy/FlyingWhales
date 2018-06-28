@@ -183,7 +183,7 @@ public class BaseLandmark : ILocation {
         _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
-        _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
+        SetName(RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType));
         ConstructTags(landmarkData);
         //ConstructCiviliansDictionary();
         //GenerateCivilians();
@@ -193,13 +193,20 @@ public class BaseLandmark : ILocation {
         _id = Utilities.SetID(this, data.landmarkID);
         _location = location;
         _specificLandmarkType = data.landmarkType;
-        _landmarkName = data.landmarkName;
+        SetName(data.landmarkName);
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
         //ConstructCiviliansDictionary();
         //GenerateCivilians();
         SpawnInitialLandmarkItems();
+    }
+
+    public void SetName(string name) {
+        _landmarkName = name;
+        if (_landmarkVisual != null) {
+            _landmarkVisual.UpdateName();
+        }
     }
 
     #region Virtuals

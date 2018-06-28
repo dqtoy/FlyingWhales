@@ -80,7 +80,7 @@ namespace worldcreator {
                 BaseLandmark currLandmark = lastCreatedLandmarks[i];
                 currLandmark.SetCivilianCount(civiliansCount);
             }
-            WorldCreatorUI.Instance.messageBox.HideMessageBox();
+            //WorldCreatorUI.Instance.messageBox.HideMessageBox();
         }
         #endregion
     }

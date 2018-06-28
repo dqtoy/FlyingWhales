@@ -51,7 +51,7 @@ public class MessageBox : MonoBehaviour {
         this.gameObject.SetActive(true);
     }
 
-    public void ShowInputMessageBox(string windowTitle, string windowMessage, UnityAction<string> onClickOk) {
+    public void ShowInputMessageBox(string windowTitle, string windowMessage, UnityAction<string> onClickOk, InputField.CharacterValidation inputType = InputField.CharacterValidation.Integer) {
         windowTitleLbl.text = windowTitle;
         inputInstructionLbl.text = windowMessage;
 
@@ -59,6 +59,7 @@ public class MessageBox : MonoBehaviour {
         messageGO.SetActive(false);
         yesNoGO.SetActive(false);
         okGO.SetActive(true);
+        inputField.characterValidation = inputType;
 
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();
@@ -67,7 +68,7 @@ public class MessageBox : MonoBehaviour {
         if (onClickOk != null) {
             okBtn.onClick.AddListener(() => onClickOk(inputField.text));
         }
-        //okBtn.onClick.AddListener(HideMessageBox);
+        okBtn.onClick.AddListener(HideMessageBox);
         this.gameObject.SetActive(true);
     }
 
