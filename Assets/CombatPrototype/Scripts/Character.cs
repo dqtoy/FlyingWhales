@@ -2953,7 +2953,7 @@ namespace ECS {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
         }
         private void RecomputeMaxSP() {
-            _maxSP = 10 + Mathf.CeilToInt(_characterClass.spModifier * ((float) _level / 1.25f));
+            _maxSP = 10 + (Mathf.CeilToInt(_characterClass.spModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
         }
         public int GetPDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);
