@@ -39,11 +39,11 @@ public class Hero : CharacterRole {
         //_defaultRoleTask = _roleTasks [1];
 
         //Messenger.AddListener(Signals.HOUR_ENDED, StartDepletion);
-        SetFullness(1000);
-        SetEnergy(1000);
-        SetFun(600);
+        SetFullness(100);
+        SetEnergy(100);
+        SetFun(60);
         SetPrestige(0);
-        SetSanity(1000);
+        SetSanity(100);
         UpdateSafety();
         UpdateHappiness();
     }

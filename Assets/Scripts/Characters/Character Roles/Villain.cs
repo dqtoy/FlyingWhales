@@ -24,11 +24,11 @@ public class Villain : CharacterRole {
 
 		//_defaultRoleTask = _roleTasks [1];
 
-        SetFullness(1000);
-        SetEnergy(1000);
-        SetFun(600);
-        SetPrestige(400);
-        SetSanity(1000);
+        SetFullness(100);
+        SetEnergy(100);
+        SetFun(60);
+        SetPrestige(40);
+        SetSanity(100);
         UpdateHappiness();
 
         //_character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;

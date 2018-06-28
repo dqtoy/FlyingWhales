@@ -8,11 +8,11 @@ public class Civilian : CharacterRole {
     public Civilian(Character character) : base(character) {
         _roleType = CHARACTER_ROLE.CIVILIAN;
 
-        SetFullness(1000);
-        SetEnergy(1000);
-        SetFun(600);
-        SetPrestige(400);
-        SetSanity(1000);
+        SetFullness(100);
+        SetEnergy(100);
+        SetFun(60);
+        SetPrestige(40);
+        SetSanity(100);
         UpdateSafety();
         UpdateHappiness();
     }
