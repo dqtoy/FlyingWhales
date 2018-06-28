@@ -24,7 +24,7 @@ public class CharacterAIPath : AIPath {
             onTargetReachedAction();
             onTargetReachedAction = null;
         }
-        if (_icon.icharacter is Character) {
+        if (_icon.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             if (_icon.targetLocation is BaseLandmark) {
                 _icon.targetLocation.AddCharacterToLocation(_icon.icharacter as Character);
             }
@@ -48,13 +48,13 @@ public class CharacterAIPath : AIPath {
     //        return;
     //    }
     //    if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-    //        if (icon.icharacter is Monster || UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction.id != icon.icharacter.faction.id) { //TODO: Change this checker to relationship status checking instead of just faction
+    //        if (icon.icharacter.icharacterType == ICHARACTER_TYPE.MONSTER || UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction.id != icon.icharacter.faction.id) { //TODO: Change this checker to relationship status checking instead of just faction
     //            CharacterAction attackAction = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
     //            UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
     //            return;
     //        }
     //    }
-    //    if (icon.icharacter is Character) {
+    //    if (icon.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
     //        UIManager.Instance.ShowCharacterInfo(icon.icharacter as Character);
     //    }
     //}

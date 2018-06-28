@@ -1414,3 +1414,8 @@ public enum MESSAGE_BOX_MODE {
     MESSAGE_ONLY,
     YES_NO
 }
+
+public enum ICHARACTER_TYPE {
+    CHARACTER,
+    MONSTER,
+}

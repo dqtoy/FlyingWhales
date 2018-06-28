@@ -125,7 +125,7 @@ public class StructureObj : IObject {
         _maxHP = amount;
     }
     public void SetObjectLocation(BaseLandmark newLocation) {
-        //if (this is MonsterDen) {
+        //if (this.icharacterType == ICHARACTER_TYPE.MONSTERDen) {
         //    Debug.Log("Set object location to " + newLocation.ToString() + ". ST: " + StackTraceUtility.ExtractStackTrace());
         //}
         _objectLocation = newLocation;

@@ -68,7 +68,7 @@ public class ActionData {
         SetCurrentAction(action);
         action.OnChooseAction(_character);
         _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
-        //if (action.state.obj is CharacterObj) {
+        //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
         //    CharacterObj characterObj = action.state.obj as CharacterObj;
         //    _character.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
         //} else {

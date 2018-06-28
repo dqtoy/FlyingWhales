@@ -55,7 +55,7 @@ public class CombatLogsUI : UIMenu {
 			}
 			ICharacter icharacter = _currentlyShowingCombat.characterSideACopy [i];
             string currLog = string.Empty;
-            if(icharacter is Character) {
+            if(icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 Character character = icharacter as Character;
                 currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
             } else {
@@ -75,7 +75,7 @@ public class CombatLogsUI : UIMenu {
 			}
             ICharacter icharacter = _currentlyShowingCombat.characterSideBCopy [i];
             string currLog = string.Empty;
-            if (icharacter is Character) {
+            if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 Character character = icharacter as Character;
                 currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
             } else {

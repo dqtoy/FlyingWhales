@@ -40,13 +40,13 @@ public class CharacterClick : MonoBehaviour {
         
     }
     private void OnTriggerEnter2D(Collider2D other) {
-        if (icon.icharacter is Character) {
+        if (icon.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             Character thisCharacter = icon.icharacter as Character;
             if (thisCharacter.actionData.currentAction != null) {
                 if (other.tag == "Character" && thisCharacter.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
                     AttackAction attackAction = thisCharacter.actionData.currentAction as AttackAction;
                     CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                    if (attackAction.icharacterObj.icharacter.id == enemy.icharacter.id) {
+                    if (attackAction.icharacterObj.icharacter.icharacterType == enemy.icharacter.icharacterType && attackAction.icharacterObj.icharacter.id == enemy.icharacter.id) {
                         thisCharacter.actionData.DoAction();
                     }
                 }

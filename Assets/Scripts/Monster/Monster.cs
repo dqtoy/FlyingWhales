@@ -120,6 +120,9 @@ public class Monster : ICharacter {
     public SIDES currentSide {
         get { return _currentSide; }
     }
+    public ICHARACTER_TYPE icharacterType {
+        get { return ICHARACTER_TYPE.MONSTER; }
+    }
     public Combat currentCombat {
         get { return _currentCombat; }
         set { _currentCombat = value; }

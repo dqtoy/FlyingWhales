@@ -27,6 +27,7 @@ public interface ICharacter {
     float computedPower { get; }
     bool isDead { get; }
     GENDER gender { get; }
+    ICHARACTER_TYPE icharacterType { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
     Faction attackedByFaction { get; set; }

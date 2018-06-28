@@ -121,7 +121,7 @@ namespace ECS {
 			//}
             while(combat.charactersSideA.Count > 0) {
                 ICharacter icharacter = combat.charactersSideA[0];
-                if (icharacter is Character) {
+                if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
                     CharacterContinuesAction(character, true);
                 }
@@ -131,7 +131,7 @@ namespace ECS {
             }
             while (combat.charactersSideB.Count > 0) {
                 ICharacter icharacter = combat.charactersSideB[0];
-                if (icharacter is Character) {
+                if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
                     CharacterContinuesAction(character, true);
                 }

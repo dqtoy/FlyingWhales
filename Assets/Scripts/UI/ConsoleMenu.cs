@@ -145,7 +145,7 @@ public class ConsoleMenu : UIMenu {
                     log += "\n" + currCombatant.name;
                     //if (currCombatant is Party) {
                     //    log += "\n" + (currCombatant as Party).name;
-                    //} else if (currCombatant is Character) {
+                    //} else if (currCombatant.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     //    log += "\n" + (currCombatant as Character).name;
                     //}
                 }

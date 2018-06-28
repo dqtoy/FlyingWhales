@@ -62,7 +62,7 @@ public class CharacterIcon : MonoBehaviour {
 #endif
 
 
-        if (_icharacter is Character) {
+        if (_icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, OnRoleChanged);
         }
         
@@ -80,7 +80,7 @@ public class CharacterIcon : MonoBehaviour {
             if (_targetLocation == target) {
                 return;
             }
-            if (_icharacter is Character) {
+            if (_icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 Character thisCharacter = _icharacter as Character;
                 //remove character from his/her specific location
                 if (thisCharacter.specificLocation != null && thisCharacter.specificLocation is BaseLandmark) {
@@ -129,7 +129,7 @@ public class CharacterIcon : MonoBehaviour {
 
     #region Speed
     public void SetMovementState(bool state) {
-        if (_icharacter is Character && (_icharacter as Character).actionData.isHalted) {
+        if (_icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER && (_icharacter as Character).actionData.isHalted) {
             return;
         }
         if (state) {
@@ -137,7 +137,7 @@ public class CharacterIcon : MonoBehaviour {
         }
     }
     public void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
-        if (_icharacter is Character && (_icharacter as Character).actionData.isHalted) {
+        if (_icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER && (_icharacter as Character).actionData.isHalted) {
             return;
         }
         switch (speed) {
@@ -155,7 +155,7 @@ public class CharacterIcon : MonoBehaviour {
     #endregion
 
     private void OnRoleChanged(Character character) {
-        if (_icharacter is Character && _icharacter.id == character.id) {
+        if (_icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER && _icharacter.id == character.id) {
             //UpdateColor();
             //if (_character.role != null) {
             //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
