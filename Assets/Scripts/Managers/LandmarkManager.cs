@@ -46,7 +46,9 @@ public class LandmarkManager : MonoBehaviour {
                 Area newArea = CreateNewArea(areaData);
                 if (areaData.ownerID != -1) {
                     Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
-                    OwnArea(owner, newArea);
+                    if (owner != null) {
+                        OwnArea(owner, newArea);
+                    }
                 }
             }
         }
