@@ -606,8 +606,8 @@ namespace worldcreator {
         #endregion
 
         #region Faction Edit
-        public void CreateNewFaction(RACE race) {
-            Faction createdFaction = FactionManager.Instance.CreateNewFaction(race);
+        public void CreateNewFaction() {
+            Faction createdFaction = FactionManager.Instance.CreateNewFaction();
             WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(createdFaction);
             WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
         }

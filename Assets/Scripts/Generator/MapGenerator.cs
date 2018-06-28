@@ -79,9 +79,8 @@ public class MapGenerator : MonoBehaviour {
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Factions...");
         yield return null;
-        Region playerRegion = null;
         st.Start();
-        FactionManager.Instance.GenerateInitialFactions(ref playerRegion);
+        FactionManager.Instance.GenerateInitialFactions();
         st.Stop();
 
         //if (factionGenerationFailed) {
@@ -126,7 +125,7 @@ public class MapGenerator : MonoBehaviour {
         //} else {
         //    Debug.Log(string.Format("Road Generation took {0} ms to complete", st.ElapsedMilliseconds));
         //}
-        LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
+        //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
@@ -205,7 +204,7 @@ public class MapGenerator : MonoBehaviour {
         FactionManager.Instance.LoadFactions(data);
         st.Stop();
 
-        GridMap.Instance.OccupyRegions(data);
+        //GridMap.Instance.OccupyRegions(data);
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Landmarks...");
         yield return null;

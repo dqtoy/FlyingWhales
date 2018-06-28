@@ -385,26 +385,26 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return _landmarkOnTile;
     }
     private GameObject CreateLandmarkObject(LANDMARK_TYPE landmarkType) {
-        if (this.region.owner != null && this.region.owner.race == RACE.ELVES) {
-            if (landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || landmarkType == LANDMARK_TYPE.IRON_MINES || landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
-                GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
-                GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
-                if (landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
-                    obj.transform.localScale = new Vector2(1.5f, 1.5f);
-                }
-                GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-                landmarkGO.GetComponent<LandmarkObject>().SetIconState(false);
-                return landmarkGO;
-            } else {
-                GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-                landmarkGO.GetComponent<LandmarkObject>().SetIconState(true);
-                return landmarkGO;
-            }
-        } else {
+        //if (this.region.owner != null) {
+        //    if (landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || landmarkType == LANDMARK_TYPE.IRON_MINES || landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
+        //        GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
+        //        GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
+        //        if (landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
+        //            obj.transform.localScale = new Vector2(1.5f, 1.5f);
+        //        }
+        //        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        //        landmarkGO.GetComponent<LandmarkObject>().SetIconState(false);
+        //        return landmarkGO;
+        //    } else {
+        //        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        //        landmarkGO.GetComponent<LandmarkObject>().SetIconState(true);
+        //        return landmarkGO;
+        //    }
+        //} else {
             GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
             landmarkGO.GetComponent<LandmarkObject>().SetIconState(true);
             return landmarkGO;
-        }
+        //}
     }
     public BaseLandmark LoadLandmark(BaseLandmark landmark) {
         GameObject landmarkGO = null;
@@ -926,20 +926,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Structures Functions
-    internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
-        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
+    //internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
+    //    GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
 
-        string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
-        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
-        AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
-        if (structureType == STRUCTURE_TYPE.CITY) {
-            structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
-            _landmarkOnTile.landmarkVisual.SetIconState(false);
-        }
+    //    string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
+    //    GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
+    //    AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
+    //    if (structureType == STRUCTURE_TYPE.CITY) {
+    //        structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
+    //        _landmarkOnTile.landmarkVisual.SetIconState(false);
+    //    }
 
-        _structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
-        this._centerPiece.SetActive(false);
-    }
+    //    _structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
+    //    this._centerPiece.SetActive(false);
+    //}
     /*
         * Assign a structure object to this tile.
         * NOTE: This will destroy any current structures on this tile

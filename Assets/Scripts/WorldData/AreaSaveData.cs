@@ -9,6 +9,7 @@ public class AreaSaveData {
     public int coreTileID;
     public List<int> tileData; //list of tile id's that belong to this region
     public Color32 areaColor;
+    public int ownerID;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -21,5 +22,11 @@ public class AreaSaveData {
             tileData.Add(currTile.id);
         }
         areaColor = area.areaColor;
+        if (area.owner == null) {
+            ownerID = -1;
+        } else {
+            ownerID = area.owner.id;
+        }
+        
     }
 }

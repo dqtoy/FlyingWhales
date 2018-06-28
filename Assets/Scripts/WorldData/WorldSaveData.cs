@@ -116,5 +116,18 @@ public class WorldSaveData {
         return null;
     }
 
+    public FactionSaveData GetFactionData(int factionID) {
+        if (factionsData != null) {
+            for (int i = 0; i < factionsData.Count; i++) {
+                FactionSaveData data = factionsData[i];
+                if (data.factionID == factionID) {
+                    return data;
+                }
+            }
+        }
+        
+        return null;
+    }
+
     
 }

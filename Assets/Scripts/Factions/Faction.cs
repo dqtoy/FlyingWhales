@@ -10,25 +10,17 @@ using System;
 public class Faction {
 	protected int _id;
     protected string _name;
-    protected ECS.Character _leader;
-    protected RACE _race;
-    protected FACTION_TYPE _factionType;
-    protected FACTION_SIZE _factionSize;
+    protected ILeader _leader;
     private Sprite _emblem;
     private Sprite _emblemBG;
     protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
-    //protected List<Settlement> _settlements;
-    protected List<TECHNOLOGY> _initialTechnologies;
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
-    //protected List<OldQuest.Quest> _activeQuests;
-    //protected InternalQuestManager _internalQuestManager;
     protected Dictionary<Faction, FactionRelationship> _relationships;
-	//protected MilitaryManager _militaryManager;
 	protected int _warmongering;
-	protected Dictionary<PRODUCTION_TYPE, MaterialPreference> _productionPreferences;
     protected List<BaseLandmark> _landmarkInfo;
+    protected List<Area> _ownedAreas;
 
     #region getters/setters
 	public int id {
@@ -40,17 +32,8 @@ public class Faction {
 	public string urlName {
 		get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' +">" + this._name + "</link>"; }
     }
-    public ECS.Character leader {
+    public ILeader leader {
         get { return _leader; }
-    }
-    public RACE race {
-        get { return _race; }
-    }
-    public FACTION_TYPE factionType {
-        get { return _factionType; }
-    }
-    public FACTION_SIZE factionSize {
-        get { return _factionSize; }
     }
     public Sprite emblem {
         get { return _emblem; }
@@ -58,33 +41,15 @@ public class Faction {
     public Sprite emblemBG {
         get { return _emblemBG; }
     }
-    //public int totalPopulation {
-    //    get { return settlements.Sum(x => x.totalPopulation); }
-    //}
-    //public List<Settlement> settlements {
-    //    get { return _settlements; }
-    //}
-    public List<TECHNOLOGY> initialTechnologies {
-        get { return _initialTechnologies; }
-    }
     public List<ECS.Character> characters {
         get { return _characters; }
     }
     public List<Region> ownedRegions {
         get { return _ownedRegions; }
     }
-    //public List<OldQuest.Quest> activeQuests {
-    //    get { return _activeQuests; }
-    //}
-    //public InternalQuestManager internalQuestManager {
-    //    get { return _internalQuestManager; }
-    //}
     public Dictionary<Faction, FactionRelationship> relationships {
         get { return _relationships; }
     }
-	//public MilitaryManager militaryManager {
-	//	get { return _militaryManager; }
-	//}
 	public int warmongering {
 		get { return _warmongering; }
 	}
@@ -94,59 +59,43 @@ public class Faction {
     public int activeWars {
         get { return relationships.Where(x => x.Value.isAtWar).Count(); }
     }
-	public Dictionary<PRODUCTION_TYPE, MaterialPreference> productionPreferences {
-		get { return _productionPreferences; }
-	}
     public List<BaseLandmark> landmarkInfo {
         get { return _landmarkInfo; }
     }
     public List<BaseLandmark> ownedLandmarks {
         get { return _ownedLandmarks; }
     }
+    public List<Area> ownedAreas {
+        get { return _ownedAreas; }
+    }
     #endregion
 
-    public Faction(RACE race, FACTION_TYPE factionType) {
+    public Faction() {
 		this._id = Utilities.SetID<Faction>(this);
-        SetRace(race);
-        SetName(RandomNameGenerator.Instance.GenerateKingdomName(race));
-        _factionType = factionType;
-        _factionSize = FACTION_SIZE.SMALL;
+        SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         _emblem = FactionManager.Instance.GenerateFactionEmblem(this);
         _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
         factionColor = Utilities.GetColorForFaction();
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
-        //_settlements = new List<Settlement>();
-        ConstructInititalTechnologies();
-        //_activeQuests = new List<OldQuest.Quest>();
-        //_internalQuestManager = new InternalQuestManager(this);
         _relationships = new Dictionary<Faction, FactionRelationship>();
-		//_militaryManager = new MilitaryManager (this);
 		_warmongering = 0;
         _landmarkInfo = new List<BaseLandmark>();
-		MaterialPreferences ();
+        _ownedAreas = new List<Area>();
     }
 
     public Faction(FactionSaveData data) {
         _id = Utilities.SetID(this, data.factionID);
-        SetRace(data.factionRace);
         SetName(data.factionName);
-        _factionType = data.factionType;
-        _factionSize = FACTION_SIZE.SMALL;
         factionColor = data.factionColor;
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
-        //_settlements = new List<Settlement>();
-        ConstructInititalTechnologies();
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _warmongering = 0;
         _landmarkInfo = new List<BaseLandmark>();
-        MaterialPreferences();
-    }
-    public void SetRace(RACE race) {
-        _race = race;
+        _ownedAreas = new List<Area>();
     }
 
     #region virtuals
@@ -154,7 +103,7 @@ public class Faction {
      Set the leader of this faction, change this per faction type if needed.
      This creates relationships between the leader and it's village heads by default.
          */
-    public virtual void SetLeader(ECS.Character leader) {
+    public virtual void SetLeader(ILeader leader) {
         _leader = leader;
 		//if(_leader != null){
 		//	List<ECS.Character> villageHeads = GetCharactersOfType(CHARACTER_ROLE.VILLAGE_HEAD);
@@ -218,40 +167,6 @@ public class Faction {
     }
     #endregion
 
-    #region Technologies
-    protected void ConstructInititalTechnologies() {
-        _initialTechnologies = new List<TECHNOLOGY>();
-        if (FactionManager.Instance.initialRaceTechnologies.ContainsKey(this.race)) {
-            _initialTechnologies.AddRange(FactionManager.Instance.initialRaceTechnologies[this.race]);
-        }
-    }
-    /*
-     Generate bonus tech for this faction.
-         */
-    public void GenerateBonusTech(FACTION_SIZE factionSize) {
-        int bonusTechAmt = 0;
-        if (this.race == RACE.HUMANS || this.race == RACE.ELVES) {
-            switch (factionSize) {
-                case FACTION_SIZE.SMALL:
-                    bonusTechAmt = 3;
-                    break;
-                case FACTION_SIZE.MEDIUM:
-                    bonusTechAmt = 5;
-                    break;
-                case FACTION_SIZE.LARGE:
-                    bonusTechAmt = 7;
-                    break;
-            }
-        }
-        List<TECHNOLOGY> choices = FactionManager.Instance.bonusRaceTechnologies[this.race].Where(x => !_initialTechnologies.Contains(x)).ToList();
-        for (int i = 0; i < bonusTechAmt; i++) {
-            TECHNOLOGY bonusTech = choices[UnityEngine.Random.Range(0, choices.Count)];
-            _initialTechnologies.Add(bonusTech);
-            choices.Remove(bonusTech);
-        }
-    }
-    #endregion
-
     #region Characters
     public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {
@@ -261,6 +176,9 @@ public class Faction {
     }
     public void RemoveCharacter(ECS.Character character) {
         _characters.Remove(character);
+        if (_leader != null && character.id == _leader.id) {
+            SetLeader(null);
+        }
         //FactionManager.Instance.UpdateFactionOrderBy();
     }
     public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
@@ -279,28 +197,28 @@ public class Faction {
     public void SetName(string name) {
         _name = name;
     }
-    public List<Faction> GetMajorFactionsWithRelationshipStatus(List<RELATIONSHIP_STATUS> relStatuses) {
-        List<Faction> factionsWithStatus = new List<Faction>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
-            Faction currFaction = kvp.Key;
-            FactionRelationship currRel = kvp.Value;
-            if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatuses.Contains(currRel.relationshipStatus)) {
-                factionsWithStatus.Add(currFaction);
-            }
-        }
-        return factionsWithStatus;
-    }
-    public List<Faction> GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS relStatus) {
-        List<Faction> factionsWithStatus = new List<Faction>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
-            Faction currFaction = kvp.Key;
-            FactionRelationship currRel = kvp.Value;
-            if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatus == currRel.relationshipStatus) {
-                factionsWithStatus.Add(currFaction);
-            }
-        }
-        return factionsWithStatus;
-    }
+    //public List<Faction> GetMajorFactionsWithRelationshipStatus(List<RELATIONSHIP_STATUS> relStatuses) {
+    //    List<Faction> factionsWithStatus = new List<Faction>();
+    //    foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
+    //        Faction currFaction = kvp.Key;
+    //        FactionRelationship currRel = kvp.Value;
+    //        if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatuses.Contains(currRel.relationshipStatus)) {
+    //            factionsWithStatus.Add(currFaction);
+    //        }
+    //    }
+    //    return factionsWithStatus;
+    //}
+    //public List<Faction> GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS relStatus) {
+    //    List<Faction> factionsWithStatus = new List<Faction>();
+    //    foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
+    //        Faction currFaction = kvp.Key;
+    //        FactionRelationship currRel = kvp.Value;
+    //        if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatus == currRel.relationshipStatus) {
+    //            factionsWithStatus.Add(currFaction);
+    //        }
+    //    }
+    //    return factionsWithStatus;
+    //}
     public ECS.Character GetCharacterByID(int id) {
         for (int i = 0; i < _characters.Count; i++) {
             if (_characters[i].id == id) {
@@ -323,16 +241,16 @@ public class Faction {
  //       }
  //       return highestPopulationSettlement;
 	//}
-	public bool IsAtWar(){
-		foreach (FactionRelationship factionRel in _relationships.Values) {
-			if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
-				return true;
-			}else if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-				return true;
-			}
-		}
-		return false;
-	}
+	//public bool IsAtWar(){
+	//	foreach (FactionRelationship factionRel in _relationships.Values) {
+	//		if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
+	//			return true;
+	//		}else if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+	//			return true;
+	//		}
+	//	}
+	//	return false;
+	//}
     public bool IsHostileWith(Faction faction) {
         if(faction.id == this.id) {
             return false;
@@ -399,51 +317,6 @@ public class Faction {
     }
     #endregion
 
-    #region Resources
-   // internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material, Region exceptRegion = null) {
-   //     int count = 0;
-   //     for (int i = 0; i < settlements.Count; i++) {
-   //         Settlement currSettlement = settlements[i];
-			//Region regionOfSettlement = currSettlement.tileLocation.region;
-   //         if(exceptRegion != null) {
-   //             if(regionOfSettlement.id == exceptRegion.id) {
-   //                 //Skip this region
-   //                 continue;
-   //             }
-   //         }
-   //         count += regionOfSettlement.GetActivelyHarvestedMaterialsOfType(material);
-   //     }
-   //     return count;
-   // }
-	private void MaterialPreferences(){
-		List<MATERIAL> materialsList = (Utilities.GetEnumValues<MATERIAL>()).ToList();
-		materialsList.RemoveAt (0);
-
-		_productionPreferences = new Dictionary<PRODUCTION_TYPE, MaterialPreference> ();
-		_productionPreferences.Add(PRODUCTION_TYPE.WEAPON, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-		_productionPreferences.Add(PRODUCTION_TYPE.ARMOR, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-		_productionPreferences.Add(PRODUCTION_TYPE.CONSTRUCTION, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-		_productionPreferences.Add(PRODUCTION_TYPE.TRAINING, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-	}
-	internal MATERIAL GetHighestMaterialPriority(PRODUCTION_TYPE productionType){
-		return _productionPreferences [productionType].prioritizedMaterials [0];
-	}
-    /*
-     Get the preferred material for the production type that can
-     be used on that production type.
-         */
-    internal MATERIAL GetHighestElligibleMaterialPriority(PRODUCTION_TYPE productionType) {
-        List<MATERIAL> preferredMats = _productionPreferences[productionType].prioritizedMaterials;
-        for (int i = 0; i < preferredMats.Count; i++) {
-            MATERIAL currMat = preferredMats[i];
-            if(MaterialManager.Instance.CanMaterialBeUsedFor(currMat, productionType)) {
-                return currMat;
-            }
-        }
-        throw new System.Exception("There is no material that can be used for " + productionType.ToString());
-    }
-    #endregion
-
     #region Landmarks
     ///*
     // This returns a list of all the owned landmarks
@@ -474,6 +347,17 @@ public class Faction {
     }
     public void RemoveLandmarkInfo(BaseLandmark landmark) {
         _landmarkInfo.Remove(landmark);
+    }
+    #endregion
+
+    #region Areas
+    public void OwnArea(Area area) {
+        if (!_ownedAreas.Contains(area)) {
+            _ownedAreas.Add(area);
+        }
+    }
+    public void UnownArea(Area area) {
+        _ownedAreas.Remove(area);
     }
     #endregion
 }

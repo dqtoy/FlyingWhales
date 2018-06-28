@@ -1,14 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ECS;
 using UnityEngine;
 
-public class Player {
+public class Player : ILeader{
 
     private int _corruption;
+    public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
-    private List<ECS.Character> _snatchedCharacters;
 
+    public int id {
+        get {
+            return -645;
+        }
+    }
+
+    public string name {
+        get {
+            return "Player";
+        }
+    }
+
+    private List<ECS.Character> _snatchedCharacters;
 
     //#region getters/setters
     //public Area playerArea {
@@ -37,6 +51,17 @@ public class Player {
     }
     private void SetPlayerArea(Area area) {
         playerArea = area;
+    }
+    #endregion
+
+    #region Faction
+    public void CreatePlayerFaction() {
+        Faction playerFaction = FactionManager.Instance.CreateNewFaction();
+        playerFaction.SetLeader(this);
+        SetPlayerFaction(playerFaction);
+    }
+    private void SetPlayerFaction(Faction faction) {
+        playerFaction = faction;
     }
     #endregion
 

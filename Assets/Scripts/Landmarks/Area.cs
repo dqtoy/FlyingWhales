@@ -11,6 +11,7 @@ public class Area {
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
+    public Faction owner { get; private set; }
 
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
@@ -122,6 +123,12 @@ public class Area {
             HexTile currTile = tiles[i];
             currTile.UnHighlightTile();
         }
+    }
+    #endregion
+
+    #region Owner
+    public void SetOwner(Faction owner) {
+        this.owner = owner;
     }
     #endregion
 

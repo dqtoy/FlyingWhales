@@ -260,25 +260,24 @@ public class RandomNameGenerator : MonoBehaviour {
 		return GenerateElvenName(gender);
 	}
 
-	public string GenerateKingdomName(RACE race){
-		if (race == RACE.HUMANS) {
-            if(humanKingdomNames.Count <= 0) {
-                humanKingdomNames = generatedHumanKingdomNames.AllRaw(12).ToList();
-            }
-            int index = Random.Range(0, humanKingdomNames.Count);
-            string humanKingdomName = humanKingdomNames[index];
-            //humanKingdomNames.RemoveAt(index);
-            return humanKingdomName.Trim();
-		} else if(race == RACE.ELVES) {
-            if (elvenKingdomNames.Count <= 0) {
-                elvenKingdomNames = generatedElvenKingdomNames.AllRaw(12).ToList();
-            }
-            int index = Random.Range(0, elvenKingdomNames.Count);
-            string elvenKingdomName = elvenKingdomNames[index];
-            //elvenKingdomNames.RemoveAt(index);
-            return elvenKingdomName.Trim();
+	public string GenerateKingdomName(){
+        if(humanKingdomNames.Count <= 0) {
+            humanKingdomNames = generatedHumanKingdomNames.AllRaw(12).ToList();
         }
-		return "";
+        int index = Random.Range(0, humanKingdomNames.Count);
+        string humanKingdomName = humanKingdomNames[index];
+        //humanKingdomNames.RemoveAt(index);
+        return humanKingdomName.Trim();
+		//} else if(race == RACE.ELVES) {
+  //          if (elvenKingdomNames.Count <= 0) {
+  //              elvenKingdomNames = generatedElvenKingdomNames.AllRaw(12).ToList();
+  //          }
+  //          int index = Random.Range(0, elvenKingdomNames.Count);
+  //          string elvenKingdomName = elvenKingdomNames[index];
+  //          //elvenKingdomNames.RemoveAt(index);
+  //          return elvenKingdomName.Trim();
+  //      }
+		//return "";
 	}
 
 	public string GenerateCityName(RACE race){

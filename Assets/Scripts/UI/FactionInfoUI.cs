@@ -44,9 +44,9 @@ public class FactionInfoUI : UIMenu {
         string text = string.Empty;
         text += "<b>ID:</b> " + currentlyShowingFaction.id.ToString();
         text += "\n<b>Name:</b> " + currentlyShowingFaction.name;
-		text += "\n<b>Race:</b> " + currentlyShowingFaction.race.ToString();
-		text += "\n<b>Faction Type:</b> " + currentlyShowingFaction.factionType.ToString();
-		text += "\n<b>Faction Size:</b> " + currentlyShowingFaction.factionSize.ToString();
+        if (currentlyShowingFaction.leader != null) {
+            text += "\n<b>Leader:</b> " + currentlyShowingFaction.leader.name;
+        }
         text += "\n<b>Owned Landmarks: </b> ";
         List<BaseLandmark> ownedLandmarks = currentlyShowingFaction.ownedLandmarks;
         if (ownedLandmarks.Count > 0) {
@@ -58,21 +58,18 @@ public class FactionInfoUI : UIMenu {
             text += "NONE";
         }
 
-        text += "\n<b>Initial Technologies: </b> ";
-		if (currentlyShowingFaction.initialTechnologies.Count > 0) {
-			text += "\n";
-			for (int i = 0; i < currentlyShowingFaction.initialTechnologies.Count; i++) {
-				TECHNOLOGY currTech = currentlyShowingFaction.initialTechnologies[i];
-				text += currTech.ToString();
-				if (i + 1 != currentlyShowingFaction.initialTechnologies.Count) {
-					text += ", ";
-				}
-			}
-		} else {
-			text += "NONE";
-		}
+        text += "\n<b>Owned Areas: </b> ";
+        List<Area> ownedAreas = currentlyShowingFaction.ownedAreas;
+        if (ownedAreas.Count > 0) {
+            for (int i = 0; i < ownedAreas.Count; i++) {
+                Area area = ownedAreas[i];
+                text += "\n  - " + area.name;
+            }
+        } else {
+            text += "NONE";
+        }
 
-		text += "\n<b>Characters: </b> ";
+        text += "\n<b>Characters: </b> ";
 		if (currentlyShowingFaction.characters.Count > 0) {
 			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
 				ECS.Character currChar = currentlyShowingFaction.characters[i];
@@ -89,27 +86,19 @@ public class FactionInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
-
-		text += "\n<b>Production Preferences: </b> ";
-		foreach (PRODUCTION_TYPE prodType in currentlyShowingFaction.productionPreferences.Keys) {
-			text += "\n" + prodType.ToString ();
-			for (int i = 0; i < currentlyShowingFaction.productionPreferences[prodType].prioritizedMaterials.Count; i++) {
-				text += "\n - " + Utilities.NormalizeString(currentlyShowingFaction.productionPreferences[prodType].prioritizedMaterials[i].ToString ());
-			}
-		}
 			
         factionInfoLbl.text = text;
 
         //Relationships
         string relationshipText = string.Empty;
         relationshipText += "\n<b>Relationships:</b> ";
-        if (currentlyShowingFaction.relationships.Count > 0) {
-            foreach (KeyValuePair<Faction, FactionRelationship> kvp in currentlyShowingFaction.relationships) {
-                relationshipText += "\n " + kvp.Key.factionType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.relationshipStatus.ToString();
-            }
-        } else {
+        //if (currentlyShowingFaction.relationships.Count > 0) {
+        //    foreach (KeyValuePair<Faction, FactionRelationship> kvp in currentlyShowingFaction.relationships) {
+        //        relationshipText += "\n " + kvp.Key.factionType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.relationshipStatus.ToString();
+        //    }
+        //} else {
             relationshipText += "NONE";
-        }
+        //}
 
         relationshipsLbl.text = relationshipText;
     }
