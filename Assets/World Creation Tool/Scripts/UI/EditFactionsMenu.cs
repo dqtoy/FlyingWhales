@@ -9,13 +9,10 @@ namespace worldcreator {
     public class EditFactionsMenu : MonoBehaviour {
         [SerializeField] private GameObject factionItemPrefab;
         [SerializeField] private ScrollRect factionsScrollView;
-        [SerializeField] private Dropdown raceDropdown;
+
+        [SerializeField] private FactionInfoEditor factionInfoEditor;
 
         private Dictionary<Faction, FactionEditorItem> items = new Dictionary<Faction, FactionEditorItem>();
-
-        private void Awake() {
-            LoadRacesDropdown();
-        }
 
         public void OnFactionCreated(Faction newFaction) {
             GameObject newFactionItemGO = GameObject.Instantiate(factionItemPrefab, factionsScrollView.content.transform);
@@ -32,8 +29,7 @@ namespace worldcreator {
         }
 
         public void CreateNewFaction() {
-            RACE chosenRace = (RACE)Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text);
-            WorldCreatorManager.Instance.CreateNewFaction(chosenRace);
+            WorldCreatorManager.Instance.CreateNewFaction();
         }
 
         public void UpdateItems() {
@@ -46,20 +42,16 @@ namespace worldcreator {
             UpdateItems();
         }
 
+        public void ShowFactionInfo(Faction faction) {
+            factionInfoEditor.ShowFactionInfo(faction);
+        }
+        public void HideFactionInfo() {
+            factionInfoEditor.CloseMenu();
+        }
+
         #region Utilities
         private FactionEditorItem GetFactionItem(Faction faction) {
             return items[faction];
-        }
-        private void LoadRacesDropdown() {
-            RACE[] races = Utilities.GetEnumValues<RACE>();
-            List<string> options = new List<string>();
-            for (int i = 0; i < races.Length; i++) {
-                RACE currRace = races[i];
-                if (currRace != RACE.NONE) {
-                    options.Add(currRace.ToString());
-                }
-            }
-            raceDropdown.AddOptions(options);
         }
         #endregion
     }

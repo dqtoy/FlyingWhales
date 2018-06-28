@@ -43,7 +43,11 @@ public class LandmarkManager : MonoBehaviour {
         if (data.areaData != null) {
             for (int i = 0; i < data.areaData.Count; i++) {
                 AreaSaveData areaData = data.areaData[i];
-                CreateNewArea(areaData);
+                Area newArea = CreateNewArea(areaData);
+                if (areaData.ownerID != -1) {
+                    Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
+                    OwnArea(owner, newArea);
+                }
             }
         }
     }
@@ -233,17 +237,17 @@ public class LandmarkManager : MonoBehaviour {
         }
     }
     public void GenerateFactionLandmarks() {
-        for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
-            Tribe currTribe = FactionManager.Instance.allTribes[i];
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction currFaction = FactionManager.Instance.allFactions[i];
             LEVEL wealth = RandomizeLevel(25, 60, 15);
             LEVEL population = RandomizeLevel(25, 60, 15);
             LEVEL needProviders = RandomizeLevel(25, 60, 15);
             LEVEL might = RandomizeLevel(25, 60, 15);
             LEVEL characters = RandomizeLevel(25, 60, 15);
-            Dictionary<LANDMARK_TYPE, int> landmarkSettings = GetLandmarkSettings(wealth, population, might, needProviders, currTribe);
+            Dictionary<LANDMARK_TYPE, int> landmarkSettings = GetLandmarkSettings(wealth, population, might, needProviders, currFaction);
             Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = null;
             while (landmarksToBeCreated == null) {
-                landmarksToBeCreated = GenerateLandmarksForFaction(landmarkSettings, currTribe);
+                landmarksToBeCreated = GenerateLandmarksForFaction(landmarkSettings, currFaction);
             }
             foreach (KeyValuePair<HexTile, LANDMARK_TYPE> kvp in landmarksToBeCreated) {
                 CreateNewLandmarkOnTile(kvp.Key, kvp.Value);
@@ -257,10 +261,10 @@ public class LandmarkManager : MonoBehaviour {
             LoadLandmarkOnTile(currentTile, save.hextiles[i].landmark);
         }
     }
-    private Dictionary<LANDMARK_TYPE, int> GetLandmarkSettings(LEVEL wealthLvl, LEVEL populationLvl, LEVEL mightLvl, LEVEL needLvl, Tribe tribe) {
+    private Dictionary<LANDMARK_TYPE, int> GetLandmarkSettings(LEVEL wealthLvl, LEVEL populationLvl, LEVEL mightLvl, LEVEL needLvl, Faction faction) {
         Dictionary<LANDMARK_TYPE, int> landmarkSettings = new Dictionary<LANDMARK_TYPE, int>();
         AddWealthSettings(wealthLvl, landmarkSettings);
-        AddPopulationSettings(populationLvl, landmarkSettings, tribe);
+        AddPopulationSettings(populationLvl, landmarkSettings, faction);
         AddNeedSettings(needLvl, landmarkSettings);
         AddMightSettings(mightLvl, landmarkSettings);
         return landmarkSettings;
@@ -288,11 +292,11 @@ public class LandmarkManager : MonoBehaviour {
                 break;
         }
     }
-    private void AddPopulationSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings, Tribe tribe) {
+    private void AddPopulationSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings, Faction faction) {
         LANDMARK_TYPE settlementTypeToUse = LANDMARK_TYPE.HUMAN_SETTLEMENT;
-        if (tribe.race == RACE.ELVES) {
-            settlementTypeToUse = LANDMARK_TYPE.ELVEN_SETTLEMENT;
-        }
+        //if (faction.race == RACE.ELVES) {
+        //    settlementTypeToUse = LANDMARK_TYPE.ELVEN_SETTLEMENT;
+        //}
         switch (level) {
             case LEVEL.HIGH:
                 landmarksSettings.Add(settlementTypeToUse, 6);
@@ -359,16 +363,16 @@ public class LandmarkManager : MonoBehaviour {
             return LEVEL.HIGH;
         }
     }
-    private Dictionary<HexTile, LANDMARK_TYPE> GenerateLandmarksForFaction(Dictionary<LANDMARK_TYPE, int> landmarkSettings, Tribe tribe) {
-        Region tribeRegion = tribe.ownedRegions[0];
+    private Dictionary<HexTile, LANDMARK_TYPE> GenerateLandmarksForFaction(Dictionary<LANDMARK_TYPE, int> landmarkSettings, Faction faction) {
+        Region factionRegion = faction.ownedRegions[0];
         Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = new Dictionary<HexTile, LANDMARK_TYPE>();
-        string log = "Created " + landmarkSettings.Sum(x => x.Value).ToString() + " landmarks on " + tribeRegion.name;
+        string log = "Created " + landmarkSettings.Sum(x => x.Value).ToString() + " landmarks on " + factionRegion.name;
         foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarkSettings) {
             LANDMARK_TYPE landmarkType = kvp.Key;
             LandmarkData data = GetLandmarkData(landmarkType);
             log += "\n" + landmarkType.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
-                List<HexTile> tilesToChooseFrom = tribeRegion.tilesInRegion.Where(x => x.CanBuildLandmarkHere(landmarkType, data, landmarksToBeCreated)).ToList();
+                List<HexTile> tilesToChooseFrom = factionRegion.tilesInRegion.Where(x => x.CanBuildLandmarkHere(landmarkType, data, landmarksToBeCreated)).ToList();
                 //List<HexTile> tilesToChooseFrom = elligibleTiles.Where(x => ).ToList();
                 if (tilesToChooseFrom.Count <= 0) {
                     //Debug.LogError("There are no more tiles in " + tribeRegion.name + " to build a " + landmarkType.ToString(), tribeRegion.centerOfMass);
@@ -382,17 +386,9 @@ public class LandmarkManager : MonoBehaviour {
                 //Utilities.ListRemoveRange(elligibleTiles, chosenTile.GetTilesInRange(1));
             }
         }
-        Debug.Log(log, tribeRegion.centerOfMass);
+        Debug.Log(log, factionRegion.centerOfMass);
         return landmarksToBeCreated;
     }
-  //  /*
-  //   Generate new landmarks (Lairs, Dungeons)
-  //       */
-  //  public void GenerateOtherLandmarks() {
-		//AddAllCenterOfMassToRegionLandmarksList ();
-  //      GenerateDungeonLandmarks();
-  //      GenerateSettlementLandmarks();
-  //  }
     public void InitializeLandmarks() {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
@@ -402,20 +398,6 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    //private WeightedDictionary<LANDMARK_TYPE> GetLandmarkAppearanceWeights(Region region) {
-    //    WeightedDictionary<LANDMARK_TYPE> landmarkAppearanceWeights = new WeightedDictionary<LANDMARK_TYPE>();
-    //    for (int i = 0; i < landmarkData.Count; i++) {
-    //        LandmarkData currData = landmarkData[i];
-    //        if (currData.onOccupiedOnly && !region.isOwned) {
-    //            continue; //skip
-    //        }
-    //        if (currData.isUnique && HasLandmarkOfType(currData.landmarkType)) {
-    //            continue; //skip
-    //        }
-    //        //landmarkAppearanceWeights.AddElement(currData.landmarkType, currData.appearanceWeight);
-    //    }
-    //    return landmarkAppearanceWeights;
-    //}
     public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData currData = landmarkData[i];
@@ -425,16 +407,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
     }
-	private void AddInitialLandmarkItems(BaseLandmark landmark){
-		//List<ECS.Item> items = new List<ECS.Item> ();
-		//switch(landmark.specificLandmarkType){
-		//case LANDMARK_TYPE.CAVE:
-		//	ECS.Item neuroctus = ItemManager.Instance.CreateNewItemInstance ("Neuroctus");
-		//	items.Add (neuroctus);
-		//	break;
-		//}
-		//landmark.AddItemsInLandmark (items);
-	}
     public ILocation GetLocationBasedOnID(LOCATION_IDENTIFIER identifier, int id) {
         List<ILocation> choices;
         if (identifier == LOCATION_IDENTIFIER.HEXTILE) {
@@ -468,23 +440,6 @@ public class LandmarkManager : MonoBehaviour {
 			characterWeights.AddElement(currWeight.role, currWeight.weight);
         }
         return characterWeights;
-    }
-    public WeightedDictionary<CHARACTER_CLASS> GetCharacterClassProductionDictionary(BaseLandmark landmark) {
-        WeightedDictionary<CHARACTER_CLASS> classes = new WeightedDictionary<CHARACTER_CLASS>();
-        CHARACTER_CLASS[] allClasses = Utilities.GetEnumValues<CHARACTER_CLASS>();
-   //     Settlement settlement = null;
-   //     if (landmark is Settlement) {
-   //         settlement = landmark as Settlement;
-   //     } else {
-			//settlement = landmark.tileLocation.region.mainLandmark as Settlement;
-   //     }
-        for (int i = 1; i < allClasses.Length; i++) {
-            CHARACTER_CLASS charClass = allClasses[i];
-            if (landmark.CanProduceClass(charClass)) { //Does the settlement have the required technologies to produce this class
-                classes.AddElement(charClass, 200);
-            }
-        }
-        return classes;
     }
     #endregion
 
@@ -686,6 +641,28 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    public Area GetAreaByName(string name) {
+        for (int i = 0; i < allAreas.Count; i++) {
+            Area area = allAreas[i];
+            if (area.name.Equals(name)) {
+                return area;
+            }
+        }
+        return null;
+    }
+    public void OwnArea(Faction newOwner, Area area) {
+        if (area.owner != null) {
+            UnownArea(area);
+        }
+        newOwner.OwnArea(area);
+        area.SetOwner(newOwner);
+    }
+    public void UnownArea(Area area) {
+        if (area.owner != null) {
+            area.owner.UnownArea(area);
+        }
+        area.SetOwner(null);
     }
     #endregion
 }

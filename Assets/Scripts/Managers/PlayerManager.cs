@@ -30,7 +30,9 @@ public class PlayerManager : MonoBehaviour {
             return;
         }
         player = new Player();
+        player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
+        LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
         GameManager.Instance.StartProgression();

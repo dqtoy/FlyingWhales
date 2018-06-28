@@ -79,6 +79,12 @@ public class LandmarkInfoUI : UIMenu {
 			text += "<b>Name:</b> " + currentlyShowingLandmark.landmarkName + "\n";
 		}
 		text += "<b>Location:</b> " + currentlyShowingLandmark.tileLocation.urlName;
+        if (currentlyShowingLandmark.tileLocation.areaOfTile != null) {
+            text += " <b>Area:</b> " + currentlyShowingLandmark.tileLocation.areaOfTile.name;
+            if (currentlyShowingLandmark.tileLocation.areaOfTile.owner != null) {
+                text += " (Owner: " + currentlyShowingLandmark.tileLocation.areaOfTile.owner.name + ")"; 
+            }
+        }
         text += "\n<b>Landmark Type:</b> " + currentlyShowingLandmark.landmarkObj.objectName + " (" + currentlyShowingLandmark.landmarkObj.currentState.stateName + ")";
         text += "\n<b>HP:</b> " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
         text += "\n<b>Durability:</b> " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
@@ -86,7 +92,7 @@ public class LandmarkInfoUI : UIMenu {
 		text += "\n<b>Is Occupied:</b> " + currentlyShowingLandmark.isOccupied.ToString();
 
         if (currentlyShowingLandmark.owner != null) {
-            text += "\n<b>Owner:</b> " + currentlyShowingLandmark.owner.urlName + "/" + currentlyShowingLandmark.owner.race.ToString();
+            text += "\n<b>Owner:</b> " + currentlyShowingLandmark.owner.urlName;
             text += "\n<b>Settlement Population: </b> " + currentlyShowingLandmark.civilianCount.ToString();
         }
 
@@ -142,20 +148,6 @@ public class LandmarkInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
-
-        text += "\n<b>Technologies: </b> ";
-        List<TECHNOLOGY> availableTech = currentlyShowingLandmark.technologies.Where(x => x.Value == true).Select(x => x.Key).ToList();
-        if (availableTech.Count > 0) {
-            for (int i = 0; i < availableTech.Count; i++) {
-                TECHNOLOGY currTech = availableTech[i];
-                text += "\n" + currTech.ToString();
-                //if (i + 1 != availableTech.Count) {
-                //    text += ", ";
-                //}
-            }
-        } else {
-            text += "NONE";
-        }
 
 		text += "\n<b>Items: </b> ";
 		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {

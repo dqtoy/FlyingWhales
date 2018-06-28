@@ -7,24 +7,27 @@ using UnityEngine;
 public class FactionSaveData {
     public int factionID;
     public string factionName;
-    public RACE factionRace;
-    public FACTION_TYPE factionType;
     public ColorSave factionColor;
-    public List<int> ownedRegions;
+    public List<int> ownedAreas;
+    public int leaderID;
 
     public FactionSaveData(Faction faction) {
         factionID = faction.id;
         factionName = faction.name;
-        factionRace = faction.race;
-        factionType = faction.factionType;
         factionColor = new ColorSave(faction.factionColor);
-        ConstructOwnedRegions(faction);
+        ConstructOwnedAreas(faction);
+
+        if (faction.leader == null) {
+            leaderID = -1;
+        } else {
+            leaderID = faction.leader.id;
+        }
     }
-    private void ConstructOwnedRegions(Faction faction) {
-        ownedRegions = new List<int>();
-        for (int i = 0; i < faction.ownedRegions.Count; i++) {
-            Region region = faction.ownedRegions[i];
-            ownedRegions.Add(region.id);
+    private void ConstructOwnedAreas(Faction faction) {
+        ownedAreas = new List<int>();
+        for (int i = 0; i < faction.ownedAreas.Count; i++) {
+            Area area = faction.ownedAreas[i];
+            ownedAreas.Add(area.id);
         }
     }
 }

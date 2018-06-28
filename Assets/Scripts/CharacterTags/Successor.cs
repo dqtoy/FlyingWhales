@@ -9,19 +9,19 @@ public class Successor : CharacterTag {
     public Successor(Character character) : base(character, CHARACTER_TAG.SUCCESSOR) {
     }
 
-    #region overrides
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
-        (_characterToSucceed.faction as Tribe).SetSuccessor(null);
-        _characterToSucceed.RemoveActionOnDeath(TriggerSuccession);
-    }
-    #endregion
+    //#region overrides
+    //public override void OnRemoveTag() {
+    //    base.OnRemoveTag();
+    //    (_characterToSucceed.faction as Tribe).SetSuccessor(null);
+    //    _characterToSucceed.RemoveActionOnDeath(TriggerSuccession);
+    //}
+    //#endregion
 
-    public void SetCharacterToSucceed(ECS.Character characterToSucceed) {
-        _characterToSucceed = characterToSucceed;
-        (_character.faction as Tribe).SetSuccessor(_character);
-        _characterToSucceed.AddActionOnDeath(TriggerSuccession);
-    }
+    //public void SetCharacterToSucceed(ECS.Character characterToSucceed) {
+    //    _characterToSucceed = characterToSucceed;
+    //    (_character.faction as Tribe).SetSuccessor(_character);
+    //    _characterToSucceed.AddActionOnDeath(TriggerSuccession);
+    //}
     /*
      Make this character succeed the current leader if the current leader dies.
          */

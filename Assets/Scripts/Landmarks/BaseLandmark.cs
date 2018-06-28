@@ -22,8 +22,6 @@ public class BaseLandmark : ILocation {
     //protected Dictionary<RACE, int> _civiliansByRace;
     //protected int _currDurability;
     //protected int _totalDurability;
-    protected List<TECHNOLOGY> _technologiesOnLandmark;
-    protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
     protected LandmarkObject _landmarkVisual;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
@@ -88,9 +86,6 @@ public class BaseLandmark : ILocation {
  //   public Dictionary<RACE, int> civiliansByRace {
  //       get { return _civiliansByRace; }
  //   }
-    public Dictionary<TECHNOLOGY, bool> technologies {
-        get { return _technologies; }
-    }
     public LandmarkObject landmarkVisual {
         get { return _landmarkVisual; }
     }
@@ -190,7 +185,6 @@ public class BaseLandmark : ILocation {
         _specificLandmarkType = specificLandmarkType;
         _landmarkName = RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType);
         ConstructTags(landmarkData);
-        ConstructTechnologiesDictionary();
         //ConstructCiviliansDictionary();
         //GenerateCivilians();
         SpawnInitialLandmarkItems();
@@ -203,7 +197,6 @@ public class BaseLandmark : ILocation {
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
-        ConstructTechnologiesDictionary();
         //ConstructCiviliansDictionary();
         //GenerateCivilians();
         SpawnInitialLandmarkItems();
@@ -267,7 +260,6 @@ public class BaseLandmark : ILocation {
         _owner = faction;
         _isOccupied = true;
         _location.Occupy();
-        EnableInitialTechnologies(faction);
         _owner.OwnLandmark(this);
     }
     public virtual void UnoccupyLandmark() {
@@ -276,92 +268,13 @@ public class BaseLandmark : ILocation {
         }
         _isOccupied = false;
         _location.Unoccupy();
-        DisableInititalTechnologies(_owner);
         _owner = null;
     }
 	public void ChangeOwner(Faction newOwner){
 		_owner = newOwner;
 		_isOccupied = true;
 		_location.Occupy();
-		EnableInitialTechnologies(newOwner);
 	}
-    #endregion
-
-    #region Technologies
-    /*
-     Initialize the technologies dictionary with all the available technologies
-     and set them as disabled.
-         */
-    private void ConstructTechnologiesDictionary() {
-        TECHNOLOGY[] allTechnologies = Utilities.GetEnumValues<TECHNOLOGY>();
-        _technologies = new Dictionary<TECHNOLOGY, bool>();
-        for (int i = 0; i < allTechnologies.Length; i++) {
-            TECHNOLOGY currTech = allTechnologies[i];
-            _technologies.Add(currTech, false);
-        }
-    }
-    /*
-     Set the initial technologies of a faction as enabled on this landmark.
-         */
-    private void EnableInitialTechnologies(Faction faction) {
-        SetTechnologyState(faction.initialTechnologies, true);
-    }
-    /*
-     Set the initital technologies of a faction as disabled on this landmark.
-         */
-    private void DisableInititalTechnologies(Faction faction) {
-        SetTechnologyState(faction.initialTechnologies, false);
-    }
-    /*
-     Enable/Disable technologies in a landmark.
-         */
-    public void SetTechnologyState(TECHNOLOGY technology, bool state) {
-        if (!state) {
-            if (!_technologiesOnLandmark.Contains(technology)) {
-                //technology is not inherent to the landmark, so allow action
-                _technologies[technology] = state;
-            }
-        } else {
-            _technologies[technology] = state;
-        }
-    }
-    /*
-     Set multiple technologies states.
-         */
-    public void SetTechnologyState(List<TECHNOLOGY> technology, bool state) {
-        for (int i = 0; i < technology.Count; i++) {
-            TECHNOLOGY currTech = technology[i];
-            SetTechnologyState(currTech, state);
-        }
-    }
-    /*
-     Add a technology that is inherent to the current landmark.
-         */
-    public void AddTechnologyOnLandmark(TECHNOLOGY technology) {
-        if (!_technologiesOnLandmark.Contains(technology)) {
-            _technologiesOnLandmark.Add(technology);
-            SetTechnologyState(technology, true);
-        }
-    }
-    /*
-     Remove a technology that is inherent to the current landmark.
-         */
-    public void RemoveTechnologyOnLandmark(TECHNOLOGY technology) {
-        if (_technologiesOnLandmark.Contains(technology)) {
-            _technologiesOnLandmark.Remove(technology);
-            if(_owner != null && _owner.initialTechnologies.Contains(technology)) {
-                //Do not disable technology, since the owner of the landmark has that technology inherent to itself
-            } else {
-                SetTechnologyState(technology, false);
-            }
-        }
-    }
-    /*
-     Does this landmark have a specific technology?
-         */
-    public bool HasTechnology(TECHNOLOGY technology) {
-        return technologies[technology];
-    }
     #endregion
 
     #region Population
@@ -512,54 +425,6 @@ public class BaseLandmark : ILocation {
         //UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
-    ///*
-    // Make a character consider this landmark as it's home.
-    //     */
-    //public virtual void AddCharacterHomeOnLandmark(Character character) {
-    //    if (!_charactersWithHomeOnLandmark.Contains(character)) {
-    //        _charactersWithHomeOnLandmark.Add(character);
-    //    }
-    //}
-    //public void RemoveCharacterHomeOnLandmark(Character character) {
-    //    _charactersWithHomeOnLandmark.Remove(character);
-    //}
-	//public ICharacter GetCharacterAtLocationByID(int id, bool includeTraces = false){
-	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
- //           if (_charactersAtLocation[i].id == id) {
- //               return _charactersAtLocation[i];
- //           }
- //           //if (_charactersAtLocation[i]	is Character){
-	//		//	if(((Character)_charactersAtLocation[i]).id == id){
-	//		//		return (Character)_charactersAtLocation [i];
-	//		//	}
-	//		//}else if(_charactersAtLocation[i] is Party){
-	//		//	Party party = (Party)_charactersAtLocation [i];
-	//		//	for (int j = 0; j < party.partyMembers.Count; j++) {
-	//		//		if(party.partyMembers[j].id == id){
-	//		//			return party.partyMembers [j];
-	//		//		}
-	//		//	}
-	//		//}
-	//	}
-	//	if(includeTraces){
-	//		foreach (Character character in _characterTraces.Keys) {
-	//			if(character.id == id){
-	//				return character;
-	//			}	
-	//		}
-	//	}
-	//	return null;
-	//}
-	//public Party GetPartyAtLocationByLeaderID(int id){
-	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
-	//		if(_charactersAtLocation[i]	is Party){
-	//			if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
-	//				return (Party)_charactersAtLocation [i];
-	//			}
-	//		}
-	//	}
-	//	return null;
-	//}
 	public Character GetPrisonerByID(int id){
 		for (int i = 0; i < _prisoners.Count; i++) {
 			if (_prisoners [i].id == id){
@@ -568,34 +433,7 @@ public class BaseLandmark : ILocation {
 		}
 		return null;
 	}
-    /*
-     Does the landmark have the required technology
-     to produce a class?
-         */
-    public bool CanProduceClass(CHARACTER_CLASS charClass) {
-        //if (_owner == null) {
-        //    return false;
-        //}
-        TECHNOLOGY neededTech = Utilities.GetTechnologyForCharacterClass(charClass);
-        if (neededTech == TECHNOLOGY.NONE) {
-            return true;
-        } else {
-            return _technologies[neededTech];
-        }
-    }
     #endregion
-
-   // #region Party
-   // public List<Party> GetPartiesOnLandmark() {
-   //     List<Party> parties = new List<Party>();
-   //     for (int i = 0; i < _location.charactersAtLocation.Count; i++) {
-			//if(_location.charactersAtLocation[i] is Party){
-			//	parties.Add((Party)_location.charactersAtLocation[i]);
-			//}
-   //     }
-   //     return parties;
-   // }
-   // #endregion
 
     #region Location
     public void AddCharacterToLocation(ICharacter character) {
@@ -920,23 +758,6 @@ public class BaseLandmark : ILocation {
         _landmarkVisual = obj;
         _landmarkVisual.SetLandmark(this);
     }
-    internal int GetTechnologyCount() {
-        int count = 0;
-        foreach (bool isTrue in _technologies.Values) {
-            if (isTrue) {
-                count += 1;
-            }
-        }
-        return count;
-    }
-    //internal int GetMinimumCivilianRequirement() {
-    //    if (this is ResourceLandmark) {
-    //        return 5;
-    //    }else if(this is Settlement) {
-    //        return 20;
-    //    }
-    //    return 0;
-    //}
 	internal void ChangeLandmarkType(LANDMARK_TYPE newLandmarkType){
 		_specificLandmarkType = newLandmarkType;
 		Initialize ();

@@ -246,11 +246,12 @@ namespace worldcreator {
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
+            editFactionsMenu.HideFactionInfo();
 
-            tileSelectionBtn.interactable = false;
-            rectangleSelectionBtn.interactable = false;
+            tileSelectionBtn.interactable = true;
+            rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
-            regionSelectionBtn.isOn = true;
+            //regionSelectionBtn.isOn = true;
         }
         public void OnClickEditLandmarks() {
             WorldCreatorManager.Instance.SetEditMode(EDIT_MODE.LANDMARKS);

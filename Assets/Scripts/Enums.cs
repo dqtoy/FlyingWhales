@@ -763,10 +763,6 @@ public enum ACTION_CHOICES {
     DO_ACTION,
     DONT_DO_ACTION
 }
-public enum FACTION_TYPE {
-    MAJOR,
-    MINOR
-}
 public enum TECHNOLOGY {
     //Weapon Production
     BOW_MAKING,
@@ -874,11 +870,11 @@ public enum CHARACTER_PRODUCTION_CAP {
     PER_TRIBE,
     PER_SETTLEMENT
 }
-public enum FACTION_SIZE {
-    SMALL,
-    MEDIUM,
-    LARGE,
-}
+//public enum FACTION_SIZE {
+//    SMALL,
+//    MEDIUM,
+//    LARGE,
+//}
 public enum TASK_STATUS {
     IN_PROGRESS,
     SUCCESS,

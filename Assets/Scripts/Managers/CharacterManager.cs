@@ -118,6 +118,10 @@ public class CharacterManager : MonoBehaviour {
                 if (characterFaction != null) {
                     characterFaction.AddNewCharacter(currCharacter);
                     currCharacter.SetFaction(characterFaction);
+                    FactionSaveData factionData = data.GetFactionData(characterFaction.id);
+                    if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
+                        characterFaction.SetLeader(currCharacter);
+                    }
                 }
             }
 #if WORLD_CREATION_TOOL
