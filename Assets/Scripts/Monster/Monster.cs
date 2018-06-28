@@ -239,6 +239,9 @@ public class Monster : ICharacter {
         ObjectState deadState = _monsterObj.GetState("Dead");
         _monsterObj.ChangeState(deadState);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
+
+        GameObject.Destroy(_icon.gameObject);
+        _icon = null;
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -272,32 +275,32 @@ public class Monster : ICharacter {
     #endregion
 
     #region Interface
-    public void Initialize() {
-        _id = Utilities.SetID(this);
+    private void BaseInitialize() {
         _isDead = false;
-        CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(Utilities.NormalizeString(_type.ToString()) + " Classless");
+        CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(Utilities.NormalizeString(_type.ToString()));
         _raceSetting = setup.raceSetting.CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-        if(_skills == null) {
+        if (_skills == null) {
             _skills = new List<Skill>();
         }
         _skills.AddRange(GetGeneralSkills());
+        _currentHP = _maxHP;
+        _currentSP = _maxSP;
+        SetCharacterColor(Color.red);
 #if !WORLD_CREATION_TOOL
         _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
         _monsterObj.SetMonster(this);
 #endif
-        SetCharacterColor(Color.red);
+
     }
-    public void Initialize(MonsterSaveData data) {
+    public void Initialize() {
+        _id = Utilities.SetID(this);
+        BaseInitialize();
+    }
+    public void Initialize(MonsterSaveData data){
         _id = Utilities.SetID(this, data.id);
-        _isDead = false;
-        _battleOnlyTracker = new CharacterBattleOnlyTracker();
-#if !WORLD_CREATION_TOOL
-        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        _monsterObj.SetMonster(this);
-#endif
-        SetCharacterColor(Color.red);
+        BaseInitialize();
     }
     public void SetSide(SIDES side) {
         _currentSide = side;
