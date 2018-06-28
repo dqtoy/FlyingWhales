@@ -40,6 +40,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Toggle attackBtnToggle;
     [SerializeField] private GameObject joinBattleButtonGO;
     [SerializeField] private Toggle joinBattleBtnToggle;
+    [SerializeField] private Button snatchBtn;
 
     private LogHistoryItem[] logHistoryItems;
 
@@ -56,8 +57,9 @@ public class CharacterInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         isWaitingForAttackTarget = false;
-        Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
+        Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
+        Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
@@ -74,43 +76,24 @@ public class CharacterInfoUI : UIMenu {
 
     #region Overrides
     public override void HideMenu() {
-        //if (currentlyShowingCharacter.avatar != null) {
-        //    currentlyShowingCharacter.avatar.SetHighlightState(false);
-        //}
-        //currentlyShowingCharacter.icon.SetAvatarState(false);
         _activeCharacter = null;
         base.HideMenu();
     }
     public override void ShowMenu() {
         base.ShowMenu();
         _activeCharacter = (ECS.Character)_data;
-        //RepositionHistoryScrollView();
         UpdateCharacterInfo();
         UpdateAllHistoryInfo();
         SetAttackButtonState(false);
-    }
-    public override void OpenMenu() {
-        base.OpenMenu();
-        //RepositionHistoryScrollView();
-        //UpdateCharacterInfo();
-        //UpdateAllHistoryInfo();
+        CheckShowSnatchButton();
     }
     #endregion
 
     public override void SetData(object data) {
         if (_data != null) {
             ECS.Character previousCharacter = _data as ECS.Character;
-            //if (previousCharacter.avatar != null) {
-            //    previousCharacter.avatar.SetHighlightState(false);
-            //}
-            //previousCharacter.icon.SetAvatarState(false);
         }
         base.SetData(data);
-        //if (currentlyShowingCharacter.avatar != null) {
-        //    currentlyShowingCharacter.avatar.SetHighlightState(true);
-        //}
-        //currentlyShowingCharacter.icon.SetAvatarState(true);
-        //historyScrollView.ResetPosition();
         if (isShowing) {
             UpdateCharacterInfo();
         }
@@ -125,11 +108,9 @@ public class CharacterInfoUI : UIMenu {
         UpdateGeneralInfo();
         UpdateStatInfo();
         UpdateTraitInfo();
-        //UpdateFollowersInfo ();
         UpdateEquipmentInfo();
         UpdateInventoryInfo();
         UpdateRelationshipInfo();
-        //UpdateAllHistoryInfo ();
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(currentlyShowingCharacter, IMAGE_SIZE.X256);
@@ -156,62 +137,20 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateGeneralInfo() {
         string text = string.Empty;
-        //text += currentlyShowingCharacter.id;
         text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
         text += "\n<b>Current Action: </b>";
         if (currentlyShowingCharacter.actionData.currentAction != null) {
             text += currentlyShowingCharacter.actionData.currentAction.actionData.actionName.ToString() + " ";
-            //for (int i = 0; i < currentlyShowingCharacter.currentAction.alignments.Count; i++) {
-            //    ACTION_ALIGNMENT currAlignment = currentlyShowingCharacter.currentAction.alignments[i];
-            //    text += currAlignment.ToString();
-            //    if (i + 1 < currentlyShowingCharacter.currentAction.alignments.Count) {
-            //        text += ", ";
-            //    }
-            //}
         } else {
             text += "NONE";
         }
-        //text += "\nCurrent State: ";
-        //if (currentlyShowingCharacter.currentAction != null) {
-        //	if(currentlyShowingCharacter.currentAction.currentState != null){
-        //		text += currentlyShowingCharacter.currentAction.currentState.stateName;
-        //	}
-        //} else {
-        //	text += "NONE";
-        //}
-        //text += "\nCurrent Quest: ";
-        //if (currentlyShowingCharacter.currentQuest != null) {
-        //    text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";
-        //} else {
-        //    text += "NONE";
-        //}
-        //text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
-        //text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
-        //text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
-        //text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
         if (currentlyShowingCharacter.role != null) {
             text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy + ", <b>Fun: </b>" + currentlyShowingCharacter.role.fun;
             text += "\n<b>Sanity: </b>" + currentlyShowingCharacter.role.sanity + ", <b>Prestige: </b>" + currentlyShowingCharacter.role.prestige + ", <b>Safety: </b>" + currentlyShowingCharacter.role.safety;
             text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
         }
         text += "\n<b>Computed Power: </b>" + currentlyShowingCharacter.computedPower;
-        //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
-        //            if (kvp.Value > 0) {
-        //                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-        //            }
-        //        }
-        //		text += "\n[b]Skills:[/b] ";
-        //		if(currentlyShowingCharacter.skills.Count > 0){
-        //			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
-        //				ECS.Skill skill = currentlyShowingCharacter.skills [i];
-        //				text += "\n  - " + skill.skillName;
-        //			}
-        //		}else{
-        //			text += "NONE";
-        //		}
-
         generalInfoLbl.text = text;
-        //        infoScrollView.ResetPosition();
 
     }
 
@@ -252,22 +191,6 @@ public class CharacterInfoUI : UIMenu {
         }
         traitInfoLbl.text = text;
     }
-    //private void UpdateFollowersInfo(){
-    //	string text = string.Empty;
-    //	if(currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.partyLeader.id == currentlyShowingCharacter.id){
-    //		for (int i = 0; i < currentlyShowingCharacter.party.followers.Count; i++) {
-    //			ECS.Character follower = currentlyShowingCharacter.party.followers [i];
-    //			if(i > 0){
-    //				text += "\n";
-    //			}
-    //			text += follower.urlName;
-    //		}
-    //	}else{
-    //		text += "NONE";
-    //	}
-    //	followersLbl.text = text;
-    //}
-
     private void UpdateEquipmentInfo() {
         string text = string.Empty;
         if (currentlyShowingCharacter.equippedItems.Count > 0) {
@@ -298,7 +221,6 @@ public class CharacterInfoUI : UIMenu {
             text += "NONE";
         }
         equipmentInfoLbl.text = text;
-        //equipmentScrollView.UpdatePosition ();
     }
 
     private void UpdateInventoryInfo() {
@@ -308,19 +230,7 @@ public class CharacterInfoUI : UIMenu {
             text += resource.ToString() + ": " + obj.resourceInventory[resource];
             text += "\n";
         }
-        //if(currentlyShowingCharacter.inventory.Count > 0) {
-        //	for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
-        //		ECS.Item item = currentlyShowingCharacter.inventory [i];
-        //		if(i > 0){
-        //			text += "\n";
-        //		}
-        //		text += item.itemName;
-        //	}
-        //}else{
-        //	text += "NONE";
-        //}
         inventoryInfoLbl.text = text;
-        //inventoryScrollView.UpdatePosition ();
     }
 
     private void UpdateRelationshipInfo() {
@@ -350,7 +260,6 @@ public class CharacterInfoUI : UIMenu {
         }
 
         relationshipsLbl.text = text;
-        //relationshipsScrollView.UpdatePosition();
     }
 
     #region History
@@ -376,10 +285,6 @@ public class CharacterInfoUI : UIMenu {
                 currItem.gameObject.SetActive(false);
             }
         }
-        //if (this.gameObject.activeInHierarchy) {
-        //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-        //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        //}
     }
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
@@ -393,16 +298,6 @@ public class CharacterInfoUI : UIMenu {
         return false;
     }
     #endregion
-
-    //public void CenterCameraOnCharacter() {
-    //    GameObject centerOn = null;
-    //    if (currentlyShowingCharacter.avatar != null) {
-    //        centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
-    //    } else {
-    //        centerOn = currentlyShowingCharacter.currLocation.gameObject;
-    //    }
-    //    CameraMove.Instance.CenterCameraOn(centerOn);
-    //}
 
     public bool IsCharacterInfoShowing(ECS.Character character) {
         return (isShowing && currentlyShowingCharacter == character);
@@ -454,8 +349,23 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    //	public void OnClickCloseBtn(){
-    ////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-    //		HideMenu ();
-    //	}
+    private void OnPlayerLandmarkCreated(BaseLandmark createdLandmark) {
+        if (createdLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
+            CheckShowSnatchButton();
+        }
+    }
+
+    #region Snatch
+    public void CheckShowSnatchButton() {
+        if (!PlayerManager.Instance.CanSnatch() || PlayerManager.Instance.player.IsCharacterSnatched(currentlyShowingCharacter)) {
+            snatchBtn.gameObject.SetActive(false);
+        } else {
+            snatchBtn.gameObject.SetActive(true);
+        }
+    }
+    public void Snatch() {
+        PlayerManager.Instance.player.SnatchCharacter(currentlyShowingCharacter);
+        CheckShowSnatchButton();
+    }
+    #endregion
 }

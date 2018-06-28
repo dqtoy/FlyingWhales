@@ -41,8 +41,18 @@ public class PopupMessageBox : MonoBehaviour{
             SetNoAction(() => HideMessage());
         }
 
+        tweenPosition.from = hiddenPos;
+        tweenPosition.to = showingPos;
         tweenPosition.ResetToBeginning();
         tweenPosition.PlayForward();
+        if (autoHide) {
+            StartCoroutine(AutoHideAfterSeconds());
+        }
+    }
+
+    private IEnumerator AutoHideAfterSeconds() {
+        yield return new WaitForSeconds(2f);
+        HideMessage();
     }
 
     public void SetYesAction(UnityAction yesAction) {
@@ -61,7 +71,9 @@ public class PopupMessageBox : MonoBehaviour{
     }
 
     private void HideMessage() {
+        tweenPosition.from = showingPos;
+        tweenPosition.to = hiddenPos;
         tweenPosition.ResetToBeginning();
-        tweenPosition.PlayReverse();
+        tweenPosition.PlayForward();
     }
 }

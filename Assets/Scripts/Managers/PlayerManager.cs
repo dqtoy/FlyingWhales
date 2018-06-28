@@ -7,11 +7,14 @@ public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance = null;
     public bool isChoosingStartingTile = false;
 
-
     public Player player = null;
 
     private void Awake() {
         Instance = this;
+    }
+
+    public void Initialize() {
+
     }
 
     public void ChooseStartingTile() {
@@ -39,4 +42,26 @@ public class PlayerManager : MonoBehaviour {
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
     }
+
+    public void CreatePlayerLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
+        BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(location, landmarkType);
+        OnPlayerLandmarkCreated(landmark);
+    }
+
+    private void OnPlayerLandmarkCreated(BaseLandmark newLandmark) {
+        switch (newLandmark.specificLandmarkType) {
+            case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
+                player.AdjustSnatchCredits(1);
+                break;
+            default:
+                break;
+        }
+        Messenger.Broadcast(Signals.PLAYER_LANDMARK_CREATED, newLandmark);
+    }
+
+    #region Snatch
+    public bool CanSnatch() {
+        return player.snatchCredits > 0;
+    }
+    #endregion
 }

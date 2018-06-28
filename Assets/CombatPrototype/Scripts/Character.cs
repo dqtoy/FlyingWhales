@@ -16,7 +16,6 @@ namespace ECS {
         private string _name;
         private int _id;
         private GENDER _gender;
-        //[System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
         [System.NonSerialized] private List<Trait> _traits;
         private List<TRAIT> _allTraits;
         private List<CharacterTag> _tags;
@@ -438,7 +437,6 @@ namespace ECS {
 
             EquipPreEquippedItems(baseSetup);
         }
-
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
             CharacterSetup baseSetup = CombatManager.Instance.GetBaseCharacterSetup(data.className, data.race);
@@ -460,7 +458,6 @@ namespace ECS {
 
             EquipPreEquippedItems(baseSetup);
         }
-
         public Character() {
             _traits = new List<Trait>();
             _tags = new List<CharacterTag>();
@@ -511,7 +508,6 @@ namespace ECS {
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
         }
-
         public void Initialize() { }
 
 		private void AllocateStatPoints(int statAllocation){
@@ -2995,25 +2991,19 @@ namespace ECS {
         }
         #endregion
 
-        //private void GenerateRoamingBehaviour() {
-        //    List<Region> exclude = new List<Region>();
-        //    exclude.Add(this.specificLocation.tileLocation.region);
-        //    exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
-        //    List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
-        //    Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
-        //    for (int i = 0; i < allSettlements.Count; i++) {
-        //        BaseLandmark currLandmark = allSettlements[i];
-        //        List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
-        //        if (allPaths.Count > 0) {
-        //            choices.Add(currLandmark, allPaths);
-        //        }
-        //    }
-        //    if (choices.Count > 0) {
-        //        BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
-        //        List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
-        //        List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
-        //        //TODO: queue go to location of each landmark in path
-        //    }
-        //}
+        #region Player Actions
+        public void OnCharacterSnatched() {
+            BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
+            if (snatcherLair == null) {
+                throw new Exception("There is not available snatcher lair!");
+            } else {
+                if (this._specificLocation != null) { //if character is at a landmark
+                    this._specificLocation.RemoveCharacterFromLocation(this);
+                }
+                snatcherLair.AddCharacterToLocation(this);
+                Imprison();
+            }
+        }
+        #endregion
     }
 }
