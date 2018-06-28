@@ -13,21 +13,21 @@ public struct CharacterActionData {
     public bool isIndefinite;
     public ActionFilterData[] filters;
 
-    public int advertisedFullness;
-    public int advertisedFun;
-    public int advertisedEnergy;
-    public int advertisedPrestige;
-    public int advertisedSanity;
-    public int advertisedSafety;
+    public float advertisedFullness;
+    public float advertisedFun;
+    public float advertisedEnergy;
+    public float advertisedPrestige;
+    public float advertisedSanity;
+    public float advertisedSafety;
 
     public RESOURCE advertisedResource;
 
-    public int providedFullness;
-    public int providedFun;
-    public int providedEnergy;
-    public int providedPrestige;
-    public int providedSanity;
-    public int providedSafety;
+    public float providedFullness;
+    public float providedFun;
+    public float providedEnergy;
+    public float providedPrestige;
+    public float providedSanity;
+    public float providedSafety;
 
     public int successRate;
     public int duration;

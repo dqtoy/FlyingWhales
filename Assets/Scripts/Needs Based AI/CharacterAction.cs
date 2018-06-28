@@ -169,11 +169,11 @@ public class CharacterAction {
     public float GetTotalAdvertisementValue(Character character) {
         return GetFoodAdvertisementValue(character) + GetEnergyAdvertisementValue(character) + GetJoyAdvertisementValue(character) + GetPrestigeAdvertisementValue(character);
     }
-    private float GetAdvertisementValue(int currentNeed, int advertisedNeed) {
+    private float GetAdvertisementValue(float currentNeed, float advertisedNeed) {
         //350, 8
         if(advertisedNeed != 0) {
-            float x = (float) currentNeed;
-            float y = x + ((float) advertisedNeed * 80f);
+            float x = currentNeed;
+            float y = x + (advertisedNeed * 80f);
             if(y > 1000f) {
                 y = 1000f;
             }

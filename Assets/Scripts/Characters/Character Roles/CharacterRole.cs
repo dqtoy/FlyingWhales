@@ -17,10 +17,10 @@ public class CharacterRole {
 	//protected CharacterTask _defaultRoleTask;
 	protected bool _cancelsAllOtherTasks;
 	protected bool _isRemoved;
-    protected int _fullness, _energy, _fun, _prestige, _sanity, _safety;
-    protected int _maxFullness, _maxEnergy, _maxFun, _maxPrestige, _maxSanity, _maxSafety;
-    protected int _minFullness, _minEnergy, _minFun, _minPrestige, _minSanity, _minSafety;
     protected bool _isHungry, _isFamished, _isTired, _isExhausted, _isSad, _isDepressed, _isAnxious, _isInsecure;
+    protected float _fullness, _energy, _fun, _prestige, _sanity, _safety;
+    protected float _maxFullness, _maxEnergy, _maxFun, _maxPrestige, _maxSanity, _maxSafety;
+    protected float _minFullness, _minEnergy, _minFun, _minPrestige, _minSanity, _minSafety;
     protected float _happiness;
 
     #region getters/setters
@@ -48,40 +48,40 @@ public class CharacterRole {
 	public bool isRemoved {
 		get { return _isRemoved; }
 	}
-    public int fullness {
+    public float fullness {
         get { return _fullness; }
     }
-    public int energy {
+    public float energy {
         get { return _energy; }
     }
-    public int fun {
+    public float fun {
         get { return _fun; }
     }
-    public int prestige {
+    public float prestige {
         get { return _prestige; }
     }
-    public int sanity {
+    public float sanity {
         get { return _sanity; }
     }
-    public int safety {
+    public float safety {
         get { return _safety; }
     }
-    public int maxFullness {
+    public float maxFullness {
         get { return _maxFullness; }
     }
-    public int maxEnergy {
+    public float maxEnergy {
         get { return _maxEnergy; }
     }
-    public int maxFun {
+    public float maxFun {
         get { return _maxFun; }
     }
-    public int maxPrestige {
+    public float maxPrestige {
         get { return _maxPrestige; }
     }
-    public int maxSanity {
+    public float maxSanity {
         get { return _maxSanity; }
     }
-    public int maxSafety {
+    public float maxSafety {
         get { return _maxSafety; }
     }
     public float happiness {
@@ -98,19 +98,19 @@ public class CharacterRole {
 		//_roleTasks.Add (new RecruitFollowers (this._character, 5));
         _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
 
-        _maxFullness = 100;
-        _maxEnergy = 100;
-        _maxFun = 100;
-        _maxPrestige = 100;
-        _maxSanity = 100;
-        _maxSafety = 100;
+        _maxFullness = 100f;
+        _maxEnergy = 100f;
+        _maxFun = 100f;
+        _maxPrestige = 100f;
+        _maxSanity = 100f;
+        _maxSafety = 100f;
 
-        _minFullness = -100;
-        _minEnergy = -100;
-        _minFun = -100;
-        _minPrestige = -100;
-        _minSanity = -100;
-        _minSafety = -100;
+        _minFullness = -100f;
+        _minEnergy = -100f;
+        _minFun = -100f;
+        _minPrestige = -100f;
+        _minSanity = -100f;
+        _minSafety = -100f;
     }
 
 
@@ -153,20 +153,20 @@ public class CharacterRole {
 
     #region Needs
     public void DepleteFullness() {
-        AdjustFullness(-5);
+        AdjustFullness(-0.5f);
     }
-    public void SetFullness(int amount) {
+    public void SetFullness(float amount) {
         _fullness = amount;
     }
-    public void AdjustFullness(int amount) {
-        int previous = _fullness;
+    public void AdjustFullness(float amount) {
+        float previous = _fullness;
         _fullness += amount;
         _fullness = Mathf.Clamp(_fullness, _minFullness, _maxFullness);
         if(previous != _fullness) {
             UpdateHappiness();
         }
 
-        if (_fullness <= 100 && !_isFamished) {
+        if (_fullness <= 10f && !_isFamished) {
             _isFamished = true;
             if (_isHungry) {
                 _isHungry = false;
@@ -174,7 +174,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.FAMISHED);
         }
-        else if(_fullness > 100 && _fullness <= 300 && !_isHungry) {
+        else if(_fullness > 10f && _fullness <= 30f && !_isHungry) {
             _isHungry = true;
             if (_isFamished) {
                 _isFamished = false;
@@ -182,7 +182,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.HUNGRY);
         }
-        else if (_fullness > 300) {
+        else if (_fullness > 30f) {
             if (_isHungry) {
                 _isHungry = false;
                 _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
@@ -195,13 +195,13 @@ public class CharacterRole {
     }
 
     public void DepleteEnergy() {
-        AdjustEnergy(-3);
+        AdjustEnergy(-0.3f);
     }
-    public void SetEnergy(int amount) {
+    public void SetEnergy(float amount) {
         _energy = amount;
     }
-    public void AdjustEnergy(int amount) {
-        int previous = _energy;
+    public void AdjustEnergy(float amount) {
+        float previous = _energy;
         _energy += amount;
         _energy = Mathf.Clamp(_energy, _minEnergy, _maxEnergy);
         if (previous != _energy) {
@@ -209,7 +209,7 @@ public class CharacterRole {
         }
 
 
-        if (_energy <= 100 && !_isExhausted) {
+        if (_energy <= 10f && !_isExhausted) {
             _isExhausted = true;
             if (_isTired) {
                 _isTired = false;
@@ -217,7 +217,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.EXHAUSTED);
         }
-        else if (_energy > 100 && _energy <= 300 && !_isTired) {
+        else if (_energy > 10f && _energy <= 30f && !_isTired) {
             _isTired = true;
             if (_isExhausted) {
                 _isExhausted = false;
@@ -225,7 +225,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.TIRED);
         }
-        else if (_energy > 300) {
+        else if (_energy > 30f) {
             if (_isTired) {
                 _isTired = false;
                 _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
@@ -238,20 +238,20 @@ public class CharacterRole {
     }
 
     public void DepleteFun() {
-        AdjustFun(-3);
+        AdjustFun(-0.3f);
     }
-    public void SetFun(int amount) {
+    public void SetFun(float amount) {
         _fun = amount;
     }
-    public void AdjustFun(int amount) {
-        int previous = _fun;
+    public void AdjustFun(float amount) {
+        float previous = _fun;
         _fun += amount;
         _fun = Mathf.Clamp(_fun, _minFun, _maxFun);
         if (previous != _fun) {
             UpdateHappiness();
         }
 
-        if (_fun <= 100 && !_isDepressed) {
+        if (_fun <= 10f && !_isDepressed) {
             _isDepressed = true;
             if (_isSad) {
                 _isSad = false;
@@ -259,7 +259,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.DEPRESSED);
         }
-        else if (_fun > 100 && _fun <= 300 && !_isSad) {
+        else if (_fun > 10f && _fun <= 30f && !_isSad) {
             _isSad = true;
             if (_isDepressed) {
                 _isDepressed = false;
@@ -267,7 +267,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.SAD);
         }
-        else if (_fun > 300) {
+        else if (_fun > 30f) {
             if (_isSad) {
                 _isSad = false;
                 _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
@@ -280,20 +280,20 @@ public class CharacterRole {
     }
 
     public void DepletePrestige() {
-        AdjustPrestige(-7);
+        AdjustPrestige(-0.7f);
     }
-    public void SetPrestige(int amount) {
+    public void SetPrestige(float amount) {
         _prestige = amount;
     }
-    public void AdjustPrestige(int amount) {
-        int previous = _prestige;
+    public void AdjustPrestige(float amount) {
+        float previous = _prestige;
         _prestige += amount;
         _prestige = Mathf.Clamp(_prestige, _minPrestige, _maxPrestige);
         if (previous != _prestige) {
             UpdateHappiness();
         }
 
-        if (_prestige <= 100 && !_isInsecure) {
+        if (_prestige <= 10f && !_isInsecure) {
             _isInsecure = true;
             if (_isAnxious) {
                 _isAnxious = false;
@@ -301,7 +301,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.INSECURE);
         }
-        else if (_prestige > 100 && _prestige <= 300 && !_isAnxious) {
+        else if (_prestige > 10f && _prestige <= 30f && !_isAnxious) {
             _isAnxious = true;
             if (_isInsecure) {
                 _isInsecure = false;
@@ -309,7 +309,7 @@ public class CharacterRole {
             }
             _character.AssignTag(CHARACTER_TAG.ANXIOUS);
         }
-        else if (_prestige > 300) {
+        else if (_prestige > 30f) {
             if (_isAnxious) {
                 _isAnxious = false;
                 _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
@@ -322,13 +322,13 @@ public class CharacterRole {
     }
 
     public void DepleteSanity() {
-        AdjustSanity(-2);
+        AdjustSanity(-0.2f);
     }
-    public void SetSanity(int amount) {
+    public void SetSanity(float amount) {
         _sanity = amount;
     }
-    public void AdjustSanity(int amount) {
-        int previous = _sanity;
+    public void AdjustSanity(float amount) {
+        float previous = _sanity;
         _sanity += amount;
         _sanity = Mathf.Clamp(_sanity, _minSanity, _maxSanity);
         if (previous != _sanity) {
@@ -336,11 +336,11 @@ public class CharacterRole {
         }
     }
 
-    public void SetSafety(int amount) {
+    public void SetSafety(float amount) {
         _safety = amount;
     }
-    public void AdjustSafety(int amount) {
-        int previous = _safety;
+    public void AdjustSafety(float amount) {
+        float previous = _safety;
         _safety += amount;
         _safety = Mathf.Clamp(_safety, _minSafety, _maxSafety);
         if (previous != _safety) {
@@ -349,7 +349,7 @@ public class CharacterRole {
     }
     public void UpdateSafety() {
         float hpPercent = (float) character.currentHP / (float) character.maxHP;
-        int newSafety = (int)((hpPercent * (_maxSafety - _minSafety)) + _minSafety);
+        float newSafety = (hpPercent * (_maxSafety - _minSafety)) + _minSafety;
         SetSafety(newSafety);
     }
 
@@ -408,12 +408,12 @@ public class CharacterRole {
         return result;
     }
 
-    delegate float CalculateImpact(int currentNeed);
+    delegate float CalculateImpact(float currentNeed);
     private float GetHappinessIncrease(NEEDS need, CharacterAction action) {
         float happinessIncrease = 0f;
-        int advertisedAmount = 0;
-        int currentAmount = 0;
-        int maxAmount = 0;
+        float advertisedAmount = 0f;
+        float currentAmount = 0f;
+        float maxAmount = 0f;
         CalculateImpact calculateImpact = null;
         switch (need) {
             case NEEDS.FULLNESS:
@@ -453,7 +453,7 @@ public class CharacterRole {
             calculateImpact = CalculateSafetyImpact;
             break;
         }
-        int futureAmount = currentAmount + advertisedAmount;
+        float futureAmount = currentAmount + advertisedAmount;
         if(calculateImpact != null) {
             if(futureAmount > maxAmount) {
                 futureAmount = maxAmount;
@@ -465,49 +465,49 @@ public class CharacterRole {
         return happinessIncrease;
     }
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
-    private float CalculateFullnessImpact(int currentFullness) {
+    private float CalculateFullnessImpact(float currentFullness) {
         //return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
-        float result = (Mathf.Pow(1.04f, (float) -currentFullness)) + 30f;
+        float result = (Mathf.Pow(1.04f, -currentFullness)) + 30f;
         if (currentFullness < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current energy, meaning what's the happiness equivalent given the energy
-    private float CalculateEnergyImpact(int currentEnergy) {
+    private float CalculateEnergyImpact(float currentEnergy) {
         //return (-0.4f * ((float) -currentEnergy)) + 350f;
-        float result = (-0.15f * ((float) currentEnergy)) + 25f;
+        float result = (-0.15f * currentEnergy) + 25f;
         if (currentEnergy < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current fun, meaning what's the happiness equivalent given the fun
-    private float CalculateFunImpact(int currentFun) {
-        float value = 0.06f * ((float)currentFun);
+    private float CalculateFunImpact(float currentFun) {
+        float value = 0.06f * currentFun;
         float result = (Mathf.Pow(value, 2f)) + 10f;
         if (currentFun < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
-    private float CalculatePrestigeImpact(int currentPrestige) {
-        float value = 0.04f * ((float) currentPrestige);
+    private float CalculatePrestigeImpact(float currentPrestige) {
+        float value = 0.04f * currentPrestige;
         float result = (Mathf.Pow(value, 2f)) + 15f;
         if (currentPrestige < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current sanity, meaning what's the happiness equivalent given the sanity
-    private float CalculateSanityImpact(int currentSanity) {
-        float value = 0.075f * ((float)currentSanity);
+    private float CalculateSanityImpact(float currentSanity) {
+        float value = 0.075f * currentSanity;
         float result = Mathf.Pow(value, 2f);
         if (currentSanity < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
-    private float CalculateSafetyImpact(int currentSafety) {
+    private float CalculateSafetyImpact(float currentSafety) {
         //return (0.2f * ((float)currentSafety)) + 150f;
-        float result = (Mathf.Pow(1.045f, (float) -currentSafety)) + 5f;
+        float result = (Mathf.Pow(1.045f, -currentSafety)) + 5f;
         if (currentSafety < 0) { result *= -1f; }
         return result;
     }
