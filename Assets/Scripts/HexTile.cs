@@ -1180,6 +1180,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #endif
     }
     public void RightClick() {
+#if !WORLD_CREATION_TOOL
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
@@ -1187,6 +1188,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (landmarkOnTile != null) {
             UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
         }
+#endif
     }
 
     public void MouseOver() {
@@ -1675,8 +1677,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Destroy Landmark");
             createLandmarkItem.onClickAction = () => worldcreator.WorldCreatorManager.Instance.DestroyLandmarks(this);
             settings.AddMenuItem(createLandmarkItem);
-        }
-        if (this.isPassable && !MonsterManager.Instance.HasMonsterOnTile(this)) {
+
             ContextMenuItemSettings spawnMonster = new ContextMenuItemSettings("Spawn Monster");
             settings.AddMenuItem(spawnMonster);
 
@@ -1685,19 +1686,47 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
             foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
                 ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
-                if (landmarkOnTile != null) {
-                    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnLandmark(landmarkOnTile, kvp.Key);
-                } else {
-                    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
-                }
-                
+                spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnLandmark(landmarkOnTile, kvp.Key);
                 createMonsterSettings.AddMenuItem(spawnMonsterItem);
             }
-        } else if (MonsterManager.Instance.HasMonsterOnTile(this)) {
-            ContextMenuItemSettings removeMonster = new ContextMenuItemSettings("Remove Monsters");
-            removeMonster.onClickAction = () => MonsterManager.Instance.RemoveMonstersOnTile(this);
-            settings.AddMenuItem(removeMonster);
+
+            if (MonsterManager.Instance.HasMonsterOnLandmark(this.landmarkOnTile)) {
+                ContextMenuItemSettings despawnMonster = new ContextMenuItemSettings("Despawn Monster");
+                settings.AddMenuItem(despawnMonster);
+
+                ContextMenuSettings despawnMonsterSettings = new ContextMenuSettings();
+                despawnMonster.SetSubMenu(despawnMonsterSettings);
+
+                for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
+                    ICharacter currCharacter = this.landmarkOnTile.charactersAtLocation[i];
+                    if (currCharacter is Monster) {
+                        ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currCharacter.name);
+                        despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterOnLandmark(landmarkOnTile, currCharacter as Monster);
+                        despawnMonsterSettings.AddMenuItem(despawnMonsterItem);
+                    }
+                }
+            }
         }
+
+        //if (this.isPassable && !MonsterManager.Instance.HasMonsterOnTile(this)) {
+        //    ContextMenuItemSettings spawnMonster = new ContextMenuItemSettings("Spawn Monster");
+        //    settings.AddMenuItem(spawnMonster);
+        //    ContextMenuSettings createMonsterSettings = new ContextMenuSettings();
+        //    spawnMonster.SetSubMenu(createMonsterSettings);
+        //    foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
+        //        ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
+        //        if (landmarkOnTile != null) {
+        //            spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnLandmark(landmarkOnTile, kvp.Key);
+        //        } else {
+        //            spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnTile(this, kvp.Key);
+        //        }
+        //        createMonsterSettings.AddMenuItem(spawnMonsterItem);
+        //    }
+        //} else if (MonsterManager.Instance.HasMonsterOnTile(this)) {
+        //    ContextMenuItemSettings removeMonster = new ContextMenuItemSettings("Remove Monsters");
+        //    removeMonster.onClickAction = () => MonsterManager.Instance.RemoveMonstersOnTile(this);
+        //    settings.AddMenuItem(removeMonster);  
+        //}
         return settings;
     }
 #else
