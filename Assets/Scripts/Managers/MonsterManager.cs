@@ -82,15 +82,30 @@ public class MonsterManager : MonoBehaviour {
         landmark.AddCharacterToLocation(newMonster);
         return newMonster;
     }
+    public void DespawnMonsterOnLandmark(BaseLandmark landmark, Monster monster) {
+        landmark.RemoveCharacterFromLocation(monster);
+        RemoveMonster(monster);
+    }
     public void RemoveMonster(Monster monster) {
         allMonsters.Remove(monster);
+#if !WORLD_CREATION_TOOL
         GameObject.Destroy(monster.icon.gameObject);
+#endif
     }
 
     public bool HasMonsterOnTile(HexTile tile) {
         for (int i = 0; i < allMonsters.Count; i++) {
             Monster currMonster = allMonsters[i];
             if (currMonster.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE && currMonster.specificLocation.id == tile.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMonsterOnLandmark(BaseLandmark landmark) {
+        for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
+            ICharacter currCharacter = landmark.charactersAtLocation[i];
+            if (currCharacter is Monster) {
                 return true;
             }
         }
