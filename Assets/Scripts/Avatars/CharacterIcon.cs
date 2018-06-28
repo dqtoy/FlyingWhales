@@ -172,6 +172,19 @@ public class CharacterIcon : MonoBehaviour {
     }
 
     #region Monobehaviours
+//    private HexTile previousTile = null;
+//    private void Update() {
+//#if UNITY_EDITOR && !WORLD_CREATION_TOOL
+//        if (UIManager.Instance.characterInfoUI.activeCharacter != null &&
+//            UIManager.Instance.characterInfoUI.activeCharacter.id == _icharacter.id && _icharacter.specificLocation is HexTile) {
+//            if (previousTile != null) {
+//                previousTile.UnHighlightTile();
+//            }
+//            (_icharacter.specificLocation as HexTile).HighlightTile(Color.gray, 128f/255f);
+//            previousTile = _icharacter.specificLocation as HexTile;
+//        }
+//#endif
+//    }
     private void LateUpdate() {
         //Debug.Log(_aiPath.velocity);
         Vector3 newPos = _aiPath.transform.localPosition;
