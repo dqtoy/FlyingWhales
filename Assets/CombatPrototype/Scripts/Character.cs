@@ -648,41 +648,43 @@ namespace ECS {
             //Character class skills
             if(_equippedWeapon != null) {
                 for (int i = 0; i < _level; i++) {
-                    for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-                        Skill skill = _characterClass.skillsPerLevel[i][j];
-                        skill.isEnabled = true;
+                    if(_characterClass.skillsPerLevel[i] != null && _characterClass.skillsPerLevel[i].Length > 0) {
+                        for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                            Skill skill = _characterClass.skillsPerLevel[i][j];
+                            skill.isEnabled = true;
 
-                        //Check for allowed weapon types
-                        if(skill.allowedWeaponTypes != null) {
-                            for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
-                                if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+                            //Check for allowed weapon types
+                            if (skill.allowedWeaponTypes != null) {
+                                for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
+                                    if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+                                        skill.isEnabled = false;
+                                        continue;
+                                    }
+                                }
+                            }
+
+                            //for (int k = 0; k < skill.skillRequirements.Length; k++) {
+                            //    SkillRequirement skillRequirement = skill.skillRequirements[k];
+                            //    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                            //        skill.isEnabled = false;
+                            //        break;
+                            //    }
+                            //}
+                            //if (!skill.isEnabled) {
+                            //    continue;
+                            //}
+                            if (skill is AttackSkill) {
+                                AttackSkill attackSkill = skill as AttackSkill;
+                                if (attackSkill.spCost > _sp) {
                                     skill.isEnabled = false;
                                     continue;
                                 }
-                            }
-                        }
-
-                        //for (int k = 0; k < skill.skillRequirements.Length; k++) {
-                        //    SkillRequirement skillRequirement = skill.skillRequirements[k];
-                        //    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                        //        skill.isEnabled = false;
-                        //        break;
-                        //    }
-                        //}
-                        //if (!skill.isEnabled) {
-                        //    continue;
-                        //}
-                        if (skill is AttackSkill) {
-                            AttackSkill attackSkill = skill as AttackSkill;
-                            if (attackSkill.spCost > _sp) {
-                                skill.isEnabled = false;
-                                continue;
-                            }
-                            isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
-                            if (!isAttackInRange) {
-                                isAllAttacksInRange = false;
-                                skill.isEnabled = false;
-                                continue;
+                                isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                                if (!isAttackInRange) {
+                                    isAllAttacksInRange = false;
+                                    skill.isEnabled = false;
+                                    continue;
+                                }
                             }
                         }
                     }
