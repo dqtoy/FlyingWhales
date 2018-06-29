@@ -56,7 +56,7 @@ public class Monster : ICharacter {
         get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + this._name + "</link>"; }
     }
     public string coloredUrlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</link>"; }
+        get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color></link>"; }
     }
     public int id {
         get { return _id; }
@@ -487,7 +487,11 @@ public class Monster : ICharacter {
         actionThread.AddToChoices(_monsterObj);
     }
     public void SetHomeStructure(StructureObj newHomeStructure) {
-        this._homeStructure = newHomeStructure;
+        if (_homeStructure != null) {
+            _homeStructure.AdjustNumOfResidents(-1);
+        }
+        _homeStructure = newHomeStructure;
+        newHomeStructure.AdjustNumOfResidents(1);
     }
     #endregion
 

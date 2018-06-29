@@ -22,6 +22,8 @@ public class StructureObj : IObject {
     protected int _currentHP;
     protected RESOURCE _madeOf;
 
+    private int _numOfResidentCivilians;
+
     #region getters/setters
     public string objectName {
         get { return _objectName; }
@@ -46,6 +48,9 @@ public class StructureObj : IObject {
     }
     public int currentHP {
         get { return _currentHP; }
+    }
+    public int numOfResidentCivilians {
+        get { return _numOfResidentCivilians; }
     }
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
@@ -242,6 +247,9 @@ public class StructureObj : IObject {
     }
     public void SetIsMadeOf(RESOURCE resource) {
         _madeOf = resource;
+    }
+    public void AdjustNumOfResidents(int amount) {
+        _numOfResidentCivilians += amount;
     }
     #endregion
 

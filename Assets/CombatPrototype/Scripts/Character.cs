@@ -134,7 +134,7 @@ namespace ECS {
             get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
         }
         public string coloredUrlName {
-            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color>" + "</link>"; }
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color></link>"; }
         }
         public int id {
             get { return _id; }
@@ -648,41 +648,43 @@ namespace ECS {
             //Character class skills
             if(_equippedWeapon != null) {
                 for (int i = 0; i < _level; i++) {
-                    for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-                        Skill skill = _characterClass.skillsPerLevel[i][j];
-                        skill.isEnabled = true;
+                    if(_characterClass.skillsPerLevel[i] != null && _characterClass.skillsPerLevel[i].Length > 0) {
+                        for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                            Skill skill = _characterClass.skillsPerLevel[i][j];
+                            skill.isEnabled = true;
 
-                        //Check for allowed weapon types
-                        if(skill.allowedWeaponTypes != null) {
-                            for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
-                                if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+                            //Check for allowed weapon types
+                            if (skill.allowedWeaponTypes != null) {
+                                for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
+                                    if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+                                        skill.isEnabled = false;
+                                        continue;
+                                    }
+                                }
+                            }
+
+                            //for (int k = 0; k < skill.skillRequirements.Length; k++) {
+                            //    SkillRequirement skillRequirement = skill.skillRequirements[k];
+                            //    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                            //        skill.isEnabled = false;
+                            //        break;
+                            //    }
+                            //}
+                            //if (!skill.isEnabled) {
+                            //    continue;
+                            //}
+                            if (skill is AttackSkill) {
+                                AttackSkill attackSkill = skill as AttackSkill;
+                                if (attackSkill.spCost > _sp) {
                                     skill.isEnabled = false;
                                     continue;
                                 }
-                            }
-                        }
-
-                        //for (int k = 0; k < skill.skillRequirements.Length; k++) {
-                        //    SkillRequirement skillRequirement = skill.skillRequirements[k];
-                        //    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                        //        skill.isEnabled = false;
-                        //        break;
-                        //    }
-                        //}
-                        //if (!skill.isEnabled) {
-                        //    continue;
-                        //}
-                        if (skill is AttackSkill) {
-                            AttackSkill attackSkill = skill as AttackSkill;
-                            if (attackSkill.spCost > _sp) {
-                                skill.isEnabled = false;
-                                continue;
-                            }
-                            isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
-                            if (!isAttackInRange) {
-                                isAllAttacksInRange = false;
-                                skill.isEnabled = false;
-                                continue;
+                                isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                                if (!isAttackInRange) {
+                                    isAllAttacksInRange = false;
+                                    skill.isEnabled = false;
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -2526,7 +2528,11 @@ namespace ECS {
             this._homeLandmark = newHomeLandmark;
         }
         public void SetHomeStructure(StructureObj newHomeStructure) {
-            this._homeStructure = newHomeStructure;
+            if(_homeStructure != null) {
+                _homeStructure.AdjustNumOfResidents(-1);
+            }
+            _homeStructure = newHomeStructure;
+            newHomeStructure.AdjustNumOfResidents(1);
         }
         //If true, character can't do daily action (onDailyAction), i.e. actions, needs
         public void SetIsIdle(bool state) {
@@ -2535,31 +2541,6 @@ namespace ECS {
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
         }
-   //     public Settlement GetNearestNonHostileSettlement() {
-			//if(faction != null){
-			//	List<Faction> nonHostileFactions = faction.GetMajorFactionsWithRelationshipStatus
-			//		(new List<RELATIONSHIP_STATUS>() { RELATIONSHIP_STATUS.FRIENDLY, RELATIONSHIP_STATUS.NEUTRAL });
-
-			//	List<Settlement> settlements = new List<Settlement>();
-			//	nonHostileFactions.ForEach(x => settlements.AddRange(x.settlements));
-			//	settlements.AddRange(_faction.settlements); //Add the settlements of the faction that this character belongs to
-
-			//	settlements.OrderByDescending(x => currLocation.GetDistanceTo(x.tileLocation));
-
-			//	return settlements.First();
-			//}
-			//return null;
-   //     }
-     //   public Settlement GetNearestSettlementFromFaction() {
-     //       if(this.faction != null) {
-     //           List<Settlement> factionSettlements = new List<Settlement>(faction.settlements);
-     //           if (factionSettlements.Count > 0) {
-					//factionSettlements.OrderBy(x => this.currLocation.GetDistanceTo(x.tileLocation)).ToList();
-     //               return factionSettlements[0];
-     //           }
-     //       }
-     //       return null;
-     //   }
         public BaseLandmark GetNearestLandmarkWithoutHostiles() {
             Region currRegionLocation = specificLocation.tileLocation.region;
             List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.landmarks);
@@ -2599,16 +2580,6 @@ namespace ECS {
 
             return null;
         }
-        //public bool HasRelevanceToQuest(BaseLandmark landmark) {
-        //    if (currentQuest != null) {
-        //        for (int i = 0; i < questData.tasks.Count; i++) {
-        //            if (questData.tasks[i].targetLocation == landmark) {
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //}
         public void CenterOnCharacter() {
             if (!this.isDead) {
                 CameraMove.Instance.CenterCameraOn(specificLocation.tileLocation.gameObject);
@@ -2639,6 +2610,53 @@ namespace ECS {
             if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.currentRegion.id) {
                 actionThread.AddToChoices(_characterObject);
             }
+        }
+        public void LookForNewHomeStructure() {
+            //Try to get a new home structure from this character's area
+            StructureObj structure = GetNewHomeStructureFromArea(_home);
+            if(structure != null) {
+                SetHomeStructure(structure);
+            } else {
+                //If there is no available structure, look for it in other areas of the faction and migrate there
+                structure = GetNewHomeStructureFromFaction();
+                if (structure != null) {
+                    SetHomeStructure(structure);
+                    SetHome(structure.objectLocation.tileLocation.areaOfTile);
+                } else {
+                    //TODO: For future update, migrate to another friendly faction's structure
+                }
+            }
+        }
+        private StructureObj GetNewHomeStructureFromArea(Area area) {
+            StructureObj chosenStructure = null;
+            for (int i = 0; i < area.landmarks.Count; i++) {
+                StructureObj structure = area.landmarks[i].landmarkObj;
+                if(structure != _homeStructure && structure.specificObjectType == _homeStructure.specificObjectType) {
+                    if(chosenStructure == null) {
+                        chosenStructure = structure;
+                    } else {
+                        if(structure.numOfResidentCivilians < chosenStructure.numOfResidentCivilians) {
+                            chosenStructure = structure;
+                        }
+                    }
+                }
+            }
+            return chosenStructure;
+        }
+        private StructureObj GetNewHomeStructureFromFaction() {
+            StructureObj chosenStructure = null;
+            if (_faction != null) {
+                for (int i = 0; i < _faction.ownedAreas.Count; i++) {
+                    Area area = _faction.ownedAreas[i];
+                    if(area.id != _home.id) {
+                        chosenStructure = GetNewHomeStructureFromArea(area);
+                        if(chosenStructure != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return chosenStructure;
         }
         #endregion
 

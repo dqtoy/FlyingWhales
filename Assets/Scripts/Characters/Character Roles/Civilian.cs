@@ -20,15 +20,24 @@ public class Civilian : CharacterRole {
     #region Overrides
     public override void DeathRole() {
         base.DeathRole();
-        _character.SetIsIdle(false);
+        //_character.SetIsIdle(false);
+        Messenger.RemoveListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
     }
     public override void ChangedRole() {
         base.ChangedRole();
-        _character.SetIsIdle(false);
+        //_character.SetIsIdle(false);
+        Messenger.RemoveListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
     }
     public override void OnAssignRole() {
         base.OnAssignRole();
-        _character.SetIsIdle(true);
+        //_character.SetIsIdle(true);
+        Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
     }
     #endregion
+
+    private void OnStructureChangedState(StructureObj structure, ObjectState state) {
+        if(structure == _character.homeStructure && state.stateName == "Ruined") {
+            _character.LookForNewHomeStructure();
+        }
+    }
 }

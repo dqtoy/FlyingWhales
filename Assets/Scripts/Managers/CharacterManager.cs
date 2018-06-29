@@ -233,6 +233,7 @@ public class CharacterManager : MonoBehaviour {
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
             newCharacter.SetHomeLandmark(homeLandmark);
+            newCharacter.SetHomeStructure(homeLandmark.landmarkObj);
         }
 
         if (data.equipmentData != null) {

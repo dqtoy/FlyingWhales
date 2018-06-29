@@ -467,7 +467,7 @@ public class CharacterRole {
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
     private float CalculateFullnessImpact(float currentFullness) {
         //return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
-        float result = (Mathf.Pow(1.04f, -currentFullness)) + 30f;
+        float result = (Mathf.Pow(1.05f, -currentFullness)) + 20f;
         if (currentFullness < 0) { result *= -1f; }
         return result;
     }
@@ -475,31 +475,31 @@ public class CharacterRole {
     //Formula for calculation of happiness based on current energy, meaning what's the happiness equivalent given the energy
     private float CalculateEnergyImpact(float currentEnergy) {
         //return (-0.4f * ((float) -currentEnergy)) + 350f;
-        float result = (-0.15f * currentEnergy) + 25f;
+        float result = (0.5f * -currentEnergy) + 50f;
         if (currentEnergy < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current fun, meaning what's the happiness equivalent given the fun
     private float CalculateFunImpact(float currentFun) {
-        float value = 0.06f * currentFun;
-        float result = (Mathf.Pow(value, 2f)) + 10f;
+        float value = 1.09f; //* currentFun;
+        float result = (Mathf.Pow(value, -currentFun)) + 10f;
         if (currentFun < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(float currentPrestige) {
-        float value = 0.04f * currentPrestige;
-        float result = (Mathf.Pow(value, 2f)) + 15f;
+        float value = 1.07f;// * currentPrestige;
+        float result = (Mathf.Pow(value, -currentPrestige)) + 15f;
         if (currentPrestige < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current sanity, meaning what's the happiness equivalent given the sanity
     private float CalculateSanityImpact(float currentSanity) {
-        float value = 0.075f * currentSanity;
-        float result = Mathf.Pow(value, 2f);
+        float value = 1.08f;// * currentSanity;
+        float result = Mathf.Pow(value, -currentSanity);
         if (currentSanity < 0) { result *= -1f; }
         return result;
     }

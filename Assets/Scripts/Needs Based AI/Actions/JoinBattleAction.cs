@@ -56,6 +56,14 @@ public class JoinBattleAction : CharacterAction {
     private void FriendWillJoinCombat(Character friend) {
         if(_characterObj.character.currentCombat != null) {
             _characterObj.character.currentCombat.AddCharacter(_characterObj.character.currentSide, friend);
+
+            Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "join_combat");
+            combatLog.AddToFillers(friend, friend.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            combatLog.AddToFillers(_characterObj.character.currentCombat, " joins battle of ", LOG_IDENTIFIER.COMBAT);
+            combatLog.AddToFillers(_characterObj.character, _characterObj.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+            friend.AddHistory(combatLog);
+            _characterObj.character.AddHistory(combatLog);
         } else {
             CombatManager.Instance.CharacterContinuesAction(friend, false);
         }

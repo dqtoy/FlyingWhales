@@ -41,6 +41,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private GameObject joinBattleButtonGO;
     [SerializeField] private Toggle joinBattleBtnToggle;
     [SerializeField] private Button snatchBtn;
+    [SerializeField] private GameObject releaseBtnGO;
 
     private LogHistoryItem[] logHistoryItems;
 
@@ -84,7 +85,8 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter = (ECS.Character)_data;
         UpdateCharacterInfo();
         UpdateAllHistoryInfo();
-        SetAttackButtonState(false);
+        ShowAttackButton();
+        ShowReleaseButton();
         CheckShowSnatchButton();
     }
     #endregion
@@ -346,6 +348,21 @@ public class CharacterInfoUI : UIMenu {
     }
     public void SetActiveJoinBattleButtonGO(bool state) {
         joinBattleButtonGO.SetActive(state);
+    }
+    #endregion
+
+    #region Release Character
+    public void ShowReleaseButton() {
+        if (currentlyShowingCharacter.characterObject.currentState.stateName == "Imprisoned") {
+            releaseBtnGO.SetActive(true);
+        } else {
+            releaseBtnGO.SetActive(false);
+        }
+    }
+    public void ReleaseCharacter() {
+        CharacterAction action = currentlyShowingCharacter.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
+        ReleaseAction releaseAction = action as ReleaseAction;
+        releaseAction.ReleaseCharacter();
     }
     #endregion
 
