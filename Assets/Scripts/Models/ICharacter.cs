@@ -45,19 +45,21 @@ public interface ICharacter {
     CharacterIcon icon { get; }
 
     //functions
-    void SetSide(ECS.SIDES side);
-    void SetRowNumber(int row);
-    void AdjustSP(int amount);
-    void AdjustHP(int amount);
     void FaintOrDeath();
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
+    void GoHome();
+    void SetSide(ECS.SIDES side);
+    void SetRowNumber(int row);
+    void AdjustSP(int amount);
+    void AdjustHP(int amount);
+    void AdjustExperience(int amount);
     void EnableDisableSkills(Combat combat);
     void SetSpecificLocation(ILocation location);
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void SetHomeStructure(StructureObj newHomeStructure);
-    void GoHome();
+
     void AdvertiseSelf(ActionThread actionThread);
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
