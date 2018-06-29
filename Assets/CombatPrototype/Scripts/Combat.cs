@@ -1161,9 +1161,22 @@ namespace ECS{
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
 		internal void CharacterDeath(ICharacter character){
 			RemoveCharacter (character);
-			//deadCharacters.Add (character);
-			//character.SetIsDefeated (true);
-			AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
+            //Give exp to other side if monster died
+            if (character.icharacterType == ICHARACTER_TYPE.MONSTER) {
+                Monster monster = character as Monster;
+                SIDES oppositeSide = SIDES.B;
+                if(monster.currentSide == SIDES.B) {
+                    oppositeSide = SIDES.A;
+                }
+                List<ICharacter> killerCharacters = GetCharactersOnSide(oppositeSide);
+                for (int i = 0; i < killerCharacters.Count; i++) {
+                    killerCharacters[i].AdjustExperience(monster.experienceDrop);
+                }
+            }
+            //deadCharacters.Add (character);
+            //character.SetIsDefeated (true);
+            AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
+           
 		}
 
 		internal void CharacterFainted(ICharacter character){

@@ -102,6 +102,9 @@ public class Monster : ICharacter {
         get { return _numOfAttackers; }
         set { _numOfAttackers = value; }
     }
+    public int experienceDrop {
+        get { return _experienceDrop; }
+    }
     public float critChance {
         get { return _critChance; }
     }
@@ -323,6 +326,9 @@ public class Monster : ICharacter {
     }
     public void SetRowNumber(int rowNumber) {
         _currentRow = rowNumber;
+    }
+    public void AdjustExperience(int amount) {
+        //Monster no exp
     }
     public void AdjustSP(int amount) {
         _currentSP += amount;
