@@ -487,7 +487,11 @@ public class Monster : ICharacter {
         actionThread.AddToChoices(_monsterObj);
     }
     public void SetHomeStructure(StructureObj newHomeStructure) {
-        this._homeStructure = newHomeStructure;
+        if (_homeStructure != null) {
+            _homeStructure.AdjustNumOfResidents(-1);
+        }
+        _homeStructure = newHomeStructure;
+        newHomeStructure.AdjustNumOfResidents(1);
     }
     #endregion
 
