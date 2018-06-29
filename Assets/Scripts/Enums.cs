@@ -39,6 +39,7 @@ public enum RACE{
 	DEHKBRUG,
     WOLF,
     SLIME,
+    BEAST,
 }
 
 public enum PATH_DIRECTION{

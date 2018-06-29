@@ -74,21 +74,12 @@ public class AttackAction : CharacterAction {
     }
     private void StartCombatWith(Character enemy) {
         //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
+        Combat combat = _icharacterObj.icharacter.currentCombat;
         if (_icharacterObj.icharacter.currentCombat == null) {
-            Combat combat = new Combat();
+            combat = new Combat();
             combat.AddCharacter(SIDES.A, enemy);
             combat.AddCharacter(SIDES.B, _icharacterObj.icharacter);
             //MultiThreadPool.Instance.AddToThreadPool(combat);
-
-            Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
-            combatLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
-            combatLog.AddToFillers(_icharacterObj.icharacter, _icharacterObj.icharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-            enemy.AddHistory(combatLog);
-            if (_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                (_icharacterObj.icharacter as Character).AddHistory(combatLog);
-            }
             Debug.Log("Starting combat between " + enemy.name + " and  " + _icharacterObj.icharacter.name);
             combat.CombatSimulation();
         } else {
@@ -96,9 +87,18 @@ public class AttackAction : CharacterAction {
                 return;
             }
             SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(_icharacterObj.icharacter.currentSide);
-            _icharacterObj.icharacter.currentCombat.AddCharacter(sideToJoin, enemy);
+            combat.AddCharacter(sideToJoin, enemy);
         }
-       
+
+        Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
+        combatLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
+        combatLog.AddToFillers(_icharacterObj.icharacter, _icharacterObj.icharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        enemy.AddHistory(combatLog);
+        if (_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+            (_icharacterObj.icharacter as Character).AddHistory(combatLog);
+        }
     }
     public bool CanBeDoneByTesting(Character character) {
         if(_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
