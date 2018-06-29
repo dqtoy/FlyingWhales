@@ -27,12 +27,8 @@ public class ReleaseAction : CharacterAction {
     }
     public override void DoneDuration(Character character) {
         base.DoneDuration(character);
-        if(_characterObj.currentState.stateName == "Imprisoned") {
-            ObjectState aliveState = _characterObj.GetState("Alive");
-            _characterObj.ChangeState(aliveState);
-        }
         GiveAllReward(character);
-        _characterObj.character.GoHome();
+        ReleaseCharacter();
     }
     //public override bool CanBeDone() {
     //    if (!_characterObj.character.isPrisoner) {
@@ -41,4 +37,12 @@ public class ReleaseAction : CharacterAction {
     //    return base.CanBeDone();
     //}
     #endregion
+
+    public void ReleaseCharacter() {
+        if (_characterObj.currentState.stateName == "Imprisoned") {
+            ObjectState aliveState = _characterObj.GetState("Alive");
+            _characterObj.ChangeState(aliveState);
+        }
+        _characterObj.character.GoHome();
+    }
 }
