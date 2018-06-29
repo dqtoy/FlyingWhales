@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MonsterDen : StructureObj {
 
-    private const int SPAWN_COOLDOWN_TICKS = 72;
+    private const int SPAWN_COOLDOWN_TICKS = 48;
 
     private int spawnCooldown;
     private Monster spawn;
