@@ -37,7 +37,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
         yield return null;
         Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
-        Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
+        Biomes.Instance.LoadPassableTypes(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Regions...");
         yield return null;
@@ -45,31 +45,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         st.Stop();
 
-        //if (regionGenerationFailed) {
-        //    //Debug.LogWarning("Region generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //} else {
-        //    Debug.Log(string.Format("Region Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        //}
-
-        //Biomes.Instance.UpdateTileVisuals();
-        //Biomes.Instance.GenerateTileBiomeDetails();
-        //return;
-
-        //st.Start();
-        //Biomes.Instance.DetermineIslands();
-        //st.Stop();
-        //Debug.Log(string.Format("Island Connections took {0} ms to complete", st.ElapsedMilliseconds));
-
-        //RoadManager.Instance.FlattenRoads();
-        //Biomes.Instance.LoadElevationSprites();
-        //Biomes.Instance.GenerateTileBiomeDetails();
-
-        //return;
         RoadManager.Instance.GenerateTilePassableTypes();
-        //GridMap.Instance.BottleneckBorders();
 
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
@@ -83,49 +59,12 @@ public class MapGenerator : MonoBehaviour {
         FactionManager.Instance.GenerateInitialFactions();
         st.Stop();
 
-        //if (factionGenerationFailed) {
-        //    //reset
-        //    Debug.LogWarning("Faction generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //} else {
-        //    Debug.Log(string.Format("Faction Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        //}
-
-        //st.Start();
-        //bool landmarkGenerationFailed = !LandmarkManager.Instance.GenerateLandmarks();
-        //st.Stop();
-
         LevelLoaderManager.UpdateLoadingInfo("Generating Landmarks...");
         yield return null;
         st.Start();
         LandmarkManager.Instance.GenerateFactionLandmarks();
         st.Stop();
-        //if (landmarkGenerationFailed) {
-        //    //reset
-        //    Debug.LogWarning("Landmark generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //} else {
-        //    Debug.Log(string.Format("Landmark Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        //}
 
-        //st.Start();
-        //bool roadGenerationFailed = !RoadManager.Instance.GenerateRoads();
-        //st.Stop();
-
-        //if (roadGenerationFailed) {
-        //    //reset
-        //    Debug.LogWarning("Road generation ran into a problem, reloading scene...");
-        //    Messenger.Cleanup();
-        //    ReloadScene();
-        //    return;
-        //} else {
-        //    Debug.Log(string.Format("Road Generation took {0} ms to complete", st.ElapsedMilliseconds));
-        //}
-        //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 
         FactionManager.Instance.OccupyLandmarksInFactionRegions();
@@ -133,23 +72,12 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
         yield return null;
         ObjectManager.Instance.Initialize();
-        //LandmarkManager.Instance.ConstructAllLandmarkObjects();
 
-        //LandmarkManager.Instance.GenerateMaterials();
-
-        //RoadManager.Instance.FlattenRoads();
-        //Biomes.Instance.GenerateTileTags();
-        //GridMap.Instance.GenerateNeighboursWithSameTag();
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
         CharacterManager.Instance.GenerateCharactersForTesting(8);
-        //FactionManager.Instance.GenerateFactionCharacters();
-        //FactionManager.Instance.GenerateMonsters();
-        //StorylineManager.Instance.GenerateStoryLines();
-        //CharacterManager.Instance.SchedulePrisonerConversion();
-        //CameraMove.Instance.CenterCameraOn(FactionManager.Instance.allTribes.FirstOrDefault().settlements.FirstOrDefault().tileLocation.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
@@ -191,7 +119,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateOuterGrid();
         GridMap.Instance.DivideOuterGridRegions();
 
-        Biomes.Instance.LoadPassableObjects(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
+        Biomes.Instance.LoadPassableTypes(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
         RoadManager.Instance.GenerateTilePassableTypes();
 

@@ -18,7 +18,6 @@ public class Biomes : MonoBehaviour {
     [Header("Biome Sprites")]
     [SerializeField] private Sprite[] grasslandTiles;
 	[SerializeField] private Sprite[] forestTiles;
-	[SerializeField] private Sprite[] woodlandTiles;
 	[SerializeField] private Sprite[] desertTiles;
 	[SerializeField] private Sprite[] tundraTiles;
 	[SerializeField] private Sprite[] waterTiles;
@@ -35,14 +34,19 @@ public class Biomes : MonoBehaviour {
 
     [Space(10)]
     [Header("Mountain Sprites")]
-    [SerializeField] private Sprite[] greenMountainTiles;
-	[SerializeField] private Sprite[] desertMountainTiles;
-	[SerializeField] private Sprite[] snowAndTundraMountainTiles;
+    [SerializeField] private Sprite[] grasslandMountains;
+	[SerializeField] private Sprite[] forestMountains;
+    [SerializeField] private Sprite[] desertMountains;
+    [SerializeField] private Sprite[] snowMountains;
+    [SerializeField] private Sprite[] tundraMounains;
 
     [Space(10)]
     [Header("Tree Sprites")]
-    [SerializeField] private Sprite[] woodlandTrees;
+    [SerializeField] private Sprite[] grasslandTrees;
 	[SerializeField] private Sprite[] forestTrees;
+    [SerializeField] private Sprite[] desertTrees;
+    [SerializeField] private Sprite[] snowTrees;
+    [SerializeField] private Sprite[] tundraTrees;
 
     [Space(10)]
     [Header("Biome Textures")]
@@ -99,80 +103,61 @@ public class Biomes : MonoBehaviour {
         }
 		//GenerateBareBiome();
 	}
-    internal void LoadPassableObjects(List<HexTile> tiles, List<HexTile> outerGrid = null) {
+
+    public void LoadPassableTypes(List<HexTile> tiles, List<HexTile> outerGrid = null) {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currentHexTile = tiles[i];
-            LoadPassableObjects(currentHexTile);
+            LoadPassableTypes(currentHexTile);
         }
         if (outerGrid != null) {
             for (int i = 0; i < outerGrid.Count; i++) {
                 HexTile currentHexTile = outerGrid[i];
-                LoadPassableObjects(currentHexTile, true);
+                LoadPassableTypes(currentHexTile, true);
             }
         }
     }
-
-    internal void LoadPassableObjects(HexTile currentHexTile, bool isOuterGrid = false) {
-        object centerObj = GetCenterObject(currentHexTile);
-        currentHexTile.SetPassableObject(centerObj);
+    public void LoadPassableTypes(HexTile currentHexTile, bool isOuterGrid = false) {
         if (currentHexTile.elevationType == ELEVATION.PLAIN && !isOuterGrid) {
             currentHexTile.SetPassableState(true);
         } else {
             currentHexTile.SetPassableState(false);
         }
     }
-    //internal void LoadElevationSprites() {
-    //    for (int i = 0; i < GridMap.Instance.hexTiles.Count; i++) {
-    //        HexTile currTile = GridMap.Instance.hexTiles[i];
-    //        SetElevationSpriteForTile(currTile);
-    //        currTile.UpdateLedgesAndOutlines();
+
+    //internal void LoadPassableObjects(List<HexTile> tiles, List<HexTile> outerGrid = null) {
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        HexTile currentHexTile = tiles[i];
+    //        LoadPassableObjects(currentHexTile);
+    //    }
+    //    if (outerGrid != null) {
+    //        for (int i = 0; i < outerGrid.Count; i++) {
+    //            HexTile currentHexTile = outerGrid[i];
+    //            LoadPassableObjects(currentHexTile, true);
+    //        }
     //    }
     //}
+
+    //internal void LoadPassableObjects(HexTile currentHexTile, bool isOuterGrid = false) {
+    //    //object centerObj = GetCenterObject(currentHexTile);
+    //    //currentHexTile.SetPassableObject(centerObj);
+    //    if (currentHexTile.elevationType == ELEVATION.PLAIN && !isOuterGrid) {
+    //        currentHexTile.SetPassableState(true);
+    //    } else {
+    //        currentHexTile.SetPassableState(false);
+    //    }
+    //}
+   
     internal void SetBiomeForTile(BIOMES biomeForTile, HexTile currentHexTile) {
         currentHexTile.SetBiome(biomeForTile);
-
-        //if (currentHexTile.elevationType == ELEVATION.WATER) {
-        //    return;
-        //}
-        //int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
-        //switch (currentHexTile.biomeType) {
-        //    case BIOMES.SNOW:
-        //        Sprite snowSpriteToUse = snowTiles[Random.Range(0, snowTiles.Length)];
-        //        currentHexTile.SetBaseSprite(snowSpriteToUse);
-        //        sortingOrder += 6;
-        //        break;
-        //    case BIOMES.TUNDRA:
-        //        Sprite tundraSpriteToUse = tundraTiles[Random.Range(0, tundraTiles.Length)];
-        //        currentHexTile.SetBaseSprite(tundraSpriteToUse);
-        //        sortingOrder += 3;
-        //        break;
-        //    case BIOMES.DESERT:
-        //        Sprite desertSpriteToUse = desertTiles[Random.Range(0, desertTiles.Length)];
-        //        currentHexTile.SetBaseSprite(desertSpriteToUse);
-        //        sortingOrder += 5;
-        //        break;
-        //    case BIOMES.GRASSLAND:
-        //        Sprite grasslandSpriteToUse = grasslandTiles[Random.Range(0, grasslandTiles.Length)];
-        //        currentHexTile.SetBaseSprite(grasslandSpriteToUse);
-        //        sortingOrder += 1;
-        //        break;
-        //    //case BIOMES.WOODLAND:
-        //    //    Sprite woodlandSpriteToUse = woodlandTiles[Random.Range(0, woodlandTiles.Length)];
-        //    //    currentHexTile.SetBaseSprite(woodlandSpriteToUse);
-        //    //    sortingOrder += 2;
-        //    //    break;
-        //    case BIOMES.FOREST:
-        //        Sprite forestSpriteToUse = forestTiles[Random.Range(0, forestTiles.Length)];
-        //        currentHexTile.SetBaseSprite(forestSpriteToUse);
-        //        sortingOrder += 4;
-        //        break;
-        //}
-
-        //currentHexTile.SetSortingOrder(sortingOrder);
     }
 
     internal void UpdateTileVisuals(HexTile currentHexTile, bool updateNeighbours = false) {
-        int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
+        //int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
+#if WORLD_CREATION_TOOL
+        int sortingOrder = ((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  currentHexTile.yCoordinate;
+#else
+        int sortingOrder = ((int)GridMap.Instance.height - 1) -  currentHexTile.yCoordinate;
+#endif
         if (currentHexTile.elevationType == ELEVATION.WATER) {
             SetElevationSpriteForTile(currentHexTile);
             currentHexTile.UpdateLedgesAndOutlines();
@@ -184,45 +169,93 @@ public class Biomes : MonoBehaviour {
                 currentHexTile.AllNeighbours.ForEach(x => x.UpdateLedgesAndOutlines());
             }
         }
-        switch (currentHexTile.biomeType) {
+        if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+            LoadPlainTileVisuals(currentHexTile, sortingOrder);
+        } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+            LoadMountainTileVisuals(currentHexTile, sortingOrder);
+        } else if (currentHexTile.elevationType == ELEVATION.TREES) {
+            LoadTreeTileVisuals(currentHexTile, sortingOrder);
+        }
+
+    }
+
+    private void LoadPlainTileVisuals(HexTile tile, int sortingOrder) {
+        switch (tile.biomeType) {
             case BIOMES.SNOW:
                 Sprite snowSpriteToUse = snowTiles[Random.Range(0, snowTiles.Length)];
-                currentHexTile.SetBaseSprite(snowSpriteToUse);
-                sortingOrder += 6;
+                tile.SetBaseSprite(snowSpriteToUse);
                 break;
             case BIOMES.TUNDRA:
                 Sprite tundraSpriteToUse = tundraTiles[Random.Range(0, tundraTiles.Length)];
-                currentHexTile.SetBaseSprite(tundraSpriteToUse);
-                sortingOrder += 3;
+                tile.SetBaseSprite(tundraSpriteToUse);
                 break;
             case BIOMES.DESERT:
                 Sprite desertSpriteToUse = desertTiles[Random.Range(0, desertTiles.Length)];
-                currentHexTile.SetBaseSprite(desertSpriteToUse);
-                sortingOrder += 5;
+                tile.SetBaseSprite(desertSpriteToUse);
                 break;
             case BIOMES.GRASSLAND:
                 Sprite grasslandSpriteToUse = grasslandTiles[Random.Range(0, grasslandTiles.Length)];
-                currentHexTile.SetBaseSprite(grasslandSpriteToUse);
-                sortingOrder += 1;
+                tile.SetBaseSprite(grasslandSpriteToUse);
                 break;
-            //case BIOMES.WOODLAND:
-            //    Sprite woodlandSpriteToUse = woodlandTiles[Random.Range(0, woodlandTiles.Length)];
-            //    currentHexTile.SetBaseSprite(woodlandSpriteToUse);
-            //    sortingOrder += 2;
-            //    break;
             case BIOMES.FOREST:
                 Sprite forestSpriteToUse = forestTiles[Random.Range(0, forestTiles.Length)];
-                currentHexTile.SetBaseSprite(forestSpriteToUse);
-                sortingOrder += 4;
+                tile.SetBaseSprite(forestSpriteToUse);
                 break;
         }
-
-        currentHexTile.SetSortingOrder(sortingOrder);
+        tile.SetSortingOrder(sortingOrder);
+    }
+    private void LoadMountainTileVisuals(HexTile tile, int sortingOrder) {
+        switch (tile.biomeType) {
+            case BIOMES.SNOW:
+                Sprite snowSpriteToUse = snowMountains[Random.Range(0, snowMountains.Length)];
+                tile.SetBaseSprite(snowSpriteToUse);
+                break;
+            case BIOMES.TUNDRA:
+                Sprite tundraSpriteToUse = tundraMounains[Random.Range(0, tundraMounains.Length)];
+                tile.SetBaseSprite(tundraSpriteToUse);
+                break;
+            case BIOMES.DESERT:
+                Sprite desertSpriteToUse = desertMountains[Random.Range(0, desertMountains.Length)];
+                tile.SetBaseSprite(desertSpriteToUse);
+                break;
+            case BIOMES.GRASSLAND:
+                Sprite grasslandSpriteToUse = grasslandMountains[Random.Range(0, grasslandMountains.Length)];
+                tile.SetBaseSprite(grasslandSpriteToUse);
+                break;
+            case BIOMES.FOREST:
+                Sprite forestSpriteToUse = forestMountains[Random.Range(0, forestMountains.Length)];
+                tile.SetBaseSprite(forestSpriteToUse);
+                break;
+        }
+        tile.SetSortingOrder(sortingOrder);
+    }
+    private void LoadTreeTileVisuals(HexTile tile, int sortingOrder) {
+        switch (tile.biomeType) {
+            case BIOMES.SNOW:
+                Sprite snowSpriteToUse = snowTrees[Random.Range(0, snowTrees.Length)];
+                tile.SetBaseSprite(snowSpriteToUse);
+                break;
+            case BIOMES.TUNDRA:
+                Sprite tundraSpriteToUse = tundraTrees[Random.Range(0, tundraTrees.Length)];
+                tile.SetBaseSprite(tundraSpriteToUse);
+                break;
+            case BIOMES.DESERT:
+                Sprite desertSpriteToUse = desertTrees[Random.Range(0, desertTrees.Length)];
+                tile.SetBaseSprite(desertSpriteToUse);
+                break;
+            case BIOMES.GRASSLAND:
+                Sprite grasslandSpriteToUse = grasslandTrees[Random.Range(0, grasslandTrees.Length)];
+                tile.SetBaseSprite(grasslandSpriteToUse);
+                break;
+            case BIOMES.FOREST:
+                Sprite forestSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
+                tile.SetBaseSprite(forestSpriteToUse);
+                break;
+        }
+        tile.SetSortingOrder(sortingOrder);
     }
 
     internal void UpdateTileVisuals(List<HexTile> allTiles) {
-        //List<HexTile> allTiles = new List<HexTile>(GridMap.Instance.hexTiles);
-        //allTiles.AddRange(GridMap.Instance.outerGridList);
         for (int i = 0; i < allTiles.Count; i++) {
             HexTile currentHexTile = allTiles[i];
             UpdateTileVisuals(currentHexTile);
@@ -232,25 +265,24 @@ public class Biomes : MonoBehaviour {
     internal void GenerateTileBiomeDetails(List<HexTile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currentHexTile = tiles[i];
+            GenerateTileBiomeDetails(currentHexTile);
             //if(currentHexTile.elevationType != ELEVATION.PLAIN) {
             //    continue;
             //}
             //if (currentHexTile.biomeType == BIOMES.FOREST) {
             //    continue;
             //}
-            GenerateTileBiomeDetails(currentHexTile);
+            //GenerateTileBiomeDetails(currentHexTile);
         }
     }
     internal void GenerateTileBiomeDetails(HexTile tile) {
-        AddBiomeDetailToTile(tile);
+        if (tile.biomeType == BIOMES.SNOW || tile.biomeType == BIOMES.TUNDRA) {
+            AddBiomeDetailToTile(tile);
+        }
     }
 
     internal void AddBiomeDetailToTile(HexTile tile) {
-        //if(tile.elevationType != ELEVATION.PLAIN) {
-        //    return;
-        //}
         GameObject biomeDetailToUse = null;
-        //Sprite centerSpriteToUse = null;
         if (tile.elevationType == ELEVATION.PLAIN) {
             switch (tile.biomeType) {
                 case BIOMES.SNOW:
@@ -301,51 +333,6 @@ public class Biomes : MonoBehaviour {
             currentHexTile.centerPiece.SetActive(false);
             return;
         }
-        //switch (currentHexTile.biomeType) {
-        //    case BIOMES.SNOW:
-        //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-        //            Sprite mountainSpriteToUse = snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
-        //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
-        //        }
-        //        break;
-        //    case BIOMES.TUNDRA:
-        //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-        //            Sprite mountainSpriteToUse = snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
-        //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
-        //        }
-        //        break;
-        //    case BIOMES.DESERT:
-        //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-        //            Sprite mountainSpriteToUse = desertMountainTiles[Random.Range(0, desertMountainTiles.Length)];
-        //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
-        //        }
-        //        break;
-        //    case BIOMES.GRASSLAND:
-        //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-        //            Sprite mountainSpriteToUse = greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
-        //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
-        //        }
-        //        break;
-        //    //case BIOMES.WOODLAND:
-        //    //    if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-        //    //        Sprite mountainSpriteToUse = greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
-        //    //        currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //    //        Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
-        //    //    }
-        //    //    break;
-        //    case BIOMES.FOREST:
-        //        if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-        //            Sprite mountainSpriteToUse = greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
-        //            currentHexTile.SetCenterSprite(mountainSpriteToUse);
-        //            Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.spriteRenderer, "TileDetails");
-        //        }
-        //        break;
-        //}
-        //currentHexTile.UpdateSortingOrder();
     }
 	internal void DeactivateCenterPieces(){
 		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
@@ -794,22 +781,22 @@ public class Biomes : MonoBehaviour {
     //}
 
     #region Utilities
-    public Sprite GetCenterPieceSprite(HexTile tile) {
-        if (!tile.isPassable && tile.elevationType != ELEVATION.WATER) {
-            switch (tile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
-                case BIOMES.DESERT:
-                    return desertMountainTiles[Random.Range(0, desertMountainTiles.Length)];
-                case BIOMES.GRASSLAND:
-                    return greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
-                case BIOMES.FOREST:
-                    return forestTrees[Random.Range(0, forestTrees.Length)];
-            }
-        }
-        return null;
-    }
+    //public Sprite GetCenterPieceSprite(HexTile tile) {
+    //    if (!tile.isPassable && tile.elevationType != ELEVATION.WATER) {
+    //        switch (tile.biomeType) {
+    //            case BIOMES.SNOW:
+    //            case BIOMES.TUNDRA:
+    //                return snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
+    //            case BIOMES.DESERT:
+    //                return desertMountainTiles[Random.Range(0, desertMountainTiles.Length)];
+    //            case BIOMES.GRASSLAND:
+    //                return greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
+    //            case BIOMES.FOREST:
+    //                return forestTrees[Random.Range(0, forestTrees.Length)];
+    //        }
+    //    }
+    //    return null;
+    //}
     internal Sprite GetTextureForBiome(BIOMES biomeType) {
         if (biomeType == BIOMES.GRASSLAND) {
             return grasslandTexture;
@@ -828,36 +815,36 @@ public class Biomes : MonoBehaviour {
         }
         return null;
     }
-    public object GetCenterObject(HexTile tile) {
-        switch (tile.elevationType) {
-            case ELEVATION.MOUNTAIN:
-                switch (tile.biomeType) {
-                    case BIOMES.SNOW:
-                    case BIOMES.TUNDRA:
-                        return snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
-                    case BIOMES.DESERT:
-                        return desertMountainTiles[Random.Range(0, desertMountainTiles.Length)];
-                    case BIOMES.GRASSLAND:
-                    case BIOMES.FOREST:
-                        return greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
-                }
-                break;
-            case ELEVATION.PLAIN:
-            case ELEVATION.TREES:
-                switch (tile.biomeType) {
-                    case BIOMES.SNOW:
-                    case BIOMES.TUNDRA:
-                    case BIOMES.DESERT:
-                        return ebonyPrefab;
-                    case BIOMES.GRASSLAND:
-                        return oakPrefab;
-                    case BIOMES.FOREST:
-                        return forestTrees[Random.Range(0, forestTrees.Length)];
-                }
-                break;
-        }
-        return null;
-    }
+    //public object GetCenterObject(HexTile tile) {
+    //    switch (tile.elevationType) {
+    //        case ELEVATION.MOUNTAIN:
+    //            switch (tile.biomeType) {
+    //                case BIOMES.SNOW:
+    //                case BIOMES.TUNDRA:
+    //                    return snowAndTundraMountainTiles[Random.Range(0, snowAndTundraMountainTiles.Length)];
+    //                case BIOMES.DESERT:
+    //                    return desertMountainTiles[Random.Range(0, desertMountainTiles.Length)];
+    //                case BIOMES.GRASSLAND:
+    //                case BIOMES.FOREST:
+    //                    return greenMountainTiles[Random.Range(0, greenMountainTiles.Length)];
+    //            }
+    //            break;
+    //        case ELEVATION.PLAIN:
+    //        case ELEVATION.TREES:
+    //            switch (tile.biomeType) {
+    //                case BIOMES.SNOW:
+    //                case BIOMES.TUNDRA:
+    //                case BIOMES.DESERT:
+    //                    return ebonyPrefab;
+    //                case BIOMES.GRASSLAND:
+    //                    return oakPrefab;
+    //                case BIOMES.FOREST:
+    //                    return forestTrees[Random.Range(0, forestTrees.Length)];
+    //            }
+    //            break;
+    //    }
+    //    return null;
+    //}
     #endregion
 
     //internal GameObject GetPrefabForResource(RESOURCE resource) {

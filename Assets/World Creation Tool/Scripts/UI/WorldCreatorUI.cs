@@ -430,10 +430,10 @@ namespace worldcreator {
             if (settings.items.Count > 0) {
                 contextMenu.LoadSettings(settings);
                 contextMenu.gameObject.SetActive(true);
-                Vector2 pos;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
+                //Vector2 pos;
+                //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
 
-                contextMenu.transform.position = (this.transform as RectTransform).TransformPoint(pos);
+                contextMenu.transform.position = Input.mousePosition;
             }
             //Vector2 newPos;
             //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, CameraMove.Instance.uiCamera, out newPos);

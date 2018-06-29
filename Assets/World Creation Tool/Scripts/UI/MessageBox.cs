@@ -14,6 +14,7 @@ public class MessageBox : MonoBehaviour {
     [SerializeField] private Button yesBtn;
     [SerializeField] private Button noBtn;
     [SerializeField] private Button okBtn;
+    [SerializeField] private Button cancelBtn;
 
     [Space(10)]
     [Header("Input Message Box")]
@@ -69,6 +70,8 @@ public class MessageBox : MonoBehaviour {
             okBtn.onClick.AddListener(() => onClickOk(inputField.text));
         }
         okBtn.onClick.AddListener(HideMessageBox);
+        cancelBtn.onClick.RemoveAllListeners();
+        cancelBtn.onClick.AddListener(HideMessageBox);
         this.gameObject.SetActive(true);
     }
 

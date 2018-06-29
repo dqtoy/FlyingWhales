@@ -28,14 +28,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject topLeftLedge;
     [SerializeField] private GameObject topRightLedge;
 
-    [Space(10)]
-    [Header("Outlines")]
-    [SerializeField] private GameObject topLeftOutline;
-    [SerializeField] private GameObject topRightOutline;
-    [SerializeField] private GameObject leftOutline;
-    [SerializeField] private GameObject rightOutline;
-    [SerializeField] private GameObject botLeftOutline;
-    [SerializeField] private GameObject botRightOutline;
+    //[Space(10)]
+    //[Header("Outlines")]
+    //[SerializeField] private GameObject topLeftOutline;
+    //[SerializeField] private GameObject topRightOutline;
+    //[SerializeField] private GameObject leftOutline;
+    //[SerializeField] private GameObject rightOutline;
+    //[SerializeField] private GameObject botLeftOutline;
+    //[SerializeField] private GameObject botRightOutline;
 
     [Space(10)]
     [Header("Tile Visuals")]
@@ -218,54 +218,54 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //re enable all outlines and disable all ledges
             topLeftLedge.SetActive(false);
             topRightLedge.SetActive(false);
-            SetOutlinesState(true);
+            //SetOutlinesState(true);
         } else { //tile is water
             //check neighbours
             //if north west tile is not water, activate top left ledge
             if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_WEST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_WEST].elevationType != ELEVATION.WATER) {
                 topLeftLedge.SetActive(true);
-                topLeftOutline.SetActive(false);
+                //topLeftOutline.SetActive(false);
             } else {
                 //tile doesn't have a north west neighbour
             }
             //if north east tile is not water, activate top right edge
             if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_EAST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_EAST].elevationType != ELEVATION.WATER) {
                 topRightLedge.SetActive(true);
-                topRightOutline.SetActive(false);
+                //topRightOutline.SetActive(false);
             } else {
                 //tile doesn't have a north east neighbour
             }
 
-            //check outlines
-            foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in neighbourDirections) {
-                HexTile neighbour = kvp.Value;
-                HEXTILE_DIRECTION direction = kvp.Key;
-                if (neighbour.elevationType == ELEVATION.WATER) {
-                    //deactivate the outline tile in that direction
-                    switch (direction) {
-                        case HEXTILE_DIRECTION.NORTH_WEST:
-                            topLeftOutline.SetActive(false);
-                            break;
-                        case HEXTILE_DIRECTION.NORTH_EAST:
-                            topRightOutline.SetActive(false);
-                            break;
-                        case HEXTILE_DIRECTION.EAST:
-                            rightOutline.SetActive(false);
-                            break;
-                        case HEXTILE_DIRECTION.SOUTH_EAST:
-                            botRightOutline.SetActive(false);
-                            break;
-                        case HEXTILE_DIRECTION.SOUTH_WEST:
-                            botLeftOutline.SetActive(false);
-                            break;
-                        case HEXTILE_DIRECTION.WEST:
-                            leftOutline.SetActive(false);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+            ////check outlines
+            //foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in neighbourDirections) {
+            //    HexTile neighbour = kvp.Value;
+            //    HEXTILE_DIRECTION direction = kvp.Key;
+            //    if (neighbour.elevationType == ELEVATION.WATER) {
+            //        //deactivate the outline tile in that direction
+            //        switch (direction) {
+            //            case HEXTILE_DIRECTION.NORTH_WEST:
+            //                topLeftOutline.SetActive(false);
+            //                break;
+            //            case HEXTILE_DIRECTION.NORTH_EAST:
+            //                topRightOutline.SetActive(false);
+            //                break;
+            //            case HEXTILE_DIRECTION.EAST:
+            //                rightOutline.SetActive(false);
+            //                break;
+            //            case HEXTILE_DIRECTION.SOUTH_EAST:
+            //                botRightOutline.SetActive(false);
+            //                break;
+            //            case HEXTILE_DIRECTION.SOUTH_WEST:
+            //                botLeftOutline.SetActive(false);
+            //                break;
+            //            case HEXTILE_DIRECTION.WEST:
+            //                leftOutline.SetActive(false);
+            //                break;
+            //            default:
+            //                break;
+            //        }
+            //    }
+            //}
         }
     }
     #endregion
@@ -907,14 +907,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         tileTextMesh.transform.localPosition = Vector3.zero;
         tileTextMesh.gameObject.SetActive(true);
     }
-    private void SetOutlinesState(bool state) {
-        topLeftOutline.SetActive(state);
-        topRightOutline.SetActive(state);
-        leftOutline.SetActive(state);
-        rightOutline.SetActive(state);
-        botLeftOutline.SetActive(state);
-        botRightOutline.SetActive(state);
-    }
+    //private void SetOutlinesState(bool state) {
+    //    topLeftOutline.SetActive(state);
+    //    topRightOutline.SetActive(state);
+    //    leftOutline.SetActive(state);
+    //    rightOutline.SetActive(state);
+    //    botLeftOutline.SetActive(state);
+    //    botRightOutline.SetActive(state);
+    //}
     public void HighlightTile(Color color, float alpha) {
         color.a = alpha;
         _highlightGO.SetActive(true);
@@ -1040,7 +1040,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Passability
     public void SetPassableState(bool state) {
         _isPassable = state;
-        _centerPiece.SetActive(!state);
+        //_centerPiece.SetActive(!state);
 //#if WORLD_CREATION_TOOL
 //        unpassableGO.SetActive(false);
 //#else
@@ -1190,7 +1190,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 #endif
     }
-
     public void MouseOver() {
 #if WORLD_CREATION_TOOL
         //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
