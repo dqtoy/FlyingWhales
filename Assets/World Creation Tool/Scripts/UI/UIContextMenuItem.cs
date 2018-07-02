@@ -48,11 +48,11 @@ public class UIContextMenuItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
     }
 
     public void ShowSubMenu() {
-        Vector3[] v = new Vector3[4];
-        subMenuRT.GetWorldCorners(v);
-        for (int i = 0; i < v.Length; i++) {
-            Debug.Log(v[i].ToString());
-        }
+        //Vector3[] v = new Vector3[4];
+        //subMenuRT.GetWorldCorners(v);
+        //for (int i = 0; i < v.Length; i++) {
+        //    Debug.Log(v[i].ToString());
+        //}
         subMenu.gameObject.SetActive(true);
     }
 

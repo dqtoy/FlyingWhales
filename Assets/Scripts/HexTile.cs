@@ -1126,12 +1126,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Monobehaviour Functions
     private void OnMouseOver() {
         MouseOver();
+#if !WORLD_CREATION_TOOL
         if (Input.GetMouseButtonDown(0)) {
             LeftClick();
         }
         if (Input.GetMouseButtonDown(1)) {
             RightClick();
         }
+#endif
     }
     private void OnMouseExit() {
         MouseExit();
@@ -1195,7 +1197,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
-            if (Input.GetMouseButtonUp(0)) {
+            if (Input.GetMouseButton(0)) {
+                //Debug.Log("MOUSE DOWN!");
                 Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
             }
             if (Input.GetMouseButtonUp(1)) {
