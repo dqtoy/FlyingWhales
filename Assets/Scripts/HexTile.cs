@@ -10,7 +10,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public HexTileData data;
     private Region _region;
     private Area _areaOfTile;
-    [System.NonSerialized] public SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
 
     [Space(10)]
     [Header("Booleans")]
@@ -174,7 +174,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     public void Initialize() {
-        spriteRenderer = this.GetComponent<SpriteRenderer>();
+        //spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
     #region Region Functions
