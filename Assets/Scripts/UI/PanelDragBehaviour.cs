@@ -20,9 +20,9 @@ public class PanelDragBehaviour : MonoBehaviour {
         //rect.position = currentPosition;
 
         Vector2 pos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, pointerData.position, Camera.main, out pos);
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, pointerData.position, Camera.main, out pos);
 
-        transform.position = canvasRectTransform.TransformPoint(pos);
+        transform.position = Input.mousePosition;
         Debug.Log("Is Inside Canvas?: " + Utilities.IsUIElementInsideScreen(this.transform as RectTransform, worldcreator.WorldCreatorUI.Instance.canvas).ToString());
     }
 }
