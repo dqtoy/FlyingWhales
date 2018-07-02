@@ -388,16 +388,20 @@ namespace ECS{
                 if (character.equippedWeapon != null && sourceCharacter.battleOnlyTracker.lastDamageTaken < sourceCharacter.currentHP) {//character must have a weapon and sourceCharacter last damage taken must not be >= current health
                     weaponAttack = character.equippedWeapon.attackPower;
                     for (int i = 0; i < character.level; i++) {
-                        for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
-                            Skill skill = character.characterClass.skillsPerLevel[i][j];
-                            if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
-                                Debug.Log(skill.skillName);
-                                AttackSkill attackSkill = skill as AttackSkill;
-                                float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff, character.battleTracker);
-                                float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill, character.battleTracker);
-                                int finalWeight = Mathf.CeilToInt(initialWeight * (specialModifier / 100f));
-                                if (finalWeight >= 0) {
-                                    skillActivationWeights.Add(attackSkill, finalWeight);
+                        if(i < character.characterClass.skillsPerLevel.Count) {
+                            if(character.characterClass.skillsPerLevel[i] != null) {
+                                for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
+                                    Skill skill = character.characterClass.skillsPerLevel[i][j];
+                                    if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
+                                        Debug.Log(skill.skillName);
+                                        AttackSkill attackSkill = skill as AttackSkill;
+                                        float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff, character.battleTracker);
+                                        float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill, character.battleTracker);
+                                        int finalWeight = Mathf.CeilToInt(initialWeight * (specialModifier / 100f));
+                                        if (finalWeight >= 0) {
+                                            skillActivationWeights.Add(attackSkill, finalWeight);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -630,10 +634,14 @@ namespace ECS{
                 if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = sourceCharacter as Character;
                     for (int i = 0; i < character.level; i++) {
-                        for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
-                            Skill skill = character.characterClass.skillsPerLevel[i][j];
-                            if (skill is AttackSkill) {
-                                return HasTargetInRangeForSkill(skill, sourceCharacter);
+                        if (i < character.characterClass.skillsPerLevel.Count) {
+                            if (character.characterClass.skillsPerLevel[i] != null) {
+                                for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
+                                    Skill skill = character.characterClass.skillsPerLevel[i][j];
+                                    if (skill is AttackSkill) {
+                                        return HasTargetInRangeForSkill(skill, sourceCharacter);
+                                    }
+                                }
                             }
                         }
                     }
