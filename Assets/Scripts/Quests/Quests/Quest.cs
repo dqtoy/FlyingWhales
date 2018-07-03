@@ -8,11 +8,10 @@ using UnityEngine;
 
 public class Quest {
 
-    public string questName { get; private set; }
+    //public string questName { get; private set; }
     public QUEST_TYPE questType { get; private set; }
 
-    public Quest(string questName, QUEST_TYPE questType) {
-        this.questName = questName;
+    public Quest(QUEST_TYPE questType) {
         this.questType = questType;
     }
 

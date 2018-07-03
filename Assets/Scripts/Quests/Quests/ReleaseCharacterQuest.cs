@@ -4,7 +4,7 @@ using ECS;
 using UnityEngine;
 
 public class ReleaseCharacterQuest : Quest {
-    public ReleaseCharacterQuest(string questName) : base(questName, QUEST_TYPE.RELEASE_CHARACTER) {
+    public ReleaseCharacterQuest() : base(QUEST_TYPE.RELEASE_CHARACTER) {
     }
 
     #region overrides
