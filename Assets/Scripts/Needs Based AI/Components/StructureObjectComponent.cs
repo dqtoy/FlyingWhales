@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class StructureObjectComponent : ObjectComponent {
-    public SPECIFIC_OBJECT_TYPE specificObjectType;
+    public LANDMARK_TYPE specificObjectType;
     public bool isInvisible;
     public int maxHP;
     public ActionEvent onHPReachedZero;
@@ -31,7 +31,7 @@ public class StructureObjectComponent : ObjectComponent {
         if (iobject is StructureObj) {
             //On hitpoints check, when switching from Ruined, check Resource Count to determine whether to switch to Default or Depleted state
             StructureObj obj = (iobject as StructureObj);
-            if (obj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT || obj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT) {
+            if (obj.specificObjectType == LANDMARK_TYPE.ELVEN_SETTLEMENT || obj.specificObjectType == LANDMARK_TYPE.HUMAN_SETTLEMENT) {
                 if (obj.resourceInventory[obj.GetMainResource()] <= 0) {
                     nextStateName = "Empty";
                 }
@@ -77,27 +77,27 @@ public class StructureObjectComponent : ObjectComponent {
             iobject.ChangeState(defaultState);
         }
     }
-    public void ChanceToReduceCivilianUponTorture(IObject iobject) {
-        int chance = UnityEngine.Random.Range(0, 2);
-        if(chance == 0) {
-            if (iobject is StructureObj) {
-                StructureObj structure = iobject as StructureObj;
-                //TODO: Make this flexible
-                RESOURCE chosenResource = RESOURCE.HUMAN_CIVILIAN;
-                if(structure.resourceInventory[RESOURCE.ELF_CIVILIAN] > 0 && structure.resourceInventory[RESOURCE.HUMAN_CIVILIAN] > 0) {
-                    int raceChance = UnityEngine.Random.Range(0, 2);
-                    if(raceChance == 0) {
-                        chosenResource = RESOURCE.ELF_CIVILIAN;
-                    }
-                } else {
-                    if(structure.resourceInventory[RESOURCE.ELF_CIVILIAN] > 0) {
-                        chosenResource = RESOURCE.ELF_CIVILIAN;
-                    }
-                }
-                structure.AdjustResource(chosenResource, -1);
-            }
-        }
-    }
+    //public void ChanceToReduceCivilianUponTorture(IObject iobject) {
+    //    int chance = UnityEngine.Random.Range(0, 2);
+    //    if(chance == 0) {
+    //        if (iobject is StructureObj) {
+    //            StructureObj structure = iobject as StructureObj;
+    //            //TODO: Make this flexible
+    //            RESOURCE chosenResource = RESOURCE.HUMAN_CIVILIAN;
+    //            if(structure.resourceInventory[RESOURCE.ELF_CIVILIAN] > 0 && structure.resourceInventory[RESOURCE.HUMAN_CIVILIAN] > 0) {
+    //                int raceChance = UnityEngine.Random.Range(0, 2);
+    //                if(raceChance == 0) {
+    //                    chosenResource = RESOURCE.ELF_CIVILIAN;
+    //                }
+    //            } else {
+    //                if(structure.resourceInventory[RESOURCE.ELF_CIVILIAN] > 0) {
+    //                    chosenResource = RESOURCE.ELF_CIVILIAN;
+    //                }
+    //            }
+    //            structure.AdjustResource(chosenResource, -1);
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Resources

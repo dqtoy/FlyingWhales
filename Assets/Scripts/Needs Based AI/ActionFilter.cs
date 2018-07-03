@@ -31,8 +31,13 @@ public class MustBeRole : ActionFilter {
         }
     }
     public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
-        if (character.role != null && _allowedRoles.Contains(character.role.roleType)) {
-            return true;
+        if (character.role != null) {
+            if (_allowedRoles.Contains(character.role.roleType)) {
+                return true;
+            }
+            if (character.role is Civilian && _allowedRoles.Contains(CHARACTER_ROLE.CIVILIAN)) {
+                return true;
+            }
         }
         return false;
     }

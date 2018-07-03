@@ -271,7 +271,7 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> characterHistory = new List<Log>(currentlyShowingCharacter.history.OrderBy(x => x.id));
+        List<Log> characterHistory = new List<Log>(currentlyShowingCharacter.history.OrderByDescending(x => x.id));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = characterHistory.ElementAtOrDefault(i);

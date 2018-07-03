@@ -29,9 +29,9 @@ namespace worldcreator {
             List<string> options = new List<string>();
             for (int i = 0; i < landmarkTypes.Length; i++) {
                 LANDMARK_TYPE currType = landmarkTypes[i];
-                if (currType == LANDMARK_TYPE.GARRISON || currType == LANDMARK_TYPE.HUMAN_HOUSES || currType == LANDMARK_TYPE.ELVEN_HOUSES) {
+                //if (currType == LANDMARK_TYPE.GARRISON || currType == LANDMARK_TYPE.HUMAN_HOUSES || currType == LANDMARK_TYPE.ELVEN_HOUSES) {
                     options.Add(currType.ToString());
-                }
+                //}
             }
             landmarksDropDown.AddOptions(options);
         }

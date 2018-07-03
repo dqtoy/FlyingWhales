@@ -5,9 +5,9 @@ using UnityEngine;
 public class HumanSettlement : StructureObj {
 
     public HumanSettlement() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT;
+        _specificObjectType = LANDMARK_TYPE.HUMAN_SETTLEMENT;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        _resourceInventory[RESOURCE.HUMAN_CIVILIAN] = 5000;
+        //_resourceInventory[RESOURCE.HUMAN_CIVILIAN] = 5000;
     }
 
     #region Overrides
@@ -46,9 +46,9 @@ public class HumanSettlement : StructureObj {
     #endregion
 
     #region Resource Inventory
-    public override RESOURCE GetMainResource() {
-        return RESOURCE.HUMAN_CIVILIAN;
-    }
+    //public override RESOURCE GetMainResource() {
+    //    return RESOURCE.HUMAN_CIVILIAN;
+    //}
     #endregion
 
     #region Utilities

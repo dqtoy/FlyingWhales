@@ -5,7 +5,7 @@ using UnityEngine;
 public class HumanHouses : StructureObj {
 
     public HumanHouses() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.HUMAN_HOUSES;
+        _specificObjectType = LANDMARK_TYPE.HUMAN_HOUSES;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

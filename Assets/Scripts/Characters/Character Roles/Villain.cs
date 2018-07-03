@@ -7,11 +7,11 @@ public class Villain : CharacterRole {
 	public Villain(ECS.Character character): base (character) {
 		_roleType = CHARACTER_ROLE.VILLAIN;
 
-		_allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
-			ACTION_ALIGNMENT.VILLAINOUS,
-			ACTION_ALIGNMENT.LAWFUL,
-			ACTION_ALIGNMENT.UNLAWFUL
-		};
+		//_allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
+		//	ACTION_ALIGNMENT.VILLAINOUS,
+		//	ACTION_ALIGNMENT.LAWFUL,
+		//	ACTION_ALIGNMENT.UNLAWFUL
+		//};
 
 		//_roleTasks.Add (new DoNothing (this._character));
 		//_roleTasks.Add (new Rest (this._character));

@@ -5,9 +5,9 @@ using UnityEngine;
 public class OakLumberyard : StructureObj {
 
     public OakLumberyard() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.OAK_LUMBERYARD;
+        _specificObjectType = LANDMARK_TYPE.OAK_LUMBERYARD;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        _resourceInventory[RESOURCE.OAK] = 5000; //Initial amount should be 5000
+        //_resourceInventory[RESOURCE.OAK] = 5000; //Initial amount should be 5000
     }
 
     #region Overrides

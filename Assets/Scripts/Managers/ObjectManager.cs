@@ -270,53 +270,65 @@ public class ObjectManager : MonoBehaviour {
     public StructureObj ConvertComponentToStructureObject(StructureObjectComponent component) {
         StructureObj structureObj = null;
         switch (component.specificObjectType) {
-            case SPECIFIC_OBJECT_TYPE.DEMONIC_PORTAL:
+            case LANDMARK_TYPE.DEMONIC_PORTAL:
                 structureObj = new DemonicPortal();
                 break;
-            case SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT:
+            case LANDMARK_TYPE.ELVEN_SETTLEMENT:
                 structureObj = new ElvenSettlement();
                 break;
-            case SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT:
+            case LANDMARK_TYPE.HUMAN_SETTLEMENT:
                 structureObj = new HumanSettlement();
                 break;
-            case SPECIFIC_OBJECT_TYPE.GARRISON:
+            case LANDMARK_TYPE.GARRISON:
                 structureObj = new Garrison();
                 break;
-            case SPECIFIC_OBJECT_TYPE.OAK_FORTIFICATION:
+            case LANDMARK_TYPE.OAK_FORTIFICATION:
                 structureObj = new OakFortification();
                 break;
-            case SPECIFIC_OBJECT_TYPE.IRON_FORTIFICATION:
+            case LANDMARK_TYPE.IRON_FORTIFICATION:
                 structureObj = new IronFortification();
                 break;
-            case SPECIFIC_OBJECT_TYPE.OAK_LUMBERYARD:
+            case LANDMARK_TYPE.OAK_LUMBERYARD:
                 structureObj = new OakLumberyard();
                 break;
-            case SPECIFIC_OBJECT_TYPE.IRON_MINES:
+            case LANDMARK_TYPE.IRON_MINES:
                 structureObj = new IronMines();
                 break;
-            case SPECIFIC_OBJECT_TYPE.INN:
+            case LANDMARK_TYPE.INN:
                 structureObj = new Inn();
                 break;
-            case SPECIFIC_OBJECT_TYPE.PUB:
+            case LANDMARK_TYPE.PUB:
                 structureObj = new Pub();
                 break;
-            case SPECIFIC_OBJECT_TYPE.TEMPLE:
+            case LANDMARK_TYPE.TEMPLE:
                 structureObj = new Temple();
                 break;
-            case SPECIFIC_OBJECT_TYPE.HUNTING_GROUNDS:
+            case LANDMARK_TYPE.HUNTING_GROUNDS:
                 structureObj = new HuntingGrounds();
                 break;
-            case SPECIFIC_OBJECT_TYPE.ELVEN_HOUSES:
+            case LANDMARK_TYPE.ELVEN_HOUSES:
                 structureObj = new ElvenHouses();
                 break;
-            case SPECIFIC_OBJECT_TYPE.HUMAN_HOUSES:
+            case LANDMARK_TYPE.HUMAN_HOUSES:
                 structureObj = new HumanHouses();
                 break;
-            case SPECIFIC_OBJECT_TYPE.MONSTER_DEN:
+            case LANDMARK_TYPE.MONSTER_DEN:
                 structureObj = new MonsterDen();
                 break;
-            case SPECIFIC_OBJECT_TYPE.SNATCHER_DEMONS_LAIR:
+            case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
                 structureObj = new SnatcherDemonsLair();
+                break;
+            case LANDMARK_TYPE.SHOP:
+                structureObj = new Shop();
+                break;
+            case LANDMARK_TYPE.FARM:
+                structureObj = new Farm();
+                break;
+            case LANDMARK_TYPE.GOLD_MINE:
+                structureObj = new GoldMine();
+                break;
+            case LANDMARK_TYPE.LUMBERYARD:
+                structureObj = new Lumberyard();
                 break;
         }
         component.CopyDataToStructureObject(structureObj);

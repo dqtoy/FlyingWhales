@@ -5,9 +5,8 @@ using UnityEngine;
 public class IronMines : StructureObj {
 
 	public IronMines() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.IRON_MINES;
+        _specificObjectType = LANDMARK_TYPE.IRON_MINES;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        _resourceInventory[RESOURCE.IRON] = 5000;
     }
 
     #region Overrides

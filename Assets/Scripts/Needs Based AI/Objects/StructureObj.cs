@@ -7,7 +7,7 @@ using ECS;
 
 public class StructureObj : IObject {
     protected OBJECT_TYPE _objectType;
-    protected SPECIFIC_OBJECT_TYPE _specificObjectType;
+    protected LANDMARK_TYPE _specificObjectType;
     protected bool _isInvisible;
     protected int _maxHP;
     protected ActionEvent _onHPReachedZero;
@@ -31,7 +31,7 @@ public class StructureObj : IObject {
     public OBJECT_TYPE objectType {
         get { return _objectType; }
     }
-    public SPECIFIC_OBJECT_TYPE specificObjectType {
+    public LANDMARK_TYPE specificObjectType {
         get { return _specificObjectType; }
     }
     public List<ObjectState> states {
@@ -114,7 +114,7 @@ public class StructureObj : IObject {
     public void SetObjectName(string name) {
         _objectName = name;
     }
-    public void SetSpecificObjectType(SPECIFIC_OBJECT_TYPE specificObjectType) {
+    public void SetSpecificObjectType(LANDMARK_TYPE specificObjectType) {
         _specificObjectType = specificObjectType;
     }
     public void SetIsInvisible(bool state) {
@@ -208,16 +208,16 @@ public class StructureObj : IObject {
     //    //}
     //    return total;
     //}
-    public void CiviliansDeath(RACE race, int amount) {
-        RESOURCE civilianResource = RESOURCE.ELF_CIVILIAN;
-        switch (race) {
-            case RACE.HUMANS:
-            civilianResource = RESOURCE.HUMAN_CIVILIAN;
-            break;
-        }
-        AdjustResource(civilianResource, -amount);
-        Messenger.Broadcast<StructureObj, int>("CiviliansDeath", this, amount);
-    }
+    //public void CiviliansDeath(RACE race, int amount) {
+    //    RESOURCE civilianResource = RESOURCE.ELF_CIVILIAN;
+    //    switch (race) {
+    //        case RACE.HUMANS:
+    //        civilianResource = RESOURCE.HUMAN_CIVILIAN;
+    //        break;
+    //    }
+    //    AdjustResource(civilianResource, -amount);
+    //    Messenger.Broadcast<StructureObj, int>("CiviliansDeath", this, amount);
+    //}
     public virtual RESOURCE GetMainResource() {
         return RESOURCE.NONE;
     }

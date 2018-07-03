@@ -23,25 +23,28 @@ public class HarvestAction : CharacterAction {
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
         GiveAllReward(character);
 
-        int objectResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
-        if (objectResourceAmount > 0 && !character.DoesSatisfiesPrerequisite(character.actionData.currentChainAction.prerequisite)) { //if object's resource count is still greater than 0 and character doesn't have the required resource amount yet
-            int minResource = this.actionData.minResourceGiven;
-            if (minResource > objectResourceAmount) {
-                //the minimum required resource is greater than the amount of resource that the object has
-                minResource = objectResourceAmount;
-            }
-            int maxResource = this.actionData.maxResourceGiven;
-            if (objectResourceAmount < maxResource) {
-                maxResource = objectResourceAmount;
-            }
+        int resourceGiven = Random.Range(this.actionData.minResourceGiven, this.actionData.maxResourceGiven);
+        character.characterObject.AdjustResource(this.actionData.resourceGiven, resourceGiven);
+        ActionSuccess();
+        //int objectResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
+        //if (objectResourceAmount > 0 && !character.DoesSatisfiesPrerequisite(character.actionData.currentChainAction.prerequisite)) { //if object's resource count is still greater than 0 and character doesn't have the required resource amount yet
+        //    int minResource = this.actionData.minResourceGiven;
+        //    if (minResource > objectResourceAmount) {
+        //        //the minimum required resource is greater than the amount of resource that the object has
+        //        minResource = objectResourceAmount;
+        //    }
+        //    int maxResource = this.actionData.maxResourceGiven;
+        //    if (objectResourceAmount < maxResource) {
+        //        maxResource = objectResourceAmount;
+        //    }
 
-            //give the character resource amount between min and max (inclusive)
-            int resourceAmount = Random.Range(minResource, maxResource);
-            _structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character.characterObject as CharacterObj);
-            ActionSuccess();
-        } else {
-            EndAction(character);
-        }
+        //    //give the character resource amount between min and max (inclusive)
+        //    int resourceAmount = Random.Range(minResource, maxResource);
+        //    _structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character.characterObject as CharacterObj);
+        //    ActionSuccess();
+        //} else {
+        //    EndAction(character);
+        //}
 
     }
     public override CharacterAction Clone(ObjectState state) {

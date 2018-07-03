@@ -5,7 +5,7 @@ using UnityEngine;
 public class HuntingGrounds : StructureObj {
 
 	public HuntingGrounds() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.HUNTING_GROUNDS;
+        _specificObjectType = LANDMARK_TYPE.HUNTING_GROUNDS;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

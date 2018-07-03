@@ -10,7 +10,6 @@ using UnityEngine.Events;
 public struct CharacterActionData {
     public ACTION_TYPE actionType;
     public string actionName;
-    public bool isIndefinite;
     public ActionFilterData[] filters;
 
     public float advertisedFullness;
@@ -69,15 +68,10 @@ public class CharacterActionDrawer : PropertyDrawer {
         //var actionNameRect = new Rect(position.x + 180, position.y, 70, 16);
 
         EditorGUI.PropertyField(actionTypeRect, property.FindPropertyRelative("actionType"), GUIContent.none);
-
-        var indefiniteLblRect = new Rect(position.x, position.y + 20, position.width, 16);
-        var indefiniteRect = new Rect(position.x + 100, position.y + 20, position.width, 16);
-        EditorGUI.LabelField(indefiniteLblRect, "Is Indefinite", EditorStyles.boldLabel);
-        property.FindPropertyRelative("isIndefinite").boolValue = EditorGUI.Toggle(indefiniteRect, property.FindPropertyRelative("isIndefinite").boolValue);
         //EditorGUI.LabelField(new Rect(position.x + 135, position.y, 50, 16), "Name");
         //EditorGUI.PropertyField(actionNameRect, property.FindPropertyRelative("actionName"), GUIContent.none);
 
-        float startPosY = position.y + 40;
+        float startPosY = position.y + 20;
 
         //float headersPosY = startPosY;
         //EditorGUI.indentLevel = -1;

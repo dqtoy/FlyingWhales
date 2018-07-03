@@ -5,7 +5,7 @@ using UnityEngine;
 public class Temple : StructureObj {
 
     public Temple() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.TEMPLE;
+        _specificObjectType = LANDMARK_TYPE.TEMPLE;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 }

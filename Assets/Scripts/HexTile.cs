@@ -1754,6 +1754,30 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 }
             }
         }
+#if UNITY_EDITOR
+        if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
+            if (this.landmarkOnTile != null) {
+                ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+                ContextMenuItemSettings forceActionMain = new ContextMenuItemSettings("Force Action");
+                //forceActionMain.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
+                bool hasDoableAction = false;
+                ContextMenuSettings forceActionSub = new ContextMenuSettings();
+                forceActionMain.SetSubMenu(forceActionSub);
+                for (int i = 0; i < landmarkOnTile.landmarkObj.currentState.actions.Count; i++) {
+                    CharacterAction action = landmarkOnTile.landmarkObj.currentState.actions[i];
+                    if (action.MeetsRequirements(character, this._landmarkOnTile) && action.CanBeDone() && action.CanBeDoneBy(character)) {
+                        hasDoableAction = true;
+                        ContextMenuItemSettings doableAction = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(action.actionType.ToString()));
+                        doableAction.onClickAction = () => character.actionData.ForceDoAction(action);
+                        forceActionSub.AddMenuItem(doableAction);
+                    }
+                }
+                if (hasDoableAction) {
+                    settings.AddMenuItem(forceActionMain);
+                }
+            }
+        }
+#endif
         return settings;
     }
 #endif

@@ -19,6 +19,10 @@ public class ActionData {
     private float _homeMultiplier;
     private bool _hasDoneActionAtHome;
 
+#if UNITY_EDITOR
+    public List<string> actionHistory;
+#endif
+
     #region getters/setters
     public bool isHalted {
         get { return _isHalted; }
@@ -40,6 +44,9 @@ public class ActionData {
 #if !WORLD_CREATION_TOOL
         //Messenger.AddListener(Signals.HOUR_ENDED, PerformCurrentAction);
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
+#endif
+#if UNITY_EDITOR
+        actionHistory = new List<string>();
 #endif
     }
 
@@ -66,6 +73,9 @@ public class ActionData {
         }
         this.currentChainAction = chainAction;
         SetCurrentAction(action);
+        if (action == null) {
+            throw new System.Exception("Action of " + _character.name + "(" + _character.role.roleType.ToString() + ") is null!");
+        }
         action.OnChooseAction(_character);
         _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
@@ -175,10 +185,8 @@ public class ActionData {
             _isNotFirstEncounter = true;
         }
         currentAction.PerformAction(_character);
-        if (!currentAction.actionData.isIndefinite) {
-            if (currentAction.actionData.duration > 0) {
-                AdjustCurrentDay(1);
-            }
+        if (currentAction.actionData.duration > 0) {
+            AdjustCurrentDay(1);
         }
     }
 
@@ -198,5 +206,16 @@ public class ActionData {
         GameDate newDate = GameManager.Instance.Today();
         newDate.AddMonths(1);
         SchedulingManager.Instance.AddEntry(newDate.month, GameManager.daysInMonth[newDate.month], newDate.year, newDate.hour, () => CheckDoneActionHome());
+    }
+
+    /*
+     NOTE: This is only for testing purposes!
+     This will end the character's current action and assign the new action.
+         */
+    public void ForceDoAction(CharacterAction newAction) {
+        if (currentAction != null) {
+            EndAction();
+        }
+        AssignAction(newAction);
     }
 }
