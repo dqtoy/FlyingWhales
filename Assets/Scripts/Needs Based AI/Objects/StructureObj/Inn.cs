@@ -5,7 +5,7 @@ using UnityEngine;
 public class Inn : StructureObj {
 
 	public Inn() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.INN;
+        _specificObjectType = LANDMARK_TYPE.INN;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

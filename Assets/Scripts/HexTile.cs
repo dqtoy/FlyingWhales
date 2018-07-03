@@ -10,7 +10,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public HexTileData data;
     private Region _region;
     private Area _areaOfTile;
-    [System.NonSerialized] public SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
 
     [Space(10)]
     [Header("Booleans")]
@@ -174,7 +174,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     public void Initialize() {
-        spriteRenderer = this.GetComponent<SpriteRenderer>();
+        //spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
     #region Region Functions
@@ -1126,12 +1126,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Monobehaviour Functions
     private void OnMouseOver() {
         MouseOver();
+#if !WORLD_CREATION_TOOL
         if (Input.GetMouseButtonDown(0)) {
             LeftClick();
         }
         if (Input.GetMouseButtonDown(1)) {
             RightClick();
         }
+#endif
     }
     private void OnMouseExit() {
         MouseExit();
@@ -1195,7 +1197,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
-            if (Input.GetMouseButtonUp(0)) {
+            if (Input.GetMouseButton(0)) {
+                //Debug.Log("MOUSE DOWN!");
                 Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
             }
             if (Input.GetMouseButtonUp(1)) {
@@ -1751,6 +1754,30 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 }
             }
         }
+#if UNITY_EDITOR
+        if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
+            if (this.landmarkOnTile != null) {
+                ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+                ContextMenuItemSettings forceActionMain = new ContextMenuItemSettings("Force Action");
+                //forceActionMain.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
+                bool hasDoableAction = false;
+                ContextMenuSettings forceActionSub = new ContextMenuSettings();
+                forceActionMain.SetSubMenu(forceActionSub);
+                for (int i = 0; i < landmarkOnTile.landmarkObj.currentState.actions.Count; i++) {
+                    CharacterAction action = landmarkOnTile.landmarkObj.currentState.actions[i];
+                    if (action.MeetsRequirements(character, this._landmarkOnTile) && action.CanBeDone() && action.CanBeDoneBy(character)) {
+                        hasDoableAction = true;
+                        ContextMenuItemSettings doableAction = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(action.actionType.ToString()));
+                        doableAction.onClickAction = () => character.actionData.ForceDoAction(action);
+                        forceActionSub.AddMenuItem(doableAction);
+                    }
+                }
+                if (hasDoableAction) {
+                    settings.AddMenuItem(forceActionMain);
+                }
+            }
+        }
+#endif
         return settings;
     }
 #endif

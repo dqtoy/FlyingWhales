@@ -12,20 +12,20 @@ public class Hero : CharacterRole {
 
 	public Hero(ECS.Character character): base (character) {
         _roleType = CHARACTER_ROLE.HERO;
-        _allowedQuestTypes = new List<QUEST_TYPE>() {
-            QUEST_TYPE.DEFEND,
-            QUEST_TYPE.EXPLORE_TILE,
-            QUEST_TYPE.EXPAND,
-			QUEST_TYPE.EXPEDITION,
-			QUEST_TYPE.SAVE_LANDMARK,
-        };
+   //     _allowedQuestTypes = new List<QUEST_TYPE>() {
+   //         QUEST_TYPE.DEFEND,
+   //         QUEST_TYPE.EXPLORE_TILE,
+   //         QUEST_TYPE.EXPAND,
+			//QUEST_TYPE.EXPEDITION,
+			//QUEST_TYPE.SAVE_LANDMARK,
+   //     };
 
-        _allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
-            ACTION_ALIGNMENT.HEROIC,
-            ACTION_ALIGNMENT.LAWFUL,
-            ACTION_ALIGNMENT.UNLAWFUL,
-			ACTION_ALIGNMENT.PEACEFUL,
-        };
+   //     _allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
+   //         ACTION_ALIGNMENT.HEROIC,
+   //         ACTION_ALIGNMENT.LAWFUL,
+   //         ACTION_ALIGNMENT.UNLAWFUL,
+			//ACTION_ALIGNMENT.PEACEFUL,
+   //     };
 
         //_roleTasks.Add (new DoNothing (this._character));
         //_roleTasks.Add (new Rest (this._character));

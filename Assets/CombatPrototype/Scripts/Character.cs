@@ -67,7 +67,7 @@ namespace ECS {
         private CharacterRole _role;
         private Faction _faction;
         private CharacterParty _party;
-        //private QuestData _questData;
+        private List<CharacterQuestData> _questData;
         //private CharacterActionQueue<CharacterAction> _actionQueue;
         //private CharacterAction _currentAction;
         //private ILocation _specificLocation;
@@ -90,28 +90,21 @@ namespace ECS {
         private Area _home;
         private BaseLandmark _homeLandmark;
         private StructureObj _homeStructure;
-
-        //private BaseLandmark _lair;
-        //private int _combatHistoryID;
         private List<Log> _history;
-        //private Dictionary<RACE, int> _civiliansByRace;
 
         private int _actRate;
         internal Dictionary<int, Combat> combatHistory;
 
         private float _equippedWeaponPower;
         private int _gold;
-        //private int _prestige;
 
         //private Action _currentFunction;
         private bool _isInCombat;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         private Dictionary<Character, List<string>> _traceInfo;
-        //private WeightedDictionary<CharacterTask> actionWeights;
 
         //private ActionData _actionData;
 
-        //private Dictionary<RESOURCE, int> _resourceInventory;
 
         #region getters / setters
         public string firstName {
@@ -165,9 +158,9 @@ namespace ECS {
         public CharacterParty party {
             get { return _party; }
         }
-        //public ILocation specificLocation {
-        //    get { return _party.specificLocation; }
-        //}
+        public List<CharacterQuestData> questData {
+            get { return _questData; }
+        }
         public HexTile currLocation {
             get { return (_party.specificLocation != null ? _party.specificLocation.tileLocation : null); }
         }
@@ -393,11 +386,11 @@ namespace ECS {
             _isIdle = false;
             _traceInfo = new Dictionary<Character, List<string>>();
             _history = new List<Log>();
-            //_questData = new QuestData(this);
+            _questData = new List<CharacterQuestData>();
             //_actionQueue = new CharacterActionQueue<CharacterAction>();
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
-            _actionData = new ActionData(this);
+            //_actionData = new ActionData(this);
 
 
             //RPG
@@ -791,7 +784,7 @@ namespace ECS {
 				}
 
                 //Remove ActionData
-                _actionData.DetachActionData();
+                //_actionData.DetachActionData();
 
 				//if(_home != null){
     //                //Remove character home on landmark
@@ -1340,10 +1333,10 @@ namespace ECS {
             }
             return this.characterClass.allowedWeaponTypes[UnityEngine.Random.Range(0, this.characterClass.allowedWeaponTypes.Count)];
         }
-        internal void AdjustGold(int amount) {
-            _gold += amount;
-            _gold = Mathf.Max(0, _gold);
-        }
+        //internal void AdjustGold(int amount) {
+        //    _gold += amount;
+        //    _gold = Mathf.Max(0, _gold);
+        //}
         //internal void AdjustPrestige(int amount) {
         //    _prestige += amount;
         //    _prestige = Mathf.Max(0, _prestige);
@@ -1573,7 +1566,19 @@ namespace ECS {
                     break;
                 case CHARACTER_ROLE.KING:
                     _role = new King(this);
-                break;
+                    break;
+                case CHARACTER_ROLE.SHOPKEEPER:
+                    _role = new Shopkeeper(this);
+                    break;
+                case CHARACTER_ROLE.MINER:
+                    _role = new Miner(this);
+                    break;
+                case CHARACTER_ROLE.WOODCUTTER:
+                    _role = new Woodcutter(this);
+                    break;
+                case CHARACTER_ROLE.FARMER:
+                    _role = new Farmer(this);
+                    break;
                 //case CHARACTER_ROLE.FOLLOWER:
                 //    _role = new Follower(this);
                 //    break;
@@ -2007,6 +2012,17 @@ namespace ECS {
 			return false;
 		}
 		#endregion
+
+		#region Quests
+        public void OnQuestTaken(Quest takenQuest) {
+            //TODO: Add CharacterQuestData based on the taken quest
+        }
+        public void AddQuestData(CharacterQuestData questData) {
+            if (!_questData.Contains(questData)) {
+                _questData.Add(questData);
+            }
+        }
+        #endregion
 
         #region Tags
 		public void AssignInitialTags(){

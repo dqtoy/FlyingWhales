@@ -79,6 +79,7 @@ public class Player : ILeader{
                 character.OnCharacterSnatched();
                 Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Successfully snatched " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
                 Debug.Log("Snatched " + character.name);
+                Messenger.Broadcast(Signals.PLAYER_SNATCHED, this);
             }
         } else {
             Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Failed to snatch " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);

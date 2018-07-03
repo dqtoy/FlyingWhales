@@ -30,7 +30,7 @@ public class ActionThread : Multithread {
         try {
             LookForAction();
         } catch (Exception e) {
-            Debug.LogError(e.Message);
+            Debug.LogError(e.Message + " ST: " + e.StackTrace);
         }
     }
     public override void FinishMultithread() {
@@ -62,7 +62,14 @@ public class ActionThread : Multithread {
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
             Debug.Log(actionLog);
         }
+#if UNITY_EDITOR
+        _character.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
+#endif
         chosenAction = PickAction();
+#if UNITY_EDITOR
+        _character.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
+            " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
+#endif
 
         //Check Prerequisites, currently for resource prerequisites only
         CheckPrerequisites(chosenAction);
@@ -195,6 +202,16 @@ public class ActionThread : Multithread {
         //}
         int chosenIndex = 0; //Utilities.rng.Next(0, maxChoice);
         CharacterAction chosenAction = choices[chosenIndex].action;
+        if (chosenAction == null) {
+            string error = _character.role.roleType.ToString() + " " +  _character.name + " could not find an action to do! Choices were ";
+            for (int i = 0; i < choices.Length; i++) {
+                CharacterActionAdvertisement currAd = choices[i];
+                if (currAd.action != null) {
+                    error += "\n" + currAd.action.actionType.ToString() + " " + currAd.action.state.obj.objectName + " at " + currAd.action.state.obj.objectLocation.landmarkName;
+                }
+            }
+            throw new Exception(error);
+        }
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
             Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.specificLocation.locationName + ")");
         }

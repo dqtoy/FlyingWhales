@@ -5,7 +5,7 @@ using UnityEngine;
 public class SnatcherDemonsLair : StructureObj {
 
     public SnatcherDemonsLair() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.SNATCHER_DEMONS_LAIR;
+        _specificObjectType = LANDMARK_TYPE.SNATCHER_DEMONS_LAIR;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

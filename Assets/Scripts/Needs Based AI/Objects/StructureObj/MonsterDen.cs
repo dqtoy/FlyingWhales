@@ -10,7 +10,7 @@ public class MonsterDen : StructureObj {
     private Monster spawn;
 
     public MonsterDen() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.MONSTER_DEN;
+        _specificObjectType = LANDMARK_TYPE.MONSTER_DEN;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
         ResetSpawnCooldown();
         //_resourceInventory[RESOURCE.IRON] = 5000;

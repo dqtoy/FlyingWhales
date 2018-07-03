@@ -118,10 +118,15 @@ public enum MONTH{
 }
 public enum RESOURCE {
     NONE,
-    OAK,
-    ELF_CIVILIAN,
-    HUMAN_CIVILIAN,
+    //OAK,
+    //ELF_CIVILIAN,
+    //HUMAN_CIVILIAN,
+    //IRON,
+    WOOD,
     IRON,
+    GOLD,
+    FOOD,
+
 }
 //public enum RESOURCE_TYPE{
 //	NONE,
@@ -728,6 +733,10 @@ public enum LANDMARK_TYPE {
     HUMAN_HOUSES,
     MONSTER_DEN,
     SNATCHER_DEMONS_LAIR,
+    SHOP,
+    FARM,
+    GOLD_MINE,
+    LUMBERYARD,
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,
@@ -843,6 +852,10 @@ public enum CHARACTER_ROLE {
     //FOLLOWER,
     //HERMIT,
     //BEAST,
+    SHOPKEEPER,
+    MINER,
+    WOODCUTTER,
+    FARMER,
 }
 public enum CHARACTER_CLASS {
     CLASSLESS,
@@ -882,26 +895,8 @@ public enum TASK_STATUS {
     FAIL,
     CANCEL
 }
-public enum QUEST_TYPE { //This is a list of actions a character can choose to accept. These are usually created by the Internal OldQuest.Quest Manager/Military Manager
-    EXPLORE_REGION,
-    EXPAND,
-    REST,
-    GO_HOME,
-    DO_NOTHING,
-    JOIN_PARTY,
-	ATTACK,
-	DEFEND,
-    EXPLORE_TILE,
-    BUILD_STRUCTURE,
-	OBTAIN_MATERIAL,
-    EXPEDITION,
-	SAVE_LANDMARK,
-
-    FIND_LOST_HEIR,
-	THE_DARK_RITUAL,
-	PSYTOXIN_CURE,
-	ELIMINATE_LOST_HEIR,
-	HUNT,
+public enum QUEST_TYPE { 
+    RELEASE_CHARACTER,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
@@ -1316,27 +1311,30 @@ public enum ACTION_FILTER {
     HERO,
     VILLAIN,
     RUINED,
-    CIVILIAN
+    CIVILIAN,
+    FARMER,
+    MINER,
+    WOODCUTTER,
 }
 
-public enum SPECIFIC_OBJECT_TYPE {
-    DEMONIC_PORTAL,
-    ELVEN_SETTLEMENT,
-    HUMAN_SETTLEMENT,
-    GARRISON,
-    OAK_FORTIFICATION,
-    IRON_FORTIFICATION,
-    OAK_LUMBERYARD,
-    IRON_MINES,
-    INN,
-    PUB,
-    TEMPLE,
-    HUNTING_GROUNDS,
-    ELVEN_HOUSES,
-    HUMAN_HOUSES,
-    MONSTER_DEN,
-    SNATCHER_DEMONS_LAIR,
-}
+//public enum SPECIFIC_OBJECT_TYPE {
+//    DEMONIC_PORTAL,
+//    ELVEN_SETTLEMENT,
+//    HUMAN_SETTLEMENT,
+//    GARRISON,
+//    OAK_FORTIFICATION,
+//    IRON_FORTIFICATION,
+//    OAK_LUMBERYARD,
+//    IRON_MINES,
+//    INN,
+//    PUB,
+//    TEMPLE,
+//    HUNTING_GROUNDS,
+//    ELVEN_HOUSES,
+//    HUMAN_HOUSES,
+//    MONSTER_DEN,
+//    SNATCHER_DEMONS_LAIR,
+//}
 
 public enum PREREQUISITE {
     RESOURCE,

@@ -45,4 +45,8 @@ public static class Signals {
     public static string UPDATE_UI = "UpdateUI";
     public static string LANDMARK_ATTACK_TARGET_SELECTED = "OnLandmarkAttackTargetSelected"; //Parameters (BaseLandmark target)
     public static string PLAYER_LANDMARK_CREATED = "OnPlayerLandmarkCreated"; //Parameters (BaseLandmark createdLandmark)
+
+    #region Quest Signals
+    public static string PLAYER_SNATCHED = "OnPlayerSnatched"; //Parameters (Character snatchedCharacter)
+    #endregion
 }

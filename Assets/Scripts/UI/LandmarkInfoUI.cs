@@ -112,7 +112,7 @@ public class LandmarkInfoUI : UIMenu {
                 ICharacter currObject = currentlyShowingLandmark.charactersAtLocation[i];
                 if (currObject is ECS.Character) {
                     ECS.Character currChar = (ECS.Character)currObject;
-                    text += "\n" + currChar.name + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+                    text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
                 } else if (currObject.icharacterType == ICHARACTER_TYPE.MONSTER) {
                     Monster monster = currObject as Monster;
                     text += "\n" + monster.name;
@@ -149,7 +149,7 @@ public class LandmarkInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n<b>Items: </b> ";
+		text += "\n<b>Items In Landmark: </b> ";
 		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
 				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
@@ -158,6 +158,19 @@ public class LandmarkInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
+
+        if (currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.SHOP) {
+            text += "\n<b>Items In Shop: </b> ";
+            Shop shop = currentlyShowingLandmark.landmarkObj as Shop;
+            if (shop.availableItems.Count > 0) {
+                for (int i = 0; i < shop.availableItems.Count; i++) {
+                    text += "\n" + shop.availableItems[i];
+                }
+            } else {
+                text += "NONE";
+            }
+            
+        }
        
         landmarkInfoLbl.text = text;
     }
@@ -169,7 +182,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> landmarkHistory = new List<Log>(currentlyShowingLandmark.history.OrderBy(x => x.id));
+        List<Log> landmarkHistory = new List<Log>(currentlyShowingLandmark.history.OrderByDescending(x => x.id));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = landmarkHistory.ElementAtOrDefault(i);
@@ -214,7 +227,7 @@ public class LandmarkInfoUI : UIMenu {
     private void ShowAttackButton() {
         BaseLandmark landmark = currentlyShowingLandmark;
         if (!landmark.isAttackingAnotherLandmark) {
-            if ((landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.GARRISON || landmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.DEMONIC_PORTAL) && landmark.landmarkObj.currentState.stateName == "Ready") {
+            if ((landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.GARRISON || landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.DEMONIC_PORTAL) && landmark.landmarkObj.currentState.stateName == "Ready") {
                 attackButtonGO.SetActive(true);
                 attackBtnToggle.isOn = false;
                 SetWaitingForAttackState(false);

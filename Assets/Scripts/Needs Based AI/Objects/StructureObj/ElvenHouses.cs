@@ -5,7 +5,7 @@ using UnityEngine;
 public class ElvenHouses : StructureObj {
 
     public ElvenHouses() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.ELVEN_HOUSES;
+        _specificObjectType = LANDMARK_TYPE.ELVEN_HOUSES;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

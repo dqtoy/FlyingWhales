@@ -83,13 +83,13 @@ public class Army {
     private void DestroyArmy() {
         _isDestroyed = true;
         _originLandmark.SetIsAttackingAnotherLandmarkState(false);
-        if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.HUMAN_SETTLEMENT) {
+        if (_originLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.HUMAN_SETTLEMENT) {
             (_originLandmark.landmarkObj as HumanSettlement).CommenceTraining();
-        } else if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT) {
+        } else if (_originLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.ELVEN_SETTLEMENT) {
             (_originLandmark.landmarkObj as ElvenSettlement).CommenceTraining();
-        } else if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.GARRISON) {
+        } else if (_originLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.GARRISON) {
             (_originLandmark.landmarkObj as Garrison).CommenceTraining();
-        } else if (_originLandmark.landmarkObj.specificObjectType == SPECIFIC_OBJECT_TYPE.DEMONIC_PORTAL) {
+        } else if (_originLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.DEMONIC_PORTAL) {
             (_originLandmark.landmarkObj as DemonicPortal).CommenceTraining();
         }
         GameObject.Destroy(_icon.gameObject);

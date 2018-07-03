@@ -5,9 +5,9 @@ using UnityEngine;
 public class ElvenSettlement : StructureObj {
 
     public ElvenSettlement() : base() {
-        _specificObjectType = SPECIFIC_OBJECT_TYPE.ELVEN_SETTLEMENT;
+        _specificObjectType = LANDMARK_TYPE.ELVEN_SETTLEMENT;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        _resourceInventory[RESOURCE.ELF_CIVILIAN] = 5000;
+        //_resourceInventory[RESOURCE.ELF_CIVILIAN] = 5000;
     }
 
     #region Overrides
@@ -48,9 +48,9 @@ public class ElvenSettlement : StructureObj {
     #endregion
 
     #region Resource Inventory
-    public override RESOURCE GetMainResource() {
-        return RESOURCE.ELF_CIVILIAN;
-    }
+    //public override RESOURCE GetMainResource() {
+    //    return RESOURCE.ELF_CIVILIAN;
+    //}
     #endregion
 
     #region Utilities

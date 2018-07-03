@@ -11,8 +11,8 @@ using System;
 public class CharacterRole {
 	protected ECS.Character _character;
     protected CHARACTER_ROLE _roleType;
-    protected List<ACTION_ALIGNMENT> _allowedQuestAlignments;
-    protected List<QUEST_TYPE> _allowedQuestTypes;
+    //protected List<ACTION_ALIGNMENT> _allowedQuestAlignments;
+    //protected List<QUEST_TYPE> _allowedQuestTypes;
 	//protected List<CharacterTask> _roleTasks;
 	//protected CharacterTask _defaultRoleTask;
 	protected bool _cancelsAllOtherTasks;
@@ -30,12 +30,12 @@ public class CharacterRole {
 	public ECS.Character character{
 		get { return _character; }
 	}
-    public List<ACTION_ALIGNMENT> allowedQuestAlignments {
-        get { return _allowedQuestAlignments; }
-    }
-    public List<QUEST_TYPE> allowedQuestTypes {
-        get { return _allowedQuestTypes; }
-    }
+    //public List<ACTION_ALIGNMENT> allowedQuestAlignments {
+    //    get { return _allowedQuestAlignments; }
+    //}
+    //public List<QUEST_TYPE> allowedQuestTypes {
+    //    get { return _allowedQuestTypes; }
+    //}
 	//public List<CharacterTask> roleTasks {
 	//	get { return _roleTasks; }
 	//}
@@ -93,10 +93,10 @@ public class CharacterRole {
 		_character = character;
 		_cancelsAllOtherTasks = false;
 		_isRemoved = false;
-        _allowedQuestTypes = new List<QUEST_TYPE>();
+        //_allowedQuestTypes = new List<QUEST_TYPE>();
 		//_roleTasks = new List<CharacterTask> ();
 		//_roleTasks.Add (new RecruitFollowers (this._character, 5));
-        _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
+        //_allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
 
         _maxFullness = 100f;
         _maxEnergy = 100f;

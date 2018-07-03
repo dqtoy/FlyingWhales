@@ -7,7 +7,7 @@ public class OakWoods : StructureObj {
 	public OakWoods() : base() {
         //_specificObjectType = SPECIFIC_OBJECT_TYPE.OAK_WOODS;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        _resourceInventory[RESOURCE.OAK] = 5000;
+        //_resourceInventory[RESOURCE.OAK] = 5000;
     }
 
     #region Overrides

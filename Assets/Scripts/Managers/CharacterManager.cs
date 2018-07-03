@@ -233,7 +233,9 @@ public class CharacterManager : MonoBehaviour {
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
             newCharacter.SetHomeLandmark(homeLandmark);
+#if !WORLD_CREATION_TOOL
             newCharacter.SetHomeStructure(homeLandmark.landmarkObj);
+#endif
         }
 
         if (data.equipmentData != null) {
