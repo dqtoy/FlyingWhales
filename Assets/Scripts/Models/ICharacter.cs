@@ -18,50 +18,40 @@ public interface ICharacter {
     int currentRow { get; }
     int id { get; }
     int currentSP { get; }
-    int numOfAttackers { get; set; }
     string coloredUrlName { get; }
     string urlName { get; }
     string name { get; }
+    float computedPower { get; }
     float critChance { get; }
     float critDamage { get; }
-    float computedPower { get; }
     bool isDead { get; }
     GENDER gender { get; }
     ICHARACTER_TYPE icharacterType { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
-    Faction attackedByFaction { get; set; }
-    Combat currentCombat { get; set; }
     BaseLandmark homeLandmark { get; }
     StructureObj homeStructure { get; }
-    Region currentRegion { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
-    ICharacterObject icharacterObject { get; }
-    ILocation specificLocation { get; }
     PortraitSettings portraitSettings { get; }
-    CharacterIcon icon { get; }
+    IParty iparty { get; }
 
     //functions
     void FaintOrDeath();
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
-    void GoHome();
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
     void AdjustHP(int amount);
     void AdjustExperience(int amount);
     void EnableDisableSkills(Combat combat);
-    void SetSpecificLocation(ILocation location);
+    void SetParty(IParty party);
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void SetHomeStructure(StructureObj newHomeStructure);
-
-    void AdvertiseSelf(ActionThread actionThread);
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
-
 }

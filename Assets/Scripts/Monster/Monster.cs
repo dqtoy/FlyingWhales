@@ -31,21 +31,15 @@ public class Monster : ICharacter {
     private int _currentSP;
     private int _actRate;
     private int _currentRow;
-    private int _numOfAttackers;
     private bool _isDead;
     private Color _characterColor;
-    private Combat _currentCombat;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
-    private MonsterObj _monsterObj;
-    private Faction _attackedByFaction;
     private BaseLandmark _homeLandmark;
     private StructureObj _homeStructure;
     private RaceSetting _raceSetting;
-    private Region _currentRegion;
+    private MonsterParty _party;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
-    private CharacterIcon _icon;
-    private ILocation _specificLocation;
     private PortraitSettings _portraitSettings;
 
     #region getters/setters
@@ -98,10 +92,6 @@ public class Monster : ICharacter {
     public int currentSP {
         get { return _currentSP; }
     }
-    public int numOfAttackers {
-        get { return _numOfAttackers; }
-        set { _numOfAttackers = value; }
-    }
     public int experienceDrop {
         get { return _experienceDrop; }
     }
@@ -126,19 +116,11 @@ public class Monster : ICharacter {
     public ICHARACTER_TYPE icharacterType {
         get { return ICHARACTER_TYPE.MONSTER; }
     }
-    public Combat currentCombat {
-        get { return _currentCombat; }
-        set { _currentCombat = value; }
-    }
     public CharacterBattleOnlyTracker battleOnlyTracker {
         get { return _battleOnlyTracker; }
     }
     public Faction faction {
         get { return null; }
-    }
-    public Faction attackedByFaction {
-        get { return _attackedByFaction; }
-        set { _attackedByFaction = value; }
     }
     public BaseLandmark homeLandmark {
         get { return _homeLandmark; }
@@ -146,8 +128,11 @@ public class Monster : ICharacter {
     public StructureObj homeStructure {
         get { return _homeStructure; }
     }
-    public Region currentRegion {
-        get { return _currentRegion; }
+    public PortraitSettings portraitSettings {
+        get { return _portraitSettings; }
+    }
+    public MonsterParty party {
+        get { return _party; }
     }
     public List<Skill> skills {
         get { return _skills; }
@@ -161,20 +146,8 @@ public class Monster : ICharacter {
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
     }
-    public ICharacterObject icharacterObject {
-        get { return _monsterObj; }
-    }
-    public MonsterObj monsterObj {
-        get { return _monsterObj; }
-    }
-    public ILocation specificLocation {
-        get { return GetSpecificLocation(); }
-    }
-    public CharacterIcon icon {
-        get { return _icon; }
-    }
-    public PortraitSettings portraitSettings {
-        get { return _portraitSettings; }
+    public IParty iparty {
+        get { return _party; }
     }
     #endregion
 
@@ -250,16 +223,8 @@ public class Monster : ICharacter {
     }
     public void Death() {
         _isDead = true;
-        Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
-        if (_specificLocation != null) {
-            _specificLocation.RemoveCharacterFromLocation(this);
-        }
-        ObjectState deadState = _monsterObj.GetState("Dead");
-        _monsterObj.ChangeState(deadState);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
-
-        GameObject.Destroy(_icon.gameObject);
-        _icon = null;
+        _party.RemoveCharacter(this);
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -279,17 +244,6 @@ public class Monster : ICharacter {
         }
         return allGeneralSkills;
     }
-    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
-        if (specificLocation == targetLocation) {
-            //action doer is already at the target location
-            if (doneAction != null) {
-                doneAction();
-            }
-        } else {
-            _icon.SetActionOnTargetReached(doneAction);
-            _icon.SetTarget(targetLocation);
-        }
-    }
     #endregion
 
     #region Interface
@@ -306,12 +260,6 @@ public class Monster : ICharacter {
         _currentHP = _maxHP;
         _currentSP = _maxSP;
         SetCharacterColor(Color.red);
-        Messenger.AddListener<ActionThread>("LookForAction", AdvertiseSelf);
-#if !WORLD_CREATION_TOOL
-        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        _monsterObj.SetMonster(this);
-#endif
-
     }
     public void Initialize() {
         _id = Utilities.SetID(this);
@@ -345,7 +293,7 @@ public class Monster : ICharacter {
         }
     }
     public void FaintOrDeath() {
-        this.currentCombat.CharacterDeath(this);
+        _party.currentCombat.CharacterDeath(this);
         Death();
     }
     public int GetPDef(ICharacter enemy) {
@@ -360,32 +308,7 @@ public class Monster : ICharacter {
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
     }
-    public void SetSpecificLocation(ILocation specificLocation) {
-        _specificLocation = specificLocation;
-        if (_specificLocation != null) {
-            _currentRegion = _specificLocation.tileLocation.region;
-        }
-    }
-    private ILocation GetSpecificLocation() {
-        if (_specificLocation != null) {
-            return _specificLocation;
-        } else {
-            if (_icon != null) {
-                Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 1f, LayerMask.GetMask("Hextiles"));
-                //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
-                HexTile tile = collide.gameObject.GetComponent<HexTile>();
-                if (tile != null) {
-                    return tile;
-                } else {
-                    LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
-                    if (landmarkObject != null) {
-                        return landmarkObject.landmark.tileLocation;
-                    }
-                }
-            }
-            return null;
-        }
-    }
+
     public void EnableDisableSkills(Combat combat) {
         bool isAllAttacksInRange = true;
         bool isAttackInRange = false;
@@ -480,12 +403,6 @@ public class Monster : ICharacter {
     public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
         this._homeLandmark = newHomeLandmark;
     }
-    public void GoHome() {
-        GoToLocation(_homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
-    }
-    public void AdvertiseSelf(ActionThread actionThread) {
-        actionThread.AddToChoices(_monsterObj);
-    }
     public void SetHomeStructure(StructureObj newHomeStructure) {
         if (_homeStructure != null) {
             _homeStructure.AdjustNumOfResidents(-1);
@@ -493,19 +410,13 @@ public class Monster : ICharacter {
         _homeStructure = newHomeStructure;
         newHomeStructure.AdjustNumOfResidents(1);
     }
-    #endregion
-
-    #region Icon
-    /*
-    Create a new icon for this character.
-    Each character owns 1 icon.
-        */
-    public void CreateIcon() {
-        GameObject characterIconGO = GameObject.Instantiate(MonsterManager.Instance.monsterIconPrefab,
-            Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
-        _icon = characterIconGO.GetComponent<CharacterIcon>();
-        _icon.SetCharacter(this);
-        //PathfindingManager.Instance.AddAgent(_icon.aiPath);
+    public MonsterParty CreateNewParty() {
+        MonsterParty newParty = new MonsterParty();
+        newParty.AddCharacter(this);
+        return newParty;
+    }
+    public void SetParty(IParty party) {
+        _party = party as MonsterParty;
     }
     #endregion
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface ICharacterObject: IObject {
-    ICharacter icharacter { get; }
+    IParty iparty { get; }
     //ObjectState currentState { get; }
 
     //ObjectState GetState(string state);

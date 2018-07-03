@@ -10,14 +10,14 @@ public class MonsterObj : ICharacterObject {
     private bool _isInvisible;
     private List<ObjectState> _states;
 
-    private Monster _monster;
+    private MonsterParty _party;
     private string _objectName;
     [NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
 
     #region getters/setters
-    public ICharacter icharacter {
-        get { return _monster; }
+    public IParty iparty {
+        get { return _party; }
     }
     public string objectName {
         get { return _objectName; }
@@ -44,7 +44,7 @@ public class MonsterObj : ICharacterObject {
         }
     }
     public ILocation specificLocation {
-        get { return _monster.specificLocation; }
+        get { return _party.specificLocation; }
     }
     public RESOURCE madeOf {
         get { return RESOURCE.NONE; }
@@ -55,9 +55,9 @@ public class MonsterObj : ICharacterObject {
     #endregion
 
 
-    public MonsterObj(Monster monster) {
+    public MonsterObj(MonsterParty party) {
         _objectType = OBJECT_TYPE.MONSTER;
-        _monster = monster;
+        _party = party;
     }
 
     #region Interface Requirements
@@ -76,8 +76,8 @@ public class MonsterObj : ICharacterObject {
     public void SetIsInvisible(bool state) {
         _isInvisible = state;
     }
-    public void SetMonster(Monster monster) {
-        _monster = monster;
+    public void SetMonster(MonsterParty party) {
+        _party = party;
     }
     public void ChangeState(ObjectState state) {
         if (_currentState != null) {
@@ -101,7 +101,7 @@ public class MonsterObj : ICharacterObject {
         return null;
     }
     public IObject Clone() {
-        MonsterObj clone = new MonsterObj(_monster);
+        MonsterObj clone = new MonsterObj(_party);
         clone.SetObjectName(this._objectName);
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;

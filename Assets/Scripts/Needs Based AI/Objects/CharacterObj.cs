@@ -11,17 +11,17 @@ public class CharacterObj : ICharacterObject {
     private List<ObjectState> _states;
     private Dictionary<RESOURCE, int> _resourceInventory;
 
-    private Character _character;
+    private CharacterParty _party;
     private string _objectName;
     [NonSerialized] private ObjectState _currentState;
     private BaseLandmark _objectLocation;
 
     #region getters/setters
-    public ICharacter icharacter {
-        get { return _character; }
+    public IParty iparty {
+        get { return _party; }
     }
-    public Character character {
-        get { return _character; }
+    public CharacterParty party {
+        get { return _party; }
     }
     public string objectName {
         get { return _objectName; }
@@ -47,7 +47,7 @@ public class CharacterObj : ICharacterObject {
         }
     }
     public ILocation specificLocation {
-        get { return _character.specificLocation; }
+        get { return _party.specificLocation; }
     }
     public Dictionary<RESOURCE, int> resourceInventory {
         get { return _resourceInventory; }
@@ -58,9 +58,9 @@ public class CharacterObj : ICharacterObject {
     #endregion
 
 
-    public CharacterObj(Character character) {
+    public CharacterObj(CharacterParty party) {
         _objectType = OBJECT_TYPE.CHARACTER;
-        _character = character;
+        _party = party;
         ConstructResourceInventory();
     }
 
@@ -80,8 +80,8 @@ public class CharacterObj : ICharacterObject {
     public void SetIsInvisible(bool state) {
         _isInvisible = state;
     }
-    public void SetCharacter(Character character) {
-        _character = character;
+    public void SetCharacter(CharacterParty party) {
+        _party = party;
     }
     public void ChangeState(ObjectState state) {
         if (_currentState != null) {
@@ -105,7 +105,7 @@ public class CharacterObj : ICharacterObject {
         return null;
     }
     public IObject Clone() {
-        CharacterObj clone = new CharacterObj(_character);
+        CharacterObj clone = new CharacterObj(_party);
         clone.SetObjectName(this._objectName);
         clone._objectType = this._objectType;
         clone._isInvisible = this.isInvisible;

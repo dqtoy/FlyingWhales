@@ -15,14 +15,10 @@ public class ActionData {
     private CharacterActionAdvertisement[] choices;
     private ActionThread actionThread;
     private bool _isNotFirstEncounter;
-    private bool _isHalted;
     private float _homeMultiplier;
     private bool _hasDoneActionAtHome;
 
     #region getters/setters
-    public bool isHalted {
-        get { return _isHalted; }
-    }
     public float homeMultiplier {
         get { return _homeMultiplier; }
     }
@@ -34,7 +30,6 @@ public class ActionData {
         choices = new CharacterActionAdvertisement[3];
         actionThread = new ActionThread(_character);
         _character.onDailyAction += PerformCurrentAction;
-        _isHalted = false;
         _homeMultiplier = 1f;
         _hasDoneActionAtHome = false;
 #if !WORLD_CREATION_TOOL
@@ -67,7 +62,7 @@ public class ActionData {
         this.currentChainAction = chainAction;
         SetCurrentAction(action);
         action.OnChooseAction(_character);
-        _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        _character.party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
         //    CharacterObj characterObj = action.state.obj as CharacterObj;
         //    _character.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
@@ -109,17 +104,9 @@ public class ActionData {
     public void SetIsDone(bool state) {
         this.isDone = state;
     }
-    public void SetIsHalted(bool state) {
-        if (_isHalted != state) {
-            _isHalted = state;
-            if (state) {
-                _character.icon.aiPath.maxSpeed = 0f;
-            }
-        }
-    }
 
     private void PerformCurrentAction() {
-        if (!isWaiting && _character.icon.targetLocation == null) {
+        if (!isWaiting && _character.party.icon.targetLocation == null) {
             if (!isDone && currentAction != null){
                 if (_isHalted) {
                     return;

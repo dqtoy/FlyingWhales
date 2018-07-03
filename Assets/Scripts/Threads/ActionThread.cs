@@ -6,22 +6,22 @@ using System;
 
 public class ActionThread : Multithread {
     private CharacterActionAdvertisement[] choices;
-    private Character _character;
+    private CharacterParty _party;
     private CharacterAction chosenAction;
     private List<CharacterActionAdvertisement> allChoices;
     private ChainAction chosenChainAction;
     private string actionLog;
 
     #region getters/setters
-    public Character character {
-        get { return _character; }
+    public CharacterParty party {
+        get { return _party; }
     }
     #endregion
 
-    public ActionThread(Character character) {
+    public ActionThread(CharacterParty party) {
         choices = new CharacterActionAdvertisement[3];
         allChoices = new List<CharacterActionAdvertisement>();
-        _character = character;
+        _party = party;
     }
 
     #region Overrides

@@ -390,9 +390,9 @@ namespace ECS {
             return combatRooms;
         }
         public void CharacterContinuesAction(Character character, bool isActionSucess) {
-            character.actionData.SetIsHalted(false);
-            character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
-            character.icon.SetMovementState(GameManager.Instance.isPaused);
+            character.party.SetIsHalted(false);
+            character.party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
+            character.party.icon.SetMovementState(GameManager.Instance.isPaused);
             if (character.actionData.currentAction != null) {
                 if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || character.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
                     if (isActionSucess) {

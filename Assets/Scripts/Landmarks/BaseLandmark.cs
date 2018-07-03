@@ -449,7 +449,7 @@ public class BaseLandmark : ILocation {
             //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //Character currChar = character as Character;
             this.tileLocation.RemoveCharacterFromLocation(character);
-            character.SetSpecificLocation(this);
+            character.iparty.SetSpecificLocation(this);
 #if !WORLD_CREATION_TOOL
             _landmarkVisual.OnCharacterEnteredLandmark(character);
 #endif
@@ -473,7 +473,7 @@ public class BaseLandmark : ILocation {
         _charactersAtLocation.Remove(character);
         //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
         //Character currChar = character as Character;
-        character.SetSpecificLocation(null);
+        character.iparty.SetSpecificLocation(null);
 #if !WORLD_CREATION_TOOL
         _landmarkVisual.OnCharacterExitedLandmark(character);
 #endif

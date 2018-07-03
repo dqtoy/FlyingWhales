@@ -36,8 +36,8 @@ public class Civilian : CharacterRole {
     #endregion
 
     private void OnStructureChangedState(StructureObj structure, ObjectState state) {
-        if(structure == _character.homeStructure && state.stateName == "Ruined") {
-            _character.LookForNewHomeStructure();
+        if(structure == _character.party.homeStructure && state.stateName == "Ruined") {
+            _character.party.LookForNewHomeStructure();
         }
     }
 }

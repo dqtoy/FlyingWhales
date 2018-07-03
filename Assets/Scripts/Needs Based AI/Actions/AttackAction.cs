@@ -37,25 +37,25 @@ public class AttackAction : CharacterAction {
         return attackAction;
     }
     public override bool CanBeDoneBy(Character character) {
-        if (_icharacterObj.icharacter.faction != null) {
-            if (character.faction.id == _icharacterObj.icharacter.faction.id || (_icharacterObj.icharacter.attackedByFaction != null && _icharacterObj.icharacter.attackedByFaction.id != character.faction.id)) {
+        if (_icharacterObj.iparty.faction != null) {
+            if (character.faction.id == _icharacterObj.iparty.faction.id || (_icharacterObj.iparty.attackedByFaction != null && _icharacterObj.iparty.attackedByFaction.id != character.faction.id)) {
                 return false;
             }
         }
         return base.CanBeDoneBy(character);
     }
     public override void OnChooseAction(ICharacter character) {
-        _icharacterObj.icharacter.numOfAttackers++;
-        if(_icharacterObj.icharacter.attackedByFaction == null) {
-            _icharacterObj.icharacter.attackedByFaction = character.faction;
+        _icharacterObj.iparty.numOfAttackers++;
+        if(_icharacterObj.iparty.attackedByFaction == null) {
+            _icharacterObj.iparty.attackedByFaction = character.faction;
         }
         base.OnChooseAction(character);
     }
     public override void EndAction(Character character) {
-        _icharacterObj.icharacter.numOfAttackers--;
-        if (_icharacterObj.icharacter.numOfAttackers <= 0) {
-            _icharacterObj.icharacter.numOfAttackers = 0;
-            _icharacterObj.icharacter.attackedByFaction = null;
+        _icharacterObj.iparty.numOfAttackers--;
+        if (_icharacterObj.iparty.numOfAttackers <= 0) {
+            _icharacterObj.iparty.numOfAttackers = 0;
+            _icharacterObj.iparty.attackedByFaction = null;
         }
         base.EndAction(character);
     }
@@ -65,44 +65,44 @@ public class AttackAction : CharacterAction {
     }
     #endregion
     private void StartEncounter(Character enemy) {
-        enemy.actionData.SetIsHalted(true);
-        if(_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-            (_icharacterObj.icharacter as Character).actionData.SetIsHalted(true);
+        enemy.party.SetIsHalted(true);
+        if(_icharacterObj.iparty is CharacterParty) {
+            (_icharacterObj.iparty as CharacterParty).SetIsHalted(true);
         }
 
         StartCombatWith(enemy);
     }
     private void StartCombatWith(Character enemy) {
         //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
-        Combat combat = _icharacterObj.icharacter.currentCombat;
-        if (_icharacterObj.icharacter.currentCombat == null) {
+        Combat combat = _icharacterObj.iparty.currentCombat;
+        if (_icharacterObj.iparty.currentCombat == null) {
             combat = new Combat();
             combat.AddCharacter(SIDES.A, enemy);
-            combat.AddCharacter(SIDES.B, _icharacterObj.icharacter);
+            combat.AddCharacter(SIDES.B, _icharacterObj.iparty);
             //MultiThreadPool.Instance.AddToThreadPool(combat);
-            Debug.Log("Starting combat between " + enemy.name + " and  " + _icharacterObj.icharacter.name);
+            Debug.Log("Starting combat between " + enemy.name + " and  " + _icharacterObj.iparty.name);
             combat.CombatSimulation();
         } else {
-            if(enemy.currentCombat != null && enemy.currentCombat == _icharacterObj.icharacter.currentCombat) {
+            if(enemy.currentCombat != null && enemy.currentCombat == _icharacterObj.iparty.currentCombat) {
                 return;
             }
-            SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(_icharacterObj.icharacter.currentSide);
+            SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(_icharacterObj.iparty.currentSide);
             combat.AddCharacter(sideToJoin, enemy);
         }
 
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
         combatLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
-        combatLog.AddToFillers(_icharacterObj.icharacter, _icharacterObj.icharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        combatLog.AddToFillers(_icharacterObj.iparty, _icharacterObj.iparty.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         enemy.AddHistory(combatLog);
-        if (_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-            (_icharacterObj.icharacter as Character).AddHistory(combatLog);
+        if (_icharacterObj.iparty.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+            (_icharacterObj.iparty as Character).AddHistory(combatLog);
         }
     }
     public bool CanBeDoneByTesting(Character character) {
-        if(_icharacterObj.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-            if (character.id == _icharacterObj.icharacter.id) {
+        if(_icharacterObj.iparty.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+            if (character.id == _icharacterObj.iparty.id) {
                 return false;
             }
         }

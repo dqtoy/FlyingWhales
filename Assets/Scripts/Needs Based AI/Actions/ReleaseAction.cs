@@ -43,6 +43,6 @@ public class ReleaseAction : CharacterAction {
             ObjectState aliveState = _characterObj.GetState("Alive");
             _characterObj.ChangeState(aliveState);
         }
-        _characterObj.character.GoHome();
+        _characterObj.iparty.GoHome();
     }
 }

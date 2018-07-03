@@ -66,21 +66,17 @@ namespace ECS {
         private RaceSetting _raceSetting;
         private CharacterRole _role;
         private Faction _faction;
-        private Faction _attackedByFaction;
-        private Party _party;
+        private CharacterParty _party;
         //private QuestData _questData;
         //private CharacterActionQueue<CharacterAction> _actionQueue;
         //private CharacterAction _currentAction;
-        private ILocation _specificLocation;
+        //private ILocation _specificLocation;
         private Region _currentRegion;
         //private CharacterAvatar _avatar;
 
         private List<BodyPart> _bodyParts;
         private List<Item> _equippedItems;
         private List<Item> _inventory;
-
-        //Character Icon
-        private CharacterIcon _icon;
 
         //Character Portrait
         private PortraitSettings _portraitSettings;
@@ -100,14 +96,12 @@ namespace ECS {
         private List<Log> _history;
         //private Dictionary<RACE, int> _civiliansByRace;
 
-        private Combat _currentCombat;
         private int _actRate;
         internal Dictionary<int, Combat> combatHistory;
 
         private float _equippedWeaponPower;
         private int _gold;
         //private int _prestige;
-        private int _numOfAttackers;
 
         //private Action _currentFunction;
         private bool _isInCombat;
@@ -115,8 +109,7 @@ namespace ECS {
         private Dictionary<Character, List<string>> _traceInfo;
         //private WeightedDictionary<CharacterTask> actionWeights;
 
-        private ActionData _actionData;
-        private CharacterObj _characterObject;
+        //private ActionData _actionData;
 
         //private Dictionary<RESOURCE, int> _resourceInventory;
 
@@ -163,40 +156,23 @@ namespace ECS {
         public Faction faction {
             get { return _faction; }
         }
-        public Faction attackedByFaction {
-            get { return _attackedByFaction; }
-            set { _attackedByFaction = value; }
-        }
-        public Party party {
+        //public Faction attackedByFaction {
+        //    get { return _party.attackedByFaction; }
+        //}
+        public IParty iparty {
             get { return _party; }
         }
-        //public QuestData questData {
-        //    get { return _questData; }
-        //}
-        //public Quest currentQuest {
-        //    get { return _questData.activeQuest; }
-        //}
-        //public QuestPhase currentQuestPhase {
-        //    get { return _questData.GetQuestPhase(); }
-        //}
-        //public CharacterAction currentAction {
-        //    get { return _actionData.currentAction; }
-        //}
-        public ILocation specificLocation {
-            get {
-                //            ILocation loc = null;
-                //loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
-                return GetSpecificLocation();
-            }
+        public CharacterParty party {
+            get { return _party; }
         }
+        //public ILocation specificLocation {
+        //    get { return _party.specificLocation; }
+        //}
         public HexTile currLocation {
-            get { return (this.specificLocation != null ? this.specificLocation.tileLocation : null); }
+            get { return (_party.specificLocation != null ? _party.specificLocation.tileLocation : null); }
         }
-        public Region currentRegion {
-            get { return (_party == null ? _currentRegion : _party.currentRegion); }
-        }
-        //public CharacterAvatar avatar{
-        //	get { return _avatar; }
+        //public Region currentRegion {
+        //    get { return _party.currentRegion; }
         //}
         public List<BodyPart> bodyParts {
             get { return this._bodyParts; }
@@ -255,15 +231,6 @@ namespace ECS {
         public int baseMaxHP {
             get { return _baseMaxHP; }
         }
-        //public int dodgeRate {
-        //	get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
-        //}
-        //public int parryRate {
-        //	get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
-        //}
-        //public int blockRate {
-        //	get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
-        //}
         public Color characterColor {
             get { return _characterColor; }
         }
@@ -297,74 +264,26 @@ namespace ECS {
         public int gold {
             get { return _gold; }
         }
-        //public int prestige {
-        //    get { return _prestige; }
-        //}
-        //public bool isDefeated {
-        //	get { return _isDefeated; }
-        //}
-        //public int civilians {
-        //    get {
-        //        if (_civiliansByRace == null) {
-        //            return 0;
-        //        }
-        //        return _civiliansByRace.Sum(x => x.Value);
-        //    }
-        //}
-        //public Dictionary<RACE, int> civiliansByRace {
-        //    get { return _civiliansByRace; }
-        //}
         public List<BaseLandmark> exploredLandmarks {
             get { return _exploredLandmarks; }
         }
         public bool isInCombat {
             get {
-                if (_party != null) {
-                    return _party.isInCombat;
-                }
                 return _isInCombat;
             }
         }
-        //public Action currentFunction{
-        //	get { return _currentFunction; }
-        //}
         public bool isFactionless {
             get { return faction == null; }
         }
-        public int missingFollowers {
-            get {
-                if (party == null) {
-                    return MAX_FOLLOWERS;
-                } else {
-                    return Mathf.Max(0, MAX_FOLLOWERS - (party.partyMembers.Count - 1));
-                }
-
-            }
-        }
-        //public int numOfCharacters{
-        //	get { return 1; }
-        //}
         public Dictionary<Character, List<string>> traceInfo {
             get { return _traceInfo; }
         }
-        public COMBAT_INTENT combatIntent {
-            get {
-                return COMBAT_INTENT.KILL; //TODO: Change this when task is changed to action
-                //return (_currentAction == null ? COMBAT_INTENT.DEFEAT : _currentAction.currentState.combatIntent);
-            }
-        }
-        public ActionData actionData {
-            get { return _actionData; }
-        }
-        public ICharacterObject icharacterObject {
-            get { return _characterObject; }
-        }
-        public CharacterObj characterObject {
-            get { return _characterObject; }
-        }
-        public CharacterIcon icon {
-            get { return _icon; }
-        }
+        //public ActionData actionData {
+        //    get { return _actionData; }
+        //}
+        //public CharacterIcon icon {
+        //    get { return _party.icon; }
+        //}
         public bool isIdle {
             get { return _isIdle; }
         }
@@ -398,10 +317,9 @@ namespace ECS {
         public Dictionary<ELEMENT, float> elementalResistances {
             get { return _elementalResistances; }
         }
-        public Combat currentCombat {
-            get { return _currentCombat; }
-            set { _currentCombat = value; }
-        }
+        //public Combat currentCombat {
+        //    get { return _party.currentCombat; }
+        //}
         public int actRate {
             get { return _actRate; }
             set { _actRate = value; }
@@ -414,10 +332,6 @@ namespace ECS {
         }
         public CharacterBattleOnlyTracker battleOnlyTracker {
             get { return _battleOnlyTracker; }
-        }
-        public int numOfAttackers {
-            get { return _numOfAttackers; }
-            set { _numOfAttackers = value; }
         }
         public float computedPower {
             get { return GetAttackPower() + GetDefensePower(); }
@@ -502,21 +416,14 @@ namespace ECS {
 
             GetRandomCharacterColor();
 
-			currentCombat = null;
 			combatHistory = new Dictionary<int, Combat> ();
             //_combatHistoryID = 0;
 
-#if !WORLD_CREATION_TOOL
-            _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
-            _characterObject.SetCharacter(this);
-            //ConstructResourceInventory();
-#endif
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
             Messenger.AddListener<List<Region>>("RegionPsytoxin", RegionPsytoxin);
             Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
-            Messenger.AddListener<ActionThread>("LookForAction", AdvertiseSelf);
         }
         public void Initialize() { }
 
@@ -811,13 +718,13 @@ namespace ECS {
 		public void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
-				if(this.currentCombat == null){
+				if(_party.currentCombat == null){
 					Faint ();
 				}else{
-                    this.currentCombat.CharacterFainted(this);
+                    _party.currentCombat.CharacterFainted(this);
                 }
 			}else if(pickedWeight == "die"){
-                this.currentCombat.CharacterDeath(this);
+                _party.currentCombat.CharacterDeath(this);
                 Death();
     //            if (this.currentCombat == null){
 				//	Death ();
@@ -831,9 +738,6 @@ namespace ECS {
 			if(!_isFainted){
 				_isFainted = true;
 				SetHP (1);
-				if (this._party != null) {
-					this._party.RemovePartyMember(this);
-				}
                 ////Set Task to Fainted
                 //Faint faintTask = new Faint(this);
                 //faintTask.OnChooseTask(this)
@@ -846,9 +750,12 @@ namespace ECS {
 			}
 		}
         public void Imprison() {
-            if(_characterObject.currentState.stateName != "Imprisoned") {
-                ObjectState imprisonedState = _characterObject.GetState("Imprisoned");
-                _characterObject.ChangeState(imprisonedState);
+            if(_party.icharacters.Count > 0) {
+                CreateNewParty();
+            }
+            if(_party.characterObject.currentState.stateName != "Imprisoned") {
+                ObjectState imprisonedState = _party.characterObject.GetState("Imprisoned");
+                _party.characterObject.ChangeState(imprisonedState);
 
                 SetIsIdle(true); //this makes the character not do any action, and needs are halted
                 //Do other things when imprisoned
@@ -858,22 +765,22 @@ namespace ECS {
 		internal void Death(Character killer = null){
 			if(!_isDead){
 				_isDead = true;
-                Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
+                _party.RemoveCharacter(this);
                 Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
                 Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
-                if (specificLocation == null) {
+                if (_party.specificLocation == null) {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
                 }
 
-				if(specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				if(_party.specificLocation != null && _party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
-                    (specificLocation as BaseLandmark).AddHistory(deathLog);
+                    (_party.specificLocation as BaseLandmark).AddHistory(deathLog);
 				}
 				//Drop all Items
 				while (_equippedItems.Count > 0) {
@@ -901,17 +808,9 @@ namespace ECS {
 
                 //CheckForInternationalIncident();
 
-                if (this._party != null) {
-                    Party party = this._party;
-                    party.RemovePartyMember(this, true);
-                    if (party.partyLeader.id == this._id) {
-                        party.DisbandParty();
-                    }
-                } else {
-                    if(_specificLocation != null) {
-                        _specificLocation.RemoveCharacterFromLocation(this);
-                    }
-                }
+                //if (_specificLocation != null) {
+                //    _specificLocation.RemoveCharacterFromLocation(this);
+                //}
                 //if (_avatar != null) {
                 //    if (_avatar.mainCharacter.id == this.id) {
                 //        DestroyAvatar();
@@ -920,9 +819,9 @@ namespace ECS {
                 //    }
                 //}
                 //if (_isPrisoner){
-				//	PrisonerDeath ();
-				//}
-				if(_role != null){
+                //	PrisonerDeath ();
+                //}
+                if (_role != null){
 					_role.DeathRole ();
 				}
 				while(_tags.Count > 0){
@@ -940,11 +839,11 @@ namespace ECS {
                     Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
                 }
 
-                ObjectState deadState = _characterObject.GetState("Dead");
-                _characterObject.ChangeState(deadState);
+                //ObjectState deadState = _characterObject.GetState("Dead");
+                //_characterObject.ChangeState(deadState);
 
-                GameObject.Destroy(_icon.gameObject);
-                _icon = null;
+                //GameObject.Destroy(_icon.gameObject);
+                //_icon = null;
 
                 Debug.Log(this.name + " died!");
             }
@@ -1075,8 +974,8 @@ namespace ECS {
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
-			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                (specificLocation as BaseLandmark).AddHistory(obtainLog);
+			if (_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                (_party.specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
 #endif
             Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
@@ -1090,7 +989,7 @@ namespace ECS {
 			this._inventory.Remove (item);
 			//item.exploreWeight = 15;
 			if(addInLandmark){
-				ILocation location = specificLocation;
+				ILocation location = _party.specificLocation;
 				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 					BaseLandmark landmark = location as BaseLandmark;
 					landmark.AddItemInLandmark(item);
@@ -1100,7 +999,7 @@ namespace ECS {
         }
         internal void DropItem(Item item) {
             ThrowItem(item);
-            ILocation location = specificLocation;
+            ILocation location = _party.specificLocation;
 			if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 				//BaseLandmark landmark = location as BaseLandmark;
                 Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
@@ -1113,15 +1012,13 @@ namespace ECS {
 
         }
         internal void CheckForItemDrop() {
-			if (specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+            ILocation location = _party.specificLocation;
+            if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 if (UnityEngine.Random.Range(0, 100) < 3) {
                     Dictionary<Item, Character> itemPool = new Dictionary<Item, Character>();
                     List<Character> charactersToCheck = new List<Character>();
-					if(_party == null){
-						charactersToCheck.Add(this);
-					}else{
-						charactersToCheck.AddRange(_party.partyMembers);
-					}
+                    charactersToCheck.Add(this);
+
                     for (int i = 0; i < charactersToCheck.Count; i++) {
                         ECS.Character currCharacter = charactersToCheck[i];
                         for (int j = 0; j < currCharacter.inventory.Count; j++) {
@@ -1564,7 +1461,7 @@ namespace ECS {
 				STATUS_EFFECT statusEffect = statusEffects [i];
 				int chance = Utilities.rng.Next (0, 100);
 				if (chance < 15) {
-					this.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+					_party.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 					RemoveStatusEffect (statusEffect);
 					i--;
 				}
@@ -1577,7 +1474,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
-                                this.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+                                _party.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
@@ -2016,30 +1913,8 @@ namespace ECS {
             }
 			return false;
         }
-		public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false, bool includeParty = false){
-			if(!includeParty){
-				return DoesHaveTags (this, tagsToHave, mustHaveAll);
-			}else{
-				if(party != null){
-					List<CHARACTER_TAG> tagsToHaveCopy = tagsToHave.ToList ();
-					for (int i = 0; i < party.partyMembers.Count; i++) {
-						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
-							for (int k = 0; k < tagsToHaveCopy.Count; k++) {
-								if(party.partyMembers[i].tags[j].tagType == tagsToHaveCopy[k]) {
-									tagsToHaveCopy.RemoveAt (k);
-									break;
-								}
-							}
-							if(tagsToHaveCopy.Count <= 0){
-								return true;
-							}
-						}
-					}
-				}else{
-					return DoesHaveTags (this, tagsToHave, mustHaveAll);
-				}
-			}
-			return false;
+		public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
+			return DoesHaveTags (this, tagsToHave, mustHaveAll);
 		}
 		private bool DoesHaveTags(Character currCharacter, CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
 			if(mustHaveAll){
@@ -2066,110 +1941,37 @@ namespace ECS {
 			}
 			return false;
 		}
-		public bool HasTag(CHARACTER_TAG tag, bool includeParty = false) {
-			if(!includeParty){
-				for (int i = 0; i < _tags.Count; i++) {
-					if(_tags[i].tagType == tag) {
-						return true;
-					}
-				}
-			}else{
-				if(party != null){
-					for (int i = 0; i < party.partyMembers.Count; i++) {
-						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
-							if(party.partyMembers[i].tags[j].tagType == tag) {
-								return true;
-							}
-						}
-					}
-				}else{
-					for (int i = 0; i < _tags.Count; i++) {
-						if(_tags[i].tagType == tag) {
-							return true;
-						}
-					}
-				}
-			}
+		public bool HasTag(CHARACTER_TAG tag) {
+            for (int i = 0; i < _tags.Count; i++) {
+                if (_tags[i].tagType == tag) {
+                    return true;
+                }
+            }
 
+            return false;
+		}
+		public bool HasTag(string tag) {
+            for (int i = 0; i < _tags.Count; i++) {
+                if (_tags[i].tagName == tag) {
+                    return true;
+                }
+            }
 			return false;
 		}
-		public bool HasTag(string tag, bool includeParty = false) {
-			if(!includeParty){
-				for (int i = 0; i < _tags.Count; i++) {
-					if(_tags[i].tagName == tag) {
-						return true;
-					}
-				}
-			}else{
-				if(party != null){
-					for (int i = 0; i < party.partyMembers.Count; i++) {
-						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
-							if(party.partyMembers[i].tags[j].tagName == tag) {
-								return true;
-							}
-						}
-					}
-				}else{
-					for (int i = 0; i < _tags.Count; i++) {
-						if(_tags[i].tagName == tag) {
-							return true;
-						}
-					}
-				}
-			}
-
-			return false;
-		}
-		public CharacterTag GetTag(CHARACTER_TAG tag, bool includeParty = false){
-			if(!includeParty){
-				for (int i = 0; i < _tags.Count; i++) {
-					if(_tags[i].tagType == tag) {
-						return _tags[i];
-					}
-				}
-			}else{
-				if(party != null){
-					for (int i = 0; i < party.partyMembers.Count; i++) {
-						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
-							if(party.partyMembers[i].tags[j].tagType == tag) {
-								return party.partyMembers[i].tags[j];
-							}
-						}
-					}
-				}else{
-					for (int i = 0; i < _tags.Count; i++) {
-						if(_tags[i].tagType == tag) {
-							return _tags[i];
-						}
-					}
-				}
-			}
+		public CharacterTag GetTag(CHARACTER_TAG tag){
+            for (int i = 0; i < _tags.Count; i++) {
+                if (_tags[i].tagType == tag) {
+                    return _tags[i];
+                }
+            }
 			return null;
 		}
-		public CharacterTag GetTag(string tag, bool includeParty = false){
-			if(!includeParty){
-				for (int i = 0; i < _tags.Count; i++) {
-					if(_tags[i].tagName == tag) {
-						return _tags[i];
-					}
-				}
-			}else{
-				if(party != null){
-					for (int i = 0; i < party.partyMembers.Count; i++) {
-						for (int j = 0; j < party.partyMembers[i].tags.Count; j++) {
-							if(party.partyMembers[i].tags[j].tagName == tag) {
-								return party.partyMembers[i].tags[j];
-							}
-						}
-					}
-				}else{
-					for (int i = 0; i < _tags.Count; i++) {
-						if(_tags[i].tagName == tag) {
-							return _tags[i];
-						}
-					}
-				}
-			}
+		public CharacterTag GetTag(string tag){
+            for (int i = 0; i < _tags.Count; i++) {
+                if (_tags[i].tagName == tag) {
+                    return _tags[i];
+                }
+            }
 			return null;
 		}
 		#endregion
@@ -2185,127 +1987,26 @@ namespace ECS {
         /*
          Create a new Party with this character as the leader.
              */
-        public Party CreateNewParty() {
-            Party newParty = new Party(this);
+        public CharacterParty CreateNewParty() {
+            CharacterParty newParty = new CharacterParty();
+            newParty.AddCharacter(this);
             return newParty;
         }
-		public void SetParty(Party party) {
-			_party = party;
+		public void SetParty(IParty party) {
+			_party = party as CharacterParty;
 		}
         #endregion
 
         #region Location
-        public List<string> specificLocationHistory = new List<string>();
-        public void SetSpecificLocation(ILocation specificLocation) {
-            string previousLocationString = string.Empty;
-            string newLocationString = string.Empty;
-            if (_specificLocation == null) {
-                previousLocationString = "null";
-            } else {
-                previousLocationString = _specificLocation.ToString();
-            }
-            if (specificLocation == null) {
-                newLocationString = "null";
-            } else {
-                newLocationString = specificLocation.ToString();
-            }
-            specificLocationHistory.Add("Specific Location was changed from " + previousLocationString + " to " + newLocationString + " ST: " + StackTraceUtility.ExtractStackTrace());
-            _specificLocation = specificLocation;
-			if(_specificLocation != null){
-				_currentRegion = _specificLocation.tileLocation.region;
-			}
-        }
 		public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter){
 			for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
-				if(targetCharacter.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id){
+				if(targetCharacter.party.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id){
 					return true;
 				}
 			}
 			return false;
 		}
-        private ILocation GetSpecificLocation() {
-            if (_specificLocation != null) {
-                return _specificLocation;
-            } else {
-                if (_icon != null) {
-                    Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 0.1f, LayerMask.GetMask("Hextiles"));
-                    //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
-                    HexTile tile = collide.gameObject.GetComponent<HexTile>();
-                    if (tile != null) {
-                        return tile;
-                    } else {
-                        LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
-                        if (landmarkObject != null) {
-                            return landmarkObject.landmark.tileLocation;
-                        }
-                    }
-                }
-                return null;
-            }
-        }
 		#endregion
-
-		#region Quests
-        /*
-         Determine what action the character will do, and execute that action.
-             */
-		internal void DetermineAction() {
-			//if(_isFainted || _isPrisoner || _isDead || _isFollower){
-			//	return;
-			//}
-   //         if(_party != null) {
-   //             //if the character is in a party, and is not the leader, do not decide any action
-   //             if (!_party.IsCharacterLeaderOfParty(this)) {
-   //                 return;
-   //             }
-   //         }
-			//if(_currentTask != null && !_currentTask.isDone){
-			//	_currentTask.SetIsHalted (true);
-			//}
-   //         if(nextTaskToDo != null) {
-   //             //Force next task to do, if any
-			//	nextTaskToDo.OnChooseTask(this);
-   //             nextTaskToDo = null;
-   //             return;
-   //         }
-			//actionWeights.Clear ();
-			//if(_role != null){
-			//	_role.AddTaskWeightsFromRole (actionWeights);
-			//}
-
-			//if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {				
-			//	for (int i = 0; i < _tags.Count; i++) {
-			//		_tags [i].AddTaskWeightsFromTags (actionWeights);
-			//	}
-			//	if (currentQuest != null) {
-			//		//Quest Tasks
-			//		_questData.AddQuestTasksToWeightedDictionary(actionWeights);
-			//	}
-			//}
-
-   //         if (actionWeights.GetTotalOfWeights() > 0) {
-   //             CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
-   //             if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
-   //                 LogActionWeights(actionWeights, chosenTask);
-   //             }
-   //             chosenTask.ResetTask();
-   //             chosenTask.OnChooseTask(this);
-   //         } else {
-   //             actionWeights.LogDictionaryValues(this.name + " action weights!");
-			//	Debug.LogError(this.role.roleType.ToString() + " " + this.name + " could not determine an action!");
-   //         }
-		}
-        /*
-         Set a task that this character will accept next
-             */
-        //internal void SetTaskToDoNext(CharacterTask taskToDo) {
-        //    //nextTaskToDo = taskToDo;
-        //}
-        //private void LogActionWeights(WeightedDictionary<CharacterTask> actionWeights, CharacterTask chosenTask) {
-        //    actionWeights.LogDictionaryValues(this.name + " action weights!");
-        //    Debug.Log(this.name + "'s chosen task is " + chosenTask.taskType.ToString());
-        //}
-        #endregion
 
         #region Tags
 		public void AssignInitialTags(){
@@ -2324,186 +2025,6 @@ namespace ECS {
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-        #endregion
-
-        #region Avatar
-        public void CreateNewAvatar() {
-            return;
-			//TODO: Only create one avatar per character, then enable disable it based on need, rather than destroying it then creating a new avatar when needed
-			//GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
-			//CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-			//if (party != null) {
-			//	avatar.Init(party);
-			//} else {
-			//	avatar.Init(this);
-			//}
-//            if(this._role != null) {
-//                if (this._role.roleType == CHARACTER_ROLE.HERO) {
-//                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("HeroAvatar", this.currLocation.transform.position, Quaternion.identity);
-//                    HeroAvatar avatar = avatarGO.GetComponent<HeroAvatar>();
-//                    if (party != null) {
-//                        avatar.Init(party);
-//                    } else {
-//                        avatar.Init(this);
-//                    }
-//                } else {
-//                    GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
-//                    CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-//                    if (party != null) {
-//                        avatar.Init(party);
-//                    } else {
-//                        avatar.Init(this);
-//                    }
-//                }
-//            } else {
-//                GameObject avatarGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterAvatar", this.currLocation.transform.position, Quaternion.identity);
-//                CharacterAvatar avatar = avatarGO.GetComponent<CharacterAvatar>();
-//                if (party != null) {
-//                    avatar.Init(party);
-//                } else {
-//                    avatar.Init(this);
-//                }
-//            }
-        }
-		//public void SetAvatar(CharacterAvatar avatar) {
-		//	_avatar = avatar;
-		//}
-		//public void DestroyAvatar() {
-		//	if(_avatar != null) {
-		//		_avatar.InstantDestroyAvatar();
-  //          }
-  //      }
-		public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
-            if (specificLocation == targetLocation) {
-                //action doer is already at the target location
-                if (doneAction != null) {
-                    doneAction();
-                }
-            } else {
-                _icon.SetActionOnTargetReached(doneAction);
-                _icon.SetTarget(targetLocation);
-            }
-            //if (specificLocation == null) {
-            //    throw new Exception("Specific location is null!");
-            //}
-            //if (targetLocation == null) {
-            //    throw new Exception("target location is null!");
-            //}
-			//if (specificLocation == targetLocation) {
-			//	//action doer is already at the target location
-			//	if(doneAction != null){
-			//		doneAction ();
-			//	}
-			//} else {
-			//	if (_avatar == null) {
-			//		//Instantiate a new character avatar
-			//		CreateNewAvatar();
-			//	}
-			//	_avatar.SetTarget(targetLocation);
-			//	if(doneAction == null){
-			//		_avatar.StartPath(pathfindingMode);
-			//	}else{
-			//		_avatar.StartPath(pathfindingMode, () => doneAction());
-			//	}
-			//}
-		}
-        public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
-            _icon.SetActionOnTargetReached(doneAction);
-            _icon.SetTargetGO(locationGO);
-        }
-        public void GoHome() {
-            GoToLocation(_homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
-        }
-        #endregion
-
-        #region Icon
-        /*
-            Create a new icon for this character.
-            Each character owns 1 icon.
-                */
-        public void CreateIcon() {
-            GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
-                Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
-            _icon = characterIconGO.GetComponent<CharacterIcon>();
-            _icon.SetCharacter(this);
-            PathfindingManager.Instance.AddAgent(_icon.aiPath);
-        }
-        #endregion
-
-        #region Task Management
-        //public void SetCurrentQuest(Quest currentQuest) {
-        //    _questData.SetActiveQuest(currentQuest);
-        //    UIManager.Instance.UpdateCharacterInfo();
-        //}
-		//public void AddNewQuest(OldQuest.Quest quest) {
-		//	if (!_activeQuests.Contains(quest)) {
-		//		_activeQuests.Add(quest);
-		//	}
-		//}
-		//public void RemoveQuest(OldQuest.Quest quest) {
-		//	_activeQuests.Remove(quest);
-		//}
-		//public void SetCurrentTask(CharacterAction action) {
-  //          if (_currentAction == null || _currentAction != action) {
-  //              if (onTaskChanged != null) {
-  //                  onTaskChanged();
-  //              }
-  //          }
-  //          _currentAction = action;
-  //      }
-        //public void AddActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
-        //    onTaskChanged += onTaskChangeAction;
-        //}
-        //public void RemoveActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
-        //    onTaskChanged -= onTaskChangeAction;
-        //}
-        //public void ResetOnTaskChangedActions() {
-        //    onTaskChanged = null;
-        //}
-  //      public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
-		//	List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
-		//	for (int i = 0; i < _activeQuests.Count; i++) {
-		//		OldQuest.Quest currQuest = _activeQuests[i];
-		//		if(currQuest.questType == questType) {
-		//			quests.Add(currQuest);
-		//		}
-		//	}
-		//	return quests;
-		//}
-		//public List<CharacterTask> GetAllPossibleTasks(ILocation location){
-		//	List<CharacterTask> possibleTasks = new List<CharacterTask> ();
-  //          //Role Tasks
-		//	if(_role != null){
-		//		for (int i = 0; i < _role.roleTasks.Count; i++) {
-		//			CharacterTask currentTask = _role.roleTasks [i];
-		//			if(!currentTask.forGameOnly && currentTask.CanBeDone(this, location)){
-		//				possibleTasks.Add (currentTask);
-		//			}
-		//		}
-		//	}
-  //          //Tag tasks
-		//	if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {
-		//		for (int i = 0; i < _tags.Count; i++) {
-		//			for (int j = 0; j < _tags [i].tagTasks.Count; j++) {
-		//				CharacterTask currentTask = _tags [i].tagTasks [j];
-		//				if (!currentTask.forGameOnly && currentTask.CanBeDone (this, location)) {
-		//					possibleTasks.Add (currentTask);
-		//				}
-		//			}
-		//		}
-		//		//Quest Tasks
-		//		if (currentQuest != null) {
-		//			for (int i = 0; i < _questData.tasks.Count; i++) {
-		//				CharacterTask currentTask = _questData.tasks [i];
-		//				if (!currentTask.forGameOnly && !currentTask.isDone && currentTask.CanBeDone (this, location)) {
-		//					possibleTasks.Add (currentTask);
-		//				}
-		//			}
-		//		}
-		//	}
-
-		//	return possibleTasks;
-		//}
         #endregion
 
         #region Utilities
@@ -2526,30 +2047,6 @@ namespace ECS {
 		public void SetName(string newName){
 			_name = newName;
 		}
-        public Character GetFollowerByID(int id) {
-            if (party != null) {
-                for (int i = 0; i < party.partyMembers.Count; i++) {
-                    Character currChar = party.partyMembers[i];
-                    if (currChar.id == id) {
-                        return currChar;
-                    }
-                }
-            }
-            return null;
-        }
-		public void SetHome(Area newHome) {
-            this._home = newHome;
-        }
-        public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
-            this._homeLandmark = newHomeLandmark;
-        }
-        public void SetHomeStructure(StructureObj newHomeStructure) {
-            if(_homeStructure != null) {
-                _homeStructure.AdjustNumOfResidents(-1);
-            }
-            _homeStructure = newHomeStructure;
-            newHomeStructure.AdjustNumOfResidents(1);
-        }
         //If true, character can't do daily action (onDailyAction), i.e. actions, needs
         public void SetIsIdle(bool state) {
             _isIdle = state;
@@ -2558,18 +2055,19 @@ namespace ECS {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
         }
         public BaseLandmark GetNearestLandmarkWithoutHostiles() {
-            Region currRegionLocation = specificLocation.tileLocation.region;
+            ILocation location = _party.specificLocation;
+            Region currRegionLocation = location.tileLocation.region;
             List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.landmarks);
             //elligibleLandmarks.Add(currRegionLocation.mainLandmark);
             //elligibleLandmarks.AddRange(currRegionLocation.landmarks);
-			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                elligibleLandmarks.Remove(specificLocation as BaseLandmark);
+			if (location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                elligibleLandmarks.Remove(location as BaseLandmark);
             }
             Dictionary<BaseLandmark, List<HexTile>> landmarksWithoutHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
             Dictionary<BaseLandmark, List<HexTile>> landmarksWithHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
             for (int i = 0; i < elligibleLandmarks.Count; i++) {
                 BaseLandmark currLandmark = elligibleLandmarks[i];
-                List<HexTile> path = PathGenerator.Instance.GetPath(specificLocation.tileLocation, currLandmark.tileLocation, PATHFINDING_MODE.USE_ROADS);
+                List<HexTile> path = PathGenerator.Instance.GetPath(location.tileLocation, currLandmark.tileLocation, PATHFINDING_MODE.USE_ROADS);
                 if(path != null) {
                     //check for hostiles
                     if (!currLandmark.HasHostilitiesWith(this.faction)) {
@@ -2598,12 +2096,12 @@ namespace ECS {
         }
         public void CenterOnCharacter() {
             if (!this.isDead) {
-                CameraMove.Instance.CenterCameraOn(specificLocation.tileLocation.gameObject);
+                CameraMove.Instance.CenterCameraOn(_party.specificLocation.tileLocation.gameObject);
             }
         }
 		//Death of this character if he/she is in the region specified
 		private void RegionDeath(Region region){
-			if(currentRegion.id == region.id){
+			if(_party.currentRegion.id == region.id){
 				Death ();
 			}
 		}
@@ -2622,58 +2120,11 @@ namespace ECS {
                 }
             }
         }
-        public void AdvertiseSelf(ActionThread actionThread) {
-            if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.currentRegion.id) {
-                actionThread.AddToChoices(_characterObject);
-            }
-        }
-        public void LookForNewHomeStructure() {
-            //Try to get a new home structure from this character's area
-            StructureObj structure = GetNewHomeStructureFromArea(_home);
-            if(structure != null) {
-                SetHomeStructure(structure);
-            } else {
-                //If there is no available structure, look for it in other areas of the faction and migrate there
-                structure = GetNewHomeStructureFromFaction();
-                if (structure != null) {
-                    SetHomeStructure(structure);
-                    SetHome(structure.objectLocation.tileLocation.areaOfTile);
-                } else {
-                    //TODO: For future update, migrate to another friendly faction's structure
-                }
-            }
-        }
-        private StructureObj GetNewHomeStructureFromArea(Area area) {
-            StructureObj chosenStructure = null;
-            for (int i = 0; i < area.landmarks.Count; i++) {
-                StructureObj structure = area.landmarks[i].landmarkObj;
-                if(structure != _homeStructure && structure.specificObjectType == _homeStructure.specificObjectType) {
-                    if(chosenStructure == null) {
-                        chosenStructure = structure;
-                    } else {
-                        if(structure.numOfResidentCivilians < chosenStructure.numOfResidentCivilians) {
-                            chosenStructure = structure;
-                        }
-                    }
-                }
-            }
-            return chosenStructure;
-        }
-        private StructureObj GetNewHomeStructureFromFaction() {
-            StructureObj chosenStructure = null;
-            if (_faction != null) {
-                for (int i = 0; i < _faction.ownedAreas.Count; i++) {
-                    Area area = _faction.ownedAreas[i];
-                    if(area.id != _home.id) {
-                        chosenStructure = GetNewHomeStructureFromArea(area);
-                        if(chosenStructure != null) {
-                            break;
-                        }
-                    }
-                }
-            }
-            return chosenStructure;
-        }
+        //public void AdvertiseSelf(ActionThread actionThread) {
+        //    if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.party.currentRegion.id) {
+        //        actionThread.AddToChoices(_characterObject);
+        //    }
+        //}
         #endregion
 
         #region Relationships
@@ -2793,7 +2244,7 @@ namespace ECS {
 		#region Psytoxin
 		private void RegionPsytoxin(List<Region> regions){
 			for (int i = 0; i < regions.Count; i++) {
-				if(currentRegion.id == regions[i].id){
+				if(_party.currentRegion.id == regions[i].id){
 					InfectedByPsytoxin ();
 					break;
 				}
@@ -2819,7 +2270,7 @@ namespace ECS {
 
 		#region Traces
 		public void LeaveTraceOnLandmark(){
-			ILocation location = specificLocation;
+			ILocation location = _party.specificLocation;
 			if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 				BaseLandmark landmark = location as BaseLandmark;
 				int chance = UnityEngine.Random.Range (0, 100);
@@ -2886,7 +2337,7 @@ namespace ECS {
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-                if(resourcePrerequisite.resourceType != RESOURCE.NONE && _characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+                if(resourcePrerequisite.resourceType != RESOURCE.NONE && _party.characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
                     return true;
                 }
             }
@@ -2897,7 +2348,8 @@ namespace ECS {
         #region Needs
         private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
             if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
-                if (specificLocation.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(specificLocation.tileLocation)){
+                ILocation location = _party.specificLocation;
+                if (location.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(location.tileLocation)){
                     int sanityToReduce = amount * 5;
                     this.role.AdjustSanity(-sanityToReduce);
                     Debug.Log(this.name + " has reduced its sanity by " + sanityToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
@@ -2906,26 +2358,6 @@ namespace ECS {
         }
         #endregion
 
-        //private void GenerateRoamingBehaviour() {
-        //    List<Region> exclude = new List<Region>();
-        //    exclude.Add(this.specificLocation.tileLocation.region);
-        //    exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
-        //    List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
-        //    Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
-        //    for (int i = 0; i < allSettlements.Count; i++) {
-        //        BaseLandmark currLandmark = allSettlements[i];
-        //        List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
-        //        if (allPaths.Count > 0) {
-        //            choices.Add(currLandmark, allPaths);
-        //        }
-        //    }
-        //    if (choices.Count > 0) {
-        //        BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
-        //        List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
-        //        List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
-        //        //TODO: queue go to location of each landmark in path
-        //    }
-        //}
         #region Portrait Settings
         public void SetPortraitSettings(PortraitSettings settings) {
             _portraitSettings = settings;
@@ -3051,12 +2483,76 @@ namespace ECS {
             if (snatcherLair == null) {
                 throw new Exception("There is not available snatcher lair!");
             } else {
-                if (this._specificLocation != null) { //if character is at a landmark
-                    this._specificLocation.RemoveCharacterFromLocation(this);
+                ILocation location = _party.specificLocation;
+                if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
+                    location.RemoveCharacterFromLocation(this);
                 }
                 snatcherLair.AddCharacterToLocation(this);
                 Imprison();
             }
+        }
+        #endregion
+
+        #region Home
+        public void LookForNewHomeStructure() {
+            //Try to get a new home structure from this character's area
+            StructureObj structure = GetNewHomeStructureFromArea(_home);
+            if (structure != null) {
+                SetHomeStructure(structure);
+            } else {
+                //If there is no available structure, look for it in other areas of the faction and migrate there
+                structure = GetNewHomeStructureFromFaction();
+                if (structure != null) {
+                    SetHomeStructure(structure);
+                    SetHome(structure.objectLocation.tileLocation.areaOfTile);
+                } else {
+                    //TODO: For future update, migrate to another friendly faction's structure
+                }
+            }
+        }
+        private StructureObj GetNewHomeStructureFromArea(Area area) {
+            StructureObj chosenStructure = null;
+            for (int i = 0; i < area.landmarks.Count; i++) {
+                StructureObj structure = area.landmarks[i].landmarkObj;
+                if (structure != _homeStructure && structure.specificObjectType == _homeStructure.specificObjectType) {
+                    if (chosenStructure == null) {
+                        chosenStructure = structure;
+                    } else {
+                        if (structure.numOfResidentCivilians < chosenStructure.numOfResidentCivilians) {
+                            chosenStructure = structure;
+                        }
+                    }
+                }
+            }
+            return chosenStructure;
+        }
+        private StructureObj GetNewHomeStructureFromFaction() {
+            StructureObj chosenStructure = null;
+            if (_faction != null) {
+                for (int i = 0; i < _faction.ownedAreas.Count; i++) {
+                    Area area = _faction.ownedAreas[i];
+                    if (area.id != _home.id) {
+                        chosenStructure = GetNewHomeStructureFromArea(area);
+                        if (chosenStructure != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return chosenStructure;
+        }
+        public void SetHome(Area newHome) {
+            _home = newHome;
+        }
+        public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+            this._homeLandmark = newHomeLandmark;
+        }
+        public void SetHomeStructure(StructureObj newHomeStructure) {
+            if (_homeStructure != null) {
+                _homeStructure.AdjustNumOfResidents(-1);
+            }
+            _homeStructure = newHomeStructure;
+            newHomeStructure.AdjustNumOfResidents(1);
         }
         #endregion
     }
