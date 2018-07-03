@@ -16,6 +16,7 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private AIDestinationSetter _destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private Seeker seeker;
+    [SerializeField] private EdgeCollider2D edgeCollider;
 
     public CharacterPortrait characterPortrait { get; private set; }
 
@@ -154,6 +155,30 @@ public class CharacterIcon : MonoBehaviour {
     }
     #endregion
 
+    #region Utilities
+    public List<HexTile> ConvertToTilePath(List<Vector3> vectorPath) {
+        Vector2[] colliderPoints = new Vector2[vectorPath.Count];
+        for (int i = 0; i < vectorPath.Count; i++) {
+            colliderPoints[i] = vectorPath[i];
+        }
+        edgeCollider.offset = new Vector2(vectorPath[0].x * -1f, vectorPath[0].y * -1f);
+        edgeCollider.points = colliderPoints;
+
+        Collider2D[] collisions = new Collider2D[50];
+        ContactFilter2D contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(LayerMask.GetMask("Hextiles"));
+        int numOfCollisions = edgeCollider.OverlapCollider(contactFilter, collisions);
+        List<HexTile> tilePath = new List<HexTile>();
+        for (int i = 0; i < numOfCollisions; i++) {
+            Debug.Log(collisions[i].gameObject.name);
+            HexTile tile = collisions[i].gameObject.GetComponent<HexTile>();
+            if (tile != null) {
+                tilePath.Add(tile);
+            }
+        }
+        return tilePath;
+    }
+    #endregion
     private void OnRoleChanged(Character character) {
         if (_icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER && _icharacter.id == character.id) {
             //UpdateColor();

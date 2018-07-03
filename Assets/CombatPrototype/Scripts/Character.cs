@@ -68,7 +68,7 @@ namespace ECS {
         private Faction _faction;
         private Faction _attackedByFaction;
         private Party _party;
-        //private QuestData _questData;
+        private List<CharacterQuestData> _questData;
         //private CharacterActionQueue<CharacterAction> _actionQueue;
         //private CharacterAction _currentAction;
         private ILocation _specificLocation;
@@ -94,31 +94,24 @@ namespace ECS {
         private Area _home;
         private BaseLandmark _homeLandmark;
         private StructureObj _homeStructure;
-
-        //private BaseLandmark _lair;
-        //private int _combatHistoryID;
         private List<Log> _history;
-        //private Dictionary<RACE, int> _civiliansByRace;
 
         private Combat _currentCombat;
         private int _actRate;
         internal Dictionary<int, Combat> combatHistory;
 
         private float _equippedWeaponPower;
-        private int _gold;
-        //private int _prestige;
+        //private int _gold;
         private int _numOfAttackers;
 
         //private Action _currentFunction;
         private bool _isInCombat;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         private Dictionary<Character, List<string>> _traceInfo;
-        //private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
         private CharacterObj _characterObject;
 
-        //private Dictionary<RESOURCE, int> _resourceInventory;
 
         #region getters / setters
         public string firstName {
@@ -170,18 +163,9 @@ namespace ECS {
         public Party party {
             get { return _party; }
         }
-        //public QuestData questData {
-        //    get { return _questData; }
-        //}
-        //public Quest currentQuest {
-        //    get { return _questData.activeQuest; }
-        //}
-        //public QuestPhase currentQuestPhase {
-        //    get { return _questData.GetQuestPhase(); }
-        //}
-        //public CharacterAction currentAction {
-        //    get { return _actionData.currentAction; }
-        //}
+        public List<CharacterQuestData> questData {
+            get { return _questData; }
+        }
         public ILocation specificLocation {
             get {
                 //            ILocation loc = null;
@@ -294,9 +278,9 @@ namespace ECS {
         public float equippedWeaponPower {
             get { return _equippedWeaponPower; }
         }
-        public int gold {
-            get { return _gold; }
-        }
+        //public int gold {
+        //    get { return _gold; }
+        //}
         //public int prestige {
         //    get { return _prestige; }
         //}
@@ -479,7 +463,7 @@ namespace ECS {
             _isIdle = false;
             _traceInfo = new Dictionary<Character, List<string>>();
             _history = new List<Log>();
-            //_questData = new QuestData(this);
+            _questData = new List<CharacterQuestData>();
             //_actionQueue = new CharacterActionQueue<CharacterAction>();
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
@@ -1443,10 +1427,10 @@ namespace ECS {
             }
             return this.characterClass.allowedWeaponTypes[UnityEngine.Random.Range(0, this.characterClass.allowedWeaponTypes.Count)];
         }
-        internal void AdjustGold(int amount) {
-            _gold += amount;
-            _gold = Mathf.Max(0, _gold);
-        }
+        //internal void AdjustGold(int amount) {
+        //    _gold += amount;
+        //    _gold = Mathf.Max(0, _gold);
+        //}
         //internal void AdjustPrestige(int amount) {
         //    _prestige += amount;
         //    _prestige = Mathf.Max(0, _prestige);
@@ -2258,65 +2242,14 @@ namespace ECS {
 		#endregion
 
 		#region Quests
-        /*
-         Determine what action the character will do, and execute that action.
-             */
-		internal void DetermineAction() {
-			//if(_isFainted || _isPrisoner || _isDead || _isFollower){
-			//	return;
-			//}
-   //         if(_party != null) {
-   //             //if the character is in a party, and is not the leader, do not decide any action
-   //             if (!_party.IsCharacterLeaderOfParty(this)) {
-   //                 return;
-   //             }
-   //         }
-			//if(_currentTask != null && !_currentTask.isDone){
-			//	_currentTask.SetIsHalted (true);
-			//}
-   //         if(nextTaskToDo != null) {
-   //             //Force next task to do, if any
-			//	nextTaskToDo.OnChooseTask(this);
-   //             nextTaskToDo = null;
-   //             return;
-   //         }
-			//actionWeights.Clear ();
-			//if(_role != null){
-			//	_role.AddTaskWeightsFromRole (actionWeights);
-			//}
-
-			//if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {				
-			//	for (int i = 0; i < _tags.Count; i++) {
-			//		_tags [i].AddTaskWeightsFromTags (actionWeights);
-			//	}
-			//	if (currentQuest != null) {
-			//		//Quest Tasks
-			//		_questData.AddQuestTasksToWeightedDictionary(actionWeights);
-			//	}
-			//}
-
-   //         if (actionWeights.GetTotalOfWeights() > 0) {
-   //             CharacterTask chosenTask = actionWeights.PickRandomElementGivenWeights();
-   //             if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
-   //                 LogActionWeights(actionWeights, chosenTask);
-   //             }
-   //             chosenTask.ResetTask();
-   //             chosenTask.OnChooseTask(this);
-   //         } else {
-   //             actionWeights.LogDictionaryValues(this.name + " action weights!");
-			//	Debug.LogError(this.role.roleType.ToString() + " " + this.name + " could not determine an action!");
-   //         }
-		}
-        /*
-         Set a task that this character will accept next
-             */
-        //internal void SetTaskToDoNext(CharacterTask taskToDo) {
-        //    //nextTaskToDo = taskToDo;
-        //}
-        //private void LogActionWeights(WeightedDictionary<CharacterTask> actionWeights, CharacterTask chosenTask) {
-        //    actionWeights.LogDictionaryValues(this.name + " action weights!");
-        //    Debug.Log(this.name + "'s chosen task is " + chosenTask.taskType.ToString());
-        //}
+        public void OnQuestTaken(Quest takenQuest) {
+            //TODO: Add CharacterQuestData based on the taken quest
+        }
+        public void AddQuestData(CharacterQuestData questData) {
+            if (!_questData.Contains(questData)) {
+                _questData.Add(questData);
+            }
+        }
         #endregion
 
         #region Tags

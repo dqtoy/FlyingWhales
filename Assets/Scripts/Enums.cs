@@ -895,26 +895,8 @@ public enum TASK_STATUS {
     FAIL,
     CANCEL
 }
-public enum QUEST_TYPE { //This is a list of actions a character can choose to accept. These are usually created by the Internal OldQuest.Quest Manager/Military Manager
-    EXPLORE_REGION,
-    EXPAND,
-    REST,
-    GO_HOME,
-    DO_NOTHING,
-    JOIN_PARTY,
-	ATTACK,
-	DEFEND,
-    EXPLORE_TILE,
-    BUILD_STRUCTURE,
-	OBTAIN_MATERIAL,
-    EXPEDITION,
-	SAVE_LANDMARK,
-
-    FIND_LOST_HEIR,
-	THE_DARK_RITUAL,
-	PSYTOXIN_CURE,
-	ELIMINATE_LOST_HEIR,
-	HUNT,
+public enum QUEST_TYPE { 
+    RELEASE_CHARACTER,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,

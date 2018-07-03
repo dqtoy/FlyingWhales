@@ -105,6 +105,7 @@ public class LandmarkObject : MonoBehaviour {
                 List<Vector3> vectorPath = path.vectorPath;
                 lineRenderer.positionCount = vectorPath.Count;
                 lineRenderer.SetPositions(vectorPath.ToArray());
+                
             }
         }
     }
