@@ -149,7 +149,7 @@ public class LandmarkInfoUI : UIMenu {
 			text += "NONE";
 		}
 
-		text += "\n<b>Items: </b> ";
+		text += "\n<b>Items In Landmark: </b> ";
 		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
 				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
@@ -158,6 +158,19 @@ public class LandmarkInfoUI : UIMenu {
 		} else {
 			text += "NONE";
 		}
+
+        if (currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.SHOP) {
+            text += "\n<b>Items In Shop: </b> ";
+            Shop shop = currentlyShowingLandmark.landmarkObj as Shop;
+            if (shop.availableItems.Count > 0) {
+                for (int i = 0; i < shop.availableItems.Count; i++) {
+                    text += "\n" + shop.availableItems[i];
+                }
+            } else {
+                text += "NONE";
+            }
+            
+        }
        
         landmarkInfoLbl.text = text;
     }
