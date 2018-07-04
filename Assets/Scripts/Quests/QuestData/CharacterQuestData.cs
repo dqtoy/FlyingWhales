@@ -11,4 +11,8 @@ public class CharacterQuestData {
         _parentQuest = parentQuest;
         _owner = owner;
     }
+
+    public CharacterAction GetNextQuestAction() {
+        return _parentQuest.GetQuestAction(_owner, this);
+    }
 }

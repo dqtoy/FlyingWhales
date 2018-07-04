@@ -18,10 +18,9 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
 
     public ReleaseCharacterQuestData(Quest parentQuest, ECS.Character owner, ECS.Character targetCharacter) : base(parentQuest, owner) {
         this.targetCharacter = targetCharacter;
-        //UpdateVectorPath();
     }
 
-    public void UpdateVectorPath() {
+    public void UpdateVectorPath() { //TODO: Change this to somehow get the path of immediately
         PathfindingManager.Instance.GetPath(_owner.specificLocation.tileLocation, targetCharacter.specificLocation.tileLocation, OnVectorPathComputed);
     }
     private void OnVectorPathComputed(List<Vector3> path) {

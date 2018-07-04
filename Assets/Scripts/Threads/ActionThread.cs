@@ -39,6 +39,25 @@ public class ActionThread : Multithread {
     }
     #endregion
     private void LookForAction() {
+        if (!LookForActionFromQuests()) {
+            LookForActionFromAdvertisements();
+        }
+    }
+    private bool LookForActionFromQuests() {
+        if (_character.questData.Count > 0 && _character.role != null && _character.role.happiness >= 100) {
+            //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
+            CharacterQuestData chosenQuest = _character.questData[UnityEngine.Random.Range(0, _character.questData.Count)];
+            if (chosenQuest is ReleaseCharacterQuestData) {
+                (chosenQuest as ReleaseCharacterQuestData).UpdateVectorPath();
+            }
+            chosenAction = chosenQuest.GetNextQuestAction();
+            if (chosenAction != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void LookForActionFromAdvertisements() {
         allChoices.Clear();
 
         actionLog = _character.name + "'s Action Advertisements: ";
@@ -67,14 +86,14 @@ public class ActionThread : Multithread {
 #endif
         chosenAction = PickAction();
 #if UNITY_EDITOR
-        _character.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
+        _character.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) +
             " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
 #endif
 
         //Check Prerequisites, currently for resource prerequisites only
         CheckPrerequisites(chosenAction);
-
     }
+
     private void CheckPrerequisites(CharacterAction characterAction) {
         if (HasPrerequisite(characterAction)) {
             if (CanDoPrerequisite(characterAction)) {
