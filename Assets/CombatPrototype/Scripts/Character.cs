@@ -449,6 +449,7 @@ namespace ECS {
             LevelUp();
 
             EquipPreEquippedItems(baseSetup);
+            SubscribeToSignals();
         }
         public Character() {
             _traits = new List<Trait>();
@@ -504,7 +505,13 @@ namespace ECS {
         }
         public void Initialize() { }
 
-		private void AllocateStatPoints(int statAllocation){
+        #region Signals
+        private void SubscribeToSignals() {
+            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        }
+        #endregion
+
+        private void AllocateStatPoints(int statAllocation){
             _baseStrength = 0;
             _baseIntelligence = 0;
             _baseAgility = 0;
@@ -2310,14 +2317,6 @@ namespace ECS {
 //                }
 //            }
         }
-		//public void SetAvatar(CharacterAvatar avatar) {
-		//	_avatar = avatar;
-		//}
-		//public void DestroyAvatar() {
-		//	if(_avatar != null) {
-		//		_avatar.InstantDestroyAvatar();
-  //          }
-  //      }
 		public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
             if (specificLocation == targetLocation) {
                 //action doer is already at the target location
@@ -2373,82 +2372,6 @@ namespace ECS {
             _icon.SetCharacter(this);
             PathfindingManager.Instance.AddAgent(_icon.aiPath);
         }
-        #endregion
-
-        #region Task Management
-        //public void SetCurrentQuest(Quest currentQuest) {
-        //    _questData.SetActiveQuest(currentQuest);
-        //    UIManager.Instance.UpdateCharacterInfo();
-        //}
-		//public void AddNewQuest(OldQuest.Quest quest) {
-		//	if (!_activeQuests.Contains(quest)) {
-		//		_activeQuests.Add(quest);
-		//	}
-		//}
-		//public void RemoveQuest(OldQuest.Quest quest) {
-		//	_activeQuests.Remove(quest);
-		//}
-		//public void SetCurrentTask(CharacterAction action) {
-  //          if (_currentAction == null || _currentAction != action) {
-  //              if (onTaskChanged != null) {
-  //                  onTaskChanged();
-  //              }
-  //          }
-  //          _currentAction = action;
-  //      }
-        //public void AddActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
-        //    onTaskChanged += onTaskChangeAction;
-        //}
-        //public void RemoveActionOnTaskChanged(OnTaskChanged onTaskChangeAction) {
-        //    onTaskChanged -= onTaskChangeAction;
-        //}
-        //public void ResetOnTaskChangedActions() {
-        //    onTaskChanged = null;
-        //}
-  //      public List<OldQuest.Quest> GetQuestsOfType(QUEST_TYPE questType) {
-		//	List<OldQuest.Quest> quests = new List<OldQuest.Quest>();
-		//	for (int i = 0; i < _activeQuests.Count; i++) {
-		//		OldQuest.Quest currQuest = _activeQuests[i];
-		//		if(currQuest.questType == questType) {
-		//			quests.Add(currQuest);
-		//		}
-		//	}
-		//	return quests;
-		//}
-		//public List<CharacterTask> GetAllPossibleTasks(ILocation location){
-		//	List<CharacterTask> possibleTasks = new List<CharacterTask> ();
-  //          //Role Tasks
-		//	if(_role != null){
-		//		for (int i = 0; i < _role.roleTasks.Count; i++) {
-		//			CharacterTask currentTask = _role.roleTasks [i];
-		//			if(!currentTask.forGameOnly && currentTask.CanBeDone(this, location)){
-		//				possibleTasks.Add (currentTask);
-		//			}
-		//		}
-		//	}
-  //          //Tag tasks
-		//	if (_role == null || (_role != null && !_role.cancelsAllOtherTasks)) {
-		//		for (int i = 0; i < _tags.Count; i++) {
-		//			for (int j = 0; j < _tags [i].tagTasks.Count; j++) {
-		//				CharacterTask currentTask = _tags [i].tagTasks [j];
-		//				if (!currentTask.forGameOnly && currentTask.CanBeDone (this, location)) {
-		//					possibleTasks.Add (currentTask);
-		//				}
-		//			}
-		//		}
-		//		//Quest Tasks
-		//		if (currentQuest != null) {
-		//			for (int i = 0; i < _questData.tasks.Count; i++) {
-		//				CharacterTask currentTask = _questData.tasks [i];
-		//				if (!currentTask.forGameOnly && !currentTask.isDone && currentTask.CanBeDone (this, location)) {
-		//					possibleTasks.Add (currentTask);
-		//				}
-		//			}
-		//		}
-		//	}
-
-		//	return possibleTasks;
-		//}
         #endregion
 
         #region Utilities
@@ -2713,13 +2636,6 @@ namespace ECS {
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
 		}
-        //public void SetCurrentFunction(Action function) {
-        //    if (_party != null) {
-        //        _party.SetCurrentFunction(() => function());
-        //    } else {
-        //        _currentFunction = function;
-        //    }
-        //}
         #endregion
 
         #region Landmarks
@@ -2822,12 +2738,6 @@ namespace ECS {
         #endregion
 
         #region Action Queue
-        //public void AddActionToQueue(CharacterAction action) {
-        //    _actionQueue.Enqueue(action);
-        //}
-        //public void InsertActionToQueue(CharacterAction action, int index) {
-        //    _actionQueue.Enqueue(action, index);
-        //}
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
@@ -2851,26 +2761,6 @@ namespace ECS {
         }
         #endregion
 
-        //private void GenerateRoamingBehaviour() {
-        //    List<Region> exclude = new List<Region>();
-        //    exclude.Add(this.specificLocation.tileLocation.region);
-        //    exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
-        //    List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
-        //    Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
-        //    for (int i = 0; i < allSettlements.Count; i++) {
-        //        BaseLandmark currLandmark = allSettlements[i];
-        //        List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
-        //        if (allPaths.Count > 0) {
-        //            choices.Add(currLandmark, allPaths);
-        //        }
-        //    }
-        //    if (choices.Count > 0) {
-        //        BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
-        //        List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
-        //        List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
-        //        //TODO: queue go to location of each landmark in path
-        //    }
-        //}
         #region Portrait Settings
         public void SetPortraitSettings(PortraitSettings settings) {
             _portraitSettings = settings;
@@ -2991,7 +2881,7 @@ namespace ECS {
         #endregion
 
         #region Player Actions
-        public void OnCharacterSnatched() {
+        public void OnThisCharacterSnatched() {
             BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
             if (snatcherLair == null) {
                 throw new Exception("There is not available snatcher lair!");
@@ -3002,6 +2892,47 @@ namespace ECS {
                 snatcherLair.AddCharacterToLocation(this);
                 Imprison();
             }
+        }
+        #endregion
+
+        #region Snatch
+        /*
+         When the player successfully snatches a character, other characters with relation to 
+         the snatched one would all be sent signals to check whether they should react or not. 
+         Other character reaction would depend on their relationship, happiness and traits.
+             */
+        private void OnCharacterSnatched(ECS.Character otherCharacter) {
+            if (otherCharacter.id != this.id) {
+                if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
+                    Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
+                    //For now make all characters that have relationship with the snatched character, react.
+                    //if (UnityEngine.Random.Range(0, 2) == 0) {
+                    //    //obtain release character questline
+                    //} else {
+                        //bargain with player
+                        TriggerBargain(otherCharacter);
+                    //}
+                }
+            }
+        }
+        private void TriggerBargain(ECS.Character bargainingFor) {
+            List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
+            CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
+            List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.characterObject.currentState.stateName != "Imprisoned"));
+            otherCharacters.Remove(this);
+            dialogChoices.Add(killYourselfChoice);
+            if (otherCharacters.Count > 0) {
+                ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
+                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => actionData.AssignAction(characterToAttack.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)));
+                dialogChoices.Add(attackCharacterChoice);
+            }
+
+            UnityEngine.Events.UnityAction onClickAction = () => Messenger.Broadcast(Signals.SHOW_CHARACTER_DIALOG, this, "Please release " + bargainingFor.name + "!", dialogChoices);
+
+            Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>
+                (Signals.SHOW_NOTIFICATION, this.name + " wants to bargain for " + bargainingFor.name + "'s freedom!",
+                144,
+                onClickAction);
         }
         #endregion
     }

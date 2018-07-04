@@ -58,6 +58,8 @@ public class Area {
     public void AddTile(HexTile tile, bool revalidateTiles = true) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
+            tile.SetBaseSprite(Biomes.Instance.bareTiles[0]);
+            tile.SetBiomeDetailState(false);
             tile.SetArea(this);
             if (revalidateTiles) {
                 RevalidateTiles();

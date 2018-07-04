@@ -6,6 +6,7 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public class UIManager : MonoBehaviour {
 
@@ -54,6 +55,14 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Popup Message Box")]
     [SerializeField] private PopupMessageBox popupMessageBox;
+
+    [Space(10)]
+    [Header("Notification Area")]
+    [SerializeField] private PlayerNotificationArea notificationArea;
+
+    [Space(10)]
+    [Header("Character Dialog Menu")]
+    [SerializeField] private CharacterDialogMenu characterDialogMenu;
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
@@ -123,6 +132,7 @@ public class UIManager : MonoBehaviour {
         popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
+        Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, ShowNotification);
     }
 
     #region Font Utilities
@@ -283,77 +293,9 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Notifications Area
-    //public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif, bool addLogToHistory = true) {
-    //      if (addLogToHistory) {
-    //          AddLogToLogHistory(log);
-    //      }
-    //if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
-    //    //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
-    //    return;
-    //}
-    //if (notificationItemsThatCanBeReused.Count > 0) {
-    //    NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
-    //    itemToUse.SetLog(log);
-    //    RemoveNotificationItemFromReuseList(itemToUse);
-    //    itemToUse.gameObject.SetActive(true);
-    //} else {
-    //    GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
-    //    notifGO.transform.localScale = Vector3.one;
-    //    notifGO.GetComponent<NotificationItem>().SetLog(log);
-    //}
-    ////notificationParent.AddChild(notifGO.transform);
-    //RepositionNotificationTable();
-    ////notificationScrollView.UpdatePosition();
-    ////notificationParent.Reposition();
-    //notificationScrollView.UpdatePosition();
-
-    //}
-    //    public void ShowNotification(Log log, bool addLogToHistory = true) {
-    ////        if (addLogToHistory) {
-    ////            AddLogToLogHistory(log);
-    ////        }
-    //        //if (kingdomsThatShouldShowNotif != null) {
-    //        //    if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
-    //        //        //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
-    //        //        return;
-    //        //    }
-    //        //}
-    //        if (notificationItemsThatCanBeReused.Count > 0) {
-    //            NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
-    //            itemToUse.SetLog(log);
-    //            RemoveNotificationItemFromReuseList(itemToUse);
-    //            itemToUse.gameObject.SetActive(true);
-    //        } else {
-    //            GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
-    //            notifGO.transform.localScale = Vector3.one;
-    //            notifGO.GetComponent<NotificationItem>().SetLog(log);
-    //        }
-    //        //notificationParent.AddChild(notifGO.transform);
-    //        RepositionNotificationTable();
-    //        //notificationScrollView.UpdatePosition();
-    //        //notificationParent.Reposition();
-    //        notificationScrollView.UpdatePosition();
-
-    //    }
-    //internal void AddNotificationItemToReuseList(NotificationItem item) {
-    //    if (!notificationItemsThatCanBeReused.Contains(item)) {
-    //        notificationItemsThatCanBeReused.Add(item);
-    //    }
-    //}
-    //internal void RemoveNotificationItemFromReuseList(NotificationItem item) {
-    //    notificationItemsThatCanBeReused.Remove(item);
-    //}
-    //public void RemoveAllNotifications() {
-    //    List<Transform> children = notificationParent.GetChildList();
-    //    for (int i = 0; i < children.Count; i++) {
-    //        ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
-    //    }
-    //}
-    //public void RepositionNotificationTable() {
-    //    StartCoroutine(RepositionTable(notificationParent));
-    //    //StartCoroutine(RepositionGrid(notificationParent));
-    //    //StartCoroutine(RepositionScrollView(notificationParent.GetComponentInParent<UIScrollView>()));
-    //}
+    private void ShowNotification(string text, int expirationTicks, UnityAction onClickAction) {
+        notificationArea.ShowNotification(text, expirationTicks, onClickAction);
+    }
     #endregion
 
     #region World History
@@ -612,22 +554,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-
-    //#region Faction Summary
-    //public void ShowFactionsSummary() {
-    //    factionSummaryUI.ShowFactionSummary();
-    //    HideStorylinesSummary();
-    //    HideQuestsSummary();
-    //    SetWorldInfoMenuItemAsSelected(worldInfoFactionBtn.transform);
-    //}
-    //public void HideFactionsSummary() {
-    //    factionSummaryUI.HideFactionSummary();
-    //}
-    //public void UpdateFactionSummary() {
-    //    factionSummaryUI.UpdateFactionsSummary();
-    //}
-    //#endregion
-
     #region Player Actions
     [Space(10)]
     [Header("Player Actions")]
@@ -641,55 +567,6 @@ public class UIManager : MonoBehaviour {
         playerActionsUI.HidePlayerActionsUI();
     }
     #endregion
-
-    //  #region Quest Info
-    //  [Space(10)]
-    //  [Header("Quest Info")]
-    //  [SerializeField] internal QuestInfoUI questInfoUI;
-    //  public void ShowQuestInfo(OldQuest.Quest quest) {
-    //      if (settlementInfoUI.isShowing) {
-    //          settlementInfoUI.HideMenu();
-    //      }
-    //      if (factionInfoUI.isShowing) {
-    //          factionInfoUI.HideMenu();
-    //      }
-    //      if (characterInfoUI.isShowing) {
-    //          characterInfoUI.HideMenu();
-    //      }
-    //      if (hexTileInfoUI.isShowing) {
-    //          hexTileInfoUI.HideMenu();
-    //      }
-    //if(partyinfoUI.isShowing){
-    //	partyinfoUI.HideMenu ();
-    //}
-    //      questInfoUI.SetData(quest);
-    //      questInfoUI.OpenMenu();
-    //      //		playerActionsUI.ShowPlayerActionsUI ();
-    //  }
-    //  public void UpdateQuestInfo() {
-    //      if (questInfoUI.isShowing) {
-    //          questInfoUI.UpdateQuestInfo();
-    //      }
-    //  }
-    //  #endregion
-
-    //  #region Quest Logs
-    //  [Space(10)]
-    //  [Header("Quest Logs")]
-    //  [SerializeField] internal QuestLogsUI questLogUI;
-    //  public void ShowQuestLog(OldQuest.Quest quest) {
-    //if(combatLogUI.isShowing){
-    //	combatLogUI.HideCombatLogs ();
-    //}
-    //      questLogUI.ShowQuestLogs(quest);
-    //      questLogUI.UpdateQuestLogs();
-    //  }
-    //  public void UpdateQuestLogs() {
-    //      if (questLogUI.isShowing) {
-    //          questLogUI.UpdateQuestLogs();
-    //      }
-    //  }
-    //  #endregion
 
     #region Menu History
     public void AddMenuToQueue(UIMenu menu, object data) {
@@ -790,64 +667,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    //#region Quests Summary
-    //[Space(10)]
-    //[Header("Quests Summary")]
-    //[SerializeField] private UILabel questsSummaryLbl;
-    //[SerializeField] private GameObject questsSummaryGO;
-    //public void ShowQuestsSummary() {
-    //    HideCharactersSummary();
-    //    HideStorylinesSummary();
-    //    worldInfoQuestsSelectedGO.SetActive(true);
-    //    questsSummaryGO.SetActive(true);
-    //    UpdateQuestsSummary();
-    //}
-    //public void HideQuestsSummary() {
-    //    worldInfoQuestsSelectedGO.SetActive(false);
-    //    questsSummaryGO.SetActive(false);
-    //}
-    //public void UpdateQuestsSummary() {
-    //    string questSummary = string.Empty;
-    //    //questSummary += "[b]Available Quests: [/b]";
-    //    //for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
-    //    //    Quest currentQuest = QuestManager.Instance.availableQuests[i];
-    //    //    if (!currentQuest.isDone) {
-    //    //        questSummary += "\n" + currentQuest.questURLName;
-    //    //        questSummary += "\n   Characters on Quest: ";
-    //    //        if (currentQuest.acceptedCharacters.Count > 0) {
-    //    //            for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
-    //    //                ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
-    //    //                questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
-    //    //            }
-    //    //        } else {
-    //    //            questSummary += "NONE";
-    //    //        }
-    //    //    }
-    //    //}
-    //    questsSummaryLbl.text = questSummary;
-    //    questsSummaryLbl.ResizeCollider();
-    //}
-    //#endregion
-
-    //#region Storylines Summary
-    //[Space(10)]
-    //[Header("Storylines Summary")]
-    //[SerializeField] private GameObject storylinesSummaryGO;
-    //public StorylinesSummaryMenu storylinesSummaryMenu;
-    //public void ShowStorylinesSummary() {
-    //    HideCharactersSummary();
-    //    HideQuestsSummary();
-    //    worldInfoStorylinesSelectedGO.SetActive(true);
-    //    storylinesSummaryMenu.ShowMenu();
-    //    StartCoroutine(RepositionTable(storylinesSummaryMenu.storyTable));
-    //    //UpdateQuestsSummary();
-    //}
-    //public void HideStorylinesSummary() {
-    //    worldInfoStorylinesSelectedGO.SetActive(false);
-    //    storylinesSummaryMenu.HideMenu();
-    //}
-    //#endregion
-
     #region Characters Summary
     [Space(10)]
     [Header("Characters Summary")]
@@ -929,4 +748,5 @@ public class UIManager : MonoBehaviour {
         //LevelLoaderManager.Instance.LoadLevel("MainMenu");
     }
     #endregion
+
 }
