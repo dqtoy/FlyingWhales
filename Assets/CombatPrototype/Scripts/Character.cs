@@ -2935,5 +2935,12 @@ namespace ECS {
                 onClickAction);
         }
         #endregion
+
+        #region Path
+        public List<Vector3> GetPathTowards(ILocation location) {
+            //_icon.Set
+            return null;
+        }
+        #endregion
     }
 }

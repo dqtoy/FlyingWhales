@@ -39,7 +39,7 @@ public class QuestManager : MonoBehaviour {
     public CharacterQuestData ConstructQuestData(QUEST_TYPE type, ECS.Character questTaker, object data) {
         switch (type) {
             case QUEST_TYPE.RELEASE_CHARACTER:
-                return new ReleaseCharacterQuestData(availableQuests[type], data as ECS.Character);
+                return new ReleaseCharacterQuestData(availableQuests[type], questTaker, data as ECS.Character);
             default:
                 break;
         }

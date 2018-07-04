@@ -9,7 +9,9 @@ public class ReleaseCharacterQuest : Quest {
 
     #region overrides
     public override CharacterAction GetQuestAction(Character character, CharacterQuestData data) {
+        if (true) { //if current power is greater than or equal to Required Power
 
+        }
         return base.GetQuestAction(character,data);
     }
     #endregion

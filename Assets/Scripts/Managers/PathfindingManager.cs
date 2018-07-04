@@ -8,6 +8,7 @@ public class PathfindingManager : MonoBehaviour {
     public static PathfindingManager Instance = null;
 
     [SerializeField] private AstarPath aStarPath;
+    [SerializeField] private PathfindingManagerAIPath aiPath;
 
     private GridGraph mainGraph;
     private List<AIPath> _allAgents;
@@ -67,5 +68,11 @@ public class PathfindingManager : MonoBehaviour {
         }
     }
 #endif
+    #endregion
+
+    #region Pathfinding
+    public void GetPath(HexTile startTile, HexTile endTile, System.Action<List<Vector3>> onPathComplete) {
+        aiPath.ComputePath(startTile, endTile, onPathComplete);
+    }
     #endregion
 }

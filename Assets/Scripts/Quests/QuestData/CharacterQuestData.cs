@@ -5,8 +5,10 @@ using UnityEngine;
 public class CharacterQuestData {
 
     protected Quest _parentQuest;
+    protected ECS.Character _owner;
 
-    public CharacterQuestData(Quest parentQuest) {
+    public CharacterQuestData(Quest parentQuest, ECS.Character owner) {
         _parentQuest = parentQuest;
+        _owner = owner;
     }
 }
