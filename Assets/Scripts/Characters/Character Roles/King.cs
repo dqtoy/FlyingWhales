@@ -20,17 +20,14 @@ public class King : CharacterRole {
     #region Overrides
     public override void DeathRole() {
         base.DeathRole();
-        //_character.SetIsIdle(false);
         Messenger.RemoveListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
     }
     public override void ChangedRole() {
         base.ChangedRole();
-        //_character.SetIsIdle(false);
         Messenger.RemoveListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
     }
     public override void OnAssignRole() {
         base.OnAssignRole();
-        //_character.SetIsIdle(true);
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
     }
     #endregion

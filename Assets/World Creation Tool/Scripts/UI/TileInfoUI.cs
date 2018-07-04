@@ -54,7 +54,7 @@ public class TileInfoUI : MonoBehaviour {
         //}
         info += "\nCharacters located here: ";
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-            ICharacter currChar = landmark.charactersAtLocation[i];
+            IParty currChar = landmark.charactersAtLocation[i];
             info += "\n   - " + currChar.name;
         }
         return info;

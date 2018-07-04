@@ -28,9 +28,9 @@ public class CharacterSaveData {
         role = character.role.roleType;
         className = character.characterClass.className;
 
-        if (character.specificLocation != null) {
-            locationType = character.specificLocation.locIdentifier;
-            locationID = character.specificLocation.id;
+        if (character.party.specificLocation != null) {
+            locationType = character.party.specificLocation.locIdentifier;
+            locationID = character.party.specificLocation.id;
         } else {
             locationID = -1;
         }

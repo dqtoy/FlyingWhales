@@ -41,15 +41,15 @@ public class ActionThread : Multithread {
     private void LookForAction() {
         allChoices.Clear();
 
-        actionLog = _character.name + "'s Action Advertisements: ";
-        for (int i = 0; i < _character.currentRegion.landmarks.Count; i++) {
-            BaseLandmark landmark = _character.currentRegion.landmarks[i];
+        actionLog = _party.name + "'s Action Advertisements: ";
+        for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
+            BaseLandmark landmark = _party.currentRegion.landmarks[i];
             StructureObj iobject = landmark.landmarkObj;
             if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                     CharacterAction action = iobject.currentState.actions[k];
-                    if (action.MeetsRequirements(_character, landmark) && action.CanBeDone() && action.CanBeDoneBy(_character)) { //Filter
-                        float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
+                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone() && action.CanBeDoneBy(_party)) { //Filter
+                        float happinessIncrease = _party.TotalHappinessIncrease(action);
                         actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
                         PutToChoices(action, happinessIncrease);
                     }
@@ -59,95 +59,94 @@ public class ActionThread : Multithread {
         if (Messenger.eventTable.ContainsKey("LookForAction")) {
             Messenger.Broadcast<ActionThread>("LookForAction", this);
         }
-        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
+        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
             Debug.Log(actionLog);
         }
 #if UNITY_EDITOR
-        _character.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
+        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
 #endif
         chosenAction = PickAction();
 #if UNITY_EDITOR
-        _character.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
+        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
             " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
 #endif
 
         //Check Prerequisites, currently for resource prerequisites only
-        CheckPrerequisites(chosenAction);
-
+        //CheckPrerequisites(chosenAction);
     }
-    private void CheckPrerequisites(CharacterAction characterAction) {
-        if (HasPrerequisite(characterAction)) {
-            if (CanDoPrerequisite(characterAction)) {
-                DoPrerequisite(characterAction, null, null);
-            } else {
-                RemoveActionFromChoices(characterAction);
-                chosenAction = PickAction();
-                CheckPrerequisites(chosenAction);
-            }
-        }
-    }
-    private bool CanDoPrerequisite(CharacterAction characterAction) {
-        if(HasPrerequisite(characterAction)) {
-            for (int i = 0; i < characterAction.actionData.prerequisites.Count; i++) {
-                IPrerequisite prerequisite = characterAction.actionData.prerequisites[i];
-                if (_character.DoesSatisfiesPrerequisite(prerequisite)) {
-                    continue;
-                }
-                if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
-                    ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-                    CharacterAction satisfyingAction = GetActionThatMatchesResourcePrerequisite(resourcePrerequisite);
-                    if (satisfyingAction == null || (satisfyingAction != null && !CanDoPrerequisite(satisfyingAction))) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-    private void DoPrerequisite(CharacterAction characterAction, ChainAction parentAction, IPrerequisite iprerequisite) {
-        ChainAction chainAction = new ChainAction();
-        chainAction.parentChainAction = parentAction;
-        chainAction.action = characterAction;
-        chainAction.prerequisite = iprerequisite;
-        chainAction.satisfiedPrerequisites = new List<ChainAction>();
-        chainAction.finishedPrerequisites = new List<IPrerequisite>();
-        if (parentAction != null) {
-            parentAction.satisfiedPrerequisites.Add(chainAction);
-        }
-        chosenChainAction = chainAction;
-        if (HasPrerequisite(characterAction)) {
-            for (int i = 0; i < characterAction.actionData.prerequisites.Count; i++) {
-                IPrerequisite prerequisite = characterAction.actionData.prerequisites[i];
-                if (_character.DoesSatisfiesPrerequisite(prerequisite)) {
-                    chainAction.finishedPrerequisites.Add(prerequisite);
-                    continue;
-                }
-                if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
-                    ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-                    CharacterAction satisfyingAction = GetActionThatMatchesResourcePrerequisite(resourcePrerequisite);
-                    if (satisfyingAction != null) {
-                        DoPrerequisite(satisfyingAction, chainAction, prerequisite);
-                    }
-                }
-            }
-        }
-    }
-    private bool HasPrerequisite(CharacterAction characterAction) {
-        return characterAction.actionData.prerequisites != null;
-    }
-    private CharacterAction GetActionThatMatchesResourcePrerequisite(ResourcePrerequisite resourcePrerequisite) {
-        for (int i = 0; i < allChoices.Count; i++) {
-            CharacterAction action = allChoices[i].action;
-            if (action.actionData.advertisedResource != RESOURCE.NONE && resourcePrerequisite.resourceType != RESOURCE.NONE && action.actionData.advertisedResource == resourcePrerequisite.resourceType && action.state.obj.resourceInventory != null) {
-                if (action.state.obj.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
-                    return action;
-                }
-            }
-        }
-        return null;
-    }
+    //private void CheckPrerequisites(CharacterAction characterAction) {
+    //    if (HasPrerequisite(characterAction)) {
+    //        if (CanDoPrerequisite(characterAction)) {
+    //            DoPrerequisite(characterAction, null, null);
+    //        } else {
+    //            RemoveActionFromChoices(characterAction);
+    //            chosenAction = PickAction();
+    //            CheckPrerequisites(chosenAction);
+    //        }
+    //    }
+    //}
+    //private bool CanDoPrerequisite(CharacterAction characterAction) {
+    //    if(HasPrerequisite(characterAction)) {
+    //        for (int i = 0; i < characterAction.actionData.prerequisites.Count; i++) {
+    //            IPrerequisite prerequisite = characterAction.actionData.prerequisites[i];
+    //            if (_party.DoesSatisfiesPrerequisite(prerequisite)) {
+    //                continue;
+    //            }
+    //            if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
+    //                ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
+    //                CharacterAction satisfyingAction = GetActionThatMatchesResourcePrerequisite(resourcePrerequisite);
+    //                if (satisfyingAction == null || (satisfyingAction != null && !CanDoPrerequisite(satisfyingAction))) {
+    //                    return false;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return true;
+    //}
+    //private void DoPrerequisite(CharacterAction characterAction, ChainAction parentAction, IPrerequisite iprerequisite) {
+    //    ChainAction chainAction = new ChainAction();
+    //    chainAction.parentChainAction = parentAction;
+    //    chainAction.action = characterAction;
+    //    chainAction.prerequisite = iprerequisite;
+    //    chainAction.satisfiedPrerequisites = new List<ChainAction>();
+    //    chainAction.finishedPrerequisites = new List<IPrerequisite>();
+    //    if (parentAction != null) {
+    //        parentAction.satisfiedPrerequisites.Add(chainAction);
+    //    }
+    //    chosenChainAction = chainAction;
+    //    if (HasPrerequisite(characterAction)) {
+    //        for (int i = 0; i < characterAction.actionData.prerequisites.Count; i++) {
+    //            IPrerequisite prerequisite = characterAction.actionData.prerequisites[i];
+    //            if (_party.DoesSatisfiesPrerequisite(prerequisite)) {
+    //                chainAction.finishedPrerequisites.Add(prerequisite);
+    //                continue;
+    //            }
+    //            if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
+    //                ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
+    //                CharacterAction satisfyingAction = GetActionThatMatchesResourcePrerequisite(resourcePrerequisite);
+    //                if (satisfyingAction != null) {
+    //                    DoPrerequisite(satisfyingAction, chainAction, prerequisite);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //private bool HasPrerequisite(CharacterAction characterAction) {
+    //    return characterAction.actionData.prerequisites != null;
+    //}
+    //private CharacterAction GetActionThatMatchesResourcePrerequisite(ResourcePrerequisite resourcePrerequisite) {
+    //    for (int i = 0; i < allChoices.Count; i++) {
+    //        CharacterAction action = allChoices[i].action;
+    //        if (action.actionData.advertisedResource != RESOURCE.NONE && resourcePrerequisite.resourceType != RESOURCE.NONE && action.actionData.advertisedResource == resourcePrerequisite.resourceType && action.state.obj.resourceInventory != null) {
+    //            if (action.state.obj.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+    //                return action;
+    //            }
+    //        }
+    //    }
+    //    return null;
+    //}
     private void ReturnAction() {
-        _character.actionData.ReturnActionFromThread(chosenAction, chosenChainAction);
+        _party.actionData.ReturnActionFromThread(chosenAction, chosenChainAction);
     }
     private void PutToChoices(CharacterAction action, float advertisement) {
         CharacterActionAdvertisement actionAdvertisement = new CharacterActionAdvertisement();
@@ -203,7 +202,7 @@ public class ActionThread : Multithread {
         int chosenIndex = 0; //Utilities.rng.Next(0, maxChoice);
         CharacterAction chosenAction = choices[chosenIndex].action;
         if (chosenAction == null) {
-            string error = _character.role.roleType.ToString() + " " +  _character.name + " could not find an action to do! Choices were ";
+            string error = _party.name + " could not find an action to do! Choices were ";
             for (int i = 0; i < choices.Length; i++) {
                 CharacterActionAdvertisement currAd = choices[i];
                 if (currAd.action != null) {
@@ -212,7 +211,7 @@ public class ActionThread : Multithread {
             }
             throw new Exception(error);
         }
-        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _character.id) {
+        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && _party.icharacters.Contains(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) {
             Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.specificLocation.locationName + ")");
         }
         //Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
@@ -231,8 +230,8 @@ public class ActionThread : Multithread {
         if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
             for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                 CharacterAction action = iobject.currentState.actions[k];
-                if (action.MeetsRequirements(_character, null) && action.CanBeDone() && action.CanBeDoneBy(_character)) { //Filter
-                    float happinessIncrease = _character.role.GetTotalHappinessIncrease(action);
+                if (action.MeetsRequirements(_party, null) && action.CanBeDone() && action.CanBeDoneBy(_party)) { //Filter
+                    float happinessIncrease = _party.TotalHappinessIncrease(action);
                     actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + ")";
                     PutToChoices(action, happinessIncrease);
                 }

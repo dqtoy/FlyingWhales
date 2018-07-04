@@ -35,14 +35,14 @@ public class RepairAction : CharacterAction {
             _resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);
         }
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
-        GiveAllReward(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
+        GiveAllReward(party);
 
-        (character.characterObject as CharacterObj).AdjustResource(_resourceNeeded, _resourceAmountToDecrease);
+        (party.characterObject as CharacterObj).AdjustResource(_resourceNeeded, _resourceAmountToDecrease);
         _structure.AdjustHP(_amountToIncrease);
-        if (_structure.isHPFull || (character.characterObject as CharacterObj).resourceInventory[_resourceNeeded] < _resourceAmountToDecrease) {
-            EndAction(character);
+        if (_structure.isHPFull || (party.characterObject as CharacterObj).resourceInventory[_resourceNeeded] < _resourceAmountToDecrease) {
+            EndAction(party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

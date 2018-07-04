@@ -19,35 +19,35 @@ public class CharacterClick : MonoBehaviour {
             return;
         }
         if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-            CharacterAction action = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+            CharacterAction action = icon.iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
             AttackAction attackAction = action as AttackAction;
-            if (attackAction.CanBeDoneByTesting(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
-                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(attackAction);
+            if (attackAction.CanBeDoneByTesting(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party)) { //TODO: Change this checker to relationship status checking instead of just faction
+                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction);
                 UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
                 return;
             }
         }else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
-            CharacterAction joinBattleAction = icon.icharacter.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
-            if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
-                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(joinBattleAction);
+            CharacterAction joinBattleAction = icon.iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
+            if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party)) { //TODO: Change this checker to relationship status checking instead of just faction
+                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction);
                 UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
                 return;
             }
         }
-        if (icon.icharacter is ECS.Character) {
-            UIManager.Instance.ShowCharacterInfo(icon.icharacter as ECS.Character);
+        if (icon.iparty is CharacterParty) {
+            UIManager.Instance.ShowCharacterInfo(icon.iparty.icharacters[0] as ECS.Character);
         }
         
     }
     private void OnTriggerEnter2D(Collider2D other) {
-        if (icon.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-            Character thisCharacter = icon.icharacter as Character;
-            if (thisCharacter.actionData.currentAction != null) {
-                if (other.tag == "Character" && thisCharacter.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
-                    AttackAction attackAction = thisCharacter.actionData.currentAction as AttackAction;
+        if (icon.iparty is CharacterParty) {
+            CharacterParty thisParty = icon.iparty as CharacterParty;
+            if (thisParty.actionData.currentAction != null) {
+                if (other.tag == "Character" && thisParty.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
+                    AttackAction attackAction = thisParty.actionData.currentAction as AttackAction;
                     CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                    if (attackAction.icharacterObj.icharacter.icharacterType == enemy.icharacter.icharacterType && attackAction.icharacterObj.icharacter.id == enemy.icharacter.id) {
-                        thisCharacter.actionData.DoAction();
+                    if (attackAction.icharacterObj.iparty.id == enemy.iparty.id) {//attackAction.icharacterObj.iparty == enemy.iparty.icharacterType && 
+                        thisParty.actionData.DoAction();
                     }
                 }
             }

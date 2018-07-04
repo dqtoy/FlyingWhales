@@ -73,7 +73,7 @@ public class Party: IEncounterable {
         get { return _followers; }
     }
     public CharacterAction currentAction {
-        get { return _partyLeader.actionData.currentAction; }
+        get { return null; }// _partyLeader.actionData.currentAction; }
 	}
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
@@ -169,7 +169,7 @@ public class Party: IEncounterable {
     public virtual void AddPartyMember(ECS.Character member) {
         if (!_partyMembers.Contains(member)) {
 			if(member.party != null){
-				member.party.DisbandParty ();
+				//member.party.DisbandParty ();
 				Debug.Log ("DISBANDING " + member.party.name + " before adding " + member.name + " to " + _name);
 			}else{
 				//if (member.avatar != null) {
@@ -184,8 +184,8 @@ public class Party: IEncounterable {
 				//	_partyLeader.avatar.AddNewCharacter (member);
 				//}
 			}
-            member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
-            member.SetParty(this);
+            //member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
+            //member.SetParty(this);
         }
     }
     /*

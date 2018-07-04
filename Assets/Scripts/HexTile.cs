@@ -82,7 +82,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
 
-    protected List<ICharacter> _charactersAtLocation = new List<ICharacter>(); //List of characters/party on landmark
+    protected List<IParty> _charactersAtLocation = new List<IParty>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -141,7 +141,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject clickHighlightGO {
         get { return _clickHighlightGO; }
     }
-    public List<ICharacter> charactersAtLocation {
+    public List<IParty> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
     public HexTile tileLocation {
@@ -1311,10 +1311,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Characters
-	public void AddCharacterToLocation(ICharacter character) {
-		if (!_charactersAtLocation.Contains(character)) {
-			_charactersAtLocation.Add(character);
-            character.SetSpecificLocation(this);
+	public void AddCharacterToLocation(IParty iparty) {
+		if (!_charactersAtLocation.Contains(iparty)) {
+			_charactersAtLocation.Add(iparty);
+            iparty.SetSpecificLocation(this);
             //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
             //  Character currChar = character as Character;
             //  currChar.SetSpecificLocation(this);
@@ -1327,9 +1327,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
 	}
-	public void RemoveCharacterFromLocation(ICharacter character) {
-		_charactersAtLocation.Remove(character);
-        character.SetSpecificLocation(null);
+	public void RemoveCharacterFromLocation(IParty iparty) {
+		_charactersAtLocation.Remove(iparty);
+        iparty.SetSpecificLocation(null);
   //      if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
   //          Character currChar = character as Character;
   //          currChar.SetSpecificLocation(null);
@@ -1341,12 +1341,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             UnScheduleCombatCheck();
         }
 	}
-    public void ReplaceCharacterAtLocation(ICharacter characterToReplace, ICharacter characterToAdd) {
-        if (_charactersAtLocation.Contains(characterToReplace)) {
-            int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
-            _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
-            _charactersAtLocation.Remove(characterToReplace);
-            characterToAdd.SetSpecificLocation(this);
+    public void ReplaceCharacterAtLocation(IParty ipartyToReplace, IParty ipartyToAdd) {
+        if (_charactersAtLocation.Contains(ipartyToReplace)) {
+            int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
+            _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
+            _charactersAtLocation.Remove(ipartyToReplace);
+            ipartyToAdd.SetSpecificLocation(this);
             //if (characterToAdd.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //    Character currChar = characterToAdd as Character;
             //    currChar.SetSpecificLocation(this);
@@ -1765,10 +1765,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 forceActionMain.SetSubMenu(forceActionSub);
                 for (int i = 0; i < landmarkOnTile.landmarkObj.currentState.actions.Count; i++) {
                     CharacterAction action = landmarkOnTile.landmarkObj.currentState.actions[i];
-                    if (action.MeetsRequirements(character, this._landmarkOnTile) && action.CanBeDone() && action.CanBeDoneBy(character)) {
+                    if (action.MeetsRequirements(character.party, this._landmarkOnTile) && action.CanBeDone() && action.CanBeDoneBy(character.party)) {
                         hasDoableAction = true;
                         ContextMenuItemSettings doableAction = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(action.actionType.ToString()));
-                        doableAction.onClickAction = () => character.actionData.ForceDoAction(action);
+                        doableAction.onClickAction = () => character.party.actionData.ForceDoAction(action);
                         forceActionSub.AddMenuItem(doableAction);
                     }
                 }

@@ -4,9 +4,9 @@ using UnityEngine;
 using ECS;
 
 public class ActionData {
-    private Character _character;
+    private CharacterParty _party;
     public CharacterAction currentAction;
-    public ChainAction currentChainAction;
+    //public ChainAction currentChainAction;
     public object specificTarget;
     public int currentDay;
     public bool isDone;
@@ -15,8 +15,9 @@ public class ActionData {
     private CharacterActionAdvertisement[] choices;
     private ActionThread actionThread;
     private bool _isNotFirstEncounter;
-    private float _homeMultiplier;
+    private bool _isHalted;
     private bool _hasDoneActionAtHome;
+    private float _homeMultiplier;
 
 #if UNITY_EDITOR
     public List<string> actionHistory;
@@ -26,16 +27,20 @@ public class ActionData {
     public float homeMultiplier {
         get { return _homeMultiplier; }
     }
+    public bool isHalted {
+        get { return _isHalted; }
+    }
     #endregion
 
-    public ActionData(Character character) {
+    public ActionData(CharacterParty party) {
         Reset();
-        _character = character;
+        _party = party;
         choices = new CharacterActionAdvertisement[3];
-        actionThread = new ActionThread(_character);
-        _character.onDailyAction += PerformCurrentAction;
+        actionThread = new ActionThread(_party);
+        _party.onDailyAction += PerformCurrentAction;
         _homeMultiplier = 1f;
         _hasDoneActionAtHome = false;
+        _isHalted = false;
 #if !WORLD_CREATION_TOOL
         //Messenger.AddListener(Signals.HOUR_ENDED, PerformCurrentAction);
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
@@ -47,7 +52,7 @@ public class ActionData {
 
     public void Reset() {
         this.currentAction = null;
-        this.currentChainAction = null;
+        //this.currentChainAction = null;
         this.currentDay = 0;
         this.isDone = false;
         this.isWaiting = false;
@@ -66,23 +71,23 @@ public class ActionData {
         if (chainAction != null) {
             action = chainAction.action;
         }
-        this.currentChainAction = chainAction;
+        //this.currentChainAction = chainAction;
         SetCurrentAction(action);
         if (action == null) {
-            throw new System.Exception("Action of " + _character.name + "(" + _character.role.roleType.ToString() + ") is null!");
+            throw new System.Exception("Action of " + _party.name + " is null!");
         }
-        action.OnChooseAction(_character);
-        _character.party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        action.OnChooseAction(_party);
+        _party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
         //    CharacterObj characterObj = action.state.obj as CharacterObj;
-        //    _character.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
+        //    _party.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
         //} else {
-        //    _character.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        //    _party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //}
 
         if (action.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
             Area areaOfStructure = action.state.obj.objectLocation.tileLocation.areaOfTile;
-            if (areaOfStructure != null && _character.home != null && areaOfStructure.id == _character.home.id) {
+            if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
                 _homeMultiplier = 1f;
                 _hasDoneActionAtHome = true;
             }
@@ -90,8 +95,8 @@ public class ActionData {
     }
     public void DetachActionData() {
         Reset();
-        _character.onDailyAction -= PerformCurrentAction;
-        _character = null;
+        _party.onDailyAction -= PerformCurrentAction;
+        _party = null;
         //Messenger.RemoveListener(Signals.HOUR_ENDED, PerformCurrentAction);
     }
 
@@ -104,11 +109,19 @@ public class ActionData {
     public void SetCurrentDay(int day) {
         this.currentDay = day;
     }
+    public void SetIsHalted(bool state) {
+        if (_isHalted != state) {
+            _isHalted = state;
+            if (state) {
+                _party.icon.aiPath.maxSpeed = 0f;
+            }
+        }
+    }
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
         if(this.currentDay >= currentAction.actionData.duration) {
-            currentAction.DoneDuration(_character);
-            currentAction.EndAction(_character);
+            currentAction.DoneDuration(_party);
+            currentAction.EndAction(_party);
         }
     }
     public void SetIsDone(bool state) {
@@ -116,12 +129,12 @@ public class ActionData {
     }
 
     private void PerformCurrentAction() {
-        if (!isWaiting && _character.party.icon.targetLocation == null) {
+        if (!isWaiting && _party.icon.targetLocation == null) {
             if (!isDone && currentAction != null){
                 if (_isHalted) {
                     return;
                 }
-                ILocation characterLocation = _character.specificLocation;
+                ILocation characterLocation = _party.specificLocation;
                 if (characterLocation != null && currentAction.state.obj.specificLocation != null && characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
                     //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                     if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
@@ -129,7 +142,7 @@ public class ActionData {
                         if (newAction != null) {
                             AssignAction(newAction);
                         } else {
-                            currentAction.EndAction(_character);
+                            currentAction.EndAction(_party);
                             return;
                         }
                     }
@@ -137,41 +150,42 @@ public class ActionData {
                 } else {
                     if (currentAction.state.obj.specificLocation != null) {
                         if (currentAction.actionType == ACTION_TYPE.ATTACK) {
-                            _character.GoToLocation(currentAction.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                            _party.GoToLocation(currentAction.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
                         }
                     } else {
                         if(currentAction.state.obj.currentState.stateName == "Dead") { //if object is dead
-                            currentAction.EndAction(_character);
+                            currentAction.EndAction(_party);
                         }
                     }
                     
                 }
                 //else {
-                //    Debug.Log(_character.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
+                //    Debug.Log(_party.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
                 //}
             } else {
-                if(currentChainAction != null && currentChainAction.parentChainAction != null) {
-                    if(currentChainAction.IsPrerequisiteFinished(_character, currentChainAction)) {
-                        if(currentChainAction.parentChainAction.satisfiedPrerequisites.Count > 0) {
-                            AssignAction(currentChainAction.parentChainAction.satisfiedPrerequisites[0].action, currentChainAction.parentChainAction.satisfiedPrerequisites[0]);
-                        } else {
-                            AssignAction(currentChainAction.parentChainAction.action, currentChainAction.parentChainAction);
-                        }
-                    } else {
-                        LookForAction();
-                    }
-                } else {
-                    LookForAction();
-                }
+                LookForAction();
+                //if (currentChainAction != null && currentChainAction.parentChainAction != null) {
+                //    if(currentChainAction.IsPrerequisiteFinished(_party, currentChainAction)) {
+                //        if(currentChainAction.parentChainAction.satisfiedPrerequisites.Count > 0) {
+                //            AssignAction(currentChainAction.parentChainAction.satisfiedPrerequisites[0].action, currentChainAction.parentChainAction.satisfiedPrerequisites[0]);
+                //        } else {
+                //            AssignAction(currentChainAction.parentChainAction.action, currentChainAction.parentChainAction);
+                //        }
+                //    } else {
+                //        LookForAction();
+                //    }
+                //} else {
+                //    LookForAction();
+                //}
             }
         }
     }
     public void DoAction() {
         if (!_isNotFirstEncounter) {
-            currentAction.OnFirstEncounter(_character);
+            currentAction.OnFirstEncounter(_party);
             _isNotFirstEncounter = true;
         }
-        currentAction.PerformAction(_character);
+        currentAction.PerformAction(_party);
         if (currentAction.actionData.duration > 0) {
             AdjustCurrentDay(1);
         }

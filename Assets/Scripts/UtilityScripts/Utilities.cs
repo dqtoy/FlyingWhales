@@ -25,6 +25,7 @@ public class Utilities : MonoBehaviour {
     public static int lastItemID = 0;
     public static int lastAreaID = 0;
     public static int lastMonsterID = 0;
+    public static int lastPartyID = 0;
 
     public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
@@ -72,6 +73,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Area) {
             lastAreaID += 1;
             return lastAreaID;
+        } else if (obj is NewParty) {
+            lastPartyID += 1;
+            return lastPartyID;
         }
         return 0;
 	}
@@ -92,6 +96,8 @@ public class Utilities : MonoBehaviour {
             lastMonsterID = idToUse;
         } else if (obj is Area) {
             lastAreaID = idToUse;
+        } else if (obj is NewParty) {
+            lastPartyID = idToUse;
         }
         return idToUse;
     }

@@ -381,8 +381,8 @@ public class ConsoleMenu : UIMenu {
         }
 
         string text = string.Empty;
-        for (int i = 0; i < character.actionData.actionHistory.Count; i++) {
-            text += character.actionData.actionHistory[i] + "\n";
+        for (int i = 0; i < character.party.actionData.actionHistory.Count; i++) {
+            text += character.party.actionData.actionHistory[i] + "\n";
         }
         Debug.Log(text);
         AddSuccessMessage(text);
@@ -440,9 +440,9 @@ public class ConsoleMenu : UIMenu {
         }
 
         string text = character.name + "'s Location History: ";
-        for (int i = 0; i < character.specificLocationHistory.Count; i++) {
-            text += "\n" + character.specificLocationHistory[i];
-        }
+        //for (int i = 0; i < character.specificLocationHistory.Count; i++) {
+        //    text += "\n" + character.specificLocationHistory[i];
+        //}
         Debug.Log(text);
         string fileLocation = Utilities.dataPath + "Logs/" + character.name + "'s_Location_History.txt";
         System.IO.File.WriteAllText(fileLocation, text);
@@ -654,7 +654,7 @@ public class ConsoleMenu : UIMenu {
 
         HexTile targetTile = GridMap.Instance.map[targetTileX, targetTileY];
 
-        character.icon.SetTarget(targetTile);
+        character.party.icon.SetTarget(targetTile);
     }
     #endregion
 

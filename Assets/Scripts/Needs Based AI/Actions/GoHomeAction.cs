@@ -8,10 +8,10 @@ public class GoHomeAction : CharacterAction {
 
     }
     #region Overrides
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         ActionSuccess();
-        GiveAllReward(character);
+        GiveAllReward(party);
     }
     public override CharacterAction Clone(ObjectState state) {
         GoHomeAction goHomeAction = new GoHomeAction(state);
@@ -19,11 +19,11 @@ public class GoHomeAction : CharacterAction {
         goHomeAction.Initialize();
         return goHomeAction;
     }
-    public override bool CanBeDoneBy(Character character) {
-        if (character.home == null || _state.obj.objectLocation.tileLocation.areaOfTile.id != character.home.id) {
+    public override bool CanBeDoneBy(CharacterParty party) {
+        if (party.home == null || _state.obj.objectLocation.tileLocation.areaOfTile.id != party.home.id) {
             return false;
         }
-        return base.CanBeDoneBy(character);
+        return base.CanBeDoneBy(party);
     }
     #endregion
 }

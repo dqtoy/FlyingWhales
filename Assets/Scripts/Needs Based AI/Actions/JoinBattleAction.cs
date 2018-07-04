@@ -21,12 +21,12 @@ public class JoinBattleAction : CharacterAction {
             _characterObj = _state.obj as CharacterObj;
         }
     }
-    public override void OnFirstEncounter(Character character) {
-        base.OnFirstEncounter(character);
-        StartEncounter(character);
+    public override void OnFirstEncounter(CharacterParty party) {
+        base.OnFirstEncounter(party);
+        StartEncounter(party);
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         ActionSuccess();
         //What happens when performing join battle
     }
@@ -37,35 +37,39 @@ public class JoinBattleAction : CharacterAction {
         return joinBattleAction;
     }
     public override bool CanBeDone() {
-        if(_characterObj.character.currentCombat == null) {
+        if(_characterObj.party.icharacters[0].currentCombat == null) {
             return false;
         }
         return base.CanBeDone();
     }
-    public override bool CanBeDoneBy(Character character) {
-        if (character.faction == null || _characterObj.character.faction == null || character.faction.id != _characterObj.character.faction.id) {
+    public override bool CanBeDoneBy(CharacterParty party) {
+        if (party.faction == null || _characterObj.party.faction == null || party.faction.id != _characterObj.party.faction.id) {
             return false;
         }
-        return base.CanBeDoneBy(character);
+        return base.CanBeDoneBy(party);
     }
     #endregion
-    private void StartEncounter(Character friend) {
+    private void StartEncounter(CharacterParty friend) {
         friend.actionData.SetIsHalted(true);
         FriendWillJoinCombat(friend);
     }
-    private void FriendWillJoinCombat(Character friend) {
-        if(_characterObj.character.currentCombat != null) {
-            _characterObj.character.currentCombat.AddCharacter(_characterObj.character.currentSide, friend);
+    private void FriendWillJoinCombat(CharacterParty friend) {
+        if(_characterObj.party.icharacters[0].currentCombat != null) {
+            _characterObj.party.icharacters[0].currentCombat.AddParty(_characterObj.party.icharacters[0].currentSide, friend);
 
             Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "join_combat");
             combatLog.AddToFillers(friend, friend.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            combatLog.AddToFillers(_characterObj.character.currentCombat, " joins battle of ", LOG_IDENTIFIER.COMBAT);
-            combatLog.AddToFillers(_characterObj.character, _characterObj.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            combatLog.AddToFillers(_characterObj.party.icharacters[0].currentCombat, " joins battle of ", LOG_IDENTIFIER.COMBAT);
+            combatLog.AddToFillers(_characterObj.party, _characterObj.party.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-            friend.AddHistory(combatLog);
-            _characterObj.character.AddHistory(combatLog);
+            for (int i = 0; i < friend.icharacters.Count; i++) {
+                friend.icharacters[i].AddHistory(combatLog);
+            }
+            for (int i = 0; i < _characterObj.party.icharacters.Count; i++) {
+                _characterObj.party.icharacters[i].AddHistory(combatLog);
+            }
         } else {
-            CombatManager.Instance.CharacterContinuesAction(friend, false);
+            CombatManager.Instance.PartyContinuesAction(friend, false);
         }
     }
 }

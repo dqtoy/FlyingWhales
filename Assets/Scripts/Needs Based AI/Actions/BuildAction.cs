@@ -21,20 +21,20 @@ public class BuildAction : CharacterAction {
         _structureObject = ObjectManager.Instance.GetNewStructureObject(_structureName);
         _amountToIncrease = Mathf.RoundToInt((float) _structureObject.maxHP / (float) _actionData.duration);
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         //if (!_isStructureInLandmark) {
         //    _isStructureInLandmark = _state.obj.objectLocation.AddObject(_structureObject);
         //}
 
         ActionSuccess();
-        GiveAllReward(character);
+        GiveAllReward(party);
 
         //TODO: Resources
 
         _structureObject.AdjustHP(_amountToIncrease);
         if (_structureObject.isHPFull) {
-            EndAction(character);
+            EndAction(party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

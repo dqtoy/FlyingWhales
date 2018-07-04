@@ -4,13 +4,18 @@ using UnityEngine;
 using ECS;
 
 public interface IParty {
-    float computedPower { get; }
+    int id { get; }
     int numOfAttackers { get; set; }
+    string name { get; }
+    string coloredUrlName { get; }
+    string urlName { get; }
+    float computedPower { get; }
     Faction attackedByFaction { get; set; }
     Faction faction { get; }
-    Combat currentCombat { get; set; }
     CharacterIcon icon { get; }
     Region currentRegion { get; }
+    Area home { get; }
+    StructureObj homeStructure { get; }
     ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
     List<ICharacter> icharacters { get; }

@@ -139,10 +139,10 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateGeneralInfo() {
         string text = string.Empty;
-        text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
+        text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.party.specificLocation != null ? currentlyShowingCharacter.party.specificLocation.locationName : "NONE");
         text += "\n<b>Current Action: </b>";
-        if (currentlyShowingCharacter.actionData.currentAction != null) {
-            text += currentlyShowingCharacter.actionData.currentAction.actionData.actionName.ToString() + " ";
+        if (currentlyShowingCharacter.party.actionData.currentAction != null) {
+            text += currentlyShowingCharacter.party.actionData.currentAction.actionData.actionName.ToString() + " ";
         } else {
             text += "NONE";
         }
@@ -227,7 +227,7 @@ public class CharacterInfoUI : UIMenu {
 
     private void UpdateInventoryInfo() {
         string text = string.Empty;
-        CharacterObj obj = currentlyShowingCharacter.characterObject as CharacterObj;
+        CharacterObj obj = currentlyShowingCharacter.party.characterObject as CharacterObj;
         foreach (RESOURCE resource in obj.resourceInventory.Keys) {
             text += resource.ToString() + ": " + obj.resourceInventory[resource];
             text += "\n";
@@ -353,14 +353,14 @@ public class CharacterInfoUI : UIMenu {
 
     #region Release Character
     public void ShowReleaseButton() {
-        if (currentlyShowingCharacter.characterObject.currentState.stateName == "Imprisoned") {
+        if (currentlyShowingCharacter.party.characterObject.currentState.stateName == "Imprisoned") {
             releaseBtnGO.SetActive(true);
         } else {
             releaseBtnGO.SetActive(false);
         }
     }
     public void ReleaseCharacter() {
-        CharacterAction action = currentlyShowingCharacter.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
+        CharacterAction action = currentlyShowingCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
         ReleaseAction releaseAction = action as ReleaseAction;
         releaseAction.ReleaseCharacter();
     }

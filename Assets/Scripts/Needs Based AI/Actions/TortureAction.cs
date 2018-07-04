@@ -16,17 +16,17 @@ public class TortureAction : CharacterAction {
             _structure = _state.obj as StructureObj;
         }
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         //if (obj.GetTotalCivilians() > 0) {//check if there are civilians in the object
         //    //if yes, 
         //}
 
         if(_structure.objectLocation.civilianCount > 0) {
-            GiveAllReward(character);
+            GiveAllReward(party);
             ActionSuccess();
-            if (character.role.IsFull(NEEDS.FUN)) {
-                EndAction(character);
+            if (party.IsFull(NEEDS.FUN)) {
+                EndAction(party);
             }
         } 
         //else {

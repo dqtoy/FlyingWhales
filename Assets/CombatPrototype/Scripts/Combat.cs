@@ -84,7 +84,7 @@ namespace ECS{
             }
             for (int i = 0; i < characters.Count; i++) {
 				characters[i].SetSide (side);
-				characters[i].currentCombat = this;
+                characters[i].currentCombat = this;
                 characters[i].SetRowNumber(rowNumber);
                 characters[i].actRate = characters[i].agility * 5;
                 if (hasStarted && !isDone) {
@@ -97,6 +97,11 @@ namespace ECS{
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
 			}
 		}
+        internal void AddParty(SIDES side, IParty iparty) {
+            for (int i = 0; i < iparty.icharacters.Count; i++) {
+                AddCharacter(side, iparty.icharacters[i]);
+            }
+        }
         //Remove a character from a side
         internal void RemoveCharacter(SIDES side, ICharacter character) {
             if (side == SIDES.A) {
@@ -1136,8 +1141,8 @@ namespace ECS{
 			RemoveCharacter(targetCharacter);
 			fledCharacters.Add (targetCharacter);
 			//targetCharacter.SetIsDefeated (true);
-            if(targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                CombatManager.Instance.CharacterContinuesAction(targetCharacter as Character, false);
+            if(targetCharacter.iparty is CharacterParty) {
+                CombatManager.Instance.PartyContinuesAction(targetCharacter.iparty as CharacterParty, false);
             }
             AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
 		}

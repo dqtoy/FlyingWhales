@@ -15,8 +15,8 @@ public class ReleaseAction : CharacterAction {
             _characterObj = _state.obj as CharacterObj;
         }
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         ActionSuccess();
     }
     public override CharacterAction Clone(ObjectState state) {
@@ -25,9 +25,9 @@ public class ReleaseAction : CharacterAction {
         releaseAction.Initialize();
         return releaseAction;
     }
-    public override void DoneDuration(Character character) {
-        base.DoneDuration(character);
-        GiveAllReward(character);
+    public override void DoneDuration(CharacterParty party) {
+        base.DoneDuration(party);
+        GiveAllReward(party);
         ReleaseCharacter();
     }
     //public override bool CanBeDone() {

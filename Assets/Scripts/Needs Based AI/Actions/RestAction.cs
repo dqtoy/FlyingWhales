@@ -9,12 +9,12 @@ public class RestAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         ActionSuccess();
-        GiveAllReward(character);
-        if (character.role.IsFull(NEEDS.ENERGY)) {
-            EndAction(character);
+        GiveAllReward(party);
+        if (party.IsFull(NEEDS.ENERGY)) {
+            EndAction(party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

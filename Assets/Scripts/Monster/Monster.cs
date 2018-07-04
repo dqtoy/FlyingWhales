@@ -38,6 +38,7 @@ public class Monster : ICharacter {
     private StructureObj _homeStructure;
     private RaceSetting _raceSetting;
     private MonsterParty _party;
+    private Combat _currentCombat;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private PortraitSettings _portraitSettings;
@@ -128,11 +129,21 @@ public class Monster : ICharacter {
     public StructureObj homeStructure {
         get { return _homeStructure; }
     }
+    public Area home {
+        get { return null; }
+    }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
     }
     public MonsterParty party {
         get { return _party; }
+    }
+    public CharacterRole role {
+        get { return null; }
+    }
+    public Combat currentCombat {
+        get { return _currentCombat; }
+        set { _currentCombat = value; }
     }
     public List<Skill> skills {
         get { return _skills; }
@@ -293,7 +304,7 @@ public class Monster : ICharacter {
         }
     }
     public void FaintOrDeath() {
-        _party.currentCombat.CharacterDeath(this);
+        _currentCombat.CharacterDeath(this);
         Death();
     }
     public int GetPDef(ICharacter enemy) {
@@ -308,7 +319,37 @@ public class Monster : ICharacter {
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
     }
-
+    public void EverydayAction() {
+        //No daily/tick action
+    }
+    public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+        this._homeLandmark = newHomeLandmark;
+    }
+    public void SetHomeStructure(StructureObj newHomeStructure) {
+        if (_homeStructure != null) {
+            _homeStructure.AdjustNumOfResidents(-1);
+        }
+        _homeStructure = newHomeStructure;
+        newHomeStructure.AdjustNumOfResidents(1);
+    }
+    public MonsterParty CreateNewParty() {
+        if (_party != null) {
+            _party.RemoveCharacter(this);
+        }
+        MonsterParty newParty = new MonsterParty();
+        newParty.AddCharacter(this);
+        return newParty;
+    }
+    public void SetParty(IParty party) {
+        _party = party as MonsterParty;
+    }
+    public CharacterTag AssignTag(CHARACTER_TAG tag) {
+        //No tag assignment
+        return null;
+    }
+    public void AddHistory(Log log) {
+        //No history
+    }
     public void EnableDisableSkills(Combat combat) {
         bool isAllAttacksInRange = true;
         bool isAttackInRange = false;
@@ -399,24 +440,6 @@ public class Monster : ICharacter {
                 }
             }
         }
-    }
-    public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
-        this._homeLandmark = newHomeLandmark;
-    }
-    public void SetHomeStructure(StructureObj newHomeStructure) {
-        if (_homeStructure != null) {
-            _homeStructure.AdjustNumOfResidents(-1);
-        }
-        _homeStructure = newHomeStructure;
-        newHomeStructure.AdjustNumOfResidents(1);
-    }
-    public MonsterParty CreateNewParty() {
-        MonsterParty newParty = new MonsterParty();
-        newParty.AddCharacter(this);
-        return newParty;
-    }
-    public void SetParty(IParty party) {
-        _party = party as MonsterParty;
     }
     #endregion
 }

@@ -27,7 +27,7 @@ public class BaseLandmark : ILocation {
     protected List<Log> _history;
     protected int _combatHistoryID;
     protected Dictionary<int, Combat> _combatHistory;
-    protected List<ICharacter> _charactersAtLocation;
+    protected List<IParty> _charactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
@@ -98,7 +98,7 @@ public class BaseLandmark : ILocation {
 	public Dictionary<int, Combat> combatHistory {
 		get { return _combatHistory; }
 	}
-    public List<ICharacter> charactersAtLocation {
+    public List<IParty> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
 	public HexTile tileLocation{
@@ -156,7 +156,7 @@ public class BaseLandmark : ILocation {
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
         _combatHistoryID = 0;
-        _charactersAtLocation = new List<ICharacter>();
+        _charactersAtLocation = new List<IParty>();
         _itemsInLandmark = new List<Item>();
         _characterTraces = new Dictionary<Character, GameDate>();
         //_totalDurability = landmarkData.hitPoints;
@@ -366,11 +366,12 @@ public class BaseLandmark : ILocation {
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
         //}
-        newCharacter.CreateIcon();
+        CharacterParty party = newCharacter.CreateNewParty();
+        party.CreateIcon();
         this.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterToLocation(newCharacter);
+        this.AddCharacterToLocation(party);
         //this.AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.icon.SetPosition(this.tileLocation.transform.position);
+        party.icon.SetPosition(this.tileLocation.transform.position);
         //if (charRole != CHARACTER_ROLE.FOLLOWER) {
         //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
         //    if (determineAction) {
@@ -419,10 +420,11 @@ public class BaseLandmark : ILocation {
         if (_owner != null) {
             _owner.AddNewCharacter(newCharacter);
         }
-        newCharacter.CreateIcon();
-        this.AddCharacterToLocation(newCharacter);
+        CharacterParty party = newCharacter.CreateNewParty();
+        party.CreateIcon();
+        this.AddCharacterToLocation(party);
         //this.AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.icon.SetPosition(this.tileLocation.transform.position);
+        party.icon.SetPosition(this.tileLocation.transform.position);
         //if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
         //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
         //    if (determineAction) {
@@ -443,15 +445,15 @@ public class BaseLandmark : ILocation {
     #endregion
 
     #region Location
-    public void AddCharacterToLocation(ICharacter character) {
-        if (!_charactersAtLocation.Contains(character)) {
-            _charactersAtLocation.Add(character);
+    public void AddCharacterToLocation(IParty iparty) {
+        if (!_charactersAtLocation.Contains(iparty)) {
+            _charactersAtLocation.Add(iparty);
             //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //Character currChar = character as Character;
-            this.tileLocation.RemoveCharacterFromLocation(character);
-            character.iparty.SetSpecificLocation(this);
+            this.tileLocation.RemoveCharacterFromLocation(iparty);
+            iparty.SetSpecificLocation(this);
 #if !WORLD_CREATION_TOOL
-            _landmarkVisual.OnCharacterEnteredLandmark(character);
+            _landmarkVisual.OnCharacterEnteredLandmark(iparty);
 #endif
         }
          //character.SetSpecificLocation(this);
@@ -469,13 +471,13 @@ public class BaseLandmark : ILocation {
             //}
         //}
     }
-    public void RemoveCharacterFromLocation(ICharacter character) {
-        _charactersAtLocation.Remove(character);
+    public void RemoveCharacterFromLocation(IParty iparty) {
+        _charactersAtLocation.Remove(iparty);
         //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
         //Character currChar = character as Character;
-        character.iparty.SetSpecificLocation(null);
+        iparty.SetSpecificLocation(null);
 #if !WORLD_CREATION_TOOL
-        _landmarkVisual.OnCharacterExitedLandmark(character);
+        _landmarkVisual.OnCharacterExitedLandmark(iparty);
 #endif
     //}
         //character.SetSpecificLocation(null);
@@ -491,12 +493,12 @@ public class BaseLandmark : ILocation {
         //}
     }
 
-    public void ReplaceCharacterAtLocation(ICharacter characterToReplace, ICharacter characterToAdd) {
-        if (_charactersAtLocation.Contains(characterToReplace)) {
-            int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
-            _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
-            _charactersAtLocation.Remove(characterToReplace);
-            characterToAdd.SetSpecificLocation(this);
+    public void ReplaceCharacterAtLocation(IParty ipartyToReplace, IParty ipartyToAdd) {
+        if (_charactersAtLocation.Contains(ipartyToReplace)) {
+            int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
+            _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
+            _charactersAtLocation.Remove(ipartyToReplace);
+            ipartyToAdd.SetSpecificLocation(this);
     //        if (characterToAdd.icharacterType == ICHARACTER_TYPE.CHARACTER) {
     //            Character currChar = characterToAdd as Character;
 				//this.tileLocation.RemoveCharacterFromLocation(currChar);
@@ -607,12 +609,12 @@ public class BaseLandmark : ILocation {
         return null;
     }
     public bool HasCombatInitializers() {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICharacter currChar = _charactersAtLocation[i];
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    IParty currChar = _charactersAtLocation[i];
             //if (currChar.currentAction != null && currChar.currentAction.combatPriority > 0) {
             //    return true;
             //}
-        }
+        //}
         return false;
     }
     public bool HasHostilities() {

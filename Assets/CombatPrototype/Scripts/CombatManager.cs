@@ -123,7 +123,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideA[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    CharacterContinuesAction(character, true);
+                    PartyContinuesAction(character.party, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -133,7 +133,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideB[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    CharacterContinuesAction(character, true);
+                    PartyContinuesAction(character.party, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -389,16 +389,18 @@ namespace ECS {
             }
             return combatRooms;
         }
-        public void CharacterContinuesAction(Character character, bool isActionSucess) {
-            character.party.SetIsHalted(false);
-            character.party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
-            character.party.icon.SetMovementState(GameManager.Instance.isPaused);
-            if (character.actionData.currentAction != null) {
-                if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || character.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
-                    if (isActionSucess) {
-                        character.actionData.currentAction.SuccessEndAction(character);
+        public void PartyContinuesAction(CharacterParty party, bool isActionSucess) {
+            if (party.actionData.isHalted) {
+                party.actionData.SetIsHalted(false);
+                party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
+                party.icon.SetMovementState(GameManager.Instance.isPaused);
+                if (party.actionData.currentAction != null) {
+                    if (party.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || party.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
+                        if (isActionSucess) {
+                            party.actionData.currentAction.SuccessEndAction(party);
+                        }
+                        party.actionData.currentAction.EndAction(party);
                     }
-                    character.actionData.currentAction.EndAction(character);
                 }
             }
         }

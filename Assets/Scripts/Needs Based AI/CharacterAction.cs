@@ -37,24 +37,28 @@ public class CharacterAction {
 
     #region Virtuals
     public virtual void Initialize() {}
-    public virtual void OnChooseAction(ICharacter character) {}
-    public virtual void OnFirstEncounter(Character character) {
+    public virtual void OnChooseAction(IParty iparty) {}
+    public virtual void OnFirstEncounter(CharacterParty party) {
         if(state.obj.objectLocation != null) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-            arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             arriveLog.AddToFillers(state.obj.objectLocation, state.obj.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-            character.AddHistory(arriveLog);
+            for (int i = 0; i < party.icharacters.Count; i++) {
+                party.icharacters[i].AddHistory(arriveLog);
+            }
         } else {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-            arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             arriveLog.AddToFillers(state.obj.specificLocation.tileLocation, state.obj.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-            character.AddHistory(arriveLog);
+            for (int i = 0; i < party.icharacters.Count; i++) {
+                party.icharacters[i].AddHistory(arriveLog);
+            }
         }
 
     }
-    public virtual void PerformAction(Character character) {}
+    public virtual void PerformAction(CharacterParty party) {}
     public virtual void ActionSuccess() {
         if (_actionData.successFunction != null) {
             _actionData.successFunction.Invoke(_state.obj);
@@ -74,22 +78,23 @@ public class CharacterAction {
     public virtual bool CanBeDone() {
         return true;
     }
-    public virtual bool CanBeDoneBy(Character character) {
+    public virtual bool CanBeDoneBy(CharacterParty party) {
         return true;
     }
-    public virtual void EndAction(Character character) {
-        character.actionData.EndAction();
+    public virtual void EndAction(CharacterParty party) {
+        party.actionData.EndAction();
     }
-    public virtual void DoneDuration(Character character) { }
-    public virtual void SuccessEndAction(Character character) { }
+    public virtual void DoneDuration(CharacterParty party) { }
+    public virtual void SuccessEndAction(CharacterParty party) { }
     #endregion
 
     #region Filters
     public void SetFilters(ActionFilter[] filters) {
         _filters = filters;
     }
-    public virtual bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
-        if (filters != null) {
+    public virtual bool MeetsRequirements(CharacterParty party, BaseLandmark landmark) {
+        if (filters != null && party.icharacters[0] is Character) {
+            Character character = party.icharacters[0] as Character;
             for (int i = 0; i < filters.Length; i++) {
                 ActionFilter currFilter = filters[i];
                 if (!currFilter.MeetsRequirements(character, landmark)) {
@@ -113,41 +118,48 @@ public class CharacterAction {
     }
 
     //Give specific provided need to a character
-    public void GiveReward(NEEDS need, Character character) {
-        switch (need) {
-            case NEEDS.FULLNESS:
-            character.role.AdjustFullness(_actionData.providedFullness);
-            break;
-            case NEEDS.ENERGY:
-            character.role.AdjustEnergy(_actionData.providedEnergy);
-            break;
-            case NEEDS.FUN:
-            character.role.AdjustFun(_actionData.providedFun);
-            break;
-            case NEEDS.PRESTIGE:
-            character.role.AdjustPrestige(_actionData.providedPrestige);
-            break;
-            case NEEDS.SANITY:
-            character.role.AdjustSanity(_actionData.providedSanity);
-            break;
-            case NEEDS.SAFETY:
-            character.role.AdjustSafety(_actionData.providedSafety);
-            break;
+    public void GiveReward(NEEDS need, CharacterParty party) {
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            ICharacter icharacter = party.icharacters[i];
+            switch (need) {
+                case NEEDS.FULLNESS:
+                icharacter.role.AdjustFullness(_actionData.providedFullness);
+                break;
+                case NEEDS.ENERGY:
+                icharacter.role.AdjustEnergy(_actionData.providedEnergy);
+                break;
+                case NEEDS.FUN:
+                icharacter.role.AdjustFun(_actionData.providedFun);
+                break;
+                case NEEDS.PRESTIGE:
+                icharacter.role.AdjustPrestige(_actionData.providedPrestige);
+                break;
+                case NEEDS.SANITY:
+                icharacter.role.AdjustSanity(_actionData.providedSanity);
+                break;
+                case NEEDS.SAFETY:
+                icharacter.role.AdjustSafety(_actionData.providedSafety);
+                break;
+            }
         }
     }
 
     //Give all provided needs to the character regardless of the amount
-    public void GiveAllReward(Character character) {
-        character.role.AdjustFullness(_actionData.providedFullness);
-        character.role.AdjustEnergy(_actionData.providedEnergy);
-        character.role.AdjustFun(_actionData.providedFun);
-        character.role.AdjustPrestige(_actionData.providedPrestige);
-        character.role.AdjustSanity(_actionData.providedSanity);
-        character.role.AdjustSafety(_actionData.providedSafety);
-        if(_actionData.hpRecoveredPercentage != 0f && character.currentHP < character.maxHP) {
-            float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) character.maxHP;
-            character.AdjustHP((int)hpRecovery);
+    public void GiveAllReward(CharacterParty party) {
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            ICharacter icharacter = party.icharacters[i];
+            icharacter.role.AdjustFullness(_actionData.providedFullness);
+            icharacter.role.AdjustEnergy(_actionData.providedEnergy);
+            icharacter.role.AdjustFun(_actionData.providedFun);
+            icharacter.role.AdjustPrestige(_actionData.providedPrestige);
+            icharacter.role.AdjustSanity(_actionData.providedSanity);
+            icharacter.role.AdjustSafety(_actionData.providedSafety);
+            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
+                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) icharacter.maxHP;
+                icharacter.AdjustHP((int) hpRecovery);
+            }
         }
+        
     }
     public void SetCommonData(CharacterAction action) {
         if (this._filters != null) {

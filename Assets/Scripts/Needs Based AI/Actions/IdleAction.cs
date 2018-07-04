@@ -8,10 +8,10 @@ public class IdleAction : CharacterAction {
 
     }
     #region Overrides
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         ActionSuccess();
-        GiveAllReward(character);
+        GiveAllReward(party);
     }
     public override CharacterAction Clone(ObjectState state) {
         IdleAction idleAction = new IdleAction(state);
@@ -19,13 +19,13 @@ public class IdleAction : CharacterAction {
         idleAction.Initialize();
         return idleAction;
     }
-    public override bool CanBeDoneBy(Character character) {
+    public override bool CanBeDoneBy(CharacterParty party) {
         //if (character.characterObject.objectLocation == null || character.characterObject.objectLocation.id != _state.obj.objectLocation.id || character.homeStructure.objectLocation.id != _state.obj.objectLocation.id) {
-        if (character.characterObject.objectLocation == null || character.homeStructure.objectLocation.id != _state.obj.objectLocation.id) {
+        if (party.characterObject.objectLocation == null || party.homeStructure.objectLocation.id != _state.obj.objectLocation.id) {
             //the characters location is null or the object that this action belongs to is not the home of the character
             return false;
         }
-        return base.CanBeDoneBy(character);
+        return base.CanBeDoneBy(party);
     }
     #endregion
 }

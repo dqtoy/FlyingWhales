@@ -17,14 +17,14 @@ public class HarvestAction : CharacterAction {
             _structure = state.obj as StructureObj;
         }
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-        GiveAllReward(character);
+        GiveAllReward(party);
 
         int resourceGiven = Random.Range(this.actionData.minResourceGiven, this.actionData.maxResourceGiven);
-        character.characterObject.AdjustResource(this.actionData.resourceGiven, resourceGiven);
+        party.characterObject.AdjustResource(this.actionData.resourceGiven, resourceGiven);
         ActionSuccess();
         //int objectResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
         //if (objectResourceAmount > 0 && !character.DoesSatisfiesPrerequisite(character.actionData.currentChainAction.prerequisite)) { //if object's resource count is still greater than 0 and character doesn't have the required resource amount yet

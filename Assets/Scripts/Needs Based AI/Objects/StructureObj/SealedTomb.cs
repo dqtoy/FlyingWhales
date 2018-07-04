@@ -57,8 +57,8 @@ public class SealedTomb : StructureObj {
     }
     public void ReleaseContent() {
         Debug.Log("RELEASED " + _content.name + " from SEALED TOMB in " + _objectLocation.landmarkName);
-        _objectLocation.AddCharacterToLocation(_content);
-        _content.SetIsIdle(false);
+        //_objectLocation.AddCharacterToLocation(_content);
+        //_content.SetIsIdle(false);
 
         ObjectState emptyState = GetState("Empty");
         ChangeState(emptyState);
@@ -67,7 +67,7 @@ public class SealedTomb : StructureObj {
     }
     public void AddContent(Character character) {
         _content = character;
-        _content.SetIsIdle(true);
+        //_content.SetIsIdle(true);
         ObjectState unsealedState = GetState("Unsealed");
         ChangeState(unsealedState);
     }

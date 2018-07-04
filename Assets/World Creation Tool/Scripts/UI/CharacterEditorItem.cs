@@ -40,9 +40,9 @@ namespace worldcreator {
             List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection);
             HexTile chosenTile = choices[Random.Range(0, choices.Count)];
             if (chosenTile.landmarkOnTile != null) {
-                _character.SetSpecificLocation(chosenTile.landmarkOnTile);
+                _character.party.SetSpecificLocation(chosenTile.landmarkOnTile);
             } else {
-                _character.SetSpecificLocation(chosenTile);
+                _character.party.SetSpecificLocation(chosenTile);
             }
             if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
                 WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.UpdateBasicInfo();

@@ -9,18 +9,18 @@ public class HuntAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < actionData.successRate) {
             ActionSuccess();
-            GiveAllReward(character);
-            if (character.role.IsFull(NEEDS.FULLNESS)){
-                EndAction(character);
+            GiveAllReward(party);
+            if (party.IsFull(NEEDS.FULLNESS)){
+                EndAction(party);
             }
         } else {
             ActionFail();
-            GiveReward(NEEDS.ENERGY, character);
+            GiveReward(NEEDS.ENERGY, party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

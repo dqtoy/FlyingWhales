@@ -129,7 +129,7 @@ public class Player : ILeader{
     public bool HasSnatchedCharacter(BaseLandmark landmark) {
         for (int i = 0; i < _snatchedCharacters.Count; i++) {
             ECS.Character currCharacter = _snatchedCharacters[i];
-            if (landmark.charactersAtLocation.Contains(currCharacter)) {
+            if (landmark.charactersAtLocation.Contains(currCharacter.party)) {
                 return true;
             }
         }

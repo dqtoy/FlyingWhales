@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 using TMPro;
+using ECS;
 
 public class EventLabel : MonoBehaviour, IPointerClickHandler {
 
@@ -35,12 +36,12 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                     //    UIManager.Instance.ShowLandmarkInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
                     //}
                 } else if (linkText.Contains("_party")) {
-                    Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
-                    if (party != null) {
-                        UIManager.Instance.ShowCharacterInfo(party.partyLeader);
-                    }
+                    //Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
+                    //if (party != null) {
+                    //    UIManager.Instance.ShowCharacterInfo(party.partyLeader);
+                    //}
                 } else if (linkText.Contains("_character")) {
-                    ECS.Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
+                    Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
                     if (character != null) {
                         UIManager.Instance.ShowCharacterInfo(character);
                     }
@@ -62,14 +63,23 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                 LogFiller lf = logItem.log.fillers[indexToUse];
 
                 if (lf.obj != null) {
-                    if (lf.obj is ECS.Character) {
-                        UIManager.Instance.ShowCharacterInfo(lf.obj as ECS.Character);
+                    if (lf.obj is Character) {
+                        UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
                     } else if (lf.obj is Party) {
                         UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
                     } else if (lf.obj is BaseLandmark) {
                         UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
-                    } else if (lf.obj is ECS.Combat) {
-                        UIManager.Instance.ShowCombatLog(lf.obj as ECS.Combat);
+                    } else if (lf.obj is Combat) {
+                        UIManager.Instance.ShowCombatLog(lf.obj as Combat);
+                    } else if (lf.obj is NewParty) {
+                        NewParty party = lf.obj as NewParty;
+                        if(party.icharacters.Count > 1) {
+                            //Show party ui
+                        }else if (party.icharacters.Count == 1) {
+                            if(party.icharacters[0] is Character) {
+                                UIManager.Instance.ShowCharacterInfo(party.icharacters[0] as Character);
+                            }
+                        }
                     }
                 }
             }

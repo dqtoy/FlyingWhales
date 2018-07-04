@@ -24,10 +24,8 @@ public class CharacterAIPath : AIPath {
             onTargetReachedAction();
             onTargetReachedAction = null;
         }
-        if (_icon.icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-            if (_icon.targetLocation is BaseLandmark) {
-                _icon.targetLocation.AddCharacterToLocation(_icon.icharacter as Character);
-            }
+        if (_icon.targetLocation is BaseLandmark) {
+            _icon.targetLocation.AddCharacterToLocation(_icon.iparty);
         }
         _icon.SetTarget(null);
         //SetRecalculatePathState(false);

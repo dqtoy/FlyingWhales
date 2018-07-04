@@ -17,12 +17,12 @@ public class AbductAction : CharacterAction {
             _structure = state.obj as StructureObj;
         }
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
 
         structureResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
         if (structureResourceAmount > 0) {
-            GiveAllReward(character);
+            GiveAllReward(party);
 
             int minResourceAmount = this.actionData.minResourceGiven;
             int maxResourceAmount = this.actionData.maxResourceGiven;
@@ -37,7 +37,7 @@ public class AbductAction : CharacterAction {
             //_structure.TransferResourceTo(this.actionData.resourceGiven, resourceAmount, character.characterObject);
             ActionSuccess();
         } else {
-            EndAction(character);
+            EndAction(party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

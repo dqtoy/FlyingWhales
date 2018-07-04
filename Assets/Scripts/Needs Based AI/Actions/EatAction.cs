@@ -8,12 +8,12 @@ public class EatAction : CharacterAction {
 
     }
     #region Overrides
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         ActionSuccess();
-        GiveAllReward(character);
-        if (character.role.IsFull(NEEDS.FULLNESS)) {
-            EndAction(character);
+        GiveAllReward(party);
+        if (party.IsFull(NEEDS.FULLNESS)) {
+            EndAction(party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

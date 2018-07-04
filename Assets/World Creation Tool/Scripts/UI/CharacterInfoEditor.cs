@@ -147,10 +147,10 @@ namespace worldcreator {
                     otherInfoLbl.text += "(" + _character.homeLandmark.landmarkName + ")";
                 }
             }
-            if (_character.specificLocation == null) {
+            if (_character.party.specificLocation == null) {
                 otherInfoLbl.text += "\nLocation: NONE";
             } else {
-                otherInfoLbl.text += "\nLocation: " + _character.specificLocation.ToString();
+                otherInfoLbl.text += "\nLocation: " + _character.party.specificLocation.ToString();
             }
         }
         public void SetName(string newName) {

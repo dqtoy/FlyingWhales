@@ -106,16 +106,16 @@ public class LandmarkInfoUI : UIMenu {
             text += "NONE";
         }
 
-        text += "\n<b>Characters At Landmark: </b> ";
+        text += "\n<b>Parties At Landmark: </b> ";
         if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
-                ICharacter currObject = currentlyShowingLandmark.charactersAtLocation[i];
-                if (currObject is ECS.Character) {
-                    ECS.Character currChar = (ECS.Character)currObject;
-                    text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-                } else if (currObject.icharacterType == ICHARACTER_TYPE.MONSTER) {
-                    Monster monster = currObject as Monster;
-                    text += "\n" + monster.name;
+                IParty currObject = currentlyShowingLandmark.charactersAtLocation[i];
+                if (currObject is CharacterParty) {
+                    CharacterParty currChar = currObject as CharacterParty;
+                    text += "\n" + currChar.urlName; // + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+                } else if (currObject is MonsterParty) {
+                    //MonsterParty monster = currObject as MonsterParty;
+                    text += "\n" + currObject.name;
                 }
             }
 		} else {
@@ -128,13 +128,14 @@ public class LandmarkInfoUI : UIMenu {
                 if (currObject is ECS.Character) {
                     ECS.Character currChar = (ECS.Character)currObject;
                     text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-                    if (currChar.actionData.currentAction != null) {
-                        text += " (" + currChar.actionData.currentAction.actionData.actionName + ")";
+                    if (currChar.party.actionData.currentAction != null) {
+                        text += " (" + currChar.party.actionData.currentAction.actionData.actionName + ")";
                     }
-                } else if (currObject is Party) {
-                    Party currParty = (Party)currObject;
-                    text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString() : "NONE");
-                }
+                } 
+                //else if (currObject is Party) {
+                //    Party currParty = (Party)currObject;
+                //    text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString() : "NONE");
+                //}
             }
         } else {
             text += "NONE";

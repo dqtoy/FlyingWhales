@@ -383,12 +383,12 @@ public class CharacterRole {
         if (characterAction.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
             Area areaOfStructure = characterAction.state.obj.objectLocation.tileLocation.areaOfTile;
             if (areaOfStructure != null && _character.home != null && areaOfStructure.id == _character.home.id) {
-                result *= _character.actionData.homeMultiplier;
+                result *= _character.party.actionData.homeMultiplier;
             }
         }else if (characterAction.actionType == ACTION_TYPE.ATTACK) {
             AttackAction attackAction = characterAction as AttackAction;
-            float myPower = _character.computedPower;
-            float enemyPower = attackAction.icharacterObj.icharacter.computedPower;
+            float myPower = _character.party.computedPower;
+            float enemyPower = attackAction.icharacterObj.iparty.computedPower;
             float powerDiff = enemyPower - myPower;
             float powerDivisor = myPower;
             if(powerDiff < 0f) {

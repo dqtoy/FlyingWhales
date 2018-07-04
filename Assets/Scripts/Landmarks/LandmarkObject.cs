@@ -51,20 +51,20 @@ public class LandmarkObject : MonoBehaviour {
     public void UpdateProgressBar() {
         hpProgressBar.value = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
     }
-    public void OnCharacterEnteredLandmark(ICharacter character) {
+    public void OnCharacterEnteredLandmark(IParty iparty) {
         //add character portrait to grid
-        CharacterPortrait portrait = character.icon.characterPortrait;
+        CharacterPortrait portrait = iparty.icon.characterPortrait;
         portrait.transform.SetParent(charactersScrollView.content.transform);
         portrait.transform.localScale = Vector3.one;
         (portrait.transform as RectTransform).sizeDelta = new Vector2(65, 65);
         portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         portrait.gameObject.SetActive(true);
-        character.icon.gameObject.SetActive(false);
+        iparty.icon.gameObject.SetActive(false);
     }
-    public void OnCharacterExitedLandmark(ICharacter character) {
+    public void OnCharacterExitedLandmark(IParty iparty) {
         //remove character portrait from grid
-        character.icon.ReclaimPortrait();
-        character.icon.gameObject.SetActive(true);
+        iparty.icon.ReclaimPortrait();
+        iparty.icon.gameObject.SetActive(true);
     }
     public void DrawPathTo(BaseLandmark otherLandmark) {
         if (destinationSetter.target != otherLandmark.tileLocation.transform) {

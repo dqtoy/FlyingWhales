@@ -122,7 +122,7 @@ public class CharacterIcon : MonoBehaviour {
 
     #region Speed
     public void SetMovementState(bool state) {
-        if (_iparty is CharacterParty && (_iparty as CharacterParty).isHalted) {
+        if (_iparty is CharacterParty && (_iparty as CharacterParty).actionData.isHalted) {
             return;
         }
         if (state) {
@@ -130,7 +130,7 @@ public class CharacterIcon : MonoBehaviour {
         }
     }
     public void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
-        if (_iparty is CharacterParty && (_iparty as CharacterParty).isHalted) {
+        if (_iparty is CharacterParty && (_iparty as CharacterParty).actionData.isHalted) {
             return;
         }
         switch (speed) {

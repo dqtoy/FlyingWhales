@@ -216,12 +216,13 @@ public class CharacterManager : MonoBehaviour {
 
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
+            CharacterParty party = newCharacter.CreateNewParty();
 #if !WORLD_CREATION_TOOL
-            newCharacter.CreateIcon();
-            newCharacter.icon.SetPosition(currentLocation.tileLocation.transform.position);            
+            party.CreateIcon();
+            party.icon.SetPosition(currentLocation.tileLocation.transform.position);            
 #endif
             if (currentLocation is BaseLandmark) {
-                currentLocation.AddCharacterToLocation(newCharacter);
+                currentLocation.AddCharacterToLocation(party);
             }
 #if WORLD_CREATION_TOOL
             else{

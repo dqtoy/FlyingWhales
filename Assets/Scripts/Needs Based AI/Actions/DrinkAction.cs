@@ -8,17 +8,19 @@ public class DrinkAction : CharacterAction {
 
     }
     #region Overrides
-    public override void OnFirstEncounter(Character character) {
-        base.OnFirstEncounter(character);
+    public override void OnFirstEncounter(CharacterParty party) {
+        base.OnFirstEncounter(party);
         //Add history log
-        character.AssignTag(CHARACTER_TAG.DRUNK);
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            party.icharacters[i].AssignTag(CHARACTER_TAG.DRUNK);
+        }
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         ActionSuccess();
-        GiveAllReward(character);
-        if (character.role.IsFull(NEEDS.FUN)) {
-            EndAction(character);
+        GiveAllReward(party);
+        if (party.IsFull(NEEDS.FUN)) {
+            EndAction(party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {

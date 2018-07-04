@@ -31,6 +31,9 @@ public interface ICharacter {
     Faction faction { get; }
     BaseLandmark homeLandmark { get; }
     StructureObj homeStructure { get; }
+    Area home { get; } //Character only
+    CharacterRole role { get; } //Character only
+    Combat currentCombat { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
@@ -43,6 +46,7 @@ public interface ICharacter {
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
+    void EverydayAction();
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
@@ -52,6 +56,8 @@ public interface ICharacter {
     void SetParty(IParty party);
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void SetHomeStructure(StructureObj newHomeStructure);
+    void AddHistory(Log log); //Character only
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
+    CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
 }

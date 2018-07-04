@@ -76,9 +76,9 @@ public class Region : IHasNeighbours<Region> {
     internal List<HexTile> tilesWithMaterials {
         get { return _tilesWithMaterials; }
     }
-    internal List<ICharacter> charactersInRegion {
-        get { return GetCharactersInRegion(); }
-    }
+    //internal List<ICharacter> charactersInRegion {
+    //    get { return GetCharactersInRegion(); }
+    //}
     internal int numOfCharactersInLandmarks {
         //get { return landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
         get { return landmarks.Sum(x => x.charactersAtLocation.Count); }
@@ -507,17 +507,17 @@ public class Region : IHasNeighbours<Region> {
 #endregion
 
 #region Utilities
-    private List<ICharacter> GetCharactersInRegion() {
-        List<ICharacter> characters = new List<ICharacter>();
-        for (int i = 0; i < tilesInRegion.Count; i++) {
-            HexTile currTile = tilesInRegion[i];
-            characters.AddRange(currTile.charactersAtLocation.Select(x => x));
-            if (currTile.landmarkOnTile != null) {
-                characters.AddRange(currTile.landmarkOnTile.charactersAtLocation.Select(x => x));
-            }
-        }
-        return characters;
-    }
+    //private List<ICharacter> GetCharactersInRegion() {
+    //    List<ICharacter> characters = new List<ICharacter>();
+    //    for (int i = 0; i < tilesInRegion.Count; i++) {
+    //        HexTile currTile = tilesInRegion[i];
+    //        characters.AddRange(currTile.charactersAtLocation.Select(x => x));
+    //        if (currTile.landmarkOnTile != null) {
+    //            characters.AddRange(currTile.landmarkOnTile.charactersAtLocation.Select(x => x));
+    //        }
+    //    }
+    //    return characters;
+    //}
     internal void LogPassableTiles() {
         Dictionary<PASSABLE_TYPE, int> passableTiles = new Dictionary<PASSABLE_TYPE, int>();
         PASSABLE_TYPE[] types = Utilities.GetEnumValues<PASSABLE_TYPE>();

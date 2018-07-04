@@ -73,6 +73,7 @@ namespace ECS {
         //private ILocation _specificLocation;
         private Region _currentRegion;
         //private CharacterAvatar _avatar;
+        private Combat _currentCombat;
 
         private List<BodyPart> _bodyParts;
         private List<Item> _equippedItems;
@@ -86,7 +87,7 @@ namespace ECS {
         private bool _isDead;
         private bool _isFainted;
         //private bool _isDefeated;
-        private bool _isIdle; //can't do action, needs will not deplete
+        //private bool _isIdle; //can't do action, needs will not deplete
         private Area _home;
         private BaseLandmark _homeLandmark;
         private StructureObj _homeStructure;
@@ -277,9 +278,9 @@ namespace ECS {
         //public CharacterIcon icon {
         //    get { return _party.icon; }
         //}
-        public bool isIdle {
-            get { return _isIdle; }
-        }
+        //public bool isIdle {
+        //    get { return _isIdle; }
+        //}
         public PortraitSettings portraitSettings {
             get { return _portraitSettings; }
         }
@@ -310,9 +311,10 @@ namespace ECS {
         public Dictionary<ELEMENT, float> elementalResistances {
             get { return _elementalResistances; }
         }
-        //public Combat currentCombat {
-        //    get { return _party.currentCombat; }
-        //}
+        public Combat currentCombat {
+            get { return _currentCombat; }
+            set { _currentCombat = value; }
+        }
         public int actRate {
             get { return _actRate; }
             set { _actRate = value; }
@@ -383,7 +385,7 @@ namespace ECS {
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
-            _isIdle = false;
+            //_isIdle = false;
             _traceInfo = new Dictionary<Character, List<string>>();
             _history = new List<Log>();
             _questData = new List<CharacterQuestData>();
@@ -414,7 +416,7 @@ namespace ECS {
 
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
             Messenger.AddListener<List<Region>>("RegionPsytoxin", RegionPsytoxin);
-            Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
+            //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
         }
@@ -711,13 +713,13 @@ namespace ECS {
 		public void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
-				if(_party.currentCombat == null){
+				if(_currentCombat == null){
 					Faint ();
 				}else{
-                    _party.currentCombat.CharacterFainted(this);
+                    _currentCombat.CharacterFainted(this);
                 }
 			}else if(pickedWeight == "die"){
-                _party.currentCombat.CharacterDeath(this);
+                _currentCombat.CharacterDeath(this);
                 Death();
     //            if (this.currentCombat == null){
 				//	Death ();
@@ -743,14 +745,14 @@ namespace ECS {
 			}
 		}
         public void Imprison() {
-            if(_party.icharacters.Count > 0) {
+            if(_party.icharacters.Count > 1) {
                 CreateNewParty();
             }
             if(_party.characterObject.currentState.stateName != "Imprisoned") {
                 ObjectState imprisonedState = _party.characterObject.GetState("Imprisoned");
                 _party.characterObject.ChangeState(imprisonedState);
 
-                SetIsIdle(true); //this makes the character not do any action, and needs are halted
+                _party.SetIsIdle(true); //this makes the character not do any action, and needs are halted
                 //Do other things when imprisoned
             }
         }
@@ -1454,7 +1456,7 @@ namespace ECS {
 				STATUS_EFFECT statusEffect = statusEffects [i];
 				int chance = Utilities.rng.Next (0, 100);
 				if (chance < 15) {
-					_party.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+					_currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 					RemoveStatusEffect (statusEffect);
 					i--;
 				}
@@ -1467,7 +1469,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
-                                _party.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+                                _currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
@@ -1993,6 +1995,9 @@ namespace ECS {
          Create a new Party with this character as the leader.
              */
         public CharacterParty CreateNewParty() {
+            if(_party != null) {
+                _party.RemoveCharacter(this);
+            }
             CharacterParty newParty = new CharacterParty();
             newParty.AddCharacter(this);
             return newParty;
@@ -2064,9 +2069,9 @@ namespace ECS {
 			_name = newName;
 		}
         //If true, character can't do daily action (onDailyAction), i.e. actions, needs
-        public void SetIsIdle(bool state) {
-            _isIdle = state;
-        }
+        //public void SetIsIdle(bool state) {
+        //    _isIdle = state;
+        //}
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
         }
@@ -2129,12 +2134,12 @@ namespace ECS {
             _characterColor = color;
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
         }
-        private void EverydayAction() {
-            if (!_isIdle ) {
+        public void EverydayAction() {
+            //if (!_isIdle) {
                 if (onDailyAction != null) {
                     onDailyAction();
                 }
-            }
+            //}
         }
         //public void AdvertiseSelf(ActionThread actionThread) {
         //    if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.party.currentRegion.id) {
@@ -2187,7 +2192,7 @@ namespace ECS {
         #endregion
 
         #region History
-        internal void AddHistory(Log log) {
+        public void AddHistory(Log log) {
             _history.Add(log);
             if (this._history.Count > 20) {
                 this._history.RemoveAt(0);
@@ -2499,12 +2504,12 @@ namespace ECS {
             if (snatcherLair == null) {
                 throw new Exception("There is not available snatcher lair!");
             } else {
+                Imprison();
                 ILocation location = _party.specificLocation;
                 if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
-                    location.RemoveCharacterFromLocation(this);
+                    location.RemoveCharacterFromLocation(_party);
                 }
-                snatcherLair.AddCharacterToLocation(this);
-                Imprison();
+                snatcherLair.AddCharacterToLocation(_party);
             }
         }
         #endregion

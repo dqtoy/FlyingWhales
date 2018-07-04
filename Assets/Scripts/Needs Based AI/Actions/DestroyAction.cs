@@ -19,24 +19,24 @@ public class DestroyAction : CharacterAction {
             _amountToReduce = Mathf.RoundToInt((float) _structure.maxHP / (float) _actionData.duration);
         }
     }
-    public override void PerformAction(Character character) {
-        base.PerformAction(character);
+    public override void PerformAction(CharacterParty party) {
+        base.PerformAction(party);
         if (_structure.isHPZero) {
-            EndAction(character);
+            EndAction(party);
             return;
         }
         int chance = UnityEngine.Random.Range(0, 100);
         if (chance < actionData.successRate) {
             ActionSuccess();
-            GiveAllReward(character);
+            GiveAllReward(party);
 
             _structure.AdjustHP(-_amountToReduce);
             if (_structure.isHPZero) {
-                EndAction(character);
+                EndAction(party);
             }
         } else {
             ActionFail();
-            GiveReward(NEEDS.ENERGY, character);
+            GiveReward(NEEDS.ENERGY, party);
         }
     }
     public override CharacterAction Clone(ObjectState state) {
