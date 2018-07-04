@@ -12,6 +12,10 @@ public class QuestManager : MonoBehaviour {
         Instance = this;
     }
 
+    public void Initialize() {
+        ConstructQuests();
+    }
+
     private void ConstructQuests() {
         availableQuests = new Dictionary<QUEST_TYPE, Quest>();
         QUEST_TYPE[] questTypes = Utilities.GetEnumValues<QUEST_TYPE>();
@@ -24,6 +28,30 @@ public class QuestManager : MonoBehaviour {
                 default:
                     break;
             }
+        }
+    }
+    
+    public void TakeQuest(QUEST_TYPE type, ECS.Character questTaker, object data) {
+        CharacterQuestData questData = ConstructQuestData(type, questTaker, data);
+        questTaker.AddQuestData(questData);
+    }
+
+    public CharacterQuestData ConstructQuestData(QUEST_TYPE type, ECS.Character questTaker, object data) {
+        switch (type) {
+            case QUEST_TYPE.RELEASE_CHARACTER:
+                return new ReleaseCharacterQuestData(availableQuests[type], data as ECS.Character);
+            default:
+                break;
+        }
+        return null;
+    }
+
+    public CharacterAction GetNextQuestAction(QUEST_TYPE type, ECS.Character character, CharacterQuestData data) {
+        if (availableQuests.ContainsKey(type)) {
+            Quest quest = availableQuests[type];
+            return quest.GetQuestAction(character, data);
+        } else {
+            throw new System.Exception("There is no available quest of type " + type.ToString());
         }
     }
 

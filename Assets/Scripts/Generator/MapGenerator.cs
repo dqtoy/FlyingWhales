@@ -79,12 +79,12 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.InitializeLandmarks();
         CharacterManager.Instance.GenerateCharactersForTesting(8);
         CameraMove.Instance.UpdateMinimapTexture();
+        QuestManager.Instance.Initialize();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
-
+        
         Messenger.Broadcast(Signals.GAME_LOADED);
-
         yield return new WaitForSeconds(1f);
         PlayerManager.Instance.ChooseStartingTile();
 
@@ -162,6 +162,7 @@ public class MapGenerator : MonoBehaviour {
         MonsterManager.Instance.LoadMonsters(data);
 
         CameraMove.Instance.UpdateMinimapTexture();
+        QuestManager.Instance.Initialize();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
