@@ -2903,15 +2903,15 @@ namespace ECS {
                 if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
                     Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
                     //For now make all characters that have relationship with the snatched character, react.
-                    //if (UnityEngine.Random.Range(0, 2) == 0) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
                         //obtain release character questline
                         Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
                         QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
-                    //} else {
-                    //    //bargain with player
-                    //    Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
-                    //    TriggerBargain(otherCharacter);
-                    //}
+                    } else {
+                        //bargain with player
+                        Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
+                        TriggerBargain(otherCharacter);
+                    }
                 }
             }
         }
