@@ -1128,6 +1128,9 @@ namespace ECS {
 		}
 		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipWeapon(Weapon weapon){
+            if (!_characterClass.allowedWeaponTypes.Contains(weapon.weaponType)) {
+                return false;
+            }
 			for (int j = 0; j < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
 				IBodyPart.ATTRIBUTE currReq = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
 				if(!AttachWeaponToBodyPart(weapon, currReq)){
