@@ -404,9 +404,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if(partyinfoUI.isShowing){
-        //	partyinfoUI.HideMenu ();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.HideMenu();
+        }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
@@ -437,9 +437,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if(partyinfoUI.isShowing){
-        //	partyinfoUI.HideMenu ();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.HideMenu();
+        }
         factionInfoUI.SetData(faction);
         factionInfoUI.OpenMenu();
         //		playerActionsUI.ShowPlayerActionsUI ();
@@ -477,9 +477,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if(partyinfoUI.isShowing){
-        //	partyinfoUI.HideMenu ();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.HideMenu();
+        }
         characterInfoUI.SetData(character);
         characterInfoUI.OpenMenu();
         character.CenterOnCharacter();
@@ -510,9 +510,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if(partyinfoUI.isShowing){
-        //	partyinfoUI.HideMenu ();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.HideMenu();
+        }
         hexTileInfoUI.SetData(hexTile);
         hexTileInfoUI.OpenMenu();
         //		playerActionsUI.ShowPlayerActionsUI ();
@@ -528,7 +528,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Party Info")]
     [SerializeField] internal PartyInfoUI partyinfoUI;
-    public void ShowPartyInfo(Party party) {
+    public void ShowPartyInfo(NewParty party) {
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.HideMenu();
         }

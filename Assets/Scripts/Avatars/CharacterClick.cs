@@ -34,10 +34,15 @@ public class CharacterClick : MonoBehaviour {
                 return;
             }
         }
-        if (icon.iparty is CharacterParty) {
-            UIManager.Instance.ShowCharacterInfo(icon.iparty.icharacters[0] as ECS.Character);
+        IParty iparty = icon.iparty;
+        if (iparty.icharacters.Count > 1) {
+            UIManager.Instance.ShowPartyInfo(iparty as NewParty);
+        } else if (iparty.icharacters.Count == 1) {
+            if (iparty.icharacters[0] is ECS.Character) {
+                UIManager.Instance.ShowCharacterInfo(iparty.icharacters[0] as ECS.Character);
+            }
         }
-        
+
     }
     private void OnTriggerEnter2D(Collider2D other) {
         if (icon.iparty is CharacterParty) {

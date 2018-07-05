@@ -36,10 +36,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                     //    UIManager.Instance.ShowLandmarkInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
                     //}
                 } else if (linkText.Contains("_party")) {
-                    //Party party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
-                    //if (party != null) {
-                    //    UIManager.Instance.ShowCharacterInfo(party.partyLeader);
-                    //}
+                    CharacterParty party = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party;
+                    UIManager.Instance.ShowPartyInfo(party);
                 } else if (linkText.Contains("_character")) {
                     Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
                     if (character != null) {
@@ -74,8 +72,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                     } else if (lf.obj is NewParty) {
                         NewParty party = lf.obj as NewParty;
                         if(party.icharacters.Count > 1) {
-                            //Show party ui
-                        }else if (party.icharacters.Count == 1) {
+                            UIManager.Instance.ShowPartyInfo(party);
+                        } else if (party.icharacters.Count == 1) {
                             if(party.icharacters[0] is Character) {
                                 UIManager.Instance.ShowCharacterInfo(party.icharacters[0] as Character);
                             }

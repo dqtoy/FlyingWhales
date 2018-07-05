@@ -23,9 +23,9 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI equipmentInfoLbl;
     [SerializeField] private TextMeshProUGUI inventoryInfoLbl;
     [SerializeField] private TextMeshProUGUI relationshipsLbl;
-    [SerializeField] private ScrollRect equipmentScrollView;
-    [SerializeField] private ScrollRect inventoryScrollView;
-    [SerializeField] private ScrollRect relationshipsScrollView;
+    //[SerializeField] private ScrollRect equipmentScrollView;
+    //[SerializeField] private ScrollRect inventoryScrollView;
+    //[SerializeField] private ScrollRect relationshipsScrollView;
 
     [Space(10)]
     [Header("Logs")]
@@ -45,13 +45,13 @@ public class CharacterInfoUI : UIMenu {
 
     private LogHistoryItem[] logHistoryItems;
 
-    private ECS.Character _activeCharacter;
+    private Character _activeCharacter;
 
-    internal ECS.Character currentlyShowingCharacter {
-        get { return _data as ECS.Character; }
+    internal Character currentlyShowingCharacter {
+        get { return _data as Character; }
     }
 
-    internal ECS.Character activeCharacter {
+    internal Character activeCharacter {
         get { return _activeCharacter; }
     }
 
@@ -82,7 +82,7 @@ public class CharacterInfoUI : UIMenu {
     }
     public override void ShowMenu() {
         base.ShowMenu();
-        _activeCharacter = (ECS.Character)_data;
+        _activeCharacter = (Character)_data;
         UpdateCharacterInfo();
         UpdateAllHistoryInfo();
         ShowAttackButton();
@@ -93,7 +93,7 @@ public class CharacterInfoUI : UIMenu {
 
     public override void SetData(object data) {
         if (_data != null) {
-            ECS.Character previousCharacter = _data as ECS.Character;
+            Character previousCharacter = _data as Character;
         }
         base.SetData(data);
         if (isShowing) {
@@ -197,13 +197,13 @@ public class CharacterInfoUI : UIMenu {
         string text = string.Empty;
         if (currentlyShowingCharacter.equippedItems.Count > 0) {
             for (int i = 0; i < currentlyShowingCharacter.equippedItems.Count; i++) {
-                ECS.Item item = currentlyShowingCharacter.equippedItems[i];
+                Item item = currentlyShowingCharacter.equippedItems[i];
                 if (i > 0) {
                     text += "\n";
                 }
                 text += item.itemName;
-                if (item is ECS.Weapon) {
-                    ECS.Weapon weapon = (ECS.Weapon)item;
+                if (item is Weapon) {
+                    Weapon weapon = (Weapon)item;
                     if (weapon.bodyPartsAttached.Count > 0) {
                         text += " (";
                         for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
@@ -214,8 +214,8 @@ public class CharacterInfoUI : UIMenu {
                         }
                         text += ")";
                     }
-                } else if (item is ECS.Armor) {
-                    ECS.Armor armor = (ECS.Armor)item;
+                } else if (item is Armor) {
+                    Armor armor = (Armor)item;
                     text += " (" + armor.bodyPartAttached.name + ")";
                 }
             }
@@ -239,7 +239,7 @@ public class CharacterInfoUI : UIMenu {
         string text = string.Empty;
         if (currentlyShowingCharacter.relationships.Count > 0) {
             bool isFirst = true;
-            foreach (KeyValuePair<ECS.Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
+            foreach (KeyValuePair<Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
                 if (!isFirst) {
                     text += "\n";
                 } else {
@@ -266,7 +266,7 @@ public class CharacterInfoUI : UIMenu {
 
     #region History
     private void UpdateHistory(object obj) {
-        if (obj is ECS.Character && currentlyShowingCharacter != null && (obj as ECS.Character).id == currentlyShowingCharacter.id) {
+        if (obj is Character && currentlyShowingCharacter != null && (obj as Character).id == currentlyShowingCharacter.id) {
             UpdateAllHistoryInfo();
         }
     }
@@ -301,7 +301,7 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    public bool IsCharacterInfoShowing(ECS.Character character) {
+    public bool IsCharacterInfoShowing(Character character) {
         return (isShowing && currentlyShowingCharacter == character);
     }
 
@@ -383,6 +383,21 @@ public class CharacterInfoUI : UIMenu {
     public void Snatch() {
         PlayerManager.Instance.player.SnatchCharacter(currentlyShowingCharacter);
         CheckShowSnatchButton();
+    }
+    #endregion
+
+    #region Level Up
+    public void LevelUpCharacter() {
+        currentlyShowingCharacter.LevelUp();
+    }
+    #endregion
+
+    #region Death
+    public void DieCharacter() {
+        if(currentlyShowingCharacter.currentCombat != null) {
+            currentlyShowingCharacter.currentCombat.CharacterDeath(currentlyShowingCharacter);
+        }
+        currentlyShowingCharacter.Death();
     }
     #endregion
 }
