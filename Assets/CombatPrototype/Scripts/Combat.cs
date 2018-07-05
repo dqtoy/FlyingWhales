@@ -420,7 +420,7 @@ namespace ECS{
                     if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
                         Debug.Log(skill.skillName);
                         AttackSkill attackSkill = skill as AttackSkill;
-                        float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff);
+                        float initialWeight = (float) attackSkill.activationWeight; // GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff);
                         float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill);
                         int finalWeight = Mathf.CeilToInt(initialWeight * (specialModifier / 100f));
                         if(finalWeight >= 0) {
@@ -802,6 +802,7 @@ namespace ECS{
             int critChance = Utilities.rng.Next(0, 100);
             if(critChance < sourceCharacter.critChance) {
                 //CRITICAL HIT!
+                Debug.Log(attackSkill.skillName + " CRITICAL HIT!");
                 critDamage = 200f + sourceCharacter.critDamage;
             }
             BodyPart chosenBodyPart = GetRandomBodyPart(targetCharacter);

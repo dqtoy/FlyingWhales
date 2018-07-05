@@ -1,0 +1,1 @@
+{"monsterName":"Slime_2","type":0,"category":0,"level":5,"experienceDrop":50,"maxHP":250,"maxSP":20,"attackPower":100,"speed":5,"pDef":5,"mDef":5,"dodgeChance":0.0,"hitChance":0.0,"critChance":0.0,"skills":[{"instanceID":17966},{"instanceID":50696}],"skillNames":["Normal Attack","Skill150"],"elementChanceWeaknesses":[],"elementChanceResistances":[]}

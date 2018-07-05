@@ -1579,18 +1579,18 @@ namespace ECS {
                 case CHARACTER_ROLE.KING:
                     _role = new King(this);
                     break;
-                case CHARACTER_ROLE.SHOPKEEPER:
-                    _role = new Shopkeeper(this);
-                    break;
-                case CHARACTER_ROLE.MINER:
-                    _role = new Miner(this);
-                    break;
-                case CHARACTER_ROLE.WOODCUTTER:
-                    _role = new Woodcutter(this);
-                    break;
-                case CHARACTER_ROLE.FARMER:
-                    _role = new Farmer(this);
-                    break;
+                //case CHARACTER_ROLE.SHOPKEEPER:
+                //    _role = new Shopkeeper(this);
+                //    break;
+                //case CHARACTER_ROLE.MINER:
+                //    _role = new Miner(this);
+                //    break;
+                //case CHARACTER_ROLE.WOODCUTTER:
+                //    _role = new Woodcutter(this);
+                //    break;
+                //case CHARACTER_ROLE.FARMER:
+                //    _role = new Farmer(this);
+                //    break;
                 //case CHARACTER_ROLE.FOLLOWER:
                 //    _role = new Follower(this);
                 //    break;
