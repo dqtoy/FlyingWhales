@@ -76,10 +76,10 @@ public class Player : ILeader{
         if (IsSnatchSuccess(character)) {
             if (!_snatchedCharacters.Contains(character)) {
                 _snatchedCharacters.Add(character);
-                character.OnCharacterSnatched();
+                character.OnThisCharacterSnatched();
                 Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Successfully snatched " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
                 Debug.Log("Snatched " + character.name);
-                Messenger.Broadcast(Signals.PLAYER_SNATCHED, this);
+                Messenger.Broadcast(Signals.CHARACTER_SNATCHED, character);
             }
         } else {
             Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Failed to snatch " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
@@ -91,7 +91,7 @@ public class Player : ILeader{
         if (character.role == null) {
             return true;
         }
-        if (character.role.roleType == CHARACTER_ROLE.CIVILIAN) {
+        if (character.role is Civilian) {
             return true; //100%
         } else if (character.role.roleType == CHARACTER_ROLE.HERO) {
             int chance = 50; //low happiness

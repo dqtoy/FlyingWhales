@@ -374,6 +374,7 @@ namespace ECS {
             LevelUp();
 
             EquipPreEquippedItems(baseSetup);
+            SubscribeToSignals();
         }
         public Character() {
             _traits = new List<Trait>();
@@ -422,7 +423,13 @@ namespace ECS {
         }
         public void Initialize() { }
 
-		private void AllocateStatPoints(int statAllocation){
+        #region Signals
+        private void SubscribeToSignals() {
+            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        }
+        #endregion
+
+        private void AllocateStatPoints(int statAllocation){
             _baseStrength = 0;
             _baseIntelligence = 0;
             _baseAgility = 0;
@@ -2019,9 +2026,6 @@ namespace ECS {
 		#endregion
 
 		#region Quests
-        public void OnQuestTaken(Quest takenQuest) {
-            //TODO: Add CharacterQuestData based on the taken quest
-        }
         public void AddQuestData(CharacterQuestData questData) {
             if (!_questData.Contains(questData)) {
                 _questData.Add(questData);
@@ -2240,13 +2244,6 @@ namespace ECS {
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
 		}
-        //public void SetCurrentFunction(Action function) {
-        //    if (_party != null) {
-        //        _party.SetCurrentFunction(() => function());
-        //    } else {
-        //        _currentFunction = function;
-        //    }
-        //}
         #endregion
 
         #region Landmarks
@@ -2349,12 +2346,6 @@ namespace ECS {
         #endregion
 
         #region Action Queue
-        //public void AddActionToQueue(CharacterAction action) {
-        //    _actionQueue.Enqueue(action);
-        //}
-        //public void InsertActionToQueue(CharacterAction action, int index) {
-        //    _actionQueue.Enqueue(action, index);
-        //}
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
@@ -2499,7 +2490,7 @@ namespace ECS {
         #endregion
 
         #region Player Actions
-        public void OnCharacterSnatched() {
+        public void OnThisCharacterSnatched() {
             BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
             if (snatcherLair == null) {
                 throw new Exception("There is not available snatcher lair!");
@@ -2513,6 +2504,51 @@ namespace ECS {
             }
         }
         #endregion
+        
+        #region Snatch
+        /*
+         When the player successfully snatches a character, other characters with relation to 
+         the snatched one would all be sent signals to check whether they should react or not. 
+         Other character reaction would depend on their relationship, happiness and traits.
+             */
+        private void OnCharacterSnatched(ECS.Character otherCharacter) {
+            if (otherCharacter.id != this.id) {
+                if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
+                    Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
+                    //For now make all characters that have relationship with the snatched character, react.
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        //obtain release character questline
+                        Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
+                        QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
+                    } else {
+                        //bargain with player
+                        Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
+                        TriggerBargain(otherCharacter);
+                    }
+                }
+            }
+        }
+        private void TriggerBargain(ECS.Character bargainingFor) {
+            List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
+            CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
+            List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.characterObject.currentState.stateName != "Imprisoned"));
+            otherCharacters.Remove(this);
+            dialogChoices.Add(killYourselfChoice);
+            if (otherCharacters.Count > 0) {
+                ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
+                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => actionData.AssignAction(characterToAttack.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)));
+                dialogChoices.Add(attackCharacterChoice);
+            }
+
+            UnityEngine.Events.UnityAction onClickAction = () => Messenger.Broadcast(Signals.SHOW_CHARACTER_DIALOG, this, "Please release " + bargainingFor.name + "!", dialogChoices);
+
+            Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>
+                (Signals.SHOW_NOTIFICATION, this.name + " wants to bargain for " + bargainingFor.name + "'s freedom!",
+                144,
+                onClickAction);
+        }
+        #endregion
+
 
         #region Home
         public void LookForNewHomeStructure() {

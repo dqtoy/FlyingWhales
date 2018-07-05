@@ -9,7 +9,6 @@ public static class Signals {
     public static string DAY_START = "OnDayStart";
     public static string FOUND_ITEM = "OnItemFound"; //Parameters (Character characterThatFoundItem, Item foundItem)
     public static string FOUND_TRACE = "OnTraceFound"; //Parameters (Character characterThatFoundTrace, string traceFound)
-    public static string TASK_SUCCESS = "OnTaskSuccess"; //Parameters (Character characterThatFinishedTask, CharacterTask succeededTask)
     public static string ITEM_PLACED_LANDMARK = "OnItemPlacedAtLandmark"; //Parameters (Item item, BaseLandmark landmark)
     public static string ITEM_PLACED_INVENTORY = "OnItemPlacedAtInventory"; //Parameters (Item item, Character character)
     public static string CHARACTER_DEATH = "OnCharacterDied"; //Parameters (Character characterThatDied)
@@ -38,15 +37,20 @@ public static class Signals {
     public static string ITEM_UNEQUIPPED = "OnItemUnequipped"; //Parameters (Item unequippedItem, ECS.Character character)
     public static string ITEM_OBTAINED = "OnObtainItem"; //Parameters (Item obtainedItem, Character characterThatObtainedItem)
     public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, ECS.Character character)
-    public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, MESSAGE_BOX_MODE mode, bool expires)
-    public static string HIDE_POPUP_MESSAGE = "HidePopupMessage";
     public static string GAME_LOADED = "OnGameLoaded";
     public static string STRUCTURE_STATE_CHANGED = "OnStructureStateChanged"; //Parameters (StructureObj obj, ObjectState newState)
-    public static string UPDATE_UI = "UpdateUI";
     public static string LANDMARK_ATTACK_TARGET_SELECTED = "OnLandmarkAttackTargetSelected"; //Parameters (BaseLandmark target)
     public static string PLAYER_LANDMARK_CREATED = "OnPlayerLandmarkCreated"; //Parameters (BaseLandmark createdLandmark)
 
+    #region UI
+    public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, MESSAGE_BOX_MODE mode, bool expires)
+    public static string HIDE_POPUP_MESSAGE = "HidePopupMessage";
+    public static string UPDATE_UI = "UpdateUI";
+    public static string SHOW_NOTIFICATION = "ShowNotification"; //Parameters (string text, UnityAction onClickAction)
+    public static string SHOW_CHARACTER_DIALOG = "ShowCharacterDialog"; //Parameters(ECS.Character character, string text, List<CharacterDialogChoice> choices)
+    #endregion
+
     #region Quest Signals
-    public static string PLAYER_SNATCHED = "OnPlayerSnatched"; //Parameters (Character snatchedCharacter)
+    public static string CHARACTER_SNATCHED = "OnCharacterSnatched"; //Parameters (Character snatchedCharacter)
     #endregion
 }
