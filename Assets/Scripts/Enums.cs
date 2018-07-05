@@ -838,12 +838,12 @@ public enum CHARACTER_ROLE {
     //WARLORD,
     HERO,
     //ADVENTURER,
- //   COLONIST,
- //   VILLAGE_HEAD,
- //   WORKER,
+    //COLONIST,
+    //VILLAGE_HEAD,
+    //WORKER,
 	//TAMED_BEAST,
 	//BANDIT,
- //   ANCIENT_VAMPIRE,
+    //ANCIENT_VAMPIRE,
 	//CRATER_BEAST,
 	//SLYX,
 	VILLAIN,
@@ -852,10 +852,6 @@ public enum CHARACTER_ROLE {
     //FOLLOWER,
     //HERMIT,
     //BEAST,
-    SHOPKEEPER,
-    MINER,
-    WOODCUTTER,
-    FARMER,
 }
 public enum CHARACTER_CLASS {
     CLASSLESS,
@@ -873,6 +869,12 @@ public enum CHARACTER_CLASS {
     SCOUT,
     NIGHTBLADE,
     WARRIOR,
+}
+public enum CHARACTER_JOB {
+    SHOPKEEPER,
+    MINER,
+    WOODCUTTER,
+    FARMER,
 }
 public enum CHARACTER_PRODUCTION_CAP {
     CITY_COUNT,
