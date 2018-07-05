@@ -6,11 +6,10 @@ public class MonsterManager : MonoBehaviour {
     public static MonsterManager Instance = null;
 
     private Dictionary<string, Monster> _monstersDictionary;
+    public GameObject monsterIconPrefab;
     public MonsterComponent monsterComponent;
 
-    public GameObject monsterIconPrefab;
-
-    public List<Monster> allMonsters;
+    public List<MonsterParty> allMonsterParties;
 
     #region getters/setters
     public Dictionary<string, Monster> monstersDictionary {
@@ -20,7 +19,7 @@ public class MonsterManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        allMonsters = new List<Monster>();
+        allMonsterParties = new List<MonsterParty>();
     }
 
     public void Initialize() {
@@ -41,13 +40,11 @@ public class MonsterManager : MonoBehaviour {
     public Monster CreateNewMonster(string monsterName) {
         Monster newMonster = _monstersDictionary[monsterName].CreateNewCopy();
         newMonster.Initialize();
-        allMonsters.Add(newMonster);
         return newMonster;
     }
     public Monster CreateNewMonster(MonsterSaveData data) {
         Monster newMonster = _monstersDictionary[data.monsterName].CreateNewCopy();
         newMonster.Initialize(data);
-        allMonsters.Add(newMonster);
         return newMonster;
     }
     public Monster SpawnMonsterOnTile(HexTile tile, string monsterName) {
@@ -86,52 +83,65 @@ public class MonsterManager : MonoBehaviour {
         landmark.AddCharacterToLocation(monsterParty);
         return newMonster;
     }
+    public MonsterParty SpawnMonsterPartyOnLandmark(BaseLandmark landmark, MonsterPartyComponent monsterPartyComponent) {
+        MonsterParty monsterParty = new MonsterParty();
+        for (int i = 0; i < monsterPartyComponent.monsters.Length; i++) {
+            string monsterName = monsterPartyComponent.monsters[i].name;
+            Monster monster = CreateNewMonster(monsterName);
+            monsterParty.AddCharacter(monster);
+        }
+#if !WORLD_CREATION_TOOL
+        monsterParty.CreateIcon();
+        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
+#endif
+        landmark.AddCharacterToLocation(monsterParty);
+        return monsterParty;
+    }
     public void DespawnMonsterOnLandmark(BaseLandmark landmark, Monster monster) {
         landmark.RemoveCharacterFromLocation(monster.party);
-        RemoveMonster(monster);
+        //RemoveMonster(monster);
     }
-    public void RemoveMonster(Monster monster) {
-        allMonsters.Remove(monster);
+    public void RemoveMonster(MonsterParty party) {
+        allMonsterParties.Remove(party);
 #if !WORLD_CREATION_TOOL
-        GameObject.Destroy(monster.party.icon.gameObject);
+        GameObject.Destroy(party.icon.gameObject);
 #endif
     }
-    //TODO
+    
     public bool HasMonsterOnTile(HexTile tile) {
-        for (int i = 0; i < allMonsters.Count; i++) {
-            Monster currMonster = allMonsters[i];
-            //if (currMonster.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE && currMonster.specificLocation.id == tile.id) {
-            //    return true;
-            //}
+        for (int i = 0; i < allMonsterParties.Count; i++) {
+            MonsterParty currMonsterParty = allMonsterParties[i];
+            if (currMonsterParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE && currMonsterParty.specificLocation.id == tile.id) {
+                return true;
+            }
         }
         return false;
     }
 
-    //TODO
     public bool HasMonsterOnLandmark(BaseLandmark landmark) {
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-            //ICharacter currCharacter = landmark.charactersAtLocation[i];
-            //if (currCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
-            //    return true;
-            //}
+            IParty currParty = landmark.charactersAtLocation[i];
+            if (currParty is MonsterParty) {
+                return true;
+            }
         }
         return false;
     }
-    //TODO
-    public List<Monster> GetMonstersOnTile(HexTile tile) {
-        List<Monster> monsters = new List<Monster>();
-        for (int i = 0; i < allMonsters.Count; i++) {
-            Monster currMonster = allMonsters[i];
-            //if (currMonster.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE && currMonster.specificLocation.id == tile.id) {
-            //    monsters.Add(currMonster);
-            //}
+    
+    public List<MonsterParty> GetMonstersOnTile(HexTile tile) {
+        List<MonsterParty> monsterParties = new List<MonsterParty>();
+        for (int i = 0; i < allMonsterParties.Count; i++) {
+            MonsterParty currMonsterParty = allMonsterParties[i];
+            if (currMonsterParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE && currMonsterParty.specificLocation.id == tile.id) {
+                monsterParties.Add(currMonsterParty);
+            }
         }
-        return monsters;
+        return monsterParties;
     }
     public void RemoveMonstersOnTile(HexTile tile) {
-        List<Monster> monsters = GetMonstersOnTile(tile);
-        for (int i = 0; i < monsters.Count; i++) {
-            RemoveMonster(monsters[i]);
+        List<MonsterParty> monsterParties = GetMonstersOnTile(tile);
+        for (int i = 0; i < monsterParties.Count; i++) {
+            RemoveMonster(monsterParties[i]);
         }
     }
     public void LoadMonsters(WorldSaveData data) {
@@ -151,15 +161,5 @@ public class MonsterManager : MonoBehaviour {
                 }
             }
         }
-    }
-
-    public Monster GetMonsterByID(int id) {
-        for (int i = 0; i < allMonsters.Count; i++) {
-            Monster currMonster = allMonsters[i];
-            if (currMonster.id == id) {
-                return currMonster;
-            }
-        }
-        return null;
     }
 }

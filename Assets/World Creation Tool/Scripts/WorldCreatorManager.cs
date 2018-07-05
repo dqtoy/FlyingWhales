@@ -609,7 +609,7 @@ namespace worldcreator {
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
             worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);
-            worldData.OccupyMonstersData(MonsterManager.Instance.allMonsters);
+            //worldData.OccupyMonstersData(MonsterManager.Instance.allMonsters);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {
                 saveName += Utilities.worldConfigFileExt;

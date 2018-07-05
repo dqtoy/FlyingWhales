@@ -24,7 +24,7 @@ public class NewParty : IParty {
         get { return _numOfAttackers; }
         set { _numOfAttackers = value; }
     }
-    public string name {
+    public virtual string name {
         get { return _icharacters[0].name + "'s Party"; }
     }
     public string urlName {
