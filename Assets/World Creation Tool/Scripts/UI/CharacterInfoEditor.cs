@@ -24,6 +24,7 @@ namespace worldcreator {
         [SerializeField] private Dropdown raceField;
         [SerializeField] private Dropdown genderField;
         [SerializeField] private Dropdown roleField;
+        [SerializeField] private Dropdown jobField;
         [SerializeField] private Dropdown classField;
         [SerializeField] private Dropdown factionField;
         [SerializeField] private Text otherInfoLbl;
@@ -47,7 +48,7 @@ namespace worldcreator {
 
         public Dictionary<string, PortraitSettings> portraitTemplates;
 
-        private void Awake() {
+        public void Initialize() {
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
 
@@ -112,11 +113,13 @@ namespace worldcreator {
             raceField.ClearOptions();
             genderField.ClearOptions();
             roleField.ClearOptions();
+            jobField.ClearOptions();
             classField.ClearOptions();
 
             raceField.AddOptions(Utilities.GetEnumChoices<RACE>());
             genderField.AddOptions(Utilities.GetEnumChoices<GENDER>());
             roleField.AddOptions(Utilities.GetEnumChoices<CHARACTER_ROLE>());
+            jobField.AddOptions(Utilities.GetEnumChoices<CHARACTER_JOB>(true));
             classField.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
             LoadFactionDropdownOptions();
         }
@@ -132,6 +135,12 @@ namespace worldcreator {
             raceField.value = Utilities.GetOptionIndex(raceField, _character.raceSetting.race.ToString());
             genderField.value = Utilities.GetOptionIndex(genderField, _character.gender.ToString());
             roleField.value = Utilities.GetOptionIndex(roleField, _character.role.roleType.ToString());
+            if (_character.role.job != null) {
+                jobField.value = Utilities.GetOptionIndex(jobField, _character.role.job.jobType.ToString());
+            } else {
+                jobField.value = Utilities.GetOptionIndex(jobField, CHARACTER_JOB.NONE.ToString());
+            }
+            
             classField.value = Utilities.GetOptionIndex(classField, _character.characterClass.className);
             string factionName = "Factionless";
             if (_character.faction != null) {
@@ -166,7 +175,18 @@ namespace worldcreator {
         }
         public void SetRole(int choice) {
             CHARACTER_ROLE newRole = (CHARACTER_ROLE)Enum.Parse(typeof(CHARACTER_ROLE), roleField.options[choice].text);
+            CHARACTER_JOB previousJob = CHARACTER_JOB.NONE;
+            if (_character.role.job != null) {
+                previousJob = _character.role.job.jobType;
+            }
             _character.AssignRole(newRole);
+            if (previousJob != CHARACTER_JOB.NONE) {
+                SetJob(Utilities.GetOptionIndex(jobField, previousJob.ToString())); //to recreate the job for the new role
+            }
+        }
+        public void SetJob(int choice) {
+            CHARACTER_JOB newJob = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), jobField.options[choice].text);
+            _character.role.AssignJob(newJob);
         }
         public void SetClass(int choice) {
             string newClass = classField.options[choice].text;

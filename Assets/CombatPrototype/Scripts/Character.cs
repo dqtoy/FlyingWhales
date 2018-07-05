@@ -770,7 +770,7 @@ namespace ECS {
 		internal void Death(Character killer = null){
 			if(!_isDead){
 				_isDead = true;
-                _party.RemoveCharacter(this);
+                
                 Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
                 Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
@@ -787,23 +787,24 @@ namespace ECS {
                     AddHistory(deathLog);
                     (_party.specificLocation as BaseLandmark).AddHistory(deathLog);
 				}
-				//Drop all Items
-				while (_equippedItems.Count > 0) {
+                
+                //Drop all Items
+                while (_equippedItems.Count > 0) {
 					ThrowItem (_equippedItems [0]);
 				}
 				while (_inventory.Count > 0) {
 					ThrowItem (_inventory [0]);
 				}
-
+                _party.RemoveCharacter(this);
                 //Remove ActionData
                 //_actionData.DetachActionData();
 
-				//if(_home != null){
-    //                //Remove character home on landmark
-				//	_home.RemoveCharacterHomeOnLandmark (this);
-				//}
+                //if(_home != null){
+                //                //Remove character home on landmark
+                //	_home.RemoveCharacterHomeOnLandmark (this);
+                //}
 
-				if(this._faction != null){
+                if (this._faction != null){
 					if(this._faction.leader != null && this._faction.leader.id == this.id) {
 						//If this character is the leader of a faction, set that factions leader as null
 						this._faction.SetLeader(null);
@@ -2085,46 +2086,6 @@ namespace ECS {
         public bool HasPathToParty(Party partyToJoin) {
             return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
         }
-        public BaseLandmark GetNearestLandmarkWithoutHostiles() {
-            ILocation location = _party.specificLocation;
-            Region currRegionLocation = location.tileLocation.region;
-            List<BaseLandmark> elligibleLandmarks = new List<BaseLandmark>(currRegionLocation.landmarks);
-            //elligibleLandmarks.Add(currRegionLocation.mainLandmark);
-            //elligibleLandmarks.AddRange(currRegionLocation.landmarks);
-			if (location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                elligibleLandmarks.Remove(location as BaseLandmark);
-            }
-            Dictionary<BaseLandmark, List<HexTile>> landmarksWithoutHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
-            Dictionary<BaseLandmark, List<HexTile>> landmarksWithHostiles = new Dictionary<BaseLandmark, List<HexTile>>();
-            for (int i = 0; i < elligibleLandmarks.Count; i++) {
-                BaseLandmark currLandmark = elligibleLandmarks[i];
-                List<HexTile> path = PathGenerator.Instance.GetPath(location.tileLocation, currLandmark.tileLocation, PATHFINDING_MODE.USE_ROADS);
-                if(path != null) {
-                    //check for hostiles
-                    if (!currLandmark.HasHostilitiesWith(this.faction)) {
-                        if (landmarksWithoutHostiles.ContainsKey(currLandmark)) {
-                            landmarksWithoutHostiles.Add(currLandmark, path);
-                        }
-                    } else {
-                        if (landmarksWithHostiles.ContainsKey(currLandmark)) {
-                            landmarksWithHostiles.Add(currLandmark, path);
-                        }
-                    }
-                }
-            }
-
-            if (landmarksWithoutHostiles.Count > 0) {
-                landmarksWithoutHostiles.OrderBy(x => x.Value.Count);
-                return landmarksWithoutHostiles.Keys.First();
-            } else {
-                if (landmarksWithHostiles.Count > 0) {
-                    landmarksWithHostiles.OrderBy(x => x.Value.Count);
-                    return landmarksWithHostiles.Keys.First();
-                }
-            }
-
-            return null;
-        }
         public void CenterOnCharacter() {
             if (!this.isDead) {
                 CameraMove.Instance.CenterCameraOn(_party.specificLocation.tileLocation.gameObject);
@@ -2522,15 +2483,15 @@ namespace ECS {
                 if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
                     Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
                     //For now make all characters that have relationship with the snatched character, react.
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                    //if (UnityEngine.Random.Range(0, 2) == 0) {
                         //obtain release character questline
                         Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
                         QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
-                    } else {
-                        //bargain with player
-                        Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
-                        TriggerBargain(otherCharacter);
-                    }
+                    //} else {
+                    //    //bargain with player
+                    //    Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
+                    //    TriggerBargain(otherCharacter);
+                    //}
                 }
             }
         }
