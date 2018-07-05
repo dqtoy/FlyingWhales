@@ -1709,24 +1709,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
             //end monster spawning
 
-            //Monster despawning
-            if (MonsterManager.Instance.HasMonsterOnLandmark(this.landmarkOnTile)) {
-                ContextMenuItemSettings despawnMonster = new ContextMenuItemSettings("Despawn Monster");
-                settings.AddMenuItem(despawnMonster);
+            ////Monster despawning
+            //if (MonsterManager.Instance.HasMonsterOnLandmark(this.landmarkOnTile)) {
+            //    ContextMenuItemSettings despawnMonster = new ContextMenuItemSettings("Despawn Monster");
+            //    settings.AddMenuItem(despawnMonster);
 
-                ContextMenuSettings despawnMonsterSettings = new ContextMenuSettings();
-                despawnMonster.SetSubMenu(despawnMonsterSettings);
+            //    ContextMenuSettings despawnMonsterSettings = new ContextMenuSettings();
+            //    despawnMonster.SetSubMenu(despawnMonsterSettings);
 
-                for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
-                    ICharacter currCharacter = this.landmarkOnTile.charactersAtLocation[i];
-                    if (currCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
-                        ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currCharacter.name);
-                        despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterOnLandmark(landmarkOnTile, currCharacter as Monster);
-                        despawnMonsterSettings.AddMenuItem(despawnMonsterItem);
-                    }
-                }
-            }
-            //end monster despawning
+            //    for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
+            //        ICharacter currCharacter = this.landmarkOnTile.charactersAtLocation[i];
+            //        if (currCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
+            //            ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currCharacter.name);
+            //            despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterOnLandmark(landmarkOnTile, currCharacter as Monster);
+            //            despawnMonsterSettings.AddMenuItem(despawnMonsterItem);
+            //        }
+            //    }
+            //}
+            ////end monster despawning
         }
         return settings;
     }

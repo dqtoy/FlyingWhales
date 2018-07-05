@@ -226,7 +226,7 @@ public class CharacterManager : MonoBehaviour {
             }
 #if WORLD_CREATION_TOOL
             else{
-                newCharacter.SetSpecificLocation(currentLocation);
+                party.SetSpecificLocation(currentLocation);
             }
 #endif
         }
