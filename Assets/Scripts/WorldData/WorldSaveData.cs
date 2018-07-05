@@ -69,10 +69,10 @@ public class WorldSaveData {
             areaData.Add(currData);
         }
     }
-    public void OccupyMonstersData(List<Monster> monsters) {
+    public void OccupyMonstersData(List<MonsterParty> monsters) {
         monstersData = new List<MonsterSaveData>();
         for (int i = 0; i < monsters.Count; i++) {
-            Monster currMonster = monsters[i];
+            MonsterParty currMonster = monsters[i];
             MonsterSaveData monsterData = new MonsterSaveData(currMonster);
             monstersData.Add(monsterData);
         }

@@ -9,10 +9,10 @@ public class MonsterSaveData {
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
 
-    public MonsterSaveData(Monster monster) {
-        id = monster.id;
-        monsterName = monster.name;
-        locationType = monster.party.specificLocation.locIdentifier;
-        locationID = monster.party.specificLocation.id;
+    public MonsterSaveData(MonsterParty monsterParty) {
+        id = monsterParty.id;
+        monsterName = monsterParty.name;
+        locationType = monsterParty.specificLocation.locIdentifier;
+        locationID = monsterParty.specificLocation.id;
     }
 }
