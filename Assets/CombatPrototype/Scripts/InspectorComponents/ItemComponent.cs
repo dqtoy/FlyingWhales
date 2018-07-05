@@ -7,6 +7,7 @@ namespace ECS{
 		public ITEM_TYPE itemType;
 		public string itemName;
 		public string description;
+        public string interactString;
         //public int bonusActRate;
         //public int bonusStrength;
         //public int bonusIntelligence;
@@ -22,7 +23,7 @@ namespace ECS{
         //      public int collectChance;
         public bool isUnlimited;
         public bool isObtainable;
-        public string interactString;
+        public int goldCost;
         //public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
         //Weapon Fields
