@@ -75,8 +75,13 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
                     return;
                 }
             }
-            if (_character is ECS.Character) {
-                UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
+            IParty iparty = _character.iparty;
+            if(iparty.icharacters.Count > 1) {
+                UIManager.Instance.ShowPartyInfo(iparty as NewParty);
+            } else if (iparty.icharacters.Count == 1) {
+                if (iparty.icharacters[0] is ECS.Character) {
+                    UIManager.Instance.ShowCharacterInfo(iparty.icharacters[0] as ECS.Character);
+                }
             }
         }
 #endif

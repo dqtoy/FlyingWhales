@@ -2,23 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine.UI;
 
 public class PartyInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private UILabel partyInfoLbl;
-    [SerializeField] private UIScrollView infoScrollView;
+    [SerializeField] private TextMeshProUGUI partyInfoLbl;
+    [SerializeField] private ScrollRect infoScrollView;
 
-    internal Party currentlyShowingParty {
-        get { return _data as Party; }
+    internal NewParty currentlyShowingParty {
+        get { return _data as NewParty; }
     }
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener("UpdateUI", UpdatePartyInfo);
-        tweenPos.AddOnFinished(() => UpdatePartyInfo());
+        Messenger.AddListener(Signals.UPDATE_UI, UpdatePartyInfo);
     }
 
     public override void OpenMenu() {
@@ -38,59 +39,16 @@ public class PartyInfoUI : UIMenu {
         }
         string text = string.Empty;
         text += "[b]Name:[/b] " + currentlyShowingParty.name;
-		text += "\n[b]IsDisbanded:[/b] " + currentlyShowingParty.isDisbanded.ToString ();
-		text += "\n[b]IsFull:[/b] " + currentlyShowingParty.isFull.ToString ();
-		text += "\n[b]Party Leader:[/b] " + currentlyShowingParty.partyLeader.urlName;
-		text += "\n[b]Members:[/b] ";
-		if((currentlyShowingParty.partyMembers.Count - 1) > 0){
-			for (int i = 0; i < currentlyShowingParty.partyMembers.Count; i++) {
-				if(currentlyShowingParty.partyMembers[i].id != currentlyShowingParty.partyLeader.id){
-					ECS.Character member = currentlyShowingParty.partyMembers [i];
-					text += "\n" + member.urlName;
-				}
-			}
-		} else {
-			text += "NONE";
-		}
-
-		text += "\n[b]Current Task:[/b] ";
-		if (currentlyShowingParty.currentAction != null) {
-			//if (currentlyShowingParty.currentTask.taskType == TASK_TYPE.QUEST) {
-			//	OldQuest.Quest currQuest = (OldQuest.Quest)currentlyShowingParty.currentTask;
-			//	text += " (" + currQuest.urlName + ")";
-			//} else {
-				text += " (" + currentlyShowingParty.currentAction.actionData.actionName + ")";
-			//}
-		} else {
-			text += "NONE";
-		}
-		text += "\n[b]Civilians:[/b] " + currentlyShowingParty.civilians.ToString ();
-        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingParty.civiliansByRace) {
-            if (kvp.Value > 0) {
-                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+		text += "\n[b]Characters:[/b]";
+		if(currentlyShowingParty.icharacters.Count > 0){
+			for (int i = 0; i < currentlyShowingParty.icharacters.Count; i++) {
+                ICharacter member = currentlyShowingParty.icharacters[i];
+                text += "\n" + member.urlName;
             }
-        }
-
-        //text += "\n[b]Materials:[/b] ";
-        //if (currentlyShowingParty.materialInventory.Sum(x => x.Value) > 0) {
-        //    text += "\n";
-        //    foreach (KeyValuePair<MATERIAL, int> kvp in currentlyShowingParty.materialInventory) {
-        //        if (kvp.Value > 0) {
-        //            text += kvp.Key.ToString() + " - " + kvp.Value.ToString();
-        //        }
-        //    }
-        //} else {
-        //    text += "NONE";
-        //}
-
+		} else {
+			text += "NONE";
+		}
         partyInfoLbl.text = text;
-        infoScrollView.ResetPosition();
+        //infoScrollView.ResetPosition();
     }
-	public void CenterCameraOnParty() {
-		CameraMove.Instance.CenterCameraOn(currentlyShowingParty.currLocation.gameObject);
-	}
-//	public void OnClickCloseBtn(){
-////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-//		HideMenu ();
-//	}
 }
