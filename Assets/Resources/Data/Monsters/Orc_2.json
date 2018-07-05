@@ -1,0 +1,1 @@
+{"monsterName":"Orc_2","type":1,"category":0,"level":15,"experienceDrop":380,"maxHP":1500,"maxSP":50,"attackPower":205,"speed":35,"pDef":38,"mDef":38,"dodgeChance":0.0,"hitChance":0.0,"critChance":3.0,"skills":[{"instanceID":17966},{"instanceID":50714}],"skillNames":["Normal Attack","Skill180"],"elementChanceWeaknesses":[],"elementChanceResistances":[]}

@@ -1,0 +1,1 @@
+{"monsterName":"Golem_2","type":1,"category":0,"level":21,"experienceDrop":1000,"maxHP":4000,"maxSP":30,"attackPower":375,"speed":21,"pDef":98,"mDef":68,"dodgeChance":0.0,"hitChance":0.0,"critChance":0.0,"skills":[{"instanceID":17966},{"instanceID":50708}],"skillNames":["Normal Attack","Skill175"],"elementChanceWeaknesses":[],"elementChanceResistances":[]}

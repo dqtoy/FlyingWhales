@@ -1,0 +1,1 @@
+{"monsterName":"Wolf_2","type":1,"category":0,"level":8,"experienceDrop":145,"maxHP":650,"maxSP":30,"attackPower":150,"speed":35,"pDef":15,"mDef":15,"dodgeChance":0.0,"hitChance":0.0,"critChance":5.0,"skills":[{"instanceID":17966},{"instanceID":50702}],"skillNames":["Normal Attack","Skill200"],"elementChanceWeaknesses":[],"elementChanceResistances":[]}

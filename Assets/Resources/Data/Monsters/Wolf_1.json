@@ -1,0 +1,1 @@
+{"monsterName":"Wolf_1","type":1,"category":0,"level":4,"experienceDrop":60,"maxHP":260,"maxSP":30,"attackPower":125,"speed":27,"pDef":10,"mDef":10,"dodgeChance":0.0,"hitChance":0.0,"critChance":3.0,"skills":[{"instanceID":17966},{"instanceID":50702}],"skillNames":["Normal Attack","Skill200"],"elementChanceWeaknesses":[],"elementChanceResistances":[]}
